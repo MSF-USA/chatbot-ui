@@ -1,4 +1,10 @@
-import { OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION, OPENAI_ORGANIZATION } from '@/utils/app/const';
+import {
+  findWorkingConfiguration,
+  OPENAI_API_HOST,
+  OPENAI_API_TYPE,
+  OPENAI_API_VERSION,
+  OPENAI_ORGANIZATION
+} from '@/utils/app/const';
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -6,30 +12,62 @@ export const config = {
   runtime: 'edge',
 };
 
+const getModels = (json: any, configData: any) => {
+  return json.data
+      .map((model: any) => {
+        const model_name = (configData.OPENAI_API_TYPE === 'azure') ? model.model : model.id;
+        for (const [key, value] of Object.entries(OpenAIModelID)) {
+          if (value === model_name) {
+            return {
+              id: model.id,
+              name: OpenAIModels[value].name,
+            };
+          }
+        }
+      })
+      .filter(Boolean);
+}
+
+const getAuthHeaders = (configData: any, key: string) => {
+  return {
+    ...(configData.OPENAI_API_TYPE === 'openai' && {
+      Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`
+    }),
+    ...(configData.OPENAI_API_TYPE === 'azure' && {
+      'api-key': `${key || process.env.OPENAI_API_KEY}`
+    }),
+    ...((configData.OPENAI_API_TYPE === 'openai' && configData.OPENAI_ORGANIZATION) && {
+      'OpenAI-Organization': configData.OPENAI_ORGANIZATION,
+    }),
+  };
+}
+
+
 const handler = async (req: Request): Promise<Response> => {
   try {
     const { key } = (await req.json()) as {
       key: string;
     };
 
-    let url = `${OPENAI_API_HOST}/v1/models`;
-    if (OPENAI_API_TYPE === 'azure') {
-      url = `${OPENAI_API_HOST}/openai/deployments?api-version=${OPENAI_API_VERSION}`;
+    let configData;
+    try {
+      configData = await findWorkingConfiguration(key);
+    } catch(error) {
+        configData = {
+            OPENAI_API_HOST: OPENAI_API_HOST,
+            OPENAI_API_TYPE: OPENAI_API_TYPE,
+            OPENAI_API_VERSION: OPENAI_API_VERSION,
+            OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
+        }
+    }
+
+    let url = `${configData.OPENAI_API_HOST}/v1/models`;
+    if (configData.OPENAI_API_TYPE === 'azure') {
+      url = `${configData.OPENAI_API_HOST}/openai/deployments?api-version=${configData.OPENAI_API_VERSION}`;
     }
 
     const response = await fetch(url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(OPENAI_API_TYPE === 'openai' && {
-          Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
-        }),
-        ...(OPENAI_API_TYPE === 'azure' && {
-          'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
-        }),
-        ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
-          'OpenAI-Organization': OPENAI_ORGANIZATION,
-        }),
-      },
+      headers: getAuthHeaders(configData, key),
     });
 
     if (response.status === 401) {
@@ -48,19 +86,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const json = await response.json();
 
-    const models: OpenAIModel[] = json.data
-      .map((model: any) => {
-        const model_name = (OPENAI_API_TYPE === 'azure') ? model.model : model.id;
-        for (const [key, value] of Object.entries(OpenAIModelID)) {
-          if (value === model_name) {
-            return {
-              id: model.id,
-              name: OpenAIModels[value].name,
-            };
-          }
-        }
-      })
-      .filter(Boolean);
+    const models: OpenAIModel[] = getModels(json, configData);
 
     return new Response(JSON.stringify(models), { status: 200 });
   } catch (error) {

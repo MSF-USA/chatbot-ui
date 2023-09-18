@@ -1,7 +1,14 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
-import { AZURE_DEPLOYMENT_ID, OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION, OPENAI_ORGANIZATION } from '../app/const';
+import {
+  AZURE_DEPLOYMENT_ID,
+  findWorkingConfiguration,
+  OPENAI_API_HOST,
+  OPENAI_API_TYPE,
+  OPENAI_API_VERSION,
+  OPENAI_ORGANIZATION
+} from '../app/const';
 
 import {
   ParsedEvent,
@@ -30,26 +37,40 @@ export const OpenAIStream = async (
   key: string,
   messages: Message[],
 ) => {
-  let url = `${OPENAI_API_HOST}/v1/chat/completions`;
-  if (OPENAI_API_TYPE === 'azure') {
-    url = `${OPENAI_API_HOST}/openai/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
+
+
+  let configData;
+  try {
+    configData = await findWorkingConfiguration(key);
+  } catch(error) {
+    configData = {
+      OPENAI_API_HOST: OPENAI_API_HOST,
+      OPENAI_API_TYPE: OPENAI_API_TYPE,
+      OPENAI_API_VERSION: OPENAI_API_VERSION,
+      OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
+    }
+  }
+
+  let url = `${configData.OPENAI_API_HOST}/v1/chat/completions`;
+  if (configData.OPENAI_API_TYPE === 'azure') {
+    url = `${configData.OPENAI_API_HOST}/openai/deployments/${configData.AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
   }
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      ...(OPENAI_API_TYPE === 'openai' && {
+      ...(configData.OPENAI_API_TYPE === 'openai' && {
         Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
       }),
-      ...(OPENAI_API_TYPE === 'azure' && {
+      ...(configData.OPENAI_API_TYPE === 'azure' && {
         'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
       }),
-      ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
-        'OpenAI-Organization': OPENAI_ORGANIZATION,
+      ...((configData.OPENAI_API_TYPE === 'openai' && configData.OPENAI_ORGANIZATION) && {
+        'OpenAI-Organization': configData.OPENAI_ORGANIZATION,
       }),
     },
     method: 'POST',
     body: JSON.stringify({
-      ...(OPENAI_API_TYPE === 'openai' && {model: model.id}),
+      ...(configData.OPENAI_API_TYPE === 'openai' && {model: model.id}),
       messages: [
         {
           role: 'system',

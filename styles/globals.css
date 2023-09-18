@@ -41,3 +41,13 @@ html {
 pre:has(div.codeblock) {
   padding: 0;
 }
+
+select {
+  background: #202123;
+  color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 5px;
+  outline: none;
+  margin: 0 5px;
+}

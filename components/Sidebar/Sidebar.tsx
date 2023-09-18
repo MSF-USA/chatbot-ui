@@ -1,5 +1,5 @@
 import { IconFolderPlus, IconMistOff, IconPlus } from '@tabler/icons-react';
-import { ReactNode } from 'react';
+import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -8,6 +8,7 @@ import {
 } from './components/OpenCloseButton';
 
 import Search from '../Search';
+import LanguageSwitcher from "@/components/Sidebar/components/LanguageSwitcher";
 
 interface Props<T> {
   isOpen: boolean;
@@ -111,6 +112,7 @@ const Sidebar = <T,>({
           )}
         </div>
         {footerComponent}
+        <LanguageSwitcher />
       </div>
 
       <CloseSidebarButton onClick={toggleOpen} side={side} />

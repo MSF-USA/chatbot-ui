@@ -70,8 +70,8 @@ export const ChatInput = ({
   );
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const value = e.target.value;
-    const maxLength = selectedConversation?.model.maxLength;
+    const value: string = e.target.value;
+    const maxLength: number | undefined = selectedConversation?.model?.maxLength;
 
     if (maxLength && value.length > maxLength) {
       alert(
@@ -162,7 +162,7 @@ export const ChatInput = ({
       } else {
         setActivePromptIndex(0);
       }
-    } else if (e.key === 'Enter' && !isTyping && !isMobile() && !e.shiftKey) {
+    } else if (e.key === 'Enter' && !isTyping && !isMobile() && !e.shiftKey && !e.ctrlKey) {
       e.preventDefault();
       handleSend();
     } else if (e.key === '/' && e.metaKey) {
