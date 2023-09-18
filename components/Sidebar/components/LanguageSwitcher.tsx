@@ -1,9 +1,34 @@
-import { FC, ChangeEvent } from 'react';
-import { useRouter } from 'next/router';
+import { FC, ChangeEvent, JSXElementConstructor, ReactElement, ReactFragment, ReactPortal} from 'react';
+import {useRouter} from 'next/router';
 // import {IconLanguage, IconMessage} from "@tabler/icons-react";
 
 // map locale to autonym language name
-const localeToLanguageName = {
+const localeToLanguageName: {
+    de: string;
+    fi: string;
+    ru: string;
+    sv: string;
+    ko: string;
+    pt: string;
+    en: string;
+    it: string;
+    bn: string;
+    fr: string;
+    es: string;
+    zh: string;
+    ar: string;
+    te: string;
+    vi: string;
+    si: string;
+    ja: string;
+    id: string;
+    pl: string;
+    he: string;
+    ro: string;
+    ca: string;
+    nl: string;
+    tr: string
+} = {
     en: 'English',
     es: 'Español',
     ar: 'العربية',
@@ -32,7 +57,7 @@ const localeToLanguageName = {
 
 const LanguageSwitcher: FC = () => {
     const router = useRouter();
-    const { locale, locales, asPath } = router;
+    const {locale, locales, asPath} = router;
 
     const handleLocaleChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const newLocale = event.target.value;
@@ -45,6 +70,12 @@ const LanguageSwitcher: FC = () => {
     if (!locales || locales.length === 0) {
         return null;
     }
+
+    const getAutonym = (locale: string) => {
+        // @ts-ignore
+        return localeToLanguageName[locale] ?? locale;
+    }
+
     return (<div className={'grid'}>
         <select value={locale} onChange={handleLocaleChange}>
         {locales.map((localeOption) => (
@@ -52,7 +83,7 @@ const LanguageSwitcher: FC = () => {
                     data-te-select-init={'true'}
                     key={localeOption}
                     value={localeOption}>
-                    {localeToLanguageName[localeOption] ?? localeOption}
+                    {getAutonym(localeOption)}
                 </option>
 ))}
     </select>
