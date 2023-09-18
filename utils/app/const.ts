@@ -51,13 +51,11 @@ const configurations = [
 
 export async function findWorkingConfiguration(key: string) {
     for (const config of configurations) {
+        console.log("Trying config", config)
 
         let url = `${config.OPENAI_API_HOST}/v1/models`;
         if (config.OPENAI_API_TYPE === 'azure') {
             url = `${config.OPENAI_API_HOST}/openai/deployments?api-version=${config.OPENAI_API_VERSION}`;
-        }
-        if (config.OPENAI_API_HOST.indexOf('log') > -1) {
-            debugger;
         }
         const headers = {
             'Content-Type': 'application/json',
@@ -76,7 +74,9 @@ export async function findWorkingConfiguration(key: string) {
             const response = await fetch(url, {
                 headers,
             });
+            console.log("Response", JSON.stringify(response))
             if (response.status === 200) {
+                console.log("Found working config", config)
                 return config;
             }
         } catch (error) {
