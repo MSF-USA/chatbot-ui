@@ -44,13 +44,16 @@ describe('prompts tests', () => {
     describe('updatePrompt function', () => {
         it('should update prompt', () => {
             const updatedPrompt = {id: 'uuid1', content: newPromptText};
+            // @ts-ignore
             const result = updatePrompt(updatedPrompt, prompts);
             expect((result.single as Prompt).content).toBe(newPromptText);
+            // @ts-ignore
             expect((result.all as Prompt[]).find(p => p.id === updatedPrompt.id).content).toBe(newPromptText);
         });
 
         it('should not update a non-existent prompt', () => {
-            const nonExistentPrompt = {id: 3, text: 'Non Existent Prompt'};
+            // @ts-ignore
+            const nonExistentPrompt: Prompt = {id: 3, text: 'Non Existent Prompt'};
             const result = updatePrompt(nonExistentPrompt, prompts);
             expect((result.single as Prompt).id).toBe(3);
             expect((result.all as Prompt[]).find(p => p.id === nonExistentPrompt.id)).toBeUndefined();
