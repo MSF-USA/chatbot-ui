@@ -1,3 +1,13 @@
+export interface BackendConfiguration {
+    OPENAI_API_HOST: string;
+    OPENAI_API_VERSION: string;
+    OPENAI_API_TYPE: string;
+    OPENAI_ORGANIZATION: string;
+    AZURE_DEPLOYMENT_ID: string;
+    DEFAULT_TEMPERATURE: number;
+    DEFAULT_SYSTEM_PROMPT: string;
+}
+
 export const DEFAULT_SYSTEM_PROMPT =
   process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
   "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.";
@@ -20,7 +30,7 @@ export const OPENAI_ORGANIZATION =
 export const AZURE_DEPLOYMENT_ID =
   process.env.AZURE_DEPLOYMENT_ID || '';
 
-const COMMON_CONFIGURATION = {
+const COMMON_CONFIGURATION: any = {
     OPENAI_API_VERSION: "2023-03-15-preview",
     OPENAI_API_TYPE: OPENAI_API_TYPE,
     OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
@@ -33,20 +43,15 @@ const COMMON_CONFIGURATION = {
 const API_HOST_PREFIX = process.env.API_HOST_PREFIX || '';
 const API_HOST_DEV_PREFIX = process.env.API_HOST_DEV_PREFIX || '';
 
-// Assuming this is your array of configurations.
-const configurations = [
+const configurations: BackendConfiguration[] = [
     {
         OPENAI_API_HOST: `https://${API_HOST_PREFIX}-sbx-openai-cs.openai.azure.com`,
         ...COMMON_CONFIGURATION
     },
-    {
-        OPENAI_API_HOST: `https://${API_HOST_PREFIX}-ai-sbx-ca-estus2.openai.azure.com`,
-        ...COMMON_CONFIGURATION
-    },
-    ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map((i) => ({
-        OPENAI_API_HOST: `https://${API_HOST_DEV_PREFIX}${i}.openai.azure.com`,
-        ...COMMON_CONFIGURATION
-    })),
+    // ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map((i) => ({
+    //     OPENAI_API_HOST: `https://${API_HOST_DEV_PREFIX}${i}.openai.azure.com`,
+    //     ...COMMON_CONFIGURATION
+    // })),
 ];
 
 export async function findWorkingConfiguration(key: string) {
@@ -86,4 +91,18 @@ export async function findWorkingConfiguration(key: string) {
     }
 
     throw new Error("No valid configuration found for this key");
+}
+
+export const getAuthHeaders = (configData: any, key: string) => {
+    return {
+        ...(configData.OPENAI_API_TYPE === 'openai' && {
+            Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`
+        }),
+        ...(configData.OPENAI_API_TYPE === 'azure' && {
+            'api-key': `${key || process.env.OPENAI_API_KEY}`
+        }),
+        ...((configData.OPENAI_API_TYPE === 'openai' && configData.OPENAI_ORGANIZATION) && {
+            'OpenAI-Organization': configData.OPENAI_ORGANIZATION,
+        }),
+    };
 }
