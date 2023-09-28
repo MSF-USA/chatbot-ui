@@ -21,7 +21,7 @@ stages:
                     repository: 'chatbot'
                     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
                     containerRegistry: 'azure-cr-dev'
-                    tags: latest
+                    tags: latest-dev
               - task: Docker@2
                 displayName: Push Image
                 inputs:
@@ -29,4 +29,4 @@ stages:
                     repository: 'chatbot'
                     dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
                     containerRegistry: 'azure-cr-dev'
-                    tags: latest
+                    tags: latest-dev
