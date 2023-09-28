@@ -45,7 +45,7 @@ const API_HOST_DEV_PREFIX = process.env.API_HOST_DEV_PREFIX || '';
 
 const configurations: BackendConfiguration[] = [
     {
-        OPENAI_API_HOST: `https://${OPENAI_API_HOST}`,
+        OPENAI_API_HOST: `${OPENAI_API_HOST}`,
         ...COMMON_CONFIGURATION
     },
     // ...[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].map((i) => ({
