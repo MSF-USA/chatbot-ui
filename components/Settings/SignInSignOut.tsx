@@ -7,7 +7,7 @@ import { useTranslation } from 'next-i18next';
 import { SidebarButton } from '../Sidebar/SidebarButton';
 
 
-export const SignInSignOut: FC<Props> = () => {
+export const SignInSignOut = () => {
   const { data: session } = useSession();
   const { t } = useTranslation('sidebar');
 
