@@ -22,14 +22,14 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
     </div>
       {Object.values(providers).map((provider) => (
         <div key={provider.name} className="flex items-center justify-center h-screen w-3/4">
-            <div className="flex flex-row bg-zinc-950 hover:bg-zinc-800 text-white py-5 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <div className="flex flex-row bg-zinc-950 hover:bg-zinc-800 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 <Image
             src={azure}
             alt="Active Directory Logo"
-            width="30"
+            width="25"
             />
             <button
-               className="px-5"
+               className="px-3"
                 onClick={() => signIn(provider.id)}
             >
                 Sign in with {provider.name}
