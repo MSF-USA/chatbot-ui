@@ -5,21 +5,24 @@ import { authOptions } from "../api/auth/[...nextauth]";
 import Image from 'next/image'
 import azure from '../../public/azure.png'
 import logo from '../../public/logo_light.png'
+import loginBackground from '../../public/loginBackground.jpg'
 
 export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
-    <div className="flex flex-row py-10 px-10 bg-gray-800">
-        <Image
-                src={logo}
-                alt="MSF Logo"
-                height="50"
-        />
-        <h1 className="text-3xl font-bold text-white px-10">MSF AI Chat</h1>
+    <div className="flex h-screen bg-zinc-900">
+    <div className="flex w-screen p-10" style={{ backgroundImage: `url(${loginBackground.src})`, width: '100%', height: '100%', backgroundSize: 'cover'}}>
+        <div>
+            <Image
+                    src={logo}
+                    alt="MSF Logo"
+                />
+        </div>
+        <h1 className="text-4xl font-thin text-white px-5 mt-3">MSF AI Assistant</h1>
     </div>
       {Object.values(providers).map((provider) => (
-        <div key={provider.name} className="flex flex-col items-center justify-center h-screen">
-            <div className="mt-[-20vh] flex flex-row bg-gray-700 hover:bg-gray-600 text-white py-5 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <div key={provider.name} className="flex items-center justify-center h-screen w-3/4">
+            <div className="flex flex-row bg-zinc-950 hover:bg-zinc-800 text-white py-5 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 <Image
             src={azure}
             alt="Active Directory Logo"
@@ -34,6 +37,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
             </div>
         </div>
       ))}
+      </div>
     </>
   )
 }
