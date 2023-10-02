@@ -20,13 +20,13 @@ export const fallbackModelID = OpenAIModelID.GPT_3_5;
 export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   [OpenAIModelID.GPT_3_5]: {
     id: OpenAIModelID.GPT_3_5,
-    name: 'GPT-3.5',
+    name: 'gpt-35-turbo',
     maxLength: 12000,
     tokenLimit: 4000,
   },
   [OpenAIModelID.GPT_3_5_AZ]: {
     id: OpenAIModelID.GPT_3_5_AZ,
-    name: 'GPT-3.5',
+    name: 'gpt-35-turbo',
     maxLength: 12000,
     tokenLimit: 4000,
   },
