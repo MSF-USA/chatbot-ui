@@ -55,6 +55,17 @@ const configurations: BackendConfiguration[] = [
 ];
 
 export async function findWorkingConfiguration(key: string) {
+    if (process.env.OPENAI_API_KEY) {
+        return {
+            OPENAI_API_HOST: process.env.OPENAI_API_HOST,
+            OPENAI_API_VERSION: process.env.OPENAI_API_VERSION,
+            OPENAI_API_TYPE: process.env.OPENAI_API_TYPE,
+            OPENAI_ORGANIZATION: process.env.OPENAI_ORGANIZATION,
+            AZURE_DEPLOYMENT_ID: process.env.AZURE_DEPLOYMENT_ID,
+            DEFAULT_TEMPERATURE: process.env.DEFAULT_TEMPERATURE,
+            DEFAULT_SYSTEM_PROMPT: process.env.DEFAULT_SYSTEM_PROMPT,
+        }
+    }
     for (const config of configurations) {
         console.log("Trying config", config)
 
