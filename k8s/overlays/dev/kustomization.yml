@@ -1,0 +1,18 @@
+configMapGenerator:
+  - files:
+      - config.json
+    name: chat-configmap
+    namespace: chat
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+patches:
+  - path: deployment_patch.yml
+images:
+  - name: msfintlnycdev1.azurecr.io/chatbot
+    newTag: latest-dev
+secretGenerator:
+  - name: chat-secret
+    envs:
+      - .env.secret.dev
