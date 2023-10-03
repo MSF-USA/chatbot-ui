@@ -58,7 +58,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - script: kustomize build $(Pipeline.Workspace)/k8s/overlays/$(env) > $(Pipeline.Workspace)/baked.yml
+                - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Pipeline.Workspace)/baked.yml
                   displayName: Bake environment specific manifest
 
                 - task: KubernetesManifest@0
@@ -91,6 +91,9 @@ stages:
             deploy:
               steps:
                 - reviewApp: chat
+
+                - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Pipeline.Workspace)/baked.yml
+                  displayName: Bake environment specific manifest
 
                 - task: Kubernetes@1
                   displayName: 'Create a new namespace for the pull request'
