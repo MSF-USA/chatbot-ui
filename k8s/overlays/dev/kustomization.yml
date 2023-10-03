@@ -9,9 +9,6 @@ resources:
   - ../../base
 patches:
   - path: deployment_patch.yml
-images:
-  - name: msfintlnycdev1.azurecr.io/chatbot
-    newTag: latest-dev
 secretGenerator:
   - name: chat-secret
     envs:
