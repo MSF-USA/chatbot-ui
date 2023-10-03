@@ -58,7 +58,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Pipeline.Workspace)/baked.yml
+                - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest
 
                 - task: KubernetesManifest@0
@@ -92,7 +92,7 @@ stages:
               steps:
                 - reviewApp: chat
 
-                - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Pipeline.Workspace)/baked.yml
+                - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest
 
                 - task: Kubernetes@1
