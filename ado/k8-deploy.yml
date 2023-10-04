@@ -58,6 +58,9 @@ stages:
           runOnce:
             deploy:
               steps:
+                - checkout: self
+                  displayName: Checkout
+
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest
 
