@@ -28,4 +28,4 @@ variables:
   vmImageName: 'ubuntu-latest'
 
 stages:
-  - template: '../templates/k8-deploy.yml'
+  - template: './templates/k8-deploy.yml'
