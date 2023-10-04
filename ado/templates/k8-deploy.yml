@@ -2,25 +2,8 @@
 # Build and push image to Azure Container Registry; Deploy to Azure Kubernetes Service
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
-trigger:
-  - main
-
 resources:
   - repo: self
-
-variables:
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'f9b66bc3-bc4f-4199-91c3-336305d91908'
-  imageRepository: 'chatbot'
-  containerRegistry: 'msfintlnycdev1.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'msfintlnycdev17452-auth'
-  namespace: 'chat'
-  env: dev
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
 
 stages:
   - stage: Build
