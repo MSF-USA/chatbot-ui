@@ -61,6 +61,17 @@ stages:
                 - checkout: self
                   displayName: Checkout
 
+                - task: DownloadSecureFile@1
+                  name: downloadSecrets
+                  inputs:
+                    secureFile: .env.secret.$(env)
+                    retryCount: 3
+
+                - task: CopyFiles@2
+                  inputs:
+                    Contents: $(downloadSecrets.secureFilePath)
+                    TargetFolder: $(Build.SourcesDirectory)/k8s/overlays/$(env)
+
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest
 
@@ -76,7 +87,7 @@ stages:
                   inputs:
                     action: deploy
                     manifests: |
-                      $(Pipeline.Workspace)/baked.yml
+                      $(Build.SourcesDirectory)/baked.yml
                     imagePullSecrets: |
                       $(imagePullSecret)
                     containers: |
@@ -119,7 +130,7 @@ stages:
                     action: deploy
                     namespace: $(k8sNamespaceForPR)
                     manifests: |
-                      $(Pipeline.Workspace)/baked.yml
+                      $(Build.SourcesDirectory)/baked.yml
                     imagePullSecrets: |
                       $(imagePullSecret)
                     containers: |
