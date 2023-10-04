@@ -69,7 +69,7 @@ stages:
 
                 - task: CopyFiles@2
                   inputs:
-                    Contents: $(downloadSecrets.secureFilePath)
+                    Contents: $(downloadSecrets.secureFilePath)/*
                     TargetFolder: $(Build.SourcesDirectory)/k8s/overlays/$(env)
 
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
