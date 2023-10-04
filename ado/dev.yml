@@ -13,6 +13,9 @@ pr:
 pool:
   vmImage: ubuntu-latest
 
+resources:
+  - repo: self
+
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'f9b66bc3-bc4f-4199-91c3-336305d91908'
