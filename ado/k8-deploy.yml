@@ -67,9 +67,13 @@ stages:
                     secureFile: .env.secret.$(env)
                     retryCount: 3
 
+                - script: |
+                    echo $(downloadSecrets.secureFilePath)
+                    ls $(downloadSecrets.secureFilePath)
+
                 - task: CopyFiles@2
                   inputs:
-                    Contents: $(downloadSecrets.secureFilePath)/*
+                    Contents: $(downloadSecrets.secureFilePath)
                     TargetFolder: $(Build.SourcesDirectory)/k8s/overlays/$(env)
 
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
