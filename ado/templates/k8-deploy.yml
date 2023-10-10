@@ -58,6 +58,7 @@ stages:
                     action: createSecret
                     secretName: $(imagePullSecret)
                     dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+                    kubernetesServiceConnection: $(k8ServiceConnection)
 
                 - task: KubernetesManifest@1
                   displayName: Deploy to Kubernetes cluster
