@@ -76,9 +76,6 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 5
-          volumeMounts:
-            - name: config-volume
-              mountPath: /configs/
           env:
             - name: AZURE_AD_CLIENT_SECRET
               valueFrom:
@@ -95,7 +92,53 @@ spec:
                 secretKeyRef:
                   name: chat-secret
                   key: NEXTAUTH_SECRET
-      volumes:
-        - name: config-volume
-          configMap:
-            name: chat-configmap
+            - name: OPENAI_API_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: OPENAI_API_VERSION
+            - name: API_HOST_DEV_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: API_HOST_DEV_PREFIX
+            - name: OPENAI_API_TYPE
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: OPENAI_API_TYPE
+            - name: AZURE_DEPLOYMENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: AZURE_DEPLOYMENT_ID
+            - name: OPENAI_API_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: OPENAI_API_HOST
+            - name: API_HOST_PREFIX
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: API_HOST_PREFIX
+            - name: DEFAULT_MODEL
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: DEFAULT_MODEL
+            - name: NEXTAUTH_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: NEXTAUTH_URL
+            - name: AZURE_AD_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: AZURE_AD_CLIENT_ID
+            - name: AZURE_AD_TENANT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: AZURE_AD_TENANT_ID

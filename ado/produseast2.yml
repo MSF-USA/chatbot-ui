@@ -1,0 +1,34 @@
+name: Dev Application Deployment
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    exclude:
+      - README.md
+
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+resources:
+  - repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'c4bdd380-1da8-426c-b7d5-e73ed0c95295'
+  imageRepository: 'chatbot'
+  containerRegistry: 'msfintlnycproduseast2.azurecr.io'
+  dockerfilePath: '**/Dockerfile'
+  tag: '$(Build.BuildId)'
+  imagePullSecret: 'msfintlnycproduseast2bbf1-auth'
+  namespace: 'chat'
+  env: produseast2
+
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+  - template: './templates/k8-deploy.yml'

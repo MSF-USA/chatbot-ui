@@ -1,0 +1,9 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: chat
+  name: chat-ingress
+spec:
+  rules:
+    - host: aichat.eastus2.cloudapp.azure.com
+    - host: msfintl-nyc-produseast2-ai.trafficmanager.net

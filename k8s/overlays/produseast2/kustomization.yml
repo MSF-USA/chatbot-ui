@@ -1,13 +1,13 @@
 configMapGenerator:
   - literals:
       - OPENAI_API_VERSION=2023-03-15-preview
-      - API_HOST_DEV_PREFIX=msfintlnycdev
+      - API_HOST_DEV_PREFIX=msfintlnycproduseast2
       - OPENAI_API_TYPE=azure
       - AZURE_DEPLOYMENT_ID=gpt-35-turbo
-      - OPENAI_API_HOST=https://msfintlnycdev1.openai.azure.com
+      - OPENAI_API_HOST=https://msfintlnycproduseast21.openai.azure.com
       - API_HOST_PREFIX=msfintl-nyc
-      - NEXTAUTH_URL=https://msfintl-nyc-dev-ai.trafficmanager.net
-      - AZURE_AD_CLIENT_ID=5d7ecf37-8323-4da3-bef1-717d37feed4b
+      - NEXTAUTH_URL=https://msfintl-nyc-produseast2-ai.trafficmanager.net
+      - AZURE_AD_CLIENT_ID=7499015b-608d-438b-8992-0f816fbf5075
       - AZURE_AD_TENANT_ID=4d9dd1af-83ce-4e9b-b090-b0543ccc2b31
       - DEFAULT_MODEL=gpt-35-turbo
     name: chat-configmap
@@ -18,7 +18,8 @@ resources:
   - ../../base
 patches:
   - path: deployment_patch.yml
+  - path: ingress_patch.yml
 secretGenerator:
   - name: chat-secret
     envs:
-      - .env.secret.dev
+      - .env.secret.produseast2
