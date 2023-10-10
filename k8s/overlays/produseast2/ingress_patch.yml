@@ -3,7 +3,20 @@ kind: Ingress
 metadata:
   namespace: chat
   name: chat-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
+    cert-manager.io/acme-challenge-type: http01
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '360'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '360'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '360'
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: '360'
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
 spec:
+  tls:
+    - hosts:
+        - aichat.eastus2.cloudapp.azure.com
+        - msfintl-nyc-produseast2-ai.trafficmanager.net
   rules:
     - host: aichat.eastus2.cloudapp.azure.com
-    - host: msfintl-nyc-produseast2-ai.trafficmanager.net
