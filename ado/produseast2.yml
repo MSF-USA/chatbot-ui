@@ -1,4 +1,4 @@
-name: Dev Application Deployment
+name: ProdUSEast2 Application Deployment
 
 trigger:
   branches:

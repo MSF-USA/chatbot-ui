@@ -31,7 +31,7 @@ stages:
         displayName: Deploy
         pool:
           vmImage: $(vmImageName)
-        environment: 'MSFUSAchatbotui.chat'
+        environment: $(env)
         strategy:
           runOnce:
             deploy:
