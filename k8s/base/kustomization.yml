@@ -1,4 +1,9 @@
 resources:
-    - deployment.yml
-    - ingress.yml
-    - service.yml
+  - deployment.yml
+  - ingress.yml
+  - service.yml
+
+secretGenerator:
+  - name: chat-secret
+    envs:
+      - ../overlays/dev/.env.secret.dev
