@@ -66,6 +66,7 @@ stages:
                     action: deploy
                     namespace: $(namespace)
                     kubernetesServiceConnection: $(k8ServiceConnection)
+                    rolloutStatusTimeout: 600
                     manifests: |
                       $(Build.SourcesDirectory)/baked.yml
                     imagePullSecrets: |
