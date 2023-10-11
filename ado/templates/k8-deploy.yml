@@ -20,6 +20,7 @@ stages:
               containerRegistry: $(dockerRegistryServiceConnection)
               tags: |
                 $(tag)
+                latest-produseast2
 
   - stage: Deploy
     displayName: Deploy stage

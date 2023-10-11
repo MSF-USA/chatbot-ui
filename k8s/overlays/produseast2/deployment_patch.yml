@@ -8,7 +8,7 @@ spec:
     spec:
       containers:
         - name: chat
-          image: msfintlproduseast2.azurecr.io/chatbot:latest-produseast2
+          image: msfintlnycproduseast2.azurecr.io/chatbot:latest-produseast2
           env:
             - name: ENVIRONMENT
               value: produseast2
