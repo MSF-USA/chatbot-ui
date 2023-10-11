@@ -6,4 +6,4 @@ resources:
 secretGenerator:
   - name: chat-secret
     envs:
-      - ../overlays/dev/.env.secret.dev
+      - default_secrets.txt
