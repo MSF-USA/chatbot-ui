@@ -18,7 +18,10 @@ resources:
   - ../../base
 patches:
   - path: deployment_patch.yml
-  - path: ingress_patch.yml
+  - target:
+      kind: Ingress
+      name: chat-ingress
+    path: ingress_patch.json
 secretGenerator:
   - name: chat-secret
     envs:
