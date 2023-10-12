@@ -24,5 +24,6 @@ patches:
     path: ingress_patch.json
 secretGenerator:
   - name: chat-secret
+    behavior: replace
     envs:
       - .env.secret.produseast2
