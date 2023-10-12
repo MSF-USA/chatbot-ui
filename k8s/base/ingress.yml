@@ -1,43 +1,43 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    namespace: chat
-    name: chat-ingress
-    annotations:
-        cert-manager.io/cluster-issuer: letsencrypt-nginx
-        nginx.ingress.kubernetes.io/ssl-redirect: 'true'
-        cert-manager.io/acme-challenge-type: http01
-        nginx.ingress.kubernetes.io/proxy-connect-timeout: '360'
-        nginx.ingress.kubernetes.io/proxy-send-timeout: '360'
-        nginx.ingress.kubernetes.io/proxy-read-timeout: '360'
-        nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: '360'
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-            more_set_headers "X-Frame-Options: SAMEORIGIN";
+  namespace: chat
+  name: chat-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+    cert-manager.io/acme-challenge-type: http01
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: '360'
+    nginx.ingress.kubernetes.io/proxy-send-timeout: '360'
+    nginx.ingress.kubernetes.io/proxy-read-timeout: '360'
+    nginx.ingress.kubernetes.io/proxy-next-upstream-timeout: '360'
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: SAMEORIGIN";
 spec:
-    ingressClassName: nginx
-    tls:
-        - hosts:
-              - aichat.eastus.cloudapp.azure.com
-              - msfintl-nyc-dev-ai.trafficmanager.net
-          secretName: tls-secret
-    rules:
-        - host: aichat.eastus.cloudapp.azure.com
-          http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: chat
-                            port:
-                                number: 80
-        - host: msfintl-nyc-dev-ai.trafficmanager.net
-          http:
-              paths:
-                  - path: /
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: chat
-                            port:
-                                number: 80
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - aichat.eastus.cloudapp.azure.com
+        - msfintl-nyc-dev-ai.trafficmanager.net
+      secretName: tls-secret
+  rules:
+    - host: aichat.eastus.cloudapp.azure.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chat
+                port:
+                  number: 80
+    - host: msfintl-nyc-dev-ai.trafficmanager.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: chat
+                port:
+                  number: 80
