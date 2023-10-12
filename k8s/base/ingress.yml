@@ -5,7 +5,7 @@ metadata:
   name: chat-ingress
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-nginx
-    nginx.ingress.kubernetes.io/ssl-redirect: 'false'
+    nginx.ingress.kubernetes.io/ssl-redirect: 'true'
     cert-manager.io/acme-challenge-type: http01
     nginx.ingress.kubernetes.io/proxy-connect-timeout: '360'
     nginx.ingress.kubernetes.io/proxy-send-timeout: '360'
