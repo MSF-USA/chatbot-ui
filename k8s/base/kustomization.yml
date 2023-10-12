@@ -2,8 +2,3 @@ resources:
   - deployment.yml
   - ingress.yml
   - service.yml
-
-secretGenerator:
-  - name: chat-secret
-    envs:
-      - default_secrets.txt

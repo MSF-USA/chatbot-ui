@@ -20,5 +20,6 @@ patches:
   - path: deployment_patch.yml
 secretGenerator:
   - name: chat-secret
+    namespace: chat
     envs:
       - .env.secret.dev
