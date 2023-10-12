@@ -13,5 +13,10 @@
     "op": "replace",
     "path": "/spec/rules/0/host",
     "value": "msfintl-nyc-produseast2-ai.trafficmanager.net"
+  },
+  {
+    "op": "replace",
+    "path": "/spec/rules/1/host",
+    "value": "aichat.eastus2.cloudapp.azure.com"
   }
 ]
