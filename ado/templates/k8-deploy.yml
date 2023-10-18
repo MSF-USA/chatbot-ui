@@ -50,6 +50,8 @@ stages:
                     touch $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
                     echo OPENAI_API_HOST=$(OPENAI_API_HOST) > $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
                     echo OPENAI_API_KEY=$(OPENAI_API_KEY) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
+                    echo AZURE_AD_CLIENT_SECRET=$(AZURE_AD_CLIENT_SECRET) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
+                    echo NEXTAUTH_SECRET=$(NEXTAUTH_SECRET) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
 
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest

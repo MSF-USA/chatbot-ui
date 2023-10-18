@@ -18,6 +18,7 @@ resources:
 
 variables:
   - group: msfintl-nyc-dev-ai
+  - group: nextauth-dev
   # Container registry service connection established during pipeline creation
   - name: dockerRegistryServiceConnection
     value: 'f9b66bc3-bc4f-4199-91c3-336305d91908'

@@ -4,7 +4,6 @@ configMapGenerator:
       - API_HOST_DEV_PREFIX=msfintlnycdev
       - OPENAI_API_TYPE=azure
       - AZURE_DEPLOYMENT_ID=gpt-35-turbo
-      - OPENAI_API_HOST=https://msfintlnycdev1.openai.azure.com
       - API_HOST_PREFIX=msfintl-nyc
       - NEXTAUTH_URL=https://msfintl-nyc-dev-ai.trafficmanager.net
       - AZURE_AD_CLIENT_ID=5d7ecf37-8323-4da3-bef1-717d37feed4b

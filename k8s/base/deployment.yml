@@ -92,6 +92,11 @@ spec:
                 secretKeyRef:
                   name: chat-secret
                   key: NEXTAUTH_SECRET
+            - name: OPENAI_API_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-secret
+                  key: OPENAI_API_HOST
             - name: OPENAI_API_VERSION
               valueFrom:
                 configMapKeyRef:
@@ -112,11 +117,6 @@ spec:
                 configMapKeyRef:
                   name: chat-configmap
                   key: AZURE_DEPLOYMENT_ID
-            - name: OPENAI_API_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: chat-configmap
-                  key: OPENAI_API_HOST
             - name: API_HOST_PREFIX
               valueFrom:
                 configMapKeyRef:
