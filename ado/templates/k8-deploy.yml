@@ -40,15 +40,16 @@ stages:
                 - checkout: self
                   displayName: Checkout
 
-                - task: DownloadSecureFile@1
-                  name: downloadSecrets
-                  inputs:
-                    secureFile: .env.secret.$(env)
-                    retryCount: 3
+                # - task: DownloadSecureFile@1
+                #   name: downloadSecrets
+                #   inputs:
+                #     secureFile: .env.secret.$(env)
+                #     retryCount: 3
 
                 - script: |
-                    echo $(downloadSecrets.secureFilePath)
-                    cp $(downloadSecrets.secureFilePath) $(Build.SourcesDirectory)/k8s/overlays/$(env)
+                    touch $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
+                    echo OPENAI_API_HOST=$(OPENAI_API_HOST) > $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
+                    echo OPENAI_API_KEY=$(OPENAI_API_KEY) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
 
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest

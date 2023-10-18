@@ -17,19 +17,28 @@ resources:
   - repo: self
 
 variables:
+  - group: msfintl-nyc-dev-ai
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'f9b66bc3-bc4f-4199-91c3-336305d91908'
-  k8ServiceConnection: 'msfintl-nyc-dev-ai-chat'
-  imageRepository: 'chatbot'
-  containerRegistry: 'msfintlnycdev1.azurecr.io'
-  dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'msfintlnycdev17452-auth'
-  namespace: 'chat'
-  env: dev
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  - name: dockerRegistryServiceConnection
+    value: 'f9b66bc3-bc4f-4199-91c3-336305d91908'
+  - name: k8ServiceConnection
+    value: 'msfintl-nyc-dev-ai-chat'
+  - name: imageRepository
+    value: 'chatbot'
+  - name: containerRegistry
+    value: 'msfintlnycdev1.azurecr.io'
+  - name: dockerfilePath
+    value: '**/Dockerfile'
+  - name: tag
+    value: '$(Build.BuildId)'
+  - name: imagePullSecret
+    value: 'msfintlnycdev17452-auth'
+  - name: namespace
+    value: 'chat'
+  - name:
+    value: dev
+  - name: vmImageName
+    value: 'ubuntu-latest'
 
 stages:
   - template: './templates/k8-deploy.yml'
