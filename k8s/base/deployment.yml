@@ -94,7 +94,7 @@ spec:
                   key: NEXTAUTH_SECRET
             - name: OPENAI_API_HOST
               valueFrom:
-                configMapKeyRef:
+                secretKeyRef:
                   name: chat-secret
                   key: OPENAI_API_HOST
             - name: OPENAI_API_VERSION
