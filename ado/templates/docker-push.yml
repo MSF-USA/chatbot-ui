@@ -1,7 +1,4 @@
-trigger:
-    branches:
-        include:
-            - main
+trigger: none
 
 pr: none
 
@@ -9,24 +6,24 @@ stages:
   - stage: build_push
     displayName: Build and Push Image
     jobs:
-        - job: buildPush
-          displayName: Build and Push
-          pool:
-              vmImage: ubuntu-latest
-          steps:
-              - task: Docker@2
-                displayName: Build Image
-                inputs:
-                    command: build
-                    repository: 'chatbot'
-                    dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-                    containerRegistry: 'azure-cr-dev'
-                    tags: latest-dev
-              - task: Docker@2
-                displayName: Push Image
-                inputs:
-                    command: push
-                    repository: 'chatbot'
-                    dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-                    containerRegistry: 'azure-cr-dev'
-                    tags: latest-dev
+      - job: buildPush
+        displayName: Build and Push
+        pool:
+          vmImage: ubuntu-latest
+        steps:
+          - task: Docker@2
+            displayName: Build Image
+            inputs:
+              command: build
+              repository: 'chatbot'
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              containerRegistry: 'azure-cr-dev'
+              tags: latest-dev
+          - task: Docker@2
+            displayName: Push Image
+            inputs:
+              command: push
+              repository: 'chatbot'
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              containerRegistry: 'azure-cr-dev'
+              tags: latest-dev
