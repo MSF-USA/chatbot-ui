@@ -36,7 +36,7 @@ variables:
   - name: namespace
     value: 'chat'
   - name:
-    value: dev
+    value: 'dev'
   - name: vmImageName
     value: 'ubuntu-latest'
 
