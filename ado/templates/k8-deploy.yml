@@ -40,11 +40,17 @@ stages:
                 - checkout: self
                   displayName: Checkout
 
-                # - task: DownloadSecureFile@1
-                #   name: downloadSecrets
-                #   inputs:
-                #     secureFile: .env.secret.$(env)
-                #     retryCount: 3
+                - task: DeleteFiles@1
+                  inputs:
+                    SourceFolder: $(Build.SourcesDirectory)/k8s/overlays/$(env)
+                    Contents: .env.$(env)
+                    RemoveDotFiles: true
+
+                - task: DeleteFiles@1
+                  inputs:
+                    SourceFolder: $(Build.SourcesDirectory)/k8s/overlays/$(env)
+                    Contents: .env.secret.$(env)
+                    RemoveDotFiles: true
 
                 - script: |
                     secret_path=$(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
