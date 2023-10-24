@@ -47,11 +47,23 @@ stages:
                 #     retryCount: 3
 
                 - script: |
-                    touch $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
-                    echo OPENAI_API_HOST=$(OPENAI_API_HOST) > $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
-                    echo OPENAI_API_KEY=$(OPENAI_API_KEY) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
-                    echo AZURE_AD_CLIENT_SECRET=$(AZURE_AD_CLIENT_SECRET) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
-                    echo NEXTAUTH_SECRET=$(NEXTAUTH_SECRET) >> $(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
+                    secret_path=$(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.secret.$(env)
+                    env_path=$(Build.SourcesDirectory)/k8s/overlays/$(env)/.env.$(env)
+                    touch $yaml_path
+
+                    echo OPENAI_API_KEY=$(OPENAI_API_KEY) >> $secret_path
+                    echo AZURE_AD_CLIENT_SECRET=$(AZURE_AD_CLIENT_SECRET) >> $secret_path
+                    echo NEXTAUTH_SECRET=$(NEXTAUTH_SECRET) >> $secret_path
+
+                    echo OPENAI_API_HOST=$(OPENAI_API_HOST) >> $env_path
+                    echo NEXTAUTH_URL=$(NEXTAUTH_URL) >> $env_path
+                    echo OPENAI_API_VERSION=$(OPENAI_API_VERSION) >> $env_path
+                    echo OPENAI_API_TYPE=$(OPENAI_API_TYPE) >> $env_path
+                    echo DEFAULT_MODEL=$(DEFAULT_MODEL) >> $env_path
+                    echo AZURE_AD_CLIENT_ID=$(AZURE_AD_CLIENT_ID) >> $env_path
+                    echo AZURE_AD_TENANT_ID=$(AZURE_AD_TENANT_ID) >> $env_path
+                    echo API_HOST_PREFIX=$(API_HOST_PREFIX) >> $env_path
+                    echo API_HOST_DEV_PREFIX=$(API_HOST_DEV_PREFIX) >> $env_path
 
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest

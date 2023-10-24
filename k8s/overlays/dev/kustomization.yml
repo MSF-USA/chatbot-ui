@@ -1,16 +1,8 @@
 configMapGenerator:
-  - literals:
-      - OPENAI_API_VERSION=2023-03-15-preview
-      - API_HOST_DEV_PREFIX=msfintlnycdev
-      - OPENAI_API_TYPE=azure
-      - AZURE_DEPLOYMENT_ID=gpt-35-turbo
-      - API_HOST_PREFIX=msfintl-nyc
-      - NEXTAUTH_URL=https://msfintl-nyc-dev-ai.trafficmanager.net
-      - AZURE_AD_CLIENT_ID=5d7ecf37-8323-4da3-bef1-717d37feed4b
-      - AZURE_AD_TENANT_ID=4d9dd1af-83ce-4e9b-b090-b0543ccc2b31
-      - DEFAULT_MODEL=gpt-35-turbo
-    name: chat-configmap
+  - name: chat-configmap
     namespace: chat
+    files:
+      - .env.dev
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
