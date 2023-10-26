@@ -39,6 +39,16 @@ export const makeAPIMRequest = async (
     }
 
     const json = await res.json();
-    console.log(json)
-    return json.message;
+
+    const string = JSON.stringify(json.message);
+    let stream = new ReadableStream({
+        start(controller) {
+            controller.enqueue(string);
+            controller.close();
+        }
+    });
+
+    return stream;
+
+    // return json.message;
 }
