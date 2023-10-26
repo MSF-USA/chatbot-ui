@@ -30,6 +30,12 @@ export const OPENAI_ORGANIZATION =
 export const AZURE_DEPLOYMENT_ID =
   process.env.AZURE_DEPLOYMENT_ID || '';
 
+export const APIM_CHAT_ENDPONT =
+    process.env.APIM_CHAT_ENDPONT || 'localhostchat';
+
+export const APIM_MANAGEMENT_ENDPONT =
+    process.env.APIM_MANAGEMENT_ENDPONT || 'localhostmgmt';
+
 const COMMON_CONFIGURATION: any = {
     OPENAI_API_VERSION: "2023-03-15-preview",
     OPENAI_API_TYPE: OPENAI_API_TYPE,
