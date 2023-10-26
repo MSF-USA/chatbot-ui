@@ -3,10 +3,12 @@ import {
   OPENAI_API_HOST,
   OPENAI_API_TYPE,
   OPENAI_API_VERSION,
-  OPENAI_ORGANIZATION
+  OPENAI_ORGANIZATION,
+  getAuthHeaders, AZURE_DEPLOYMENT_ID, APIM_MANAGEMENT_ENDPONT
 } from '@/utils/app/const';
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+import {getToken} from "next-auth/jwt";
 
 export const config = {
   runtime: 'edge',
@@ -28,52 +30,44 @@ const getModels = (json: any, configData: any) => {
       .filter(Boolean);
 }
 
-const getAuthHeaders = (configData: any, key: string) => {
-  return {
-    ...(configData.OPENAI_API_TYPE === 'openai' && {
-      Authorization: `Bearer ${key || process.env.OPENAI_API_KEY}`
-    }),
-    ...(configData.OPENAI_API_TYPE === 'azure' && {
-      'api-key': `${key || process.env.OPENAI_API_KEY}`
-    }),
-    ...((configData.OPENAI_API_TYPE === 'openai' && configData.OPENAI_ORGANIZATION) && {
-      'OpenAI-Organization': configData.OPENAI_ORGANIZATION,
-    }),
-  };
-}
-
-
 const handler = async (req: Request): Promise<Response> => {
   try {
     const { key } = (await req.json()) as {
       key: string;
     };
+    const token = await getToken({ req });
+    if (token == null) {
+        return new Response('Unauthorized: Please login again or check with your administrator', { status: 401 });
+    }
+
 
     let configData;
-    try {
-      configData = await findWorkingConfiguration(key);
-    } catch(error) {
-        configData = {
-            OPENAI_API_HOST: OPENAI_API_HOST,
-            OPENAI_API_TYPE: OPENAI_API_TYPE,
-            OPENAI_API_VERSION: OPENAI_API_VERSION,
-            OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
-        }
+    configData = {
+      OPENAI_API_HOST: OPENAI_API_HOST,
+      OPENAI_API_TYPE: OPENAI_API_TYPE,
+      OPENAI_API_VERSION: OPENAI_API_VERSION,
+      OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
     }
+
+    const headers = getAuthHeaders(configData, key);
 
     let url = `${configData.OPENAI_API_HOST}/v1/models`;
     if (configData.OPENAI_API_TYPE === 'azure') {
-      url = `${configData.OPENAI_API_HOST}/openai/deployments?api-version=${configData.OPENAI_API_VERSION}`;
+      url = `${configData.OPENAI_API_HOST}/${APIM_MANAGEMENT_ENDPONT}/deployments?api-version=${configData.OPENAI_API_VERSION}`;
+      headers["Authorization"] = `Bearer ${token?.accessToken}`;
+      headers['Content-Type'] = 'application/json';
+      delete headers['api-key'];
     }
 
     const response = await fetch(url, {
-      headers: getAuthHeaders(configData, key),
+      headers,
     });
 
     if (response.status === 401) {
       return new Response(response.body, {
         status: 500,
         headers: response.headers,
+        statusText: "Backend authorization failed",
       });
     } else if (response.status !== 200) {
       console.error(

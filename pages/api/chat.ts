@@ -1,4 +1,10 @@
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import {
+  APIM_CHAT_ENDPONT,
+  AZURE_DEPLOYMENT_ID,
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_TEMPERATURE,
+  OPENAI_API_HOST, OPENAI_API_VERSION
+} from '@/utils/app/const';
 import { OpenAIError, OpenAIStream } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
@@ -8,6 +14,8 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
+import {getToken} from "next-auth/jwt";
+import {makeAPIMRequest} from "@/utils/server/apim";
 
 export const config = {
   runtime: 'edge',
@@ -51,10 +59,22 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     encoding.free();
+    // TODO: don't hardcode this (use of APIM)
+    const token = await getToken({ req });
+    const resp = await makeAPIMRequest(
+        `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+        token.accessToken,
+        'POST',
+        {
+          "model":model.id,
+          "messages": messagesToSend,
+        }
+    )
+    return new Response(resp.choices[0].message.content, { status: 200 });
 
-    const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
-
-    return new Response(stream);
+    // const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
+    //
+    // return new Response(stream);
   } catch (error) {
     console.error(error);
     if (error instanceof OpenAIError) {
