@@ -112,6 +112,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
 
     const answerMessage: Message = { role: 'user', content: answerPrompt };
 
+    // TODO: Fix this section. For some reason it's directly pulling from openai
+    //    rather than using the client that was created in utils/server/index.ts
+    //    In addition to being not a great way to do it, this also fails on Azure
+    //    because it's not handling the differences in api structure.
+    //    Should be easy to fix but we should also allow APIM usage, as it's just
+    //    the normal chat completion endpoint.
     const answerRes = await fetch(`${OPENAI_API_HOST}/v1/chat/completions`, {
       headers: {
         'Content-Type': 'application/json',
