@@ -3,7 +3,8 @@ import { OpenAIModel } from '@/types/openai';
 
 import {
   AZURE_DEPLOYMENT_ID,
-  findWorkingConfiguration,
+  BackendConfiguration, DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE,
+  findWorkingConfiguration, getAuthHeaders,
   OPENAI_API_HOST,
   OPENAI_API_TYPE,
   OPENAI_API_VERSION,
@@ -30,6 +31,22 @@ export class OpenAIError extends Error {
   }
 }
 
+const getConfig = async (key: string) => {
+  try {
+    return await findWorkingConfiguration(key);
+  } catch (error) {
+    return {
+      OPENAI_API_HOST: OPENAI_API_HOST,
+      OPENAI_API_TYPE: OPENAI_API_TYPE,
+      OPENAI_API_VERSION: OPENAI_API_VERSION,
+      OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
+      AZURE_DEPLOYMENT_ID: AZURE_DEPLOYMENT_ID,
+      DEFAULT_TEMPERATURE: DEFAULT_TEMPERATURE,
+      DEFAULT_SYSTEM_PROMPT: DEFAULT_SYSTEM_PROMPT,
+    }
+  }
+};
+
 export const OpenAIStream = async (
   model: OpenAIModel,
   systemPrompt: string,
@@ -39,35 +56,14 @@ export const OpenAIStream = async (
 ) => {
 
 
-  let configData;
-  try {
-    configData = await findWorkingConfiguration(key);
-  } catch(error) {
-    configData = {
-      OPENAI_API_HOST: OPENAI_API_HOST,
-      OPENAI_API_TYPE: OPENAI_API_TYPE,
-      OPENAI_API_VERSION: OPENAI_API_VERSION,
-      OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
-    }
-  }
+  const configData: BackendConfiguration = await getConfig(key);
 
   let url = `${configData.OPENAI_API_HOST}/v1/chat/completions`;
   if (configData.OPENAI_API_TYPE === 'azure') {
     url = `${configData.OPENAI_API_HOST}/openai/deployments/${configData.AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
   }
   const res = await fetch(url, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(configData.OPENAI_API_TYPE === 'openai' && {
-        Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
-      }),
-      ...(configData.OPENAI_API_TYPE === 'azure' && {
-        'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
-      }),
-      ...((configData.OPENAI_API_TYPE === 'openai' && configData.OPENAI_ORGANIZATION) && {
-        'OpenAI-Organization': configData.OPENAI_ORGANIZATION,
-      }),
-    },
+    headers: getAuthHeaders(configData, key),
     method: 'POST',
     body: JSON.stringify({
       ...(configData.OPENAI_API_TYPE === 'openai' && {model: model.id}),
