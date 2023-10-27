@@ -1,6 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { OPENAI_API_HOST } from '@/utils/app/const';
+import {
+  APIM_CHAT_ENDPONT,
+  AZURE_DEPLOYMENT_ID,
+  OPENAI_API_HOST,
+  OPENAI_API_TYPE,
+  OPENAI_API_VERSION
+} from '@/utils/app/const';
 import { cleanSourceText } from '@/utils/server/google';
 
 import { Message } from '@/types/chat';
@@ -9,6 +15,8 @@ import { GoogleBody, GoogleSource } from '@/types/google';
 import { Readability } from '@mozilla/readability';
 import endent from 'endent';
 import jsdom, { JSDOM } from 'jsdom';
+import {makeAPIMRequest} from "@/utils/server/apim";
+import {getToken} from "next-auth/jwt";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   try {
@@ -112,38 +120,50 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
 
     const answerMessage: Message = { role: 'user', content: answerPrompt };
 
-    // TODO: Fix this section. For some reason it's directly pulling from openai
-    //    rather than using the client that was created in utils/server/index.ts
-    //    In addition to being not a great way to do it, this also fails on Azure
-    //    because it's not handling the differences in api structure.
-    //    Should be easy to fix but we should also allow APIM usage, as it's just
-    //    the normal chat completion endpoint.
-    const answerRes = await fetch(`${OPENAI_API_HOST}/v1/chat/completions`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`,
-        ...(process.env.OPENAI_ORGANIZATION && {
-          'OpenAI-Organization': process.env.OPENAI_ORGANIZATION,
-        }),
-      },
-      method: 'POST',
-      body: JSON.stringify({
-        model: model.id,
-        messages: [
-          {
-            role: 'system',
-            content: `Use the sources to provide an accurate response. Respond in markdown format. Cite the sources you used as [1](link), etc, as you use them. Maximum 4 sentences.`,
-          },
-          answerMessage,
-        ],
-        max_tokens: 1000,
-        temperature: 1,
-        stream: false,
-      }),
-    });
+    const body = {
+      model: model.id,
+      messages: [
+        {
+          role: 'system',
+          content: `Use the sources to provide an accurate response. Respond in markdown format. Cite the sources you used as [1](link), etc, as you use them. Maximum 4 sentences.`,
+        },
+        answerMessage,
+      ],
+      // max_tokens: 1000,
+      temperature: 1,
+      stream: false,
+    };
 
-    const { choices: choices2 } = await answerRes.json();
-    const answer = choices2[0].message.content;
+    let answerRes;
+    if (OPENAI_API_TYPE === 'openai') {
+      answerRes = await fetch(`${OPENAI_API_HOST}/v1/chat/completions`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`,
+          ...(process.env.OPENAI_ORGANIZATION && {
+            'OpenAI-Organization': process.env.OPENAI_ORGANIZATION,
+          }),
+        },
+        method: 'POST',
+        body: JSON.stringify(body),
+      });
+    } else {
+      const token = await getToken({ req });
+      answerRes = await makeAPIMRequest(
+          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+          token?.accessToken,
+          'POST',
+          body,
+      )
+    }
+
+    let answer;
+    try {
+      const {choices: choices2} = await answerRes.json();
+      answer = choices2[0].message.content;
+    } catch (err) {
+      answer = answerRes.choices[0].message.content;
+    }
 
     res.status(200).json({ answer });
   } catch (error) {
