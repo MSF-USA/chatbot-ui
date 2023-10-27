@@ -99,7 +99,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const makeRequest = async (
-      plugin: Plugin, updatedConversation: Conversation
+      plugin: Plugin | null, updatedConversation: Conversation
   ) => {
     const chatBody: ChatBody = {
       model: updatedConversation.model,
@@ -281,7 +281,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
+    async (message: Message, deleteCount = 0, plugin: Plugin | null) => {
       if (selectedConversation) {
         let updatedConversation: Conversation = updateConversationFromUserInput(
             message,
