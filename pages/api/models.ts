@@ -9,6 +9,7 @@ import {
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import {getToken} from "next-auth/jwt";
+import {refreshAccessToken} from "@/utils/server/azure";
 
 export const config = {
   runtime: 'edge',
@@ -59,9 +60,18 @@ const handler = async (req: Request): Promise<Response> => {
       delete headers['api-key'];
     }
 
-    const response = await fetch(url, {
-      headers,
-    });
+    let response;
+    try {
+      response = await fetch(url, {
+        headers,
+      });
+    } catch (err) {
+      refreshAccessToken(token)
+      response = await fetch(url, {
+        headers,
+      });
+
+    }
 
     if (response.status === 401) {
       return new Response(response.body, {
