@@ -2,6 +2,7 @@ import NextAuth from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 import {JWT} from "next-auth/jwt";
 
+
 export const authOptions = {
   // Configure one or more authentication providers
   providers: [
@@ -9,6 +10,12 @@ export const authOptions = {
       clientId: process.env.AZURE_AD_CLIENT_ID || '',
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET || '',
       tenantId: process.env.AZURE_AD_TENANT_ID || '',
+        authorization: {
+          params: {
+              scope: "openid User.Read User.ReadBasic.all offline_access",
+          }
+        }
+
     }),
     // ...add more providers here
   ],
@@ -17,11 +24,18 @@ export const authOptions = {
   },
   callbacks: {
     async jwt({token, user, account, profile, isNewUser}) {
-        if (account?.accessToken) {
-            token.accessToken = account.accessToken;
-        } else if (account?.access_token) {
-            token.accessToken = account.access_token;
+        if (account?.access_token) {
+            token.accessToken = account?.access_token;
+        } else if (token?.accessToken) {
+            token.accessToken = token?.accessToken;
         }
+
+        if (account?.refresh_token) {
+            token.refreshToken = account?.refresh_token;
+        } else if (token?.refreshToken) {
+            token.refreshToken = token?.refreshToken;
+        }
+        // console.log(token)
 
         return token;
     }
