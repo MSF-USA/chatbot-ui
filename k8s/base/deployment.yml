@@ -97,6 +97,16 @@ spec:
                 configMapKeyRef:
                   name: chat-configmap
                   key: OPENAI_API_HOST
+            - name: APIM_CHAT_ENDPONT
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: APIM_CHAT_ENDPONT
+            - name: APIM_MANAGEMENT_ENDPONT
+              valueFrom:
+                configMapKeyRef:
+                  name: chat-configmap
+                  key: APIM_MANAGEMENT_ENDPONT
             - name: OPENAI_API_VERSION
               valueFrom:
                 configMapKeyRef:

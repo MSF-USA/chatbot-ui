@@ -61,7 +61,7 @@ stages:
                     echo AZURE_AD_CLIENT_SECRET=$(AZURE_AD_CLIENT_SECRET) >> $secret_path
                     echo NEXTAUTH_SECRET=$(NEXTAUTH_SECRET) >> $secret_path
 
-                    echo OPENAI_API_HOST=$(OPENAI_API_HOST) >> $env_path
+                    echo OPENAI_API_HOST=$(OPENAI_API_HOST)/ >> $env_path
                     echo NEXTAUTH_URL=$(NEXTAUTH_URL) >> $env_path
                     echo OPENAI_API_VERSION=$(OPENAI_API_VERSION) >> $env_path
                     echo OPENAI_API_TYPE=$(OPENAI_API_TYPE) >> $env_path
@@ -71,6 +71,8 @@ stages:
                     echo API_HOST_PREFIX=$(API_HOST_PREFIX) >> $env_path
                     echo API_HOST_DEV_PREFIX=$(API_HOST_DEV_PREFIX) >> $env_path
                     echo AZURE_DEPLOYMENT_ID=$(AZURE_DEPLOYMENT_ID) >> $env_path
+                    echo APIM_CHAT_ENDPONT=$(APIM_CHAT_ENDPONT) >> $env_path
+                    echo APIM_MANAGEMENT_ENDPONT=$(APIM_MANAGEMENT_ENDPONT) >> $env_path
 
                 - script: kustomize build $(Build.SourcesDirectory)/k8s/overlays/$(env) > $(Build.SourcesDirectory)/baked.yml
                   displayName: Bake environment specific manifest
