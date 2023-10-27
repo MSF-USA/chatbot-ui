@@ -31,7 +31,7 @@ export class OpenAIError extends Error {
   }
 }
 
-const getConfig = async (key: string) => {
+const getConfig = async (key: string): Promise<BackendConfiguration> => {
   try {
     return await findWorkingConfiguration(key);
   } catch (error) {

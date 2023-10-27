@@ -1,6 +1,7 @@
 import {JWT} from "next-auth/jwt";
+import {CustomJWT} from "@/types/jwt";
 
-export const refreshAccessToken = async (token: JWT | null) => {
+export const refreshAccessToken = async (token: CustomJWT | null) => {
     if (!token || !token.refreshToken) {
         return;
     }

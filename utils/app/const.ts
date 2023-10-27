@@ -1,11 +1,11 @@
 export interface BackendConfiguration {
-    OPENAI_API_HOST: string;
-    OPENAI_API_VERSION: string;
-    OPENAI_API_TYPE: string;
-    OPENAI_ORGANIZATION: string;
-    AZURE_DEPLOYMENT_ID: string;
-    DEFAULT_TEMPERATURE: number;
-    DEFAULT_SYSTEM_PROMPT: string;
+    OPENAI_API_HOST: string | undefined;
+    OPENAI_API_VERSION: string | undefined;
+    OPENAI_API_TYPE: string | undefined;
+    OPENAI_ORGANIZATION: string | undefined;
+    AZURE_DEPLOYMENT_ID: string | undefined;
+    DEFAULT_TEMPERATURE: number | undefined;
+    DEFAULT_SYSTEM_PROMPT: string | undefined;
 }
 
 export const DEFAULT_SYSTEM_PROMPT =
@@ -60,7 +60,7 @@ const configurations: BackendConfiguration[] = [
     // })),
 ];
 
-export async function findWorkingConfiguration(key: string) {
+export async function findWorkingConfiguration(key: string): Promise<BackendConfiguration> {
     if (process.env.OPENAI_API_KEY) {
         return {
             OPENAI_API_HOST: process.env.OPENAI_API_HOST,
@@ -68,7 +68,7 @@ export async function findWorkingConfiguration(key: string) {
             OPENAI_API_TYPE: process.env.OPENAI_API_TYPE,
             OPENAI_ORGANIZATION: process.env.OPENAI_ORGANIZATION,
             AZURE_DEPLOYMENT_ID: process.env.AZURE_DEPLOYMENT_ID,
-            DEFAULT_TEMPERATURE: process.env.DEFAULT_TEMPERATURE,
+            DEFAULT_TEMPERATURE: parseFloat(process.env.DEFAULT_TEMPERATURE || "1"),
             DEFAULT_SYSTEM_PROMPT: process.env.DEFAULT_SYSTEM_PROMPT,
         }
     }

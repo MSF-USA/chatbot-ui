@@ -10,6 +10,8 @@ import {
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import {getToken} from "next-auth/jwt";
 import {refreshAccessToken} from "@/utils/server/azure";
+import {NextRequest} from "next/server";
+import {CustomJWT} from "@/types/jwt";
 
 export const config = {
   runtime: 'edge',
@@ -31,12 +33,13 @@ const getModels = (json: any, configData: any) => {
       .filter(Boolean);
 }
 
-const handler = async (req: Request): Promise<Response> => {
+const handler = async (req: NextRequest): Promise<Response> => {
   try {
     const { key } = (await req.json()) as {
       key: string;
     };
-    const token = await getToken({ req });
+    // @ts-ignore
+    const token: CustomJWT = await getToken({ req });
     if (token == null) {
         return new Response('Unauthorized: Please login again or check with your administrator', { status: 401 });
     }
