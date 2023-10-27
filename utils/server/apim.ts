@@ -29,13 +29,23 @@ export const makeAPIMRequest = async (
             status: 500,
             headers: res.headers,
         });
+    } else if (res.status === 400) {
+        const json = await res.json();
+        const { message, type, param, code } = json;
+        if (code == 'content_length_exceeded') {
+            return new Response(res.body, {
+                status: 400,
+                headers: res.headers,
+            });
+        }
+        throw new APIMError(message, type, param, code);
     } else if (res.status !== 200) {
         console.error(
             `APIM API returned an error ${
             res.status
             }: ${await res.text()}`,
         );
-        throw new Error('APIM API returned an error');
+        throw new Error(`APIM API returned an error: ${res.text()} (${res.status})`);
     }
 
     const json = await res.json();
