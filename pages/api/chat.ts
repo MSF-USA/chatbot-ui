@@ -3,7 +3,7 @@ import {
   AZURE_DEPLOYMENT_ID,
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_TEMPERATURE,
-  OPENAI_API_HOST, OPENAI_API_VERSION
+  OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION
 } from '@/utils/app/const';
 import { OpenAIError, OpenAIStream } from '@/utils/server';
 
@@ -16,6 +16,7 @@ import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import {getToken} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
+import {refreshAccessToken} from "@/utils/server/azure";
 
 export const config = {
   runtime: 'edge',
@@ -59,22 +60,38 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     encoding.free();
-    // TODO: don't hardcode this (use of APIM)
-    const token = await getToken({ req });
-    const resp = await makeAPIMRequest(
-        `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-        token.accessToken,
-        'POST',
-        {
-          "model":model.id,
-          "messages": messagesToSend,
-        }
-    )
-    return new Response(resp.choices[0].message.content, { status: 200 });
+    if (OPENAI_API_TYPE === 'azure') {
+      const token = await getToken({req});
+      let resp;
+      try {
+        resp = await makeAPIMRequest(
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+            token.accessToken,
+            'POST',
+            {
+              "model": model.id,
+              "messages": messagesToSend,
+            }
+        )
+      } catch (err) {
+        // TODO: implement this in a way that isn't idiotic
+        refreshAccessToken(token.refreshToken)
+        resp = await makeAPIMRequest(
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+            token.accessToken,
+            'POST',
+            {
+              "model": model.id,
+              "messages": messagesToSend,
+            }
+        )
+      }
+      return new Response(resp.choices[0].message.content, {status: 200});
+    } else {
+      const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
 
-    // const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
-    //
-    // return new Response(stream);
+      return new Response(stream);
+    }
   } catch (error) {
     console.error(error);
     if (error instanceof OpenAIError) {
