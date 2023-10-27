@@ -281,7 +281,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null) => {
+    async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
       if (selectedConversation) {
         let updatedConversation: Conversation = updateConversationFromUserInput(
             message,
