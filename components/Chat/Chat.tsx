@@ -47,7 +47,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       conversations,
       models,
       apiKey,
-      pluginKeys,
       serverSideApiKeyIsSet,
       messageIsStreaming,
       modelError,
@@ -57,6 +56,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     handleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+  let {
+    state: { pluginKeys },
+  } = useContext(HomeContext);
+  if (typeof pluginKeys === 'string') {
+    pluginKeys = JSON.parse(pluginKeys);
+  }
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -150,7 +155,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const handleGoogleResponse = async (
       response: Response, updatedConversation: Conversation,
       selectedConversation: Conversation,
-      conversations: Conversation[] = conversations
+      conversations: Conversation[] = []
   ) => {
     let content;
 
@@ -166,7 +171,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     };
     homeDispatch({
       field: 'selectedConversation',
-      value: updateConversation,
+      value: updatedConversation,
     });
     saveConversation(updatedConversation);
     const updatedConversations: Conversation[] = conversations.map(
@@ -345,10 +350,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
           }
         } else {
+          if (updatedConversation.messages.length === 1) {
+            updatedConversation = setConversationTitle(updatedConversation, message);
+          }
+
           const updatedConversations = await handleGoogleResponse(
                 response,
                 updatedConversation,
-                selectedConversation
+                selectedConversation,
+                conversations
           );
           homeDispatch({ field: 'conversations', value: updatedConversations });
           saveConversations(updatedConversations);
@@ -552,7 +562,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             ) : (
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model.name} | {t('Temp')}
+                  {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
                   : {selectedConversation?.temperature} |
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"

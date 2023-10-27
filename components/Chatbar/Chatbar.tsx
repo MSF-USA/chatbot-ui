@@ -34,12 +34,19 @@ export const Chatbar = () => {
   });
 
   const {
-    state: { conversations, showChatbar, defaultModelId, folders, pluginKeys },
+    state: { conversations, showChatbar, defaultModelId, folders },
     dispatch: homeDispatch,
     handleCreateFolder,
     handleNewConversation,
     handleUpdateConversation,
   } = useContext(HomeContext);
+
+  let {
+    state: { pluginKeys },
+  } = useContext(HomeContext);
+  if (typeof pluginKeys === 'string') {
+    pluginKeys = JSON.parse(pluginKeys);
+  }
 
   const {
     state: { searchTerm, filteredConversations },
