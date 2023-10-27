@@ -190,7 +190,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const handleNormalChatBackendStreaming = async (
-      data: ReadableStreamDefaultReader<Uint8Array>,
+      data: any,
       controller: AbortController,
       updatedConversation: Conversation,
       selectedConversation: Conversation,
