@@ -15,7 +15,7 @@ import {
   cleanConversationHistory,
   cleanSelectedConversation,
 } from '@/utils/app/clean';
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE, OPENAI_API_HOST, OPENAI_API_HOST_TYPE} from '@/utils/app/const';
 import {
   saveConversation,
   saveConversations,
@@ -40,6 +40,8 @@ import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
+import {ErrorMessage} from "@/types/error";
+import {signOut} from "next-auth/react";
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
@@ -79,7 +81,8 @@ const Home = ({
   const { data, error, refetch } = useQuery(
     ['GetModels', apiKey, serverSideApiKeyIsSet],
     ({ signal }) => {
-      if (!apiKey && !serverSideApiKeyIsSet) return null;
+      const needKeyAuth = !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim'
+      if (needKeyAuth) return null;
 
       return getModels(
         {
@@ -98,6 +101,7 @@ const Home = ({
   useEffect(() => {
     dispatch({ field: 'modelError', value: getModelsError(error) });
   }, [dispatch, error, getModelsError]);
+
 
   // FETCH MODELS ----------------------------------------------
 
@@ -261,7 +265,7 @@ const Home = ({
 
     const apiKey = localStorage.getItem('apiKey');
 
-    if (serverSideApiKeyIsSet) {
+    if (serverSideApiKeyIsSet || OPENAI_API_HOST_TYPE === 'apim') {
       dispatch({ field: 'apiKey', value: '' });
 
       localStorage.removeItem('apiKey');
@@ -415,7 +419,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
-      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY,
+      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
       defaultModelId,
       serverSidePluginKeysSet,
       ...(await serverSideTranslations(locale ?? 'en', [
