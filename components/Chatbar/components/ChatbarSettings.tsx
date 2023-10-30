@@ -14,6 +14,7 @@ import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
 import { PluginKeys } from './PluginKeys';
+import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
@@ -57,7 +58,7 @@ export const ChatbarSettings = () => {
         onClick={() => setIsSettingDialog(true)}
       />
 
-      {!serverSideApiKeyIsSet ? (
+      {!serverSideApiKeyIsSet && OPENAI_API_HOST_TYPE !== 'apim' ? (
         <Key apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
       ) : null}
 
