@@ -39,6 +39,9 @@ export const APIM_MANAGEMENT_ENDPONT =
 export const FORCE_LOGOUT_ON_REFRESH_FAILURE =
     process.env.FORCE_LOGOUT_ON_REFRESH_FAILURE || 'true';
 
+export const OPENAI_API_HOST_TYPE =
+    process.env.OPEN_AI_HOST_TYPE || 'apim';
+
 const COMMON_CONFIGURATION: any = {
     OPENAI_API_VERSION: "2023-03-15-preview",
     OPENAI_API_TYPE: OPENAI_API_TYPE,
