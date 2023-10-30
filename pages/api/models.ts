@@ -63,18 +63,15 @@ const handler = async (req: NextRequest): Promise<Response> => {
       delete headers['api-key'];
     }
 
-    let response;
     try {
-      response = await fetch(url, {
-        headers,
-      });
-    } catch (err) {
       refreshAccessToken(token)
-      response = await fetch(url, {
-        headers,
-      });
-
+    } catch (err) {
+      console.error(`Failed to refresh access token: ${err}`);
     }
+    const response = await fetch(url, {
+      headers,
+    });
+
 
     if (response.status === 401) {
       return new Response(response.body, {
