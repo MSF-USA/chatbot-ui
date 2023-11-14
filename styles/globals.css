@@ -36,18 +36,10 @@ html {
   pre {
     width: calc(100vw - 110px);
   }
-  login {
-    display: none;
-  }
 }
 
 pre:has(div.codeblock) {
   padding: 0;
-}
-
-login {
-  display: flex;
-  height: 100vh;
 }
 
 select {

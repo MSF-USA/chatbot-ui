@@ -10,7 +10,8 @@ import loginBackground from '../../public/loginBackground.jpg'
 export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
-      <div className="md:flex md:h-screen bg-zinc-900">
+      <div className="h-screen overflow-hidden md:flex">
+      <div className="md:h-screen w-screen bg-zinc-900">
       <div className="flex w-screen p-10" style={{ backgroundImage: `url(${loginBackground.src})`, width: '100%', height: '100%', backgroundSize: 'cover'}}>
           <div>
               <Image
@@ -20,8 +21,9 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
           </div>
           <h1 className="text-4xl font-thin text-white px-5 mt-3">MSF AI Assistant</h1>
       </div>
+      </div>
       {Object.values(providers).map((provider) => (
-        <div key={provider.name} className="flex items-center justify-center h-screen md:w-3/4">
+        <div key={provider.name} className="flex items-center justify-center h-full md:w-3/4">
             <div className="flex flex-row mb-80 md:mb-0 sm:mb-40 bg-zinc-950 hover:bg-zinc-800 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                 <Image
             src={azure}
