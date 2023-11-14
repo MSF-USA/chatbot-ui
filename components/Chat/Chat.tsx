@@ -33,6 +33,7 @@ import { ModelSelect } from './ModelSelect';
 import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
+import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -47,7 +48,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       conversations,
       models,
       apiKey,
-      pluginKeys,
       serverSideApiKeyIsSet,
       messageIsStreaming,
       modelError,
@@ -57,6 +57,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     handleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+  let {
+    state: { pluginKeys },
+  } = useContext(HomeContext);
+  if (typeof pluginKeys === 'string') {
+    pluginKeys = JSON.parse(pluginKeys);
+  }
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -68,62 +74,230 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const updateConversationFromUserInput = (
+      userMessage: Message,
+      selectedConversation: Conversation,
+      deleteCount: number | null
+  ): Conversation => {
+    let updatedConversation: Conversation;
+    if (deleteCount) {
+      const updatedMessages = [...selectedConversation.messages];
+      for (let i = 0; i < deleteCount; i++) {
+        updatedMessages.pop();
+      }
+      updatedConversation = {
+        ...selectedConversation,
+        messages: [...updatedMessages, userMessage],
+      };
+    } else {
+      updatedConversation = {
+        ...selectedConversation,
+        messages: [...selectedConversation.messages, userMessage],
+      };
+    }
+
+    return updatedConversation
+  }
+
+  const makeRequest = async (
+      plugin: Plugin | null, updatedConversation: Conversation
+  ) => {
+    const chatBody: ChatBody = {
+      model: updatedConversation.model,
+      messages: updatedConversation.messages,
+      key: apiKey,
+      prompt: updatedConversation.prompt,
+      temperature: updatedConversation.temperature,
+    };
+    const endpoint = getEndpoint(plugin);
+    let body;
+    if (!plugin) {
+      body = JSON.stringify(chatBody);
+    } else {
+      body = JSON.stringify({
+        ...chatBody,
+        googleAPIKey: pluginKeys
+            .find((key) => key.pluginId === 'google-search')
+            ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
+        googleCSEId: pluginKeys
+            .find((key) => key.pluginId === 'google-search')
+            ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
+      });
+    }
+    const controller = new AbortController();
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body,
+    });
+
+    return {
+      controller,
+      body,
+      response
+    }
+  }
+
+  const setConversationTitle = (updatedConversation: Conversation, message: Message) : Conversation  => {
+    const {content} = message;
+    const customName =
+        content.length > 30 ? content.substring(0, 30) + '...' : content;
+    updatedConversation = {
+      ...updatedConversation,
+      name: customName,
+    };
+
+    return updatedConversation;
+  }
+
+  const handleGoogleResponse = async (
+      response: Response, updatedConversation: Conversation,
+      selectedConversation: Conversation,
+      conversations: Conversation[] = []
+  ) => {
+    let content;
+
+    const {answer} = await response.json();
+    content = answer;
+    const updatedMessages: Message[] = [
+      ...updatedConversation.messages,
+      { role: 'assistant', content: content },
+    ];
+    updatedConversation = {
+      ...updatedConversation,
+      messages: updatedMessages,
+    };
+    homeDispatch({
+      field: 'selectedConversation',
+      value: updatedConversation,
+    });
+    saveConversation(updatedConversation);
+    const updatedConversations: Conversation[] = conversations.map(
+        (conversation) => {
+          if (conversation.id === selectedConversation.id) {
+            return updatedConversation;
+          }
+          return conversation;
+        },
+    );
+    if (updatedConversations.length === 0) {
+      updatedConversations.push(updatedConversation);
+    }
+
+    return updatedConversations
+  }
+
+  const handleNormalChatBackendStreaming = async (
+      data: any,
+      controller: AbortController,
+      updatedConversation: Conversation,
+      selectedConversation: Conversation,
+      originalConversations: Conversation[]
+  ) => {
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+    let isFirst = true;
+    let text = '';
+    let updatedConversationCopy = { ...updatedConversation };
+    let conversationsCopy = originalConversations.slice();
+
+    const readerChunks = async function* () {
+      let doneInt = 0
+      while (true) {
+        const { value, done } = await reader.read();
+        yield value;
+
+        // For whatever reason when done is set to true, there's still a chunk left
+        //   This might be some Azure things, so maybe this breaks the openai direct
+        //   streaming. Needs to be revisited
+        if (done)
+          doneInt = 1;
+
+        if (doneInt === 1) break;
+      }
+    };
+
+    for await (let value of readerChunks()) {
+      if (stopConversationRef.current) {
+        controller.abort();
+        break;
+      }
+      const chunkValue = decoder.decode(value);
+      text += chunkValue;
+      if (isFirst) {
+        isFirst = false;
+        const updatedMessages: Message[] = [
+          ...updatedConversationCopy.messages,
+          { role: 'assistant', content: chunkValue },
+        ];
+        updatedConversationCopy = {
+          ...updatedConversationCopy,
+          messages: updatedMessages,
+        };
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      } else {
+        const updatedMessages: Message[] =
+            updatedConversationCopy.messages.map((message, index) => {
+              if (index === updatedConversationCopy.messages.length - 1) {
+                return {
+                  ...message,
+                  content: text,
+                };
+              }
+              return message;
+            });
+        updatedConversationCopy = {
+          ...updatedConversationCopy,
+          messages: updatedMessages,
+        };
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
+    }
+
+    saveConversation(updatedConversationCopy);
+
+    const updatedConversations : Conversation[] = conversations.map(
+        (conversation) => {
+          if (conversation.id === selectedConversation.id) {
+            return updatedConversationCopy;
+          }
+          return conversation;
+        },
+    );
+    if (updatedConversations.length === 0) {
+      updatedConversations.push(updatedConversationCopy);
+    }
+
+    return updatedConversations;
+  }
+
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
       if (selectedConversation) {
-        let updatedConversation: Conversation;
-        if (deleteCount) {
-          const updatedMessages = [...selectedConversation.messages];
-          for (let i = 0; i < deleteCount; i++) {
-            updatedMessages.pop();
-          }
-          updatedConversation = {
-            ...selectedConversation,
-            messages: [...updatedMessages, message],
-          };
-        } else {
-          updatedConversation = {
-            ...selectedConversation,
-            messages: [...selectedConversation.messages, message],
-          };
-        }
+        let updatedConversation: Conversation = updateConversationFromUserInput(
+            message,
+            selectedConversation,
+            deleteCount
+        );
         homeDispatch({
           field: 'selectedConversation',
           value: updatedConversation,
         });
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
-        const chatBody: ChatBody = {
-          model: updatedConversation.model,
-          messages: updatedConversation.messages,
-          key: apiKey,
-          prompt: updatedConversation.prompt,
-          temperature: updatedConversation.temperature,
-        };
-        const endpoint = getEndpoint(plugin);
-        let body;
-        if (!plugin) {
-          body = JSON.stringify(chatBody);
-        } else {
-          body = JSON.stringify({
-            ...chatBody,
-            googleAPIKey: pluginKeys
-              .find((key) => key.pluginId === 'google-search')
-              ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-            googleCSEId: pluginKeys
-              .find((key) => key.pluginId === 'google-search')
-              ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
-          });
-        }
-        const controller = new AbortController();
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          signal: controller.signal,
-          body,
-        });
+
+        const {controller, body, response} = await makeRequest(plugin, updatedConversation);
+
         if (!response.ok) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
@@ -138,106 +312,55 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         }
         if (!plugin) {
           if (updatedConversation.messages.length === 1) {
-            const { content } = message;
-            const customName =
-              content.length > 30 ? content.substring(0, 30) + '...' : content;
-            updatedConversation = {
-              ...updatedConversation,
-              name: customName,
-            };
+            updatedConversation = setConversationTitle(updatedConversation, message);
           }
-          homeDispatch({ field: 'loading', value: false });
-          const reader = data.getReader();
-          const decoder = new TextDecoder();
-          let done = false;
-          let isFirst = true;
-          let text = '';
-          while (!done) {
-            if (stopConversationRef.current === true) {
-              controller.abort();
-              done = true;
-              break;
-            }
-            const { value, done: doneReading } = await reader.read();
-            done = doneReading;
-            const chunkValue = decoder.decode(value);
-            text += chunkValue;
-            if (isFirst) {
-              isFirst = false;
-              const updatedMessages: Message[] = [
-                ...updatedConversation.messages,
-                { role: 'assistant', content: chunkValue },
-              ];
-              updatedConversation = {
-                ...updatedConversation,
-                messages: updatedMessages,
-              };
-              homeDispatch({
-                field: 'selectedConversation',
-                value: updatedConversation,
-              });
-            } else {
-              const updatedMessages: Message[] =
-                updatedConversation.messages.map((message, index) => {
-                  if (index === updatedConversation.messages.length - 1) {
-                    return {
-                      ...message,
-                      content: text,
-                    };
-                  }
-                  return message;
-                });
-              updatedConversation = {
-                ...updatedConversation,
-                messages: updatedMessages,
-              };
-              homeDispatch({
-                field: 'selectedConversation',
-                value: updatedConversation,
-              });
-            }
+          homeDispatch({field: 'loading', value: false});
+
+          // TODO: Either force everything through streaming or implement a
+          //    non-streaming version of this as well
+          const streaming = true;
+          if (streaming) {
+            const updatedConversations = await handleNormalChatBackendStreaming(
+                data,
+                controller,
+                updatedConversation,
+                selectedConversation,
+                conversations
+            );
+
+            homeDispatch({field: 'conversations', value: updatedConversations});
+            saveConversations(updatedConversations);
+            homeDispatch({field: 'messageIsStreaming', value: false});
+          } else {
+            const reader = data.getReader()
+            // const data = await response;
+            // const body = await data.body;
+            // const {answer} = data;
+            const updatedConversations = await handleNormalChatBackendStreaming(
+                data,
+                controller,
+                updatedConversation,
+                selectedConversation,
+                conversations
+            );
+
+            homeDispatch({field: 'conversations', value: updatedConversations});
+            saveConversations(updatedConversations);
+            homeDispatch({field: 'messageIsStreaming', value: false});
+
+
           }
-          saveConversation(updatedConversation);
-          const updatedConversations: Conversation[] = conversations.map(
-            (conversation) => {
-              if (conversation.id === selectedConversation.id) {
-                return updatedConversation;
-              }
-              return conversation;
-            },
-          );
-          if (updatedConversations.length === 0) {
-            updatedConversations.push(updatedConversation);
-          }
-          homeDispatch({ field: 'conversations', value: updatedConversations });
-          saveConversations(updatedConversations);
-          homeDispatch({ field: 'messageIsStreaming', value: false });
         } else {
-          const { answer } = await response.json();
-          const updatedMessages: Message[] = [
-            ...updatedConversation.messages,
-            { role: 'assistant', content: answer },
-          ];
-          updatedConversation = {
-            ...updatedConversation,
-            messages: updatedMessages,
-          };
-          homeDispatch({
-            field: 'selectedConversation',
-            value: updateConversation,
-          });
-          saveConversation(updatedConversation);
-          const updatedConversations: Conversation[] = conversations.map(
-            (conversation) => {
-              if (conversation.id === selectedConversation.id) {
-                return updatedConversation;
-              }
-              return conversation;
-            },
-          );
-          if (updatedConversations.length === 0) {
-            updatedConversations.push(updatedConversation);
+          if (updatedConversation.messages.length === 1) {
+            updatedConversation = setConversationTitle(updatedConversation, message);
           }
+
+          const updatedConversations = await handleGoogleResponse(
+                response,
+                updatedConversation,
+                selectedConversation,
+                conversations
+          );
           homeDispatch({ field: 'conversations', value: updatedConversations });
           saveConversations(updatedConversations);
           homeDispatch({ field: 'loading', value: false });
@@ -346,23 +469,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       }
     };
   }, [messagesEndRef]);
+  const showSplash = !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim'
 
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
-      {!(apiKey || serverSideApiKeyIsSet) ? (
+      {(showSplash) ? (
         <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
-            Welcome to Chatbot UI
+            Welcome to the MSF AI Assistant
           </div>
           <div className="text-center text-lg text-black dark:text-white">
-            <div className="mb-8">{`Chatbot UI is an open source clone of OpenAI's ChatGPT UI.`}</div>
+            <div className="mb-8">{`MSF AI Assistant is an open source clone of OpenAI's ChatGPT UI.`}</div>
             <div className="mb-2 font-bold">
-              Important: Chatbot UI is 100% unaffiliated with OpenAI.
+              Important: MSF AI Assistant is 100% unaffiliated with OpenAI.
             </div>
           </div>
           <div className="text-center text-gray-500 dark:text-gray-400">
             <div className="mb-2">
-              Chatbot UI allows you to plug in your API key to use this UI with
+              MSF AI Assistant allows you to plug in your API key to use this UI with
               their API.
             </div>
             <div className="mb-2">
@@ -396,7 +520,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
-            {selectedConversation?.messages.length === 0 ? (
+            {selectedConversation?.messages?.length === 0 ? (
               <>
                 <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
                   <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
@@ -405,7 +529,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         <Spinner size="16px" className="mx-auto" />
                       </div>
                     ) : (
-                      'Chatbot UI'
+                      'MSF AI Assistant'
                     )}
                   </div>
 
@@ -440,7 +564,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             ) : (
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model.name} | {t('Temp')}
+                  {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
                   : {selectedConversation?.temperature} |
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"

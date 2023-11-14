@@ -13,9 +13,13 @@ import ChatbarContext from '../Chatbar.context';
 export const PluginKeys = () => {
   const { t } = useTranslation('sidebar');
 
-  const {
+  let {
     state: { pluginKeys },
   } = useContext(HomeContext);
+
+  if (typeof pluginKeys === 'string') {
+    pluginKeys = JSON.parse(pluginKeys);
+  }
 
   const { handlePluginKeyChange, handleClearPluginKey } =
     useContext(ChatbarContext);
