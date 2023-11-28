@@ -559,7 +559,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       />
                       <span className="mb-2 text-[12px] text-black/50 dark:text-white/50 text-sm">
                       {t(
-                        'Define how the AI Assistant should act.',
+                        'Type question below to get started.',
                       )}
                     </span>
                     </div>
