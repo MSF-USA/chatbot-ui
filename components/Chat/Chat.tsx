@@ -557,6 +557,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           })
                         }
                       />
+                      {t("Type question below to get started.")}
                     </div>
                   )}
                 </div>
