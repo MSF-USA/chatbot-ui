@@ -22,7 +22,7 @@ export const OPENAI_API_TYPE =
   process.env.OPENAI_API_TYPE || 'azure';
 
 export const OPENAI_API_VERSION =
-  process.env.OPENAI_API_VERSION || '2023-03-15-preview';
+  process.env.OPENAI_API_VERSION || '2023-12-01-preview';
 
 export const OPENAI_ORGANIZATION =
   process.env.OPENAI_ORGANIZATION || '';
@@ -43,7 +43,7 @@ export const OPENAI_API_HOST_TYPE =
     process.env.OPEN_AI_HOST_TYPE || 'apim';
 
 const COMMON_CONFIGURATION: any = {
-    OPENAI_API_VERSION: "2023-03-15-preview",
+    OPENAI_API_VERSION: OPENAI_API_VERSION,
     OPENAI_API_TYPE: OPENAI_API_TYPE,
     OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
     AZURE_DEPLOYMENT_ID: AZURE_DEPLOYMENT_ID,
