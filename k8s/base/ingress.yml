@@ -18,11 +18,11 @@ spec:
   ingressClassName: nginx
   tls:
     - hosts:
-        - aichat.eastus.cloudapp.azure.com
-        - msfintl-nyc-dev-ai.trafficmanager.net
+        - www.dev.ai.msfusa.org
+        - dev.ai.msfusa.org
       secretName: tls-secret
   rules:
-    - host: aichat.eastus.cloudapp.azure.com
+    - host: www.dev.ai.msfusa.org
       http:
         paths:
           - path: /
@@ -32,7 +32,7 @@ spec:
                 name: chat
                 port:
                   number: 80
-    - host: msfintl-nyc-dev-ai.trafficmanager.net
+    - host: dev.ai.msfusa.org
       http:
         paths:
           - path: /
