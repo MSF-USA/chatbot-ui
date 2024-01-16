@@ -1,14 +1,25 @@
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: chat-hpa
   namespace: chat
 spec:
-  maxReplicas: 15 # define max replica count
-  minReplicas: 3  # define min replica count
+  maxReplicas: 15
+  minReplicas: 3
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
     name: chat
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
-  targetMemoryUtilizationPercentage: 80 #target Memory utilization
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
