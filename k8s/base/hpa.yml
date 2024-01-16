@@ -2,6 +2,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: chat-hpa
+  namespace: chat
 spec:
   maxReplicas: 15 # define max replica count
   minReplicas: 3  # define min replica count
