@@ -11,3 +11,4 @@ spec:
     kind: Deployment
     name: chat
   targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetMemoryUtilizationPercentage: 80 #target Memory utilization
