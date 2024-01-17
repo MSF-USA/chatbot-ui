@@ -9,4 +9,4 @@ spec:
     kind: Deployment
     name: chat
   updatePolicy:
-    updateMode: "Auto"
+    updateMode: "Off"
