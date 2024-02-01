@@ -1,4 +1,4 @@
-name: Dev Application Deployment
+name: $(Build.BuildId)
 
 trigger: none
 
