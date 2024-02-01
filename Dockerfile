@@ -1,10 +1,6 @@
 # ---- Base Node ----
 FROM node:20-alpine AS base
 WORKDIR /app
-ARG BUILD
-ENV NEXT_PUBLIC_BUILD=$BUILD
-ARG ENV
-ENV NEXT_PUBLIC_ENV=$ENV
 COPY package*.json ./
 
 # ---- Dependencies ----
@@ -14,6 +10,12 @@ RUN npm ci
 # ---- Build ----
 FROM dependencies AS build
 COPY . .
+
+ARG BUILD
+ENV NEXT_PUBLIC_BUILD=$BUILD
+ARG ENV
+ENV NEXT_PUBLIC_ENV=$ENV
+
 RUN npm run build
 
 # ---- Production ----
