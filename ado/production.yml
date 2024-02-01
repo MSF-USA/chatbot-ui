@@ -27,7 +27,7 @@ stages:
               repository: 'chatbot'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
               containerRegistry: 'msfintlnycproduseast2'
-              buildArguments: '--build-arg BUILD=$(Build.BuildId)'
+              buildArguments: '--build-arg BUILD=$(Build.BuildId) --build-arg ENV=prod'
               tags: |
                 latest
                 $(Build.BuildId)
