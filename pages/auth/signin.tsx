@@ -46,11 +46,9 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
       ))}
     </div>
     <div className="fixed bottom-0 right-0 w-full py-1">
-        <div className="container mx-auto px-1">
-          <div className="flex flex-col items-end">
-              <div className="text-gray-500">v{version}.{build}.{env}</div>
-              <div className="text-gray-500">{email}</div>
-            </div>
+        <div className="flex flex-col items-end px-1">
+          <div className="text-gray-500">v{version}.{build}.{env}</div>
+          <div className="text-gray-500">{email}</div>
         </div>
       </div>
     </>
