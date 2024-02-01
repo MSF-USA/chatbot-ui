@@ -7,6 +7,10 @@ import azure from '../../public/azure.png'
 import logo from '../../public/logo_light.png'
 import loginBackground from '../../public/loginBackground.jpg'
 
+const version = process.env.NEXT_PUBLIC_VERSION;
+const build = process.env.NEXT_PUBLIC_BUILD;
+const email = process.env.NEXT_PUBLIC_EMAIL;
+
 export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
@@ -39,6 +43,14 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
             </div>
         </div>
       ))}
+    </div>
+    <div className="fixed bottom-0 right-0 w-full py-1">
+        <div className="container mx-auto px-1">
+          <div class="flex flex-col items-end">
+              <div className="text-gray-500">{version}.{build}</div>
+              <div className="text-gray-500">{email}</div>
+            </div>
+        </div>
       </div>
     </>
   )

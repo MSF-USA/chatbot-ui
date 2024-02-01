@@ -1,6 +1,8 @@
 # ---- Base Node ----
 FROM node:20-alpine AS base
 WORKDIR /app
+ARG BUILD
+ENV NEXT_PUBLIC_BUILD=$BUILD
 COPY package*.json ./
 
 # ---- Dependencies ----
