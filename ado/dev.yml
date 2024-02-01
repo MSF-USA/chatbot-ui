@@ -13,33 +13,30 @@ pr:
 pool:
   vmImage: ubuntu-latest
 
-resources:
-  - repo: self
-
-variables:
-  - group: msfintl-nyc-dev-ai
-  - group: nextauth-dev
-  # Container registry service connection established during pipeline creation
-  - name: dockerRegistryServiceConnection
-    value: 'f9b66bc3-bc4f-4199-91c3-336305d91908'
-  - name: k8ServiceConnection
-    value: 'msfintl-nyc-dev-ai-chat'
-  - name: imageRepository
-    value: 'chatbot'
-  - name: containerRegistry
-    value: 'msfintlnycdev1.azurecr.io'
-  - name: dockerfilePath
-    value: '**/Dockerfile'
-  - name: tag
-    value: '$(Build.BuildId)'
-  - name: imagePullSecret
-    value: 'msfintlnycdev17452-auth'
-  - name: namespace
-    value: 'chat'
-  - name: env
-    value: 'dev'
-  - name: vmImageName
-    value: 'ubuntu-latest'
-
 stages:
-  - template: './templates/k8-deploy.yml'
+  - stage: build_push
+    displayName: Build and Push Image
+    jobs:
+      - job: buildPush
+        displayName: Build and Push
+        steps:
+          - task: Docker@2
+            displayName: Build Image
+            inputs:
+              command: build
+              repository: 'chatbot'
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              containerRegistry: 'azure-cr-dev'
+              tags: |
+                latest-dev
+                $(Build.BuildId)
+          - task: Docker@2
+            displayName: Push Image
+            inputs:
+              command: push
+              repository: 'chatbot'
+              dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
+              containerRegistry: 'azure-cr-dev'
+              tags: |
+                latest-dev
+                $(Build.BuildId)
