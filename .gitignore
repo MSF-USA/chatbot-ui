@@ -39,3 +39,8 @@ yarn-error.log*
 next-env.d.ts
 .idea
 pnpm-lock.yaml
+
+# PWA
+public/sw.js
+public/sw.js.map
+public/workbox*
