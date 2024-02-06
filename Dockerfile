@@ -6,7 +6,7 @@ COPY package*.json ./
 # ---- Dependencies ----
 FROM base AS dependencies
 RUN npm ci
-RUN npm test
+RUN npm run test
 
 # ---- Build ----
 FROM dependencies AS build
