@@ -4,6 +4,7 @@ const { i18n } = require('./next-i18next.config');
 const nextConfig = {
   i18n,
   reactStrictMode: true,
+  swcMinify: true,
 
   rewrites: async () => {
     return [
@@ -24,4 +25,12 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+const withPWA = require("next-pwa")({
+  dest: "public", // Destination directory for the PWA files
+  disable: process.env.NODE_ENV === "development", // Disable PWA in development mode
+  register: true, // Register the PWA service worker
+  // skipWaiting: true, // Skip waiting for service worker activation
+  reloadOnOnline: true
+});
+
+module.exports = withPWA(nextConfig);

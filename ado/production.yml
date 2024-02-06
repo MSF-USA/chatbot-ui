@@ -1,14 +1,14 @@
 name: $(Build.BuildId)
 
-trigger: none
-
-pr:
+trigger:
   branches:
     include:
       - main
   paths:
     exclude:
       - README.md
+
+pr: none
 
 pool:
   vmImage: ubuntu-latest
@@ -26,10 +26,10 @@ stages:
               command: build
               repository: 'chatbot'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              containerRegistry: 'azure-cr-dev'
-              arguments: '--build-arg BUILD=$(Build.BuildId) --build-arg ENV=dev'
+              containerRegistry: 'msfintlnycproduseast2'
+              arguments: '--build-arg BUILD=$(Build.BuildId) --build-arg ENV=prod'
               tags: |
-                latest-dev
+                latest
                 $(Build.BuildId)
           - task: Docker@2
             displayName: Push Image
@@ -37,7 +37,7 @@ stages:
               command: push
               repository: 'chatbot'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              containerRegistry: 'azure-cr-dev'
+              containerRegistry: 'msfintlnycproduseast2'
               tags: |
-                latest-dev
+                latest
                 $(Build.BuildId)
