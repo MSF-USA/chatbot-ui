@@ -104,7 +104,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   ) => {
     const chatBody: ChatBody = {
       model: updatedConversation.model,
-      messages: updatedConversation.messages.slice(-3),
+      messages: updatedConversation.messages.slice(-6),
       key: apiKey,
       prompt: updatedConversation.prompt,
       temperature: updatedConversation.temperature,
