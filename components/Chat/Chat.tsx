@@ -99,12 +99,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation
   }
 
+  //added to prevent chat token limit being hit too early. Will still happen with large messages though
+  let limitedConversationMessages = updateConversation.messages.slice(-3);
+
   const makeRequest = async (
       plugin: Plugin | null, updatedConversation: Conversation
   ) => {
     const chatBody: ChatBody = {
       model: updatedConversation.model,
-      messages: updatedConversation.messages,
+      messages: limitedConversationMessages,
       key: apiKey,
       prompt: updatedConversation.prompt,
       temperature: updatedConversation.temperature,
