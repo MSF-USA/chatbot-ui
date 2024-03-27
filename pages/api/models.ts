@@ -69,7 +69,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     let url = `${configData.OPENAI_API_HOST}/v1/models`;
     if (configData.OPENAI_API_TYPE === 'azure') {
-      url = `${configData.OPENAI_API_HOST}/${APIM_MANAGEMENT_ENDPONT}/deployments?api-version=${configData.OPENAI_API_VERSION}`;
+      url = `${configData.OPENAI_API_HOST}/${APIM_MANAGEMENT_ENDPONT}/models?api-version=${configData.OPENAI_API_VERSION}`;
       headers["Authorization"] = `Bearer ${token?.accessToken}`;
       headers['Content-Type'] = 'application/json';
       delete headers['api-key'];
