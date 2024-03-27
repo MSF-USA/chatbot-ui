@@ -18,16 +18,28 @@ export const config = {
 };
 
 const getModels = (json: any, configData: any) => {
-  return json.data
+  return json.data.filter((model: any) => {
+    if (model?.capabilities) {
+      return model.capabilities.chat_completion;
+    } else {
+      return true;
+    }
+  })
       .map((model: any) => {
-        const model_name = (configData.OPENAI_API_TYPE === 'azure') ? model.model : model.id;
+        let model_passed = true;
+        const model_name = (configData.OPENAI_API_TYPE === 'azure' && model.model) ? model.model : model.id;
         for (const [key, value] of Object.entries(OpenAIModelID)) {
           if (value === model_name) {
+            model_passed = false;
             return {
               id: model.id,
               name: OpenAIModels[value].name,
             };
           }
+          // Enable this to see what models we are missing in the frontend
+          // if (model_passed === true) {
+          //   console.warn(`Model ${model_name} is not supported`);
+          // }
         }
       })
       .filter(Boolean);

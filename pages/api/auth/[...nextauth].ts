@@ -11,7 +11,7 @@ export const authOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID || '',
       authorization: {
           params: {
-              scope: "openid User.Read User.ReadBasic.all offline_access",
+              scope: "openid User.Read offline_access",
           }
         }
 
