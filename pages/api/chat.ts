@@ -68,9 +68,8 @@ const handler = async (req: NextRequest): Promise<Response> => {
       const token: CustomJWT = await getToken({req});
       let resp;
       try {
-        const apimUrl = `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`
         resp = await makeAPIMRequest(
-            apimUrl,
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token?.accessToken,
             'POST',
             {
