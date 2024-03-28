@@ -25,7 +25,7 @@ const getModels = (json: any, configData: any) => {
             if (value === modelName) {
               const mappedData = {
                 id: model.id,
-                name: modelName,
+                name: OpenAIModels?.[value]?.name ?? modelName,
                 status: model.status,
                 createdAt: model.created_at,
                 object: model.object
