@@ -4,6 +4,11 @@ services:
   chatgpt:
     build: .
     ports:
-      - 3000:3000
+      - '3000:3000'
     environment:
-      - 'OPENAI_API_KEY='
+      OPENAI_API_TYPE: ${OPENAI_API_TYPE:-azure}
+      OPENAI_API_HOST: ${OPENAI_API_HOST:-https://msfintl-nyc-sbx-openai-cs.openai.azure.com/}
+      AZURE_DEPLOYMENT_ID: ${AZURE_DEPLOYMENT_ID:-gpt35default}
+      OPENAI_API_VERSION: ${OPENAI_API_VERSION:-2023-12-01-preview}
+      API_HOST_DEV_PREFIX: ${API_HOST_DEV_PREFIX:-msfintlnycdev}
+      API_HOST_PREFIX: ${API_HOST_PREFIX:-msfintl-nyc}
