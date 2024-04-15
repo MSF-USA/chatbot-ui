@@ -1,3 +1,4 @@
+# TODO: Figure out eaxct way to integrate Prisma into the dockerfile. Minimum seems like we need to run migrations and generate the client.
 # ---- Base Node ----
 FROM node:20-alpine AS base
 WORKDIR /app
