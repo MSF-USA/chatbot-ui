@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Just metadata as authentication handled via APIM
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  name          String?
+  conversations Conversation[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  Folder        Folder[]
+
+  @@map("users")
+}
+
+model Folder {
+  id            String         @id @default(uuid())
+  name          String
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  conversations Conversation[]
+
+  @@map("folders")
+}
+
+model Conversation {
+  id               String       @id @default(uuid())
+  name             String
+  messages         Message[]
+  modelId          String?
+  model            Model?       @relation(fields: [modelId], references: [id])
+  systemPromptId   String
+  systemPrompt     SystemPrompt @relation(fields: [systemPromptId], references: [id])
+  temperature      Float
+  folderId         String?
+  folder           Folder?      @relation(fields: [folderId], references: [id])
+  userId           String
+  user             User         @relation(fields: [userId], references: [id])
+  legacyIdentifier String // New field for legacy system reference
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@map("conversations")
+}
+
+model SystemPrompt {
+  id            String         @id @default(uuid())
+  content       String // Changed from description to content
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  conversations Conversation[]
+
+  @@map("system_prompts")
+}
+
+// TODO: Figure out encryption for message content
+model Message {
+  id              Int          @id @default(autoincrement())
+  role            String
+  contentType     String       @default("text") // "text" or "image"
+  content         String // Text content or URL to image
+  audioUrl        String? // Optional URL to audio file for TTS
+  order           Int
+  conversationId  String
+  parentMessageId Int?
+  childMessages   Message[]    @relation("MessageToMessage")
+  conversation    Conversation @relation(fields: [conversationId], references: [id])
+  parentMessage   Message?     @relation("MessageToMessage", fields: [parentMessageId], references: [id])
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  @@index([conversationId, order])
+  @@map("messages")
+}
+
+model Model {
+  id              String         @id
+  name            String
+  maxLength       Int
+  tokenLimit      Int
+  modelIdentifier String // New field to uniquely identify model versions or configurations
+  Conversation    Conversation[]
+
+  @@map("models")
+}
