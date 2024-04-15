@@ -20,17 +20,24 @@ export const config = {
 const getModels = (json: any, configData: any) => {
   return json.data
       .map((model: any) => {
-        const model_name = (configData.OPENAI_API_TYPE === 'azure') ? model.model : model.id;
+        const modelName = model.model ?? model.id;
         for (const [key, value] of Object.entries(OpenAIModelID)) {
-          if (value === model_name) {
-            return {
-              id: model.id,
-              name: OpenAIModels[value].name,
+            if (value === modelName) {
+              const mappedData = {
+                id: model.id,
+                name: OpenAIModels?.[value]?.name ?? modelName,
+                status: model.status,
+                createdAt: model.created_at,
+                object: model.object
+              };
+
+              return mappedData;
             };
           }
-        }
       })
       .filter(Boolean);
+
+
 }
 
 const handler = async (req: NextRequest): Promise<Response> => {
@@ -57,7 +64,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     let url = `${configData.OPENAI_API_HOST}/v1/models`;
     if (configData.OPENAI_API_TYPE === 'azure') {
-      url = `${configData.OPENAI_API_HOST}/${APIM_MANAGEMENT_ENDPONT}/deployments?api-version=${configData.OPENAI_API_VERSION}`;
+      url = `${configData.OPENAI_API_HOST}/${APIM_MANAGEMENT_ENDPONT}/models?api-version=${configData.OPENAI_API_VERSION}`;
       headers["Authorization"] = `Bearer ${token?.accessToken}`;
       headers['Content-Type'] = 'application/json';
       delete headers['api-key'];
@@ -90,7 +97,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     const json = await response.json();
 
+    // console.log("raw response", json)
     const models: OpenAIModel[] = getModels(json, configData);
+    // console.log("models", models)
 
     return new Response(JSON.stringify(models), { status: 200 });
   } catch (error) {
