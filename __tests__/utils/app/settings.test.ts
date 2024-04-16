@@ -1,6 +1,6 @@
 import { getSettings, saveSettings } from '@/utils/app/settings';
 import { Settings } from '@/types/settings';
-import { vi, beforeEach, describe, it, expect } from 'vitest';
+import {vi, beforeEach, describe, it, expect, Mock} from 'vitest';
 
 
 
@@ -51,7 +51,7 @@ describe('Settings Manager', () => {
 
         const settings = getSettings();
         expect(console.error).toHaveBeenCalled();
-        console.error.mockRestore();
+        (console.error as Mock).mockRestore();
 
         expect(settings).toMatchObject({ theme: 'dark' });
         expect((global as any).localStorage.getItem).toHaveBeenCalledWith('settings');
