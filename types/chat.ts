@@ -1,8 +1,16 @@
 import { OpenAIModel } from './openai';
 
+enum MessageType {
+  TEXT = 'text',
+  IMAGE = 'image',
+  AUDIO = 'audio',
+  VIDEO = 'video',
+}
+
 export interface Message {
   role: Role;
   content: string;
+  messageType: MessageType | undefined;
 }
 
 export type Role = 'assistant' | 'user';
