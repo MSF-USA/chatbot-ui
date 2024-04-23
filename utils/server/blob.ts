@@ -1,9 +1,12 @@
 import {BlobServiceClient, StorageSharedKeyCredential} from "@azure/storage-blob";
-import Error from "next/error";
 
 enum BlobProperty {
     URL = 'url',
     BLOB = 'blob'
+}
+
+enum BlobStorageType {
+    AZURE = 'azure',
 }
 
 interface BlobStorage {
@@ -57,19 +60,32 @@ export class AzureBlobStorage implements BlobStorage {
         else if(property === BlobProperty.BLOB) {
             const downloadBlockBlobResponse = await blockBlobClient.download(0);
             if (downloadBlockBlobResponse !== undefined) {
-                const blob = await this.blobToString(await downloadBlockBlobResponse.blobBody);
-                return blob;
+                const blobBody = await downloadBlockBlobResponse.blobBody
+                if (blobBody !== undefined) {
+                    const blob = await this.blobToString(blobBody);
+                    return blob;
+                } else {
+                    throw new Error("Error downloading the blob body.")
+                }
             } else {
-                throw Error("Blob not found.");
+                throw new Error("Blob not found.");
             }
         } else {
-            throw Error("Invalid property type specified.")
+            throw new Error("Invalid property type specified.")
         }
     }
 }
 
 export default class BlobStorageFactory {
-    static createAzureBlobStorage(storageAccountName: string, storageAccountAccessKey: string, containerName: string): BlobStorage | AzureBlobStorage {
-        return new AzureBlobStorage(storageAccountName, storageAccountAccessKey, containerName);
+    static createAzureBlobStorage(
+        storageAccountName: string, storageAccountAccessKey: string,
+        containerName: string, type: BlobStorageType = BlobStorageType.AZURE
+    ): BlobStorage | AzureBlobStorage {
+        switch (type) {
+            case BlobStorageType.AZURE:
+                return new AzureBlobStorage(storageAccountName, storageAccountAccessKey, containerName);
+            default:
+                throw new Error(`Invalid blob storage type provided: ${type}`)
+        }
     }
 }
