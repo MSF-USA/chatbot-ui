@@ -25,14 +25,6 @@ interface Props {
   showScrollDownButton: boolean;
 }
 
-
-
-
-
-
-
-
-
 export const ChatInput = ({
   onSend,
   onRegenerate,
