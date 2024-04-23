@@ -1,32 +1,17 @@
-import {
-  IconArrowDown,
-  IconBolt,
-  IconBrandGoogle,
-  IconPlayerStop,
-  IconRepeat,
-  IconSend,
-} from '@tabler/icons-react';
-import {
-  KeyboardEvent,
-  MutableRefObject,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import {IconArrowDown, IconBolt, IconBrandGoogle, IconPlayerStop, IconRepeat, IconSend,} from '@tabler/icons-react';
+import {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
-import { useTranslation } from 'next-i18next';
+import {useTranslation} from 'next-i18next';
 
-import { Message } from '@/types/chat';
-import { Plugin } from '@/types/plugin';
-import { Prompt } from '@/types/prompt';
+import {Message, MessageType} from '@/types/chat';
+import {Plugin} from '@/types/plugin';
+import {Prompt} from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import { PluginSelect } from './PluginSelect';
-import { PromptList } from './PromptList';
-import { VariableModal } from './VariableModal';
+import {PluginSelect} from './PluginSelect';
+import {PromptList} from './PromptList';
+import {VariableModal} from './VariableModal';
 import ImageIcon from "@/components/Icons/image";
 import FileIcon from "@/components/Icons/file";
 import MicIcon from "@/components/Icons/mic";
@@ -108,7 +93,7 @@ export const ChatInput = ({
       return;
     }
 
-    onSend({ role: 'user', content }, plugin);
+    onSend({ role: 'user', content, messageType: MessageType.TEXT }, plugin);
     setContent('');
     setPlugin(null);
 

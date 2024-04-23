@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import {NextApiRequest, NextApiResponse} from 'next';
 
 import {
   APIM_CHAT_ENDPONT,
@@ -7,14 +7,14 @@ import {
   OPENAI_API_TYPE,
   OPENAI_API_VERSION
 } from '@/utils/app/const';
-import { cleanSourceText } from '@/utils/server/google';
+import {cleanSourceText} from '@/utils/server/google';
 
-import { Message } from '@/types/chat';
-import { GoogleBody, GoogleSource } from '@/types/google';
+import {Message, MessageType} from '@/types/chat';
+import {GoogleBody, GoogleSource} from '@/types/google';
 
-import { Readability } from '@mozilla/readability';
+import {Readability} from '@mozilla/readability';
 import endent from 'endent';
-import jsdom, { JSDOM } from 'jsdom';
+import jsdom, {JSDOM} from 'jsdom';
 import {makeAPIMRequest} from "@/utils/server/apim";
 import {getToken} from "next-auth/jwt";
 import {CustomJWT} from "@/types/jwt";
@@ -119,7 +119,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     Response:
     `;
 
-    const answerMessage: Message = { role: 'user', content: answerPrompt };
+    const answerMessage: Message = { role: 'user', content: answerPrompt, messageType: MessageType.TEXT };
 
     const body = {
       model: model.id,

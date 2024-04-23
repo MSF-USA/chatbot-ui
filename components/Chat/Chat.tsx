@@ -1,38 +1,25 @@
-import { IconClearAll, IconSettings } from '@tabler/icons-react';
-import {
-  MutableRefObject,
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import {IconClearAll, IconSettings} from '@tabler/icons-react';
+import {memo, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 import toast from 'react-hot-toast';
 
-import { useTranslation } from 'next-i18next';
+import {useTranslation} from 'next-i18next';
 
-import { getEndpoint } from '@/utils/app/api';
-import {
-  saveConversation,
-  saveConversations,
-  updateConversation,
-} from '@/utils/app/conversation';
-import { throttle } from '@/utils/data/throttle';
+import {getEndpoint} from '@/utils/app/api';
+import {saveConversation, saveConversations,} from '@/utils/app/conversation';
+import {throttle} from '@/utils/data/throttle';
 
-import { ChatBody, Conversation, Message } from '@/types/chat';
-import { Plugin } from '@/types/plugin';
+import {ChatBody, Conversation, Message, MessageType} from '@/types/chat';
+import {Plugin} from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import Spinner from '../Spinner';
-import { ChatInput } from './ChatInput';
-import { ChatLoader } from './ChatLoader';
-import { ErrorMessageDiv } from './ErrorMessageDiv';
-import { ModelSelect } from './ModelSelect';
-import { SystemPrompt } from './SystemPrompt';
-import { TemperatureSlider } from './Temperature';
-import { MemoizedChatMessage } from './MemoizedChatMessage';
+import {ChatInput} from './ChatInput';
+import {ChatLoader} from './ChatLoader';
+import {ErrorMessageDiv} from './ErrorMessageDiv';
+import {ModelSelect} from './ModelSelect';
+import {TemperatureSlider} from './Temperature';
+import {MemoizedChatMessage} from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 
 interface Props {
@@ -164,7 +151,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     content = answer;
     const updatedMessages: Message[] = [
       ...updatedConversation.messages,
-      { role: 'assistant', content: content },
+      { role: 'assistant', content: content, messageType: MessageType.TEXT },
     ];
     updatedConversation = {
       ...updatedConversation,
@@ -232,7 +219,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         isFirst = false;
         const updatedMessages: Message[] = [
           ...updatedConversationCopy.messages,
-          { role: 'assistant', content: chunkValue },
+          { role: 'assistant', content: chunkValue, messageType: MessageType.TEXT },
         ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
