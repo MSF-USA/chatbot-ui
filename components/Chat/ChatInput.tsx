@@ -12,9 +12,10 @@ import HomeContext from '@/pages/api/home/home.context';
 import {PluginSelect} from './PluginSelect';
 import {PromptList} from './PromptList';
 import {VariableModal} from './VariableModal';
-import ImageIcon from "@/components/Icons/image";
-import FileIcon from "@/components/Icons/file";
 import MicIcon from "@/components/Icons/mic";
+import ChatInputImage from "@/components/Chat/ChatInputImage";
+import ChatInputFile from "@/components/Chat/ChatInputFile";
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -268,14 +269,10 @@ export const ChatInput = ({
                 </button>
             )}
 
-        <button>
-          <ImageIcon className="h-5 w-5"/>
-          <span className="sr-only">Add image</span>
-        </button>
-        <button>
-          <FileIcon className="h-5 w-5"/>
-          <span className="sr-only">Add document</span>
-        </button>
+        <ChatInputImage />
+        <ChatInputFile
+            onFileUpload={onFileUpload}
+          />
         <button>
           <MicIcon className="h-5 w-5"/>
           <span className="sr-only">Voice input</span>
