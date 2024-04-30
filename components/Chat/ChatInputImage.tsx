@@ -9,7 +9,19 @@ const onImageUpload = (event: React.ChangeEvent<any>) => {
     const formData = new FormData();
     formData.append("file", file);
 
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+        const base64String = reader.result as string;
+        fetch('/api/image', {
+            method: 'POST',
+            body: base64String,
+        })
+
+    };
+
     console.log(file)
+
 }
 
 const onImageUploadButtonClick = (event: React.ChangeEvent<any>, fileInputRef: MutableRefObject<any>) => {
