@@ -13,7 +13,7 @@ const onImageUpload = (event: React.ChangeEvent<any>) => {
     reader.readAsDataURL(file);
     reader.onloadend = () => {
         const base64String = reader.result as string;
-        fetch('/api/image', {
+        fetch(`/api/image?filename=${encodeURI(file.name)}`, {
             method: 'POST',
             body: base64String,
         })
