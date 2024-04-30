@@ -34,9 +34,14 @@ export class AzureBlobStorage implements BlobStorage {
 
     async upload(blobName: string, content: string): Promise<string> {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         await blockBlobClient.upload(content, content.length);
         return blockBlobClient.url;
+    }
+
+    async createContainer(containerName: string): Promise<void> {
+        await this.blobServiceClient.createContainer(containerName)
     }
 
     async blobToString(blob: Blob): Promise<string> {
