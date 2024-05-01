@@ -1,5 +1,5 @@
 import {NextApiRequest, NextApiResponse} from 'next'
-import {AzureBlobStorage} from "@/utils/server/blob";
+import {AzureBlobStorage, BlobStorage} from "@/utils/server/blob";
 import {getEnvVariable} from "@/utils/app/env";
 import Hasher from "@/utils/app/hash";
 
@@ -12,7 +12,7 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // TODO: Implement the uploader function that will handle the upload to your blob storage.
         const uploadImageToBlobStorage = async (data: any) => {
-            let blobStorageClient: AzureBlobStorage = new AzureBlobStorage(
+            let blobStorageClient: BlobStorage = new AzureBlobStorage(
                 getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
                 getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
                 getEnvVariable('AZURE_BLOB_STORAGE_IMAGE_CONTAINER')

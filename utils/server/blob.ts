@@ -9,7 +9,7 @@ enum BlobStorageType {
     AZURE = 'azure',
 }
 
-interface BlobStorage {
+export interface BlobStorage {
     upload(blobName: string, content: string): Promise<string>;
     get(blobName: string, property: BlobProperty): Promise<string | Blob>;
 }
@@ -18,18 +18,18 @@ interface BlobStorage {
 export class AzureBlobStorage implements BlobStorage {
     private blobServiceClient: BlobServiceClient;
 
+
     constructor(
         storageAccountName: string,
         storageAccountAccessKey: string,
         private containerName: string
     ) {
         const sharedKeyCredential = new StorageSharedKeyCredential(storageAccountName, storageAccountAccessKey);
-        const blobServiceClient = new BlobServiceClient(
+        this.blobServiceClient = new BlobServiceClient(
             `https://${storageAccountName}.blob.core.windows.net`,
             sharedKeyCredential
         );
 
-        this.blobServiceClient = blobServiceClient;
     }
 
     async upload(blobName: string, content: string): Promise<string> {
