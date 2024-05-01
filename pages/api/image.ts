@@ -2,6 +2,8 @@ import {NextApiRequest, NextApiResponse} from 'next'
 import {AzureBlobStorage, BlobStorage} from "@/utils/server/blob";
 import {getEnvVariable} from "@/utils/app/env";
 import Hasher from "@/utils/app/hash";
+import {CustomJWT} from "@/types/jwt";
+import {getToken} from "next-auth/jwt";
 
 const page = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === 'POST') {
@@ -12,6 +14,10 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
 
         // TODO: Implement the uploader function that will handle the upload to your blob storage.
         const uploadImageToBlobStorage = async (data: any) => {
+            // @ts-ignore
+            const token: CustomJWT = await getToken({req});
+            const userId: string = token.userId ?? 'anonymous';
+
             let blobStorageClient: BlobStorage = new AzureBlobStorage(
                 getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
                 getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
@@ -21,7 +27,7 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
             const hashedFileContents = Hasher.sha256(data).slice(0, 200);
             const extension = filename.split('.').pop();
             return await blobStorageClient.upload(
-                `${hashedFileContents}.${extension}`,
+                `${userId}/uploads/images/${hashedFileContents}.${extension}`,
                 data
             )
         }
