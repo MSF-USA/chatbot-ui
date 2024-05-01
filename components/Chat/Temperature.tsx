@@ -43,7 +43,7 @@ export const TemperatureSlider: FC<Props> = ({
         {temperature.toFixed(1)}
       </span>
       <input
-        className="cursor-pointer"
+        className="cursor-pointer accent-[#D7211E]"
         type="range"
         min={0}
         max={1}

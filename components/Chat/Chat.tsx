@@ -34,6 +34,8 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
+import Image from 'next/image'
+import logo from '../../public/logo_light.png'
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -523,13 +525,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             {selectedConversation?.messages?.length === 0 ? (
               <>
                 <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
-                  <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
+                  <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                     {models.length === 0 ? (
                       <div>
                         <Spinner size="16px" className="mx-auto" />
                       </div>
                     ) : (
-                      'MSF AI Assistant'
+                      <div className='flex flex-row justify-center items-end'>
+                        <div className='flex-shrink-0 max-sm:hidden my-1'>
+                          <Image
+                            src={logo}
+                            alt="MSF Logo"
+                          />
+                        </div>
+                        <h1 className="text-4xl font-thin text-white px-5 mt-3">MSF AI Assistant</h1>
+                      </div>
                     )}
                   </div>
 
