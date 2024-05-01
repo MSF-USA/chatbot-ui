@@ -36,6 +36,9 @@ export const authOptions = {
             token.refreshToken = token?.refreshToken;
         }
 
+        if (user?.id)
+            token.userId = user.id
+
         return token;
     }
   }
