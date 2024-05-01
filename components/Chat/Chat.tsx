@@ -129,7 +129,16 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const setConversationTitle = (updatedConversation: Conversation, message: Message) : Conversation  => {
-    const {content} = message;
+    let content;
+    if (typeof message.content === "string")
+      content = message.content;
+    else if (message.content?.type === 'text')
+      content = message.content.text
+    else if (message.content?.type === 'image_url')
+      content = 'User uploaded image'
+    else
+      throw new Error(`Invalid message content type: ${message.content}`)
+
     const customName =
         content.length > 30 ? content.substring(0, 30) + '...' : content;
     updatedConversation = {
@@ -140,42 +149,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   }
 
-  const handleGoogleResponse = async (
-      response: Response, updatedConversation: Conversation,
-      selectedConversation: Conversation,
-      conversations: Conversation[] = []
-  ) => {
-    let content;
-
-    const {answer} = await response.json();
-    content = answer;
-    const updatedMessages: Message[] = [
-      ...updatedConversation.messages,
-      { role: 'assistant', content: content, messageType: MessageType.TEXT },
-    ];
-    updatedConversation = {
-      ...updatedConversation,
-      messages: updatedMessages,
-    };
-    homeDispatch({
-      field: 'selectedConversation',
-      value: updatedConversation,
-    });
-    saveConversation(updatedConversation);
-    const updatedConversations: Conversation[] = conversations.map(
-        (conversation) => {
-          if (conversation.id === selectedConversation.id) {
-            return updatedConversation;
-          }
-          return conversation;
-        },
-    );
-    if (updatedConversations.length === 0) {
-      updatedConversations.push(updatedConversation);
-    }
-
-    return updatedConversations
-  }
 
   const handleNormalChatBackendStreaming = async (
       data: any,
@@ -338,20 +311,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
           }
         } else {
-          if (updatedConversation.messages.length === 1) {
-            updatedConversation = setConversationTitle(updatedConversation, message);
-          }
-
-          const updatedConversations = await handleGoogleResponse(
-                response,
-                updatedConversation,
-                selectedConversation,
-                conversations
-          );
-          homeDispatch({ field: 'conversations', value: updatedConversations });
-          saveConversations(updatedConversations);
-          homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false });
+          throw new Error("Plugins not currently supported.")
+          // if (updatedConversation.messages.length === 1) {
+          //   updatedConversation = setConversationTitle(updatedConversation, message);
+          // }
+          //
+          // const updatedConversations = await handleGoogleResponse(
+          //       response,
+          //       updatedConversation,
+          //       selectedConversation,
+          //       conversations
+          // );
+          // homeDispatch({ field: 'conversations', value: updatedConversations });
+          // saveConversations(updatedConversations);
+          // homeDispatch({ field: 'loading', value: false });
+          // homeDispatch({ field: 'messageIsStreaming', value: false });
         }
       }
     },
