@@ -47,7 +47,7 @@ export const ChatbarSettings = () => {
       <Import onImport={handleImportConversations} />
 
       <SidebarButton
-        text={t('Backup Chat Data')}
+        text={t('Export data')}
         icon={<IconFileExport size={18} />}
         onClick={() => handleExportData()}
       />
