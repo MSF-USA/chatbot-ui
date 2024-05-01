@@ -12,7 +12,7 @@ import { useTranslation } from 'next-i18next';
 
 import { updateConversation } from '@/utils/app/conversation';
 
-import { Message } from '@/types/chat';
+import {getChatMessageContent, Message} from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -104,7 +104,8 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
   const copyOnClick = () => {
     if (!navigator.clipboard) return;
 
-    navigator.clipboard.writeText(message.content).then(() => {
+    const content = getChatMessageContent(message);
+    navigator.clipboard.writeText(content).then(() => {
       setMessageCopied(true);
       setTimeout(() => {
         setMessageCopied(false);
@@ -147,29 +148,30 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
             <div className="flex w-full">
               {isEditing ? (
                 <div className="flex w-full flex-col">
-                  <textarea
-                    ref={textareaRef}
-                    className="w-full resize-none whitespace-pre-wrap border-none dark:bg-[#343541]"
-                    value={messageContent}
-                    onChange={handleInputChange}
-                    onKeyDown={handlePressEnter}
-                    onCompositionStart={() => setIsTyping(true)}
-                    onCompositionEnd={() => setIsTyping(false)}
-                    style={{
-                      fontFamily: 'inherit',
-                      fontSize: 'inherit',
-                      lineHeight: 'inherit',
-                      padding: '0',
-                      margin: '0',
-                      overflow: 'hidden',
-                    }}
-                  />
+                  {(typeof messageContent === "string" || messageContent?.type !== 'image_url') ?? <textarea
+                      ref={textareaRef}
+                      className="w-full resize-none whitespace-pre-wrap border-none dark:bg-[#343541]"
+                      value={getChatMessageContent(message)}
+                      onChange={handleInputChange}
+                      onKeyDown={handlePressEnter}
+                      onCompositionStart={() => setIsTyping(true)}
+                      onCompositionEnd={() => setIsTyping(false)}
+                      style={{
+                        fontFamily: 'inherit',
+                        fontSize: 'inherit',
+                        lineHeight: 'inherit',
+                        padding: '0',
+                        margin: '0',
+                        overflow: 'hidden',
+                      }}
+                  />}
+                  {}
 
                   <div className="mt-10 flex justify-center space-x-4">
                     <button
                       className="h-[40px] rounded-md bg-blue-500 px-4 py-1 text-sm font-medium text-white enabled:hover:bg-blue-600 disabled:opacity-50"
                       onClick={handleEditMessage}
-                      disabled={messageContent.trim().length <= 0}
+                      disabled={getChatMessageContent(message).trim().length <= 0}
                     >
                       {t('Save & Submit')}
                     </button>
@@ -186,7 +188,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                 </div>
               ) : (
                 <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
-                  {message.content}
+                  {getChatMessageContent(message)}
                 </div>
               )}
 
