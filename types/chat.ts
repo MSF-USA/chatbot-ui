@@ -17,6 +17,17 @@ export interface TextMessageContent {
   text: string;
 }
 
+export function getChatMessageContent(message: Message): string {
+  if (typeof message.content === "string")
+    return message.content
+  else if (message.content?.type === 'text')
+    return message.content.text
+  else if (message.content?.type === 'image_url')
+    return message.content?.image_url
+  else
+    throw new Error(`Invalid message type or structure: ${message}`)
+}
+
 export interface Message {
   role: Role;
   content: string | ImageMessageContent | TextMessageContent;
