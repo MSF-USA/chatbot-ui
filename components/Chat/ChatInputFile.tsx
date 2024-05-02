@@ -1,0 +1,27 @@
+import FileIcon from "@/components/Icons/file";
+import React, {MutableRefObject, useRef} from "react";
+
+interface ChatInputFileProps {
+    onFileUpload: (event: React.ChangeEvent<any>) => void
+}
+
+const ChatInputFile = ({onFileUpload}: ChatInputFileProps) => {
+    const fileInputRef: MutableRefObject<any> = useRef(null)
+    return <>
+        <input
+            type="file"
+            ref={fileInputRef}
+            style={{display: "none"}}
+            onChange={onFileUpload}
+        />
+        <button onClick={(event) => {
+            event.preventDefault();
+            fileInputRef.current?.click();
+        }}>
+            <FileIcon className="h-5 w-5"/>
+            <span className="sr-only">Add document</span>
+        </button>
+    </>
+}
+
+export default ChatInputFile;

@@ -19,6 +19,7 @@ import {makeAPIMRequest} from "@/utils/server/apim";
 import {refreshAccessToken} from "@/utils/server/azure";
 import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
+import {getMessagesToSend} from "@/utils/app/chat";
 
 export const config = {
   runtime: 'edge',
@@ -48,19 +49,10 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     const prompt_tokens = encoding.encode(promptToSend);
 
-    let tokenCount = prompt_tokens.length;
-    let messagesToSend: Message[] = [];
+    const messagesToSend: Message[] = getMessagesToSend(
+        messages, encoding, prompt_tokens.length, model.tokenLimit
+    );
 
-    for (let i = messages.length - 1; i >= 0; i--) {
-      const message = messages[i];
-      const tokens = encoding.encode(message.content);
-
-      if (tokenCount + tokens.length + 1000 > model.tokenLimit) {
-        break;
-      }
-      tokenCount += tokens.length;
-      messagesToSend = [message, ...messagesToSend];
-    }
 
     encoding.free();
     if (OPENAI_API_TYPE === 'azure') {
