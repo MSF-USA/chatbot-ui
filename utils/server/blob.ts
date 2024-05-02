@@ -7,6 +7,7 @@ enum BlobProperty {
 
 enum BlobStorageType {
     AZURE = 'azure',
+    AWS = 'aws'
 }
 
 interface BlobStorage {
@@ -84,6 +85,8 @@ export default class BlobStorageFactory {
         switch (type) {
             case BlobStorageType.AZURE:
                 return new AzureBlobStorage(storageAccountName, storageAccountAccessKey, containerName);
+            case BlobStorageType.AWS:
+                throw new Error("AWS blob storage support not implemented.")
             default:
                 throw new Error(`Invalid blob storage type provided: ${type}`)
         }
