@@ -21,6 +21,10 @@ export const authOptions = {
   pages: {
     signIn: '/auth/signin',
   },
+  session: {
+    strategy: "jwt",
+    maxAge: 15,
+  },
   callbacks: {
       // @ts-ignore
       async jwt({token, user, account, profile, isNewUser}) {

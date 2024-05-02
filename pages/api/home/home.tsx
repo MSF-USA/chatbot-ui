@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 
 import { GetServerSideProps } from 'next';
+import { useSession } from "next-auth/react"
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
@@ -54,6 +56,8 @@ const Home = ({
   serverSidePluginKeysSet,
   defaultModelId,
 }: Props) => {
+  const { data: session, status } = useSession()
+  const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
   const { getModelsError } = useErrorService();
@@ -93,6 +97,12 @@ const Home = ({
     },
     { enabled: true, refetchOnMount: false },
   );
+
+  useEffect(() => {
+    if (status !== "authenticated") {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
