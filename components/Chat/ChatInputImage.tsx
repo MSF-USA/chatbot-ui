@@ -2,7 +2,7 @@ import ImageIcon from "@/components/Icons/image";
 import React, {MutableRefObject, useRef} from "react";
 
 
-const onImageUpload = (event: React.ChangeEvent<any>) => {
+const onImageUpload = (event: React.ChangeEvent<any>, setContent: any) => {
     event.preventDefault();
     const file = event.target.files[0];
 
@@ -16,6 +16,14 @@ const onImageUpload = (event: React.ChangeEvent<any>) => {
         fetch(`/api/image?filename=${encodeURI(file.name)}`, {
             method: 'POST',
             body: base64String,
+        }).then(page => {
+            page.json().then(data => {
+                setContent({
+                    type: 'image_url',
+                    image_url: data.uri
+                })
+
+            })
         })
 
     };
@@ -29,7 +37,7 @@ const onImageUploadButtonClick = (event: React.ChangeEvent<any>, fileInputRef: M
     fileInputRef.current.click();
 }
 
-const ChatInputImage = ({}: any) => {
+const ChatInputImage = ({setSubmitType, setContent}: any) => {
     const imageInputRef: MutableRefObject<any> = useRef(null);
 
 
@@ -38,10 +46,13 @@ const ChatInputImage = ({}: any) => {
             type="file"
             ref={imageInputRef}
             style={{display: "none"}}
-            onChange={onImageUpload}
+            onChange={(event) => onImageUpload(event, setContent)}
             accept={"image/*"}
         />
-        <button onClick={(e) => onImageUploadButtonClick(e, imageInputRef)}>
+        <button onClick={(e) => {
+            setSubmitType('image');
+            onImageUploadButtonClick(e, imageInputRef)
+        }}>
             <ImageIcon className="h-5 w-5"/>
             <span className="sr-only">Add image</span>
         </button>
