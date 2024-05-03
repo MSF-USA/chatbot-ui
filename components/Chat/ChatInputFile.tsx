@@ -3,16 +3,22 @@ import React, {MutableRefObject, useRef} from "react";
 
 interface ChatInputFileProps {
     onFileUpload: (event: React.ChangeEvent<any>) => void
+    setSubmitType: (type: string) => void,
+    setContent: (content: any) => void,
 }
 
-const ChatInputFile = ({onFileUpload}: ChatInputFileProps) => {
+const ChatInputFile = ({onFileUpload, setSubmitType}: ChatInputFileProps) => {
     const fileInputRef: MutableRefObject<any> = useRef(null)
     return <>
         <input
             type="file"
             ref={fileInputRef}
             style={{display: "none"}}
-            onChange={onFileUpload}
+            onChange={(event) => {
+                event.preventDefault()
+                setSubmitType("file");
+                onFileUpload(event)
+            }}
         />
         <button onClick={(event) => {
             event.preventDefault();
