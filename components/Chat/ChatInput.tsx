@@ -1,4 +1,4 @@
-import {IconArrowDown, IconBolt, IconBrandGoogle, IconPlayerStop, IconRepeat, IconSend,} from '@tabler/icons-react';
+import {IconArrowDown, IconPlayerStop, IconRepeat, IconSend,} from '@tabler/icons-react';
 import {KeyboardEvent, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 
 import {useTranslation} from 'next-i18next';
@@ -8,8 +8,6 @@ import {Plugin} from '@/types/plugin';
 import {Prompt} from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
-
-import {PluginSelect} from './PluginSelect';
 import {PromptList} from './PromptList';
 import {VariableModal} from './VariableModal';
 import MicIcon from "@/components/Icons/mic";
@@ -51,6 +49,7 @@ export const ChatInput = ({
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [showPluginSelect, setShowPluginSelect] = useState(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
+  const [submitType, setSubmitType] = useState<string>('text');
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
@@ -86,13 +85,17 @@ export const ChatInput = ({
       return;
     }
 
-    onSend({ role: 'user', content, messageType: MessageType.TEXT }, plugin);
+    onSend({
+      role: 'user', content, messageType: submitType === 'image' ? MessageType.IMAGE : MessageType.TEXT
+    }, plugin);
     setContent('');
     setPlugin(null);
 
     if (window.innerWidth < 640 && textareaRef && textareaRef.current) {
       textareaRef.current.blur();
     }
+
+    setSubmitType('text')
   };
 
   const handleStopConversation = () => {
@@ -269,9 +272,14 @@ export const ChatInput = ({
                 </button>
             )}
 
-        <ChatInputImage />
+        <ChatInputImage
+            setSubmitType={setSubmitType}
+            setContent={setContent}
+        />
         <ChatInputFile
             onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setContent={setContent}
           />
         <button>
           <MicIcon className="h-5 w-5"/>
@@ -329,7 +337,8 @@ export const ChatInput = ({
               placeholder={
                   t('Type a message or type "/" to select a prompt...') || ''
               }
-              value={content}
+              disabled={submitType !== 'text'}
+              value={submitType === 'text' ? content : 'UPLOAD PENDING...'}
               rows={1}
               onCompositionStart={() => setIsTyping(true)}
               onCompositionEnd={() => setIsTyping(false)}
