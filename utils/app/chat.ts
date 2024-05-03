@@ -7,8 +7,6 @@ export const getMessagesToSend = (
 ): Message[] => {
     const { messagesToSend } = messages.reduceRight(
         (acc, message) => {
-            if (message.messageType === MessageType.IMAGE)
-                console.log(message)
             delete message.messageType;
 
             let tokens: Uint32Array;
