@@ -12,7 +12,20 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
         // get filename from params
         const filename = req.query.filename as string;
 
-        // TODO: Implement the uploader function that will handle the upload to your blob storage.
+        const getContentType = (extension: string): string => {
+            switch (extension) {
+                case 'jpg':
+                case 'jpeg':
+                    return 'image/jpeg';
+                case 'png':
+                    return 'image/png';
+                case 'gif':
+                    return 'image/gif';
+                default:
+                    return 'application/octet-stream';
+            }
+        }
+
         const uploadImageToBlobStorage = async (data: any) => {
             // @ts-ignore
             const token: CustomJWT = await getToken({req});
@@ -25,10 +38,22 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
             );
 
             const hashedFileContents = Hasher.sha256(data).slice(0, 200);
-            const extension = filename.split('.').pop();
+            const extension: string | undefined = filename.split('.').pop();
+
+            let contentType;
+            if (extension)
+                contentType = getContentType(extension);
+            else
+                contentType = 'application/octet-stream';
+
             return await blobStorageClient.upload(
                 `${userId}/uploads/images/${hashedFileContents}.${extension}`,
-                data
+                data,
+                {
+                    blobHTTPHeaders: {
+                        blobContentType: contentType
+                    }
+                }
             )
         }
 
