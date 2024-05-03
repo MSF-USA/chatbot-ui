@@ -1,4 +1,4 @@
-import {BlobServiceClient, StorageSharedKeyCredential} from "@azure/storage-blob";
+import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
 
 enum BlobProperty {
     URL = 'url',
@@ -11,7 +11,7 @@ enum BlobStorageType {
 }
 
 export interface BlobStorage {
-    upload(blobName: string, content: string): Promise<string>;
+    upload(blobName: string, content: string, options?: BlockBlobUploadOptions | undefined): Promise<string>;
     get(blobName: string, property: BlobProperty): Promise<string | Blob>;
 }
 
@@ -33,7 +33,7 @@ export class AzureBlobStorage implements BlobStorage {
 
     }
 
-    async upload(blobName: string, content: string): Promise<string> {
+    async upload(blobName: string, content: string,  options?: BlockBlobUploadOptions | undefined): Promise<string> {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
 
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
