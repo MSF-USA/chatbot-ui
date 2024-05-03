@@ -148,7 +148,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
             <div className="flex w-full">
               {isEditing ? (
                 <div className="flex w-full flex-col">
-                  {(typeof messageContent === "string" || messageContent?.type !== 'image_url') ?? <textarea
+                  {(typeof messageContent === "string" && message.messageType !== 'image') ?? <textarea
                       ref={textareaRef}
                       className="w-full resize-none whitespace-pre-wrap border-none dark:bg-[#343541]"
                       value={getChatMessageContent(message)}
@@ -165,7 +165,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                         overflow: 'hidden',
                       }}
                   />}
-                  {}
+                  {message.messageType === 'image' ?? messageContent ?? <img src={messageContent} /> }
 
                   <div className="mt-10 flex justify-center space-x-4">
                     <button
@@ -188,7 +188,10 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
                 </div>
               ) : (
                 <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
-                  {getChatMessageContent(message)}
+                  <>
+                    {typeof messageContent === 'string' && messageContent}
+                    {message.messageType === "image" && <><img src={getChatMessageContent(message)} /></>}
+                  </>
                 </div>
               )}
 
