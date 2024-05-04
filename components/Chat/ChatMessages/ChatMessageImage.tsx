@@ -1,21 +1,26 @@
 import {FC, useEffect, useState} from "react";
 import {IconRobot, IconUser} from "@tabler/icons-react";
+import {ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
+import {getBase64FromImageURL} from "@/utils/app/image";
 
-const ChatMessageImage: FC<any> = ({message}) => {
-    const {role, content: {image_url}} = message;
+interface ChatMessageImageProps {
+    message: Message
+}
+
+const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
+    const {role, content} = message;
+
+    const image_url = (
+        content as Array<TextMessageContent | ImageMessageContent>
+        // @ts-ignore
+    ).find(contentSection => contentSection.type === 'image_url')?.image_url ?? {url: ''}
 
     const [imageBase64, setImageBase64] = useState("");
 
     useEffect(() => {
         const fetchImage = async () => {
             try {
-                const response = await fetch(image_url);
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const arrayBuffer = await response.arrayBuffer();
-                // @ts-ignore
-                const base64String = String.fromCharCode(...new Uint8Array(arrayBuffer));
+                const base64String: string = await getBase64FromImageURL(image_url.url)
                 setImageBase64(base64String)
 
             } catch (error) {
@@ -26,8 +31,6 @@ const ChatMessageImage: FC<any> = ({message}) => {
 
         fetchImage();
     }, [image_url]);
-
-    const extension = image_url.split(".").pop();
 
     return <div
         className={`group md:px-4 ${
