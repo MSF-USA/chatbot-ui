@@ -1,8 +1,34 @@
-import {FC} from "react";
+import {FC, useEffect, useState} from "react";
 import {IconRobot, IconUser} from "@tabler/icons-react";
 
 const ChatMessageImage: FC<any> = ({message}) => {
     const {role, content: {image_url}} = message;
+
+    const [imageBase64, setImageBase64] = useState("");
+
+    useEffect(() => {
+        const fetchImage = async () => {
+            try {
+                const response = await fetch(image_url);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const arrayBuffer = await response.arrayBuffer();
+                // @ts-ignore
+                const base64String = String.fromCharCode(...new Uint8Array(arrayBuffer));
+                setImageBase64(base64String)
+
+            } catch (error) {
+                console.error('Error fetching the image:', error);
+                setImageBase64(''); // Setting a fallback or error state
+            }
+        };
+
+        fetchImage();
+    }, [image_url]);
+
+    const extension = image_url.split(".").pop();
+
     return <div
         className={`group md:px-4 ${
             role === 'assistant'
@@ -20,7 +46,7 @@ const ChatMessageImage: FC<any> = ({message}) => {
                     <IconUser size={30}/>
                 )}
             </div>
-            <img src={image_url} />
+            <img src={imageBase64}/>
         </div>
     </div>
 }
