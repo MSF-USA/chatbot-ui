@@ -58,6 +58,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
+  const [filePreviews, setFilePreviews] = useState<string[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -589,6 +590,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             )}
           </div>
 
+
+
           <ChatInput
             stopConversationRef={stopConversationRef}
             textareaRef={textareaRef}
@@ -603,6 +606,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               }
             }}
             showScrollDownButton={showScrollDownButton}
+            setFilePreviews={setFilePreviews}
+            filePreviews={filePreviews}
           />
         </>
       )}
