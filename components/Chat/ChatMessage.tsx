@@ -146,6 +146,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
         messageIndex={messageIndex}
         selectedConversation={selectedConversation}
         messageCopied={messagedCopied}
+        onEdit={onEdit}
     />
   } else if (message.messageType === MessageType.IMAGE) {
     return <ChatMessageImage
