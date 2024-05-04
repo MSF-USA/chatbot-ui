@@ -9,7 +9,9 @@ export enum MessageType {
 
 export interface ImageMessageContent {
   type: 'image_url';
-  image_url: string;
+  image_url: {
+    url: string;
+  };
 }
 
 export interface TextMessageContent {
@@ -20,17 +22,18 @@ export interface TextMessageContent {
 export function getChatMessageContent(message: Message): string {
   if (typeof message.content === "string")
     return message.content
-  else if (message.content?.type === 'text')
+  else if (Array.isArray(message.content)) {
+    const imageContent = message.content.find(contentItem => contentItem.type === 'image_url') as ImageMessageContent;
+    return imageContent.image_url.url
+  } else if (message.content?.type === 'text')
     return message.content.text
-  else if (message.content?.type === 'image_url')
-    return message.content?.image_url
   else
     throw new Error(`Invalid message type or structure: ${message}`)
 }
 
 export interface Message {
   role: Role;
-  content: string | ImageMessageContent | TextMessageContent;
+  content: string | Array<TextMessageContent | ImageMessageContent> | TextMessageContent;
   messageType: MessageType | undefined;
 }
 
