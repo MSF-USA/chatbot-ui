@@ -1,23 +1,38 @@
-import {Message, MessageType, TextMessageContent} from "@/types/chat";
+import {Message} from "@/types/chat";
 import {Tiktoken} from "@dqbd/tiktoken/lite/init";
+import {getBase64FromImageURL} from "@/utils/app/image";
 
-export const getMessagesToSend = (
+export const getMessagesToSend = async (
     messages: Message[], encoding: Tiktoken, promptLength: number,
     tokenLimit: number,
-): Message[] => {
-    const { messagesToSend } = messages.reduceRight(
-        (acc, message) => {
+): Promise<Message[]> => {
+    const { messagesToSend } = await messages.reduceRight(
+        async (accPromise, message) => {
+            const acc = await accPromise;
             delete message.messageType;
 
             let tokens: Uint32Array;
-            if (typeof message.content === "string")
+            if (typeof message.content === "string") {
                 tokens = encoding.encode(message.content);
-            else if (message.content?.type === 'text')
+            } else if (Array.isArray(message.content)) {
+                tokens = encoding.encode('');
+                message.content = await Promise.all(
+                    message.content.map(async (contentSection) => {
+                        if (contentSection.type === "text") {
+                            return contentSection;
+                        } else {
+                            const url = await getBase64FromImageURL(contentSection.image_url.url);
+                            return {
+                                ...contentSection, image_url: { url }
+                            };
+                        }
+                    })
+                );
+            } else if (message.content?.type === 'text') {
                 tokens = encoding.encode(message.content.text);
-            else if (message.content?.type === 'image_url')
-                tokens = encoding.encode('')
-            else
-                throw new Error(`Unsupported message type: ${message}`)
+            } else {
+                throw new Error(`Unsupported message type: ${JSON.stringify(message)}`);
+            }
 
             if (acc.tokenCount + tokens.length + 1000 > tokenLimit) {
                 return acc;
@@ -26,7 +41,7 @@ export const getMessagesToSend = (
             acc.messagesToSend = [message, ...acc.messagesToSend];
             return acc;
         },
-        { tokenCount: promptLength, messagesToSend: [] as Message[] }
+        Promise.resolve({ tokenCount: promptLength, messagesToSend: [] as Message[] })
     );
     return messagesToSend;
 }
