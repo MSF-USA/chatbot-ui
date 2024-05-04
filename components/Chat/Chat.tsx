@@ -134,10 +134,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let content;
     if (typeof message.content === "string")
       content = message.content;
+    else if (Array.isArray(message.content))
+      content = 'User uploaded image'
     else if (message.content?.type === 'text')
       content = message.content.text
-    else if (message.content?.type === 'image_url')
-      content = 'User uploaded image'
     else
       throw new Error(`Invalid message content type: ${message.content}`)
 
