@@ -1,4 +1,4 @@
-import {FC} from "react";
+import {FC, useState} from "react";
 import {IconCheck, IconCopy, IconEdit, IconRobot, IconTrash, IconUser} from "@tabler/icons-react";
 import {getChatMessageContent, MessageType} from "@/types/chat";
 import {MemoizedReactMarkdown} from "@/components/Markdown/MemoizedReactMarkdown";
@@ -103,12 +103,23 @@ const AssistantMessage: FC<any> = (
 
 const UserMessage: FC<any> = (
     {
-        message, messageContent, isEditing, textareaRef, handleInputChange, handlePressEnter, setIsTyping, handleEditMessage,
-        setMessageContent, setIsEditing, toggleEditing, handleDeleteMessage,
+        message, isEditing, textareaRef, handleInputChange, handlePressEnter, setIsTyping, selectedConversation,
+        setIsEditing, toggleEditing, handleDeleteMessage, onEdit
     }
 ) => {
     const { t } = useTranslation('chat');
     const {role, content, messageType} = message;
+
+    const [messageContent, setMessageContent] = useState(message.content);
+
+    const handleEditMessage = () => {
+        if (message.content != messageContent) {
+            if (selectedConversation && onEdit) {
+                onEdit({...message, content: messageContent});
+            }
+        }
+        setIsEditing(false);
+    };
 
     return (
         <div
@@ -150,7 +161,7 @@ const UserMessage: FC<any> = (
                                 <button
                                     className="h-[40px] rounded-md border border-neutral-300 px-4 py-1 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
                                     onClick={() => {
-                                        setMessageContent(message.content);
+                                        setMessageContent(messageContent);
                                         setIsEditing(false);
                                     }}
                                 >
@@ -160,7 +171,7 @@ const UserMessage: FC<any> = (
                         </div>
                     ) : (
                         <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
-                            {content}
+                            {messageContent}
                         </div>
                     )}
 
@@ -192,7 +203,7 @@ const ChatMessageText: FC<any> = (
     {
         message, copyOnClick, isEditing, setIsEditing, setIsTyping, handleInputChange, textareaRef, handlePressEnter,
         handleEditMessage, setMessageContent, toggleEditing, handleDeleteMessage, messageIsStreaming, messageIndex,
-        selectedConversation, messageCopied,
+        selectedConversation, messageCopied, onEdit
     }
 ) => {
     const { role, content, messageType } = message;
@@ -217,7 +228,6 @@ const ChatMessageText: FC<any> = (
                 messageCopied={messageCopied}
             /> : <UserMessage
                 message={message}
-                content={content}
                 isEditing={isEditing}
                 textareaRef={textareaRef}
                 handleInputChange={handleInputChange}
@@ -228,6 +238,8 @@ const ChatMessageText: FC<any> = (
                 setIsEditing={setIsEditing}
                 toggleEditing={toggleEditing}
                 handleDeleteMessage={handleDeleteMessage}
+                onEdit={onEdit}
+                selectedConversation={selectedConversation}
                 />}
         </div>
     );
