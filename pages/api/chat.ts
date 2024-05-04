@@ -49,7 +49,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     const prompt_tokens = encoding.encode(promptToSend);
 
-    const messagesToSend: Message[] = getMessagesToSend(
+    const messagesToSend: Message[] = await getMessagesToSend(
         messages, encoding, prompt_tokens.length, model.tokenLimit
     );
 
