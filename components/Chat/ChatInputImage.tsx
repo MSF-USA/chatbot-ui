@@ -18,10 +18,16 @@ const onImageUpload = (event: React.ChangeEvent<any>, setContent: any) => {
             body: base64String,
         }).then(page => {
             page.json().then(data => {
-                setContent({
-                    type: 'image_url',
-                    image_url: data.uri
-                })
+                setContent([
+                    {
+                        type: 'text',
+                        text: 'Describe this image:'
+                    },
+                    {
+                        type: 'image_url',
+                        image_url: {url: data.uri}
+                    },
+                ])
 
             })
         })
