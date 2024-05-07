@@ -13,7 +13,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
     const image_url = (
         content as Array<TextMessageContent | ImageMessageContent>
         // @ts-ignore
-    ).find(contentSection => contentSection.type === 'image_url')?.image_url ?? {url: ''}
+    )?.find?.(contentSection => contentSection.type === 'image_url')?.image_url ?? {url: ''}
 
     const [imageBase64, setImageBase64] = useState("");
 
