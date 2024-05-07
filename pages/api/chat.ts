@@ -20,6 +20,7 @@ import {refreshAccessToken} from "@/utils/server/azure";
 import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
 import {getMessagesToSend} from "@/utils/app/chat";
+import {ApimChatResponseDataStructure} from "@/types/apim";
 
 export const config = {
   runtime: 'edge',
@@ -80,7 +81,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
           }
       )
     }
-    return new Response(resp.choices[0].message.content, {status: 200});
+    return new Response((resp as  ApimChatResponseDataStructure).choices[0].message.content, {status: 200});
   } catch (error) {
     console.error(error);
     if (error instanceof OpenAIError) {
