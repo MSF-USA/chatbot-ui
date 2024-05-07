@@ -13,7 +13,7 @@ import {
 
 import {useTranslation} from 'next-i18next';
 
-import {Message, MessageType} from '@/types/chat';
+import {getChatMessageContent, ImageMessageContent, Message, MessageType, TextMessageContent} from '@/types/chat';
 import {Plugin} from '@/types/plugin';
 import {Prompt} from '@/types/prompt';
 
@@ -24,7 +24,6 @@ import MicIcon from "@/components/Icons/mic";
 import ChatInputImage from "@/components/Chat/ChatInputImage";
 import ChatInputFile from "@/components/Chat/ChatInputFile";
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
-import {XIcon} from "@/components/Icons/cancel";
 import ChatFileUploadPreviews from "@/components/Chat/ChatFileUploadPreviews";
 
 interface Props {
@@ -56,7 +55,7 @@ export const ChatInput = ({
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
-  const [content, setContent] = useState<string>();
+  const [content, setContent] = useState<string | Array<TextMessageContent | ImageMessageContent>>();
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState(false);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
@@ -133,11 +132,22 @@ export const ChatInput = ({
     const selectedPrompt = filteredPrompts[activePromptIndex];
     if (selectedPrompt) {
       setContent((prevContent) => {
-        const newContent = prevContent?.replace(
-          /\/\w*$/,
-          selectedPrompt.content,
-        );
-        return newContent;
+        if (Array.isArray(prevContent)) {
+          return prevContent.map(content => {
+            return content.type === "text"
+                ? {
+                    ...content,
+                    text: content?.text?.replace(/\/\w*$/, selectedPrompt.content)
+                  }
+                : content
+          })
+        } else {
+          const newContent = prevContent?.replace(
+              /\/\w*$/,
+              selectedPrompt.content,
+          );
+          return newContent;
+        }
       });
       handlePromptSelect(selectedPrompt);
     }
@@ -174,8 +184,10 @@ export const ChatInput = ({
       e.preventDefault();
       handleSend();
     } else if (e.key === '/' && e.metaKey) {
-      e.preventDefault();
-      setShowPluginSelect(!showPluginSelect);
+      if (submitType === "text") {
+        e.preventDefault();
+        setShowPluginSelect(!showPluginSelect);
+      }
     }
   };
 
@@ -211,6 +223,10 @@ export const ChatInput = ({
       setIsModalVisible(true);
     } else {
       setContent((prevContent) => {
+        // TODO: Support prompts for image upload text
+        if (Array.isArray(prevContent))
+          return prevContent
+
         const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
         return updatedContent;
       });
@@ -219,12 +235,14 @@ export const ChatInput = ({
   };
 
   const handleSubmit = (updatedVariables: string[]) => {
-    const newContent = content?.replace(/{{(.*?)}}/g, (match, variable) => {
-      const index = variables.indexOf(variable);
-      return updatedVariables[index];
-    });
+    if (typeof content === "string") {
+      const newContent = content?.replace(/{{(.*?)}}/g, (match, variable) => {
+        const index = variables.indexOf(variable);
+        return updatedVariables[index];
+      });
+      setContent(newContent);
+    }
 
-    setContent(newContent);
     setFilePreviews([])
 
     if (textareaRef?.current) {
@@ -294,22 +312,25 @@ export const ChatInput = ({
         <ChatInputImage
             setSubmitType={setSubmitType}
             setContent={setContent}
+            prompt={content}
+            setFilePreviews={setFilePreviews}
         />
-        <ChatInputFile
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setContent={setContent}
-          />
-        <button>
-          <MicIcon className="h-5 w-5"/>
-          <span className="sr-only">Voice input</span>
-        </button>
+        {/*<ChatInputFile*/}
+        {/*    onFileUpload={onFileUpload}*/}
+        {/*    setSubmitType={setSubmitType}*/}
+        {/*    setContent={setContent}*/}
+        {/*  />*/}
+        {/*<button>*/}
+        {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
+        {/*  <span className="sr-only">Voice input</span>*/}
+        {/*</button>*/}
 
         <div
             className="relative mx-2 flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
           <ChatFileUploadPreviews
               filePreviews={filePreviews}
               setFilePreviews={setFilePreviews}
+              setSubmitType={setSubmitType}
           />
 
           <textarea
@@ -329,7 +350,12 @@ export const ChatInput = ({
                   t('Type a message or type "/" to select a prompt...') ?? ''
               }
               disabled={submitType !== 'text'}
-              value={submitType === 'text' ? content : 'UPLOAD PENDING...'}
+              value={
+                typeof content === "string"
+                  ? content
+                  //@ts-ignore
+                  : content?.find(contentMessage => contentMessage.type === "text")?.text
+              }
               rows={1}
               onCompositionStart={() => setIsTyping(true)}
               onCompositionEnd={() => setIsTyping(false)}
