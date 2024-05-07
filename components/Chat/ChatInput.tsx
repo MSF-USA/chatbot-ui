@@ -86,7 +86,17 @@ export const ChatInput = ({
       return;
     }
 
-    setContent(value);
+    if (submitType === 'text')
+      setContent(value);
+    else
+      setContent(prevContent => {
+        if (Array.isArray(prevContent))
+          prevContent.push(
+              {type: "text", text: value}
+          )
+        else
+          return [{type: "text", text: value}]
+      })
     updatePromptListVisibility(value);
   };
 
@@ -349,7 +359,6 @@ export const ChatInput = ({
               placeholder={
                   t('Type a message or type "/" to select a prompt...') ?? ''
               }
-              disabled={submitType !== 'text'}
               value={
                 typeof content === "string"
                   ? content
