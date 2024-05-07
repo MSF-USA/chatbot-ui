@@ -1,3 +1,5 @@
+import {ApimChatResponseDataStructure} from "@/types/apim";
+
 export class APIMError extends Error {
     type: string;
     param: string;
@@ -12,9 +14,15 @@ export class APIMError extends Error {
     }
 }
 
+interface ErrorResponseStructure {
+    status: number;
+    headers: Headers;  // Assuming headers is of type Headers
+    body: any;  // type can be more specific if you know the structure
+}
+
 export const makeAPIMRequest = async (
     url: string, accessToken: string, method: string, body: any
-) => {
+): Promise<ApimChatResponseDataStructure | ErrorResponseStructure> => {
     const res = await fetch(url, {
         headers: {
             'Content-Type': 'application/json',
@@ -51,5 +59,5 @@ export const makeAPIMRequest = async (
     const json = await res.json();
 
     // const string = JSON.stringify(json.message);
-    return json
+    return (json as ApimChatResponseDataStructure)
 }
