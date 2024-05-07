@@ -55,8 +55,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
 
     encoding.free();
-    // @ts-ignore
-    const token: CustomJWT = await getToken({req});
+    const token = (await getToken({req}) as CustomJWT);
     let resp;
     try {
       resp = await makeAPIMRequest(
