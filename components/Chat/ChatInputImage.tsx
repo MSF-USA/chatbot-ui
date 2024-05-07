@@ -33,16 +33,19 @@ const onImageUpload = (
             body: base64String,
         }).then(page => {
             page.json().then(data => {
-                setContent([
+                const imageMessage: Array<ImageMessageContent | TextMessageContent> = [
                     {
                         type: 'text',
                         text: prompt,
                     },
                     {
                         type: 'image_url',
-                        image_url: {url: data.uri}
+                        image_url: {
+                            url: data.uri
+                        }
                     },
-                ])
+                ]
+                setContent(imageMessage)
                 setFilePreviews(prevFilePreviews => {
                     if (Array.isArray(prevFilePreviews)) {
                         prevFilePreviews.push(base64String)
