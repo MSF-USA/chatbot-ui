@@ -1,6 +1,6 @@
 interface DallEAPIClientConfig {
-    endpoint: string;
-    azureApiKey: string;
+    dalleHostName: string;
+    dalleApiKey: string;
 }
 
 interface DallEGenerationOptions {
@@ -28,9 +28,9 @@ export default class DallEAPIClient {
     private endpoint: string;
     private apiKey: string;
 
-    constructor({ endpoint, azureApiKey }: DallEAPIClientConfig) {
-        this.endpoint = endpoint;
-        this.apiKey = azureApiKey;
+    constructor({ dalleHostName, dalleApiKey }: DallEAPIClientConfig) {
+        this.endpoint = `https://${dalleHostName}.openai.azure.com/`;
+        this.apiKey = dalleApiKey;
     }
 
     private handleError = (error: any) => {
