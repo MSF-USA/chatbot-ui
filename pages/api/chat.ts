@@ -70,7 +70,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       )
     } catch (err) {
       // TODO: implement this in a way that isn't idiotic
-      refreshAccessToken(token)
+      await refreshAccessToken(token)
       resp = await makeAPIMRequest(
           `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
           token.accessToken,
