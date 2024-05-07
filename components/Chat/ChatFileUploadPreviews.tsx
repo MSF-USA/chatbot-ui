@@ -5,21 +5,29 @@ import Image from "next/image";
 interface ChatFileUploadPreviewsProps {
     filePreviews: string[],
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
+    setSubmitType: Dispatch<SetStateAction<string>>,
 }
 interface ChatFileUploadPreviewProps {
     filePreview: string,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
+    setSubmitType: Dispatch<SetStateAction<string>>,
 }
 
-const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({filePreview, setFilePreviews}) => {
+const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({filePreview, setFilePreviews, setSubmitType}) => {
     const removeFilePreview = (event: MouseEvent<HTMLButtonElement>, filePreview: string) => {
         event.preventDefault();
-        setFilePreviews(prevPreviews => prevPreviews.filter(prevPreview => prevPreview !== filePreview))
+        setFilePreviews(prevPreviews => {
+            const newPreviews = prevPreviews.filter(prevPreview => prevPreview !== filePreview)
+            if (newPreviews.length === 0)
+                setSubmitType("text")
+            return newPreviews
+        })
+
     }
 
     return (
         <>
-            <Image
+            <img
                 alt="Preview"
                 className="object-cover"
                 height="150"
@@ -35,16 +43,16 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({filePreview, set
                 className="absolute top-1 right-1 rounded-full"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => removeFilePreview(event, filePreview)}
             >
-                <XIcon className="w-4 h-4"/>
+                <XIcon className="bg-[#343541] rounded w-4 h-4"/>
                 <span className="sr-only">Remove</span>
             </button>
         </>
     )
 }
 
-const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({filePreviews, setFilePreviews}) => {
+const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({filePreviews, setFilePreviews, setSubmitType}) => {
     if (filePreviews.length === 0) {
-        return null
+        return null;
     }
 
     return (
@@ -61,6 +69,7 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({filePreviews, 
                         filePreview={filePreview}
                         key={`${filePreview}-${index}`}
                         setFilePreviews={setFilePreviews}
+                        setSubmitType={setSubmitType}
                     />
                 )}
             </div>
