@@ -5,7 +5,7 @@ import {
   DEFAULT_TEMPERATURE,
   OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION
 } from '@/utils/app/const';
-import { OpenAIError, OpenAIStream } from '@/utils/server';
+import { OpenAIError } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
 
@@ -55,39 +55,33 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
 
     encoding.free();
-    if (OPENAI_API_TYPE === 'azure') {
-      // @ts-ignore
-      const token: CustomJWT = await getToken({req});
-      let resp;
-      try {
-        resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token?.accessToken,
-            'POST',
-            {
-              "model": model.id,
-              "messages": messagesToSend,
-            }
-        )
-      } catch (err) {
-        // TODO: implement this in a way that isn't idiotic
-        refreshAccessToken(token)
-        resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token.accessToken,
-            'POST',
-            {
-              "model": model.id,
-              "messages": messagesToSend,
-            }
-        )
-      }
-      return new Response(resp.choices[0].message.content, {status: 200});
-    } else {
-      const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
-
-      return new Response(stream);
+    // @ts-ignore
+    const token: CustomJWT = await getToken({req});
+    let resp;
+    try {
+      resp = await makeAPIMRequest(
+          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+          token?.accessToken,
+          'POST',
+          {
+            "model": model.id,
+            "messages": messagesToSend,
+          }
+      )
+    } catch (err) {
+      // TODO: implement this in a way that isn't idiotic
+      refreshAccessToken(token)
+      resp = await makeAPIMRequest(
+          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+          token.accessToken,
+          'POST',
+          {
+            "model": model.id,
+            "messages": messagesToSend,
+          }
+      )
     }
+    return new Response(resp.choices[0].message.content, {status: 200});
   } catch (error) {
     console.error(error);
     if (error instanceof OpenAIError) {
