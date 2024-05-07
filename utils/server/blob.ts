@@ -37,7 +37,14 @@ export class AzureBlobStorage implements BlobStorage {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
 
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-        await blockBlobClient.upload(content, (content as string).length, options);
+
+        let safeContent: string;
+        if (Array.isArray(content))
+            safeContent = content[0]
+        else
+            safeContent = content
+        
+        await blockBlobClient.upload(safeContent, safeContent.length, options);
         return blockBlobClient.url;
     }
 
