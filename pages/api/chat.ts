@@ -18,6 +18,7 @@ import {getToken, JWT} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
+import { getServerSession } from "next-auth/next"
 
 export const config = {
   runtime: 'edge',

@@ -19,11 +19,12 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ ses
   const [interval, setInterval] = useState(0);
 
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={interval}>
     <div className={inter.className}>
       <Toaster />
       <QueryClientProvider client={queryClient}>
         <Component {...pageProps} />
+        <RefreshTokenHandler setInterval={setInterval} />
       </QueryClientProvider>
     </div>
     </SessionProvider>

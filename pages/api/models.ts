@@ -9,7 +9,6 @@ import {
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import {getToken} from "next-auth/jwt";
-import {refreshAccessToken} from "@/utils/server/azure";
 import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
 
@@ -70,11 +69,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
       delete headers['api-key'];
     }
 
-    try {
-      refreshAccessToken(token)
-    } catch (err) {
-      console.error(`Failed to refresh access token: ${err}`);
-    }
     const response = await fetch(url, {
       headers,
     });

@@ -59,7 +59,7 @@ export const authOptions = {
     // ...add more providers here
   ],
   session: {
-    maxAge: 15
+    maxAge: 60 * 60
   },
   pages: {
     signIn: '/auth/signin',
@@ -89,9 +89,11 @@ export const authOptions = {
       if (token) {
         session.user = token.user
         session.accessToken = token.accessToken;
-        session.accessTokenExpiry = token.accessTokenExpiry;
+        session.accessTokenExpires = token.accessTokenExpires;
         session.error = token.error;
       }
+
+      console.log(session)
 
       return session;
     }
