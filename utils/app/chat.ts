@@ -45,3 +45,14 @@ export const getMessagesToSend = async (
     );
     return messagesToSend;
 }
+/*
+* Checks whether a collection of messages is an image conversation by checking the type of the last message in the conversation.
+*/
+export const isImageConversation = (messages: Message[]): boolean => {
+    const lastMessage = messages[messages.length-1];
+    if(Array.isArray(lastMessage.content)) {
+        return lastMessage.content.some(contentItem => contentItem.type === 'image_url');
+    }
+
+    return false;
+}
