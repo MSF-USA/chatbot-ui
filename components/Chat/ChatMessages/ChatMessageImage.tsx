@@ -10,18 +10,35 @@ interface ChatMessageImageProps {
 const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
     const {role, content} = message;
 
-    const image_url = (
-        content as Array<TextMessageContent | ImageMessageContent>
-        // @ts-ignore
-    )?.find?.(contentSection => contentSection.type === 'image_url')?.image_url ?? {url: ''}
+    const [image, setImage] = useState<ImageMessageContent | null>(null)
+    const [text, setText] = useState<TextMessageContent | null>(null);
+
+
 
     const [imageBase64, setImageBase64] = useState("");
 
     useEffect(() => {
+        (
+            content as Array<TextMessageContent | ImageMessageContent>
+            // @ts-ignore
+        ).forEach(contentMessage => {
+            if (contentMessage.type === 'image_url') {
+                setImage(contentMessage);
+            } else if (contentMessage.type === 'text') {
+                setText(contentMessage);
+            } else {
+                throw new Error(`Unexpected message type for message: ${contentMessage}`)
+            }
+        })
+    }, []);
+
+    useEffect(() => {
         const fetchImage = async () => {
             try {
-                const base64String: string = await getBase64FromImageURL(image_url.url)
-                setImageBase64(base64String)
+                if (image) {
+                    const base64String: string = await getBase64FromImageURL(image?.image_url?.url)
+                    setImageBase64(base64String)
+                }
 
             } catch (error) {
                 console.error('Error fetching the image:', error);
@@ -30,7 +47,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
         };
 
         fetchImage();
-    }, [image_url]);
+    }, [image]);
 
     return <div
         className={`group md:px-4 ${
@@ -49,8 +66,18 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
                     <IconUser size={30}/>
                 )}
             </div>
-            <img src={imageBase64}/>
+            <img className={'block'} src={imageBase64}/>
         </div>
+        <div
+            className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
+
+        <div className="prose mt-[-2px] w-full dark:prose-invert">
+            <div className="flex flex-row">
+                <div>{text?.text}</div>
+            </div>
+        </div>
+        </div>
+
     </div>
 }
 
