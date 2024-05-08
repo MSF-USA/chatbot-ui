@@ -184,6 +184,11 @@ export const ChatInput = ({
       } else if (e.key === 'Enter') {
         e.preventDefault();
         handleInitModal();
+        if (submitType !== 'text') {
+          setSubmitType('text')
+        }
+        if (filePreviews.length > 0)
+          setFilePreviews([]);
       } else if (e.key === 'Escape') {
         e.preventDefault();
         setShowPromptList(false);
