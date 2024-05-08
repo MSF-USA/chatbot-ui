@@ -19,8 +19,9 @@ import {makeAPIMRequest} from "@/utils/server/apim";
 import {refreshAccessToken} from "@/utils/server/azure";
 import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
-import {getMessagesToSend} from "@/utils/app/chat";
+import {getMessagesToSend, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
+import AzureOpenAIClient from "@/utils/server/azure-openai";
 
 export const config = {
   runtime: 'edge',
@@ -59,15 +60,20 @@ const handler = async (req: NextRequest): Promise<Response> => {
     const token = (await getToken({req}) as CustomJWT);
     let resp;
     try {
-      resp = await makeAPIMRequest(
-          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-          token?.accessToken,
-          'POST',
-          {
-            "model": model.id,
-            "messages": messagesToSend,
-          }
-      )
+      if (isImageConversation(messages)) {
+        const openaiClient = new AzureOpenAIClient();
+        resp = await openaiClient.getVisionCompletion(messagesToSend);
+      } else {
+        resp = await makeAPIMRequest(
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+            token?.accessToken,
+            'POST',
+            {
+              "model": model.id,
+              "messages": messagesToSend,
+            }
+        )
+      }
     } catch (err) {
       // TODO: implement this in a way that isn't idiotic
       await refreshAccessToken(token)
