@@ -88,15 +88,15 @@ export const ChatInput = ({
 
     if (submitType === 'text')
       setContent(value);
-    else
-      setContent(prevContent => {
-        if (Array.isArray(prevContent))
-          prevContent.push(
-              {type: "text", text: value}
-          )
-        else
-          return [{type: "text", text: value}]
-      })
+    else {
+      const imageContent = Array.isArray(content)
+          ? content.find(contentMessage => contentMessage.type === 'image_url')
+          : null
+      if (imageContent)
+        setContent([imageContent, {type: "text", text: value}])
+      else
+        setContent([{type: "text", text: value}])
+    }
     updatePromptListVisibility(value);
   };
 
