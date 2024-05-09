@@ -1,9 +1,14 @@
 import NextAuth from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
-import {JWT} from "next-auth/jwt";
 import {CustomJWT} from "@/types/jwt";
+import {Account} from "@/types/account";
+import {CustomSession} from "@/types/session";
 
 export const refreshAccessToken = async (token: CustomJWT | null) => {
+  if (!token || !token.refreshToken) {
+    return;
+  }
+
   try {
     const url = `https://login.microsoftonline.com/${process.env.AZURE_AD_TENANT_ID}/oauth2/v2.0/token`;
 
@@ -28,7 +33,7 @@ export const refreshAccessToken = async (token: CustomJWT | null) => {
       ...token,
       accessToken: refreshedTokens.access_token,
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken, // Fall back to old refresh token
+      refreshToken: refreshedTokens.refresh_token ?? token?.refreshToken, // Fall back to old refresh token
     }
 
   } catch (error) {
@@ -58,46 +63,37 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
-  session: {
-    maxAge: 60 * 60
-  },
   pages: {
     signIn: '/auth/signin',
   },
   callbacks: {
-      // @ts-ignore
-      async jwt({token, account, user}) {
+      async jwt({token, account}: {token: CustomJWT, account: Account}) {
 
-        if (account && user) {
+        if (account) {
           // This will only be executed at login. Each next invocation will skip this part.
           return {
             accessToken: account.access_token,
-            accessTokenExpires: Date.now() + account.expires_in * 1000,
+            accessTokenExpires: account.expires_at * 1000,
             refreshToken: account.refresh_token,
           }
       }
-
-       // Return previous token if the access token has not expired yet
-       if (Date.now() < token.accessTokenExpires) {
+      // Return previous token if the access token has not expired yet
+      if (Date.now() < token.accessTokenExpires) {
         return token
       }
 
-        return refreshAccessToken(token);
+      return refreshAccessToken(token);
     },
-     // @ts-ignore
-    async session({session, token}) {
+    async session({session, token}: {session: CustomSession, token: CustomJWT}) {
       if (token) {
-        session.user = token.user
         session.accessToken = token.accessToken;
         session.accessTokenExpires = token.accessTokenExpires;
         session.error = token.error;
       }
 
-      console.log(session)
-
       return session;
     }
-   }
+  }
 };
 
 //@ts-ignore

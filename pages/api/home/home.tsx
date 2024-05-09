@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 
 import { GetServerSideProps } from 'next';
-import { useSession } from "next-auth/react"
+import { useSession, signIn } from "next-auth/react"
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
@@ -42,8 +42,7 @@ import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
-import {ErrorMessage} from "@/types/error";
-import {signOut} from "next-auth/react";
+
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
@@ -56,7 +55,7 @@ const Home = ({
   serverSidePluginKeysSet,
   defaultModelId,
 }: Props) => {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
@@ -99,10 +98,15 @@ const Home = ({
   );
 
   useEffect(() => {
-    if (status !== "authenticated") {
-      router.push("/auth/signin");
+    //@ts-ignore
+    if (session?.error === "RefreshAccessTokenError") {
+      try {
+        signIn(); // Force sign in to hopefully resolve error
+      } catch (error) {
+        router.push("/auth/signin");
+      }
     }
-  }, [status, router]);
+  }, [router, session]);
 
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });

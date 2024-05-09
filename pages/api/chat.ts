@@ -16,9 +16,8 @@ import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import {getToken, JWT} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
-import {NextRequest} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import {CustomJWT} from "@/types/jwt";
-import { getServerSession } from "next-auth/next"
 
 export const config = {
   runtime: 'edge',
@@ -26,6 +25,7 @@ export const config = {
 
 
 const handler = async (req: NextRequest): Promise<Response> => {
+
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
 
