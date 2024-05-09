@@ -140,7 +140,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     else if (message.content?.type === 'text')
       content = message.content.text
     else
-      throw new Error(`Invalid message content type: ${message.content}`)
+      throw new Error(`Invalid message content type: ${message.content?.toString() ?? message.content}`)
 
     const customName =
         content.length > 30 ? content.substring(0, 30) + '...' : content;
@@ -566,7 +566,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
                 {selectedConversation?.messages.map((message, index) => (
                   <MemoizedChatMessage
-                    key={index}
+                    key={`conversation-message-${index}`}
                     message={message}
                     messageIndex={index}
                     onEdit={(editedMessage) => {
