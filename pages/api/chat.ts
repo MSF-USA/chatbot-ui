@@ -14,9 +14,9 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import {getToken, JWT} from "next-auth/jwt";
+import {getToken} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
-import {NextRequest, NextResponse} from "next/server";
+import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
 
 export const config = {
