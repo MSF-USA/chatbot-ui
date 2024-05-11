@@ -56,19 +56,21 @@ export const ChatInput = ({
   } = useContext(HomeContext);
 
   const [content, setContent] = useState<string | Array<TextMessageContent | ImageMessageContent>>();
+  const [textFieldValue, setTextFieldValue] = useState<string>("");
+  const [imageFieldValue, setImageFieldValue] = useState<Array<TextMessageContent | ImageMessageContent>>()
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [showPromptList, setShowPromptList] = useState(false);
-  const [activePromptIndex, setActivePromptIndex] = useState(0);
-  const [promptInputValue, setPromptInputValue] = useState('');
+  const [showPromptList, setShowPromptList] = useState<boolean>(false);
+  const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
+  const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showPluginSelect, setShowPluginSelect] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [submitType, setSubmitType] = useState<string>('text');
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
-  const filteredPrompts = prompts.filter((prompt) =>
+  const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
     prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
   );
 
@@ -164,47 +166,71 @@ export const ChatInput = ({
     setShowPromptList(false);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (showPromptList) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
+  const handleKeyDownInput = (key: string, event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (key === 'Enter' && !isTyping && !isMobile() && !event.shiftKey && !event.ctrlKey) {
+      event.preventDefault();
+      handleSend();
+      if (submitType !== 'text') {
+        setSubmitType('text');
+      }
+      if (filePreviews.length > 0) {
+        setFilePreviews([]);
+      }
+    } else if (event.key === '/' && event.metaKey && submitType === "text") {
+      event.preventDefault();
+      setShowPluginSelect(!showPluginSelect);
+    }
+  }
+
+  const handleKeyDownPromptList = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
+            prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
         );
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : prevIndex,
+            prevIndex > 0 ? prevIndex - 1 : prevIndex,
         );
-      } else if (e.key === 'Tab') {
-        e.preventDefault();
+        break;
+      case 'Tab':
+        event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
+            prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
         );
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
+        break;
+      case 'Enter':
+        event.preventDefault();
         handleInitModal();
         if (submitType !== 'text') {
-          setSubmitType('text')
+          setSubmitType('text');
         }
-        if (filePreviews.length > 0)
+        if (filePreviews.length > 0) {
           setFilePreviews([]);
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
         setShowPromptList(false);
-      } else {
+        break;
+      default:
         setActivePromptIndex(0);
-      }
-    } else if (e.key === 'Enter' && !isTyping && !isMobile() && !e.shiftKey && !e.ctrlKey) {
-      e.preventDefault();
-      handleSend();
-    } else if (e.key === '/' && e.metaKey) {
-      if (submitType === "text") {
-        e.preventDefault();
-        setShowPluginSelect(!showPluginSelect);
-      }
+        break;
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (showPromptList) {
+      handleKeyDownPromptList(e)
+    } else {
+      // Handle cases when showPromptList is false
+      handleKeyDownInput(e.key, e)
     }
   };
+
 
   const parseVariables = (content: string) => {
     const regex = /{{(.*?)}}/g;
