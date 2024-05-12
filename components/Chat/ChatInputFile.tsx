@@ -1,11 +1,10 @@
 import FileIcon from "@/components/Icons/file";
-import React, {Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
+import React, {ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
 import {ChatInputSubmitTypes} from "@/types/chat";
 
 interface ChatInputFileProps {
     onFileUpload: (event: React.ChangeEvent<any>) => void
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setContent: (content: any) => void,
 }
 
 const ChatInputFile = ({onFileUpload, setSubmitType}: ChatInputFileProps) => {
@@ -15,13 +14,13 @@ const ChatInputFile = ({onFileUpload, setSubmitType}: ChatInputFileProps) => {
             type="file"
             ref={fileInputRef}
             style={{display: "none"}}
-            onChange={(event) => {
+            onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 event.preventDefault()
                 setSubmitType("file");
                 onFileUpload(event)
             }}
         />
-        <button onClick={(event) => {
+        <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             event.preventDefault();
             fileInputRef.current?.click();
         }}>
