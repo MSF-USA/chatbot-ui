@@ -1,16 +1,17 @@
 import {XIcon} from "@/components/Icons/cancel";
 import {Dispatch, FC, SetStateAction, MouseEvent} from "react";
 import Image from "next/image";
+import {ChatInputSubmitTypes} from "@/types/chat";
 
 interface ChatFileUploadPreviewsProps {
     filePreviews: string[],
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
-    setSubmitType: Dispatch<SetStateAction<string>>,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
 }
 interface ChatFileUploadPreviewProps {
     filePreview: string,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
-    setSubmitType: Dispatch<SetStateAction<string>>,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
 }
 
 const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({filePreview, setFilePreviews, setSubmitType}) => {

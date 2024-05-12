@@ -1,9 +1,10 @@
 import FileIcon from "@/components/Icons/file";
-import React, {MutableRefObject, useRef} from "react";
+import React, {Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
+import {ChatInputSubmitTypes} from "@/types/chat";
 
 interface ChatInputFileProps {
     onFileUpload: (event: React.ChangeEvent<any>) => void
-    setSubmitType: (type: string) => void,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setContent: (content: any) => void,
 }
 
