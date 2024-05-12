@@ -56,3 +56,6 @@ export interface Conversation {
   temperature: number;
   folderId: string | null;
 }
+
+export type ChatInputSubmitTypes = "text" | "image" | "file";
+

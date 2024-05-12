@@ -13,7 +13,14 @@ import {
 
 import {useTranslation} from 'next-i18next';
 
-import {getChatMessageContent, ImageMessageContent, Message, MessageType, TextMessageContent} from '@/types/chat';
+import {
+  ChatInputSubmitTypes,
+  getChatMessageContent,
+  ImageMessageContent,
+  Message,
+  MessageType,
+  TextMessageContent
+} from '@/types/chat';
 import {Plugin} from '@/types/plugin';
 import {Prompt} from '@/types/prompt';
 
@@ -55,9 +62,8 @@ export const ChatInput = ({
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
-  const [content, setContent] = useState<string | Array<TextMessageContent | ImageMessageContent>>();
   const [textFieldValue, setTextFieldValue] = useState<string>("");
-  const [imageFieldValue, setImageFieldValue] = useState<Array<TextMessageContent | ImageMessageContent>>()
+  const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | null>()
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -66,7 +72,7 @@ export const ChatInput = ({
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
-  const [submitType, setSubmitType] = useState<string>('text');
+  const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
@@ -88,26 +94,40 @@ export const ChatInput = ({
       return;
     }
 
-    if (submitType === 'text')
-      setContent(value);
-    else {
-      const imageContent = Array.isArray(content)
-          ? content.find(contentMessage => contentMessage.type === 'image_url')
-          : null
-      if (imageContent)
-        setContent([imageContent, {type: "text", text: value}])
-      else
-        setContent([{type: "text", text: value}])
-    }
+    setTextFieldValue(value);
     updatePromptListVisibility(value);
   };
+
+  const buildContent = () => {
+    // if (imageFieldValue) {
+    //   setContent(imageFieldValue)
+    // } else if (textFieldValue) {
+    //   setContent(textFieldValue)
+    // }
+    if (submitType === 'text')
+      return textFieldValue;
+    else if (submitType === 'image') {
+      if (imageFieldValue)
+        return [
+            imageFieldValue,
+          {type: "text", text: textFieldValue} as TextMessageContent
+      ];
+      else
+        return [
+            {type: "text", text: textFieldValue} as TextMessageContent
+      ]
+    } else {
+      throw new Error(`Invalid submit type for message: ${submitType}`);
+    }
+  }
 
   const handleSend = () => {
     if (messageIsStreaming) {
       return;
     }
+    const content: string | (ImageMessageContent | TextMessageContent)[] = buildContent()
 
-    if (!content) {
+    if (!textFieldValue) {
       alert(t('Please enter a message'));
       return;
     }
@@ -115,7 +135,8 @@ export const ChatInput = ({
     onSend({
       role: 'user', content, messageType: submitType === 'image' ? MessageType.IMAGE : MessageType.TEXT
     }, plugin);
-    setContent('');
+    setTextFieldValue('')
+    setImageFieldValue(null)
     setPlugin(null);
 
     if (window.innerWidth < 640 && textareaRef?.current) {
@@ -143,23 +164,12 @@ export const ChatInput = ({
   const handleInitModal = () => {
     const selectedPrompt = filteredPrompts[activePromptIndex];
     if (selectedPrompt) {
-      setContent((prevContent) => {
-        if (Array.isArray(prevContent)) {
-          return prevContent.map(content => {
-            return content.type === "text"
-                ? {
-                    ...content,
-                    text: content?.text?.replace(/\/\w*$/, selectedPrompt.content)
-                  }
-                : content
-          })
-        } else {
-          const newContent = prevContent?.replace(
-              /\/\w*$/,
-              selectedPrompt.content,
-          );
-          return newContent;
-        }
+      setTextFieldValue((prevTextFieldValue) => {
+        const newContent = prevTextFieldValue?.replace(
+            /\/\w*$/,
+            selectedPrompt.content,
+        );
+        return newContent;
       });
       handlePromptSelect(selectedPrompt);
     }
@@ -263,11 +273,7 @@ export const ChatInput = ({
     if (parsedVariables.length > 0) {
       setIsModalVisible(true);
     } else {
-      setContent((prevContent) => {
-        // TODO: Support prompts for image upload text
-        if (Array.isArray(prevContent))
-          return prevContent
-
+      setTextFieldValue((prevContent) => {
         const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
         return updatedContent;
       });
@@ -276,13 +282,11 @@ export const ChatInput = ({
   };
 
   const handleSubmit = (updatedVariables: string[]) => {
-    if (typeof content === "string") {
-      const newContent = content?.replace(/{{(.*?)}}/g, (match, variable) => {
-        const index = variables.indexOf(variable);
-        return updatedVariables[index];
-      });
-      setContent(newContent);
-    }
+    const newContent = textFieldValue?.replace(/{{(.*?)}}/g, (match, variable) => {
+      const index = variables.indexOf(variable);
+      return updatedVariables[index];
+    });
+    setTextFieldValue(newContent);
 
     setFilePreviews([])
 
@@ -305,7 +309,7 @@ export const ChatInput = ({
         textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
       }`;
     }
-  }, [content]);
+  }, [textFieldValue]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -352,9 +356,10 @@ export const ChatInput = ({
 
         <ChatInputImage
             setSubmitType={setSubmitType}
-            setContent={setContent}
-            prompt={content}
+            // setContent={setContent}
+            prompt={textFieldValue}
             setFilePreviews={setFilePreviews}
+            setImageFieldValue={setImageFieldValue}
         />
         {/*<ChatInputFile*/}
         {/*    onFileUpload={onFileUpload}*/}
@@ -391,10 +396,7 @@ export const ChatInput = ({
                   t('Type a message or type "/" to select a prompt...') ?? ''
               }
               value={
-                typeof content === "string"
-                  ? content
-                  //@ts-ignore
-                  : content?.find(contentMessage => contentMessage.type === "text")?.text
+                textFieldValue
               }
               rows={1}
               onCompositionStart={() => setIsTyping(true)}
