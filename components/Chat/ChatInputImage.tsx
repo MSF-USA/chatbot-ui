@@ -1,14 +1,15 @@
 import ImageIcon from "@/components/Icons/image";
 import React, {Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
-import {ImageMessageContent, TextMessageContent} from "@/types/chat";
+import {ChatInputSubmitTypes, ImageMessageContent, TextMessageContent} from "@/types/chat";
 
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
-    setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>>,
+    // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>>,
     prompt: string,
     setFilePreviews:  Dispatch<SetStateAction<string[]>>,
-    setSubmitType: Dispatch<SetStateAction<string>>,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>,
 ) => {
     event.preventDefault();
     const file = event.target.files[0];
@@ -33,19 +34,13 @@ const onImageUpload = (
             body: base64String,
         }).then(page => {
             page.json().then(data => {
-                const imageMessage: Array<ImageMessageContent | TextMessageContent> = [
-                    {
-                        type: 'text',
-                        text: prompt,
-                    },
-                    {
-                        type: 'image_url',
-                        image_url: {
-                            url: data.uri
-                        }
-                    },
-                ]
-                setContent(imageMessage)
+                const imageMessage: ImageMessageContent = {
+                    type: 'image_url',
+                    image_url: {
+                        url: data.uri
+                    }
+                }
+                setImageFieldValue(imageMessage)
                 setFilePreviews(prevFilePreviews => {
                     if (Array.isArray(prevFilePreviews)) {
                         prevFilePreviews.push(base64String)
@@ -68,13 +63,21 @@ const onImageUploadButtonClick = (event: React.ChangeEvent<any>, fileInputRef: M
     fileInputRef.current.click();
 }
 
+export interface ChatInputImageProps {
+    setFilePreviews: Dispatch<SetStateAction<string[]>>;
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+    prompt: string;
+    // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>> | null;
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent  | null | undefined>>;
+}
+
 const ChatInputImage = (
     {
         setSubmitType,
-        setContent,
         prompt,
-        setFilePreviews
-    }: any
+        setFilePreviews,
+        setImageFieldValue
+    }: ChatInputImageProps
 ) => {
     const imageInputRef: MutableRefObject<any> = useRef(null);
 
@@ -85,7 +88,7 @@ const ChatInputImage = (
             ref={imageInputRef}
             style={{display: "none"}}
             onChange={(event) => {
-                onImageUpload(event, setContent, prompt, setFilePreviews, setSubmitType)
+                onImageUpload(event, prompt, setFilePreviews, setSubmitType, setImageFieldValue)
             }}
             accept={"image/*"}
         />
