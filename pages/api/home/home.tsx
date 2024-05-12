@@ -32,6 +32,7 @@ import { KeyValuePair } from '@/types/data';
 import { FolderInterface, FolderType } from '@/types/folder';
 import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
+import {Session} from 'next-auth';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
@@ -55,7 +56,7 @@ const Home = ({
   serverSidePluginKeysSet,
   defaultModelId,
 }: Props) => {
-  const { data: session } = useSession()
+  const { data: Session } = useSession()
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
@@ -98,15 +99,14 @@ const Home = ({
   );
 
   useEffect(() => {
-    //@ts-ignore
-    if (session?.error === "RefreshAccessTokenError") {
+    if (Session?.error === "RefreshAccessTokenError") {
       try {
         signIn(); // Force sign in to hopefully resolve error
       } catch (error) {
         router.push("/auth/signin");
       }
     }
-  }, [router, session]);
+  }, [router, Session]);
 
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });

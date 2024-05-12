@@ -10,7 +10,7 @@ import {
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import {getToken} from "next-auth/jwt";
 import {NextRequest} from "next/server";
-import {CustomJWT} from "@/types/jwt";
+import {JWT} from 'next-auth';
 
 export const config = {
   runtime: 'edge',
@@ -45,7 +45,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       key: string;
     };
     // @ts-ignore
-    const token: CustomJWT = await getToken({ req });
+    const token: JWT = await getToken({ req });
     if (token == null) {
         return new Response('Unauthorized: Please login again or check with your administrator', { status: 401 });
     }
@@ -64,7 +64,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
     let url = `${configData.OPENAI_API_HOST}/v1/models`;
     if (configData.OPENAI_API_TYPE === 'azure') {
       url = `${configData.OPENAI_API_HOST}/${APIM_MANAGEMENT_ENDPONT}/models?api-version=${configData.OPENAI_API_VERSION}`;
-      headers["Authorization"] = `Bearer ${token?.accessToken}`;
+      headers["Authorization"] = `Bearer ${token.accessToken}`;
       headers['Content-Type'] = 'application/json';
       delete headers['api-key'];
     }
