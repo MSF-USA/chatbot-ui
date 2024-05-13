@@ -108,20 +108,23 @@ export default class AzureOpenAIClient {
 
         const body = {
             "messages": messages,
-            // "max_tokens": 100,
-            "stream": false
+            "max_tokens": 2000,
+            "stream": false,
+            // "model": "gpt-4"
         };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers,
-            body: JSON.stringify(body),
-        });
+        const response = await fetch(
+            url, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(body),
+            }
+        );
 
         if (response.status === 200) {
             return await response.json();
         } else {
-            throw new Error(`Request failed with status ${response.status}`);
+            throw new Error(`Request failed with status ${response.status} ${response.statusText}`);
         }
     }
 
