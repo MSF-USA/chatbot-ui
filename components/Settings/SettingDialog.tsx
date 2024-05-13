@@ -74,7 +74,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
+            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle overflow-hidden"
             role="dialog"
           >
             <div className="text-lg pb-4 font-bold text-black dark:text-neutral-200">
@@ -134,11 +134,11 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           <div className="flex justify-end w-full">
             <SignInSignOut />
           </div>
-          <div className="flex flex-row px-1 justify-between mt-5">
+          <div className="flex flex-col md:flex-row px-1 md:justify-between mt-5">
             <div className="text-gray-500">v{version}.{build}.{env}</div>
             <a
               href={`mailto:${email}`}
-              className="flex items-center"
+              className="flex items-center mt-2 md:mt-0"
             >
               <IconExternalLink size={18} className={'inline mr-1'} />
               {t('Send your Feedback')}
