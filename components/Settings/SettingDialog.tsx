@@ -1,6 +1,7 @@
 import { FC, useContext, useEffect, useReducer, useRef } from 'react';
 
 import { useTranslation } from 'next-i18next';
+import { IconExternalLink } from '@tabler/icons-react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -11,6 +12,11 @@ import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 
 import HomeContext from '@/pages/api/home/home.context';
+
+const version = process.env.NEXT_PUBLIC_VERSION;
+const build = process.env.NEXT_PUBLIC_BUILD;
+const env = process.env.NEXT_PUBLIC_ENV;
+const email = process.env.NEXT_PUBLIC_EMAIL;
 
 interface Props {
   open: boolean;
@@ -127,6 +133,16 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           <hr className="my-4 border-gray-300 dark:border-neutral-700" />
           <div className="flex justify-end w-full">
             <SignInSignOut />
+          </div>
+          <div className="flex flex-row px-1 justify-between mt-5">
+            <div className="text-gray-500">v{version}.{build}.{env}</div>
+            <a
+              href={`mailto:${email}`}
+              className="flex items-center"
+            >
+              <IconExternalLink size={18} className={'inline mr-1'} />
+              {t('Send your Feedback')}
+            </a>
           </div>
           </div>
         </div>
