@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 
 import { GetServerSideProps } from 'next';
+import { useSession, signIn } from "next-auth/react"
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
@@ -30,6 +32,7 @@ import { KeyValuePair } from '@/types/data';
 import { FolderInterface, FolderType } from '@/types/folder';
 import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
+import { Session } from 'next-auth';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
@@ -40,8 +43,7 @@ import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
-import {ErrorMessage} from "@/types/error";
-import {signOut} from "next-auth/react";
+
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
@@ -54,6 +56,9 @@ const Home = ({
   serverSidePluginKeysSet,
   defaultModelId,
 }: Props) => {
+  const { data: Session } = useSession()
+  const user = Session?.user;
+  const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
   const { getModelsError } = useErrorService();
@@ -95,8 +100,22 @@ const Home = ({
   );
 
   useEffect(() => {
+    if (Session?.error === "RefreshAccessTokenError") {
+      try {
+        signIn(); // Force sign in to hopefully resolve error
+      } catch (error) {
+        router.push("/auth/signin");
+      }
+    }
+  }, [router, Session]);
+
+  useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
   }, [data, dispatch]);
+
+  useEffect(() => {
+    if (user) dispatch({ field: 'user', value: user });
+  }, [user, dispatch]);
 
   useEffect(() => {
     dispatch({ field: 'modelError', value: getModelsError(error) });
@@ -361,6 +380,7 @@ const Home = ({
         handleUpdateFolder,
         handleSelectConversation,
         handleUpdateConversation,
+        user,
       }}
     >
       <Head>

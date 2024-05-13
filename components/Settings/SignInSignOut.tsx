@@ -1,11 +1,7 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import { IconLogin, IconLogin2 } from '@tabler/icons-react';
-import { FC } from 'react';
 
 import { useTranslation } from 'next-i18next';
-
-import { SidebarButton } from '../Sidebar/SidebarButton';
-
 
 export const SignInSignOut = () => {
   const { data: session } = useSession();
@@ -13,24 +9,25 @@ export const SignInSignOut = () => {
 
   if (session) {
   return (
-    <>
-        <SidebarButton
-            text={t('Sign Out')}
-            icon={<IconLogin size={18} />}
-            onClick={() => signOut()}
-        />
-    </>
-  )
-  }
+    <button
+      type="button"
+      className="w-full flex items-center justify-center px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300 text-sm"
+      onClick={() => signOut()}
+    >
+      <IconLogin size={18} className="mr-2" />
+      Sign Out
+    </button>
+  )}
   else {
     return (
-      <>
-          <SidebarButton
-              text={t('Sign in')}
-              icon={<IconLogin size={18} />}
-              onClick={() => signIn()}
-          />
-      </>
+      <button
+      type="button"
+      className="w-full flex items-center justify-center px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300 text-sm"
+      onClick={() => signIn()}
+    >
+      <IconLogin size={18} className="mr-2" />
+      Sign In
+    </button>
     )
   }
 };

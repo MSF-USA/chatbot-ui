@@ -1,21 +1,30 @@
 import { FC, useContext, useEffect, useReducer, useRef } from 'react';
 
 import { useTranslation } from 'next-i18next';
+import { IconExternalLink } from '@tabler/icons-react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
+import { Session } from 'next-auth';
 
 import { Settings } from '@/types/settings';
+import { SignInSignOut } from './SignInSignOut';
 
 import HomeContext from '@/pages/api/home/home.context';
+
+const version = process.env.NEXT_PUBLIC_VERSION;
+const build = process.env.NEXT_PUBLIC_BUILD;
+const env = process.env.NEXT_PUBLIC_ENV;
+const email = process.env.NEXT_PUBLIC_EMAIL;
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  user?: Session['user'];
 }
 
-export const SettingDialog: FC<Props> = ({ open, onClose }) => {
+export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
@@ -65,7 +74,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle"
+            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle overflow-hidden"
             role="dialog"
           >
             <div className="text-lg pb-4 font-bold text-black dark:text-neutral-200">
@@ -97,6 +106,44 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
             >
               {t('Save')}
             </button>
+        <hr className="my-4 border-gray-300 dark:border-neutral-700" />
+        <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+          User
+        </div>
+          <table>
+            <tbody>
+              <tr>
+                <td className="pr-4 text-black dark:text-neutral-300">Name:</td>
+                <td className="text-black dark:text-neutral-100">{user?.displayName}</td>
+              </tr>
+              <tr>
+                <td className="pr-4 text-black dark:text-neutral-300">Department:</td>
+                <td className="text-black dark:text-neutral-100">{user?.department}</td>
+              </tr>
+              <tr>
+                <td className="pr-4 text-black dark:text-neutral-300">Position:</td>
+                <td className="text-black dark:text-neutral-100">{user?.jobTitle}</td>
+              </tr>
+              <tr>
+                <td className="pr-4 text-black dark:text-neutral-300">Email:</td>
+                <td className="text-black dark:text-neutral-100">{user?.mail}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr className="my-4 border-gray-300 dark:border-neutral-700" />
+          <div className="flex justify-end w-full">
+            <SignInSignOut />
+          </div>
+          <div className="flex flex-col md:flex-row px-1 md:justify-between mt-5">
+            <div className="text-gray-500">v{version}.{build}.{env}</div>
+            <a
+              href={`mailto:${email}`}
+              className="flex items-center mt-2 md:mt-0"
+            >
+              <IconExternalLink size={18} className={'inline mr-1'} />
+              {t('Send your Feedback')}
+            </a>
+          </div>
           </div>
         </div>
       </div>

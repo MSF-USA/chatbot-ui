@@ -14,11 +14,11 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import {getToken, JWT} from "next-auth/jwt";
+import {getToken} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
-import {refreshAccessToken} from "@/utils/server/azure";
 import {NextRequest} from "next/server";
-import {CustomJWT} from "@/types/jwt";
+import {JWT} from 'next-auth';
+
 
 export const config = {
   runtime: 'edge',
@@ -26,6 +26,7 @@ export const config = {
 
 
 const handler = async (req: NextRequest): Promise<Response> => {
+
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
 
@@ -65,12 +66,12 @@ const handler = async (req: NextRequest): Promise<Response> => {
     encoding.free();
     if (OPENAI_API_TYPE === 'azure') {
       // @ts-ignore
-      const token: CustomJWT = await getToken({req});
+      const token: JWT = await getToken({req});
       let resp;
       try {
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token?.accessToken,
+            token.accessToken,
             'POST',
             {
               "model": model.id,
@@ -78,8 +79,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
             }
         )
       } catch (err) {
-        // TODO: implement this in a way that isn't idiotic
-        refreshAccessToken(token)
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,

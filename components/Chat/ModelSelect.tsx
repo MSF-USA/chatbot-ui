@@ -33,7 +33,7 @@ export const ModelSelect = () => {
       </label>
       <div className="w-full rounded-lg border border-neutral-200 bg-transparent pr-2 text-neutral-900 dark:border-neutral-600 dark:text-white">
         <select
-          className="w-full bg-transparent p-2"
+          className="w-full bg-transparent p-2 text-neutral-900 dark:text-white"
           placeholder={t('Select a model') || ''}
           value={selectedConversation?.model?.id || defaultModelId}
           onChange={handleChange}
@@ -42,7 +42,7 @@ export const ModelSelect = () => {
             <option
               key={model.id}
               value={model.id}
-              className="dark:bg-[#343541] dark:text-white"
+              className="text-neutral-900 dark:bg-[#343541] dark:text-white"
             >
               {model.id === defaultModelId
                 ? `Default (${model.name})`
