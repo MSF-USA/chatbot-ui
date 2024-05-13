@@ -107,7 +107,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           <table>
             <tbody>
               <tr>
-                <td className="pr-4">Username:</td>
+                <td className="pr-4">Name:</td>
                 <td>{user?.displayName}</td>
               </tr>
               <tr>
