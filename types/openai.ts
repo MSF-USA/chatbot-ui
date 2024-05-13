@@ -1,4 +1,3 @@
-import { OPENAI_API_TYPE } from '../utils/app/const';
 
 export interface OpenAIModel {
   id: string;
@@ -16,7 +15,7 @@ export enum OpenAIModelID {
   GPT_4_0613 = 'gpt-4-0613',
   GPT_4_32K = 'gpt-4-32k-0613',
   GPT_4_TURBO = 'gpt-4-1106-Preview',
-  // GPT_4_VISION = 'gpt-4-vision-preview',
+  GPT_4_VISION = 'gpt-4-vision-preview',
 }
 
 // in case the `DEFAULT_MODEL` environment variable is not set or set to an unsupported model
@@ -71,10 +70,10 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 128000,
     tokenLimit: 8000,
   },
-  // [OpenAIModelID.GPT_4_VISION]: {
-  //     id: OpenAIModelID.GPT_4_VISION,
-  //     name: 'GPT-4-Vision (Preview)',
-  //     maxLength: 128000,
-  //     tokenLimit: 8000,
-  // },
+  [OpenAIModelID.GPT_4_VISION]: {
+      id: OpenAIModelID.GPT_4_VISION,
+      name: 'GPT-4-Vision (Preview)',
+      maxLength: 128000,
+      tokenLimit: 8000,
+  },
 };

@@ -6,6 +6,7 @@ export const getMessagesToSend = async (
     messages: Message[], encoding: Tiktoken, promptLength: number,
     tokenLimit: number,
 ): Promise<Message[]> => {
+    const imageConversation: boolean = isImageConversation(messages);
     const { messagesToSend } = await messages.reduceRight(
         async (accPromise, message) => {
             const acc = await accPromise;
@@ -15,19 +16,23 @@ export const getMessagesToSend = async (
             if (typeof message.content === "string") {
                 tokens = encoding.encode(message.content);
             } else if (Array.isArray(message.content)) {
-                tokens = encoding.encode('');
+                // allText is exclusively used to calculate tokens
+                let allText: string ='';
                 message.content = await Promise.all(
                     message.content.map(async (contentSection) => {
                         if (contentSection.type === "text") {
+                            allText += contentSection.text;
                             return contentSection;
                         } else {
-                            const url = await getBase64FromImageURL(contentSection.image_url.url);
+                            const url: string = await getBase64FromImageURL(contentSection.image_url.url);
+                            allText += url
                             return {
                                 ...contentSection, image_url: { url }
                             };
                         }
                     })
                 );
+                tokens = encoding.encode(allText);
             } else if (message.content?.type === 'text') {
                 tokens = encoding.encode(message.content.text);
             } else {
@@ -49,7 +54,7 @@ export const getMessagesToSend = async (
 * Checks whether a collection of messages is an image conversation by checking the type of the last message in the conversation.
 */
 export const isImageConversation = (messages: Message[]): boolean => {
-    const lastMessage = messages[messages.length-1];
+    const lastMessage = messages.length === 1 ? messages[0] : messages[messages.length-1];
     if(Array.isArray(lastMessage.content)) {
         return lastMessage.content.some(contentItem => contentItem.type === 'image_url');
     }
