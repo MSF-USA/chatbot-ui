@@ -32,7 +32,7 @@ import { KeyValuePair } from '@/types/data';
 import { FolderInterface, FolderType } from '@/types/folder';
 import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
-import {Session} from 'next-auth';
+import { Session } from 'next-auth';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
@@ -57,6 +57,7 @@ const Home = ({
   defaultModelId,
 }: Props) => {
   const { data: Session } = useSession()
+  const user = Session?.user;
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
@@ -111,6 +112,10 @@ const Home = ({
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
   }, [data, dispatch]);
+
+  useEffect(() => {
+    if (user) dispatch({ field: 'user', value: user });
+  }, [user, dispatch]);
 
   useEffect(() => {
     dispatch({ field: 'modelError', value: getModelsError(error) });
@@ -375,6 +380,7 @@ const Home = ({
         handleUpdateFolder,
         handleSelectConversation,
         handleUpdateConversation,
+        user,
       }}
     >
       <Head>

@@ -5,17 +5,20 @@ import { useTranslation } from 'next-i18next';
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
+import { Session } from 'next-auth';
 
 import { Settings } from '@/types/settings';
+import { SignInSignOut } from './SignInSignOut';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
   open: boolean;
   onClose: () => void;
+  user?: Session['user'];
 }
 
-export const SettingDialog: FC<Props> = ({ open, onClose }) => {
+export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
@@ -97,6 +100,34 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
             >
               {t('Save')}
             </button>
+        <hr className="my-4 border-gray-300 dark:border-neutral-700" />
+        <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+          User
+        </div>
+          <table>
+            <tbody>
+              <tr>
+                <td className="pr-4">Username:</td>
+                <td>{user?.displayName}</td>
+              </tr>
+              <tr>
+                <td className="pr-4">Department:</td>
+                <td>{user?.department}</td>
+              </tr>
+              <tr>
+                <td className="pr-4">Position:</td>
+                <td>{user?.jobTitle}</td>
+              </tr>
+              <tr>
+                <td className="pr-4">Email:</td>
+                <td>{user?.mail}</td>
+              </tr>
+            </tbody>
+          </table>
+          <hr className="my-4 border-gray-300 dark:border-neutral-700" />
+          <div className="flex justify-end w-full">
+            <SignInSignOut />
+          </div>
           </div>
         </div>
       </div>

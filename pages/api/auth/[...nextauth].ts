@@ -108,8 +108,6 @@ export const authOptions = {
 
           session.user = {... userData};
 
-          console.log(JSON.stringify(session))
-
       } catch (error) {
         console.log('failed to get User Data: ' + error)
       }

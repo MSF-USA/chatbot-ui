@@ -6,7 +6,7 @@ declare module "next-auth" {
     user: {
         givenName: string;
         surName: string;
-        dispplayName: string;
+        displayName: string;
         jobTitle?: string;
         department?: string;
         mail?: string;
