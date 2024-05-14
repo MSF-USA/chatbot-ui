@@ -1,4 +1,4 @@
-import {Message} from "@/types/chat";
+import {Message, TextMessageContent} from "@/types/chat";
 import {Tiktoken} from "@dqbd/tiktoken/lite/init";
 import {getBase64FromImageURL} from "@/utils/app/image";
 
@@ -23,12 +23,17 @@ export const getMessagesToSend = async (
                         if (contentSection.type === "text") {
                             allText += contentSection.text;
                             return contentSection;
-                        } else {
+                        } else if (imageConversation) {
                             const url: string = await getBase64FromImageURL(contentSection.image_url.url);
                             allText += url
                             return {
                                 ...contentSection, image_url: { url }
                             };
+                        } else {
+                            return {
+                                type: "text",
+                                text: "THE USER UPLOADED AN IMAGE"
+                            } as TextMessageContent
                         }
                     })
                 );
