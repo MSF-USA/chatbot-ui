@@ -42,7 +42,7 @@ export const ModelSelect = () => {
             <option
               key={model.id}
               value={model.id}
-              className={`text-neutral-900 dark:bg-[#343541] bg-white ${
+              className={`text-neutral-900 dark:text-white dark:bg-[#343541] bg-white ${
                   model.id === (selectedConversation?.model?.id || defaultModelId)
                   ? "font-bold"
                   : ""
