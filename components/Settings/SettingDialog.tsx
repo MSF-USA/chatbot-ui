@@ -86,7 +86,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             </div>
 
             <select
-              className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200"
+              className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 dark:bg-black"
               value={state.theme}
               onChange={(event) =>
                 dispatch({ field: 'theme', value: event.target.value })
