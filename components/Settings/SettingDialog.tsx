@@ -1,7 +1,7 @@
 import { FC, useContext, useEffect, useReducer, useRef } from 'react';
 
 import { useTranslation } from 'next-i18next';
-import { IconExternalLink } from '@tabler/icons-react';
+import {IconExternalLink, IconSettings, IconUser} from '@tabler/icons-react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -73,12 +73,13 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           />
 
           <div
-            ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle overflow-hidden"
-            role="dialog"
+              ref={modalRef}
+              className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle overflow-hidden"
+              role="dialog"
           >
-            <div className="text-lg pb-4 font-bold text-black dark:text-neutral-200">
-              {t('Settings')}
+            <div className="text-lg pb-4 font-bold text-black dark:text-neutral-200 flex">
+              <IconSettings/>
+              <span>{t('Settings')}</span>
             </div>
 
             <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
@@ -86,32 +87,36 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             </div>
 
             <select
-              className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 dark:bg-black"
-              value={state.theme}
-              onChange={(event) =>
-                dispatch({ field: 'theme', value: event.target.value })
-              }
+                className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 dark:bg-black"
+                value={state.theme}
+                onChange={(event) =>
+                    dispatch({field: 'theme', value: event.target.value})
+                }
             >
               <option value="dark">{t('Dark mode')}</option>
               <option value="light">{t('Light mode')}</option>
             </select>
 
             <button
-              type="button"
-              className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-              onClick={() => {
-                handleSave();
-                onClose();
-              }}
+                type="button"
+                className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                onClick={() => {
+                  handleSave();
+                  onClose();
+                }}
             >
               {t('Save')}
             </button>
-        <hr className="my-4 border-gray-300 dark:border-neutral-700" />
-        <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
-          User
-        </div>
-          <table>
-            <tbody>
+            <hr className="my-4 border-gray-300 dark:border-neutral-700"/>
+            <div className="text-lg pb-4 font-bold text-black dark:text-neutral-200 flex">
+              <IconUser/>
+              <span>{t('User')}</span>
+            </div>
+            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              {t('Basic user info')}
+            </div>
+            <table>
+              <tbody>
               <tr>
                 <td className="pr-4 text-black dark:text-neutral-300">Name:</td>
                 <td className="text-black dark:text-neutral-100">{user?.displayName}</td>
@@ -128,22 +133,22 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 <td className="pr-4 text-black dark:text-neutral-300">Email:</td>
                 <td className="text-black dark:text-neutral-100">{user?.mail}</td>
               </tr>
-            </tbody>
-          </table>
-          <hr className="my-4 border-gray-300 dark:border-neutral-700" />
-          <div className="flex justify-end w-full">
-            <SignInSignOut />
-          </div>
-          <div className="flex flex-col md:flex-row px-1 md:justify-between mt-5">
-            <div className="text-gray-500">v{version}.{build}.{env}</div>
-            <a
-              href={`mailto:${email}`}
-              className="flex items-center mt-2 md:mt-0"
-            >
-              <IconExternalLink size={18} className={'inline mr-1'} />
-              {t('Send your Feedback')}
-            </a>
-          </div>
+              </tbody>
+            </table>
+            <hr className="my-4 border-gray-300 dark:border-neutral-700"/>
+            <div className="flex justify-end w-full">
+              <SignInSignOut/>
+            </div>
+            <div className="flex flex-col md:flex-row px-1 md:justify-between mt-5">
+              <div className="text-gray-500">v{version}.{build}.{env}</div>
+              <a
+                  href={`mailto:${email}`}
+                  className="flex items-center mt-2 md:mt-0"
+              >
+                <IconExternalLink size={18} className={'inline mr-1'}/>
+                {t('Send your Feedback')}
+              </a>
+            </div>
           </div>
         </div>
       </div>
