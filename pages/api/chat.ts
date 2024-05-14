@@ -17,7 +17,6 @@ import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import {getToken} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
-import {CustomJWT} from "@/types/jwt";
 import {getMessagesToSend, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
 import AzureOpenAIClient from "@/utils/server/azure-openai";
@@ -58,7 +57,11 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
 
     encoding.free();
-    const token: JWT = await getToken({req});
+    // @ts-ignore
+    const token: JWT | null = await getToken({req});
+    if (!token)
+      throw new Error("Could not pull token!")
+
     let resp;
     try {
       if (isImageConversation(messages)) {
@@ -77,7 +80,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
       }
     } catch (err) {
       // TODO: implement this in a way that isn't idiotic
-      await refreshAccessToken(token)
       resp = await makeAPIMRequest(
           `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
           token.accessToken,

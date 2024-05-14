@@ -2,7 +2,6 @@ import {NextApiRequest, NextApiResponse} from 'next'
 import {AzureBlobStorage, BlobStorage} from "@/utils/server/blob";
 import {getEnvVariable} from "@/utils/app/env";
 import Hasher from "@/utils/app/hash";
-import {CustomJWT} from "@/types/jwt";
 import {getToken} from "next-auth/jwt";
 
 const page = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -28,7 +27,7 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
 
         const uploadImageToBlobStorage = async (data: any) => {
             // @ts-ignore
-            const token: CustomJWT = await getToken({req});
+            const token: JWT = await getToken({req});
             const userId: string = token.userId ?? 'anonymous';
 
             let blobStorageClient: BlobStorage = new AzureBlobStorage(
