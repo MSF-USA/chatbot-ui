@@ -139,6 +139,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
         textareaRef={textareaRef}
         handlePressEnter={handlePressEnter}
         handleEditMessage={handleEditMessage}
+        messageContent={messageContent as string}
         setMessageContent={setMessageContent}
         toggleEditing={toggleEditing}
         handleDeleteMessage={handleDeleteMessage}

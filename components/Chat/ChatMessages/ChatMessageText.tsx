@@ -103,14 +103,13 @@ const AssistantMessage: FC<any> = (
 
 const UserMessage: FC<any> = (
     {
-        message, isEditing, textareaRef, handleInputChange, handlePressEnter, setIsTyping, selectedConversation,
+        message, messageContent, setMessageContent, isEditing, textareaRef, handleInputChange, handlePressEnter, setIsTyping, selectedConversation,
         setIsEditing, toggleEditing, handleDeleteMessage, onEdit
     }
 ) => {
     const { t } = useTranslation('chat');
     const {role, content, messageType} = message;
 
-    const [messageContent, setMessageContent] = useState(message.content);
 
     const handleEditMessage = () => {
         if (message.content != messageContent) {
@@ -202,9 +201,9 @@ const UserMessage: FC<any> = (
 const ChatMessageText: FC<any> = (
     {
         message, copyOnClick, isEditing, setIsEditing, setIsTyping, handleInputChange, textareaRef, handlePressEnter,
-        handleEditMessage, setMessageContent, toggleEditing, handleDeleteMessage, messageIsStreaming, messageIndex,
+        handleEditMessage, messageContent, setMessageContent, toggleEditing, handleDeleteMessage, messageIsStreaming, messageIndex,
         selectedConversation, messageCopied, onEdit
-    }
+    }: any
 ) => {
     const { role, content, messageType } = message;
     const { t } = useTranslation('chat');
@@ -228,6 +227,7 @@ const ChatMessageText: FC<any> = (
                 messageCopied={messageCopied}
             /> : <UserMessage
                 message={message}
+                messageContent={messageContent}
                 isEditing={isEditing}
                 textareaRef={textareaRef}
                 handleInputChange={handleInputChange}
