@@ -1,7 +1,7 @@
 import ImageIcon from "@/components/Icons/image";
 import React, {Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
 import {ChatInputSubmitTypes, ImageMessageContent, TextMessageContent} from "@/types/chat";
-
+import toast from 'react-hot-toast';
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
@@ -21,7 +21,10 @@ const onImageUpload = (
     } else {
         setSubmitType("image");
     }
-
+    if (file.size > 5242480) {
+        toast.error("Image upload must be <5mb");
+        return
+    }
     const formData = new FormData();
     formData.append("file", file);
 
