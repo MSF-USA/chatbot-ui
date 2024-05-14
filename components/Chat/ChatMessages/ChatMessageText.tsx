@@ -1,6 +1,6 @@
-import {FC, useState} from "react";
+import {FC, useState, MouseEvent, Dispatch, SetStateAction, KeyboardEventHandler, MouseEventHandler} from "react";
 import {IconCheck, IconCopy, IconEdit, IconRobot, IconTrash, IconUser} from "@tabler/icons-react";
-import {getChatMessageContent, MessageType} from "@/types/chat";
+import {Conversation, getChatMessageContent, Message, MessageType} from "@/types/chat";
 import {MemoizedReactMarkdown} from "@/components/Markdown/MemoizedReactMarkdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
@@ -8,7 +8,16 @@ import rehypeMathjax from "rehype-mathjax";
 import {CodeBlock} from "@/components/Markdown/CodeBlock";
 import {useTranslation} from "next-i18next";
 
-const AssistantMessage: FC<any> = (
+interface AssistantMessageProps {
+    content: string;
+    copyOnClick: (event: MouseEvent<any>) => void,
+    messageIsStreaming: boolean;
+    messageIndex: number;
+    selectedConversation: Conversation;
+    messageCopied: boolean;
+}
+
+const AssistantMessage: FC<AssistantMessageProps> = (
     {
         content, copyOnClick, messageIsStreaming, messageIndex, selectedConversation, messageCopied,
     }
@@ -101,10 +110,27 @@ const AssistantMessage: FC<any> = (
     )
 }
 
-const UserMessage: FC<any> = (
+interface UserMessageProps {
+    message: Message;
+    messageContent: string;
+    setMessageContent: Dispatch<SetStateAction<string>>;
+    isEditing: boolean;
+    textareaRef: any;
+    handleInputChange: (event: any) => void;
+    handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
+    setIsTyping: Dispatch<SetStateAction<boolean>>;
+    setIsEditing: Dispatch<SetStateAction<boolean>>;
+    toggleEditing: (event: any) => void
+    handleDeleteMessage: MouseEventHandler<HTMLButtonElement>;
+    onEdit: (message: Message) => void;
+    selectedConversation: Conversation;
+}
+
+const UserMessage: FC<UserMessageProps> = (
     {
-        message, messageContent, setMessageContent, isEditing, textareaRef, handleInputChange, handlePressEnter, setIsTyping, selectedConversation,
-        setIsEditing, toggleEditing, handleDeleteMessage, onEdit
+        message, messageContent, setMessageContent, isEditing, textareaRef, handleInputChange,
+        handlePressEnter, setIsTyping, selectedConversation, setIsEditing, toggleEditing,
+        handleDeleteMessage, onEdit
     }
 ) => {
     const { t } = useTranslation('chat');
@@ -233,7 +259,6 @@ const ChatMessageText: FC<any> = (
                 handleInputChange={handleInputChange}
                 handlePressEnter={handlePressEnter}
                 setIsTyping={setIsTyping}
-                handleEditMessage={handleEditMessage}
                 setMessageContent={setMessageContent}
                 setIsEditing={setIsEditing}
                 toggleEditing={toggleEditing}
