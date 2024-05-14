@@ -16,8 +16,7 @@ import {Readability} from '@mozilla/readability';
 import endent from 'endent';
 import jsdom, {JSDOM} from 'jsdom';
 import {makeAPIMRequest} from "@/utils/server/apim";
-import {getToken} from "next-auth/jwt";
-import {CustomJWT} from "@/types/jwt";
+import {JWT} from 'next-auth';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   // try {

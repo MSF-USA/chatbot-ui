@@ -1,4 +1,5 @@
 import { Conversation, Message } from '@/types/chat';
+import { Session } from 'next-auth';
 import { ErrorMessage } from '@/types/error';
 import { FolderInterface } from '@/types/folder';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
@@ -6,6 +7,7 @@ import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
 export interface HomeInitialState {
+  user?: Session["user"];
   apiKey: string;
   pluginKeys: PluginKey[];
   loading: boolean;

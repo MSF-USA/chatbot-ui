@@ -33,6 +33,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   const {
     state: {
+      user,
       selectedConversation,
       conversations,
       models,

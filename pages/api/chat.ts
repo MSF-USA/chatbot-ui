@@ -14,14 +14,15 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import {getToken, JWT} from "next-auth/jwt";
+import {getToken} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
-import {refreshAccessToken} from "@/utils/server/azure";
 import {NextRequest} from "next/server";
 import {CustomJWT} from "@/types/jwt";
 import {getMessagesToSend, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
 import AzureOpenAIClient from "@/utils/server/azure-openai";
+import {JWT} from 'next-auth';
+
 
 export const config = {
   runtime: 'edge',
@@ -57,7 +58,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
 
     encoding.free();
-    const token = (await getToken({req}) as CustomJWT);
+    const token: JWT = await getToken({req});
     let resp;
     try {
       if (isImageConversation(messages)) {
@@ -66,7 +67,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       } else {
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token?.accessToken,
+            token.accessToken,
             'POST',
             {
               "model": model.id,

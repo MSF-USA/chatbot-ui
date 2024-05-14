@@ -9,7 +9,6 @@ import { SettingDialog } from '@/components/Settings/SettingDialog';
 
 import { Import } from '../../Settings/Import';
 import { Key } from '../../Settings/Key';
-import { SignInSignOut } from '../../Settings/SignInSignOut';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
@@ -22,6 +21,7 @@ export const ChatbarSettings = () => {
 
   const {
     state: {
+      user,
       apiKey,
       lightMode,
       serverSideApiKeyIsSet,
@@ -53,7 +53,7 @@ export const ChatbarSettings = () => {
       />
 
       <SidebarButton
-        text={t('Settings')}
+        text={user != undefined ? user.displayName : t('Settings')}
         icon={<IconSettings size={18} />}
         onClick={() => setIsSettingDialog(true)}
       />
@@ -69,9 +69,8 @@ export const ChatbarSettings = () => {
         onClose={() => {
           setIsSettingDialog(false);
         }}
+        user={user}
       />
-
-      <SignInSignOut />
     </div>
   );
 };

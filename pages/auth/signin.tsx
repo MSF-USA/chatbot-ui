@@ -56,6 +56,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // @ts-ignore
   const session = await getServerSession(context.req, context.res, authOptions);
 
   // If the user is already logged in, redirect.
