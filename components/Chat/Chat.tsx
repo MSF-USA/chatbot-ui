@@ -31,7 +31,6 @@ import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { ModelSelect } from './ModelSelect';
 import { SystemPrompt } from './SystemPrompt';
-import { TemperatureSlider } from './Temperature';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
@@ -56,6 +55,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       modelError,
       loading,
       prompts,
+      temperature
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -110,7 +110,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       messages: updatedConversation.messages.slice(-6),
       key: apiKey,
       prompt: updatedConversation.prompt,
-      temperature: updatedConversation.temperature,
+      temperature: temperature,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -545,7 +545,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </div>
 
                   {models.length > 0 && (
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
+                    <div className="flex h-full flex-col space-y-4">
                       <ModelSelect />
 
                       {/* <SystemPrompt
@@ -558,21 +558,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           })
                         }
                       /> */}
-
-                      <TemperatureSlider
-                        label={t('Temperature')}
-                        onChangeTemperature={(temperature) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'temperature',
-                            value: temperature,
-                          })
-                        }
-                      />
-                      <span className="mb-2 text-[12px] text-black/50 dark:text-white/50 text-sm">
-                      {t(
-                        'Type question below to get started.',
-                      )}
-                    </span>
                     </div>
                   )}
                 </div>
@@ -581,7 +566,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
                   {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
-                  : {selectedConversation?.temperature} |
+                  : {temperature} |
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}

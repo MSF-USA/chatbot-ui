@@ -10,6 +10,7 @@ import { Session } from 'next-auth';
 
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
+import { TemperatureSlider } from './Temperature';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -30,7 +31,10 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
   });
-  const { dispatch: homeDispatch } = useContext(HomeContext);
+  const {
+    state: homeState,
+    dispatch: homeDispatch
+  } = useContext(HomeContext);
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -74,12 +78,24 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle overflow-hidden"
+            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#202123] sm:my-8 sm:max-h-[600px] sm:w-full md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] sm:p-6 sm:align-middle overflow-hidden"
             role="dialog"
           >
-            <div className="text-lg pb-4 font-bold text-black dark:text-neutral-200">
+            <div className="sm:text-xl md:text-2xl pb-4 font-bold text-black dark:text-neutral-200">
               {t('Settings')}
             </div>
+
+            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              {t('Temperature')}
+            </div>
+
+            <TemperatureSlider
+              label={t('Temperature')}
+              temperature={homeState.temperature}
+              onChangeTemperature={(temperature) =>
+                homeDispatch({ field: 'temperature', value: temperature })
+              }
+            />
 
             <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
               {t('Theme')}
@@ -98,7 +114,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
             <button
               type="button"
-              className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+              className="max-w-[600px] px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
               onClick={() => {
                 handleSave();
                 onClose();

@@ -8,24 +8,18 @@ import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
   label: string;
+  temperature: number;
   onChangeTemperature: (temperature: number) => void;
 }
 
 export const TemperatureSlider: FC<Props> = ({
   label,
+  temperature,
   onChangeTemperature,
 }) => {
-  const {
-    state: { conversations },
-  } = useContext(HomeContext);
-  const lastConversation = conversations[conversations.length - 1];
-  const [temperature, setTemperature] = useState(
-    lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
-  );
   const { t } = useTranslation('chat');
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(event.target.value);
-    setTemperature(newValue);
     onChangeTemperature(newValue);
   };
 
