@@ -11,7 +11,7 @@ import { Session } from 'next-auth';
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
-import { SystemPrompt } from './SystemPrompt';
+import { SystemPrompt } from '../Chat/SystemPrompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
