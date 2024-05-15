@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useReducer, useRef } from 'react';
+import { FC, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 import { IconExternalLink } from '@tabler/icons-react';
@@ -11,6 +11,7 @@ import { Session } from 'next-auth';
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
+import { SystemPrompt } from './SystemPrompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -18,6 +19,11 @@ const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
 const env = process.env.NEXT_PUBLIC_ENV;
 const email = process.env.NEXT_PUBLIC_EMAIL;
+
+enum Tab {
+  CHAT_SETTINGS = 'CHAT_SETTINGS',
+  APP_SETTINGS = 'APP_SETTINGS',
+}
 
 interface Props {
   open: boolean;
@@ -36,6 +42,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     dispatch: homeDispatch
   } = useContext(HomeContext);
   const modalRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
 
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
@@ -85,18 +92,65 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               {t('Settings')}
             </div>
 
-            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
-              {t('Temperature')}
+            <div className="flex">
+              <button
+                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 border-b-2 border-transparent focus:outline-none ${
+                  activeTab === Tab.CHAT_SETTINGS
+                    ? 'border-black dark:border-white'
+                    : ''
+                }`}
+                onClick={() => setActiveTab(Tab.CHAT_SETTINGS)}
+              >
+                {t('Chat Settings')}
+              </button>
+              <button
+                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 border-b-2 border-transparent focus:outline-none ${
+                  activeTab === Tab.APP_SETTINGS ? 'border-black dark:border-white' : ''
+                }`}
+                onClick={() => setActiveTab(Tab.APP_SETTINGS)}
+              >
+                {t('App Settings')}
+              </button>
             </div>
 
-            <TemperatureSlider
-              label={t('Temperature')}
-              temperature={homeState.temperature}
-              onChangeTemperature={(temperature) =>
-                homeDispatch({ field: 'temperature', value: temperature })
-              }
-            />
+            {activeTab === Tab.CHAT_SETTINGS && (
+              <>
+              <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+                {t('Temperature')}
+              </div>
 
+              <TemperatureSlider
+                label={t('Temperature')}
+                temperature={homeState.temperature}
+                onChangeTemperature={(temperature) =>
+                  homeDispatch({ field: 'temperature', value: temperature })
+                }
+              />
+              {/* <SystemPrompt
+                prompts={prompts}
+                onChangePrompt={(prompt) =>
+                  handleUpdateConversation(selectedConversation, {
+                    key: 'prompt',
+                    value: prompt,
+                  })
+                }
+              /> */}
+              <button
+                type="button"
+                className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                onClick={() => {
+                  handleSave();
+                  onClose();
+                }}
+              >
+                {t('Save')}
+              </button>
+
+              </>)
+            }
+
+            {activeTab === Tab.APP_SETTINGS && (
+            <>
             <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
               {t('Theme')}
             </div>
@@ -114,7 +168,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
             <button
               type="button"
-              className="max-w-[600px] px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+              className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
               onClick={() => {
                 handleSave();
                 onClose();
@@ -150,6 +204,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           <div className="flex justify-end w-full">
             <SignInSignOut />
           </div>
+          </>
+        )}
           <div className="flex flex-col md:flex-row px-1 md:justify-between mt-5">
             <div className="text-gray-500">v{version}.{build}.{env}</div>
             <a

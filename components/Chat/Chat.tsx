@@ -7,8 +7,10 @@ import {
   useEffect,
   useRef,
   useState,
+  Component
 } from 'react';
 import toast from 'react-hot-toast';
+import Typewriter from 'typewriter-effect';
 
 import { useTranslation } from 'next-i18next';
 
@@ -30,11 +32,11 @@ import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { ModelSelect } from './ModelSelect';
-import { SystemPrompt } from './SystemPrompt';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
 import logo from '../../public/logo_light.png'
+import { type } from 'os';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -101,6 +103,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     return updatedConversation
   }
+
 
   const makeRequest = async (
       plugin: Plugin | null, updatedConversation: Conversation
@@ -474,6 +477,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, [messagesEndRef]);
   const showSplash = !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim'
 
+  const [image, setImage] = useState(false)
+  const [runTypewriter, setRunTypewriter] = useState(false)
+
+  useEffect(() => {
+    if (!image) {
+      console.log(image)
+      setRunTypewriter(true);
+    } else {
+      console.log(image)
+      setRunTypewriter(false)
+    }
+  }, []);
+
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
       {(showSplash) ? (
@@ -533,13 +549,27 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       </div>
                     ) : (
                       <div className='flex flex-row justify-center items-end'>
-                        <div className='flex-shrink-0 max-sm:hidden my-1'>
-                          <Image
-                            src={logo}
-                            alt="MSF Logo"
-                          />
-                        </div>
-                        <h1 className="text-4xl font-thin text-white px-5 mt-3">MSF AI Assistant</h1>
+                        {runTypewriter && <Typewriter
+                          options={{
+                            loop: false,
+                            cursor: '',
+                            delay: 60,
+                          }}
+                          onInit={(typewriter) => {
+                            typewriter.typeString('MSF AI Assistant')
+                              .pauseFor(1000)
+                              .deleteAll()
+                              .callFunction(() => {
+                                setImage(true)
+                                setRunTypewriter(false)
+                            })
+                            .start();
+                          }}
+                        />}
+                      {image &&
+                      <div className='flex-shrink-0 max-sm:hidden my-1'>
+                        <Image src={logo} alt="MSF Logo" />
+                      </div>}
                       </div>
                     )}
                   </div>
@@ -547,17 +577,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   {models.length > 0 && (
                     <div className="flex h-full flex-col space-y-4">
                       <ModelSelect />
-
-                      {/* <SystemPrompt
-                        conversation={selectedConversation}
-                        prompts={prompts}
-                        onChangePrompt={(prompt) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'prompt',
-                            value: prompt,
-                          })
-                        }
-                      /> */}
                     </div>
                   )}
                 </div>

@@ -323,9 +323,10 @@ export const ChatInput = ({
                   ? 'auto'
                   : 'hidden'
               }`,
+              fontSize: '16px',
             }}
             placeholder={
-              t('Type a message or type "/" to select a prompt...') || ''
+              t('Message MSF AI Assistant here or type "/" to select a prompt...') || ''
             }
             value={content}
             rows={1}
