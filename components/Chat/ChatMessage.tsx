@@ -1,9 +1,5 @@
 import {
-  IconCheck,
-  IconCopy,
-  IconEdit,
   IconRobot,
-  IconTrash,
   IconUser,
 } from '@tabler/icons-react';
 import { FC, memo, useContext, useEffect, useRef, useState } from 'react';
@@ -16,12 +12,6 @@ import {getChatMessageContent, Message, MessageType} from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import { CodeBlock } from '../Markdown/CodeBlock';
-import { MemoizedReactMarkdown } from '../Markdown/MemoizedReactMarkdown';
-
-import rehypeMathjax from 'rehype-mathjax';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 import ChatMessageText from "@/components/Chat/ChatMessages/ChatMessageText";
 import ChatMessageImage from "@/components/Chat/ChatMessages/ChatMessageImage";
 
