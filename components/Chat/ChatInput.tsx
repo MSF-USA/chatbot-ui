@@ -32,6 +32,7 @@ import ChatInputImage from "@/components/Chat/ChatInputImage";
 import ChatInputFile from "@/components/Chat/ChatInputFile";
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 import ChatFileUploadPreviews from "@/components/Chat/ChatFileUploadPreviews";
+import ChatInputImageCapture from "@/components/Chat/ChatInputImageCapture";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -354,6 +355,12 @@ export const ChatInput = ({
                 </button>
             )}
 
+        <ChatInputImageCapture
+                setFilePreviews={setFilePreviews}
+                setSubmitType={setSubmitType}
+                prompt={textFieldValue}
+                setImageFieldValue={setImageFieldValue}
+            />
         <ChatInputImage
             setSubmitType={setSubmitType}
             // setContent={setContent}
