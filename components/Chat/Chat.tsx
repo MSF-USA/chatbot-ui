@@ -7,10 +7,10 @@ import {
   useEffect,
   useRef,
   useState,
-  Component
 } from 'react';
 import toast from 'react-hot-toast';
 import Typewriter from 'typewriter-effect';
+import { Transition } from '@headlessui/react'
 
 import { useTranslation } from 'next-i18next';
 
@@ -571,10 +571,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             />
                           )}
                           {image && (
+                            <Transition
+                            appear={true}
+                            show={image}
+                            enter="transition-opacity duration-1000"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity duration-300"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
                           <div className='flex-shrink-0 my-1 flex flex-col items-center'>
                             <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
                             <p className='text-xs text-gray-600 dark:text-gray-400 mt-4'>Type question below to get started</p>
                           </div>
+                          </Transition>
                           )}
                         </div>
                       </div>
