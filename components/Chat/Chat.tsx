@@ -35,7 +35,7 @@ import { ModelSelect } from './ModelSelect';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
-import logo from '../../public/logo_light.png'
+import logo from '../../public/msf_logo2.png'
 import { type } from 'os';
 
 interface Props {
@@ -541,6 +541,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages?.length === 0 ? (
               <>
+              <div className="flex items-center justify-center h-screen">
                 <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
                   <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                     {models.length === 0 ? (
@@ -548,28 +549,34 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         <Spinner size="16px" className="mx-auto" />
                       </div>
                     ) : (
-                      <div className='flex flex-row justify-center items-end'>
-                        {runTypewriter && <Typewriter
-                          options={{
-                            loop: false,
-                            cursor: '',
-                            delay: 60,
-                          }}
-                          onInit={(typewriter) => {
-                            typewriter.typeString('MSF AI Assistant')
-                              .pauseFor(1000)
-                              .deleteAll()
-                              .callFunction(() => {
-                                setImage(true)
-                                setRunTypewriter(false)
-                            })
-                            .start();
-                          }}
-                        />}
-                      {image &&
-                      <div className='flex-shrink-0 my-1'>
-                        <Image src={logo} alt="MSF Logo" />
-                      </div>}
+                      <div className='flex flex-col items-center'>
+                        <div className='flex flex-row justify-center items-end'>
+                          {runTypewriter && (
+                            <Typewriter
+                              options={{
+                                loop: false,
+                                cursor: '',
+                                delay: 60,
+                              }}
+                              onInit={(typewriter) => {
+                                typewriter.typeString('MSF AI Assistant')
+                                  .pauseFor(1000)
+                                  .deleteAll()
+                                  .callFunction(() => {
+                                    setImage(true)
+                                    setRunTypewriter(false)
+                                  })
+                                  .start();
+                              }}
+                            />
+                          )}
+                          {image && (
+                          <div className='flex-shrink-0 my-1 flex flex-col items-center'>
+                            <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
+                            <p className='text-xs text-gray-600 dark:text-gray-400 mt-4'>Type question below to get started</p>
+                          </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
@@ -580,6 +587,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     </div>
                   )}
                 </div>
+              </div>
               </>
             ) : (
               <>
