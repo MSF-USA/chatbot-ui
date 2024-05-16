@@ -13,24 +13,27 @@ import { DEFAULT_SYSTEM_PROMPT } from '@/utils/app/const';
 
 import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
+import { Session } from 'next-auth';
 
-import { PromptList } from './PromptList';
-import { VariableModal } from './VariableModal';
+import { PromptList } from '../Chat/PromptList';
+import { VariableModal } from '../Chat/VariableModal';
 
 interface Props {
-  conversation: Conversation;
   prompts: Prompt[];
+  systemPrompt?: string;
+  user?: Session['user']
   onChangePrompt: (prompt: string) => void;
 }
 
 export const SystemPrompt: FC<Props> = ({
-  conversation,
   prompts,
-  onChangePrompt,
+  systemPrompt = '',
+  user,
+  onChangePrompt
 }) => {
   const { t } = useTranslation('chat');
 
-  const [value, setValue] = useState<string>('');
+  const [value, setValue] = useState<string>(systemPrompt);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
   const [showPromptList, setShowPromptList] = useState(false);
   const [promptInputValue, setPromptInputValue] = useState('');
@@ -46,7 +49,7 @@ export const SystemPrompt: FC<Props> = ({
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    const maxLength = conversation.model.maxLength;
+    const maxLength = Number(process.env.systemPromptmaxLength) || 500;
 
     if (value.length > maxLength) {
       alert(
@@ -165,14 +168,6 @@ export const SystemPrompt: FC<Props> = ({
       textareaRef.current.style.height = `${textareaRef.current?.scrollHeight}px`;
     }
   }, [value]);
-
-  useEffect(() => {
-    if (conversation.prompt) {
-      setValue(conversation.prompt);
-    } else {
-      setValue(DEFAULT_SYSTEM_PROMPT);
-    }
-  }, [conversation]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {

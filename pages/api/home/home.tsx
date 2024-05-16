@@ -77,6 +77,7 @@ const Home = ({
       selectedConversation,
       prompts,
       temperature,
+      systemPrompt
     },
     dispatch,
   } = contextValue;
@@ -323,6 +324,16 @@ const Home = ({
     const prompts = localStorage.getItem('prompts');
     if (prompts) {
       dispatch({ field: 'prompts', value: JSON.parse(prompts) });
+    }
+
+    const temperature = localStorage.getItem('temperature');
+    if (temperature) {
+      dispatch({ field: 'temperature', value: JSON.parse(temperature) });
+    }
+
+    const systemPrompt = localStorage.getItem('systemPrompt');
+    if (systemPrompt) {
+      dispatch({ field: 'systemPrompt', value: JSON.parse(systemPrompt) });
     }
 
     const conversationHistory = localStorage.getItem('conversationHistory');

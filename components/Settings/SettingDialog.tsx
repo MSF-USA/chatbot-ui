@@ -11,7 +11,7 @@ import { Session } from 'next-auth';
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
-import { SystemPrompt } from '../Chat/SystemPrompt';
+import { SystemPrompt } from './SystemPrompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -66,6 +66,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const handleSave = () => {
     homeDispatch({ field: 'lightMode', value: state.theme });
     saveSettings(state);
+    localStorage.setItem('temperature', JSON.stringify(homeState.temperature));
+    localStorage.setItem('systemPrompt', JSON.stringify(homeState.systemPrompt));
   };
 
   // Render nothing if the dialog is not open.
@@ -123,15 +125,17 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   homeDispatch({ field: 'temperature', value: temperature })
                 }
               />
-              {/* <SystemPrompt
-                prompts={prompts}
+              <SystemPrompt
+                prompts={homeState.prompts}
+                systemPrompt={homeState.systemPrompt}
+                user={user}
                 onChangePrompt={(prompt) =>
-                  handleUpdateConversation(selectedConversation, {
-                    key: 'prompt',
+                  homeDispatch({
+                    field: 'systemPrompt',
                     value: prompt,
                   })
                 }
-              /> */}
+              />
               <button
                 type="button"
                 className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"

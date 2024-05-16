@@ -11,6 +11,7 @@ import {
 import toast from 'react-hot-toast';
 import Typewriter from 'typewriter-effect';
 import { Transition } from '@headlessui/react'
+import {DEFAULT_SYSTEM_PROMPT} from '@/utils/app/const';
 
 import { useTranslation } from 'next-i18next';
 
@@ -37,6 +38,7 @@ import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
 import logo from '../../public/msf_logo2.png'
 import { type } from 'os';
+import { SystemPrompt } from '../Settings/SystemPrompt';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -57,7 +59,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       modelError,
       loading,
       prompts,
-      temperature
+      temperature,
+      systemPrompt
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -112,7 +115,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       model: updatedConversation.model,
       messages: updatedConversation.messages.slice(-6),
       key: apiKey,
-      prompt: updatedConversation.prompt,
+      prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature: temperature,
     };
     const endpoint = getEndpoint(plugin);
@@ -556,11 +559,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               options={{
                                 loop: false,
                                 cursor: '',
-                                delay: 60,
+                                delay: 50,
                               }}
                               onInit={(typewriter) => {
                                 typewriter.typeString('MSF AI Assistant')
-                                  .pauseFor(1000)
+                                  .pauseFor(1200)
                                   .deleteAll()
                                   .callFunction(() => {
                                     setImage(true)
