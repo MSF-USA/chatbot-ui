@@ -1,5 +1,6 @@
 import { IconFileExport, IconSettings } from '@tabler/icons-react';
 import { useContext, useState } from 'react';
+import { Transition } from '@headlessui/react';
 
 import { useTranslation } from 'next-i18next';
 
@@ -54,8 +55,8 @@ export const ChatbarSettings = () => {
         text={''}
         icon={user != undefined ?
             <div
-              className="rounded-full bg-[#D7211E] h-8 w-8 flex items-center justify-center text-white"
-              style={{ fontSize: '0.8rem' }}
+              className="rounded-full bg-[#D7211E] h-10 w-10 flex items-center justify-center text-white"
+              style={{ fontSize: '16px' }}
             >
               {getInitials(user.displayName)}
             </div> : <IconSettings size={18} />}
@@ -68,13 +69,25 @@ export const ChatbarSettings = () => {
 
       {/* {!serverSidePluginKeysSet ? <PluginKeys /> : null} */}
 
-      <SettingDialog
-        open={isSettingDialogOpen}
-        onClose={() => {
-          setIsSettingDialog(false);
-        }}
-        user={user}
-      />
+      <Transition
+        show={isSettingDialogOpen}
+        as="div"
+        className="absolute inset-0 overflow-hidden z-10"
+        enter="transition-opacity ease-out duration-400"
+        enterFrom="opacity-0"
+        enterTo="opacity-100"
+        leave="transition-opacity ease-in duration-400"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <SettingDialog
+          open={isSettingDialogOpen}
+          onClose={() => {
+            setIsSettingDialog(false);
+          }}
+          user={user}
+        />
+      </Transition>
     </div>
   );
 };
