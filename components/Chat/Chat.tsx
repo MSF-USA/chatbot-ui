@@ -587,6 +587,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           <div className='flex-shrink-0 my-1 flex flex-col items-center'>
                             <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
                             <p className='text-xs text-gray-600 dark:text-gray-400 mt-4'>Type question below to get started</p>
+                            {models.length > 0 && (
+                            <div className='text-base'>
+                              <ModelSelect />
+                            </div>
+                          )}
                           </div>
                           </Transition>
                           )}
@@ -594,12 +599,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       </div>
                     )}
                   </div>
-
-                  {models.length > 0 && (
-                    <div className="flex h-full flex-col space-y-4">
-                      <ModelSelect />
-                    </div>
-                  )}
                 </div>
               </div>
               </>
@@ -623,7 +622,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 </div>
                 {showSettings && (
                   <div className="flex flex-col space-y-10 md:mx-auto md:max-w-xl md:gap-6 md:py-3 md:pt-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-                    <div className="flex h-full flex-col space-y-4 border-b border-neutral-200 p-4 dark:border-neutral-600 md:rounded-lg md:border">
+                    <div className="flex h-full flex-col space-y-4 md:rounded-lg">
                       <ModelSelect />
                     </div>
                   </div>
