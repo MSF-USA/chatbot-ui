@@ -1,19 +1,23 @@
 import { FC, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
-import { IconExternalLink } from '@tabler/icons-react';
+import { IconExternalLink, IconFileExport } from '@tabler/icons-react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
 import { Session } from 'next-auth';
+import { Import } from './Import';
+import { SidebarButton } from '../Sidebar/SidebarButton';
 
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
 import { SystemPrompt } from './SystemPrompt';
+import LanguageSwitcher from "@/components/Sidebar/components/LanguageSwitcher";
 
 import HomeContext from '@/pages/api/home/home.context';
+import ChatbarContext from '../Chatbar/Chatbar.context';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -37,6 +41,12 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
   });
+
+  const {
+    handleImportConversations,
+    handleExportData,
+  } = useContext(ChatbarContext);
+
   const {
     state: homeState,
     dispatch: homeDispatch
@@ -114,17 +124,20 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
             {activeTab === Tab.CHAT_SETTINGS && (
               <>
-              <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
                 {t('Temperature')}
               </div>
 
               <TemperatureSlider
-                label={t('Temperature')}
                 temperature={homeState.temperature}
                 onChangeTemperature={(temperature) =>
                   homeDispatch({ field: 'temperature', value: temperature })
                 }
               />
+              <hr className="my-5 border-gray-300 dark:border-neutral-700" />
+              <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
+                {t('System Prompt')}
+              </div>
               <SystemPrompt
                 prompts={homeState.prompts}
                 systemPrompt={homeState.systemPrompt}
@@ -136,6 +149,19 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   })
                 }
               />
+              <hr className="my-5 border-gray-300 dark:border-neutral-700" />
+              <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
+                {('Recover and Export Chat Data')}
+              </div>
+              <div className='flex flex-row'>
+              <Import onImport={handleImportConversations} />
+
+              <SidebarButton
+                text={t('Export data')}
+                icon={<IconFileExport size={18} />}
+                onClick={() => handleExportData()}
+              />
+              </div>
               <button
                 type="button"
                 className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
@@ -152,7 +178,11 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
             {activeTab === Tab.APP_SETTINGS && (
             <>
-            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+            <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
+              {t('Language')}
+            </div>
+            <LanguageSwitcher />
+            <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
               {t('Theme')}
             </div>
 

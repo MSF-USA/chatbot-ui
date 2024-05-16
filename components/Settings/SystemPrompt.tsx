@@ -188,10 +188,7 @@ export const SystemPrompt: FC<Props> = ({
 
   return (
     <div className="flex flex-col">
-      <label className="mb-2 text-left text-neutral-700 dark:text-neutral-400">
-        {t('System Prompt')}
-      </label>
-      <span className="mb-2 text-[12px] text-black/50 dark:text-white/50 text-sm">
+      <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
         {t(
           'Define how the AI Assistant should act.',
         )}

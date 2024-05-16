@@ -14,6 +14,7 @@ import ChatbarContext from '../Chatbar.context';
 import { ClearConversations } from './ClearConversations';
 import { PluginKeys } from './PluginKeys';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
+import { Session } from 'inspector';
 
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
@@ -38,23 +39,26 @@ export const ChatbarSettings = () => {
     handleApiKeyChange,
   } = useContext(ChatbarContext);
 
+  const getInitials = (name: string) => {
+    const names = name.split(' ');
+    return names.map((n) => n[0]).join('');
+  };
+
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm">
       {conversations.length > 0 ? (
         <ClearConversations onClearConversations={handleClearConversations} />
       ) : null}
 
-      <Import onImport={handleImportConversations} />
-
       <SidebarButton
-        text={t('Export data')}
-        icon={<IconFileExport size={18} />}
-        onClick={() => handleExportData()}
-      />
-
-      <SidebarButton
-        text={user != undefined ? user.displayName : t('Settings')}
-        icon={<IconSettings size={18} />}
+        text={''}
+        icon={user != undefined ?
+            <div
+              className="rounded-full bg-[#D7211E] h-8 w-8 flex items-center justify-center text-white"
+              style={{ fontSize: '0.8rem' }}
+            >
+              {getInitials(user.displayName)}
+            </div> : <IconSettings size={18} />}
         onClick={() => setIsSettingDialog(true)}
       />
 
