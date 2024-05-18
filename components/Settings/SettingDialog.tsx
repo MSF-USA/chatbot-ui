@@ -15,6 +15,7 @@ import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
 import { SystemPrompt } from './SystemPrompt';
 import LanguageSwitcher from "@/components/Sidebar/components/LanguageSwitcher";
+import { ClearConversations } from './ClearConversations';
 
 import HomeContext from '@/pages/api/home/home.context';
 import ChatbarContext from '../Chatbar/Chatbar.context';
@@ -45,6 +46,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const {
     handleImportConversations,
     handleExportData,
+    handleClearConversations,
   } = useContext(ChatbarContext);
 
   const {
@@ -97,10 +99,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 sm:max-h-[600px] sm:w-full md:max-w-[600px] lg:max-w-[800px] xl:max-w-[1000px] sm:p-6 sm:align-middle overflow-hidden"
+            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 sm:max-h-[600px] sm:w-full md:max-w-[400px] lg:max-w-[600px] xl:max-w-[800px] sm:p-6 sm:align-middle overflow-hidden"
             role="dialog"
           >
-
             <div className="flex">
               <button
                 className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 border-b-2 border-transparent focus:outline-none ${
@@ -110,7 +111,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 }`}
                 onClick={() => setActiveTab(Tab.CHAT_SETTINGS)}
               >
-                {t('Chat Settings')}
+                {t('Chat') + ' ' + t('Settings')}
               </button>
               <button
                 className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 border-b-2 border-transparent focus:outline-none ${
@@ -118,13 +119,13 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 }`}
                 onClick={() => setActiveTab(Tab.APP_SETTINGS)}
               >
-                {t('App Settings')}
+                {t('App') + ' ' + t('Settings')}
               </button>
             </div>
 
             {activeTab === Tab.CHAT_SETTINGS && (
               <>
-              <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
+              <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
                 {t('Temperature')}
               </div>
 
@@ -134,8 +135,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   homeDispatch({ field: 'temperature', value: temperature })
                 }
               />
-              <hr className="my-5 border-gray-300 dark:border-neutral-700" />
-              <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
+              <hr className="my-10 border-gray-300 dark:border-neutral-700" />
+              <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
                 {t('System Prompt')}
               </div>
               <SystemPrompt
@@ -149,7 +150,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   })
                 }
               />
-              <hr className="my-5 border-gray-300 dark:border-neutral-700" />
+              <hr className="my-10 border-gray-300 dark:border-neutral-700" />
               <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
                 {('Recover and Export Chat Data')}
               </div>
@@ -162,9 +163,48 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 onClick={() => handleExportData()}
               />
               </div>
+                <div className='flex justify-end mr-1 mt-10'>
+                <button
+                  type="button"
+                  className="w-[200px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                  onClick={() => {
+                    handleSave();
+                    onClose();
+                  }}
+                >
+                  {t('Save')}
+                </button>
+              </div>
+              </>)
+            }
+
+            {activeTab === Tab.APP_SETTINGS && (
+            <>
+            <div className='flex flex-row justify-between items-center my-10'>
+              <div className="text-sm font-bold text-black dark:text-neutral-200">
+                {t('Language')}
+              </div>
+              <LanguageSwitcher/>
+            </div>
+            <div className='flex flex-row justify-between items-center my-10'>
+              <div className="text-sm font-bold text-black dark:text-neutral-200">
+                {t('Theme')}
+              </div>
+              <select
+                className="w-[200px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm"
+                value={state.theme}
+                onChange={(event) =>
+                  dispatch({ field: 'theme', value: event.target.value })
+                }
+              >
+                <option value="dark">{t('Dark mode')}</option>
+                <option value="light">{t('Light mode')}</option>
+              </select>
+            </div>
+            <div className='flex justify-end mr-1'>
               <button
                 type="button"
-                className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                className="w-[200px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
                 onClick={() => {
                   handleSave();
                   onClose();
@@ -172,72 +212,43 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               >
                 {t('Save')}
               </button>
-
-              </>)
-            }
-
-            {activeTab === Tab.APP_SETTINGS && (
-            <>
-            <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
-              {t('Language')}
             </div>
-            <LanguageSwitcher />
-            <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
-              {t('Theme')}
-            </div>
-
-            <select
-              className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200"
-              value={state.theme}
-              onChange={(event) =>
-                dispatch({ field: 'theme', value: event.target.value })
-              }
-            >
-              <option value="dark">{t('Dark mode')}</option>
-              <option value="light">{t('Light mode')}</option>
-            </select>
-
-            <button
-              type="button"
-              className="w-full px-4 py-2 mt-6 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-              onClick={() => {
-                handleSave();
-                onClose();
-              }}
-            >
-              {t('Save')}
-            </button>
-        <hr className="my-4 border-gray-300 dark:border-neutral-700" />
-        <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+            <hr className="mb-10 border-gray-300 dark:border-neutral-700" />
+        <div className="text-sm font-bold mb-5 text-black dark:text-neutral-200">
           User
         </div>
           <table>
             <tbody>
               <tr>
-                <td className="pr-4 text-black dark:text-neutral-300">Name:</td>
+                {/* <td className="pr-4 text-black dark:text-neutral-300">Name:</td> */}
                 <td className="text-black dark:text-neutral-100">{user?.displayName}</td>
               </tr>
               <tr>
-                <td className="pr-4 text-black dark:text-neutral-300">Department:</td>
+                {/* <td className="pr-4 text-black dark:text-neutral-300">Department:</td> */}
                 <td className="text-black dark:text-neutral-100">{user?.department}</td>
               </tr>
               <tr>
-                <td className="pr-4 text-black dark:text-neutral-300">Position:</td>
+                {/* <td className="pr-4 text-black dark:text-neutral-300">Position:</td> */}
                 <td className="text-black dark:text-neutral-100">{user?.jobTitle}</td>
               </tr>
               <tr>
-                <td className="pr-4 text-black dark:text-neutral-300">Email:</td>
+               {/* <td className="pr-4 text-black dark:text-neutral-300">Email:</td> */}
                 <td className="text-black dark:text-neutral-100">{user?.mail}</td>
               </tr>
             </tbody>
           </table>
-          <hr className="my-4 border-gray-300 dark:border-neutral-700" />
-          <div className="flex justify-end w-full">
+          <hr className="my-10 border-gray-300 dark:border-neutral-700" />
+          <div className='flex justify-end mr-1 mb-10'>
+            {homeState.conversations.length > 0 ? (
+                <ClearConversations onClearConversations={handleClearConversations} />
+            ) : null}
+          </div>
+          <div className='flex justify-end mr-1'>
             <SignInSignOut />
           </div>
           </>
         )}
-          <div className="flex flex-col md:flex-row px-1 md:justify-between mt-5">
+          <div className="flex flex-col md:flex-row px-1 md:justify-between mt-10 mr-1">
             <div className="text-gray-500">v{version}.{build}.{env}</div>
             <a
               href={`mailto:${email}`}

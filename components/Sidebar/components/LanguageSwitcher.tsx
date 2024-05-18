@@ -77,7 +77,7 @@ const LanguageSwitcher: FC = () => {
     }
 
     return (<div className={'grid'}>
-        <select value={locale} onChange={handleLocaleChange}>
+        <select value={locale} onChange={handleLocaleChange} className='w-[200px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm'>
         {locales.map((localeOption) => (
                 <option
                     data-te-select-init={'true'}

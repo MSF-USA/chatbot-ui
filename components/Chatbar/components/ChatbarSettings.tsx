@@ -12,7 +12,6 @@ import { Import } from '../../Settings/Import';
 import { Key } from '../../Settings/Key';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
-import { ClearConversations } from './ClearConversations';
 import { PluginKeys } from './PluginKeys';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import { Session } from 'inspector';
@@ -34,9 +33,6 @@ export const ChatbarSettings = () => {
   } = useContext(HomeContext);
 
   const {
-    handleClearConversations,
-    handleImportConversations,
-    handleExportData,
     handleApiKeyChange,
   } = useContext(ChatbarContext);
 
@@ -47,10 +43,6 @@ export const ChatbarSettings = () => {
 
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-white/20 pt-1 text-sm">
-      {conversations.length > 0 ? (
-        <ClearConversations onClearConversations={handleClearConversations} />
-      ) : null}
-
       <SidebarButton
         text={''}
         icon={user != undefined ?
