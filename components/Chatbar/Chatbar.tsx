@@ -333,70 +333,76 @@ export const Chatbar = () => {
       }}
     >
 
-    <div className="flex flex-col h-full">
-        <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5">
-          <button
-            className={`flex-1 p-2 text-sm font-bold ${
-              activeTab === Tab.CONVERSATIONS
-                ? 'border-b-2 border-black dark:border-white'
-                : 'border-b-2 border-transparent'
-            }`}
-            onClick={() => setActiveTab(Tab.CONVERSATIONS)}
-          >
-            {t('Conversations')}
-          </button>
-          <button
-            className={`flex-1 p-2 text-sm font-bold ${
-              activeTab === Tab.PROMPTS
-                ? 'border-b-2 border-black dark:border-white'
-                : 'border-b-2 border-transparent'
-            }`}
-            onClick={() => setActiveTab(Tab.PROMPTS)}
-          >
-            {t('Prompts')}
-          </button>
+    <div className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto">
+        <div className="flex flex-col h-full w-64 bg-gray-200 dark:bg-[#171717] z-30 md:relative md:w-auto">
+          <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5">
+            <button
+              className={`flex-1 p-2 text-sm font-bold ${
+                activeTab === Tab.CONVERSATIONS
+                  ? 'border-b-2 border-black dark:border-white'
+                  : 'border-b-2 border-transparent'
+              }`}
+              onClick={() => setActiveTab(Tab.CONVERSATIONS)}
+            >
+              {t('Conversations')}
+            </button>
+            <button
+              className={`flex-1 p-2 text-sm font-bold ${
+                activeTab === Tab.PROMPTS
+                  ? 'border-b-2 border-black dark:border-white'
+                  : 'border-b-2 border-transparent'
+              }`}
+              onClick={() => setActiveTab(Tab.PROMPTS)}
+            >
+              {t('Prompts')}
+            </button>
+          </div>
+          <div className="flex-1 overflow-auto">
+            {activeTab === Tab.CONVERSATIONS && (
+              <Sidebar<Conversation>
+                addItemButtonTitle={t('New chat')}
+                itemComponent={<Conversations conversations={filteredConversations} />}
+                folderComponent={<ChatFolders searchTerm={searchTerm} />}
+                items={filteredConversations}
+                searchTerm={searchTerm}
+                handleSearchTerm={(searchTerm: string) =>
+                  chatDispatch({ field: 'searchTerm', value: searchTerm })
+                }
+                handleCreateItem={handleNewConversation}
+                handleCreateFolder={() => handleCreateFolder(t('New folder'), 'chat')}
+                handleDrop={handleDrop}
+              />
+            )}
+            {activeTab === Tab.PROMPTS && (
+              <Sidebar<Prompt>
+                addItemButtonTitle={t('New prompt')}
+                itemComponent={
+                  <Prompts
+                    prompts={filteredPrompts.filter((prompt) => !prompt.folderId)}
+                  />
+                }
+                folderComponent={<PromptFolders />}
+                items={filteredPrompts}
+                searchTerm={promptSearchTerm}
+                handleSearchTerm={(searchTerm: string) =>
+                  chatDispatch({ field: 'promptSearchTerm', value: searchTerm })
+                }
+                handleCreateItem={handleCreatePrompt}
+                handleCreateFolder={() => handleCreateFolder(t('New folder'), 'prompt')}
+                handleDrop={handleDropPrompt}
+              />
+            )}
+          </div>
+          <div className="p-2">
+            <ChatbarSettings />
+          </div>
         </div>
-        <div className="flex-1 overflow-auto">
-          {activeTab === Tab.CONVERSATIONS && (
-            <Sidebar<Conversation>
-              addItemButtonTitle={t('New chat')}
-              itemComponent={<Conversations conversations={filteredConversations} />}
-              folderComponent={<ChatFolders searchTerm={searchTerm} />}
-              items={filteredConversations}
-              searchTerm={searchTerm}
-              handleSearchTerm={(searchTerm: string) =>
-                chatDispatch({ field: 'searchTerm', value: searchTerm })
-              }
-              handleCreateItem={handleNewConversation}
-              handleCreateFolder={() => handleCreateFolder(t('New folder'), 'chat')}
-              handleDrop={handleDrop}
-            />
-          )}
-          {activeTab === Tab.PROMPTS && (
-          <Sidebar<Prompt>
-          addItemButtonTitle={t('New prompt')}
-          itemComponent={
-            <Prompts
-              prompts={filteredPrompts.filter((prompt) => !prompt.folderId)}
-            />
-          }
-          folderComponent={<PromptFolders />}
-          items={filteredPrompts}
-          searchTerm={promptSearchTerm}
-          handleSearchTerm={(searchTerm: string) =>
-            chatDispatch({ field: 'promptSearchTerm', value: searchTerm })
-          }
-          handleCreateItem={handleCreatePrompt}
-          handleCreateFolder={() => handleCreateFolder(t('New folder'), 'prompt')}
-          handleDrop={handleDropPrompt}
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          onClick={handleToggleChatbar}
         />
-          )}
-        </div>
-        <div className="p-2">
-          <ChatbarSettings />
-        </div>
       </div>
-    <CloseSidebarButton onClick={handleToggleChatbar} side={'left'} />
+      <CloseSidebarButton onClick={handleToggleChatbar} side={'left'} />
     </ChatbarContext.Provider>
 ) : (
     <OpenSidebarButton onClick={handleToggleChatbar} side={'left'} />
