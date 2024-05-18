@@ -420,8 +420,6 @@ const Home = ({
             <div className="flex flex-1">
               <Chat stopConversationRef={stopConversationRef} />
             </div>
-
-            <Promptbar />
           </div>
         </main>
       )}

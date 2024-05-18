@@ -5,9 +5,9 @@ import { FolderInterface } from '@/types/folder';
 import HomeContext from '@/pages/api/home/home.context';
 
 import Folder from '@/components/Folder';
-import { PromptComponent } from '@/components/Promptbar/components/Prompt';
+import { PromptComponent } from './Prompt';
 
-import PromptbarContext from '../PromptBar.context';
+import ChatbarContext from '../Chatbar.context';
 
 export const PromptFolders = () => {
   const {
@@ -17,7 +17,7 @@ export const PromptFolders = () => {
   const {
     state: { searchTerm, filteredPrompts },
     handleUpdatePrompt,
-  } = useContext(PromptbarContext);
+  } = useContext(ChatbarContext);
 
   const handleDrop = (e: any, folder: FolderInterface) => {
     if (e.dataTransfer) {

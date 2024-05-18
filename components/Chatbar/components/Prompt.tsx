@@ -16,7 +16,7 @@ import { Prompt } from '@/types/prompt';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 
-import PromptbarContext from '../PromptBar.context';
+import ChatbarContext from '../Chatbar.context';
 import { PromptModal } from './PromptModal';
 
 interface Props {
@@ -25,10 +25,10 @@ interface Props {
 
 export const PromptComponent = ({ prompt }: Props) => {
   const {
-    dispatch: promptDispatch,
+    dispatch: dispatch,
     handleUpdatePrompt,
     handleDeletePrompt,
-  } = useContext(PromptbarContext);
+  } = useContext(ChatbarContext);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -37,7 +37,7 @@ export const PromptComponent = ({ prompt }: Props) => {
 
   const handleUpdate = (prompt: Prompt) => {
     handleUpdatePrompt(prompt);
-    promptDispatch({ field: 'searchTerm', value: '' });
+    dispatch({ field: 'searchTerm', value: '' });
   };
 
   const handleDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -45,7 +45,7 @@ export const PromptComponent = ({ prompt }: Props) => {
 
     if (isDeleting) {
       handleDeletePrompt(prompt);
-      promptDispatch({ field: 'searchTerm', value: '' });
+      dispatch({ field: 'searchTerm', value: '' });
     }
 
     setIsDeleting(false);
