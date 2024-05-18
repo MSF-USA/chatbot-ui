@@ -151,22 +151,10 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 }
               />
               <hr className="my-10 border-gray-300 dark:border-neutral-700" />
-              <div className="text-sm font-bold my-5 text-black dark:text-neutral-200">
-                {('Recover and Export Chat Data')}
-              </div>
-              <div className='flex flex-row'>
-              <Import onImport={handleImportConversations} />
-
-              <SidebarButton
-                text={t('Export data')}
-                icon={<IconFileExport size={18} />}
-                onClick={() => handleExportData()}
-              />
-              </div>
                 <div className='flex justify-end mr-1 mt-10'>
                 <button
                   type="button"
-                  className="w-[200px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                  className="w-[120px] p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
                   onClick={() => {
                     handleSave();
                     onClose();
@@ -191,7 +179,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 {t('Theme')}
               </div>
               <select
-                className="w-[200px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm"
+                className="w-[120px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm border-none hover:bg-gray-500/10"
                 value={state.theme}
                 onChange={(event) =>
                   dispatch({ field: 'theme', value: event.target.value })
@@ -204,7 +192,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             <div className='flex justify-end mr-1'>
               <button
                 type="button"
-                className="w-[200px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
                 onClick={() => {
                   handleSave();
                   onClose();
@@ -238,10 +226,22 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             </tbody>
           </table>
           <hr className="my-10 border-gray-300 dark:border-neutral-700" />
-          <div className='flex justify-end mr-1 mb-10'>
-            {homeState.conversations.length > 0 ? (
-                <ClearConversations onClearConversations={handleClearConversations} />
-            ) : null}
+          <div className='flex flex-row justify-between'>
+            <div className="text-sm mb-5 font-bold text-black dark:text-neutral-200">
+              Data
+            </div>
+            <div className='flex justify-end mr-1 mb-10 items-center flex-col'>
+              {homeState.conversations.length > 0 ? (
+                  <ClearConversations onClearConversations={handleClearConversations} />
+              ) : null}
+              <Import onImport={handleImportConversations} />
+
+              <SidebarButton
+                text={t('Export data')}
+                icon={<IconFileExport size={18} />}
+                onClick={() => handleExportData()}
+              />
+            </div>
           </div>
           <div className='flex justify-end mr-1'>
             <SignInSignOut />
