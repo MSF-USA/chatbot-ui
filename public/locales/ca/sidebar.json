@@ -9,5 +9,14 @@
   "Clear conversations": "Esborrar converses",
   "Export data": "Exportar converses",
   "Dark mode": "Mode fosc",
-  "Light mode": "Mode clar"
+  "Light mode": "Mode clar",
+  "New prompt": "Nou prompt",
+  "No prompts.": "No hi ha prompts.",
+  "Search prompts...": "Cerca prompts...",
+  "Name": "Nom",
+  "Description": "Descripció",
+  "A description for your prompt.": "Descripció del teu prompt.",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del missatge. Utilitza {{}} per indicar una variable. Ex: {{nom}} és un {{adjectiu}} {{substantiu}}",
+  "Save": "Guardar"
 }

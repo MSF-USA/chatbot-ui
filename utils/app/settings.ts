@@ -5,6 +5,8 @@ const STORAGE_KEY = 'settings';
 export const getSettings = (): Settings => {
   let settings: Settings = {
     theme: 'dark',
+    temperature: 1,
+    systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || ''
   };
   const settingsJson = localStorage.getItem(STORAGE_KEY);
   if (settingsJson) {

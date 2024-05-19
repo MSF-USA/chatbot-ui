@@ -75,8 +75,6 @@ const Home = ({
       conversations,
       selectedConversation,
       prompts,
-      temperature,
-      systemPrompt
     },
     dispatch,
   } = contextValue;
@@ -275,12 +273,9 @@ const Home = ({
 
   useEffect(() => {
     const settings = getSettings();
-    if (settings.theme) {
-      dispatch({
-        field: 'lightMode',
-        value: settings.theme,
-      });
-    }
+    if (settings.theme) dispatch({field: 'lightMode', value: settings.theme});
+    if (settings.temperature) dispatch({ field: 'temperature', value: settings.temperature });
+    if (settings.systemPrompt) dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
 
     const apiKey = localStorage.getItem('apiKey');
 
@@ -318,25 +313,6 @@ const Home = ({
     if (prompts) {
       dispatch({ field: 'prompts', value: JSON.parse(prompts) });
     }
-
-    const temperature = localStorage.getItem('temperature');
-    if (temperature) {
-      dispatch({ field: 'temperature', value: JSON.parse(temperature) });
-    }
-
-    const systemPrompt = localStorage.getItem('systemPrompt');
-    if (systemPrompt) {
-      dispatch({ field: 'systemPrompt', value: JSON.parse(systemPrompt) });
-    }
-    // else if (!systemPrompt && user?.jobTitle && user?.department)  {
-    //   const customUserSystemPrompt = `I work for Doctors Without Borders as a ${user.jobTitle} in the ${user.department}. Please read my message and respond accordingly based on this context.`
-    //   dispatch({ field: 'systemPrompt', value: customUserSystemPrompt });
-    // } else if (process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT) {
-    //   dispatch({ field: 'systemPrompt', value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT});
-    // } else {
-    //   const defaultSystemPrompt = "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown."
-    //   dispatch({ field: 'systemPrompt', value: defaultSystemPrompt});
-    //}
 
     const conversationHistory = localStorage.getItem('conversationHistory');
     if (conversationHistory) {

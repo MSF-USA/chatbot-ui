@@ -78,8 +78,16 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const handleSave = () => {
     homeDispatch({ field: 'lightMode', value: state.theme });
     saveSettings(state);
-    localStorage.setItem('temperature', JSON.stringify(homeState.temperature));
-    localStorage.setItem('systemPrompt', JSON.stringify(homeState.systemPrompt));
+  };
+
+  const handleReset = () => {
+    const defaultSettings: Settings = {
+      theme: 'dark',
+      temperature: 0.5,
+      systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || ''
+    };
+    homeDispatch({ field: 'lightMode', value: 'dark' });
+    saveSettings(defaultSettings);
   };
 
   // Render nothing if the dialog is not open.
@@ -132,9 +140,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               </div>
 
               <TemperatureSlider
-                temperature={homeState.temperature}
+                temperature={state.temperature}
                 onChangeTemperature={(temperature) =>
-                  homeDispatch({ field: 'temperature', value: temperature })
+                  dispatch({ field: 'temperature', value: temperature })
                 }
               />
               <hr className="my-10 border-gray-300 dark:border-neutral-700" />
@@ -143,10 +151,10 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               </div>
               <SystemPrompt
                 prompts={homeState.prompts}
-                systemPrompt={homeState.systemPrompt}
+                systemPrompt={state.systemPrompt}
                 user={user}
                 onChangePrompt={(prompt) =>
-                  homeDispatch({
+                  dispatch({
                     field: 'systemPrompt',
                     value: prompt,
                   })
@@ -246,6 +254,19 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             </div>
           </div>
           <div className='flex justify-end mr-1'>
+          <button
+            type="button"
+            className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+            onClick={() => {
+              handleReset()
+              onClose();
+            }}
+          >
+            {t('Reset Settings')}
+          </button>
+          </div>
+          <div className='flex justify-end mr-1'>
+
             <SignInSignOut />
           </div>
           </>
