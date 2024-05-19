@@ -44,7 +44,7 @@ export const ChatbarSettings = () => {
   return (
     <div className="flex flex-col items-center space-y-1 border-t border-black dark:border-white/20 pt-1 text-sm">
       <SidebarButton
-        text={''}
+        text={t('Settings')}
         icon={user != undefined ?
             <div
               className="rounded-full bg-[#D7211E] h-10 w-10 flex items-center justify-center dark:text-white text-black"

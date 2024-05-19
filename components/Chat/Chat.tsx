@@ -560,6 +560,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 loop: false,
                                 cursor: '',
                                 delay: 50,
+                                deleteSpeed: 1,
                               }}
                               onInit={(typewriter) => {
                                 typewriter.typeString('MSF AI Assistant')
