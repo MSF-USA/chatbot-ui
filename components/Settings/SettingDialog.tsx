@@ -77,6 +77,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
   const handleSave = () => {
     homeDispatch({ field: 'lightMode', value: state.theme });
+    homeDispatch({ field: 'temperature', value: state.temperature });
+    homeDispatch({ field: 'systemPrompt', value: state.systemPrompt });
     saveSettings(state);
   };
 
@@ -87,6 +89,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || ''
     };
     homeDispatch({ field: 'lightMode', value: 'dark' });
+    homeDispatch({ field: 'temperature', value: 0.5 });
+    homeDispatch({ field: 'systemPrompt', value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '' });
     saveSettings(defaultSettings);
   };
 
