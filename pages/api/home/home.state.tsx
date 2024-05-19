@@ -23,7 +23,7 @@ export interface HomeInitialState {
   temperature: number;
   showChatbar: boolean;
   showPromptbar: boolean;
-  systemPrompt: string | undefined;
+  systemPrompt: string;
   currentFolder: FolderInterface | undefined;
   messageError: boolean;
   searchTerm: string;
@@ -47,7 +47,7 @@ export const initialState: HomeInitialState = {
   prompts: [],
   temperature: 0.5,
   showPromptbar: true,
-  systemPrompt: undefined,
+  systemPrompt: '',
   showChatbar: true,
   currentFolder: undefined,
   messageError: false,
