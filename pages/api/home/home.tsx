@@ -327,15 +327,16 @@ const Home = ({
     const systemPrompt = localStorage.getItem('systemPrompt');
     if (systemPrompt) {
       dispatch({ field: 'systemPrompt', value: JSON.parse(systemPrompt) });
-    } else if (!systemPrompt && user?.jobTitle && user?.department)  {
-      const customUserSystemPrompt = `I work for Doctors Without Borders as a ${user.jobTitle} in the ${user.department}. Please read my message and respond accordingly based on this context.`
-      dispatch({ field: 'systemPrompt', value: customUserSystemPrompt });
-    } else if (process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT) {
-      dispatch({ field: 'systemPrompt', value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT});
-    } else {
-      const defaultSystemPrompt = "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown."
-      dispatch({ field: 'systemPrompt', value: defaultSystemPrompt});
     }
+    // else if (!systemPrompt && user?.jobTitle && user?.department)  {
+    //   const customUserSystemPrompt = `I work for Doctors Without Borders as a ${user.jobTitle} in the ${user.department}. Please read my message and respond accordingly based on this context.`
+    //   dispatch({ field: 'systemPrompt', value: customUserSystemPrompt });
+    // } else if (process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT) {
+    //   dispatch({ field: 'systemPrompt', value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT});
+    // } else {
+    //   const defaultSystemPrompt = "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown."
+    //   dispatch({ field: 'systemPrompt', value: defaultSystemPrompt});
+    //}
 
     const conversationHistory = localStorage.getItem('conversationHistory');
     if (conversationHistory) {
