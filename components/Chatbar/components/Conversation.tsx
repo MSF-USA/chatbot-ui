@@ -116,11 +116,11 @@ export const ConversationComponent = ({ conversation }: Props) => {
         </div>
       ) : (
         <button
-          className={`flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#212121]/90 ${
+          className={`flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 dark:hover:bg-[#212121]/90 hover:bg-gray-300 ${
             messageIsStreaming ? 'disabled:cursor-not-allowed' : ''
           } ${
             selectedConversation?.id === conversation.id
-              ? 'bg-[#212121]/90'
+              ? 'dark:bg-[#212121]/90 bg-gray-400'
               : ''
           }`}
           onClick={() => handleSelectConversation(conversation)}
@@ -141,7 +141,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
 
       {(isDeleting || isRenaming) &&
         selectedConversation?.id === conversation.id && (
-          <div className="absolute right-1 z-10 flex text-gray-300">
+          <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
             <SidebarActionButton handleClick={handleConfirm}>
               <IconCheck size={18} />
             </SidebarActionButton>
@@ -154,7 +154,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
       {selectedConversation?.id === conversation.id &&
         !isDeleting &&
         !isRenaming && (
-          <div className="absolute right-1 z-10 flex text-gray-300">
+          <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
             <SidebarActionButton handleClick={handleOpenRenameModal}>
               <IconPencil size={18} />
             </SidebarActionButton>

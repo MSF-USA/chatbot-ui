@@ -335,7 +335,7 @@ export const Chatbar = () => {
 
     <div className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto">
         <div className="flex flex-col h-full w-64 bg-gray-200 dark:bg-[#171717] z-30 md:relative md:w-auto">
-          <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5">
+          <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5 text-black dark:text-white">
             <button
               className={`flex-1 p-2 text-sm font-bold ${
                 activeTab === Tab.CONVERSATIONS

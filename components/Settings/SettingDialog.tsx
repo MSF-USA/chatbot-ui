@@ -104,18 +104,20 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           >
             <div className="flex">
               <button
-                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 border-b-2 border-transparent focus:outline-none ${
+                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
                   activeTab === Tab.CHAT_SETTINGS
-                    ? 'border-black dark:border-white'
-                    : ''
+                    ? 'border-b-2 border-black dark:border-white'
+                    : 'border-0'
                 }`}
                 onClick={() => setActiveTab(Tab.CHAT_SETTINGS)}
               >
                 {t('Chat') + ' ' + t('Settings')}
               </button>
               <button
-                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 border-b-2 border-transparent focus:outline-none ${
-                  activeTab === Tab.APP_SETTINGS ? 'border-black dark:border-white' : ''
+                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
+                  activeTab === Tab.APP_SETTINGS
+                  ? 'border-b-2 border-black dark:border-white'
+                  : 'border-0'
                 }`}
                 onClick={() => setActiveTab(Tab.APP_SETTINGS)}
               >
@@ -252,9 +254,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             <div className="text-gray-500">v{version}.{build}.{env}</div>
             <a
               href={`mailto:${email}`}
-              className="flex items-center mt-2 md:mt-0"
+              className="flex items-center mt-2 md:mt-0 text-black dark:text-white"
             >
-              <IconExternalLink size={18} className={'inline mr-1'} />
+              <IconExternalLink size={18} className={'inline mr-1 text-black dark:text-white'} />
               {t('Send your Feedback')}
             </a>
           </div>

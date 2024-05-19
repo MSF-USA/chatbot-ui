@@ -47,21 +47,21 @@ const Sidebar = <T,>({
     <div>
       <div className="flex items-center">
         <button
-          className="text-sidebar flex w-[190px] flex-shrink-0 cursor-pointer select-none items-center gap-3 rounded-md border border-white/20 p-3 text-white transition-colors duration-200 hover:bg-gray-500/10"
+          className="text-sidebar flex w-[190px] flex-shrink-0 cursor-pointer select-none items-center gap-3 rounded-md border border-white/20 p-3 text-black dark:text-white transition-colors duration-200 dark:hover:bg-gray-500/10 hover:bg-gray-300"
           onClick={() => {
             handleCreateItem();
             handleSearchTerm('');
           }}
         >
-          <IconPlus size={16} />
+          <IconPlus size={16} className='text-black dark:text-white'/>
           {addItemButtonTitle}
         </button>
 
         <button
-          className="ml-2 flex flex-shrink-0 cursor-pointer items-center gap-3 rounded-md border border-white/20 p-3 text-sm text-white transition-colors duration-200 hover:bg-gray-500/10"
+          className="ml-2 flex flex-shrink-0 cursor-pointer items-center gap-3 rounded-md border border-white/20 p-3 text-sm text-white transition-colors duration-200 dark:hover:bg-gray-500/10 hover:bg-gray-300"
           onClick={handleCreateFolder}
         >
-          <IconFolderPlus size={16} />
+          <IconFolderPlus size={16} className='text-black dark:text-white'/>
         </button>
       </div>
       <Search
@@ -72,14 +72,14 @@ const Sidebar = <T,>({
 
       <div className="flex-grow overflow-auto">
         {items?.length > 0 && (
-          <div className="flex border-b border-white/20 pb-2">
+          <div className="flex border-b border-white/20 pb-2 text-black dark:text-white">
             {folderComponent}
           </div>
         )}
 
         {items?.length > 0 ? (
           <div
-            className="pt-2"
+            className="pt-2 text-black dark:text-white"
             onDrop={handleDrop}
             onDragOver={allowDrop}
             onDragEnter={highlightDrop}
@@ -88,8 +88,8 @@ const Sidebar = <T,>({
             {itemComponent}
           </div>
         ) : (
-          <div className="mt-8 select-none text-center text-white opacity-50">
-            <IconMistOff className="mx-auto mb-3" />
+          <div className="mt-8 select-none text-center text-black dark:text-white opacity-50">
+            <IconMistOff className="mx-auto mb-3 text-black dark:text-white" />
             <span className="text-[14px] leading-normal">
               {t('No data.')}
             </span>
