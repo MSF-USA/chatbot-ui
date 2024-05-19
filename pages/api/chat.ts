@@ -17,7 +17,7 @@ import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import {getToken} from "next-auth/jwt";
 import {makeAPIMRequest} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
-import {getMessagesToSend, isImageConversation} from "@/utils/app/chat";
+import {getMessagesToSendV2, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
 import AzureOpenAIClient from "@/utils/server/azure-openai";
 import {JWT} from 'next-auth';
@@ -51,11 +51,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     const prompt_tokens = encoding.encode(promptToSend);
 
-    const messagesToSend: Message[] = await getMessagesToSend(
+    const messagesToSend: Message[] = await getMessagesToSendV2(
         messages, encoding, prompt_tokens.length, model.tokenLimit
     );
-
-
     encoding.free();
     // @ts-ignore
     const token: JWT | null = await getToken({req});
@@ -79,6 +77,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
         )
       }
     } catch (err) {
+      console.error(err)
       // TODO: implement this in a way that isn't idiotic
       resp = await makeAPIMRequest(
           `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
