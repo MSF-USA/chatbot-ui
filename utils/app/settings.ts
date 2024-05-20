@@ -6,7 +6,7 @@ export const getSettings = (): Settings => {
   let settings: Settings = {
     theme: 'dark',
     temperature: 1,
-    systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || ''
+    systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown."
   };
   const settingsJson = localStorage.getItem(STORAGE_KEY);
   if (settingsJson) {
