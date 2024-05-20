@@ -19,7 +19,6 @@ import { getEndpoint } from '@/utils/app/api';
 import {
   saveConversation,
   saveConversations,
-  updateConversation,
 } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
@@ -37,8 +36,6 @@ import { MemoizedChatMessage } from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
 import logo from '../../public/msf_logo2.png'
-import { type } from 'os';
-import { SystemPrompt } from '../Settings/SystemPrompt';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
