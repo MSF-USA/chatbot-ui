@@ -680,7 +680,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}
                   >
-                    <IconSettings size={18} className='text-black dark:text-white'/>
+                  <IconSettings size={18} className={`${
+                    showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
+                  }`}/>
                   </button>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
@@ -690,11 +692,47 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </button>
                 </div>
                 {showSettings && (
-                  <div className="flex flex-col space-y-10 md:mx-auto md:max-w-xl md:gap-6 md:py-3 md:pt-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
+                  <Transition
+                    appear={true}
+                    show={showSettings}
+                    enter="transition-opacity duration-500"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-300"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                  <div className="flex flex-col space-y-10 mx-auto max-w-sm md:max-w-md md:gap-6 md:py-3 md:pt-6 lg:max-w-lg lg:px-0">
                     <div className="flex h-full flex-col space-y-4 md:rounded-lg">
+                      <div className='flex justify-between items-center mb-5'>
+                      {t('AI Model Selection:')}
                       <ModelSelect />
+                      </div>
+
+                      {/* <SystemPrompt
+                        conversation={selectedConversation}
+                        prompts={prompts}
+                        onChangePrompt={(prompt) =>
+                          handleUpdateConversation(selectedConversation, {
+                            key: 'prompt',
+                            value: prompt,
+                          })
+                        }
+                      /> */}
+                      {selectedConversation ? t('Temperature'): ''}
+                      {selectedConversation ? <TemperatureSlider
+                        // label={t('Temperature')}
+                        temperature={selectedConversation?.temperature}
+                        onChangeTemperature={(temperature) =>
+                          handleUpdateConversation(selectedConversation, {
+                            key: 'temperature',
+                            value: temperature,
+                          })
+                        }
+                      /> : <></>}
                     </div>
                   </div>
+                  </Transition>
                 )}
 
                 {selectedConversation?.messages.map((message, index) => (
