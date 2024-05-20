@@ -75,6 +75,8 @@ const Home = ({
       conversations,
       selectedConversation,
       prompts,
+      temperature,
+      systemPrompt
     },
     dispatch,
   } = contextValue;
@@ -212,8 +214,8 @@ const Home = ({
         maxLength: OpenAIModels[defaultModelId].maxLength,
         tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
       },
-      prompt: DEFAULT_SYSTEM_PROMPT,
-      temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+      prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature: temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
       folderId: null,
     };
 
@@ -346,8 +348,8 @@ const Home = ({
           name: t('New Conversation'),
           messages: [],
           model: OpenAIModels[defaultModelId],
-          prompt: DEFAULT_SYSTEM_PROMPT,
-          temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+          prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+          temperature: temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
           folderId: null,
         },
       });

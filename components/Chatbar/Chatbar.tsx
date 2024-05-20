@@ -50,7 +50,9 @@ export const Chatbar = () => {
       defaultModelId,
       folders,
       prompts,
-      showPromptbar
+      showPromptbar,
+      temperature,
+      systemPrompt
     },
     dispatch: homeDispatch,
     handleCreateFolder,
@@ -151,8 +153,8 @@ export const Chatbar = () => {
           name: t('New Conversation'),
           messages: [],
           model: OpenAIModels[defaultModelId],
-          prompt: DEFAULT_SYSTEM_PROMPT,
-          temperature: DEFAULT_TEMPERATURE,
+          prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+          temperature: temperature || DEFAULT_TEMPERATURE,
           folderId: null,
         },
       });
@@ -193,8 +195,8 @@ export const Chatbar = () => {
             name: t('New Conversation'),
             messages: [],
             model: OpenAIModels[defaultModelId],
-            prompt: DEFAULT_SYSTEM_PROMPT,
-            temperature: DEFAULT_TEMPERATURE,
+            prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+            temperature: temperature || DEFAULT_TEMPERATURE,
             folderId: null,
           },
         });

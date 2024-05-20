@@ -1,4 +1,4 @@
-import { IconClearAll, IconSettings } from '@tabler/icons-react';
+import { IconClearAll, IconSettings, IconInfoCircle } from '@tabler/icons-react';
 import {
   MutableRefObject,
   memo,
@@ -11,7 +11,7 @@ import {
 import toast from 'react-hot-toast';
 import Typewriter from 'typewriter-effect';
 import { Transition } from '@headlessui/react'
-import {DEFAULT_SYSTEM_PROMPT} from '@/utils/app/const';
+import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
 
 import { useTranslation } from 'next-i18next';
 
@@ -36,6 +36,7 @@ import { MemoizedChatMessage } from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
 import logo from '../../public/msf_logo2.png'
+import { TemperatureSlider } from '../Settings/Temperature';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -112,8 +113,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       model: updatedConversation.model,
       messages: updatedConversation.messages.slice(-6),
       key: apiKey,
-      prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature: temperature,
+      prompt: updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature: updatedConversation.temperature || temperature ||DEFAULT_TEMPERATURE,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -541,8 +542,78 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages?.length === 0 ? (
               <>
+              {models.length > 0 && !runTypewriter && (
+                <Transition
+                  appear={true}
+                  show={image}
+                  enter="transition-opacity duration-1000"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="transition-opacity duration-300"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                <div>
+                <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                  {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
+                  : {selectedConversation?.temperature} |
+                  <button
+                    className="ml-2 cursor-pointer hover:opacity-50"
+                    onClick={handleSettings}
+                  >
+                  <IconSettings size={18} className={`${
+                    showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
+                  }`}/>
+                  </button>
+                  </div>
+                  {showSettings && (
+                  <Transition
+                    appear={true}
+                    show={showSettings}
+                    enter="transition-opacity duration-500"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-300"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                  <div className="flex flex-col space-y-10 md:mx-auto md:max-w-md md:gap-6 md:py-3 md:pt-6 lg:max-w-lg lg:px-0 xl:max-w-xl">
+                    <div className="flex h-full flex-col space-y-4 md:rounded-lg">
+                      <div className='flex justify-between items-center mb-5'>
+                      {t('AI Model Selection:')}
+                      <ModelSelect />
+                      </div>
+
+                      {/* <SystemPrompt
+                        conversation={selectedConversation}
+                        prompts={prompts}
+                        onChangePrompt={(prompt) =>
+                          handleUpdateConversation(selectedConversation, {
+                            key: 'prompt',
+                            value: prompt,
+                          })
+                        }
+                      /> */}
+                      {t('Temperature')}
+                      <TemperatureSlider
+                        // label={t('Temperature')}
+                        temperature={selectedConversation.temperature}
+                        onChangeTemperature={(temperature) =>
+                          handleUpdateConversation(selectedConversation, {
+                            key: 'temperature',
+                            value: temperature,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  </Transition>
+                )}
+                </div>
+                </ Transition>
+              )}
               <div className="flex items-center justify-center h-screen">
-                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
+                <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
                   <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                     {models.length === 0 ? (
                       <div>
@@ -571,7 +642,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               }}
                             />
                           )}
-                          {image && (
+                          {image && !showSettings && (
                             <Transition
                             appear={true}
                             show={image}
@@ -582,14 +653,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             leaveFrom="opacity-100"
                             leaveTo="opacity-0"
                           >
-                          <div className='flex-shrink-0 my-1 flex flex-col items-center'>
+                          <div className='flex-shrink-0 flex flex-col items-center'>
+                          <div className="ml-2 group relative flex flex-row">
                             <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
-                            <p className='text-xs text-gray-600 dark:text-gray-400 mt-4'>Type question below to get started</p>
-                            {models.length > 0 && (
-                            <div className='text-base'>
-                              <ModelSelect />
-                            </div>
-                          )}
+                              <IconInfoCircle size={20} className='text-black dark:text-white'/>
+                            <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[200px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                            Choose conversation settings in top banner or type question below to get started with default settings. Default settings can be modified in bottom left settings menu.
+                          </span>
+                          </div>
                           </div>
                           </Transition>
                           )}
@@ -604,7 +675,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
                   {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
-                  : {temperature} |
+                  : {selectedConversation?.temperature} |
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}

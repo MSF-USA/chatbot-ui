@@ -1,4 +1,4 @@
-import { IconExternalLink, IconInfoCircle } from '@tabler/icons-react';
+import { IconExternalLink } from '@tabler/icons-react';
 import { useContext } from 'react';
 
 import { useTranslation } from 'next-i18next';
@@ -62,12 +62,6 @@ export const ModelSelect = () => {
           {t('View Account Usage')}
         </a>
       </div> */}
-      <div className="ml-2 group relative">
-        <IconInfoCircle size={20} className='text-black dark:text-white'/>
-        <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[150px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-        Choose which AI Model to use or go with the default.
-      </span>
-      </div>
     </div>
   );
 };
