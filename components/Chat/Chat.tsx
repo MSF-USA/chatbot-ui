@@ -114,7 +114,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       messages: updatedConversation.messages.slice(-6),
       key: apiKey,
       prompt: updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature: updatedConversation.temperature || temperature ||DEFAULT_TEMPERATURE,
+      temperature: updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
     };
     const endpoint = getEndpoint(plugin);
     let body;
