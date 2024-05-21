@@ -577,11 +577,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                  <div className="mt-10 flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
-                    <div className="flex h-full flex-col md:rounded-lg">
+                  <div className="mt-10 flex justify-center relative mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
+                    <div className="absolute w-full md:max-w-lg rounded-lg space-y-4 border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121]">
                       <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
-                      {t('AI Model Selection:')}
-                      <ModelSelect />
+                        {t('AI Model Selection:')}
+                        <ModelSelect />
                       </div>
 
                       {/* <SystemPrompt
@@ -606,7 +606,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         }
                       />
                     </div>
-                    <hr className="border-gray-300 dark:border-neutral-700 my-5" />
                   </div>
                   </Transition>
                 )}
@@ -704,7 +703,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                   <div className="flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
-                    <div className="flex h-full flex-col space-y-4 md:rounded-lg">
+                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121]">
                       <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
                       {t('AI Model Selection:')}
                       <ModelSelect />
@@ -732,7 +731,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         }
                       /> : <></>}
                     </div>
-                    <hr className="border-gray-300 dark:border-neutral-700 my-5" />
                   </div>
                   </Transition>
                 )}
