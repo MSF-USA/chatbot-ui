@@ -577,7 +577,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                  <div className="flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
+                  <div className="mt-10 flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
                     <div className="flex h-full flex-col md:rounded-lg">
                       <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
                       {t('AI Model Selection:')}
