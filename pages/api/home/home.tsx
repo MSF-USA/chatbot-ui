@@ -278,7 +278,7 @@ const Home = ({
     if (settings.theme) dispatch({field: 'lightMode', value: settings.theme});
     if (settings.temperature) dispatch({ field: 'temperature', value: settings.temperature });
     if (settings.systemPrompt) dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
-
+    if (settings.runTypeWriterIntroSetting === false) dispatch({ field: 'runTypeWriterIntroSetting', value: settings.runTypeWriterIntroSetting });
     const apiKey = localStorage.getItem('apiKey');
 
     if (serverSideApiKeyIsSet || OPENAI_API_HOST_TYPE === 'apim') {

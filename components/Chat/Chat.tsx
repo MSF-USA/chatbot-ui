@@ -58,7 +58,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       loading,
       prompts,
       temperature,
-      systemPrompt
+      systemPrompt,
+      runTypeWriterIntroSetting
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -482,11 +483,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [runTypewriter, setRunTypewriter] = useState(false)
 
   useEffect(() => {
+    console.log('comp'+ runTypeWriterIntroSetting)
     if (!image) {
-      console.log(image)
-      setRunTypewriter(true);
+      if (runTypeWriterIntroSetting) {
+        setRunTypewriter(true);
+      } else { setImage(true)
+      }
     } else {
-      console.log(image)
       setRunTypewriter(false)
     }
   }, []);
