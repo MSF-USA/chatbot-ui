@@ -578,7 +578,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                   <div className="mt-10 flex justify-center relative mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
-                    <div className="absolute w-full md:max-w-lg rounded-lg space-y-4 border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121]">
+                    <div className="absolute w-full md:max-w-lg rounded-lg space-y-4 border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121] text-black dark:text-white">
                       <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
                         {t('AI Model Selection:')}
                         <ModelSelect />
@@ -594,7 +594,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           })
                         }
                       /> */}
-                      {t('Temperature')}
+                        {t('Temperature')}
                       <TemperatureSlider
                         // label={t('Temperature')}
                         temperature={selectedConversation.temperature}
@@ -703,7 +703,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                   <div className="flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121]">
+                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121] text-black dark:text-white">
                       <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
                       {t('AI Model Selection:')}
                       <ModelSelect />
