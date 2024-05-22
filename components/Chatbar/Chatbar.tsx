@@ -310,7 +310,7 @@ export const Chatbar = () => {
             prompt.description.toLowerCase() +
             ' ' +
             prompt.content.toLowerCase();
-          return searchable.includes(searchTerm.toLowerCase());
+          return searchable.includes(promptSearchTerm.toLowerCase());
         }),
       });
     } else {

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { FolderInterface } from '@/types/folder';
 
@@ -15,7 +15,7 @@ export const PromptFolders = () => {
   } = useContext(HomeContext);
 
   const {
-    state: { searchTerm, filteredPrompts },
+    state: { promptSearchTerm, filteredPrompts },
     handleUpdatePrompt,
   } = useContext(ChatbarContext);
 
@@ -53,7 +53,7 @@ export const PromptFolders = () => {
         .map((folder, index) => (
           <Folder
             key={index}
-            searchTerm={searchTerm}
+            searchTerm={promptSearchTerm}
             currentFolder={folder}
             handleDrop={handleDrop}
             folderComponent={PromptFolders(folder)}

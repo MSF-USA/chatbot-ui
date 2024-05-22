@@ -483,7 +483,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [runTypewriter, setRunTypewriter] = useState(false)
 
   useEffect(() => {
-    console.log('comp'+ runTypeWriterIntroSetting)
     if (!image) {
       if (runTypeWriterIntroSetting) {
         setRunTypewriter(true);
