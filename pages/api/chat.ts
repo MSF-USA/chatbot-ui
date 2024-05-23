@@ -82,7 +82,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
               "messages": messagesToSend,
             }
         )
-        console.log(resp)
       } catch (err) {
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
