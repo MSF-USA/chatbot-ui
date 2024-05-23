@@ -47,6 +47,11 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
+    let modelToUse = model.id
+    if (modelToUse == null) {
+      modelToUse = AZURE_DEPLOYMENT_ID;
+    }
+
     const prompt_tokens = encoding.encode(promptToSend);
 
     let tokenCount = prompt_tokens.length;
@@ -70,21 +75,20 @@ const handler = async (req: NextRequest): Promise<Response> => {
       let resp;
       try {
         resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,
             'POST',
             {
-              "model": model.id,
               "messages": messagesToSend,
             }
         )
+        console.log(resp)
       } catch (err) {
         resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,
             'POST',
             {
-              "model": model.id,
               "messages": messagesToSend,
             }
         )
