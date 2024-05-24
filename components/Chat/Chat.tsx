@@ -1,4 +1,4 @@
-import { IconClearAll, IconSettings, IconInfoCircle } from '@tabler/icons-react';
+import { IconClearAll, IconSettings, IconInfoCircle, IconExternalLink } from '@tabler/icons-react';
 import {
   MutableRefObject,
   memo,
@@ -70,6 +70,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
   }
+
+  const email = process.env.NEXT_PUBLIC_EMAIL;
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -566,6 +568,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
                   }`}/>
                   </button>
+                    <div className='absolute right-0'>
+                      <a
+                          href={`mailto:${email}`}
+                          className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                        >
+                          <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                          {t('Send Feedback')}
+                      </a>
+                    </div>
                   </div>
                   {showSettings && (
                   <Transition
@@ -692,6 +703,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   >
                     <IconClearAll size={18} className='text-black dark:text-white'/>
                   </button>
+                  <div className='absolute right-0'>
+                    <a
+                        href={`mailto:${email}`}
+                        className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                      >
+                        <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                        {t('Send Feedback')}
+                    </a>
+                  </div>
                 </div>
                 {showSettings && (
                   <Transition

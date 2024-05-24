@@ -37,9 +37,10 @@ export const ChatbarSettings = () => {
   } = useContext(ChatbarContext);
 
   const getInitials = (name: string) => {
-    const names = name.replace(/[^a-zA-Z\s]/g, '').trim().split(/\s+/);
-    const firstInitial = names[0] ? names[0][0] : '';
-    const lastInitial = names.length > 1 ? names[names.length - 1][0] : '';
+    const cleanName = name.replace(/\(.*?\)/g, '').replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ').trim();
+    const names = cleanName.split(' ');
+    const firstInitial = names[0] ? names[0][0].toUpperCase() : '';
+    const lastInitial = names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
     return firstInitial + lastInitial;
   };
 

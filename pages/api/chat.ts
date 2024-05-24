@@ -8,6 +8,7 @@ import {
 import { OpenAIError, OpenAIStream } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
+import { OpenAIModelID } from '@/types/openai';
 
 // @ts-expect-error
 import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
@@ -47,8 +48,10 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
+    const isValidModel = Object.values(OpenAIModelID).toString().includes(model.id)
+
     let modelToUse = model.id
-    if (modelToUse == null) {
+    if (modelToUse == null || !isValidModel) {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
@@ -74,6 +77,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       const token: JWT = await getToken({req});
       let resp;
       try {
+        console.log(isValidModel)
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,
