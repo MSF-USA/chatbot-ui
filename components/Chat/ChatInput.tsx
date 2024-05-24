@@ -336,7 +336,6 @@ export const ChatInput = ({
                   : 'hidden'
               }`,
               fontSize: '16px',
-              whiteSpace: 'nowrap',
             }}
             placeholder={placeholderText}
             value={content}
