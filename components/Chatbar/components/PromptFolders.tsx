@@ -1,13 +1,13 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 
 import { FolderInterface } from '@/types/folder';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import Folder from '@/components/Folder';
-import { PromptComponent } from '@/components/Promptbar/components/Prompt';
+import { PromptComponent } from './Prompt';
 
-import PromptbarContext from '../PromptBar.context';
+import ChatbarContext from '../Chatbar.context';
 
 export const PromptFolders = () => {
   const {
@@ -15,9 +15,9 @@ export const PromptFolders = () => {
   } = useContext(HomeContext);
 
   const {
-    state: { searchTerm, filteredPrompts },
+    state: { promptSearchTerm, filteredPrompts },
     handleUpdatePrompt,
-  } = useContext(PromptbarContext);
+  } = useContext(ChatbarContext);
 
   const handleDrop = (e: any, folder: FolderInterface) => {
     if (e.dataTransfer) {
@@ -53,7 +53,7 @@ export const PromptFolders = () => {
         .map((folder, index) => (
           <Folder
             key={index}
-            searchTerm={searchTerm}
+            searchTerm={promptSearchTerm}
             currentFolder={folder}
             handleDrop={handleDrop}
             folderComponent={PromptFolders(folder)}

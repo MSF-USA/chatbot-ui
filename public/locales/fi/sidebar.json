@@ -9,5 +9,14 @@
   "Clear conversations": "Tyhjennä keskustelut",
   "Export data": "Vie keskustelut",
   "Settings": "Asetukset",
-  "Plugin Keys": "Plugin-avaimet"
+  "Plugin Keys": "Plugin-avaimet",
+  "New prompt": "Uusi prompt",
+  "No prompts.": "Ei prompteja.",
+  "Search prompts...": "Hae prompteista...",
+  "Name": "Nimi",
+  "Description": "Kuvaus",
+  "A description for your prompt.": "Promptisi kuvaus.",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Promptin sisältö. Käytä {{}} muuttujien merkitsemiseen. Esim: {{nimi}} on {{adjektiivi}} {{substantiivi}}",
+  "Save": "Tallenna"
 }
