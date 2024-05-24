@@ -658,8 +658,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           <div className="ml-2 group relative flex flex-row">
                             <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
                               <IconInfoCircle size={20} className='text-black dark:text-white'/>
-                            <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[200px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                            Choose conversation settings in top banner or type question below to get started with default settings. Default settings can be modified in bottom left settings menu.
+                            <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                            Type question below to get started.<br /><br />
+                            Chat settings can be modified with top banner gear icon.<br /><br />
+                            Default settings can be modified in bottom left settings menu.
                           </span>
                           </div>
                           </div>

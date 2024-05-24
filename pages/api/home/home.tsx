@@ -377,7 +377,7 @@ const Home = ({
     >
       <Head>
         <title>MSF AI Assistant</title>
-        <meta name="description" content="ChatGPT but better." />
+        <meta name="description" content="Chat GPT AI Assistant for MSF Staff - Internal Use Only" />
         <meta
           name="viewport"
           content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"

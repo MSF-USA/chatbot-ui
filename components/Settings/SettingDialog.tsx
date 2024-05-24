@@ -144,7 +144,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             {activeTab === Tab.CHAT_SETTINGS && (
               <>
               <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
-                {t('Temperature')}
+                {t('Default') + ' ' + t('Temperature')}
               </div>
 
               <TemperatureSlider

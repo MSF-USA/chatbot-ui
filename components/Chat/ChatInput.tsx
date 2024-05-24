@@ -5,6 +5,7 @@ import {
   IconPlayerStop,
   IconRepeat,
   IconSend,
+  IconExternalLink
 } from '@tabler/icons-react';
 import {
   KeyboardEvent,
@@ -27,6 +28,8 @@ import HomeContext from '@/pages/api/home/home.context';
 import { PluginSelect } from './PluginSelect';
 import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
+
+const email = process.env.NEXT_PUBLIC_EMAIL;
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -388,10 +391,17 @@ export const ChatInput = ({
           )}
         </div>
       </div>
-      <div className="px-3 pt-2 pb-3 text-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
+      <div className="px-3 pt-2 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3">
         {t(
-          "MSF AI Assistant can give incorrect information. Please verify responses with reliable and trusted sources.",
+          "MSF AI Assistant can make mistakes. Check important info.",
         )}
+        <a
+            href={`mailto:${email}`}
+            className="mb-1 mt-3 flex justify-center text-black/50 dark:text-white/50 text-[12px]"
+          >
+            {t('Send Feedback')}
+            <IconExternalLink size={16} className={'ml-1 text-black dark:text-white/90'} />
+        </a>
       </div>
     </div>
   );
