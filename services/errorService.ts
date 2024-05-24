@@ -25,7 +25,7 @@ const useErrorService = () => {
                 ? [error.statusText]
                 : [
                     t(
-                      'MSF AI Assistant is having issues right now',
+                      'MSF AI Assistant is having issues right now.',
                     ),
                     t(
                       'Please check back later.',
