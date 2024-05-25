@@ -71,7 +71,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
         <div
             className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
 
-        <div className="prose mt-[-2px] w-full dark:prose-invert">
+        <div className="prose mt-[-2px] ml-16 w-full dark:prose-invert">
             <div className="flex flex-row">
                 <div>{text?.text}</div>
             </div>
