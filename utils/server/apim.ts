@@ -77,14 +77,19 @@ export const makeAPIMRequestWithRetry = async (
     data: any,
     maxRetries: number = MAX_RETRIES,
     initialDelay: number = INITIAL_DELAY
-): Promise<any> => {
+): Promise<ApimChatResponseDataStructure> => {
     let retries = 0;
     let delay = initialDelay;
 
     while (retries < maxRetries) {
         try {
-            const response = await makeAPIMRequest(url, token, method, data);
-            return response;
+            const response: ApimChatResponseDataStructure | ErrorResponseStructure = await makeAPIMRequest(url, token, method, data);
+            if ((response as ErrorResponseStructure)?.status)
+                throw new Error(`APIM API returned an error ${JSON.stringify(response)}`)
+
+            // casting here is stupid, b/c above we are handling the error structure above, but
+            //   typescript seems unable to conceive of this.
+            return (response as ApimChatResponseDataStructure);
         } catch (error) {
             retries += 1;
             if (retries >= maxRetries) {
