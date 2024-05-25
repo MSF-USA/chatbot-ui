@@ -98,7 +98,7 @@ const ChatInputImage = (
             }}
             className={""}
         >
-            <ImageIcon className="bg-[#343541] rounded h-5 w-5"/>
+            <ImageIcon className="bg-[#212121] rounded h-5 w-5"/>
             <span className="sr-only">Add image</span>
         </button>
     </>

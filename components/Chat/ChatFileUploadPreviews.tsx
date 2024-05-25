@@ -44,7 +44,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({filePreview, set
                 className="absolute top-1 right-1 rounded-full"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => removeFilePreview(event, filePreview)}
             >
-                <XIcon className="bg-[#343541] rounded w-4 h-4"/>
+                <XIcon className="bg-[#212121] rounded w-4 h-4"/>
                 <span className="sr-only">Remove</span>
             </button>
         </>
