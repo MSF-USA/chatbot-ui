@@ -16,7 +16,7 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import {getToken} from "next-auth/jwt";
-import {makeAPIMRequest} from "@/utils/server/apim";
+import {makeAPIMRequestWithRetry} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
 import {getMessagesToSendV2, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
@@ -70,29 +70,18 @@ const handler = async (req: NextRequest): Promise<Response> => {
       throw new Error("Could not pull token!")
 
     let resp;
-    try {
-      if (isImageConversation(messages)) {
-        const openaiClient = new AzureOpenAIClient();
-        resp = await openaiClient.getVisionCompletion(messagesToSend);
-      } else {
-        resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token.accessToken,
-            'POST',
-            {
-              "messages": messagesToSend,
-            }
-        )
-      }
-    } catch (err) {
-      console.error(err)
-      // TODO: implement this in a way that isn't idiotic
-      resp = await makeAPIMRequest(
-          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+
+    if (isImageConversation(messages)) {
+      const openaiClient = new AzureOpenAIClient();
+      resp = await openaiClient.getVisionCompletion(messagesToSend);
+    } else {
+      resp = await makeAPIMRequestWithRetry(
+          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
           token.accessToken,
           'POST',
           {
             "messages": messagesToSend,
+            "temperature": temperatureToUse,
           }
       )
     }

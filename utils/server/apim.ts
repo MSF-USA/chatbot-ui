@@ -20,6 +20,14 @@ interface ErrorResponseStructure {
     body: any;  // type can be more specific if you know the structure
 }
 
+export const config = {
+    runtime: 'edge',
+};
+
+const MAX_RETRIES = 3;
+const INITIAL_DELAY = 1000; // 1 second
+
+
 export const makeAPIMRequest = async (
     url: string, accessToken: string, method: string, body: any
 ): Promise<ApimChatResponseDataStructure | ErrorResponseStructure> => {
@@ -60,4 +68,33 @@ export const makeAPIMRequest = async (
 
     // const string = JSON.stringify(json.message);
     return (json as ApimChatResponseDataStructure)
+}
+
+export const makeAPIMRequestWithRetry = async (
+    url: string,
+    token: string,
+    method: string,
+    data: any,
+    maxRetries: number = MAX_RETRIES,
+    initialDelay: number = INITIAL_DELAY
+): Promise<any> => {
+    let retries = 0;
+    let delay = initialDelay;
+
+    while (retries < maxRetries) {
+        try {
+            const response = await makeAPIMRequest(url, token, method, data);
+            return response;
+        } catch (error) {
+            retries += 1;
+            if (retries >= maxRetries) {
+                throw error;
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, delay));
+            delay *= 2; // Exponential backoff
+        }
+    }
+
+    throw new Error("Max retries exceeded");
 }
