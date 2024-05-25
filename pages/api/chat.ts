@@ -8,6 +8,7 @@ import {
 import { OpenAIError } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
+import { OpenAIModelID } from '@/types/openai';
 
 // @ts-expect-error
 import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
@@ -29,6 +30,7 @@ export const config = {
 
 
 const handler = async (req: NextRequest): Promise<Response> => {
+
   try {
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
 
@@ -49,6 +51,13 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
+    const isValidModel = Object.values(OpenAIModelID).toString().includes(model.id)
+
+    let modelToUse = model.id
+    if (modelToUse == null || !isValidModel) {
+      modelToUse = AZURE_DEPLOYMENT_ID;
+    }
+
     const prompt_tokens = encoding.encode(promptToSend);
 
     const messagesToSend: Message[] = await getMessagesToSendV2(
@@ -67,11 +76,10 @@ const handler = async (req: NextRequest): Promise<Response> => {
         resp = await openaiClient.getVisionCompletion(messagesToSend);
       } else {
         resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,
             'POST',
             {
-              "model": model.id,
               "messages": messagesToSend,
             }
         )
@@ -84,7 +92,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
           token.accessToken,
           'POST',
           {
-            "model": model.id,
             "messages": messagesToSend,
           }
       )

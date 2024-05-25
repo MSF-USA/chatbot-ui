@@ -13,6 +13,8 @@ export interface LocalStorage {
   folders: FolderInterface[];
   // added prompts (3/26/23)
   prompts: Prompt[];
+  systemPrompt: string;
+  temperature: number;
   // added showChatbar and showPromptbar (3/26/23)
   showChatbar: boolean;
   showPromptbar: boolean;

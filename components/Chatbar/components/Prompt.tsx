@@ -16,7 +16,7 @@ import { Prompt } from '@/types/prompt';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 
-import PromptbarContext from '../PromptBar.context';
+import ChatbarContext from '../Chatbar.context';
 import { PromptModal } from './PromptModal';
 
 interface Props {
@@ -25,10 +25,10 @@ interface Props {
 
 export const PromptComponent = ({ prompt }: Props) => {
   const {
-    dispatch: promptDispatch,
+    dispatch: dispatch,
     handleUpdatePrompt,
     handleDeletePrompt,
-  } = useContext(PromptbarContext);
+  } = useContext(ChatbarContext);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -37,7 +37,7 @@ export const PromptComponent = ({ prompt }: Props) => {
 
   const handleUpdate = (prompt: Prompt) => {
     handleUpdatePrompt(prompt);
-    promptDispatch({ field: 'searchTerm', value: '' });
+    dispatch({ field: 'searchTerm', value: '' });
   };
 
   const handleDelete: MouseEventHandler<HTMLButtonElement> = (e) => {
@@ -45,7 +45,7 @@ export const PromptComponent = ({ prompt }: Props) => {
 
     if (isDeleting) {
       handleDeletePrompt(prompt);
-      promptDispatch({ field: 'searchTerm', value: '' });
+      dispatch({ field: 'searchTerm', value: '' });
     }
 
     setIsDeleting(false);
@@ -78,7 +78,7 @@ export const PromptComponent = ({ prompt }: Props) => {
   return (
     <div className="relative flex items-center">
       <button
-        className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 hover:bg-[#343541]/90"
+        className="flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 dark:hover:bg-[#212121]/90 hover:bg-gray-300"
         draggable="true"
         onClick={(e) => {
           e.stopPropagation();
@@ -91,7 +91,7 @@ export const PromptComponent = ({ prompt }: Props) => {
           setRenameValue('');
         }}
       >
-        <IconBulbFilled size={18} />
+        <IconBulbFilled size={18} className='text-black dark:text-white'/>
 
         <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all pr-4 text-left text-[12.5px] leading-3">
           {prompt.name}
@@ -99,21 +99,21 @@ export const PromptComponent = ({ prompt }: Props) => {
       </button>
 
       {(isDeleting || isRenaming) && (
-        <div className="absolute right-1 z-10 flex text-gray-300">
+        <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
           <SidebarActionButton handleClick={handleDelete}>
-            <IconCheck size={18} />
+            <IconCheck size={18} className='text-black dark:text-white'/>
           </SidebarActionButton>
 
           <SidebarActionButton handleClick={handleCancelDelete}>
-            <IconX size={18} />
+            <IconX size={18} className='text-black dark:text-white'/>
           </SidebarActionButton>
         </div>
       )}
 
       {!isDeleting && !isRenaming && (
-        <div className="absolute right-1 z-10 flex text-gray-300">
+        <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
           <SidebarActionButton handleClick={handleOpenDeleteModal}>
-            <IconTrash size={18} />
+            <IconTrash size={18} className='text-black dark:text-white'/>
           </SidebarActionButton>
         </div>
       )}

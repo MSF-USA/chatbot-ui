@@ -29,7 +29,7 @@
 }
 
 html {
-  background: #202123;
+  background: #171717;
 }
 
 @media (max-width: 720px) {
@@ -43,7 +43,7 @@ pre:has(div.codeblock) {
 }
 
 select {
-  background: #202123;
+  background: #171717;
   color: #fff;
   border: 1px solid #ccc;
   border-radius: 5px;

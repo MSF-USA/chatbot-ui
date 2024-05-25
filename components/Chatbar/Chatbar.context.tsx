@@ -5,6 +5,7 @@ import { ActionType } from '@/hooks/useCreateReducer';
 import { Conversation } from '@/types/chat';
 import { SupportedExportFormats } from '@/types/export';
 import { PluginKey } from '@/types/plugin';
+import { Prompt } from '@/types/prompt';
 
 import { ChatbarInitialState } from './Chatbar.state';
 
@@ -18,6 +19,9 @@ export interface ChatbarContextProps {
   handlePluginKeyChange: (pluginKey: PluginKey) => void;
   handleClearPluginKey: (pluginKey: PluginKey) => void;
   handleApiKeyChange: (apiKey: string) => void;
+  handleCreatePrompt: () => void;
+  handleDeletePrompt: (prompt: Prompt) => void;
+  handleUpdatePrompt: (prompt: Prompt) => void;
 }
 
 const ChatbarContext = createContext<ChatbarContextProps>(undefined!);

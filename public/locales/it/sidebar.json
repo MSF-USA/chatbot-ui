@@ -7,5 +7,14 @@
   "Import data": "Importa dati",
   "Are you sure?": "Sei sicuro?",
   "Clear conversations": "Elimina conversazioni",
-  "Export data": "Esporta dati"
+  "Export data": "Esporta dati",
+  "New prompt": "Nuovo prompt",
+  "No prompts.": "Nessun prompt.",
+  "Search prompts...": "Cerca prompts...",
+  "Name": "Nome",
+  "Description": "Descrizione",
+  "A description for your prompt.": "Descrizione del tuo prompt.",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contenuto del prompt. Utilizza {{}} per indicare una variabile. Per esempio: {{nome}} è un {{aggettivo}} {{sostantivo}}",
+  "Save": "Salva"
 }
