@@ -22,7 +22,7 @@ export async function parseAndQueryFileOpenAI({file, prompt, token}: parseAndQue
     const summarizationEndpoint: string = ''
 
     const summaries: string[] = await Promise.all(chunks.map(async (chunk: string): Promise<string> => {
-        const summaryPrompt = `Summarize the following text with relevance to the prompt: ${prompt}\n\n${chunk}`;
+        const summaryPrompt: string = `Summarize the following text with relevance to the prompt: ${prompt}\n\n\`\`\`text\n${chunk}\n\`\`\``;
         const summaryResponse: ApimChatResponseDataStructure = await makeAPIMRequestWithRetry(
             summarizationEndpoint,
             token.accessToken,
@@ -54,7 +54,7 @@ export async function parseAndQueryFileOpenAI({file, prompt, token}: parseAndQue
     return response.choices[0].message.content.trim();
 }
 
-function splitIntoChunks(text: string, chunkSize = 2000): string[] {
+function splitIntoChunks(text: string, chunkSize: number = 2000): string[] {
     const chunks: string[] = [];
     for (let i = 0; i < text.length; i += chunkSize) {
         chunks.push(text.slice(i, i + chunkSize));
