@@ -79,7 +79,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
       const token: JWT = await getToken({req});
       let resp;
       try {
-        console.log(modelToUse)
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,
