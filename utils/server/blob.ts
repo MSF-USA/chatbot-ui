@@ -43,7 +43,7 @@ export class AzureBlobStorage implements BlobStorage {
             safeContent = content[0]
         else
             safeContent = content
-        
+
         await blockBlobClient.upload(safeContent, safeContent.length, options);
         return blockBlobClient.url;
     }
