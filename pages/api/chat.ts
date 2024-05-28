@@ -68,7 +68,15 @@ const handler = async (req: NextRequest) => {
         break;
       }
       tokenCount += tokens.length;
-      messagesToSend = [message, ...messagesToSend];
+
+      messagesToSend = [
+        {
+          role: 'system',
+          content: prompt,
+        },
+        message,
+        ...messagesToSend
+      ];
     }
 
     //@ts-ignore
@@ -95,6 +103,7 @@ const handler = async (req: NextRequest) => {
 
     const stream = OpenAIStream(response)
 
+    //Formatting changed significantly on 'ai' package > 3.0.19
     return new StreamingTextResponse(stream)
 
   } catch (error: any) {

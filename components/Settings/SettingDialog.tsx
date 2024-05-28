@@ -153,7 +153,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   dispatch({ field: 'temperature', value: temperature })
                 }
               />
-              {/* <hr className="my-10 border-gray-300 dark:border-neutral-700" />
+              <hr className="my-10 border-gray-300 dark:border-neutral-700" />
               <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
                 {t('System Prompt')}
               </div>
@@ -167,7 +167,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                     value: prompt,
                   })
                 }
-              /> */}
+              />
               <hr className="my-10 border-gray-300 dark:border-neutral-700" />
                 <div className='flex justify-end mr-1 mt-10'>
                 <button
