@@ -28,6 +28,10 @@ enum AzureOpenAIClientCredentialsType {
     DEFAULT = 'default',
 }
 
+/**
+ * @class AzureOpenAIClient
+ * @classdesc A client for interacting with various Azure OpenAI services including Vision, DALL-E, and Whisper.
+ */
 export default class AzureOpenAIClient {
     private readonly hostName: string;
     private readonly apiKey: string;
@@ -42,6 +46,10 @@ export default class AzureOpenAIClient {
     private readonly visionApiKey: string | undefined | null;
     private readonly visionDeployment: string | undefined | null;
 
+    /**
+     * @constructor
+     * @param {AzureOpenAIClientConstructorArgs} args - The constructor arguments.
+     */
     constructor(args: AzureOpenAIClientConstructorArgs = {
         hostName: process.env.OPENAI_API_HOST ?? '',
         apiKey: process.env.OPENAI_API_KEY ?? '',
@@ -70,6 +78,12 @@ export default class AzureOpenAIClient {
         this.visionDeployment = args.visionDeployment;
     }
 
+    /**
+     * Retrieves the credentials for a specified service type.
+     * @param {AzureOpenAIClientCredentialsType} type - The type of credentials to retrieve.
+     * @returns {AzureOpenAIClientCredentials} The credentials for the specified service type.
+     * @throws Will throw an error if the credentials are incomplete.
+     */
     getCredentials(type: AzureOpenAIClientCredentialsType): AzureOpenAIClientCredentials {
         switch (type) {
             case AzureOpenAIClientCredentialsType.VISION:
@@ -93,6 +107,11 @@ export default class AzureOpenAIClient {
         }
     }
 
+    /**
+     * Constructs a URL from the provided credentials.
+     * @param {AzureOpenAIClientCredentials} credentials - The credentials to use for constructing the URL.
+     * @returns {string} The constructed URL.
+     */
     constructUrlFromCredentials(credentials: AzureOpenAIClientCredentials) {
         return `https://${credentials.host}.openai.azure.com/openai/deployments/${credentials.deployment}/chat/completions?api-version=${process.env.OPENAI_API_VERSION}`
     }
