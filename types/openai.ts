@@ -19,6 +19,11 @@ export enum OpenAIModelID {
   // GPT_4_VISION = 'gpt-4-vision-preview',
 }
 
+export enum OpenAIVisionModelID {
+  GPT_4o = "gpt-4o",
+  GPT_4_VISION = 'gpt-4-vision-preview',
+}
+
 // in case the `DEFAULT_MODEL` environment variable is not set or set to an unsupported model
 export const fallbackModelID = OpenAIModelID.GPT_3_5;
 
