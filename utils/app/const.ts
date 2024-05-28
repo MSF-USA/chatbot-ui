@@ -16,7 +16,7 @@ export const OPENAI_API_HOST =
   process.env.OPENAI_API_HOST || 'https://api.openai.com';
 
 export const DEFAULT_TEMPERATURE =
-  parseFloat(process.env.NEXT_PUBLIC_DEFAULT_TEMPERATURE || "1");
+  parseFloat(process.env.NEXT_PUBLIC_DEFAULT_TEMPERATURE || "0.5");
 
 export const OPENAI_API_TYPE =
   process.env.OPENAI_API_TYPE || 'azure';
@@ -74,7 +74,7 @@ export async function findWorkingConfiguration(key: string): Promise<BackendConf
             OPENAI_API_TYPE: process.env.OPENAI_API_TYPE,
             OPENAI_ORGANIZATION: process.env.OPENAI_ORGANIZATION,
             AZURE_DEPLOYMENT_ID: process.env.AZURE_DEPLOYMENT_ID,
-            DEFAULT_TEMPERATURE: parseFloat(process.env.DEFAULT_TEMPERATURE || "1"),
+            DEFAULT_TEMPERATURE: parseFloat(process.env.DEFAULT_TEMPERATURE || "0.5"),
             DEFAULT_SYSTEM_PROMPT: process.env.DEFAULT_SYSTEM_PROMPT,
         }
     }

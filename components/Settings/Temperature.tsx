@@ -7,33 +7,22 @@ import { DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import HomeContext from '@/pages/api/home/home.context';
 
 interface Props {
-  label: string;
+  temperature: number;
   onChangeTemperature: (temperature: number) => void;
 }
 
 export const TemperatureSlider: FC<Props> = ({
-  label,
+  temperature,
   onChangeTemperature,
 }) => {
-  const {
-    state: { conversations },
-  } = useContext(HomeContext);
-  const lastConversation = conversations[conversations.length - 1];
-  const [temperature, setTemperature] = useState(
-    lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
-  );
   const { t } = useTranslation('chat');
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = parseFloat(event.target.value);
-    setTemperature(newValue);
     onChangeTemperature(newValue);
   };
 
   return (
-    <div className="flex flex-col">
-      <label className="mb-2 text-left text-neutral-700 dark:text-neutral-400">
-        {label}
-      </label>
+    <div className="flex flex-col mt-5">
       <span className="text-[12px] text-black/50 dark:text-white/50 text-sm">
         {t(
           'Higher values like 0.8 will make the output more creative, while lower values like 0.2 will make it more focused and deterministic.',
@@ -51,15 +40,15 @@ export const TemperatureSlider: FC<Props> = ({
         value={temperature}
         onChange={handleChange}
       />
-      <ul className="w mt-2 pb-8 flex justify-between px-[24px] text-neutral-900 dark:text-neutral-100">
-        <li className="flex justify-center">
-          <span className="absolute">{t('Precise')}</span>
+      <ul className="mt-2 pb-8 flex justify-between px-[5px] text-neutral-900 dark:text-neutral-100">
+        <li className="flex justify-start w-1/3">
+          <span>{t('Precise')}</span>
         </li>
-        <li className="flex justify-center">
-          <span className="absolute">{t('Neutral')}</span>
+        <li className="flex justify-center w-1/3">
+          <span>{t('Neutral')}</span>
         </li>
-        <li className="flex justify-center">
-          <span className="absolute">{t('Creative')}</span>
+        <li className="flex justify-end w-1/3">
+          <span>{t('Creative')}</span>
         </li>
       </ul>
     </div>

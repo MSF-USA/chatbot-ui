@@ -14,6 +14,8 @@
   "dependencies": {
     "@azure/storage-blob": "^12.17.0",
     "@dqbd/tiktoken": "^1.0.2",
+    "@headlessui/react": "^2.0.3",
+    "@langchain/openai": "^0.0.33",
     "@tabler/icons-react": "^2.9.0",
     "eventsource-parser": "^0.1.0",
     "i18next": "^22.4.13",
@@ -33,6 +35,7 @@
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "sharp": "^0.32.6",
+    "typewriter-effect": "^2.21.0",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

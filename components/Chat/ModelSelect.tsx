@@ -27,34 +27,28 @@ export const ModelSelect = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <label className="mb-2 text-left text-neutral-700 dark:text-neutral-400">
-        {t('Model')}
-      </label>
-      <div className="w-full rounded-lg border border-neutral-200 bg-transparent pr-2 text-neutral-900 dark:border-neutral-600 dark:text-white">
-        <select
-          className="w-full bg-transparent p-2 text-neutral-900 dark:text-white"
-          placeholder={t('Select a model') || ''}
-          value={selectedConversation?.model?.id || defaultModelId}
-          onChange={handleChange}
-        >
-          {models.map((model) => (
-            <option
-              key={model.id}
-              value={model.id}
-              className={`text-neutral-900 dark:text-white dark:bg-[#343541] bg-white ${
-                  model.id === (selectedConversation?.model?.id || defaultModelId)
-                  ? "font-bold"
-                  : ""
-              }`}
-            >
-              {model.id === defaultModelId
-                ? `Default (${model.name})`
-                : model.name}
-            </option>
-          ))}
-        </select>
+    <div className='flex flex-row items-center'>
+      <div className="flex flex-col my-5 ml-7">
+        <div className="max-w-[210px] rounded-lg bg-[#F4F4F4] dark:bg-[#2F2F2F] pr-2 text-neutral-900 dark:text-white dark:hover:bg-[#171717] hover:bg-gray-300">
+          <select
+            className="cursor-pointer w-full bg-transparent p-2 text-neutral-900 dark:text-white border-none text-center"
+            placeholder={t('Select a model') || ''}
+            value={selectedConversation?.model?.id || defaultModelId}
+            onChange={handleChange}
+          >
+            {models.map((model) => (
+              <option
+                key={model.id}
+                value={model.id}
+                className="text-neutral-900 dark:bg-[#212121] dark:text-white"
+              >
+                {model.name}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
+
       {/* <div className="w-full mt-3 text-left text-neutral-700 dark:text-neutral-400 flex items-center">
         <a
           href="https://platform.openai.com/account/usage"

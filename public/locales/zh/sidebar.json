@@ -10,5 +10,15 @@
   "Clear conversations": "清空对话",
   "Settings": "设置",
   "Export data": "导出对话",
-  "Plugin Keys": "插件密钥"
+  "Plugin Keys": "插件密钥",
+  "New prompt": "新建提示",
+  "No prompts.": "无提示词",
+  "Search prompts...": "搜索提示...",
+  "Name": "名称",
+  "A name for your prompt.": "提示词名称",
+  "Description": "描述",
+  "A description for your prompt.": "提示词描述",
+  "Prompt": "提示词",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "提示内容。使用 {{}} 表示一个变量。例如：{{name}} 是一个 {{adjective}} {{noun}}",
+  "Save": "保存"
 }

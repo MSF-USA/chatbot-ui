@@ -7,5 +7,14 @@
   "Import data": "ייבוא שיחות",
   "Are you sure?": "אתה בטוח?",
   "Clear conversations": "ניקוי שיחות",
-  "Export data": "ייצוא שיחות"
+  "Export data": "ייצוא שיחות",
+  "New prompt": "פקודת מכונה חדשה",
+  "No prompts.": "לא נמצאו פקודות מכונות",
+  "Search prompts...": "חיפוש פקודות...",
+  "Name": "שם",
+  "Description": "תיאור",
+  "A description for your prompt.": "תיאור שורת הפקודה למכונה",
+  "Prompt": "פקודה",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "תיאור הפקודה. השתמש {{}} להגדרת משתנים. לדוגמא {{שם משתנה}} הוא {{תואר}} {{שם עצם}}",
+  "Save": "Save"
 }

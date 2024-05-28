@@ -37,7 +37,6 @@ import { Session } from 'next-auth';
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
-import Promptbar from '@/components/Promptbar';
 
 import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
@@ -77,6 +76,7 @@ const Home = ({
       selectedConversation,
       prompts,
       temperature,
+      systemPrompt
     },
     dispatch,
   } = contextValue;
@@ -145,6 +145,7 @@ const Home = ({
     const updatedFolders = [...folders, newFolder];
 
     dispatch({ field: 'folders', value: updatedFolders });
+
     saveFolders(updatedFolders);
   };
 
@@ -214,8 +215,8 @@ const Home = ({
         maxLength: OpenAIModels[defaultModelId].maxLength,
         tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
       },
-      prompt: DEFAULT_SYSTEM_PROMPT,
-      temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+      prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature: temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
       folderId: null,
     };
 
@@ -275,13 +276,10 @@ const Home = ({
 
   useEffect(() => {
     const settings = getSettings();
-    if (settings.theme) {
-      dispatch({
-        field: 'lightMode',
-        value: settings.theme,
-      });
-    }
-
+    if (settings.theme) dispatch({field: 'lightMode', value: settings.theme});
+    if (settings.temperature) dispatch({ field: 'temperature', value: settings.temperature });
+    if (settings.systemPrompt) dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
+    if (settings.runTypeWriterIntroSetting === false) dispatch({ field: 'runTypeWriterIntroSetting', value: settings.runTypeWriterIntroSetting });
     const apiKey = localStorage.getItem('apiKey');
 
     if (serverSideApiKeyIsSet || OPENAI_API_HOST_TYPE === 'apim') {
@@ -302,17 +300,11 @@ const Home = ({
 
     if (window.innerWidth < 640) {
       dispatch({ field: 'showChatbar', value: false });
-      dispatch({ field: 'showPromptbar', value: false });
     }
 
     const showChatbar = localStorage.getItem('showChatbar');
     if (showChatbar) {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
-    }
-
-    const showPromptbar = localStorage.getItem('showPromptbar');
-    if (showPromptbar) {
-      dispatch({ field: 'showPromptbar', value: showPromptbar === 'true' });
     }
 
     const folders = localStorage.getItem('folders');
@@ -357,8 +349,8 @@ const Home = ({
           name: t('New Conversation'),
           messages: [],
           model: OpenAIModels[defaultModelId],
-          prompt: DEFAULT_SYSTEM_PROMPT,
-          temperature: lastConversation?.temperature ?? DEFAULT_TEMPERATURE,
+          prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+          temperature: temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
           folderId: null,
         },
       });
@@ -385,7 +377,7 @@ const Home = ({
     >
       <Head>
         <title>MSF AI Assistant</title>
-        <meta name="description" content="ChatGPT but better." />
+        <meta name="description" content="Chat GPT AI Assistant for MSF Staff - Internal Use Only" />
         <meta
           name="viewport"
           content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
@@ -409,8 +401,6 @@ const Home = ({
             <div className="flex flex-1">
               <Chat stopConversationRef={stopConversationRef} />
             </div>
-
-            <Promptbar />
           </div>
         </main>
       )}

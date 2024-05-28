@@ -52,8 +52,8 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
     return <div
         className={`group md:px-4 ${
             role === 'assistant'
-                ? 'border-b border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#444654] dark:text-gray-100'
-                : 'border-b border-black/10 bg-white text-gray-800 dark:border-gray-900/50 dark:bg-[#343541] dark:text-gray-100'
+                ? 'border-b border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#2f2f2f] dark:text-gray-100'
+                : 'border-b border-black/10 bg-white text-gray-800 dark:border-gray-900/50 dark:bg-[#212121] dark:text-gray-100'
         }`}
         style={{overflowWrap: 'anywhere'}}
     >
@@ -69,13 +69,13 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
             <img className={'block'} src={imageBase64}/>
         </div>
         <div
-            className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-
-        <div className="prose mt-[-2px] w-full dark:prose-invert">
-            <div className="flex flex-row">
-                <div>{text?.text}</div>
+            className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl"
+        >
+            <div className="prose mt-[-2px] ml-16 w-full dark:prose-invert">
+                <div className="flex flex-row">
+                    <div>{text?.text}</div>
+                </div>
             </div>
-        </div>
         </div>
 
     </div>

@@ -1,6 +1,9 @@
-import {IconClearAll, IconSettings} from '@tabler/icons-react';
 import {memo, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
+import { IconClearAll, IconSettings, IconInfoCircle, IconExternalLink } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
+import Typewriter from 'typewriter-effect';
+import { Transition } from '@headlessui/react'
+import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
 
 import {useTranslation} from 'next-i18next';
 
@@ -18,11 +21,11 @@ import {ChatInput} from './ChatInput';
 import {ChatLoader} from './ChatLoader';
 import {ErrorMessageDiv} from './ErrorMessageDiv';
 import {ModelSelect} from './ModelSelect';
-import {TemperatureSlider} from './Temperature';
 import {MemoizedChatMessage} from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
-import logo from '../../public/logo_light.png'
+import logo from '../../public/msf_logo2.png'
+import { TemperatureSlider } from '../Settings/Temperature';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -43,6 +46,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       modelError,
       loading,
       prompts,
+      temperature,
+      systemPrompt,
+      runTypeWriterIntroSetting
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -53,6 +59,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
   }
+
+  const email = process.env.NEXT_PUBLIC_EMAIL;
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -97,8 +105,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       model: updatedConversation.model,
       messages: updatedConversation.messages.slice(-6),
       key: apiKey,
-      prompt: updatedConversation.prompt,
-      temperature: updatedConversation.temperature,
+      prompt: updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature: updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -353,7 +361,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } =
         chatContainerRef.current;
-      const bottomTolerance = 30;
+      const bottomTolerance = 35;
 
       if (scrollTop + clientHeight < scrollHeight - bottomTolerance) {
         setAutoScrollEnabled(false);
@@ -436,8 +444,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, [messagesEndRef]);
   const showSplash = !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim'
 
+  const [image, setImage] = useState(false)
+  const [runTypewriter, setRunTypewriter] = useState(false)
+
+  useEffect(() => {
+    if (!image) {
+      if (runTypeWriterIntroSetting) {
+        setRunTypewriter(true);
+      } else { setImage(true)
+      }
+    } else {
+      setRunTypewriter(false)
+    }
+  }, []);
+
   return (
-    <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
+    <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#212121]">
       {(showSplash) ? (
         <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
@@ -487,28 +509,55 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages?.length === 0 ? (
               <>
-                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
-                  <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
-                    {models.length === 0 ? (
-                      <div>
-                        <Spinner size="16px" className="mx-auto" />
-                      </div>
-                    ) : (
-                      <div className='flex flex-row justify-center items-end'>
-                        <div className='flex-shrink-0 max-sm:hidden my-1'>
-                          <Image
-                            src={logo}
-                            alt="MSF Logo"
-                          />
-                        </div>
-                        <h1 className="text-4xl font-thin text-white px-5 mt-3">MSF AI Assistant</h1>
-                      </div>
-                    )}
+              {models.length > 0 && !runTypewriter && (
+                <Transition
+                  appear={true}
+                  show={image}
+                  enter="transition-opacity duration-1000"
+                  enterFrom="opacity-0"
+                  enterTo="opacity-100"
+                  leave="transition-opacity duration-300"
+                  leaveFrom="opacity-100"
+                  leaveTo="opacity-0"
+                >
+                <div>
+                <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                  {t('Model')}: {selectedConversation?.model?.name}
+                  <button
+                    className="ml-2 cursor-pointer hover:opacity-50"
+                    onClick={handleSettings}
+                  >
+                  <IconSettings size={18} className={`${
+                    showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
+                  }`}/>
+                  </button>
+                    <div className='absolute right-0'>
+                      <a
+                          href={`mailto:${email}`}
+                          className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                        >
+                          <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                          {t('Send Feedback')}
+                      </a>
+                    </div>
                   </div>
-
-                  {models.length > 0 && (
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                      <ModelSelect />
+                  {showSettings && (
+                  <Transition
+                    appear={true}
+                    show={showSettings}
+                    enter="transition-opacity duration-500"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-300"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                  <div className="mt-10 flex justify-center relative mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
+                    <div className="absolute w-full md:max-w-lg rounded-lg space-y-4 border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121] text-black dark:text-white">
+                      <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
+                        {t('AI Model Selection:')}
+                        <ModelSelect />
+                      </div>
 
                       {/* <SystemPrompt
                         conversation={selectedConversation}
@@ -520,9 +569,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           })
                         }
                       /> */}
-
+                        {t('Temperature')}
                       <TemperatureSlider
-                        label={t('Temperature')}
+                        // label={t('Temperature')}
+                        temperature={selectedConversation.temperature}
                         onChangeTemperature={(temperature) =>
                           handleUpdateConversation(selectedConversation, {
                             key: 'temperature',
@@ -530,39 +580,144 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           })
                         }
                       />
-                      <span className="mb-2 text-[12px] text-black/50 dark:text-white/50 text-sm">
-                      {t(
-                        'Type question below to get started.',
-                      )}
-                    </span>
                     </div>
-                  )}
+                  </div>
+                  </Transition>
+                )}
                 </div>
+                </ Transition>
+              )}
+              <div className="flex items-center justify-center h-screen">
+                <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
+                  <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
+                    {models.length === 0 ? (
+                      <div>
+                        <Spinner size="16px" className="mx-auto" />
+                      </div>
+                    ) : (
+                      <div className='flex flex-col items-center'>
+                        <div className='flex flex-row justify-center items-end'>
+                          {runTypewriter && (
+                            <Typewriter
+                              options={{
+                                loop: false,
+                                cursor: '',
+                                delay: 50,
+                                deleteSpeed: 1,
+                              }}
+                              onInit={(typewriter) => {
+                                typewriter.typeString('MSF AI Assistant')
+                                  .pauseFor(1200)
+                                  .deleteAll()
+                                  .callFunction(() => {
+                                    setImage(true)
+                                    setRunTypewriter(false)
+                                  })
+                                  .start();
+                              }}
+                            />
+                          )}
+                          {image && !showSettings && (
+                            <Transition
+                            appear={true}
+                            show={image}
+                            enter="transition-opacity duration-1000"
+                            enterFrom="opacity-0"
+                            enterTo="opacity-100"
+                            leave="transition-opacity duration-300"
+                            leaveFrom="opacity-100"
+                            leaveTo="opacity-0"
+                          >
+                          <div className='flex-shrink-0 flex flex-col items-center'>
+                          <div className="ml-2 group relative flex flex-row">
+                            <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
+                              <IconInfoCircle size={20} className='text-black dark:text-white'/>
+                            <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                            Type question below to get started.<br /><br />
+                            Individual chat settings can be modified with top banner gear icon.<br /><br />
+                            Default settings can be modified in bottom left settings menu.
+                          </span>
+                          </div>
+                          </div>
+                          </Transition>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
               </>
             ) : (
               <>
-                <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#444654] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model?.name} | {t('Temp')}
-                  : {selectedConversation?.temperature} |
+                <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                  {t('Model')}: {selectedConversation?.model?.name}
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}
                   >
-                    <IconSettings size={18} />
+                  <IconSettings size={18} className={`${
+                    showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
+                  }`}/>
                   </button>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={onClearAll}
                   >
-                    <IconClearAll size={18} />
+                    <IconClearAll size={18} className='text-black dark:text-white'/>
                   </button>
+                  <div className='absolute right-0'>
+                    <a
+                        href={`mailto:${email}`}
+                        className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                      >
+                        <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                        {t('Send Feedback')}
+                    </a>
+                  </div>
                 </div>
                 {showSettings && (
-                  <div className="flex flex-col space-y-10 md:mx-auto md:max-w-xl md:gap-6 md:py-3 md:pt-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-                    <div className="flex h-full flex-col space-y-4 border-b border-neutral-200 p-4 dark:border-neutral-600 md:rounded-lg md:border">
-                      <ModelSelect />
-                    </div>
-                  </div>
+                  <Transition
+                    appear={true}
+                    show={showSettings}
+                    enter="transition-opacity duration-500"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="transition-opacity duration-300"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                  >
+                      <div className="flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
+                        <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121] text-black dark:text-white">
+                          <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
+                              {t('AI Model Selection:')}
+                              <ModelSelect />
+                          </div>
+
+                          {/* <SystemPrompt
+                            conversation={selectedConversation}
+                            prompts={prompts}
+                            onChangePrompt={(prompt) =>
+                              handleUpdateConversation(selectedConversation, {
+                                key: 'prompt',
+                                value: prompt,
+                              })
+                            }
+                          /> */}
+                          {selectedConversation ? t('Temperature'): ''}
+                          {selectedConversation ? <TemperatureSlider
+                            // label={t('Temperature')}
+                            temperature={selectedConversation?.temperature}
+                            onChangeTemperature={(temperature) =>
+                              handleUpdateConversation(selectedConversation, {
+                                key: 'temperature',
+                                value: temperature,
+                              })
+                            }
+                          /> : <></>}
+                        </div>
+                      </div>
+                  </Transition>
                 )}
 
                 {selectedConversation?.messages.map((message, index) => (
@@ -584,14 +739,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 {loading && <ChatLoader />}
 
                 <div
-                  className="h-[162px] bg-white dark:bg-[#343541]"
+                  className="h-[162px] bg-white dark:bg-[#212121]"
                   ref={messagesEndRef}
                 />
               </>
             )}
           </div>
-
-
 
           <ChatInput
             stopConversationRef={stopConversationRef}

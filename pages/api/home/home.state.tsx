@@ -12,6 +12,7 @@ export interface HomeInitialState {
   pluginKeys: PluginKey[];
   loading: boolean;
   lightMode: 'light' | 'dark';
+  runTypeWriterIntroSetting: boolean;
   messageIsStreaming: boolean;
   modelError: ErrorMessage | null;
   models: OpenAIModel[];
@@ -23,6 +24,7 @@ export interface HomeInitialState {
   temperature: number;
   showChatbar: boolean;
   showPromptbar: boolean;
+  systemPrompt: string;
   currentFolder: FolderInterface | undefined;
   messageError: boolean;
   searchTerm: string;
@@ -36,6 +38,7 @@ export const initialState: HomeInitialState = {
   loading: false,
   pluginKeys: [],
   lightMode: 'dark',
+  runTypeWriterIntroSetting: true,
   messageIsStreaming: false,
   modelError: null,
   models: [],
@@ -44,8 +47,9 @@ export const initialState: HomeInitialState = {
   selectedConversation: undefined,
   currentMessage: undefined,
   prompts: [],
-  temperature: 1,
+  temperature: 0.5,
   showPromptbar: true,
+  systemPrompt: '',
   showChatbar: true,
   currentFolder: undefined,
   messageError: false,

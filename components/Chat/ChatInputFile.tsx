@@ -24,7 +24,7 @@ const ChatInputFile = ({onFileUpload, setSubmitType}: ChatInputFileProps) => {
             event.preventDefault();
             fileInputRef.current?.click();
         }}>
-            <FileIcon className="bg-[#343541] rounded h-5 w-5"/>
+            <FileIcon className="bg-[#212121] rounded h-5 w-5"/>
             <span className="sr-only">Add document</span>
         </button>
     </>
