@@ -48,7 +48,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    const isValidModel = Object.values(OpenAIModelID).toString().includes(model.id)
+    model.id = "gpt-4"
+
+    const isValidModel = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
 
     let modelToUse = model.id
     if (modelToUse == null || !isValidModel) {
@@ -77,7 +79,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       const token: JWT = await getToken({req});
       let resp;
       try {
-        console.log(isValidModel)
+        console.log(modelToUse)
         resp = await makeAPIMRequest(
             `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
             token.accessToken,
