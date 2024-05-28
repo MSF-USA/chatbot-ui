@@ -48,8 +48,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    model.id = "gpt-4"
-
     const isValidModel = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
 
     let modelToUse = model.id
