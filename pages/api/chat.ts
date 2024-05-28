@@ -73,27 +73,15 @@ const handler = async (req: NextRequest): Promise<Response> => {
       throw new Error("Could not pull token!")
 
     let resp;
-    if (isImageConversation(messages)) {
-      resp = await makeAPIMRequestWithRetry(
-          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/gpt-4o/chat/completions?api-version=${OPENAI_API_VERSION}`,
-          token.accessToken,
-          'POST',
-          {
-            "messages": messagesToSend,
-            "temperature": temperatureToUse,
-          }
-      )
-    } else {
-      resp = await makeAPIMRequestWithRetry(
-          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-          token.accessToken,
-          'POST',
-          {
-            "messages": messagesToSend,
-            "temperature": temperatureToUse,
-          }
-      )
-    }
+    resp = await makeAPIMRequestWithRetry(
+        `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+        token.accessToken,
+        'POST',
+        {
+          "messages": messagesToSend,
+          "temperature": temperatureToUse,
+        }
+    )
     return new Response((resp as  ApimChatResponseDataStructure).choices[0].message.content, {status: 200});
   } catch (error) {
     console.error(error);
