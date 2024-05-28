@@ -8,7 +8,7 @@ import {
 import { OpenAIError, OpenAIStream } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
-import { OpenAIModelID } from '@/types/openai';
+import {OpenAIModelID, OpenAIVisionModelID} from '@/types/openai';
 
 // @ts-expect-error
 import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
@@ -20,7 +20,6 @@ import {makeAPIMRequestWithRetry} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
 import {getMessagesToSendV2, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
-import AzureOpenAIClient from "@/utils/server/azure-openai";
 import {JWT} from 'next-auth';
 
 
@@ -51,10 +50,14 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    const isValidModel = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
+    const needsToHandleImages: boolean = isImageConversation(messages);
+    const isValidModel: boolean = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
+    const isImageModel: boolean = Object.values(OpenAIVisionModelID).toString().split(',').includes(model.id)
 
-    let modelToUse = model.id
-    if (modelToUse == null || !isValidModel) {
+    let modelToUse = model.id;
+    if (needsToHandleImages && !isImageModel) {
+      modelToUse = "gpt-4o";
+    } else if (modelToUse == null || !isValidModel) {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
@@ -70,10 +73,16 @@ const handler = async (req: NextRequest): Promise<Response> => {
       throw new Error("Could not pull token!")
 
     let resp;
-
     if (isImageConversation(messages)) {
-      const openaiClient = new AzureOpenAIClient();
-      resp = await openaiClient.getVisionCompletion(messagesToSend);
+      resp = await makeAPIMRequestWithRetry(
+          `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/gpt-4o/chat/completions?api-version=${OPENAI_API_VERSION}`,
+          token.accessToken,
+          'POST',
+          {
+            "messages": messagesToSend,
+            "temperature": temperatureToUse,
+          }
+      )
     } else {
       resp = await makeAPIMRequestWithRetry(
           `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
