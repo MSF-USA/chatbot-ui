@@ -28,7 +28,7 @@ export const OPENAI_ORGANIZATION =
   process.env.OPENAI_ORGANIZATION || '';
 
 export const AZURE_DEPLOYMENT_ID =
-  process.env.AZURE_DEPLOYMENT_ID || '';
+  process.env.AZURE_DEPLOYMENT_ID || 'gpt-35-turbo';
 
 export const APIM_CHAT_ENDPONT =
     process.env.APIM_CHAT_ENDPONT || 'localhostchat';

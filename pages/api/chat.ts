@@ -49,7 +49,7 @@ const handler = async (req: NextRequest) => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    const isValidModel = Object.values(OpenAIModelID).toString().includes(model.id)
+    const isValidModel = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
 
     let modelToUse = model.id
     if (modelToUse == null || !isValidModel) {
