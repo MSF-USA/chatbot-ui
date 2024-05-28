@@ -5,7 +5,7 @@ import {
   DEFAULT_TEMPERATURE,
   OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION
 } from '@/utils/app/const';
-import { OpenAIError } from '@/utils/server';
+import { OpenAIError, OpenAIStream } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
 import { OpenAIModelID } from '@/types/openai';
@@ -51,7 +51,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    const isValidModel = Object.values(OpenAIModelID).toString().includes(model.id)
+    const isValidModel = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
 
     let modelToUse = model.id
     if (modelToUse == null || !isValidModel) {
