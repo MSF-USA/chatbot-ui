@@ -1,7 +1,67 @@
 import React, { Dispatch, FC, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react";
-import { IconCamera } from "@tabler/icons-react";
+import {IconCamera, IconX} from "@tabler/icons-react";
 import { ChatInputSubmitTypes, ImageMessageContent } from "@/types/chat";
 import toast from "react-hot-toast";
+
+interface CameraModalProps {
+    isOpen: boolean;
+    closeModal: () => void;
+    videoRef: MutableRefObject<HTMLVideoElement | null>;
+    canvasRef: MutableRefObject<HTMLCanvasElement | null>;
+    fileInputRef: MutableRefObject<HTMLInputElement | null>;
+    setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
+    setFilePreviews: Dispatch<SetStateAction<string[]>>;
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>;
+}
+
+const CameraModal: FC<CameraModalProps> = (
+    {
+       isOpen,
+       closeModal,
+       videoRef,
+       canvasRef,
+       fileInputRef,
+       setIsCameraOpen,
+       setFilePreviews,
+       setSubmitType,
+       setImageFieldValue,
+    }
+) => {
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg shadow-lg p-6 relative">
+                <button
+                    onClick={closeModal}
+                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+                >
+                    <IconX />
+                </button>
+                <video ref={videoRef} autoPlay playsInline className="w-full h-auto mb-4" />
+                <canvas ref={canvasRef} style={{ display: "none" }} />
+                <button
+                    onClick={() => {
+                        onTakePhotoButtonClick(
+                            videoRef,
+                            canvasRef,
+                            fileInputRef,
+                            setIsCameraOpen,
+                            setFilePreviews,
+                            setSubmitType,
+                            setImageFieldValue,
+                            closeModal
+                        );
+                    }}
+                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                >
+                    Take Photo
+                </button>
+            </div>
+        </div>
+    );
+};
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
@@ -83,7 +143,8 @@ const onTakePhotoButtonClick = (
     setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>,
+    closeModal: () => void
 ) => {
     if (videoRef.current && canvasRef.current && fileInputRef.current) {
         canvasRef.current.width = videoRef.current.videoWidth;
@@ -91,7 +152,6 @@ const onTakePhotoButtonClick = (
         canvasRef.current.getContext("2d")?.drawImage(videoRef.current, 0, 0);
 
         canvasRef.current.toBlob((blob) => {
-            debugger
             if (blob) {
                 const file = new File([blob], "camera_image.png", { type: "image/png" });
                 const dataTransfer = new DataTransfer();
@@ -117,6 +177,7 @@ const onTakePhotoButtonClick = (
         }
         setIsCameraOpen(false);
     }
+    closeModal();
 };
 
 export interface ChatInputImageCaptureProps {
@@ -138,10 +199,14 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const openModal = () => setIsModalOpen(true);
+    const closeModal = () => setIsModalOpen(false);
 
     return (
         <>
-            <video ref={videoRef} autoPlay playsInline style={{ display: isCameraOpen ? "block" : "none" }} />
+            {/*<video ref={videoRef} autoPlay playsInline style={{ display: isCameraOpen ? "block" : "none" }} />*/}
             <canvas ref={canvasRef} style={{ display: "none" }} />
             <input
                 type="file"
@@ -155,7 +220,10 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
             {!isCameraOpen && (
                 <button
                     onClick={(e) => {
-                        onImageUploadButtonClick(e, videoRef, canvasRef, fileInputRef, setIsCameraOpen);
+                        onImageUploadButtonClick(e, videoRef, canvasRef, fileInputRef, setIsCameraOpen).then(
+                            r => null
+                        );
+                        openModal()
                     }}
                     className="open-photo-button"
                 >
@@ -163,26 +231,38 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
                     <span className="sr-only">Open Camera</span>
                 </button>
             )}
-            {isCameraOpen && (
-                <button
-                    onClick={() => {
-                        onTakePhotoButtonClick(
-                            videoRef,
-                            canvasRef,
-                            fileInputRef,
-                            setIsCameraOpen,
-                            setFilePreviews,
-                            setSubmitType,
-                            setImageFieldValue
-                        );
-                    }}
-                    className="take-photo-button"
-                >
-                    {/*<IconPhotoCamera className="bg-[#343541] rounded h-5 w-5" />*/}
-                    <IconCamera className="bg-[#343541] rounded h-5 w-5" />
-                    <span className="sr-only">Take Photo</span>
-                </button>
-            )}
+            <CameraModal
+                isOpen={isModalOpen}
+                closeModal={closeModal}
+                videoRef={videoRef}
+                canvasRef={canvasRef}
+                fileInputRef={fileInputRef}
+                setIsCameraOpen={setIsCameraOpen}
+                setFilePreviews={setFilePreviews}
+                setSubmitType={setSubmitType}
+                setImageFieldValue={setImageFieldValue}
+            />
+            {/*{isCameraOpen && (*/}
+            {/*    <button*/}
+            {/*        onClick={() => {*/}
+            {/*            onTakePhotoButtonClick(*/}
+            {/*                videoRef,*/}
+            {/*                canvasRef,*/}
+            {/*                fileInputRef,*/}
+            {/*                setIsCameraOpen,*/}
+            {/*                setFilePreviews,*/}
+            {/*                setSubmitType,*/}
+            {/*                setImageFieldValue,*/}
+            {/*                closeModal*/}
+            {/*            );*/}
+            {/*        }}*/}
+            {/*        className="take-photo-button"*/}
+            {/*    >*/}
+            {/*        /!*<IconPhotoCamera className="bg-[#343541] rounded h-5 w-5" />*!/*/}
+            {/*        <IconCamera className="bg-[#343541] rounded h-5 w-5" />*/}
+            {/*        <span className="sr-only">Take Photo</span>*/}
+            {/*    </button>*/}
+            {/*)}*/}
         </>
     );
 };
