@@ -39,7 +39,13 @@ interface Props {
 
 export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { t } = useTranslation('settings');
-  const settings: Settings = getSettings();
+
+  const {
+    state: homeState,
+    dispatch: homeDispatch
+  } = useContext(HomeContext);
+
+  const settings: Settings = getSettings(homeState.customUserSystemPrompt);
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
   });
@@ -50,10 +56,6 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     handleClearConversations,
   } = useContext(ChatbarContext);
 
-  const {
-    state: homeState,
-    dispatch: homeDispatch
-  } = useContext(HomeContext);
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
 
@@ -88,12 +90,12 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     const defaultSettings: Settings = {
       theme: 'dark',
       temperature: 0.5,
-      systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
+      systemPrompt: homeState.customUserSystemPrompt || process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       runTypeWriterIntroSetting: true
     };
     homeDispatch({ field: 'lightMode', value: 'dark' });
     homeDispatch({ field: 'temperature', value: 0.5 });
-    homeDispatch({ field: 'systemPrompt', value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '' });
+    homeDispatch({ field: 'systemPrompt', value: homeState.customUserSystemPrompt || process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '' });
     homeDispatch({ field: 'runTypeWriterIntroSetting', value: true });
     saveSettings(defaultSettings);
   };
@@ -144,7 +146,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             {activeTab === Tab.CHAT_SETTINGS && (
               <>
               <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
-                {t('Default') + ' ' + t('Temperature')}
+                {t('Default') + ' ' + t('Temperature') + '*'}
               </div>
 
               <TemperatureSlider
@@ -155,7 +157,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               />
               <hr className="my-10 border-gray-300 dark:border-neutral-700" />
               <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
-                {t('System Prompt')}
+                {t('Default System Prompt') + '*'}
               </div>
               <SystemPrompt
                 prompts={homeState.prompts}
@@ -168,7 +170,12 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   })
                 }
               />
-              <hr className="my-10 border-gray-300 dark:border-neutral-700" />
+              <hr className="mt-10 mb-2 border-gray-300 dark:border-neutral-700" />
+              <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
+                {t(
+                  '*Note that these default settings only apply to NEW conversations once saved.',
+                )}
+              </span>
                 <div className='flex justify-end mr-1 mt-10'>
                 <button
                   type="button"

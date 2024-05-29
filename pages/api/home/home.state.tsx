@@ -25,6 +25,7 @@ export interface HomeInitialState {
   showChatbar: boolean;
   showPromptbar: boolean;
   systemPrompt: string;
+  customUserSystemPrompt: string | undefined;
   currentFolder: FolderInterface | undefined;
   messageError: boolean;
   searchTerm: string;
@@ -50,6 +51,7 @@ export const initialState: HomeInitialState = {
   temperature: 0.5,
   showPromptbar: true,
   systemPrompt: '',
+  customUserSystemPrompt: '',
   showChatbar: true,
   currentFolder: undefined,
   messageError: false,

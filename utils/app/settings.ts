@@ -2,11 +2,11 @@ import { Settings } from '@/types/settings';
 
 const STORAGE_KEY = 'settings';
 
-export const getSettings = (): Settings => {
+export const getSettings = (customSystemPrompt?: string): Settings => {
   let settings: Settings = {
     theme: 'dark',
     temperature: 0.5,
-    systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
+    systemPrompt: customSystemPrompt || process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     runTypeWriterIntroSetting: true
   };
   const settingsJson = localStorage.getItem(STORAGE_KEY);

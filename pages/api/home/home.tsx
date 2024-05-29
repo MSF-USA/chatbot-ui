@@ -76,7 +76,8 @@ const Home = ({
       selectedConversation,
       prompts,
       temperature,
-      systemPrompt
+      systemPrompt,
+      customUserSystemPrompt
     },
     dispatch,
   } = contextValue;
@@ -116,6 +117,13 @@ const Home = ({
   useEffect(() => {
     if (user) dispatch({ field: 'user', value: user });
   }, [user, dispatch]);
+
+  useEffect(() => {
+    if (user?.department && user?.jobTitle) {
+      const customSystemPrompt = `You are a highly intelligent and helpful AI assistant designed to support individuals in the ${user.department} department with their tasks and responsibilities as a ${user.jobTitle}, especially those working in the humanitarian sector.`
+      dispatch({ field: 'customUserSystemPrompt', value: customSystemPrompt })
+    }
+  }, [user, dispatch])
 
   useEffect(() => {
     dispatch({ field: 'modelError', value: getModelsError(error) });
@@ -275,7 +283,7 @@ const Home = ({
   // ON LOAD --------------------------------------------
 
   useEffect(() => {
-    const settings = getSettings();
+    const settings = getSettings(customUserSystemPrompt);
     if (settings.theme) dispatch({field: 'lightMode', value: settings.theme});
     if (settings.temperature) dispatch({ field: 'temperature', value: settings.temperature });
     if (settings.systemPrompt) dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
@@ -360,6 +368,7 @@ const Home = ({
     dispatch,
     serverSideApiKeyIsSet,
     serverSidePluginKeysSet,
+    customUserSystemPrompt
   ]);
 
   return (

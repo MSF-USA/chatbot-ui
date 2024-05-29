@@ -72,7 +72,7 @@ const handler = async (req: NextRequest) => {
       messagesToSend = [
         {
           role: 'system',
-          content: prompt,
+          content: promptToSend,
         },
         message,
         ...messagesToSend
