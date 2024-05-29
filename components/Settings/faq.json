@@ -1,0 +1,32 @@
+{
+    "faq": [
+        {
+            "question": "What is the MSF AI Assistant?",
+            "answer": "The MSF AI Assistant is a large language model developed by OpenAI and tailored for use by Doctors Without Borders (Médecins Sans Frontières). It was developed to give MSF staff access to advanced language models while ensuring that data remains secure. The MSF AI Assistant is designed to understand and generate human-like text based on the input it receives. It can assist with a wide range of tasks, including answering questions, providing explanations, generating creative content, and more."
+        },
+        {
+            "question": "How can the MSF AI Assistant assist employees of Doctors Without Borders (Médecins Sans Frontières)?",
+            "answer": "The MSF AI Assistant can assist employees of Doctors Without Borders (Médecins Sans Frontières) in various ways, such as:\n- Answering logistical questions\n- Generating reports and documentation\n- Offering language translation assistance\n- Assisting with brainstorming and idea generation for field operations\n- Conversing in a human-like manner on a wide range of topics relevant to humanitarian work"
+        },
+        {
+            "question": "What are some example questions I can ask the MSF AI Assistant?",
+            "answer": "Here are a few examples of questions you can ask the MSF AI Assistant:\n- 'Generate a report on the recent health camp activities.'\n- 'Translate this document into French.'\n- 'What are some strategies for managing a field clinic?'\n- 'Provide ideas for improving logistics in remote areas.'"
+        },
+        {
+            "question": "What is a prompt?",
+            "answer": "A prompt is the input or instruction that you provide to the MSF AI Assistant to generate a response. It can be a question, a statement, or any other form of text that guides the model on what kind of response you are looking for. For example, if you need help with translation, your prompt might be 'Translate this document into Spanish.'"
+        },
+        {
+            "question": "How do I create a reusable prompt?",
+            "answer": "To create a reusable prompt, you can use the 'Prompts' tab. Here's how:\n1. Navigate to the 'Prompts' tab in the MSF AI Assistant interface.\n2. Click on 'New Prompt.'\n3. Click on the newly created prompt to edit it.\n4. Enter the text of the prompt you want to reuse, such as 'Generate a daily activity report.'\n5. Save the prompt with a recognizable name.\n6. You can now access this prompt by typing '/' and selecting it from the list, making it easy to reuse whenever needed."
+        },
+        {
+            "question": "How can I automate and reuse prompts?",
+            "answer": "Once you have created a reusable prompt, you can automate and reuse it by typing the '/' and then choosing the prompt from the list. This feature allows you to quickly access frequently used prompts without having to type them out each time. For example, you might have a prompt for generating a daily report or translating a document, which you can easily select and use whenever needed."
+        },
+        {
+            "question": "Where is my conversation data stored?",
+            "answer": "All conversation data with the MSF AI Assistant is stored locally on your own computer. This ensures that your data remains private and secure, and is not transmitted to external servers."
+        }
+    ]
+}

@@ -11,15 +11,19 @@ import { Import } from './Import';
 import { SidebarButton } from '../Sidebar/SidebarButton';
 import { Switch } from '@headlessui/react'
 
+import { FAQData } from '@/types/faq';
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
 import { SystemPrompt } from './SystemPrompt';
 import LanguageSwitcher from "@/components/Sidebar/components/LanguageSwitcher";
 import { ClearConversations } from './ClearConversations';
+import { FAQ } from './faq';
+import faqData from './faq.json';
 
 import HomeContext from '@/pages/api/home/home.context';
 import ChatbarContext from '../Chatbar/Chatbar.context';
+
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -29,6 +33,7 @@ const email = process.env.NEXT_PUBLIC_EMAIL;
 enum Tab {
   CHAT_SETTINGS = 'CHAT_SETTINGS',
   APP_SETTINGS = 'APP_SETTINGS',
+  FAQ = 'FAQ',
 }
 
 interface Props {
@@ -140,6 +145,16 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 onClick={() => setActiveTab(Tab.APP_SETTINGS)}
               >
                 {t('App') + ' ' + t('Settings')}
+              </button>
+              <button
+                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
+                  activeTab === Tab.FAQ
+                  ? 'border-b-2 border-black dark:border-white'
+                  : 'border-0'
+                }`}
+                onClick={() => setActiveTab(Tab.FAQ)}
+              >
+                {t('FAQ')}
               </button>
             </div>
 
@@ -304,6 +319,16 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           <div className='flex justify-end mr-1'>
 
             <SignInSignOut />
+          </div>
+          </>
+        )}
+        {activeTab === Tab.FAQ && (
+          <>
+          <div>
+            <div className="text-sm font-bold text-black dark:text-neutral-200 my-10">
+                {t('Frequently Asked Questions')}
+            </div>
+            <FAQ faq={faqData.faq} />
           </div>
           </>
         )}
