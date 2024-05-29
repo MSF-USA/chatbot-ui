@@ -362,12 +362,12 @@ export const ChatInput = ({
             </button>
           )}
 
-        {/*<ChatInputImageCapture*/}
-        {/*        setFilePreviews={setFilePreviews}*/}
-        {/*        setSubmitType={setSubmitType}*/}
-        {/*        prompt={textFieldValue}*/}
-        {/*        setImageFieldValue={setImageFieldValue}*/}
-        {/*    />*/}
+        <ChatInputImageCapture
+                setFilePreviews={setFilePreviews}
+                setSubmitType={setSubmitType}
+                prompt={textFieldValue}
+                setImageFieldValue={setImageFieldValue}
+            />
         <ChatInputImage
             setSubmitType={setSubmitType}
             // setContent={setContent}
