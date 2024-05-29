@@ -2,6 +2,7 @@ import React, { Dispatch, FC, MutableRefObject, SetStateAction, useEffect, useRe
 import {IconCamera, IconX} from "@tabler/icons-react";
 import { ChatInputSubmitTypes, ImageMessageContent } from "@/types/chat";
 import toast from "react-hot-toast";
+import {useTranslation} from "next-i18next";
 
 interface CameraModalProps {
     isOpen: boolean;
@@ -28,7 +29,9 @@ const CameraModal: FC<CameraModalProps> = (
        setImageFieldValue,
     }
 ) => {
+    const { t } = useTranslation('chat');
     if (!isOpen) return null;
+
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -56,7 +59,8 @@ const CameraModal: FC<CameraModalProps> = (
                     }}
                     className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
-                    Take Photo
+                    <IconCamera />
+                    <span className={"sr-only"}>{t('Take photo')}</span>
                 </button>
             </div>
         </div>
