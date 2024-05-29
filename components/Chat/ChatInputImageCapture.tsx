@@ -60,7 +60,7 @@ const onImageUploadButtonClick = async (
     canvasRef: MutableRefObject<HTMLCanvasElement | null>,
     fileInputRef: MutableRefObject<HTMLInputElement | null>,
     setIsCameraOpen: Dispatch<SetStateAction<boolean>>
-) => {
+): Promise<void> => {
     event.preventDefault();
 
     if (navigator?.mediaDevices?.getUserMedia) {
@@ -80,7 +80,10 @@ const onTakePhotoButtonClick = (
     videoRef: MutableRefObject<HTMLVideoElement | null>,
     canvasRef: MutableRefObject<HTMLCanvasElement | null>,
     fileInputRef: MutableRefObject<HTMLInputElement | null>,
-    setIsCameraOpen: Dispatch<SetStateAction<boolean>>
+    setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
+    setFilePreviews: Dispatch<SetStateAction<string[]>>,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
 ) => {
     if (videoRef.current && canvasRef.current && fileInputRef.current) {
         canvasRef.current.width = videoRef.current.videoWidth;
@@ -88,12 +91,23 @@ const onTakePhotoButtonClick = (
         canvasRef.current.getContext("2d")?.drawImage(videoRef.current, 0, 0);
 
         canvasRef.current.toBlob((blob) => {
+            debugger
             if (blob) {
                 const file = new File([blob], "camera_image.png", { type: "image/png" });
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 fileInputRef.current!.files = dataTransfer.files;
-                fileInputRef.current!.dispatchEvent(new Event("change"));
+                const newEvent = new Event("change")
+                fileInputRef.current!.dispatchEvent(newEvent);
+                onImageUpload(
+                    // @ts-ignore
+                    newEvent,
+                    prompt,
+                    setFilePreviews,
+                    setSubmitType,
+                    setImageFieldValue
+                );
+
             }
         }, "image/png");
 
@@ -112,12 +126,14 @@ export interface ChatInputImageCaptureProps {
     setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>;
 }
 
-const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
-                                                                   setSubmitType,
-                                                                   prompt,
-                                                                   setFilePreviews,
-                                                                   setImageFieldValue,
-                                                               }) => {
+const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
+    {
+       setSubmitType,
+       prompt,
+       setFilePreviews,
+       setImageFieldValue,
+    }
+) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -141,7 +157,7 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
                     onClick={(e) => {
                         onImageUploadButtonClick(e, videoRef, canvasRef, fileInputRef, setIsCameraOpen);
                     }}
-                    className=""
+                    className="open-photo-button"
                 >
                     <IconCamera className="bg-[#343541] rounded h-5 w-5" />
                     <span className="sr-only">Open Camera</span>
@@ -150,9 +166,17 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
             {isCameraOpen && (
                 <button
                     onClick={() => {
-                        onTakePhotoButtonClick(videoRef, canvasRef, fileInputRef, setIsCameraOpen);
+                        onTakePhotoButtonClick(
+                            videoRef,
+                            canvasRef,
+                            fileInputRef,
+                            setIsCameraOpen,
+                            setFilePreviews,
+                            setSubmitType,
+                            setImageFieldValue
+                        );
                     }}
-                    className=""
+                    className="take-photo-button"
                 >
                     {/*<IconPhotoCamera className="bg-[#343541] rounded h-5 w-5" />*/}
                     <IconCamera className="bg-[#343541] rounded h-5 w-5" />
