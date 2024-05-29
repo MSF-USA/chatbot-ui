@@ -1,6 +1,7 @@
 import {ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
 import {Tiktoken} from "@dqbd/tiktoken/lite/init";
 import {getBase64FromImageURL} from "@/utils/app/image";
+import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
 
 export const getMessagesToSendV2 = async (
     messages: Message[], encoding: Tiktoken, promptLength: number,
@@ -117,4 +118,37 @@ export const isImageConversation = (messages: Message[]): boolean => {
     }
 
     return false;
+}
+
+/**
+ * Checks if a given model ID is valid based on a set of valid model IDs.
+ *
+ * @param {string} modelId - The model ID to check for validity.
+ * @param {OpenAIModelID | OpenAIVisionModelID} validModelIDs - An object containing valid model IDs.
+ * @returns {boolean} - Returns true if the model ID is valid, false otherwise.
+ *
+ * @example
+ * const isValid = checkIsModelValid('gpt-35-turbo', OpenAIModelID);
+ * console.log(isValid); // Output: true
+ *
+ * @example
+ * const isValid = checkIsModelValid('gpt-4-vision-preview', OpenAIVisionModelID);
+ * console.log(isValid); // Output: true
+ *
+ * @example
+ * const isValid = checkIsModelValid('invalid-model', OpenAIModelID);
+ * console.log(isValid); // Output: false
+ *
+ * @remarks
+ * This function takes a model ID and an object containing valid model IDs as parameters.
+ * It converts the valid model IDs object to an array of strings using `Object.values()` and `toString()`.
+ * It then checks if the given model ID is included in the array of valid model IDs using the `includes()` method.
+ * The function returns true if the model ID is found in the array of valid model IDs, indicating that it is a valid model.
+ * Otherwise, it returns false, indicating that the model ID is not valid.
+ */
+export const checkIsModelValid = (
+    modelId: string,
+    validModelIDs: typeof OpenAIModelID |  typeof OpenAIVisionModelID
+): boolean => {
+    return Object.values(validModelIDs).toString().split(',').includes(modelId);
 }
