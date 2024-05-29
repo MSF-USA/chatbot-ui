@@ -325,7 +325,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
         {activeTab === Tab.FAQ && (
           <>
           <div>
-            <div className="text-sm font-bold text-black dark:text-neutral-200 my-10">
+            <div className="text-sm font-bold text-black dark:text-neutral-200 mt-10 mb-5">
                 {t('Frequently Asked Questions')}
             </div>
             <FAQ faq={faqData.faq} />
