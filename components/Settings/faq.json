@@ -27,6 +27,10 @@
         {
             "question": "Where is my conversation data stored?",
             "answer": "All conversation data with the MSF AI Assistant is stored locally on your own computer. This ensures that your data remains private and secure, and is not transmitted to external servers."
+        },
+        {
+            "question": "Should the MSF AI Assistant's responses be 100% trusted?",
+            "answer": "While the MSF AI Assistant is a powerful tool designed to assist with various tasks, it should not be considered a replacement for human judgment and expertise. Always confirm and fact-check the information provided by the AI Assistant to ensure accuracy and reliability."
         }
     ]
 }
