@@ -148,7 +148,14 @@ export const isImageConversation = (messages: Message[]): boolean => {
  */
 export const checkIsModelValid = (
     modelId: string,
-    validModelIDs: typeof OpenAIModelID |  typeof OpenAIVisionModelID
+    validModelIDs: object
 ): boolean => {
+    if (
+        validModelIDs !== OpenAIModelID &&
+        validModelIDs !== OpenAIVisionModelID
+    ) {
+        throw new Error('Invalid enum provided for validModelIDs');
+    }
+
     return Object.values(validModelIDs).toString().split(',').includes(modelId);
 }

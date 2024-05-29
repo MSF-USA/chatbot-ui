@@ -29,12 +29,10 @@ export const config = {
 };
 
 
-
-
 const handler = async (req: NextRequest): Promise<Response> => {
 
   try {
-    const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
+    const { model, messages, prompt, temperature } = (await req.json()) as ChatBody;
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
     const encoding = new Tiktoken(
