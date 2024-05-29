@@ -31,6 +31,10 @@
         {
             "question": "Should the MSF AI Assistant's responses be 100% trusted?",
             "answer": "While the MSF AI Assistant is a powerful tool designed to assist with various tasks, it should not be considered a replacement for human judgment and expertise. Always confirm and fact-check the information provided by the AI Assistant to ensure accuracy and reliability."
+        },
+        {
+            "question": "What should I do if something is not working with the MSF AI Assistant?",
+            "answer": "If something is not working with the MSF AI Assistant, please email our team at ai@newyork.msf.org and we'd be happy to address your concerns."
         }
     ]
 }
