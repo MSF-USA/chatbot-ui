@@ -1,4 +1,13 @@
-import React, { Dispatch, FC, MutableRefObject, SetStateAction, useEffect, useRef, useState } from "react";
+import React, {
+    Dispatch,
+    FC,
+    MouseEventHandler,
+    MutableRefObject,
+    SetStateAction,
+    useEffect,
+    useRef,
+    useState
+} from "react";
 import {IconCamera, IconX} from "@tabler/icons-react";
 import { ChatInputSubmitTypes, ImageMessageContent } from "@/types/chat";
 import toast from "react-hot-toast";
@@ -62,20 +71,20 @@ const CameraModal: FC<CameraModalProps> = (
 
     if (!isOpen) return null;
 
-    const exitModal = () => {
+    const exitModal = (_: any): void => {
         if (videoRef.current && videoRef.current.srcObject instanceof MediaStream) {
             const tracks = videoRef.current.srcObject.getTracks();
             tracks.forEach((track) => track.stop());
         }
         setIsCameraOpen(false);
-        closeModal()
+        closeModal();
     }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg shadow-lg p-6 relative">
+            <div className="bg-white dark:bg-black rounded-lg shadow-lg p-6 relative">
                 <button
-                    onClick={closeModal}
+                    onClick={exitModal}
                     className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
                 >
                     <IconX />
@@ -87,12 +96,13 @@ const CameraModal: FC<CameraModalProps> = (
                         className="mb-4"
                     >
                         {cameras.map(camera => (
-                            <option key={camera.deviceId} value={camera.deviceId}>
-                                {camera.label}
+                            <option key={`camera-${camera.deviceId}`} value={camera.deviceId}>
+                                {camera.label ?? camera.deviceId}
                             </option>
                         ))}
                     </select>
                 )}
+                {cameras.length === 1 && <div>{cameras[0].label ?? cameras[0].deviceId}</div>}
                 <video ref={videoRef} autoPlay playsInline className="w-full h-auto mb-4" />
                 <canvas ref={canvasRef} style={{ display: "none" }} />
                 <button
