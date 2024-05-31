@@ -144,7 +144,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
             {activeTab === Tab.CHAT_SETTINGS && (
               <>
               <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
-                {t('Default') + ' ' + t('Temperature')}
+                {t('Default') + ' ' + t('Temperature') + '*'}
               </div>
 
               <TemperatureSlider
@@ -153,9 +153,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   dispatch({ field: 'temperature', value: temperature })
                 }
               />
-              {/* <hr className="my-10 border-gray-300 dark:border-neutral-700" />
-              <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
-                {t('System Prompt')}
+              {/* <hr className="my-10 border-gray-300 dark:border-neutral-700" /> */}
+              {/* <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
+                {t('Default System Prompt') + '*'}
               </div>
               <SystemPrompt
                 prompts={homeState.prompts}
@@ -168,7 +168,12 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   })
                 }
               /> */}
-              <hr className="my-10 border-gray-300 dark:border-neutral-700" />
+              <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
+              <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
+                {t(
+                  '*Note that these default settings only apply to NEW conversations once saved.',
+                )}
+              </span>
                 <div className='flex justify-end mr-1 mt-10'>
                 <button
                   type="button"

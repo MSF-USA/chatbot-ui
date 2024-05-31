@@ -1,3 +1,7 @@
+
+import { OpenAIStream, StreamingTextResponse } from "ai"
+import OpenAI from "openai"
+
 import {
   APIM_CHAT_ENDPONT,
   AZURE_DEPLOYMENT_ID,
@@ -76,24 +80,36 @@ const handler = async (req: NextRequest): Promise<Response> => {
     if (!token)
       throw new Error("Could not pull token!")
 
-    let resp;
-    resp = await makeAPIMRequestWithRetry(
-        apiUrl,
-        token.accessToken,
-        'POST',
-        {
-          "messages": messagesToSend,
-          "temperature": temperatureToUse,
-        }
-    )
-    return new Response((resp as  ApimChatResponseDataStructure).choices[0].message.content, {status: 200});
-  } catch (error) {
-    console.error(error);
-    if (error instanceof OpenAIError) {
-      return new Response('Error', { status: 500, statusText: error.message });
-    } else {
-      return new Response('Error', { status: 500 });
-    }
+      const azureOpenai = new OpenAI({
+          baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
+          defaultQuery: { "api-version": OPENAI_API_VERSION },
+          defaultHeaders: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${ token.accessToken }`
+          }
+      })
+
+      const response = await azureOpenai.chat.completions.create({
+          model: modelToUse,
+          messages: messagesToSend,
+          temperature: temperatureToUse,
+          max_tokens: null,
+          stream: true
+      })
+
+      const stream = OpenAIStream(response)
+
+      //Formatting changed significantly on 'ai' package > 3.0.19
+      return new StreamingTextResponse(stream)
+    // return new Response((resp as  ApimChatResponseDataStructure).choices[0].message.content, {status: 200});
+  } catch (error: any) {
+      const errorMessage = error.error?.message || "An unexpected error occurred"
+      const errorCode = error.status || 500
+
+      console.error(error);
+      return new Response(JSON.stringify({ message: errorMessage }), {
+          status: errorCode
+      })
   }
 };
 

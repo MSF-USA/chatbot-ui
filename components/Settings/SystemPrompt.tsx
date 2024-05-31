@@ -188,9 +188,9 @@ export const SystemPrompt: FC<Props> = ({
 
   return (
     <div className="flex flex-col">
-      <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
+      <span className="mb-10 text-[12px] text-black/50 dark:text-white/50 text-sm">
         {t(
-          'Define how the AI Assistant should act.',
+          'This is a set of instructions that guide the AI Assistant on how to respond. It helps the AI provide useful and accurate information by giving context to the questions asked.',
         )}
       </span>
       <textarea

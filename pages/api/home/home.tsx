@@ -359,7 +359,7 @@ const Home = ({
     defaultModelId,
     dispatch,
     serverSideApiKeyIsSet,
-    serverSidePluginKeysSet,
+    serverSidePluginKeysSet
   ]);
 
   return (

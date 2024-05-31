@@ -37,7 +37,7 @@ export interface Message {
   messageType: MessageType | undefined;
 }
 
-export type Role = 'assistant' | 'user' | 'system';
+export type Role = 'system' | 'assistant' | 'user';
 
 export interface ChatBody {
   model: OpenAIModel;
