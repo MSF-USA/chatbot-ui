@@ -80,27 +80,33 @@ const handler = async (req: NextRequest): Promise<Response> => {
     if (!token)
       throw new Error("Could not pull token!")
 
-      const azureOpenai = new OpenAI({
-          baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
-          defaultQuery: { "api-version": OPENAI_API_VERSION },
-          defaultHeaders: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${ token.accessToken }`
-          }
-      })
+    const openAIArgs: any = {
+        baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
+        defaultQuery: { "api-version": OPENAI_API_VERSION },
+        defaultHeaders: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${ token.accessToken }`
+        },
+    }
 
-      const response = await azureOpenai.chat.completions.create({
-          model: modelToUse,
-          messages: messagesToSend,
-          temperature: temperatureToUse,
-          max_tokens: null,
-          stream: true
-      })
+    if (process.env.OPENAI_API_KEY)
+      openAIArgs.apiKey = process.env.OPENAI_API_KEY;
+    else
+      openAIArgs.apiKey = '';
 
-      const stream = OpenAIStream(response)
+    const azureOpenai = new OpenAI(openAIArgs)
+    const response = await azureOpenai.chat.completions.create({
+        model: modelToUse,
+        messages: messagesToSend as  OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+        temperature: temperatureToUse,
+        max_tokens: null,
+        stream: true
+    })
 
-      //Formatting changed significantly on 'ai' package > 3.0.19
-      return new StreamingTextResponse(stream)
+    const stream = OpenAIStream(response)
+
+    //Formatting changed significantly on 'ai' package > 3.0.19
+    return new StreamingTextResponse(stream)
     // return new Response((resp as  ApimChatResponseDataStructure).choices[0].message.content, {status: 200});
   } catch (error: any) {
       const errorMessage = error.error?.message || "An unexpected error occurred"
