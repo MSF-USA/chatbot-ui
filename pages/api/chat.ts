@@ -1,3 +1,7 @@
+
+import { OpenAIStream, StreamingTextResponse } from "ai"
+import OpenAI from "openai"
+
 import {
   APIM_CHAT_ENDPONT,
   AZURE_DEPLOYMENT_ID,
@@ -5,7 +9,6 @@ import {
   DEFAULT_TEMPERATURE,
   OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION
 } from '@/utils/app/const';
-import { OpenAIError, OpenAIStream } from '@/utils/server';
 
 import { ChatBody, Message } from '@/types/chat';
 import { OpenAIModelID } from '@/types/openai';
@@ -16,7 +19,6 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import {getToken} from "next-auth/jwt";
-import {makeAPIMRequest} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
 import {JWT} from 'next-auth';
 
@@ -25,10 +27,9 @@ export const config = {
   runtime: 'edge',
 };
 
-
-const handler = async (req: NextRequest): Promise<Response> => {
-
+const handler = async (req: NextRequest) => {
   try {
+
     const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
@@ -56,7 +57,6 @@ const handler = async (req: NextRequest): Promise<Response> => {
     }
 
     const prompt_tokens = encoding.encode(promptToSend);
-
     let tokenCount = prompt_tokens.length;
     let messagesToSend: Message[] = [];
 
@@ -68,46 +68,50 @@ const handler = async (req: NextRequest): Promise<Response> => {
         break;
       }
       tokenCount += tokens.length;
-      messagesToSend = [message, ...messagesToSend];
+
+      messagesToSend = [
+        // {
+        //   role: 'system',
+        //   content: promptToSend,
+        // },
+        message,
+        ...messagesToSend
+      ];
     }
+
+    //@ts-ignore
+    const token: JWT = await getToken({req});
 
     encoding.free();
-    if (OPENAI_API_TYPE === 'azure') {
-      // @ts-ignore
-      const token: JWT = await getToken({req});
-      let resp;
-      try {
-        resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token.accessToken,
-            'POST',
-            {
-              "messages": messagesToSend,
-            }
-        )
-      } catch (err) {
-        resp = await makeAPIMRequest(
-            `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
-            token.accessToken,
-            'POST',
-            {
-              "messages": messagesToSend,
-            }
-        )
-      }
-      return new Response(resp.choices[0].message.content, {status: 200});
-    } else {
-      const stream = await OpenAIStream(model, promptToSend, temperatureToUse, key, messagesToSend);
 
-      return new Response(stream);
-    }
-  } catch (error) {
-    console.error(error);
-    if (error instanceof OpenAIError) {
-      return new Response('Error', { status: 500, statusText: error.message });
-    } else {
-      return new Response('Error', { status: 500 });
-    }
+    const azureOpenai = new OpenAI({
+      baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
+      defaultQuery: { "api-version": OPENAI_API_VERSION },
+      defaultHeaders: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${ token.accessToken }`
+      }
+    })
+
+    const response = await azureOpenai.chat.completions.create({
+      model: modelToUse,
+      messages: messagesToSend,
+      temperature: temperatureToUse,
+      max_tokens: null,
+      stream: true
+    })
+
+    const stream = OpenAIStream(response)
+
+    //Formatting changed significantly on 'ai' package > 3.0.19
+    return new StreamingTextResponse(stream)
+
+  } catch (error: any) {
+    const errorMessage = error.error?.message || "An unexpected error occurred"
+    const errorCode = error.status || 500
+    return new Response(JSON.stringify({ message: errorMessage }), {
+      status: errorCode
+    })
   }
 };
 
