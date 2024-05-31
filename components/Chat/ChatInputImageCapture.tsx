@@ -18,20 +18,58 @@ interface CameraModalProps {
 
 const CameraModal: FC<CameraModalProps> = (
     {
-       isOpen,
-       closeModal,
-       videoRef,
-       canvasRef,
-       fileInputRef,
-       setIsCameraOpen,
-       setFilePreviews,
-       setSubmitType,
-       setImageFieldValue,
+        isOpen,
+        closeModal,
+        videoRef,
+        canvasRef,
+        fileInputRef,
+        setIsCameraOpen,
+        setFilePreviews,
+        setSubmitType,
+        setImageFieldValue,
     }
 ) => {
     const { t } = useTranslation('chat');
+    const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+    const [selectedCamera, setSelectedCamera] = useState<string>('');
+
+    useEffect(() => {
+        const getDevices = async () => {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            const videoDevices = devices.filter(device => device.kind === 'videoinput');
+            setCameras(videoDevices);
+            if (videoDevices.length > 0) {
+                setSelectedCamera(videoDevices[0].deviceId);
+            }
+        };
+        getDevices();
+    }, []);
+
+    const startCamera = async (deviceId: string) => {
+        const stream: MediaStream = await navigator.mediaDevices.getUserMedia({ video: { deviceId } });
+        if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+        }
+    };
+
+    const handleCameraChange = (deviceId: string) => {
+        setSelectedCamera(deviceId);
+        if (videoRef.current?.srcObject) {
+            (videoRef.current.srcObject as MediaStream).getTracks().forEach(track => track.stop());
+        }
+        startCamera(deviceId);
+    };
+
     if (!isOpen) return null;
 
+    const exitModal = () => {
+        if (videoRef.current && videoRef.current.srcObject instanceof MediaStream) {
+            const tracks = videoRef.current.srcObject.getTracks();
+            tracks.forEach((track) => track.stop());
+        }
+        setIsCameraOpen(false);
+        closeModal()
+    }
 
     return (
         <div className="fixed inset-0 flex items-center justify-center z-50">
@@ -42,6 +80,19 @@ const CameraModal: FC<CameraModalProps> = (
                 >
                     <IconX />
                 </button>
+                {cameras.length > 1 && (
+                    <select
+                        value={selectedCamera}
+                        onChange={e => handleCameraChange(e.target.value)}
+                        className="mb-4"
+                    >
+                        {cameras.map(camera => (
+                            <option key={camera.deviceId} value={camera.deviceId}>
+                                {camera.label}
+                            </option>
+                        ))}
+                    </select>
+                )}
                 <video ref={videoRef} autoPlay playsInline className="w-full h-auto mb-4" />
                 <canvas ref={canvasRef} style={{ display: "none" }} />
                 <button
@@ -66,6 +117,7 @@ const CameraModal: FC<CameraModalProps> = (
         </div>
     );
 };
+
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
