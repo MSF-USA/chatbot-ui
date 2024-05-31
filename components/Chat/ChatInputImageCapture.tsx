@@ -81,60 +81,65 @@ const CameraModal: FC<CameraModalProps> = (
     }
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-black rounded-lg shadow-lg p-6 relative">
-                <button
-                    onClick={exitModal}
-                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+      <div className="fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-black rounded-lg shadow-lg p-6 relative max-w-lg w-full">
+              <button
+                onClick={exitModal}
+                className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+              >
+                  <IconX/>
+              </button>
+              {cameras.length > 1 && (
+                <select
+                  value={selectedCamera}
+                  onChange={e => handleCameraChange(e.target.value)}
+                  className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                    <IconX />
-                </button>
-                {cameras.length > 1 && (
-                    <select
-                        value={selectedCamera}
-                        onChange={e => handleCameraChange(e.target.value)}
-                        className="mb-4"
-                    >
-                        {cameras.map(camera => (
-                            <option key={`camera-${camera.deviceId}`} value={camera.deviceId}>
-                                {camera.label ?? camera.deviceId}
-                            </option>
-                        ))}
-                    </select>
-                )}
-                {cameras.length === 1 && <div>{cameras[0].label ?? cameras[0].deviceId}</div>}
-                <video ref={videoRef} autoPlay playsInline className="w-full h-auto mb-4" />
-                <canvas ref={canvasRef} style={{ display: "none" }} />
-                <button
-                    onClick={() => {
-                        onTakePhotoButtonClick(
-                            videoRef,
-                            canvasRef,
-                            fileInputRef,
-                            setIsCameraOpen,
-                            setFilePreviews,
-                            setSubmitType,
-                            setImageFieldValue,
-                            closeModal
-                        );
-                    }}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                >
-                    <IconCamera />
-                    <span className={"sr-only"}>{t('Take photo')}</span>
-                </button>
-            </div>
-        </div>
+                    {cameras.map(camera => (
+                      <option key={`camera-${camera.deviceId}`} value={camera.deviceId}>
+                          {camera.label ?? camera.deviceId}
+                      </option>
+                    ))}
+                </select>
+              )}
+              {cameras.length === 1 && (
+                <div className="mb-4 text-center">{cameras[0].label ?? cameras[0].deviceId}</div>
+              )}
+              <div className="relative mb-4">
+                  <video ref={videoRef} autoPlay playsInline className="w-full h-auto rounded-md"/>
+                  <canvas ref={canvasRef} style={{display: "none"}}/>
+              </div>
+              <button
+                onClick={() => {
+                    onTakePhotoButtonClick(
+                      videoRef,
+                      canvasRef,
+                      fileInputRef,
+                      setIsCameraOpen,
+                      setFilePreviews,
+                      setSubmitType,
+                      setImageFieldValue,
+                      closeModal
+                    );
+                }}
+                className="w-full bg-blue-500 text-white px-4 py-2 rounded-md flex items-center justify-center"
+              >
+                  <IconCamera className="w-6 h-6 mr-2"/>
+                  <span>{t('Take photo')}</span>
+              </button>
+          </div>
+      </div>
+
     );
 };
 
 
 const onImageUpload = (
-    event: React.ChangeEvent<any>,
-    prompt: string,
-    setFilePreviews: Dispatch<SetStateAction<string[]>>,
-    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
+  event: React.ChangeEvent<any>,
+  prompt: string,
+  setFilePreviews: Dispatch<SetStateAction<string[]>>,
+  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
 ) => {
     event.preventDefault();
     const file = event.target.files[0];
