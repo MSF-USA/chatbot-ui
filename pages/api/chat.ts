@@ -63,7 +63,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
-    const prompt_tokens = encoding.encode(promptToSend);
+    const apiUrl: string = `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`
+
+        const prompt_tokens = encoding.encode(promptToSend);
 
     const messagesToSend: Message[] = await getMessagesToSendV2(
         messages, encoding, prompt_tokens.length, model.tokenLimit
@@ -76,7 +78,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
     let resp;
     resp = await makeAPIMRequestWithRetry(
-        `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`,
+        apiUrl,
         token.accessToken,
         'POST',
         {
