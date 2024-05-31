@@ -39,13 +39,7 @@ interface Props {
 
 export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { t } = useTranslation('settings');
-
-  const {
-    state: homeState,
-    dispatch: homeDispatch
-  } = useContext(HomeContext);
-
-  const settings: Settings = getSettings(homeState.customUserSystemPrompt);
+  const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
   });
@@ -56,6 +50,10 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     handleClearConversations,
   } = useContext(ChatbarContext);
 
+  const {
+    state: homeState,
+    dispatch: homeDispatch
+  } = useContext(HomeContext);
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
 
