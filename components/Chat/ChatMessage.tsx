@@ -117,8 +117,13 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
     }
   }, [isEditing]);
 
+  const isImageMessage = message.messageType === MessageType.IMAGE || Array.isArray(message.content);
 
-  if (message.messageType === MessageType.TEXT || message.messageType === undefined) {
+  if (isImageMessage) {
+    return <ChatMessageImage
+      message={message}
+    />;
+  } else if ((message.messageType === MessageType.TEXT || message.messageType === undefined) && typeof message.content === 'string') {
     return <ChatMessageText
         message={message}
         copyOnClick={copyOnClick}
@@ -139,11 +144,7 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
         messageCopied={messagedCopied}
         onEdit={onEdit}
     />
-  } else if (message.messageType === MessageType.IMAGE) {
-    return <ChatMessageImage
-        message={message}
-    />;
-  } else {
+  }  else {
     return <div
         className={`group md:px-4 ${
             message.role === 'assistant'

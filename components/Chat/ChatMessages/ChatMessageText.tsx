@@ -1,4 +1,13 @@
-import {FC, useState, MouseEvent, Dispatch, SetStateAction, KeyboardEventHandler, MouseEventHandler} from "react";
+import {
+  FC,
+  useState,
+  MouseEvent,
+  Dispatch,
+  SetStateAction,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useEffect
+} from "react";
 import {IconCheck, IconCopy, IconEdit, IconRobot, IconTrash, IconUser} from "@tabler/icons-react";
 import {Conversation, getChatMessageContent, Message, MessageType} from "@/types/chat";
 import {MemoizedReactMarkdown} from "@/components/Markdown/MemoizedReactMarkdown";
@@ -146,6 +155,12 @@ const UserMessage: FC<UserMessageProps> = (
         setIsEditing(false);
     };
 
+  useEffect(() => {
+    if (message.content !== messageContent && typeof message.content === "string") {
+      setMessageContent(message.content);
+    }
+  }, [message.content, messageContent]);
+
     return (
         <div
             className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
@@ -196,7 +211,7 @@ const UserMessage: FC<UserMessageProps> = (
                         </div>
                     ) : (
                         <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
-                            {messageContent}
+                            {message.content as string}
                         </div>
                     )}
 
