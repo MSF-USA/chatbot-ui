@@ -28,11 +28,11 @@ import HomeContext from '@/pages/api/home/home.context';
 import {PromptList} from './PromptList';
 import {VariableModal} from './VariableModal';
 import MicIcon from "@/components/Icons/mic";
-import ChatInputImage from "@/components/Chat/ChatInputImage";
-import ChatInputFile from "@/components/Chat/ChatInputFile";
+import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
+import ChatInputFile from "@/components/Chat/ChatInput/ChatInputFile";
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
-import ChatFileUploadPreviews from "@/components/Chat/ChatFileUploadPreviews";
-import ChatInputImageCapture from "@/components/Chat/ChatInputImageCapture";
+import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPreviews";
+import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
