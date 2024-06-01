@@ -142,18 +142,24 @@ const UserMessage: FC<UserMessageProps> = (
         handleDeleteMessage, onEdit
     }
 ) => {
-    const { t } = useTranslation('chat');
-    const {role, content, messageType} = message;
+  const { t } = useTranslation('chat');
+  const {role, content, messageType} = message;
+  const [localMessageContent, setLocalMessageContent] = useState<string>(content as string);
 
 
-    const handleEditMessage = () => {
-        if (message.content != messageContent) {
-            if (selectedConversation && onEdit) {
-                onEdit({...message, content: messageContent});
-            }
-        }
-        setIsEditing(false);
-    };
+  const handleEditMessage = () => {
+    if (localMessageContent != content) {
+      if (selectedConversation && onEdit) {
+        onEdit({...message, content: localMessageContent});
+        setMessageContent(localMessageContent);
+      }
+    }
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    setLocalMessageContent(content as string);
+  }, [content]);
 
   useEffect(() => {
     if (message.content !== messageContent && typeof message.content === "string") {
@@ -175,8 +181,8 @@ const UserMessage: FC<UserMessageProps> = (
                             <textarea
                                 ref={textareaRef}
                                 className="w-full resize-none whitespace-pre-wrap border-none dark:bg-[#212121]"
-                                value={messageContent}
-                                onChange={handleInputChange}
+                                value={localMessageContent}
+                                onChange={(event) => setLocalMessageContent(event.target.value)}
                                 onKeyDown={handlePressEnter}
                                 onCompositionStart={() => setIsTyping(true)}
                                 onCompositionEnd={() => setIsTyping(false)}
@@ -194,14 +200,14 @@ const UserMessage: FC<UserMessageProps> = (
                                 <button
                                     className="h-[40px] rounded-md bg-blue-500 px-4 py-1 text-sm font-medium text-white enabled:hover:bg-blue-600 disabled:opacity-50"
                                     onClick={handleEditMessage}
-                                    disabled={getChatMessageContent(message).trim().length <= 0}
+                                    disabled={localMessageContent.trim().length <= 0}
                                 >
                                     {t('Save & Submit')}
                                 </button>
                                 <button
                                     className="h-[40px] rounded-md border border-neutral-300 px-4 py-1 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:text-neutral-300 dark:hover:bg-neutral-800"
                                     onClick={() => {
-                                        setMessageContent(messageContent);
+                                        setLocalMessageContent(content as string);
                                         setIsEditing(false);
                                     }}
                                 >
