@@ -5,6 +5,7 @@ interface ValidFileTypes {
   txt: boolean;
   pdf: boolean;
   docx: boolean;
+  "text/plain": boolean;
   // Add more supported file types as needed
 }
 
