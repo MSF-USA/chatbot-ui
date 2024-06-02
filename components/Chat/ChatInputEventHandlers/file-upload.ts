@@ -2,29 +2,44 @@ import React from "react";
 import toast from "react-hot-toast";
 
 export function onFileUpload(event: React.ChangeEvent<any>) {
-    event.preventDefault();
-    const file = event.target.files[0];
+  event.preventDefault();
+  const file = event.target.files[0];
 
-    if (file.size > 10485760) {
-        toast.error("Image upload must be <10mb");
-        return;
-    }
+  if (file.size > 10485760) {
+    toast.error("Image upload must be <10mb");
+    return;
+  }
+
+  const chunkSize = 1024 * 1024 * 5; // 5MB
+  let uploadedBytes = 0;
+
+  const uploadChunk = () => {
+    const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("chunk", chunk);
+    formData.append("name", file.name);
 
     fetch("/api/file/upload", {
-        method: "POST",
-        body: formData,
+      method: "POST",
+      body: formData,
     })
       .then((response: Response) => {
-          if (response.ok) {
-              toast.success("File uploaded successfully");
+        if (response.ok) {
+          uploadedBytes += chunkSize;
+          if (uploadedBytes < file.size) {
+            uploadChunk();
           } else {
-              toast.error("File upload failed");
+            toast.success("File uploaded successfully");
           }
+        } else {
+          toast.error("File upload failed");
+        }
       })
       .catch(() => {
-          toast.error("File upload failed");
+        toast.error("File upload failed");
       });
+  };
+
+  uploadChunk();
 }
