@@ -1,3 +1,6 @@
+import fs from 'fs/promises';
+import path from 'path';
+
 interface ValidFileTypes {
   txt: boolean;
   pdf: boolean;
@@ -45,6 +48,17 @@ export class UserFileHandler {
     }
   }
 
+  private async extractTextFromTxtFile(): Promise<string> {
+    try {
+      const filePath = path.join(process.cwd(), this.fileData as string);
+      return await fs.readFile(filePath, 'utf-8');
+    } catch (error: any) {
+      console.error('Error reading text file:', error);
+      throw new Error('Failed to read text file');
+    }
+
+  }
+
   public async extractText(): Promise<string> {
     if (this.fileType && !this.validFileTypes[this.fileType]) {
       throw new Error(`Text extraction not supported for file type: ${this.fileType}`);
@@ -57,8 +71,7 @@ export class UserFileHandler {
         let txt = '';
         switch (this.fileType) {
           case 'txt':
-            // Use appropriate library to read text file
-            return txt;
+            return await this.extractTextFromTxtFile();
           case 'pdf':
             // Use appropriate library to extract text from PDF
             return txt;
