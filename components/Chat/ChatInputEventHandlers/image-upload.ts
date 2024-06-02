@@ -2,7 +2,7 @@ import React, {Dispatch, MutableRefObject, SetStateAction} from "react";
 import {ChatInputSubmitTypes, ImageMessageContent} from "@/types/chat";
 import toast from "react-hot-toast";
 
-export const onImageUpload = (
+export const onImageUpload = async (
   event: React.ChangeEvent<any>,
   prompt: string,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
@@ -15,43 +15,46 @@ export const onImageUpload = (
     if (!file) {
         setSubmitType("text");
         return;
-    } else {
-        setSubmitType("image");
     }
+
+    setSubmitType("image");
 
     if (file.size > 5242480) {
         toast.error("Image upload must be <5mb");
         return;
     }
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onloadend = () => {
-        const base64String = reader.result as string;
-        fetch(`/api/image?filename=${encodeURI(file.name)}`, {
-            method: "POST",
-            body: base64String,
-        }).then((page) => {
-            page.json().then((data) => {
-                const imageMessage: ImageMessageContent = {
-                    type: "image_url",
-                    image_url: {
-                        url: data.uri,
-                    },
-                };
-                setImageFieldValue(imageMessage);
-                setFilePreviews((prevFilePreviews) => {
-                    if (Array.isArray(prevFilePreviews)) {
-                        prevFilePreviews.push(base64String);
-                        return prevFilePreviews;
-                    } else {
-                        return [base64String];
-                    }
-                });
-            });
-        });
+    const base64String = await readFileAsDataURL(file);
+    const data = await uploadImage(file.name, base64String);
+
+    const imageMessage: ImageMessageContent = {
+        type: "image_url",
+        image_url: {
+            url: data.uri,
+        },
     };
+
+    setImageFieldValue(imageMessage);
+    setFilePreviews((prevFilePreviews) => [...(prevFilePreviews || []), base64String]);
 };
+
+const readFileAsDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+};
+
+const uploadImage = async (filename: string, base64String: string): Promise<{ uri: string }> => {
+    const response = await fetch(`/api/image?filename=${encodeURI(filename)}`, {
+        method: "POST",
+        body: base64String,
+    });
+    return response.json();
+};
+
 
 export function onImageUploadButtonClick(event: React.ChangeEvent<any>, fileInputRef: MutableRefObject<any>) {
     event.preventDefault();
