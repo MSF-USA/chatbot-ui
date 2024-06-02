@@ -13,10 +13,10 @@ type ValidFileExtensions = "txt" | "pdf" | "docx";
 type ValidFileLocations = 'local' | 'remote'
 
 export class UserFileHandler {
-  private fileData: Blob | string;
-  private fileType: ValidFileExtensions | undefined;
-  private fileLocation: ValidFileLocations;
-  private validFileTypes: ValidFileTypes;
+  private readonly fileData: Blob | string;
+  private readonly fileType: ValidFileExtensions | undefined;
+  private readonly fileLocation: ValidFileLocations;
+  private readonly validFileTypes: ValidFileTypes;
 
   constructor(fileData: Blob | string, validFileTypes: ValidFileTypes) {
     this.fileData = fileData;
@@ -43,8 +43,7 @@ export class UserFileHandler {
     if (fileData instanceof Blob) {
       return fileData.type.split('/')[1];
     } else {
-      const fileExtension = fileData.split('.').pop();
-      return fileExtension;
+      return fileData.split('.').pop();
     }
   }
 
