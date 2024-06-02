@@ -12,8 +12,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   }
 
   const tempDirectory = os.tmpdir();
-  const filename = req.headers['x-file-name'] as string;
-  const tempFilePath = path.join(tempDirectory, filename);
+  const rawFilename = req.headers['x-file-name'] as string;
+  const sanitizedFilename = path.basename(rawFilename);
+  const tempFilePath = path.join(tempDirectory, sanitizedFilename);
 
   const fileStream = fs.createWriteStream(tempFilePath);
 
@@ -24,7 +25,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   req.on('end', () => {
     fileStream.end();
 
-    const fileExtension = path.extname(filename).toLowerCase();
+    const fileExtension = path.extname(sanitizedFilename).toLowerCase();
     if (READABLE_FORMATS.includes(fileExtension)) {
       // Read the contents of the file
       fs.readFile(tempFilePath, 'utf8', (err, data) => {
@@ -41,13 +42,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         // Remove the temporary file
         cleanupTempFile(tempFilePath);
 
-        res.status(200).json({ message: 'File uploaded successfully', filename, fileText });
+        res.status(200).json({ message: 'File uploaded successfully', filename: sanitizedFilename, fileText });
       });
     } else {
       // Remove the temporary file
       cleanupTempFile(tempFilePath);
 
-      res.status(200).json({ message: 'File uploaded successfully', filename });
+      res.status(200).json({ message: 'File uploaded successfully', filename: sanitizedFilename });
     }
   });
 
