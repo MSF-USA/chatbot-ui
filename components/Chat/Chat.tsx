@@ -606,7 +606,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 {t('AI Model Selection:')}
                                 <ModelSelect />
                               </div>
-                              {t('Temperature')}
+                              <div className='text-black dark:text-white'>
+                                {t('Temperature')}
+                              </div>
                               <TemperatureSlider
                                 temperature={selectedConversation.temperature}
                                 onChangeTemperature={(temperature) =>
@@ -737,7 +739,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           {t('AI Model Selection:')}
                           <ModelSelect />
                         </div>
-                        {selectedConversation ? t('Temperature') : ''}
+                        <div className='text-black dark:text-white'>
+                          {selectedConversation ? t('Temperature') : ''}
+                        </div>
                         {selectedConversation ? (
                           <TemperatureSlider
                             temperature={selectedConversation?.temperature}
