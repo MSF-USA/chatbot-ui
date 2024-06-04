@@ -52,7 +52,7 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
             <div className="ml-2 group relative flex flex-row text-white">
               How Do I Get Access?
               <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full right-0 transform translate-x-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                Currently MSF AI Assistant is only available to USA and OCA staff.<br /><br />
+                Currently MSF AI Assistant is only available to USA and Amasterdam HQ staff.<br /><br />
                 We hope to expand soon!
               </span>
             </div>
