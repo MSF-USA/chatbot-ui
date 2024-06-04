@@ -70,10 +70,10 @@ const handler = async (req: NextRequest) => {
       tokenCount += tokens.length;
 
       messagesToSend = [
-        {
-          role: 'system',
-          content: promptToSend,
-        },
+        // {
+        //   role: 'system',
+        //   content: promptToSend,
+        // },
         message,
         ...messagesToSend
       ];
