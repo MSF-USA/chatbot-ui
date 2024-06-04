@@ -186,7 +186,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
               <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
                 {t(
-                  '*Note that these default settings only apply to NEW conversations once saved.',
+                  '*Note that these default settings only apply to new conversations once saved.',
                 )}
               </span>
                 <div className='flex justify-end mr-1 mt-10'>
