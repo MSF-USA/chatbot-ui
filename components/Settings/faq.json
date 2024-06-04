@@ -2,11 +2,11 @@
     "faq": [
         {
             "question": "What is the MSF AI Assistant?",
-            "answer": "The MSF AI Assistant is a large language model developed by OpenAI and tailored for use by Doctors Without Borders (Médecins Sans Frontières). It was developed to give MSF staff access to advanced language models while ensuring that data remains secure. The MSF AI Assistant is designed to understand and generate human-like text based on the input it receives. It can assist with a wide range of tasks, including answering questions, providing explanations, generating creative content, and more."
+            "answer": "The MSF AI Assistant is a large language model developed by OpenAI and tailored for use by Doctors Without Borders/Médecins Sans Frontières (MSF). It was developed to give MSF staff access to advanced language models while ensuring that data remains secure. The MSF AI Assistant is designed to understand and generate human-like text based on the input it receives. It can assist with a wide range of tasks, including answering questions, providing explanations, generating creative content, and more."
         },
         {
             "question": "How can the MSF AI Assistant assist employees of Doctors Without Borders (Médecins Sans Frontières)?",
-            "answer": "The MSF AI Assistant can assist employees of Doctors Without Borders (Médecins Sans Frontières) in various ways, such as:\n- Answering technical questions\n- Generating or modifying reports and documentation\n- Offering language translation assistance\n- Assisting with brainstorming and idea generation\n- Conversing in a human-like manner on a wide range of topics relevant to humanitarian work"
+            "answer": "The MSF AI Assistant can assist employees of Doctors Without Borders/Médecins Sans Frontières (MSF) in various ways, such as:\n- Answering technical questions.\n- Generating or modifying reports and documentation.\n- Offering language translation assistance.\n- Assisting with brainstorming and idea generation.\n- Conversing in a human-like manner on a wide range of topics relevant to humanitarian work."
         },
         {
             "question": "What are some example questions I can ask the MSF AI Assistant?",
