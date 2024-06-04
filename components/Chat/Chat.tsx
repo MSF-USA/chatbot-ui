@@ -82,6 +82,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const updateConversationFromUserInput = (
       userMessage: Message,
@@ -440,6 +441,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
   const throttledScrollDown = throttle(scrollDown, 250);
 
+  const handleClickOutside = (event: any) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setShowSettings(false);
+    }
+  };
+
   // useEffect(() => {
   //   console.log('currentMessage', currentMessage);
   //   if (currentMessage) {
@@ -497,7 +504,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#212121]">
-      {(showSplash) ? (
+      {showSplash ? (
         <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
             Welcome to the MSF AI Assistant
@@ -510,17 +517,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           </div>
           <div className="text-center text-gray-500 dark:text-gray-400">
             <div className="mb-2">
-              MSF AI Assistant allows you to plug in your API key to use this UI with
-              their API.
+              MSF AI Assistant allows you to plug in your API key to use this UI with their API.
             </div>
             <div className="mb-2">
-              It is <span className="italic">only</span> used to communicate
-              with their API.
+              It is <span className="italic">only</span> used to communicate with their API.
             </div>
             <div className="mb-2">
-              {t(
-                'Please set your OpenAI API key in the bottom left of the sidebar.',
-              )}
+              {t('Please set your OpenAI API key in the bottom left of the sidebar.')}
             </div>
             <div>
               {t("If you don't have an OpenAI API key, you can get one here: ")}
@@ -546,144 +549,142 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages?.length === 0 ? (
               <>
-              {models.length > 0 && !runTypewriter && (
-                <Transition
-                  appear={true}
-                  show={image}
-                  enter="transition-opacity duration-1000"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="transition-opacity duration-300"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                <div>
-                <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model?.name}
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={handleSettings}
-                  >
-                  <IconSettings size={18} className={`${
-                    showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
-                  }`}/>
-                  </button>
-                    <div className='absolute right-0'>
-                      <a
-                          href={`mailto:${email}`}
-                          className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
-                        >
-                          <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
-                          {t('Send Feedback')}
-                      </a>
-                    </div>
-                  </div>
-                  {showSettings && (
+                {models.length > 0 && !runTypewriter && (
                   <Transition
                     appear={true}
-                    show={showSettings}
-                    enter="transition-opacity duration-500"
+                    show={image}
+                    enter="transition-opacity duration-1000"
                     enterFrom="opacity-0"
                     enterTo="opacity-100"
                     leave="transition-opacity duration-300"
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                  <div className="mt-10 flex justify-center relative mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
-                    <div className="absolute w-full md:max-w-lg rounded-lg space-y-4 border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121] text-black dark:text-white">
-                      <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
-                        {t('AI Model Selection:')}
-                        <ModelSelect />
-                      </div>
-
-                      {/* <SystemPrompt
-                        conversation={selectedConversation}
-                        prompts={prompts}
-                        onChangePrompt={(prompt) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'prompt',
-                            value: prompt,
-                          })
-                        }
-                      /> */}
-                        {t('Temperature')}
-                      <TemperatureSlider
-                        // label={t('Temperature')}
-                        temperature={selectedConversation.temperature}
-                        onChangeTemperature={(temperature) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'temperature',
-                            value: temperature,
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                  </Transition>
-                )}
-                </div>
-                </ Transition>
-              )}
-              <div className="flex items-center justify-center h-screen">
-                <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
-                  <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
-                    {models.length === 0 ? (
-                      <div>
-                        <Spinner size="16px" className="mx-auto" />
-                      </div>
-                    ) : (
-                      <div className='flex flex-col items-center'>
-                        <div className='flex flex-row justify-center items-end'>
-                          {runTypewriter && (
-                            <Typewriter
-                              options={{
-                                loop: false,
-                                cursor: '',
-                                delay: 50,
-                                deleteSpeed: 1,
-                              }}
-                              onInit={(typewriter) => {
-                                typewriter.typeString('MSF AI Assistant')
-                                  .pauseFor(1200)
-                                  .deleteAll()
-                                  .callFunction(() => {
-                                    setImage(true)
-                                    setRunTypewriter(false)
-                                  })
-                                  .start();
-                              }}
-                            />
-                          )}
-                          {image && !showSettings && (
-                            <Transition
-                            appear={true}
-                            show={image}
-                            enter="transition-opacity duration-1000"
-                            enterFrom="opacity-0"
-                            enterTo="opacity-100"
-                            leave="transition-opacity duration-300"
-                            leaveFrom="opacity-100"
-                            leaveTo="opacity-0"
+                    <div>
+                      <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                        {t('Model')}: {selectedConversation?.model?.name}
+                        <button
+                          className="ml-2 cursor-pointer hover:opacity-50"
+                          onClick={handleSettings}
+                        >
+                          <IconSettings
+                            size={18}
+                            className={`${showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'}`}
+                          />
+                        </button>
+                        <div className='absolute right-0'>
+                          <a
+                            href={`mailto:${email}`}
+                            className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
                           >
-                          <div className='flex-shrink-0 flex flex-col items-center'>
-                          <div className="ml-2 group relative flex flex-row">
-                            <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
-                              <IconInfoCircle size={20} className='text-black dark:text-white'/>
-                            <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                            Type question below to get started.<br /><br />
-                            Individual chat settings can be modified with top banner gear icon.<br /><br />
-                            Default settings can be modified in bottom left settings menu.
-                          </span>
-                          </div>
-                          </div>
-                          </Transition>
-                          )}
+                            <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                            {t('Send Feedback')}
+                          </a>
                         </div>
                       </div>
-                    )}
+                      {showSettings && (
+                        <Transition
+                          appear={true}
+                          show={showSettings}
+                          enter="transition-opacity duration-500"
+                          enterFrom="opacity-0"
+                          enterTo="opacity-100"
+                          leave="transition-opacity duration-300"
+                          leaveFrom="opacity-100"
+                          leaveTo="opacity-0"
+                        >
+                          <div
+                            className="fixed inset-0 z-50 flex items-center justify-center"
+                            onClick={handleClickOutside}
+                          >
+                            <div className="fixed inset-0 bg-black opacity-50" />
+                            <div
+                              ref={modalRef}
+                              className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
+                            >
+                              <div className="flex justify-between items-center mb-5 text-black dark:text-white">
+                                {t('AI Model Selection:')}
+                                <ModelSelect />
+                              </div>
+                              <div className='text-black dark:text-white'>
+                                {t('Temperature')}
+                              </div>
+                              <TemperatureSlider
+                                temperature={selectedConversation.temperature}
+                                onChangeTemperature={(temperature) =>
+                                  handleUpdateConversation(selectedConversation, {
+                                    key: 'temperature',
+                                    value: temperature,
+                                  })
+                                }
+                              />
+                            </div>
+                          </div>
+                        </Transition>
+                      )}
+                    </div>
+                  </Transition>
+                )}
+                <div className="flex items-center justify-center h-screen">
+                  <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
+                    <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
+                      {models.length === 0 ? (
+                        <div>
+                          <Spinner size="16px" className="mx-auto" />
+                        </div>
+                      ) : (
+                        <div className='flex flex-col items-center'>
+                          <div className='flex flex-row justify-center items-end'>
+                            {runTypewriter && (
+                              <Typewriter
+                                options={{
+                                  loop: false,
+                                  cursor: '',
+                                  delay: 50,
+                                  deleteSpeed: 1,
+                                }}
+                                onInit={(typewriter) => {
+                                  typewriter.typeString('MSF AI Assistant')
+                                    .pauseFor(1200)
+                                    .deleteAll()
+                                    .callFunction(() => {
+                                      setImage(true);
+                                      setRunTypewriter(false);
+                                    })
+                                    .start();
+                                }}
+                              />
+                            )}
+                            {image && !showSettings && (
+                              <Transition
+                                appear={true}
+                                show={image}
+                                enter="transition-opacity duration-1000"
+                                enterFrom="opacity-0"
+                                enterTo="opacity-100"
+                                leave="transition-opacity duration-300"
+                                leaveFrom="opacity-100"
+                                leaveTo="opacity-0"
+                              >
+                                <div className='flex-shrink-0 flex flex-col items-center'>
+                                  <div className="ml-2 group relative flex flex-row">
+                                    <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
+                                    <IconInfoCircle size={20} className='text-black dark:text-white' />
+                                    <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
+                                      Type question below to get started.<br /><br />
+                                      Individual chat settings can be modified with top banner gear icon.<br /><br />
+                                      Default settings can be modified in bottom left settings menu.
+                                    </span>
+                                  </div>
+                                </div>
+                              </Transition>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
               </>
             ) : (
               <>
@@ -693,23 +694,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}
                   >
-                  <IconSettings size={18} className={`${
-                    showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
-                  }`}/>
+                    <IconSettings
+                      size={18}
+                      className={`${showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'}`}
+                    />
                   </button>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={onClearAll}
                   >
-                    <IconClearAll size={18} className='text-black dark:text-white'/>
+                    <IconClearAll size={18} className='text-black dark:text-white' />
                   </button>
                   <div className='absolute right-0'>
                     <a
-                        href={`mailto:${email}`}
-                        className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
-                      >
-                        <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
-                        {t('Send Feedback')}
+                      href={`mailto:${email}`}
+                      className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                    >
+                      <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                      {t('Send Feedback')}
                     </a>
                   </div>
                 </div>
@@ -724,36 +726,35 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                   >
-                  <div className="flex flex-col mx-auto max-w-[300px] md:max-w-lg bg-white dark:bg-[#212121]">
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 mt-5 dark:border-neutral-600 bg-white dark:bg-[#212121] text-black dark:text-white">
-                      <div className='flex justify-between items-center mb-5 text-black dark:text-white'>
-                      {t('AI Model Selection:')}
-                      <ModelSelect />
+                    <div
+                      className="fixed inset-0 z-50 flex items-center justify-center"
+                      onClick={handleClickOutside}
+                    >
+                      <div className="fixed inset-0 bg-black opacity-50" />
+                      <div
+                        ref={modalRef}
+                        className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
+                      >
+                        <div className="flex justify-between items-center mb-5 text-black dark:text-white">
+                          {t('AI Model Selection:')}
+                          <ModelSelect />
+                        </div>
+                        <div className='text-black dark:text-white'>
+                          {selectedConversation ? t('Temperature') : ''}
+                        </div>
+                        {selectedConversation ? (
+                          <TemperatureSlider
+                            temperature={selectedConversation?.temperature}
+                            onChangeTemperature={(temperature) =>
+                              handleUpdateConversation(selectedConversation, {
+                                key: 'temperature',
+                                value: temperature,
+                              })
+                            }
+                          />
+                        ) : <></>}
                       </div>
-
-                      {/* <SystemPrompt
-                        conversation={selectedConversation}
-                        prompts={prompts}
-                        onChangePrompt={(prompt) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'prompt',
-                            value: prompt,
-                          })
-                        }
-                      /> */}
-                      {selectedConversation ? t('Temperature'): ''}
-                      {selectedConversation ? <TemperatureSlider
-                        // label={t('Temperature')}
-                        temperature={selectedConversation?.temperature}
-                        onChangeTemperature={(temperature) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'temperature',
-                            value: temperature,
-                          })
-                        }
-                      /> : <></>}
                     </div>
-                  </div>
                   </Transition>
                 )}
 

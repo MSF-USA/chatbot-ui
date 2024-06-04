@@ -11,15 +11,19 @@ import { Import } from './Import';
 import { SidebarButton } from '../Sidebar/SidebarButton';
 import { Switch } from '@headlessui/react'
 
+import { FAQData } from '@/types/faq';
 import { Settings } from '@/types/settings';
 import { SignInSignOut } from './SignInSignOut';
 import { TemperatureSlider } from './Temperature';
 import { SystemPrompt } from './SystemPrompt';
 import LanguageSwitcher from "@/components/Sidebar/components/LanguageSwitcher";
 import { ClearConversations } from './ClearConversations';
+import { FAQ } from './faq';
+import faqData from './faq.json';
 
 import HomeContext from '@/pages/api/home/home.context';
 import ChatbarContext from '../Chatbar/Chatbar.context';
+
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -29,6 +33,7 @@ const email = process.env.NEXT_PUBLIC_EMAIL;
 enum Tab {
   CHAT_SETTINGS = 'CHAT_SETTINGS',
   APP_SETTINGS = 'APP_SETTINGS',
+  FAQ = 'FAQ',
 }
 
 interface Props {
@@ -115,7 +120,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 sm:max-h-[600px] sm:w-full md:max-w-[400px] lg:max-w-[600px] xl:max-w-[800px] sm:p-6 sm:align-middle overflow-hidden"
+            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 sm:max-h-[600px] w-full md:max-w-[400px] lg:max-w-[600px] xl:max-w-[800px] sm:p-6 sm:align-middle overflow-hidden"
             role="dialog"
           >
             <div className="flex">
@@ -138,6 +143,16 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 onClick={() => setActiveTab(Tab.APP_SETTINGS)}
               >
                 {t('App') + ' ' + t('Settings')}
+              </button>
+              <button
+                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
+                  activeTab === Tab.FAQ
+                  ? 'border-b-2 border-black dark:border-white'
+                  : 'border-0'
+                }`}
+                onClick={() => setActiveTab(Tab.FAQ)}
+              >
+                {t('FAQ')}
               </button>
             </div>
 
@@ -171,7 +186,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
               <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
                 {t(
-                  '*Note that these default settings only apply to NEW conversations once saved.',
+                  '*Note that these default settings only apply to new conversations once saved.',
                 )}
               </span>
                 <div className='flex justify-end mr-1 mt-10'>
@@ -302,6 +317,16 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
           <div className='flex justify-end mr-1'>
 
             <SignInSignOut />
+          </div>
+          </>
+        )}
+        {activeTab === Tab.FAQ && (
+          <>
+          <div>
+            <div className="text-sm font-bold text-black dark:text-neutral-200 mt-10 mb-5">
+                {t('Frequently Asked Questions')}
+            </div>
+            <FAQ faq={faqData.faq} />
           </div>
           </>
         )}
