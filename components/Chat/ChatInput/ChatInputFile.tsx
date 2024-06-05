@@ -5,9 +5,11 @@ import {ChatInputSubmitTypes} from "@/types/chat";
 interface ChatInputFileProps {
     onFileUpload: (event: React.ChangeEvent<any>) => void
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+    setFilePreviews: Dispatch<SetStateAction<string[]>>,
+    setFileFieldValue: Dispatch<SetStateAction<string | null>>
 }
 
-const ChatInputFile = ({onFileUpload, setSubmitType}: ChatInputFileProps) => {
+const ChatInputFile = ({onFileUpload, setSubmitType, setFilePreviews}: ChatInputFileProps) => {
     const fileInputRef: MutableRefObject<any> = useRef(null)
     return <>
         <input
