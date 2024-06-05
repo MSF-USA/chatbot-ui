@@ -47,7 +47,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         const fileStream = Readable.from(fileData);
         await blobStorageClient.uploadStream(
             {
-              blobName: sanitizedFilename, contentStream: fileStream
+              blobName: sanitizedFilename,
+              contentStream: fileStream,
+              options: {
+                metadata:{
+                  mimeType: mimeType.toString()
+                }
+              }
             }
         );
 
@@ -55,7 +61,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         await blobStorageClient.uploadStream(
             {
               blobName: `${sanitizedFilename}.txt`,
-              contentStream: textStream
+              contentStream: textStream,
+              options: {
+                metadata:{
+                  mimeType: 'plain/text'
+                }
+              }
             },
         );
 
@@ -75,8 +86,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         const fileStream = Readable.from(fileData);
         await blobStorageClient.uploadStream(
             {
-               blobName: sanitizedFilename,
-              contentStream: fileStream
+                blobName: sanitizedFilename,
+                contentStream: fileStream
             }
         );
 
