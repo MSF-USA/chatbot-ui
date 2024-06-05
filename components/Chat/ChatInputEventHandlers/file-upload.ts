@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 export function onFileUpload(event: React.ChangeEvent<any>) {
   event.preventDefault();
-  const file = event.target.files[0];
+  const file: File = event.target.files[0];
 
   if (file.size > 10485760) {
     toast.error("Image upload must be <10mb");
