@@ -23,6 +23,9 @@ export function onFileUpload(event: React.ChangeEvent<any>) {
     fetch("/api/file/upload", {
       method: "POST",
       body: formData,
+      headers: {
+        "x-file-name": file.name
+      }
     })
       .then((response: Response) => {
         if (response.ok) {
