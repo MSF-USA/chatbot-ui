@@ -1,4 +1,5 @@
 import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
+import {Readable} from "stream";
 
 enum BlobProperty {
     URL = 'url',
@@ -10,8 +11,26 @@ enum BlobStorageType {
     AWS = 'aws'
 }
 
+export interface UploadStreamAzureStorageArgs {
+    blobName: string;
+    contentStream: Readable;
+    bufferSize?: number | undefined;
+    maxConcurrency?: number | undefined;
+    options?: BlockBlobUploadOptions | undefined;
+
+}
+
 export interface BlobStorage {
     upload(blobName: string, content: string, options?: BlockBlobUploadOptions | undefined): Promise<string>;
+    uploadStream(
+        {
+            blobName,
+            contentStream,
+            bufferSize,
+            maxConcurrency,
+            options
+        }: UploadStreamAzureStorageArgs
+    ): Promise<string>;
     get(blobName: string, property: BlobProperty): Promise<string | Blob>;
 }
 
@@ -87,6 +106,25 @@ export class AzureBlobStorage implements BlobStorage {
             throw new Error("Invalid property type specified.")
         }
     }
+
+    async uploadStream(
+        {
+            blobName,
+            contentStream,
+            bufferSize,
+            maxConcurrency,
+            options
+        }: UploadStreamAzureStorageArgs
+    ): Promise<string> {
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+        await blockBlobClient.uploadStream(
+            contentStream, bufferSize, maxConcurrency, options
+        );
+        return blockBlobClient.url;
+    }
+
 }
 
 export default class BlobStorageFactory {

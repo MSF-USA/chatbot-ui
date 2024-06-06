@@ -65,6 +65,7 @@ export const ChatInput = ({
 
   const [textFieldValue, setTextFieldValue] = useState<string>("");
   const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | null>()
+  const [fileFieldValue, setFileFieldValue] = useState<string | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -378,7 +379,8 @@ export const ChatInput = ({
         {/*<ChatInputFile*/}
         {/*    onFileUpload={onFileUpload}*/}
         {/*    setSubmitType={setSubmitType}*/}
-        {/*    setContent={setContent}*/}
+        {/*    setFilePreviews={setFilePreviews}*/}
+        {/*    setFileFieldValue={setFileFieldValue}*/}
         {/*  />*/}
         {/*<button>*/}
         {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
