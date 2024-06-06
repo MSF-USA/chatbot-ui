@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "test": "vitest",
+    "test:node": "vitest --config ./vitest.config.ts",
+    "test": "npm run test:node",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
@@ -42,6 +43,8 @@
   "devDependencies": {
     "@mozilla/readability": "^0.4.4",
     "@tailwindcss/typography": "^0.5.9",
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/react": "^15.0.7",
     "@trivago/prettier-plugin-sort-imports": "^4.1.1",
     "@types/jsdom": "^21.1.1",
     "@types/node": "18.15.0",
@@ -49,18 +52,19 @@
     "@types/react-dom": "18.0.11",
     "@types/react-syntax-highlighter": "^15.5.6",
     "@types/uuid": "^9.0.1",
-    "@vitest/coverage-c8": "^0.29.7",
+    "@vitejs/plugin-react": "^4.3.0",
+    "@vitest/coverage-v8": "^1.6.0",
     "autoprefixer": "^10.4.14",
     "endent": "^2.1.0",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "gpt-3-encoder": "^1.1.4",
-    "jsdom": "^21.1.1",
+    "jsdom": "^21.1.2",
     "postcss": "^8.4.31",
     "prettier": "^2.8.7",
     "prettier-plugin-tailwindcss": "^0.2.5",
     "tailwindcss": "^3.2.7",
     "typescript": "4.9.5",
-    "vitest": "^0.29.7"
+    "vitest": "^1.6.0"
   }
 }
