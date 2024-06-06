@@ -3,8 +3,10 @@ import fs from 'fs';
 import path from 'path';
 import os from 'os';
 
-const READABLE_FORMATS = ['.txt', '.csv', '.srt', '.vtt'];
-
+const READABLE_FORMATS = ['.txt', '.csv', '.srt', '.vtt', '.json', '.log', ".xml", ".ini", ".markdown"];
+/*
+* This API endpoint should take a file, generate a text file, if needed & possible, upload both to blob storage
+ */
 const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   if (req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
