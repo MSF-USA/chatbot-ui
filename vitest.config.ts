@@ -3,10 +3,12 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
   test: {
+    globals: true,
     include: [
-      '__tests__/utils/**/*.test.ts',
+      '__tests__/node/**/*.test.ts',
     ],
-    environment: 'node'
+    environment: 'node',
+    setupFiles: ['./vitest.setup.node.ts']
   },
   resolve: {
     alias: {
