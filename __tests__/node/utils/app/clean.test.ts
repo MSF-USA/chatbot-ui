@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest'
-import { cleanSelectedConversation, cleanConversationHistory } from '../../../utils/app/clean'
-import { Conversation, } from '../../../types/chat'
-import { OpenAIModels, OpenAIModelID } from '../../../types/openai'
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '../../../utils/app/const'
+import { cleanSelectedConversation, cleanConversationHistory } from '../../../../utils/app/clean'
+import { Conversation, } from '../../../../types/chat'
+import { OpenAIModels, OpenAIModelID } from '../../../../types/openai'
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '../../../../utils/app/const'
 
 let tempConversation: Conversation = {
     id: '1',

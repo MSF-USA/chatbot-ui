@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { getEndpoint } from '../../../utils/app/api'
+import { getEndpoint } from '../../../../utils/app/api'
 import { Plugin, PluginID } from '@/types/plugin'
 
 let plugin: { id: PluginID } | null
