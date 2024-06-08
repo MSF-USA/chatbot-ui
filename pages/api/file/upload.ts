@@ -5,6 +5,8 @@ import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
 import { getEnvVariable } from "@/utils/app/env";
 import {undefined} from "zod";
 import {file} from "@babel/types";
+import {getToken} from "next-auth/jwt";
+import {JWT} from "next-auth";
 
 const READABLE_FORMATS = ['.txt', '.csv', '.srt', '.vtt', '.json', '.log', ".xml", ".ini", ".markdown"];
 /*
@@ -15,6 +17,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  // @ts-ignore
+  const token: JWT | null = await getToken({req});
+  if (!token)
+    throw new Error("Could not pull token!")
+
 
   const rawFilename = req.headers['x-file-name'] as string;
 
