@@ -1,12 +1,12 @@
 import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
 import {Readable} from "stream";
 
-enum BlobProperty {
+export enum BlobProperty {
     URL = 'url',
     BLOB = 'blob'
 }
 
-enum BlobStorageType {
+export enum BlobStorageType {
     AZURE = 'azure',
     AWS = 'aws'
 }
