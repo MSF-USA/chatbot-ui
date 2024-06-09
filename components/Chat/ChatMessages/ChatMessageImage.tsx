@@ -35,9 +35,15 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
     useEffect(() => {
         const fetchImage = async () => {
             try {
-                if (image) {
-                    const base64String: string = await getBase64FromImageURL(image?.image_url?.url)
-                    setImageBase64(base64String)
+                if (image?.image_url?.url) {
+                    const filename = image.image_url.url.split("/")[image.image_url.url.split("/").length - 1];
+                    fetch(`/api/file/${filename}`).then(page => {
+                        page.json().then(resp => {
+                            setImageBase64(resp.base64Url);
+                        })
+                    })
+                    // const base64String: string = await getBase64FromImageURL(image?.image_url?.url)
+                    // setImageBase64(base64String)
                 }
 
             } catch (error) {
