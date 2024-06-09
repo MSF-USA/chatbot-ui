@@ -143,3 +143,20 @@ export default class BlobStorageFactory {
         }
     }
 }
+
+
+export const createBlobStorageClient = (): BlobStorage => {
+    return new AzureBlobStorage(
+      process.env.AZURE_BLOB_STORAGE_NAME ?? '',
+      process.env.AZURE_BLOB_STORAGE_KEY ?? '',
+      process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
+    );
+}
+
+export const getBlobBase64String = async (userId: string, id: string): Promise<string> => {
+    const blobStorageClient: BlobStorage = createBlobStorageClient();
+    const blobLocation: string = `${userId}/uploads/images/${id}`;
+    const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
+    const base64String: string = blob.toString();
+    return base64String;
+}
