@@ -46,6 +46,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     res.status(200).json({ base64Url: base64String });
   } catch (error) {
     console.error('Error retrieving blob:', error);
+    res.setHeader('Cache-Control', 's-maxage=43200, stale-while-revalidate');
     res.status(500).json({ error: 'Failed to retrieve file' });
   }
 };
