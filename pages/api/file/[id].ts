@@ -1,6 +1,8 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {AzureBlobStorage, BlobProperty, BlobStorage} from "@/utils/server/blob";
 import {getEnvVariable} from "@/utils/app/env";
+import {getToken} from "next-auth/jwt";
+import {getBase64FromImageURL} from "@/utils/app/image";
 
 /**
  * Checks if the given identifier is a valid SHA-256 hash.
@@ -9,40 +11,57 @@ import {getEnvVariable} from "@/utils/app/env";
  * @returns {boolean} True if the identifier is a valid SHA-256 hash, false otherwise.
  */
 const isValidSha256Hash = (id: string): boolean => {
-  if (typeof id !== 'string') {
+  if (typeof id !== 'string' || id.length < 1) {
     return false;
   }
+  const idParts: string[] = id.split('.');
+  if (idParts.length > 2)
+    return false;
+
+  const [idHash, idExtension] = idParts
+  if (idExtension.length > 4)
+    return false;
 
   const SHA256_HASH_LENGTH: number = 64;
   const VALID_HASH_REGEX: RegExp = /^[0-9a-f]{64}$/;
 
-  return id.length === SHA256_HASH_LENGTH && VALID_HASH_REGEX.test(id);
+  return idHash.length === SHA256_HASH_LENGTH && VALID_HASH_REGEX.test(idHash);
 };
 
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
-    const {id} = req.body;
+const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+  const { id } = req.query;
 
-    if (!isValidSha256Hash(id)) {
-      res.status(400).json({ error: 'Invalid file identifier' });
-    }
+  if (!isValidSha256Hash(id as string)) {
+    res.status(400).json({ error: 'Invalid file identifier' });
+    return;
+  }
 
-    let blobStorageClient: BlobStorage = new AzureBlobStorage(
-      getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
-      getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-      getEnvVariable('AZURE_BLOB_STORAGE_FILE_CONTAINER') ?? 'files'
-    );
+  // @ts-ignore
+  const token: JWT = await getToken({req});
+  const userId: string = token.userId ?? 'anonymous';
+
+  let blobStorageClient: BlobStorage = new AzureBlobStorage(
+    getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
+    getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
+    getEnvVariable('AZURE_BLOB_STORAGE_IMAGE_CONTAINER') ?? 'files'
+  );
 
   try {
-    const blob: Blob = await (blobStorageClient.get(id, BlobProperty.BLOB) as Promise<Blob>);
+    // debugger
+    const blobLocation: string = `${userId}/uploads/images/${id}`
+    const blobUrl: string = await (blobStorageClient.get(blobLocation, BlobProperty.URL) as Promise<string>);
+    const base64String: string = await getBase64FromImageURL(blobUrl);
+    // const blob: Blob = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Blob>);
+    //
+    // const arrayBuffer: ArrayBuffer = await blob.arrayBuffer();
+    // const base64String: string = Buffer.from(arrayBuffer).toString('base64');
 
-    res.setHeader('Content-Type', 'application/octet-stream');
-    res.setHeader('Content-Disposition', `attachment; filename=${id}`);
-    res.send(blob);
+    res.status(200).json({ base64Url: base64String });
   } catch (error) {
     console.error('Error retrieving blob:', error);
     res.status(500).json({ error: 'Failed to retrieve file' });
   }
-}
+};
 
 export default handler;
