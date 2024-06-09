@@ -56,25 +56,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
   );
 
-// Generate a SAS token
-  const generateSasToken = (containerName: string, blobName: string): SASQueryParameters => {
-    const sasOptions = {
-      containerName,
-      blobName,
-      permissions: BlobSASPermissions.parse("r"), // Read permission
-      expiresOn: new Date(new Date().valueOf() + 3600 * 24000 * 365), // 1 hour expiry
-      protocol: SASProtocol.Https,
-    };
-    return generateBlobSASQueryParameters(sasOptions, sharedKeyCredential);
-  };
-
-  // const sasToken = generateSasToken(
-  //   getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
-  //   getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-  // );
-  //
   try {
-    // debugger
     const blobLocation: string = `${userId}/uploads/images/${id}`
     const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
 
