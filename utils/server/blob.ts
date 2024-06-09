@@ -86,24 +86,29 @@ export class AzureBlobStorage implements BlobStorage {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-        if(property === BlobProperty.URL) {
+        if (property === BlobProperty.URL) {
             return blockBlobClient.url;
-        }
-        else if(property === BlobProperty.BLOB) {
-            const downloadBlockBlobResponse = await blockBlobClient.download(0);
-            if (downloadBlockBlobResponse !== undefined) {
-                const blobBody = await downloadBlockBlobResponse.blobBody
-                if (blobBody !== undefined) {
-                    const blob = await this.blobToString(blobBody);
-                    return blob;
+        } else if (property === BlobProperty.BLOB) {
+            try {
+                const downloadBlockBlobResponse: any = await blockBlobClient.download(0);
+
+                if (downloadBlockBlobResponse !== undefined) {
+                    const blobBody = await downloadBlockBlobResponse.blobBody;
+                    if (blobBody !== undefined) {
+                        const blob = await this.blobToString(blobBody);
+                        return blob;
+                    } else {
+                        throw new Error("Error downloading the blob body.");
+                    }
                 } else {
-                    throw new Error("Error downloading the blob body.")
+                    throw new Error("Blob not found.");
                 }
-            } else {
-                throw new Error("Blob not found.");
+            } catch (error) {
+                console.error('Error downloading blob:', error);
+                throw error;
             }
         } else {
-            throw new Error("Invalid property type specified.")
+            throw new Error("Invalid property type specified.");
         }
     }
 
