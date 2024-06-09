@@ -23,9 +23,10 @@ import {init, Tiktoken} from '@dqbd/tiktoken/lite/init';
 import {getToken} from "next-auth/jwt";
 import {makeAPIMRequestWithRetry} from "@/utils/server/apim";
 import {NextRequest} from "next/server";
-import {checkIsModelValid, getMessagesToSendV2, isImageConversation} from "@/utils/app/chat";
+import {checkIsModelValid, isImageConversation} from "@/utils/app/chat";
 import {ApimChatResponseDataStructure} from "@/types/apim";
 import {JWT} from 'next-auth';
+import {getMessagesToSend} from "@/utils/server/chat";
 
 
 export const config = {
@@ -34,7 +35,6 @@ export const config = {
 
 
 const handler = async (req: NextRequest): Promise<Response> => {
-
   try {
     const { model, messages, prompt, temperature } = (await req.json()) as ChatBody;
 
@@ -67,11 +67,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
-    const apiUrl: string = `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}/chat/completions?api-version=${OPENAI_API_VERSION}`
+    const prompt_tokens = encoding.encode(promptToSend);
 
-        const prompt_tokens = encoding.encode(promptToSend);
-
-    const messagesToSend: Message[] = await getMessagesToSendV2(
+    const messagesToSend: Message[] = await getMessagesToSend(
         messages, encoding, prompt_tokens.length, model.tokenLimit
     );
     encoding.free();
