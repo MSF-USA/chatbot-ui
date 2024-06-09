@@ -1,5 +1,6 @@
 import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
 import {Readable} from "stream";
+import fs from "fs/promises";
 
 export enum BlobProperty {
     URL = 'url',
@@ -31,7 +32,7 @@ export interface BlobStorage {
             options
         }: UploadStreamAzureStorageArgs
     ): Promise<string>;
-    get(blobName: string, property: BlobProperty): Promise<string | Blob>;
+    get(blobName: string, property: BlobProperty): Promise<string | Blob | Buffer>;
 }
 
 
@@ -82,7 +83,7 @@ export class AzureBlobStorage implements BlobStorage {
         });
     }
 
-    async get(blobName: string, property = BlobProperty.URL): Promise<string | Blob> {
+    async get(blobName: string, property = BlobProperty.URL): Promise<string | Buffer> {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
@@ -90,19 +91,14 @@ export class AzureBlobStorage implements BlobStorage {
             return blockBlobClient.url;
         } else if (property === BlobProperty.BLOB) {
             try {
-                const downloadBlockBlobResponse: any = await blockBlobClient.download(0);
+                const localFilename = blobName.split('/')[blobName.split('/').length - 1];
+                const tempFilePath = `/tmp/${localFilename}`;
+                await blockBlobClient.downloadToFile(tempFilePath, 0);
 
-                if (downloadBlockBlobResponse !== undefined) {
-                    const blobBody = await downloadBlockBlobResponse.blobBody;
-                    if (blobBody !== undefined) {
-                        const blob = await this.blobToString(blobBody);
-                        return blob;
-                    } else {
-                        throw new Error("Error downloading the blob body.");
-                    }
-                } else {
-                    throw new Error("Blob not found.");
-                }
+                const fileContent: Buffer = await fs.readFile(tempFilePath);
+                await fs.unlink(tempFilePath);
+
+                return fileContent;
             } catch (error) {
                 console.error('Error downloading blob:', error);
                 throw error;
