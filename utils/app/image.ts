@@ -18,9 +18,9 @@
  * const imageBase64 = await getBase64FromImageURL('https://example.com/image.jpg');
  * console.log(imageBase64);
  */
-export const getBase64FromImageURL = async (imageUrl: string): Promise<string> => {
+export const getBase64FromImageURL = async (imageUrl: string, init?: RequestInit | undefined): Promise<string> => {
     try {
-        const response = await fetch(imageUrl);
+        const response = await fetch(imageUrl, init);
 
         if (!response.ok) {
             throw new Error('Network response was not ok');
