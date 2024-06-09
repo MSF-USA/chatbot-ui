@@ -7,11 +7,18 @@ interface ChatMessageImageProps {
     message: Message
 }
 
+interface ImageStyleProps {
+    maxHeight?: string;
+    maxWidth?: string;
+}
+
 const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
     const {role, content} = message;
+    const defaultImageStyleProps: ImageStyleProps = {maxHeight: '20rem', maxWidth: '30rem'}
 
     const [image, setImage] = useState<ImageMessageContent | null>(null)
     const [text, setText] = useState<TextMessageContent | null>(null);
+    const [imageStyleProps, setImageStyleProps] = useState<ImageStyleProps>(defaultImageStyleProps);
 
 
 
@@ -56,6 +63,13 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
         fetchImage();
     }, [image]);
 
+    const toggleImageStyleProps = (event: any) => {
+        if (imageStyleProps?.maxHeight)
+            setImageStyleProps({})
+        else
+            setImageStyleProps(defaultImageStyleProps);
+    }
+
     return <div
         className={`group md:px-4 ${
             role === 'assistant'
@@ -73,7 +87,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
                     <IconUser size={30}/>
                 )}
             </div>
-            <img className={'block'} style={{maxHeight: '20rem', maxWidth: '30rem'}} src={imageBase64}/>
+            <img onClick={toggleImageStyleProps} className={'block hover:cursor-pointer'} style={imageStyleProps} src={imageBase64}/>
         </div>
         <div
             className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl"
