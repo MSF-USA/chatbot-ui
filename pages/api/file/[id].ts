@@ -1,13 +1,6 @@
 import {NextApiRequest, NextApiResponse} from "next";
-import {AzureBlobStorage, BlobProperty, BlobStorage} from "@/utils/server/blob";
-import {getEnvVariable} from "@/utils/app/env";
+import {getBlobBase64String} from "@/utils/server/blob";
 import {getToken} from "next-auth/jwt";
-import {
-  BlobSASPermissions,
-  generateBlobSASQueryParameters,
-  SASProtocol, SASQueryParameters,
-  StorageSharedKeyCredential
-} from "@azure/storage-blob";
 
 /**
  * Checks if the given identifier is a valid SHA-256 hash.
@@ -46,21 +39,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const token: JWT = await getToken({req});
   const userId: string = token.userId ?? 'anonymous';
 
-  let blobStorageClient: BlobStorage = new AzureBlobStorage(
-    getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
-    getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-    getEnvVariable('AZURE_BLOB_STORAGE_IMAGE_CONTAINER') ?? 'files'
-  );
-  const sharedKeyCredential = new StorageSharedKeyCredential(
-    getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
-    getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-  );
 
   try {
-    const blobLocation: string = `${userId}/uploads/images/${id}`
-    const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
-
-    const base64String: string = blob.toString();
+    const base64String: string = await getBlobBase64String(userId, id as string);
 
     res.status(200).json({ base64Url: base64String });
   } catch (error) {
