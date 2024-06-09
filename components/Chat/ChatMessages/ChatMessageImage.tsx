@@ -40,6 +40,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
                     fetch(`/api/file/${filename}`).then(page => {
                         page.json().then(resp => {
                             setImageBase64(resp.base64Url);
+                            window.scrollTo(0, document.body.scrollHeight);
                         })
                     })
                     // const base64String: string = await getBase64FromImageURL(image?.image_url?.url)
@@ -72,7 +73,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
                     <IconUser size={30}/>
                 )}
             </div>
-            <img className={'block'} src={imageBase64}/>
+            <img className={'block'} style={{maxHeight: '20rem', maxWidth: '30rem'}} src={imageBase64}/>
         </div>
         <div
             className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl"
