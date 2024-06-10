@@ -27,8 +27,7 @@ export const getMessagesToSend = async (
           const id: string | undefined = (contentSection as ImageMessageContent).image_url.url.split('/').pop()
           if (!id || id.trim().length === 0)
             throw new Error(`Image ID ${id} is not valid`);
-          if (!process.env.NEXT_PUBLIC_URL)
-            throw new Error(`Required ENV Variable 'NEXT_PUBLIC_URL' is missing a value`);
+
           try {
             url = await getBase64FromImageURL((contentSection as ImageMessageContent).image_url.url);
           } catch (error: any) {
