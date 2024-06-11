@@ -1,7 +1,8 @@
-import React from "react";
+import React, {Dispatch, SetStateAction} from "react";
 import toast from "react-hot-toast";
+import {ChatInputSubmitTypes} from "@/types/chat";
 
-export function onFileUpload(event: React.ChangeEvent<any>) {
+export function onFileUpload(event: React.ChangeEvent<any>, setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>) {
   event.preventDefault();
   const file: File = event.target.files[0];
 
@@ -33,13 +34,16 @@ export function onFileUpload(event: React.ChangeEvent<any>) {
           if (uploadedBytes < file.size) {
             uploadChunk();
           } else {
+            setSubmitType("file");
             toast.success("File uploaded successfully");
           }
         } else {
+          setSubmitType("text");
           toast.error("File upload failed");
         }
       })
       .catch(() => {
+        setSubmitType("text");
         toast.error("File upload failed");
       });
   };

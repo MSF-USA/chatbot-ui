@@ -3,7 +3,7 @@ import React, {ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useRef} 
 import {ChatInputSubmitTypes} from "@/types/chat";
 
 interface ChatInputFileProps {
-    onFileUpload: (event: React.ChangeEvent<any>) => void
+    onFileUpload: (event: React.ChangeEvent<any>, setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>) => void
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setFileFieldValue: Dispatch<SetStateAction<string | null>>
@@ -18,8 +18,7 @@ const ChatInputFile = ({onFileUpload, setSubmitType, setFilePreviews}: ChatInput
             style={{display: "none"}}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 event.preventDefault()
-                setSubmitType("file");
-                onFileUpload(event)
+                onFileUpload(event, setSubmitType)
             }}
         />
         <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
