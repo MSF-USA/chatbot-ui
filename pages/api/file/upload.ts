@@ -3,8 +3,6 @@ import { Readable } from 'stream';
 import mime from 'mime-types';
 import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
 import { getEnvVariable } from "@/utils/app/env";
-import {undefined} from "zod";
-import {file} from "@babel/types";
 import {getToken} from "next-auth/jwt";
 import {JWT} from "next-auth";
 
@@ -80,7 +78,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
             },
         );
 
-        res.status(200).json({ message: 'File uploaded successfully', filename: sanitizedFilename, fileText });
+        res.status(200).json({
+          message: 'File uploaded successfully',
+          filename: sanitizedFilename,
+          fileText
+        });
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });
@@ -101,7 +103,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
             }
         );
 
-        res.status(200).json({ message: 'File uploaded successfully', filename: sanitizedFilename });
+        res.status(200).json({
+          message: 'File uploaded successfully',
+          filename: sanitizedFilename
+        });
       } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Internal server error' });

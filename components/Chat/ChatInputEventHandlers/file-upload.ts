@@ -10,7 +10,7 @@ export function onFileUpload(event: React.ChangeEvent<any>) {
     return;
   }
 
-  const chunkSize = 1024 * 1024 * 5; // 5MB
+  const chunkSize = 1024 * 1024 * 5; // 5MB chunks
   let uploadedBytes = 0;
 
   const uploadChunk = () => {
