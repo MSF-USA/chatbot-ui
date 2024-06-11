@@ -220,9 +220,55 @@ const UserMessage: FC<UserMessageProps> = (
                             </div>
                         </div>
                     ) : (
-                        <div className="prose whitespace-pre-wrap dark:prose-invert flex-1">
+                        <MemoizedReactMarkdown
+                            className="prose dark:prose-invert flex-1"
+                            remarkPlugins={[remarkGfm, remarkMath]}
+                            rehypePlugins={[rehypeMathjax]}
+                            components={{
+                                code({node, inline, className, children, ...props}) {
+                                    const match = /language-(\w+)/.exec(className || '');
+                                    return !inline ? (
+                                        <CodeBlock
+                                            key={Math.random()}
+                                            language={(match && match[1]) || ''}
+                                            value={String(children).replace(/\n$/, '')}
+                                            {...props}
+                                        />
+                                    ) : (
+                                        <code className={className} {...props}>
+                                            {children}
+                                        </code>
+                                    );
+                                },
+                                table({children}) {
+                                    return (
+                                        <div className="overflow-auto">
+                                            <table
+                                                className="max-w-full border-collapse border border-black px-3 py-1 dark:border-white"
+                                            >
+                                                {children}
+                                            </table>
+                                        </div>
+                                    );
+                                },
+                                th({children}) {
+                                    return (
+                                        <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
+                                            {children}
+                                        </th>
+                                    );
+                                },
+                                td({children}) {
+                                    return (
+                                        <td className="break-words border border-black px-3 py-1 dark:border-white">
+                                            {children}
+                                        </td>
+                                    );
+                                },
+                            }}
+                        >
                             {message.content as string}
-                        </div>
+                        </MemoizedReactMarkdown>
                     )}
 
                     {!isEditing && (
