@@ -70,10 +70,13 @@ const AssistantMessage: FC<AssistantMessageProps> = (
                             },
                             table({children}) {
                                 return (
-                                    <table
-                                        className="border-collapse border border-black px-3 py-1 dark:border-white">
-                                        {children}
-                                    </table>
+                                    <div className="overflow-auto">
+                                        <table
+                                            className="max-w-full border-collapse border border-black px-3 py-1 dark:border-white"
+                                        >
+                                            {children}
+                                        </table>
+                                    </div>
                                 );
                             },
                             th({children}) {
@@ -118,6 +121,7 @@ const AssistantMessage: FC<AssistantMessageProps> = (
         </div>
     )
 }
+
 
 interface UserMessageProps {
     message: Message;
