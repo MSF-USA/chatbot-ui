@@ -65,7 +65,7 @@ export const ChatInput = ({
 
   const [textFieldValue, setTextFieldValue] = useState<string>("");
   const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | null>()
-  const [fileFieldValue, setFileFieldValue] = useState<string | null>(null)
+  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -122,7 +122,7 @@ export const ChatInput = ({
     } else if (submitType === 'file') {
       if (fileFieldValue) {
         return [
-          {type: 'file_url', url: fileFieldValue} as FileMessageContent,
+          fileFieldValue,
           {type: "text", text: textFieldValue} as TextMessageContent
         ]
       } else {
@@ -151,6 +151,7 @@ export const ChatInput = ({
     }, plugin);
     setTextFieldValue('')
     setImageFieldValue(null)
+    setFileFieldValue(null)
     setPlugin(null);
 
     if (window.innerWidth < 640 && textareaRef?.current) {
