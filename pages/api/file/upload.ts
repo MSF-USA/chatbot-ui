@@ -16,8 +16,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     return;
   }
 
-  // @ts-ignore
-  const token: JWT | null = await getToken({req});
+  const token: JWT | null = await (getToken({req}) as Promise<JWT | null>)
   if (!token)
     throw new Error("Could not pull token!")
 
@@ -40,7 +39,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   });
 
   req.on('end', async () => {
-    const fileData = Buffer.concat(chunks);
+    const data = Buffer.concat(chunks);
+    const dataString = data.toString('utf8');
+    const splitData = dataString.split('\r\n\r\n');
+    const fileContent = splitData[splitData.length - 1];
+    const fileData = Buffer.from(fileContent, 'utf8');
 
     if (READABLE_FORMATS.includes(`.${fileExtension}`) || (mimeType && mimeType.startsWith('text/'))) {
       try {

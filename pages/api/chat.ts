@@ -73,8 +73,8 @@ const handler = async (req: NextRequest): Promise<Response> => {
         messages, encoding, prompt_tokens.length, model.tokenLimit
     );
     encoding.free();
-    // @ts-ignore
-    const token: JWT | null = await getToken({req});
+
+    const token: JWT | null = await (getToken({req}) as Promise<JWT | null>);
     if (!token)
       throw new Error("Could not pull token!")
 
