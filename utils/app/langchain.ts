@@ -11,12 +11,13 @@ import {ChainValues} from "@langchain/core/dist/utils/types";
 import {EPubLoader} from "@langchain/community/dist/document_loaders/fs/epub";
 import {JSONLoader} from "langchain/dist/document_loaders/fs/json";
 import {CSVLoader} from "langchain/dist/document_loaders/fs/csv";
+import {APIM_CHAT_ENDPONT, OPENAI_API_HOST} from "@/utils/app/const";
 
 const openaiConfig: AzureOpenAIInput = {
-    azureOpenAIApiDeploymentName: '',
-    azureOpenAIBasePath: '',
-    azureOpenAIApiInstanceName: '',
+    azureOpenAIApiDeploymentName: APIM_CHAT_ENDPONT,
+    azureOpenAIBasePath:  `${OPENAI_API_HOST}`,
     azureOpenAIApiKey: '',
+    azureOpenAIApiVersion: '',
 };
 
 const openai: AzureChatOpenAI = new AzureChatOpenAI(openaiConfig);
@@ -31,7 +32,7 @@ const summaryChain = new LLMChain({
     prompt: summaryTemplate,
 });
 
-const qaTemplate = ChatPromptTemplate.fromPromptMessages([
+const qaTemplate = ChatPromptTemplate.fromMessages([
     HumanMessagePromptTemplate.fromTemplate('{summary}\n\nUser prompt: {prompt}'),
 ]);
 
