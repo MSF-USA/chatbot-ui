@@ -150,7 +150,7 @@ export const getBlobBase64String = async (userId: string, id: string, blobType: 
     const blobStorageClient: BlobStorage = new AzureBlobStorage(
       process.env.AZURE_BLOB_STORAGE_NAME ?? '',
       process.env.AZURE_BLOB_STORAGE_KEY ?? '',
-      process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
+      process.env.AZURE_BLOB_STORAGE_CONTAINER ?? process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
     );
     const blobLocation: string = `${userId}/uploads/${blobType}/${id}`;
     const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);

@@ -52,7 +52,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         let blobStorageClient: BlobStorage = new AzureBlobStorage(
             getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
             getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-            getEnvVariable('AZURE_BLOB_STORAGE_FILE_CONTAINER') ?? 'files'
+            getEnvVariable(
+                'AZURE_BLOB_STORAGE_CONTAINER',
+                false,
+                process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
+            )
         );
 
         const fileStream = Readable.from(fileData);
@@ -95,7 +99,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         let blobStorageClient: BlobStorage = new AzureBlobStorage(
             getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
             getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-            getEnvVariable('AZURE_BLOB_STORAGE_FILE_CONTAINER') ?? 'files'
+            getEnvVariable(
+                'AZURE_BLOB_STORAGE_CONTAINER',
+                false,
+                process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
+            )
         );
 
         const fileStream = Readable.from(fileData);

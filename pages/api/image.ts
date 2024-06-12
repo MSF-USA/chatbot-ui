@@ -33,7 +33,11 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
             let blobStorageClient: BlobStorage = new AzureBlobStorage(
                 getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
                 getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-                getEnvVariable('AZURE_BLOB_STORAGE_IMAGE_CONTAINER')
+                getEnvVariable(
+                    'AZURE_BLOB_STORAGE_CONTAINER',
+                    false,
+                    process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
+                )
             );
 
             const hashedFileContents = Hasher.sha256(data).slice(0, 200);
