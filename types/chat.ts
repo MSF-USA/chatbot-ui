@@ -5,6 +5,7 @@ export enum MessageType {
   IMAGE = 'image',
   AUDIO = 'audio',
   VIDEO = 'video',
+  FILE = 'file'
 }
 
 export interface ImageMessageContent {
@@ -14,27 +15,43 @@ export interface ImageMessageContent {
   };
 }
 
+/*
+* This is an arbitrary content type since we are just using it to handle
+* the retrieval and parsing on the server-side. This is unlike ImageMessageContent,
+* which is a genuine type that some gpt models can handle directly
+ */
+export interface FileMessageContent {
+  type: 'file_url';
+  url: string;
+}
+
 export interface TextMessageContent {
   type: 'text';
   text: string;
 }
 
 export function getChatMessageContent(message: Message): string {
-  if (typeof message.content === "string")
+  if (typeof message.content === "string") {
     return message.content
-  else if (Array.isArray(message.content)) {
+  } else if (Array.isArray(message.content) && message.content.some(contentItem => contentItem.type !== 'text')) {
+    // @ts-ignore
     const imageContent = message.content.find(contentItem => contentItem.type === 'image_url') as ImageMessageContent;
-    return imageContent.image_url.url
-  } else if (message.content?.type === 'text')
-    return message.content.text
+    if (imageContent) {
+      return imageContent.image_url.url
+    } else {
+      // @ts-ignore
+      return (message.content.find(contentItem => contentItem.type === 'file_url') as FileMessageContent).url;
+    }
+  } else if ((message.content as TextMessageContent).type === 'text')
+    return (message.content as TextMessageContent).text
   else
     throw new Error(`Invalid message type or structure: ${message}`)
 }
 
 export interface Message {
   role: Role;
-  content: string | Array<TextMessageContent | ImageMessageContent> | TextMessageContent;
-  messageType: MessageType | undefined;
+  content: string | Array<TextMessageContent | FileMessageContent> | Array<TextMessageContent | ImageMessageContent> | TextMessageContent;
+  messageType: MessageType | ChatInputSubmitTypes | undefined;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
