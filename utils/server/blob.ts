@@ -144,13 +144,15 @@ export default class BlobStorageFactory {
     }
 }
 
-export const getBlobBase64String = async (userId: string, id: string): Promise<string> => {
+type BlobType = 'files' | 'images' | 'audio' | 'video';
+
+export const getBlobBase64String = async (userId: string, id: string, blobType: BlobType = 'images'): Promise<string> => {
     const blobStorageClient: BlobStorage = new AzureBlobStorage(
       process.env.AZURE_BLOB_STORAGE_NAME ?? '',
       process.env.AZURE_BLOB_STORAGE_KEY ?? '',
       process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
     );
-    const blobLocation: string = `${userId}/uploads/images/${id}`;
+    const blobLocation: string = `${userId}/uploads/${blobType}/${id}`;
     const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
     const base64String: string = blob.toString();
     return base64String;
