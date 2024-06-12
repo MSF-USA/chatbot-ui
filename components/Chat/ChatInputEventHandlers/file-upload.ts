@@ -1,8 +1,14 @@
 import React, {Dispatch, SetStateAction} from "react";
 import toast from "react-hot-toast";
-import {ChatInputSubmitTypes} from "@/types/chat";
+import {ChatInputSubmitTypes, FileMessageContent} from "@/types/chat";
+import FileIcon from "@/components/Icons/file";
 
-export function onFileUpload(event: React.ChangeEvent<any>, setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>) {
+export function onFileUpload(
+    event: React.ChangeEvent<any>,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+    setFilePreviews: Dispatch<SetStateAction<string[]>>,
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>
+) {
   event.preventDefault();
   const file: File = event.target.files[0];
 
@@ -35,6 +41,11 @@ export function onFileUpload(event: React.ChangeEvent<any>, setSubmitType: Dispa
             uploadChunk();
           } else {
             setSubmitType("file");
+            setFilePreviews(prevState => [...prevState, FileIcon.toString()])
+            setFileFieldValue({
+              type: 'file_url',
+              url: ''
+            })
             toast.success("File uploaded successfully");
           }
         } else {
