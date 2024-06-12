@@ -14,7 +14,7 @@ import {
 import {useTranslation} from 'next-i18next';
 
 import {
-  ChatInputSubmitTypes,
+  ChatInputSubmitTypes, FileMessageContent,
   getChatMessageContent,
   ImageMessageContent,
   Message,
@@ -118,7 +118,18 @@ export const ChatInput = ({
       else
         return [
             {type: "text", text: textFieldValue} as TextMessageContent
-      ]
+        ]
+    } else if (submitType === 'file') {
+      if (fileFieldValue) {
+        return [
+          {type: 'file_url', url: fileFieldValue} as FileMessageContent,
+          {type: "text", text: textFieldValue} as TextMessageContent
+        ]
+      } else {
+        return [
+          {type: "text", text: textFieldValue} as TextMessageContent
+        ]
+      }
     } else {
       throw new Error(`Invalid submit type for message: ${submitType}`);
     }
@@ -128,7 +139,7 @@ export const ChatInput = ({
     if (messageIsStreaming) {
       return;
     }
-    const content: string | (ImageMessageContent | TextMessageContent)[] = buildContent()
+    const content: string | TextMessageContent | (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[] = buildContent()
 
     if (!textFieldValue) {
       alert(t('Please enter a message'));
@@ -136,7 +147,7 @@ export const ChatInput = ({
     }
 
     onSend({
-      role: 'user', content, messageType: submitType === 'image' ? MessageType.IMAGE : MessageType.TEXT
+      role: 'user', content, messageType: submitType ?? 'text'
     }, plugin);
     setTextFieldValue('')
     setImageFieldValue(null)
