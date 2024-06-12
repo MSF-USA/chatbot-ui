@@ -117,12 +117,19 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
     }
   }, [isEditing]);
 
-  const isImageMessage = message.messageType === MessageType.IMAGE || Array.isArray(message.content);
+  const isImageMessage = message.messageType === MessageType.IMAGE || (
+      Array.isArray(message.content) && message.content.some(content => content.type === 'image_url')
+  );
+  const isFileMessage = !isImageMessage && (message.messageType === MessageType.FILE || (
+      Array.isArray(message.content) && message.content.some(content => content.type === 'file_url')
+  ))
 
   if (isImageMessage) {
     return <ChatMessageImage
-      message={message}
+        message={message}
     />;
+  } else if (isFileMessage) {
+    return <>FILE!!!</>
   } else if ((message.messageType === MessageType.TEXT || message.messageType === undefined) && typeof message.content === 'string') {
     return <ChatMessageText
         message={message}
