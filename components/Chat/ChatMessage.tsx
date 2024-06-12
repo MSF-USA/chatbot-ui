@@ -14,6 +14,7 @@ import HomeContext from '@/pages/api/home/home.context';
 
 import ChatMessageText from "@/components/Chat/ChatMessages/ChatMessageText";
 import ChatMessageImage from "@/components/Chat/ChatMessages/ChatMessageImage";
+import ChatMessageFile from "@/components/Chat/ChatMessages/ChatMessageFile";
 
 export interface Props {
   message: Message;
@@ -129,7 +130,9 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
         message={message}
     />;
   } else if (isFileMessage) {
-    return <>FILE!!!</>
+    return <ChatMessageFile
+        message={message}
+      />
   } else if ((message.messageType === MessageType.TEXT || message.messageType === undefined) && typeof message.content === 'string') {
     return <ChatMessageText
         message={message}
