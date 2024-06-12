@@ -102,11 +102,6 @@ export const ChatInput = ({
   };
 
   const buildContent = () => {
-    // if (imageFieldValue) {
-    //   setContent(imageFieldValue)
-    // } else if (textFieldValue) {
-    //   setContent(textFieldValue)
-    // }
     if (submitType === 'text')
       return textFieldValue;
     else if (submitType === 'image') {
