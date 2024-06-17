@@ -24,8 +24,7 @@ const getMessageContentType = (
 
 
 export const getMessagesToSend = async (
-  messages: Message[], encoding: any, promptLength: number,
-  tokenLimit: number
+  messages: Message[], encoding: any, promptLength: number, tokenLimit: number
 ): Promise<Message[]> => {
   const conversationType: ContentType = getMessageContentType(messages[messages.length - 1].content);
   const fileConversation: boolean = isFileConversation(messages);
@@ -34,6 +33,7 @@ export const getMessagesToSend = async (
   for (let i = messages.length - 1; i >= 0; i--) {
     let message = messages[i];
     delete message.messageType;
+    const isLastMessage: boolean = messages.length - 1 === i;
 
     if (Array.isArray(message.content)) {
       message.content = await processMessageContent(message.content, conversationType);
@@ -48,7 +48,6 @@ export const getMessagesToSend = async (
     if (!(conversationType === 'image') && Array.isArray(message.content)) {
       message.content = extractTextContent(message.content);
     }
-
     acc.messagesToSend = [message, ...acc.messagesToSend];
   }
 
@@ -94,7 +93,7 @@ const processImageUrl = async (contentSection: ImageMessageContent): Promise<str
     const url: string = await getBase64FromImageURL(contentSection.image_url.url);
     contentSection.image_url = { url };
     return url;
-  } catch (error: any) {
+  } catch (error: unknown) {
     throw new Error(`Failed to pull image from image url: ${contentSection}`);
   }
 };
