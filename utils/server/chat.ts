@@ -100,11 +100,14 @@ const processImageUrl = async (contentSection: ImageMessageContent): Promise<str
 };
 
 const extractTextContent = (content: (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]): string => {
-  const textContent = (
-    content as (TextMessageContent | ImageMessageContent | TextMessageContent)[]
+  const textContent: TextMessageContent | undefined = (
+    content as (TextMessageContent | ImageMessageContent | FileMessageContent)[]
   ).find(
     contentItem => contentItem.type === "text"
-  );
+  ) as TextMessageContent;
+  if (!textContent)
+    throw new Error(`Couldn't find text content type in ${JSON.stringify(content)}`);
+
   // @ts-ignore
-  return textContent?.text ?? '';
+  return textContent.text ?? '';
 };
