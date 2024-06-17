@@ -2,17 +2,55 @@ import {ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
 import {Tiktoken} from "@dqbd/tiktoken/lite/init";
 import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
 
-/*
-* Checks whether a collection of messages is an image conversation by checking the type of the last message in the conversation.
-*/
-export const isImageConversation = (messages: Message[]): boolean => {
+/**
+ * Checks if a collection of messages is of a specific conversation type by checking the type of the last message in the conversation.
+ *
+ * @param {Message[]} messages - The array of messages representing the conversation.
+ * @param {string} type - The desired conversation type to check for.
+ * @returns {boolean} - Returns true if the last message in the conversation has content of the specified type, false otherwise.
+ */
+const isConversationType = (messages: Message[], type: string): boolean => {
     const lastMessage = messages.length === 1 ? messages[0] : messages[messages.length-1];
     if(Array.isArray(lastMessage.content)) {
-        return lastMessage.content.some(contentItem => contentItem.type === 'image_url');
+        return lastMessage.content.some(contentItem => contentItem.type === type);
     }
-
     return false;
 }
+
+/**
+ * Checks whether a collection of messages is an image conversation by checking the type of the last message in the conversation.
+ *
+ * @param {Message[]} messages - The array of messages representing the conversation.
+ * @returns {boolean} - Returns true if the last message in the conversation has content of type 'image_url', false otherwise.
+ * @example
+ * const messages = [
+ *   { content: [{ type: 'text', text: 'Hello' }] },
+ *   { content: [{ type: 'image_url', url: 'https://example.com/image.jpg' }] }
+ * ];
+ * const isImageConvo = isImageConversation(messages);
+ * console.log(isImageConvo); // Output: true
+ */
+export const isImageConversation = (messages: Message[]): boolean => {
+    return isConversationType(messages, 'image_url');
+}
+
+/**
+ * Checks whether a collection of messages is a file conversation by checking the type of the last message in the conversation.
+ *
+ * @param {Message[]} messages - The array of messages representing the conversation.
+ * @returns {boolean} - Returns true if the last message in the conversation has content of type 'file_url', false otherwise.
+ * @example
+ * const messages = [
+ *   { content: [{ type: 'text', text: 'Here is the file' }] },
+ *   { content: [{ type: 'file_url', url: 'https://example.com/file.pdf' }] }
+ * ];
+ * const isFileConvo = isFileConversation(messages);
+ * console.log(isFileConvo); // Output: true
+ */
+export const isFileConversation = (messages: Message[]): boolean => {
+    return isConversationType(messages, 'file_url');
+}
+
 
 /**
  * Checks if a given model ID is valid based on a set of valid model IDs.
