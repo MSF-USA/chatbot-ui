@@ -73,7 +73,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         );
 
         const textStream = Readable.from(fileText);
-        await blobStorageClient.uploadStream(
+        const fileUrl: string = await blobStorageClient.uploadStream(
             {
               blobName: `${sanitizedFilename}.txt`,
               contentStream: textStream,
@@ -88,7 +88,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         res.status(200).json({
           message: 'File uploaded successfully',
           filename: sanitizedFilename,
-          fileText
+          fileText,
+          fileUrl
         });
       } catch (err) {
         console.error(err);
@@ -107,16 +108,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         );
 
         const fileStream = Readable.from(fileData);
-        await blobStorageClient.uploadStream(
+        const fileUrl: string = await blobStorageClient.uploadStream(
             {
                 blobName: sanitizedFilename,
-                contentStream: fileStream
+                contentStream: fileStream,
             }
         );
 
         res.status(200).json({
           message: 'File uploaded successfully',
-          filename: sanitizedFilename
+          filename: sanitizedFilename,
+          fileUrl
         });
       } catch (err) {
         console.error(err);
