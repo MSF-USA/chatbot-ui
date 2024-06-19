@@ -40,13 +40,16 @@ export function onFileUpload(
           if (uploadedBytes < file.size) {
             uploadChunk();
           } else {
-            setSubmitType("file");
-            setFilePreviews(prevState => [...prevState, FileIcon.toString()])
-            setFileFieldValue({
-              type: 'file_url',
-              url: ''
+            response.json().then(resp => {
+              setSubmitType("file");
+              setFilePreviews(prevState => [...prevState, FileIcon.toString()])
+              setFileFieldValue({
+                type: 'file_url',
+                url: resp.fileUrl ?? resp.filename
+              })
+              toast.success("File uploaded successfully");
             })
-            toast.success("File uploaded successfully");
+
           }
         } else {
           setSubmitType("text");
