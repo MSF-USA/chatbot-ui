@@ -36,7 +36,7 @@ export const getMessagesToSend = async (
     const isLastMessage: boolean = messages.length - 1 === i;
 
     if (Array.isArray(message.content)) {
-      message.content = await processMessageContent(message.content, conversationType);
+      message.content = await processMessageContent(message.content, conversationType, isLastMessage);
     } else if (typeof message.content === 'string') {
       /* pass */
     } else if (
@@ -56,17 +56,22 @@ export const getMessagesToSend = async (
 
 const processMessageContent = async (
   content: (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[],
-  conversationType: ContentType
+  conversationType: ContentType,
+  isLastMessageInConversation: boolean
 ): Promise<(TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]> => {
   let allText: string = '';
 
   for (let contentSection of content) {
     if (conversationType === 'image' && contentSection.type === "text") {
       allText += contentSection.text;
-    } else if (conversationType !== 'text' && contentSection.type === "text") {
-      allText += getContentTypePrefix(conversationType) + contentSection.text;
+    } else if (conversationType !== 'text' && contentSection.type === "text" && !isLastMessageInConversation) {
+      const contentTypePrefix: string = getContentTypePrefix(conversationType) + contentSection.text;
+      contentSection.text = contentTypePrefix;
+      allText += contentTypePrefix;
     } else if (conversationType === 'image' && contentSection?.type === "image_url") {
-      allText += await processImageUrl(contentSection as ImageMessageContent);
+      const imageUrl: string = await processImageUrl(contentSection as ImageMessageContent);
+      allText += imageUrl;
+      contentSection.image_url.url = imageUrl;
     }
   }
 
