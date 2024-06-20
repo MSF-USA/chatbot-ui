@@ -1,13 +1,15 @@
-
-import { OpenAIStream, StreamingTextResponse } from "ai"
-import OpenAI from "openai"
+import { JWT } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 
 import {
   APIM_CHAT_ENDPONT,
   AZURE_DEPLOYMENT_ID,
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_TEMPERATURE,
-  OPENAI_API_HOST, OPENAI_API_TYPE, OPENAI_API_VERSION
+  OPENAI_API_HOST,
+  OPENAI_API_TYPE,
+  OPENAI_API_VERSION,
 } from '@/utils/app/const';
 
 import { ChatBody, Message } from '@/types/chat';
@@ -18,10 +20,8 @@ import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import {getToken} from "next-auth/jwt";
-import {NextRequest} from "next/server";
-import {JWT} from 'next-auth';
-
+import { OpenAIStream, StreamingTextResponse } from 'ai';
+import OpenAI from 'openai';
 
 export const config = {
   runtime: 'edge',
@@ -29,8 +29,8 @@ export const config = {
 
 const handler = async (req: NextRequest) => {
   try {
-
-    const { model, messages, key, prompt, temperature } = (await req.json()) as ChatBody;
+    const { model, messages, key, prompt, temperature, userId } =
+      (await req.json()) as ChatBody;
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
     const encoding = new Tiktoken(
@@ -49,9 +49,12 @@ const handler = async (req: NextRequest) => {
       temperatureToUse = DEFAULT_TEMPERATURE;
     }
 
-    const isValidModel = Object.values(OpenAIModelID).toString().split(',').includes(model.id)
+    const isValidModel = Object.values(OpenAIModelID)
+      .toString()
+      .split(',')
+      .includes(model.id);
 
-    let modelToUse = model.id
+    let modelToUse = model.id;
     if (modelToUse == null || !isValidModel) {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
@@ -75,43 +78,43 @@ const handler = async (req: NextRequest) => {
         //   content: promptToSend,
         // },
         message,
-        ...messagesToSend
+        ...messagesToSend,
       ];
     }
 
     //@ts-ignore
-    const token: JWT = await getToken({req});
+    const token: JWT = await getToken({ req });
 
     encoding.free();
 
     const azureOpenai = new OpenAI({
       baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
-      defaultQuery: { "api-version": OPENAI_API_VERSION },
+      defaultQuery: { 'api-version': OPENAI_API_VERSION },
       defaultHeaders: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${ token.accessToken }`
-      }
-    })
+        Authorization: `Bearer ${token.accessToken}`,
+      },
+    });
 
     const response = await azureOpenai.chat.completions.create({
       model: modelToUse,
       messages: messagesToSend,
       temperature: temperatureToUse,
       max_tokens: null,
-      stream: true
-    })
+      stream: true,
+      user: userId,
+    });
 
-    const stream = OpenAIStream(response)
+    const stream = OpenAIStream(response);
 
     //Formatting changed significantly on 'ai' package > 3.0.19
-    return new StreamingTextResponse(stream)
-
+    return new StreamingTextResponse(stream);
   } catch (error: any) {
-    const errorMessage = error.error?.message || "An unexpected error occurred"
-    const errorCode = error.status || 500
+    const errorMessage = error.error?.message || 'An unexpected error occurred';
+    const errorCode = error.status || 500;
     return new Response(JSON.stringify({ message: errorMessage }), {
-      status: errorCode
-    })
+      status: errorCode,
+    });
   }
 };
 
