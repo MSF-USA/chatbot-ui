@@ -118,7 +118,10 @@ const handler = async (req: NextRequest): Promise<Response> => {
       if (!fileUrl)
         throw new Error('Could not find file URL!');
 
-      const filePath = `/tmp/${Date.now()}.pdf`; // Generate a unique file name
+      const filename = (fileUrl as string).split('/').pop()
+      if (!filename)
+        throw new Error("Could not parse filename from URL!");
+      const filePath = `/tmp/${filename}`;
 
       try {
         const response = await fetch(fileUrl);
