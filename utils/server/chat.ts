@@ -4,7 +4,7 @@ import {getBase64FromImageURL} from "@/utils/app/image";
 
 type ContentType = 'text' | 'image' | 'file'
 
-const getMessageContentType = (
+export const getMessageContentType = (
   content: string | TextMessageContent | (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]
 ): ContentType => {
   if (typeof content === "string") {
