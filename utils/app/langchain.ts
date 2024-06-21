@@ -9,8 +9,8 @@ import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
 import { TextLoader } from 'langchain/document_loaders/fs/text';
 import {ChainValues} from "@langchain/core/dist/utils/types";
 import {EPubLoader} from "@langchain/community/dist/document_loaders/fs/epub";
-import {JSONLoader} from "langchain/dist/document_loaders/fs/json";
-import {CSVLoader} from "langchain/dist/document_loaders/fs/csv";
+// import {JSONLoader} from "langchain/dist/document_loaders/fs/json";
+// import {CSVLoader} from "langchain/dist/document_loaders/fs/csv";
 import {APIM_CHAT_ENDPONT, OPENAI_API_HOST} from "@/utils/app/const";
 
 const openaiConfig: AzureOpenAIInput = {
@@ -55,12 +55,12 @@ async function loadDocument(file: File): Promise<string> {
         case mimeType.startsWith('text/plain') || mimeType.startsWith('text/'):
             loader = new TextLoader(file);
             break;
-        case mimeType.startsWith('text/csv') || mimeType.startsWith('application/csv'):
-            loader = new CSVLoader(file);
-            break;
-        case mimeType.startsWith('application/json'):
-            loader = new JSONLoader(file);
-            break;
+        // case mimeType.startsWith('text/csv') || mimeType.startsWith('application/csv'):
+        //     loader = new CSVLoader(file);
+        //     break;
+        // case mimeType.startsWith('application/json'):
+        //     loader = new JSONLoader(file);
+        //     break;
         // case mimeType.startsWith('application/epub+zip'):
         //     loader = new EPubLoader(file);
         //     break;
