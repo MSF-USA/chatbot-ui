@@ -18,7 +18,6 @@ export interface UploadStreamAzureStorageArgs {
     bufferSize?: number | undefined;
     maxConcurrency?: number | undefined;
     options?: BlockBlobUploadOptions | undefined;
-
 }
 
 export interface BlobStorage {
@@ -33,30 +32,31 @@ export interface BlobStorage {
         }: UploadStreamAzureStorageArgs
     ): Promise<string>;
     get(blobName: string, property: BlobProperty): Promise<string | Blob | Buffer>;
+    blobExists(blobName: string): Promise<boolean>;
 }
-
 
 export class AzureBlobStorage implements BlobStorage {
     private blobServiceClient: BlobServiceClient;
 
-
     constructor(
-        storageAccountName: string,
-        storageAccountAccessKey: string,
-        private containerName: string
+      storageAccountName: string,
+      storageAccountAccessKey: string,
+      private containerName: string
     ) {
         const sharedKeyCredential = new StorageSharedKeyCredential(storageAccountName, storageAccountAccessKey);
         this.blobServiceClient = new BlobServiceClient(
-            `https://${storageAccountName}.blob.core.windows.net`,
-            sharedKeyCredential
+          `https://${storageAccountName}.blob.core.windows.net`,
+          sharedKeyCredential
         );
-
     }
 
-    async upload(blobName: string, content: string,  options?: BlockBlobUploadOptions | undefined): Promise<string> {
+    async upload(blobName: string, content: string, options?: BlockBlobUploadOptions | undefined): Promise<string> {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
-
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+        if (await this.blobExists(blobName)) {
+            return blockBlobClient.url;
+        }
 
         let safeContent: string;
         if (Array.isArray(content))
@@ -68,19 +68,26 @@ export class AzureBlobStorage implements BlobStorage {
         return blockBlobClient.url;
     }
 
-    async createContainer(containerName: string): Promise<void> {
-        await this.blobServiceClient.createContainer(containerName)
-    }
+    async uploadStream(
+      {
+          blobName,
+          contentStream,
+          bufferSize,
+          maxConcurrency,
+          options
+      }: UploadStreamAzureStorageArgs
+    ): Promise<string> {
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+        const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
-    async blobToString(blob: Blob): Promise<string> {
-        const fileReader = new FileReader();
-        return new Promise<string>((resolve, reject) => {
-            fileReader.onloadend = (ev: any) => {
-                resolve(ev.target!.result as string);
-            };
-            fileReader.onerror = reject;
-            fileReader.readAsText(blob);
-        });
+        if (await this.blobExists(blobName)) {
+            return blockBlobClient.url;
+        }
+
+        await blockBlobClient.uploadStream(
+          contentStream, bufferSize, maxConcurrency, options
+        );
+        return blockBlobClient.url;
     }
 
     async get(blobName: string, property = BlobProperty.URL): Promise<string | Buffer> {
@@ -108,30 +115,32 @@ export class AzureBlobStorage implements BlobStorage {
         }
     }
 
-    async uploadStream(
-        {
-            blobName,
-            contentStream,
-            bufferSize,
-            maxConcurrency,
-            options
-        }: UploadStreamAzureStorageArgs
-    ): Promise<string> {
+    async blobExists(blobName: string): Promise<boolean> {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
-
-        await blockBlobClient.uploadStream(
-            contentStream, bufferSize, maxConcurrency, options
-        );
-        return blockBlobClient.url;
+        return blockBlobClient.exists();
     }
 
+    async createContainer(containerName: string): Promise<void> {
+        await this.blobServiceClient.createContainer(containerName)
+    }
+
+    async blobToString(blob: Blob): Promise<string> {
+        const fileReader = new FileReader();
+        return new Promise<string>((resolve, reject) => {
+            fileReader.onloadend = (ev: any) => {
+                resolve(ev.target!.result as string);
+            };
+            fileReader.onerror = reject;
+            fileReader.readAsText(blob);
+        });
+    }
 }
 
 export default class BlobStorageFactory {
     static createAzureBlobStorage(
-        storageAccountName: string, storageAccountAccessKey: string,
-        containerName: string, type: BlobStorageType = BlobStorageType.AZURE
+      storageAccountName: string, storageAccountAccessKey: string,
+      containerName: string, type: BlobStorageType = BlobStorageType.AZURE
     ): BlobStorage | AzureBlobStorage {
         switch (type) {
             case BlobStorageType.AZURE:
