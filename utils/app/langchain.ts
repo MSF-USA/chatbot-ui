@@ -16,7 +16,7 @@ import {APIM_CHAT_ENDPONT, OPENAI_API_HOST} from "@/utils/app/const";
 const openaiConfig: AzureOpenAIInput = {
     azureOpenAIApiDeploymentName: APIM_CHAT_ENDPONT,
     azureOpenAIBasePath:  `${OPENAI_API_HOST}`,
-    azureOpenAIApiKey: '',
+    azureOpenAIApiKey: '123',
     azureOpenAIApiVersion: '',
 };
 
@@ -52,7 +52,8 @@ async function loadDocument(file: File): Promise<string> {
         case mimeType.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
             loader = new DocxLoader(file);
             break;
-        case mimeType.startsWith('text/plain') || mimeType.startsWith('text/'):
+        case mimeType.startsWith('text/plain') || mimeType.startsWith('text/') || mimeType.startsWith('application/csv')
+                || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml'):
             loader = new TextLoader(file);
             break;
         // case mimeType.startsWith('text/csv') || mimeType.startsWith('application/csv'):
