@@ -28,12 +28,11 @@ import {JWT} from 'next-auth';
 import {getMessagesToSend} from "@/utils/server/chat";
  import {parseAndQueryFileLangchainOpenAI} from "@/utils/app/langchain";
 import fs from "fs";
-import {pipeline} from "node:stream/promises";
 import {Readable} from "stream";
 
 
 export const config = {
-  runtime: 'nodejs',
+  runtime: 'edge',
 };
 
 
@@ -130,8 +129,31 @@ const handler = async (req: NextRequest): Promise<Response> => {
         if (!response.body)
           throw new Error("Could not find file URL!");
 
-        const readableStream = Readable.fromWeb(response.body as any);
-        await pipeline(readableStream, fileStream);
+        const readableStream = new ReadableStream({
+          start(controller) {
+            const reader = response.body!.getReader();
+            function push() {
+              reader.read().then(({ done, value }) => {
+                if (done) {
+                  controller.close();
+                  return;
+                }
+                controller.enqueue(value);
+                push();
+              });
+            }
+            push();
+          }
+        });
+
+        const nodeReadableStream = Readable.fromWeb(readableStream as any);
+        const writableStream = fs.createWriteStream(filePath);
+
+        await new Promise<void>((resolve, reject) => {
+          nodeReadableStream.pipe(writableStream);
+          writableStream.on('finish', resolve);
+          writableStream.on('error', reject);
+        });
 
         console.log('File downloaded successfully.');
       } catch (error) {
@@ -142,7 +164,7 @@ const handler = async (req: NextRequest): Promise<Response> => {
       try {
         const fileBuffer = fs.readFileSync(filePath);
         const file = new File([fileBuffer], 'file.pdf', { type: 'application/pdf' });
-        const responseString: string = await parseAndQueryFileLangchainOpenAI(file, prompt);
+        const responseString: string = '' //await parseAndQueryFileLangchainOpenAI(file, prompt);
 
         return new Response(JSON.stringify({
           content: responseString
