@@ -44,6 +44,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const splitData = dataString.split('\r\n\r\n');
     const fileContent = splitData[splitData.length - 1];
     const fileData = Buffer.from(fileContent, 'utf8');
+    const remoteFilepath = `${(token as any).userId ?? 'anonymous'}/uploads/files`
 
     if (READABLE_FORMATS.includes(`.${fileExtension}`) || (mimeType && mimeType.startsWith('text/'))) {
       try {
@@ -62,7 +63,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         const fileStream = Readable.from(fileData);
         await blobStorageClient.uploadStream(
             {
-              blobName: sanitizedFilename,
+              blobName: `${remoteFilepath}/${sanitizedFilename}`,
               contentStream: fileStream,
               options: {
                 metadata:{
@@ -75,7 +76,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         const textStream = Readable.from(fileText);
         const fileUrl: string = await blobStorageClient.uploadStream(
             {
-              blobName: `${sanitizedFilename}.txt`,
+              blobName: `${remoteFilepath}/${sanitizedFilename}.txt`,
               contentStream: textStream,
               options: {
                 metadata:{
@@ -110,7 +111,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         const fileStream = Readable.from(fileData);
         const fileUrl: string = await blobStorageClient.uploadStream(
             {
-                blobName: sanitizedFilename,
+                blobName: `${remoteFilepath}/${sanitizedFilename}`,
                 contentStream: fileStream,
             }
         );
