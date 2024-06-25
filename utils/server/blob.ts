@@ -1,6 +1,7 @@
 import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
 import {Readable} from "stream";
 import fs from "fs/promises";
+import {getEnvVariable} from "@/utils/app/env";
 
 export enum BlobProperty {
     URL = 'url',
@@ -39,9 +40,13 @@ export class AzureBlobStorage implements BlobStorage {
     private blobServiceClient: BlobServiceClient;
 
     constructor(
-      storageAccountName: string,
-      storageAccountAccessKey: string,
-      private containerName: string
+      storageAccountName: string = getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
+      storageAccountAccessKey: string = getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
+      private containerName: string = getEnvVariable(
+          'AZURE_BLOB_STORAGE_CONTAINER',
+          false,
+          process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
+      )
     ) {
         const sharedKeyCredential = new StorageSharedKeyCredential(storageAccountName, storageAccountAccessKey);
         this.blobServiceClient = new BlobServiceClient(
