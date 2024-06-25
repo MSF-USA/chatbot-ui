@@ -2,7 +2,7 @@ import { Plugin, PluginID } from '@/types/plugin';
 
 export const getEndpoint = (plugin: Plugin | null) => {
   if (plugin?.id === PluginID.GOOGLE_SEARCH) {
-    return 'api/google';
+    throw new Error('Google Plugin no longer supported.')
   }
 
   return 'api/chat';
