@@ -1,0 +1,18 @@
+[
+    {
+        "title": "Translate Something",
+        "prompt": "I would like some text translated."
+    },
+    {
+        "title": "Draft an Email",
+        "prompt": "Can you draft an email on a specific subject for me?"
+    },
+    {
+        "title": "Brainstorm Ideas",
+        "prompt": "I need assistance brain storming about a specific idea."
+    },
+    {
+        "title": "Explain a Culture or Region",
+        "prompt": "I need to know about a specific culture or region."
+    }
+]

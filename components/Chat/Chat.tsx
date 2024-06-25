@@ -1,4 +1,10 @@
-import { IconClearAll, IconSettings, IconInfoCircle, IconExternalLink } from '@tabler/icons-react';
+import { Transition } from '@headlessui/react';
+import {
+  IconClearAll,
+  IconExternalLink,
+  IconInfoCircle,
+  IconSettings,
+} from '@tabler/icons-react';
 import {
   MutableRefObject,
   memo,
@@ -9,17 +15,14 @@ import {
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
-import Typewriter from 'typewriter-effect';
-import { Transition } from '@headlessui/react'
-import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
 
 import { useTranslation } from 'next-i18next';
+import Image from 'next/image';
 
 import { getEndpoint } from '@/utils/app/api';
-import {
-  saveConversation,
-  saveConversations,
-} from '@/utils/app/conversation';
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
+import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
 import { ChatBody, Conversation, Message } from '@/types/chat';
@@ -27,20 +30,26 @@ import { Plugin } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
+import logo from '../../public/msf_logo2.png';
+import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
-import { ModelSelect } from './ModelSelect';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
-import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
-import Image from 'next/image'
-import logo from '../../public/msf_logo2.png'
-import { TemperatureSlider } from '../Settings/Temperature';
+import { ModelSelect } from './ModelSelect';
+import prompts from './prompts.json';
+
+import Typewriter from 'typewriter-effect';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
 }
+
+const getRandomPrompts = (num: number): { title: string; prompt: string }[] => {
+  const shuffled = [...prompts].sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, num);
+};
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
   const { t } = useTranslation('chat');
@@ -59,7 +68,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       prompts,
       temperature,
       systemPrompt,
-      runTypeWriterIntroSetting
+      runTypeWriterIntroSetting,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -78,6 +87,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
+  const [randomPrompts, setRandomPrompts] = useState<
+    { title: string; prompt: string }[]
+  >([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -85,9 +97,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const updateConversationFromUserInput = (
-      userMessage: Message,
-      selectedConversation: Conversation,
-      deleteCount: number | null
+    userMessage: Message,
+    selectedConversation: Conversation,
+    deleteCount: number | null,
   ): Conversation => {
     let updatedConversation: Conversation;
     if (deleteCount) {
@@ -106,19 +118,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       };
     }
 
-    return updatedConversation
-  }
-
+    return updatedConversation;
+  };
 
   const makeRequest = async (
-      plugin: Plugin | null, updatedConversation: Conversation
+    plugin: Plugin | null,
+    updatedConversation: Conversation,
   ) => {
     const chatBody: ChatBody = {
       model: updatedConversation.model,
       messages: updatedConversation.messages.slice(-6),
       key: apiKey,
-      prompt: updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature: updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
+      prompt:
+        updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature:
+        updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -128,11 +142,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       body = JSON.stringify({
         ...chatBody,
         googleAPIKey: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
+          .find((key) => key.pluginId === 'google-search')
+          ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
         googleCSEId: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
+          .find((key) => key.pluginId === 'google-search')
+          ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
       });
     }
     const controller = new AbortController();
@@ -148,30 +162,34 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return {
       controller,
       body,
-      response
-    }
-  }
+      response,
+    };
+  };
 
-  const setConversationTitle = (updatedConversation: Conversation, message: Message) : Conversation  => {
-    const {content} = message;
+  const setConversationTitle = (
+    updatedConversation: Conversation,
+    message: Message,
+  ): Conversation => {
+    const { content } = message;
     const customName =
-        content.length > 30 ? content.substring(0, 30) + '...' : content;
+      content.length > 30 ? content.substring(0, 30) + '...' : content;
     updatedConversation = {
       ...updatedConversation,
       name: customName,
     };
 
     return updatedConversation;
-  }
+  };
 
   const handleGoogleResponse = async (
-      response: Response, updatedConversation: Conversation,
-      selectedConversation: Conversation,
-      conversations: Conversation[] = []
+    response: Response,
+    updatedConversation: Conversation,
+    selectedConversation: Conversation,
+    conversations: Conversation[] = [],
   ) => {
     let content;
 
-    const {answer} = await response.json();
+    const { answer } = await response.json();
     content = answer;
     const updatedMessages: Message[] = [
       ...updatedConversation.messages,
@@ -187,26 +205,26 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     });
     saveConversation(updatedConversation);
     const updatedConversations: Conversation[] = conversations.map(
-        (conversation) => {
-          if (conversation.id === selectedConversation.id) {
-            return updatedConversation;
-          }
-          return conversation;
-        },
+      (conversation) => {
+        if (conversation.id === selectedConversation.id) {
+          return updatedConversation;
+        }
+        return conversation;
+      },
     );
     if (updatedConversations.length === 0) {
       updatedConversations.push(updatedConversation);
     }
 
-    return updatedConversations
-  }
+    return updatedConversations;
+  };
 
   const handleNormalChatBackendStreaming = async (
-      data: any,
-      controller: AbortController,
-      updatedConversation: Conversation,
-      selectedConversation: Conversation,
-      originalConversations: Conversation[]
+    data: any,
+    controller: AbortController,
+    updatedConversation: Conversation,
+    selectedConversation: Conversation,
+    originalConversations: Conversation[],
   ) => {
     const reader = data.getReader();
     const decoder = new TextDecoder();
@@ -217,7 +235,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let conversationsCopy = originalConversations.slice();
 
     const readerChunks = async function* () {
-      let doneInt = 0
+      let doneInt = 0;
       while (true) {
         const { value, done } = await reader.read();
         yield value;
@@ -225,8 +243,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         // For whatever reason when done is set to true, there's still a chunk left
         //   This might be some Azure things, so maybe this breaks the openai direct
         //   streaming. Needs to be revisited
-        if (done)
-          doneInt = 1;
+        if (done) doneInt = 1;
 
         if (doneInt === 1) break;
       }
@@ -254,16 +271,17 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           value: updatedConversationCopy,
         });
       } else {
-        const updatedMessages: Message[] =
-            updatedConversationCopy.messages.map((message, index) => {
-              if (index === updatedConversationCopy.messages.length - 1) {
-                return {
-                  ...message,
-                  content: text,
-                };
-              }
-              return message;
-            });
+        const updatedMessages: Message[] = updatedConversationCopy.messages.map(
+          (message, index) => {
+            if (index === updatedConversationCopy.messages.length - 1) {
+              return {
+                ...message,
+                content: text,
+              };
+            }
+            return message;
+          },
+        );
         updatedConversationCopy = {
           ...updatedConversationCopy,
           messages: updatedMessages,
@@ -277,28 +295,28 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     saveConversation(updatedConversationCopy);
 
-    const updatedConversations : Conversation[] = conversations.map(
-        (conversation) => {
-          if (conversation.id === selectedConversation.id) {
-            return updatedConversationCopy;
-          }
-          return conversation;
-        },
+    const updatedConversations: Conversation[] = conversations.map(
+      (conversation) => {
+        if (conversation.id === selectedConversation.id) {
+          return updatedConversationCopy;
+        }
+        return conversation;
+      },
     );
     if (updatedConversations.length === 0) {
       updatedConversations.push(updatedConversationCopy);
     }
 
     return updatedConversations;
-  }
+  };
 
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
       if (selectedConversation) {
         let updatedConversation: Conversation = updateConversationFromUserInput(
-            message,
-            selectedConversation,
-            deleteCount
+          message,
+          selectedConversation,
+          deleteCount,
         );
         homeDispatch({
           field: 'selectedConversation',
@@ -307,7 +325,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
-        const {controller, body, response} = await makeRequest(plugin, updatedConversation);
+        const { controller, body, response } = await makeRequest(
+          plugin,
+          updatedConversation,
+        );
 
         if (!response.ok) {
           homeDispatch({ field: 'loading', value: false });
@@ -323,54 +344,64 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         }
         if (!plugin) {
           if (updatedConversation.messages.length === 1) {
-            updatedConversation = setConversationTitle(updatedConversation, message);
+            updatedConversation = setConversationTitle(
+              updatedConversation,
+              message,
+            );
           }
-          homeDispatch({field: 'loading', value: false});
+          homeDispatch({ field: 'loading', value: false });
 
           // TODO: Either force everything through streaming or implement a
           //    non-streaming version of this as well
           const streaming = true;
           if (streaming) {
             const updatedConversations = await handleNormalChatBackendStreaming(
-                data,
-                controller,
-                updatedConversation,
-                selectedConversation,
-                conversations
+              data,
+              controller,
+              updatedConversation,
+              selectedConversation,
+              conversations,
             );
 
-            homeDispatch({field: 'conversations', value: updatedConversations});
+            homeDispatch({
+              field: 'conversations',
+              value: updatedConversations,
+            });
             saveConversations(updatedConversations);
-            homeDispatch({field: 'messageIsStreaming', value: false});
+            homeDispatch({ field: 'messageIsStreaming', value: false });
           } else {
-            const reader = data.getReader()
+            const reader = data.getReader();
             // const data = await response;
             // const body = await data.body;
             // const {answer} = data;
             const updatedConversations = await handleNormalChatBackendStreaming(
-                data,
-                controller,
-                updatedConversation,
-                selectedConversation,
-                conversations
+              data,
+              controller,
+              updatedConversation,
+              selectedConversation,
+              conversations,
             );
 
-            homeDispatch({field: 'conversations', value: updatedConversations});
+            homeDispatch({
+              field: 'conversations',
+              value: updatedConversations,
+            });
             saveConversations(updatedConversations);
-            homeDispatch({field: 'messageIsStreaming', value: false});
-
-
+            homeDispatch({ field: 'messageIsStreaming', value: false });
           }
         } else {
           if (updatedConversation.messages.length === 1) {
-            updatedConversation = setConversationTitle(updatedConversation, message);
+            updatedConversation = setConversationTitle(
+              updatedConversation,
+              message,
+            );
           }
 
           const updatedConversations = await handleGoogleResponse(
-                response,
-                updatedConversation,
-                selectedConversation,
-                conversations
+            response,
+            updatedConversation,
+            selectedConversation,
+            conversations,
           );
           homeDispatch({ field: 'conversations', value: updatedConversations });
           saveConversations(updatedConversations);
@@ -486,20 +517,26 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       }
     };
   }, [messagesEndRef]);
-  const showSplash = !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim'
+  const showSplash =
+    !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim';
 
-  const [image, setImage] = useState(false)
-  const [runTypewriter, setRunTypewriter] = useState(false)
+  const [image, setImage] = useState(false);
+  const [runTypewriter, setRunTypewriter] = useState(false);
 
   useEffect(() => {
     if (!image) {
       if (runTypeWriterIntroSetting) {
         setRunTypewriter(true);
-      } else { setImage(true)
+      } else {
+        setImage(true);
       }
     } else {
-      setRunTypewriter(false)
+      setRunTypewriter(false);
     }
+  }, []);
+
+  useEffect(() => {
+    setRandomPrompts(getRandomPrompts(3));
   }, []);
 
   return (
@@ -517,13 +554,17 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           </div>
           <div className="text-center text-gray-500 dark:text-gray-400">
             <div className="mb-2">
-              MSF AI Assistant allows you to plug in your API key to use this UI with their API.
+              MSF AI Assistant allows you to plug in your API key to use this UI
+              with their API.
             </div>
             <div className="mb-2">
-              It is <span className="italic">only</span> used to communicate with their API.
+              It is <span className="italic">only</span> used to communicate
+              with their API.
             </div>
             <div className="mb-2">
-              {t('Please set your OpenAI API key in the bottom left of the sidebar.')}
+              {t(
+                'Please set your OpenAI API key in the bottom left of the sidebar.',
+              )}
             </div>
             <div>
               {t("If you don't have an OpenAI API key, you can get one here: ")}
@@ -569,15 +610,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         >
                           <IconSettings
                             size={18}
-                            className={`${showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'}`}
+                            className={`${
+                              showSettings
+                                ? 'text-[#D7211E]'
+                                : 'text-black dark:text-white'
+                            }`}
                           />
                         </button>
-                        <div className='absolute right-0'>
+                        <div className="absolute right-0">
                           <a
                             href={`mailto:${email}`}
                             className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
                           >
-                            <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                            <IconExternalLink
+                              size={16}
+                              className={'mr-1 text-black dark:text-white/50'}
+                            />
                             {t('Send Feedback')}
                           </a>
                         </div>
@@ -606,16 +654,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 {t('AI Model Selection:')}
                                 <ModelSelect />
                               </div>
-                              <div className='text-black dark:text-white'>
+                              <div className="text-black dark:text-white">
                                 {t('Temperature')}
                               </div>
                               <TemperatureSlider
                                 temperature={selectedConversation.temperature}
                                 onChangeTemperature={(temperature) =>
-                                  handleUpdateConversation(selectedConversation, {
-                                    key: 'temperature',
-                                    value: temperature,
-                                  })
+                                  handleUpdateConversation(
+                                    selectedConversation,
+                                    {
+                                      key: 'temperature',
+                                      value: temperature,
+                                    },
+                                  )
                                 }
                               />
                             </div>
@@ -633,8 +684,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           <Spinner size="16px" className="mx-auto" />
                         </div>
                       ) : (
-                        <div className='flex flex-col items-center'>
-                          <div className='flex flex-row justify-center items-end'>
+                        <div className="flex flex-col items-center">
+                          <div className="flex flex-row justify-center items-end">
                             {runTypewriter && (
                               <Typewriter
                                 options={{
@@ -644,7 +695,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                   deleteSpeed: 1,
                                 }}
                                 onInit={(typewriter) => {
-                                  typewriter.typeString('MSF AI Assistant')
+                                  typewriter
+                                    .typeString('MSF AI Assistant')
                                     .pauseFor(1200)
                                     .deleteAll()
                                     .callFunction(() => {
@@ -666,19 +718,62 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
-                                <div className='flex-shrink-0 flex flex-col items-center'>
+                                <div className="flex-shrink-0 flex flex-col items-center">
                                   <div className="ml-2 group relative flex flex-row">
-                                    <Image src={logo} alt="MSF Logo" style={{ maxWidth: '75px', maxHeight: '75px' }} />
-                                    <IconInfoCircle size={20} className='text-black dark:text-white' />
+                                    <Image
+                                      src={logo}
+                                      alt="MSF Logo"
+                                      style={{
+                                        maxWidth: '75px',
+                                        maxHeight: '75px',
+                                      }}
+                                    />
+                                    <IconInfoCircle
+                                      size={20}
+                                      className="text-black dark:text-white"
+                                    />
                                     <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                                      Type question below to get started.<br /><br />
-                                      Individual chat settings can be modified with top banner gear icon.<br /><br />
-                                      Default settings can be modified in bottom left settings menu.
+                                      Type question below to get started.
+                                      <br />
+                                      <br />
+                                      Individual chat settings can be modified
+                                      with top banner gear icon.
+                                      <br />
+                                      <br />
+                                      Default settings can be modified in bottom
+                                      left settings menu.
                                     </span>
                                   </div>
                                 </div>
                               </Transition>
                             )}
+                          </div>
+                          <div className="mt-8 flex justify-center w-full">
+                            <div className="hidden sm:flex space-x-5">
+                              {randomPrompts.map((prompt, index) => (
+                                <button
+                                  key={index}
+                                  className="bg-transparent text-black dark:text-white border border-[#E0E0E0] dark:border-[#444444] rounded-md px-3 py-1 text-sm hover:bg-[#F9F9F9] dark:hover:bg-[#2F2F2F] dark:hover:text-white transition"
+                                  onClick={() =>
+                                    handleSend({
+                                      role: 'user',
+                                      content: prompt.prompt,
+                                    })
+                                  }
+                                  style={{
+                                    width: '200px',
+                                    height: '80px',
+                                    textAlign: 'center',
+                                    whiteSpace: 'normal',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                  }}
+                                >
+                                  {prompt.title}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         </div>
                       )}
@@ -696,21 +791,31 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   >
                     <IconSettings
                       size={18}
-                      className={`${showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'}`}
+                      className={`${
+                        showSettings
+                          ? 'text-[#D7211E]'
+                          : 'text-black dark:text-white'
+                      }`}
                     />
                   </button>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={onClearAll}
                   >
-                    <IconClearAll size={18} className='text-black dark:text-white' />
+                    <IconClearAll
+                      size={18}
+                      className="text-black dark:text-white"
+                    />
                   </button>
-                  <div className='absolute right-0'>
+                  <div className="absolute right-0">
                     <a
                       href={`mailto:${email}`}
                       className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
                     >
-                      <IconExternalLink size={16} className={'mr-1 text-black dark:text-white/50'} />
+                      <IconExternalLink
+                        size={16}
+                        className={'mr-1 text-black dark:text-white/50'}
+                      />
                       {t('Send Feedback')}
                     </a>
                   </div>
@@ -739,7 +844,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           {t('AI Model Selection:')}
                           <ModelSelect />
                         </div>
-                        <div className='text-black dark:text-white'>
+                        <div className="text-black dark:text-white">
                           {selectedConversation ? t('Temperature') : ''}
                         </div>
                         {selectedConversation ? (
@@ -752,7 +857,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               })
                             }
                           />
-                        ) : <></>}
+                        ) : (
+                          <></>
+                        )}
                       </div>
                     </div>
                   </Transition>
