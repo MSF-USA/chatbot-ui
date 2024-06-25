@@ -12,7 +12,7 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
         const filename = req.query.filename as string;
 
         const getContentType = (extension: string): string => {
-            switch (extension) {
+            switch (extension.toLowerCase().trim()) {
                 case 'jpg':
                 case 'jpeg':
                     return 'image/jpeg';
