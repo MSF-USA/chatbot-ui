@@ -29,7 +29,7 @@ export const config = {
 
 const handler = async (req: NextRequest) => {
   try {
-    const { model, messages, key, prompt, temperature, userId } =
+    const { model, messages, key, prompt, temperature, user } =
       (await req.json()) as ChatBody;
 
     await init((imports) => WebAssembly.instantiate(wasm, imports));
@@ -102,7 +102,7 @@ const handler = async (req: NextRequest) => {
       temperature: temperatureToUse,
       max_tokens: null,
       stream: true,
-      user: userId,
+      user: JSON.stringify(user),
     });
 
     const stream = OpenAIStream(response);
