@@ -14,5 +14,13 @@
     {
         "title": "Explain a Culture or Region",
         "prompt": "I need to know about a specific culture or region."
+    },
+    {
+        "title": "Summarize Text",
+        "prompt": "I need a large set of text summarized."
+    },
+    {
+        "title": "Analyze Data",
+        "prompt": "I need some data analyzed."
     }
 ]
