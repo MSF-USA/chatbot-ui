@@ -25,7 +25,7 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
             }
         }
 
-        const uploadImageToBlobStorage = async (data: any) => {
+        const uploadImageToBlobStorage = async (data: string) => {
             // @ts-ignore
             const token: JWT = await getToken({req});
             const userId: string = token.userId ?? 'anonymous';
