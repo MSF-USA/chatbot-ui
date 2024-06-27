@@ -1,38 +1,27 @@
+import {memo, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
 import { IconClearAll, IconSettings, IconInfoCircle, IconExternalLink } from '@tabler/icons-react';
-import {
-  MutableRefObject,
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
 import toast from 'react-hot-toast';
 import Typewriter from 'typewriter-effect';
 import { Transition } from '@headlessui/react'
 import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
 
-import { useTranslation } from 'next-i18next';
+import {useTranslation} from 'next-i18next';
 
-import { getEndpoint } from '@/utils/app/api';
-import {
-  saveConversation,
-  saveConversations,
-} from '@/utils/app/conversation';
-import { throttle } from '@/utils/data/throttle';
+import {getEndpoint} from '@/utils/app/api';
+import {saveConversation, saveConversations,} from '@/utils/app/conversation';
+import {throttle} from '@/utils/data/throttle';
 
-import { ChatBody, Conversation, Message } from '@/types/chat';
-import { Plugin } from '@/types/plugin';
+import {ChatBody, Conversation, Message, MessageType} from '@/types/chat';
+import {Plugin} from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import Spinner from '../Spinner';
-import { ChatInput } from './ChatInput';
-import { ChatLoader } from './ChatLoader';
-import { ErrorMessageDiv } from './ErrorMessageDiv';
-import { ModelSelect } from './ModelSelect';
-import { MemoizedChatMessage } from './MemoizedChatMessage';
+import {ChatInput} from './ChatInput';
+import {ChatLoader} from './ChatLoader';
+import {ErrorMessageDiv} from './ErrorMessageDiv';
+import {ModelSelect} from './ModelSelect';
+import {MemoizedChatMessage} from './MemoizedChatMessage';
 import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
 import logo from '../../public/msf_logo2.png'
@@ -78,6 +67,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
+  const [filePreviews, setFilePreviews] = useState<string[]>([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -108,7 +98,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     return updatedConversation
   }
-
 
   const makeRequest = async (
       plugin: Plugin | null, updatedConversation: Conversation
@@ -153,7 +142,16 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const setConversationTitle = (updatedConversation: Conversation, message: Message) : Conversation  => {
-    const {content} = message;
+    let content;
+    if (typeof message.content === "string")
+      content = message.content;
+    else if (Array.isArray(message.content))
+      content = 'User uploaded image'
+    else if (message.content?.type === 'text')
+      content = message.content.text
+    else
+      throw new Error(`Invalid message content type: ${message.content?.toString() ?? message.content}`)
+
     const customName =
         content.length > 30 ? content.substring(0, 30) + '...' : content;
     updatedConversation = {
@@ -164,42 +162,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   }
 
-  const handleGoogleResponse = async (
-      response: Response, updatedConversation: Conversation,
-      selectedConversation: Conversation,
-      conversations: Conversation[] = []
-  ) => {
-    let content;
-
-    const {answer} = await response.json();
-    content = answer;
-    const updatedMessages: Message[] = [
-      ...updatedConversation.messages,
-      { role: 'assistant', content: content },
-    ];
-    updatedConversation = {
-      ...updatedConversation,
-      messages: updatedMessages,
-    };
-    homeDispatch({
-      field: 'selectedConversation',
-      value: updatedConversation,
-    });
-    saveConversation(updatedConversation);
-    const updatedConversations: Conversation[] = conversations.map(
-        (conversation) => {
-          if (conversation.id === selectedConversation.id) {
-            return updatedConversation;
-          }
-          return conversation;
-        },
-    );
-    if (updatedConversations.length === 0) {
-      updatedConversations.push(updatedConversation);
-    }
-
-    return updatedConversations
-  }
 
   const handleNormalChatBackendStreaming = async (
       data: any,
@@ -243,7 +205,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         isFirst = false;
         const updatedMessages: Message[] = [
           ...updatedConversationCopy.messages,
-          { role: 'assistant', content: chunkValue },
+          { role: 'assistant', content: chunkValue, messageType: MessageType.TEXT },
         ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
@@ -362,20 +324,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
           }
         } else {
-          if (updatedConversation.messages.length === 1) {
-            updatedConversation = setConversationTitle(updatedConversation, message);
-          }
-
-          const updatedConversations = await handleGoogleResponse(
-                response,
-                updatedConversation,
-                selectedConversation,
-                conversations
-          );
-          homeDispatch({ field: 'conversations', value: updatedConversations });
-          saveConversations(updatedConversations);
-          homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false });
+          throw new Error("Plugins not currently supported.")
+          // if (updatedConversation.messages.length === 1) {
+          //   updatedConversation = setConversationTitle(updatedConversation, message);
+          // }
+          //
+          // const updatedConversations = await handleGoogleResponse(
+          //       response,
+          //       updatedConversation,
+          //       selectedConversation,
+          //       conversations
+          // );
+          // homeDispatch({ field: 'conversations', value: updatedConversations });
+          // saveConversations(updatedConversations);
+          // homeDispatch({ field: 'loading', value: false });
+          // homeDispatch({ field: 'messageIsStreaming', value: false });
         }
       }
     },
@@ -760,7 +723,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
                 {selectedConversation?.messages.map((message, index) => (
                   <MemoizedChatMessage
-                    key={index}
+                    key={`conversation-message-${index}`}
                     message={message}
                     messageIndex={index}
                     onEdit={(editedMessage) => {
@@ -798,6 +761,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               }
             }}
             showScrollDownButton={showScrollDownButton}
+            setFilePreviews={setFilePreviews}
+            filePreviews={filePreviews}
           />
         </>
       )}

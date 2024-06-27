@@ -13,8 +13,14 @@ beforeEach(() => {
 
 describe('Chat App', () => {
     const conversationToUpdate: Conversation = {
-        id: 1,
-        model: null,
+        id: "1",
+        name: "",
+        model: {
+            id: "",
+            name: "",
+            maxLength: -1,
+            tokenLimit: -1
+        },
         prompt: 'This is a test prompt.',
         messages: [],
         folderId: '',
@@ -23,8 +29,14 @@ describe('Chat App', () => {
 
     const conversations: Conversation[] = [
         {
-            id: 0,
-            model: null,
+            id: "0",
+            name: "",
+            model: {
+                id: "",
+                name: "",
+                maxLength: -1,
+                tokenLimit: -1
+            },
             prompt: 'This is a different test prompt.',
             messages: [],
             folderId: '',

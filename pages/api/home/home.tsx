@@ -42,6 +42,7 @@ import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
+import {Settings} from "@/types/settings";
 
 
 interface Props {
@@ -276,20 +277,39 @@ const Home = ({
 
   useEffect(() => {
     const settings = getSettings();
-    if (settings.theme) dispatch({field: 'lightMode', value: settings.theme});
+    applySettings(settings);
+    handleApiKey();
+    handlePluginKeys();
+    handleShowChatbar();
+    loadFolders();
+    loadPrompts();
+    loadConversations();
+    selectConversation();
+  }, [
+    defaultModelId,
+    dispatch,
+    serverSideApiKeyIsSet,
+    serverSidePluginKeysSet
+  ]);
+
+  function applySettings(settings: Settings) {
+    if (settings.theme) dispatch({ field: 'lightMode', value: settings.theme });
     if (settings.temperature) dispatch({ field: 'temperature', value: settings.temperature });
     if (settings.systemPrompt) dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
     if (settings.runTypeWriterIntroSetting === false) dispatch({ field: 'runTypeWriterIntroSetting', value: settings.runTypeWriterIntroSetting });
-    const apiKey = localStorage.getItem('apiKey');
+  }
 
+  function handleApiKey() {
+    const apiKey = localStorage.getItem('apiKey');
     if (serverSideApiKeyIsSet || OPENAI_API_HOST_TYPE === 'apim') {
       dispatch({ field: 'apiKey', value: '' });
-
       localStorage.removeItem('apiKey');
     } else if (apiKey) {
       dispatch({ field: 'apiKey', value: apiKey });
     }
+  }
 
+  function handlePluginKeys() {
     const pluginKeys = localStorage.getItem('pluginKeys');
     if (serverSidePluginKeysSet) {
       dispatch({ field: 'pluginKeys', value: [] });
@@ -297,49 +317,47 @@ const Home = ({
     } else if (pluginKeys) {
       dispatch({ field: 'pluginKeys', value: pluginKeys });
     }
+  }
 
+  function handleShowChatbar() {
     if (window.innerWidth < 640) {
       dispatch({ field: 'showChatbar', value: false });
     }
-
     const showChatbar = localStorage.getItem('showChatbar');
     if (showChatbar) {
       dispatch({ field: 'showChatbar', value: showChatbar === 'true' });
     }
+  }
 
+  function loadFolders() {
     const folders = localStorage.getItem('folders');
     if (folders) {
       dispatch({ field: 'folders', value: JSON.parse(folders) });
     }
+  }
 
+  function loadPrompts() {
     const prompts = localStorage.getItem('prompts');
     if (prompts) {
       dispatch({ field: 'prompts', value: JSON.parse(prompts) });
     }
+  }
 
+  function loadConversations() {
     const conversationHistory = localStorage.getItem('conversationHistory');
     if (conversationHistory) {
-      const parsedConversationHistory: Conversation[] =
-        JSON.parse(conversationHistory);
-      const cleanedConversationHistory = cleanConversationHistory(
-        parsedConversationHistory,
-      );
-
+      const parsedConversationHistory: Conversation[] = JSON.parse(conversationHistory);
+      const cleanedConversationHistory = cleanConversationHistory(parsedConversationHistory);
       dispatch({ field: 'conversations', value: cleanedConversationHistory });
     }
+  }
 
+  function selectConversation() {
     const selectedConversation = localStorage.getItem('selectedConversation');
     if (selectedConversation) {
-      const parsedSelectedConversation: Conversation =
-        JSON.parse(selectedConversation);
-      const cleanedSelectedConversation = cleanSelectedConversation(
-        parsedSelectedConversation,
-      );
-
-      dispatch({
-        field: 'selectedConversation',
-        value: cleanedSelectedConversation,
-      });
+      const parsedSelectedConversation: Conversation = JSON.parse(selectedConversation);
+      const cleanedSelectedConversation = cleanSelectedConversation(parsedSelectedConversation);
+      dispatch({ field: 'selectedConversation', value: cleanedSelectedConversation });
     } else {
       const lastConversation = conversations[conversations.length - 1];
       dispatch({
@@ -355,12 +373,8 @@ const Home = ({
         },
       });
     }
-  }, [
-    defaultModelId,
-    dispatch,
-    serverSideApiKeyIsSet,
-    serverSidePluginKeysSet
-  ]);
+  }
+
 
   return (
     <HomeContext.Provider
