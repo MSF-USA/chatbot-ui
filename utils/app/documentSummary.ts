@@ -7,14 +7,15 @@ interface parseAndQueryFilterOpenAIArguments {
     file: File;
     prompt: string;
     token: JWT;
+    modelId: string;
 }
 
 /**
  * Parses a file and queries APIM with the file content and prompt.
- * @param {ParseAndQueryFilterOpenAIArguments} args - The arguments for parsing and querying.
+ * @param {parseAndQueryFilterOpenAIArguments} args - The arguments for parsing and querying.
  * @returns {Promise<string>} - The response from the OpenAI API.
  */
-export async function parseAndQueryFileOpenAI({file, prompt, token}: parseAndQueryFilterOpenAIArguments): Promise<string> {
+export async function parseAndQueryFileOpenAI({file, prompt, token, modelId}: parseAndQueryFilterOpenAIArguments): Promise<string> {
     const fileContent = await file.text();
 
     const chunks: string[] = splitIntoChunks(fileContent);
@@ -28,7 +29,7 @@ export async function parseAndQueryFileOpenAI({file, prompt, token}: parseAndQue
             token.accessToken,
             'POST',
             {
-                model: 'text-davinci-003',
+                model: modelId,
                 prompt: summaryPrompt,
                 max_tokens: 100,
             }
@@ -45,7 +46,7 @@ export async function parseAndQueryFileOpenAI({file, prompt, token}: parseAndQue
         token.accessToken,
         'POST',
         {
-            model: 'text-davinci-003',
+            model: modelId,
             prompt: finalPrompt,
             max_tokens: 150,
         }
