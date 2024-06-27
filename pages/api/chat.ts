@@ -26,7 +26,7 @@ import {checkIsModelValid, isFileConversation, isImageConversation} from "@/util
 import {ApimChatResponseDataStructure} from "@/types/apim";
 import {JWT} from 'next-auth';
 import {getMessagesToSend} from "@/utils/server/chat";
- import {parseAndQueryFileLangchainOpenAI} from "@/utils/app/langchain";
+import {parseAndQueryFileLangchainOpenAI} from "@/utils/app/langchain";
 import fs from "fs";
 import {Readable} from "stream";
 
@@ -163,13 +163,13 @@ const handler = async (req: NextRequest): Promise<Response> => {
 
       try {
         const fileBuffer = fs.readFileSync(filePath);
-        const file = new File([fileBuffer], 'file.pdf', { type: 'application/pdf' });
+        const file = new File([fileBuffer], filename, {});
         const responseString: string = '' //await parseAndQueryFileLangchainOpenAI(file, prompt);
 
+        console.log('File parsed successfully.');
         return new Response(JSON.stringify({
           content: responseString
         }))
-        console.log('File parsed successfully.');
       } catch (error) {
         console.error('Error parsing the file:', error);
         throw error;
