@@ -38,7 +38,7 @@ import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
-import prompts from './prompts.json';
+import { suggestedPrompts } from './prompts';
 
 import Typewriter from 'typewriter-effect';
 
@@ -46,9 +46,13 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>;
 }
 
-const getRandomPrompts = (num: number): { title: string; prompt: string }[] => {
-  const shuffled = [...prompts].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, num);
+const getRandomPrompts = (
+  num: number,
+): { title: string; prompt: string; icon: React.ElementType | null }[] => {
+  const shuffled = [...suggestedPrompts].sort(() => 0.5 - Math.random());
+  const randomPrompts = shuffled.slice(0, num);
+
+  return randomPrompts;
 };
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
@@ -88,7 +92,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
   const [randomPrompts, setRandomPrompts] = useState<
-    { title: string; prompt: string }[]
+    { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -754,7 +758,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               {randomPrompts.map((prompt, index) => (
                                 <button
                                   key={index}
-                                  className="bg-transparent text-black dark:text-white border border-[#E0E0E0] dark:border-[#444444] rounded-md px-3 py-1 text-sm hover:bg-[#F9F9F9] dark:hover:bg-[#2F2F2F] dark:hover:text-white transition"
+                                  className="bg-transparent text-black dark:text-white border border-[#E0E0E0] dark:border-[#444444] rounded-md px-2 py-1 text-sm hover:bg-[#F9F9F9] dark:hover:bg-[#2F2F2F] dark:hover:text-white transition"
                                   onClick={() =>
                                     handleSend({
                                       role: 'user',
@@ -763,15 +767,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                   }
                                   style={{
                                     width: '200px',
-                                    height: '80px',
-                                    textAlign: 'center',
+                                    height: '100px',
+                                    textAlign: 'start',
                                     whiteSpace: 'normal',
                                     display: 'flex',
-                                    alignItems: 'center',
+                                    flexDirection: 'column',
+                                    alignItems: 'start',
                                     justifyContent: 'center',
+                                    padding: '30px',
                                   }}
                                 >
-                                  {prompt.title}
+                                  {prompt.icon && (
+                                    <div className="flex flex-col items-start">
+                                      <prompt.icon className="h-5 w-5 mb-2" />
+                                      <div>
+                                        <span>{prompt.title}</span>
+                                      </div>
+                                    </div>
+                                  )}
                                 </button>
                               ))}
                             </div>
