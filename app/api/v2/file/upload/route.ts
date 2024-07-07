@@ -1,0 +1,81 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
+import { getEnvVariable } from "@/utils/app/env";
+import Hasher from "@/utils/app/hash";
+import { getToken } from "next-auth/jwt";
+import {JWT} from "next-auth";
+import {BadRequestError} from "openai";
+
+export async function POST(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const filename = searchParams.get('filename') as string;
+  const filetype = searchParams.get('filetype') ?? 'file';
+
+  const getContentType = (extension: string): string => {
+    switch (extension.toLowerCase().trim()) {
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'png':
+        return 'image/png';
+      case 'gif':
+        return 'image/gif';
+      default:
+        return 'application/octet-stream';
+    }
+  };
+
+  const uploadFileToBlobStorage = async (data: string) => {
+    // @ts-ignore
+    const token: JWT | null = await getToken({ req: request });
+    if (!token)
+      throw new Error(`Token could not be pulled from request: ${request}`);
+    // @ts-ignore
+    const userId: string = token.userId ?? 'anonymous';
+
+    let blobStorageClient: BlobStorage = new AzureBlobStorage(
+      getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
+      getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
+      getEnvVariable(
+        'AZURE_BLOB_STORAGE_CONTAINER',
+        false,
+        process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
+      )
+    );
+
+    const hashedFileContents = Hasher.sha256(data).slice(0, 200);
+    const extension: string | undefined = filename.split('.').pop();
+
+    let contentType;
+    if (extension) {
+      contentType = getContentType(extension);
+    } else {
+      contentType = 'application/octet-stream';
+    }
+
+    const uploadLocation = filetype === 'image' ? 'images' : 'files';
+
+    return await blobStorageClient.upload(
+      `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,
+      data,
+      {
+        blobHTTPHeaders: {
+          blobContentType: contentType,
+        },
+      }
+    );
+  };
+
+  const fileData = await request.text();
+  const fileURI: string = await uploadFileToBlobStorage(fileData);
+
+  return NextResponse.json({ message: 'File uploaded', uri: fileURI });
+}
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '50mb',
+    },
+  },
+};
