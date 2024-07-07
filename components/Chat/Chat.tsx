@@ -26,13 +26,14 @@ import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
 import Image from 'next/image'
 import logo from '../../public/msf_logo2.png'
 import { TemperatureSlider } from '../Settings/Temperature';
+import {debounce} from "@tanstack/virtual-core";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
 }
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
-  const { t } = useTranslation('chat');
+  const {t} = useTranslation('chat');
 
   const {
     state: {
@@ -54,7 +55,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     dispatch: homeDispatch,
   } = useContext(HomeContext);
   let {
-    state: { pluginKeys },
+    state: {pluginKeys},
   } = useContext(HomeContext);
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
@@ -75,9 +76,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const updateConversationFromUserInput = (
-      userMessage: Message,
-      selectedConversation: Conversation,
-      deleteCount: number | null
+    userMessage: Message,
+    selectedConversation: Conversation,
+    deleteCount: number | null
   ): Conversation => {
     let updatedConversation: Conversation;
     if (deleteCount) {
@@ -100,7 +101,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }
 
   const makeRequest = async (
-      plugin: Plugin | null, updatedConversation: Conversation
+    plugin: Plugin | null, updatedConversation: Conversation
   ) => {
     const chatBody: ChatBody = {
       model: updatedConversation.model,
@@ -117,11 +118,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       body = JSON.stringify({
         ...chatBody,
         googleAPIKey: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
+          .find((key) => key.pluginId === 'google-search')
+          ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
         googleCSEId: pluginKeys
-            .find((key) => key.pluginId === 'google-search')
-            ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
+          .find((key) => key.pluginId === 'google-search')
+          ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
       });
     }
     const controller = new AbortController();
@@ -132,6 +133,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       },
       signal: controller.signal,
       body,
+      mode: 'cors',
     });
 
     return {
@@ -141,7 +143,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     }
   }
 
-  const setConversationTitle = (updatedConversation: Conversation, message: Message) : Conversation  => {
+  const setConversationTitle = (updatedConversation: Conversation, message: Message): Conversation => {
     let content;
     if (typeof message.content === "string")
       content = message.content;
@@ -153,7 +155,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       throw new Error(`Invalid message content type: ${message.content?.toString() ?? message.content}`)
 
     const customName =
-        content.length > 30 ? content.substring(0, 30) + '...' : content;
+      content.length > 30 ? content.substring(0, 30) + '...' : content;
     updatedConversation = {
       ...updatedConversation,
       name: customName,
@@ -162,50 +164,40 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   }
 
+  const debouncedUpdateConversation = useCallback(
+    debounce((content: string, updateConversation: CallableFunction) => {
+      updateConversation(content);
+    }, 100),
+    []
+  );
 
   const handleNormalChatBackendStreaming = async (
-      data: any,
-      controller: AbortController,
-      updatedConversation: Conversation,
-      selectedConversation: Conversation,
-      originalConversations: Conversation[]
+    data: any,
+    controller: AbortController,
+    updatedConversation: Conversation,
+    selectedConversation: Conversation,
+    originalConversations: Conversation[]
   ) => {
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let done = false;
     let isFirst = true;
     let text = '';
-    let updatedConversationCopy = { ...updatedConversation };
+    let updatedConversationCopy = {...updatedConversation};
     let conversationsCopy = originalConversations.slice();
 
-    const readerChunks = async function* () {
-      let doneInt = 0
-      while (true) {
-        const { value, done } = await reader.read();
-        yield value;
+    while (!done) {
+      const {value, done: doneReading} = await reader.read();
+      done = doneReading;
 
-        // For whatever reason when done is set to true, there's still a chunk left
-        //   This might be some Azure things, so maybe this breaks the openai direct
-        //   streaming. Needs to be revisited
-        if (done)
-          doneInt = 1;
-
-        if (doneInt === 1) break;
-      }
-    };
-
-    for await (let value of readerChunks()) {
-      if (stopConversationRef.current) {
-        controller.abort();
-        break;
-      }
       const chunkValue = decoder.decode(value);
       text += chunkValue;
+
       if (isFirst) {
         isFirst = false;
         const updatedMessages: Message[] = [
           ...updatedConversationCopy.messages,
-          { role: 'assistant', content: chunkValue, messageType: MessageType.TEXT },
+          {role: 'assistant', content: chunkValue, messageType: MessageType.TEXT},
         ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
@@ -216,16 +208,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           value: updatedConversationCopy,
         });
       } else {
-        const updatedMessages: Message[] =
-            updatedConversationCopy.messages.map((message, index) => {
-              if (index === updatedConversationCopy.messages.length - 1) {
-                return {
-                  ...message,
-                  content: text,
-                };
-              }
-              return message;
-            });
+        const lastMessage = updatedConversationCopy.messages[updatedConversationCopy.messages.length - 1];
+        const updatedMessages = [
+          ...updatedConversationCopy.messages.slice(0, -1),
+          {...lastMessage, content: lastMessage.content + chunkValue},
+        ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
           messages: updatedMessages,
@@ -239,20 +226,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     saveConversation(updatedConversationCopy);
 
-    const updatedConversations : Conversation[] = conversations.map(
-        (conversation) => {
-          if (conversation.id === selectedConversation.id) {
-            return updatedConversationCopy;
-          }
-          return conversation;
-        },
-    );
+    const updatedConversations: Conversation[] = conversations.map((conversation) => {
+      if (conversation.id === selectedConversation.id) {
+        return updatedConversationCopy;
+      }
+      return conversation;
+    });
+
     if (updatedConversations.length === 0) {
       updatedConversations.push(updatedConversationCopy);
     }
 
     return updatedConversations;
-  }
+  };
+
+
+
 
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
@@ -287,14 +276,32 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           if (updatedConversation.messages.length === 1) {
             updatedConversation = setConversationTitle(updatedConversation, message);
           }
-          homeDispatch({field: 'loading', value: false});
+          homeDispatch({ field: 'loading', value: false });
 
           // TODO: Either force everything through streaming or implement a
           //    non-streaming version of this as well
           const streaming = true;
           if (streaming) {
+            const stream = new ReadableStream({
+              start(controller) {
+                const reader = data.getReader();
+
+                function push() {
+                  reader.read().then(({ done, value }) => {
+                    if (done) {
+                      controller.close();
+                      return;
+                    }
+                    controller.enqueue(value);
+                    push();
+                  });
+                }
+
+                push();
+              },
+            });
             const updatedConversations = await handleNormalChatBackendStreaming(
-                data,
+                stream,
                 controller,
                 updatedConversation,
                 selectedConversation,
@@ -357,6 +364,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       textareaRef.current?.focus();
     }
   }, [autoScrollEnabled]);
+
+  useEffect(() => {
+    if (autoScrollEnabled) {
+      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedConversation, autoScrollEnabled]);
 
   const handleScroll = () => {
     if (chatContainerRef.current) {
