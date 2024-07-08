@@ -44,7 +44,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = ({message}) => {
             try {
                 if (image?.image_url?.url) {
                     const filename = image.image_url.url.split("/")[image.image_url.url.split("/").length - 1];
-                    fetch(`/api/v2/file/${filename}`).then(page => {
+                    fetch(`/api/v2/file/${filename}?filetype=image`).then(page => {
                         page.json().then(resp => {
                             setImageBase64(resp.base64Url);
                             window.scrollTo(0, document.body.scrollHeight);
