@@ -5,5 +5,5 @@ export const getEndpoint = (plugin: Plugin | null) => {
     throw new Error('Google Plugin no longer supported.')
   }
 
-  return 'api/chat';
+  return 'api/v2/chat';
 };
