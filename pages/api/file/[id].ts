@@ -29,7 +29,7 @@ const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
 
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { id, fileType: requestedFileType } = req.query;
+  const { id, filetype: requestedFileType } = req.query;
 
   if (!isValidSha256Hash(id)) {
     res.status(400).json({ error: 'Invalid file identifier' });
