@@ -32,7 +32,7 @@ const onImageUpload = (
     reader.readAsDataURL(file);
     reader.onloadend = () => {
         const base64String = reader.result as string;
-        fetch(`/api/image?filename=${encodeURI(file.name)}`, {
+        fetch(`/api/v2/file/upload?filename=${encodeURI(file.name)}&filetype=image`, {
             method: 'POST',
             body: base64String,
         }).then(page => {

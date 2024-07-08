@@ -48,7 +48,7 @@ const readFileAsDataURL = (file: File): Promise<string> => {
 };
 
 const uploadImage = async (filename: string, base64String: string): Promise<{ uri: string }> => {
-    const response = await fetch(`/api/image?filename=${encodeURI(filename)}`, {
+    const response = await fetch(`/api/v2/file/upload?filename=${encodeURI(filename)}&filetype=image`, {
         method: "POST",
         body: base64String,
     });
