@@ -19,8 +19,11 @@ const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   return idHash.length === SHA256_HASH_LENGTH && VALID_HASH_REGEX.test(idHash);
 };
 
-export async function GET(request: NextRequest, { params }: { params: { id: string, fileType: string } }) {
-  const { id, fileType: requestedFileType } = params;
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = params;
+  const { searchParams } = new URL(request.url);
+  const requestedFileType = searchParams.get('filetype');
+
 
   if (!isValidSha256Hash(id)) {
     return NextResponse.json({ error: 'Invalid file identifier' }, { status: 400 });
@@ -37,11 +40,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const remoteFilepath = `${userId}/uploads/${fileType}s`;
 
   try {
+    const blobStorage = new AzureBlobStorage();
     if (fileType === 'image') {
       const base64String: string = await getBlobBase64String(userId, id as string);
       return NextResponse.json({ base64Url: base64String });
+      // const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.URL) as Promise<Buffer>);
+      // return NextResponse.json({base64Url: blob.toString()});
     } else if (fileType === 'file') {
-      const blobStorage = new AzureBlobStorage();
       const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.BLOB) as Promise<Buffer>);
       return new NextResponse(blob);
     } else {
