@@ -67,7 +67,7 @@ export const suggestedPrompts = [
     icon: IconPresentation,
   },
   {
-    title: 'Generate Meeting Agenda',
+    title: 'Generate A Meeting Agenda',
     prompt:
       'Can you help me create an agenda for an upcoming meeting? Ask me about the meeting goals, the time allotted and the attendees before giving suggestions.',
     icon: IconCalendar,
