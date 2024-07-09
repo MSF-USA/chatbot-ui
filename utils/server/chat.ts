@@ -45,7 +45,7 @@ export const getMessagesToSend = async (
       throw new Error(`Unsupported message type: ${JSON.stringify(message)}`);
     }
 
-    if (!(conversationType === 'image') && Array.isArray(message.content)) {
+    if (!isLastMessage && conversationType !== 'image' && Array.isArray(message.content)) {
       message.content = extractTextContent(message.content);
     }
     acc.messagesToSend = [message, ...acc.messagesToSend];
