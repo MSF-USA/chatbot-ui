@@ -61,31 +61,31 @@ export const suggestedPrompts = [
     icon: IconTextScan2,
   },
   {
-    title: 'Create A Presentation Outline',
+    title: 'Create a Presentation Outline',
     prompt:
       'I need to create a compelling presentation on a specific subject. Please help me outline or draft it.',
     icon: IconPresentation,
   },
   {
-    title: 'Generate A Meeting Agenda',
+    title: 'Generate a Meeting Agenda',
     prompt:
       'Can you help me create an agenda for an upcoming meeting? Ask me about the meeting goals, the time allotted and the attendees before giving suggestions.',
     icon: IconCalendar,
   },
   {
-    title: 'Develop A Survey',
+    title: 'Develop a Survey',
     prompt:
       'Can you help me design a survey to gather feedback or information on a particular topic?',
     icon: IconCheckbox,
   },
   {
-    title: 'Debug my Code',
+    title: 'Debug My Code',
     prompt:
       "I'm having trouble with a particular coding task. Can you help me give the right context about the problem so you can suggest a way to fix the issue?",
     icon: IconSourceCode,
   },
   {
-    title: 'Learn about a topic',
+    title: 'Learn About a topic',
     prompt:
       'I need help learning the background and a few important points about a specific topic.',
     icon: IconSchool,
