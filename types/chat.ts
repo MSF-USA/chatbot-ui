@@ -1,3 +1,5 @@
+import { Session } from 'next-auth';
+
 import { OpenAIModel } from './openai';
 
 export interface Message {
@@ -13,6 +15,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
+  user: Session['user'] | undefined;
 }
 
 export interface Conversation {
