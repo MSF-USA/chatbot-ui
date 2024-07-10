@@ -14,17 +14,13 @@ import {
   useRef,
   useState,
 } from 'react';
-import {memo, MutableRefObject, useCallback, useContext, useEffect, useRef, useState,} from 'react';
-import { IconClearAll, IconSettings, IconInfoCircle, IconExternalLink } from '@tabler/icons-react';
 import toast from 'react-hot-toast';
-import Typewriter from 'typewriter-effect';
 import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
 
 import {useTranslation} from 'next-i18next';
 import Image from 'next/image';
 
 import {getEndpoint} from '@/utils/app/api';
-import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations} from '@/utils/app/conversation';
 import {throttle} from '@/utils/data/throttle';
@@ -745,6 +741,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                     handleSend({
                                       role: 'user',
                                       content: prompt.prompt,
+                                      messageType: "text",
                                     })
                                   }
                                   style={{
