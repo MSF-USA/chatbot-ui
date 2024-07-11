@@ -19,6 +19,7 @@ import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
 import {getMessagesToSend} from "@/utils/server/chat";
 import {getToken} from "next-auth/jwt";
 import {JWT} from "next-auth";
+import {parseAndQueryFileOpenAI} from "@/utils/app/documentSummary";
 
 
 /**
@@ -63,8 +64,9 @@ export default class ChatService {
    * @param {Message[]} messagesToSend - The messages to send in the conversation.
    * @returns {Promise<Response>} A promise that resolves to the response containing the processed file content.
    */
-  private async handleFileConversation(messagesToSend: Message[]): Promise<Response> {
+  private async handleFileConversation(messagesToSend: Message[], token: JWT, modelId: string): Promise<Response> {
     const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
+    console.log("lastMessage", lastMessage);
     const content = lastMessage.content as Array<TextMessageContent | FileMessageContent>;
 
     let prompt: string | null = null;
@@ -88,18 +90,26 @@ export default class ChatService {
 
       const fileBuffer = fs.readFileSync(filePath);
       const file = new File([fileBuffer], filename, {});
-      const responseString: string = ""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
 
-      console.log("File parsed successfully.");
-      return new Response(JSON.stringify({ content: responseString }), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      });
+      const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({file, prompt, token, modelId})//""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
+
+      console.log("File summarized successfully.");
+      return new StreamingTextResponse(stream);
+
     } catch (error) {
       console.error("Error processing the file:", error);
       throw error;
     } finally {
-      fs.unlinkSync(filePath);
+      try {
+        fs.unlinkSync(filePath);
+      } catch (fileUnlinkError) {
+        if (fileUnlinkError instanceof Error && fileUnlinkError.message.startsWith('ENOENT: no such file or directory, unlink')) {
+          console.warn('File not found, but this is acceptable.');
+        } else {
+          throw fileUnlinkError
+        }
+
+      }
     }
   }
 
@@ -208,7 +218,7 @@ export default class ChatService {
     if (!token) throw new Error("Could not pull token!");
 
     if (needsToHandleFiles) {
-      return this.handleFileConversation(messagesToSend);
+      return this.handleFileConversation(messagesToSend, token, model.id);
     } else {
       return this.handleChatCompletion(modelToUse, messagesToSend, temperatureToUse, token);
     }
