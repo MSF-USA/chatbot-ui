@@ -14,16 +14,36 @@ interface parseAndQueryFilterOpenAIArguments {
     maxLength?: number;
 }
 
-/**
- * Parses a file and queries APIM with the file content and prompt.
- * @param {parseAndQueryFilterOpenAIArguments} args - The arguments for parsing and querying.
- * @returns {Promise<string>} - The response from the OpenAI API.
- */
+async function summarizeChunk(
+  azureOpenai: OpenAI,
+  modelId: string,
+  prompt: string,
+  chunk: string
+): Promise<string> {
+    const summaryPrompt: string = `Summarize the following text with relevance to the prompt: ${prompt}\n\n\`\`\`text\n${chunk}\n\`\`\``;
+    const chunkSummary = await azureOpenai.chat.completions.create({
+        model: modelId,
+        messages: [
+            {
+                role: "system",
+                content: "You are an AI Text summarizer. You take the prompt of a user and rather than conclusively answering, you pull together all the relevant information for that prompt in a particular chunk of text and reshape that into brief statements capturing the nuanced intent of the original text."
+            },
+            {
+                role: "user",
+                content: summaryPrompt
+            }
+        ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+        temperature: 0.1,
+        max_tokens: null,
+        stream: false,
+    });
+    return chunkSummary?.choices?.[0]?.message?.content?.trim() ?? "";
+}
+
 export async function parseAndQueryFileOpenAI(
   {file, prompt, token, modelId, maxLength = 9000}: parseAndQueryFilterOpenAIArguments
 ): Promise<ReadableStream<any>> {
     const fileContent = await file.text();
-
     const chunks: string[] = splitIntoChunks(fileContent);
 
     const openAIArgs: any = {
@@ -40,70 +60,23 @@ export async function parseAndQueryFileOpenAI(
 
     const azureOpenai = new OpenAI(openAIArgs);
 
-    const summaries: string[] =  []
-    for (const chunk of chunks) {
-        const summaryPrompt: string = `Summarize the following text with relevance to the prompt: ${prompt}\n\n\`\`\`text\n${chunk}\n\`\`\``;
-        const chunkSummary = await azureOpenai.chat.completions.create({
-            model: modelId,
-            messages: [
-                {
-                    role: "system",
-                    content: "You are an AI Text summarizer. You take the prompt of a user and rather than conclusively answering, you pull together all the relevant information for that prompt in a particular chunk of text and reshape that into brief statements capturing the nuanced intent of the original text."
-                },
-                {
-                    role: "user",
-                    content: summaryPrompt
-                }
-            ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-            temperature: 0.1,
-            max_tokens: null,
-            // TODO: Support non-streaming as optional output
-            stream: false,
-        });
-        const summary = chunkSummary?.choices?.[0]?.message?.content?.trim() ?? "";
-        summaries.push(summary);
+    let combinedSummary: string = "";
 
-        if (summaries.join(' ').length >= maxLength) {
-            break;
+    while (chunks.length > 0) {
+        const summaries: string[] = [];
+
+        for (const chunk of chunks) {
+            const summary = await summarizeChunk(azureOpenai, modelId, prompt, chunk);
+            summaries.push(summary);
+
+            if (summaries.join(' ').length >= maxLength) {
+                break;
+            }
         }
 
-
-        // return summaryResponse.choices[0].message.content.trim();
+        combinedSummary += summaries.join(' ');
+        chunks.splice(0, summaries.length);
     }
-
-    let combinedSummary: string = summaries.join(' ');
-
-    while (combinedSummary.length > maxLength) {
-        const newChunks: string[] = splitIntoChunks(combinedSummary, Math.floor(maxLength / 2));
-        const newSummaries: string[] = [];
-
-        for (const newChunk of newChunks) {
-            const summaryPrompt: string = `Summarize the following text with relevance to the prompt: ${prompt}\n\n\`\`\`text\n${newChunk}\n\`\`\``;
-            const chunkSummary = await azureOpenai.chat.completions.create({
-                model: modelId,
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are an AI Text summarizer. You take the prompt of a user and rather than conclusively answering, you pull together all the relevant information for that prompt in a particular chunk of text and reshape that into brief statements capturing the nuanced intent of the original text."
-                    },
-                    {
-                        role: "user",
-                        content: summaryPrompt
-                    }
-                ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-                temperature: 0.1,
-                max_tokens: null,
-                // TODO: Support non-streaming as optional output
-                stream: false,
-            });
-
-            const summary = chunkSummary?.choices?.[0]?.message?.content?.trim() ?? "";
-            newSummaries.push(summary);
-        }
-
-        combinedSummary = newSummaries.join(' ');
-    }
-
 
     const finalPrompt: string = `${combinedSummary}\n\nUser prompt: ${prompt}`;
 
@@ -122,7 +95,7 @@ export async function parseAndQueryFileOpenAI(
         temperature: 0.1,
         max_tokens: null,
         stream: true,
-    })
+    });
 
     const stream: ReadableStream<any> = OpenAIStream(response);
     return stream;
