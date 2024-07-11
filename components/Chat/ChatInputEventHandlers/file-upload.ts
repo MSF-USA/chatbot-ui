@@ -4,16 +4,16 @@ import {ChatInputSubmitTypes, FileMessageContent} from "@/types/chat";
 import FileIcon from "@/components/Icons/file";
 
 export function onFileUpload(
-    event: React.ChangeEvent<any>,
-    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setFilePreviews: Dispatch<SetStateAction<string[]>>,
-    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>
+  event: React.ChangeEvent<any>,
+  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+  setFilePreviews: Dispatch<SetStateAction<string[]>>,
+  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>
 ) {
   event.preventDefault();
   const file: File = event.target.files[0];
 
   if (file.size > 10485760) {
-    toast.error("Image upload must be <10mb");
+    toast.error("File upload must be <10mb");
     return;
   }
 
@@ -23,43 +23,51 @@ export function onFileUpload(
   const uploadChunk = () => {
     const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
 
-    const formData = new FormData();
-    formData.append("chunk", chunk);
-    formData.append("name", file.name);
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64Chunk = btoa(reader.result as string);
+      const encodedFileName = encodeURIComponent(file.name);
+      const encodedMimeType = encodeURIComponent(file.type);
 
-    fetch("/api/file/upload", {
-      method: "POST",
-      body: formData,
-      headers: {
-        "x-file-name": file.name
-      }
-    })
-      .then((response: Response) => {
-        if (response.ok) {
-          uploadedBytes += chunkSize;
-          if (uploadedBytes < file.size) {
-            uploadChunk();
-          } else {
-            response.json().then(resp => {
-              setSubmitType("file");
-              setFilePreviews(prevState => [...prevState, FileIcon.toString()])
-              setFileFieldValue({
-                type: 'file_url',
-                url: resp.fileUrl ?? resp.filename
-              })
-              toast.success("File uploaded successfully");
-            })
+      const formData = new FormData();
+      formData.append("chunk", base64Chunk);
+      formData.append("name", encodedFileName);
 
-          }
-        } else {
-          setSubmitType("text");
-          toast.error("File upload failed");
+
+      fetch(`/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "x-file-name": encodedFileName
         }
       })
-      .catch(() => {
-        setSubmitType("text");
-        toast.error("File upload failed");
-      });
+        .then((response: Response) => {
+          if (response.ok) {
+            uploadedBytes += chunkSize;
+            if (uploadedBytes < file.size) {
+              uploadChunk();
+            } else {
+              response.json().then(resp => {
+                setSubmitType("file");
+                setFilePreviews(prevState => [...prevState, FileIcon.toString()])
+                setFileFieldValue({
+                  type: 'file_url',
+                  url: resp.uri ?? resp.filename
+                })
+                toast.success("File uploaded successfully");
+              })
+            }
+          } else {
+            setSubmitType("text");
+            toast.error("File upload failed");
+          }
+        })
+        .catch(() => {
+          setSubmitType("text");
+          toast.error("File upload failed");
+        });
+    };
+    reader.readAsBinaryString(chunk);
   };
 
   uploadChunk();
