@@ -34,14 +34,14 @@ async function summarizeChunk(
             }
         ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature: 0.1,
-        max_tokens: null,
+        max_tokens: 1000,
         stream: false,
     });
     return chunkSummary?.choices?.[0]?.message?.content?.trim() ?? "";
 }
 
 export async function parseAndQueryFileOpenAI(
-  {file, prompt, token, modelId, maxLength = 9000}: parseAndQueryFilterOpenAIArguments
+  {file, prompt, token, modelId, maxLength = 6000}: parseAndQueryFilterOpenAIArguments
 ): Promise<ReadableStream<any>> {
     const fileContent = await file.text();
     const chunks: string[] = splitIntoChunks(fileContent);
