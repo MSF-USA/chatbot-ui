@@ -8,8 +8,33 @@ import {BadRequestError} from "openai";
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const filename = searchParams.get('filename') as string;
-  const filetype = searchParams.get('filetype') ?? 'file';
+  const filename: string = searchParams.get('filename') as string;
+  const filetype: string = searchParams.get('filetype') ?? 'file';
+  const mimeType: string | null = searchParams.get('mime');
+
+  if (filetype) {
+    const extension = filename.split('.').pop()?.toLowerCase();
+    const executableExtensions = ['exe', 'bat', 'cmd', 'sh', 'dll', 'msi', 'jar', 'app'];
+
+    if (extension && executableExtensions.includes(extension)) {
+      return NextResponse.json({error: 'Executable files are not allowed'}, {status: 400});
+    }
+
+    if (mimeType) {
+      const executableMimeTypes = [
+        'application/x-msdownload',
+        'application/x-msdos-program',
+        'application/x-executable',
+        'application/x-sharedlib',
+        'application/java-archive',
+        'application/x-apple-diskimage',
+      ];
+
+      if (executableMimeTypes.includes(mimeType)) {
+        return NextResponse.json({error: 'Invalid file type submitted'}, {status: 400});
+      }
+    }
+  }
 
   const getContentType = (extension: string): string => {
     switch (extension.toLowerCase().trim()) {
@@ -47,13 +72,18 @@ export async function POST(request: NextRequest) {
     const extension: string | undefined = filename.split('.').pop();
 
     let contentType;
-    if (extension) {
+    if(mimeType) {
+      contentType = mimeType
+    } else if (extension) {
       contentType = getContentType(extension);
     } else {
       contentType = 'application/octet-stream';
     }
 
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
+
+    const decodedData = Buffer.from(data, 'base64');
+
 
     return await blobStorageClient.upload(
       `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,
@@ -68,7 +98,7 @@ export async function POST(request: NextRequest) {
 
   const fileData = await request.text();
   const fileURI: string = await uploadFileToBlobStorage(fileData);
-
+  const fileHash: string = fileURI.split('/').pop() ?? fileURI.split('/')[fileURI.split('/').length-1];
   return NextResponse.json({ message: 'File uploaded', uri: fileURI });
 }
 
