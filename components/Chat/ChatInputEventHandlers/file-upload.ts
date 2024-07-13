@@ -36,11 +36,6 @@ export function onFileUpload(
       const encodedFileName = encodeURIComponent(file.name);
       const encodedMimeType = encodeURIComponent(file.type);
 
-      const formData = new FormData();
-      formData.append("chunk", base64Chunk);
-      formData.append("name", encodedFileName);
-
-
       fetch(`/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`, {
         method: "POST",
         body: base64Chunk,
