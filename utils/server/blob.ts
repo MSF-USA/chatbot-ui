@@ -22,7 +22,7 @@ export interface UploadStreamAzureStorageArgs {
 }
 
 export interface BlobStorage {
-    upload(blobName: string, content: string, options?: BlockBlobUploadOptions | undefined): Promise<string>;
+    upload(blobName: string, content: string | Buffer, options?: BlockBlobUploadOptions | undefined): Promise<string>;
     uploadStream(
         {
             blobName,
@@ -55,7 +55,7 @@ export class AzureBlobStorage implements BlobStorage {
         );
     }
 
-    async upload(blobName: string, content: string, options?: BlockBlobUploadOptions | undefined): Promise<string> {
+    async upload(blobName: string, content: string | Buffer, options?: BlockBlobUploadOptions | undefined): Promise<string> {
         const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
@@ -63,13 +63,23 @@ export class AzureBlobStorage implements BlobStorage {
             return blockBlobClient.url;
         }
 
-        let safeContent: string;
-        if (Array.isArray(content))
-            safeContent = content[0]
-        else
-            safeContent = content
+        let uploadContent: string | Buffer;
+        let contentLength: number;
 
-        await blockBlobClient.upload(safeContent, safeContent.length, options);
+        if (Buffer.isBuffer(content)) {
+            uploadContent = content;
+            contentLength = content.length;
+        } else if (typeof content === 'string') {
+            uploadContent = content;
+            contentLength = Buffer.byteLength(content);
+        } else if (Array.isArray(content)) {
+            uploadContent = content[0];
+            contentLength = Buffer.byteLength(content[0]);
+        } else {
+            throw new Error('Invalid content type. Expected string, Buffer, or array of strings.');
+        }
+
+        await blockBlobClient.upload(uploadContent, contentLength, options);
         return blockBlobClient.url;
     }
 
