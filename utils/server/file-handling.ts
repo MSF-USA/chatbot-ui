@@ -26,7 +26,16 @@ export async function convertWithPandoc(inputPath: string, outputFormat: string)
     throw error;
   } finally {
     // Clean up temporary files
-    await execAsync(`rm "${inputPath}" "${outputPath}"`);
+    try {
+      await execAsync(`rm "${inputPath}" "${outputPath}"`);
+    } catch (removeFileError: any) {
+      console.warn(`Error removing converted file with Pandoc: ${removeFileError}`);
+      if (removeFileError.message.indexOf('File not found') === -1
+        && removeFileError.message.indexOf('No such file or directory') === -1
+      ) {
+        throw removeFileError
+      }
+    }
   }
 }
 
