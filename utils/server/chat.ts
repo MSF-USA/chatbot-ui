@@ -1,6 +1,7 @@
 import {FileMessageContent, ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
 import {isFileConversation, isImageConversation} from "@/utils/app/chat";
 import {getBase64FromImageURL} from "@/utils/app/image";
+import {getBlobBase64String} from "@/utils/server/blob";
 
 type ContentType = 'text' | 'image' | 'file'
 
@@ -94,11 +95,25 @@ const processImageUrl = async (contentSection: ImageMessageContent): Promise<str
     throw new Error(`Image ID ${id} is not valid`);
   }
 
+  let url: string;
   try {
-    const url: string = await getBase64FromImageURL(contentSection.image_url.url);
-    contentSection.image_url = { url };
+    url = await getBlobBase64String(
+      'anonymous',
+      contentSection.image_url.url.split('/')[contentSection.image_url.url.split('/').length - 1],
+      "images"
+    )
+    contentSection.image_url = {
+      url,
+      detail: "auto"
+    }
     return url;
   } catch (error: unknown) {
+    url = await getBase64FromImageURL(contentSection.image_url.url);
+    contentSection.image_url = {
+      url,
+      detail: "auto"
+    };
+    // return url;
     throw new Error(`Failed to pull image from image url: ${contentSection}`);
   }
 };
