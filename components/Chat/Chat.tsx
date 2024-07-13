@@ -25,7 +25,7 @@ import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations} from '@/utils/app/conversation';
 import {throttle} from '@/utils/data/throttle';
 
-import {ChatBody, Conversation, Message, MessageType} from '@/types/chat';
+import {ChatBody, Conversation, Message, MessageType, TextMessageContent} from '@/types/chat';
 import {Plugin} from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -180,10 +180,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let content;
     if (typeof message.content === "string")
       content = message.content;
-    else if (Array.isArray(message.content))
-      content = 'User uploaded image'
-    else if (message.content?.type === 'text')
-      content = message.content.text
+    else if (Array.isArray(message.content) && message.content.some(section => section.type === 'image_url'))
+      content = 'User uploaded image';
+    else if (Array.isArray(message.content) && message.content.some(section => section.type === 'file_url'))
+      content = 'User uploaded a file';
+    else if ((message.content as TextMessageContent)?.type === 'text')
+      content = (message.content as TextMessageContent).text
     else
       throw new Error(`Invalid message content type: ${message.content?.toString() ?? message.content}`)
     const customName =
@@ -213,52 +215,51 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     const reader = data.getReader();
     const decoder = new TextDecoder();
     let done = false;
-    let isFirst = true;
     let text = '';
     let updatedConversationCopy = {...updatedConversation};
-    let conversationsCopy = originalConversations.slice();
 
     while (!done) {
       const {value, done: doneReading} = await reader.read();
       done = doneReading;
 
       const chunkValue = decoder.decode(value);
-      text += chunkValue;
+      const regex = /\d+:"((?:\\.|[^"\\])*?)"/g;
+      let match;
+      while ((match = regex.exec(chunkValue)) !== null) {
+        // Unescape any escaped characters (like newlines)
+        text += JSON.parse('"' + match[1] + '"');
+      }
 
-      if (isFirst) {
-        isFirst = false;
-        const updatedMessages: Message[] = [
-          ...updatedConversationCopy.messages,
-          {role: 'assistant', content: chunkValue, messageType: MessageType.TEXT},
-        ];
+      if (updatedConversationCopy.messages.length === 0 || updatedConversationCopy.messages[updatedConversationCopy.messages.length - 1].role !== 'assistant') {
+        // If there's no assistant message, create a new one
         updatedConversationCopy = {
           ...updatedConversationCopy,
-          messages: updatedMessages,
+          messages: [
+            ...updatedConversationCopy.messages,
+            {role: 'assistant', content: text, messageType: MessageType.TEXT},
+          ],
         };
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
       } else {
-        const lastMessage = updatedConversationCopy.messages[updatedConversationCopy.messages.length - 1];
+        // Update the existing assistant message
         const updatedMessages = [
           ...updatedConversationCopy.messages.slice(0, -1),
-          {...lastMessage, content: lastMessage.content + chunkValue},
+          {...updatedConversationCopy.messages[updatedConversationCopy.messages.length - 1], content: text},
         ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
           messages: updatedMessages,
         };
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
       }
+
+      homeDispatch({
+        field: 'selectedConversation',
+        value: updatedConversationCopy,
+      });
     }
 
     saveConversation(updatedConversationCopy);
 
-    const updatedConversations: Conversation[] = conversations.map((conversation) => {
+    const updatedConversations: Conversation[] = originalConversations.map((conversation) => {
       if (conversation.id === selectedConversation.id) {
         return updatedConversationCopy;
       }
@@ -270,6 +271,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     return updatedConversations;
   };
+
 
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
@@ -438,7 +440,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   const onClearAll = () => {
     if (
-      confirm(t<string>('Are you sure you want to clear all messages?')) &&
+      // @ts-ignore
+      confirm(t<string>('Are you sure you want to clear all messages?') as string) &&
       selectedConversation
     ) {
       handleUpdateConversation(selectedConversation, {
