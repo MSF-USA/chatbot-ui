@@ -62,7 +62,15 @@ const processMessageContent = async (
 ): Promise<(TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]> => {
   let allText: string = '';
 
-  for (let contentSection of content) {
+  let processedContent: (TextMessageContent)[] | (TextMessageContent | ImageMessageContent)[] = (content as any[]).filter((contentSection) => {
+    if (!isLastMessageInConversation && contentSection.type === 'file_url') {
+      return false; // Remove file_url content sections for non-last messages
+    }
+    return true;
+  });
+
+
+  for (let contentSection of processedContent) {
     if (conversationType === 'image' && contentSection.type === "text") {
       allText += contentSection.text;
     } else if (conversationType !== 'text' && contentSection.type === "text" && !isLastMessageInConversation) {
@@ -76,7 +84,7 @@ const processMessageContent = async (
     }
   }
 
-  return content.map(contentSection =>
+  return processedContent.map(contentSection =>
     contentSection.type === "image_url" && !(conversationType === 'image')
       ? { type: "text", text: "THE USER UPLOADED AN IMAGE" } as TextMessageContent
       : contentSection
