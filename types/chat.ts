@@ -26,6 +26,7 @@ export interface ImageMessageContent {
 export interface FileMessageContent {
   type: 'file_url';
   url: string;
+  originalFilename?: string;
 }
 
 export interface TextMessageContent {
