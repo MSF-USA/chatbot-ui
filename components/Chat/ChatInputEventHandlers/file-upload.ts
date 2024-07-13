@@ -84,7 +84,8 @@ export function onFileUpload(
                 setFilePreviews(prevState => [...prevState, `file:${file.type}||name:${file.name}`])
                 setFileFieldValue({
                   type: 'file_url',
-                  url: resp.uri ?? resp.filename
+                  url: resp.uri ?? resp.filename,
+                  originalFilename: file.name,
                 })
                 toast.success("File uploaded successfully");
               })

@@ -1,5 +1,5 @@
 import {FileMessageContent, ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
-import {FC, useEffect, useState} from "react";
+import {FC, useEffect, useRef, useState} from "react";
 import {IconRobot, IconUser} from "@tabler/icons-react";
 import FileIcon from "@/components/Icons/file";
 
@@ -11,6 +11,9 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
     const {role, content} = message;
     const [text, setText] = useState<TextMessageContent | null>(null);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
+    const [filename, setFilename] = useState<string | null>(null);
+    const fileNameRef = useRef<HTMLSpanElement>(null);
+
 
     useEffect(() => {
         (
@@ -20,6 +23,10 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
             if (contentMessage.type === 'file_url') {
                 // TODO: Get the file type then display the file icon differently depending
                 setFileUrl(contentMessage.url);
+                if (contentMessage.originalFilename)
+                    setFilename(contentMessage.originalFilename)
+                else
+                    setFilename(contentMessage.url.split('/')[contentMessage.url.split('/').length-1]);
            } else if (contentMessage.type === 'text') {
                 setText(contentMessage);
             } else {
@@ -37,6 +44,20 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
 
         }
     }
+    const handleMouseEnter = () => {
+        if (fileNameRef.current) {
+            const element = fileNameRef.current;
+            if (element.offsetWidth < element.scrollWidth) {
+                element.style.animation = `scroll-filename ${element.scrollWidth / 50}s linear infinite`;
+            }
+        }
+    }
+
+    const handleMouseLeave = () => {
+        if (fileNameRef.current) {
+            fileNameRef.current.style.animation = 'none';
+        }
+    }
 
     return <div
         className={`group md:px-4 ${
@@ -47,23 +68,37 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
         style={{overflowWrap: 'anywhere'}}
     >
         <div
-            className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
+          className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
             <div className="min-w-[40px] text-right font-bold">
                 {role === 'assistant' ? (
-                    <IconRobot size={30}/>
+                  <IconRobot size={30}/>
                 ) : (
-                    <IconUser size={30}/>
+                  <IconUser size={30}/>
                 )}
             </div>
-            <div onClick={downloadFile}>
-                <FileIcon/>
+            <div
+              onClick={downloadFile}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
+              className="flex items-center justify-between w-full ml-4 p-3 rounded-lg border border-black dark:border-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+            >
+                <FileIcon className="w-8 h-8 mr-5"/>
+                {fileUrl && filename &&
+                  <span
+                    ref={fileNameRef}
+                    className="text-right flex-grow truncate"
+                  >
+                        {filename}
+                    </span>
+
+                }
             </div>
         </div>
         <div
-            className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl"
+          className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl"
         >
             <div className="prose mt-[-2px] ml-16 w-full dark:prose-invert">
-                <div className="flex flex-row">
+            <div className="flex flex-row">
                     <div>{text?.text}</div>
                 </div>
             </div>
