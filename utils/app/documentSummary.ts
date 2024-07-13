@@ -6,6 +6,7 @@ import {lookup} from "mime-types";
 import mammoth from 'mammoth';
 import {DocxLoader} from "@langchain/community/document_loaders/fs/docx";
 import pdfParse from 'pdf-parse'
+import {loadDocument} from "@/utils/server/file-handling";
 
 
 
@@ -17,61 +18,6 @@ interface parseAndQueryFilterOpenAIArguments {
     maxLength?: number;
 }
 
-async function loadPDF(file: File): Promise<string> {
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    // const data = await pdfParse(buffer);
-    // return data.text;
-    return "";
-}
-
-async function loadDOCX(file: File): Promise<string> {
-    const arrayBuffer = await file.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
-    try {
-        const result = await mammoth.extractRawText({ arrayBuffer: uint8Array });
-        return result.value;
-    } catch (error: any) {
-        console.error(`Error processing the DOCX file: ${error.message}`);
-        throw error;
-    }
-}
-
-async function loadDocument(file: File): Promise<string> {
-    let text, content, loader;
-    const mimeType = lookup(file.name) || 'application/octet-stream';
-
-    switch (true) {
-        case mimeType.startsWith('application/pdf'):
-            text = await loadPDF(file);
-            // loader = new PDFLoader(file);
-            // content = await loader.load();
-            // text = content[0].pageContent
-
-            break;
-        case mimeType.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
-            loader = new DocxLoader(file);
-            content = await loader.load();
-            text = content[0].pageContent
-            break;
-        case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
-            throw new Error("Not supported file type");
-        case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation'):
-            throw new Error("Not supported file type");
-        case mimeType.startsWith('application/epub+zip'):
-            throw new Error("Not supported file type");
-        case mimeType.startsWith('text/plain') || mimeType.startsWith('text/') || mimeType.startsWith('application/csv')
-        || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml'):
-        default:
-            try {
-                text = await file.text()
-            } catch (error) {
-                console.error(`Could not parse text from ${file.name}`);
-                throw error;
-            }
-    }
-    return text;
-}
 
 async function summarizeChunk(
   azureOpenai: OpenAI,
@@ -152,7 +98,7 @@ export async function parseAndQueryFileOpenAI(
         messages: [
             {
                 role: "system",
-                content: "You are a document analyzer AI Assistant. You perform all tasks the user requests of you, careful to make sure you are responding to the spirit and intentions behind their request. You make it clear how your responses relate to the base text that you are processing and provide your responses in markdown format when special formatting is necessary. Understand that you are analyzing text that you have previously summarized, so make sure your response is an amalgamation of your impressions over each chunk."
+                content: "You are a document analyzer AI Assistant. You perform all tasks the user requests of you, careful to make sure you are responding to the spirit and intentions behind their request. You make it clear how your responses relate to the base text that you are processing and provide your responses in markdown format when special formatting is necessary. Understand that you are analyzing text that you have previously summarized, so make sure your response is an amalgamation of your impressions over each chunk. Follow all user instructions on formatting but if none are provided make your response well structured, taking advantage of markdown formatting. Finally, make sure your final analysis is coherent and not just a listing out of details unless that's what the user specifically asks for."
             },
             {
                 role: "user",
