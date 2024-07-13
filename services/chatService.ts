@@ -66,7 +66,6 @@ export default class ChatService {
    */
   private async handleFileConversation(messagesToSend: Message[], token: JWT, modelId: string): Promise<Response> {
     const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
-    console.log("lastMessage", lastMessage);
     const content = lastMessage.content as Array<TextMessageContent | FileMessageContent>;
 
     let prompt: string | null = null;
