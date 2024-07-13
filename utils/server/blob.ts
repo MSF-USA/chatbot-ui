@@ -2,6 +2,7 @@ import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} f
 import {Readable} from "stream";
 import fs from "fs/promises";
 import {getEnvVariable} from "@/utils/app/env";
+import {lookup} from "mime-types";
 
 export enum BlobProperty {
     URL = 'url',
@@ -113,14 +114,13 @@ export class AzureBlobStorage implements BlobStorage {
             return blockBlobClient.url;
         } else if (property === BlobProperty.BLOB) {
             try {
-                const localFilename = blobName.split('/')[blobName.split('/').length - 1];
-                const tempFilePath = `/tmp/${localFilename}`;
-                await blockBlobClient.downloadToFile(tempFilePath, 0);
+                const downloadResponse = await blockBlobClient.download();
 
-                const fileContent: Buffer = await fs.readFile(tempFilePath);
-                await fs.unlink(tempFilePath);
+                if (!downloadResponse.readableStreamBody) {
+                    throw new Error('No readable stream available');
+                }
 
-                return fileContent;
+                return this.streamToBuffer(downloadResponse.readableStreamBody);
             } catch (error) {
                 console.error('Error downloading blob:', error);
                 throw error;
@@ -150,6 +150,20 @@ export class AzureBlobStorage implements BlobStorage {
             fileReader.readAsText(blob);
         });
     }
+
+    private async streamToBuffer(readableStream: NodeJS.ReadableStream): Promise<Buffer> {
+        return new Promise((resolve, reject) => {
+            const chunks: Buffer[] = [];
+            readableStream.on('data', (data) => {
+                chunks.push(data instanceof Buffer ? data : Buffer.from(data));
+            });
+            readableStream.on('end', () => {
+                resolve(Buffer.concat(chunks));
+            });
+            readableStream.on('error', reject);
+        });
+    }
+
 }
 
 export default class BlobStorageFactory {
@@ -178,6 +192,23 @@ export const getBlobBase64String = async (userId: string, id: string, blobType: 
     );
     const blobLocation: string = `${userId}/uploads/${blobType}/${id}`;
     const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
-    const base64String: string = blob.toString();
+    const mimeType = lookup(blobLocation.split('.')[blobLocation.split('.').length-1]);
+
+    let base64String: string;
+    if (blobType === 'images') {
+        base64String = blob.toString()
+    } else {
+        base64String = blob.toString('base64');
+    }
+
+    if (base64String.startsWith('data:')) {
+        /* pass */
+    } else if (mimeType) {
+        const base64Content = base64String.split('base64')[base64String.split('base64').length - 1];
+        base64String = `data:${mimeType};base64,${base64Content}`;
+    } else {
+        throw new Error(`Couldn't pull mime type: ${blobLocation}`);
+    }
+
     return base64String;
 }
