@@ -1,8 +1,7 @@
 import { NextRequest } from "next/server";
-import { parseAndQueryFileLangchainOpenAI } from "@/utils/app/langchain";
 import ChatService from "@/services/chatService";
 
-
+export const maxDuration: number = 300;
 
 export async function POST(req: NextRequest): Promise<Response> {
   try {
