@@ -4,6 +4,30 @@ import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/t
 import FileIcon from "@/components/Icons/file";
 import {onImageUpload} from "@/components/Chat/ChatInputEventHandlers/image-upload";
 
+
+const disallowedExtensions: string[] = [
+  '.exe', '.dll', '.cmd', '.msi', '.zip', '.rar', '.7z', '.tar', '.gz', '.iso'
+];
+
+const disallowedMimeTypes: string[] = [
+  'application/x-msdownload',
+  'application/x-executable',
+  'application/x-dosexec',
+  'application/x-msdos-program',
+  'application/x-msi',
+  'application/zip',
+  'application/x-rar-compressed',
+  'application/x-7z-compressed',
+  'application/x-tar',
+  'application/gzip',
+  'application/x-iso9660-image'
+];
+
+function isFileAllowed(file: File): boolean {
+  const extension = '.' + file.name.split('.')[file.name.split('.').length-1].toLowerCase()
+  return !disallowedExtensions.includes(extension) && !disallowedMimeTypes.includes(file.type);
+}
+
 export function onFileUpload(
   event: React.ChangeEvent<any>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
@@ -13,6 +37,12 @@ export function onFileUpload(
 ) {
   event.preventDefault();
   const file: File = event.target.files[0];
+
+  if (!isFileAllowed(file)){
+    toast.error(`Invalid file type provided: ${file.name}`);
+    return;
+  }
+
   if (file.type.startsWith("image/")) {
     onImageUpload(event, "", setFilePreviews, setSubmitType, setImageFieldValue);
     return;
