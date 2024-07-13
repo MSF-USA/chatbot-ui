@@ -81,7 +81,7 @@ export function onFileUpload(
             } else {
               response.json().then(resp => {
                 setSubmitType("file");
-                setFilePreviews(prevState => [...prevState, FileIcon.toString()])
+                setFilePreviews(prevState => [...prevState, `file:${file.type}||name:${file.name}`])
                 setFileFieldValue({
                   type: 'file_url',
                   url: resp.uri ?? resp.filename

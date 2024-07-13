@@ -2,6 +2,7 @@ import {XIcon} from "@/components/Icons/cancel";
 import {Dispatch, FC, SetStateAction, MouseEvent} from "react";
 import Image from "next/image";
 import {ChatInputSubmitTypes} from "@/types/chat";
+import FileIcon from "@/components/Icons/file";
 
 interface ChatFileUploadPreviewsProps {
     filePreviews: string[],
@@ -26,20 +27,29 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({filePreview, set
 
     }
 
+    const isImage: boolean = !filePreview.startsWith('file:');
+    let filename;
+    if (!isImage)
+      filename = filePreview.split('||name:')[filePreview.split('||name:').length-1];
+
+
     return (
         <>
-            <img
-                alt="Preview"
-                className="object-cover"
-                height="150"
-                src={filePreview}
-                style={{
-                    aspectRatio: "200/150",
-                    objectFit: "cover",
+          {isImage ? <img
+            alt="Preview"
+            className="object-cover"
+            height="150"
+            src={filePreview}
+            style={{
+              aspectRatio: "200/150",
+              objectFit: "cover",
 
-                }}
-                width="200"
-            />
+            }}
+            width="200"
+          /> : <>
+            <FileIcon className={'object-cover'} />
+            {filename && <span>{filename.slice(0, 16)}...</span>}
+          </>}
             <button
                 className="absolute top-1 right-1 rounded-full"
                 onClick={(event: React.MouseEvent<HTMLButtonElement>) => removeFilePreview(event, filePreview)}

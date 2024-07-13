@@ -10,6 +10,7 @@ export interface ChatMessageFileProps {
 const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
     const {role, content} = message;
     const [text, setText] = useState<TextMessageContent | null>(null);
+    const [fileUrl, setFileUrl] = useState<string | null>(null);
 
     useEffect(() => {
         (
@@ -18,6 +19,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
         ).forEach(contentMessage => {
             if (contentMessage.type === 'file_url') {
                 // TODO: Get the file type then display the file icon differently depending
+                setFileUrl(contentMessage.url);
            } else if (contentMessage.type === 'text') {
                 setText(contentMessage);
             } else {
@@ -25,6 +27,16 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
             }
         })
     }, [content]);
+
+    const downloadFile = (event: any) => {
+        event.preventDefault();
+        if (fileUrl) {
+            const filename = fileUrl.split('/')[fileUrl.split("/").length - 1];
+            const downloadUrl = `/api/v2/file/${filename}`
+            window.open(downloadUrl, '_blank');
+
+        }
+    }
 
     return <div
         className={`group md:px-4 ${
@@ -43,7 +55,9 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
                     <IconUser size={30}/>
                 )}
             </div>
-            <img src={FileIcon.toString()}/>
+            <div onClick={downloadFile}>
+                <FileIcon/>
+            </div>
         </div>
         <div
             className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl"
