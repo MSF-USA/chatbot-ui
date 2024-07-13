@@ -33,7 +33,7 @@ FROM node:22-alpine AS production
 WORKDIR /app
 
 # pdftotext package
-RUN apk add --no-cache poppler poppler-dev
+RUN apk add --no-cache poppler poppler-dev poppler-utils
 
 # Install Pandoc
 COPY --from=base /usr/local/bin/pandoc /usr/local/bin/pandoc
