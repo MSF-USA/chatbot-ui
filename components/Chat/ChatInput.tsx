@@ -383,12 +383,13 @@ export const ChatInput = ({
             setFilePreviews={setFilePreviews}
             setImageFieldValue={setImageFieldValue}
         />
-        {/*<ChatInputFile*/}
-        {/*    onFileUpload={onFileUpload}*/}
-        {/*    setSubmitType={setSubmitType}*/}
-        {/*    setFilePreviews={setFilePreviews}*/}
-        {/*    setFileFieldValue={setFileFieldValue}*/}
-        {/*  />*/}
+        <ChatInputFile
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+          />
         {/*<button>*/}
         {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
         {/*  <span className="sr-only">Voice input</span>*/}

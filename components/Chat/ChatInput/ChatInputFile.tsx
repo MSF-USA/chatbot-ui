@@ -1,6 +1,6 @@
 import FileIcon from "@/components/Icons/file";
 import React, {ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
-import {ChatInputSubmitTypes, FileMessageContent} from "@/types/chat";
+import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/types/chat";
 
 interface ChatInputFileProps {
     onFileUpload: (
@@ -8,13 +8,16 @@ interface ChatInputFileProps {
         setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
         setFilePreviews: Dispatch<SetStateAction<string[]>>,
         setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>,
+        setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
     ) => void
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
-    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>,
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
+
 }
 
-const ChatInputFile = ({onFileUpload, setSubmitType, setFilePreviews, setFileFieldValue}: ChatInputFileProps) => {
+const ChatInputFile = ({onFileUpload, setSubmitType, setFilePreviews, setFileFieldValue, setImageFieldValue}: ChatInputFileProps) => {
     const fileInputRef: MutableRefObject<any> = useRef(null)
     return <>
         <input
@@ -23,7 +26,7 @@ const ChatInputFile = ({onFileUpload, setSubmitType, setFilePreviews, setFileFie
             style={{display: "none"}}
             onChange={(event: ChangeEvent<HTMLInputElement>) => {
                 event.preventDefault()
-                onFileUpload(event, setSubmitType, setFilePreviews, setFileFieldValue)
+                onFileUpload(event, setSubmitType, setFilePreviews, setFileFieldValue, setImageFieldValue)
             }}
         />
         <button onClick={(event: React.MouseEvent<HTMLButtonElement>) => {

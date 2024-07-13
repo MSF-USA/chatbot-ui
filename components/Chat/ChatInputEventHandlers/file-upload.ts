@@ -1,16 +1,23 @@
 import React, {Dispatch, SetStateAction} from "react";
 import toast from "react-hot-toast";
-import {ChatInputSubmitTypes, FileMessageContent} from "@/types/chat";
+import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/types/chat";
 import FileIcon from "@/components/Icons/file";
+import {onImageUpload} from "@/components/Chat/ChatInputEventHandlers/image-upload";
 
 export function onFileUpload(
   event: React.ChangeEvent<any>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
-  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>
+  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
 ) {
   event.preventDefault();
   const file: File = event.target.files[0];
+  if (file.type.startsWith("image/")) {
+    onImageUpload(event, "", setFilePreviews, setSubmitType, setImageFieldValue);
+    return;
+  }
+
 
   if (file.size > 10485760) {
     toast.error("File upload must be <10mb");
