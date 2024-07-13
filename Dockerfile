@@ -8,11 +8,6 @@ ENV PANDOC_VERSION "3.2.1"
 # Install dependencies for Pandoc
 RUN apk add --no-cache curl
 
-# Download and install Pandoc
-RUN curl -L https://github.com/jgm/pandoc/releases/download/${PANDOC_VERSION}/pandoc-${PANDOC_VERSION}-linux-amd64.tar.gz | tar xz && \
-    mv pandoc-${PANDOC_VERSION}/bin/pandoc /usr/local/bin && \
-    rm -rf pandoc-${PANDOC_VERSION}
-
 # ---- Dependencies ----
 FROM base AS dependencies
 RUN npm ci
@@ -33,10 +28,9 @@ FROM node:22-alpine AS production
 WORKDIR /app
 
 # pdftotext package
-RUN apk add --no-cache poppler poppler-dev poppler-utils
+RUN apk add --no-cache poppler poppler-dev poppler-utils pandoc libxml2 libxslt zlib fontconfig ttf-dejavu \
+    shared-mime-info libc6-compat
 
-# Install Pandoc
-COPY --from=base /usr/local/bin/pandoc /usr/local/bin/pandoc
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=build /app/.next ./.next
