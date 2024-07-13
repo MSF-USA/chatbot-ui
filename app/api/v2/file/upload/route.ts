@@ -82,8 +82,11 @@ export async function POST(request: NextRequest) {
 
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
 
-    const decodedData = Buffer.from(data, 'base64')
-
+    let decodedData;
+    if (mimeType && mimeType.indexOf('image') > -1 || filetype === 'image')
+      decodedData = data
+    else
+      decodedData = Buffer.from(data, 'base64')
 
     return await blobStorageClient.upload(
       `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,
