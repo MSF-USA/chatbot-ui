@@ -40,8 +40,9 @@ const onImageUpload = (
                 const imageMessage: ImageMessageContent = {
                     type: 'image_url',
                     image_url: {
-                        url: data.uri
-                    }
+                        url: data.uri,
+                        detail: 'auto',
+                    },
                 }
                 setImageFieldValue(imageMessage)
                 setFilePreviews(prevFilePreviews => {

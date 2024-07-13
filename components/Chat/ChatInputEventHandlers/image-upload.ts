@@ -31,6 +31,7 @@ export const onImageUpload = async (
         type: "image_url",
         image_url: {
             url: data.uri,
+            detail: 'auto'
         },
     };
 
