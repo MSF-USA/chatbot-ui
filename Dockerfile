@@ -3,8 +3,6 @@ FROM node:22-alpine AS base
 WORKDIR /app
 COPY package*.json ./
 
-ENV PANDOC_VERSION "3.2.1"
-
 # Install dependencies for Pandoc
 RUN apk add --no-cache curl
 
@@ -28,8 +26,10 @@ FROM node:22-alpine AS production
 WORKDIR /app
 
 # pdftotext package
-RUN apk add --no-cache poppler poppler-dev poppler-utils pandoc libxml2 libxslt zlib fontconfig ttf-dejavu \
-    shared-mime-info libc6-compat glib zip unzip ghostscript
+RUN apk add --no-cache poppler poppler-dev poppler-utils libxml2 libxslt zlib fontconfig ttf-dejavu \
+    shared-mime-info libc6-compat glib zip unzip ghostscript curl
+
+RUN curl -L "https://github.com/jgm/pandoc/releases/download/3.2.1/pandoc-3.2.1-linux-amd64.tar.gz" | tar xz --strip-components 1 -C /usr/local
 
 RUN chmod 1777 /tmp
 
