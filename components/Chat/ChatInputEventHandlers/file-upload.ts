@@ -43,7 +43,7 @@ export function onFileUpload(
 
       fetch(`/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`, {
         method: "POST",
-        body: formData,
+        body: base64Chunk,
         headers: {
           "x-file-name": encodedFileName
         }

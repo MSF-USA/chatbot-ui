@@ -82,12 +82,12 @@ export async function POST(request: NextRequest) {
 
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
 
-    const decodedData = Buffer.from(data, 'base64');
+    const decodedData = Buffer.from(data, 'base64')
 
 
     return await blobStorageClient.upload(
       `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,
-      data,
+      decodedData,
       {
         blobHTTPHeaders: {
           blobContentType: contentType,
@@ -101,11 +101,3 @@ export async function POST(request: NextRequest) {
   const fileHash: string = fileURI.split('/').pop() ?? fileURI.split('/')[fileURI.split('/').length-1];
   return NextResponse.json({ message: 'File uploaded', uri: fileURI });
 }
-
-// export const config = {
-//   api: {
-//     bodyParser: {
-//       sizeLimit: '50mb',
-//     },
-//   },
-// };
