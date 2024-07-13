@@ -102,10 +102,10 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ message: 'File uploaded', uri: fileURI });
 }
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '50mb',
-    },
-  },
-};
+// export const config = {
+//   api: {
+//     bodyParser: {
+//       sizeLimit: '50mb',
+//     },
+//   },
+// };
