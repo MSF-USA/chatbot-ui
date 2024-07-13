@@ -29,8 +29,9 @@ WORKDIR /app
 
 # pdftotext package
 RUN apk add --no-cache poppler poppler-dev poppler-utils pandoc libxml2 libxslt zlib fontconfig ttf-dejavu \
-    shared-mime-info libc6-compat
+    shared-mime-info libc6-compat glib zip unzip ghostscript
 
+RUN chmod 1777 /tmp
 
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=build /app/.next ./.next
