@@ -2,6 +2,7 @@ import {FileMessageContent, ImageMessageContent, Message, TextMessageContent} fr
 import {isFileConversation, isImageConversation} from "@/utils/app/chat";
 import {getBase64FromImageURL} from "@/utils/app/image";
 import {getBlobBase64String} from "@/utils/server/blob";
+import {JWT} from "next-auth";
 
 type ContentType = 'text' | 'image' | 'file'
 
@@ -25,7 +26,7 @@ export const getMessageContentType = (
 
 
 export const getMessagesToSend = async (
-  messages: Message[], encoding: any, promptLength: number, tokenLimit: number
+  messages: Message[], encoding: any, promptLength: number, tokenLimit: number, token: JWT
 ): Promise<Message[]> => {
   const conversationType: ContentType = getMessageContentType(messages[messages.length - 1].content);
   const fileConversation: boolean = isFileConversation(messages);
@@ -37,7 +38,7 @@ export const getMessagesToSend = async (
     const isLastMessage: boolean = messages.length - 1 === i;
 
     if (Array.isArray(message.content)) {
-      message.content = await processMessageContent(message.content, conversationType, isLastMessage);
+      message.content = await processMessageContent(message.content, conversationType, isLastMessage, token);
     } else if (typeof message.content === 'string') {
       /* pass */
     } else if (
@@ -58,7 +59,8 @@ export const getMessagesToSend = async (
 const processMessageContent = async (
   content: (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[],
   conversationType: ContentType,
-  isLastMessageInConversation: boolean
+  isLastMessageInConversation: boolean,
+  token: JWT,
 ): Promise<(TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]> => {
   let allText: string = '';
 
@@ -78,7 +80,7 @@ const processMessageContent = async (
       contentSection.text = contentTypePrefix;
       allText += contentTypePrefix;
     } else if (conversationType === 'image' && contentSection?.type === "image_url") {
-      const imageUrl: string = await processImageUrl(contentSection as ImageMessageContent);
+      const imageUrl: string = await processImageUrl(contentSection as ImageMessageContent, token);
       allText += imageUrl;
       contentSection.image_url.url = imageUrl;
     }
@@ -97,7 +99,7 @@ const getContentTypePrefix = (contentType: ContentType): string => {
   return '';
 };
 
-const processImageUrl = async (contentSection: ImageMessageContent): Promise<string> => {
+const processImageUrl = async (contentSection: ImageMessageContent, token: JWT): Promise<string> => {
   const id: string | undefined = contentSection.image_url.url.split('/').pop();
   if (!id || id.trim().length === 0) {
     throw new Error(`Image ID ${id} is not valid`);
@@ -106,7 +108,7 @@ const processImageUrl = async (contentSection: ImageMessageContent): Promise<str
   let url: string;
   try {
     url = await getBlobBase64String(
-      'anonymous',
+      (token as any).userId ?? 'anonymous',
       contentSection.image_url.url.split('/')[contentSection.image_url.url.split('/').length - 1],
       "images"
     )

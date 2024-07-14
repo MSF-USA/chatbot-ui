@@ -204,17 +204,18 @@ export default class ChatService {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
+    const token= (await getToken({ req })) as JWT | null;
+    if (!token) throw new Error("Could not pull token!");
+
     const prompt_tokens = encoding.encode(promptToSend);
     const messagesToSend: Message[] = await getMessagesToSend(
       messages,
       encoding,
       prompt_tokens.length,
-      model.tokenLimit
+      model.tokenLimit,
+      token
     );
     encoding.free();
-
-    const token= (await getToken({ req })) as JWT | null;
-    if (!token) throw new Error("Could not pull token!");
 
     if (needsToHandleFiles) {
       return this.handleFileConversation(messagesToSend, token, model.id);
