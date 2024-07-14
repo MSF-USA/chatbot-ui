@@ -84,16 +84,18 @@ const handler = async (
 
     const prompt_tokens = encoding.encode(promptToSend);
 
+    const token: JWT | null = await (getToken({ req }) as Promise<JWT | null>);
+    if (!token) throw new Error("Could not pull token!");
+
     const messagesToSend: Message[] = await getMessagesToSend(
       messages,
       encoding,
       prompt_tokens.length,
-      model.tokenLimit
+      model.tokenLimit,
+      token
     );
     encoding.free();
 
-    const token: JWT | null = await (getToken({ req }) as Promise<JWT | null>);
-    if (!token) throw new Error("Could not pull token!");
 
     const openAIArgs: any = {
       baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
