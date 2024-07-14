@@ -20,13 +20,27 @@ const disallowedMimeTypes: string[] = [
   'application/x-7z-compressed',
   'application/x-tar',
   'application/gzip',
-  'application/x-iso9660-image'
+  'application/x-iso9660-image',
+  'application/octet-stream'
 ];
 
 function isFileAllowed(file: File): boolean {
   const extension = '.' + file.name.split('.')[file.name.split('.').length-1].toLowerCase()
   return !disallowedExtensions.includes(extension) && !disallowedMimeTypes.includes(file.type);
 }
+
+const unsupportedExtensions: string[] = [
+  '.mp3', '.wav', '.ogg', '.flac', '.m4a', '.aac',
+  '.mp4', '.avi', '.mov', '.wmv', '.flv', '.mkv', '.webm'
+];
+
+function isFileSupported(file: File): boolean {
+  const extension = '.' + file.name.split('.').pop()?.toLowerCase();
+  return !(file.type.startsWith('audio/') ||
+    file.type.startsWith('video/') ||
+    unsupportedExtensions.includes(extension));
+}
+
 
 export function onFileUpload(
   event: React.ChangeEvent<any>,
@@ -40,6 +54,11 @@ export function onFileUpload(
 
   if (!isFileAllowed(file)){
     toast.error(`Invalid file type provided: ${file.name}`);
+    return;
+  }
+
+  if (!isFileSupported(file)){
+    toast.error(`This file type is currently unsupported.`);
     return;
   }
 
