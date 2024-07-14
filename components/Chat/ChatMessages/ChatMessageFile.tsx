@@ -1,6 +1,6 @@
 import {FileMessageContent, ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
 import {FC, useEffect, useRef, useState} from "react";
-import {IconRobot, IconUser} from "@tabler/icons-react";
+import {IconDownload, IconRobot, IconUser} from "@tabler/icons-react";
 import FileIcon from "@/components/Icons/file";
 
 export interface ChatMessageFileProps {
@@ -12,6 +12,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
     const [text, setText] = useState<TextMessageContent | null>(null);
     const [fileUrl, setFileUrl] = useState<string | null>(null);
     const [filename, setFilename] = useState<string | null>(null);
+    const [downloadIconOpacity, setDownloadIconOpacity] = useState<number>(50);
     const fileNameRef = useRef<HTMLSpanElement>(null);
 
 
@@ -50,12 +51,14 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
             if (element.offsetWidth < element.scrollWidth) {
                 element.style.animation = `scroll-filename ${element.scrollWidth / 50}s linear infinite`;
             }
+            setDownloadIconOpacity(100)
         }
     }
 
     const handleMouseLeave = () => {
         if (fileNameRef.current) {
             fileNameRef.current.style.animation = 'none';
+            setDownloadIconOpacity(50)
         }
     }
 
@@ -86,12 +89,13 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({message}) => {
                 {fileUrl && filename &&
                   <span
                     ref={fileNameRef}
-                    className="text-right flex-grow truncate"
+                    className="text-left flex-grow truncate"
                   >
                         {filename}
                     </span>
 
                 }
+                <IconDownload className={`opacity-${downloadIconOpacity}`} />
             </div>
         </div>
         <div
