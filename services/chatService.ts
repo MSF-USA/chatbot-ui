@@ -20,6 +20,7 @@ import {getMessagesToSend} from "@/utils/server/chat";
 import {getToken} from "next-auth/jwt";
 import {JWT} from "next-auth";
 import {parseAndQueryFileOpenAI} from "@/utils/app/documentSummary";
+import {AzureBlobStorage, BlobProperty} from "@/utils/server/blob";
 
 
 /**
@@ -84,7 +85,7 @@ export default class ChatService {
     const filePath = `/tmp/${filename}`;
 
     try {
-      await this.downloadFile(fileUrl, filePath);
+      await this.downloadFile(fileUrl, filePath, token);
       console.log("File downloaded successfully.");
 
       const fileBuffer = fs.readFileSync(filePath);
@@ -118,37 +119,16 @@ export default class ChatService {
    * @param {string} filePath - The path where the downloaded file will be saved.
    * @returns {Promise<void>} A promise that resolves when the file is successfully downloaded.
    */
-  private async downloadFile(fileUrl: string, filePath: string): Promise<void> {
-    const response = await fetch(fileUrl);
-    const fileStream = fs.createWriteStream(filePath);
+  private async downloadFile(fileUrl: string, filePath: string, token: JWT): Promise<void> {
+    const userId: string = (token as any).userId ?? 'anonymous';
+    const remoteFilepath = `${userId}/uploads/files`;
+    const id: string | undefined = fileUrl.split('/').pop()
+    if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
 
-    if (!response.body) throw new Error("Could not find file URL!");
+    const blobStorage = new AzureBlobStorage();
+    const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.BLOB) as Promise<Buffer>);
 
-    const readableStream = new ReadableStream({
-      start(controller) {
-        const reader = response.body!.getReader();
-        function push() {
-          reader.read().then(({ done, value }) => {
-            if (done) {
-              controller.close();
-              return;
-            }
-            controller.enqueue(value);
-            push();
-          });
-        }
-        push();
-      },
-    });
-
-    const nodeReadableStream = Readable.fromWeb(readableStream as any);
-    const writableStream = fs.createWriteStream(filePath);
-
-    await new Promise<void>((resolve, reject) => {
-      nodeReadableStream.pipe(writableStream);
-      writableStream.on("finish", resolve);
-      writableStream.on("error", reject);
-    });
+    fs.writeFile(filePath, blob, ()=>null);
   }
 
   /**
