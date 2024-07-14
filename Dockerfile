@@ -43,5 +43,10 @@ COPY --from=build /app/next-i18next.config.js ./next-i18next.config.js
 # Expose the port the app will run on
 EXPOSE 3000
 
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
+RUN chown -R appuser:appgroup /app
+USER appuser
+
+
 # Start the application
 CMD ["npm", "start"]
