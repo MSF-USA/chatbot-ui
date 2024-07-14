@@ -25,7 +25,7 @@ import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations} from '@/utils/app/conversation';
 import {throttle} from '@/utils/data/throttle';
 
-import {ChatBody, Conversation, Message, MessageType, TextMessageContent} from '@/types/chat';
+import {ChatBody, Conversation, FileMessageContent, Message, MessageType, TextMessageContent} from '@/types/chat';
 import {Plugin} from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -176,27 +176,44 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   const setConversationTitle = (
     updatedConversation: Conversation,
-    message: Message,): Conversation => {
-    let content;
-    if (typeof message.content === "string")
-      content = message.content;
-    else if (Array.isArray(message.content) && message.content.some(section => section.type === 'image_url'))
-      content = 'User uploaded image';
-    else if (Array.isArray(message.content) && message.content.some(section => section.type === 'file_url'))
-      content = 'User uploaded a file';
-    else if ((message.content as TextMessageContent)?.type === 'text')
-      content = (message.content as TextMessageContent).text
-    else
-      throw new Error(`Invalid message content type: ${message.content?.toString() ?? message.content}`)
-    const customName =
-      content.length > 30 ? content.substring(0, 30) + '...' : content;
-    updatedConversation = {
-      ...updatedConversation,
-      name: customName,
-    };
+    message: Message,
+  ): Conversation => {
+    // TODO: Add generated title option with these as fallback, similar to how other LLM frontends work
+    let title = '';
+    if (typeof message.content === "string") {
+      title = message.content.substring(0, 30);
+    } else if (Array.isArray(message.content)) {
+      const contentTypes = message.content.map(section => section.type);
+      if (contentTypes.includes('image_url')) {
+        title = 'Image Chat';
+      } else if (contentTypes.includes('file_url')) {
+        const fileSection = (
+          message.content as (FileMessageContent | TextMessageContent)[]
+        ).find(section => (section as FileMessageContent).originalFilename) as FileMessageContent;
+        title = fileSection?.originalFilename
+          ? `File: ${fileSection.originalFilename.substring(0, 20)}`
+          : 'File Chat';
+      } else {
+        const textSection = (
+          message.content as (TextMessageContent | any)[]
+        ).find(section => (section as TextMessageContent).type === 'text') as TextMessageContent;
+        title = textSection?.text ? textSection.text.substring(0, 30) : 'New Chat';
+      }
+    } else if ((message.content as TextMessageContent)?.type === 'text') {
+      title = (message.content as TextMessageContent).text.substring(0, 30);
+    } else {
+      title = 'New Chat';
+    }
 
-    return updatedConversation;
+    title = title.trim().length > 0 ? title : 'New Chat';
+    title = title.length > 30 ? title.substring(0, 30) + '...' : title;
+
+    return {
+      ...updatedConversation,
+      name: title,
+    };
   };
+
 
   const debouncedUpdateConversation = useCallback(
     debounce((content: string, updateConversation: CallableFunction) => {
