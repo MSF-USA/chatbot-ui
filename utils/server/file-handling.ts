@@ -5,6 +5,29 @@ import fs from "fs";
 
 const execAsync = promisify(exec);
 
+async function retryRemoveFile(filePath: string, maxRetries = 3): Promise<void> {
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      await fs.promises.unlink(filePath);
+      console.log(`Successfully removed file: ${filePath}`);
+      return;
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        console.log(`File not found, considered as removed: ${filePath}`);
+        return;
+      }
+      if (attempt === maxRetries - 1) {
+        console.warn(`Failed to remove file after ${maxRetries} attempts: ${filePath}`);
+        return;
+      }
+      console.warn(`Attempt ${attempt + 1} to remove file failed. Retrying...`);
+      await delay(Math.pow(2, attempt) * 1000); // Exponential backoff: 1s, 2s, 4s
+    }
+  }
+}
+
 /**
  * Converts a file using Pandoc.
  *
@@ -26,16 +49,13 @@ export async function convertWithPandoc(inputPath: string, outputFormat: string)
     throw error;
   } finally {
     // Clean up temporary files
-    try {
-      await execAsync(`rm "${inputPath}" "${outputPath}"`);
-    } catch (removeFileError: any) {
-      console.warn(`Error removing converted file with Pandoc: ${removeFileError}`);
-      if (removeFileError.message.indexOf('File not found') === -1
-        && removeFileError.message.indexOf('No such file or directory') === -1
-      ) {
-        throw removeFileError
-      }
-    }
+    retryRemoveFile(inputPath).catch(error => {
+      console.error(`Failed to remove temporary file ${inputPath}:`, error);
+    });
+    retryRemoveFile(outputPath).catch(error => {
+      console.error(`Failed to remove temporary file ${outputPath}:`, error);
+    });
+
   }
 }
 
@@ -54,8 +74,6 @@ export async function loadDocument(file: File): Promise<string> {
   const buffer = Buffer.from(await file.arrayBuffer());
   await fs.promises.writeFile(tempFilePath, buffer);
 
-  console.log("mimeType", mimeType)
-
   switch (true) {
     case mimeType.startsWith('application/pdf'):
       text = await pdfToText(tempFilePath);
@@ -70,11 +88,15 @@ export async function loadDocument(file: File): Promise<string> {
     case mimeType.startsWith('application/epub+zip'):
       text = await convertWithPandoc(tempFilePath, 'markdown');
       break;
-    case mimeType.startsWith('text/plain') || mimeType.startsWith('text/') || mimeType.startsWith('application/csv')
+    case mimeType.startsWith('text/') || mimeType.startsWith('application/csv') || file.name.endsWith('.py') || file.name.endsWith('.sql')
     || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml'):
     default:
       try {
         text = await file.text()
+        if (!text) {
+          // If file.text() fails or returns empty, read from the temp file
+          text = await fs.promises.readFile(tempFilePath, 'utf8');
+        }
       } catch (error) {
         console.error(`Could not parse text from ${file.name}`);
         throw error;
