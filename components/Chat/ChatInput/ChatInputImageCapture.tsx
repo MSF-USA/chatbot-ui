@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import {useTranslation} from "next-i18next";
 import {CameraModal} from "@/components/Chat/ChatInput/CameraModal";
 import {onImageUpload} from "@/components/Chat/ChatInputEventHandlers/image-upload";
-
+import {isMobile} from "@/utils/app/env";
 
 
 
@@ -62,11 +62,40 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const [isCameraOpen, setIsCameraOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [hasCameraSupport, setHasCameraSupport] = useState(false);
+
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
-    return (
+  useEffect(() => {
+    const checkCameraSupport = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasCamera = devices.some(device => device.kind === 'videoinput');
+        setHasCameraSupport(hasCamera);
+      } catch (error) {
+        console.error("Error checking camera support:", error);
+        setHasCameraSupport(false);
+      }
+    };
+
+    checkCameraSupport();
+  }, []);
+
+  const handleCameraButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isMobile()) {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    } else {
+      onImageUploadButtonClick(e, videoRef, canvasRef, fileInputRef, setIsCameraOpen).then(r => null);
+      openModal();
+    }
+  };
+
+
+  return (
         <>
             {/*<video ref={videoRef} autoPlay playsInline style={{ display: isCameraOpen ? "block" : "none" }} />*/}
             <canvas ref={canvasRef} style={{ display: "none" }} />
@@ -74,19 +103,15 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
                 type="file"
                 ref={fileInputRef}
                 accept="image/*"
+                capture={'environment'}
                 onChange={(event) => {
                     onImageUpload(event, prompt, setFilePreviews, setSubmitType, setImageFieldValue);
                 }}
                 style={{ display: "none" }}
             />
-            {!isCameraOpen && (
+            {!isCameraOpen && hasCameraSupport && (
                 <button
-                    onClick={(e) => {
-                        onImageUploadButtonClick(e, videoRef, canvasRef, fileInputRef, setIsCameraOpen).then(
-                            r => null
-                        );
-                        openModal()
-                    }}
+                    onClick={handleCameraButtonClick}
                     className="open-photo-button"
                 >
                     <IconCamera className="bg-[#343541] rounded h-5 w-5" />
@@ -104,27 +129,6 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
                 setSubmitType={setSubmitType}
                 setImageFieldValue={setImageFieldValue}
             />
-            {/*{isCameraOpen && (*/}
-            {/*    <button*/}
-            {/*        onClick={() => {*/}
-            {/*            onTakePhotoButtonClick(*/}
-            {/*                videoRef,*/}
-            {/*                canvasRef,*/}
-            {/*                fileInputRef,*/}
-            {/*                setIsCameraOpen,*/}
-            {/*                setFilePreviews,*/}
-            {/*                setSubmitType,*/}
-            {/*                setImageFieldValue,*/}
-            {/*                closeModal*/}
-            {/*            );*/}
-            {/*        }}*/}
-            {/*        className="take-photo-button"*/}
-            {/*    >*/}
-            {/*        /!*<IconPhotoCamera className="bg-[#343541] rounded h-5 w-5" />*!/*/}
-            {/*        <IconCamera className="bg-[#343541] rounded h-5 w-5" />*/}
-            {/*        <span className="sr-only">Take Photo</span>*/}
-            {/*    </button>*/}
-            {/*)}*/}
         </>
     );
 };
