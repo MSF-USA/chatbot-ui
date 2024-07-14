@@ -60,6 +60,24 @@ export default class ChatService {
     return openAIArgs;
   }
 
+  private async retryReadFile(filePath: string, maxRetries: number = 2): Promise<Buffer> {
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return fs.readFileSync(filePath);
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        console.warn(`Attempt ${attempt + 1} to read file failed. Retrying...`);
+        await delay(Math.pow(2, attempt) * 1000); // Exponential backoff: 1s, 2s, 4s
+      }
+    }
+    throw new Error("Failed to read file after maximum retries");
+  }
+
+
   /**
    * Handles a file conversation by processing the file and returning a response.
    * @param {Message[]} messagesToSend - The messages to send in the conversation.
@@ -88,8 +106,8 @@ export default class ChatService {
       await this.downloadFile(fileUrl, filePath, token);
       console.log("File downloaded successfully.");
 
-      const fileBuffer = fs.readFileSync(filePath);
-      const file = new File([fileBuffer], filename, {});
+      const fileBuffer: Buffer = await this.retryReadFile(filePath);
+      const file: File = new File([fileBuffer], filename, {});
 
       const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({file, prompt, token, modelId})//""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
 
