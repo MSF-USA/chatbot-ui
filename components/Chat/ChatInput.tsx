@@ -132,6 +132,9 @@ export const ChatInput = ({
 
   const handleSend = () => {
     if (messageIsStreaming) {
+      if (filePreviews.length > 0) {
+        setFilePreviews([]);
+      }
       return;
     }
     const content: string | TextMessageContent | (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[] = buildContent()
