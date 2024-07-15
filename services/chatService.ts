@@ -39,6 +39,35 @@ export default class ChatService {
   }
 
   /**
+   * Wrapper function to implement exponential backoff retry logic.
+   * @param {Function} fn - The function to retry.
+   * @param {number} maxRetries - Maximum number of retries.
+   * @param {number} baseDelay - Base delay in milliseconds.
+   * @returns {Promise<any>} - The result of the function call.
+   */
+  private async retryWithExponentialBackoff<T>(
+    fn: () => Promise<T>,
+    maxRetries: number = 3,
+    baseDelay: number = 1000
+  ): Promise<T> {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        return await fn();
+      } catch (error) {
+        if (attempt === maxRetries) {
+          throw error;
+        }
+        const delay = Math.min(Math.pow(2, attempt) * baseDelay, 10000); // Max delay of 10 seconds
+        console.warn(`Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+    throw new Error("Failed after maximum retries");
+  }
+
+
+
+  /**
    * Retrieves the OpenAI API arguments based on the provided token and model.
    * @param {JWT} token - The JWT token for authentication.
    * @param {string} modelToUse - The ID of the model to use.
@@ -84,51 +113,54 @@ export default class ChatService {
    * @returns {Promise<Response>} A promise that resolves to the response containing the processed file content.
    */
   private async handleFileConversation(messagesToSend: Message[], token: JWT, modelId: string): Promise<Response> {
-    const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
-    const content = lastMessage.content as Array<TextMessageContent | FileMessageContent>;
+    return this.retryWithExponentialBackoff(async () => {
 
-    let prompt: string | null = null;
-    let fileUrl: string | null = null;
-    content.forEach((section) => {
-      if (section.type === "text") prompt = section.text;
-      else if (section.type === "file_url") fileUrl = section.url;
-      else throw new Error(`Unexpected content section type: ${JSON.stringify(section)}`);
-    });
+      const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
+      const content = lastMessage.content as Array<TextMessageContent | FileMessageContent>;
 
-    if (!prompt) throw new Error("Could not find text content type!");
-    if (!fileUrl) throw new Error("Could not find file URL!");
+      let prompt: string | null = null;
+      let fileUrl: string | null = null;
+      content.forEach((section) => {
+        if (section.type === "text") prompt = section.text;
+        else if (section.type === "file_url") fileUrl = section.url;
+        else throw new Error(`Unexpected content section type: ${JSON.stringify(section)}`);
+      });
 
-    const filename = (fileUrl as string).split("/").pop();
-    if (!filename) throw new Error("Could not parse filename from URL!");
-    const filePath = `/tmp/${filename}`;
+      if (!prompt) throw new Error("Could not find text content type!");
+      if (!fileUrl) throw new Error("Could not find file URL!");
 
-    try {
-      await this.downloadFile(fileUrl, filePath, token);
-      console.log("File downloaded successfully.");
+      const filename = (fileUrl as string).split("/").pop();
+      if (!filename) throw new Error("Could not parse filename from URL!");
+      const filePath = `/tmp/${filename}`;
 
-      const fileBuffer: Buffer = await this.retryReadFile(filePath);
-      const file: File = new File([fileBuffer], filename, {});
-
-      const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({file, prompt, token, modelId})//""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
-
-      console.log("File summarized successfully.");
-      return new StreamingTextResponse(stream);
-
-    } catch (error) {
-      console.error("Error processing the file:", error);
-      throw error;
-    } finally {
       try {
-        fs.unlinkSync(filePath);
-      } catch (fileUnlinkError) {
-        if (fileUnlinkError instanceof Error && fileUnlinkError.message.startsWith('ENOENT: no such file or directory, unlink')) {
-          console.warn('File not found, but this is acceptable.');
-        } else {
-          throw fileUnlinkError
-        }
+        await this.downloadFile(fileUrl, filePath, token);
+        console.log("File downloaded successfully.");
 
+        const fileBuffer: Buffer = await this.retryReadFile(filePath);
+        const file: File = new File([fileBuffer], filename, {});
+
+        const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({file, prompt, token, modelId})//""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
+
+        console.log("File summarized successfully.");
+        return new StreamingTextResponse(stream);
+
+      } catch (error) {
+        console.error("Error processing the file:", error);
+        throw error;
+      } finally {
+        try {
+          fs.unlinkSync(filePath);
+        } catch (fileUnlinkError) {
+          if (fileUnlinkError instanceof Error && fileUnlinkError.message.startsWith('ENOENT: no such file or directory, unlink')) {
+            console.warn('File not found, but this is acceptable.');
+          } else {
+            throw fileUnlinkError
+          }
+
+        }
       }
-    }
+    });
   }
 
   /**
@@ -163,18 +195,20 @@ export default class ChatService {
     temperatureToUse: number,
     token: JWT
   ): Promise<StreamingTextResponse> {
-    const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-    const azureOpenai = new OpenAI(openAIArgs);
-    const response = await azureOpenai.chat.completions.create({
-      model: modelToUse,
-      messages: messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-      temperature: temperatureToUse,
-      max_tokens: null,
-      stream: true,
-    });
+    return this.retryWithExponentialBackoff(async () => {
+      const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
+      const azureOpenai = new OpenAI(openAIArgs);
+      const response = await azureOpenai.chat.completions.create({
+        model: modelToUse,
+        messages: messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+        temperature: temperatureToUse,
+        max_tokens: null,
+        stream: true,
+      });
 
-    const stream: ReadableStream<any> = OpenAIStream(response);
-    return new StreamingTextResponse(stream);
+      const stream: ReadableStream<any> = OpenAIStream(response);
+      return new StreamingTextResponse(stream);
+    });
   }
 
   /**
