@@ -2,6 +2,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import {lookup} from "mime-types";
 import fs from "fs";
+import path from "path";
 
 const execAsync = promisify(exec);
 
@@ -64,6 +65,45 @@ async function pdfToText(inputPath: string): Promise<string> {
   return stdout;
 }
 
+async function xlsxToText(inputPath: string): Promise<string> {
+  const tempDir = await fs.promises.mkdtemp('/tmp/xlsx-');
+  const baseName = path.basename(inputPath, path.extname(inputPath));
+  const outputPattern = path.join(tempDir, `${baseName}_.csv`);
+
+  try {
+    // Convert XLSX to multiple CSV files (one per sheet)
+    await execAsync(`ssconvert --export-file-per-sheet "${inputPath}" "${outputPattern}"`);
+
+    // Read all generated CSV files
+    const files = await fs.promises.readdir(tempDir);
+    let result = '';
+
+    const filePattern: string | undefined = outputPattern.split('/').pop()
+
+    for (const file of files) {
+      if (filePattern && file.indexOf(filePattern) > -1) {
+        const sheetName = file.replace(`${baseName}_`, '').replace('.csv', '');
+        const content = await fs.promises.readFile(path.join(tempDir, file), 'utf8');
+
+        result += `\n\n--- START OF SHEET: ${sheetName} ---\n\n`;
+        result += content;
+        result += `\n\n--- END OF SHEET: ${sheetName} ---\n\n`;
+      }
+    }
+
+    return result;
+  } finally {
+    // Clean up temporary directory and files
+    const files = await fs.promises.readdir(tempDir);
+    for (const file of files) {
+      await retryRemoveFile(path.join(tempDir, file));
+    }
+    await fs.promises.rmdir(tempDir);
+  }
+}
+
+
+
 
 export async function loadDocument(file: File): Promise<string> {
   let text, content, loader;
@@ -81,8 +121,9 @@ export async function loadDocument(file: File): Promise<string> {
     case mimeType.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
       text = await convertWithPandoc(tempFilePath, 'markdown');
       break;
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'):
-      throw new Error("Not supported file type");
+    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') || file.name.endsWith('.xlsx'):
+      text = await xlsxToText(tempFilePath)
+      break
     case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation'):
       throw new Error("Not supported file type");
     case mimeType.startsWith('application/epub+zip'):
