@@ -128,10 +128,31 @@ export const ChatMessage: FC<Props> = memo(({ message, messageIndex, onEdit }) =
   if (isImageMessage) {
     return <ChatMessageImage
         message={message}
+        handleDeleteMessage={handleDeleteMessage}
+        onEdit={onEdit as any}
+        handleEditMessage={handleEditMessage}
+        handleInputChange={handleInputChange}
+        handlePressEnter={handlePressEnter}
+        setIsTyping={setIsTyping}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        toggleEditing={toggleEditing}
+        textareaRef={textareaRef}
+
     />;
   } else if (isFileMessage) {
     return <ChatMessageFile
         message={message}
+        handleDeleteMessage={handleDeleteMessage}
+        onEdit={onEdit as any}
+        handleEditMessage={handleEditMessage}
+        handleInputChange={handleInputChange}
+        handlePressEnter={handlePressEnter}
+        setIsTyping={setIsTyping}
+        isEditing={isEditing}
+        setIsEditing={setIsEditing}
+        toggleEditing={toggleEditing}
+        textareaRef={textareaRef}
       />
   } else if ((message.messageType === MessageType.TEXT || message.messageType === undefined) && typeof message.content === 'string') {
     return <ChatMessageText
