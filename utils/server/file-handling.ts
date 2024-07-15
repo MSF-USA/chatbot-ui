@@ -102,6 +102,42 @@ async function xlsxToText(inputPath: string): Promise<string> {
   }
 }
 
+async function pptToText(inputPath: string): Promise<string> {
+  // TODO: Possibly find a way to do this without converting to PDF first
+  const outputDir = await fs.promises.mkdtemp('/tmp/ppt-');
+  const baseName = path.basename(inputPath, path.extname(inputPath));
+  const pdfPath = path.join(outputDir, `${baseName}.pdf`);
+
+  try {
+    const { stdout, stderr } = await execAsync(`libreoffice --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`);
+    console.log('LibreOffice stdout:', stdout);
+    if (stderr) {
+      console.warn('LibreOffice stderr:', stderr);
+    }
+
+    // Check if the PDF file exists
+    const files = await fs.promises.readdir(outputDir);
+    console.log('Files in output directory:', files);
+
+    if (!files.includes(`${baseName}.pdf`)) {
+      throw new Error(`PDF file not found in ${outputDir}`);
+    }
+
+    // Extract text from the PDF
+    const text = await pdfToText(pdfPath);
+    return text;
+  } catch (error) {
+    console.error(`Error converting PPT/PPTX to PDF and extracting text: ${error}`);
+    throw error;
+  } finally {
+    // Clean up temporary files
+    retryRemoveFile(pdfPath).catch(error => {
+      console.error(`Failed to remove temporary file ${pdfPath}:`, error);
+    });
+  }
+}
+
+
 
 
 
@@ -124,13 +160,15 @@ export async function loadDocument(file: File): Promise<string> {
     case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') || file.name.endsWith('.xlsx'):
       text = await xlsxToText(tempFilePath)
       break
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation'):
-      throw new Error("Not supported file type");
+    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation')
+    || mimeType.startsWith('application/vnd.ms-powerpoint'):
+      text = await pptToText(tempFilePath);
+      break
     case mimeType.startsWith('application/epub+zip'):
       text = await convertWithPandoc(tempFilePath, 'markdown');
       break;
     case mimeType.startsWith('text/') || mimeType.startsWith('application/csv') || file.name.endsWith('.py') || file.name.endsWith('.sql')
-    || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml'):
+    || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml') || file.name.endsWith('.tex'):
     default:
       try {
         text = await file.text()
