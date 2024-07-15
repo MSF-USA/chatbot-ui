@@ -313,7 +313,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         if (!response.ok) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
-          toast.error(response.statusText);
+          let errorResp: any;
+          try {
+            errorResp = await response.json()
+          } catch (errorResponsePullError) {
+            errorResp = {}
+          }
+          toast.error(response.statusText ?? errorResp.error ?? "Response failed");
           return;
         }
         const data = response.body;
