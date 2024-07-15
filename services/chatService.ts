@@ -18,9 +18,11 @@ import {checkIsModelValid, isFileConversation, isImageConversation} from "@/util
 import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
 import {getMessagesToSend} from "@/utils/server/chat";
 import {getToken} from "next-auth/jwt";
-import {JWT} from "next-auth";
+import {JWT, Session} from "next-auth";
 import {parseAndQueryFileOpenAI} from "@/utils/app/documentSummary";
 import {AzureBlobStorage, BlobProperty} from "@/utils/server/blob";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 
 /**
@@ -112,7 +114,9 @@ export default class ChatService {
    * @param {Message[]} messagesToSend - The messages to send in the conversation.
    * @returns {Promise<Response>} A promise that resolves to the response containing the processed file content.
    */
-  private async handleFileConversation(messagesToSend: Message[], token: JWT, modelId: string): Promise<Response> {
+  private async handleFileConversation(
+    messagesToSend: Message[], token: JWT, modelId: string, session: Session
+  ): Promise<Response> {
     return this.retryWithExponentialBackoff(async () => {
 
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
@@ -134,7 +138,7 @@ export default class ChatService {
       const filePath = `/tmp/${filename}`;
 
       try {
-        await this.downloadFile(fileUrl, filePath, token);
+        await this.downloadFile(fileUrl, filePath, token, session);
         console.log("File downloaded successfully.");
 
         const fileBuffer: Buffer = await this.retryReadFile(filePath);
@@ -169,8 +173,8 @@ export default class ChatService {
    * @param {string} filePath - The path where the downloaded file will be saved.
    * @returns {Promise<void>} A promise that resolves when the file is successfully downloaded.
    */
-  private async downloadFile(fileUrl: string, filePath: string, token: JWT): Promise<void> {
-    const userId: string = (token as any).userId ?? 'anonymous';
+  private async downloadFile(fileUrl: string, filePath: string, token: JWT, session: Session): Promise<void> {
+    const userId: string = (token as any).userId ?? session?.user?.id ?? 'anonymous';
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop()
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
@@ -193,7 +197,8 @@ export default class ChatService {
     modelToUse: string,
     messagesToSend: Message[],
     temperatureToUse: number,
-    token: JWT
+    token: JWT,
+    session: Session
   ): Promise<StreamingTextResponse> {
     return this.retryWithExponentialBackoff(async () => {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
@@ -238,6 +243,8 @@ export default class ChatService {
 
     const token= (await getToken({ req })) as JWT | null;
     if (!token) throw new Error("Could not pull token!");
+    const session: Session | null = (await getServerSession(authOptions as any))
+    if (!session) throw new Error("Could not pull session!");
 
     const prompt_tokens = encoding.encode(promptToSend);
     const messagesToSend: Message[] = await getMessagesToSend(
@@ -245,14 +252,15 @@ export default class ChatService {
       encoding,
       prompt_tokens.length,
       model.tokenLimit,
-      token
+      token,
+      session
     );
     encoding.free();
 
     if (needsToHandleFiles) {
-      return this.handleFileConversation(messagesToSend, token, model.id);
+      return this.handleFileConversation(messagesToSend, token, model.id, session);
     } else {
-      return this.handleChatCompletion(modelToUse, messagesToSend, temperatureToUse, token);
+      return this.handleChatCompletion(modelToUse, messagesToSend, temperatureToUse, token, session);
     }
   }
 }
