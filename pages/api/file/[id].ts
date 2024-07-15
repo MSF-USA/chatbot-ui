@@ -1,6 +1,9 @@
 import {NextApiRequest, NextApiResponse} from "next";
 import {AzureBlobStorage, BlobProperty, getBlobBase64String} from "@/utils/server/blob";
 import {getToken} from "next-auth/jwt";
+import {Session} from "next-auth";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 /**
  * Checks if the given identifier is a valid SHA-256 hash.
@@ -44,7 +47,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   // @ts-ignore
   const token: JWT = await getToken({req});
-  const userId: string = token.userId ?? 'anonymous';
+  const session: Session | null = await getServerSession(authOptions as any);
+  if (!session) throw new Error("Failed to pull session!");
+
+  // @ts-ignore
+  const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
   const remoteFilepath = `${userId}/uploads/${fileType}s`;
 
 

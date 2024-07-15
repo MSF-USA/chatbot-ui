@@ -4,7 +4,9 @@ import mime from 'mime-types';
 import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
 import { getEnvVariable } from "@/utils/app/env";
 import {getToken} from "next-auth/jwt";
-import {JWT} from "next-auth";
+import {JWT, Session} from "next-auth";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 const READABLE_FORMATS = ['.txt', '.csv', '.srt', '.vtt', '.json', '.log', ".xml", ".ini", ".markdown"];
 /*
@@ -19,6 +21,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   const token: JWT | null = await (getToken({req}) as Promise<JWT | null>)
   if (!token)
     throw new Error("Could not pull token!")
+
+  const session: Session | null = await getServerSession(authOptions as any);
+  if (!session) throw new Error("Failed to pull session!");
+
+  // @ts-ignore
+  const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
+
 
 
   const rawFilename = req.headers['x-file-name'] as string;
@@ -44,7 +53,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
     const splitData = dataString.split('\r\n\r\n');
     const fileContent = splitData[splitData.length - 1];
     const fileData = Buffer.from(fileContent, 'utf8');
-    const remoteFilepath = `${(token as any).userId ?? 'anonymous'}/uploads/files`
+    const remoteFilepath = `${userId}/uploads/files`
 
     if (READABLE_FORMATS.includes(`.${fileExtension}`) || (mimeType && mimeType.startsWith('text/'))) {
       try {

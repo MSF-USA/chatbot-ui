@@ -3,8 +3,10 @@ import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
 import { getEnvVariable } from "@/utils/app/env";
 import Hasher from "@/utils/app/hash";
 import { getToken } from "next-auth/jwt";
-import {JWT} from "next-auth";
+import {JWT, Session} from "next-auth";
 import {BadRequestError} from "openai";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -55,8 +57,12 @@ export async function POST(request: NextRequest) {
     const token: JWT | null = await getToken({ req: request });
     if (!token)
       throw new Error(`Token could not be pulled from request: ${request}`);
+
+    const session: Session | null = await getServerSession(authOptions as any);
+    if (!session) throw new Error("Failed to pull session!");
+
     // @ts-ignore
-    const userId: string = token.userId ?? 'anonymous';
+    const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
 
     let blobStorageClient: BlobStorage = new AzureBlobStorage(
       getEnvVariable('AZURE_BLOB_STORAGE_NAME'),

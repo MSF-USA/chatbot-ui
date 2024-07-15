@@ -3,6 +3,9 @@ import {AzureBlobStorage, BlobStorage} from "@/utils/server/blob";
 import {getEnvVariable} from "@/utils/app/env";
 import Hasher from "@/utils/app/hash";
 import {getToken} from "next-auth/jwt";
+import {JWT, Session} from "next-auth";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 const page = async (req: NextApiRequest, res: NextApiResponse) => {
     if (req.method === 'POST') {
@@ -26,9 +29,13 @@ const page = async (req: NextApiRequest, res: NextApiResponse) => {
         }
 
         const uploadImageToBlobStorage = async (data: string) => {
+            const token: JWT | null = (await getToken({req})) as JWT | null;
+            if (!token) throw new Error(`Token could not be pulled from request`);
+            const session: Session | null = await getServerSession(authOptions as any);
+            if (!session) throw new Error("Failed to pull session!");
+
             // @ts-ignore
-            const token: JWT = await getToken({req});
-            const userId: string = token.userId ?? 'anonymous';
+            const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
 
             let blobStorageClient: BlobStorage = new AzureBlobStorage(
                 getEnvVariable('AZURE_BLOB_STORAGE_NAME'),

@@ -32,12 +32,14 @@ import {
   isImageConversation,
 } from "@/utils/app/chat";
 import { ApimChatResponseDataStructure } from "@/types/apim";
-import { JWT } from "next-auth";
+import {JWT, Session} from "next-auth";
 import { getMessagesToSend } from "@/utils/server/chat";
 import { parseAndQueryFileLangchainOpenAI } from "@/utils/app/langchain";
 import fs from "fs";
 import { Readable } from "stream";
 import path from "path";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 const handler = async (
   req: NextApiRequest,
@@ -86,13 +88,16 @@ const handler = async (
 
     const token: JWT | null = await (getToken({ req }) as Promise<JWT | null>);
     if (!token) throw new Error("Could not pull token!");
+    const session: Session | null = await getServerSession(authOptions as any);
+    if (!session) throw new Error("Failed to pull session!");
 
     const messagesToSend: Message[] = await getMessagesToSend(
       messages,
       encoding,
       prompt_tokens.length,
       model.tokenLimit,
-      token
+      token,
+      session
     );
     encoding.free();
 
