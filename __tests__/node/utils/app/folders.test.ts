@@ -8,7 +8,7 @@ describe('saveFolders', () => {
 
     beforeEach(() => {
         // Assign folders before each test
-        folders = [{ id: '2345', name: 'Test', type: 'folder', children: [] }];
+        folders = [{ id: '2345', name: 'Test', type: 'chat' }];
 
         // Mock the localStorage
         (global as any).localStorage = {

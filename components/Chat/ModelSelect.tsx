@@ -1,10 +1,9 @@
 import { IconExternalLink } from '@tabler/icons-react';
-import { useContext } from 'react';
+import {FC, useContext} from 'react';
 
 import { useTranslation } from 'next-i18next';
 
 import { OpenAIModel } from '@/types/openai';
-
 
 import HomeContext from '@/pages/api/home/home.context';
 

@@ -17,12 +17,12 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ ses
 
   return (
     <SessionProvider session={session}>
-    <div className={inter.className}>
-      <Toaster />
-      <QueryClientProvider client={queryClient}>
-        <Component {...pageProps} />
-      </QueryClientProvider>
-    </div>
+      <div className={inter.className}>
+        <Toaster />
+        <QueryClientProvider client={queryClient}>
+          <Component {...pageProps} />
+        </QueryClientProvider>
+      </div>
     </SessionProvider>
   );
 }

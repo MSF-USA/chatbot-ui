@@ -1,14 +1,9 @@
+import {IconArrowDown, IconPlayerStop, IconRepeat, IconSend,} from '@tabler/icons-react';
 import {
-  IconArrowDown,
-  IconBolt,
-  IconBrandGoogle,
-  IconPlayerStop,
-  IconRepeat,
-  IconSend,
-} from '@tabler/icons-react';
-import {
+  Dispatch,
   KeyboardEvent,
   MutableRefObject,
+  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -16,17 +11,28 @@ import {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import {useTranslation} from 'next-i18next';
 
-import { Message } from '@/types/chat';
-import { Plugin } from '@/types/plugin';
-import { Prompt } from '@/types/prompt';
+import {
+  ChatInputSubmitTypes, FileMessageContent,
+  getChatMessageContent,
+  ImageMessageContent,
+  Message,
+  MessageType,
+  TextMessageContent
+} from '@/types/chat';
+import {Plugin} from '@/types/plugin';
+import {Prompt} from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
-
-import { PluginSelect } from './PluginSelect';
-import { PromptList } from './PromptList';
-import { VariableModal } from './VariableModal';
+import {PromptList} from './PromptList';
+import {VariableModal} from './VariableModal';
+import MicIcon from "@/components/Icons/mic";
+import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
+import ChatInputFile from "@/components/Chat/ChatInput/ChatInputFile";
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
+import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPreviews";
+import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -35,6 +41,8 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>;
   textareaRef: MutableRefObject<HTMLTextAreaElement | null>;
   showScrollDownButton: boolean;
+  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  filePreviews: string[];
 }
 
 export const ChatInput = ({
@@ -44,6 +52,8 @@ export const ChatInput = ({
   stopConversationRef,
   textareaRef,
   showScrollDownButton,
+  filePreviews,
+  setFilePreviews,
 }: Props) => {
   const { t } = useTranslation('chat');
 
@@ -53,20 +63,23 @@ export const ChatInput = ({
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
-  const [content, setContent] = useState<string>();
+  const [textFieldValue, setTextFieldValue] = useState<string>("");
+  const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | null>()
+  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [showPromptList, setShowPromptList] = useState(false);
-  const [activePromptIndex, setActivePromptIndex] = useState(0);
-  const [promptInputValue, setPromptInputValue] = useState('');
+  const [showPromptList, setShowPromptList] = useState<boolean>(false);
+  const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
+  const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [showPluginSelect, setShowPluginSelect] = useState(false);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
+  const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
   const [placeholderText, setPlaceholderText] = useState('');
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
-  const filteredPrompts = prompts.filter((prompt) =>
+  const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
     prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
   );
 
@@ -84,27 +97,66 @@ export const ChatInput = ({
       return;
     }
 
-    setContent(value);
+    setTextFieldValue(value);
     updatePromptListVisibility(value);
   };
 
+  const buildContent = () => {
+    if (submitType === 'text')
+      return textFieldValue;
+    else if (submitType === 'image') {
+      if (imageFieldValue)
+        return [
+            imageFieldValue,
+          {type: "text", text: textFieldValue} as TextMessageContent
+      ];
+      else
+        return [
+            {type: "text", text: textFieldValue} as TextMessageContent
+        ]
+    } else if (submitType === 'file') {
+      if (fileFieldValue) {
+        return [
+          fileFieldValue,
+          {type: "text", text: textFieldValue} as TextMessageContent
+        ]
+      } else {
+        return [
+          {type: "text", text: textFieldValue} as TextMessageContent
+        ]
+      }
+    } else {
+      throw new Error(`Invalid submit type for message: ${submitType}`);
+    }
+  }
+
   const handleSend = () => {
     if (messageIsStreaming) {
+      if (filePreviews.length > 0) {
+        setFilePreviews([]);
+      }
       return;
     }
+    const content: string | TextMessageContent | (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[] = buildContent()
 
-    if (!content) {
+    if (!textFieldValue) {
       alert(t('Please enter a message'));
       return;
     }
 
-    onSend({ role: 'user', content }, plugin);
-    setContent('');
+    onSend({
+      role: 'user', content, messageType: submitType ?? 'text'
+    }, plugin);
+    setTextFieldValue('')
+    setImageFieldValue(null)
+    setFileFieldValue(null)
     setPlugin(null);
 
-    if (window.innerWidth < 640 && textareaRef && textareaRef.current) {
+    if (window.innerWidth < 640 && textareaRef?.current) {
       textareaRef.current.blur();
     }
+
+    setSubmitType('text')
   };
 
   const handleStopConversation = () => {
@@ -125,10 +177,10 @@ export const ChatInput = ({
   const handleInitModal = () => {
     const selectedPrompt = filteredPrompts[activePromptIndex];
     if (selectedPrompt) {
-      setContent((prevContent) => {
-        const newContent = prevContent?.replace(
-          /\/\w*$/,
-          selectedPrompt.content,
+      setTextFieldValue((prevTextFieldValue) => {
+        const newContent = prevTextFieldValue?.replace(
+            /\/\w*$/,
+            selectedPrompt.content,
         );
         return newContent;
       });
@@ -137,40 +189,71 @@ export const ChatInput = ({
     setShowPromptList(false);
   };
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (showPromptList) {
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
-        );
-      } else if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : prevIndex,
-        );
-      } else if (e.key === 'Tab') {
-        e.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
-        );
-      } else if (e.key === 'Enter') {
-        e.preventDefault();
-        handleInitModal();
-      } else if (e.key === 'Escape') {
-        e.preventDefault();
-        setShowPromptList(false);
-      } else {
-        setActivePromptIndex(0);
-      }
-    } else if (e.key === 'Enter' && !isTyping && !isMobile() && !e.shiftKey && !e.ctrlKey) {
-      e.preventDefault();
+  const handleKeyDownInput = (key: string, event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (key === 'Enter' && !isTyping && !isMobile() && !event.shiftKey && !event.ctrlKey) {
+      event.preventDefault();
       handleSend();
-    } else if (e.key === '/' && e.metaKey) {
-      e.preventDefault();
+      if (submitType !== 'text') {
+        setSubmitType('text');
+      }
+      if (filePreviews.length > 0) {
+        setFilePreviews([]);
+      }
+    } else if (event.key === '/' && event.metaKey && submitType === "text") {
+      event.preventDefault();
       setShowPluginSelect(!showPluginSelect);
     }
+  }
+
+  const handleKeyDownPromptList = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setActivePromptIndex((prevIndex) =>
+            prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
+        );
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setActivePromptIndex((prevIndex) =>
+            prevIndex > 0 ? prevIndex - 1 : prevIndex,
+        );
+        break;
+      case 'Tab':
+        event.preventDefault();
+        setActivePromptIndex((prevIndex) =>
+            prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
+        );
+        break;
+      case 'Enter':
+        event.preventDefault();
+        handleInitModal();
+        if (submitType !== 'text') {
+          setSubmitType('text');
+        }
+        if (filePreviews.length > 0) {
+          setFilePreviews([]);
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
+        setShowPromptList(false);
+        break;
+      default:
+        setActivePromptIndex(0);
+        break;
+    }
+  }
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (showPromptList) {
+      handleKeyDownPromptList(e)
+    } else {
+      // Handle cases when showPromptList is false
+      handleKeyDownInput(e.key, e)
+    }
   };
+
 
   const parseVariables = (content: string) => {
     const regex = /{{(.*?)}}/g;
@@ -185,7 +268,7 @@ export const ChatInput = ({
   };
 
   const updatePromptListVisibility = useCallback((text: string) => {
-    const match = text.match(/\/\w*$/);
+    const match = /\/\w*$/.exec(text);
 
     if (match) {
       setShowPromptList(true);
@@ -203,7 +286,7 @@ export const ChatInput = ({
     if (parsedVariables.length > 0) {
       setIsModalVisible(true);
     } else {
-      setContent((prevContent) => {
+      setTextFieldValue((prevContent) => {
         const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
         return updatedContent;
       });
@@ -212,14 +295,15 @@ export const ChatInput = ({
   };
 
   const handleSubmit = (updatedVariables: string[]) => {
-    const newContent = content?.replace(/{{(.*?)}}/g, (match, variable) => {
+    const newContent = textFieldValue?.replace(/{{(.*?)}}/g, (match, variable) => {
       const index = variables.indexOf(variable);
       return updatedVariables[index];
     });
+    setTextFieldValue(newContent);
 
-    setContent(newContent);
+    setFilePreviews([])
 
-    if (textareaRef && textareaRef.current) {
+    if (textareaRef?.current) {
       textareaRef.current.focus();
     }
   };
@@ -238,7 +322,7 @@ export const ChatInput = ({
         textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
       }`;
     }
-  }, [content]);
+  }, [textFieldValue]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -267,7 +351,8 @@ export const ChatInput = ({
 
   return (
     <div className="absolute bottom-0 left-0 w-full border-transparent bg-gradient-to-b from-transparent via-white to-white pt-6 dark:border-white/20 dark:via-[#212121] dark:to-[#212121] md:pt-2 max-h-[200px]">
-      <div className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[52px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
+      <div
+          className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[52px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
         {messageIsStreaming && (
           <button
             className="absolute top-0 left-0 right-0 mx-auto mb-3 flex w-fit items-center gap-3 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-0 md:mt-2"
@@ -288,37 +373,38 @@ export const ChatInput = ({
             </button>
           )}
 
-        <div className="relative mx-2 mt-3 flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#2a2a2f] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
-          <button
-            className="absolute left-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
-            onClick={() => setShowPluginSelect(!showPluginSelect)}
-            onKeyDown={(e) => {}}
-          >
-            {plugin ? <IconBrandGoogle size={20} /> : <IconBolt size={20} />}
-          </button>
+        <ChatInputImageCapture
+                setFilePreviews={setFilePreviews}
+                setSubmitType={setSubmitType}
+                prompt={textFieldValue}
+                setImageFieldValue={setImageFieldValue}
+            />
+        <ChatInputImage
+            setSubmitType={setSubmitType}
+            // setContent={setContent}
+            prompt={textFieldValue}
+            setFilePreviews={setFilePreviews}
+            setImageFieldValue={setImageFieldValue}
+        />
+        <ChatInputFile
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+          />
+        {/*<button>*/}
+        {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
+        {/*  <span className="sr-only">Voice input</span>*/}
+        {/*</button>*/}
 
-          {showPluginSelect && (
-            <div className="absolute left-0 bottom-14 rounded bg-white dark:bg-[#212121]">
-              <PluginSelect
-                plugin={plugin}
-                onKeyDown={(e: any) => {
-                  if (e.key === 'Escape') {
-                    e.preventDefault();
-                    setShowPluginSelect(false);
-                    textareaRef.current?.focus();
-                  }
-                }}
-                onPluginChange={(plugin: Plugin) => {
-                  setPlugin(plugin);
-                  setShowPluginSelect(false);
-
-                  if (textareaRef && textareaRef.current) {
-                    textareaRef.current.focus();
-                  }
-                }}
-              />
-            </div>
-          )}
+        <div
+            className="relative mx-2 flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
+          <ChatFileUploadPreviews
+              filePreviews={filePreviews}
+              setFilePreviews={setFilePreviews}
+              setSubmitType={setSubmitType}
+          />
 
           <textarea
             ref={textareaRef}
@@ -332,10 +418,11 @@ export const ChatInput = ({
                   ? 'auto'
                   : 'hidden'
               }`,
-              fontSize: '16px',
             }}
             placeholder={placeholderText}
-            value={content}
+            value={
+                textFieldValue
+            }
             rows={1}
             onCompositionStart={() => setIsTyping(true)}
             onCompositionEnd={() => setIsTyping(false)}
@@ -344,46 +431,47 @@ export const ChatInput = ({
           />
 
           <button
-            className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
-            onClick={handleSend}
+              className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
+              onClick={handleSend}
           >
             {messageIsStreaming ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
+                <div
+                    className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
             ) : (
-              <IconSend size={18} />
+                <IconSend size={18}/>
             )}
           </button>
 
           {showScrollDownButton && (
-            <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
-              <button
-                className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
-                onClick={onScrollDownClick}
-              >
-                <IconArrowDown size={18} />
-              </button>
-            </div>
+              <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
+                <button
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
+                    onClick={onScrollDownClick}
+                >
+                  <IconArrowDown size={18}/>
+                </button>
+              </div>
           )}
 
           {showPromptList && filteredPrompts.length > 0 && (
-            <div className="absolute bottom-12 w-full">
-              <PromptList
-                activePromptIndex={activePromptIndex}
-                prompts={filteredPrompts}
-                onSelect={handleInitModal}
-                onMouseOver={setActivePromptIndex}
-                promptListRef={promptListRef}
-              />
-            </div>
+              <div className="absolute bottom-12 w-full">
+                <PromptList
+                    activePromptIndex={activePromptIndex}
+                    prompts={filteredPrompts}
+                    onSelect={handleInitModal}
+                    onMouseOver={setActivePromptIndex}
+                    promptListRef={promptListRef}
+                />
+              </div>
           )}
 
           {isModalVisible && (
-            <VariableModal
-              prompt={filteredPrompts[activePromptIndex]}
-              variables={variables}
-              onSubmit={handleSubmit}
-              onClose={() => setIsModalVisible(false)}
-            />
+              <VariableModal
+                  prompt={filteredPrompts[activePromptIndex]}
+                  variables={variables}
+                  onSubmit={handleSubmit}
+                  onClose={() => setIsModalVisible(false)}
+              />
           )}
         </div>
       </div>

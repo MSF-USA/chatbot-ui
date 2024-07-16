@@ -34,8 +34,8 @@ export default function Document(props: Props) {
           type="image/png"
           sizes="32x32"
         />
-        <link rel="apple-touch-icon" href="icons/icon-192x192.png"></link>
-        <link rel="icon" href="icons/icon-192x192.png"></link>
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png"></link>
+        <link rel="icon" href="/icons/icon-192x192.png"></link>
         <meta name="theme-color" content="#FFF" />
       </Head>
       <body>
