@@ -486,8 +486,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   const onClearAll = () => {
     if (
-      // @ts-ignore
       confirm(
+        // @ts-ignore
         t<string>('Are you sure you want to clear all messages?') as string,
       ) &&
       selectedConversation
