@@ -41,16 +41,16 @@ export function getChatMessageContent(message: Message): string {
     Array.isArray(message.content) &&
     message.content.some((contentItem) => contentItem.type !== 'text')
   ) {
-    // @ts-ignore
     const imageContent = message.content.find(
+      // @ts-ignore
       (contentItem) => contentItem.type === 'image_url',
     ) as ImageMessageContent;
     if (imageContent) {
       return imageContent.image_url.url;
     } else {
-      // @ts-ignore
       return (
         message.content.find(
+          // @ts-ignore
           (contentItem) => contentItem.type === 'file_url',
         ) as FileMessageContent
       ).url;
