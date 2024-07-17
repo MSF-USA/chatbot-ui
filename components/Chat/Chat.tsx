@@ -15,33 +15,40 @@ import {
   useState,
 } from 'react';
 import toast from 'react-hot-toast';
-import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE} from '@/utils/app/const';
 
-import {useTranslation} from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
-import {getEndpoint} from '@/utils/app/api';
+import { getEndpoint } from '@/utils/app/api';
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
-import { saveConversation, saveConversations} from '@/utils/app/conversation';
-import {throttle} from '@/utils/data/throttle';
+import { saveConversation, saveConversations } from '@/utils/app/conversation';
+import { throttle } from '@/utils/data/throttle';
 
-import {ChatBody, Conversation, FileMessageContent, Message, MessageType, TextMessageContent} from '@/types/chat';
-import {Plugin} from '@/types/plugin';
+import {
+  ChatBody,
+  Conversation,
+  FileMessageContent,
+  Message,
+  MessageType,
+  TextMessageContent,
+} from '@/types/chat';
+import { Plugin } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import logo from '../../public/msf_logo2.png';
 import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
-import {ChatInput} from './ChatInput';
-import {ChatLoader} from './ChatLoader';
-import {ErrorMessageDiv} from './ErrorMessageDiv';
-import {MemoizedChatMessage} from './MemoizedChatMessage';
-import {ModelSelect } from './ModelSelect';
+import { ChatInput } from './ChatInput';
+import { ChatLoader } from './ChatLoader';
+import { ErrorMessageDiv } from './ErrorMessageDiv';
+import { MemoizedChatMessage } from './MemoizedChatMessage';
+import { ModelSelect } from './ModelSelect';
 import { suggestedPrompts } from './prompts';
 
+import { debounce } from '@tanstack/virtual-core';
 import Typewriter from 'typewriter-effect';
-import {debounce} from "@tanstack/virtual-core";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -57,11 +64,10 @@ const getRandomPrompts = (
 };
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
-  const {t} = useTranslation('chat');
+  const { t } = useTranslation('chat');
 
   const {
     state: {
-      user,
       selectedConversation,
       conversations,
       models,
@@ -139,7 +145,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
-      user: user,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -180,24 +185,30 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   ): Conversation => {
     // TODO: Add generated title option with these as fallback, similar to how other LLM frontends work
     let title = '';
-    if (typeof message.content === "string") {
+    if (typeof message.content === 'string') {
       title = message.content.substring(0, 30);
     } else if (Array.isArray(message.content)) {
-      const contentTypes = message.content.map(section => section.type);
+      const contentTypes = message.content.map((section) => section.type);
       if (contentTypes.includes('image_url')) {
         title = 'Image Chat';
       } else if (contentTypes.includes('file_url')) {
         const fileSection = (
           message.content as (FileMessageContent | TextMessageContent)[]
-        ).find(section => (section as FileMessageContent).originalFilename) as FileMessageContent;
+        ).find(
+          (section) => (section as FileMessageContent).originalFilename,
+        ) as FileMessageContent;
         title = fileSection?.originalFilename
           ? `File: ${fileSection.originalFilename.substring(0, 20)}`
           : 'File Chat';
       } else {
         const textSection = (
           message.content as (TextMessageContent | any)[]
-        ).find(section => (section as TextMessageContent).type === 'text') as TextMessageContent;
-        title = textSection?.text ? textSection.text.substring(0, 30) : 'New Chat';
+        ).find(
+          (section) => (section as TextMessageContent).type === 'text',
+        ) as TextMessageContent;
+        title = textSection?.text
+          ? textSection.text.substring(0, 30)
+          : 'New Chat';
       }
     } else if ((message.content as TextMessageContent)?.type === 'text') {
       title = (message.content as TextMessageContent).text.substring(0, 30);
@@ -214,12 +225,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     };
   };
 
-
   const debouncedUpdateConversation = useCallback(
     debounce((content: string, updateConversation: CallableFunction) => {
       updateConversation(content);
     }, 100),
-    []
+    [],
   );
 
   const handleNormalChatBackendStreaming = async (
@@ -233,10 +243,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     const decoder = new TextDecoder();
     let done = false;
     let text = '';
-    let updatedConversationCopy = {...updatedConversation};
+    let updatedConversationCopy = { ...updatedConversation };
 
     while (!done) {
-      const {value, done: doneReading} = await reader.read();
+      const { value, done: doneReading } = await reader.read();
       done = doneReading;
 
       const chunkValue = decoder.decode(value);
@@ -247,20 +257,30 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         text += JSON.parse('"' + match[1] + '"');
       }
 
-      if (updatedConversationCopy.messages.length === 0 || updatedConversationCopy.messages[updatedConversationCopy.messages.length - 1].role !== 'assistant') {
+      if (
+        updatedConversationCopy.messages.length === 0 ||
+        updatedConversationCopy.messages[
+          updatedConversationCopy.messages.length - 1
+        ].role !== 'assistant'
+      ) {
         // If there's no assistant message, create a new one
         updatedConversationCopy = {
           ...updatedConversationCopy,
           messages: [
             ...updatedConversationCopy.messages,
-            {role: 'assistant', content: text, messageType: MessageType.TEXT},
+            { role: 'assistant', content: text, messageType: MessageType.TEXT },
           ],
         };
       } else {
         // Update the existing assistant message
         const updatedMessages = [
           ...updatedConversationCopy.messages.slice(0, -1),
-          {...updatedConversationCopy.messages[updatedConversationCopy.messages.length - 1], content: text},
+          {
+            ...updatedConversationCopy.messages[
+              updatedConversationCopy.messages.length - 1
+            ],
+            content: text,
+          },
         ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
@@ -276,19 +296,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     saveConversation(updatedConversationCopy);
 
-    const updatedConversations: Conversation[] = originalConversations.map((conversation) => {
-      if (conversation.id === selectedConversation.id) {
-        return updatedConversationCopy;
-      }
-      return conversation;
-    });
+    const updatedConversations: Conversation[] = originalConversations.map(
+      (conversation) => {
+        if (conversation.id === selectedConversation.id) {
+          return updatedConversationCopy;
+        }
+        return conversation;
+      },
+    );
     if (updatedConversations.length === 0) {
       updatedConversations.push(updatedConversationCopy);
     }
 
     return updatedConversations;
   };
-
 
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
@@ -315,11 +336,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           homeDispatch({ field: 'messageIsStreaming', value: false });
           let errorResp: any;
           try {
-            errorResp = await response.json()
+            errorResp = await response.json();
           } catch (errorResponsePullError) {
-            errorResp = {}
+            errorResp = {};
           }
-          toast.error(response.statusText ?? errorResp.error ?? "Response failed");
+          toast.error(
+            response.statusText ?? errorResp.error ?? 'Response failed',
+          );
           return;
         }
         const data = response.body;
@@ -360,11 +383,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               },
             });
             const updatedConversations = await handleNormalChatBackendStreaming(
-                stream,
-                controller,
-                updatedConversation,
-                selectedConversation,
-                conversations
+              stream,
+              controller,
+              updatedConversation,
+              selectedConversation,
+              conversations,
             );
 
             homeDispatch({
@@ -394,7 +417,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             homeDispatch({ field: 'messageIsStreaming', value: false });
           }
         } else {
-          throw new Error("Plugins not currently supported.")
+          throw new Error('Plugins not currently supported.');
           // if (updatedConversation.messages.length === 1) {
           //   updatedConversation = setConversationTitle(updatedConversation, message);
           // }
@@ -464,7 +487,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const onClearAll = () => {
     if (
       // @ts-ignore
-      confirm(t<string>('Are you sure you want to clear all messages?') as string) &&
+      confirm(
+        t<string>('Are you sure you want to clear all messages?') as string,
+      ) &&
       selectedConversation
     ) {
       handleUpdateConversation(selectedConversation, {
@@ -767,7 +792,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                     handleSend({
                                       role: 'user',
                                       content: prompt.prompt,
-                                      messageType: "text",
+                                      messageType: 'text',
                                     })
                                   }
                                   style={{
