@@ -1,12 +1,6 @@
 name: $(Build.BuildId)
 
-trigger:
-  branches:
-    include:
-      - main
-  paths:
-    exclude:
-      - README.md
+trigger: none
 
 pr: none
 

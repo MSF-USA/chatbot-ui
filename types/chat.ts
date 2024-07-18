@@ -66,7 +66,6 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
-  user: Session['user'] | undefined;
 }
 
 export interface Conversation {
@@ -80,4 +79,3 @@ export interface Conversation {
 }
 
 export type ChatInputSubmitTypes = "text" | "image" | "file";
-

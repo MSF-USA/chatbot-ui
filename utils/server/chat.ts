@@ -1,34 +1,53 @@
-import {FileMessageContent, ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
-import {isFileConversation, isImageConversation} from "@/utils/app/chat";
-import {getBase64FromImageURL} from "@/utils/app/image";
-import {getBlobBase64String} from "@/utils/server/blob";
-import {JWT, Session} from "next-auth";
+import { JWT, Session } from 'next-auth';
 
-type ContentType = 'text' | 'image' | 'file'
+import { isFileConversation, isImageConversation } from '@/utils/app/chat';
+import { getBase64FromImageURL } from '@/utils/app/image';
+import { getBlobBase64String } from '@/utils/server/blob';
+
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
+
+type ContentType = 'text' | 'image' | 'file';
 
 export const getMessageContentType = (
-  content: string | TextMessageContent | (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]
+  content:
+    | string
+    | TextMessageContent
+    | (TextMessageContent | FileMessageContent)[]
+    | (TextMessageContent | ImageMessageContent)[],
 ): ContentType => {
-  if (typeof content === "string") {
-    return 'text'
+  if (typeof content === 'string') {
+    return 'text';
   } else if (Array.isArray(content)) {
-    if (content.some(contentItem => contentItem.type === 'file_url')) {
-      return 'file'
-    } else if (content.some(contentItem => contentItem.type === 'image_url')) {
-      return 'image'
+    if (content.some((contentItem) => contentItem.type === 'file_url')) {
+      return 'file';
+    } else if (
+      content.some((contentItem) => contentItem.type === 'image_url')
+    ) {
+      return 'image';
     } else {
-      throw new Error('Invalid content type or structure: ' + content)
+      throw new Error('Invalid content type or structure: ' + content);
     }
   } else {
-    throw new Error("Invalid content type " + content);
+    throw new Error('Invalid content type ' + content);
   }
-}
-
+};
 
 export const getMessagesToSend = async (
-  messages: Message[], encoding: any, promptLength: number, tokenLimit: number, token: JWT, session: Session
+  messages: Message[],
+  encoding: any,
+  promptLength: number,
+  tokenLimit: number,
+  token: JWT,
+  user: Session['user'],
 ): Promise<Message[]> => {
-  const conversationType: ContentType = getMessageContentType(messages[messages.length - 1].content);
+  const conversationType: ContentType = getMessageContentType(
+    messages[messages.length - 1].content,
+  );
   const fileConversation: boolean = isFileConversation(messages);
   let acc = { tokenCount: promptLength, messagesToSend: [] as Message[] };
 
@@ -38,16 +57,31 @@ export const getMessagesToSend = async (
     const isLastMessage: boolean = messages.length - 1 === i;
 
     if (Array.isArray(message.content)) {
-      message.content = await processMessageContent(message.content, conversationType, isLastMessage, token, session);
+      message.content = await processMessageContent(
+        message.content,
+        conversationType,
+        isLastMessage,
+        token,
+        user,
+      );
     } else if (typeof message.content === 'string') {
       /* pass */
     } else if (
-      (message.content as (TextMessageContent | FileMessageContent | ImageMessageContent))?.type !== 'text'
+      (
+        message.content as
+          | TextMessageContent
+          | FileMessageContent
+          | ImageMessageContent
+      )?.type !== 'text'
     ) {
       throw new Error(`Unsupported message type: ${JSON.stringify(message)}`);
     }
 
-    if (!isLastMessage && conversationType !== 'image' && Array.isArray(message.content)) {
+    if (
+      !isLastMessage &&
+      conversationType !== 'image' &&
+      Array.isArray(message.content)
+    ) {
       message.content = extractTextContent(message.content);
     }
     acc.messagesToSend = [message, ...acc.messagesToSend];
@@ -57,41 +91,66 @@ export const getMessagesToSend = async (
 };
 
 const processMessageContent = async (
-  content: (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[],
+  content:
+    | (TextMessageContent | FileMessageContent)[]
+    | (TextMessageContent | ImageMessageContent)[],
   conversationType: ContentType,
   isLastMessageInConversation: boolean,
   token: JWT,
-  session: Session,
-): Promise<(TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]> => {
+  user: Session['user'],
+): Promise<
+  | (TextMessageContent | FileMessageContent)[]
+  | (TextMessageContent | ImageMessageContent)[]
+> => {
   let allText: string = '';
 
-  let processedContent: (TextMessageContent)[] | (TextMessageContent | ImageMessageContent)[] = (content as any[]).filter((contentSection) => {
-    if (!isLastMessageInConversation && contentSection.type === 'file_url') {
-      return false; // Remove file_url content sections for non-last messages
-    }
-    return true;
-  });
-
+  let processedContent:
+    | TextMessageContent[]
+    | (TextMessageContent | ImageMessageContent)[] = (content as any[]).filter(
+    (contentSection) => {
+      if (!isLastMessageInConversation && contentSection.type === 'file_url') {
+        return false; // Remove file_url content sections for non-last messages
+      }
+      return true;
+    },
+  );
 
   for (let contentSection of processedContent) {
-    if (conversationType === 'image' && contentSection.type === "text") {
+    if (conversationType === 'image' && contentSection.type === 'text') {
       allText += contentSection.text;
-    } else if (conversationType !== 'text' && contentSection.type === "text" && !isLastMessageInConversation) {
-      const contentTypePrefix: string = getContentTypePrefix(conversationType) + contentSection.text;
+    } else if (
+      conversationType !== 'text' &&
+      contentSection.type === 'text' &&
+      !isLastMessageInConversation
+    ) {
+      const contentTypePrefix: string =
+        getContentTypePrefix(conversationType) + contentSection.text;
       contentSection.text = contentTypePrefix;
       allText += contentTypePrefix;
-    } else if (conversationType === 'image' && contentSection?.type === "image_url") {
-      const imageUrl: string = await processImageUrl(contentSection as ImageMessageContent, token, session);
+    } else if (
+      conversationType === 'image' &&
+      contentSection?.type === 'image_url'
+    ) {
+      const imageUrl: string = await processImageUrl(
+        contentSection as ImageMessageContent,
+        token,
+        user,
+      );
       allText += imageUrl;
       contentSection.image_url.url = imageUrl;
     }
   }
 
-  return processedContent.map(contentSection =>
-    contentSection.type === "image_url" && !(conversationType === 'image')
-      ? { type: "text", text: "THE USER UPLOADED AN IMAGE" } as TextMessageContent
-      : contentSection
-  ) as (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[];
+  return processedContent.map((contentSection) =>
+    contentSection.type === 'image_url' && !(conversationType === 'image')
+      ? ({
+          type: 'text',
+          text: 'THE USER UPLOADED AN IMAGE',
+        } as TextMessageContent)
+      : contentSection,
+  ) as
+    | (TextMessageContent | FileMessageContent)[]
+    | (TextMessageContent | ImageMessageContent)[];
 };
 
 const getContentTypePrefix = (contentType: ContentType): string => {
@@ -100,7 +159,11 @@ const getContentTypePrefix = (contentType: ContentType): string => {
   return '';
 };
 
-const processImageUrl = async (contentSection: ImageMessageContent, token: JWT, session: Session): Promise<string> => {
+const processImageUrl = async (
+  contentSection: ImageMessageContent,
+  token: JWT,
+  user: Session['user'],
+): Promise<string> => {
   const id: string | undefined = contentSection.image_url.url.split('/').pop();
   if (!id || id.trim().length === 0) {
     throw new Error(`Image ID ${id} is not valid`);
@@ -109,34 +172,40 @@ const processImageUrl = async (contentSection: ImageMessageContent, token: JWT, 
   let url: string;
   try {
     url = await getBlobBase64String(
-      (token as any).userId ?? session?.user?.id ?? 'anonymous',
-      contentSection.image_url.url.split('/')[contentSection.image_url.url.split('/').length - 1],
-      "images"
-    )
+      (token as any).userId ?? user?.id ?? 'anonymous',
+      contentSection.image_url.url.split('/')[
+        contentSection.image_url.url.split('/').length - 1
+      ],
+      'images',
+    );
     contentSection.image_url = {
       url,
-      detail: "auto"
-    }
+      detail: 'auto',
+    };
     return url;
   } catch (error: unknown) {
     url = await getBase64FromImageURL(contentSection.image_url.url);
     contentSection.image_url = {
       url,
-      detail: "auto"
+      detail: 'auto',
     };
     // return url;
     throw new Error(`Failed to pull image from image url: ${contentSection}`);
   }
 };
 
-const extractTextContent = (content: (TextMessageContent | FileMessageContent)[] | (TextMessageContent | ImageMessageContent)[]): string => {
+const extractTextContent = (
+  content:
+    | (TextMessageContent | FileMessageContent)[]
+    | (TextMessageContent | ImageMessageContent)[],
+): string => {
   const textContent: TextMessageContent | undefined = (
     content as (TextMessageContent | ImageMessageContent | FileMessageContent)[]
-  ).find(
-    contentItem => contentItem.type === "text"
-  ) as TextMessageContent;
+  ).find((contentItem) => contentItem.type === 'text') as TextMessageContent;
   if (!textContent)
-    throw new Error(`Couldn't find text content type in ${JSON.stringify(content)}`);
+    throw new Error(
+      `Couldn't find text content type in ${JSON.stringify(content)}`,
+    );
 
   // @ts-ignore
   return textContent.text ?? '';
