@@ -22,8 +22,21 @@ const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   return idHash.length === SHA256_HASH_LENGTH && VALID_HASH_REGEX.test(idHash);
 };
 
+function encodeFilename(filename: string): string {
+  // Remove any characters that aren't alphanumeric, dots, dashes, or underscores
+  const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-_]/g, '');
+
+  // Encode the sanitized filename
+  return encodeURIComponent(sanitizedFilename)
+    .replace(/['()]/g, escape) // ASCII encoding for '()'
+    .replace(/\*/g, '%2A')     // ASCII encoding for '*'
+    .replace(/%20/g, '+');     // Replace spaces with '+'
+}
+
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
+  const encodedFilename = encodeFilename(id);
+
   const { searchParams } = new URL(request.url);
   const requestedFileType = searchParams.get('filetype');
 
@@ -49,11 +62,27 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     if (fileType === 'image') {
       const base64String: string = await getBlobBase64String(userId, id as string);
-      return NextResponse.json({ base64Url: base64String });
+      return NextResponse.json(
+        { base64Url: base64String },
+        {
+          headers: {
+            'Content-Disposition': `attachment; filename="${encodedFilename}"`,
+            'Cache-Control': 'no-store',
+          }
+        }
+      );
     } else if (fileType === 'file') {
       const blobStorage = new AzureBlobStorage();
       const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.BLOB) as Promise<Buffer>);
-      return new NextResponse(blob);
+      return new NextResponse(
+        blob,
+        {
+          headers: {
+            'Content-Disposition': `attachment; filename="${encodedFilename}"`,
+            'Cache-Control': 'no-store',
+          }
+        }
+      );
     } else {
       throw new Error(`Invalid fileType requested: ${fileType}`);
     }
