@@ -24,20 +24,20 @@ stages:
             displayName: Build Image
             inputs:
               command: build
-              repository: 'chatbot'
+              repository: 'ai-platform'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              containerRegistry: 'azure-cr-dev'
+              containerRegistry: 'msfintlnycdevai'
               arguments: '--build-arg BUILD=$(Build.BuildId) --build-arg ENV=dev'
               tags: |
-                latest-dev
+                latest
                 $(Build.BuildId)
           - task: Docker@2
             displayName: Push Image
             inputs:
               command: push
-              repository: 'chatbot'
+              repository: 'ai-platform'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
               containerRegistry: 'msfintlnycdevai'
               tags: |
-                latest-dev
+                latest
                 $(Build.BuildId)
