@@ -18,7 +18,7 @@ stages:
             displayName: Build Image
             inputs:
               command: build
-              repository: 'chatbot'
+              repository: 'ai-platform'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
               containerRegistry: 'msfintlnycprodai'
               arguments: '--build-arg BUILD=$(Build.BuildId) --build-arg ENV=prod'
@@ -29,7 +29,7 @@ stages:
             displayName: Push Image
             inputs:
               command: push
-              repository: 'chatbot'
+              repository: 'ai-platform'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
               containerRegistry: 'msfintlnycprodai'
               tags: |
