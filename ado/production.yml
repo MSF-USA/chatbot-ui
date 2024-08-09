@@ -18,9 +18,9 @@ stages:
             displayName: Build Image
             inputs:
               command: build
-              repository: 'chatbot'
+              repository: 'ai-platform'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              containerRegistry: 'msfintlnycproduseast2'
+              containerRegistry: 'msfintlnycprodai'
               arguments: '--build-arg BUILD=$(Build.BuildId) --build-arg ENV=prod'
               tags: |
                 latest
@@ -29,9 +29,9 @@ stages:
             displayName: Push Image
             inputs:
               command: push
-              repository: 'chatbot'
+              repository: 'ai-platform'
               dockerfile: '$(Build.SourcesDirectory)/Dockerfile'
-              containerRegistry: 'msfintlnycproduseast2'
+              containerRegistry: 'msfintlnycprodai'
               tags: |
                 latest
                 $(Build.BuildId)
