@@ -15,6 +15,7 @@ import {useTranslation} from "next-i18next";
 import {CameraModal} from "@/components/Chat/ChatInput/CameraModal";
 import {onImageUpload} from "@/components/Chat/ChatInputEventHandlers/image-upload";
 import {isMobile} from "@/utils/app/env";
+import {userAuthorizedForFileUploads} from "@/utils/app/userAuth";
 
 
 
@@ -93,7 +94,8 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
       openModal();
     }
   };
-
+  if (!userAuthorizedForFileUploads())
+    return null;
 
   return (
         <>

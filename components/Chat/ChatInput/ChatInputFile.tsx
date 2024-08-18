@@ -1,6 +1,7 @@
 import FileIcon from "@/components/Icons/file";
 import React, {ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
 import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/types/chat";
+import {userAuthorizedForFileUploads} from "@/utils/app/userAuth";
 
 interface ChatInputFileProps {
     onFileUpload: (
@@ -19,6 +20,9 @@ interface ChatInputFileProps {
 
 const ChatInputFile = ({onFileUpload, setSubmitType, setFilePreviews, setFileFieldValue, setImageFieldValue}: ChatInputFileProps) => {
     const fileInputRef: MutableRefObject<any> = useRef(null)
+    if (!userAuthorizedForFileUploads())
+        return null;
+
     return <>
         <input
             type="file"

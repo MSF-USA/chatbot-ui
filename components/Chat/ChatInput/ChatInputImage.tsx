@@ -2,6 +2,7 @@ import ImageIcon from "@/components/Icons/image";
 import React, {Dispatch, MutableRefObject, SetStateAction, useRef} from "react";
 import {ChatInputSubmitTypes, ImageMessageContent, TextMessageContent} from "@/types/chat";
 import toast from 'react-hot-toast';
+import {userAuthorizedForFileUploads} from "@/utils/app/userAuth";
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
@@ -84,7 +85,8 @@ const ChatInputImage = (
     }: ChatInputImageProps
 ) => {
     const imageInputRef: MutableRefObject<any> = useRef(null);
-
+    if (!userAuthorizedForFileUploads())
+        return null;
 
     return <>
         <input
