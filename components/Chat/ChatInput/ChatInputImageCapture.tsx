@@ -1,12 +1,12 @@
 import React, {
-    Dispatch,
-    FC,
-    MouseEventHandler,
-    MutableRefObject,
-    SetStateAction,
-    useEffect,
-    useRef,
-    useState
+  Dispatch,
+  FC,
+  MouseEventHandler,
+  MutableRefObject,
+  SetStateAction, useContext,
+  useEffect,
+  useRef,
+  useState
 } from "react";
 import {IconCamera, IconX} from "@tabler/icons-react";
 import { ChatInputSubmitTypes, ImageMessageContent } from "@/types/chat";
@@ -16,6 +16,7 @@ import {CameraModal} from "@/components/Chat/ChatInput/CameraModal";
 import {onImageUpload} from "@/components/Chat/ChatInputEventHandlers/image-upload";
 import {isMobile} from "@/utils/app/env";
 import {userAuthorizedForFileUploads} from "@/utils/app/userAuth";
+import HomeContext from "@/pages/api/home/home.context";
 
 
 
@@ -94,7 +95,14 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = (
       openModal();
     }
   };
-  if (!userAuthorizedForFileUploads())
+
+  const {
+    state: {
+      user,
+    },
+    dispatch: homeDispatch,
+  } = useContext(HomeContext);
+  if (!userAuthorizedForFileUploads(user))
     return null;
 
   return (
