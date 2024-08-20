@@ -20,6 +20,7 @@ import { parseAndQueryFileOpenAI } from '@/utils/app/documentSummary';
 import { AzureBlobStorage, BlobProperty } from '@/utils/server/blob';
 import { getMessagesToSend } from '@/utils/server/chat';
 
+import { MessageType } from '@/types/chat';
 import {
   ChatBody,
   FileMessageContent,
@@ -27,8 +28,11 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
+import { SearchIndex } from '@/types/searchIndex';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
+
+import useSearchService from './searchService';
 
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
@@ -249,6 +253,39 @@ export default class ChatService {
     return this.retryWithExponentialBackoff(async () => {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
       const azureOpenai = new OpenAI(openAIArgs);
+
+      const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
+
+      let augmentedUserMessage: string = '';
+      if (
+        typeof lastMessage.content === 'string' ||
+        (lastMessage.content as TextMessageContent).type === 'text'
+      ) {
+        const textContent =
+          typeof lastMessage.content === 'string'
+            ? lastMessage.content
+            : (lastMessage.content as TextMessageContent).text;
+        const searchResults = await useSearchService(textContent);
+
+        console.log(searchResults);
+
+        // Augment the user's message with search results
+        augmentedUserMessage = `User's question: ${textContent}\n\nRelevant information:\n`;
+        searchResults.forEach((result, index) => {
+          augmentedUserMessage += `[${index + 1}] ${result.title}: ${
+            result.content
+          }\n`;
+        });
+        augmentedUserMessage +=
+          "\nBased on this information, please answer the user's question.";
+      }
+
+      // Replace the last message with the augmented version
+      messagesToSend[messagesToSend.length - 1] = {
+        ...lastMessage,
+        content: augmentedUserMessage || lastMessage.content,
+      };
+
       const response = await azureOpenai.chat.completions.create({
         model: modelToUse,
         messages:

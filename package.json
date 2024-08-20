@@ -13,6 +13,7 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@azure/search-documents": "^12.1.0",
     "@azure/storage-blob": "^12.23.0",
     "@dqbd/tiktoken": "^1.0.2",
     "@headlessui/react": "^2.0.3",
