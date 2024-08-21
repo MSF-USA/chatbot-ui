@@ -236,6 +236,37 @@ export default class ChatService {
   }
 
   /**
+    Decides whether a user query is worth searching related MSF data for
+  */
+  private async isQueryRelevantToMSF(
+    modelToUse: string,
+    token: JWT,
+    query: string,
+  ): Promise<boolean> {
+    const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
+    const azureOpenai = new OpenAI(openAIArgs);
+
+    const response = await azureOpenai.chat.completions.create({
+      model: modelToUse,
+      messages: [
+        {
+          role: 'system',
+          content:
+            "You are an AI assistant that determines if a query is related to Médecins Sans Frontières (MSF)/Doctors Without Borders, their work, humanitarian aid, medical assistance in conflict zones, or any related NGO activities. Consider queries about humanitarian situations, conflicts, crises, and medical emergencies as relevant. Respond with only 'yes' or 'no'.",
+        },
+        {
+          role: 'user',
+          content: `Is the following query related to Médecins Sans Frontières (MSF), their work, humanitarian aid, medical assistance in conflict zones, or any related NGO activities? Query: "${query}"`,
+        },
+      ],
+    });
+
+    const answer = response.choices[0]?.message?.content?.toLowerCase().trim();
+    console.log('relevant: ', answer);
+    return answer === 'yes';
+  }
+
+  /**
    * Handles a chat completion request by sending the messages to the OpenAI API and returning a streaming response.
    * @param {string} modelToUse - The ID of the model to use for the chat completion.
    * @param {Message[]} messagesToSend - The messages to send in the chat completion request.
@@ -256,7 +287,9 @@ export default class ChatService {
 
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
 
-      let augmentedUserMessage: string = '';
+      let searchResults: SearchIndex[] = [];
+      let augmentedUserMessage = '';
+
       if (
         typeof lastMessage.content === 'string' ||
         (lastMessage.content as TextMessageContent).type === 'text'
@@ -265,26 +298,45 @@ export default class ChatService {
           typeof lastMessage.content === 'string'
             ? lastMessage.content
             : (lastMessage.content as TextMessageContent).text;
-        const searchResults = await useSearchService(textContent);
 
-        console.log(searchResults);
+        const isRelevant = await this.isQueryRelevantToMSF(
+          modelToUse,
+          token,
+          textContent,
+        );
 
-        // Augment the user's message with search results
-        augmentedUserMessage = `User's question: ${textContent}\n\nRelevant information:\n`;
-        searchResults.forEach((result, index) => {
-          augmentedUserMessage += `[${index + 1}] ${result.title}: ${
-            result.content
-          }\n`;
-        });
-        augmentedUserMessage +=
-          "\nBased on this information, please answer the user's question.";
+        if (isRelevant) {
+          searchResults = await useSearchService(textContent);
+          // Augment the user's message with search results
+
+          console.log(searchResults);
+          augmentedUserMessage =
+            `User's question: ${textContent}\n\nRelevant information:\n` +
+            searchResults
+              .map(
+                (result, index) =>
+                  `[${index + 1}] ${result.title}: ${result.content} (URL: ${
+                    result.url
+                  })`,
+              )
+              .join('\n') +
+            "\n\nBased on this information, please answer the user's question. Try to use the latest information. When you use information from the provided sources, cite it using the format [X] where X is the number of the source. If you use general knowledge not from these sources, no citation is needed." +
+            '\n\nAfter your response, please list all used citations in the following format:' +
+            '\n\nCITATIONS:' +
+            '\n[{' +
+            '\n  "number": "1",' +
+            '\n  "title": "Source Title",' +
+            '\n  "url": "https://example.com"' +
+            '\n}]';
+        } else {
+          augmentedUserMessage = textContent;
+        }
+        // Replace the last message with the augmented version
+        messagesToSend[messagesToSend.length - 1] = {
+          ...lastMessage,
+          content: augmentedUserMessage,
+        };
       }
-
-      // Replace the last message with the augmented version
-      messagesToSend[messagesToSend.length - 1] = {
-        ...lastMessage,
-        content: augmentedUserMessage || lastMessage.content,
-      };
 
       const response = await azureOpenai.chat.completions.create({
         model: modelToUse,

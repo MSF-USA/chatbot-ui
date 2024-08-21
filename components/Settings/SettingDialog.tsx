@@ -1,29 +1,30 @@
+import { Switch } from '@headlessui/react';
+import { IconExternalLink, IconFileExport } from '@tabler/icons-react';
 import { FC, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
+import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
-import { IconExternalLink, IconFileExport } from '@tabler/icons-react';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
-import { Session } from 'next-auth';
-import { Import } from './Import';
-import { SidebarButton } from '../Sidebar/SidebarButton';
-import { Switch } from '@headlessui/react'
 
 import { FAQData } from '@/types/faq';
 import { Settings } from '@/types/settings';
-import { SignInSignOut } from './SignInSignOut';
-import { TemperatureSlider } from './Temperature';
-import { SystemPrompt } from './SystemPrompt';
-import LanguageSwitcher from "@/components/Sidebar/components/LanguageSwitcher";
-import { ClearConversations } from './ClearConversations';
-import { FAQ } from './faq';
-import faqData from './faq.json';
 
 import HomeContext from '@/pages/api/home/home.context';
-import ChatbarContext from '../Chatbar/Chatbar.context';
 
+import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
+
+import ChatbarContext from '../Chatbar/Chatbar.context';
+import { SidebarButton } from '../Sidebar/SidebarButton';
+import { ClearConversations } from './ClearConversations';
+import { Import } from './Import';
+import { SignInSignOut } from './SignInSignOut';
+import { SystemPrompt } from './SystemPrompt';
+import { TemperatureSlider } from './Temperature';
+import { FAQ } from './faq';
+import faqData from './faq.json';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -55,10 +56,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     handleClearConversations,
   } = useContext(ChatbarContext);
 
-  const {
-    state: homeState,
-    dispatch: homeDispatch
-  } = useContext(HomeContext);
+  const { state: homeState, dispatch: homeDispatch } = useContext(HomeContext);
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
 
@@ -85,7 +83,10 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     homeDispatch({ field: 'lightMode', value: state.theme });
     homeDispatch({ field: 'temperature', value: state.temperature });
     homeDispatch({ field: 'systemPrompt', value: state.systemPrompt });
-    homeDispatch({ field: 'runTypeWriterIntroSetting', value: state.runTypeWriterIntroSetting });
+    homeDispatch({
+      field: 'runTypeWriterIntroSetting',
+      value: state.runTypeWriterIntroSetting,
+    });
     saveSettings(state);
   };
 
@@ -94,11 +95,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       theme: 'dark',
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
-      runTypeWriterIntroSetting: true
+      runTypeWriterIntroSetting: true,
     };
     homeDispatch({ field: 'lightMode', value: 'dark' });
     homeDispatch({ field: 'temperature', value: 0.5 });
-    homeDispatch({ field: 'systemPrompt', value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '' });
+    homeDispatch({
+      field: 'systemPrompt',
+      value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
+    });
     homeDispatch({ field: 'runTypeWriterIntroSetting', value: true });
     saveSettings(defaultSettings);
   };
@@ -137,8 +141,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               <button
                 className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
                   activeTab === Tab.APP_SETTINGS
-                  ? 'border-b-2 border-black dark:border-white'
-                  : 'border-0'
+                    ? 'border-b-2 border-black dark:border-white'
+                    : 'border-0'
                 }`}
                 onClick={() => setActiveTab(Tab.APP_SETTINGS)}
               >
@@ -147,8 +151,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               <button
                 className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
                   activeTab === Tab.FAQ
-                  ? 'border-b-2 border-black dark:border-white'
-                  : 'border-0'
+                    ? 'border-b-2 border-black dark:border-white'
+                    : 'border-0'
                 }`}
                 onClick={() => setActiveTab(Tab.FAQ)}
               >
@@ -158,18 +162,18 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
             {activeTab === Tab.CHAT_SETTINGS && (
               <>
-              <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
-                {t('Default') + ' ' + t('Temperature') + '*'}
-              </div>
+                <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
+                  {t('Default') + ' ' + t('Temperature') + '*'}
+                </div>
 
-              <TemperatureSlider
-                temperature={state.temperature}
-                onChangeTemperature={(temperature) =>
-                  dispatch({ field: 'temperature', value: temperature })
-                }
-              />
-              {/* <hr className="my-10 border-gray-300 dark:border-neutral-700" /> */}
-              {/* <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
+                <TemperatureSlider
+                  temperature={state.temperature}
+                  onChangeTemperature={(temperature) =>
+                    dispatch({ field: 'temperature', value: temperature })
+                  }
+                />
+                {/* <hr className="my-10 border-gray-300 dark:border-neutral-700" /> */}
+                {/* <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
                 {t('Default System Prompt') + '*'}
               </div>
               <SystemPrompt
@@ -183,163 +187,220 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   })
                 }
               /> */}
-              <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
-              <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
-                {t(
-                  '*Note that these default settings only apply to new conversations once saved.',
-                )}
-              </span>
-                <div className='flex justify-end mr-1 mt-10'>
-                <button
-                  type="button"
-                  className="w-[120px] p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-                  onClick={() => {
-                    handleSave();
-                    onClose();
-                  }}
-                >
-                  {t('Save')}
-                </button>
-              </div>
-              </>)
-            }
+                <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
+                <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
+                  {t(
+                    '*Note that these default settings only apply to new conversations once saved.',
+                  )}
+                </span>
+                <div className="flex justify-end mr-1 mt-10">
+                  <button
+                    type="button"
+                    className="w-[120px] p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                    onClick={() => {
+                      handleSave();
+                      onClose();
+                    }}
+                  >
+                    {t('Save')}
+                  </button>
+                </div>
+              </>
+            )}
 
             {activeTab === Tab.APP_SETTINGS && (
-            <>
-            <div className='flex flex-row justify-between items-center my-10'>
-              <div className="text-sm font-bold text-black dark:text-neutral-200">
-                {t('Language')}
-              </div>
-              <LanguageSwitcher/>
-            </div>
-            <div className='flex flex-row justify-between items-center my-10'>
-              <div className="text-sm font-bold text-black dark:text-neutral-200">
-                {t('Theme')}
-              </div>
-              <select
-                className="w-[120px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm border-none hover:bg-gray-500/10"
-                value={state.theme}
-                onChange={(event) =>
-                  dispatch({ field: 'theme', value: event.target.value })
-                }
-              >
-                <option value="dark">{t('Dark mode')}</option>
-                <option value="light">{t('Light mode')}</option>
-              </select>
-            </div>
-          <div className="flex flex-row justify-between items-center my-10">
-          <div className="text-sm font-bold text-black dark:text-neutral-200">
-            {t('Run Typewriter Intro')}
-          </div>
-          <Switch
-            checked={state.runTypeWriterIntroSetting}
-            onChange={(value) =>
-              dispatch({ field: 'runTypeWriterIntroSetting', value })
-            }
-            className={`${
-              state.runTypeWriterIntroSetting ? 'bg-blue-600' : 'bg-gray-400'
-            } relative inline-flex h-6 w-14 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
-          >
-            <span
-              aria-hidden="true"
-              className={`${
-                state.runTypeWriterIntroSetting ? 'translate-x-8' : 'translate-x-0'
-              } inline-block h-6 w-6 transform rounded-full dark:bg-white bg-gray-300 shadow-lg transition duration-200 ease-in-out`}
-            />
-            </Switch>
-          </div>
-            <div className='flex justify-end mr-1'>
-              <button
-                type="button"
-                className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-                onClick={() => {
-                  handleSave();
-                  onClose();
-                }}
-              >
-                {t('Save')}
-              </button>
-            </div>
-            <hr className="mb-10 border-gray-300 dark:border-neutral-700" />
-        <div className="text-sm font-bold mb-5 text-black dark:text-neutral-200">
-          User
-        </div>
-          <table>
-            <tbody>
-              <tr>
-                {/* <td className="pr-4 text-black dark:text-neutral-300">Name:</td> */}
-                <td className="text-black dark:text-neutral-100">{user?.displayName}</td>
-              </tr>
-              <tr>
-                {/* <td className="pr-4 text-black dark:text-neutral-300">Department:</td> */}
-                <td className="text-black dark:text-neutral-100">{user?.department}</td>
-              </tr>
-              <tr>
-                {/* <td className="pr-4 text-black dark:text-neutral-300">Position:</td> */}
-                <td className="text-black dark:text-neutral-100">{user?.jobTitle}</td>
-              </tr>
-              <tr>
-               {/* <td className="pr-4 text-black dark:text-neutral-300">Email:</td> */}
-                <td className="text-black dark:text-neutral-100">{user?.mail}</td>
-              </tr>
-            </tbody>
-          </table>
-          <hr className="my-10 border-gray-300 dark:border-neutral-700" />
-          <div className='flex flex-row justify-between'>
-            <div className="text-sm mb-5 font-bold text-black dark:text-neutral-200">
-              Data
-            </div>
-            <div className='flex justify-end mr-1 mb-10 items-center flex-col'>
-              {homeState.conversations.length > 0 ? (
-                  <ClearConversations onClearConversations={handleClearConversations} />
-              ) : null}
-              <Import onImport={handleImportConversations} />
+              <>
+                <div className="flex flex-row justify-between items-center my-10">
+                  <div className="text-sm font-bold text-black dark:text-neutral-200">
+                    {t('Language')}
+                  </div>
+                  <LanguageSwitcher />
+                </div>
+                <div className="flex flex-row justify-between items-center my-10">
+                  <div className="text-sm font-bold text-black dark:text-neutral-200">
+                    {t('Theme')}
+                  </div>
+                  <select
+                    className="w-[120px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm border-none hover:bg-gray-500/10"
+                    value={state.theme}
+                    onChange={(event) =>
+                      dispatch({ field: 'theme', value: event.target.value })
+                    }
+                  >
+                    <option value="dark">{t('Dark mode')}</option>
+                    <option value="light">{t('Light mode')}</option>
+                  </select>
+                </div>
+                <div className="flex flex-row justify-between items-center my-10">
+                  <div className="text-sm font-bold text-black dark:text-neutral-200">
+                    {t('Run Typewriter Intro')}
+                  </div>
+                  <Switch
+                    checked={state.runTypeWriterIntroSetting}
+                    onChange={(value) =>
+                      dispatch({ field: 'runTypeWriterIntroSetting', value })
+                    }
+                    className={`${
+                      state.runTypeWriterIntroSetting
+                        ? 'bg-blue-600'
+                        : 'bg-gray-400'
+                    } relative inline-flex h-6 w-14 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`${
+                        state.runTypeWriterIntroSetting
+                          ? 'translate-x-8'
+                          : 'translate-x-0'
+                      } inline-block h-6 w-6 transform rounded-full dark:bg-white bg-gray-300 shadow-lg transition duration-200 ease-in-out`}
+                    />
+                  </Switch>
+                </div>
+                <div className="flex justify-end mr-1">
+                  <button
+                    type="button"
+                    className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                    onClick={() => {
+                      handleSave();
+                      onClose();
+                    }}
+                  >
+                    {t('Save')}
+                  </button>
+                </div>
+                <hr className="mb-10 border-gray-300 dark:border-neutral-700" />
+                <div className="text-sm font-bold mb-5 text-black dark:text-neutral-200">
+                  Searchable Data
+                </div>
+                <span className="mb-4 block text-[12px] text-black/50 dark:text-white/50 text-sm">
+                  {t(
+                    'MSF AI Assistant uses data from the following sources for relevant queries. The latest information from these sources is highlighted below. Citations will be provided if this data is used.',
+                  )}
+                </span>
+                <table className="mb-10 w-full border-spacing-y-4">
+                  <tbody>
+                    <tr>
+                      <td className="py-2 text-black dark:text-neutral-100">
+                        <a
+                          href="https://www.doctorswithoutborders.org"
+                          className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                        >
+                          doctorswithoutborders.org
+                        </a>
+                      </td>
+                      <td className="py-2 text-right text-black/50 dark:text-neutral-300">
+                        Updated: August 18, 2024
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-2 text-black dark:text-neutral-100">
+                        <a
+                          href="https://www.msf.org"
+                          className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                        >
+                          msf.org
+                        </a>
+                      </td>
+                      <td className="py-2 text-right text-black/50 dark:text-neutral-300">
+                        Updated: August 18, 2024
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <hr className="mb-10 border-gray-300 dark:border-neutral-700" />
+                <div className="text-sm font-bold mb-5 text-black dark:text-neutral-200">
+                  User
+                </div>
+                <table>
+                  <tbody>
+                    <tr>
+                      {/* <td className="pr-4 text-black dark:text-neutral-300">Name:</td> */}
+                      <td className="text-black dark:text-neutral-100">
+                        {user?.displayName}
+                      </td>
+                    </tr>
+                    <tr>
+                      {/* <td className="pr-4 text-black dark:text-neutral-300">Department:</td> */}
+                      <td className="text-black dark:text-neutral-100">
+                        {user?.department}
+                      </td>
+                    </tr>
+                    <tr>
+                      {/* <td className="pr-4 text-black dark:text-neutral-300">Position:</td> */}
+                      <td className="text-black dark:text-neutral-100">
+                        {user?.jobTitle}
+                      </td>
+                    </tr>
+                    <tr>
+                      {/* <td className="pr-4 text-black dark:text-neutral-300">Email:</td> */}
+                      <td className="text-black dark:text-neutral-100">
+                        {user?.mail}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <hr className="my-10 border-gray-300 dark:border-neutral-700" />
+                <div className="flex flex-row justify-between">
+                  <div className="text-sm mb-5 font-bold text-black dark:text-neutral-200">
+                    Chat Data
+                  </div>
+                  <div className="flex justify-end mr-1 mb-10 items-center flex-col">
+                    {homeState.conversations.length > 0 ? (
+                      <ClearConversations
+                        onClearConversations={handleClearConversations}
+                      />
+                    ) : null}
+                    <Import onImport={handleImportConversations} />
 
-              <SidebarButton
-                text={t('Export data')}
-                icon={<IconFileExport size={18} />}
-                onClick={() => handleExportData()}
-              />
+                    <SidebarButton
+                      text={t('Export data')}
+                      icon={<IconFileExport size={18} />}
+                      onClick={() => handleExportData()}
+                    />
+                  </div>
+                </div>
+                <div className="flex justify-end mr-1">
+                  <button
+                    type="button"
+                    className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
+                    onClick={() => {
+                      handleReset();
+                      onClose();
+                    }}
+                  >
+                    {t('Reset Settings')}
+                  </button>
+                </div>
+                <div className="flex justify-end mr-1">
+                  <SignInSignOut />
+                </div>
+              </>
+            )}
+            {activeTab === Tab.FAQ && (
+              <>
+                <div>
+                  <div className="text-sm font-bold text-black dark:text-neutral-200 mt-10 mb-5">
+                    {t('Frequently Asked Questions')}
+                  </div>
+                  <FAQ faq={faqData.faq} />
+                </div>
+              </>
+            )}
+            <div className="flex flex-col md:flex-row px-1 md:justify-between mt-10 mr-1">
+              <div className="text-gray-500">
+                v{version}.{build}.{env}
+              </div>
+              <a
+                href={`mailto:${email}`}
+                className="flex items-center mt-2 md:mt-0 text-black dark:text-white"
+              >
+                <IconExternalLink
+                  size={18}
+                  className={'inline mr-1 text-black dark:text-white'}
+                />
+                {t('Send your Feedback')}
+              </a>
             </div>
-          </div>
-          <div className='flex justify-end mr-1'>
-          <button
-            type="button"
-            className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-            onClick={() => {
-              handleReset()
-              onClose();
-            }}
-          >
-            {t('Reset Settings')}
-          </button>
-          </div>
-          <div className='flex justify-end mr-1'>
-
-            <SignInSignOut />
-          </div>
-          </>
-        )}
-        {activeTab === Tab.FAQ && (
-          <>
-          <div>
-            <div className="text-sm font-bold text-black dark:text-neutral-200 mt-10 mb-5">
-                {t('Frequently Asked Questions')}
-            </div>
-            <FAQ faq={faqData.faq} />
-          </div>
-          </>
-        )}
-          <div className="flex flex-col md:flex-row px-1 md:justify-between mt-10 mr-1">
-            <div className="text-gray-500">v{version}.{build}.{env}</div>
-            <a
-              href={`mailto:${email}`}
-              className="flex items-center mt-2 md:mt-0 text-black dark:text-white"
-            >
-              <IconExternalLink size={18} className={'inline mr-1 text-black dark:text-white'} />
-              {t('Send your Feedback')}
-            </a>
-          </div>
           </div>
         </div>
       </div>
