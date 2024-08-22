@@ -320,14 +320,21 @@ export default class ChatService {
                   })`,
               )
               .join('\n') +
-            "\n\nBased on this information, please answer the user's question. Try to use the latest information. When you use information from the provided sources, cite it using the format [X] where X is the number of the source. If you use general knowledge not from these sources, no citation is needed." +
-            '\n\nAfter your response, please list all used citations in the following format:' +
+            '\n\nInstructions:' +
+            "\n1. Answer the user's question based on the provided information and your general knowledge." +
+            '\n2. Use the most recent and relevant information available.' +
+            '\n3. When citing information from the provided sources, use the format [X] where X is a new label starting at 1 and incrementing for each unique source used.' +
+            '\n4. Aim to use multiple sources when appropriate to provide a comprehensive answer.' +
+            '\n5. More up to date information from sources compared to general knowledge supersedes general knowledge.' +
+            '\n6. No citation is needed for general knowledge not from these sources.' +
+            '\n7. After your response, list ALL original sources from the relevant information recieved in the CITATIONS block as shown below, with used sources first (renumbered starting from 1), followed by unused sources (continuing the numbering).' +
+            "\n8. Format the date in the sources as 'Month Day, Year'." +
             '\n\nCITATIONS:' +
             '\n[{' +
             '\n  "number": "1",' +
             '\n  "title": "Source Title",' +
             '\n  "url": "https://example.com"' +
-            '\n  "date": "Source Date With the following format and only show the date - Feb 23, 2024"' +
+            '\n  "date": "Source Date"' +
             '\n}]';
         } else {
           augmentedUserMessage = textContent;

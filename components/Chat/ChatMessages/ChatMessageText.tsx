@@ -60,16 +60,131 @@ const extractCitations = (
   return { mainContent, citations };
 };
 
-const CitationList: React.FC<{ citations: Citation[] }> = ({ citations }) => {
+const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollDirection, setScrollDirection] = useState<
+    'left' | 'right' | null
+  >(null);
+  const scrollIntervalRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsVisible(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!scrollContainerRef.current) return;
+
+      const container = scrollContainerRef.current;
+      const containerRect = container.getBoundingClientRect();
+      const mouseX = e.clientX - containerRect.left;
+      const containerWidth = containerRect.width;
+
+      if (mouseX > containerWidth * 0.9) {
+        setScrollDirection('right');
+      } else if (mouseX < containerWidth * 0.1) {
+        setScrollDirection('left');
+      } else {
+        setScrollDirection(null);
+      }
+    };
+
+    const handleMouseLeave = () => {
+      setScrollDirection(null);
+    };
+
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener(
+        'mousemove',
+        handleMouseMove as unknown as EventListener,
+      );
+      container.addEventListener('mouseleave', handleMouseLeave);
+    }
+
+    return () => {
+      if (container) {
+        container.removeEventListener(
+          'mousemove',
+          handleMouseMove as unknown as EventListener,
+        );
+        container.removeEventListener('mouseleave', handleMouseLeave);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const SCROLL_SPEED = 5; // Pixels per frame
+
+    if (scrollDirection) {
+      scrollIntervalRef.current = window.setInterval(() => {
+        if (scrollContainerRef.current) {
+          const container = scrollContainerRef.current;
+          if (scrollDirection === 'right') {
+            container.scrollLeft += SCROLL_SPEED;
+          } else {
+            container.scrollLeft -= SCROLL_SPEED;
+          }
+        }
+      }, 16); // ~60fps
+    } else {
+      if (scrollIntervalRef.current !== null) {
+        clearInterval(scrollIntervalRef.current);
+        scrollIntervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (scrollIntervalRef.current !== null) {
+        clearInterval(scrollIntervalRef.current);
+      }
+    };
+  }, [scrollDirection]);
+
+  const handleReactMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const mouseX = e.clientX - containerRect.left;
+    const containerWidth = containerRect.width;
+
+    if (mouseX > containerWidth * 0.9) {
+      setScrollDirection('right');
+    } else if (mouseX < containerWidth * 0.1) {
+      setScrollDirection('left');
+    } else {
+      setScrollDirection(null);
+    }
+  };
+
+  const handleReactMouseLeave = () => {
+    setScrollDirection(null);
+  };
+
   if (citations.length === 0) return null;
 
   return (
-    <div className="my-2 w-full">
+    <div
+      className={`my-2 w-full transition-opacity duration-500 ease-in-out ${
+        isVisible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
       <div className="flex items-center mb-2">
         <IconBlockquote size={20} className="inline-block" />
-        <h3 className="text-lg font-semibold ml-2 mt-3">Sources</h3>
+        <h3 className="text-lg font-semibold ml-2 mt-3">
+          Sources and Relevant Links
+        </h3>
       </div>
-      <div className="flex w-full overflow-x-auto gap-4 custom-scrollbar">
+      <div
+        ref={scrollContainerRef}
+        className="flex w-full overflow-x-auto gap-4 no-scrollbar"
+        style={{ scrollBehavior: 'auto' }}
+        onMouseMove={handleReactMouseMove}
+        onMouseLeave={handleReactMouseLeave}
+      >
         {citations.map((citation) => (
           <div key={citation.number} className="flex-shrink-0">
             <CitationItem citation={citation} />
@@ -129,7 +244,6 @@ const CitationItem: React.FC<{ citation: Citation }> = ({ citation }) => {
 
 interface AssistantMessageProps {
   content: string;
-  citations: Citation[];
   copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
@@ -139,13 +253,42 @@ interface AssistantMessageProps {
 
 const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
-  citations,
   copyOnClick,
   messageIsStreaming,
   messageIndex,
   selectedConversation,
   messageCopied,
 }) => {
+  const [displayContent, setDisplayContent] = useState('');
+  const [citations, setCitations] = useState<Citation[]>([]);
+  const previousCitations = useRef<Citation[]>([]);
+  const citationsProcessed = useRef(false);
+
+  useEffect(() => {
+    const processContent = () => {
+      if (content.includes('CITATIONS:')) {
+        const { mainContent, citations } = extractCitations(content);
+        setDisplayContent(mainContent);
+        setCitations(citations);
+        previousCitations.current = citations;
+        citationsProcessed.current = true;
+      } else {
+        setDisplayContent(content);
+        citationsProcessed.current = false;
+      }
+    };
+
+    processContent();
+  }, [content]);
+
+  const displayContentWithoutCitations = messageIsStreaming
+    ? content.split('CITATIONS:')[0]
+    : displayContent;
+
+  const citationsToShow = citationsProcessed.current
+    ? citations
+    : previousCitations.current;
+
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
       <div className="min-w-[40px] text-right font-bold">
@@ -212,7 +355,7 @@ const AssistantMessage: FC<AssistantMessageProps> = ({
               },
             }}
           >
-            {content}
+            {displayContentWithoutCitations}
           </MemoizedReactMarkdown>
 
           <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
@@ -231,7 +374,9 @@ const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
         </div>
-        <CitationList citations={citations} />
+        {citationsToShow.length > 0 && (
+          <CitationList citations={citationsToShow} />
+        )}
       </div>
     </div>
   );
@@ -437,46 +582,6 @@ const ChatMessageText: FC<any> = ({
   onEdit,
 }: any) => {
   const { role, content } = message;
-  const [displayContent, setDisplayContent] = useState('');
-  const [citations, setCitations] = useState<Citation[]>([]);
-  const citationsProcessed = useRef(false);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const processContent = () => {
-      if (messageIsStreaming) {
-        // Check if the content includes the CITATIONS marker
-        if (content.includes('CITATIONS:')) {
-          const { mainContent, citations } = extractCitations(content);
-          if (isMounted) {
-            setDisplayContent(mainContent);
-            setCitations(citations);
-            citationsProcessed.current = true;
-          }
-        } else {
-          // If no CITATIONS marker, just update the display content
-          if (isMounted) {
-            setDisplayContent(content);
-          }
-        }
-      } else if (!citationsProcessed.current) {
-        // Only process citations if they haven't been processed during streaming
-        const { mainContent, citations } = extractCitations(content);
-        if (isMounted) {
-          setDisplayContent(mainContent);
-          setCitations(citations);
-          citationsProcessed.current = true;
-        }
-      }
-    };
-
-    processContent();
-
-    return () => {
-      isMounted = false;
-    };
-  }, [content, messageIsStreaming]);
 
   return (
     <div
@@ -489,10 +594,9 @@ const ChatMessageText: FC<any> = ({
     >
       {role === 'assistant' ? (
         <AssistantMessage
-          content={displayContent}
-          citations={citations}
+          content={content}
           copyOnClick={copyOnClick}
-          messageIsStreaming={messageIsStreaming && !citationsProcessed.current}
+          messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
