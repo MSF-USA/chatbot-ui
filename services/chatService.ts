@@ -327,6 +327,7 @@ export default class ChatService {
             '\n  "number": "1",' +
             '\n  "title": "Source Title",' +
             '\n  "url": "https://example.com"' +
+            '\n  "date": "Source Date With the following format and only show the date - Feb 23, 2024"' +
             '\n}]';
         } else {
           augmentedUserMessage = textContent;

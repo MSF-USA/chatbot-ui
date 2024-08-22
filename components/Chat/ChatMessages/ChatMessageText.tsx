@@ -1,4 +1,5 @@
 import {
+  IconBlockquote,
   IconCheck,
   IconCopy,
   IconEdit,
@@ -16,10 +17,12 @@ import {
   SetStateAction,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
 import { useTranslation } from 'next-i18next';
+import Link from 'next/link';
 
 import { Conversation, Message } from '@/types/chat';
 
@@ -34,70 +37,99 @@ interface Citation {
   number: string;
   title: string;
   url: string;
+  date: string;
 }
 
 const extractCitations = (
   content: string,
 ): { mainContent: string; citations: Citation[] } => {
-  const parts = content.split('CITATIONS:');
-  const mainContent = parts[0].trim();
-  console.log('Main Content:', mainContent);
-
+  const citationRegex = /\s*CITATIONS:\s*(\[[\s\S]*\])\s*$/;
+  const match = content.match(citationRegex);
+  let mainContent = content;
   let citations: Citation[] = [];
 
-  if (parts[1]) {
-    let citationsPart = parts[1].trim();
-    console.log('Raw Citations JSON:', citationsPart);
-
-    citationsPart = citationsPart.replace(
-      /"([^"]*)"/g,
-      (match, p1) => `"${p1.replace(/"/g, '\\"')}"`,
-    );
-
+  if (match) {
+    mainContent = content.replace(citationRegex, '').trim();
     try {
-      citations = JSON.parse(citationsPart);
+      citations = JSON.parse(match[1]);
     } catch (error) {
       console.error('Failed to parse citations:', error);
-      console.error('Problematic JSON:', citationsPart);
     }
   }
 
   return { mainContent, citations };
 };
 
-const formatMessageWithCitations = (
-  content: any,
-  citations: Citation[],
-): React.ReactNode => {
-  if (typeof content !== 'string') {
-    return content;
-  }
-  return content.split(/(\[\d+\])/).map((part, index) => {
-    if (index % 2 === 1) {
-      const citationNumber = part.replace('[', '').replace(']', '');
-      const citation = citations.find((c) => c.number === citationNumber);
-      if (citation) {
-        return (
-          <sup key={index}>
-            <a
-              href={citation.url}
-              title={citation.title}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-500 hover:underline"
-            >
-              {part}
-            </a>
-          </sup>
-        );
-      }
-    }
-    return part;
-  });
+const CitationList: React.FC<{ citations: Citation[] }> = ({ citations }) => {
+  if (citations.length === 0) return null;
+
+  return (
+    <div className="my-2 w-full">
+      <div className="flex items-center mb-2">
+        <IconBlockquote size={20} className="inline-block" />
+        <h3 className="text-lg font-semibold ml-2 mt-3">Sources</h3>
+      </div>
+      <div className="flex w-full overflow-x-auto gap-4 custom-scrollbar">
+        {citations.map((citation) => (
+          <div key={citation.number} className="flex-shrink-0">
+            <CitationItem citation={citation} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const CitationItem: React.FC<{ citation: Citation }> = ({ citation }) => {
+  const [useDefaultLogo, setUseDefaultLogo] = useState(false);
+  const { hostname } = new URL(citation.url);
+
+  const cleanDomain = hostname.replace(/^www\.|https?:\/\/|\.[^.]+$/g, '');
+
+  const handleImageError = () => {
+    setUseDefaultLogo(true);
+  };
+
+  return (
+    <div className="relative bg-gray-200 dark:bg-[#171717] rounded-lg transition-all duration-300 overflow-hidden text-xs border-2 border-transparent hover:border-blue-500 hover:shadow-lg h-[132px] w-48 p-2 mb-5">
+      <Link
+        href={citation.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        title={citation.title}
+        className="flex flex-col h-full no-underline justify-between"
+      >
+        <div className="flex-grow">
+          <div className="text-[12.5px] line-clamp-3 text-gray-800 dark:text-white mb-2">
+            {citation.title}
+          </div>
+        </div>
+        <div className="text-[11px] text-gray-600 dark:text-gray-400 mb-6">
+          {citation.date}
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 dark:bg-[#1f1f1f] bg-gray-100 px-2 py-1 flex items-center dark:text-white text-gray-500 text-[11.5px] space-x-1">
+          <div className="flex items-center">
+            <img
+              src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
+              alt={`${hostname} favicon`}
+              width={12}
+              height={12}
+              onError={handleImageError}
+              className="mr-1 my-0 p-0 align-middle"
+            />
+          </div>
+          <span className="truncate">{cleanDomain}</span>
+          <span>|</span>
+          <span>{citation.number}</span>
+        </div>
+      </Link>
+    </div>
+  );
 };
 
 interface AssistantMessageProps {
   content: string;
+  citations: Citation[];
   copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
@@ -107,17 +139,13 @@ interface AssistantMessageProps {
 
 const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
+  citations,
   copyOnClick,
   messageIsStreaming,
   messageIndex,
   selectedConversation,
   messageCopied,
 }) => {
-  const { mainContent, citations } = useMemo(
-    () => extractCitations(content),
-    [content],
-  );
-
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
       <div className="min-w-[40px] text-right font-bold">
@@ -162,7 +190,7 @@ const AssistantMessage: FC<AssistantMessageProps> = ({
               table({ children }) {
                 return (
                   <div className="overflow-auto">
-                    <table className="max-w-full border-collapse border border-black px-3 py-1 dark:border-white">
+                    <table className="border-collapse border border-black px-3 py-1 dark:border-white">
                       {children}
                     </table>
                   </div>
@@ -203,6 +231,7 @@ const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
         </div>
+        <CitationList citations={citations} />
       </div>
     </div>
   );
@@ -268,11 +297,6 @@ const UserMessage: FC<UserMessageProps> = ({
     }
   }, [message.content, messageContent]);
 
-  const { mainContent, citations } = useMemo(
-    () => extractCitations(localMessageContent),
-    [localMessageContent],
-  );
-
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
       <div className="min-w-[40px] text-right font-bold">
@@ -326,11 +350,6 @@ const UserMessage: FC<UserMessageProps> = ({
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeMathjax]}
               components={{
-                p: ({ children }) => (
-                  <p>
-                    {formatMessageWithCitations(children as string, citations)}
-                  </p>
-                ),
                 code({ node, inline, className, children, ...props }) {
                   const match = /language-(\w+)/.exec(className || '');
                   return !inline ? (
@@ -349,7 +368,7 @@ const UserMessage: FC<UserMessageProps> = ({
                 table({ children }) {
                   return (
                     <div className="overflow-auto">
-                      <table className="max-w-full border-collapse border border-black px-3 py-1 dark:border-white">
+                      <table className="border-collapse border border-black px-3 py-1 dark:border-white">
                         {children}
                       </table>
                     </div>
@@ -371,7 +390,7 @@ const UserMessage: FC<UserMessageProps> = ({
                 },
               }}
             >
-              {mainContent}
+              {localMessageContent}
             </MemoizedReactMarkdown>
           )}
 
@@ -417,18 +436,46 @@ const ChatMessageText: FC<any> = ({
   messageCopied,
   onEdit,
 }: any) => {
-  const { role, content, messageType } = message;
-  const { t } = useTranslation('chat');
-
-  const [mainContent, setMainContent] = useState<string>('');
+  const { role, content } = message;
+  const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
+  const citationsProcessed = useRef(false);
 
   useEffect(() => {
-    if (!messageIsStreaming) {
-      const { mainContent, citations } = extractCitations(content);
-      setMainContent(mainContent);
-      setCitations(citations);
-    }
+    let isMounted = true;
+
+    const processContent = () => {
+      if (messageIsStreaming) {
+        // Check if the content includes the CITATIONS marker
+        if (content.includes('CITATIONS:')) {
+          const { mainContent, citations } = extractCitations(content);
+          if (isMounted) {
+            setDisplayContent(mainContent);
+            setCitations(citations);
+            citationsProcessed.current = true;
+          }
+        } else {
+          // If no CITATIONS marker, just update the display content
+          if (isMounted) {
+            setDisplayContent(content);
+          }
+        }
+      } else if (!citationsProcessed.current) {
+        // Only process citations if they haven't been processed during streaming
+        const { mainContent, citations } = extractCitations(content);
+        if (isMounted) {
+          setDisplayContent(mainContent);
+          setCitations(citations);
+          citationsProcessed.current = true;
+        }
+      }
+    };
+
+    processContent();
+
+    return () => {
+      isMounted = false;
+    };
   }, [content, messageIsStreaming]);
 
   return (
@@ -442,9 +489,10 @@ const ChatMessageText: FC<any> = ({
     >
       {role === 'assistant' ? (
         <AssistantMessage
-          content={content}
+          content={displayContent}
+          citations={citations}
           copyOnClick={copyOnClick}
-          messageIsStreaming={messageIsStreaming}
+          messageIsStreaming={messageIsStreaming && !citationsProcessed.current}
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
