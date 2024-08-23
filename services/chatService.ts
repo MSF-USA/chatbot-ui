@@ -315,9 +315,9 @@ export default class ChatService {
             searchResults
               .map(
                 (result, index) =>
-                  `[${index + 1}] ${result.title}: ${result.content} (URL: ${
-                    result.url
-                  })`,
+                  `[${index + 1}] ${result.title}: date ${result.date} : ${
+                    result.content
+                  } (URL: ${result.url})`,
               )
               .join('\n') +
             '\n\nInstructions:' +
@@ -328,13 +328,12 @@ export default class ChatService {
             '\n5. More up to date information from sources compared to general knowledge supersedes general knowledge.' +
             '\n6. No citation is needed for general knowledge not from these sources.' +
             '\n7. After your response, list ALL original sources from the relevant information recieved in the CITATIONS block as shown below, with used sources first (renumbered starting from 1), followed by unused sources (continuing the numbering). Use the EXACT block json format below and include all sources in the same block.' +
-            "\n8. Format the date in the sources as 'Month Day, Year' for EACH source." +
             '\n\nCITATIONS:' +
             '\n[{' +
             '\n  "number": "1",' +
             '\n  "title": "Source Title",' +
             '\n  "url": "https://example.com"' +
-            '\n  "date": "Source Date"' +
+            '\n  "date": "Source Date as Month Day, Year"' +
             '\n}]';
         } else {
           augmentedUserMessage = textContent;
