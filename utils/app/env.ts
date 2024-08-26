@@ -1,3 +1,10 @@
+import {Session} from "next-auth";
+
+const EUVariableMap: any = {
+    'AZURE_BLOB_STORAGE_NAME': 'AZURE_BLOB_STORAGE_NAME_EU',
+    'AZURE_BLOB_STORAGE_KEY': 'AZURE_BLOB_STORAGE_KEY_EU',
+}
+
 /**
  * Fetches the value of a specific environment variable. If the environment variable is not set, it either returns a default value or throws an error based on the flag throwErrorOnFail
  *
@@ -10,10 +17,22 @@
  * @throws {Error} - Throws an error if the environment variable is not set and the flag throwErrorOnFail is set to true.
  */
 export function getEnvVariable(
-    name: string, throwErrorOnFail: boolean = true,
-    defaultValue: string = ''
+    name: string,
+    throwErrorOnFail: boolean = true,
+    defaultValue: string = '',
+    user?: Session["user"] | undefined
 ): string {
-    const value = process.env[name];
+    let euUser: boolean = true;
+    if (user?.mail && user.mail.toLowerCase()?.indexOf('newyork.msf.org') > -1) {
+        euUser = false;
+    }
+
+    let value: string | undefined;
+    if (!euUser || !EUVariableMap[name]) {
+       value = process.env[name];
+    } else {
+        value = process.env[EUVariableMap[name]]
+    }
     if (!value && throwErrorOnFail) {
         throw new Error(`Environment variable ${name} not set`);
     } else if (!value) {
