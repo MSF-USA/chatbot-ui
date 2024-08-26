@@ -280,6 +280,7 @@ export default class ChatService {
     temperatureToUse: number,
     token: JWT,
     user: Session['user'],
+    useAISearch: boolean,
   ): Promise<StreamingTextResponse> {
     return this.retryWithExponentialBackoff(async () => {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
@@ -287,7 +288,6 @@ export default class ChatService {
 
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
 
-      let searchResults: SearchIndex[] = [];
       let augmentedUserMessage = '';
 
       if (
@@ -299,45 +299,50 @@ export default class ChatService {
             ? lastMessage.content
             : (lastMessage.content as TextMessageContent).text;
 
-        const isRelevant = await this.isQueryRelevantToMSF(
-          modelToUse,
-          token,
-          textContent,
-        );
+        if (useAISearch) {
+          const isRelevant = await this.isQueryRelevantToMSF(
+            modelToUse,
+            token,
+            textContent,
+          );
 
-        if (isRelevant) {
-          searchResults = await useSearchService(textContent);
-          // Augment the user's message with search results
+          if (isRelevant) {
+            const searchResults = await useSearchService(textContent);
+            // Augment the user's message with search results
 
-          console.log(searchResults);
-          augmentedUserMessage =
-            `User's question: ${textContent}\n\nRelevant information:\n` +
-            searchResults
-              .map(
-                (result, index) =>
-                  `[${index + 1}] ${result.title}: date ${result.date} : ${
-                    result.content
-                  } (URL: ${result.url})`,
-              )
-              .join('\n') +
-            '\n\nInstructions:' +
-            "\n1. Answer the user's question based on the provided information and your general knowledge." +
-            '\n2. Use the most recent and relevant information available.' +
-            '\n3. When citing information from the provided sources, use the format [X] where X is a new label starting at 1 and incrementing for each unique source used.' +
-            '\n4. Aim to use multiple sources when appropriate to provide a comprehensive answer.' +
-            '\n5. More up to date information from sources compared to general knowledge supersedes general knowledge.' +
-            '\n6. No citation is needed for general knowledge not from these sources.' +
-            '\n7. After your response, list ALL original sources from the relevant information recieved in the CITATIONS block as shown below, with used sources first (renumbered starting from 1), followed by unused sources (continuing the numbering). Use the EXACT block json format below and include all sources in the same block.' +
-            '\n\nCITATIONS:' +
-            '\n[{' +
-            '\n  "number": "1",' +
-            '\n  "title": "Source Title",' +
-            '\n  "url": "https://example.com"' +
-            '\n  "date": "Source Date as Month Day, Year"' +
-            '\n}]';
+            console.log(searchResults);
+            augmentedUserMessage =
+              `User's question: ${textContent}\n\nRelevant information:\n` +
+              searchResults
+                .map(
+                  (result, index) =>
+                    `[${index + 1}] ${result.title}: date ${result.date} : ${
+                      result.content
+                    } (URL: ${result.url})`,
+                )
+                .join('\n') +
+              '\n\nInstructions:' +
+              "\n1. Answer the user's question based on the provided information and your general knowledge." +
+              '\n2. Use the most recent and relevant information available.' +
+              '\n3. When citing information from the provided sources, use the format [X] where X is a new label starting at 1 and incrementing for each unique source used.' +
+              '\n4. Aim to use multiple sources when appropriate to provide a comprehensive answer.' +
+              '\n5. More up to date information from sources compared to general knowledge supersedes general knowledge.' +
+              '\n6. No citation is needed for general knowledge not from these sources.' +
+              '\n7. After your response, list ALL original sources from the relevant information recieved in the CITATIONS block as shown below, with used sources first (renumbered starting from 1), followed by unused sources (continuing the numbering). Use the EXACT block json format below and include all sources in the same block.' +
+              '\n\nCITATIONS:' +
+              '\n[{' +
+              '\n  "number": "1",' +
+              '\n  "title": "Source Title",' +
+              '\n  "url": "https://example.com",' +
+              '\n  "date": "Source Date as Month Day, Year"' +
+              '\n}]';
+          } else {
+            augmentedUserMessage = textContent;
+          }
         } else {
           augmentedUserMessage = textContent;
         }
+
         // Replace the last message with the augmented version
         messagesToSend[messagesToSend.length - 1] = {
           ...lastMessage,
@@ -366,12 +371,13 @@ export default class ChatService {
    * @returns {Promise<Response>} A promise that resolves to the response based on the request.
    */
   public async handleRequest(req: NextRequest): Promise<Response> {
-    const { model, messages, prompt, temperature } =
+    const { model, messages, prompt, temperature, useKnowledgeBase } =
       (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
     const temperatureToUse = temperature ?? DEFAULT_TEMPERATURE;
+    const useAISearch = useKnowledgeBase || false;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
     const needsToHandleFiles: boolean =
@@ -417,6 +423,7 @@ export default class ChatService {
         temperatureToUse,
         token,
         user,
+        useAISearch,
       );
     }
   }

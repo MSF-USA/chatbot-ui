@@ -20,7 +20,11 @@ import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
 import { getEndpoint } from '@/utils/app/api';
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import {
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_USE_KNOWLEDGE_BASE,
+} from '@/utils/app/const';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
@@ -80,6 +84,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
+      useKnowledgeBase,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -145,6 +150,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
+      useKnowledgeBase: useKnowledgeBase || DEFAULT_USE_KNOWLEDGE_BASE,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -441,6 +447,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       pluginKeys,
       selectedConversation,
       stopConversationRef,
+      useKnowledgeBase,
     ],
   );
 
