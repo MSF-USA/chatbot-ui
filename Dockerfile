@@ -22,7 +22,7 @@ ENV NEXT_PUBLIC_ENV=$ENV
 RUN npm run build
 
 # ---- Production ----
-FROM node:22-alpine AS production
+FROM node:21-alpine AS production
 WORKDIR /app
 
 # pdftotext package
