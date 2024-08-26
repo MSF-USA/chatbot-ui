@@ -232,9 +232,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
 
   const debouncedUpdateConversation = useCallback(
-    debounce((content: string, updateConversation: CallableFunction) => {
-      updateConversation(content);
-    }, 100),
+    debounce(
+      window,
+      (content: string, updateConversation: CallableFunction) => {
+        updateConversation(content);
+      },
+      100,
+    ),
     [],
   );
 
