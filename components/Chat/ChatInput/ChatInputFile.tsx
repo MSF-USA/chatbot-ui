@@ -3,14 +3,19 @@ import React, {
   Dispatch,
   MutableRefObject,
   SetStateAction,
+  useContext,
   useRef,
 } from 'react';
+
+import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
   ImageMessageContent,
 } from '@/types/chat';
+
+import HomeContext from '@/pages/api/home/home.context';
 
 import FileIcon from '@/components/Icons/file';
 
@@ -40,6 +45,13 @@ const ChatInputFile = ({
   setImageFieldValue,
 }: ChatInputFileProps) => {
   const fileInputRef: MutableRefObject<any> = useRef(null);
+
+  const {
+    state: { user },
+    dispatch: homeDispatch,
+  } = useContext(HomeContext);
+  if (!userAuthorizedForFileUploads(user)) return null;
+
   return (
     <>
       <input

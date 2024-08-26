@@ -2,15 +2,20 @@ import React, {
   Dispatch,
   MutableRefObject,
   SetStateAction,
+  useContext,
   useRef,
 } from 'react';
 import toast from 'react-hot-toast';
+
+import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import {
   ChatInputSubmitTypes,
   ImageMessageContent,
   TextMessageContent,
 } from '@/types/chat';
+
+import HomeContext from '@/pages/api/home/home.context';
 
 import ImageIcon from '@/components/Icons/image';
 
@@ -101,6 +106,12 @@ const ChatInputImage = ({
   setImageFieldValue,
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
+
+  const {
+    state: { user },
+    dispatch: homeDispatch,
+  } = useContext(HomeContext);
+  if (!userAuthorizedForFileUploads(user)) return null;
 
   return (
     <>

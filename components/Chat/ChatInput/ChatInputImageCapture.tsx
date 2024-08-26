@@ -5,6 +5,7 @@ import React, {
   MouseEventHandler,
   MutableRefObject,
   SetStateAction,
+  useContext,
   useEffect,
   useRef,
   useState,
@@ -14,8 +15,11 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 
 import { isMobile } from '@/utils/app/env';
+import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
+
+import HomeContext from '@/pages/api/home/home.context';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
 import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
@@ -100,6 +104,12 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
       openModal();
     }
   };
+
+  const {
+    state: { user },
+    dispatch: homeDispatch,
+  } = useContext(HomeContext);
+  if (!userAuthorizedForFileUploads(user)) return null;
 
   return (
     <>
