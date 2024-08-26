@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
 
 // Example setup code
 beforeAll(() => {
@@ -9,8 +9,6 @@ afterAll(() => {
   console.log('Cleaning up after tests');
 });
 
-beforeEach(() => {
-});
+beforeEach(() => {});
 
-afterEach(() => {
-});
+afterEach(() => {});

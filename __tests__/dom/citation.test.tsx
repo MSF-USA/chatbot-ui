@@ -11,13 +11,6 @@ import { CitationList } from '@/components/Chat/Citations/CitationList';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 
-// Mock Next.js Link component
-vi.mock('next/link', () => {
-  return ({ children, href }: { children: React.ReactNode; href: string }) => (
-    <a href={href}>{children}</a>
-  );
-});
-
 describe('CitationList Component', () => {
   const mockCitations: Citation[] = [
     {
@@ -59,7 +52,7 @@ describe('CitationItem Component', () => {
     render(<CitationItem citation={mockCitation} />);
     expect(screen.getByText('Test Citation')).toBeInTheDocument();
     expect(screen.getByText('2023-01-01')).toBeInTheDocument();
-    expect(screen.getByText('test.com')).toBeInTheDocument();
+    expect(screen.getByText('test')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
   });
 });

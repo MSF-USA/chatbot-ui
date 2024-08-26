@@ -9,7 +9,8 @@
     "lint": "next lint",
     "format": "prettier --write .",
     "test:node": "vitest --config ./vitest.config.ts",
-    "test": "npm run test:node",
+    "test:jsdom": "vitest --config ./vitest.config.jsdom.ts",
+    "test": "npm run test:node;npm run test:jsdom",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
