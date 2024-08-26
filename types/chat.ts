@@ -43,23 +43,25 @@ export function getChatMessageContent(message: Message): string {
   ) {
     // @ts-ignore
     const imageContent = message.content.find(
+      // @ts-ignore
       (contentItem) => contentItem.type === 'image_url',
     ) as ImageMessageContent;
     if (imageContent) {
       return imageContent.image_url.url;
     } else {
       // @ts-ignore
-      return (
-        message.content.find(
-          (contentItem) => contentItem.type === 'file_url',
-        ) as FileMessageContent
-      ).url;
+      const fileContent = message.content.find(
+        // @ts-ignore
+        (contentItem) => contentItem.type === 'file_url',
+      ) as FileMessageContent;
+      return fileContent.url;
     }
-  } else if ((message.content as TextMessageContent).type === 'text')
+  } else if ((message.content as TextMessageContent).type === 'text') {
     return (message.content as TextMessageContent).text;
-  else throw new Error(`Invalid message type or structure: ${message}`);
+  } else {
+    throw new Error(`Invalid message type or structure: ${message}`);
+  }
 }
-
 export interface Message {
   role: Role;
   content:
