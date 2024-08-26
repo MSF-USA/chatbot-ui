@@ -236,8 +236,12 @@ export default class ChatService {
   }
 
   /**
-    Decides whether a user query is worth searching related MSF data for
-  */
+   * Determines whether a user query is relevant to Médecins Sans Frontières (MSF) or related topics.
+   * @param {string} modelToUse - The ID of the model to use for relevance checking.
+   * @param {JWT} token - The JWT token for authentication.
+   * @param {string} query - The user's query to check for relevance.
+   * @returns {Promise<boolean>} A promise that resolves to true if the query is relevant, false otherwise.
+   */
   private async isQueryRelevantToMSF(
     modelToUse: string,
     token: JWT,
@@ -267,11 +271,83 @@ export default class ChatService {
   }
 
   /**
+   * Extracts the text content from a message.
+   * @param {Message} message - The message to extract text content from.
+   * @returns {string | null} The extracted text content, or null if not found.
+   */
+  private getTextContent(message: Message): string | null {
+    if (typeof message.content === 'string') return message.content;
+    if ((message.content as TextMessageContent).type === 'text')
+      return (message.content as TextMessageContent).text;
+    return null;
+  }
+
+  /**
+   * Reformats the user query to Azure OpenAI for RAG captabilities.
+   * @param {string} userQuestion - The original user question.
+   * @param {any[]} searchResults - The search results to include in the augmented content.
+   * @returns {string} The formatted augmented content.
+   */
+  private formatAugmentedContent(
+    userQuestion: string,
+    searchResults: any[],
+  ): string {
+    const formattedResults = searchResults
+      .map(
+        (result, index) =>
+          `[${index + 1}] ${result.title}: date ${result.date} : ${
+            result.content
+          } (URL: ${result.url})`,
+      )
+      .join('\n');
+
+    return `
+User's question: ${userQuestion}
+
+Relevant information:
+${formattedResults}
+
+Instructions:
+1. Provide a clear and concise answer to the user's question based on the provided information and your general knowledge.
+2. Use the most recent and relevant information available from the provided sources.
+3. When citing information from the provided sources in your answer, use the format [X] where X is the original number of the source as listed in the "Relevant information" section above. Do NOT renumber these in-text citations.
+4. Use multiple sources when appropriate to provide a comprehensive answer.
+5. If information from the provided sources contradicts your general knowledge, prioritize the provided information as it's likely more up-to-date.
+6. Do not cite general knowledge that isn't from these sources.
+7. Structure your response as follows:
+   a. Start with a direct answer to the user's question, highlighting the MOST RECENT data or information available.
+   b. Provide supporting details and explanations, using citations where appropriate. Clearly indicate when you're presenting older vs. newer information.
+   c. If relevant, include a brief conclusion or summary, emphasizing the latest findings or data.
+8. After your response, you MUST include a "CITATIONS" section listing ALL sources from the relevant information provided, including those not directly cited in your answer.
+9. The CITATIONS section must be preceded by the exact string "[[CITATIONS_START]]" on a new line, and followed by "[[CITATIONS_END]]" on a new line after the last citation.
+10. In the CITATIONS section:
+    a. List ALL sources in the order they were originally numbered in the "Relevant information" section.
+    b. Maintain the original numbering from the "Relevant information" section for each source.
+11. Each citation within the CITATIONS section should be on a new line and in the following format:
+    [{"number": "X", "title": "Source Title", "url": "https://example.com", "date": "Source Date as Month Day, Year"}]
+
+Your response MUST always include the CITATIONS section with the start and end markers, even if no sources were used.
+
+Example format:
+
+Your detailed response here... According to [2], some relevant information... Another study [1] suggests...
+
+[[CITATIONS_START]]
+[{"number": "1", "title": "Source Title 1", "url": "https://example1.com", "date": "January 1, 2023"}]
+[{"number": "2", "title": "Source Title 2", "url": "https://example2.com", "date": "February 2, 2023"}]
+[{"number": "3", "title": "Unused Source Title 3", "url": "https://example3.com", "date": "March 3, 2023"}]
+[[CITATIONS_END]]
+`;
+  }
+
+  /**
    * Handles a chat completion request by sending the messages to the OpenAI API and returning a streaming response.
    * @param {string} modelToUse - The ID of the model to use for the chat completion.
    * @param {Message[]} messagesToSend - The messages to send in the chat completion request.
    * @param {number} temperatureToUse - The temperature value to use for the chat completion.
    * @param {JWT} token - The JWT token for authentication.
+   * @param {Session['user']} user - User information for logging
+   * @param {boolean} useAISearch - Whether to use Azure AI Search and use RAG capabilities
    * @returns {Promise<StreamingTextResponse>} A promise that resolves to the streaming response containing the chat completion.
    */
   private async handleChatCompletion(
@@ -286,68 +362,26 @@ export default class ChatService {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
       const azureOpenai = new OpenAI(openAIArgs);
 
-      const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
+      const lastMessage = messagesToSend[messagesToSend.length - 1];
+      const textContent = this.getTextContent(lastMessage);
 
-      let augmentedUserMessage = '';
-
-      if (
-        typeof lastMessage.content === 'string' ||
-        (lastMessage.content as TextMessageContent).type === 'text'
-      ) {
-        const textContent =
-          typeof lastMessage.content === 'string'
-            ? lastMessage.content
-            : (lastMessage.content as TextMessageContent).text;
-
-        if (useAISearch) {
-          const isRelevant = await this.isQueryRelevantToMSF(
-            modelToUse,
-            token,
+      if (textContent && useAISearch) {
+        const isRelevant = await this.isQueryRelevantToMSF(
+          modelToUse,
+          token,
+          textContent,
+        );
+        if (isRelevant) {
+          const searchResults = await useSearchService(textContent);
+          const augmentedUserMessage = this.formatAugmentedContent(
             textContent,
+            searchResults,
           );
-
-          if (isRelevant) {
-            const searchResults = await useSearchService(textContent);
-            // Augment the user's message with search results
-
-            console.log(searchResults);
-            augmentedUserMessage =
-              `User's question: ${textContent}\n\nRelevant information:\n` +
-              searchResults
-                .map(
-                  (result, index) =>
-                    `[${index + 1}] ${result.title}: date ${result.date} : ${
-                      result.content
-                    } (URL: ${result.url})`,
-                )
-                .join('\n') +
-              '\n\nInstructions:' +
-              "\n1. Answer the user's question based on the provided information and your general knowledge." +
-              '\n2. Use the most recent and relevant information available.' +
-              '\n3. When citing information from the provided sources, use the format [X] where X is a new label starting at 1 and incrementing for each unique source used.' +
-              '\n4. Aim to use multiple sources when appropriate to provide a comprehensive answer.' +
-              '\n5. More up to date information from sources compared to general knowledge supersedes general knowledge.' +
-              '\n6. No citation is needed for general knowledge not from these sources.' +
-              '\n7. After your response, list ALL original sources from the relevant information recieved in the CITATIONS block as shown below, with used sources first (renumbered starting from 1), followed by unused sources (continuing the numbering). Use the EXACT block json format below and include all sources in the same block.' +
-              '\n\nCITATIONS:' +
-              '\n[{' +
-              '\n  "number": "1",' +
-              '\n  "title": "Source Title",' +
-              '\n  "url": "https://example.com",' +
-              '\n  "date": "Source Date as Month Day, Year"' +
-              '\n}]';
-          } else {
-            augmentedUserMessage = textContent;
-          }
-        } else {
-          augmentedUserMessage = textContent;
+          messagesToSend[messagesToSend.length - 1] = {
+            ...lastMessage,
+            content: augmentedUserMessage,
+          };
         }
-
-        // Replace the last message with the augmented version
-        messagesToSend[messagesToSend.length - 1] = {
-          ...lastMessage,
-          content: augmentedUserMessage,
-        };
       }
 
       const response = await azureOpenai.chat.completions.create({
@@ -360,7 +394,7 @@ export default class ChatService {
         user: JSON.stringify(user),
       });
 
-      const stream: ReadableStream<any> = OpenAIStream(response);
+      const stream = OpenAIStream(response);
       return new StreamingTextResponse(stream);
     });
   }

@@ -22,225 +22,19 @@ import {
 } from 'react';
 
 import { useTranslation } from 'next-i18next';
-import Link from 'next/link';
+
+import { extractCitations } from '@/utils/app/citations';
 
 import { Conversation, Message } from '@/types/chat';
+import { Citation } from '@/types/citation';
 
+import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-
-interface Citation {
-  number: string;
-  title: string;
-  url: string;
-  date: string;
-}
-
-const extractCitations = (
-  content: string,
-): { mainContent: string; citations: Citation[] } => {
-  const citationRegex = /\s*CITATIONS:\s*(\[[\s\S]*\])\s*$/;
-  const match = content.match(citationRegex);
-  let mainContent = content;
-  let citations: Citation[] = [];
-
-  if (match) {
-    mainContent = content.replace(citationRegex, '').trim();
-    try {
-      citations = JSON.parse(match[1]);
-    } catch (error) {
-      console.error('Failed to parse citations:', error);
-    }
-  }
-
-  return { mainContent, citations };
-};
-
-const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [scrollDirection, setScrollDirection] = useState<
-    'left' | 'right' | null
-  >(null);
-  const scrollIntervalRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!scrollContainerRef.current) return;
-
-      const container = scrollContainerRef.current;
-      const containerRect = container.getBoundingClientRect();
-      const mouseX = e.clientX - containerRect.left;
-      const containerWidth = containerRect.width;
-
-      if (mouseX > containerWidth * 0.9) {
-        setScrollDirection('right');
-      } else if (mouseX < containerWidth * 0.1) {
-        setScrollDirection('left');
-      } else {
-        setScrollDirection(null);
-      }
-    };
-
-    const handleMouseLeave = () => {
-      setScrollDirection(null);
-    };
-
-    const container = scrollContainerRef.current;
-    if (container) {
-      container.addEventListener(
-        'mousemove',
-        handleMouseMove as unknown as EventListener,
-      );
-      container.addEventListener('mouseleave', handleMouseLeave);
-    }
-
-    return () => {
-      if (container) {
-        container.removeEventListener(
-          'mousemove',
-          handleMouseMove as unknown as EventListener,
-        );
-        container.removeEventListener('mouseleave', handleMouseLeave);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    const SCROLL_SPEED = 5; // Pixels per frame
-
-    if (scrollDirection) {
-      scrollIntervalRef.current = window.setInterval(() => {
-        if (scrollContainerRef.current) {
-          const container = scrollContainerRef.current;
-          if (scrollDirection === 'right') {
-            container.scrollLeft += SCROLL_SPEED;
-          } else {
-            container.scrollLeft -= SCROLL_SPEED;
-          }
-        }
-      }, 16); // ~60fps
-    } else {
-      if (scrollIntervalRef.current !== null) {
-        clearInterval(scrollIntervalRef.current);
-        scrollIntervalRef.current = null;
-      }
-    }
-
-    return () => {
-      if (scrollIntervalRef.current !== null) {
-        clearInterval(scrollIntervalRef.current);
-      }
-    };
-  }, [scrollDirection]);
-
-  const handleReactMouseMove = (e: MouseEvent<HTMLDivElement>) => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const containerRect = container.getBoundingClientRect();
-    const mouseX = e.clientX - containerRect.left;
-    const containerWidth = containerRect.width;
-
-    if (mouseX > containerWidth * 0.9) {
-      setScrollDirection('right');
-    } else if (mouseX < containerWidth * 0.1) {
-      setScrollDirection('left');
-    } else {
-      setScrollDirection(null);
-    }
-  };
-
-  const handleReactMouseLeave = () => {
-    setScrollDirection(null);
-  };
-
-  if (citations.length === 0) return null;
-
-  return (
-    <div
-      className={`my-2 w-full transition-opacity duration-500 ease-in-out ${
-        isVisible ? 'opacity-100' : 'opacity-0'
-      }`}
-    >
-      <div className="flex items-center mb-2">
-        <IconBlockquote size={20} className="inline-block" />
-        <h3 className="text-lg font-semibold ml-2 mt-3">
-          Sources and Relevant Links
-        </h3>
-      </div>
-      <div
-        ref={scrollContainerRef}
-        className="flex w-full overflow-x-auto gap-4 no-scrollbar"
-        style={{ scrollBehavior: 'auto' }}
-        onMouseMove={handleReactMouseMove}
-        onMouseLeave={handleReactMouseLeave}
-      >
-        {citations.map((citation) => (
-          <div key={citation.number} className="flex-shrink-0">
-            <CitationItem citation={citation} />
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const CitationItem: React.FC<{ citation: Citation }> = ({ citation }) => {
-  const [useDefaultLogo, setUseDefaultLogo] = useState(false);
-  const { hostname } = new URL(citation.url);
-
-  const cleanDomain = hostname.replace(/^www\.|https?:\/\/|\.[^.]+$/g, '');
-
-  const handleImageError = () => {
-    setUseDefaultLogo(true);
-  };
-
-  return (
-    <div className="relative bg-gray-200 dark:bg-[#171717] rounded-lg transition-all duration-300 overflow-hidden text-xs border-2 border-transparent hover:border-blue-500 hover:shadow-lg h-[132px] w-48 p-2 mb-5">
-      <Link
-        href={citation.url}
-        target="_blank"
-        rel="noopener noreferrer"
-        title={citation.title}
-        className="flex flex-col h-full no-underline justify-between"
-      >
-        <div className="flex-grow">
-          <div className="text-[12.5px] line-clamp-3 text-gray-800 dark:text-white mb-2">
-            {citation.title}
-          </div>
-        </div>
-        <div className="text-[11px] text-gray-600 dark:text-gray-400 mb-6">
-          {citation.date}
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 dark:bg-[#1f1f1f] bg-gray-100 px-2 py-1 flex items-center dark:text-white text-gray-500 text-[11.5px] space-x-1">
-          <div className="flex items-center">
-            <img
-              src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
-              alt={`${hostname} favicon`}
-              width={12}
-              height={12}
-              onError={handleImageError}
-              className="mr-1 my-0 p-0 align-middle"
-            />
-          </div>
-          <span className="truncate">{cleanDomain}</span>
-          <span>|</span>
-          <span>{citation.number}</span>
-        </div>
-      </Link>
-    </div>
-  );
-};
 
 interface AssistantMessageProps {
   content: string;
@@ -251,7 +45,7 @@ interface AssistantMessageProps {
   messageCopied: boolean;
 }
 
-const AssistantMessage: FC<AssistantMessageProps> = ({
+export const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
   copyOnClick,
   messageIsStreaming,
@@ -266,23 +60,18 @@ const AssistantMessage: FC<AssistantMessageProps> = ({
 
   useEffect(() => {
     const processContent = () => {
-      if (content.includes('CITATIONS:')) {
-        const { mainContent, citations } = extractCitations(content);
-        setDisplayContent(mainContent);
-        setCitations(citations);
-        previousCitations.current = citations;
-        citationsProcessed.current = true;
-      } else {
-        setDisplayContent(content);
-        citationsProcessed.current = false;
-      }
+      const { mainContent, citations } = extractCitations(content);
+      setDisplayContent(mainContent);
+      setCitations(citations);
+      previousCitations.current = citations;
+      citationsProcessed.current = true;
     };
 
     processContent();
   }, [content]);
 
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split('CITATIONS:')[0]
+    ? content.split('[[CITATIONS_START]]')[0]
     : displayContent;
 
   const citationsToShow = citationsProcessed.current
@@ -398,7 +187,7 @@ interface UserMessageProps {
   selectedConversation: Conversation;
 }
 
-const UserMessage: FC<UserMessageProps> = ({
+export const UserMessage: FC<UserMessageProps> = ({
   message,
   messageContent,
   setMessageContent,
@@ -561,7 +350,7 @@ const UserMessage: FC<UserMessageProps> = ({
   );
 };
 
-const ChatMessageText: FC<any> = ({
+export const ChatMessageText: FC<any> = ({
   message,
   copyOnClick,
   isEditing,
