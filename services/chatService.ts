@@ -366,36 +366,53 @@ Your detailed response here... According to [2], some relevant information... An
       const textContent = this.getTextContent(lastMessage);
 
       if (textContent && useAISearch) {
-        const isRelevant = await this.isQueryRelevantToMSF(
-          modelToUse,
-          token,
-          textContent,
-        );
-        if (isRelevant) {
-          const searchResults = await useSearchService(textContent);
-          const augmentedUserMessage = this.formatAugmentedContent(
+        try {
+          const isRelevant = await this.isQueryRelevantToMSF(
+            modelToUse,
+            token,
             textContent,
-            searchResults,
           );
-          messagesToSend[messagesToSend.length - 1] = {
-            ...lastMessage,
-            content: augmentedUserMessage,
-          };
+          if (isRelevant) {
+            const searchResults = await useSearchService(textContent);
+            const augmentedUserMessage = this.formatAugmentedContent(
+              textContent,
+              searchResults,
+            );
+            messagesToSend[messagesToSend.length - 1] = {
+              ...lastMessage,
+              content: augmentedUserMessage,
+            };
+          }
+        } catch (error) {
+          console.error('Error in AI search or relevance check:', error);
         }
       }
 
-      const response = await azureOpenai.chat.completions.create({
-        model: modelToUse,
-        messages:
-          messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-        temperature: temperatureToUse,
-        max_tokens: null,
-        stream: true,
-        user: JSON.stringify(user),
-      });
+      try {
+        const response = await azureOpenai.chat.completions.create({
+          model: modelToUse,
+          messages:
+            messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          temperature: temperatureToUse,
+          max_tokens: null,
+          stream: true,
+          user: JSON.stringify(user),
+        });
 
-      const stream = OpenAIStream(response);
-      return new StreamingTextResponse(stream);
+        const stream = OpenAIStream(response);
+        return new StreamingTextResponse(stream);
+      } catch (error) {
+        console.error('Error in chat completion:', error);
+        const errorStream = new ReadableStream({
+          start(controller) {
+            controller.enqueue(
+              'An error occurred while processing your request. Please try again later.',
+            );
+            controller.close();
+          },
+        });
+        return new StreamingTextResponse(errorStream);
+      }
     });
   }
 
