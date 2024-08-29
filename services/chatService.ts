@@ -325,6 +325,10 @@ Instructions:
     b. Maintain the original numbering from the "Relevant information" section for each source.
 11. Each citation within the CITATIONS section should be on a new line and in the following format:
     [{"number": "X", "title": "Source Title", "url": "https://example.com", "date": "Source Date as Month Day, Year"}]
+12. After the CITATIONS section, include a "FOLLOW_UP_QUESTIONS" section with 3 relevant follow-up questions based on your response and the available information.
+13. The FOLLOW_UP_QUESTIONS section must be preceded by the exact string "[[FOLLOW_UP_QUESTIONS_START]]" on a new line, and followed by "[[FOLLOW_UP_QUESTIONS_END]]" on a new line after the last question.
+14. Each follow-up question in the FOLLOW_UP_QUESTIONS section should be on a new line and in the following format:
+    [{"question": "Follow-up question text here?"}]
 
 Your response MUST always include the CITATIONS section with the start and end markers, even if no sources were used.
 
@@ -337,6 +341,12 @@ Your detailed response here... According to [2], some relevant information... An
 [{"number": "2", "title": "Source Title 2", "url": "https://example2.com", "date": "February 2, 2023"}]
 [{"number": "3", "title": "Unused Source Title 3", "url": "https://example3.com", "date": "March 3, 2023"}]
 [[CITATIONS_END]]
+
+[[FOLLOW_UP_QUESTIONS_START]]
+{"question": "How do the findings from the Smith et al. study compare to previous research in this field?"}
+{"question": "What are the potential implications of the WHO report for global health policies?"}
+{"question": "Are there any ongoing studies or upcoming reports that might provide more recent data on this topic?"}
+[[FOLLOW_UP_QUESTIONS_END]]
 `;
   }
 
@@ -357,7 +367,7 @@ Your detailed response here... According to [2], some relevant information... An
     token: JWT,
     user: Session['user'],
     useAISearch: boolean,
-  ): Promise<StreamingTextResponse> {
+  ): Promise<Response> {
     return this.retryWithExponentialBackoff(async () => {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
       const azureOpenai = new OpenAI(openAIArgs);
@@ -403,15 +413,21 @@ Your detailed response here... According to [2], some relevant information... An
         return new StreamingTextResponse(stream);
       } catch (error) {
         console.error('Error in chat completion:', error);
-        const errorStream = new ReadableStream({
-          start(controller) {
-            controller.enqueue(
-              'An error occurred while processing your request. Please try again later.',
-            );
-            controller.close();
-          },
+        let statusCode = 500;
+        let errorMessage =
+          'An error occurred while processing your request. Please try again later.';
+
+        if (error instanceof OpenAI.APIError) {
+          statusCode = error.status || 500;
+          errorMessage = error.message;
+        } else if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+
+        return new Response(JSON.stringify({ error: errorMessage }), {
+          status: statusCode,
+          headers: { 'Content-Type': 'application/json' },
         });
-        return new StreamingTextResponse(errorStream);
       }
     });
   }

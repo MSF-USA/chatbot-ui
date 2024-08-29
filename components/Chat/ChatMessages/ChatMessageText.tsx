@@ -23,18 +23,23 @@ import {
 
 import { useTranslation } from 'next-i18next';
 
-import { extractCitations } from '@/utils/app/citations';
+import { extractCitationsAndQuestions } from '@/utils/app/citations';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/citation';
 
 import { CitationList } from '@/components/Chat/Citations/CitationList';
+import { QuestionList } from '@/components/Chat/Citations/QuestionList';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+
+interface Question {
+  question: string;
+}
 
 interface AssistantMessageProps {
   content: string;
@@ -43,6 +48,7 @@ interface AssistantMessageProps {
   messageIndex: number;
   selectedConversation: Conversation;
   messageCopied: boolean;
+  onQuestionClick: (question: string) => void;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
@@ -52,18 +58,24 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageIndex,
   selectedConversation,
   messageCopied,
+  onQuestionClick,
 }) => {
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const previousCitations = useRef<Citation[]>([]);
+  const previousQuestions = useRef<Question[]>([]);
   const citationsProcessed = useRef(false);
 
   useEffect(() => {
     const processContent = () => {
-      const { mainContent, citations } = extractCitations(content);
+      const { mainContent, citations, questions } =
+        extractCitationsAndQuestions(content);
       setDisplayContent(mainContent);
       setCitations(citations);
+      setQuestions(questions);
       previousCitations.current = citations;
+      previousQuestions.current = questions;
       citationsProcessed.current = true;
     };
 
@@ -77,6 +89,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const citationsToShow = citationsProcessed.current
     ? citations
     : previousCitations.current;
+
+  const questionsToShow = citationsProcessed.current
+    ? questions
+    : previousQuestions.current;
 
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
@@ -165,6 +181,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </div>
         {citationsToShow.length > 0 && (
           <CitationList citations={citationsToShow} />
+        )}
+
+        {questionsToShow.length > 0 && (
+          <QuestionList
+            questions={questionsToShow}
+            onQuestionClick={onQuestionClick}
+          />
         )}
       </div>
     </div>
@@ -369,6 +392,7 @@ export const ChatMessageText: FC<any> = ({
   selectedConversation,
   messageCopied,
   onEdit,
+  onQuestionClick,
 }: any) => {
   const { role, content } = message;
 
@@ -389,6 +413,7 @@ export const ChatMessageText: FC<any> = ({
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
+          onQuestionClick={onQuestionClick}
         />
       ) : (
         <UserMessage
