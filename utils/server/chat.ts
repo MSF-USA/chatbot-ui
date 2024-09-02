@@ -177,6 +177,7 @@ const processImageUrl = async (
         contentSection.image_url.url.split('/').length - 1
       ],
       'images',
+      user
     );
     contentSection.image_url = {
       url,
