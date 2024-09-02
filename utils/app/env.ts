@@ -5,23 +5,45 @@ const EUVariableMap: any = {
     'AZURE_BLOB_STORAGE_KEY': 'AZURE_BLOB_STORAGE_KEY_EU',
 }
 
+interface EnvVariableOptions {
+    name: string;
+    throwErrorOnFail?: boolean;
+    defaultValue?: string;
+    user?: Session["user"] | undefined;
+}
+
 /**
  * Fetches the value of a specific environment variable. If the environment variable is not set, it either returns a default value or throws an error based on the flag throwErrorOnFail
  *
- * @param {string} name - The name of the environment variable.
- * @param {boolean} throwErrorOnFail - Flag that decides whether to throw an error or not when the environment variable is not set. Default is true.
- * @param {string} defaultValue - The default value to return when the environment variable is not set and throwErrorOnFail is false. Default is an empty string.
+ * @param {string | EnvVariableOptions} nameOrOptions - The name of the environment variable or an object containing all options.
+ * @param {boolean} [throwErrorOnFail=true] - Flag that decides whether to throw an error or not when the environment variable is not set. Default is true.
+ * @param {string} [defaultValue=''] - The default value to return when the environment variable is not set and throwErrorOnFail is false. Default is an empty string.
+ * @param {Session["user"] | undefined} [user] - The user session object.
  *
  * @returns {string} - The value of the environment variable if it is set. Throws an error or returns the defaultValue based on the throwErrorOnFail flag if the environment variable is not set.
  *
  * @throws {Error} - Throws an error if the environment variable is not set and the flag throwErrorOnFail is set to true.
  */
 export function getEnvVariable(
-    name: string,
-    throwErrorOnFail: boolean = true,
-    defaultValue: string = '',
-    user?: Session["user"] | undefined
+  nameOrOptions: string | EnvVariableOptions,
+  throwErrorOnFail: boolean = true,
+  defaultValue: string = '',
+  user?: Session["user"] | undefined
 ): string {
+    let name: string;
+    let options: EnvVariableOptions;
+
+    if (typeof nameOrOptions === 'string') {
+        name = nameOrOptions;
+        options = { name, throwErrorOnFail, defaultValue, user };
+    } else {
+        options = nameOrOptions;
+        name = options.name;
+        throwErrorOnFail = options.throwErrorOnFail ?? true;
+        defaultValue = options.defaultValue ?? '';
+        user = options.user;
+    }
+
     let euUser: boolean = true;
     if (user?.mail && user.mail.toLowerCase()?.indexOf('newyork.msf.org') > -1) {
         euUser = false;
@@ -29,10 +51,11 @@ export function getEnvVariable(
 
     let value: string | undefined;
     if (!euUser || !EUVariableMap[name]) {
-       value = process.env[name];
+        value = process.env[name];
     } else {
         value = process.env[EUVariableMap[name]]
     }
+
     if (!value && throwErrorOnFail) {
         throw new Error(`Environment variable ${name} not set`);
     } else if (!value) {
