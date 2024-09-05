@@ -29,11 +29,10 @@ import {
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
 
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-
 // @ts-expect-error
 import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
 
+import { authOptions } from '@/app/api/auth/[...nextauth]';
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream } from 'ai';

@@ -9,8 +9,7 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
-import HomeContext from '@/pages/api/home/home.context';
-
+import HomeContext from '@/app/home.context';
 import { v4 as uuidv4 } from 'uuid';
 
 const bots = [

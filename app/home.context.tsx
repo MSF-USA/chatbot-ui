@@ -1,16 +1,14 @@
-import { Dispatch, createContext } from 'react';
+import { Dispatch, createContext, useContext } from 'react';
 
 import { ActionType } from '@/hooks/useCreateReducer';
 
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { FolderType } from '@/types/folder';
-import { Session } from 'next-auth';
 
 import { HomeInitialState } from './home.state';
 
 export interface HomeContextProps {
-  user?: Session["user"];
   state: HomeInitialState;
   dispatch: Dispatch<ActionType<HomeInitialState>>;
   handleNewConversation: () => void;
@@ -24,6 +22,14 @@ export interface HomeContextProps {
   ) => void;
 }
 
-const HomeContext = createContext<HomeContextProps>(undefined!);
+export const HomeContext = createContext<HomeContextProps | undefined>(
+  undefined,
+);
 
-export default HomeContext;
+export function useHomeContext() {
+  const context = useContext(HomeContext);
+  if (context === undefined) {
+    throw new Error('useHomeContext must be used within a HomeProvider');
+  }
+  return context;
+}

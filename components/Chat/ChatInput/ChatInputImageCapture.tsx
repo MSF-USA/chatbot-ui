@@ -19,10 +19,10 @@ import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
-
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
 import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
+
+import HomeContext from '@/app/home.context';
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement>,

@@ -1,13 +1,11 @@
+'use client';
+
 import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 
-import { GetServerSideProps } from 'next';
-import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import Head from 'next/head';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -21,7 +19,6 @@ import {
 import {
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_TEMPERATURE,
-  OPENAI_API_HOST,
   OPENAI_API_HOST_TYPE,
 } from '@/utils/app/const';
 import {
@@ -36,7 +33,7 @@ import { getSettings } from '@/utils/app/settings';
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { FolderInterface, FolderType } from '@/types/folder';
-import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { Settings } from '@/types/settings';
 
@@ -44,7 +41,7 @@ import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
 
-import HomeContext from './home.context';
+import { HomeProvider } from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -55,13 +52,13 @@ interface Props {
   defaultModelId: OpenAIModelID;
 }
 
-const Home = ({
+export default function HomePage({
   serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
-}: Props) => {
-  const { data: Session } = useSession();
-  const user = Session?.user;
+}: Props) {
+  const { data: session } = useSession();
+  const user = session?.user;
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
@@ -106,14 +103,10 @@ const Home = ({
   );
 
   useEffect(() => {
-    if (Session?.error === 'RefreshAccessTokenError') {
-      try {
-        signIn(); // Force sign in to hopefully resolve error
-      } catch (error) {
-        router.push('/auth/signin');
-      }
+    if (session?.error === 'RefreshAccessTokenError') {
+      signIn(); // Force sign in to hopefully resolve error
     }
-  }, [router, Session]);
+  }, [session]);
 
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
@@ -261,7 +254,7 @@ const Home = ({
     if (window.innerWidth < 640) {
       dispatch({ field: 'showChatbar', value: false });
     }
-  }, [selectedConversation]);
+  }, [selectedConversation, dispatch]);
 
   useEffect(() => {
     defaultModelId &&
@@ -276,7 +269,12 @@ const Home = ({
         field: 'serverSidePluginKeysSet',
         value: serverSidePluginKeysSet,
       });
-  }, [defaultModelId, serverSideApiKeyIsSet, serverSidePluginKeysSet]);
+  }, [
+    defaultModelId,
+    serverSideApiKeyIsSet,
+    serverSidePluginKeysSet,
+    dispatch,
+  ]);
 
   // ON LOAD --------------------------------------------
 
@@ -290,12 +288,16 @@ const Home = ({
     loadPrompts();
     loadConversations();
     selectConversation();
-  }, [
-    defaultModelId,
-    dispatch,
-    serverSideApiKeyIsSet,
-    serverSidePluginKeysSet,
-  ]);
+    setInitialRender(false);
+  }, []);
+
+  useEffect(() => {
+    if (!initialRender) {
+      refetch().catch((error) => {
+        console.error('Error refetching models:', error);
+      });
+    }
+  }, [apiKey, serverSideApiKeyIsSet, initialRender, refetch]);
 
   function applySettings(settings: Settings) {
     if (settings.theme) dispatch({ field: 'lightMode', value: settings.theme });
@@ -328,7 +330,7 @@ const Home = ({
       dispatch({ field: 'pluginKeys', value: [] });
       localStorage.removeItem('pluginKeys');
     } else if (pluginKeys) {
-      dispatch({ field: 'pluginKeys', value: pluginKeys });
+      dispatch({ field: 'pluginKeys', value: JSON.parse(pluginKeys) });
     }
   }
 
@@ -398,31 +400,19 @@ const Home = ({
     }
   }
 
+  const homeContextValue = {
+    ...contextValue,
+    handleNewConversation,
+    handleCreateFolder,
+    handleDeleteFolder,
+    handleUpdateFolder,
+    handleSelectConversation,
+    handleUpdateConversation,
+    user,
+  };
+
   return (
-    <HomeContext.Provider
-      value={{
-        ...contextValue,
-        handleNewConversation,
-        handleCreateFolder,
-        handleDeleteFolder,
-        handleUpdateFolder,
-        handleSelectConversation,
-        handleUpdateConversation,
-        user,
-      }}
-    >
-      <Head>
-        <title>MSF AI Assistant</title>
-        <meta
-          name="description"
-          content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
-        />
-        <meta
-          name="viewport"
-          content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <HomeProvider value={homeContextValue}>
       {selectedConversation && (
         <main
           className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
@@ -443,43 +433,6 @@ const Home = ({
           </div>
         </main>
       )}
-    </HomeContext.Provider>
+    </HomeProvider>
   );
-};
-export default Home;
-
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
-  const defaultModelId =
-    (process.env.DEFAULT_MODEL &&
-      Object.values(OpenAIModelID).includes(
-        process.env.DEFAULT_MODEL as OpenAIModelID,
-      ) &&
-      process.env.DEFAULT_MODEL) ||
-    fallbackModelID;
-
-  let serverSidePluginKeysSet = false;
-
-  const googleApiKey = process.env.GOOGLE_API_KEY;
-  const googleCSEId = process.env.GOOGLE_CSE_ID;
-
-  if (googleApiKey && googleCSEId) {
-    serverSidePluginKeysSet = true;
-  }
-
-  return {
-    props: {
-      serverSideApiKeyIsSet:
-        !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
-      defaultModelId,
-      serverSidePluginKeysSet,
-      ...(await serverSideTranslations(locale ?? 'en', [
-        'common',
-        'chat',
-        'sidebar',
-        'markdown',
-        'promptbar',
-        'settings',
-      ])),
-    },
-  };
-};
+}

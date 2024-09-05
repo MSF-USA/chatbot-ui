@@ -1,11 +1,11 @@
 import { IconExternalLink } from '@tabler/icons-react';
-import {FC, useContext} from 'react';
+import { FC, useContext } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
 import { OpenAIModel } from '@/types/openai';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/app/home.context';
 
 export const ModelSelect = () => {
   const { t } = useTranslation('chat');
@@ -27,7 +27,7 @@ export const ModelSelect = () => {
   };
 
   return (
-    <div className='flex flex-row items-center'>
+    <div className="flex flex-row items-center">
       <div className="flex flex-col my-5 ml-7">
         <div className="max-w-[210px] rounded-lg bg-[#F4F4F4] dark:bg-[#2F2F2F] pr-2 text-neutral-900 dark:text-white dark:hover:bg-[#171717] hover:bg-gray-300">
           <select

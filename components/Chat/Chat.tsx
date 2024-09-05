@@ -39,8 +39,6 @@ import {
 } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
 
-import HomeContext from '@/pages/api/home/home.context';
-
 import logo from '../../public/msf_logo2.png';
 import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
@@ -51,6 +49,7 @@ import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
 import { suggestedPrompts } from './prompts';
 
+import HomeContext from '@/app/home.context';
 import { debounce } from '@tanstack/virtual-core';
 import Typewriter from 'typewriter-effect';
 

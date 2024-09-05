@@ -12,8 +12,6 @@ import { getSettings, saveSettings } from '@/utils/app/settings';
 import { FAQData } from '@/types/faq';
 import { Settings } from '@/types/settings';
 
-import HomeContext from '@/pages/api/home/home.context';
-
 import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
 
 import ChatbarContext from '../Chatbar/Chatbar.context';
@@ -25,6 +23,8 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { FAQ } from './faq';
 import faqData from './faq.json';
+
+import HomeContext from '@/app/home.context';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;

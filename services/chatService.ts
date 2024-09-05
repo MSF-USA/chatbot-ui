@@ -30,10 +30,9 @@ import {
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
 import { SearchIndex } from '@/types/searchIndex';
 
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
-
 import useSearchService from './searchService';
 
+import { authOptions } from '@/app/api/auth/[...nextauth]';
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream, StreamingTextResponse } from 'ai';

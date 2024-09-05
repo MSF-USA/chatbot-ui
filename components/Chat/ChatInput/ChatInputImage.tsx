@@ -15,9 +15,9 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
-
 import ImageIcon from '@/components/Icons/image';
+
+import HomeContext from '@/app/home.context';
 
 const onImageUpload = (
   event: React.ChangeEvent<any>,

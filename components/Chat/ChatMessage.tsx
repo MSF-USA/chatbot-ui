@@ -7,11 +7,11 @@ import { updateConversation } from '@/utils/app/conversation';
 
 import { Message, MessageType, getChatMessageContent } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
-
 import ChatMessageFile from '@/components/Chat/ChatMessages/ChatMessageFile';
 import ChatMessageImage from '@/components/Chat/ChatMessages/ChatMessageImage';
 import ChatMessageText from '@/components/Chat/ChatMessages/ChatMessageText';
+
+import HomeContext from '@/app/home.context';
 
 export interface Props {
   message: Message;
