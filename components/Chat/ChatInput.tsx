@@ -16,7 +16,7 @@ import {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import {
   ChatInputSubmitTypes,
@@ -40,7 +40,7 @@ import MicIcon from '@/components/Icons/mic';
 import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -63,13 +63,13 @@ export const ChatInput = ({
   filePreviews,
   setFilePreviews,
 }: Props) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations('chat');
 
   const {
     state: { selectedConversation, messageIsStreaming, prompts },
 
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   const [textFieldValue, setTextFieldValue] = useState<string>('');
   const [imageFieldValue, setImageFieldValue] =

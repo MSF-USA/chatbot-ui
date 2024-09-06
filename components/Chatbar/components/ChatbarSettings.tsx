@@ -2,7 +2,7 @@ import { Transition } from '@headlessui/react';
 import { IconFileExport, IconSettings } from '@tabler/icons-react';
 import { useContext, useState } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 
@@ -14,11 +14,11 @@ import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { PluginKeys } from './PluginKeys';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 import { Session } from 'inspector';
 
 export const ChatbarSettings = () => {
-  const { t } = useTranslation('sidebar');
+  const t = useTranslations('sidebar');
   const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
 
   const {
@@ -31,7 +31,7 @@ export const ChatbarSettings = () => {
       conversations,
     },
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   const { handleApiKeyChange } = useContext(ChatbarContext);
 

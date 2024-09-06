@@ -19,7 +19,7 @@ import { Conversation } from '@/types/chat';
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 import ChatbarContext from '@/components/Chatbar/Chatbar.context';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 interface Props {
   conversation: Conversation;
@@ -30,7 +30,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
     state: { selectedConversation, messageIsStreaming },
     handleSelectConversation,
     handleUpdateConversation,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   const { handleDeleteConversation } = useContext(ChatbarContext);
 

@@ -17,7 +17,7 @@ import {
 
 import ImageIcon from '@/components/Icons/image';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 const onImageUpload = (
   event: React.ChangeEvent<any>,
@@ -110,7 +110,7 @@ const ChatInputImage = ({
   const {
     state: { user },
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
   if (!userAuthorizedForFileUploads(user)) return null;
 
   return (

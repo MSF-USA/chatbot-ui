@@ -12,8 +12,6 @@ import React, {
 } from 'react';
 import toast from 'react-hot-toast';
 
-import { useTranslation } from 'next-i18next';
-
 import { isMobile } from '@/utils/app/env';
 import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
@@ -22,7 +20,7 @@ import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
 import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement>,
@@ -108,7 +106,7 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
   const {
     state: { user },
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
   if (!userAuthorizedForFileUploads(user)) return null;
 
   return (

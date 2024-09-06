@@ -7,12 +7,12 @@ import Folder from '@/components/Folder';
 import ChatbarContext from '../Chatbar.context';
 import { PromptComponent } from './Prompt';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 export const PromptFolders = () => {
   const {
     state: { folders },
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   const {
     state: { promptSearchTerm, filteredPrompts },

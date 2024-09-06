@@ -16,7 +16,7 @@ import {
 } from 'react';
 import toast from 'react-hot-toast';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import { getEndpoint } from '@/utils/app/api';
@@ -49,7 +49,7 @@ import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
 import { suggestedPrompts } from './prompts';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 import { debounce } from '@tanstack/virtual-core';
 import Typewriter from 'typewriter-effect';
 
@@ -67,7 +67,7 @@ const getRandomPrompts = (
 };
 
 export const Chat = memo(({ stopConversationRef }: Props) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations('chat');
 
   const {
     state: {
@@ -87,10 +87,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
   let {
     state: { pluginKeys },
-  } = useContext(HomeContext);
+  } = useHomeContext();
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
   }

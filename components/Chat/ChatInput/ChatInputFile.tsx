@@ -17,7 +17,7 @@ import {
 
 import FileIcon from '@/components/Icons/file';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 interface ChatInputFileProps {
   onFileUpload: (
@@ -49,7 +49,7 @@ const ChatInputFile = ({
   const {
     state: { user },
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
   if (!userAuthorizedForFileUploads(user)) return null;
 
   return (

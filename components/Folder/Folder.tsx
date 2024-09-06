@@ -18,7 +18,7 @@ import { FolderInterface } from '@/types/folder';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 interface Props {
   currentFolder: FolderInterface;
@@ -33,7 +33,7 @@ const Folder = ({
   handleDrop,
   folderComponent,
 }: Props) => {
-  const { handleDeleteFolder, handleUpdateFolder } = useContext(HomeContext);
+  const { handleDeleteFolder, handleUpdateFolder } = useHomeContext();
 
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);

@@ -1,20 +1,20 @@
 import { IconExternalLink } from '@tabler/icons-react';
 import { FC, useContext } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { OpenAIModel } from '@/types/openai';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 export const ModelSelect = () => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations('chat');
 
   const {
     state: { selectedConversation, models, defaultModelId },
     handleUpdateConversation,
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     selectedConversation &&

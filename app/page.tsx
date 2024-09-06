@@ -1,4 +1,3 @@
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { headers } from 'next/headers';
 
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
@@ -34,17 +33,9 @@ async function getServerSideData() {
       !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
     defaultModelId,
     serverSidePluginKeysSet,
-    ...(await serverSideTranslations(locale, [
-      'common',
-      'chat',
-      'sidebar',
-      'markdown',
-      'promptbar',
-      'settings',
-    ])),
+    locale,
   };
 }
-
 export default async function Page() {
   const serverData = await getServerSideData();
   return <HomePage {...serverData} />;

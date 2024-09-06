@@ -21,7 +21,7 @@ import {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { extractCitationsAndQuestions } from '@/utils/app/citations';
 
@@ -225,7 +225,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   handleDeleteMessage,
   onEdit,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations('chat');
   const { role, content, messageType } = message;
   const [localMessageContent, setLocalMessageContent] = useState<string>(
     content as string,

@@ -7,9 +7,9 @@ import {
 } from '@tabler/icons-react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 import { v4 as uuidv4 } from 'uuid';
 
 const bots = [
@@ -31,12 +31,12 @@ const BotModal: React.FC = () => {
   const [isCustomBotExpanded, setIsCustomBotExpanded] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const customBotRef = useRef<HTMLDivElement>(null);
-  const { t } = useTranslation('sidebar');
+  const t = useTranslations('sidebar');
 
   const {
     state: { conversations, selectedConversation },
     dispatch: homeDispatch,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

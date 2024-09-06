@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -31,11 +31,11 @@ import Sidebar from '../Sidebar';
 import ChatbarContext from './Chatbar.context';
 import { ChatbarInitialState, initialState } from './Chatbar.state';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 import { v4 as uuidv4 } from 'uuid';
 
 export const Chatbar = () => {
-  const { t } = useTranslation('sidebar');
+  const t = useTranslations('sidebar');
 
   const chatBarContextValue = useCreateReducer<ChatbarInitialState>({
     initialState,
@@ -56,7 +56,7 @@ export const Chatbar = () => {
     handleCreateFolder,
     handleNewConversation,
     handleUpdateConversation,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   enum Tab {
     CONVERSATIONS = 'CONVERSATIONS',
@@ -67,7 +67,7 @@ export const Chatbar = () => {
 
   let {
     state: { pluginKeys },
-  } = useContext(HomeContext);
+  } = useHomeContext();
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
   }

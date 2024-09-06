@@ -6,7 +6,7 @@ import Folder from '@/components/Folder';
 
 import { ConversationComponent } from './Conversation';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 interface Props {
   searchTerm: string;
@@ -16,7 +16,7 @@ export const ChatFolders = ({ searchTerm }: Props) => {
   const {
     state: { folders, conversations },
     handleUpdateConversation,
-  } = useContext(HomeContext);
+  } = useHomeContext();
 
   const handleDrop = (e: any, folder: FolderInterface) => {
     if (e.dataTransfer) {

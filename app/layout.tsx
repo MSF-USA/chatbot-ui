@@ -1,8 +1,10 @@
-import { SessionProvider } from 'next-auth/react';
 import { Toaster } from 'react-hot-toast';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
+import { NextIntlClientProvider } from 'next-intl';
 import { Inter } from 'next/font/google';
+import { useRouter } from 'next/router';
+
+import { HomeProvider } from './home-provider';
 
 import '@/styles/globals.css';
 
@@ -39,22 +41,29 @@ export const metadata = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params: { locale },
 }: {
   children: React.ReactNode;
+  params: { locale: string };
 }) {
-  const queryClient = new QueryClient();
+  let messages;
+  try {
+    messages = (await import(`../public/locales/${locale}/common.json`))
+      .default;
+  } catch (error) {
+    console.error(`Could not load messages for locale "${locale}":`, error);
+    throw new Error('Locale messages not found');
+  }
 
   return (
     <html lang="en" className={inter.className}>
       <body>
-        <SessionProvider>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <Toaster />
-          <QueryClientProvider client={queryClient}>
-            {children}
-          </QueryClientProvider>
-        </SessionProvider>
+          <HomeProvider>{children}</HomeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

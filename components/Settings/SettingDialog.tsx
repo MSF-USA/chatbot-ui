@@ -3,7 +3,7 @@ import { IconExternalLink, IconFileExport } from '@tabler/icons-react';
 import { FC, useContext, useEffect, useReducer, useRef, useState } from 'react';
 
 import { Session } from 'next-auth';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -24,7 +24,7 @@ import { TemperatureSlider } from './Temperature';
 import { FAQ } from './faq';
 import faqData from './faq.json';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -44,7 +44,7 @@ interface Props {
 }
 
 export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
-  const { t } = useTranslation('settings');
+  const t = useTranslations('settings');
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
@@ -56,7 +56,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     handleClearConversations,
   } = useContext(ChatbarContext);
 
-  const { state: homeState, dispatch: homeDispatch } = useContext(HomeContext);
+  const { state: homeState, dispatch: homeDispatch } = useHomeContext();
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
 

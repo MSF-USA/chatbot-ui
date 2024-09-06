@@ -1,7 +1,7 @@
 import { IconRobot, IconUser } from '@tabler/icons-react';
 import { FC, memo, useContext, useEffect, useRef, useState } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { updateConversation } from '@/utils/app/conversation';
 
@@ -11,7 +11,7 @@ import ChatMessageFile from '@/components/Chat/ChatMessages/ChatMessageFile';
 import ChatMessageImage from '@/components/Chat/ChatMessages/ChatMessageImage';
 import ChatMessageText from '@/components/Chat/ChatMessages/ChatMessageText';
 
-import HomeContext from '@/app/home.context';
+import { useHomeContext } from '@/app/home-provider';
 
 export interface Props {
   message: Message;
@@ -22,7 +22,7 @@ export interface Props {
 
 export const ChatMessage: FC<Props> = memo(
   ({ message, messageIndex, onEdit, onQuestionClick }) => {
-    const { t } = useTranslation('chat');
+    const t = useTranslations('chat');
 
     const {
       state: {
@@ -32,7 +32,7 @@ export const ChatMessage: FC<Props> = memo(
         messageIsStreaming,
       },
       dispatch: homeDispatch,
-    } = useContext(HomeContext);
+    } = useHomeContext();
 
     const [isEditing, setIsEditing] = useState<boolean>(false);
     const [isTyping, setIsTyping] = useState<boolean>(false);

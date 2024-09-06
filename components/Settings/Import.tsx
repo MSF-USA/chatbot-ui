@@ -1,7 +1,7 @@
 import { IconFileImport } from '@tabler/icons-react';
 import { FC } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { SupportedExportFormats } from '@/types/export';
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 export const Import: FC<Props> = ({ onImport }) => {
-  const { t } = useTranslation('sidebar');
+  const t = useTranslations('sidebar');
   return (
     <>
       <input

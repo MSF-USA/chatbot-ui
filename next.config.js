@@ -1,8 +1,13 @@
-const { i18n } = require('./next-i18next.config');
+const withNextIntl = require('next-intl/plugin')('./app/i18n.ts');
+const withPWA = require('next-pwa')({
+  dest: 'public',
+  disable: process.env.NODE_ENV === 'development',
+  register: true,
+  reloadOnOnline: true,
+});
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  i18n,
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -28,12 +33,4 @@ const nextConfig = {
   },
 };
 
-const withPWA = require('next-pwa')({
-  dest: 'public', // Destination directory for the PWA files
-  disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
-  register: true, // Register the PWA service worker
-  // skipWaiting: true, // Skip waiting for service worker activation
-  reloadOnOnline: true,
-});
-
-module.exports = withPWA(nextConfig);
+module.exports = withNextIntl(withPWA(nextConfig));

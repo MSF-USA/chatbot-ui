@@ -8,7 +8,7 @@ import React, {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
 
@@ -90,7 +90,7 @@ export const CameraModal: FC<CameraModalProps> = ({
   setSubmitType,
   setImageFieldValue,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations('chat');
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string>('');
 
