@@ -183,6 +183,7 @@ export default class ChatService {
           prompt,
           token,
           modelId,
+          user,
         }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
 
         console.log('File summarized successfully.');
@@ -256,11 +257,18 @@ export default class ChatService {
         {
           role: 'system',
           content:
-            "You are an AI assistant that determines if a query is related to Médecins Sans Frontières (MSF)/Doctors Without Borders, their work, humanitarian aid, medical assistance in conflict zones, or any related NGO activities. Consider queries about humanitarian situations, conflicts, crises, and medical emergencies as relevant. Respond with only 'yes' or 'no'.",
+            'You are an AI assistant that determines if a query is related to humanitarian issues, global health crises, or the work of organizations like Médecins Sans Frontières (MSF)/Doctors Without Borders. Consider the following as relevant:\n' +
+            '1. Direct questions about MSF, their work, or similar NGOs\n' +
+            '2. Queries about humanitarian aid or medical assistance in any context\n' +
+            '3. Questions about ongoing conflicts, natural disasters, or health crises anywhere in the world\n' +
+            '4. General inquiries about the situation in areas known for humanitarian challenges\n' +
+            '5. Topics related to global health, epidemic outbreaks, or access to healthcare in developing countries\n' +
+            '6. Questions about refugee health, displacement, or migration due to conflicts or disasters\n' +
+            "Respond with only 'yes' if the query is related to any of these topics, or 'no' if it's completely unrelated.",
         },
         {
           role: 'user',
-          content: `Is the following query related to Médecins Sans Frontières (MSF), their work, humanitarian aid, medical assistance in conflict zones, or any related NGO activities? Query: "${query}"`,
+          content: `Is the following query related to humanitarian issues, global health crises, or the work of organizations like MSF? Query: "${query}"`,
         },
       ],
     });
@@ -318,19 +326,22 @@ Instructions:
    a. Start with a direct answer to the user's question, highlighting the MOST RECENT data or information available.
    b. Provide supporting details and explanations, using citations where appropriate. Clearly indicate when you're presenting older vs. newer information.
    c. If relevant, include a brief conclusion or summary, emphasizing the latest findings or data.
-8. After your response, you MUST include a "CITATIONS" section listing ALL sources from the relevant information provided, including those not directly cited in your answer.
-9. The CITATIONS section must be preceded by the exact string "[[CITATIONS_START]]" on a new line, and followed by "[[CITATIONS_END]]" on a new line after the last citation.
-10. In the CITATIONS section:
-    a. List ALL sources in the order they were originally numbered in the "Relevant information" section.
-    b. Maintain the original numbering from the "Relevant information" section for each source.
-11. Each citation within the CITATIONS section should be on a new line and in the following format:
-    [{"number": "X", "title": "Source Title", "url": "https://example.com", "date": "Source Date as Month Day, Year"}]
-12. After the CITATIONS section, include a "FOLLOW_UP_QUESTIONS" section with 3 relevant follow-up questions based on your response and the available information.
-13. The FOLLOW_UP_QUESTIONS section must be preceded by the exact string "[[FOLLOW_UP_QUESTIONS_START]]" on a new line, and followed by "[[FOLLOW_UP_QUESTIONS_END]]" on a new line after the last question.
-14. Each follow-up question in the FOLLOW_UP_QUESTIONS section should be on a new line and in the following format:
-    [{"question": "Follow-up question text here?"}]
+8. After your main response, you MUST include a "CITATIONS" section, followed by a "FOLLOW_UP_QUESTIONS" section. Always include both sections in this order, even if one is empty.
+9. The CITATIONS section:
+   a. Must be preceded by the exact string "[[CITATIONS_START]]" on a new line.
+   b. Must be followed by "[[CITATIONS_END]]" on a new line after the last citation.
+   c. Must list ALL sources from the relevant information provided, including those not directly cited in your answer.
+   d. Must maintain the original numbering from the "Relevant information" section for each source.
+   e. Each citation should be on a new line and in the following format:
+      [{"number": "X", "title": "Source Title", "url": "https://example.com", "date": "Source Date as Month Day, Year"}]
+10. The FOLLOW_UP_QUESTIONS section:
+    a. Must be preceded by the exact string "[[FOLLOW_UP_QUESTIONS_START]]" on a new line.
+    b. Must be followed by "[[FOLLOW_UP_QUESTIONS_END]]" on a new line after the last question.
+    c. Should include 3 relevant follow-up questions based on your response and the available information.
+    d. Each follow-up question should be on a new line and in the following format:
+       {"question": "Follow-up question text here?"}
 
-Your response MUST always include the CITATIONS section with the start and end markers, even if no sources were used.
+Your response MUST always include both the CITATIONS and FOLLOW_UP_QUESTIONS sections with their respective start and end markers, in that order, even if one section is empty.
 
 Example format:
 
