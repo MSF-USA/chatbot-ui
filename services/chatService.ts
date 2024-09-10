@@ -183,7 +183,6 @@ export default class ChatService {
           prompt,
           token,
           modelId,
-          user,
         }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
 
         console.log('File summarized successfully.');
