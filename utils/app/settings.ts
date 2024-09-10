@@ -11,6 +11,8 @@ export const getSettings = (): Settings => {
       "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     runTypeWriterIntroSetting: true,
     useKnowledgeBase: true,
+    voiceTone: undefined,
+    voiceToneInstructions: undefined,
   };
   const settingsJson = localStorage.getItem(STORAGE_KEY);
   if (settingsJson) {

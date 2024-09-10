@@ -80,6 +80,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
+  voiceToneInstructions: string | undefined;
   useKnowledgeBase: boolean;
 }
 
@@ -90,6 +91,8 @@ export interface Conversation {
   model: OpenAIModel;
   prompt: string;
   temperature: number;
+  voiceTone: string | undefined;
+  voiceToneInstructions: string | undefined;
   folderId: string | null;
 }
 

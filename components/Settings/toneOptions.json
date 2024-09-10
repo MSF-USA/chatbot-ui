@@ -1,0 +1,19 @@
+{
+    "toneOptions": [
+        {
+            "label": "Formal",
+            "description": "A serious and professional tone.",
+            "example": "Dear Sir/Madam, I am writing to inform you about the recent updates to our policy. Please review the attached document for detailed information. Sincerely, [Your Name]"
+        },
+        {
+            "label": "Informal",
+            "description": "A casual and conversational tone.",
+            "example": "Hey there! Just wanted to let you know about the new policy updates. Check out the attached doc for all the details. Cheers, [Your Name]"
+        },
+        {
+            "label": "Friendly",
+            "description": "A warm and approachable tone.",
+            "example": "Hi there! Hope you're doing well. I wanted to share some updates about our policy. Please take a look at the attached document. Best, [Your Name]"
+        }
+    ]
+}

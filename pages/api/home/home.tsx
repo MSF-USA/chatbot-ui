@@ -81,6 +81,8 @@ const Home = ({
       selectedConversation,
       prompts,
       temperature,
+      voiceTone,
+      voiceToneInstructions,
       systemPrompt,
     },
     dispatch,
@@ -223,6 +225,11 @@ const Home = ({
       prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
+      voiceTone: voiceTone || lastConversation?.voiceTone || undefined,
+      voiceToneInstructions:
+        voiceToneInstructions ||
+        lastConversation?.voiceToneInstructions ||
+        undefined,
       folderId: null,
     };
 
@@ -301,6 +308,13 @@ const Home = ({
     if (settings.theme) dispatch({ field: 'lightMode', value: settings.theme });
     if (settings.temperature)
       dispatch({ field: 'temperature', value: settings.temperature });
+    if (settings.voiceTone)
+      dispatch({ field: 'voiceTone', value: settings.voiceTone });
+    if (settings.voiceToneInstructions)
+      dispatch({
+        field: 'voiceToneInstructions',
+        value: settings.voiceToneInstructions,
+      });
     if (settings.systemPrompt)
       dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
     if (settings.runTypeWriterIntroSetting === false)
@@ -310,6 +324,13 @@ const Home = ({
       });
     if (settings.useKnowledgeBase === false)
       dispatch({ field: 'useKnowledgeBase', value: settings.useKnowledgeBase });
+    if (settings.voiceTone)
+      dispatch({ field: 'voiceTone', value: settings.voiceTone });
+    if (settings.voiceToneInstructions)
+      dispatch({
+        field: 'voiceToneInstructions',
+        value: settings.voiceToneInstructions,
+      });
   }
 
   function handleApiKey() {
@@ -393,6 +414,11 @@ const Home = ({
           temperature:
             temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
           folderId: null,
+          voiceTone: voiceTone || lastConversation?.voiceTone || undefined,
+          voiceToneInstructions:
+            voiceToneInstructions ||
+            lastConversation?.voiceToneInstructions ||
+            undefined,
         },
       });
     }

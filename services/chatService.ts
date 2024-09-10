@@ -289,6 +289,23 @@ export default class ChatService {
     return null;
   }
 
+  private addVoiceTone(
+    userQuestion: string,
+    voiceToneInstructions: string,
+  ): string {
+    console.log('adding voice tone to user message:', voiceToneInstructions);
+    return `
+    User's question: ${userQuestion}
+
+    Instructions:
+    1. Respond in a tone replicating the example below.
+    2. The example is only used to give a sample of the tone and language. Ignore the actual content, instructions, and length of the example.
+
+    Example:
+    ${voiceToneInstructions}
+    `;
+  }
+
   /**
    * Reformats the user query to Azure OpenAI for RAG captabilities.
    * @param {string} userQuestion - The original user question.
@@ -377,6 +394,7 @@ Your detailed response here... According to [2], some relevant information... An
     token: JWT,
     user: Session['user'],
     useAISearch: boolean,
+    voiceToneInstructions: string | undefined,
   ): Promise<Response> {
     return this.retryWithExponentialBackoff(async () => {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
@@ -402,6 +420,22 @@ Your detailed response here... According to [2], some relevant information... An
               ...lastMessage,
               content: augmentedUserMessage,
             };
+          } else {
+            if (voiceToneInstructions) {
+              try {
+                console.log('adding voice tone', voiceToneInstructions);
+                const augmentedUserMessage = this.addVoiceTone(
+                  textContent,
+                  voiceToneInstructions,
+                );
+                messagesToSend[messagesToSend.length - 1] = {
+                  ...lastMessage,
+                  content: augmentedUserMessage,
+                };
+              } catch (error) {
+                console.error('Error adding Voice tone:', error);
+              }
+            }
           }
         } catch (error) {
           console.error('Error in AI search or relevance check:', error);
@@ -448,8 +482,14 @@ Your detailed response here... According to [2], some relevant information... An
    * @returns {Promise<Response>} A promise that resolves to the response based on the request.
    */
   public async handleRequest(req: NextRequest): Promise<Response> {
-    const { model, messages, prompt, temperature, useKnowledgeBase } =
-      (await req.json()) as ChatBody;
+    const {
+      model,
+      messages,
+      prompt,
+      temperature,
+      useKnowledgeBase,
+      voiceToneInstructions,
+    } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
@@ -501,6 +541,7 @@ Your detailed response here... According to [2], some relevant information... An
         token,
         user,
         useAISearch,
+        voiceToneInstructions,
       );
     }
   }

@@ -1,6 +1,14 @@
 import { Switch } from '@headlessui/react';
 import { IconExternalLink, IconFileExport } from '@tabler/icons-react';
-import { FC, useContext, useEffect, useReducer, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  FC,
+  useContext,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
@@ -25,6 +33,7 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { FAQ } from './faq';
 import faqData from './faq.json';
+import toneData from './toneOptions.json';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -43,12 +52,41 @@ interface Props {
   user?: Session['user'];
 }
 
+interface ToneOption {
+  label: string;
+  description: string;
+  example: string;
+}
+
 export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
   });
+
+  const [selectedTone, setSelectedTone] = useState<string>(
+    state.voiceTone || '',
+  );
+  const [description, setDescription] = useState<string>('');
+  const [example, setExample] = useState<string>(
+    state.voiceToneInstructions || '',
+  );
+
+  const toneOptions: ToneOption[] = toneData.toneOptions;
+
+  const handleToneChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const selected = toneOptions.find(
+      (option) => option.label === event.target.value,
+    );
+    if (selected) {
+      setSelectedTone(selected.label);
+      setDescription(selected.description);
+      setExample(selected.example);
+      dispatch({ field: 'voiceTone', value: selected.label });
+      dispatch({ field: 'voiceToneInstructions', value: selected.example });
+    }
+  };
 
   const {
     handleImportConversations,
@@ -91,6 +129,11 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       field: 'useKnowledgeBase',
       value: state.useKnowledgeBase,
     });
+    homeDispatch({ field: 'voiceTone', value: state.voiceTone });
+    homeDispatch({
+      field: 'voiceToneInstructions',
+      value: state.voiceToneInstructions,
+    });
     saveSettings(state);
   };
 
@@ -101,6 +144,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       runTypeWriterIntroSetting: true,
       useKnowledgeBase: true,
+      voiceTone: undefined,
+      voiceToneInstructions: undefined,
     };
     homeDispatch({ field: 'lightMode', value: 'dark' });
     homeDispatch({ field: 'temperature', value: 0.5 });
@@ -113,6 +158,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       field: 'useKnowledgeBase',
       value: true,
     });
+    homeDispatch({ field: 'voiceTone', value: undefined });
+    homeDispatch({ field: 'voiceToneInstructions', value: undefined });
     saveSettings(defaultSettings);
   };
 
@@ -258,6 +305,49 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                     </tr>
                   </tbody>
                 </table>
+                <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
+                <div className="flex flex-row justify-between items-center my-10">
+                  <div className="text-sm font-bold text-black dark:text-neutral-200">
+                    {t('Default Voice Tone*')}
+                  </div>
+                </div>
+                <span className="mb-4 block text-[12px] text-black/50 dark:text-white/50 text-sm">
+                  {t(
+                    'MSF AI Assistant can emulate various tones for different writing styles. Select one below.',
+                  )}
+                </span>
+
+                <div className="flex flex-row items-start mb-4 space-x-4">
+                  <div className="w-1/2">
+                    <select
+                      className="w-1/2 p-2 my-2 border border-gray-300 dark:border-neutral-700 rounded bg-white dark:bg-neutral-800 text-black dark:text-white"
+                      value={selectedTone}
+                      onChange={handleToneChange}
+                    >
+                      <option value="" disabled>
+                        {t('Select a tone')}
+                      </option>
+                      {toneOptions.map((option) => (
+                        <option key={option.label} value={option.label}>
+                          {t(option.label)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {description && (
+                    <div className="w-1/2 p-2 my-2 text-black/50 dark:text-neutral-300 text-end">
+                      {t(description)}
+                    </div>
+                  )}
+                </div>
+
+                {example && (
+                  <div className="w-full py-6 px-4 my-4 border border-gray-300 dark:border-neutral-700 rounded text-black dark:text-white text-center">
+                    <strong>{t('Example:')}</strong> {t(example)}
+                  </div>
+                )}
+
                 <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
                 <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
                   {t(

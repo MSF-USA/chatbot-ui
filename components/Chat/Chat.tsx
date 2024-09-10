@@ -81,6 +81,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       modelError,
       loading,
       prompts,
+      voiceTone,
+      voiceToneInstructions,
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
@@ -151,6 +153,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature:
         updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
       useKnowledgeBase: useKnowledgeBase || DEFAULT_USE_KNOWLEDGE_BASE,
+      voiceToneInstructions:
+        updatedConversation.voiceToneInstructions ||
+        voiceToneInstructions ||
+        undefined,
     };
     const endpoint = getEndpoint(plugin);
     let body;

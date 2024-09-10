@@ -24,6 +24,8 @@ export interface HomeInitialState {
   currentMessage: Message | undefined;
   prompts: Prompt[];
   temperature: number;
+  voiceTone: string | undefined;
+  voiceToneInstructions: string | undefined;
   showChatbar: boolean;
   showPromptbar: boolean;
   systemPrompt: string;
@@ -51,6 +53,8 @@ export const initialState: HomeInitialState = {
   currentMessage: undefined,
   prompts: [],
   temperature: 0.5,
+  voiceTone: undefined,
+  voiceToneInstructions: undefined,
   showPromptbar: true,
   systemPrompt: '',
   showChatbar: true,
