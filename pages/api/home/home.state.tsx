@@ -1,5 +1,6 @@
-import { Conversation, Message } from '@/types/chat';
 import { Session } from 'next-auth';
+
+import { Conversation, Message } from '@/types/chat';
 import { ErrorMessage } from '@/types/error';
 import { FolderInterface } from '@/types/folder';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
@@ -7,12 +8,13 @@ import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
 export interface HomeInitialState {
-  user?: Session["user"];
+  user?: Session['user'];
   apiKey: string;
   pluginKeys: PluginKey[];
   loading: boolean;
   lightMode: 'light' | 'dark';
   runTypeWriterIntroSetting: boolean;
+  useKnowledgeBase: boolean;
   messageIsStreaming: boolean;
   modelError: ErrorMessage | null;
   models: OpenAIModel[];
@@ -39,6 +41,7 @@ export const initialState: HomeInitialState = {
   pluginKeys: [],
   lightMode: 'dark',
   runTypeWriterIntroSetting: true,
+  useKnowledgeBase: true,
   messageIsStreaming: false,
   modelError: null,
   models: [],

@@ -8,11 +8,13 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "test:node": "vitest --config ./vitest.config.ts",
-    "test": "npm run test:node",
+    "test:node": "vitest --run --config ./vitest.config.node.ts",
+    "test:jsdom": "vitest --run --config ./vitest.config.jsdom.ts",
+    "test": "npm run test:node && npm run test:jsdom",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@azure/search-documents": "^12.1.0",
     "@azure/storage-blob": "^12.23.0",
     "@dqbd/tiktoken": "^1.0.2",
     "@headlessui/react": "^2.0.3",
