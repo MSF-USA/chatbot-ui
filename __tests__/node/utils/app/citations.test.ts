@@ -1,4 +1,4 @@
-import { extractCitations } from '@/utils/app/citations';
+import { extractCitationsAndQuestions } from '@/utils/app/citations';
 
 describe('extractCitations function', () => {
   it('should extract citations correctly', () => {
@@ -8,7 +8,7 @@ describe('extractCitations function', () => {
   [{"number": "2", "title": "Test Citation 2", "url": "https://test2.com", "date": "2023-01-02"}]
   [[CITATIONS_END]]`;
 
-    const result = extractCitations(content);
+    const result = extractCitationsAndQuestions(content);
     expect(result.mainContent).toBe('Test content');
     expect(result.citations).toHaveLength(2);
     expect(result.citations[0].title).toBe('Test Citation 1');
@@ -17,7 +17,7 @@ describe('extractCitations function', () => {
 
   it('should handle content without citations', () => {
     const content = 'Test content without citations';
-    const result = extractCitations(content);
+    const result = extractCitationsAndQuestions(content);
     expect(result.mainContent).toBe(content);
     expect(result.citations).toHaveLength(0);
   });
@@ -29,7 +29,7 @@ describe('extractCitations function', () => {
   [{"number": "2", "title": "Malformed Citation", "url": "https://test2.com", "date": "2023-01-02}]
   [[CITATIONS_END]]`;
 
-    const result = extractCitations(content);
+    const result = extractCitationsAndQuestions(content);
     expect(result.mainContent).toBe('Test content with malformed citations');
     expect(result.citations).toHaveLength(1);
     expect(result.citations[0].title).toBe('Test Citation 1');
@@ -42,7 +42,7 @@ describe('extractCitations function', () => {
   [{"number": "2", "title": "Incomplete Citation"}]
   [[CITATIONS_END]]`;
 
-    const result = extractCitations(content);
+    const result = extractCitationsAndQuestions(content);
     expect(result.mainContent).toBe('Test content with incomplete citations');
     expect(result.citations).toHaveLength(2);
     expect(result.citations[0].title).toBe('Test Citation 1');
