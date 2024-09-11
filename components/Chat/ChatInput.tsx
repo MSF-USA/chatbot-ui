@@ -64,8 +64,8 @@ export const ChatInput = ({
   } = useContext(HomeContext);
 
   const [textFieldValue, setTextFieldValue] = useState<string>("");
-  const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | null>()
-  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | null>(null)
+  const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | ImageMessageContent[] | null>()
+  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | FileMessageContent[] | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -102,29 +102,22 @@ export const ChatInput = ({
   };
 
   const buildContent = () => {
-    if (submitType === 'text')
+    const wrapInArray = (value: any) => Array.isArray(value) ? value : [value];
+
+    if (submitType === 'text') {
       return textFieldValue;
-    else if (submitType === 'image') {
-      if (imageFieldValue)
-        return [
-            imageFieldValue,
-          {type: "text", text: textFieldValue} as TextMessageContent
+    } else if (submitType === 'image') {
+      const imageContents = imageFieldValue ? wrapInArray(imageFieldValue) : [];
+      return [
+        ...imageContents,
+        { type: "text", text: textFieldValue } as TextMessageContent
       ];
-      else
-        return [
-            {type: "text", text: textFieldValue} as TextMessageContent
-        ]
-    } else if (submitType === 'file') {
-      if (fileFieldValue) {
-        return [
-          fileFieldValue,
-          {type: "text", text: textFieldValue} as TextMessageContent
-        ]
-      } else {
-        return [
-          {type: "text", text: textFieldValue} as TextMessageContent
-        ]
-      }
+    } else if (submitType === 'file' || submitType == 'multi-file') {
+      const fileContents = fileFieldValue ? wrapInArray(fileFieldValue) : [];
+      return [
+        ...fileContents,
+        { type: "text", text: textFieldValue } as TextMessageContent
+      ];
     } else {
       throw new Error(`Invalid submit type for message: ${submitType}`);
     }
@@ -151,12 +144,16 @@ export const ChatInput = ({
     setImageFieldValue(null)
     setFileFieldValue(null)
     setPlugin(null);
+    setSubmitType('text')
+
+    if (filePreviews.length > 0) {
+      setFilePreviews([]);
+    }
 
     if (window.innerWidth < 640 && textareaRef?.current) {
       textareaRef.current.blur();
     }
 
-    setSubmitType('text')
   };
 
   const handleStopConversation = () => {
@@ -322,7 +319,7 @@ export const ChatInput = ({
         textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
       }`;
     }
-  }, [textFieldValue]);
+  }, [textFieldValue, textareaRef]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
