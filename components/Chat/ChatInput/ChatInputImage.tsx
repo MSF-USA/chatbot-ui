@@ -7,11 +7,9 @@ import HomeContext from "@/pages/api/home/home.context";
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
-    // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>>,
-    prompt: string,
     setFilePreviews:  Dispatch<SetStateAction<string[]>>,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>,
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>,
 ) => {
     event.preventDefault();
     const file = event.target.files[0];
@@ -46,7 +44,15 @@ const onImageUpload = (
                         detail: 'auto',
                     },
                 }
-                setImageFieldValue(imageMessage)
+                setImageFieldValue(prevImageFieldValue => {
+                    if (Array.isArray(prevImageFieldValue)) {
+                        return [...prevImageFieldValue, imageMessage];
+                    } else if (prevImageFieldValue) {
+                        return [prevImageFieldValue, imageMessage];
+                    } else {
+                        return [imageMessage]
+                    }
+                })
                 setFilePreviews(prevFilePreviews => {
                     if (Array.isArray(prevFilePreviews)) {
                         prevFilePreviews.push(base64String)
@@ -73,8 +79,7 @@ export interface ChatInputImageProps {
     setFilePreviews: Dispatch<SetStateAction<string[]>>;
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
     prompt: string;
-    // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>> | null;
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent  | null | undefined>>;
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[]  | null | undefined>>;
 }
 
 const ChatInputImage = (
@@ -102,7 +107,7 @@ const ChatInputImage = (
             ref={imageInputRef}
             style={{display: "none"}}
             onChange={(event) => {
-                onImageUpload(event, prompt, setFilePreviews, setSubmitType, setImageFieldValue)
+                onImageUpload(event, setFilePreviews, setSubmitType, setImageFieldValue)
             }}
             accept={"image/*"}
         />

@@ -11,7 +11,7 @@ const onTakePhotoButtonClick = (
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>,
   closeModal: () => void
 ) => {
   if (videoRef.current && canvasRef.current && fileInputRef.current) {
@@ -28,7 +28,6 @@ const onTakePhotoButtonClick = (
         const newEvent = new Event("change");
         fileInputRef.current!.dispatchEvent(newEvent);
         onImageUpload(
-            // @ts-ignore
             newEvent,
             prompt,
             setFilePreviews,
@@ -60,7 +59,7 @@ interface CameraModalProps {
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
   setFilePreviews: Dispatch<SetStateAction<string[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>;
 }
 
 export const CameraModal: FC<CameraModalProps> = (
