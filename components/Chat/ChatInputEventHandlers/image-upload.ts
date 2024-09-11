@@ -3,11 +3,11 @@ import {ChatInputSubmitTypes, ImageMessageContent} from "@/types/chat";
 import toast from "react-hot-toast";
 
 export const onImageUpload = async (
-  event: React.ChangeEvent<any>,
-  prompt: string,
+  event: React.ChangeEvent<any> | Event,
+  prompt: any,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
+  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
 ) => {
     event.preventDefault();
     const file = event.target.files[0];
@@ -16,8 +16,6 @@ export const onImageUpload = async (
         setSubmitType("text");
         return;
     }
-
-    setSubmitType("image");
 
     if (file.size > 5242480) {
         toast.error("Image upload must be <5mb");
@@ -35,7 +33,18 @@ export const onImageUpload = async (
         },
     };
 
-    setImageFieldValue(imageMessage);
+    setImageFieldValue((prevValue: ImageMessageContent | ImageMessageContent[] | null | undefined) => {
+        if (prevValue && Array.isArray(prevValue)) {
+            setSubmitType("multi-file");
+            return [...prevValue, imageMessage];
+        } else if (prevValue) {
+            setSubmitType("multi-file");
+            return [prevValue, imageMessage];
+        } else {
+            setSubmitType("image");
+            return [imageMessage];
+        }
+    });
     setFilePreviews((prevFilePreviews) => [...(prevFilePreviews || []), base64String]);
 };
 
