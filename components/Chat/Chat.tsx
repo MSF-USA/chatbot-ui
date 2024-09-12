@@ -49,6 +49,7 @@ import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
 import Typewriter from 'typewriter-effect';
+import {makeRequest} from "@/services/frontendChatServices";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -133,51 +134,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   };
 
-  const makeRequest = async (
-    plugin: Plugin | null,
-    updatedConversation: Conversation,
-  ) => {
-    const chatBody: ChatBody = {
-      model: updatedConversation.model,
-      messages: updatedConversation.messages.slice(-6),
-      key: apiKey,
-      prompt:
-        updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature:
-        updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
-    };
-    const endpoint = getEndpoint(plugin);
-    let body;
-    if (!plugin) {
-      body = JSON.stringify(chatBody);
-    } else {
-      body = JSON.stringify({
-        ...chatBody,
-        googleAPIKey: pluginKeys
-          .find((key) => key.pluginId === 'google-search')
-          ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-        googleCSEId: pluginKeys
-          .find((key) => key.pluginId === 'google-search')
-          ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
-      });
-    }
-    const controller = new AbortController();
-    const response = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal,
-      body,
-      mode: 'cors',
-    });
-
-    return {
-      controller,
-      body,
-      response,
-    };
-  };
 
   const setConversationTitle = (
     updatedConversation: Conversation,
@@ -326,10 +282,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
-        const { controller, body, response } = await makeRequest(
+        const { controller, body, response, hasComplexContent } = await makeRequest(
           plugin,
           updatedConversation,
+          apiKey,
+          pluginKeys,
+          systemPrompt,
+          temperature
         );
+
+        if (hasComplexContent) {
+          // Handle complex content case
+          console.log('Message contains complex content');
+          // Add your logic here
+        }
+
 
         if (!response.ok) {
           homeDispatch({ field: 'loading', value: false });
