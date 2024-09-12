@@ -3,6 +3,7 @@ import {Readable} from "stream";
 import fs from "fs/promises";
 import {getEnvVariable} from "@/utils/app/env";
 import {lookup} from "mime-types";
+import {retryWithExponentialBackoff} from "@/utils/app/retry";
 
 export enum BlobProperty {
     URL = 'url',
@@ -185,30 +186,33 @@ export default class BlobStorageFactory {
 type BlobType = 'files' | 'images' | 'audio' | 'video';
 
 export const getBlobBase64String = async (userId: string, id: string, blobType: BlobType = 'images'): Promise<string> => {
-    const blobStorageClient: BlobStorage = new AzureBlobStorage(
-      process.env.AZURE_BLOB_STORAGE_NAME ?? '',
-      process.env.AZURE_BLOB_STORAGE_KEY ?? '',
-      process.env.AZURE_BLOB_STORAGE_CONTAINER ?? process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
-    );
-    const blobLocation: string = `${userId}/uploads/${blobType}/${id}`;
-    const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
-    const mimeType = lookup(blobLocation.split('.')[blobLocation.split('.').length-1]);
+    return retryWithExponentialBackoff(async () => {
 
-    let base64String: string;
-    if (blobType === 'images') {
-        base64String = blob.toString()
-    } else {
-        base64String = blob.toString('base64');
-    }
+        const blobStorageClient: BlobStorage = new AzureBlobStorage(
+          process.env.AZURE_BLOB_STORAGE_NAME ?? '',
+          process.env.AZURE_BLOB_STORAGE_KEY ?? '',
+          process.env.AZURE_BLOB_STORAGE_CONTAINER ?? process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
+        );
+        const blobLocation: string = `${userId}/uploads/${blobType}/${id}`;
+        const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);
+        const mimeType = lookup(blobLocation.split('.')[blobLocation.split('.').length - 1]);
 
-    if (base64String.startsWith('data:')) {
-        /* pass */
-    } else if (mimeType) {
-        const base64Content = base64String.split('base64')[base64String.split('base64').length - 1];
-        base64String = `data:${mimeType};base64,${base64Content}`;
-    } else {
-        throw new Error(`Couldn't pull mime type: ${blobLocation}`);
-    }
+        let base64String: string;
+        if (blobType === 'images') {
+            base64String = blob.toString()
+        } else {
+            base64String = blob.toString('base64');
+        }
 
-    return base64String;
+        if (base64String.startsWith('data:')) {
+            /* pass */
+        } else if (mimeType) {
+            const base64Content = base64String.split('base64')[base64String.split('base64').length - 1];
+            base64String = `data:${mimeType};base64,${base64Content}`;
+        } else {
+            throw new Error(`Couldn't pull mime type: ${blobLocation}`);
+        }
+
+        return base64String;
+    })
 }
