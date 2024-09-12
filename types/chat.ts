@@ -7,7 +7,7 @@ export enum MessageType {
   IMAGE = 'image',
   AUDIO = 'audio',
   VIDEO = 'video',
-  FILE = 'file'
+  FILE = 'file',
 }
 
 export interface ImageMessageContent {
@@ -19,9 +19,9 @@ export interface ImageMessageContent {
 }
 
 /*
-* This is an arbitrary content type since we are just using it to handle
-* the retrieval and parsing on the server-side. This is unlike ImageMessageContent,
-* which is a genuine type that some gpt models can handle directly
+ * This is an arbitrary content type since we are just using it to handle
+ * the retrieval and parsing on the server-side. This is unlike ImageMessageContent,
+ * which is a genuine type that some gpt models can handle directly
  */
 export interface FileMessageContent {
   type: 'file_url';
@@ -35,26 +35,40 @@ export interface TextMessageContent {
 }
 
 export function getChatMessageContent(message: Message): string {
-  if (typeof message.content === "string") {
-    return message.content
-  } else if (Array.isArray(message.content) && message.content.some(contentItem => contentItem.type !== 'text')) {
+  if (typeof message.content === 'string') {
+    return message.content;
+  } else if (
+    Array.isArray(message.content) &&
+    message.content.some((contentItem) => contentItem.type !== 'text')
+  ) {
     // @ts-ignore
-    const imageContent = message.content.find(contentItem => contentItem.type === 'image_url') as ImageMessageContent;
+    const imageContent = message.content.find(
+      // @ts-ignore
+      (contentItem) => contentItem.type === 'image_url',
+    ) as ImageMessageContent;
     if (imageContent) {
-      return imageContent.image_url.url
+      return imageContent.image_url.url;
     } else {
       // @ts-ignore
-      return (message.content.find(contentItem => contentItem.type === 'file_url') as FileMessageContent).url;
+      const fileContent = message.content.find(
+        // @ts-ignore
+        (contentItem) => contentItem.type === 'file_url',
+      ) as FileMessageContent;
+      return fileContent.url;
     }
-  } else if ((message.content as TextMessageContent).type === 'text')
-    return (message.content as TextMessageContent).text
-  else
-    throw new Error(`Invalid message type or structure: ${message}`)
+  } else if ((message.content as TextMessageContent).type === 'text') {
+    return (message.content as TextMessageContent).text;
+  } else {
+    throw new Error(`Invalid message type or structure: ${message}`);
+  }
 }
-
 export interface Message {
   role: Role;
-  content: string | Array<TextMessageContent | FileMessageContent> | Array<TextMessageContent | ImageMessageContent> | TextMessageContent;
+  content:
+    | string
+    | Array<TextMessageContent | FileMessageContent>
+    | Array<TextMessageContent | ImageMessageContent>
+    | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
 }
 
@@ -66,6 +80,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
+  useKnowledgeBase: boolean;
 }
 
 export interface Conversation {
@@ -78,4 +93,4 @@ export interface Conversation {
   folderId: string | null;
 }
 
-export type ChatInputSubmitTypes = "text" | "image" | "file";
+export type ChatInputSubmitTypes = 'text' | 'image' | 'file';
