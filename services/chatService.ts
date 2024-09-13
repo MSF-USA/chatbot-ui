@@ -37,6 +37,8 @@ import fs from 'fs';
 import OpenAI from 'openai';
 import path from 'path';
 import {getEnvVariable} from "@/utils/app/env";
+import { Chat } from "openai/resources";
+import ChatCompletion = Chat.ChatCompletion;
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -142,6 +144,7 @@ export default class ChatService {
     token: JWT,
     modelId: string,
     user: Session['user'],
+    streamResponse: boolean,
   ): Promise<Response> {
     return this.retryWithExponentialBackoff(async () => {
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
@@ -174,15 +177,39 @@ export default class ChatService {
         const fileBuffer: Buffer = await this.retryReadFile(filePath);
         const file: File = new File([fileBuffer], filename, {});
 
-        const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({
-          file,
-          prompt,
-          token,
-          modelId,
-        }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
-
-        console.log('File summarized successfully.');
-        return new StreamingTextResponse(stream);
+        if (streamResponse) {
+          // @ts-expect-error the `stream` variable sets the response type. cool that typescript can't figure that out, even when casting
+          const streamResponse: ReadableStream<any> = await parseAndQueryFileOpenAI({
+            file,
+            prompt,
+            token,
+            modelId,
+            stream: true,
+          });
+          console.log('File summarized successfully.');
+          return new StreamingTextResponse(streamResponse);
+        } else {
+          const responseText = await parseAndQueryFileOpenAI({
+            file,
+            prompt,
+            token,
+            modelId,
+            stream: false,
+          });
+          console.log('File summarized successfully.');
+          return new Response(JSON.stringify({ text: responseText }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        // const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({
+        //   file,
+        //   prompt,
+        //   token,
+        //   modelId,
+        // }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
+        //
+        // console.log('File summarized successfully.');
+        // return new StreamingTextResponse(stream);
       } catch (error) {
         console.error('Error processing the file:', error);
         throw error;
@@ -257,7 +284,8 @@ export default class ChatService {
     temperatureToUse: number,
     token: JWT,
     user: Session['user'],
-  ): Promise<StreamingTextResponse> {
+    streamResponse: boolean,
+  ): Promise<StreamingTextResponse | Response> {
     return this.retryWithExponentialBackoff(async () => {
       const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
       const azureOpenai = new OpenAI(openAIArgs);
@@ -267,12 +295,20 @@ export default class ChatService {
           messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature: temperatureToUse,
         max_tokens: null,
-        stream: true,
+        stream: streamResponse,
         user: JSON.stringify(user),
       });
 
-      const stream: ReadableStream<any> = OpenAIStream(response);
-      return new StreamingTextResponse(stream);
+      if (streamResponse) {
+        // @ts-ignore
+        const streamResponse: ReadableStream<any> = OpenAIStream(response);
+        return new StreamingTextResponse(streamResponse);
+      } else {
+        const completionText = (response as ChatCompletion).choices[0].message.content;
+        return new Response(JSON.stringify({ text: completionText }), {
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
     });
   }
 
@@ -282,7 +318,7 @@ export default class ChatService {
    * @returns {Promise<Response>} A promise that resolves to the response based on the request.
    */
   public async handleRequest(req: NextRequest): Promise<Response> {
-    const { model, messages, prompt, temperature } =
+    const { model, messages, prompt, temperature, stream = true } =
       (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -325,7 +361,7 @@ export default class ChatService {
     encoding.free();
 
     if (needsToHandleFiles) {
-      return this.handleFileConversation(messagesToSend, token, model.id, user);
+      return this.handleFileConversation(messagesToSend, token, model.id, user, stream);
     } else {
       return this.handleChatCompletion(
         modelToUse,
@@ -333,6 +369,7 @@ export default class ChatService {
         temperatureToUse,
         token,
         user,
+        stream
       );
     }
   }
