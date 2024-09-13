@@ -66,6 +66,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
+  stream?: boolean;
 }
 
 export interface Conversation {
