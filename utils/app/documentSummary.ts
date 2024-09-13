@@ -7,6 +7,8 @@ import mammoth from 'mammoth';
 import {DocxLoader} from "@langchain/community/document_loaders/fs/docx";
 import pdfParse from 'pdf-parse'
 import {loadDocument} from "@/utils/server/file-handling";
+import {Chat} from "openai/resources";
+import ChatCompletion = Chat.ChatCompletion;
 
 
 
@@ -16,6 +18,7 @@ interface parseAndQueryFilterOpenAIArguments {
     token: JWT;
     modelId: string;
     maxLength?: number;
+    stream?: boolean;
 }
 
 
@@ -23,7 +26,7 @@ async function summarizeChunk(
   azureOpenai: OpenAI,
   modelId: string,
   prompt: string,
-  chunk: string
+  chunk: string,
 ): Promise<string> {
     const summaryPrompt: string = `Summarize the following text with relevance to the prompt, but keep enough details to maintain the tone, character, and content of the original. If nothing is relevant, then return an empty string:\n\n\`\`\`prompt\n${prompt}\`\`\`\n\n\`\`\`text\n${chunk}\n\`\`\``;
     const chunkSummary = await azureOpenai.chat.completions.create({
@@ -46,8 +49,8 @@ async function summarizeChunk(
 }
 
 export async function parseAndQueryFileOpenAI(
-  {file, prompt, token, modelId, maxLength = 6000}: parseAndQueryFilterOpenAIArguments
-): Promise<ReadableStream<any>> {
+  {file, prompt, token, modelId, maxLength = 6000, stream = true}: parseAndQueryFilterOpenAIArguments
+): Promise<ReadableStream<any> | string> {
     const fileContent = await loadDocument(file);
     let chunks: string[] = splitIntoChunks(fileContent);
 
@@ -107,11 +110,20 @@ export async function parseAndQueryFileOpenAI(
         ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature: 0.1,
         max_tokens: null,
-        stream: true,
+        stream: stream, // Use the stream parameter here
     });
 
-    const stream: ReadableStream<any> = OpenAIStream(response);
-    return stream;
+    if (stream) {
+        // @ts-ignore
+        const streamResponse: ReadableStream<any> = OpenAIStream(response);
+        return streamResponse;
+    } else {
+        const completionText = (response as ChatCompletion).choices[0].message.content;
+        if (!completionText) {
+            throw new Error(`Empty response returned from API! ${JSON.stringify(response)}`)
+        }
+        return completionText;
+    }
 }
 
 function splitIntoChunks(text: string, chunkSize: number = 6000): string[] {
