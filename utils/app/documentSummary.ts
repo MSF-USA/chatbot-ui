@@ -50,9 +50,9 @@ async function summarizeChunk(
     max_tokens: 1000,
     stream: false,
     user: JSON.stringify(user),
-    langchain: true,
+    no_log: true,
   } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
-    langchain: boolean;
+    no_log: boolean;
   });
 
   const typedChunkSummary =
