@@ -83,53 +83,124 @@ export const makeRequest = async (
     const allMessagesExceptFinal = updatedConversation.messages.slice(0, -1);
 
     const fileSummaries: any[] = [];
-
     for (const content of nonTextContents) {
+      const summarizationPrompt = `
+Please summarize the following document. This summary will be used to compare documents based on the user's prompt.
+
+\`\`\`users-prompt
+${messageText?.text ?? ''}
+\`\`\`
+
+Document metadata: ${content.type === 'file_url' ? content.originalFilename : `Image: ${content.image_url.url.split('/').pop()}`}
+
+\`\`\`content
+${content}
+\`\`\`
+`.trim();
+
+      // Create a temporary message for summarization
       const temporaryLastMessage: Message = {
-        role: lastMessage.role,
-        content: [
-          messageText, content
-        ] as (TextMessageContent | ImageMessageContent)[] | (TextMessageContent | FileMessageContent)[],
-        messageType: lastMessage.messageType
+        role: 'user',
+        content: [{ type: 'text', text: summarizationPrompt }],
+        messageType: 'text',
       };
 
       const chatBody = createChatBody(
         updatedConversation,
         [...allMessagesExceptFinal.slice(-5), temporaryLastMessage],
-        apiKey, systemPrompt, temperature,
-        false // don't stream intermediate steps
+        apiKey,
+        systemPrompt,
+        temperature,
+        false // Don't stream intermediate steps
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
 
       const { controller, response, body } = await sendRequest(endpoint, requestBody);
+      const responseData = await response.json();
+
+      // Store the summary with a clear association to its file
       if (content.type === 'file_url') {
         fileSummaries.push({
-          'filename': content.originalFilename,
-          'summary': (response.json() as any).text ?? ''
-        })
+          filename: content.originalFilename,
+          summary: responseData.text ?? '',
+        });
       } else {
         fileSummaries.push({
-          'filename': `image:${content.image_url.url.split('/')[content.image_url.url.split('/').length - 1]}`,
-          'summary': (response.json() as any).text ?? ''
-        })
+          filename: `Image: ${content.image_url.url.split('/').pop()}`,
+          summary: responseData.text ?? '',
+        });
       }
     }
+
+    const comparisonPrompt = `
+Please compare the following documents based on the user's prompt.
+
+${fileSummaries
+      .map(
+        (summary) => `\`\`\`${summary.filename}
+${summary.summary}
+\`\`\``
+      )
+      .join('\n\n')}
+
+User's prompt: ${messageText?.text ?? ''}
+
+Provide a detailed comparison.
+`.trim();
+
+    // Create a final message for comparison
+    const finalMessage: Message = {
+      role: 'user',
+      content: [{ type: 'text', text: comparisonPrompt }],
+      messageType: 'text',
+    };
+
+    // Create chatBody for the final request
+    const chatBody = createChatBody(
+      updatedConversation,
+      [...allMessagesExceptFinal.slice(-5), finalMessage],
+      apiKey,
+      systemPrompt,
+      temperature,
+      stream // Stream the final comparison response
+    );
+
+    const endpoint = getEndpoint(plugin);
+
+    let requestBody = plugin
+      ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys))
+      : JSON.stringify(chatBody);
+
+    const { controller, body, response } = await sendRequest(endpoint, requestBody);
+
+    return {
+      controller,
+      body,
+      response,
+      hasComplexContent,
+    };
+  } else {
+    const chatBody = createChatBody(
+      updatedConversation,
+      updatedConversation.messages.slice(-6),
+      apiKey,
+      systemPrompt,
+      temperature,
+      stream
+    );
+    const endpoint = getEndpoint(plugin);
+
+    let requestBody = plugin
+      ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys))
+      : JSON.stringify(chatBody);
+    const { controller, body, response } = await sendRequest(endpoint, requestBody);
+
+    return {
+      controller,
+      body,
+      response,
+      hasComplexContent,
+    };
   }
-
-  const chatBody = createChatBody(
-    updatedConversation, updatedConversation.messages.slice(-6),
-    apiKey, systemPrompt, temperature, stream
-  );
-  const endpoint = getEndpoint(plugin);
-
-  let requestBody = plugin ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys)) : JSON.stringify(chatBody);
-  const { controller, body, response } = await sendRequest(endpoint, requestBody);
-
-  return {
-    controller,
-    body,
-    response,
-    hasComplexContent
-  };
 };
