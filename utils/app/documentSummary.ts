@@ -11,8 +11,7 @@ import {
 import { loadDocument } from '@/utils/server/file-handling';
 
 import { OpenAIStream } from 'ai';
-import {Chat} from "openai/resources";
-import ChatCompletion = Chat.ChatCompletion;
+import OpenAI from "openai";
 
 
 
@@ -147,7 +146,7 @@ export async function parseAndQueryFileOpenAI(
         const streamResponse: ReadableStream<any> = OpenAIStream(response as any);
         return streamResponse;
     } else {
-        const completionText = (response as ChatCompletion).choices[0].message.content;
+        const completionText = (response as any).choices[0].message.content;
         if (!completionText) {
             throw new Error(`Empty response returned from API! ${JSON.stringify(response)}`)
         }

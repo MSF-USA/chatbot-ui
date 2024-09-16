@@ -41,8 +41,8 @@ import fs from 'fs';
 import OpenAI from 'openai';
 import path from 'path';
 import {getEnvVariable} from "@/utils/app/env";
-import ChatCompletion = Chat.ChatCompletion;
-import {Chat} from "openai/resources";
+// import ChatCompletion = Chat.ChatCompletion;
+// import {Chat} from "openai/resources";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -473,7 +473,7 @@ Your detailed response here... According to [2], some relevant information... An
             const streamResponse: ReadableStream<any> = OpenAIStream(response);
             return new StreamingTextResponse(streamResponse);
           } else {
-            const completionText = (response as ChatCompletion).choices[0].message.content;
+            const completionText = (response as any).choices[0].message.content;
             return new Response(JSON.stringify({text: completionText}), {
               headers: {'Content-Type': 'application/json'},
             });
