@@ -26,12 +26,14 @@ const createChatBody = (
   systemPrompt: string,
   temperature: number,
   stream: boolean,
+  useKnowledgeBase: boolean,
 ): ChatBody => ({
   model: conversation.model,
   messages,
   key: apiKey,
   prompt: conversation.prompt || systemPrompt,
   temperature: conversation.temperature || temperature,
+  useKnowledgeBase
 });
 
 const appendPluginKeys = (chatBody: ChatBody, pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[]) => ({
@@ -65,7 +67,8 @@ export const makeRequest = async (
   pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
   systemPrompt: string,
   temperature: number,
-  stream: boolean = true
+  stream: boolean = true,
+  useKnowledgeBase: boolean = false,
 ) => {
   const lastMessage: Message = updatedConversation.messages[updatedConversation.messages.length - 1];
   let hasComplexContent = false;
@@ -111,7 +114,8 @@ ${content}
         apiKey,
         systemPrompt,
         temperature,
-        false // Don't stream intermediate steps
+        false, // Don't stream intermediate steps
+        false, // don't use knowledge base
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
@@ -163,7 +167,8 @@ Provide a detailed comparison.
       apiKey,
       systemPrompt,
       temperature,
-      stream // Stream the final comparison response
+      stream, // Stream the final comparison response
+      false // Don't use knowledge base
     );
 
     const endpoint = getEndpoint(plugin);
@@ -187,7 +192,8 @@ Provide a detailed comparison.
       apiKey,
       systemPrompt,
       temperature,
-      stream
+      stream,
+      useKnowledgeBase,
     );
     const endpoint = getEndpoint(plugin);
 

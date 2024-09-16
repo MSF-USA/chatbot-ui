@@ -41,8 +41,8 @@ import fs from 'fs';
 import OpenAI from 'openai';
 import path from 'path';
 import {getEnvVariable} from "@/utils/app/env";
-import { Chat } from "openai/resources";
 import ChatCompletion = Chat.ChatCompletion;
+import {Chat} from "openai/resources";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -200,6 +200,7 @@ export default class ChatService {
             token,
             modelId,
             stream: false,
+            user
           });
           console.log('File summarized successfully.');
           return new Response(JSON.stringify({ text: responseText }), {
@@ -427,73 +428,74 @@ Your detailed response here... According to [2], some relevant information... An
     useAISearch: boolean,
   ): Promise<StreamingTextResponse | Response> {
     return this.retryWithExponentialBackoff(async () => {
-      const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-      const azureOpenai = new OpenAI(openAIArgs);
+        const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
+        const azureOpenai = new OpenAI(openAIArgs);
 
-      const lastMessage = messagesToSend[messagesToSend.length - 1];
-      const textContent = this.getTextContent(lastMessage);
+        const lastMessage = messagesToSend[messagesToSend.length - 1];
+        const textContent = this.getTextContent(lastMessage);
 
-      if (textContent && useAISearch) {
-        try {
-          const isRelevant = await this.isQueryRelevantToMSF(
-            modelToUse,
-            token,
-            textContent,
-          );
-          if (isRelevant) {
-            const searchResults = await useSearchService(textContent);
-            const augmentedUserMessage = this.formatAugmentedContent(
+        if (textContent && useAISearch) {
+          try {
+            const isRelevant = await this.isQueryRelevantToMSF(
+              modelToUse,
+              token,
               textContent,
-              searchResults,
             );
-            messagesToSend[messagesToSend.length - 1] = {
-              ...lastMessage,
-              content: augmentedUserMessage,
-            };
+            if (isRelevant) {
+              const searchResults = await useSearchService(textContent);
+              const augmentedUserMessage = this.formatAugmentedContent(
+                textContent,
+                searchResults,
+              );
+              messagesToSend[messagesToSend.length - 1] = {
+                ...lastMessage,
+                content: augmentedUserMessage,
+              };
+            }
+          } catch (error) {
+            console.error('Error in AI search or relevance check:', error);
+          }
+        }
+
+        try {
+          const response = await azureOpenai.chat.completions.create({
+            model: modelToUse,
+            messages:
+              messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            temperature: temperatureToUse,
+            max_tokens: null,
+            stream: streamResponse,
+            user: JSON.stringify(user),
+          });
+
+          if (streamResponse) {
+            // @ts-ignore
+            const streamResponse: ReadableStream<any> = OpenAIStream(response);
+            return new StreamingTextResponse(streamResponse);
+          } else {
+            const completionText = (response as ChatCompletion).choices[0].message.content;
+            return new Response(JSON.stringify({text: completionText}), {
+              headers: {'Content-Type': 'application/json'},
+            });
           }
         } catch (error) {
-          console.error('Error in AI search or relevance check:', error);
+          console.error('Error in chat completion:', error);
+          let statusCode = 500;
+          let errorMessage =
+            'An error occurred while processing your request. Please try again later.';
+
+          if (error instanceof OpenAI.APIError) {
+            statusCode = error.status || 500;
+            errorMessage = error.message;
+          } else if (error instanceof Error) {
+            errorMessage = error.message;
+          }
+
+          return new Response(JSON.stringify({error: errorMessage}), {
+            status: statusCode,
+            headers: {'Content-Type': 'application/json'},
+          });
         }
-      }
-
-      try {
-        const response = await azureOpenai.chat.completions.create({
-          model: modelToUse,
-          messages:
-            messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-          temperature: temperatureToUse,
-          max_tokens: null,
-          stream: streamResponse,
-          user: JSON.stringify(user),
-        });
-
-      if (streamResponse) {
-        // @ts-ignore
-        const streamResponse: ReadableStream<any> = OpenAIStream(response);
-        return new StreamingTextResponse(streamResponse);
-      } else {
-        const completionText = (response as ChatCompletion).choices[0].message.content;
-        return new Response(JSON.stringify({ text: completionText }), {
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    } catch (error) {
-        console.error('Error in chat completion:', error);
-        let statusCode = 500;
-        let errorMessage =
-          'An error occurred while processing your request. Please try again later.';
-
-        if (error instanceof OpenAI.APIError) {
-          statusCode = error.status || 500;
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-
-        return new Response(JSON.stringify({ error: errorMessage }), {
-          status: statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
       });
   }
 
