@@ -1,23 +1,8 @@
-import React, {
-  ChangeEvent,
-  Dispatch,
-  MutableRefObject,
-  SetStateAction,
-  useContext,
-  useRef,
-} from 'react';
-
-import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
-
-import {
-  ChatInputSubmitTypes,
-  FileMessageContent,
-  ImageMessageContent,
-} from '@/types/chat';
-
-import HomeContext from '@/pages/api/home/home.context';
-
-import FileIcon from '@/components/Icons/file';
+import FileIcon from "@/components/Icons/file";
+import React, {ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useContext, useRef} from "react";
+import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/types/chat";
+import {userAuthorizedForFileUploads} from "@/utils/app/userAuth";
+import HomeContext from "@/pages/api/home/home.context";
 
 interface ChatInputFileProps {
     onFileUpload: (
@@ -30,22 +15,14 @@ interface ChatInputFileProps {
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | null>>,
-    setImageFieldValue: Dispatch<
-      SetStateAction<ImageMessageContent | null | undefined>
-    >,
-  ) => void;
-  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
-  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>;
-  setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
-  >;
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
+
 }
 
 const ChatInputFile = (
     {
         onFileUpload, setSubmitType, setFilePreviews, setFileFieldValue, setImageFieldValue
-    ,}: ChatInputFileProps
+    }: ChatInputFileProps
 ) => {
     const fileInputRef: MutableRefObject<any> = useRef(null);
 
