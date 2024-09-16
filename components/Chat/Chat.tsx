@@ -20,7 +20,11 @@ import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
 import { getEndpoint } from '@/utils/app/api';
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import {
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_USE_KNOWLEDGE_BASE,
+} from '@/utils/app/const';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
@@ -81,6 +85,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
+      useKnowledgeBase,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -182,9 +187,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
 
   const debouncedUpdateConversation = useCallback(
-    debounce((content: string, updateConversation: CallableFunction) => {
-      updateConversation(content);
-    }, 100),
+    debounce(
+      window,
+      (content: string, updateConversation: CallableFunction) => {
+        updateConversation(content);
+      },
+      100,
+    ),
     [],
   );
 
@@ -282,7 +291,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'loading', value: true });
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
-        const { controller, body, response, hasComplexContent } = await makeRequest(
+        try {
+          const { controller, body, response, hasComplexContent } = await makeRequest(
           plugin,
           updatedConversation,
           apiKey,
@@ -297,108 +307,108 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           // Add your logic here
         }
 
-
-        if (!response.ok) {
-          homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false });
-          let errorResp: any;
-          try {
-            errorResp = await response.json();
-          } catch (errorResponsePullError) {
-            errorResp = {};
-          }
-          toast.error(
-            response.statusText ?? errorResp.error ?? 'Response failed',
-          );
-          return;
-        }
-        const data = response.body;
-        if (!data) {
-          homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false });
-          return;
-        }
-        if (!plugin) {
-          if (updatedConversation.messages.length === 1) {
-            updatedConversation = setConversationTitle(
-              updatedConversation,
-              message,
-            );
-          }
-          homeDispatch({ field: 'loading', value: false });
-
-          // TODO: Either force everything through streaming or implement a
-          //    non-streaming version of this as well
-          const streaming = true;
-          if (streaming) {
-            const stream = new ReadableStream({
-              start(controller) {
-                const reader = data.getReader();
-
-                function push() {
-                  reader.read().then(({ done, value }) => {
-                    if (done) {
-                      controller.close();
-                      return;
-                    }
-                    controller.enqueue(value);
-                    push();
-                  });
-                }
-
-                push();
-              },
-            });
-            const updatedConversations = await handleNormalChatBackendStreaming(
-              stream,
-              controller,
-              updatedConversation,
-              selectedConversation,
-              conversations,
-            );
-
-            homeDispatch({
-              field: 'conversations',
-              value: updatedConversations,
-            });
-            saveConversations(updatedConversations);
+          if (!response.ok) {
+            homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            let errorResp: any;
+            try {
+              errorResp = await response.json();
+            } catch (errorResponsePullError) {
+              errorResp = {};
+            }
+            toast.error(
+              response.statusText ?? errorResp.error ?? 'Response failed',
+            );
+            return;
+          }
+          const data = response.body;
+          if (!data) {
+            homeDispatch({ field: 'loading', value: false });
+            homeDispatch({ field: 'messageIsStreaming', value: false });
+            return;
+          }
+          if (!plugin) {
+            if (updatedConversation.messages.length === 1) {
+              updatedConversation = setConversationTitle(
+                updatedConversation,
+                message,
+              );
+            }
+            homeDispatch({ field: 'loading', value: false });
+
+            // TODO: Either force everything through streaming or implement a
+            //    non-streaming version of this as well
+            const streaming = true;
+            if (streaming) {
+              const stream = new ReadableStream({
+                start(controller) {
+                  const reader = data.getReader();
+
+                  function push() {
+                    reader.read().then(({ done, value }) => {
+                      if (done) {
+                        controller.close();
+                        return;
+                      }
+                      controller.enqueue(value);
+                      push();
+                    });
+                  }
+
+                  push();
+                },
+              });
+              const updatedConversations =
+                await handleNormalChatBackendStreaming(
+                  stream,
+                  controller,
+                  updatedConversation,
+                  selectedConversation,
+                  conversations,
+                );
+
+              homeDispatch({
+                field: 'conversations',
+                value: updatedConversations,
+              });
+              saveConversations(updatedConversations);
+              homeDispatch({ field: 'messageIsStreaming', value: false });
+            } else {
+              const reader = data.getReader();
+              const updatedConversations =
+                await handleNormalChatBackendStreaming(
+                  data,
+                  controller,
+                  updatedConversation,
+                  selectedConversation,
+                  conversations,
+                );
+
+              homeDispatch({
+                field: 'conversations',
+                value: updatedConversations,
+              });
+              saveConversations(updatedConversations);
+              homeDispatch({ field: 'messageIsStreaming', value: false });
+            }
           } else {
-            const reader = data.getReader();
-            // const data = await response;
-            // const body = await data.body;
-            // const {answer} = data;
-            const updatedConversations = await handleNormalChatBackendStreaming(
-              data,
-              controller,
-              updatedConversation,
-              selectedConversation,
-              conversations,
-            );
-
-            homeDispatch({
-              field: 'conversations',
-              value: updatedConversations,
-            });
-            saveConversations(updatedConversations);
-            homeDispatch({ field: 'messageIsStreaming', value: false });
+            throw new Error('Plugins not currently supported.');
           }
-        } else {
-          throw new Error('Plugins not currently supported.');
-          // if (updatedConversation.messages.length === 1) {
-          //   updatedConversation = setConversationTitle(updatedConversation, message);
-          // }
-          //
-          // const updatedConversations = await handleGoogleResponse(
-          //       response,
-          //       updatedConversation,
-          //       selectedConversation,
-          //       conversations
-          // );
-          // homeDispatch({ field: 'conversations', value: updatedConversations });
-          // saveConversations(updatedConversations);
-          // homeDispatch({ field: 'loading', value: false });
-          // homeDispatch({ field: 'messageIsStreaming', value: false });
+        } catch (error: unknown) {
+          homeDispatch({ field: 'loading', value: false });
+          homeDispatch({ field: 'messageIsStreaming', value: false });
+
+          if (error instanceof Error) {
+            if (error.message === 'Request timed out') {
+              toast.error('Request timed out. Please try again.');
+            } else {
+              toast.error(`Error: ${error.message}`);
+            }
+          } else {
+            toast.error('An unknown error occurred');
+          }
+
+          console.error('Error in handleSend:', error);
         }
       }
     },
@@ -408,7 +418,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       pluginKeys,
       selectedConversation,
       stopConversationRef,
+      useKnowledgeBase,
     ],
+  );
+
+  const handleQuestionClick = useCallback(
+    (question: string) => {
+      handleSend({
+        role: 'user',
+        content: question,
+        messageType: MessageType.TEXT,
+      });
+    },
+    [handleSend],
   );
 
   const scrollToBottom = useCallback(() => {
@@ -889,6 +911,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         selectedConversation?.messages.length - index,
                       );
                     }}
+                    onQuestionClick={handleQuestionClick}
                   />
                 ))}
 
