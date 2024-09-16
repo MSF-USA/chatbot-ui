@@ -1,4 +1,5 @@
 import { JWT } from 'next-auth';
+import { Session } from 'next-auth';
 
 import {
   APIM_CHAT_ENDPONT,
@@ -21,6 +22,7 @@ interface parseAndQueryFilterOpenAIArguments {
   token: JWT;
   modelId: string;
   maxLength?: number;
+  user: Session['user'];
 }
 
 async function summarizeChunk(
@@ -28,6 +30,7 @@ async function summarizeChunk(
   modelId: string,
   prompt: string,
   chunk: string,
+  user: Session['user'],
 ): Promise<string> {
   const summaryPrompt: string = `Summarize the following text with relevance to the prompt, but keep enough details to maintain the tone, character, and content of the original. If nothing is relevant, then return an empty string:\n\n\`\`\`prompt\n${prompt}\`\`\`\n\n\`\`\`text\n${chunk}\n\`\`\``;
   const chunkSummary = await azureOpenai.chat.completions.create({
@@ -42,12 +45,20 @@ async function summarizeChunk(
         role: 'user',
         content: summaryPrompt,
       },
-    ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+    ],
     temperature: 0.1,
     max_tokens: 1000,
     stream: false,
+    user: JSON.stringify(user),
+    no_log: true,
+  } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
+    no_log: boolean;
   });
-  return chunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
+
+  const typedChunkSummary =
+    chunkSummary as OpenAI.Chat.Completions.ChatCompletion;
+
+  return typedChunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
 }
 
 export async function parseAndQueryFileOpenAI({
@@ -56,6 +67,7 @@ export async function parseAndQueryFileOpenAI({
   token,
   modelId,
   maxLength = 6000,
+  user,
 }: parseAndQueryFilterOpenAIArguments): Promise<ReadableStream<any>> {
   const fileContent = await loadDocument(file);
   let chunks: string[] = splitIntoChunks(fileContent);
@@ -79,10 +91,12 @@ export async function parseAndQueryFileOpenAI({
 
   while (chunks.length > 0) {
     const chunkPromises = chunks.map((chunk) =>
-      summarizeChunk(azureOpenai, modelId, prompt, chunk).catch((error) => {
-        console.error(error);
-        return null;
-      }),
+      summarizeChunk(azureOpenai, modelId, prompt, chunk, user).catch(
+        (error) => {
+          console.error(error);
+          return null;
+        },
+      ),
     );
 
     const summaries = await Promise.all(chunkPromises);
@@ -114,13 +128,17 @@ export async function parseAndQueryFileOpenAI({
         role: 'user',
         content: finalPrompt,
       },
-    ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+    ],
     temperature: 0.1,
     max_tokens: null,
     stream: true,
+    user: JSON.stringify(user),
+    file_upload: true,
+  } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
+    file_upload: boolean;
   });
 
-  const stream: ReadableStream<any> = OpenAIStream(response);
+  const stream: ReadableStream<any> = OpenAIStream(response as any);
   return stream;
 }
 

@@ -183,6 +183,7 @@ export default class ChatService {
           prompt,
           token,
           modelId,
+          user,
         }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
 
         console.log('File summarized successfully.');
@@ -270,9 +271,16 @@ export default class ChatService {
           content: `Is the following query related to humanitarian issues, global health crises, or the work of organizations like MSF? Query: "${query}"`,
         },
       ],
+      no_log: true,
+    } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
+      no_log: boolean;
     });
 
-    const answer = response.choices[0]?.message?.content?.toLowerCase().trim();
+    const typedAnswer = response as OpenAI.Chat.Completions.ChatCompletion;
+
+    const answer = typedAnswer.choices[0]?.message?.content
+      ?.toLowerCase()
+      .trim();
     console.log('relevant: ', answer);
     return answer === 'yes';
   }
