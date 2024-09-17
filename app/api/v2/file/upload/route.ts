@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
     if (!session) throw new Error("Failed to pull session!");
 
     // @ts-ignore
-    const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
+    const userId: string = session?.user?.id ?? token.userId ?? 'anonymous';
 
     let blobStorageClient: BlobStorage = new AzureBlobStorage(
       getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
