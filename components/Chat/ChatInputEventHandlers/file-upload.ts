@@ -46,8 +46,8 @@ export function onFileUpload(
   event: React.ChangeEvent<any>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
-  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | null>>,
-  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
+  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | null>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
 ) {
   event.preventDefault();
   const file: File = event.target.files[0];
@@ -99,12 +99,24 @@ export function onFileUpload(
               uploadChunk();
             } else {
               response.json().then(resp => {
-                setSubmitType("file");
                 setFilePreviews(prevState => [...prevState, `file:${file.type}||name:${file.name}`])
-                setFileFieldValue({
-                  type: 'file_url',
-                  url: resp.uri ?? resp.filename,
-                  originalFilename: file.name,
+                // @ts-ignore
+                setFileFieldValue((prevValue: FileMessageContent | FileMessageContent[] | null): FileMessageContent[] => {
+                  const newValue: FileMessageContent = {
+                    type: 'file_url',
+                    url: resp.uri ?? resp.filename,
+                    originalFilename: file.name,
+                  }
+                  if (prevValue && Array.isArray(prevValue)) {
+                    setSubmitType("multi-file");
+                    return [...prevValue, newValue];
+                  } else if (prevValue) {
+                    setSubmitType("multi-file");
+                    return [prevValue, newValue];
+                  } else {
+                    setSubmitType("file");
+                    return [newValue];
+                  }
                 })
                 toast.success("File uploaded successfully");
               })

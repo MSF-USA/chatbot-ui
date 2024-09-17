@@ -51,7 +51,7 @@ export interface ChatInputImageCaptureProps {
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
   >;
 }
 

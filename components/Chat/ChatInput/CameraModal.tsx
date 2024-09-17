@@ -22,7 +22,7 @@ const onTakePhotoButtonClick = (
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
   >,
   closeModal: () => void,
 ) => {
@@ -42,12 +42,11 @@ const onTakePhotoButtonClick = (
         const newEvent = new Event('change');
         fileInputRef.current!.dispatchEvent(newEvent);
         onImageUpload(
-          // @ts-ignore
-          newEvent,
-          prompt,
-          setFilePreviews,
-          setSubmitType,
-          setImageFieldValue,
+            newEvent,
+            prompt,
+            setFilePreviews,
+            setSubmitType,
+            setImageFieldValue,
         );
       }
     }, 'image/png');
@@ -75,7 +74,7 @@ interface CameraModalProps {
   setFilePreviews: Dispatch<SetStateAction<string[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
   >;
 }
 

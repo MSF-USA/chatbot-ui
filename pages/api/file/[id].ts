@@ -4,6 +4,7 @@ import {getToken} from "next-auth/jwt";
 import {Session} from "next-auth";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {getEnvVariable} from "@/utils/app/env";
 
 /**
  * Checks if the given identifier is a valid SHA-256 hash.
@@ -57,11 +58,25 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   try {
     if (fileType === 'image') {
-      const base64String: string = await getBlobBase64String(userId, id as string);
+      const base64String: string = await getBlobBase64String(
+        userId, id as string, undefined, session.user
+      );
 
       res.status(200).json({base64Url: base64String});
     } else if (fileType === 'file') {
-      const blobStorage = new AzureBlobStorage()
+      const blobStorage = new AzureBlobStorage(
+        getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
+        getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
+        getEnvVariable(
+          {
+            name: 'AZURE_BLOB_STORAGE_CONTAINER',
+            throwErrorOnFail: false,
+            defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+            user: session.user
+          }
+        ),
+        session.user
+      );
       const blob: Buffer = await (blobStorage.get(
           `${remoteFilepath}/${id}`,
           BlobProperty.BLOB

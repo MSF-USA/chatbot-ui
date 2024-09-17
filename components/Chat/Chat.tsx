@@ -152,7 +152,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
       useKnowledgeBase: useKnowledgeBase || DEFAULT_USE_KNOWLEDGE_BASE,
     };
-    const endpoint = getEndpoint(plugin);
+    const endpoint = getEndpoint({plugin});
     let body;
     if (!plugin) {
       body = JSON.stringify(chatBody);

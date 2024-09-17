@@ -1,8 +1,8 @@
 import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
 import {Readable} from "stream";
-import fs from "fs/promises";
 import {getEnvVariable} from "@/utils/app/env";
 import {lookup} from "mime-types";
+import {Session} from "next-auth";
 
 export enum BlobProperty {
     URL = 'url',
@@ -41,23 +41,47 @@ export class AzureBlobStorage implements BlobStorage {
     private blobServiceClient: BlobServiceClient;
 
     constructor(
-      storageAccountName: string = getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
-      storageAccountAccessKey: string = getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-      private containerName: string = getEnvVariable(
-          'AZURE_BLOB_STORAGE_CONTAINER',
-          false,
-          process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
-      )
+      storageAccountName: string | undefined = undefined,
+      storageAccountAccessKey: string | undefined = undefined,
+      private containerName: string | undefined = undefined,
+      private user: Session['user'],
     ) {
-        const sharedKeyCredential = new StorageSharedKeyCredential(storageAccountName, storageAccountAccessKey);
+        let name: string;
+        if (!storageAccountName) {
+            name = getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user});
+        } else {
+            name = storageAccountName;
+        }
+
+        let key: string;
+        if (storageAccountAccessKey) {
+            key = storageAccountAccessKey
+        } else {
+            key = getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user});
+        }
+
+        if (!this.containerName) {
+            this.containerName = getEnvVariable(
+              {
+                  name: 'AZURE_BLOB_STORAGE_CONTAINER',
+                  throwErrorOnFail: false,
+                  defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+                  user
+              }
+            )
+        }
+
+        const sharedKeyCredential = new StorageSharedKeyCredential(name, key);
         this.blobServiceClient = new BlobServiceClient(
           `https://${storageAccountName}.blob.core.windows.net`,
           sharedKeyCredential
         );
     }
 
-    async upload(blobName: string, content: string | Buffer, options?: BlockBlobUploadOptions | undefined): Promise<string> {
-        const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+    async upload(
+      blobName: string, content: string | Buffer, options?: BlockBlobUploadOptions | undefined
+    ): Promise<string> {
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName as string);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
         if (await this.blobExists(blobName)) {
@@ -93,7 +117,7 @@ export class AzureBlobStorage implements BlobStorage {
           options
       }: UploadStreamAzureStorageArgs
     ): Promise<string> {
-        const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName as string);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
         if (await this.blobExists(blobName)) {
@@ -107,7 +131,7 @@ export class AzureBlobStorage implements BlobStorage {
     }
 
     async get(blobName: string, property = BlobProperty.URL): Promise<string | Buffer> {
-        const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName as string);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
 
         if (property === BlobProperty.URL) {
@@ -131,7 +155,7 @@ export class AzureBlobStorage implements BlobStorage {
     }
 
     async blobExists(blobName: string): Promise<boolean> {
-        const containerClient = this.blobServiceClient.getContainerClient(this.containerName);
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName as string);
         const blockBlobClient = containerClient.getBlockBlobClient(blobName);
         return blockBlobClient.exists();
     }
@@ -169,11 +193,12 @@ export class AzureBlobStorage implements BlobStorage {
 export default class BlobStorageFactory {
     static createAzureBlobStorage(
       storageAccountName: string, storageAccountAccessKey: string,
-      containerName: string, type: BlobStorageType = BlobStorageType.AZURE
+      containerName: string, type: BlobStorageType = BlobStorageType.AZURE,
+      user: Session['user']
     ): BlobStorage | AzureBlobStorage {
         switch (type) {
             case BlobStorageType.AZURE:
-                return new AzureBlobStorage(storageAccountName, storageAccountAccessKey, containerName);
+                return new AzureBlobStorage(storageAccountName, storageAccountAccessKey, containerName, user);
             case BlobStorageType.AWS:
                 throw new Error("AWS blob storage support not implemented.")
             default:
@@ -184,11 +209,22 @@ export default class BlobStorageFactory {
 
 type BlobType = 'files' | 'images' | 'audio' | 'video';
 
-export const getBlobBase64String = async (userId: string, id: string, blobType: BlobType = 'images'): Promise<string> => {
+export const getBlobBase64String = async (
+  userId: string, id: string, blobType: BlobType = 'images',
+  user: Session['user']
+): Promise<string> => {
     const blobStorageClient: BlobStorage = new AzureBlobStorage(
-      process.env.AZURE_BLOB_STORAGE_NAME ?? '',
-      process.env.AZURE_BLOB_STORAGE_KEY ?? '',
-      process.env.AZURE_BLOB_STORAGE_CONTAINER ?? process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? 'files'
+      getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user}),
+      getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user}),
+      getEnvVariable(
+        {
+            name: 'AZURE_BLOB_STORAGE_CONTAINER',
+            throwErrorOnFail: false,
+            defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+            user
+        }
+      ),
+      user
     );
     const blobLocation: string = `${userId}/uploads/${blobType}/${id}`;
     const blob: Buffer = await (blobStorageClient.get(blobLocation, BlobProperty.BLOB) as Promise<Buffer>);

@@ -296,7 +296,7 @@ export const Chatbar = () => {
         value: conversations,
       });
     }
-  }, [searchTerm, conversations]);
+  }, [chatDispatch, searchTerm, conversations]);
 
 
   useEffect(() => {
@@ -316,7 +316,7 @@ export const Chatbar = () => {
     } else {
       chatDispatch({ field: 'filteredPrompts', value: prompts });
     }
-  }, [promptSearchTerm, prompts]);
+  }, [chatDispatch, promptSearchTerm, prompts]);
 
   return showChatbar ? (
     <ChatbarContext.Provider
