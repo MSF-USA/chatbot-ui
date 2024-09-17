@@ -104,7 +104,7 @@ ${content}
       // Create a temporary message for summarization
       const temporaryLastMessage: Message = {
         role: 'user',
-        content: [{ type: 'text', text: summarizationPrompt }],
+        content: [{ type: 'text', text: summarizationPrompt }, content as any],
         messageType: 'text',
       };
 
