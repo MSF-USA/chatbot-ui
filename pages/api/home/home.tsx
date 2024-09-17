@@ -1,12 +1,13 @@
+import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
-import { useRouter } from 'next/router';
 import { useQuery } from 'react-query';
 
 import { GetServerSideProps } from 'next';
-import { useSession, signIn } from "next-auth/react"
+import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -17,7 +18,12 @@ import {
   cleanConversationHistory,
   cleanSelectedConversation,
 } from '@/utils/app/clean';
-import {DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE, OPENAI_API_HOST, OPENAI_API_HOST_TYPE} from '@/utils/app/const';
+import {
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_TEMPERATURE,
+  OPENAI_API_HOST,
+  OPENAI_API_HOST_TYPE,
+} from '@/utils/app/const';
 import {
   saveConversation,
   saveConversations,
@@ -32,7 +38,7 @@ import { KeyValuePair } from '@/types/data';
 import { FolderInterface, FolderType } from '@/types/folder';
 import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
-import { Session } from 'next-auth';
+import { Settings } from '@/types/settings';
 
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
@@ -42,8 +48,6 @@ import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
-import {Settings} from "@/types/settings";
-
 
 interface Props {
   serverSideApiKeyIsSet: boolean;
@@ -56,7 +60,7 @@ const Home = ({
   serverSidePluginKeysSet,
   defaultModelId,
 }: Props) => {
-  const { data: Session } = useSession()
+  const { data: Session } = useSession();
   const user = Session?.user;
   const router = useRouter();
   const { t } = useTranslation('chat');
@@ -77,7 +81,7 @@ const Home = ({
       selectedConversation,
       prompts,
       temperature,
-      systemPrompt
+      systemPrompt,
     },
     dispatch,
   } = contextValue;
@@ -87,7 +91,8 @@ const Home = ({
   const { data, error, refetch } = useQuery(
     ['GetModels', apiKey, serverSideApiKeyIsSet],
     ({ signal }) => {
-      const needKeyAuth = !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim'
+      const needKeyAuth =
+        !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim';
       if (needKeyAuth) return null;
 
       return getModels(
@@ -101,11 +106,11 @@ const Home = ({
   );
 
   useEffect(() => {
-    if (Session?.error === "RefreshAccessTokenError") {
+    if (Session?.error === 'RefreshAccessTokenError') {
       try {
         signIn(); // Force sign in to hopefully resolve error
       } catch (error) {
-        router.push("/auth/signin");
+        router.push('/auth/signin');
       }
     }
   }, [router, Session]);
@@ -121,7 +126,6 @@ const Home = ({
   useEffect(() => {
     dispatch({ field: 'modelError', value: getModelsError(error) });
   }, [dispatch, error, getModelsError]);
-
 
   // FETCH MODELS ----------------------------------------------
 
@@ -217,7 +221,8 @@ const Home = ({
         tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
       },
       prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature: temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
+      temperature:
+        temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
       folderId: null,
     };
 
@@ -289,14 +294,22 @@ const Home = ({
     defaultModelId,
     dispatch,
     serverSideApiKeyIsSet,
-    serverSidePluginKeysSet
+    serverSidePluginKeysSet,
   ]);
 
   function applySettings(settings: Settings) {
     if (settings.theme) dispatch({ field: 'lightMode', value: settings.theme });
-    if (settings.temperature) dispatch({ field: 'temperature', value: settings.temperature });
-    if (settings.systemPrompt) dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
-    if (settings.runTypeWriterIntroSetting === false) dispatch({ field: 'runTypeWriterIntroSetting', value: settings.runTypeWriterIntroSetting });
+    if (settings.temperature)
+      dispatch({ field: 'temperature', value: settings.temperature });
+    if (settings.systemPrompt)
+      dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
+    if (settings.runTypeWriterIntroSetting === false)
+      dispatch({
+        field: 'runTypeWriterIntroSetting',
+        value: settings.runTypeWriterIntroSetting,
+      });
+    if (settings.useKnowledgeBase === false)
+      dispatch({ field: 'useKnowledgeBase', value: settings.useKnowledgeBase });
   }
 
   function handleApiKey() {
@@ -346,8 +359,11 @@ const Home = ({
   function loadConversations() {
     const conversationHistory = localStorage.getItem('conversationHistory');
     if (conversationHistory) {
-      const parsedConversationHistory: Conversation[] = JSON.parse(conversationHistory);
-      const cleanedConversationHistory = cleanConversationHistory(parsedConversationHistory);
+      const parsedConversationHistory: Conversation[] =
+        JSON.parse(conversationHistory);
+      const cleanedConversationHistory = cleanConversationHistory(
+        parsedConversationHistory,
+      );
       dispatch({ field: 'conversations', value: cleanedConversationHistory });
     }
   }
@@ -355,9 +371,15 @@ const Home = ({
   function selectConversation() {
     const selectedConversation = localStorage.getItem('selectedConversation');
     if (selectedConversation) {
-      const parsedSelectedConversation: Conversation = JSON.parse(selectedConversation);
-      const cleanedSelectedConversation = cleanSelectedConversation(parsedSelectedConversation);
-      dispatch({ field: 'selectedConversation', value: cleanedSelectedConversation });
+      const parsedSelectedConversation: Conversation =
+        JSON.parse(selectedConversation);
+      const cleanedSelectedConversation = cleanSelectedConversation(
+        parsedSelectedConversation,
+      );
+      dispatch({
+        field: 'selectedConversation',
+        value: cleanedSelectedConversation,
+      });
     } else {
       const lastConversation = conversations[conversations.length - 1];
       dispatch({
@@ -368,13 +390,13 @@ const Home = ({
           messages: [],
           model: OpenAIModels[defaultModelId],
           prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
-          temperature: temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
+          temperature:
+            temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
           folderId: null,
         },
       });
     }
   }
-
 
   return (
     <HomeContext.Provider
@@ -391,7 +413,10 @@ const Home = ({
     >
       <Head>
         <title>MSF AI Assistant</title>
-        <meta name="description" content="Chat GPT AI Assistant for MSF Staff - Internal Use Only" />
+        <meta
+          name="description"
+          content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
+        />
         <meta
           name="viewport"
           content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
@@ -443,7 +468,8 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
-      serverSideApiKeyIsSet: !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
+      serverSideApiKeyIsSet:
+        !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
       defaultModelId,
       serverSidePluginKeysSet,
       ...(await serverSideTranslations(locale ?? 'en', [
