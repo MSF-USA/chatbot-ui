@@ -27,7 +27,7 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
       <div className="flex items-center">
         {loader}
         <span
-            className="ml-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-2 text-xs"
+            className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs"
             aria-live="polite"
         >
         {requestStatusMessage}
