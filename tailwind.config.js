@@ -7,7 +7,17 @@ module.exports = {
   ],
   darkMode: 'class',
   theme: {
-    extend: {},
+    extend: {
+      keyframes: {
+        'scroll-text': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+      },
+      animation: {
+        'scroll-text': 'scroll-text 10s linear infinite',
+      },
+    },
   },
   variants: {
     extend: {
