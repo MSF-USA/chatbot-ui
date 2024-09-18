@@ -108,6 +108,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [randomPrompts, setRandomPrompts] = useState<
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
+  const [requestStatusMessage, setRequestStatusMessage] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -294,11 +295,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         try {
           const { controller, body, response, hasComplexContent } = await makeRequest(
           plugin,
+          setRequestStatusMessage,
           updatedConversation,
           apiKey,
           pluginKeys,
           systemPrompt,
-          temperature
+          temperature,
         );
 
         if (hasComplexContent) {
@@ -915,7 +917,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   />
                 ))}
 
-                {loading && <ChatLoader />}
+                {loading && <ChatLoader requestStatusMessage={requestStatusMessage} />}
 
                 <div
                   className="h-[162px] bg-white dark:bg-[#212121]"
