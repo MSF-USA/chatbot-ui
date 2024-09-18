@@ -73,7 +73,7 @@ export async function onFileUpload(
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setFileFieldValue: Dispatch<
-        SetStateAction<FileMessageContent[] | null>
+        SetStateAction<FileMessageContent | FileMessageContent[] | null>
     >,
     setImageFieldValue: Dispatch<
         SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
