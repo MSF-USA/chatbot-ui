@@ -69,7 +69,7 @@ function isFileSupported(file: File): boolean {
 }
 
 export async function onFileUpload(
-    event: React.ChangeEvent<any>,
+    event: React.ChangeEvent<any> | FileList | File[],
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setFileFieldValue: Dispatch<
@@ -79,8 +79,13 @@ export async function onFileUpload(
         SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
     >
 ) {
-  event.preventDefault();
-  const files: FileList = event.target.files;
+  let files: FileList | File[];
+  if (Object.hasOwn(event, 'preventDefault')) {
+    (event as React.ChangeEvent<any>).preventDefault();
+    files = (event as React.ChangeEvent<any>).target.files;
+  } else {
+    files = event as FileList | File[];
+  }
 
   if (files.length === 0) {
     toast.error("No files selected.");
@@ -221,5 +226,7 @@ export async function onFileUpload(
   }
 
   // Reset the file input value to allow re-upload of the same files if needed
-  event.target.value = "";
+  if (Object.hasOwn(event, 'target')) {
+    (event as React.ChangeEvent<any>).target.value = "";
+  }
 }
