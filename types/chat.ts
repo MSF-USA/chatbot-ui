@@ -62,6 +62,15 @@ export function getChatMessageContent(message: Message): string {
     throw new Error(`Invalid message type or structure: ${message}`);
   }
 }
+
+export interface Citation {
+  content: string;
+  title?: string;
+  filepath?: string;
+  url?: string;
+  chunk_id?: string;
+}
+
 export interface Message {
   role: Role;
   content:
@@ -70,6 +79,10 @@ export interface Message {
     | Array<TextMessageContent | ImageMessageContent>
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
+  context?: {
+    citations?: Citation[];
+    intent?: string;
+  };
 }
 
 export type Role = 'system' | 'assistant' | 'user';
