@@ -349,20 +349,31 @@ export const ChatInput = ({
   return (
       <div
           className="absolute bottom-0 left-0 w-full border-transparent bg-gradient-to-b from-transparent via-white to-white pt-6 dark:border-white/20 dark:via-[#212121] dark:to-[#212121] md:pt-2 max-h-[200px]">
-        <div
-            className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[52px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
-
-          {filePreviews.length > 0 && <div className="mx-4 mb-0">
-            <ChatFileUploadPreviews
-                filePreviews={filePreviews}
-                setFilePreviews={setFilePreviews}
-                setSubmitType={setSubmitType}
-            />
+          {filePreviews.length > 0 && <div
+          className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[52px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
+              <div className="mx-4 mb-0">
+                <ChatFileUploadPreviews
+                    filePreviews={filePreviews}
+                    setFilePreviews={setFilePreviews}
+                    setSubmitType={setSubmitType}
+                />
+            </div>
           </div>}
-        </div>
-          <div
-              className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[22px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
 
+          <div
+              className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[42px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
+
+            {!messageIsStreaming &&
+                !filePreviews.length &&
+                selectedConversation &&
+                selectedConversation.messages.length > 0 && (
+                    <button
+                        className="absolute top-0 left-0 right-0 mx-auto flex w-fit items-center gap-3 mb-1 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-1 md:mt-2"
+                        onClick={onRegenerate}
+                    >
+                      <IconRepeat size={16} /> {t('Regenerate response')}
+                    </button>
+                )}
 
             <ChatInputImageCapture
                 setFilePreviews={setFilePreviews}
@@ -433,19 +444,6 @@ export const ChatInput = ({
                     </button>
                 )}
               </div>
-
-
-              {!messageIsStreaming &&
-                  selectedConversation &&
-                  selectedConversation.messages.length > 0 && (
-                      <button
-                          className="flex items-center gap-1 rounded border border-neutral-200 bg-white px-3 py-1 text-black
-              hover:opacity-80 dark:border-neutral-600 dark:bg-[#212121] dark:text-white"
-                          onClick={onRegenerate}
-                      >
-                        <IconRepeat size={18}/> {t('Regenerate')}
-                      </button>
-                  )}
 
               {showScrollDownButton && (
                   <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
