@@ -36,6 +36,7 @@ const ChatInputFile = (
     <>
       <input
         type="file"
+        multiple
         ref={fileInputRef}
         style={{ display: 'none' }}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
