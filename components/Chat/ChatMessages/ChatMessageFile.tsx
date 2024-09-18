@@ -120,14 +120,14 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                         >
                             <FileIcon className="w-8 h-8 mr-2 flex-shrink-0" />
                             <div className="relative flex-grow overflow-hidden">
-                <span
-                    className="block truncate whitespace-nowrap"
-                    style={{ transition: "transform 0.3s linear" }}
-                >
-                  {file.originalFilename || file.url.split("/").pop()}
-                </span>
+                              <span
+                                  className="block whitespace-nowrap hover:animate-scroll-text"
+                              >
+                                {file.originalFilename || file.url.split("/").pop()}
+                              </span>
+
                             </div>
-                            <IconDownload className="opacity-50 group-hover:opacity-100 flex-shrink-0" />
+                            <IconDownload className="opacity-50 group-hover:opacity-100 flex-shrink-0"/>
                         </div>
                     ))}
                 </div>
@@ -273,33 +273,6 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                     </div>
                 </div>
             )}
-            {/* Add custom styles for scrolling filenames */}
-            <style jsx>{`
-        .scrolling-text {
-          display: block;
-          overflow: hidden;
-          position: relative;
-        }
-
-        .scrolling-text span {
-          display: inline-block;
-          padding-left: 100%;
-          animation: scroll-text 10s linear infinite;
-        }
-
-        .scrolling-text:hover span {
-          animation-play-state: running;
-        }
-
-        @keyframes scroll-text {
-          0% {
-            transform: translateX(0%);
-          }
-          100% {
-            transform: translateX(-100%);
-          }
-        }
-      `}</style>
         </div>
     );
 };
