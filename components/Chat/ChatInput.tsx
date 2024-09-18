@@ -430,8 +430,8 @@ export const ChatInput = ({
               >
                 {messageIsStreaming ? (
                     <button
-                        className="flex items-center gap-1 rounded border border-neutral-200 bg-white px-3 py-1 text-black
-            hover:opacity-80 dark:border-neutral-600 dark:bg-[#212121] dark:text-white"
+                        className="flex items-center gap-1 rounded px-3 py-1 text-black
+            hover:opacity-80 dark:border-neutral-600 dark:text-red-600"
                         onClick={handleStopConversation}
                     >
                       <IconPlayerStop size={18}/>
