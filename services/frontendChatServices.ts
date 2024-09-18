@@ -8,6 +8,7 @@ import {
   Message
 } from '@/types/chat';
 import { getEndpoint } from '@/utils/app/api';
+import {Dispatch, SetStateAction} from "react";
 
 const isComplexContent = (content: (TextMessageContent | ImageMessageContent | FileMessageContent)[]): boolean => {
   const contentTypes = content.map((section) => section.type);
@@ -67,6 +68,7 @@ const sendRequest = async (endpoint: string, body: string) => {
 
 export const makeRequest = async (
   plugin: Plugin | null,
+  setRequestStatusMessage: Dispatch<SetStateAction<string | null>>,
   updatedConversation: Conversation,
   apiKey: string,
   pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
@@ -79,6 +81,7 @@ export const makeRequest = async (
   let hasComplexContent = false;
 
   if (Array.isArray(lastMessage.content) && isComplexContent(lastMessage.content)) {
+    setRequestStatusMessage('Handling multi-file processing. Please wait...')
     hasComplexContent = true;
     const messageContent = lastMessage.content as (TextMessageContent | ImageMessageContent | FileMessageContent)[];
     const messageText = messageContent.find(
@@ -92,6 +95,8 @@ export const makeRequest = async (
 
     const fileSummaries: any[] = [];
     for (const content of nonTextContents) {
+      const filename = content.type === 'file_url' ? content.originalFilename : `Image: ${content.image_url.url.split('/').pop()}`;
+      setRequestStatusMessage(`Processing ${filename}...`)
       const summarizationPrompt = `
 Please summarize the following document. This summary will be used to compare documents based on the user's prompt.
 
@@ -99,7 +104,7 @@ Please summarize the following document. This summary will be used to compare do
 ${messageText?.text ?? ''}
 \`\`\`
 
-Document metadata: ${content.type === 'file_url' ? content.originalFilename : `Image: ${content.image_url.url.split('/').pop()}`}
+Document metadata: ${filename}
 `.trim();
 
       // Create a temporary message for summarization
@@ -137,7 +142,7 @@ Document metadata: ${content.type === 'file_url' ? content.originalFilename : `I
         });
       }
     }
-
+    setRequestStatusMessage(`File processing complete! Handling user prompt...`)
     const comparisonPrompt = `
 Please compare the following documents based on the user's prompt.
 
@@ -179,6 +184,8 @@ Provide a detailed comparison.
       : JSON.stringify(chatBody);
 
     const { controller, body, response } = await sendRequest(endpoint, requestBody);
+
+    setRequestStatusMessage(null);
 
     return {
       controller,
