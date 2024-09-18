@@ -133,23 +133,7 @@ export const ChatMessage: FC<Props> = memo(
         (Array.isArray(message.content) &&
           message.content.some((content) => content.type === 'file_url')));
 
-    if (isImageMessage) {
-      return (
-        <ChatMessageImage
-          message={message}
-          handleDeleteMessage={handleDeleteMessage}
-          onEdit={onEdit as any}
-          handleEditMessage={handleEditMessage}
-          handleInputChange={handleInputChange}
-          handlePressEnter={handlePressEnter}
-          setIsTyping={setIsTyping}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          toggleEditing={toggleEditing}
-          textareaRef={textareaRef}
-        />
-      );
-    } else if (isFileMessage) {
+    if (isFileMessage) { // has priority b/c it handles files and images in case of mixed content
       return (
         <ChatMessageFile
           message={message}
@@ -165,6 +149,22 @@ export const ChatMessage: FC<Props> = memo(
           textareaRef={textareaRef}
         />
       );
+    } else if (isImageMessage) {
+        return (
+            <ChatMessageImage
+                message={message}
+                handleDeleteMessage={handleDeleteMessage}
+                onEdit={onEdit as any}
+                handleEditMessage={handleEditMessage}
+                handleInputChange={handleInputChange}
+                handlePressEnter={handlePressEnter}
+                setIsTyping={setIsTyping}
+                isEditing={isEditing}
+                setIsEditing={setIsEditing}
+                toggleEditing={toggleEditing}
+                textareaRef={textareaRef}
+            />
+        );
     } else if (
       (message.messageType === MessageType.TEXT ||
         message.messageType === undefined) &&
