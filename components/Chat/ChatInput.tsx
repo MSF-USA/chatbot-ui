@@ -350,7 +350,13 @@ export const ChatInput = ({
     const filesArray = Array.from(files);
 
     if (filesArray.length > 0) {
-      // onFileUpload(filesArray);
+      onFileUpload(
+          filesArray,
+          setSubmitType,
+          setFilePreviews,
+          setFileFieldValue,
+          setImageFieldValue
+      );
     }
 
   };
@@ -384,7 +390,7 @@ export const ChatInput = ({
       try {
         e.dataTransfer.clearData();
       } catch (err: any) {
-        // handle
+        // e.target.value = ""
       }
     }
   };
