@@ -34,11 +34,16 @@ import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 import useSearchService from './searchService';
 
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+import '@azure/openai/types';
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
-import OpenAI from 'openai';
+import OpenAI, { AzureOpenAI } from 'openai';
 import path from 'path';
 import { Readable } from 'stream';
 
@@ -106,6 +111,7 @@ export default class ChatService {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token.accessToken}`,
       },
+      apiVersion: OPENAI_API_VERSION,
     };
 
     if (process.env.OPENAI_API_KEY)
@@ -236,54 +242,54 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  /**
-   * Determines whether a user query is relevant to Médecins Sans Frontières (MSF) or related topics.
-   * @param {string} modelToUse - The ID of the model to use for relevance checking.
-   * @param {JWT} token - The JWT token for authentication.
-   * @param {string} query - The user's query to check for relevance.
-   * @returns {Promise<boolean>} A promise that resolves to true if the query is relevant, false otherwise.
-   */
-  private async isQueryRelevantToMSF(
-    modelToUse: string,
-    token: JWT,
-    query: string,
-  ): Promise<boolean> {
-    const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-    const azureOpenai = new OpenAI(openAIArgs);
+  // /**
+  //  * Determines whether a user query is relevant to Médecins Sans Frontières (MSF) or related topics.
+  //  * @param {string} modelToUse - The ID of the model to use for relevance checking.
+  //  * @param {JWT} token - The JWT token for authentication.
+  //  * @param {string} query - The user's query to check for relevance.
+  //  * @returns {Promise<boolean>} A promise that resolves to true if the query is relevant, false otherwise.
+  //  */
+  // private async isQueryRelevantToMSF(
+  //   modelToUse: string,
+  //   token: JWT,
+  //   query: string,
+  // ): Promise<boolean> {
+  //   const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
+  //   const azureOpenai = new OpenAI(openAIArgs);
 
-    const response = await azureOpenai.chat.completions.create({
-      model: modelToUse,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an AI assistant that determines if a query is related to humanitarian issues, global health crises, or the work of organizations like Médecins Sans Frontières (MSF)/Doctors Without Borders. Consider the following as relevant:\n' +
-            '1. Direct questions about MSF, their work, or similar NGOs\n' +
-            '2. Queries about humanitarian aid or medical assistance in any context\n' +
-            '3. Questions about ongoing conflicts, natural disasters, or health crises anywhere in the world\n' +
-            '4. General inquiries about the situation in areas known for humanitarian challenges\n' +
-            '5. Topics related to global health, epidemic outbreaks, or access to healthcare in developing countries\n' +
-            '6. Questions about refugee health, displacement, or migration due to conflicts or disasters\n' +
-            "Respond with only 'yes' if the query is related to any of these topics, or 'no' if it's completely unrelated.",
-        },
-        {
-          role: 'user',
-          content: `Is the following query related to humanitarian issues, global health crises, or the work of organizations like MSF? Query: "${query}"`,
-        },
-      ],
-      no_log: true,
-    } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
-      no_log: boolean;
-    });
+  //   const response = await azureOpenai.chat.completions.create({
+  //     model: modelToUse,
+  //     messages: [
+  //       {
+  //         role: 'system',
+  //         content:
+  //           'You are an AI assistant that determines if a query is related to humanitarian issues, global health crises, or the work of organizations like Médecins Sans Frontières (MSF)/Doctors Without Borders. Consider the following as relevant:\n' +
+  //           '1. Direct questions about MSF, their work, or similar NGOs\n' +
+  //           '2. Queries about humanitarian aid or medical assistance in any context\n' +
+  //           '3. Questions about ongoing conflicts, natural disasters, or health crises anywhere in the world\n' +
+  //           '4. General inquiries about the situation in areas known for humanitarian challenges\n' +
+  //           '5. Topics related to global health, epidemic outbreaks, or access to healthcare in developing countries\n' +
+  //           '6. Questions about refugee health, displacement, or migration due to conflicts or disasters\n' +
+  //           "Respond with only 'yes' if the query is related to any of these topics, or 'no' if it's completely unrelated.",
+  //       },
+  //       {
+  //         role: 'user',
+  //         content: `Is the following query related to humanitarian issues, global health crises, or the work of organizations like MSF? Query: "${query}"`,
+  //       },
+  //     ],
+  //     no_log: true,
+  //   } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
+  //     no_log: boolean;
+  //   });
 
-    const typedAnswer = response as OpenAI.Chat.Completions.ChatCompletion;
+  //   const typedAnswer = response as OpenAI.Chat.Completions.ChatCompletion;
 
-    const answer = typedAnswer.choices[0]?.message?.content
-      ?.toLowerCase()
-      .trim();
-    console.log('relevant: ', answer);
-    return answer === 'yes';
-  }
+  //   const answer = typedAnswer.choices[0]?.message?.content
+  //     ?.toLowerCase()
+  //     .trim();
+  //   console.log('relevant: ', answer);
+  //   return answer === 'yes';
+  // }
 
   /**
    * Extracts the text content from a message.
@@ -380,62 +386,70 @@ Your detailed response here... According to [2], some relevant information... An
    */
   private async handleChatCompletion(
     modelToUse: string,
-    messagesToSend: Message[],
+    messagesToSend: [],
     temperatureToUse: number,
     token: JWT,
     user: Session['user'],
     useAISearch: boolean,
   ): Promise<Response> {
     return this.retryWithExponentialBackoff(async () => {
-      const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-      const azureOpenai = new OpenAI(openAIArgs);
+      const scope = 'https://cognitiveservices.azure.com/.default';
+      const azureADTokenProvider = getBearerTokenProvider(
+        new DefaultAzureCredential(),
+        scope,
+      );
+
+      const apiKey = process.env.OPENAI_API_KEY;
+      const deployment = 'gpt-35-turbo';
+      const apiVersion = '2024-07-01-preview';
+      const client = new AzureOpenAI({
+        apiKey,
+        deployment,
+        apiVersion,
+      });
 
       const lastMessage = messagesToSend[messagesToSend.length - 1];
-      const textContent = this.getTextContent(lastMessage);
-
-      if (textContent && useAISearch) {
-        try {
-          const isRelevant = await this.isQueryRelevantToMSF(
-            modelToUse,
-            token,
-            textContent,
-          );
-          if (isRelevant) {
-            const searchResults = await useSearchService(textContent);
-            const augmentedUserMessage = this.formatAugmentedContent(
-              textContent,
-              searchResults,
-            );
-            messagesToSend[messagesToSend.length - 1] = {
-              ...lastMessage,
-              content: augmentedUserMessage,
-            };
-          }
-        } catch (error) {
-          console.error('Error in AI search or relevance check:', error);
-        }
-      }
 
       try {
-        const response = await azureOpenai.chat.completions.create({
+        //@ts-ignore
+        const response = await client.chat.completions.create({
           model: modelToUse,
           messages:
             messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature: temperatureToUse,
           max_tokens: null,
-          stream: true,
+          stream: false,
           user: JSON.stringify(user),
+          data_sources: [
+            {
+              type: 'azure_search',
+              parameters: {
+                endpoint: process.env.SEARCH_ENDPOINT,
+                index_name: process.env.SEARCH_INDEX,
+                authentication: {
+                  type: 'api_key',
+                  key: process.env.SEARCH_ENDPOINT_API_KEY,
+                },
+              },
+            },
+          ],
         });
 
-        const stream = OpenAIStream(response);
-        return new StreamingTextResponse(stream);
+        // Collect the streaming response
+        console.log(response.choices[0].message);
+        //@ts-ignore
+        console.log(response.choices[0].message.context.citations);
+
+        // Create a new ReadableStream from the full response
+
+        // return new StreamingTextResponse(response);
       } catch (error) {
         console.error('Error in chat completion:', error);
         let statusCode = 500;
         let errorMessage =
           'An error occurred while processing your request. Please try again later.';
 
-        if (error instanceof OpenAI.APIError) {
+        if (error instanceof AzureOpenAI.APIError) {
           statusCode = error.status || 500;
           errorMessage = error.message;
         } else if (error instanceof Error) {

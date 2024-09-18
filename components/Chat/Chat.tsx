@@ -345,6 +345,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           selectedConversation,
           deleteCount,
         );
+
+        console.log('Messages:', updatedConversation.messages);
+
         homeDispatch({
           field: 'selectedConversation',
           value: updatedConversation,
