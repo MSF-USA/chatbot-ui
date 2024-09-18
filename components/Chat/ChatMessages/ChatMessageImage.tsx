@@ -73,7 +73,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                 throw new Error(`Unexpected message type for message: ${contentMessage}`)
             }
         })
-    }, []);
+    }, [content]);
 
     useEffect(() => {
         const fetchImage = async () => {
