@@ -250,7 +250,7 @@ export default class ChatService {
     token: JWT,
     user: Session['user'],
   ): Promise<void> {
-    const userId: string = (token as any).userId ?? user?.id ?? 'anonymous';
+    const userId: string = user?.id ?? (token as any).userId ?? 'anonymous';
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop();
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
