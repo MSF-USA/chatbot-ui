@@ -33,7 +33,8 @@ const createChatBody = (
   key: apiKey,
   prompt: conversation.prompt || systemPrompt,
   temperature: conversation.temperature || temperature,
-  useKnowledgeBase
+  useKnowledgeBase,
+  stream,
 });
 
 const appendPluginKeys = (chatBody: ChatBody, pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[]) => ({
@@ -47,17 +48,21 @@ const appendPluginKeys = (chatBody: ChatBody, pluginKeys: { pluginId: PluginID; 
 });
 
 const sendRequest = async (endpoint: string, body: string) => {
-  const controller = new AbortController();
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    signal: controller.signal,
-    body,
-    mode: 'cors',
-  });
-  return { controller, body, response };
+    const controller = new AbortController();
+    const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+        body,
+        mode: 'cors',
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+    }
+    return { controller, body, response };
 };
 
 export const makeRequest = async (
@@ -95,10 +100,6 @@ ${messageText?.text ?? ''}
 \`\`\`
 
 Document metadata: ${content.type === 'file_url' ? content.originalFilename : `Image: ${content.image_url.url.split('/').pop()}`}
-
-\`\`\`content
-${content}
-\`\`\`
 `.trim();
 
       // Create a temporary message for summarization
