@@ -565,9 +565,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, []);
 
   return (
-    <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#212121]">
+    <div className="flex flex-col h-full w-full bg-white dark:bg-[#212121]">
       {showSplash ? (
-        <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
+        <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
             Welcome to the MSF AI Assistant
           </div>
@@ -609,7 +609,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       ) : (
         <>
           <div
-            className="max-h-full overflow-x-hidden"
+            className="flex-1 overflow-auto mt-[headerHeight]"
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
@@ -627,7 +627,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                      <div className="w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
                         {t('Model')}: {selectedConversation?.model?.name}
                         <button
                           className="ml-2 cursor-pointer hover:opacity-50"
@@ -702,7 +702,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </Transition>
                 )}
                 <div className="flex items-center justify-center h-screen">
-                  <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
+                  <div className="mx-auto flex flex-col px-3">
                     <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                       {models.length === 0 ? (
                         <div>
