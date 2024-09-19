@@ -80,7 +80,7 @@ export async function onFileUpload(
     >
 ) {
   let files: FileList | File[];
-  if (Object.hasOwn(event, 'preventDefault')) {
+  if (Object.hasOwn(event, 'target')) {
     (event as React.ChangeEvent<any>).preventDefault();
     files = (event as React.ChangeEvent<any>).target.files;
   } else {
