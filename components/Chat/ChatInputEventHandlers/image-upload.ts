@@ -1,16 +1,22 @@
 import React, {Dispatch, MutableRefObject, SetStateAction} from "react";
-import {ChatInputSubmitTypes, ImageMessageContent} from "@/types/chat";
+import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/types/chat";
 import toast from "react-hot-toast";
+import {isChangeEvent} from "@/components/Chat/ChatInputEventHandlers/common";
 
 export const onImageUpload = async (
-  event: React.ChangeEvent<any> | Event,
+  event: React.ChangeEvent<any> | Event | File,
   prompt: any,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
+  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null | undefined>>
 ) => {
-    event.preventDefault();
-    const file = event.target.files[0];
+    let file: File;
+    if (isChangeEvent(event)) {
+        (event as React.ChangeEvent<any>).preventDefault();
+        file = (event as React.ChangeEvent<any>).target.files[0];
+    } else {
+        file = event as File;
+    }
 
     if (!file) {
         setSubmitType("text");
@@ -33,7 +39,8 @@ export const onImageUpload = async (
         },
     };
 
-    setImageFieldValue((prevValue: ImageMessageContent | ImageMessageContent[] | null | undefined) => {
+    // @ts-ignore
+    setFileFieldValue((prevValue) => {
         if (prevValue && Array.isArray(prevValue)) {
             setSubmitType("multi-file");
             return [...prevValue, imageMessage];
