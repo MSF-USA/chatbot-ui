@@ -13,7 +13,7 @@ import {Dispatch, SetStateAction} from "react";
 const isComplexContent = (content: (TextMessageContent | ImageMessageContent | FileMessageContent)[]): boolean => {
   const contentTypes = content.map((section) => section.type);
   return (
-    contentTypes.length > 2 ||
+    content.length > 2 ||
     (contentTypes.includes('file_url') && contentTypes.includes('image_url')) ||
     contentTypes.filter((type) => type === 'file_url').length > 1 ||
     contentTypes.filter((type) => type === 'image_url').length > 1
