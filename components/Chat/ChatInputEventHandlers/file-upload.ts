@@ -6,6 +6,7 @@ import {
   ImageMessageContent,
 } from "@/types/chat";
 import { onImageUpload } from "@/components/Chat/ChatInputEventHandlers/image-upload";
+import {isChangeEvent} from "@/components/Chat/ChatInputEventHandlers/common";
 
 const disallowedExtensions: string[] = [
   ".exe",
@@ -80,7 +81,7 @@ export async function onFileUpload(
     >
 ) {
   let files: FileList | File[];
-  if (Object.hasOwn(event, 'target')) {
+  if (isChangeEvent(event)) {
     (event as React.ChangeEvent<any>).preventDefault();
     files = (event as React.ChangeEvent<any>).target.files;
   } else {
@@ -121,14 +122,12 @@ export async function onFileUpload(
       // Handle image upload
       return new Promise<void>((resolve, reject) => {
         onImageUpload(
-            { target: { files: [file] } } as ChangeEvent<any>,
+            file,
             "",
-            (prevState) => {
-              (prevState as string[]).push(URL.createObjectURL(file));
-              setFilePreviews([...(prevState as string[])]);
-            },
+            setFilePreviews,
             setSubmitType,
-            setImageFieldValue,
+            // @ts-ignore
+            setFileFieldValue,
         );
       });
     } else {
@@ -226,7 +225,7 @@ export async function onFileUpload(
   }
 
   // Reset the file input value to allow re-upload of the same files if needed
-  if (Object.hasOwn(event, 'target')) {
+  if (isChangeEvent(event)) {
     (event as React.ChangeEvent<any>).target.value = "";
   }
 }
