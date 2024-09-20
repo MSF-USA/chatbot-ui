@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import {
-  ChatInputSubmitTypes,
+  ChatInputSubmitTypes, FileMessageContent,
   ImageMessageContent,
   TextMessageContent,
 } from '@/types/chat';
@@ -23,7 +23,7 @@ const onImageUpload = (
     event: React.ChangeEvent<any>,
     setFilePreviews:  Dispatch<SetStateAction<string[]>>,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>,
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
 ) => {
   event.preventDefault();
   const file = event.target.files[0];
@@ -61,11 +61,12 @@ const onImageUpload = (
             detail: 'auto',
           },
         };
-        setImageFieldValue(prevImageFieldValue => {
-                    if (Array.isArray(prevImageFieldValue)) {
-                        return [...prevImageFieldValue, imageMessage];
-                    } else if (prevImageFieldValue) {
-                        return [prevImageFieldValue, imageMessage];
+        // @ts-ignore
+        setFileFieldValue(prevFieldValue => {
+                    if (Array.isArray(prevFieldValue)) {
+                        return [...prevFieldValue, imageMessage];
+                    } else if (prevFieldValue) {
+                        return [prevFieldValue, imageMessage];
                     } else {
                         return [imageMessage]
                     }
@@ -97,14 +98,14 @@ export interface ChatInputImageProps {
     setFilePreviews: Dispatch<SetStateAction<string[]>>;
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
     prompt: string;
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[]  | null | undefined>>;
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[]  | null>>;
 }
 
 const ChatInputImage = ({
   setSubmitType,
   prompt,
   setFilePreviews,
-  setImageFieldValue,
+  setFileFieldValue,
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
 
@@ -124,7 +125,7 @@ const ChatInputImage = ({
                 onImageUpload(event,
             setFilePreviews,
             setSubmitType,
-            setImageFieldValue,
+            setFileFieldValue,
           );
         }}
         accept={'image/*'}

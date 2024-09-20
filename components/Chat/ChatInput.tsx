@@ -65,7 +65,7 @@ export const ChatInput = ({
 
   const [textFieldValue, setTextFieldValue] = useState<string>("");
   const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | ImageMessageContent[] | null>()
-  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | FileMessageContent[] | null>(null)
+  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -441,7 +441,7 @@ export const ChatInput = ({
               setSubmitType={setSubmitType}
               prompt={textFieldValue}
               setFilePreviews={setFilePreviews}
-              setImageFieldValue={setImageFieldValue}
+              setFileFieldValue={setFileFieldValue}
             />
             <ChatInputFile
               onFileUpload={onFileUpload}
