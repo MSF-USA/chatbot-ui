@@ -435,7 +435,7 @@ export const ChatInput = ({
               setFilePreviews={setFilePreviews}
               setSubmitType={setSubmitType}
               prompt={textFieldValue}
-              setImageFieldValue={setImageFieldValue}
+              setImageFieldValue={setFileFieldValue}
             />
             <ChatInputImage
               setSubmitType={setSubmitType}

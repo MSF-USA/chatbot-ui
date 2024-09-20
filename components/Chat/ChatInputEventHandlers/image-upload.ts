@@ -8,7 +8,7 @@ export const onImageUpload = async (
   prompt: any,
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null | undefined>>
+  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>
 ) => {
     let file: File;
     if (isChangeEvent(event)) {

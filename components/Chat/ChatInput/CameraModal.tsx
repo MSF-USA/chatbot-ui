@@ -10,7 +10,7 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
-import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
+import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from '@/types/chat';
 
 import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
 
@@ -22,7 +22,7 @@ const onTakePhotoButtonClick = (
   setFilePreviews: Dispatch<SetStateAction<string[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
+    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >,
   closeModal: () => void,
 ) => {
@@ -74,7 +74,7 @@ interface CameraModalProps {
   setFilePreviews: Dispatch<SetStateAction<string[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
+    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >;
 }
 
