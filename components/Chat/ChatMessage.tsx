@@ -128,7 +128,6 @@ export const ChatMessage: FC<Props> = memo(
       (Array.isArray(message.content) &&
         message.content.some((content) => content.type === 'image_url'));
     const isFileMessage =
-      !isImageMessage &&
       (message.messageType === MessageType.FILE ||
         (Array.isArray(message.content) &&
           message.content.some((content) => content.type === 'file_url')));

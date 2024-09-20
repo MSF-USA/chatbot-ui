@@ -74,7 +74,7 @@ export async function onFileUpload(
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setFileFieldValue: Dispatch<
-        SetStateAction<FileMessageContent | FileMessageContent[] | null>
+        SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
     >,
     setImageFieldValue: Dispatch<
         SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
@@ -198,6 +198,7 @@ export async function onFileUpload(
   // Update state after all files have been processed
   if (fileFieldValues.length > 0) {
     setFilePreviews((prevState) => [...prevState, ...filePreviews]);
+    // @ts-ignore
     setFileFieldValue((prevValue) => {
       if (prevValue && Array.isArray(prevValue)) {
         return [...prevValue, ...fileFieldValues];

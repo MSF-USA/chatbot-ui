@@ -9,12 +9,12 @@ interface ChatInputFileProps {
         event: React.ChangeEvent<any>,
         setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
         setFilePreviews: Dispatch<SetStateAction<string[]>>,
-        setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | null>>,
+        setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
         setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
     ) => void
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
-    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | null>>,
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
     setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
 
 }
