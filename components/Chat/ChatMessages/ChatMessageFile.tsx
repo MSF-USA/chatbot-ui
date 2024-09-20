@@ -151,9 +151,9 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                             >
                                 <FileIcon className="w-8 h-8 mr-2 flex-shrink-0" />
                                 <div className="relative flex-grow overflow-hidden">
-                  <span className="block whitespace-nowrap hover:animate-scroll-text">
-                    {file.originalFilename || file.url.split("/").pop()}
-                  </span>
+                                  <span className="block whitespace-nowrap hover:animate-scroll-text">
+                                    {file.originalFilename || file.url.split("/").pop()}
+                                  </span>
                                 </div>
                                 <IconDownload className="opacity-50 group-hover:opacity-100 flex-shrink-0" />
                             </div>
