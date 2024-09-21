@@ -405,8 +405,8 @@ export const ChatInput = ({
       className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50"
     >
       {filePreviews.length > 0 && (
-        <div className="px-4 py-2 max-h-52 overflow-y-auto flex justify-center">
-          <div className="w-full items-center">
+        <div className="px-4 py-2 max-h-52 overflow-y-auto">
+          <div className="w-full flex justify-center items-center space-x-2">
             <ChatFileUploadPreviews
               filePreviews={filePreviews}
               setFilePreviews={setFilePreviews}
