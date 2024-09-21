@@ -177,8 +177,8 @@ export const ChatInput = ({
     if (selectedPrompt) {
       setTextFieldValue((prevTextFieldValue) => {
         const newContent = prevTextFieldValue?.replace(
-            /\/\w*$/,
-            selectedPrompt.content,
+          /\/\w*$/,
+          selectedPrompt.content,
         );
         return newContent;
       });
@@ -208,19 +208,19 @@ export const ChatInput = ({
       case 'ArrowDown':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-            prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
+          prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
         );
         break;
       case 'ArrowUp':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-            prevIndex > 0 ? prevIndex - 1 : prevIndex,
+          prevIndex > 0 ? prevIndex - 1 : prevIndex,
         );
         break;
       case 'Tab':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-            prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
+          prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
         );
         break;
       case 'Enter':
@@ -351,11 +351,11 @@ export const ChatInput = ({
 
     if (filesArray.length > 0) {
       onFileUpload(
-          filesArray,
-          setSubmitType,
-          setFilePreviews,
-          setFileFieldValue,
-          setImageFieldValue
+        filesArray,
+        setSubmitType,
+        setFilePreviews,
+        setFileFieldValue,
+        setImageFieldValue
       );
     }
 
@@ -397,26 +397,26 @@ export const ChatInput = ({
 
 
   return (
-      <div
-          onDragEnter={handleDragEnter}
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50"
-      >
-        {filePreviews.length > 0 && (
-          <div className="px-4 py-2 max-h-52 overflow-y-auto flex justify-center">
-            <div className="w-full items-center">
-              <ChatFileUploadPreviews
-                filePreviews={filePreviews}
-                setFilePreviews={setFilePreviews}
-                setSubmitType={setSubmitType}
-              />
-            </div>
+    <div
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50"
+    >
+      {filePreviews.length > 0 && (
+        <div className="px-4 py-2 max-h-52 overflow-y-auto flex justify-center">
+          <div className="w-full items-center">
+            <ChatFileUploadPreviews
+              filePreviews={filePreviews}
+              setFilePreviews={setFilePreviews}
+              setSubmitType={setSubmitType}
+            />
           </div>
-        )}
+        </div>
+      )}
 
-        <div className={'flex justify-center'}>
+      <div className={'flex justify-center'}>
         {!messageIsStreaming &&
           !filePreviews.length &&
           selectedConversation &&
@@ -428,38 +428,38 @@ export const ChatInput = ({
               <IconRepeat size={16}/> {t('Regenerate response')}
             </button>
           )}
-        </div>
+      </div>
 
-        <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
+      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
 
-          <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
+        <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
 
-            <ChatInputImageCapture
-              setFilePreviews={setFilePreviews}
-              setSubmitType={setSubmitType}
-              prompt={textFieldValue}
-              setImageFieldValue={setFileFieldValue}
-            />
-            <ChatInputImage
-              setSubmitType={setSubmitType}
-              prompt={textFieldValue}
-              setFilePreviews={setFilePreviews}
-              setFileFieldValue={setFileFieldValue}
-            />
-            <ChatInputFile
-              onFileUpload={onFileUpload}
-              setSubmitType={setSubmitType}
-              setFilePreviews={setFilePreviews}
-              setFileFieldValue={setFileFieldValue}
-              setImageFieldValue={setImageFieldValue}
-            />
-            {/*<button>*/}
-            {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
-            {/*  <span className="sr-only">Voice input</span>*/}
-            {/*</button>*/}
+          <ChatInputImageCapture
+            setFilePreviews={setFilePreviews}
+            setSubmitType={setSubmitType}
+            prompt={textFieldValue}
+            setImageFieldValue={setFileFieldValue}
+          />
+          <ChatInputImage
+            setSubmitType={setSubmitType}
+            prompt={textFieldValue}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+          />
+          <ChatInputFile
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+          />
+          {/*<button>*/}
+          {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
+          {/*  <span className="sr-only">Voice input</span>*/}
+          {/*</button>*/}
 
-            <div
-              className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
+          <div
+            className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
             <textarea
               ref={textareaRef}
               className="m-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 lg:"
@@ -484,66 +484,66 @@ export const ChatInput = ({
               onKeyDown={handleKeyDown}
             />
 
-              <div
-                className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
-              >
-                {messageIsStreaming ? (
-                  <button
-                    className="flex items-center gap-1 rounded px-3 py-1 text-black
+            <div
+              className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
+            >
+              {messageIsStreaming ? (
+                <button
+                  className="flex items-center gap-1 rounded px-3 py-1 text-black
             hover:opacity-80 dark:border-neutral-600 dark:text-red-600"
-                    onClick={handleStopConversation}
-                  >
-                    <IconPlayerStop size={18}/>
-                  </button>
-                  // <div
-                  //     className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
-                ) : (
-                  <button onClick={handleSend}>
-                    <IconSend size={18}/>
-                  </button>
-                )}
+                  onClick={handleStopConversation}
+                >
+                  <IconPlayerStop size={18}/>
+                </button>
+                // <div
+                //     className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
+              ) : (
+                <button onClick={handleSend}>
+                  <IconSend size={18}/>
+                </button>
+              )}
+            </div>
+
+            {showScrollDownButton && (
+              <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
+                <button
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
+                  onClick={onScrollDownClick}
+                >
+                  <IconArrowDown size={18}/>
+                </button>
               </div>
+            )}
 
-              {showScrollDownButton && (
-                <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
-                  <button
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
-                    onClick={onScrollDownClick}
-                  >
-                    <IconArrowDown size={18}/>
-                  </button>
-                </div>
-              )}
-
-              {showPromptList && filteredPrompts.length > 0 && (
-                <div className="absolute bottom-12 w-full">
-                  <PromptList
-                    activePromptIndex={activePromptIndex}
-                    prompts={filteredPrompts}
-                    onSelect={handleInitModal}
-                    onMouseOver={setActivePromptIndex}
-                    promptListRef={promptListRef}
-                  />
-                </div>
-              )}
-            </div>
-
-              {isModalVisible && (
-                <VariableModal
-                  prompt={filteredPrompts[activePromptIndex]}
-                  variables={variables}
-                  onSubmit={handleSubmit}
-                  onClose={() => setIsModalVisible(false)}
+            {showPromptList && filteredPrompts.length > 0 && (
+              <div className="absolute bottom-12 w-full">
+                <PromptList
+                  activePromptIndex={activePromptIndex}
+                  prompts={filteredPrompts}
+                  onSelect={handleInitModal}
+                  onMouseOver={setActivePromptIndex}
+                  promptListRef={promptListRef}
                 />
-              )}
-            </div>
-          </div>
-          <div
-            className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
-            {t(
-              "MSF AI Assistant can make mistakes. Check important info.",
+              </div>
             )}
           </div>
+
+          {isModalVisible && (
+            <VariableModal
+              prompt={filteredPrompts[activePromptIndex]}
+              variables={variables}
+              onSubmit={handleSubmit}
+              onClose={() => setIsModalVisible(false)}
+            />
+          )}
         </div>
+      </div>
+      <div
+        className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
+        {t(
+          "MSF AI Assistant can make mistakes. Check important info.",
+        )}
+      </div>
+    </div>
   );
 };
