@@ -226,8 +226,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (
         updatedConversationCopy.messages.length === 0 ||
         updatedConversationCopy.messages[
-          updatedConversationCopy.messages.length - 1
-        ].role !== 'assistant'
+        updatedConversationCopy.messages.length - 1
+          ].role !== 'assistant'
       ) {
         // If there's no assistant message, create a new one
         updatedConversationCopy = {
@@ -243,8 +243,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           ...updatedConversationCopy.messages.slice(0, -1),
           {
             ...updatedConversationCopy.messages[
-              updatedConversationCopy.messages.length - 1
-            ],
+            updatedConversationCopy.messages.length - 1
+              ],
             content: text,
           },
         ];
@@ -294,20 +294,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         try {
           const { controller, body, response, hasComplexContent } = await makeRequest(
-          plugin,
-          setRequestStatusMessage,
-          updatedConversation,
-          apiKey,
-          pluginKeys,
-          systemPrompt,
-          temperature,
-        );
+            plugin,
+            setRequestStatusMessage,
+            updatedConversation,
+            apiKey,
+            pluginKeys,
+            systemPrompt,
+            temperature,
+          );
 
-        if (hasComplexContent) {
-          // Handle complex content case
-          console.log('Message contains complex content');
-          // Add your logic here
-        }
+          if (hasComplexContent) {
+            // Handle complex content case
+            console.log('Message contains complex content');
+            // Add your logic here
+          }
 
           if (!response.ok) {
             homeDispatch({ field: 'loading', value: false });
@@ -514,9 +514,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   useEffect(() => {
     throttledScrollDown();
     selectedConversation &&
-      setCurrentMessage(
-        selectedConversation.messages[selectedConversation.messages.length - 2],
-      );
+    setCurrentMessage(
+      selectedConversation.messages[selectedConversation.messages.length - 2],
+    );
   }, [selectedConversation, throttledScrollDown]);
 
   useEffect(() => {
@@ -609,7 +609,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       ) : (
         <>
           <div
-            className="flex-1 overflow-auto mt-[headerHeight]"
+            className="flex-1 overflow-auto"
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
@@ -920,7 +920,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 {loading && <ChatLoader requestStatusMessage={requestStatusMessage} />}
 
                 <div
-                  className="h-[162px] bg-white dark:bg-[#212121]"
+                  className="h-[2px] bg-white dark:bg-[#212121]"
                   ref={messagesEndRef}
                 />
               </>
