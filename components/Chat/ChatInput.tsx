@@ -405,8 +405,8 @@ export const ChatInput = ({
           className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50"
       >
         {filePreviews.length > 0 && (
-          <div className="px-4 py-2 max-h-52 overflow-y-auto">
-            <div className="w-full">
+          <div className="px-4 py-2 max-h-52 overflow-y-auto flex justify-center">
+            <div className="w-full items-center">
               <ChatFileUploadPreviews
                 filePreviews={filePreviews}
                 setFilePreviews={setFilePreviews}
@@ -416,22 +416,23 @@ export const ChatInput = ({
           </div>
         )}
 
+        <div className={'flex justify-center'}>
         {!messageIsStreaming &&
           !filePreviews.length &&
           selectedConversation &&
           selectedConversation.messages.length > 0 && (
             <button
-              className="px-4 py-2 max-h-52 overflow-y-auto flex w-fit items-center gap-3 mb-1 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-1 md:mt-2"
+              className="max-h-52 overflow-y-auto flex items-center gap-3 mb-1 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-1 md:mt-2"
               onClick={onRegenerate}
             >
               <IconRepeat size={16}/> {t('Regenerate response')}
             </button>
           )}
+        </div>
 
+        <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
 
-        <div className="sticky bottom-0 w-full bg-white dark:bg-[#212121]">
-
-          <div className="flex items-center px-2 md:px-4">
+          <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
 
             <ChatInputImageCapture
               setFilePreviews={setFilePreviews}
@@ -461,7 +462,7 @@ export const ChatInput = ({
               className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
             <textarea
               ref={textareaRef}
-              className="m-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10"
+              className="m-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 lg:"
               style={{
                 resize: 'none',
                 bottom: `${textareaRef?.current?.scrollHeight}px`,
@@ -544,5 +545,5 @@ export const ChatInput = ({
             )}
           </div>
         </div>
-        );
-        };
+  );
+};
