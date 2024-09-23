@@ -3,6 +3,7 @@ import { Dispatch, FC, SetStateAction, MouseEvent } from "react";
 import Image from "next/image";
 import { ChatInputSubmitTypes } from "@/types/chat";
 import FileIcon from "@/components/Icons/file";
+import {IconInfoCircle} from "@tabler/icons-react";
 
 interface ChatFileUploadPreviewsProps {
   filePreviews: string[];
@@ -80,21 +81,19 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
           <FileIcon className="object-cover" />
           {filename && (
             <span>
-                            {filename.slice(0, 16)}...
+              {filename.slice(0, 15)}...
               {/* Display warning if file is a PDF */}
               {isPdf && (
-                <>
-                <br/>
                 <span
                   title="Currently only the text content of PDFs gets processed; images, charts, and other visualizations are not included."
-                  style={{ marginLeft: '4px' }}
-                  className={'text-xs'}
+                  style={{ display: 'inline-flex', alignItems: 'center' }}
+                  className="text-xs text-blue-500"
                 >
-                                    ⚠️ Text Only
-                                </span>
-                </>
+                  <IconInfoCircle size={20} />
+                  <span style={{ marginLeft: '4px' }}>Text Only</span>
+                </span>
               )}
-                        </span>
+            </span>
           )}
         </>
       )}
