@@ -26,6 +26,77 @@ import {
     ImageMessageContent,
 } from "@/types/chat";
 import ImageIcon from "@/components/Icons/image";
+import {fetchImageBase64FromMessageContent} from "@/services/imageService";
+
+const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => {
+    const [imageSrc, setImageSrc] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+
+    useEffect(() => {
+        fetchImageBase64FromMessageContent(image).then((imageBase64String) => {
+            if (imageBase64String.length > 0) {
+                setImageSrc(imageBase64String);
+            }
+        });
+    }, [image]);
+
+    const handleImageClick = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    return (
+      <div
+        className="relative p-1 m-1 rounded-lg overflow-hidden border border-black dark:border-white"
+        style={{ width: 'calc(50% - 0.5rem)' }}
+      >
+          <div className="flex items-center">
+              <ImageIcon className="w-8 h-8 mr-2 flex-shrink-0" />
+
+              {imageSrc ? (
+                <img
+                  src={imageSrc}
+                  alt="Image Content"
+                  className="h-12 w-auto object-cover cursor-pointer"
+                  onClick={handleImageClick}
+                />
+              ) : (
+                <div className="relative flex-grow overflow-hidden">
+            <span className="block whitespace-nowrap hover:animate-scroll-text">
+              {image.image_url.url.split('/').pop()}
+            </span>
+                </div>
+              )}
+          </div>
+
+          {/* Modal */}
+          {isModalOpen && imageSrc && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+              onClick={handleCloseModal}
+            >
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                    <img
+                      src={imageSrc}
+                      alt="Full Size Image"
+                      className="max-h-screen max-w-screen"
+                    />
+                    <button
+                      className="absolute top-0 right-0 m-2 text-white text-3xl leading-none focus:outline-none"
+                      onClick={handleCloseModal}
+                      aria-label="Close"
+                    >
+                        &times;
+                    </button>
+                </div>
+            </div>
+          )}
+      </div>
+    );
+};
 
 export interface ChatMessageFileProps {
     message: Message;
@@ -123,23 +194,10 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                     <div className="flex flex-wrap items-center w-full ml-4">
                         {/* Render Images */}
                         {images.map((image, index) => (
-                          <div
+                          <ChatMessageFileImage
                             key={`image-${index}`}
-                            className="relative p-1 m-1 rounded-lg overflow-hidden border border-black dark:border-white"
-                            style={{width: "calc(50% - 0.5rem)"}}
-                          >
-                              <ImageIcon className="w-8 h-8 mr-2 flex-shrink-0"/>
-                              <div className="relative flex-grow overflow-hidden">
-                                  <span className="block whitespace-nowrap hover:animate-scroll-text">
-                                    {image.image_url.url.split('/').pop()}
-                                  </span>
-                              </div>
-                              {/*<img*/}
-                              {/*    src={image.image_url.url}*/}
-                              {/*    alt="Image Content"*/}
-                              {/*    className="w-full h-auto object-cover"*/}
-                              {/*/>*/}
-                          </div>
+                            image={image}
+                          />
                         ))}
                         {/* Render Files */}
                         {files.map((file, index) => (
