@@ -108,7 +108,7 @@ export const ChatInput = ({
     if (submitType === 'text') {
       return textFieldValue;
     } else if (submitType === 'image') {
-      const imageContents = imageFieldValue ? wrapInArray(imageFieldValue) : [];
+      const imageContents = imageFieldValue ? [...wrapInArray(imageFieldValue), ...wrapInArray(fileFieldValue)] : (fileFieldValue ? [...wrapInArray(fileFieldValue)] : []);
       return [
         ...imageContents,
         { type: "text", text: textFieldValue } as TextMessageContent
