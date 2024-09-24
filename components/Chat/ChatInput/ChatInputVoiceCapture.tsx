@@ -1,5 +1,6 @@
 import React, { FC, useEffect, useState, useRef } from "react";
 import MicIcon from "@/components/Icons/mic";
+import { IconPlayerRecordFilled } from "@tabler/icons-react";
 
 interface ChatInputVoiceCaptureProps {}
 
@@ -144,11 +145,14 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = () => {
     return (
         <div className="voice-capture">
             <button onClick={isRecording ? stopRecording : startRecording}>
-                <MicIcon
-                    className={`text-black dark:text-white rounded h-5 w-5 ${
-                        isRecording ? "animate-pulse text-red-500" : ""
-                    }`}
-                />
+                {isRecording
+                ? <IconPlayerRecordFilled className={'rounded h-5 w-5 animate-pulse text-red-500'} />
+                : <MicIcon
+                        className={`text-black dark:text-white rounded h-5 w-5`}
+                    />
+                }
+
+
                 <span className="sr-only">Voice input</span>
             </button>
             {isRecording && <div className="recording-indicator">Recording...</div>}
