@@ -14,24 +14,38 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
         // Show spinner when progress is not available
         loader = <IconLoader2 className="animate-spin text-gray-500" size={24} />;
     } else if (progress === 0) {
-        // Show indeterminate progress bar at 0% progress
+        // Show indeterminate progress bar with animated stripes
         loader = (
             <div className={requestStatusMessage ? 'w-24 relative' : 'w-full max-w-xs relative'}>
                 <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden relative">
                     <div className="bg-blue-600 h-2 absolute animate-indeterminate"></div>
                 </div>
                 <span className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs">
-                  Loading...
-                </span>
+          Loading...
+        </span>
             </div>
         );
     } else {
-        // Show determinate progress bar with percentage
+        // Show determinate progress bar with percentage and animated stripes
         loader = (
             <div className={requestStatusMessage ? 'w-24' : 'w-full max-w-xs'}>
                 <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
                     <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-500 ease-in-out"
+                        className="
+                              bg-blue-600
+                              h-2
+                              rounded-full
+                              transition-all
+                              duration-500
+                              ease-in-out
+                              animate-progress-bar-stripes
+                              bg-[length:1rem_1rem]
+                              bg-gradient-to-r
+                              from-blue-600
+                              to-blue-600
+                              via-blue-500
+                              bg-[linear-gradient(45deg,_rgba(255,255,255,0.15)_25%,_transparent_25%,_transparent_50%,_rgba(255,255,255,0.15)_50%,_rgba(255,255,255,0.15)_75%,_transparent_75%,_transparent)]
+                            "
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
@@ -51,8 +65,8 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
                     className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs"
                     aria-live="polite"
                 >
-                  {requestStatusMessage}
-                </span>
+          {requestStatusMessage}
+        </span>
             )}
         </div>
     );
