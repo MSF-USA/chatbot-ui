@@ -27,12 +27,12 @@ import {Prompt} from '@/types/prompt';
 import HomeContext from '@/pages/api/home/home.context';
 import {PromptList} from './PromptList';
 import {VariableModal} from './VariableModal';
-import MicIcon from "@/components/Icons/mic";
 import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
 import ChatInputFile from "@/components/Chat/ChatInput/ChatInputFile";
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPreviews";
 import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
+import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -453,10 +453,8 @@ export const ChatInput = ({
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
           />
-          {/*<button>*/}
-          {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
-          {/*  <span className="sr-only">Voice input</span>*/}
-          {/*</button>*/}
+          <ChatInputVoiceCapture
+          />
 
           <div
             className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
