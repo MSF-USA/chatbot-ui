@@ -22,12 +22,17 @@ module.exports = {
           '0%': { backgroundPosition: '1rem 0' },
           '100%': { backgroundPosition: '0 0' },
         },
-
+        'animate-pulse': {
+          '0%': { opacity: 1 },
+          '50%': { opacity: 0.5 },
+          '100%': { opacity: 1 },
+        },
       },
       animation: {
         'scroll-text': 'scroll-text 10s linear infinite',
         indeterminate: 'indeterminate 1.5s infinite',
         'progress-bar-stripes': 'progress-bar-stripes 1s linear infinite',
+        'animate-pulse': 'pulse 2s infinite',
       },
     },
   },
