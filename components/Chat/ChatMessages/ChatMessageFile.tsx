@@ -226,21 +226,21 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                             <div className="flex flex-row">
                                 {isEditing ? (
                                     <div className="flex w-full flex-col">
-                    <textarea
-                        ref={textareaRef}
-                        className="w-full resize-none whitespace-pre-wrap border border-gray-300 dark:border-gray-700 dark:bg-[#212121] p-2 rounded-md"
-                        value={localTextContent}
-                        onChange={(e) => setLocalTextContent(e.target.value)}
-                        onKeyDown={handlePressEnter}
-                        onCompositionStart={() => setIsTyping(true)}
-                        onCompositionEnd={() => setIsTyping(false)}
-                        style={{
-                            fontFamily: "inherit",
-                            fontSize: "inherit",
-                            lineHeight: "inherit",
-                            overflow: "hidden",
-                        }}
-                    />
+                                        <textarea
+                                            ref={textareaRef}
+                                            className="w-full resize-none whitespace-pre-wrap border border-gray-300 dark:border-gray-700 dark:bg-[#212121] p-2 rounded-md"
+                                            value={localTextContent}
+                                            onChange={(e) => setLocalTextContent(e.target.value)}
+                                            onKeyDown={handlePressEnter}
+                                            onCompositionStart={() => setIsTyping(true)}
+                                            onCompositionEnd={() => setIsTyping(false)}
+                                            style={{
+                                                fontFamily: "inherit",
+                                                fontSize: "inherit",
+                                                lineHeight: "inherit",
+                                                overflow: "hidden",
+                                            }}
+                                        />
                                         <div className="mt-4 flex justify-center space-x-4">
                                             <button
                                                 className="h-[40px] rounded-md bg-blue-500 px-4 py-1 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50"
@@ -292,8 +292,8 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                         if (children[0] == "▍") {
                                                             return (
                                                                 <span className="animate-pulse cursor-default mt-1">
-                                  ▍
-                                </span>
+                                                                  ▍
+                                                                </span>
                                                             );
                                                         }
 
