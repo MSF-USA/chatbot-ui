@@ -109,6 +109,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
   const [requestStatusMessage, setRequestStatusMessage] = useState<string | null>(null);
+  const [progress, setProgress] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -301,6 +302,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             pluginKeys,
             systemPrompt,
             temperature,
+            true,
+            useKnowledgeBase,
+            setProgress,
           );
 
           if (hasComplexContent) {
@@ -917,7 +921,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   />
                 ))}
 
-                {loading && <ChatLoader requestStatusMessage={requestStatusMessage} />}
+                {loading && <ChatLoader requestStatusMessage={requestStatusMessage} progress={progress} />}
 
                 <div
                   className="h-[2px] bg-white dark:bg-[#212121]"

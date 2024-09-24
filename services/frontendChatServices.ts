@@ -76,6 +76,7 @@ export const makeRequest = async (
   temperature: number,
   stream: boolean = true,
   useKnowledgeBase: boolean = false,
+  setProgress: Dispatch<SetStateAction<number | null>>
 ) => {
   const lastMessage: Message = updatedConversation.messages[updatedConversation.messages.length - 1];
   let hasComplexContent = false;
@@ -90,6 +91,12 @@ export const makeRequest = async (
     const nonTextContents = messageContent.filter(
       (content): content is ImageMessageContent | FileMessageContent => content.type !== 'text'
     );
+
+    let progressPercentage = 0;
+    const totalFiles = nonTextContents.length + 1; // Final bit is the consolidated summary
+    let filesProcessed = 0;
+    setProgress(progressPercentage);
+
 
     const allMessagesExceptFinal = updatedConversation.messages.slice(0, -1);
 
@@ -141,6 +148,10 @@ Document metadata: ${filename}
           summary: responseData.text ?? '',
         });
       }
+
+      filesProcessed++;
+      progressPercentage = (filesProcessed / totalFiles) * 100;
+      setProgress(progressPercentage);
     }
     setRequestStatusMessage(`File processing complete! Handling user prompt...`)
     const comparisonPrompt = `
@@ -183,9 +194,11 @@ Provide a detailed comparison.
       ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys))
       : JSON.stringify(chatBody);
 
+    setProgress(progressPercentage);
     const { controller, body, response } = await sendRequest(endpoint, requestBody);
 
     setRequestStatusMessage(null);
+    setProgress(null);
 
     return {
       controller,
