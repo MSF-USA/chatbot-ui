@@ -21,8 +21,8 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
                     <div className="bg-blue-600 h-2 absolute animate-indeterminate"></div>
                 </div>
                 <span className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs">
-          Loading...
-        </span>
+                  Loading...
+                </span>
             </div>
         );
     } else {
@@ -65,8 +65,8 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
                     className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs"
                     aria-live="polite"
                 >
-          {requestStatusMessage}
-        </span>
+                  {requestStatusMessage}
+                </span>
             )}
         </div>
     );
