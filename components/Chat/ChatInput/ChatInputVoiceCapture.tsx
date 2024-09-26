@@ -52,7 +52,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = () => {
                 };
 
                 mediaRecorder.onstop = () => {
-                    const audioBlob = new Blob(audioChunksRef.current);
+                    const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
                     // Send audioBlob to the API to transcribe
                     transcribeAudio(audioBlob);
                 };
@@ -129,13 +129,52 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = () => {
         setIsRecording(false);
     };
 
-    const transcribeAudio = (audioBlob: Blob) => {
-        // Dummy code for API call
-        // Simulate an asynchronous API call
-        setTimeout(() => {
-            const dummyTranscript = " Transcribed text goes here.";
-            setTranscribedText((prevText) => prevText + dummyTranscript);
-        }, 1000);
+    const transcribeAudio = async (audioBlob: Blob) => {
+        // Upload the audioBlob to the server
+        try {
+            const filename = 'audio.webm';
+            const mimeType = 'audio/webm';
+
+            // Create the query parameters
+            const queryParams = new URLSearchParams({
+                filename,
+                filetype: 'webm',
+                mime: mimeType,
+            });
+
+            const uploadResponse = await fetch(`/api/v2/file/upload?${queryParams.toString()}`, {
+                method: 'POST',
+                body: audioBlob,
+                headers: {
+                    'Content-Type': mimeType,
+                },
+            });
+
+            if (!uploadResponse.ok) {
+                throw new Error('Failed to upload audio');
+            }
+
+            const uploadResult = await uploadResponse.json();
+            const fileURI = uploadResult.uri;
+            const fileID = encodeURIComponent(fileURI.split('/').pop());
+
+            // Call the transcribe endpoint
+            const transcribeResponse = await fetch(`/api/v2/file/${fileID}/transcribe`, {
+                method: 'GET',
+            });
+
+            if (!transcribeResponse.ok) {
+                throw new Error('Failed to transcribe audio');
+            }
+
+            const transcribeResult = await transcribeResponse.json();
+            const transcript = transcribeResult.transcript;
+
+            setTranscribedText((prevText) => prevText + transcript);
+
+        } catch (error) {
+            console.error('Error during transcription:', error);
+        }
     };
 
     if (!hasMicrophone) {
