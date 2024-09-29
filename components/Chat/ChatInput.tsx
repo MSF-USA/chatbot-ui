@@ -77,6 +77,8 @@ export const ChatInput = ({
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
   const [placeholderText, setPlaceholderText] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
@@ -355,7 +357,8 @@ export const ChatInput = ({
         setSubmitType,
         setFilePreviews,
         setFileFieldValue,
-        setImageFieldValue
+        setImageFieldValue,
+        setUploadProgress
       );
     }
 
@@ -411,6 +414,7 @@ export const ChatInput = ({
               filePreviews={filePreviews}
               setFilePreviews={setFilePreviews}
               setSubmitType={setSubmitType}
+              uploadProgress={uploadProgress}
             />
           </div>
         </div>
@@ -452,6 +456,7 @@ export const ChatInput = ({
             setFilePreviews={setFilePreviews}
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
+            setUploadProgress={setUploadProgress}
           />
           {/*<ChatInputVoiceCapture*/}
           {/*/>*/}
