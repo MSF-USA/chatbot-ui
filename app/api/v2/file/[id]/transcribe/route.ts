@@ -13,7 +13,7 @@ import {promises as fs} from 'fs';
 
 
 if (!ffmpegPath) {
-  throw new Error('ffmpeg could not be found');
+  // pass throw new Error('ffmpeg could not be found');
 } else {
   ffmpeg.setFfmpegPath(ffmpegPath);
 }
