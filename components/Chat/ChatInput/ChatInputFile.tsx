@@ -10,18 +10,20 @@ interface ChatInputFileProps {
         setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
         setFilePreviews: Dispatch<SetStateAction<string[]>>,
         setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
-        setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
-    ) => void
+        setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>,
+        setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>
+  ) => void
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<string[]>>,
     setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>
+    setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>>,
+    setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>
 
 }
 
 const ChatInputFile = (
     {
-        onFileUpload, setSubmitType, setFilePreviews, setFileFieldValue, setImageFieldValue
+        onFileUpload, setSubmitType, setFilePreviews, setFileFieldValue, setImageFieldValue, setUploadProgress
     }: ChatInputFileProps
 ) => {
     const fileInputRef: MutableRefObject<any> = useRef(null);
@@ -47,6 +49,7 @@ const ChatInputFile = (
             setFilePreviews,
             setFileFieldValue,
             setImageFieldValue,
+            setUploadProgress
           );
         }}
       />
