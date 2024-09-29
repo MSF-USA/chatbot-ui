@@ -78,7 +78,8 @@ export async function onFileUpload(
     >,
     setImageFieldValue: Dispatch<
         SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
-    >
+    >,
+    setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
 ) {
   let files: FileList | File[];
   if (isChangeEvent(event)) {
@@ -137,6 +138,8 @@ export async function onFileUpload(
         // For simplicity, let's assume uploading the file to your server
         const chunkSize = 1024 * 1024 * 5; // 5MB chunks
         let uploadedBytes = 0;
+        filePreviews.push(`file:${file.type}||name:${file.name}`);
+        setFilePreviews((prevState) => [...prevState, ...filePreviews]);
 
         const uploadChunk = () => {
           const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
@@ -161,11 +164,13 @@ export async function onFileUpload(
 
               if (response.ok) {
                 uploadedBytes += chunkSize;
+                const progress = Math.min((uploadedBytes / file.size) * 100, 100);
+                setUploadProgress(prev => ({ ...prev, [file.name]: progress }));
+
                 if (uploadedBytes < file.size) {
                   uploadChunk();
                 } else {
                   const resp = await response.json();
-                  filePreviews.push(`file:${file.type}||name:${file.name}`);
 
                   const newValue: FileMessageContent = {
                     type: "file_url",
@@ -192,12 +197,7 @@ export async function onFileUpload(
     }
   });
 
-  // Wait for all uploads to complete
-  await Promise.all(uploadPromises);
-
-  // Update state after all files have been processed
   if (fileFieldValues.length > 0) {
-    setFilePreviews((prevState) => [...prevState, ...filePreviews]);
     // @ts-ignore
     setFileFieldValue((prevValue) => {
       if (prevValue && Array.isArray(prevValue)) {
@@ -207,7 +207,6 @@ export async function onFileUpload(
       }
     });
     setSubmitType(fileFieldValues.length > 1 ? "multi-file" : "file");
-    toast.success("Files uploaded successfully");
   }
 
   if (imageFieldValues.length > 0) {
@@ -220,10 +219,14 @@ export async function onFileUpload(
       }
     });
     setSubmitType(
-        imageFieldValues.length > 1 ? "multi-file" : "image"
+      imageFieldValues.length > 1 ? "multi-file" : "image"
     );
-    toast.success("Images uploaded successfully");
   }
+
+  // Wait for all uploads to complete
+  await Promise.all(uploadPromises);
+
+  toast.success("Files uploaded successfully");
 
   // Reset the file input value to allow re-upload of the same files if needed
   if (isChangeEvent(event)) {
