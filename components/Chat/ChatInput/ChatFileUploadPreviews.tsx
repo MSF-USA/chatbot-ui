@@ -1,19 +1,19 @@
 import { XIcon } from "@/components/Icons/cancel";
 import { Dispatch, FC, SetStateAction, MouseEvent } from "react";
 import Image from "next/image";
-import { ChatInputSubmitTypes } from "@/types/chat";
+import {ChatInputSubmitTypes, FilePreview} from "@/types/chat";
 import FileIcon from "@/components/Icons/file";
 import {IconInfoCircle} from "@tabler/icons-react";
 
 interface ChatFileUploadPreviewsProps {
-  filePreviews: string[];
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  filePreviews: FilePreview[];
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
 }
 
 interface ChatFileUploadPreviewProps {
-  filePreview: string;
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  filePreview: FilePreview;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
 }
 
@@ -28,7 +28,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   }
   const removeFilePreview = (
     event: MouseEvent<HTMLButtonElement>,
-    filePreview: string
+    filePreview: FilePreview
   ) => {
     event.preventDefault();
     setFilePreviews((prevPreviews) => {
@@ -40,11 +40,10 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
     });
   };
 
-  const isImage: boolean = !filePreview.startsWith("file:")
-  let filename;
-  if (!isImage)
-    filename =
-      filePreview?.split("||name:")?.[filePreview.split("||name:").length - 1] ?? '';
+  const { name, type, status, previewUrl } = filePreview;
+  const isImage = type.startsWith('image/');
+
+  let filename = name;
 
   // Check if the file is a PDF
   let isPdf = false;
@@ -69,7 +68,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
           alt="Preview"
           className="object-cover"
           height="150"
-          src={filePreview}
+          src={previewUrl}
           style={{
             aspectRatio: "200/150",
             objectFit: "cover",
@@ -78,30 +77,33 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
         />
       ) : (
         <>
-          <FileIcon className="object-cover" />
+          <FileIcon className="object-cover"/>
           {filename && (
             <span>
               {filename.slice(0, 15)}...
               {/* Display warning if file is a PDF */}
-              {isPdf && (
+              {isPdf && status === 'completed' && (
                 <span
                   title="Currently only the text content of PDFs gets processed; images, charts, and other visualizations are not included."
-                  style={{ display: 'inline-flex', alignItems: 'center' }}
+                  style={{display: 'inline-flex', alignItems: 'center'}}
                   className="text-xs text-blue-500"
                 >
-                  <IconInfoCircle size={20} />
-                  <span style={{ marginLeft: '4px' }}>Text Only</span>
+                  <IconInfoCircle size={20}/>
+                  <span style={{marginLeft: '4px'}}>Text Only</span>
                 </span>
               )}
             </span>
           )}
         </>
       )}
+      {status !== 'completed' && <div className="bottom-1 left-1 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
+        {status}
+      </div>}
       <button
         className="absolute top-1 right-1 rounded-full"
         onClick={(event) => removeFilePreview(event, filePreview)}
       >
-        <XIcon className="bg-[#212121] rounded w-4 h-4" />
+        <XIcon className="bg-[#212121] rounded w-4 h-4"/>
         <span className="sr-only">Remove</span>
       </button>
     </div>
