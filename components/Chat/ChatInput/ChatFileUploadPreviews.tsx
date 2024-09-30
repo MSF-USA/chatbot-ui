@@ -9,25 +9,20 @@ interface ChatFileUploadPreviewsProps {
   filePreviews: string[];
   setFilePreviews: Dispatch<SetStateAction<string[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  uploadProgress: {[key: string]: number;};
 }
 
 interface ChatFileUploadPreviewProps {
   filePreview: string;
   setFilePreviews: Dispatch<SetStateAction<string[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  progress: number;
 }
 
 
-const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = (
-  {
-    filePreview,
-    setFilePreviews,
-    setSubmitType,
-    progress
-  }
-) => {
+const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
+                                                                 filePreview,
+                                                                 setFilePreviews,
+                                                                 setSubmitType,
+                                                               }) => {
   if (!filePreview) {
     throw new Error('Empty filePreview found');
   }
@@ -83,7 +78,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = (
         />
       ) : (
         <>
-          <FileIcon className="object-cover"/>
+          <FileIcon className="object-cover" />
           {filename && (
             <span>
               {filename.slice(0, 15)}...
@@ -91,11 +86,11 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = (
               {isPdf && (
                 <span
                   title="Currently only the text content of PDFs gets processed; images, charts, and other visualizations are not included."
-                  style={{display: 'inline-flex', alignItems: 'center'}}
+                  style={{ display: 'inline-flex', alignItems: 'center' }}
                   className="text-xs text-blue-500"
                 >
-                  <IconInfoCircle size={20}/>
-                  <span style={{marginLeft: '4px'}}>Text Only</span>
+                  <IconInfoCircle size={20} />
+                  <span style={{ marginLeft: '4px' }}>Text Only</span>
                 </span>
               )}
             </span>
@@ -106,30 +101,18 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = (
         className="absolute top-1 right-1 rounded-full"
         onClick={(event) => removeFilePreview(event, filePreview)}
       >
-        <XIcon className="bg-[#212121] rounded w-4 h-4"/>
+        <XIcon className="bg-[#212121] rounded w-4 h-4" />
         <span className="sr-only">Remove</span>
       </button>
-
-      {/* Progress bar */}
-      {progress < 100 && <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mt-2">
-        <div
-          className="bg-blue-600 h-2.5 rounded-full"
-          style={{width: `${progress}%`}}
-        ></div>
-      </div>}
-
     </div>
   );
 };
 
-const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = (
-  {
-    filePreviews,
-    setFilePreviews,
-    setSubmitType,
-    uploadProgress
-  }
-) => {
+const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
+                                                                   filePreviews,
+                                                                   setFilePreviews,
+                                                                   setSubmitType,
+                                                                 }) => {
   if (filePreviews.length === 0) {
     return null;
   }
@@ -142,7 +125,6 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = (
           filePreview={filePreview}
           setFilePreviews={setFilePreviews}
           setSubmitType={setSubmitType}
-          progress={uploadProgress[filePreview?.split("||name:")?.[filePreview.split("||name:").length - 1] ?? '']}
         />
       ))}
     </div>
