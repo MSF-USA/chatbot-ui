@@ -10,7 +10,9 @@ import toast from 'react-hot-toast';
 import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import {
-  ChatInputSubmitTypes, FileMessageContent,
+  ChatInputSubmitTypes,
+  FileMessageContent,
+  FilePreview,
   ImageMessageContent,
   TextMessageContent,
 } from '@/types/chat';
@@ -21,7 +23,7 @@ import ImageIcon from '@/components/Icons/image';
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
-    setFilePreviews:  Dispatch<SetStateAction<string[]>>,
+    setFilePreviews:  Dispatch<SetStateAction<FilePreview[]>>,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
 ) => {
@@ -71,14 +73,6 @@ const onImageUpload = (
                         return [imageMessage]
                     }
                 });
-        setFilePreviews((prevFilePreviews) => {
-          if (Array.isArray(prevFilePreviews)) {
-            prevFilePreviews.push(base64String);
-            return prevFilePreviews;
-          } else {
-            return [base64String];
-          }
-        });
       });
     });
   };
@@ -95,7 +89,7 @@ const onImageUploadButtonClick = (
 };
 
 export interface ChatInputImageProps {
-    setFilePreviews: Dispatch<SetStateAction<string[]>>;
+    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
     prompt: string;
     setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[]  | null>>;
