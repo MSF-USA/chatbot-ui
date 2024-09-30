@@ -379,32 +379,26 @@ const Home = ({
     }
 
     const lastConversation = parsedConversationHistory[parsedConversationHistory.length - 1];
-    if (lastConversation?.messages?.length > 0) {
-      // Make a clean conversation if existing conversations have content
-      const newConversation: Conversation = {
-        id: uuidv4(),
-        name: t('New Conversation'),
-        messages: [],
-        model: lastConversation?.model || {
-          id: OpenAIModels[defaultModelId].id,
-          name: OpenAIModels[defaultModelId].name,
-          maxLength: OpenAIModels[defaultModelId].maxLength,
-          tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
-        },
-        prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
-        temperature:
-          temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
-        folderId: null,
-      };
+    const newConversation: Conversation = {
+      id: uuidv4(),
+      name: t('New Conversation'),
+      messages: [],
+      model: lastConversation?.model || {
+        id: OpenAIModels[defaultModelId].id,
+        name: OpenAIModels[defaultModelId].name,
+        maxLength: OpenAIModels[defaultModelId].maxLength,
+        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
+      },
+      prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature:
+        temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
+      folderId: null,
+    };
 
-      const updatedConversations = [...parsedConversationHistory, newConversation];
+    const updatedConversations = [...parsedConversationHistory, newConversation];
 
-      dispatch({ field: 'selectedConversation', value: newConversation });
-      dispatch({ field: 'conversations', value: updatedConversations });
-    } else {
-      // Use the most recent conversation if it is already empty, don't make more empty conversations
-      dispatch({ field: 'selectedConversation', value: lastConversation });
-    }
+    dispatch({ field: 'selectedConversation', value: newConversation });
+    dispatch({ field: 'conversations', value: updatedConversations });
   }
 
   return (
