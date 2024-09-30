@@ -63,19 +63,31 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const previousCitations = useRef<Citation[]>([]);
-  const previousQuestions = useRef<Question[]>([]);
   const citationsProcessed = useRef(false);
 
   useEffect(() => {
     const processContent = () => {
-      const { mainContent, citations, questions } =
-        extractCitationsAndQuestions(content);
+      let mainContent = content;
+      let citationsData = [];
+
+      // Check for JSON at the end of the content
+      const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+      if (jsonMatch) {
+        const jsonStr = jsonMatch[1];
+        mainContent = content.slice(0, -jsonStr.length).trim();
+        try {
+          const parsedData = JSON.parse(jsonStr);
+          if (parsedData.citations) {
+            citationsData = parsedData.citations;
+          }
+        } catch (error) {
+          console.error('Error parsing citations JSON:', error);
+        }
+      }
+
       setDisplayContent(mainContent);
-      setCitations(citations);
-      setQuestions(questions);
-      previousCitations.current = citations;
-      previousQuestions.current = questions;
+      setCitations(citationsData);
+      setQuestions([]);
       citationsProcessed.current = true;
     };
 
@@ -83,16 +95,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   }, [content]);
 
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split('[[CITATIONS_START]]')[0]
+    ? content.split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
-
-  const citationsToShow = citationsProcessed.current
-    ? citations
-    : previousCitations.current;
-
-  const questionsToShow = citationsProcessed.current
-    ? questions
-    : previousQuestions.current;
 
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
@@ -179,16 +183,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
         </div>
-        {citationsToShow.length > 0 && (
-          <CitationList citations={citationsToShow} />
-        )}
-
-        {questionsToShow.length > 0 && (
-          <QuestionList
-            questions={questionsToShow}
-            onQuestionClick={onQuestionClick}
-          />
-        )}
+        {citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
   );

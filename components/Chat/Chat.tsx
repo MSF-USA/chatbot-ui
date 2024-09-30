@@ -259,7 +259,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   );
 
   const handleNormalChatBackendStreaming = async (
-    data: any,
+    data: ReadableStream,
     controller: AbortController,
     updatedConversation: Conversation,
     selectedConversation: Conversation,
@@ -271,54 +271,62 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
 
+    console.log('Starting to process stream...');
+
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
 
-      const chunkValue = decoder.decode(value);
-      const regex = /\d+:"((?:\\.|[^"\\])*?)"/g;
-      let match;
-      while ((match = regex.exec(chunkValue)) !== null) {
-        // Unescape any escaped characters (like newlines)
-        text += JSON.parse('"' + match[1] + '"');
-      }
+      if (value) {
+        const chunkValue = decoder.decode(value);
+        console.log('Received chunk:', chunkValue);
+        text += chunkValue;
 
-      if (
-        updatedConversationCopy.messages.length === 0 ||
-        updatedConversationCopy.messages[
-          updatedConversationCopy.messages.length - 1
-        ].role !== 'assistant'
-      ) {
-        // If there's no assistant message, create a new one
-        updatedConversationCopy = {
-          ...updatedConversationCopy,
-          messages: [
-            ...updatedConversationCopy.messages,
-            { role: 'assistant', content: text, messageType: MessageType.TEXT },
-          ],
-        };
-      } else {
-        // Update the existing assistant message
-        const updatedMessages = [
-          ...updatedConversationCopy.messages.slice(0, -1),
-          {
-            ...updatedConversationCopy.messages[
-              updatedConversationCopy.messages.length - 1
+        if (
+          updatedConversationCopy.messages.length === 0 ||
+          updatedConversationCopy.messages[
+            updatedConversationCopy.messages.length - 1
+          ].role !== 'assistant'
+        ) {
+          // If there's no assistant message, create a new one
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: [
+              ...updatedConversationCopy.messages,
+              {
+                role: 'assistant',
+                content: text,
+                messageType: MessageType.TEXT,
+              },
             ],
-            content: text,
-          },
-        ];
-        updatedConversationCopy = {
-          ...updatedConversationCopy,
-          messages: updatedMessages,
-        };
-      }
+          };
+        } else {
+          // Update the existing assistant message
+          const updatedMessages = [
+            ...updatedConversationCopy.messages.slice(0, -1),
+            {
+              ...updatedConversationCopy.messages[
+                updatedConversationCopy.messages.length - 1
+              ],
+              content: text,
+            },
+          ];
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: updatedMessages,
+          };
+        }
 
-      homeDispatch({
-        field: 'selectedConversation',
-        value: updatedConversationCopy,
-      });
+        // Update the state to trigger a re-render
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
     }
+
+    console.log('Finished processing stream.');
+    console.log('Final text:', text);
 
     saveConversation(updatedConversationCopy);
 
@@ -345,8 +353,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           selectedConversation,
           deleteCount,
         );
-
-        console.log('Messages:', updatedConversation.messages);
 
         homeDispatch({
           field: 'selectedConversation',
@@ -376,6 +382,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             return;
           }
           const data = response.body;
+
           if (!data) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });

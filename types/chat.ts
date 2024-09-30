@@ -79,10 +79,6 @@ export interface Message {
     | Array<TextMessageContent | ImageMessageContent>
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
-  context?: {
-    citations?: Citation[];
-    intent?: string;
-  };
 }
 
 export type Role = 'system' | 'assistant' | 'user';

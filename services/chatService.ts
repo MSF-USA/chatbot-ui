@@ -254,7 +254,7 @@ export default class ChatService {
    */
   private async handleChatCompletion(
     modelToUse: string,
-    messagesToSend: [],
+    messagesToSend: Message[],
     temperatureToUse: number,
     user: Session['user'],
     useAISearch: boolean,
@@ -314,9 +314,35 @@ export default class ChatService {
           });
         }
 
-        const stream = OpenAIStream(response, {
-          onCompletion: (completion: string) => {
-            console.log('Stream completed:', completion);
+        let contentAccumulator = '';
+        let citationsAccumulator: any[] = [];
+
+        const stream = new ReadableStream({
+          async start(controller) {
+            const encoder = new TextEncoder();
+            for await (const chunk of response) {
+              if (chunk.choices && chunk.choices[0].delta) {
+                //@ts-ignore
+                const { content, context } = chunk.choices[0].delta;
+                if (content) {
+                  contentAccumulator += content;
+                  controller.enqueue(encoder.encode(content));
+                }
+                if (context && context.citations) {
+                  citationsAccumulator = citationsAccumulator.concat(
+                    context.citations,
+                  );
+                }
+              }
+            }
+            // Append citations as JSON at the end of the content
+            if (citationsAccumulator.length > 0) {
+              const citationsJson = JSON.stringify({
+                citations: citationsAccumulator,
+              });
+              controller.enqueue(encoder.encode('\n\n' + citationsJson));
+            }
+            controller.close();
           },
         });
 
@@ -398,7 +424,6 @@ export default class ChatService {
         modelToUse,
         messagesToSend,
         temperatureToUse,
-        token,
         user,
         useAISearch,
       );

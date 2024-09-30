@@ -134,9 +134,15 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
         onMouseMove={handleReactMouseMove}
         onMouseLeave={handleReactMouseLeave}
       >
-        {citations.map((citation) => (
+        {citations.map((citation, index) => (
           <div key={citation.number} className="flex-shrink-0">
-            <CitationItem citation={citation} />
+            <CitationItem
+              key={index}
+              citation={{
+                ...citation,
+                number: (index + 1).toString(),
+              }}
+            />
           </div>
         ))}
       </div>
