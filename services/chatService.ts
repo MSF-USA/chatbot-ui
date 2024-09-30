@@ -32,6 +32,7 @@ import { SearchIndex } from '@/types/searchIndex';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
+import { AzureMonitorLoggingService } from './loggingService';
 import useSearchService from './searchService';
 
 import {
@@ -51,6 +52,15 @@ import { Readable } from 'stream';
  * ChatService class for handling chat-related API operations.
  */
 export default class ChatService {
+  private loggingService: AzureMonitorLoggingService;
+
+  constructor() {
+    this.loggingService = new AzureMonitorLoggingService(
+      process.env.LOGS_INJESTION_ENDPOINT!,
+      process.env.DATA_COLLECTION_RULE_ID!,
+      process.env.STREAM_NAME,
+    );
+  }
   /**
    * Initializes the Tiktoken tokenizer.
    * @returns {Promise<Tiktoken>} A promise that resolves to the initialized Tiktoken instance.
@@ -259,6 +269,7 @@ export default class ChatService {
     user: Session['user'],
     useAISearch: boolean,
   ): Promise<Response> {
+    const startTime = Date.now();
     return this.retryWithExponentialBackoff(async () => {
       const scope = 'https://cognitiveservices.azure.com/.default';
       const azureADTokenProvider = getBearerTokenProvider(
@@ -346,6 +357,19 @@ export default class ChatService {
           },
         });
 
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        await this.loggingService.log({
+          EventType: 'ChatCompletion',
+          Status: 'success',
+          ModelUsed: modelToUse,
+          MessageCount: messagesToSend.length,
+          Temperature: temperatureToUse,
+          UserId: user.id,
+          UseAISearch: useAISearch,
+          Duration: duration,
+        });
+
         return new StreamingTextResponse(stream);
       } catch (error) {
         console.error('Error in chat completion:', error);
@@ -359,6 +383,21 @@ export default class ChatService {
         } else if (error instanceof Error) {
           errorMessage = error.message;
         }
+
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        await this.loggingService.log({
+          EventType: 'ChatCompletion',
+          Status: 'error',
+          ModelUsed: modelToUse,
+          MessageCount: messagesToSend.length,
+          Temperature: temperatureToUse,
+          UserId: user.id,
+          UseAISearch: useAISearch,
+          Duration: duration,
+          ErrorMessage: errorMessage,
+          StatusCode: statusCode,
+        });
 
         return new Response(JSON.stringify({ error: errorMessage }), {
           status: statusCode,
