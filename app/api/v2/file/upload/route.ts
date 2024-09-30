@@ -3,9 +3,10 @@ import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
 import { getEnvVariable } from "@/utils/app/env";
 import Hasher from "@/utils/app/hash";
 import { getToken } from "next-auth/jwt";
-import { JWT, Session } from "next-auth";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import {JWT, Session} from "next-auth";
+import {BadRequestError} from "openai";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -18,7 +19,7 @@ export async function POST(request: NextRequest) {
     const executableExtensions = ['exe', 'bat', 'cmd', 'sh', 'dll', 'msi', 'jar', 'app'];
 
     if (extension && executableExtensions.includes(extension)) {
-      return NextResponse.json({ error: 'Executable files are not allowed' }, { status: 400 });
+      return NextResponse.json({error: 'Executable files are not allowed'}, {status: 400});
     }
 
     if (mimeType) {
@@ -32,7 +33,7 @@ export async function POST(request: NextRequest) {
       ];
 
       if (executableMimeTypes.includes(mimeType)) {
-        return NextResponse.json({ error: 'Invalid file type submitted' }, { status: 400 });
+        return NextResponse.json({error: 'Invalid file type submitted'}, {status: 400});
       }
     }
   }
@@ -51,9 +52,9 @@ export async function POST(request: NextRequest) {
     }
   };
 
-  const uploadFileToBlobStorage = async (data: string | Buffer) => {
+  const uploadFileToBlobStorage = async (data: string) => {
     // @ts-ignore
-    const token: JWT | null = await getToken({ req: request as any });
+    const token: JWT | null = await getToken({ req: request });
     if (!token)
       throw new Error(`Token could not be pulled from request: ${request}`);
 
@@ -61,11 +62,11 @@ export async function POST(request: NextRequest) {
     if (!session) throw new Error("Failed to pull session!");
 
     // @ts-ignore
-    const userId: string = (session.user as any)?.id ?? token.userId ?? 'anonymous';
+    const userId: string = session?.user?.id ?? token.userId ?? 'anonymous';
 
     let blobStorageClient: BlobStorage = new AzureBlobStorage(
-      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user: session.user }),
-      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user: session.user }),
+      getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
+      getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
       getEnvVariable(
         {
           name: 'AZURE_BLOB_STORAGE_CONTAINER',
@@ -77,13 +78,11 @@ export async function POST(request: NextRequest) {
       session.user
     );
 
-    const hashedFileContents = Hasher.sha256(
-      typeof data === 'string' ? data : data.toString()
-    ).slice(0, 200);
+    const hashedFileContents = Hasher.sha256(data).slice(0, 200);
     const extension: string | undefined = filename.split('.').pop();
 
     let contentType;
-    if (mimeType) {
+    if(mimeType) {
       contentType = mimeType
     } else if (extension) {
       contentType = getContentType(extension);
@@ -94,7 +93,7 @@ export async function POST(request: NextRequest) {
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
 
     let decodedData;
-    if (mimeType && mimeType.indexOf('image') > -1 || filetype === 'image' || typeof data !== 'string')
+    if (mimeType && mimeType.indexOf('image') > -1 || filetype === 'image')
       decodedData = data
     else
       decodedData = Buffer.from(data, 'base64')
@@ -110,9 +109,8 @@ export async function POST(request: NextRequest) {
     );
   };
 
-  const fileArrayBuffer = await request.arrayBuffer();
-  const fileData = Buffer.from(fileArrayBuffer);
+  const fileData = await request.text();
   const fileURI: string = await uploadFileToBlobStorage(fileData);
-  const fileHash: string = fileURI.split('/').pop() ?? fileURI.split('/')[fileURI.split('/').length - 1];
-  return NextResponse.json({ message: 'File uploaded', uri: fileURI, fileHash });
+  const fileHash: string = fileURI.split('/').pop() ?? fileURI.split('/')[fileURI.split('/').length-1];
+  return NextResponse.json({ message: 'File uploaded', uri: fileURI });
 }
