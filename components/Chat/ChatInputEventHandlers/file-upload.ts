@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
+  FilePreview,
   ImageMessageContent,
 } from "@/types/chat";
 import { onImageUpload } from "@/components/Chat/ChatInputEventHandlers/image-upload";
@@ -72,7 +73,7 @@ function isFileSupported(file: File): boolean {
 export async function onFileUpload(
     event: React.ChangeEvent<any> | FileList | File[],
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setFilePreviews: Dispatch<SetStateAction<string[]>>,
+    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
     setFileFieldValue: Dispatch<
         SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
     >,
@@ -99,7 +100,7 @@ export async function onFileUpload(
     return;
   }
 
-  const filePreviews: string[] = [];
+  const filePreviews: FilePreview[] = [];
   const fileFieldValues: FileMessageContent[] = [];
   const imageFieldValues: ImageMessageContent[] = [];
 
@@ -119,7 +120,20 @@ export async function onFileUpload(
       return;
     }
 
-    if (file.type.startsWith("image/")) {
+    const isImage = file.type.startsWith("image/")
+
+    const filePreview: FilePreview = {
+      name: file.name,
+      type: file.type,
+      status: 'pending',
+      previewUrl: isImage ? URL.createObjectURL(file) : '',
+    };
+
+
+    filePreviews.push(filePreview);
+    setFilePreviews((prevState) => [...prevState, ...filePreviews]);
+
+    if (isImage) {
       // Handle image upload
       return new Promise<void>((resolve, reject) => {
         onImageUpload(
@@ -138,8 +152,12 @@ export async function onFileUpload(
         // For simplicity, let's assume uploading the file to your server
         const chunkSize = 1024 * 1024 * 5; // 5MB chunks
         let uploadedBytes = 0;
-        filePreviews.push(`file:${file.type}||name:${file.name}`);
-        setFilePreviews((prevState) => [...prevState, ...filePreviews]);
+
+        setFilePreviews((prevPreviews) =>
+          prevPreviews.map((preview) =>
+            preview.name === file.name ? { ...preview, status: 'uploading' } : preview
+          )
+        );
 
         const uploadChunk = () => {
           const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
@@ -178,14 +196,43 @@ export async function onFileUpload(
                     originalFilename: file.name,
                   };
                   fileFieldValues.push(newValue);
+
+                  // @ts-ignore
+                  setFileFieldValue((prevValue) => {
+                    if (prevValue && Array.isArray(prevValue)) {
+                      return [...prevValue, ...fileFieldValues];
+                    } else {
+                      return [...fileFieldValues];
+                    }
+                  });
+                  setSubmitType(fileFieldValues.length > 1 ? "multi-file" : "file");
+
+                  setFilePreviews((prevPreviews) =>
+                    prevPreviews.map((preview) =>
+                      preview.name === file.name ? { ...preview, status: 'completed' } : preview
+                    )
+                  );
+
                   resolve();
                 }
               } else {
                 toast.error(`File upload failed: ${file.name}`);
+                setFilePreviews((prevPreviews) =>
+                  prevPreviews.map((preview) =>
+                    preview.name === file.name ? { ...preview, status: 'failed' } : preview
+                  )
+                );
+
                 reject();
               }
             } catch (error) {
               toast.error(`File upload failed: ${file.name}`);
+              setFilePreviews((prevPreviews) =>
+                prevPreviews.map((preview) =>
+                  preview.name === file.name ? { ...preview, status: 'failed' } : preview
+                )
+              );
+
               reject();
             }
           };
