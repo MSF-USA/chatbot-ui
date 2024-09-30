@@ -95,3 +95,12 @@ export interface Conversation {
 }
 
 export type ChatInputSubmitTypes = "text" | "image" | "file" | "multi-file";
+
+type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
+
+export interface FilePreview {
+  name: string;
+  type: string;
+  status: UploadStatus;
+  previewUrl: string;
+}
