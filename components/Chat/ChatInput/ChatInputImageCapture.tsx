@@ -17,7 +17,7 @@ import { useTranslation } from 'next-i18next';
 import { isMobile } from '@/utils/app/env';
 import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
-import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from '@/types/chat';
+import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -47,7 +47,7 @@ const onImageUploadButtonClick = async (
 };
 
 export interface ChatInputImageCaptureProps {
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
   setImageFieldValue: Dispatch<

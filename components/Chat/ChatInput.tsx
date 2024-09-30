@@ -14,7 +14,9 @@ import {
 import {useTranslation} from 'next-i18next';
 
 import {
-  ChatInputSubmitTypes, FileMessageContent,
+  ChatInputSubmitTypes,
+  FileMessageContent,
+  FilePreview,
   getChatMessageContent,
   ImageMessageContent,
   Message,
@@ -41,8 +43,8 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>;
   textareaRef: MutableRefObject<HTMLTextAreaElement | null>;
   showScrollDownButton: boolean;
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
-  filePreviews: string[];
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+  filePreviews: FilePreview[];
 }
 
 export const ChatInput = ({
