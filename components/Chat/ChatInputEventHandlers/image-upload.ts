@@ -1,12 +1,12 @@
 import React, {Dispatch, MutableRefObject, SetStateAction} from "react";
-import {ChatInputSubmitTypes, FileMessageContent, ImageMessageContent} from "@/types/chat";
+import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from "@/types/chat";
 import toast from "react-hot-toast";
 import {isChangeEvent} from "@/components/Chat/ChatInputEventHandlers/common";
 
 export const onImageUpload = async (
   event: React.ChangeEvent<any> | Event | File,
   prompt: any,
-  setFilePreviews: Dispatch<SetStateAction<string[]>>,
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>
 ) => {
@@ -52,7 +52,11 @@ export const onImageUpload = async (
             return [imageMessage];
         }
     });
-    setFilePreviews((prevFilePreviews) => [...(prevFilePreviews || []), base64String]);
+    setFilePreviews((prevFilePreviews) => prevFilePreviews.map((preview) =>
+        preview.name === file.name ? { ...preview, previewUrl: base64String,  status: 'completed' } : preview
+      )
+    );
+    // setFilePreviews((prevFilePreviews) => [...(prevFilePreviews || []), base64String]);
 };
 
 const readFileAsDataURL = (file: File): Promise<string> => {
