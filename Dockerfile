@@ -27,7 +27,7 @@ WORKDIR /app
 
 # pdftotext package
 RUN apk add --no-cache poppler poppler-dev poppler-utils libxml2 libxslt zlib fontconfig ttf-dejavu \
-    shared-mime-info libc6-compat glib zip unzip ghostscript curl gnumeric libreoffice ffmpeg
+    shared-mime-info libc6-compat glib zip unzip ghostscript curl gnumeric libreoffice
 
 RUN curl -L "https://github.com/jgm/pandoc/releases/download/3.2.1/pandoc-3.2.1-linux-amd64.tar.gz" | tar xz --strip-components 1 -C /usr/local
 
