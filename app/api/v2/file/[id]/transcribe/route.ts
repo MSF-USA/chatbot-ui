@@ -1,15 +1,14 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {AzureBlobStorage, BlobProperty, BlobStorage} from "@/utils/server/blob";
-import {getEnvVariable} from "@/utils/app/env";
-import {getToken} from "next-auth/jwt";
-import {JWT, Session} from "next-auth";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
-import {tmpdir} from 'os';
-import {join} from 'path';
+// import {AzureBlobStorage, BlobProperty, BlobStorage} from "@/utils/server/blob";
+// import {getEnvVariable} from "@/utils/app/env";
+// import {getToken} from "next-auth/jwt";
+// import {JWT, Session} from "next-auth";
+// import {getServerSession} from "next-auth/next";
+// import {authOptions} from "@/pages/api/auth/[...nextauth]";
+// import {tmpdir} from 'os';
+// import {join} from 'path';
 // import ffmpegPath from 'ffmpeg-static';
 // import ffmpeg from 'fluent-ffmpeg';
-import {promises as fs} from 'fs';
 
 
 // if (!ffmpegPath) {
@@ -99,4 +98,5 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   //   console.error('Error during transcription:', error);
   //   return NextResponse.json({ error: 'Failed to transcribe file' }, { status: 500 });
   // }
+  return NextResponse.json({ error: 'Failed to transcribe file' }, { status: 500 });
 }
