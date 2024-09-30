@@ -32,7 +32,7 @@ import { throttle } from '@/utils/data/throttle';
 import {
   ChatBody,
   Conversation,
-  FileMessageContent,
+  FileMessageContent, FilePreview,
   Message,
   MessageType,
   TextMessageContent,
@@ -104,7 +104,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
-  const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
   const [randomPrompts, setRandomPrompts] = useState<
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
