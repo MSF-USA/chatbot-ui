@@ -53,6 +53,7 @@ export interface ChatInputImageCaptureProps {
   setImageFieldValue: Dispatch<
     SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >;
+  setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
 const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
@@ -60,6 +61,7 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
   prompt,
   setFilePreviews,
   setImageFieldValue,
+  setUploadProgress,
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -147,6 +149,7 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
         setFilePreviews={setFilePreviews}
         setSubmitType={setSubmitType}
         setImageFieldValue={setImageFieldValue}
+        setUploadProgress={setUploadProgress}
       />
     </>
   );

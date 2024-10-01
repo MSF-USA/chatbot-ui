@@ -444,12 +444,14 @@ export const ChatInput = ({
             setSubmitType={setSubmitType}
             prompt={textFieldValue}
             setImageFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
           />
           <ChatInputImage
             setSubmitType={setSubmitType}
             prompt={textFieldValue}
             setFilePreviews={setFilePreviews}
             setFileFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
           />
           <ChatInputFile
             onFileUpload={onFileUpload}
