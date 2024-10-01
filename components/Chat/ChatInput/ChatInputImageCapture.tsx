@@ -23,6 +23,7 @@ import HomeContext from '@/pages/api/home/home.context';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
 import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement>,
@@ -123,12 +124,14 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
         accept="image/*"
         capture={'environment'}
         onChange={(event) => {
-          onImageUpload(
+          onFileUpload(
             event,
-            prompt,
-            setFilePreviews,
             setSubmitType,
+            setFilePreviews,
             setImageFieldValue,
+            // @ts-ignore
+            setImageFieldValue,
+            setUploadProgress,
           );
         }}
         style={{ display: 'none' }}
