@@ -20,6 +20,7 @@ import {
 import HomeContext from '@/pages/api/home/home.context';
 
 import ImageIcon from '@/components/Icons/image';
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onImageUpload = (
     event: React.ChangeEvent<any>,
@@ -93,6 +94,7 @@ export interface ChatInputImageProps {
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
     prompt: string;
     setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[]  | null>>;
+    setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
 const ChatInputImage = ({
@@ -100,6 +102,7 @@ const ChatInputImage = ({
   prompt,
   setFilePreviews,
   setFileFieldValue,
+  setUploadProgress,
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
 
@@ -116,11 +119,15 @@ const ChatInputImage = ({
         ref={imageInputRef}
         style={{ display: 'none'}}
             onChange={(event) => {
-                onImageUpload(event,
-            setFilePreviews,
-            setSubmitType,
-            setFileFieldValue,
-          );
+            onFileUpload(
+              event,
+              setSubmitType,
+              setFilePreviews,
+              setFileFieldValue,
+              // @ts-ignore
+              setFileFieldValue,
+              setUploadProgress,
+            );
         }}
         accept={'image/*'}
       />
