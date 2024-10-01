@@ -7,6 +7,7 @@ import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeMathjax from "rehype-mathjax";
 import {CodeBlock} from "@/components/Markdown/CodeBlock";
+import {fetchImageBase64FromMessageContent} from "@/services/imageService";
 
 interface ChatMessageImageProps {
     message: Message
@@ -73,30 +74,14 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                 throw new Error(`Unexpected message type for message: ${contentMessage}`)
             }
         })
-    }, []);
+    }, [content]);
 
     useEffect(() => {
-        const fetchImage = async () => {
-            try {
-                if (image?.image_url?.url) {
-                    const filename = image.image_url.url.split("/")[image.image_url.url.split("/").length - 1];
-                    fetch(`/api/v2/file/${filename}?filetype=image`).then(page => {
-                        page.json().then(resp => {
-                            setImageBase64(resp.base64Url);
-                            window.scrollTo(0, document.body.scrollHeight);
-                        })
-                    })
-                    // const base64String: string = await getBase64FromImageURL(image?.image_url?.url)
-                    // setImageBase64(base64String)
-                }
-
-            } catch (error) {
-                console.error('Error fetching the image:', error);
-                setImageBase64(''); // Setting a fallback or error state
-            }
-        };
-
-        fetchImage();
+        if (image) {
+            fetchImageBase64FromMessageContent(image).then(imageBase64String => {
+                setImageBase64(imageBase64String);
+            });
+        }
     }, [image]);
 
     const toggleImageStyleProps = (event: any) => {

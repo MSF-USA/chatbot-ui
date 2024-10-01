@@ -40,7 +40,9 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI from 'openai';
 import path from 'path';
-import { Readable } from 'stream';
+import {getEnvVariable} from "@/utils/app/env";
+// import ChatCompletion = Chat.ChatCompletion;
+// import {Chat} from "openai/resources";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -146,6 +148,7 @@ export default class ChatService {
     token: JWT,
     modelId: string,
     user: Session['user'],
+    streamResponse: boolean,
   ): Promise<Response> {
     return this.retryWithExponentialBackoff(async () => {
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
@@ -178,16 +181,41 @@ export default class ChatService {
         const fileBuffer: Buffer = await this.retryReadFile(filePath);
         const file: File = new File([fileBuffer], filename, {});
 
-        const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({
-          file,
-          prompt,
-          token,
-          modelId,
-          user,
-        }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
-
-        console.log('File summarized successfully.');
-        return new StreamingTextResponse(stream);
+        if (streamResponse) {
+          // @ts-expect-error the `stream` variable sets the response type. cool that typescript can't figure that out, even when casting
+          const streamResponse: ReadableStream<any> = await parseAndQueryFileOpenAI({
+            file,
+            prompt,
+            token,
+            modelId,
+            user,
+            stream: true,
+          });
+          console.log('File summarized successfully.');
+          return new StreamingTextResponse(streamResponse);
+        } else {
+          const responseText = await parseAndQueryFileOpenAI({
+            file,
+            prompt,
+            token,
+            modelId,
+            stream: false,
+            user
+          });
+          console.log('File summarized successfully.');
+          return new Response(JSON.stringify({ text: responseText }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+        // const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({
+        //   file,
+        //   prompt,
+        //   token,
+        //   modelId,
+        // }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
+        //
+        // console.log('File summarized successfully.');
+        // return new StreamingTextResponse(stream);
       } catch (error) {
         console.error('Error processing the file:', error);
         throw error;
@@ -222,12 +250,24 @@ export default class ChatService {
     token: JWT,
     user: Session['user'],
   ): Promise<void> {
-    const userId: string = (token as any).userId ?? user?.id ?? 'anonymous';
+    const userId: string = user?.id ?? (token as any).userId ?? 'anonymous';
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop();
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
 
-    const blobStorage = new AzureBlobStorage();
+    const blobStorage = new AzureBlobStorage(
+      getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user}),
+      getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user}),
+      getEnvVariable(
+        {
+          name: 'AZURE_BLOB_STORAGE_CONTAINER',
+          throwErrorOnFail: false,
+          defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+          user
+        }
+      ),
+      user
+    );
     const blob: Buffer = await (blobStorage.get(
       `${remoteFilepath}/${id}`,
       BlobProperty.BLOB,
@@ -384,70 +424,79 @@ Your detailed response here... According to [2], some relevant information... An
     temperatureToUse: number,
     token: JWT,
     user: Session['user'],
+    streamResponse: boolean,
     useAISearch: boolean,
-  ): Promise<Response> {
+  ): Promise<StreamingTextResponse | Response> {
     return this.retryWithExponentialBackoff(async () => {
-      const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-      const azureOpenai = new OpenAI(openAIArgs);
+        const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
+        const azureOpenai = new OpenAI(openAIArgs);
 
-      const lastMessage = messagesToSend[messagesToSend.length - 1];
-      const textContent = this.getTextContent(lastMessage);
+        const lastMessage = messagesToSend[messagesToSend.length - 1];
+        const textContent = this.getTextContent(lastMessage);
 
-      if (textContent && useAISearch) {
-        try {
-          const isRelevant = await this.isQueryRelevantToMSF(
-            modelToUse,
-            token,
-            textContent,
-          );
-          if (isRelevant) {
-            const searchResults = await useSearchService(textContent);
-            const augmentedUserMessage = this.formatAugmentedContent(
+        if (textContent && useAISearch) {
+          try {
+            const isRelevant = await this.isQueryRelevantToMSF(
+              modelToUse,
+              token,
               textContent,
-              searchResults,
             );
-            messagesToSend[messagesToSend.length - 1] = {
-              ...lastMessage,
-              content: augmentedUserMessage,
-            };
+            if (isRelevant) {
+              const searchResults = await useSearchService(textContent);
+              const augmentedUserMessage = this.formatAugmentedContent(
+                textContent,
+                searchResults,
+              );
+              messagesToSend[messagesToSend.length - 1] = {
+                ...lastMessage,
+                content: augmentedUserMessage,
+              };
+            }
+          } catch (error) {
+            console.error('Error in AI search or relevance check:', error);
+          }
+        }
+
+        try {
+          const response = await azureOpenai.chat.completions.create({
+            model: modelToUse,
+            messages:
+              messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            temperature: temperatureToUse,
+            max_tokens: null,
+            stream: streamResponse,
+            user: JSON.stringify(user),
+          });
+
+          if (streamResponse) {
+            // @ts-ignore
+            const streamResponse: ReadableStream<any> = OpenAIStream(response);
+            return new StreamingTextResponse(streamResponse);
+          } else {
+            const completionText = (response as any).choices[0].message.content;
+            return new Response(JSON.stringify({text: completionText}), {
+              headers: {'Content-Type': 'application/json'},
+            });
           }
         } catch (error) {
-          console.error('Error in AI search or relevance check:', error);
+          console.error('Error in chat completion:', error);
+          let statusCode = 500;
+          let errorMessage =
+            'An error occurred while processing your request. Please try again later.';
+
+          if (error instanceof OpenAI.APIError) {
+            statusCode = error.status || 500;
+            errorMessage = error.message;
+          } else if (error instanceof Error) {
+            errorMessage = error.message;
+          }
+
+          return new Response(JSON.stringify({error: errorMessage}), {
+            status: statusCode,
+            headers: {'Content-Type': 'application/json'},
+          });
         }
-      }
-
-      try {
-        const response = await azureOpenai.chat.completions.create({
-          model: modelToUse,
-          messages:
-            messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-          temperature: temperatureToUse,
-          max_tokens: null,
-          stream: true,
-          user: JSON.stringify(user),
-        });
-
-        const stream = OpenAIStream(response);
-        return new StreamingTextResponse(stream);
-      } catch (error) {
-        console.error('Error in chat completion:', error);
-        let statusCode = 500;
-        let errorMessage =
-          'An error occurred while processing your request. Please try again later.';
-
-        if (error instanceof OpenAI.APIError) {
-          statusCode = error.status || 500;
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-
-        return new Response(JSON.stringify({ error: errorMessage }), {
-          status: statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    });
+      });
   }
 
   /**
@@ -456,7 +505,7 @@ Your detailed response here... According to [2], some relevant information... An
    * @returns {Promise<Response>} A promise that resolves to the response based on the request.
    */
   public async handleRequest(req: NextRequest): Promise<Response> {
-    const { model, messages, prompt, temperature, useKnowledgeBase } =
+    const { model, messages, prompt, temperature, stream = true, useKnowledgeBase } =
       (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -500,7 +549,7 @@ Your detailed response here... According to [2], some relevant information... An
     encoding.free();
 
     if (needsToHandleFiles) {
-      return this.handleFileConversation(messagesToSend, token, model.id, user);
+      return this.handleFileConversation(messagesToSend, token, model.id, user, stream);
     } else {
       return this.handleChatCompletion(
         modelToUse,
@@ -508,6 +557,7 @@ Your detailed response here... According to [2], some relevant information... An
         temperatureToUse,
         token,
         user,
+        stream,
         useAISearch,
       );
     }
