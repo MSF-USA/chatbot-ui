@@ -58,7 +58,7 @@ export default class ChatService {
     this.loggingService = new AzureMonitorLoggingService(
       process.env.LOGS_INJESTION_ENDPOINT!,
       process.env.DATA_COLLECTION_RULE_ID!,
-      process.env.STREAM_NAME,
+      process.env.STREAM_NAME!,
     );
   }
   /**
@@ -329,45 +329,60 @@ export default class ChatService {
         let citationsAccumulator: any[] = [];
 
         const stream = new ReadableStream({
-          async start(controller) {
+          start: (controller) => {
             const encoder = new TextEncoder();
-            for await (const chunk of response) {
-              if (chunk.choices && chunk.choices[0].delta) {
-                //@ts-ignore
-                const { content, context } = chunk.choices[0].delta;
-                if (content) {
-                  contentAccumulator += content;
-                  controller.enqueue(encoder.encode(content));
-                }
-                if (context && context.citations) {
-                  citationsAccumulator = citationsAccumulator.concat(
-                    context.citations,
-                  );
-                }
-              }
-            }
-            // Append citations as JSON at the end of the content
-            if (citationsAccumulator.length > 0) {
-              const citationsJson = JSON.stringify({
-                citations: citationsAccumulator,
-              });
-              controller.enqueue(encoder.encode('\n\n' + citationsJson));
-            }
-            controller.close();
-          },
-        });
 
-        const endTime = Date.now();
-        const duration = endTime - startTime;
-        await this.loggingService.log({
-          EventType: 'ChatCompletion',
-          Status: 'success',
-          ModelUsed: modelToUse,
-          MessageCount: messagesToSend.length,
-          Temperature: temperatureToUse,
-          UserId: user.id,
-          UseAISearch: useAISearch,
-          Duration: duration,
+            (async () => {
+              try {
+                for await (const chunk of response) {
+                  if (chunk.choices && chunk.choices[0].delta) {
+                    //@ts-ignore
+                    const { content, context } = chunk.choices[0].delta;
+                    if (content) {
+                      contentAccumulator += content;
+                      controller.enqueue(encoder.encode(content));
+                    }
+                    if (context && context.citations) {
+                      citationsAccumulator = citationsAccumulator.concat(
+                        context.citations,
+                      );
+                    }
+                  }
+                }
+
+                // Append citations as JSON at the end of the content
+                if (citationsAccumulator.length > 0) {
+                  const citationsJson = JSON.stringify({
+                    citations: citationsAccumulator,
+                  });
+                  controller.enqueue(encoder.encode('\n\n' + citationsJson));
+                }
+
+                controller.close();
+
+                const endTime = Date.now();
+                const duration = endTime - startTime;
+                await this.loggingService.log({
+                  EventType: 'ChatCompletion',
+                  Status: 'success',
+                  ModelUsed: modelToUse,
+                  MessageCount: messagesToSend.length,
+                  Temperature: temperatureToUse,
+                  UserId: user.id,
+                  UserJobTitle: user.jobTitle,
+                  UserDisplayName: user.displayName,
+                  UserEmail: user.mail,
+                  UserCompanyName: user.companyName,
+                  FileUpload: false,
+                  UseAISearch: useAISearch,
+                  CitationsCount: citationsAccumulator.length,
+                  Duration: duration,
+                });
+              } catch (error) {
+                controller.error(error);
+              }
+            })();
+          },
         });
 
         return new StreamingTextResponse(stream);
