@@ -29,6 +29,7 @@ import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
+import { getBotById } from '@/types/bots';
 import {
   ChatBody,
   Conversation,
@@ -84,7 +85,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
-      useKnowledgeBase,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -107,6 +107,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [randomPrompts, setRandomPrompts] = useState<
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
+  const [botInfo, setBotInfo] = useState<{
+    id: string;
+    name: string;
+    color: string;
+  } | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -138,6 +143,23 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   };
 
+  const updateBotInfo = useCallback(() => {
+    if (selectedConversation?.bot) {
+      const bot = getBotById(selectedConversation.bot);
+      if (bot) {
+        setBotInfo({ id: bot.id, name: bot.name, color: bot.color });
+      } else {
+        setBotInfo(null);
+      }
+    } else {
+      setBotInfo(null);
+    }
+  }, [selectedConversation]);
+
+  useEffect(() => {
+    updateBotInfo();
+  }, [selectedConversation, updateBotInfo]);
+
   const makeRequest = async (
     plugin: Plugin | null,
     updatedConversation: Conversation,
@@ -150,7 +172,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
-      useKnowledgeBase: useKnowledgeBase || DEFAULT_USE_KNOWLEDGE_BASE,
+      botId: botInfo?.id,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -479,19 +501,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       pluginKeys,
       selectedConversation,
       stopConversationRef,
-      useKnowledgeBase,
     ],
-  );
-
-  const handleQuestionClick = useCallback(
-    (question: string) => {
-      handleSend({
-        role: 'user',
-        content: question,
-        messageType: MessageType.TEXT,
-      });
-    },
-    [handleSend],
   );
 
   const scrollToBottom = useCallback(() => {
@@ -687,7 +697,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   >
                     <div>
                       <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                        {t('Model')}: {selectedConversation?.model?.name}
+                        <div className="flex items-center">
+                          {botInfo && (
+                            <>
+                              <span
+                                className="font-semibold"
+                                style={{ color: botInfo.color }}
+                              >
+                                {botInfo.name} Bot
+                              </span>
+                              <span className="mx-2 text-white dark:text-white">
+                                |
+                              </span>
+                            </>
+                          )}
+                          <span>
+                            {t('Model')}: {selectedConversation?.model?.name}
+                          </span>
+                        </div>
                         <button
                           className="ml-2 cursor-pointer hover:opacity-50"
                           onClick={handleSettings}
@@ -878,7 +905,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             ) : (
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model?.name}
+                  <div className="flex items-center">
+                    {botInfo && (
+                      <>
+                        <span
+                          className="font-semibold"
+                          style={{ color: botInfo.color }}
+                        >
+                          {botInfo.name} Bot
+                        </span>
+                        <span className="mx-2 text-white dark:text-white">
+                          |
+                        </span>
+                      </>
+                    )}
+                    <span>
+                      {t('Model')}: {selectedConversation?.model?.name}
+                    </span>
+                  </div>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}
@@ -972,7 +1016,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         selectedConversation?.messages.length - index,
                       );
                     }}
-                    onQuestionClick={handleQuestionClick}
                   />
                 ))}
 

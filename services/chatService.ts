@@ -259,7 +259,6 @@ export default class ChatService {
    * @param {number} temperatureToUse - The temperature value to use for the chat completion.
    * @param {JWT} token - The JWT token for authentication.
    * @param {Session['user']} user - User information for logging
-   * @param {boolean} useAISearch - Whether to use Azure AI Search and use RAG capabilities
    * @returns {Promise<StreamingTextResponse>} A promise that resolves to the streaming response containing the chat completion.
    */
   private async handleChatCompletion(
@@ -267,7 +266,7 @@ export default class ChatService {
     messagesToSend: Message[],
     temperatureToUse: number,
     user: Session['user'],
-    useAISearch: boolean,
+    botId: string | undefined,
   ): Promise<Response> {
     const startTime = Date.now();
     return this.retryWithExponentialBackoff(async () => {
@@ -285,20 +284,22 @@ export default class ChatService {
         apiVersion,
       });
 
-      const lastMessage = messagesToSend[messagesToSend.length - 1];
-
       try {
         let response;
-        if (useAISearch) {
-          //@ts-ignore
+        const commonParams = {
+          model: modelToUse,
+          messages:
+            messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          temperature: temperatureToUse,
+          max_tokens: null,
+          stream: true,
+          user: JSON.stringify(user),
+        };
+
+        if (botId) {
           response = await client.chat.completions.create({
-            model: modelToUse,
-            messages:
-              messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-            temperature: temperatureToUse,
-            max_tokens: null,
-            stream: true,
-            user: JSON.stringify(user),
+            ...commonParams,
+            //@ts-ignore
             data_sources: [
               {
                 type: 'azure_search',
@@ -314,15 +315,7 @@ export default class ChatService {
             ],
           });
         } else {
-          response = await client.chat.completions.create({
-            model: modelToUse,
-            messages:
-              messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-            temperature: temperatureToUse,
-            max_tokens: null,
-            stream: true,
-            user: JSON.stringify(user),
-          });
+          response = await client.chat.completions.create(commonParams);
         }
 
         let contentAccumulator = '';
@@ -334,18 +327,26 @@ export default class ChatService {
 
             (async () => {
               try {
+                // @ts-ignore
                 for await (const chunk of response) {
-                  if (chunk.choices && chunk.choices[0].delta) {
-                    //@ts-ignore
-                    const { content, context } = chunk.choices[0].delta;
-                    if (content) {
-                      contentAccumulator += content;
-                      controller.enqueue(encoder.encode(content));
-                    }
-                    if (context && context.citations) {
-                      citationsAccumulator = citationsAccumulator.concat(
-                        context.citations,
-                      );
+                  if (chunk.choices && chunk.choices[0]) {
+                    const choice = chunk.choices[0];
+                    if ('delta' in choice) {
+                      // Bot response with citations
+                      const { content, context } = choice.delta as any;
+                      if (content) {
+                        contentAccumulator += content;
+                        controller.enqueue(encoder.encode(content));
+                      }
+                      if (context && context.citations) {
+                        citationsAccumulator = citationsAccumulator.concat(
+                          context.citations,
+                        );
+                      }
+                    } else if ('text' in choice) {
+                      // Standard OpenAI response
+                      contentAccumulator += choice.text || '';
+                      controller.enqueue(encoder.encode(choice.text || ''));
                     }
                   }
                 }
@@ -374,7 +375,7 @@ export default class ChatService {
                   UserEmail: user.mail,
                   UserCompanyName: user.companyName,
                   FileUpload: false,
-                  UseAISearch: useAISearch,
+                  botId: botId,
                   CitationsCount: citationsAccumulator.length,
                   Duration: duration,
                 });
@@ -408,7 +409,7 @@ export default class ChatService {
           MessageCount: messagesToSend.length,
           Temperature: temperatureToUse,
           UserId: user.id,
-          UseAISearch: useAISearch,
+          botId: botId,
           Duration: duration,
           ErrorMessage: errorMessage,
           StatusCode: statusCode,
@@ -428,13 +429,12 @@ export default class ChatService {
    * @returns {Promise<Response>} A promise that resolves to the response based on the request.
    */
   public async handleRequest(req: NextRequest): Promise<Response> {
-    const { model, messages, prompt, temperature, useKnowledgeBase } =
+    const { model, messages, prompt, temperature, botId } =
       (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
     const temperatureToUse = temperature ?? DEFAULT_TEMPERATURE;
-    const useAISearch = useKnowledgeBase || false;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
     const needsToHandleFiles: boolean =
@@ -479,7 +479,7 @@ export default class ChatService {
         messagesToSend,
         temperatureToUse,
         user,
-        useAISearch,
+        botId,
       );
     }
   }

@@ -89,7 +89,7 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
-  useKnowledgeBase: boolean;
+  botId: string | undefined;
 }
 
 export interface Conversation {
@@ -100,6 +100,7 @@ export interface Conversation {
   prompt: string;
   temperature: number;
   folderId: string | null;
+  bot?: string;
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file';

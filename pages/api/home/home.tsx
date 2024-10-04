@@ -308,8 +308,6 @@ const Home = ({
         field: 'runTypeWriterIntroSetting',
         value: settings.runTypeWriterIntroSetting,
       });
-    if (settings.useKnowledgeBase === false)
-      dispatch({ field: 'useKnowledgeBase', value: settings.useKnowledgeBase });
   }
 
   function handleApiKey() {
