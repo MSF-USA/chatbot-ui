@@ -42,7 +42,7 @@ export default class TranscriptionService {
 
   private isBase64(str: string): boolean {
     try {
-      return btoa(atob(str)) === str;
+      return Buffer.from(Buffer.from(str, 'base64').toString('utf8')).toString('base64') === str;
     } catch (err) {
       return false;
     }
