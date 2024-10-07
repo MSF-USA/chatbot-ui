@@ -37,6 +37,17 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
             });
     }, []);
 
+    /*
+        Useful for local debugging, but otherwise just annoying
+     */
+    const testAudioPlayback = (audioBlob: Blob) => {
+        const audioURL = URL.createObjectURL(audioBlob);
+        const audio = new Audio(audioURL);
+        audio.play().catch(error => {
+            console.error("Playback failed:", error);
+        });
+    };
+
     const startRecording = () => {
         navigator.mediaDevices
             .getUserMedia({ audio: true })
@@ -135,22 +146,34 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
         // Upload the audioBlob to the server
         try {
             const filename = 'audio.webm';
-            const mimeType = 'audio/webm';
+            const mimeType = 'audio/x-matroska';
 
-            // Create the query parameters
-            const queryParams = new URLSearchParams({
-                filename,
-                filetype: 'webm',
-                mime: mimeType,
+            // Encode filename and MIME type
+            const encodedFileName = encodeURIComponent(filename);
+            const encodedMimeType = encodeURIComponent(mimeType);
+
+            // Convert blob to base64
+            const base64Chunk = await new Promise<string>((resolve) => {
+                const reader = new FileReader();
+                reader.onloadend = () => resolve(reader.result as string);
+                reader.readAsDataURL(audioBlob);
             });
 
-            const uploadResponse = await fetch(`/api/v2/file/upload?${queryParams.toString()}`, {
-                method: 'POST',
-                body: audioBlob,
-                headers: {
-                    'Content-Type': mimeType,
-                },
-            });
+            // Remove the data URL prefix (e.g., "data:audio/webm;base64,")
+            const base64Data = base64Chunk.split(',')[1];
+            // const base64Data = base64Chunk;
+
+            const uploadResponse = await fetch(
+              `/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
+              {
+                  method: 'POST',
+                  body: base64Data,
+                  headers: {
+                      'x-file-name': encodedFileName,
+                  },
+              }
+            );
+
 
             if (!uploadResponse.ok) {
                 throw new Error('Failed to upload audio');
