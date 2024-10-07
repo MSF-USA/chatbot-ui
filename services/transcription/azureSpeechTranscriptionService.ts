@@ -68,7 +68,7 @@ export class ACSTranscriptionService implements ITranscriptionService {
     const audioFormat = sdk.AudioStreamFormat.getWaveFormatPCM(16000, 16, 1);
     const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
     const speechConfig = sdk.SpeechConfig.fromSubscription(this.apiKey, this.region);
-    speechConfig.speechRecognitionLanguage = 'en-US';
+    // speechConfig.speechRecognitionLanguage = 'en-US';
 
     const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
