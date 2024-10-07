@@ -1,4 +1,9 @@
-import {BlobServiceClient, BlockBlobUploadOptions, StorageSharedKeyCredential} from "@azure/storage-blob";
+import {
+    BlobServiceClient,
+    BlockBlobClient,
+    BlockBlobUploadOptions,
+    StorageSharedKeyCredential
+} from "@azure/storage-blob";
 import {Readable} from "stream";
 import {getEnvVariable} from "@/utils/app/env";
 import {lookup} from "mime-types";
@@ -35,6 +40,7 @@ export interface BlobStorage {
     ): Promise<string>;
     get(blobName: string, property: BlobProperty): Promise<string | Blob | Buffer>;
     blobExists(blobName: string): Promise<boolean>;
+    getBlockBlobClient(blobName: string): BlockBlobClient;
 }
 
 export class AzureBlobStorage implements BlobStorage {
@@ -187,6 +193,17 @@ export class AzureBlobStorage implements BlobStorage {
             readableStream.on('error', reject);
         });
     }
+
+    /**
+     * Gets a BlockBlobClient for the specified blob.
+     * @param blobName The name/path of the blob.
+     * @returns The BlockBlobClient for the blob.
+     */
+    getBlockBlobClient(blobName: string): BlockBlobClient {
+        const containerClient = this.blobServiceClient.getContainerClient(this.containerName as string);
+        return containerClient.getBlockBlobClient(blobName);
+    }
+
 
 }
 
