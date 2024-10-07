@@ -40,18 +40,43 @@ export default class TranscriptionService {
     });
   }
 
+  private isBase64(str: string): boolean {
+    try {
+      return btoa(atob(str)) === str;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  private async saveBase64AsFile(base64String: string): Promise<string> {
+    const tempFilePath = path.join(os.tmpdir(), `temp_audio_${Date.now()}.wav`);
+    const buffer = Buffer.from(base64String, 'base64');
+    await fs.promises.writeFile(tempFilePath, buffer);
+    return tempFilePath;
+  }
+
+
   /**
    * Transcribes the given audio or video file.
    * @param filePath The path to the audio or video file.
    * @returns The transcribed text.
    */
-  async transcribe(filePath: string): Promise<string> {
+  async transcribe(input: string): Promise<string> {
+    let filePath: string;
+
+    if (this.isBase64(input)) {
+      filePath = await this.saveBase64AsFile(input);
+    } else {
+      filePath = input;
+    }
+
     let audioFilePath = filePath;
 
-    // Convert video to audio if necessary
-    if (await this.isVideoFile(filePath)) {
-      audioFilePath = await this.convertVideoToAudio(filePath);
-    }
+    // TODO: Implement this better: currently only considers extension, which was causing issues
+    // // Convert video to audio if necessary
+    // if (await this.isVideoFile(filePath)) {
+    //   audioFilePath = await this.convertVideoToAudio(filePath);
+    // }
 
     // Split audio into segments if necessary
     const maxSize = 25 * 1024 * 1024; // 25MB
@@ -65,10 +90,18 @@ export default class TranscriptionService {
 
     const fullTranscript = transcripts.join(' ');
 
-
-    await unlinkAsync(audioFilePath);
+    fs.exists(audioFilePath, (exists: boolean) => {
+      if (exists) {
+        unlinkAsync(audioFilePath);
+      }
+    })
     for (const segmentPath of audioSegments) {
-      await unlinkAsync(segmentPath);
+      fs.exists(segmentPath, (exists: boolean) => {
+        if (exists) {
+          unlinkAsync(segmentPath);
+        }
+      })
+      // unlinkAsync(segmentPath);
     }
 
     return fullTranscript;
