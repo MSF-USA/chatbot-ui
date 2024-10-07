@@ -1,13 +1,15 @@
-import React, { FC, useEffect, useState, useRef } from "react";
+import React, {FC, useEffect, useState, useRef, Dispatch, SetStateAction} from "react";
 import MicIcon from "@/components/Icons/mic";
 import { IconPlayerRecordFilled } from "@tabler/icons-react";
 
-interface ChatInputVoiceCaptureProps {}
+interface ChatInputVoiceCaptureProps {
+    setTextFieldValue: Dispatch<SetStateAction<string>>;
+}
 
 const SILENCE_THRESHOLD = -50; // in decibels
 const MAX_SILENT_DURATION = 6000; // in milliseconds
 
-const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = () => {
+const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldValue }) => {
     const [hasMicrophone, setHasMicrophone] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [transcribedText, setTranscribedText] = useState("");
@@ -170,7 +172,8 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = () => {
             const transcribeResult = await transcribeResponse.json();
             const transcript = transcribeResult.transcript;
 
-            setTranscribedText((prevText) => prevText + transcript);
+            // setTranscribedText((prevText) => prevText + transcript);
+            setTextFieldValue((prevText) => prevText?.length ? prevText + ' ' + transcript : transcript);
 
         } catch (error) {
             console.error('Error during transcription:', error);
@@ -194,10 +197,6 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = () => {
 
                 <span className="sr-only">Voice input</span>
             </button>
-            {isRecording && <div className="recording-indicator">Recording...</div>}
-            {transcribedText && (
-                <div className="transcribed-text">Transcribed Text: {transcribedText}</div>
-            )}
         </div>
     );
 };
