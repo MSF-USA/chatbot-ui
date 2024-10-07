@@ -7,6 +7,9 @@ import { promisify } from 'util';
 import { AzureOpenAI } from 'openai'
 import axios from 'axios';
 import FormData from 'form-data';
+import {ITranscriptionService} from "@/types/transcription";
+import {WhisperTranscriptionService} from "@/services/transcription/whisperTranscriptionService";
+import {ACSTranscriptionService} from "@/services/transcription/azureSpeechTranscriptionService";
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -230,3 +233,17 @@ export default class TranscriptionService {
     }
   }
 }
+
+
+export class TranscriptionServiceFactory {
+  static getTranscriptionService(method: 'whisper' | 'azureCognitiveSpeechService'): ITranscriptionService {
+    if (method === 'whisper') {
+      return new WhisperTranscriptionService();
+    } else if (method === 'azureCognitiveSpeechService') {
+      return new ACSTranscriptionService();
+    } else {
+      throw new Error('Invalid transcription method');
+    }
+  }
+}
+
