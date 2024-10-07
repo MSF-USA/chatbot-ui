@@ -48,12 +48,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // Construct file path
     const filePath = `${userId}/uploads/files/${id}`;
 
-    // Get a reference to the blob client
-    const blobClient = blobStorageClient.get(filePath, BlobProperty.BLOB);
-
     // Download the file to a temporary path
     const blockBlobClient = blobStorageClient.getBlockBlobClient(filePath);
-    const tmpFilePath = join(tmpdir(), `${id}_${Date.now()}`);
+    const tmpFilePath = join(tmpdir(), `${Date.now()}_${id}`);
     await blockBlobClient.downloadToFile(tmpFilePath);
 
     // Initialize the TranscriptionService
