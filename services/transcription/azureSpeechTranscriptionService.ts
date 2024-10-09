@@ -75,7 +75,6 @@ export class ACSTranscriptionService implements ITranscriptionService {
     const result = await new Promise<sdk.SpeechRecognitionResult>((resolve, reject) => {
       recognizer.recognizeOnceAsync(
         (result: sdk.SpeechRecognitionResult) => {
-          console.log('Recognition result:', result);
           resolve(result);
           recognizer.close();
         },
