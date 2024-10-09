@@ -75,15 +75,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // Transcribe the file
     transcript = await transcriptionService.transcribe(tmpFilePath);
 
-    // Clean up temporary files
-    await unlinkAsync(tmpFilePath);
-
-    // Clean up temporary files
-    fs.exists(tmpFilePath, (exists: boolean) => {
-        if (exists) {
-          fs.unlink(tmpFilePath, ()=>null);
-        }
-    })
+    unlinkAsync(tmpFilePath);
+    // **Delete the blob from Azure Blob Storage**
+    blockBlobClient.delete();
 
     return NextResponse.json({ transcript });
   } catch (error) {
