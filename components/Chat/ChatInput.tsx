@@ -1,4 +1,4 @@
-import {IconArrowDown, IconPlayerStop, IconRepeat, IconSend,} from '@tabler/icons-react';
+import { IconArrowDown, IconRepeat } from '@tabler/icons-react';
 import {
   Dispatch,
   KeyboardEvent,
@@ -11,7 +11,7 @@ import {
   useState,
 } from 'react';
 
-import {useTranslation} from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 
 import {
   ChatInputSubmitTypes,
@@ -35,6 +35,7 @@ import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload
 import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPreviews";
 import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
 import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
+import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -80,6 +81,8 @@ export const ChatInput = ({
   const [placeholderText, setPlaceholderText] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
+
 
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
@@ -400,6 +403,9 @@ export const ChatInput = ({
     }
   };
 
+  const preventSubmission = (): boolean => {
+    return isTranscribing || messageIsStreaming;
+  }
 
   return (
     <div
@@ -461,12 +467,17 @@ export const ChatInput = ({
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
           />
-          <ChatInputVoiceCapture
-            setTextFieldValue={setTextFieldValue}
-          />
 
           <div
-            className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
+            className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4"
+          >
+            <div className="absolute left-2 top-3">
+              <ChatInputVoiceCapture
+                setTextFieldValue={setTextFieldValue}
+                setIsTranscribing={setIsTranscribing}
+              />
+            </div>
+
             <textarea
               ref={textareaRef}
               className="m-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 lg:"
@@ -480,7 +491,7 @@ export const ChatInput = ({
                     : 'hidden'
                 }`,
               }}
-              placeholder={placeholderText}
+              placeholder={isTranscribing ? 'Transcribing...' : placeholderText} // Change placeholder when transcribing
               value={
                 textFieldValue
               }
@@ -489,26 +500,19 @@ export const ChatInput = ({
               onCompositionEnd={() => setIsTyping(false)}
               onChange={handleChange}
               onKeyDown={handleKeyDown}
+              disabled={preventSubmission()}
             />
 
             <div
               className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
             >
-              {messageIsStreaming ? (
-                <button
-                  className="flex items-center gap-1 rounded px-3 py-1 text-black
-            hover:opacity-80 dark:border-neutral-600 dark:text-red-600"
-                  onClick={handleStopConversation}
-                >
-                  <IconPlayerStop size={18}/>
-                </button>
-                // <div
-                //     className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
-              ) : (
-                <button onClick={handleSend}>
-                  <IconSend size={18}/>
-                </button>
-              )}
+              <ChatInputSubmitButton
+                   messageIsStreaming={messageIsStreaming}
+                   isTranscribing={isTranscribing}
+                   handleSend={handleSend}
+                   handleStopConversation={handleStopConversation}
+                   preventSubmission={preventSubmission}
+                 />
             </div>
 
             {showScrollDownButton && (
