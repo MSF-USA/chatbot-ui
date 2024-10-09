@@ -8,8 +8,8 @@ export class ACSTranscriptionService implements ITranscriptionService {
   private region: string;
 
   constructor() {
-    const subscriptionKey = process.env.ACS_API_KEY;
-    const serviceRegion = process.env.ACS_REGION;
+    const subscriptionKey = process.env.AZURE_SPEECH_API_KEY;
+    const serviceRegion = process.env.AZURE_SPEECH_REGION;
 
     if (!subscriptionKey || !serviceRegion) {
       throw new Error('ACS API key or region is not set.');
