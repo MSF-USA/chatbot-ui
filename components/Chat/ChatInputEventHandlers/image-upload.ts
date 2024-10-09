@@ -1,23 +1,27 @@
 import React, {Dispatch, MutableRefObject, SetStateAction} from "react";
-import {ChatInputSubmitTypes, ImageMessageContent} from "@/types/chat";
+import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from "@/types/chat";
 import toast from "react-hot-toast";
+import {isChangeEvent} from "@/components/Chat/ChatInputEventHandlers/common";
 
 export const onImageUpload = async (
-  event: React.ChangeEvent<any>,
-  prompt: string,
-  setFilePreviews: Dispatch<SetStateAction<string[]>>,
+  event: React.ChangeEvent<any> | Event | File,
+  prompt: any,
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<SetStateAction<ImageMessageContent | null | undefined>>
+  setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>
 ) => {
-    event.preventDefault();
-    const file = event.target.files[0];
+    let file: File;
+    if (isChangeEvent(event)) {
+        (event as React.ChangeEvent<any>).preventDefault();
+        file = (event as React.ChangeEvent<any>).target.files[0];
+    } else {
+        file = event as File;
+    }
 
     if (!file) {
         setSubmitType("text");
         return;
     }
-
-    setSubmitType("image");
 
     if (file.size > 5242480) {
         toast.error("Image upload must be <5mb");
@@ -35,8 +39,24 @@ export const onImageUpload = async (
         },
     };
 
-    setImageFieldValue(imageMessage);
-    setFilePreviews((prevFilePreviews) => [...(prevFilePreviews || []), base64String]);
+    // @ts-ignore
+    setFileFieldValue((prevValue) => {
+        if (prevValue && Array.isArray(prevValue)) {
+            setSubmitType("multi-file");
+            return [...prevValue, imageMessage];
+        } else if (prevValue) {
+            setSubmitType("multi-file");
+            return [prevValue, imageMessage];
+        } else {
+            setSubmitType("image");
+            return [imageMessage];
+        }
+    });
+    setFilePreviews((prevFilePreviews) => prevFilePreviews.map((preview) =>
+        preview.name === file.name ? { ...preview, previewUrl: base64String,  status: 'completed' } : preview
+      )
+    );
+    // setFilePreviews((prevFilePreviews) => [...(prevFilePreviews || []), base64String]);
 };
 
 const readFileAsDataURL = (file: File): Promise<string> => {

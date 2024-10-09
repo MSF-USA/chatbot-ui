@@ -7,22 +7,22 @@ import {
   OPENAI_API_HOST,
   OPENAI_API_VERSION,
 } from '@/utils/app/const';
+
 import { loadDocument } from '@/utils/server/file-handling';
 
-import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
 import { OpenAIStream } from 'ai';
-import mammoth from 'mammoth';
-import { lookup } from 'mime-types';
-import OpenAI from 'openai';
-import pdfParse from 'pdf-parse';
+import OpenAI from "openai";
+
+
 
 interface parseAndQueryFilterOpenAIArguments {
-  file: File;
-  prompt: string;
-  token: JWT;
-  modelId: string;
-  maxLength?: number;
-  user: Session['user'];
+    file: File;
+    prompt: string;
+    token: JWT;
+    modelId: string;
+    maxLength?: number;
+    stream?: boolean;
+    user: Session['user'];
 }
 
 async function summarizeChunk(
@@ -61,16 +61,19 @@ async function summarizeChunk(
   return typedChunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
 }
 
-export async function parseAndQueryFileOpenAI({
-  file,
-  prompt,
-  token,
-  modelId,
-  maxLength = 6000,
-  user,
-}: parseAndQueryFilterOpenAIArguments): Promise<ReadableStream<any>> {
-  const fileContent = await loadDocument(file);
-  let chunks: string[] = splitIntoChunks(fileContent);
+export async function parseAndQueryFileOpenAI(
+  {
+    file,
+    prompt,
+    token,
+    modelId,
+    maxLength = 6000,
+    stream = true,
+    user
+  }: parseAndQueryFilterOpenAIArguments
+): Promise<ReadableStream<any> | string> {
+    const fileContent = await loadDocument(file);
+    let chunks: string[] = splitIntoChunks(fileContent);
 
   const openAIArgs: any = {
     baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelId}`,
@@ -131,15 +134,24 @@ export async function parseAndQueryFileOpenAI({
     ],
     temperature: 0.1,
     max_tokens: null,
-    stream: true,
+    stream: stream, // Use the stream parameter here
     user: JSON.stringify(user),
     file_upload: true,
   } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
     file_upload: boolean;
   });
 
-  const stream: ReadableStream<any> = OpenAIStream(response as any);
-  return stream;
+  if (stream) {
+        // @ts-ignore
+        const streamResponse: ReadableStream<any> = OpenAIStream(response as any);
+        return streamResponse;
+    } else {
+        const completionText = (response as any).choices[0].message.content;
+        if (!completionText) {
+            throw new Error(`Empty response returned from API! ${JSON.stringify(response)}`)
+        }
+        return completionText;
+    }
 }
 
 function splitIntoChunks(text: string, chunkSize: number = 6000): string[] {
