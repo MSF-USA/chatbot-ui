@@ -4,12 +4,13 @@ import { IconPlayerRecordFilled } from "@tabler/icons-react";
 
 interface ChatInputVoiceCaptureProps {
     setTextFieldValue: Dispatch<SetStateAction<string>>;
+    setIsTranscribing: Dispatch<SetStateAction<boolean>>;
 }
 
 const SILENCE_THRESHOLD = -50; // in decibels
 const MAX_SILENT_DURATION = 6000; // in milliseconds
 
-const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldValue }) => {
+const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldValue, setIsTranscribing }) => {
     const [hasMicrophone, setHasMicrophone] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
     const [transcribedText, setTranscribedText] = useState("");
@@ -143,7 +144,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
     };
 
     const transcribeAudio = async (audioBlob: Blob) => {
-        // Upload the audioBlob to the server
+        setIsTranscribing(true);
         try {
             const filename = 'audio.webm';
             const mimeType = 'audio/x-matroska';
@@ -163,6 +164,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
             const base64Data = base64Chunk.split(',')[1];
             // const base64Data = base64Chunk;
 
+            // Upload the audioBlob to the server
             const uploadResponse = await fetch(
               `/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
               {
@@ -200,6 +202,8 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
 
         } catch (error) {
             console.error('Error during transcription:', error);
+        } finally {
+            setIsTranscribing(false);
         }
     };
 
