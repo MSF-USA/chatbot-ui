@@ -3,9 +3,11 @@ import {
   IconCheck,
   IconCopy,
   IconEdit,
+  IconLoader2,
   IconRobot,
   IconTrash,
   IconUser,
+  IconVolume,
 } from '@tabler/icons-react';
 import {
   Dispatch,
@@ -63,6 +65,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false)
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+
   const previousCitations = useRef<Citation[]>([]);
   const previousQuestions = useRef<Question[]>([]);
   const citationsProcessed = useRef(false);
@@ -93,6 +99,39 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const questionsToShow = citationsProcessed.current
     ? questions
     : previousQuestions.current;
+
+  const handleTTS = async () => {
+    try {
+      setIsGeneratingAudio(true);
+      const response = await fetch('/api/v2/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: displayContentWithoutCitations }),
+      });
+
+      if (!response.ok) {
+        throw new Error('TTS conversion failed');
+      }
+
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const audio = new Audio(url);
+
+      audio.onended = () => {
+        setIsPlaying(false);
+        URL.revokeObjectURL(url);
+      };
+
+      setIsGeneratingAudio(false);
+      setIsPlaying(true);
+      audio.play();
+    } catch (error) {
+      console.error('Error in TTS:', error);
+      setIsPlaying(false);
+    }
+  };
 
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
@@ -163,7 +202,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             {displayContentWithoutCitations}
           </MemoizedReactMarkdown>
 
-          <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
+          <div
+            className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
             {messageCopied ? (
               <IconCheck
                 size={20}
@@ -174,13 +214,21 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 onClick={copyOnClick}
               >
-                <IconCopy size={20} />
+                <IconCopy size={20}/>
               </button>
             )}
+            <button
+              className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+              onClick={handleTTS}
+              disabled={isPlaying || isGeneratingAudio}
+            >
+              {isGeneratingAudio ? <IconLoader2 size={20} /> : <IconVolume size={20}/>}
+            </button>
+
           </div>
         </div>
         {citationsToShow.length > 0 && (
-          <CitationList citations={citationsToShow} />
+          <CitationList citations={citationsToShow}/>
         )}
 
         {questionsToShow.length > 0 && (
