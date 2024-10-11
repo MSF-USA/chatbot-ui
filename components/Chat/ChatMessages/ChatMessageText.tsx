@@ -68,6 +68,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false)
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
 
   const previousCitations = useRef<Citation[]>([]);
   const previousQuestions = useRef<Question[]>([]);
@@ -103,6 +104,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const handleTTS = async () => {
     try {
       setIsGeneratingAudio(true);
+      setLoadingMessage("Generating audio...");
       const response = await fetch('/api/v2/tts', {
         method: 'POST',
         headers: {
@@ -115,13 +117,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         throw new Error('TTS conversion failed');
       }
 
+      setLoadingMessage("Processing audio...");
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
       setIsGeneratingAudio(false);
+      setLoadingMessage(null);
     } catch (error) {
       console.error('Error in TTS:', error);
       setIsGeneratingAudio(false);
+      setLoadingMessage("Error generating audio. Please try again.");
+      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
     }
   };
 
@@ -132,6 +138,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       </div>
 
       <div className="prose mt-[-2px] w-full dark:prose-invert">
+        {loadingMessage && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
+            {loadingMessage}
+          </div>
+        )}
         {audioUrl && (
           <div className={'flex flex-row'}>
             <audio
@@ -224,13 +235,22 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 <IconCopy size={20}/>
               </button>
             )}
-            <button
-              className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-              onClick={handleTTS}
-              disabled={isPlaying || isGeneratingAudio}
-            >
-              {isGeneratingAudio ? <IconLoader2 size={20} /> : <IconVolume size={20}/>}
-            </button>
+            {!audioUrl && (
+              <button
+                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                onClick={handleTTS}
+                disabled={isGeneratingAudio}
+              >
+                {isGeneratingAudio ? (
+                  <div className="flex items-center">
+                    <IconLoader2 size={20} className="animate-spin mr-2" />
+                    <span className="text-xs">{loadingMessage}</span>
+                  </div>
+                ) : (
+                  <IconVolume size={20} />
+                )}
+              </button>
+            )}
 
           </div>
         </div>
