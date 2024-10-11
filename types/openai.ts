@@ -4,6 +4,8 @@ export interface OpenAIModel {
   name: string;
   maxLength: number; // maximum length of a message
   tokenLimit: number;
+  temperature?: number;
+  stream?: boolean;
 }
 
 export enum OpenAIModelID {
@@ -45,5 +47,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     name: 'o1',
     maxLength: 80000,
     tokenLimit: 8000,
+    stream: false,
+    temperature: 1,
   }
 };
