@@ -34,7 +34,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   let transcript: string | undefined;
 
   try {
-    // Get the session and user ID
     // @ts-ignore
     const token: JWT | null = await getToken({ req: request as any });
     if (!token)
@@ -46,7 +45,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // @ts-ignore
     const userId: string = (session.user as any)?.id ?? token.userId ?? 'anonymous';
 
-    // Initialize blob storage client
     let blobStorageClient: BlobStorage = new AzureBlobStorage(
       getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user: session.user }),
       getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user: session.user }),
@@ -61,7 +59,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       session.user
     );
 
-    // Construct file path
     const filePath = `${userId}/uploads/files/${id}`;
 
     // Download the file to a temporary path
@@ -72,7 +69,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     // @ts-expect-error This is handled in logic above making sure that the name is not null and valid
     const transcriptionService = TranscriptionServiceFactory.getTranscriptionService(transcriptionServiceName);
 
-    // Transcribe the file
     transcript = await transcriptionService.transcribe(tmpFilePath);
 
     unlinkAsync(tmpFilePath);
@@ -84,7 +80,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     console.error('Error during transcription:', error);
     if (transcript)
       return NextResponse.json({ transcript });
-    return NextResponse.json({ error: 'Failed to transcribe file' }, { status: 500 });
+    return NextResponse.json({ message: 'Failed to transcribe audio' }, { status: 500 });
   }
-  // return NextResponse.json({ error: 'Failed to transcribe file' }, { status: 500 });
 }
