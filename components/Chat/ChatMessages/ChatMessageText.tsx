@@ -117,19 +117,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-
-      audio.onended = () => {
-        setIsPlaying(false);
-        URL.revokeObjectURL(url);
-      };
-
+      setAudioUrl(url);
       setIsGeneratingAudio(false);
-      setIsPlaying(true);
-      audio.play();
     } catch (error) {
       console.error('Error in TTS:', error);
-      setIsPlaying(false);
+      setIsGeneratingAudio(false);
     }
   };
 
@@ -140,6 +132,21 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       </div>
 
       <div className="prose mt-[-2px] w-full dark:prose-invert">
+        {audioUrl && (
+          <div className={'flex flex-row'}>
+            <audio
+              src={audioUrl}
+              controls
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => {
+                setIsPlaying(false);
+                URL.revokeObjectURL(audioUrl);
+                setAudioUrl(null);
+              }}
+            />
+          </div>
+        )}
         <div className="flex flex-row">
           <MemoizedReactMarkdown
             className="prose dark:prose-invert flex-1"
