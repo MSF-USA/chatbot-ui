@@ -1,12 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import * as sdk from "microsoft-cognitiveservices-speech-sdk";
-import { Readable } from "stream";
+import { NextRequest, NextResponse } from 'next/server';
+import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
+import { Readable } from 'stream';
 
 export async function POST(request: NextRequest) {
   try {
     const { text } = await request.json();
     if (!text) {
-      return NextResponse.json({ error: "No text provided" }, { status: 400 });
+      return NextResponse.json({ error: 'No text provided' }, { status: 400 });
     }
 
     const speechConfig = sdk.SpeechConfig.fromSubscription(
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       );
     });
   } catch (error) {
-    console.error("Error in text-to-speech conversion:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    console.error('Error in text-to-speech conversion:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
