@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const { text } = await request.json();
     if (!text) {
