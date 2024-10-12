@@ -37,6 +37,7 @@ import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCap
 import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
 import ChatInputUrl from "@/components/Chat/ChatInput/ChatInputUrl";
+import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -467,6 +468,11 @@ export const ChatInput = ({
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
+          />
+
+          <ChatInputTranslate
+            setTextFieldValue={setTextFieldValue}
+            handleSend={handleSend}
           />
 
           <ChatInputUrl
