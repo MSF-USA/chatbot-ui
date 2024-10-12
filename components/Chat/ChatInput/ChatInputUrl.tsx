@@ -65,6 +65,7 @@ const ChatInputUrl = ({
   const [isModalOpen, setModalOpen] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isPulling, setIsPulling] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const {
     state: { user },
@@ -91,6 +92,7 @@ const ChatInputUrl = ({
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setIsPulling(true)
 
     try {
       const response = await fetch('/api/v2/web/pull', {
@@ -141,6 +143,8 @@ const ChatInputUrl = ({
     } catch (error: any) {
       console.error(error);
       setError(error.message || 'An error occurred while fetching the URL content');
+    } finally {
+      setIsPulling(false);
     }
   };
 
@@ -176,6 +180,7 @@ const ChatInputUrl = ({
                            text-gray-900 dark:text-white bg-white dark:bg-gray-700"
               />
               {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+              {isPulling && <p className="text-gray-500 text-sm mt-2 animate-pulse">Attempting pull from url...</p>}
               <div className="mt-4 flex justify-end space-x-2">
                 <button
                   type="button"
