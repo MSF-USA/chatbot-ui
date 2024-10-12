@@ -1,11 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
+import { cleanMarkdown } from "@/utils/app/clean";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const { text } = await request.json();
-    if (!text) {
+    const cleanedText = cleanMarkdown(text);
+    if (!text || !cleanedText) {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
     }
 
@@ -19,7 +21,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     return new Promise((resolve, reject) => {
       synthesizer.speakTextAsync(
-        text,
+        cleanedText,
         (result) => {
           if (result.reason === sdk.ResultReason.SynthesizingAudioCompleted) {
             // 3. Stream the audio file back to the user
