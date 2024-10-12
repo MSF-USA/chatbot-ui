@@ -22,12 +22,13 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   const [domainSpecific, setDomainSpecific] = useState("general");
   const [useFormalLanguage, setUseFormalLanguage] = useState(false);
   const [useGenderNeutralLanguage, setUseGenderNeutralLanguage] = useState(false);
+  const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
 
   useEffect(() => {
     if (isReadyToSend) {
-      handleSend();
       setIsReadyToSend(false); // Reset the flag
+      handleSend();
     }
   }, [isReadyToSend, handleSend]);
 
@@ -88,7 +89,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
 
     setTextFieldValue(prompt);
     setIsModalOpen(false);
-    setIsReadyToSend(true)
+    setIsReadyToSend(autoSubmit);
   };
 
   if (isModalOpen) {
@@ -149,6 +150,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                     </select>
                   </div>
                   <button
+                    id={'translate-language-swap'}
                     onClick={() => {
                       const temp = sourceLanguage;
                       setSourceLanguage(targetLanguage);
@@ -307,13 +309,29 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                     </div>
                   )}
                 </div>
+                {/* Add auto-submit toggle before the Translate button */}
+                <div className="flex items-center mt-4">
+                  <input
+                    id="auto-submit"
+                    type="checkbox"
+                    checked={autoSubmit}
+                    onChange={(e) => setAutoSubmit(e.target.checked)}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                  />
+                  <label
+                    htmlFor="auto-submit"
+                    className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
+                  >
+                    Auto-submit translation
+                  </label>
+                </div>
                 {/* Translate button */}
                 <div className="mt-6">
                   <button
                     onClick={handleTranslate}
                     className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                   >
-                    Translate
+                    {autoSubmit ? "Translate" : "Generate Prompt"}
                   </button>
                 </div>
               </div>
