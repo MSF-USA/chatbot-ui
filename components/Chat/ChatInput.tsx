@@ -36,6 +36,7 @@ import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPr
 import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
 import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
+import ChatInputUrl from "@/components/Chat/ChatInput/ChatInputUrl";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -467,6 +468,16 @@ export const ChatInput = ({
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
           />
+
+          <ChatInputUrl
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+            setUploadProgress={setUploadProgress}
+          />
+
 
           <div
             className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4"
