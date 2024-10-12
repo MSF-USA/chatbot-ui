@@ -6,7 +6,6 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import FileIcon from '@/components/Icons/file';
 import HomeContext from '@/pages/api/home/home.context';
 import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 import {
@@ -15,7 +14,7 @@ import {
   FileMessageContent,
   ImageMessageContent,
 } from '@/types/chat';
-import {IconLink, IconPaperclip} from "@tabler/icons-react";
+import { IconLink } from "@tabler/icons-react";
 import crypto from 'crypto';
 
 interface ChatInputUrlProps {
