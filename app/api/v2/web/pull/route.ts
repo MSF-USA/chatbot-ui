@@ -27,7 +27,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       });
     }
 
-    const resp = await fetch(validatedUrl.toString());
+    const resp = await fetch(
+      validatedUrl.toString(),
+      {headers: {
+        'User-Agent': process.env.USER_AGENT ?? 'MSF Assistant'
+      }}
+    );
     if (!resp.ok) {
       return NextResponse.json({ error: 'Failed to fetch the URL' }, {
         status: resp.status,
@@ -38,16 +43,22 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const html = await resp.text();
 
     const $ = cheerio.load(html);
+
+    const title = $('title').text().trim() || 'No title found';
+    const host = validatedUrl.host;
+
     $('script, iframe, style, link[rel="stylesheet"], noscript').remove();
     const textContent = $('body').text();
-
-    // Clean up the text by replacing multiple whitespaces with a single space
     const cleanText = textContent.replace(/\s+/g, ' ').trim();
 
-    return NextResponse.json({ content: cleanText }, {
+    // Combine title, host, and content
+    const finalContent = `Title: ${title}\nURL: ${host}\n\n${cleanText}`;
+
+    return NextResponse.json({ content: finalContent }, {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });
+
 
   } catch (error: any) {
     return NextResponse.json(
