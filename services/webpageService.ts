@@ -74,7 +74,7 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
   const cleanText = textContent.replace(/\s+/g, ' ').trim();
 
   // Combine title, host, and content
-  const finalContent = `Title: ${title}\nURL: ${host}\n\n${cleanText}`;
+  const finalContent = `# ${title}\n## URL: ${host}\n\n## Content\n\n${cleanText}`;
 
   return finalContent;
 }
