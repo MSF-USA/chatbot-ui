@@ -103,7 +103,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
         className="absolute top-1 right-1 rounded-full"
         onClick={(event) => removeFilePreview(event, filePreview)}
       >
-        <XIcon className="bg-[#212121] rounded w-4 h-4"/>
+        <XIcon className="dark:bg-[#212121] bg-white rounded w-4 h-4"/>
         <span className="sr-only">Remove</span>
       </button>
     </div>
