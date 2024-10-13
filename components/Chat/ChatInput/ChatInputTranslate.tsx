@@ -39,6 +39,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     { value: "es", label: "Spanish" },
     { value: "fr", label: "French" },
     { value: "de", label: "German" },
+    { value: "nl", label: "Dutch" },
     { value: "it", label: "Italian" },
     { value: "pt", label: "Portuguese" },
     { value: "ru", label: "Russian" },
@@ -47,7 +48,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     { value: "ko", label: "Korean" },
     { value: "ar", label: "Arabic" },
     { value: "hi", label: "Hindi" },
-  ];
+  ].sort((a, b) => a.label.localeCompare(b.label));
 
   const handleTranslate = () => {
     if (!inputText.trim()) {
@@ -147,7 +148,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       value={sourceLanguage}
                       onChange={(e) => setSourceLanguage(e.target.value)}
                     >
-                      <option value="">Auto-detect</option>
+                      <option value="" className={'text-gray-400 dark:text-gray-400'}>Auto-detect</option>
                       {languages.map((language) => (
                         <option key={language.value} value={language.value}>
                           {language.label}
@@ -193,7 +194,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       value={targetLanguage}
                       onChange={(e) => setTargetLanguage(e.target.value)}
                     >
-                      <option value="">Select language</option>
+                      <option value="" className={'text-gray-400 dark:text-gray-400'}>Select language</option>
                       {languages.map((language) => (
                         <option key={language.value} value={language.value}>
                           {language.label}
@@ -213,7 +214,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                   <textarea
                     id="input-text"
                     rows={6}
-                    className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                    className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     placeholder="Type or paste your text here"
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
