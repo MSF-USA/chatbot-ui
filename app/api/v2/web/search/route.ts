@@ -4,8 +4,14 @@ export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
 import {fetchAndParseWebpage, HttpError} from "@/services/webpageService";
+import {Session} from "next-auth";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
+  const session: Session | null = await getServerSession(authOptions as any);
+  if (!session) throw new Error("Failed to pull session!");
+
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q');
   const n = parseInt(searchParams.get('n') ?? '10', 10); // default to 10 articles

@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
 import { cleanMarkdown } from "@/utils/app/clean";
+import {Session} from "next-auth";
+import {getServerSession} from "next-auth/next";
+import {authOptions} from "@/pages/api/auth/[...nextauth]";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
+  const session: Session | null = await getServerSession(authOptions as any);
+  if (!session) throw new Error("Failed to pull session!");
+
   try {
     const { text } = await request.json();
     const cleanedText = cleanMarkdown(text);
