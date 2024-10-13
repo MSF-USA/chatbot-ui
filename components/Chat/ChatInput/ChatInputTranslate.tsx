@@ -72,6 +72,8 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
       }:\n\n\`\`\`${sourceLanguage}\n${inputText}\n\`\`\``;
     }
 
+    prompt += '\n\nRespond with directly markdown formatted text (not in a code block) matching the original as closely as possible, making only language-appropriate adjustments.';
+
     // Include advanced options in the prompt if selected
     if (translationType !== "balanced") {
       prompt += `\n\nTranslation type: ${translationType}`;
