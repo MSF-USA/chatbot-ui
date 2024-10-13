@@ -16,6 +16,7 @@ import {
 } from '@/types/chat';
 import { IconLink } from "@tabler/icons-react";
 import crypto from 'crypto';
+import BetaBadge from "@/components/Beta/Badge";
 
 interface ChatInputUrlProps {
   onFileUpload: (
@@ -165,10 +166,11 @@ const ChatInputUrl = ({
             ref={modalRef}
             className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl"
           >
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
               Enter URL
             </h2>
-            <form onSubmit={handleUrlSubmit}>
+            <BetaBadge />
+            <form onSubmit={handleUrlSubmit} className={'mt-3'}>
               <input
                 type="url"
                 value={urlInput}

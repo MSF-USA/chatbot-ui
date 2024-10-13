@@ -2,6 +2,7 @@ import { FC } from "preact/compat";
 import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
 import { IconLanguage } from "@tabler/icons-react";
 import toast from "react-hot-toast";
+import BetaBadge from "@/components/Beta/Badge";
 
 interface ChatInputTranslateProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -104,6 +105,8 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
             <div className="relative w-full max-w-2xl p-6 mx-auto bg-white dark:bg-gray-800 rounded-md shadow-lg">
               {/* Modal header */}
               <div className="flex justify-between items-center border-b pb-3">
+                <BetaBadge />
+
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-white flex items-center">
                   <IconLanguage className="h-8 w-8 mr-2" />
                   Language Translator
