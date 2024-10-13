@@ -93,6 +93,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     setTextFieldValue(prompt);
     setIsModalOpen(false);
     setIsReadyToSend(autoSubmit);
+    setInputText("");
   };
 
   if (isModalOpen) {
