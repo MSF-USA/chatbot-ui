@@ -25,6 +25,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   const [useGenderNeutralLanguage, setUseGenderNeutralLanguage] = useState(false);
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
+  const [useTargetLanguageDropdown, setUseTargetLanguageDropdown] = useState<boolean>(true);
 
   useEffect(() => {
     if (isReadyToSend) {
@@ -35,19 +36,19 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
 
 
   const languages = [
-    { value: "en", label: "English" },
-    { value: "es", label: "Spanish" },
-    { value: "fr", label: "French" },
-    { value: "de", label: "German" },
-    { value: "nl", label: "Dutch" },
-    { value: "it", label: "Italian" },
-    { value: "pt", label: "Portuguese" },
-    { value: "ru", label: "Russian" },
-    { value: "zh", label: "Chinese" },
-    { value: "ja", label: "Japanese" },
-    { value: "ko", label: "Korean" },
-    { value: "ar", label: "Arabic" },
-    { value: "hi", label: "Hindi" },
+    { value: "en", label: "English", autonym: "English" },
+    { value: "es", label: "Spanish", autonym: "Español" },
+    { value: "fr", label: "French", autonym: "Français" },
+    { value: "de", label: "German", autonym: "Deutsch" },
+    { value: "nl", label: "Dutch", autonym: "Nederlands" },
+    { value: "it", label: "Italian", autonym: "Italiano" },
+    { value: "pt", label: "Portuguese", autonym: "Português" },
+    { value: "ru", label: "Russian", autonym: "Русский" },
+    { value: "zh", label: "Chinese", autonym: "中文" },
+    { value: "ja", label: "Japanese", autonym: "日本語" },
+    { value: "ko", label: "Korean", autonym: "한국어" },
+    { value: "ar", label: "Arabic", autonym: "العربية" },
+    { value: "hi", label: "Hindi", autonym: "हिन्दी" },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const handleTranslate = () => {
@@ -151,7 +152,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       <option value="" className={'text-gray-400 dark:text-gray-400'}>Auto-detect</option>
                       {languages.map((language) => (
                         <option key={language.value} value={language.value}>
-                          {language.label}
+                          {language.label} ({language.autonym})
                         </option>
                       ))}
                     </select>
@@ -188,19 +189,43 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                     >
                       To
                     </label>
-                    <select
-                      id="target-language"
-                      className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                      value={targetLanguage}
-                      onChange={(e) => setTargetLanguage(e.target.value)}
-                    >
-                      <option value="" className={'text-gray-400 dark:text-gray-400'}>Select language</option>
-                      {languages.map((language) => (
-                        <option key={language.value} value={language.value}>
-                          {language.label}
-                        </option>
-                      ))}
-                    </select>
+                    {/*<div className="flex items-center space-x-2 mt-1">*/}
+                    {/*  <button*/}
+                    {/*    onClick={() => setUseTargetLanguageDropdown(true)}*/}
+                    {/*    className={`px-3 py-2 rounded-md border ${useTargetLanguageDropdown ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}*/}
+                    {/*  >*/}
+                    {/*    Select*/}
+                    {/*  </button>*/}
+                    {/*  <button*/}
+                    {/*    onClick={() => setUseTargetLanguageDropdown(false)}*/}
+                    {/*    className={`px-3 py-2 rounded-md border ${!useTargetLanguageDropdown ? 'bg-indigo-600 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200'}`}*/}
+                    {/*  >*/}
+                    {/*    Type*/}
+                    {/*  </button>*/}
+                    {/*</div>*/}
+                    {useTargetLanguageDropdown ? (
+                      <select
+                        id="target-language"
+                        className="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        value={targetLanguage}
+                        onChange={(e) => setTargetLanguage(e.target.value)}
+                      >
+                        <option value="" className={'text-gray-400 dark:text-gray-400'}>Select language</option>
+                        {languages.map((language) => (
+                          <option key={language.value} value={language.value}>
+                            {language.label} ({language.autonym})
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        placeholder="Type a language"
+                        className="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                        value={targetLanguage}
+                        onChange={(e) => setTargetLanguage(e.target.value)}
+                      />
+                    )}
                   </div>
                 </div>
                 {/* Input text area */}
@@ -234,7 +259,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       viewBox="0 0 24 24"
                       stroke="currentColor"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
                     </svg>
                   </button>
                   {showAdvanced && (
@@ -281,7 +306,8 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                           </select>
                         </div>
                       </div>
-                      <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0 mt-4">
+                      <div
+                        className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0 mt-4">
                         <div className="flex items-center">
                           <input
                             id="use-formal-language"
@@ -356,7 +382,8 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
             setIsModalOpen(true);
           }}
         >
-          <IconLanguage className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
+          <IconLanguage
+            className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>
           <span className="sr-only">Translate text</span>
         </button>
       </>
