@@ -192,7 +192,7 @@ Put citations throughout your response. At the end of your response provide cita
             className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl"
           >
             <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
-              Search and Ask
+              Web Search
             </h2>
             <form onSubmit={handleSearchSubmit} className={'mt-3'}>
               <div className="mb-4">
