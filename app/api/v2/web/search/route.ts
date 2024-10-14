@@ -35,11 +35,17 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
             displayUrl: article.displayUrl,
             language: article.language,
             dateLastCrawled: article.dateLastCrawled
-          })}\`\`\``
+          })}\n\`\`\``
         )
       } catch (error) {
         finalArticles.push(
-          `\`\`\`article-${i}.md\n# ${article.name}\n\n## URL\n\n${article.url}\n\n# Content\n\n*Failed to fetch content for article*\n\`\`\``
+          `\`\`\`article-${i}.md\n# ${article.name}\n\n## URL\n\n${article.url}\n\n# Content\n\n*Failed to fetch content for article*\n\n${JSON.stringify({
+            title: article.name,
+            url: article.url,
+            displayUrl: article.displayUrl,
+            language: article.language,
+            dateLastCrawled: article.dateLastCrawled
+          })}\n\`\`\``
         )
       } finally {
         i++;
