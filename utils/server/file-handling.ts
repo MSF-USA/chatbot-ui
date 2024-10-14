@@ -3,6 +3,7 @@ import { promisify } from 'util';
 import {lookup} from "mime-types";
 import fs from "fs";
 import path from "path";
+import {retryWithExponentialBackoff} from "@/utils/app/retry";
 
 const execAsync = promisify(exec);
 
@@ -142,44 +143,48 @@ async function pptToText(inputPath: string): Promise<string> {
 
 
 export async function loadDocument(file: File): Promise<string> {
-  let text, content, loader;
-  const mimeType = lookup(file.name) || 'application/octet-stream';
-  const tempFilePath = `/tmp/${file.name}`;
+  return retryWithExponentialBackoff(async () => {
 
-  // Write the file to a temporary location
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.promises.writeFile(tempFilePath, buffer);
+    let text, content, loader;
+    const mimeType = lookup(file.name) || 'application/octet-stream';
+    const tempFilePath = `/tmp/${file.name}`;
 
-  switch (true) {
-    case mimeType.startsWith('application/pdf'):
-      text = await pdfToText(tempFilePath);
-      break;
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
-      text = await convertWithPandoc(tempFilePath, 'markdown');
-      break;
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') || file.name.endsWith('.xlsx'):
-      text = await xlsxToText(tempFilePath)
-      break
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation')
-    || mimeType.startsWith('application/vnd.ms-powerpoint'):
-      text = await pptToText(tempFilePath);
-      break
-    case mimeType.startsWith('application/epub+zip'):
-      text = await convertWithPandoc(tempFilePath, 'markdown');
-      break;
-    case mimeType.startsWith('text/') || mimeType.startsWith('application/csv') || file.name.endsWith('.py') || file.name.endsWith('.sql')
-    || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml') || file.name.endsWith('.tex'):
-    default:
-      try {
-        text = await file.text()
-        if (!text) {
-          // If file.text() fails or returns empty, read from the temp file
-          text = await fs.promises.readFile(tempFilePath, 'utf8');
+    // Write the file to a temporary location
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await fs.promises.writeFile(tempFilePath, buffer);
+
+    switch (true) {
+      case mimeType.startsWith('application/pdf'):
+        text = await pdfToText(tempFilePath);
+        break;
+      case mimeType.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
+        text = await convertWithPandoc(tempFilePath, 'markdown');
+        break;
+      case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') || file.name.endsWith('.xlsx'):
+        text = await xlsxToText(tempFilePath)
+        break
+      case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation')
+      || mimeType.startsWith('application/vnd.ms-powerpoint'):
+        text = await pptToText(tempFilePath);
+        break
+      case mimeType.startsWith('application/epub+zip'):
+        text = await convertWithPandoc(tempFilePath, 'markdown');
+        break;
+      case mimeType.startsWith('text/') || mimeType.startsWith('application/csv') || file.name.endsWith('.py') || file.name.endsWith('.sql')
+      || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml') || file.name.endsWith('.tex'):
+      default:
+        try {
+          text = await file.text()
+          if (!text) {
+            // If file.text() fails or returns empty, read from the temp file
+            text = await fs.promises.readFile(tempFilePath, 'utf8');
+          }
+        } catch (error) {
+          console.error(`Could not parse text from ${file.name}`);
+          throw error;
         }
-      } catch (error) {
-        console.error(`Could not parse text from ${file.name}`);
-        throw error;
-      }
-  }
-  return text;
+    }
+    return text;
+  });
+
 }
