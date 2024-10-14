@@ -33,7 +33,10 @@ interface parseAndQueryFilterOpenAIArguments {
   token: JWT;
   modelId: string;
   maxLength?: number;
+  stream?: boolean;
   user: Session['user'];
+  botId?: string;
+  loggingService: AzureMonitorLoggingService;
 }
 
 async function summarizeChunk(

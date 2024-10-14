@@ -17,12 +17,13 @@ import { useTranslation } from 'next-i18next';
 import { isMobile } from '@/utils/app/env';
 import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
-import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
+import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
 import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement>,
@@ -47,12 +48,13 @@ const onImageUploadButtonClick = async (
 };
 
 export interface ChatInputImageCaptureProps {
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >;
+  setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
 const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
@@ -60,6 +62,7 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
   prompt,
   setFilePreviews,
   setImageFieldValue,
+  setUploadProgress,
 }) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -121,12 +124,14 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
         accept="image/*"
         capture={'environment'}
         onChange={(event) => {
-          onImageUpload(
+          onFileUpload(
             event,
-            prompt,
-            setFilePreviews,
             setSubmitType,
+            setFilePreviews,
             setImageFieldValue,
+            // @ts-ignore
+            setImageFieldValue,
+            setUploadProgress,
           );
         }}
         style={{ display: 'none' }}
@@ -147,6 +152,7 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
         setFilePreviews={setFilePreviews}
         setSubmitType={setSubmitType}
         setImageFieldValue={setImageFieldValue}
+        setUploadProgress={setUploadProgress}
       />
     </>
   );

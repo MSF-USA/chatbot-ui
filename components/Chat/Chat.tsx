@@ -19,6 +19,8 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
+import { makeRequest } from '@/services/frontendChatServices';
+
 import { getEndpoint } from '@/utils/app/api';
 import {
   DEFAULT_SYSTEM_PROMPT,
@@ -34,6 +36,7 @@ import {
   ChatBody,
   Conversation,
   FileMessageContent,
+  FilePreview,
   Message,
   MessageType,
   TextMessageContent,
@@ -103,7 +106,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
-  const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
   const [randomPrompts, setRandomPrompts] = useState<
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
@@ -112,6 +115,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     name: string;
     color: string;
   } | null>(null);
+  const [requestStatusMessage, setRequestStatusMessage] = useState<
+    string | null
+  >(null);
+  const [progress, setProgress] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -159,69 +166,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   useEffect(() => {
     updateBotInfo();
   }, [selectedConversation, updateBotInfo]);
-
-  const makeRequest = async (
-    plugin: Plugin | null,
-    updatedConversation: Conversation,
-  ) => {
-    const chatBody: ChatBody = {
-      model: updatedConversation.model,
-      messages: updatedConversation.messages.slice(-6),
-      key: apiKey,
-      prompt:
-        updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature:
-        updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
-      botId: updatedConversation?.bot,
-    };
-    const endpoint = getEndpoint(plugin);
-    let body;
-    if (!plugin) {
-      body = JSON.stringify(chatBody);
-    } else {
-      body = JSON.stringify({
-        ...chatBody,
-        googleAPIKey: pluginKeys
-          .find((key) => key.pluginId === 'google-search')
-          ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-        googleCSEId: pluginKeys
-          .find((key) => key.pluginId === 'google-search')
-          ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
-      });
-    }
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: controller.signal,
-        body,
-        mode: 'cors',
-      });
-
-      clearTimeout(timeoutId);
-
-      return {
-        controller,
-        body,
-        response,
-      };
-    } catch (error: unknown) {
-      clearTimeout(timeoutId);
-
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out');
-        }
-        throw error;
-      }
-      throw new Error('An unknown error occurred');
-    }
-  };
 
   const setConversationTitle = (
     updatedConversation: Conversation,
@@ -378,10 +322,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         try {
-          const { controller, body, response } = await makeRequest(
-            plugin,
-            updatedConversation,
-          );
+          const { controller, body, response, hasComplexContent } =
+            await makeRequest(
+              plugin,
+              setRequestStatusMessage,
+              updatedConversation,
+              apiKey,
+              pluginKeys,
+              systemPrompt,
+              temperature,
+              true,
+              setProgress,
+            );
+
+          if (hasComplexContent) {
+            // Handle complex content case
+            console.log('Message contains complex content');
+            // Add your logic here
+          }
 
           if (!response.ok) {
             homeDispatch({ field: 'loading', value: false });
@@ -620,9 +578,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, []);
 
   return (
-    <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#212121]">
+    <div className="flex flex-col h-full w-full bg-white dark:bg-[#212121]">
       {showSplash ? (
-        <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
+        <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
             Welcome to the MSF AI Assistant
           </div>
@@ -664,7 +622,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       ) : (
         <>
           <div
-            className="max-h-full overflow-x-hidden"
+            className="flex-1 overflow-auto"
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
@@ -774,7 +732,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </Transition>
                 )}
                 <div className="flex items-center justify-center h-screen">
-                  <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
+                  <div className="mx-auto flex flex-col px-3">
                     <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                       {models.length === 0 ? (
                         <div>
@@ -1005,10 +963,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   />
                 ))}
 
-                {loading && <ChatLoader />}
+                {loading && (
+                  <ChatLoader
+                    requestStatusMessage={requestStatusMessage}
+                    progress={progress}
+                  />
+                )}
 
                 <div
-                  className="h-[162px] bg-white dark:bg-[#212121]"
+                  className="h-[2px] bg-white dark:bg-[#212121]"
                   ref={messagesEndRef}
                 />
               </>

@@ -10,21 +10,22 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
-import { ChatInputSubmitTypes, ImageMessageContent } from '@/types/chat';
+import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
 
-import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onTakePhotoButtonClick = (
   videoRef: MutableRefObject<HTMLVideoElement | null>,
   canvasRef: MutableRefObject<HTMLCanvasElement | null>,
   fileInputRef: MutableRefObject<HTMLInputElement | null>,
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
-  setFilePreviews: Dispatch<SetStateAction<string[]>>,
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >,
   closeModal: () => void,
+  setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>,
 ) => {
   if (videoRef.current && canvasRef.current && fileInputRef.current) {
     canvasRef.current.width = videoRef.current.videoWidth;
@@ -41,13 +42,14 @@ const onTakePhotoButtonClick = (
         fileInputRef.current!.files = dataTransfer.files;
         const newEvent = new Event('change');
         fileInputRef.current!.dispatchEvent(newEvent);
-        onImageUpload(
-          // @ts-ignore
-          newEvent,
-          prompt,
-          setFilePreviews,
-          setSubmitType,
-          setImageFieldValue,
+        onFileUpload(
+            // @ts-ignore
+            newEvent,
+            setSubmitType,
+            setFilePreviews,
+            setImageFieldValue,
+            setImageFieldValue,
+            setUploadProgress,
         );
       }
     }, 'image/png');
@@ -72,11 +74,12 @@ interface CameraModalProps {
   canvasRef: MutableRefObject<HTMLCanvasElement | null>;
   fileInputRef: MutableRefObject<HTMLInputElement | null>;
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >;
+  setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
 export const CameraModal: FC<CameraModalProps> = ({
@@ -89,6 +92,7 @@ export const CameraModal: FC<CameraModalProps> = ({
   setFilePreviews,
   setSubmitType,
   setImageFieldValue,
+  setUploadProgress,
 }) => {
   const { t } = useTranslation('chat');
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
@@ -178,6 +182,7 @@ export const CameraModal: FC<CameraModalProps> = ({
               setSubmitType,
               setImageFieldValue,
               closeModal,
+              setUploadProgress
             );
           }}
           className="w-full bg-blue-500 text-white px-4 py-2 rounded-md flex items-center justify-center"

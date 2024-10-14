@@ -59,7 +59,7 @@ export function getChatMessageContent(message: Message): string {
   } else if ((message.content as TextMessageContent).type === 'text') {
     return (message.content as TextMessageContent).text;
   } else {
-    throw new Error(`Invalid message type or structure: ${message}`);
+    throw new Error(`Invalid message type or structure: ${JSON.stringify(message)}`);
   }
 }
 
@@ -90,6 +90,7 @@ export interface ChatBody {
   prompt: string;
   temperature: number;
   botId: string | undefined;
+  stream?: boolean;
 }
 
 export interface Conversation {
@@ -103,4 +104,13 @@ export interface Conversation {
   bot?: string;
 }
 
-export type ChatInputSubmitTypes = 'text' | 'image' | 'file';
+export type ChatInputSubmitTypes = "text" | "image" | "file" | "multi-file";
+
+type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
+
+export interface FilePreview {
+  name: string;
+  type: string;
+  status: UploadStatus;
+  previewUrl: string;
+}

@@ -3,9 +3,11 @@ import {
   IconCheck,
   IconCopy,
   IconEdit,
+  IconLoader2,
   IconRobot,
   IconTrash,
   IconUser,
+  IconVolume,
 } from '@tabler/icons-react';
 import {
   Dispatch,
@@ -63,6 +65,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+
+  const previousCitations = useRef<Citation[]>([]);
+  const previousQuestions = useRef<Question[]>([]);
   const citationsProcessed = useRef(false);
 
   useEffect(() => {
@@ -98,6 +107,44 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     ? content.split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
 
+  const citationsToShow = citationsProcessed.current
+    ? citations
+    : previousCitations.current;
+
+  const questionsToShow = citationsProcessed.current
+    ? questions
+    : previousQuestions.current;
+
+  const handleTTS = async () => {
+    try {
+      setIsGeneratingAudio(true);
+      setLoadingMessage('Generating audio...');
+      const response = await fetch('/api/v2/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: displayContentWithoutCitations }),
+      });
+
+      if (!response.ok) {
+        throw new Error('TTS conversion failed');
+      }
+
+      setLoadingMessage('Processing audio...');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+      setIsGeneratingAudio(false);
+      setLoadingMessage(null);
+    } catch (error) {
+      console.error('Error in TTS:', error);
+      setIsGeneratingAudio(false);
+      setLoadingMessage('Error generating audio. Please try again.');
+      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
+    }
+  };
+
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
       <div className="min-w-[40px] text-right font-bold">
@@ -105,6 +152,26 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       </div>
 
       <div className="prose mt-[-2px] w-full dark:prose-invert">
+        {loadingMessage && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
+            {loadingMessage}
+          </div>
+        )}
+        {audioUrl && (
+          <div className={'flex flex-row'}>
+            <audio
+              src={audioUrl}
+              controls
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => {
+                setIsPlaying(false);
+                URL.revokeObjectURL(audioUrl);
+                setAudioUrl(null);
+              }}
+            />
+          </div>
+        )}
         <div className="flex flex-row">
           <MemoizedReactMarkdown
             className="prose dark:prose-invert flex-1"
@@ -179,6 +246,22 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 onClick={copyOnClick}
               >
                 <IconCopy size={20} />
+              </button>
+            )}
+            {!audioUrl && (
+              <button
+                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                onClick={handleTTS}
+                disabled={isGeneratingAudio}
+              >
+                {isGeneratingAudio ? (
+                  <div className="flex items-center">
+                    <IconLoader2 size={20} className="animate-spin mr-2" />
+                    <span className="text-xs">{loadingMessage}</span>
+                  </div>
+                ) : (
+                  <IconVolume size={20} />
+                )}
               </button>
             )}
           </div>

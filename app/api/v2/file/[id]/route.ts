@@ -4,6 +4,7 @@ import { getToken } from 'next-auth/jwt';
 import {Session} from "next-auth";
 import {getServerSession} from "next-auth/next";
 import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {getEnvVariable} from "@/utils/app/env";
 
 const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   if (typeof id !== 'string' || id.length < 1) {
@@ -43,15 +44,31 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   if (!session) throw new Error("Failed to pull session!");
 
   // @ts-ignore
-  const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
+  const userId: string = session?.user?.id ?? token.userId ?? 'anonymous';
   const remoteFilepath = `${userId}/uploads/${fileType}s`;
 
   try {
     if (fileType === 'image') {
-      const base64String: string = await getBlobBase64String(userId, id as string);
+      const base64String: string = await getBlobBase64String(
+        userId, id as string,
+        undefined,
+        session.user
+      );
       return NextResponse.json({ base64Url: base64String });
     } else if (fileType === 'file') {
-      const blobStorage = new AzureBlobStorage();
+      const blobStorage = new AzureBlobStorage(
+        getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
+        getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
+        getEnvVariable(
+          {
+            name: 'AZURE_BLOB_STORAGE_CONTAINER',
+            throwErrorOnFail: false,
+            defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+            user: session.user
+          }
+        ),
+        session.user
+      );
       const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.BLOB) as Promise<Buffer>);
       return new NextResponse(blob);
     } else {

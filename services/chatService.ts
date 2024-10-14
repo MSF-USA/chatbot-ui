@@ -17,6 +17,7 @@ import {
   OPENAI_API_VERSION,
 } from '@/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/utils/app/documentSummary';
+import { getEnvVariable } from '@/utils/app/env';
 import {
   StreamProcessingResult,
   createAzureOpenAIStreamProcessor,
@@ -51,7 +52,9 @@ import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion, ChatCompletionChunk } from 'openai/resources';
 import path from 'path';
-import { Readable } from 'stream';
+
+// import ChatCompletion = Chat.ChatCompletion;
+// import {Chat} from "openai/resources";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -271,12 +274,22 @@ export default class ChatService {
     token: JWT,
     user: Session['user'],
   ): Promise<void> {
-    const userId: string = (token as any).userId ?? user?.id ?? 'anonymous';
+    const userId: string = user?.id ?? (token as any).userId ?? 'anonymous';
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop();
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
 
-    const blobStorage = new AzureBlobStorage();
+    const blobStorage = new AzureBlobStorage(
+      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user }),
+      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user }),
+      getEnvVariable({
+        name: 'AZURE_BLOB_STORAGE_CONTAINER',
+        throwErrorOnFail: false,
+        defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+        user,
+      }),
+      user,
+    );
     const blob: Buffer = await (blobStorage.get(
       `${remoteFilepath}/${id}`,
       BlobProperty.BLOB,
