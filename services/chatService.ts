@@ -17,6 +17,10 @@ import {
   OPENAI_API_VERSION,
 } from '@/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/utils/app/documentSummary';
+import {
+  StreamProcessingResult,
+  createAzureOpenAIStreamProcessor,
+} from '@/utils/app/streamProcessor';
 import { AzureBlobStorage, BlobProperty } from '@/utils/server/blob';
 import { getMessagesToSend } from '@/utils/server/chat';
 
@@ -45,6 +49,7 @@ import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
+import { ChatCompletion, ChatCompletionChunk } from 'openai/resources';
 import path from 'path';
 import { Readable } from 'stream';
 
@@ -162,7 +167,12 @@ export default class ChatService {
     token: JWT,
     modelId: string,
     user: Session['user'],
+    botId: string | undefined,
   ): Promise<Response> {
+    const startTime = Date.now();
+    let fileBuffer: Buffer | undefined;
+    let filename: string | undefined;
+
     return this.retryWithExponentialBackoff(async () => {
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
       const content = lastMessage.content as Array<
@@ -194,18 +204,41 @@ export default class ChatService {
         const fileBuffer: Buffer = await this.retryReadFile(filePath);
         const file: File = new File([fileBuffer], filename, {});
 
-        const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({
+        const { stream } = await parseAndQueryFileOpenAI({
           file,
           prompt,
-          token,
           modelId,
           user,
+          botId,
+          loggingService: this.loggingService,
         }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
 
         console.log('File summarized successfully.');
         return new StreamingTextResponse(stream);
       } catch (error) {
         console.error('Error processing the file:', error);
+
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+
+        await this.loggingService.log({
+          EventType: 'FileConversationError',
+          Status: 'error',
+          ModelUsed: modelId,
+          UserId: user.id,
+          UserJobTitle: user.jobTitle,
+          UserDisplayName: user.displayName,
+          UserEmail: user.mail,
+          UserCompanyName: user.companyName,
+          FileUpload: true,
+          FileName: filename,
+          FileSize: fileBuffer ? fileBuffer.length : undefined,
+          Duration: duration,
+          ErrorMessage:
+            error instanceof Error ? error.message : 'Unknown error',
+          ErrorStack: error instanceof Error ? error.stack : undefined,
+        });
+
         throw error;
       } finally {
         try {
@@ -318,75 +351,33 @@ export default class ChatService {
           response = await client.chat.completions.create(commonParams);
         }
 
-        let contentAccumulator = '';
-        let citationsAccumulator: any[] = [];
+        const { stream, contentAccumulator, citationsAccumulator } =
+          //@ts-ignore
+          createAzureOpenAIStreamProcessor(response);
 
-        const stream = new ReadableStream({
-          start: (controller) => {
-            const encoder = new TextEncoder();
+        const streamingResponse = new StreamingTextResponse(stream);
 
-            (async () => {
-              try {
-                // @ts-ignore
-                for await (const chunk of response) {
-                  if (chunk.choices && chunk.choices[0]) {
-                    const choice = chunk.choices[0];
-                    if ('delta' in choice) {
-                      // Bot response with citations
-                      const { content, context } = choice.delta as any;
-                      if (content) {
-                        contentAccumulator += content;
-                        controller.enqueue(encoder.encode(content));
-                      }
-                      if (context && context.citations) {
-                        citationsAccumulator = citationsAccumulator.concat(
-                          context.citations,
-                        );
-                      }
-                    } else if ('text' in choice) {
-                      // Standard OpenAI response
-                      contentAccumulator += choice.text || '';
-                      controller.enqueue(encoder.encode(choice.text || ''));
-                    }
-                  }
-                }
-
-                // Append citations as JSON at the end of the content
-                if (citationsAccumulator.length > 0) {
-                  const citationsJson = JSON.stringify({
-                    citations: citationsAccumulator,
-                  });
-                  controller.enqueue(encoder.encode('\n\n' + citationsJson));
-                }
-
-                controller.close();
-
-                const endTime = Date.now();
-                const duration = endTime - startTime;
-                await this.loggingService.log({
-                  EventType: 'ChatCompletion',
-                  Status: 'success',
-                  ModelUsed: modelToUse,
-                  MessageCount: messagesToSend.length,
-                  Temperature: temperatureToUse,
-                  UserId: user.id,
-                  UserJobTitle: user.jobTitle,
-                  UserDisplayName: user.displayName,
-                  UserEmail: user.mail,
-                  UserCompanyName: user.companyName,
-                  FileUpload: false,
-                  botId: botId,
-                  CitationsCount: citationsAccumulator.length,
-                  Duration: duration,
-                });
-              } catch (error) {
-                controller.error(error);
-              }
-            })();
-          },
+        // Log the completion after the stream is processed
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        await this.loggingService.log({
+          EventType: 'ChatCompletion',
+          Status: 'success',
+          ModelUsed: modelToUse,
+          MessageCount: messagesToSend.length,
+          Temperature: temperatureToUse,
+          UserId: user.id,
+          UserJobTitle: user.jobTitle,
+          UserDisplayName: user.displayName,
+          UserEmail: user.mail,
+          UserCompanyName: user.companyName,
+          FileUpload: false,
+          BotId: botId,
+          CitationsCount: citationsAccumulator.length,
+          Duration: duration,
         });
 
-        return new StreamingTextResponse(stream);
+        return streamingResponse;
       } catch (error) {
         console.error('Error in chat completion:', error);
         let statusCode = 500;
@@ -409,7 +400,7 @@ export default class ChatService {
           MessageCount: messagesToSend.length,
           Temperature: temperatureToUse,
           UserId: user.id,
-          botId: botId,
+          BotId: botId,
           Duration: duration,
           ErrorMessage: errorMessage,
           StatusCode: statusCode,
@@ -472,7 +463,13 @@ export default class ChatService {
     encoding.free();
 
     if (needsToHandleFiles) {
-      return this.handleFileConversation(messagesToSend, token, model.id, user);
+      return this.handleFileConversation(
+        messagesToSend,
+        token,
+        model.id,
+        user,
+        botId,
+      );
     } else {
       return this.handleChatCompletion(
         modelToUse,

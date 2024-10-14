@@ -172,7 +172,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
-      botId: botInfo?.id,
+      botId: updatedConversation?.bot,
     };
     const endpoint = getEndpoint(plugin);
     let body;
@@ -293,15 +293,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
 
-    console.log('Starting to process stream...');
-
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
 
       if (value) {
         const chunkValue = decoder.decode(value);
-        console.log('Received chunk:', chunkValue);
         text += chunkValue;
 
         if (
@@ -346,9 +343,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         });
       }
     }
-
-    console.log('Finished processing stream.');
-    console.log('Final text:', text);
 
     saveConversation(updatedConversationCopy);
 
@@ -571,14 +565,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       setShowSettings(false);
     }
   };
-
-  // useEffect(() => {
-  //   console.log('currentMessage', currentMessage);
-  //   if (currentMessage) {
-  //     handleSend(currentMessage);
-  //     homeDispatch({ field: 'currentMessage', value: undefined });
-  //   }
-  // }, [currentMessage]);
 
   useEffect(() => {
     throttledScrollDown();

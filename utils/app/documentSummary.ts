@@ -1,19 +1,30 @@
 import { JWT } from 'next-auth';
 import { Session } from 'next-auth';
 
+import { AzureMonitorLoggingService } from '@/services/loggingService';
+
 import {
   APIM_CHAT_ENDPONT,
   DEFAULT_SYSTEM_PROMPT,
   OPENAI_API_HOST,
   OPENAI_API_VERSION,
 } from '@/utils/app/const';
+import {
+  StreamProcessingResult,
+  createAzureOpenAIStreamProcessor,
+} from '@/utils/app/streamProcessor';
 import { loadDocument } from '@/utils/server/file-handling';
 
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
 import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
 import { OpenAIStream } from 'ai';
 import mammoth from 'mammoth';
 import { lookup } from 'mime-types';
 import OpenAI from 'openai';
+import { AzureOpenAI } from 'openai';
 import pdfParse from 'pdf-parse';
 
 interface parseAndQueryFilterOpenAIArguments {
@@ -45,58 +56,57 @@ async function summarizeChunk(
         role: 'user',
         content: summaryPrompt,
       },
-    ],
+    ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
     temperature: 0.1,
     max_tokens: 1000,
     stream: false,
     user: JSON.stringify(user),
-    no_log: true,
-  } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
-    no_log: boolean;
   });
-
-  const typedChunkSummary =
-    chunkSummary as OpenAI.Chat.Completions.ChatCompletion;
-
-  return typedChunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
+  return chunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
 }
 
 export async function parseAndQueryFileOpenAI({
   file,
   prompt,
-  token,
   modelId,
   maxLength = 6000,
   user,
-}: parseAndQueryFilterOpenAIArguments): Promise<ReadableStream<any>> {
+  botId,
+  loggingService,
+}: {
+  file: File;
+  prompt: string;
+  modelId: string;
+  maxLength?: number;
+  user: any;
+  botId: string | undefined;
+  loggingService: AzureMonitorLoggingService;
+}): Promise<StreamProcessingResult> {
+  const startTime = Date.now();
   const fileContent = await loadDocument(file);
   let chunks: string[] = splitIntoChunks(fileContent);
 
-  const openAIArgs: any = {
-    baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelId}`,
-    defaultQuery: { 'api-version': OPENAI_API_VERSION },
-    defaultHeaders: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token.accessToken}`,
-    },
-  };
+  const scope = 'https://cognitiveservices.azure.com/.default';
+  const azureADTokenProvider = getBearerTokenProvider(
+    new DefaultAzureCredential(),
+    scope,
+  );
 
-  if (process.env.OPENAI_API_KEY)
-    openAIArgs.apiKey = process.env.OPENAI_API_KEY;
-  else openAIArgs.apiKey = '';
-
-  const azureOpenai = new OpenAI(openAIArgs);
+  const apiVersion = '2024-07-01-preview';
+  const client = new AzureOpenAI({
+    azureADTokenProvider,
+    deployment: modelId,
+    apiVersion,
+  });
 
   let combinedSummary: string = '';
 
   while (chunks.length > 0) {
     const chunkPromises = chunks.map((chunk) =>
-      summarizeChunk(azureOpenai, modelId, prompt, chunk, user).catch(
-        (error) => {
-          console.error(error);
-          return null;
-        },
-      ),
+      summarizeChunk(client, modelId, prompt, chunk, user).catch((error) => {
+        console.error(error);
+        return null;
+      }),
     );
 
     const summaries = await Promise.all(chunkPromises);
@@ -116,7 +126,7 @@ export async function parseAndQueryFileOpenAI({
 
   const finalPrompt: string = `${combinedSummary}\n\nUser prompt: ${prompt}`;
 
-  const response = await azureOpenai.chat.completions.create({
+  const commonParams = {
     model: modelId,
     messages: [
       {
@@ -128,18 +138,60 @@ export async function parseAndQueryFileOpenAI({
         role: 'user',
         content: finalPrompt,
       },
-    ],
+    ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
     temperature: 0.1,
     max_tokens: null,
     stream: true,
     user: JSON.stringify(user),
-    file_upload: true,
-  } as OpenAI.Chat.Completions.ChatCompletionCreateParams & {
-    file_upload: boolean;
+  };
+
+  let response;
+  if (botId) {
+    response = await client.chat.completions.create({
+      ...commonParams,
+      //@ts-ignore
+      data_sources: [
+        {
+          type: 'azure_search',
+          parameters: {
+            endpoint: process.env.SEARCH_ENDPOINT,
+            index_name: process.env.SEARCH_INDEX,
+            authentication: {
+              type: 'api_key',
+              key: process.env.SEARCH_ENDPOINT_API_KEY,
+            },
+          },
+        },
+      ],
+    });
+  } else {
+    response = await client.chat.completions.create(commonParams);
+  }
+
+  const { stream, contentAccumulator, citationsAccumulator } =
+    //@ts-ignore
+    createAzureOpenAIStreamProcessor(response);
+
+  const endTime = Date.now();
+  const duration = endTime - startTime;
+
+  await loggingService.log({
+    EventType: 'DocumentSummaryComplete',
+    Status: 'success',
+    ModelUsed: modelId,
+    UserId: user.id,
+    UserJobTitle: user.jobTitle,
+    UserDisplayName: user.displayName,
+    UserEmail: user.mail,
+    UserCompanyName: user.companyName,
+    FileUpload: true,
+    FileName: file.name,
+    FileSize: file.size,
+    Duration: duration,
+    ChunkCount: chunks.length,
   });
 
-  const stream: ReadableStream<any> = OpenAIStream(response as any);
-  return stream;
+  return { stream, contentAccumulator, citationsAccumulator };
 }
 
 function splitIntoChunks(text: string, chunkSize: number = 6000): string[] {
