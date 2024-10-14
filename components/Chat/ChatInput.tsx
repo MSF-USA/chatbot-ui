@@ -36,9 +36,8 @@ import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPr
 import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
 import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
-import ChatInputUrl from "@/components/Chat/ChatInput/ChatInputUrl";
 import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
-import ChatInputSearch from "@/components/Chat/ChatInput/ChatInputSearch";
+import ChatDropdownWeb from "@/components/Chat/ChatInput/ChatDropdownWeb";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -476,16 +475,7 @@ export const ChatInput = ({
             handleSend={handleSend}
           />
 
-          <ChatInputUrl
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setImageFieldValue={setImageFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
-
-          <ChatInputSearch
+          <ChatDropdownWeb
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
             setFilePreviews={setFilePreviews}
