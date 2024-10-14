@@ -1,5 +1,3 @@
-import {Article, fetchAndParseNewsSearch} from "@/services/newsService";
-
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
