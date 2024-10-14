@@ -13,6 +13,8 @@ import { Bot, bots } from '@/types/bots';
 
 import HomeContext from '@/pages/api/home/home.context';
 
+import BetaBadge from '@/components/Beta/Badge';
+
 import { v4 as uuidv4 } from 'uuid';
 
 const BotModal: React.FC = () => {
@@ -99,7 +101,8 @@ const BotModal: React.FC = () => {
               >
                 <div className="max-h-[90vh] overflow-y-auto px-4 pt-5 pb-4 sm:p-6">
                   <div className="text-xl font-semibold mb-4 text-black dark:text-white">
-                    {t('Explore Bots')}
+                    <BetaBadge />
+                    <span className="pl-3">{t('Explore Bots')}</span>
                   </div>
                   <p className="text-gray-600 dark:text-gray-300 mb-4">
                     {t(
