@@ -3,10 +3,12 @@ import {Article, fetchAndParseNewsSearch} from "@/services/newsService";
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
-import {fetchAndParseWebpage, HttpError} from "@/services/webpageService";
-import {Session} from "next-auth";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import { fetchAndParseWebpage, HttpError } from "@/services/webpageService";
+import { Session } from "next-auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { fetchAndParseBingSearch } from "@/services/bingService";
+import { SearchResult } from "@/types/bing";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const session: Session | null = await getServerSession(authOptions as any);
@@ -14,16 +16,34 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q');
-  const n = parseInt(searchParams.get('n') ?? '10', 10); // default to 10 articles
+  if (!q) {
+    return NextResponse.json({message: "Please submit a query"}, {status: 400})
+  }
+  const count = parseInt(searchParams.get('n') ?? '10', 10); // default to 10 articles
 
   try {
-    const articles = await fetchAndParseNewsSearch(q, n);
+    const articles: SearchResult[] = await fetchAndParseBingSearch({ q, count });
     const finalArticles: string[] = []
+    let i = 1;
     for (const article of articles) {
-      const content = await fetchAndParseWebpage(article.link);
-      finalArticles.push(
-        `\`\`\`${article.title}\n${content}\n\`\`\``
-      )
+      try {
+        const content = await fetchAndParseWebpage(article.url);
+        finalArticles.push(
+          `\`\`\`article-${i}.md\n# ${article.name}\n\n## URL\n\n${article.url}\n\n# Content\n\n${content}\n\n## Citation Details\n\n${JSON.stringify({
+            title: article.name,
+            url: article.url,
+            displayUrl: article.displayUrl,
+            language: article.language,
+            dateLastCrawled: article.dateLastCrawled
+          })}\`\`\``
+        )
+      } catch (error) {
+        finalArticles.push(
+          `\`\`\`article-${i}.md\n# ${article.name}\n\n## URL\n\n${article.url}\n\n# Content\n\n*Failed to fetch content for article*\n\`\`\``
+        )
+      } finally {
+        i++;
+      }
     }
 
     return NextResponse.json(
