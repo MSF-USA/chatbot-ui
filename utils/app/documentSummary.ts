@@ -4,12 +4,6 @@ import { Session } from 'next-auth';
 import { AzureMonitorLoggingService } from '@/services/loggingService';
 
 import {
-  APIM_CHAT_ENDPONT,
-  DEFAULT_SYSTEM_PROMPT,
-  OPENAI_API_HOST,
-  OPENAI_API_VERSION,
-} from '@/utils/app/const';
-import {
   StreamProcessingResult,
   createAzureOpenAIStreamProcessor,
 } from '@/utils/app/streamProcessor';
@@ -19,13 +13,8 @@ import {
   DefaultAzureCredential,
   getBearerTokenProvider,
 } from '@azure/identity';
-import { DocxLoader } from '@langchain/community/document_loaders/fs/docx';
-import { OpenAIStream } from 'ai';
-import mammoth from 'mammoth';
-import { lookup } from 'mime-types';
 import OpenAI from 'openai';
 import { AzureOpenAI } from 'openai';
-import pdfParse from 'pdf-parse';
 
 interface parseAndQueryFilterOpenAIArguments {
   file: File;
