@@ -92,10 +92,9 @@ const ChatInputSearch = ({
     };
   }, [isModalOpen]);
 
-  // Update the question input as the user types in the search term if question is empty
   useEffect(() => {
     if (!questionInput) {
-      setQuestionInput(`Please summarize the content you find and cite specific claims with their original sources`);
+      setQuestionInput(`Please summarize the content you find`);
     }
   }, [searchInput]);
 
@@ -107,13 +106,11 @@ const ChatInputSearch = ({
     }
   }, [isReadyToSend, handleSend]);
 
-  // Handle search submission
   const handleSearchSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     setStatusMessage('Searching...');
     try {
-      // Fetch data from the search endpoint
       const response = await fetch(`/api/v2/web/search?q=${encodeURIComponent(searchInput)}`);
       if (!response.ok) {
         throw new Error('Failed to fetch search results');
@@ -146,14 +143,16 @@ const ChatInputSearch = ({
         setUploadProgress,
       );
 
-      // Set the question in the text field
+      // Set the question in the text field with formatting and relevance context
       setTextFieldValue(questionInput + `
 
 Make all analyses relevant to the user request:
 
 \`\`\`user-request
 ${searchInput}
-\`\`\``);
+\`\`\`
+
+Put citations throughout your response. At the end of your response provide citations with titles and links to the original sources.`);
 
       // Close the modal and reset the inputs
       setModalOpen(false);
