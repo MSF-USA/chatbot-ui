@@ -83,7 +83,6 @@ export const makeRequest = async (
   pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
   systemPrompt: string,
   temperature: number,
-  botId: string | undefined,
   stream: boolean = true,
   setProgress: Dispatch<SetStateAction<number | null>>,
 ) => {
@@ -147,7 +146,7 @@ Document metadata: ${filename}
         apiKey,
         systemPrompt,
         temperature,
-        botId,
+        updatedConversation.bot,
         false, // Don't stream intermediate steps
       );
       const endpoint = getEndpoint(null);
@@ -209,7 +208,7 @@ Provide a detailed comparison.
       apiKey,
       systemPrompt,
       temperature,
-      botId,
+      updatedConversation.bot,
       stream, // Stream the final comparison response
     );
 
@@ -241,7 +240,7 @@ Provide a detailed comparison.
       apiKey,
       systemPrompt,
       temperature,
-      botId,
+      updatedConversation.bot,
       stream,
     );
     const endpoint = getEndpoint(plugin);
