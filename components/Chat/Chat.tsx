@@ -19,6 +19,8 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
+import { makeRequest } from '@/services/frontendChatServices';
+
 import { getEndpoint } from '@/utils/app/api';
 import {
   DEFAULT_SYSTEM_PROMPT,
@@ -29,10 +31,12 @@ import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
+import { getBotById } from '@/types/bots';
 import {
   ChatBody,
   Conversation,
-  FileMessageContent, FilePreview,
+  FileMessageContent,
+  FilePreview,
   Message,
   MessageType,
   TextMessageContent,
@@ -53,7 +57,6 @@ import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
 import Typewriter from 'typewriter-effect';
-import {makeRequest} from "@/services/frontendChatServices";
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -85,7 +88,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
-      useKnowledgeBase,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -108,7 +110,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [randomPrompts, setRandomPrompts] = useState<
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
-  const [requestStatusMessage, setRequestStatusMessage] = useState<string | null>(null);
+  const [botInfo, setBotInfo] = useState<{
+    id: string;
+    name: string;
+    color: string;
+  } | null>(null);
+  const [requestStatusMessage, setRequestStatusMessage] = useState<
+    string | null
+  >(null);
   const [progress, setProgress] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -141,6 +150,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   };
 
+  const updateBotInfo = useCallback(() => {
+    if (selectedConversation?.bot) {
+      const bot = getBotById(selectedConversation.bot);
+      if (bot) {
+        setBotInfo({ id: bot.id, name: bot.name, color: bot.color });
+      } else {
+        setBotInfo(null);
+      }
+    } else {
+      setBotInfo(null);
+    }
+  }, [selectedConversation]);
+
+  useEffect(() => {
+    updateBotInfo();
+  }, [selectedConversation, updateBotInfo]);
 
   const setConversationTitle = (
     updatedConversation: Conversation,
@@ -200,7 +225,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   );
 
   const handleNormalChatBackendStreaming = async (
-    data: any,
+    data: ReadableStream,
     controller: AbortController,
     updatedConversation: Conversation,
     selectedConversation: Conversation,
@@ -216,49 +241,51 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
 
-      const chunkValue = decoder.decode(value);
-      const regex = /\d+:"((?:\\.|[^"\\])*?)"/g;
-      let match;
-      while ((match = regex.exec(chunkValue)) !== null) {
-        // Unescape any escaped characters (like newlines)
-        text += JSON.parse('"' + match[1] + '"');
-      }
+      if (value) {
+        const chunkValue = decoder.decode(value);
+        text += chunkValue;
 
-      if (
-        updatedConversationCopy.messages.length === 0 ||
-        updatedConversationCopy.messages[
-        updatedConversationCopy.messages.length - 1
-          ].role !== 'assistant'
-      ) {
-        // If there's no assistant message, create a new one
-        updatedConversationCopy = {
-          ...updatedConversationCopy,
-          messages: [
-            ...updatedConversationCopy.messages,
-            { role: 'assistant', content: text, messageType: MessageType.TEXT },
-          ],
-        };
-      } else {
-        // Update the existing assistant message
-        const updatedMessages = [
-          ...updatedConversationCopy.messages.slice(0, -1),
-          {
-            ...updatedConversationCopy.messages[
+        if (
+          updatedConversationCopy.messages.length === 0 ||
+          updatedConversationCopy.messages[
             updatedConversationCopy.messages.length - 1
+          ].role !== 'assistant'
+        ) {
+          // If there's no assistant message, create a new one
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: [
+              ...updatedConversationCopy.messages,
+              {
+                role: 'assistant',
+                content: text,
+                messageType: MessageType.TEXT,
+              },
+            ],
+          };
+        } else {
+          // Update the existing assistant message
+          const updatedMessages = [
+            ...updatedConversationCopy.messages.slice(0, -1),
+            {
+              ...updatedConversationCopy.messages[
+                updatedConversationCopy.messages.length - 1
               ],
-            content: text,
-          },
-        ];
-        updatedConversationCopy = {
-          ...updatedConversationCopy,
-          messages: updatedMessages,
-        };
-      }
+              content: text,
+            },
+          ];
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: updatedMessages,
+          };
+        }
 
-      homeDispatch({
-        field: 'selectedConversation',
-        value: updatedConversationCopy,
-      });
+        // Update the state to trigger a re-render
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
     }
 
     saveConversation(updatedConversationCopy);
@@ -286,6 +313,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           selectedConversation,
           deleteCount,
         );
+
         homeDispatch({
           field: 'selectedConversation',
           value: updatedConversation,
@@ -294,18 +322,18 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         try {
-          const { controller, body, response, hasComplexContent } = await makeRequest(
-            plugin,
-            setRequestStatusMessage,
-            updatedConversation,
-            apiKey,
-            pluginKeys,
-            systemPrompt,
-            temperature,
-            true,
-            useKnowledgeBase,
-            setProgress,
-          );
+          const { controller, body, response, hasComplexContent } =
+            await makeRequest(
+              plugin,
+              setRequestStatusMessage,
+              updatedConversation,
+              apiKey,
+              pluginKeys,
+              systemPrompt,
+              temperature,
+              true,
+              setProgress,
+            );
 
           if (hasComplexContent) {
             // Handle complex content case
@@ -328,6 +356,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             return;
           }
           const data = response.body;
+
           if (!data) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
@@ -424,19 +453,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       pluginKeys,
       selectedConversation,
       stopConversationRef,
-      useKnowledgeBase,
     ],
-  );
-
-  const handleQuestionClick = useCallback(
-    (question: string) => {
-      handleSend({
-        role: 'user',
-        content: question,
-        messageType: MessageType.TEXT,
-      });
-    },
-    [handleSend],
   );
 
   const scrollToBottom = useCallback(() => {
@@ -507,20 +524,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log('currentMessage', currentMessage);
-  //   if (currentMessage) {
-  //     handleSend(currentMessage);
-  //     homeDispatch({ field: 'currentMessage', value: undefined });
-  //   }
-  // }, [currentMessage]);
-
   useEffect(() => {
     throttledScrollDown();
     selectedConversation &&
-    setCurrentMessage(
-      selectedConversation.messages[selectedConversation.messages.length - 2],
-    );
+      setCurrentMessage(
+        selectedConversation.messages[selectedConversation.messages.length - 2],
+      );
   }, [selectedConversation, throttledScrollDown]);
 
   useEffect(() => {
@@ -631,8 +640,25 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div className="w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                        {t('Model')}: {selectedConversation?.model?.name}
+                      <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                        <div className="flex items-center">
+                          {botInfo && (
+                            <>
+                              <span
+                                className="font-semibold"
+                                style={{ color: botInfo.color }}
+                              >
+                                {botInfo.name} Bot
+                              </span>
+                              <span className="mx-2 text-white dark:text-white">
+                                |
+                              </span>
+                            </>
+                          )}
+                          <span>
+                            {t('Model')}: {selectedConversation?.model?.name}
+                          </span>
+                        </div>
                         <button
                           className="ml-2 cursor-pointer hover:opacity-50"
                           onClick={handleSettings}
@@ -823,7 +849,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             ) : (
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model?.name}
+                  <div className="flex items-center">
+                    {botInfo && (
+                      <>
+                        <span
+                          className="font-semibold"
+                          style={{ color: botInfo.color }}
+                        >
+                          {botInfo.name} Bot
+                        </span>
+                        <span className="mx-2 text-white dark:text-white">
+                          |
+                        </span>
+                      </>
+                    )}
+                    <span>
+                      {t('Model')}: {selectedConversation?.model?.name}
+                    </span>
+                  </div>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}
@@ -917,11 +960,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         selectedConversation?.messages.length - index,
                       );
                     }}
-                    onQuestionClick={handleQuestionClick}
                   />
                 ))}
 
-                {loading && <ChatLoader requestStatusMessage={requestStatusMessage} progress={progress} />}
+                {loading && (
+                  <ChatLoader
+                    requestStatusMessage={requestStatusMessage}
+                    progress={progress}
+                  />
+                )}
 
                 <div
                   className="h-[2px] bg-white dark:bg-[#212121]"

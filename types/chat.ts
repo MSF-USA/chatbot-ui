@@ -62,6 +62,15 @@ export function getChatMessageContent(message: Message): string {
     throw new Error(`Invalid message type or structure: ${JSON.stringify(message)}`);
   }
 }
+
+export interface Citation {
+  content: string;
+  title?: string;
+  filepath?: string;
+  url?: string;
+  chunk_id?: string;
+}
+
 export interface Message {
   role: Role;
   content:
@@ -80,8 +89,8 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
+  botId: string | undefined;
   stream?: boolean;
-  useKnowledgeBase: boolean;
 }
 
 export interface Conversation {
@@ -92,6 +101,7 @@ export interface Conversation {
   prompt: string;
   temperature: number;
   folderId: string | null;
+  bot?: string;
 }
 
 export type ChatInputSubmitTypes = "text" | "image" | "file" | "multi-file";
