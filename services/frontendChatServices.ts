@@ -1,16 +1,20 @@
-import { Plugin, PluginID } from "@/types/plugin";
-import {
-  Conversation,
-  ChatBody,
-  TextMessageContent,
-  ImageMessageContent,
-  FileMessageContent,
-  Message
-} from '@/types/chat';
-import { getEndpoint } from '@/utils/app/api';
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from 'react';
 
-const isComplexContent = (content: (TextMessageContent | ImageMessageContent | FileMessageContent)[]): boolean => {
+import { getEndpoint } from '@/utils/app/api';
+
+import {
+  ChatBody,
+  Conversation,
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
+import { Plugin, PluginID } from '@/types/plugin';
+
+const isComplexContent = (
+  content: (TextMessageContent | ImageMessageContent | FileMessageContent)[],
+): boolean => {
   const contentTypes = content.map((section) => section.type);
   return (
     content.length > 2 ||
@@ -26,19 +30,22 @@ const createChatBody = (
   apiKey: string,
   systemPrompt: string,
   temperature: number,
+  botId: string | undefined,
   stream: boolean,
-  useKnowledgeBase: boolean,
 ): ChatBody => ({
   model: conversation.model,
   messages,
   key: apiKey,
   prompt: conversation.prompt || systemPrompt,
   temperature: conversation.temperature || temperature,
-  useKnowledgeBase,
+  botId,
   stream,
 });
 
-const appendPluginKeys = (chatBody: ChatBody, pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[]) => ({
+const appendPluginKeys = (
+  chatBody: ChatBody,
+  pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
+) => ({
   ...chatBody,
   googleAPIKey: pluginKeys
     .find((key) => key.pluginId === PluginID.GOOGLE_SEARCH)
@@ -49,21 +56,23 @@ const appendPluginKeys = (chatBody: ChatBody, pluginKeys: { pluginId: PluginID; 
 });
 
 const sendRequest = async (endpoint: string, body: string) => {
-    const controller = new AbortController();
-    const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        signal: controller.signal,
-        body,
-        mode: 'cors',
-    });
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Request failed with status ${response.status}: ${errorText}`);
-    }
-    return { controller, body, response };
+  const controller = new AbortController();
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    signal: controller.signal,
+    body,
+    mode: 'cors',
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(
+      `Request failed with status ${response.status}: ${errorText}`,
+    );
+  }
+  return { controller, body, response };
 };
 
 export const makeRequest = async (
@@ -75,21 +84,29 @@ export const makeRequest = async (
   systemPrompt: string,
   temperature: number,
   stream: boolean = true,
-  useKnowledgeBase: boolean = false,
-  setProgress: Dispatch<SetStateAction<number | null>>
+  setProgress: Dispatch<SetStateAction<number | null>>,
 ) => {
-  const lastMessage: Message = updatedConversation.messages[updatedConversation.messages.length - 1];
+  const lastMessage: Message =
+    updatedConversation.messages[updatedConversation.messages.length - 1];
   let hasComplexContent = false;
 
-  if (Array.isArray(lastMessage.content) && isComplexContent(lastMessage.content)) {
-    setRequestStatusMessage('Handling multi-file processing. Please wait...')
+  if (
+    Array.isArray(lastMessage.content) &&
+    isComplexContent(lastMessage.content)
+  ) {
+    setRequestStatusMessage('Handling multi-file processing. Please wait...');
     hasComplexContent = true;
-    const messageContent = lastMessage.content as (TextMessageContent | ImageMessageContent | FileMessageContent)[];
+    const messageContent = lastMessage.content as (
+      | TextMessageContent
+      | ImageMessageContent
+      | FileMessageContent
+    )[];
     const messageText = messageContent.find(
-      (content): content is TextMessageContent => content.type === 'text'
+      (content): content is TextMessageContent => content.type === 'text',
     );
     const nonTextContents = messageContent.filter(
-      (content): content is ImageMessageContent | FileMessageContent => content.type !== 'text'
+      (content): content is ImageMessageContent | FileMessageContent =>
+        content.type !== 'text',
     );
 
     let progressPercentage = 0;
@@ -97,13 +114,15 @@ export const makeRequest = async (
     let filesProcessed = 0;
     setProgress(progressPercentage);
 
-
     const allMessagesExceptFinal = updatedConversation.messages.slice(0, -1);
 
     const fileSummaries: any[] = [];
     for (const content of nonTextContents) {
-      const filename = content.type === 'file_url' ? content.originalFilename : `Image: ${content.image_url.url.split('/').pop()}`;
-      setRequestStatusMessage(`Processing ${filename}...`)
+      const filename =
+        content.type === 'file_url'
+          ? content.originalFilename
+          : `Image: ${content.image_url.url.split('/').pop()}`;
+      setRequestStatusMessage(`Processing ${filename}...`);
       const summarizationPrompt = `
 Please summarize the following document. This summary will be used to compare documents based on the user's prompt.
 
@@ -127,13 +146,16 @@ Document metadata: ${filename}
         apiKey,
         systemPrompt,
         temperature,
+        updatedConversation.bot,
         false, // Don't stream intermediate steps
-        false, // don't use knowledge base
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
 
-      const { controller, response, body } = await sendRequest(endpoint, requestBody);
+      const { controller, response, body } = await sendRequest(
+        endpoint,
+        requestBody,
+      );
       const responseData = await response.json();
 
       // Store the summary with a clear association to its file
@@ -153,17 +175,19 @@ Document metadata: ${filename}
       progressPercentage = (filesProcessed / totalFiles) * 100;
       setProgress(progressPercentage);
     }
-    setRequestStatusMessage(`File processing complete! Handling user prompt...`)
+    setRequestStatusMessage(
+      `File processing complete! Handling user prompt...`,
+    );
     const comparisonPrompt = `
 Please compare the following documents based on the user's prompt.
 
 ${fileSummaries
-      .map(
-        (summary) => `\`\`\`${summary.filename}
+  .map(
+    (summary) => `\`\`\`${summary.filename}
 ${summary.summary}
-\`\`\``
-      )
-      .join('\n\n')}
+\`\`\``,
+  )
+  .join('\n\n')}
 
 User's prompt: ${messageText?.text ?? ''}
 
@@ -184,8 +208,8 @@ Provide a detailed comparison.
       apiKey,
       systemPrompt,
       temperature,
+      updatedConversation.bot,
       stream, // Stream the final comparison response
-      false // Don't use knowledge base
     );
 
     const endpoint = getEndpoint(plugin);
@@ -195,7 +219,10 @@ Provide a detailed comparison.
       : JSON.stringify(chatBody);
 
     setProgress(progressPercentage);
-    const { controller, body, response } = await sendRequest(endpoint, requestBody);
+    const { controller, body, response } = await sendRequest(
+      endpoint,
+      requestBody,
+    );
 
     setRequestStatusMessage(null);
     setProgress(null);
@@ -213,15 +240,18 @@ Provide a detailed comparison.
       apiKey,
       systemPrompt,
       temperature,
+      updatedConversation.bot,
       stream,
-      useKnowledgeBase,
     );
     const endpoint = getEndpoint(plugin);
 
     let requestBody = plugin
       ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys))
       : JSON.stringify(chatBody);
-    const { controller, body, response } = await sendRequest(endpoint, requestBody);
+    const { controller, body, response } = await sendRequest(
+      endpoint,
+      requestBody,
+    );
 
     return {
       controller,

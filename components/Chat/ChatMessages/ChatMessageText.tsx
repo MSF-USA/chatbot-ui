@@ -65,7 +65,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false)
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
@@ -76,13 +76,27 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   useEffect(() => {
     const processContent = () => {
-      const { mainContent, citations, questions } =
-        extractCitationsAndQuestions(content);
+      let mainContent = content;
+      let citationsData = [];
+
+      // Check for JSON at the end of the content
+      const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+      if (jsonMatch) {
+        const jsonStr = jsonMatch[1];
+        mainContent = content.slice(0, -jsonStr.length).trim();
+        try {
+          const parsedData = JSON.parse(jsonStr);
+          if (parsedData.citations) {
+            citationsData = parsedData.citations;
+          }
+        } catch (error) {
+          console.error('Error parsing citations JSON:', error);
+        }
+      }
+
       setDisplayContent(mainContent);
-      setCitations(citations);
-      setQuestions(questions);
-      previousCitations.current = citations;
-      previousQuestions.current = questions;
+      setCitations(citationsData);
+      setQuestions([]);
       citationsProcessed.current = true;
     };
 
@@ -90,7 +104,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   }, [content]);
 
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split('[[CITATIONS_START]]')[0]
+    ? content.split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
 
   const citationsToShow = citationsProcessed.current
@@ -104,7 +118,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const handleTTS = async () => {
     try {
       setIsGeneratingAudio(true);
-      setLoadingMessage("Generating audio...");
+      setLoadingMessage('Generating audio...');
       const response = await fetch('/api/v2/tts', {
         method: 'POST',
         headers: {
@@ -117,7 +131,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         throw new Error('TTS conversion failed');
       }
 
-      setLoadingMessage("Processing audio...");
+      setLoadingMessage('Processing audio...');
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
@@ -126,7 +140,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     } catch (error) {
       console.error('Error in TTS:', error);
       setIsGeneratingAudio(false);
-      setLoadingMessage("Error generating audio. Please try again.");
+      setLoadingMessage('Error generating audio. Please try again.');
       setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
     }
   };
@@ -220,8 +234,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             {displayContentWithoutCitations}
           </MemoizedReactMarkdown>
 
-          <div
-            className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
+          <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
             {messageCopied ? (
               <IconCheck
                 size={20}
@@ -232,7 +245,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
                 onClick={copyOnClick}
               >
-                <IconCopy size={20}/>
+                <IconCopy size={20} />
               </button>
             )}
             {!audioUrl && (
@@ -251,19 +264,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 )}
               </button>
             )}
-
           </div>
         </div>
-        {citationsToShow.length > 0 && (
-          <CitationList citations={citationsToShow}/>
-        )}
-
-        {questionsToShow.length > 0 && (
-          <QuestionList
-            questions={questionsToShow}
-            onQuestionClick={onQuestionClick}
-          />
-        )}
+        {citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
   );

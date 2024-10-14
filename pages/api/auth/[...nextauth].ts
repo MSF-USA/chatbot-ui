@@ -1,9 +1,9 @@
-import NextAuth, {Session, JWT, Account} from 'next-auth';
+import NextAuth, { Account, JWT, Session } from 'next-auth';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 
 export const refreshAccessToken = async (token: JWT) => {
   if (!token || !token.refreshToken) {
-    console.log('refresh token missing')
+    console.log('refresh token missing');
     return;
   }
 
@@ -18,14 +18,14 @@ export const refreshAccessToken = async (token: JWT) => {
     body.append('scope', 'openid User.Read User.ReadBasic.all offline_access');
 
     const response = await fetch(url, {
-        method: 'POST',
-        body,
+      method: 'POST',
+      body,
     });
     const refreshedTokens = await response.json();
 
     if (!response.ok) {
-      throw refreshedTokens
-    };
+      throw refreshedTokens;
+    }
 
     return {
       ...token,
@@ -33,17 +33,15 @@ export const refreshAccessToken = async (token: JWT) => {
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
       refreshToken: refreshedTokens.refresh_token ?? token?.refreshToken, // Fall back to old refresh token
     };
-
   } catch (error) {
     console.log(error);
 
     return {
       ...token,
-      error: "RefreshAccessTokenError"
+      error: 'RefreshAccessTokenError',
     };
   }
-}
-
+};
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -53,11 +51,10 @@ export const authOptions = {
       clientSecret: process.env.AZURE_AD_CLIENT_SECRET || '',
       tenantId: process.env.AZURE_AD_TENANT_ID || '',
       authorization: {
-          params: {
-              scope: "openid User.Read User.ReadBasic.all offline_access",
-          }
-        }
-
+        params: {
+          scope: 'openid User.Read User.ReadBasic.all offline_access',
+        },
+      },
     }),
     // ...add more providers here
   ],
@@ -65,26 +62,29 @@ export const authOptions = {
     signIn: '/auth/signin',
   },
   callbacks: {
-      async jwt({token, account}: {token: JWT, account: Account}) {
+    async jwt({ token, account }: { token: JWT; account: Account }) {
       let currentDate = new Date();
 
-        if (account) {
-          // This will only be executed at login. Each next invocation will skip this part.
+      if (account) {
+        // This will only be executed at login. Each next invocation will skip this part.
 
-          return {
-            accessToken: account.access_token,
-            accessTokenExpires: account.expires_at != undefined ? account.expires_at * 1000 : currentDate.setHours(currentDate.getHours() + 24),
-            refreshToken: account.refresh_token,
-          }
+        return {
+          accessToken: account.access_token,
+          accessTokenExpires:
+            account.expires_at != undefined
+              ? account.expires_at * 1000
+              : currentDate.setHours(currentDate.getHours() + 24),
+          refreshToken: account.refresh_token,
+        };
       }
       // Return previous token if the access token has not expired yet
       if (Date.now() < token.accessTokenExpires) {
-        return token
+        return token;
       }
 
       return refreshAccessToken(token);
     },
-    async session({session, token}: {session: Session, token: JWT}) {
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (token) {
         session.accessToken = token.accessToken;
         session.accessTokenExpires = token.accessTokenExpires;
@@ -92,29 +92,27 @@ export const authOptions = {
       }
 
       try {
-
-        const selectProperties = `id,userPrincipalName,displayName,givenName,surname,department,jobTitle,mail`;
-        const userInfoUrl = `https://graph.microsoft.com/v1.0/me?$select=${selectProperties}`
+        const selectProperties = `id,userPrincipalName,displayName,givenName,surname,department,jobTitle,mail,companyName`;
+        const userInfoUrl = `https://graph.microsoft.com/v1.0/me?$select=${selectProperties}`;
 
         const userDataResponse = await fetch(userInfoUrl, {
           method: 'GET',
           headers: {
-            "Authorization": session.accessToken,
-            "Content-type": "application/json",
-            }
+            Authorization: session.accessToken,
+            'Content-type': 'application/json',
+          },
         });
 
-          const userData = await userDataResponse.json();
+        const userData = await userDataResponse.json();
 
-          session.user = {... userData};
-
+        session.user = { ...userData };
       } catch (error) {
-        console.log('failed to get User Data: ' + error)
+        console.log('failed to get User Data: ' + error);
       }
 
       return session;
-    }
-  }
+    },
+  },
 };
 
 //@ts-ignore
