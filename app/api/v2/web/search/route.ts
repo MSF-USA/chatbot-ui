@@ -17,10 +17,31 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (!q) {
     return NextResponse.json({message: "Please submit a query"}, {status: 400})
   }
-  const count = parseInt(searchParams.get('n') ?? '10', 10); // default to 10 articles
 
+  // Get optional parameters with default values
+  const mkt = searchParams.get('mkt') ?? 'en-US';
+  let safeSearch = searchParams.get('safeSearch') ?? 'Moderate';
+  const count = parseInt(searchParams.get('count') ?? '5', 10);
+  const offset = parseInt(searchParams.get('offset') ?? '0', 10);
+  const textDecorations = searchParams.get('textDecorations') ? searchParams.get('textDecorations') === 'true' : true;
+  let textFormat = searchParams.get('textFormat') ?? 'Raw';
+
+  if (!['Off', 'Moderate', 'Strict'].includes(safeSearch))
+    safeSearch = 'Moderate'
+
+  textFormat = ['Raw', 'HTML'].includes(textFormat) ? textFormat : 'Raw'
   try {
-    const articles: SearchResult[] = await fetchAndParseBingSearch({ q, count });
+    const articles: SearchResult[] = await fetchAndParseBingSearch({
+      q,
+      mkt,
+      // @ts-expect-error Typescript not understanding logical flow of types is my favorite thing
+      safeSearch,
+      textDecorations,
+      // @ts-expect-error Typescript again failing to do the only thing it is meant to do
+      textFormat,
+      count,
+      offset,
+    });
     const finalArticles: string[] = []
     let i = 1;
     for (const article of articles) {
