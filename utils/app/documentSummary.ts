@@ -15,6 +15,7 @@ import {
 } from '@azure/identity';
 import OpenAI from 'openai';
 import { AzureOpenAI } from 'openai';
+import {ChatCompletion} from "openai/resources";
 
 interface ParseAndQueryFilterOpenAIArguments {
   file: File;
@@ -181,7 +182,7 @@ export async function parseAndQueryFileOpenAI(
     return { stream: responseStream, contentAccumulator, citationsAccumulator };
   } else {
     const completionText =
-        response?.choices?.[0]?.message?.content?.trim() ?? '';
+        (response as ChatCompletion)?.choices?.[0]?.message?.content?.trim() ?? '';
     if (!completionText) {
       throw new Error(
           `Empty response returned from API! ${JSON.stringify(response)}`,
