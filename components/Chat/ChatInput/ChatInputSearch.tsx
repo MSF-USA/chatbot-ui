@@ -22,11 +22,13 @@ interface ChatInputSearchProps {
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
     setFileFieldValue: Dispatch<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
+      SetStateAction<
+        | FileMessageContent
+        | FileMessageContent[]
+        | ImageMessageContent
+        | ImageMessageContent[]
+        | null
+      >
     >,
     setImageFieldValue: Dispatch<
       SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
