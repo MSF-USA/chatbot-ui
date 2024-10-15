@@ -71,6 +71,7 @@ const ChatInputSearch = ({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // New state
   const {
     state: { user },
   } = useContext(HomeContext);
@@ -99,6 +100,7 @@ const ChatInputSearch = ({
     event.preventDefault();
     setError(null);
     setStatusMessage('Searching...');
+    setIsSubmitting(true); // Start submission
     try {
       const queryParams = new URLSearchParams({
         q: searchInput,
@@ -144,7 +146,7 @@ const ChatInputSearch = ({
       setTextFieldValue(
         questionInput +
         `
-  
+      
 Make all analyses relevant to the user request:
 
 \`\`\`user-request
@@ -170,6 +172,7 @@ Put citations throughout your response. At the end of your response provide cita
       );
     } finally {
       setStatusMessage(null);
+      setIsSubmitting(false); // End submission
     }
   };
 
@@ -180,6 +183,7 @@ Put citations throughout your response. At the end of your response provide cita
           event.preventDefault();
           setModalOpen(true);
         }}
+        disabled={isSubmitting} // Disable when submitting
       >
         <IconSearch className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
         <span className="sr-only">Add document from search</span>
@@ -190,157 +194,221 @@ Put citations throughout your response. At the end of your response provide cita
           <div
             className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl"
           >
-            <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
-              Web Search
-            </h2>
-            <form onSubmit={handleSearchSubmit}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="search-term" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Search Term
-                  </label>
-                  <input
-                    id="search-term"
-                    type="text"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    placeholder="Enter your search query"
-                    required
-                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                  />
+            <div className="relative">
+              <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
+                Web Search
+              </h2>
+              <form onSubmit={handleSearchSubmit}>
+                <div className="grid gap-4 py-4">
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label
+                      htmlFor="search-term"
+                      className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                      Search Term
+                    </label>
+                    <input
+                      id="search-term"
+                      type="text"
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                      placeholder="Enter your search query"
+                      required
+                      disabled={isSubmitting} // Disable when submitting
+                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    />
+                  </div>
+                  <div className="grid grid-cols-4 items-center gap-4">
+                    <label
+                      htmlFor="question-input"
+                      className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                    >
+                      Question
+                    </label>
+                    <input
+                      id="question-input"
+                      type="text"
+                      value={questionInput}
+                      onChange={(e) => setQuestionInput(e.target.value)}
+                      placeholder="Enter your question"
+                      disabled={isSubmitting} // Disable when submitting
+                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    />
+                  </div>
+                  <div className="flex items-center">
+                    <button
+                      type="button"
+                      className="ml-auto text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
+                      onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+                      disabled={isSubmitting} // Disable when submitting
+                    >
+                      Advanced Options
+                      {isAdvancedOpen ? (
+                        <IconChevronUp className="ml-2 h-4 w-4" />
+                      ) : (
+                        <IconChevronDown className="ml-2 h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  {isAdvancedOpen && (
+                    <>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label
+                          htmlFor="market"
+                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          Market
+                        </label>
+                        <select
+                          id="market"
+                          value={mkt}
+                          onChange={(e) => setMkt(e.target.value)}
+                          disabled={isSubmitting} // Disable when submitting
+                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                          <option value="">Any</option>
+                          <option value="ar">Arabic (General)</option>
+                          <option value="en">English (General)</option>
+                          <option value="en-US">English (United States)</option>
+                          <option value="en-GB">English (United Kingdom)</option>
+                          <option value="fr-FR">French (France)</option>
+                          <option value="es">Spanish (General)</option>
+                          <option value="es-ES">Spanish (Spain)</option>
+                          <option value="de-DE">German (Germany)</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label
+                          htmlFor="safe-search"
+                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          Safe Search
+                        </label>
+                        <select
+                          id="safe-search"
+                          value={safeSearch}
+                          onChange={(e) => setSafeSearch(e.target.value)}
+                          disabled={isSubmitting} // Disable when submitting
+                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                          <option value="Off">Off</option>
+                          <option value="Moderate">Moderate</option>
+                          <option value="Strict">Strict</option>
+                        </select>
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label
+                          htmlFor="count"
+                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          Number of Results
+                        </label>
+                        <input
+                          id="count"
+                          type="number"
+                          min="1"
+                          max="50"
+                          value={count}
+                          onChange={(e) => setCount(Number(e.target.value))}
+                          disabled={isSubmitting} // Disable when submitting
+                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                        />
+                      </div>
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label
+                          htmlFor="offset"
+                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          Offset
+                        </label>
+                        <input
+                          id="offset"
+                          type="number"
+                          min="0"
+                          value={offset}
+                          onChange={(e) => setOffset(Number(e.target.value))}
+                          disabled={isSubmitting} // Disable when submitting
+                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                        />
+                      </div>
+                    </>
+                  )}
+                  <div className="flex items-center mt-4">
+                    <input
+                      id="auto-submit"
+                      type="checkbox"
+                      checked={autoSubmit}
+                      onChange={(e) => setAutoSubmit(e.target.checked)}
+                      disabled={isSubmitting} // Disable when submitting
+                      className="h-4 w-4"
+                    />
+                    <label
+                      htmlFor="auto-submit"
+                      className="ml-2 text-sm text-gray-700 dark:text-gray-200"
+                    >
+                      Auto-submit question
+                    </label>
+                  </div>
+                  {error && (
+                    <p className="text-red-500 text-sm mt-2">{error}</p>
+                  )}
+                  {statusMessage && !isSubmitting && (
+                    <p className="text-gray-500 text-sm mt-2 animate-pulse">
+                      {statusMessage}
+                    </p>
+                  )}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label htmlFor="question-input" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
-                    Question
-                  </label>
-                  <input
-                    id="question-input"
-                    type="text"
-                    value={questionInput}
-                    onChange={(e) => setQuestionInput(e.target.value)}
-                    placeholder="Enter your question"
-                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                  />
-                </div>
-                <div className="flex items-center">
+                <div className="mt-4 flex justify-end space-x-2">
                   <button
                     type="button"
-                    className="ml-auto text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
-                    onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+                    onClick={() => setModalOpen(false)}
+                    disabled={isSubmitting} // Disable when submitting
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
                   >
-                    Advanced Options
-                    {isAdvancedOpen ? (
-                      <IconChevronUp className="ml-2 h-4 w-4" />
-                    ) : (
-                      <IconChevronDown className="ml-2 h-4 w-4" />
-                    )}
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting} // Disable when submitting
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
+                  >
+                    <IconSearch className="mr-2 h-4 w-4" />
+                    Submit
                   </button>
                 </div>
-                {isAdvancedOpen && (
-                  <>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label htmlFor="market" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
-                        Market
-                      </label>
-                      <select
-                        id="market"
-                        value={mkt}
-                        onChange={(e) => setMkt(e.target.value)}
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        <option value="">Any</option>
-                        <option value="ar">Arabic (General)</option>
-                        <option value="en">English (General)</option>
-                        <option value="en-US">English (United States)</option>
-                        <option value="en-GB">English (United Kingdom)</option>
-                        <option value="fr-FR">French (France)</option>
-                        <option value="es">Spanish (General)</option>
-                        <option value="es-ES">Spanish (Spain)</option>
-                        <option value="de-DE">German (Germany)</option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label htmlFor="safe-search" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
-                        Safe Search
-                      </label>
-                      <select
-                        id="safe-search"
-                        value={safeSearch}
-                        onChange={(e) => setSafeSearch(e.target.value)}
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        <option value="Off">Off</option>
-                        <option value="Moderate">Moderate</option>
-                        <option value="Strict">Strict</option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label htmlFor="count" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
-                        Number of Results
-                      </label>
-                      <input
-                        id="count"
-                        type="number"
-                        min="1"
-                        max="50"
-                        value={count}
-                        onChange={(e) => setCount(Number(e.target.value))}
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label htmlFor="offset" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
-                        Offset
-                      </label>
-                      <input
-                        id="offset"
-                        type="number"
-                        min="0"
-                        value={offset}
-                        onChange={(e) => setOffset(Number(e.target.value))}
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                      />
-                    </div>
-                  </>
-                )}
-                <div className="flex items-center mt-4">
-                  <input
-                    id="auto-submit"
-                    type="checkbox"
-                    checked={autoSubmit}
-                    onChange={(e) => setAutoSubmit(e.target.checked)}
-                    className="h-4 w-4"
-                  />
-                  <label htmlFor="auto-submit" className="ml-2 text-sm text-gray-700 dark:text-gray-200">
-                    Auto-submit question
-                  </label>
+              </form>
+
+              {/* Overlay when submitting */}
+              {isSubmitting && (
+                <div className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center">
+                  <svg
+                    className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    />
+                  </svg>
+                  {statusMessage && (
+                    <p className="mt-2 text-gray-700 dark:text-gray-200">
+                      {statusMessage}
+                    </p>
+                  )}
                 </div>
-                {error && (
-                  <p className="text-red-500 text-sm mt-2">{error}</p>
-                )}
-                {statusMessage && (
-                  <p className="text-gray-500 text-sm mt-2 animate-pulse">
-                    {statusMessage}
-                  </p>
-                )}
-              </div>
-              <div className="mt-4 flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={() => setModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
-                >
-                  <IconSearch className="mr-2 h-4 w-4" />
-                  Submit
-                </button>
-              </div>
-            </form>
+              )}
+            </div>
           </div>
         </div>
       )}
