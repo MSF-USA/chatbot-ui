@@ -641,27 +641,25 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   >
                     <div>
                       <div
-                          className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200"
+                        className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200"
                       >
-                        {/* Left Side Content */}
-                        <div className="flex items-center">
+                        {/* Center Content */}
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center">
                           {botInfo && (
                             <>
-                              <span
-                                className="font-semibold"
-                                style={{ color: botInfo.color }}
-                              >
+                              <span className="font-semibold" style={{color: botInfo.color}}>
                                 {botInfo.name} Bot
                               </span>
                               <span className="mx-2 text-white dark:text-white">|</span>
                             </>
                           )}
                           <span>
-      {t('Model')}: {selectedConversation?.model?.name}
-    </span>
+                            {t('Model')}: {selectedConversation?.model?.name}
+                          </span>
                         </div>
 
-                        {/* Middle Content */}
+                        {/* Settings Button */}
                         <button
                             className="ml-2 cursor-pointer hover:opacity-50"
                             onClick={handleSettings}
@@ -669,15 +667,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           <IconSettings
                             size={18}
                             className={`${
-                              showSettings
-                                ? 'text-[#D7211E]'
-                                : 'text-black dark:text-white'
+                                showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
                             }`}
                           />
                         </button>
+                      </div>
 
-                        {/* Right Side Content */}
-                        <div className="flex items-center">
+                        {/* Right-Side Content */}
+                        <div className="absolute right-0 flex items-center pr-4">
                           <a
                             href={`mailto:${email}`}
                             className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
@@ -690,6 +687,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                           </a>
                         </div>
                       </div>
+
                       {showSettings && (
                         <Transition
                           appear={true}
@@ -714,19 +712,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 {t('AI Model Selection:')}
                                 <ModelSelect />
                               </div>
-                              <div className="text-black dark:text-white">
-                                {t('Temperature')}
-                              </div>
+                              <div className="text-black dark:text-white">{t('Temperature')}</div>
                               <TemperatureSlider
                                 temperature={selectedConversation.temperature}
                                 onChangeTemperature={(temperature) =>
-                                  handleUpdateConversation(
-                                    selectedConversation,
-                                    {
+                                  handleUpdateConversation(selectedConversation, {
                                       key: 'temperature',
                                       value: temperature,
-                                    },
-                                  )
+                                    })
                                 }
                               />
                             </div>
@@ -736,12 +729,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     </div>
                   </Transition>
                 )}
-                <div className="flex items-center justify-center h-screen">
+                <div className="flex h-[88%] items-center justify-center">
                   <div className="mx-auto flex flex-col px-3">
                     <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                       {models.length === 0 ? (
                         <div>
-                          <Spinner size="16px" className="mx-auto" />
+                          <Spinner size="16px" className="mx-auto"/>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
@@ -774,8 +767,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 enter="transition-opacity duration-1000"
                                 enterFrom="opacity-0"
                                 enterTo="opacity-100"
-                                leave="transition-opacity duration-300"
-                                leaveFrom="opacity-100"
+                              leave="transition-opacity duration-300"
+                              leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
                                 <div className="flex-shrink-0 flex flex-col items-center">
