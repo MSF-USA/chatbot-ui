@@ -640,7 +640,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                      <div
+                          className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200"
+                      >
+                        {/* Left Side Content */}
                         <div className="flex items-center">
                           {botInfo && (
                             <>
@@ -650,18 +653,18 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               >
                                 {botInfo.name} Bot
                               </span>
-                              <span className="mx-2 text-white dark:text-white">
-                                |
-                              </span>
+                              <span className="mx-2 text-white dark:text-white">|</span>
                             </>
                           )}
                           <span>
-                            {t('Model')}: {selectedConversation?.model?.name}
-                          </span>
+      {t('Model')}: {selectedConversation?.model?.name}
+    </span>
                         </div>
+
+                        {/* Middle Content */}
                         <button
-                          className="ml-2 cursor-pointer hover:opacity-50"
-                          onClick={handleSettings}
+                            className="ml-2 cursor-pointer hover:opacity-50"
+                            onClick={handleSettings}
                         >
                           <IconSettings
                             size={18}
@@ -672,14 +675,16 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             }`}
                           />
                         </button>
-                        <div className="absolute right-0">
+
+                        {/* Right Side Content */}
+                        <div className="flex items-center">
                           <a
                             href={`mailto:${email}`}
-                            className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                            className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
                           >
                             <IconExternalLink
                               size={16}
-                              className={'mr-1 text-black dark:text-white/50'}
+                              className="mr-1 text-black dark:text-white/50"
                             />
                             {t('Send Feedback')}
                           </a>
@@ -700,7 +705,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             className="fixed inset-0 z-50 flex items-center justify-center"
                             onClick={handleClickOutside}
                           >
-                            <div className="fixed inset-0 bg-black opacity-50" />
+                            <div className="fixed inset-0 bg-black opacity-50"/>
                             <div
                               ref={modalRef}
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
