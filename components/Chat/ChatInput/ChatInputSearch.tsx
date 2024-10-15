@@ -4,6 +4,7 @@ import React, {
   SetStateAction,
   useContext,
   useEffect,
+  useRef,
 } from 'react';
 import HomeContext from '@/pages/api/home/home.context';
 import {
@@ -21,13 +22,11 @@ interface ChatInputSearchProps {
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
     setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
     >,
     setImageFieldValue: Dispatch<
       SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
@@ -71,7 +70,7 @@ const ChatInputSearch = ({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false); // New state
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const {
     state: { user },
   } = useContext(HomeContext);
@@ -79,14 +78,23 @@ const ChatInputSearch = ({
   // New state variables for additional parameters
   const [mkt, setMkt] = useState<string>('');
   const [safeSearch, setSafeSearch] = useState<string>('Moderate');
-  const [count, setCount] = useState<number>(5);
+  const [count, setCount] = useState<number | null>(5);
   const [offset, setOffset] = useState<number>(0);
+
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!questionInput) {
       setQuestionInput(`Please summarize the content you find`);
     }
   }, [searchInput]);
+
+  // Automatically focus on search input when modal opens
+  useEffect(() => {
+    if (isModalOpen && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [isModalOpen]);
 
   // Handle sending the message if auto-submit is enabled
   useEffect(() => {
@@ -106,7 +114,7 @@ const ChatInputSearch = ({
         q: searchInput,
         mkt,
         safeSearch,
-        count: count.toString(),
+        count: count ? count.toString() : '5',
         offset: offset.toString(),
       }).toString();
 
@@ -146,7 +154,7 @@ const ChatInputSearch = ({
       setTextFieldValue(
         questionInput +
         `
-      
+          
 Make all analyses relevant to the user request:
 
 \`\`\`user-request
@@ -184,18 +192,25 @@ Put citations throughout your response. At the end of your response provide cita
           setModalOpen(true);
         }}
         disabled={isSubmitting} // Disable when submitting
+        aria-label="Add document from search"
       >
         <IconSearch className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
         <span className="sr-only">Add document from search</span>
       </button>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/4 shadow-xl"
-          >
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/3 shadow-xl">
             <div className="relative">
-              <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
+              <h2
+                id="modal-title"
+                className="text-xl font-bold mb-1 text-gray-900 dark:text-white"
+              >
                 Web Search
               </h2>
               <form onSubmit={handleSearchSubmit}>
@@ -215,6 +230,8 @@ Put citations throughout your response. At the end of your response provide cita
                       placeholder="Enter your search query"
                       required
                       disabled={isSubmitting} // Disable when submitting
+                      title="Enter your search query"
+                      ref={searchInputRef}
                       className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                     />
                   </div>
@@ -232,6 +249,7 @@ Put citations throughout your response. At the end of your response provide cita
                       onChange={(e) => setQuestionInput(e.target.value)}
                       placeholder="Enter your question"
                       disabled={isSubmitting} // Disable when submitting
+                      title="Enter what you want the AI to do to process the pages it finds"
                       className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                     />
                   </div>
@@ -241,6 +259,8 @@ Put citations throughout your response. At the end of your response provide cita
                       className="ml-auto text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
                       onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
                       disabled={isSubmitting} // Disable when submitting
+                      aria-expanded={isAdvancedOpen}
+                      aria-controls="advanced-options"
                     >
                       Advanced Options
                       {isAdvancedOpen ? (
@@ -251,7 +271,7 @@ Put citations throughout your response. At the end of your response provide cita
                     </button>
                   </div>
                   {isAdvancedOpen && (
-                    <>
+                    <div id="advanced-options">
                       <div className="grid grid-cols-4 items-center gap-4">
                         <label
                           htmlFor="market"
@@ -264,6 +284,7 @@ Put citations throughout your response. At the end of your response provide cita
                           value={mkt}
                           onChange={(e) => setMkt(e.target.value)}
                           disabled={isSubmitting} // Disable when submitting
+                          title="Select the market"
                           className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         >
                           <option value="">Any</option>
@@ -289,6 +310,7 @@ Put citations throughout your response. At the end of your response provide cita
                           value={safeSearch}
                           onChange={(e) => setSafeSearch(e.target.value)}
                           disabled={isSubmitting} // Disable when submitting
+                          title="Select the safe search level"
                           className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         >
                           <option value="Off">Off</option>
@@ -301,37 +323,48 @@ Put citations throughout your response. At the end of your response provide cita
                           htmlFor="count"
                           className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
-                          Number of Results
+                          Results ({'max: 15'})
                         </label>
                         <input
                           id="count"
                           type="number"
                           min="1"
-                          max="50"
-                          value={count}
-                          onChange={(e) => setCount(Number(e.target.value))}
+                          max="15"
+                          value={count ?? 5}
+                          onChange={(e) => {
+                            if (!e.target.value) {
+                              setCount(null)
+                            } else if (Number(e.target.value) > 15) {
+                              const newValue = Number(e.target.value[1]);
+                              setCount(newValue)
+                            } else {
+                              setCount(Number(e.target.value));
+                            }
+                          }}
                           disabled={isSubmitting} // Disable when submitting
+                          title="Enter the number of results you want it to process"
                           className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                         />
                       </div>
-                      <div className="grid grid-cols-4 items-center gap-4">
-                        <label
-                          htmlFor="offset"
-                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                        >
-                          Offset
-                        </label>
-                        <input
-                          id="offset"
-                          type="number"
-                          min="0"
-                          value={offset}
-                          onChange={(e) => setOffset(Number(e.target.value))}
-                          disabled={isSubmitting} // Disable when submitting
-                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                        />
-                      </div>
-                    </>
+                      {/*<div className="grid grid-cols-4 items-center gap-4">*/}
+                      {/*  <label*/}
+                      {/*    htmlFor="offset"*/}
+                      {/*    className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"*/}
+                      {/*  >*/}
+                      {/*    Offset*/}
+                      {/*  </label>*/}
+                      {/*  <input*/}
+                      {/*    id="offset"*/}
+                      {/*    type="number"*/}
+                      {/*    min="0"*/}
+                      {/*    value={offset}*/}
+                      {/*    onChange={(e) => setOffset(Number(e.target.value))}*/}
+                      {/*    disabled={isSubmitting} // Disable when submitting*/}
+                      {/*    title="Enter the offset value"*/}
+                      {/*    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"*/}
+                      {/*  />*/}
+                      {/*</div>*/}
+                    </div>
                   )}
                   <div className="flex items-center mt-4">
                     <input
@@ -340,6 +373,7 @@ Put citations throughout your response. At the end of your response provide cita
                       checked={autoSubmit}
                       onChange={(e) => setAutoSubmit(e.target.checked)}
                       disabled={isSubmitting} // Disable when submitting
+                      title="Automatically submit the question after search"
                       className="h-4 w-4"
                     />
                     <label
@@ -350,10 +384,15 @@ Put citations throughout your response. At the end of your response provide cita
                     </label>
                   </div>
                   {error && (
-                    <p className="text-red-500 text-sm mt-2">{error}</p>
+                    <p className="text-red-500 text-sm mt-2" role="alert">
+                      {error}
+                    </p>
                   )}
                   {statusMessage && !isSubmitting && (
-                    <p className="text-gray-500 text-sm mt-2 animate-pulse">
+                    <p
+                      className="text-gray-500 text-sm mt-2 animate-pulse"
+                      aria-live="polite"
+                    >
                       {statusMessage}
                     </p>
                   )}
@@ -380,12 +419,17 @@ Put citations throughout your response. At the end of your response provide cita
 
               {/* Overlay when submitting */}
               {isSubmitting && (
-                <div className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center">
+                <div
+                  className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center"
+                  aria-live="polite"
+                >
                   <svg
                     className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
+                    role="img"
+                    aria-label="Loading"
                   >
                     <circle
                       className="opacity-25"
@@ -402,7 +446,10 @@ Put citations throughout your response. At the end of your response provide cita
                     />
                   </svg>
                   {statusMessage && (
-                    <p className="mt-2 text-gray-700 dark:text-gray-200">
+                    <p
+                      className="mt-2 text-gray-700 dark:text-gray-200"
+                      aria-live="polite"
+                    >
                       {statusMessage}
                     </p>
                   )}
