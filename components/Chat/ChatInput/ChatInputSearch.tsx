@@ -192,7 +192,7 @@ Put citations throughout your response. At the end of your response provide cita
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl"
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-1/4 shadow-xl"
           >
             <div className="relative">
               <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
