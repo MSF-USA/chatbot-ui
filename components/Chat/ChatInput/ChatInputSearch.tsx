@@ -118,12 +118,15 @@ const ChatInputSearch = ({
     setError(null);
     setStatusMessage('Searching...');
     setIsSubmitting(true); // Start submission
+
+    let adjustedCount = count ?? 5;
+    adjustedCount = Math.min(adjustedCount, 15);
     try {
       const queryParams = new URLSearchParams({
         q: searchInput,
         mkt,
         safeSearch,
-        count: count ? count.toString() : '5',
+        count: adjustedCount.toString(),
         offset: offset.toString(),
       }).toString();
 
@@ -193,7 +196,8 @@ Put citations throughout your response. At the end of your response provide cita
     }
   };
 
-  return (
+  // @ts-ignore
+    return (
       <>
         <button
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -358,16 +362,29 @@ Put citations throughout your response. At the end of your response provide cita
                                   type="number"
                                   min="1"
                                   max="15"
-                                  value={count ?? 5}
+                                  // @ts-ignore
+                                  value={count}
                                   onChange={(e) => {
-                                    if (!e.target.value) {
-                                      setCount(null);
-                                    } else if (Number(e.target.value) > 15) {
-                                      const newValue = Number(e.target.value[1]);
-                                      setCount(newValue);
-                                    } else {
-                                      setCount(Number(e.target.value));
-                                    }
+                                      const value = e.target.value;
+
+                                      if (value === '') {
+                                          setCount(null);
+                                      } else {
+                                          const numValue = parseInt(value, 10);
+                                          if (!isNaN(numValue)) {
+                                              setCount(numValue);
+                                          }
+                                      }
+                                  }}
+                                  onBlur={() => {
+                                      if (count !== null) {
+                                          const adjustedCount = Math.max(1, Math.min(count, 15));
+                                          if (adjustedCount !== count) {
+                                              setCount(adjustedCount);
+                                          }
+                                      } else if (!count) {
+                                          setCount(5);
+                                      }
                                   }}
                                   disabled={isSubmitting}
                                   title="Enter the number of results you want it to process"
