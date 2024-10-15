@@ -96,6 +96,8 @@ const Dropdown: React.FC<DropdownProps> = (
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
+            setTextFieldValue={setTextFieldValue}
+            handleSend={handleSend}
           />
         </div>
       )}
