@@ -1,6 +1,5 @@
 import React, {
   useState,
-  useRef,
   Dispatch,
   SetStateAction,
   useContext,
@@ -13,8 +12,8 @@ import {
   FileMessageContent,
   ImageMessageContent,
 } from '@/types/chat';
-import { IconSearch } from '@tabler/icons-react';
 import crypto from 'crypto';
+import { IconSearch, IconChevronUp, IconChevronDown } from '@tabler/icons-react';
 
 interface ChatInputSearchProps {
   onFileUpload: (
@@ -65,32 +64,22 @@ const ChatInputSearch = ({
                            handleSend,
                          }: ChatInputSearchProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [questionInput, setQuestionInput] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
-  const modalRef = useRef<HTMLDivElement>(null);
   const {
     state: { user },
   } = useContext(HomeContext);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
-        setModalOpen(false);
-      }
-    };
-
-    if (isModalOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isModalOpen]);
+  // New state variables for additional parameters
+  const [mkt, setMkt] = useState<string>('');
+  const [safeSearch, setSafeSearch] = useState<string>('Moderate');
+  const [count, setCount] = useState<number>(5);
+  const [offset, setOffset] = useState<number>(0);
 
   useEffect(() => {
     if (!questionInput) {
@@ -111,7 +100,15 @@ const ChatInputSearch = ({
     setError(null);
     setStatusMessage('Searching...');
     try {
-      const response = await fetch(`/api/v2/web/search?q=${encodeURIComponent(searchInput)}`);
+      const queryParams = new URLSearchParams({
+        q: searchInput,
+        mkt,
+        safeSearch,
+        count: count.toString(),
+        offset: offset.toString(),
+      }).toString();
+
+      const response = await fetch(`/api/v2/web/search?${queryParams}`);
       if (!response.ok) {
         throw new Error('Failed to fetch search results');
       }
@@ -144,15 +141,18 @@ const ChatInputSearch = ({
       );
 
       // Set the question in the text field with formatting and relevance context
-      setTextFieldValue(questionInput + `
-
+      setTextFieldValue(
+        questionInput +
+        `
+  
 Make all analyses relevant to the user request:
 
 \`\`\`user-request
 ${searchInput}
 \`\`\`
 
-Put citations throughout your response. At the end of your response provide citations with titles and links to the original sources.`);
+Put citations throughout your response. At the end of your response provide citations with titles and links to the original sources.`,
+      );
 
       // Close the modal and reset the inputs
       setModalOpen(false);
@@ -188,69 +188,141 @@ Put citations throughout your response. At the end of your response provide cita
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
-            ref={modalRef}
             className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96 shadow-xl"
           >
             <h2 className="text-xl font-bold mb-1 text-gray-900 dark:text-white">
               Web Search
             </h2>
-            <form onSubmit={handleSearchSubmit} className={'mt-3'}>
-              <div className="mb-4">
-                <label
-                  htmlFor="search-term"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-                >
-                  Search Term
-                </label>
-                <input
-                  id="search-term"
-                  type="text"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Enter your search query"
-                  required
-                  className="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="question-input"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-                >
-                  Question
-                </label>
-                <input
-                  id="question-input"
-                  type="text"
-                  value={questionInput}
-                  onChange={(e) => setQuestionInput(e.target.value)}
-                  placeholder="Enter your question"
-                  className="mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                />
-              </div>
-              {error && (
-                <p className="text-red-500 text-sm mt-2">{error}</p>
-              )}
-              {statusMessage && (
-                <p className="text-gray-500 text-sm mt-2 animate-pulse">
-                  {statusMessage}
-                </p>
-              )}
-              {/* Auto-submit toggle */}
-              <div className="flex items-center mt-4">
-                <input
-                  id="auto-submit"
-                  type="checkbox"
-                  checked={autoSubmit}
-                  onChange={(e) => setAutoSubmit(e.target.checked)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
-                />
-                <label
-                  htmlFor="auto-submit"
-                  className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
-                >
-                  Auto-submit question
-                </label>
+            <form onSubmit={handleSearchSubmit}>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label htmlFor="search-term" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Search Term
+                  </label>
+                  <input
+                    id="search-term"
+                    type="text"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    placeholder="Enter your search query"
+                    required
+                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label htmlFor="question-input" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Question
+                  </label>
+                  <input
+                    id="question-input"
+                    type="text"
+                    value={questionInput}
+                    onChange={(e) => setQuestionInput(e.target.value)}
+                    placeholder="Enter your question"
+                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div className="flex items-center">
+                  <button
+                    type="button"
+                    className="ml-auto text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
+                    onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+                  >
+                    Advanced Options
+                    {isAdvancedOpen ? (
+                      <IconChevronUp className="ml-2 h-4 w-4" />
+                    ) : (
+                      <IconChevronDown className="ml-2 h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+                {isAdvancedOpen && (
+                  <>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <label htmlFor="market" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Market
+                      </label>
+                      <select
+                        id="market"
+                        value={mkt}
+                        onChange={(e) => setMkt(e.target.value)}
+                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      >
+                        <option value="">Any</option>
+                        <option value="ar">Arabic (General)</option>
+                        <option value="en">English (General)</option>
+                        <option value="en-US">English (United States)</option>
+                        <option value="en-GB">English (United Kingdom)</option>
+                        <option value="fr-FR">French (France)</option>
+                        <option value="es">Spanish (General)</option>
+                        <option value="es-ES">Spanish (Spain)</option>
+                        <option value="de-DE">German (Germany)</option>
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <label htmlFor="safe-search" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Safe Search
+                      </label>
+                      <select
+                        id="safe-search"
+                        value={safeSearch}
+                        onChange={(e) => setSafeSearch(e.target.value)}
+                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                      >
+                        <option value="Off">Off</option>
+                        <option value="Moderate">Moderate</option>
+                        <option value="Strict">Strict</option>
+                      </select>
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <label htmlFor="count" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Number of Results
+                      </label>
+                      <input
+                        id="count"
+                        type="number"
+                        min="1"
+                        max="50"
+                        value={count}
+                        onChange={(e) => setCount(Number(e.target.value))}
+                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      />
+                    </div>
+                    <div className="grid grid-cols-4 items-center gap-4">
+                      <label htmlFor="offset" className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                        Offset
+                      </label>
+                      <input
+                        id="offset"
+                        type="number"
+                        min="0"
+                        value={offset}
+                        onChange={(e) => setOffset(Number(e.target.value))}
+                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      />
+                    </div>
+                  </>
+                )}
+                <div className="flex items-center mt-4">
+                  <input
+                    id="auto-submit"
+                    type="checkbox"
+                    checked={autoSubmit}
+                    onChange={(e) => setAutoSubmit(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  <label htmlFor="auto-submit" className="ml-2 text-sm text-gray-700 dark:text-gray-200">
+                    Auto-submit question
+                  </label>
+                </div>
+                {error && (
+                  <p className="text-red-500 text-sm mt-2">{error}</p>
+                )}
+                {statusMessage && (
+                  <p className="text-gray-500 text-sm mt-2 animate-pulse">
+                    {statusMessage}
+                  </p>
+                )}
               </div>
               <div className="mt-4 flex justify-end space-x-2">
                 <button
@@ -262,8 +334,9 @@ Put citations throughout your response. At the end of your response provide cita
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
                 >
+                  <IconSearch className="mr-2 h-4 w-4" />
                   Submit
                 </button>
               </div>
