@@ -237,24 +237,6 @@ Put citations throughout your response. At the end of your response provide cita
                       className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                     />
                   </div>
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <label
-                      htmlFor="question-input"
-                      className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                    >
-                      Question
-                    </label>
-                    <input
-                      id="question-input"
-                      type="text"
-                      value={questionInput}
-                      onChange={(e) => setQuestionInput(e.target.value)}
-                      placeholder="Enter your question"
-                      disabled={isSubmitting} // Disable when submitting
-                      title="Enter what you want the AI to do to process the pages it finds"
-                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                    />
-                  </div>
                   <div className="flex items-center">
                     <button
                       type="button"
@@ -274,6 +256,24 @@ Put citations throughout your response. At the end of your response provide cita
                   </div>
                   {isAdvancedOpen && (
                     <div id="advanced-options">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label
+                          htmlFor="question-input"
+                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          Question
+                        </label>
+                        <input
+                          id="question-input"
+                          type="text"
+                          value={questionInput}
+                          onChange={(e) => setQuestionInput(e.target.value)}
+                          placeholder="Enter your question"
+                          disabled={isSubmitting} // Disable when submitting
+                          title="Enter what you want the AI to do to process the pages it finds"
+                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                        />
+                      </div>
                       <div className="grid grid-cols-4 items-center gap-4">
                         <label
                           htmlFor="market"
