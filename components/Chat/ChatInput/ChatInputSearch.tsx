@@ -414,7 +414,7 @@ Put citations throughout your response. At the end of your response provide cita
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
                   >
                     <IconSearch className="mr-2 h-4 w-4" />
-                    Submit
+                    {autoSubmit ? 'Submit' : 'Generate prompt'}
                   </button>
                 </div>
               </form>

@@ -76,6 +76,7 @@ const ChatInputUrl = ({
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
+  const urlInputRef = useRef<HTMLInputElement>(null); // Added this line
   const {
     state: { user },
   } = useContext(HomeContext);
@@ -101,6 +102,12 @@ const ChatInputUrl = ({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isModalOpen]);
+
+  useEffect(() => {
+    if (isModalOpen && urlInputRef.current) {
+      urlInputRef.current.focus(); // Focus the input when modal opens
+    }
+  }, [isModalOpen]); // Re-run when isModalOpen changes
 
   useEffect(() => {
     if (isReadyToSend) {
@@ -158,7 +165,7 @@ const ChatInputUrl = ({
       setTextFieldValue(
         questionInput +
         `
-
+    
 Cite any claims you make from the text and reference the URL: ${urlInput}
 
 Also reference the title, apparent source, author(s), and publication date where available and relevant.`,
@@ -217,6 +224,7 @@ Also reference the title, apparent source, author(s), and publication date where
                     URL
                   </label>
                   <input
+                    ref={urlInputRef} // Set the ref here
                     id="url-input"
                     type="url"
                     value={urlInput}
@@ -246,21 +254,7 @@ Also reference the title, apparent source, author(s), and publication date where
                              text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                   />
                 </div>
-                {/*<div className="flex items-center">*/}
-                {/*  <button*/}
-                {/*    type="button"*/}
-                {/*    className="ml-auto text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"*/}
-                {/*    onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}*/}
-                {/*    disabled={isSubmitting}*/}
-                {/*  >*/}
-                {/*    Advanced Options*/}
-                {/*    {isAdvancedOpen ? (*/}
-                {/*      <IconChevronUp className="ml-2 h-4 w-4" />*/}
-                {/*    ) : (*/}
-                {/*      <IconChevronDown className="ml-2 h-4 w-4" />*/}
-                {/*    )}*/}
-                {/*  </button>*/}
-                {/*</div>*/}
+                {/* Advanced options can be added here */}
                 {isAdvancedOpen && (
                   <>
                     {/* Add any advanced options here */}
@@ -308,7 +302,7 @@ Also reference the title, apparent source, author(s), and publication date where
                              hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
                 >
                   <IconLink className="mr-2 h-4 w-4" />
-                  Submit
+                  {autoSubmit ? 'Submit' : 'Generate prompt'}
                 </button>
               </div>
             </form>
