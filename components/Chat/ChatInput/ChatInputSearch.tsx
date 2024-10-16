@@ -212,7 +212,7 @@ Make all analyses relevant to the user request:
 ${optimizedQuery}
 \`\`\`
 
-Put citations throughout your response. At the end of your response provide citations with titles and links to the original sources.`,
+Put citations throughout your response. At the end of your response provide citations that always include the titles and links of the original sources, as well as author(s) where available.`,
       );
 
       // Close the modal and reset the inputs
