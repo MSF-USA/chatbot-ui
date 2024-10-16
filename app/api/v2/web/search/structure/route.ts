@@ -53,7 +53,7 @@ async function generateOptimizedQueryAndQuestion(
 ): Promise<{ optimizedQuery: string; optimizedQuestion: string }> {
   const prompt = `Given the user's raw question, generate an optimized search query to find relevant data from a search engine and an optimized question, which will be passed to an AI along with the found web pages to give the user useful information.
 
-Make sure your responses are relevant to the user's original question and fit for their intended purpose.
+Make sure your responses are relevant to the user's original question and fit for their intended purpose. Try to understand the user's intent, but if the context is ambiguous keep that ambiguity in your revisions to avoid drifting from the user's needs. If the user asks for any dates relative to the present, the current date is ${new Date().toISOString()}
 
 \`\`\`user-question
 ${question}
