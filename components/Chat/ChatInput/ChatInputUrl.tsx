@@ -17,6 +17,7 @@ import {
 import { IconLink, IconChevronUp, IconChevronDown } from '@tabler/icons-react';
 import crypto from 'crypto';
 import BetaBadge from '@/components/Beta/Badge';
+import {useTranslation} from "next-i18next";
 
 interface ChatInputUrlProps {
   onFileUpload: (
@@ -57,17 +58,19 @@ interface ChatInputUrlProps {
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-const ChatInputUrl = ({
-                        onFileUpload,
-                        setSubmitType,
-                        setFilePreviews,
-                        setFileFieldValue,
-                        setImageFieldValue,
-                        setUploadProgress,
-                        setTextFieldValue,
-                        handleSend,
-    setParentModalIsOpen,
-                      }: ChatInputUrlProps) => {
+const ChatInputUrl = (
+    {
+      onFileUpload,
+      setSubmitType,
+      setFilePreviews,
+      setFileFieldValue,
+      setImageFieldValue,
+      setUploadProgress,
+      setTextFieldValue,
+      handleSend,
+      setParentModalIsOpen,
+    }: ChatInputUrlProps
+) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [questionInput, setQuestionInput] = useState('');
@@ -120,7 +123,8 @@ const ChatInputUrl = ({
     }
   }, [isReadyToSend, handleSend, setParentModalIsOpen]);
 
-  if (!userAuthorizedForFileUploads(user)) return null;
+  const { t } = useTranslation('chat');
+
 
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -220,7 +224,7 @@ Also reference the title, apparent source, author(s), and publication date where
                   id="modal-title"
                   className="text-xl font-bold text-gray-900 dark:text-white"
               >
-                Webpage Puller
+                {t('chatUrlInputTitle')}
               </h2>
               <BetaBadge/>
             </div>
