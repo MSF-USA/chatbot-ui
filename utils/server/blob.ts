@@ -2,6 +2,7 @@ import {
     BlobServiceClient,
     BlockBlobClient,
     BlockBlobUploadOptions,
+    ContainerClient,
     StorageSharedKeyCredential
 } from "@azure/storage-blob";
 import {Readable} from "stream";
@@ -242,6 +243,10 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
         return containerClient.getBlockBlobClient(blobName);
     }
 
+    getContainerClient(): ContainerClient {
+        return this.blobServiceClient.getContainerClient(this.containerName as string);
+    }
+
 
     // Queue methods
     async createQueue(queueName: string): Promise<void> {
@@ -252,6 +257,10 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
     async addMessage(queueName: string, message: string): Promise<QueueSendMessageResponse> {
         const queueClient = this.queueServiceClient.getQueueClient(queueName);
         return await queueClient.sendMessage(message);
+    }
+
+    getQueueClient(queueName: string): QueueClient {
+        return this.queueServiceClient.getQueueClient(queueName);
     }
 
     async updateMessage(
