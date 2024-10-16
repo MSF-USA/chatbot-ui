@@ -80,6 +80,7 @@ const ChatInputSearch = ({
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [shouldOptimizeInput, setShouldOptimizeInput] = useState<boolean>(true);
   const {
     state: { user },
   } = useContext(HomeContext);
@@ -115,40 +116,47 @@ const ChatInputSearch = ({
   const handleSearchSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    setStatusMessage('Optimizing query...');
     setIsSubmitting(true); // Start submission
 
     let adjustedCount = count ?? 5;
     adjustedCount = Math.min(adjustedCount, 15);
+
     try {
-      // Call the new route to get optimized query and question
       let optimizedQuery = searchInput;
       let optimizedQuestion = questionInput;
 
-      try {
-        const optimizeResponse = await fetch('/api/v2/web/search/structure', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            question: searchInput,
-            user,
-            modelId: 'gpt-4o',
-          }),
-        });
+      if (shouldOptimizeInput) {
+        setStatusMessage('Optimizing query...');
+        // Call the new route to get optimized query and question
 
-        if (optimizeResponse.ok) {
-          const optimizeData = await optimizeResponse.json();
-          optimizedQuery = optimizeData.optimizedQuery;
-          optimizedQuestion = optimizeData.optimizedQuestion;
-          setSearchInput(optimizedQuery);
-          setQuestionInput(optimizedQuestion);
-        } else {
-          console.error('Failed to optimize query:', optimizeResponse.statusText);
+        try {
+          const optimizeResponse = await fetch('/api/v2/web/search/structure', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              question: searchInput,
+              user,
+              modelId: 'gpt-4o',
+            }),
+          });
+
+          if (optimizeResponse.ok) {
+            const optimizeData = await optimizeResponse.json();
+            optimizedQuery = optimizeData.optimizedQuery;
+            optimizedQuestion = optimizeData.optimizedQuestion;
+            setSearchInput(optimizedQuery);
+            setQuestionInput(optimizedQuestion);
+          } else {
+            console.error('Failed to optimize query:', optimizeResponse.statusText);
+          }
+        } catch (error) {
+          console.error('Error optimizing query:', error);
         }
-      } catch (error) {
-        console.error('Error optimizing query:', error);
+      } else {
+        optimizedQuery = searchInput;
+        optimizedQuestion = questionInput;
       }
 
       setStatusMessage('Searching...');
@@ -316,6 +324,23 @@ Put citations throughout your response. At the end of your response provide cita
 
                   {isAdvancedOpen && (
                     <div id="advanced-options" className="space-y-4">
+                      <div className="grid grid-cols-4 items-center gap-4">
+                        <label
+                          htmlFor="optimize-input"
+                          className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+                        >
+                          Optimize User Inputs
+                        </label>
+                        <input
+                          id="optimize-input"
+                          type="checkbox"
+                          checked={shouldOptimizeInput}
+                          onChange={(e) => setShouldOptimizeInput(!shouldOptimizeInput)}
+                          disabled={isSubmitting}
+                          title="Do you want us to use AI to generate a more targeted set of queries to answer your question?"
+                          className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                        />
+                      </div>
                       <div className="grid grid-cols-4 items-center gap-4">
                         <label
                           htmlFor="question-input"
