@@ -69,6 +69,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
 
   const previousCitations = useRef<Citation[]>([]);
   const previousQuestions = useRef<Question[]>([]);
@@ -95,6 +96,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       }
 
       setDisplayContent(mainContent);
+      if (mainContent.includes('```math')) {
+        setRemarkPlugins([remarkGfm, [remarkMath, {singleDollar: false}]])
+      }
       setCitations(citationsData);
       setQuestions([]);
       citationsProcessed.current = true;
@@ -175,7 +179,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         <div className="flex flex-row">
           <MemoizedReactMarkdown
             className="prose dark:prose-invert flex-1"
-            remarkPlugins={[remarkGfm, remarkMath]}
+            remarkPlugins={remarkPlugins}
             rehypePlugins={[rehypeMathjax]}
             components={{
               code({ node, inline, className, children, ...props }) {
