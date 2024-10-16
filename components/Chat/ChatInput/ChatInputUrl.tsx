@@ -238,7 +238,7 @@ Also reference the title, apparent source, author(s), and publication date where
                     URL
                   </label>
                   <input
-                      ref={urlInputRef} // Set the ref here
+                      ref={urlInputRef}
                       id="url-input"
                       type="url"
                       value={urlInput}

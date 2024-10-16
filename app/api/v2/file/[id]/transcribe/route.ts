@@ -16,8 +16,7 @@ const unlinkAsync = promisify(fs.unlink);
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   // @ts-ignore
   const token: JWT | null = await getToken({ req: request });
-  if (!token)
-    throw new Error(`Token could not be pulled from request: ${request}`);
+  if (!token) throw new Error(`Token could not be pulled from request: ${request}`);
 
   const session: Session | null = await getServerSession(authOptions as any);
   if (!session) throw new Error("Failed to pull session!");
@@ -26,7 +25,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
   const { searchParams } = new URL(request.url);
   let transcriptionServiceName = searchParams.get('service');
-  if (!transcriptionServiceName || (!['whisper', ''].includes(transcriptionServiceName))) {
+  if (!transcriptionServiceName || (!['whisper', 'azureCognitiveSpeechService'].includes(transcriptionServiceName))) {
     transcriptionServiceName = 'azureCognitiveSpeechService'
   }
 
@@ -34,14 +33,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   let transcript: string | undefined;
 
   try {
-    // @ts-ignore
-    const token: JWT | null = await getToken({ req: request as any });
-    if (!token)
-      throw new Error(`Token could not be pulled from request: ${request}`);
-
-    const session: Session | null = await getServerSession(authOptions as any);
-    if (!session) throw new Error("Failed to pull session!");
-
     // @ts-ignore
     const userId: string = (session.user as any)?.id ?? token.userId ?? 'anonymous';
 
