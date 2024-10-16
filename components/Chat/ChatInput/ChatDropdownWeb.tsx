@@ -88,6 +88,7 @@ const Dropdown: React.FC<DropdownProps> = (
             setUploadProgress={setUploadProgress}
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
+            setParentModalIsOpen={setIsOpen}
           />
           <ChatInputUrl
             onFileUpload={onFileUpload}
@@ -98,6 +99,7 @@ const Dropdown: React.FC<DropdownProps> = (
             setUploadProgress={setUploadProgress}
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
+            setParentModalIsOpen={setIsOpen}
           />
         </div>
       )}

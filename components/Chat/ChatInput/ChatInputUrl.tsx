@@ -54,6 +54,7 @@ interface ChatInputUrlProps {
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatInputUrl = ({
@@ -65,6 +66,7 @@ const ChatInputUrl = ({
                         setUploadProgress,
                         setTextFieldValue,
                         handleSend,
+    setParentModalIsOpen,
                       }: ChatInputUrlProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [urlInput, setUrlInput] = useState('');
@@ -91,6 +93,7 @@ const ChatInputUrl = ({
     const handleClickOutside = (event: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
         setModalOpen(false);
+        setParentModalIsOpen(false);
       }
     };
 
@@ -101,7 +104,7 @@ const ChatInputUrl = ({
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isModalOpen]);
+  }, [isModalOpen, setParentModalIsOpen]);
 
   useEffect(() => {
     if (isModalOpen && urlInputRef.current) {
@@ -113,8 +116,9 @@ const ChatInputUrl = ({
     if (isReadyToSend) {
       setIsReadyToSend(false);
       handleSend();
+      setParentModalIsOpen(false);
     }
-  }, [isReadyToSend, handleSend]);
+  }, [isReadyToSend, handleSend, setParentModalIsOpen]);
 
   if (!userAuthorizedForFileUploads(user)) return null;
 
@@ -146,7 +150,8 @@ const ChatInputUrl = ({
 
       // Create a File object from the content
       const blob = new Blob([content], { type: 'text/plain' });
-      const fileName = `${hash}.txt`;
+      const url = new URL(urlInput);
+      const fileName = `web-pull-${url.host}_${hash}.txt`;
       const file = new File([blob], fileName, { type: 'text/plain' });
 
       setStatusMessage('Handling content...');

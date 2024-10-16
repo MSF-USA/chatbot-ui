@@ -59,6 +59,7 @@ interface ChatInputSearchProps {
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatInputSearch = ({
@@ -70,6 +71,7 @@ const ChatInputSearch = ({
                            setUploadProgress,
                            setTextFieldValue,
                            handleSend,
+    setParentModalIsOpen,
                          }: ChatInputSearchProps) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -110,6 +112,7 @@ const ChatInputSearch = ({
     if (isReadyToSend) {
       setIsReadyToSend(false);
       handleSend();
+      setParentModalIsOpen(false);
     }
   }, [isReadyToSend, handleSend]);
 
