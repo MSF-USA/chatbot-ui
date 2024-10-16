@@ -8,6 +8,14 @@ import {Readable} from "stream";
 import {getEnvVariable} from "@/utils/app/env";
 import {lookup} from "mime-types";
 import {Session} from "next-auth";
+import {
+    QueueServiceClient,
+    QueueClient,
+    QueueSendMessageResponse,
+    DequeuedMessageItem,
+    QueueDeleteMessageResponse,
+    StorageSharedKeyCredential as QueueSharedKeyCredential,
+} from '@azure/storage-queue';
 
 export enum BlobProperty {
     URL = 'url',
@@ -43,8 +51,32 @@ export interface BlobStorage {
     getBlockBlobClient(blobName: string): BlockBlobClient;
 }
 
-export class AzureBlobStorage implements BlobStorage {
+export interface QueueStorage {
+    createQueue(queueName: string): Promise<void>;
+    addMessage(queueName: string, message: string): Promise<QueueSendMessageResponse>;
+    updateMessage(
+        queueName: string,
+        messageId: string,
+        popReceipt: string,
+        messageText: string,
+        visibilityTimeout?: number
+    ): Promise<void>;
+    deleteMessage(
+        queueName: string,
+        messageId: string,
+        popReceipt: string
+    ): Promise<void>;
+    receiveMessages(
+        queueName: string,
+        maxMessages?: number,
+        visibilityTimeout?: number
+    ): Promise<DequeuedMessageItem[]>;
+}
+
+
+export class AzureBlobStorage implements BlobStorage, QueueStorage {
     private blobServiceClient: BlobServiceClient;
+    private queueServiceClient: QueueServiceClient;
 
     constructor(
       storageAccountName: string | undefined = undefined,
@@ -79,8 +111,14 @@ export class AzureBlobStorage implements BlobStorage {
 
         const sharedKeyCredential = new StorageSharedKeyCredential(name, key);
         this.blobServiceClient = new BlobServiceClient(
-          `https://${storageAccountName}.blob.core.windows.net`,
+          `https://${name}.blob.core.windows.net`,
           sharedKeyCredential
+        );
+
+        const queueSharedKeyCredential = new QueueSharedKeyCredential(name, key);
+        this.queueServiceClient = new QueueServiceClient(
+            `https://${name}.queue.core.windows.net`,
+            queueSharedKeyCredential
         );
     }
 
@@ -205,6 +243,46 @@ export class AzureBlobStorage implements BlobStorage {
     }
 
 
+    // Queue methods
+    async createQueue(queueName: string): Promise<void> {
+        const queueClient = this.queueServiceClient.getQueueClient(queueName);
+        await queueClient.create();
+    }
+
+    async addMessage(queueName: string, message: string): Promise<QueueSendMessageResponse> {
+        const queueClient = this.queueServiceClient.getQueueClient(queueName);
+        return await queueClient.sendMessage(message);
+    }
+
+    async updateMessage(
+        queueName: string,
+        messageId: string,
+        popReceipt: string,
+        messageText: string,
+        visibilityTimeout?: number
+    ): Promise<void> {
+        const queueClient = this.queueServiceClient.getQueueClient(queueName);
+        await queueClient.updateMessage(messageId, popReceipt, messageText, visibilityTimeout);
+    }
+
+    async deleteMessage(
+        queueName: string,
+        messageId: string,
+        popReceipt: string
+    ): Promise<void> {
+        const queueClient = this.queueServiceClient.getQueueClient(queueName);
+        await queueClient.deleteMessage(messageId, popReceipt);
+    }
+
+    async receiveMessages(
+        queueName: string,
+        maxMessages = 1,
+        visibilityTimeout?: number
+    ): Promise<DequeuedMessageItem[]> {
+        const queueClient = this.queueServiceClient.getQueueClient(queueName);
+        const response = await queueClient.receiveMessages({ numberOfMessages: maxMessages, visibilityTimeout });
+        return response.receivedMessageItems;
+    }
 }
 
 export default class BlobStorageFactory {
