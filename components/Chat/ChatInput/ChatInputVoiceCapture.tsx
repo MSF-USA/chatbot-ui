@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState, useRef, Dispatch, SetStateAction} from "react";
+import React, { FC, useEffect, useState, useRef, Dispatch, SetStateAction } from "react";
 import MicIcon from "@/components/Icons/mic";
 import { IconPlayerRecordFilled } from "@tabler/icons-react";
 
@@ -8,12 +8,16 @@ interface ChatInputVoiceCaptureProps {
 }
 
 const SILENCE_THRESHOLD = -50; // in decibels
-const MAX_SILENT_DURATION = 6000; // in milliseconds
+const MAX_SILENT_DURATION = 6000; // in milliseconds (Changed to 7000ms for 7 seconds)
 
-const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldValue, setIsTranscribing }) => {
+const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
+  {
+    setTextFieldValue,
+    setIsTranscribing,
+  }
+) => {
     const [hasMicrophone, setHasMicrophone] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
-    const [transcribedText, setTranscribedText] = useState("");
 
     const mediaRecorderRef = useRef<MediaRecorder | null>(null);
     const mediaStreamRef = useRef<MediaStream | null>(null);
@@ -162,7 +166,6 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
 
             // Remove the data URL prefix (e.g., "data:audio/webm;base64,")
             const base64Data = base64Chunk.split(',')[1];
-            // const base64Data = base64Chunk;
 
             // Upload the audioBlob to the server
             const uploadResponse = await fetch(
@@ -175,7 +178,6 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
                   },
               }
             );
-
 
             if (!uploadResponse.ok) {
                 throw new Error('Failed to upload audio');
@@ -197,9 +199,9 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
             const transcribeResult = await transcribeResponse.json();
             const transcript = transcribeResult.transcript;
 
-            // setTranscribedText((prevText) => prevText + transcript);
-            setTextFieldValue((prevText) => prevText?.length ? prevText + ' ' + transcript : transcript);
-
+            setTextFieldValue((prevText) =>
+              prevText?.length ? prevText + ' ' + transcript : transcript
+            );
         } catch (error) {
             console.error('Error during transcription:', error);
         } finally {
@@ -213,17 +215,24 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = ({ setTextFieldVal
 
     return (
         <div className="voice-capture">
-            <button onClick={isRecording ? stopRecording : startRecording}>
-                {isRecording
-                ? <IconPlayerRecordFilled className={'rounded h-5 w-5 animate-pulse text-red-500'} />
-                : <MicIcon
-                        className={`text-black dark:text-white rounded h-5 w-5`}
-                    />
-                }
-
-
-                <span className="sr-only">Voice input</span>
-            </button>
+          <button
+              className={isRecording ? ' backdrop-blur' : ''}
+              onClick={isRecording ? stopRecording : startRecording}
+              title={isRecording ? 'Click to stop recording' : 'Click to start recording'} // Tooltip added
+          >
+              {isRecording ? (
+                <div className="flex items-center">
+                    <IconPlayerRecordFilled className="rounded h-5 w-5 animate-pulse text-red-500" />
+                    {/* Optional visible text to indicate stopping */}
+                    <span className="ml-2 text-red-500">Click to stop recording</span>
+                </div>
+              ) : (
+                <MicIcon className="text-black dark:text-white rounded h-5 w-5" />
+              )}
+              <span className="sr-only">
+                {isRecording ? 'Click to stop recording' : 'Click to start recording'}
+              </span>
+          </button>
         </div>
     );
 };
