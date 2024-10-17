@@ -191,7 +191,7 @@ const ChatInputSearch = ({
 
       // Create a File object from the content
       const blob = new Blob([content], { type: 'text/plain' });
-      const fileName = `${hash}.txt`;
+      const fileName = `search-${optimizedQuery.toLowerCase().replace(/[^a-z]/g, '-')}_${hash}.txt`;
       const file = new File([blob], fileName, { type: 'text/plain' });
 
       // Call onFileUpload with the File as an array
