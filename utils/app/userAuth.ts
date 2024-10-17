@@ -5,5 +5,5 @@ const isUSBased = (email: string): boolean => {
 }
 
 export const userAuthorizedForFileUploads = (user: Session["user"] | undefined): boolean => {
-  return isUSBased(user?.mail ?? '');
+  return true; // isUSBased(user?.mail ?? '');
 }

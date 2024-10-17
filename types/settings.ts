@@ -3,5 +3,4 @@ export interface Settings {
   temperature: number;
   systemPrompt: string;
   runTypeWriterIntroSetting: boolean;
-  useKnowledgeBase: boolean;
 }

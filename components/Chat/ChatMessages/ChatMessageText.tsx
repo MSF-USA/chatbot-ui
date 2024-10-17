@@ -3,9 +3,11 @@ import {
   IconCheck,
   IconCopy,
   IconEdit,
+  IconLoader2,
   IconRobot,
   IconTrash,
   IconUser,
+  IconVolume,
 } from '@tabler/icons-react';
 import {
   Dispatch,
@@ -63,19 +65,42 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
+  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
+
   const previousCitations = useRef<Citation[]>([]);
   const previousQuestions = useRef<Question[]>([]);
   const citationsProcessed = useRef(false);
 
   useEffect(() => {
     const processContent = () => {
-      const { mainContent, citations, questions } =
-        extractCitationsAndQuestions(content);
+      let mainContent = content;
+      let citationsData = [];
+
+      // Check for JSON at the end of the content
+      const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+      if (jsonMatch) {
+        const jsonStr = jsonMatch[1];
+        mainContent = content.slice(0, -jsonStr.length).trim();
+        try {
+          const parsedData = JSON.parse(jsonStr);
+          if (parsedData.citations) {
+            citationsData = parsedData.citations;
+          }
+        } catch (error) {
+          console.error('Error parsing citations JSON:', error);
+        }
+      }
+
       setDisplayContent(mainContent);
-      setCitations(citations);
-      setQuestions(questions);
-      previousCitations.current = citations;
-      previousQuestions.current = questions;
+      if (mainContent.includes('```math')) {
+        setRemarkPlugins([remarkGfm, [remarkMath, {singleDollar: false}]])
+      }
+      setCitations(citationsData);
+      setQuestions([]);
       citationsProcessed.current = true;
     };
 
@@ -83,7 +108,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   }, [content]);
 
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split('[[CITATIONS_START]]')[0]
+    ? content.split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
 
   const citationsToShow = citationsProcessed.current
@@ -94,6 +119,36 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     ? questions
     : previousQuestions.current;
 
+  const handleTTS = async () => {
+    try {
+      setIsGeneratingAudio(true);
+      setLoadingMessage('Generating audio...');
+      const response = await fetch('/api/v2/tts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: displayContentWithoutCitations }),
+      });
+
+      if (!response.ok) {
+        throw new Error('TTS conversion failed');
+      }
+
+      setLoadingMessage('Processing audio...');
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      setAudioUrl(url);
+      setIsGeneratingAudio(false);
+      setLoadingMessage(null);
+    } catch (error) {
+      console.error('Error in TTS:', error);
+      setIsGeneratingAudio(false);
+      setLoadingMessage('Error generating audio. Please try again.');
+      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
+    }
+  };
+
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
       <div className="min-w-[40px] text-right font-bold">
@@ -101,10 +156,30 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       </div>
 
       <div className="prose mt-[-2px] w-full dark:prose-invert">
+        {loadingMessage && (
+          <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
+            {loadingMessage}
+          </div>
+        )}
+        {audioUrl && (
+          <div className={'flex flex-row'}>
+            <audio
+              src={audioUrl}
+              controls
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => {
+                setIsPlaying(false);
+                URL.revokeObjectURL(audioUrl);
+                setAudioUrl(null);
+              }}
+            />
+          </div>
+        )}
         <div className="flex flex-row">
           <MemoizedReactMarkdown
             className="prose dark:prose-invert flex-1"
-            remarkPlugins={[remarkGfm, remarkMath]}
+            remarkPlugins={remarkPlugins}
             rehypePlugins={[rehypeMathjax]}
             components={{
               code({ node, inline, className, children, ...props }) {
@@ -177,18 +252,25 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 <IconCopy size={20} />
               </button>
             )}
+            {!audioUrl && (
+              <button
+                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                onClick={handleTTS}
+                disabled={isGeneratingAudio}
+              >
+                {isGeneratingAudio ? (
+                  <div className="flex items-center">
+                    <IconLoader2 size={20} className="animate-spin mr-2" />
+                    <span className="text-xs">{loadingMessage}</span>
+                  </div>
+                ) : (
+                  <IconVolume size={20} />
+                )}
+              </button>
+            )}
           </div>
         </div>
-        {citationsToShow.length > 0 && (
-          <CitationList citations={citationsToShow} />
-        )}
-
-        {questionsToShow.length > 0 && (
-          <QuestionList
-            questions={questionsToShow}
-            onQuestionClick={onQuestionClick}
-          />
-        )}
+        {citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
   );

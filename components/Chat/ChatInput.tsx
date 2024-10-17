@@ -1,4 +1,4 @@
-import {IconArrowDown, IconPlayerStop, IconRepeat, IconSend,} from '@tabler/icons-react';
+import { IconArrowDown, IconRepeat } from '@tabler/icons-react';
 import {
   Dispatch,
   KeyboardEvent,
@@ -11,10 +11,12 @@ import {
   useState,
 } from 'react';
 
-import {useTranslation} from 'next-i18next';
+import { useTranslation } from 'next-i18next';
 
 import {
-  ChatInputSubmitTypes, FileMessageContent,
+  ChatInputSubmitTypes,
+  FileMessageContent,
+  FilePreview,
   getChatMessageContent,
   ImageMessageContent,
   Message,
@@ -27,12 +29,15 @@ import {Prompt} from '@/types/prompt';
 import HomeContext from '@/pages/api/home/home.context';
 import {PromptList} from './PromptList';
 import {VariableModal} from './VariableModal';
-import MicIcon from "@/components/Icons/mic";
 import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
 import ChatInputFile from "@/components/Chat/ChatInput/ChatInputFile";
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPreviews";
 import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
+import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
+import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
+import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
+import ChatDropdownWeb from "@/components/Chat/ChatInput/ChatDropdownWeb";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -41,8 +46,8 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>;
   textareaRef: MutableRefObject<HTMLTextAreaElement | null>;
   showScrollDownButton: boolean;
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
-  filePreviews: string[];
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+  filePreviews: FilePreview[];
 }
 
 export const ChatInput = ({
@@ -64,8 +69,8 @@ export const ChatInput = ({
   } = useContext(HomeContext);
 
   const [textFieldValue, setTextFieldValue] = useState<string>("");
-  const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | null>()
-  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | null>(null)
+  const [imageFieldValue, setImageFieldValue] = useState<ImageMessageContent | ImageMessageContent[] | null>()
+  const [fileFieldValue, setFileFieldValue] = useState<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>(null)
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -76,6 +81,11 @@ export const ChatInput = ({
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
   const [placeholderText, setPlaceholderText] = useState('');
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
+
+
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
 
@@ -102,29 +112,22 @@ export const ChatInput = ({
   };
 
   const buildContent = () => {
-    if (submitType === 'text')
+    const wrapInArray = (value: any) => Array.isArray(value) ? value : [value];
+
+    if (submitType === 'text') {
       return textFieldValue;
-    else if (submitType === 'image') {
-      if (imageFieldValue)
-        return [
-            imageFieldValue,
-          {type: "text", text: textFieldValue} as TextMessageContent
+    } else if (submitType === 'image') {
+      const imageContents = imageFieldValue ? [...wrapInArray(imageFieldValue), ...wrapInArray(fileFieldValue)] : (fileFieldValue ? [...wrapInArray(fileFieldValue)] : []);
+      return [
+        ...imageContents,
+        { type: "text", text: textFieldValue } as TextMessageContent
       ];
-      else
-        return [
-            {type: "text", text: textFieldValue} as TextMessageContent
-        ]
-    } else if (submitType === 'file') {
-      if (fileFieldValue) {
-        return [
-          fileFieldValue,
-          {type: "text", text: textFieldValue} as TextMessageContent
-        ]
-      } else {
-        return [
-          {type: "text", text: textFieldValue} as TextMessageContent
-        ]
-      }
+    } else if (submitType === 'file' || submitType == 'multi-file') {
+      const fileContents = fileFieldValue ? wrapInArray(fileFieldValue) : [];
+      return [
+        ...fileContents,
+        { type: "text", text: textFieldValue } as TextMessageContent
+      ];
     } else {
       throw new Error(`Invalid submit type for message: ${submitType}`);
     }
@@ -151,12 +154,16 @@ export const ChatInput = ({
     setImageFieldValue(null)
     setFileFieldValue(null)
     setPlugin(null);
+    setSubmitType('text')
+
+    if (filePreviews.length > 0) {
+      setFilePreviews([]);
+    }
 
     if (window.innerWidth < 640 && textareaRef?.current) {
       textareaRef.current.blur();
     }
 
-    setSubmitType('text')
   };
 
   const handleStopConversation = () => {
@@ -179,8 +186,8 @@ export const ChatInput = ({
     if (selectedPrompt) {
       setTextFieldValue((prevTextFieldValue) => {
         const newContent = prevTextFieldValue?.replace(
-            /\/\w*$/,
-            selectedPrompt.content,
+          /\/\w*$/,
+          selectedPrompt.content,
         );
         return newContent;
       });
@@ -210,19 +217,19 @@ export const ChatInput = ({
       case 'ArrowDown':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-            prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
+          prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
         );
         break;
       case 'ArrowUp':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-            prevIndex > 0 ? prevIndex - 1 : prevIndex,
+          prevIndex > 0 ? prevIndex - 1 : prevIndex,
         );
         break;
       case 'Tab':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-            prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
+          prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
         );
         break;
       case 'Enter':
@@ -322,7 +329,7 @@ export const ChatInput = ({
         textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
       }`;
     }
-  }, [textFieldValue]);
+  }, [textFieldValue, textareaRef]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -348,134 +355,222 @@ export const ChatInput = ({
     setPlaceholderText(trimmedPlaceholder);
   }, [t]);
 
+  const handleFiles = (files: FileList | File[]) => {
+    const filesArray = Array.from(files);
+
+    if (filesArray.length > 0) {
+      onFileUpload(
+        filesArray,
+        setSubmitType,
+        setFilePreviews,
+        setFileFieldValue,
+        setImageFieldValue,
+        setUploadProgress
+      );
+    }
+
+  };
+
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = e.dataTransfer.files;
+      handleFiles(files);
+      try {
+        e.dataTransfer.clearData();
+      } catch (err: any) {
+        // e.target.value = ""
+      }
+    }
+  };
+
+  const preventSubmission = (): boolean => {
+    return isTranscribing || messageIsStreaming;
+  }
 
   return (
-    <div className="absolute bottom-0 left-0 w-full border-transparent bg-gradient-to-b from-transparent via-white to-white pt-6 dark:border-white/20 dark:via-[#212121] dark:to-[#212121] md:pt-2 max-h-[200px]">
-      <div
-          className="stretch mx-2 mt-4 flex flex-row gap-3 last:mb-2 md:mx-4 md:mt-[52px] md:last:mb-6 lg:mx-auto lg:max-w-3xl">
-        {messageIsStreaming && (
-          <button
-            className="absolute top-0 left-0 right-0 mx-auto mb-3 flex w-fit items-center gap-3 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-0 md:mt-2"
-            onClick={handleStopConversation}
-          >
-            <IconPlayerStop size={16} /> {t('Stop Generating')}
-          </button>
-        )}
+    <div
+      onDragEnter={handleDragEnter}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+      className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50"
+    >
+      {filePreviews.length > 0 && (
+        <div className="px-4 py-2 max-h-52 overflow-y-auto">
+          <div className="w-full flex justify-center items-center space-x-2">
+            <ChatFileUploadPreviews
+              filePreviews={filePreviews}
+              setFilePreviews={setFilePreviews}
+              setSubmitType={setSubmitType}
+            />
+          </div>
+        </div>
+      )}
 
+      <div className={'flex justify-center'}>
         {!messageIsStreaming &&
+          !filePreviews.length &&
           selectedConversation &&
           selectedConversation.messages.length > 0 && (
             <button
-              className="absolute top-0 left-0 right-0 mx-auto mb-3 flex w-fit items-center gap-3 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-0 md:mt-2"
+              className="max-h-52 overflow-y-auto flex items-center gap-3 mb-1 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-1 md:mt-2"
               onClick={onRegenerate}
             >
-              <IconRepeat size={16} /> {t('Regenerate response')}
+              <IconRepeat size={16}/> {t('Regenerate response')}
             </button>
           )}
+      </div>
 
-        <ChatInputImageCapture
-                setFilePreviews={setFilePreviews}
-                setSubmitType={setSubmitType}
-                prompt={textFieldValue}
-                setImageFieldValue={setImageFieldValue}
-            />
-        <ChatInputImage
+      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
+
+        <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
+
+          <ChatInputImageCapture
+            setFilePreviews={setFilePreviews}
             setSubmitType={setSubmitType}
-            // setContent={setContent}
+            prompt={textFieldValue}
+            setImageFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
+          />
+          <ChatInputImage
+            setSubmitType={setSubmitType}
             prompt={textFieldValue}
             setFilePreviews={setFilePreviews}
-            setImageFieldValue={setImageFieldValue}
-        />
-        <ChatInputFile
+            setFileFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
+          />
+          <ChatInputFile
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
             setFilePreviews={setFilePreviews}
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
-          />
-        {/*<button>*/}
-        {/*  <MicIcon className="bg-[#343541] rounded h-5 w-5"/>*/}
-        {/*  <span className="sr-only">Voice input</span>*/}
-        {/*</button>*/}
-
-        <div
-            className="relative mx-2 flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
-          <ChatFileUploadPreviews
-              filePreviews={filePreviews}
-              setFilePreviews={setFilePreviews}
-              setSubmitType={setSubmitType}
+            setUploadProgress={setUploadProgress}
           />
 
-          <textarea
-            ref={textareaRef}
-            className="m-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10"
-            style={{
-              resize: 'none',
-              bottom: `${textareaRef?.current?.scrollHeight}px`,
-              maxHeight: '400px',
-              overflow: `${
-                textareaRef.current && textareaRef.current.scrollHeight > 400
-                  ? 'auto'
-                  : 'hidden'
-              }`,
-            }}
-            placeholder={placeholderText}
-            value={
-                textFieldValue
-            }
-            rows={1}
-            onCompositionStart={() => setIsTyping(true)}
-            onCompositionEnd={() => setIsTyping(false)}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
+          <ChatInputTranslate
+            setTextFieldValue={setTextFieldValue}
+            handleSend={handleSend}
           />
 
-          <button
-              className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
-              onClick={handleSend}
+          <ChatDropdownWeb
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+            setUploadProgress={setUploadProgress}
+            setTextFieldValue={setTextFieldValue}
+            handleSend={handleSend}
+          />
+
+
+
+          <div
+            className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4"
           >
-            {messageIsStreaming ? (
-                <div
-                    className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
-            ) : (
-                <IconSend size={18}/>
-            )}
-          </button>
+            <div className="absolute left-2 top-3">
+              <ChatInputVoiceCapture
+                setTextFieldValue={setTextFieldValue}
+                setIsTranscribing={setIsTranscribing}
+              />
+            </div>
 
-          {showScrollDownButton && (
+            <textarea
+              ref={textareaRef}
+              className={"m-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 lg:" + (isTranscribing ? ' animate-pulse' : '')}
+              style={{
+                resize: 'none',
+                bottom: `${textareaRef?.current?.scrollHeight}px`,
+                maxHeight: '400px',
+                overflow: `${
+                  textareaRef.current && textareaRef.current.scrollHeight > 400
+                    ? 'auto'
+                    : 'hidden'
+                }`,
+              }}
+              placeholder={isTranscribing ? 'Transcribing...' : placeholderText}
+              value={
+                textFieldValue
+              }
+              rows={1}
+              onCompositionStart={() => setIsTyping(true)}
+              onCompositionEnd={() => setIsTyping(false)}
+              onChange={handleChange}
+              onKeyDown={handleKeyDown}
+              disabled={preventSubmission()}
+            />
+
+            <div
+              className="absolute right-2 top-2 rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200"
+            >
+              <ChatInputSubmitButton
+                   messageIsStreaming={messageIsStreaming}
+                   isTranscribing={isTranscribing}
+                   handleSend={handleSend}
+                   handleStopConversation={handleStopConversation}
+                   preventSubmission={preventSubmission}
+                 />
+            </div>
+
+            {showScrollDownButton && (
               <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
                 <button
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
-                    onClick={onScrollDownClick}
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
+                  onClick={onScrollDownClick}
                 >
                   <IconArrowDown size={18}/>
                 </button>
               </div>
-          )}
+            )}
 
-          {showPromptList && filteredPrompts.length > 0 && (
+            {showPromptList && filteredPrompts.length > 0 && (
               <div className="absolute bottom-12 w-full">
                 <PromptList
-                    activePromptIndex={activePromptIndex}
-                    prompts={filteredPrompts}
-                    onSelect={handleInitModal}
-                    onMouseOver={setActivePromptIndex}
-                    promptListRef={promptListRef}
+                  activePromptIndex={activePromptIndex}
+                  prompts={filteredPrompts}
+                  onSelect={handleInitModal}
+                  onMouseOver={setActivePromptIndex}
+                  promptListRef={promptListRef}
                 />
               </div>
-          )}
+            )}
+          </div>
 
           {isModalVisible && (
-              <VariableModal
-                  prompt={filteredPrompts[activePromptIndex]}
-                  variables={variables}
-                  onSubmit={handleSubmit}
-                  onClose={() => setIsModalVisible(false)}
-              />
+            <VariableModal
+              prompt={filteredPrompts[activePromptIndex]}
+              variables={variables}
+              onSubmit={handleSubmit}
+              onClose={() => setIsModalVisible(false)}
+            />
           )}
         </div>
       </div>
-      <div className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
+      <div
+        className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
         {t(
           "MSF AI Assistant can make mistakes. Check important info.",
         )}

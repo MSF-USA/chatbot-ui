@@ -10,6 +10,7 @@ declare module 'next-auth' {
       jobTitle?: string;
       department?: string;
       mail?: string;
+      companyName?: string;
     };
     error?: string;
     accessToken: string;
