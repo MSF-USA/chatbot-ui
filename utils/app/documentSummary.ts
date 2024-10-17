@@ -15,7 +15,7 @@ import {
 } from '@azure/identity';
 import OpenAI from 'openai';
 import { AzureOpenAI } from 'openai';
-import {ChatCompletion} from "openai/resources";
+import { ChatCompletion } from 'openai/resources';
 
 interface ParseAndQueryFilterOpenAIArguments {
   file: File;
@@ -29,11 +29,11 @@ interface ParseAndQueryFilterOpenAIArguments {
 }
 
 async function summarizeChunk(
-    azureOpenai: OpenAI,
-    modelId: string,
-    prompt: string,
-    chunk: string,
-    user: Session['user'],
+  azureOpenai: OpenAI,
+  modelId: string,
+  prompt: string,
+  chunk: string,
+  user: Session['user'],
 ): Promise<string> {
   const summaryPrompt: string = `Summarize the following text with relevance to the prompt, but keep enough details to maintain the tone, character, and content of the original. If nothing is relevant, then return an empty string:\n\n\`\`\`prompt\n${prompt}\`\`\`\n\n\`\`\`text\n${chunk}\n\`\`\``;
   const chunkSummary = await azureOpenai.chat.completions.create({
@@ -42,7 +42,7 @@ async function summarizeChunk(
       {
         role: 'system',
         content:
-            "You are an AI Text summarizer. You take the prompt of a user and rather than conclusively answering, you pull together all the relevant information for that prompt in a particular chunk of text and reshape that into brief statements capturing the nuanced intent of the original text. Focus on how the provided text answers the user's question. If it doesn't then briefly make that clear.",
+          "You are an AI Text summarizer. You take the prompt of a user and rather than conclusively answering, you pull together all the relevant information for that prompt in a particular chunk of text and reshape that into brief statements capturing the nuanced intent of the original text. Focus on how the provided text answers the user's question. If it doesn't then briefly make that clear.",
       },
       {
         role: 'user',
@@ -57,26 +57,26 @@ async function summarizeChunk(
   return chunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
 }
 
-export async function parseAndQueryFileOpenAI(
-    {
-      file,
-      prompt,
-      modelId,
-      maxLength = 6000,
-      user,
-      botId,
-      loggingService,
-      stream = true,
-    }: ParseAndQueryFilterOpenAIArguments
-): Promise<StreamProcessingResult | string> {
+export async function parseAndQueryFileOpenAI({
+  file,
+  prompt,
+  modelId,
+  maxLength = 6000,
+  user,
+  botId,
+  loggingService,
+  stream = true,
+}: ParseAndQueryFilterOpenAIArguments): Promise<
+  StreamProcessingResult | string
+> {
   const startTime = Date.now();
   const fileContent = await loadDocument(file);
   let chunks: string[] = splitIntoChunks(fileContent);
 
   const scope = 'https://cognitiveservices.azure.com/.default';
   const azureADTokenProvider = getBearerTokenProvider(
-      new DefaultAzureCredential(),
-      scope,
+    new DefaultAzureCredential(),
+    scope,
   );
 
   const apiVersion = '2024-07-01-preview';
@@ -90,10 +90,10 @@ export async function parseAndQueryFileOpenAI(
 
   while (chunks.length > 0) {
     const chunkPromises = chunks.map((chunk) =>
-        summarizeChunk(client, modelId, prompt, chunk, user).catch((error) => {
-          console.error(error);
-          return null;
-        }),
+      summarizeChunk(client, modelId, prompt, chunk, user).catch((error) => {
+        console.error(error);
+        return null;
+      }),
     );
 
     const summaries = await Promise.all(chunkPromises);
@@ -119,7 +119,7 @@ export async function parseAndQueryFileOpenAI(
       {
         role: 'system',
         content:
-            "You are a document analyzer AI Assistant. You perform all tasks the user requests of you, careful to make sure you are responding to the spirit and intentions behind their request. You make it clear how your responses relate to the base text that you are processing and provide your responses in markdown format when special formatting is necessary. Understand that you are analyzing text that you have previously summarized, so make sure your response is an amalgamation of your impressions over each chunk. Follow all user instructions on formatting but if none are provided make your response well structured, taking advantage of markdown formatting. Finally, make sure your final analysis is coherent and not just a listing out of details unless that's what the user specifically asks for.",
+          "You are a document analyzer AI Assistant. You perform all tasks the user requests of you, careful to make sure you are responding to the spirit and intentions behind their request. You make it clear how your responses relate to the base text that you are processing and provide your responses in markdown format when special formatting is necessary. Understand that you are analyzing text that you have previously summarized, so make sure your response is an amalgamation of your impressions over each chunk. Follow all user instructions on formatting but if none are provided make your response well structured, taking advantage of markdown formatting. Finally, make sure your final analysis is coherent and not just a listing out of details unless that's what the user specifically asks for.",
       },
       {
         role: 'user',
@@ -160,8 +160,8 @@ export async function parseAndQueryFileOpenAI(
 
   if (stream) {
     const { stream: responseStream, contentAccumulator, citationsAccumulator } =
-        //@ts-ignore
-        createAzureOpenAIStreamProcessor(response);
+      //@ts-ignore
+      createAzureOpenAIStreamProcessor(response);
 
     await loggingService.log({
       EventType: 'DocumentSummaryComplete',
@@ -182,10 +182,11 @@ export async function parseAndQueryFileOpenAI(
     return { stream: responseStream, contentAccumulator, citationsAccumulator };
   } else {
     const completionText =
-        (response as ChatCompletion)?.choices?.[0]?.message?.content?.trim() ?? '';
+      (response as ChatCompletion)?.choices?.[0]?.message?.content?.trim() ??
+      '';
     if (!completionText) {
       throw new Error(
-          `Empty response returned from API! ${JSON.stringify(response)}`,
+        `Empty response returned from API! ${JSON.stringify(response)}`,
       );
     }
 
@@ -202,6 +203,7 @@ export async function parseAndQueryFileOpenAI(
       FileName: file.name,
       FileSize: file.size,
       Duration: duration,
+      Env: process.env.NEXT_PUBLIC_ENV,
       ChunkCount: chunks.length,
     });
 
