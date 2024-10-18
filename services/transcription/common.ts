@@ -4,7 +4,7 @@ import os from 'os';
 import { promisify } from 'util';
 import ffmpeg from 'fluent-ffmpeg';
 import ffmpegStatic from 'ffmpeg-static';
-import {exec} from "child_process";
+import { exec } from "child_process";
 
 const unlinkAsync = promisify(fs.unlink);
 ffmpeg.setFfmpegPath(ffmpegStatic as string);
