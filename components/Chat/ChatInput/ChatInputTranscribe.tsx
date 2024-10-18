@@ -2,20 +2,45 @@ import React, { FC, useState, Dispatch, SetStateAction } from 'react';
 import {
   IconFileMusic
 } from '@tabler/icons-react';
+import {ChatInputSubmitTypes} from "@/types/chat";
 
 interface ChatInputTranscribeProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
+  onFileUpload: (
+    event: React.ChangeEvent<any> | File[] | FileList,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+    setFilePreviews: Dispatch<SetStateAction<any>>,
+    setFileFieldValue: Dispatch<SetStateAction<any>>,
+    setImageFieldValue: Dispatch<SetStateAction<any>>,
+    setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
+  ) => Promise<void>;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+  setFilePreviews: Dispatch<SetStateAction<any>>;
+  setFileFieldValue: Dispatch<SetStateAction<any>>;
+  setImageFieldValue: Dispatch<SetStateAction<any>>;
+  setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
 }
 
 const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
   {
     setTextFieldValue,
+    onFileUpload,
+    setParentModalIsOpen,
+    setSubmitType,
+    setFilePreviews,
+    setFileFieldValue,
+    setImageFieldValue,
+    setUploadProgress,
   }
 ) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [transcriptModalOpen, setTranscriptModalOpen] = useState<boolean>(false);
+  const [transcript, setTranscript] = useState<string>('');
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -27,6 +52,11 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     setIsModalOpen(false);
     setFile(null);
     setError(null);
+  };
+
+  const closeTranscriptModal = () => {
+    setTranscriptModalOpen(false);
+    setTranscript('');
   };
 
   const handleFileChange = (
@@ -54,6 +84,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
 
     setIsTranscribing(true);
     setError(null);
+    setStatusMessage('Uploading file...');
 
     try {
       const filename = encodeURIComponent(file.name);
@@ -91,6 +122,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
       const fileURI = uploadResult.uri;
       const fileID = encodeURIComponent(fileURI.split('/').pop());
 
+      setStatusMessage('Transcribing... This may take a while.');
+
       const transcribeResponse = await fetch(`/api/v2/file/${fileID}/transcribe?service=whisper`, {
         method: 'GET'
       });
@@ -102,22 +135,66 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
       const transcribeResult = await transcribeResponse.json();
       const transcript = transcribeResult.transcript;
 
-      setTextFieldValue((prevText) =>
-        prevText?.length ? prevText + ' ' + transcript : transcript
-      );
+      setTranscript(transcript);
       closeModal();
+      setTranscriptModalOpen(true);
 
     } catch (error) {
       console.error('Error during transcription:', error);
       setError('An error occurred during transcription. Please try again.');
     } finally {
       setIsTranscribing(false);
+      setStatusMessage(null);
+    }
+  };
+
+  const handleCopyToClipboard = () => {
+    navigator.clipboard.writeText(transcript)
+      .then(() => {
+        // Optionally, provide feedback to user
+        alert('Copied to clipboard!');
+      })
+      .catch((error) => {
+        console.error('Failed to copy text:', error);
+      });
+  };
+
+  const handleDownload = () => {
+    const blob = new Blob([transcript], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'transcript.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleInjectToChat = async () => {
+    try {
+      const blob = new Blob([transcript], { type: 'text/plain' });
+      const file = new File([blob], 'transcript.txt', { type: 'text/plain' });
+
+      await onFileUpload(
+        [file],
+        setSubmitType,
+        setFilePreviews,
+        setFileFieldValue,
+        setImageFieldValue,
+        setUploadProgress,
+      );
+
+      closeTranscriptModal();
+      setParentModalIsOpen(false);
+    } catch (error) {
+      console.error('Error injecting transcript to chat:', error);
     }
   };
 
   return (
     <div className="inline-block">
-      <button onClick={openModal} title="Upload audio or video file" className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+      <button onClick={openModal} title="Upload audio or video file" className="py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
         <IconFileMusic className="text-black dark:text-white h-5 w-5"/>
       </button>
 
@@ -170,6 +247,81 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
                 }`}
               >
                 {isTranscribing ? 'Transcribing...' : 'Transcribe'}
+              </button>
+            </div>
+
+            {/* Overlay when transcribing */}
+            {isTranscribing && (
+              <div className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center">
+                <svg
+                  className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  />
+                </svg>
+                {statusMessage && (
+                  <p className="mt-2 text-gray-700 dark:text-gray-200">
+                    {statusMessage}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {transcriptModalOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={closeTranscriptModal}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg w-11/12 max-w-md p-6 relative"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">Transcription Result</h2>
+              <button onClick={closeTranscriptModal} title="Close" className="text-2xl leading-none">&times;</button>
+            </div>
+            <div className="mb-4">
+              <textarea
+                readOnly
+                value={transcript}
+                className="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+              />
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                onClick={handleCopyToClipboard}
+                className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
+              >
+                Copy to Clipboard
+              </button>
+              <button
+                onClick={handleDownload}
+                className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+              >
+                Download as TXT
+              </button>
+              <button
+                onClick={handleInjectToChat}
+                className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
+              >
+                Inject into Chat
               </button>
             </div>
           </div>
