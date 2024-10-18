@@ -26,7 +26,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
   if (!session) throw new Error("Failed to pull session!");
 
   // @ts-ignore
-  const userId: string = token.userId ?? session?.user?.id ?? 'anonymous';
+  const userId: string = session?.user?.id ?? token.userId ?? 'anonymous';
 
 
 
@@ -60,13 +60,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
         const fileText = fileData.toString('utf8');
 
         let blobStorageClient: BlobStorage = new AzureBlobStorage(
-            getEnvVariable('AZURE_BLOB_STORAGE_NAME'),
-            getEnvVariable('AZURE_BLOB_STORAGE_KEY'),
-            getEnvVariable(
-                'AZURE_BLOB_STORAGE_CONTAINER',
-                false,
-                process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
-            )
+          getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
+          getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
+          getEnvVariable(
+            {
+              name: 'AZURE_BLOB_STORAGE_CONTAINER',
+              throwErrorOnFail: false,
+              defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+              user: session.user
+            }
+          ),
+          session.user
         );
 
         const fileStream = Readable.from(fileData);
@@ -114,7 +118,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<any>) => {
                 'AZURE_BLOB_STORAGE_CONTAINER',
                 false,
                 process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? ''
-            )
+            ),
+            session.user
         );
 
         const fileStream = Readable.from(fileData);

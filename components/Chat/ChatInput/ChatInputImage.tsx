@@ -11,6 +11,8 @@ import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import {
   ChatInputSubmitTypes,
+  FileMessageContent,
+  FilePreview,
   ImageMessageContent,
   TextMessageContent,
 } from '@/types/chat';
@@ -18,16 +20,13 @@ import {
 import HomeContext from '@/pages/api/home/home.context';
 
 import ImageIcon from '@/components/Icons/image';
+import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onImageUpload = (
-  event: React.ChangeEvent<any>,
-  // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>>,
-  prompt: string,
-  setFilePreviews: Dispatch<SetStateAction<string[]>>,
-  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
-  >,
+    event: React.ChangeEvent<any>,
+    setFilePreviews:  Dispatch<SetStateAction<FilePreview[]>>,
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
 ) => {
   event.preventDefault();
   const file = event.target.files[0];
@@ -65,15 +64,16 @@ const onImageUpload = (
             detail: 'auto',
           },
         };
-        setImageFieldValue(imageMessage);
-        setFilePreviews((prevFilePreviews) => {
-          if (Array.isArray(prevFilePreviews)) {
-            prevFilePreviews.push(base64String);
-            return prevFilePreviews;
-          } else {
-            return [base64String];
-          }
-        });
+        // @ts-ignore
+        setFileFieldValue(prevFieldValue => {
+                    if (Array.isArray(prevFieldValue)) {
+                        return [...prevFieldValue, imageMessage];
+                    } else if (prevFieldValue) {
+                        return [prevFieldValue, imageMessage];
+                    } else {
+                        return [imageMessage]
+                    }
+                });
       });
     });
   };
@@ -90,20 +90,19 @@ const onImageUploadButtonClick = (
 };
 
 export interface ChatInputImageProps {
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
-  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  prompt: string;
-  // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>> | null;
-  setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
-  >;
+    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+    prompt: string;
+    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[]  | null>>;
+    setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
 const ChatInputImage = ({
   setSubmitType,
   prompt,
   setFilePreviews,
-  setImageFieldValue,
+  setFileFieldValue,
+  setUploadProgress,
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
 
@@ -118,15 +117,17 @@ const ChatInputImage = ({
       <input
         type="file"
         ref={imageInputRef}
-        style={{ display: 'none' }}
-        onChange={(event) => {
-          onImageUpload(
-            event,
-            prompt,
-            setFilePreviews,
-            setSubmitType,
-            setImageFieldValue,
-          );
+        style={{ display: 'none'}}
+            onChange={(event) => {
+            onFileUpload(
+              event,
+              setSubmitType,
+              setFilePreviews,
+              setFileFieldValue,
+              // @ts-ignore
+              setFileFieldValue,
+              setUploadProgress,
+            );
         }}
         accept={'image/*'}
       />
