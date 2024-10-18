@@ -27,7 +27,7 @@ export class ACSTranscriptionService implements ITranscriptionService {
       filePath = input;
     }
 
-    const maxSize = 25 * 1024 * 1024; // Adjust if different for ACS
+    const maxSize = 25 * 1024 * 1024;
     const audioSegments = await splitAudioFile(filePath, maxSize);
 
     const transcripts = [];
@@ -39,7 +39,7 @@ export class ACSTranscriptionService implements ITranscriptionService {
     const fullTranscript = transcripts.join(' ');
 
     // Clean up temporary files
-    await cleanUpFiles([filePath, ...audioSegments]);
+    cleanUpFiles([filePath, ...audioSegments]);
 
     return fullTranscript;
   }
@@ -65,8 +65,8 @@ export class ACSTranscriptionService implements ITranscriptionService {
         });
     });
 
-    const audioFormat = sdk.AudioStreamFormat.getWaveFormatPCM(16000, 16, 1);
-    const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
+    const audioConfig = sdk.AudioConfig.fromWavFileInput(fs.readFileSync(wavSegmentPath));
+    // const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
     const speechConfig = sdk.SpeechConfig.fromSubscription(this.apiKey, this.region);
     // speechConfig.speechRecognitionLanguage = 'en-US';
 
