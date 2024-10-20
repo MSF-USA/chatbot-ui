@@ -20,6 +20,7 @@ import {
   IconChevronDown,
 } from '@tabler/icons-react';
 import BetaBadge from '@/components/Beta/Badge';
+import {useTranslation} from "next-i18next";
 
 interface ChatInputSearchProps {
   onFileUpload: (
@@ -73,6 +74,8 @@ const ChatInputSearch = ({
                            handleSend,
     setParentModalIsOpen,
                          }: ChatInputSearchProps) => {
+  const { t } = useTranslation('chat');
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
@@ -96,7 +99,7 @@ const ChatInputSearch = ({
 
   useEffect(() => {
     if (!questionInput) {
-      setQuestionInput(`Please summarize the content you find`);
+      setQuestionInput(t('webSearchModalDefaultQuestion'));
     }
   }, [searchInput]);
 
@@ -129,7 +132,7 @@ const ChatInputSearch = ({
       let optimizedQuestion = questionInput;
 
       if (shouldOptimizeInput) {
-        setStatusMessage('Optimizing query...');
+        setStatusMessage(t('webSearchModalOptimizingStatusMessage'));
         // Call the new route to get optimized query and question
 
         try {
@@ -162,7 +165,7 @@ const ChatInputSearch = ({
         optimizedQuestion = questionInput;
       }
 
-      setStatusMessage('Searching...');
+      setStatusMessage(t('webSearchModalSearchingStatusMessage'));
 
       const queryParams = new URLSearchParams({
         q: optimizedQuery,
@@ -184,7 +187,7 @@ const ChatInputSearch = ({
 
       const content = data.content;
 
-      setStatusMessage('Handling content...');
+      setStatusMessage(t('webSearchModalHandlingContentStatusMessage'));
 
       // Generate a unique hash for the content
       const hash = crypto.createHash('sha256').update(content).digest('hex');
@@ -209,13 +212,13 @@ const ChatInputSearch = ({
         optimizedQuestion +
         `
                 
-Make all analyses relevant to the user request:
+${t('webSearchModalPromptUserContext')}:
 
 \`\`\`user-request
 ${optimizedQuery}
 \`\`\`
 
-Put citations throughout your response. At the end of your response provide citations that always include the titles and links of the original sources, as well as author(s) where available.`,
+${t('webSearchModalPromptCitation')}`,
       );
 
       // Close the modal and reset the inputs
@@ -266,7 +269,7 @@ Put citations throughout your response. At the end of your response provide cita
                   id="modal-title"
                   className="text-xl font-bold text-gray-900 dark:text-white"
                 >
-                  Web Search
+                  {t('webSearchModalTitle')}
                 </h2>
                 <BetaBadge />
               </div>
@@ -280,10 +283,10 @@ Put citations throughout your response. At the end of your response provide cita
                         type="text"
                         value={searchInput}
                         onChange={(e) => setSearchInput(e.target.value)}
-                        placeholder="Enter your search query"
+                        placeholder={t("searchQueryPlaceholder")}
                         required
                         disabled={isSubmitting} // Disable when submitting
-                        title="Enter your search query"
+                        title={t("searchQueryPlaceholder")}
                         ref={searchInputRef}
                         className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                       />
@@ -305,7 +308,7 @@ Put citations throughout your response. At the end of your response provide cita
                         htmlFor="auto-submit"
                         className="ml-2 text-sm text-gray-700 dark:text-gray-200"
                       >
-                        Auto-submit question
+                        {t('autoSubmitButton')}
                       </label>
                     </div>
                     <button
@@ -316,7 +319,7 @@ Put citations throughout your response. At the end of your response provide cita
                       aria-expanded={isAdvancedOpen}
                       aria-controls="advanced-options"
                     >
-                      Advanced Options
+                      {t('advancedOptionsButton')}
                       {isAdvancedOpen ? (
                         <IconChevronUp className="ml-2 h-4 w-4" />
                       ) : (
@@ -332,7 +335,7 @@ Put citations throughout your response. At the end of your response provide cita
                           htmlFor="optimize-input"
                           className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
-                          Optimize User Inputs
+                          {t('webSearchModalOptimizeLabel')}
                         </label>
                         <input
                           id="optimize-input"
@@ -349,7 +352,7 @@ Put citations throughout your response. At the end of your response provide cita
                           htmlFor="question-input"
                           className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
-                          Question
+                          {t('webPullerQuestionLabel')}
                         </label>
                         <input
                           id="question-input"
@@ -367,7 +370,7 @@ Put citations throughout your response. At the end of your response provide cita
                           htmlFor="market"
                           className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
-                          Market
+                          {t('webSearchModalMarketLabel')}
                         </label>
                         <select
                           id="market"
@@ -393,7 +396,7 @@ Put citations throughout your response. At the end of your response provide cita
                           htmlFor="safe-search"
                           className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
-                          Safe Search
+                          {t('webSearchModalSafeSearchLabel')}
                         </label>
                         <select
                           id="safe-search"
@@ -403,9 +406,9 @@ Put citations throughout your response. At the end of your response provide cita
                           title="Select the safe search level"
                           className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         >
-                          <option value="Off">Off</option>
-                          <option value="Moderate">Moderate</option>
-                          <option value="Strict">Strict</option>
+                          <option value="Off">{t('safeSearchOptionOff')}</option>
+                          <option value="Moderate">{t('safeSearchOptionModerate')}</option>
+                          <option value="Strict">{t('safeSearchOptionStrict')}</option>
                         </select>
                       </div>
                       <div className="grid grid-cols-4 items-center gap-4">
@@ -413,7 +416,7 @@ Put citations throughout your response. At the end of your response provide cita
                           htmlFor="count"
                           className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
-                          Results (max: 15)
+                          {t('webSearchModalResultsLabel')}
                         </label>
                         <input
                           id="count"
@@ -472,7 +475,7 @@ Put citations throughout your response. At the end of your response provide cita
                     disabled={isSubmitting}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
                   >
-                    Cancel
+                    {t('cancelButton')}
                   </button>
                   <button
                     type="submit"
@@ -480,7 +483,7 @@ Put citations throughout your response. At the end of your response provide cita
                     className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
                   >
                     <IconSearch className="mr-2 h-4 w-4" />
-                    {autoSubmit ? 'Submit' : 'Generate prompt'}
+                    {autoSubmit ? t('submitButton') : t('generatePromptButton')}
                   </button>
                 </div>
               </form>
