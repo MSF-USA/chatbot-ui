@@ -45,5 +45,16 @@
   "appName": "MSF AI సహాయకుడు",
   "modelSelectionDialogue": "ఏఐ మోడల్ ఎంపిక:",
   "temperatureDescription": "0.8 వంటి ఎత్తైన విలువలు అవుట్‌పుట్‌ను మరింత సృజనాత్మకంగా చేస్తాయి, అయితే 0.2 వంటి తక్కువ విలువలు దాన్ని మరింత దృష్టి సారించిన మరియు నిర్దిష్టమైనదిగా చేస్తాయి.",
-  "Run Typewriter Intro": "టైప్‌రైటర్ పరిచయాన్ని అమలు చేయండి"
+  "Run Typewriter Intro": "టైప్‌రైటర్ పరిచయాన్ని అమలు చేయండి",
+  "defaultWebPullerQuestion": "దయచేసి ఈ వెబ్‌పేజీ నుండి కంటెంట్‌ని సారాంశం చేయండి.",
+  "webPullerCitationPrompt": "మీరు చేసే ఏదైనా ప్రకటనలను పాఠ్యం నుండి సూచించండి మరియు URL ను సూచించండి",
+  "webPullerReferencePrompt": "అలాగే శీర్షికను, ప్రత్యక్ష మూలాన్ని, రచయిత(లు)ను మరియు ప్రచురణ తేదీని అందుబాటులో ఉన్నప్పుడు మరియు సంబంధితప్పుడు సూచించండి.",
+  "autoSubmitButton": "ఆటో-సబ్మిట్",
+  "cancelButton": "రద్దు చేయి",
+  "generatePromptButton": "ప్రాంప్ట్ సృష్టించండి",
+  "submitButton": "సమర్పించండి",
+  "webPullerHandlingContentStatusMessage": "కంటెంట్ నిర్వహణలో ఉంది...",
+  "webPullerIconScreenReader": "URL నుండి వెబ్‌పేజ్ పాఠ్యాన్ని లాగండి",
+  "webPullerPullingStatusMessage": "URL నుండి కంటెంట్‌ను పొందుతున్నాయి...",
+  "webPullerQuestionLabel": "ప్రశ్న"
 }

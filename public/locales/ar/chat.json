@@ -45,5 +45,16 @@
   "appName": "مساعد MSF AI",
   "modelSelectionDialogue": "اختيار نموذج الذكاء الاصطناعي:",
   "temperatureDescription": "القيم الأعلى مثل 0.8 ستجعل الناتج أكثر إبداعًا، بينما القيم الأقل مثل 0.2 ستجعله أكثر تركيزًا وحتمية.",
-  "Run Typewriter Intro": "تشغيل مقدمة الآلة الكاتبة"
+  "Run Typewriter Intro": "تشغيل مقدمة الآلة الكاتبة",
+  "defaultWebPullerQuestion": "يرجى تلخيص المحتوى من هذه الصفحة.",
+  "webPullerCitationPrompt": "اذكر أي ادعاءات تدلي بها من النص وارجع إلى عنوان URL",
+  "webPullerReferencePrompt": "انظر أيضًا إلى العنوان والمصدر الظاهر والمؤلف(ين) وتاريخ النشر حيثما كان متاحًا وملائمًا.",
+  "autoSubmitButton": "إرسال تلقائي",
+  "cancelButton": "إلغاء",
+  "generatePromptButton": "توليد موجه",
+  "submitButton": "إرسال",
+  "webPullerHandlingContentStatusMessage": "جاري معالجة المحتوى...",
+  "webPullerIconScreenReader": "سحب نص صفحة الويب من عنوان URL",
+  "webPullerPullingStatusMessage": "جارٍ سحب المحتوى من عنوان URL...",
+  "webPullerQuestionLabel": "سؤال"
 }

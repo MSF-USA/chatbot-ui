@@ -45,5 +45,16 @@
   "appName": "MSF AI -avustaja",
   "modelSelectionDialogue": "Tekoälymallin valinta:",
   "temperatureDescription": "Korkeammat arvot, kuten 0,8, tekevät tuloksesta luovemman, kun taas matalammat arvot, kuten 0,2, tekevät siitä keskittyneemmän ja deterministisemmän.",
-  "Run Typewriter Intro": "Käynnistä kirjoituskoneen esittely"
+  "Run Typewriter Intro": "Käynnistä kirjoituskoneen esittely",
+  "defaultWebPullerQuestion": "Ole hyvä ja tiivistä tämän verkkosivun sisältö.",
+  "webPullerCitationPrompt": "Lainaa kaikkia väitteitä, jotka teet tekstistä, ja viittaa URL-osoitteeseen",
+  "webPullerReferencePrompt": "Viittaa myös otsikkoon, ilmeiseen lähteeseen, kirjoittajiin ja julkaisupäivään, jos saatavilla ja merkityksellistä.",
+  "autoSubmitButton": "Automaattinen lähetys",
+  "cancelButton": "Peruuta",
+  "generatePromptButton": "Luo kehotus",
+  "submitButton": "Lähetä",
+  "webPullerHandlingContentStatusMessage": "Sisältöä käsitellään...",
+  "webPullerIconScreenReader": "Hae verkkosivuteksti URL-osoitteesta",
+  "webPullerPullingStatusMessage": "Haetaan sisältöä URL-osoitteesta...",
+  "webPullerQuestionLabel": "Kysymys"
 }

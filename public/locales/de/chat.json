@@ -45,5 +45,16 @@
   "appName": "MSF AI-Assistent",
   "modelSelectionDialogue": "KI-Modellauswahl:",
   "temperatureDescription": "Höhere Werte wie 0,8 machen das Ergebnis kreativer, während niedrigere Werte wie 0,2 es fokussierter und deterministischer machen.",
-  "Run Typewriter Intro": "Schreibmaschinen-Intro ausführen"
+  "Run Typewriter Intro": "Schreibmaschinen-Intro ausführen",
+  "defaultWebPullerQuestion": "Bitte fassen Sie den Inhalt dieser Webseite zusammen.",
+  "webPullerCitationPrompt": "Zitieren Sie alle Behauptungen, die Sie aus dem Text machen, und verweisen Sie auf die URL",
+  "webPullerReferencePrompt": "Verweisen Sie auch auf den Titel, die offensichtliche Quelle, den/die Autor(en) und das Veröffentlichungsdatum, wo verfügbar und relevant.",
+  "autoSubmitButton": "Automatisch übermitteln",
+  "cancelButton": "Abbrechen",
+  "generatePromptButton": "Aufforderung generieren",
+  "submitButton": "Absenden",
+  "webPullerHandlingContentStatusMessage": "Inhalt wird verarbeitet...",
+  "webPullerIconScreenReader": "Webseitentext von URL abrufen",
+  "webPullerPullingStatusMessage": "Inhalte von der URL abrufen...",
+  "webPullerQuestionLabel": "Frage"
 }

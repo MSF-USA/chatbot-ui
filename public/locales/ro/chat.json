@@ -45,5 +45,16 @@
   "appName": "Asistent AI MSF",
   "modelSelectionDialogue": "Selecție model AI:",
   "temperatureDescription": "Valori mai mari, precum 0,8, vor face ca rezultatul să fie mai creativ, în timp ce valori mai mici, precum 0,2, îl vor face mai concentrat și determinist.",
-  "Run Typewriter Intro": "Rulați introducerea mașinii de scris"
+  "Run Typewriter Intro": "Rulați introducerea mașinii de scris",
+  "defaultWebPullerQuestion": "Vă rugăm să rezumați conținutul acestei pagini web.",
+  "webPullerCitationPrompt": "Citează orice afirmații pe care le faci din text și fă referire la URL",
+  "webPullerReferencePrompt": "De asemenea, faceți referire la titlu, sursa aparentă, autor(i) și data publicării, acolo unde este disponibil și relevant.",
+  "autoSubmitButton": "Trimitere automată",
+  "cancelButton": "Anulează",
+  "generatePromptButton": "Generează prompt",
+  "submitButton": "Trimite",
+  "webPullerHandlingContentStatusMessage": "Procesare conținut...",
+  "webPullerIconScreenReader": "Extrage textul paginii web din URL",
+  "webPullerPullingStatusMessage": "Extrage conținutul de la URL...",
+  "webPullerQuestionLabel": "Întrebare"
 }

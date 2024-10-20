@@ -45,5 +45,16 @@
   "appName": "MSF AI助手",
   "modelSelectionDialogue": "AI模型选择：",
   "temperatureDescription": "较高的值如0.8会使输出更具创造性，而较低的值如0.2会使其更专注和确定性。",
-  "Run Typewriter Intro": "运行打字机介绍"
+  "Run Typewriter Intro": "运行打字机介绍",
+  "defaultWebPullerQuestion": "请总结此网页的内容。",
+  "webPullerCitationPrompt": "引用您从文本中提出的任何主张并参考 URL",
+  "webPullerReferencePrompt": "还请参考标题、明显来源、作者以及可用和相关的发布日期。",
+  "autoSubmitButton": "自动提交",
+  "cancelButton": "取消",
+  "generatePromptButton": "生成提示",
+  "submitButton": "提交",
+  "webPullerHandlingContentStatusMessage": "正在处理内容...",
+  "webPullerIconScreenReader": "从URL提取网页文本",
+  "webPullerPullingStatusMessage": "正在从URL提取内容...",
+  "webPullerQuestionLabel": "问题"
 }

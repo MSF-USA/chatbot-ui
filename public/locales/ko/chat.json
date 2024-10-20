@@ -45,5 +45,16 @@
   "appName": "MSF AI 어시스턴트",
   "modelSelectionDialogue": "AI 모델 선택:",
   "temperatureDescription": "0.8과 같은 높은 값은 출력을 더 창의적으로 만들고, 0.2와 같은 낮은 값은 출력을 더 집중적이고 결정적으로 만듭니다.",
-  "Run Typewriter Intro": "타자기 소개 실행"
+  "Run Typewriter Intro": "타자기 소개 실행",
+  "defaultWebPullerQuestion": "이 웹페이지의 내용을 요약해 주세요.",
+  "webPullerCitationPrompt": "텍스트에서 제기한 모든 주장을 인용하고 URL을 참고하십시오",
+  "webPullerReferencePrompt": "또한 제목, 명백한 출처, 저자 및 사용 가능하고 관련성이 있는 경우 출판 날짜를 참조하십시오.",
+  "autoSubmitButton": "자동 제출",
+  "cancelButton": "취소",
+  "generatePromptButton": "프롬프트 생성",
+  "submitButton": "제출",
+  "webPullerHandlingContentStatusMessage": "콘텐츠 처리 중...",
+  "webPullerIconScreenReader": "URL에서 웹페이지 텍스트 가져오기",
+  "webPullerPullingStatusMessage": "URL에서 콘텐츠 가져오는 중...",
+  "webPullerQuestionLabel": "질문"
 }

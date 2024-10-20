@@ -9,5 +9,16 @@
   "chatDisclaimer": "ผู้ช่วย AI ของ MSF อาจทำผิดพลาดได้ ตรวจสอบข้อมูลสำคัญ",
   "chatInputPlaceholderFull": "ส่งข้อความถึงผู้ช่วย MSF AI ที่นี่หรือพิมพ์ \"/\" เพื่อเลือกพรอมต์...",
   "chatInputPlaceholder": "ส่งข้อความถึงผู้ช่วย AI ของ MSF ที่นี่",
-  "chatUrlInputTitle": "ตัวดึงหน้าเว็บ"
+  "chatUrlInputTitle": "ตัวดึงหน้าเว็บ",
+  "defaultWebPullerQuestion": "กรุณาสรุปเนื้อหาจากเว็บเพจนี้",
+  "webPullerCitationPrompt": "อ้างอิงทุกข้อเรียกร้องที่คุณทำจากข้อความและอ้างอิง URL",
+  "webPullerReferencePrompt": "นอกจากนี้ให้กล่าวถึงชื่อเรื่อง แหล่งที่มาที่ชัดเจน ผู้เขียน และวันที่เผยแพร่ หากมีและเกี่ยวข้อง",
+  "autoSubmitButton": "ส่งอัตโนมัติ",
+  "cancelButton": "ยกเลิก",
+  "generatePromptButton": "สร้างพรอมต์",
+  "submitButton": "ส่ง",
+  "webPullerHandlingContentStatusMessage": "กำลังจัดการเนื้อหา...",
+  "webPullerIconScreenReader": "ดึงข้อความหน้าเว็บจาก URL",
+  "webPullerPullingStatusMessage": "กำลังดึงเนื้อหาจาก URL...",
+  "webPullerQuestionLabel": "คำถาม"
 }

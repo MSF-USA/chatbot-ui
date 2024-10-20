@@ -45,5 +45,16 @@
   "appName": "Assistente AI MSF",
   "modelSelectionDialogue": "Selezione del modello AI:",
   "temperatureDescription": "Valori più alti come 0,8 renderanno l'output più creativo, mentre valori più bassi come 0,2 lo renderanno più focalizzato e deterministico.",
-  "Run Typewriter Intro": "Esegui introduzione macchina da scrivere"
+  "Run Typewriter Intro": "Esegui introduzione macchina da scrivere",
+  "defaultWebPullerQuestion": "Per favore, riassumi il contenuto di questa pagina web.",
+  "webPullerCitationPrompt": "Cita qualsiasi affermazione fai dal testo e fai riferimento all'URL",
+  "webPullerReferencePrompt": "Fai anche riferimento al titolo, alla fonte apparente, all'autore(i) e alla data di pubblicazione ove disponibili e rilevanti.",
+  "autoSubmitButton": "Invio automatico",
+  "cancelButton": "Annulla",
+  "generatePromptButton": "Genera prompt",
+  "submitButton": "Invia",
+  "webPullerHandlingContentStatusMessage": "Gestione del contenuto...",
+  "webPullerIconScreenReader": "Estrai testo della pagina web dall'URL",
+  "webPullerPullingStatusMessage": "Estrazione del contenuto dall'URL...",
+  "webPullerQuestionLabel": "Domanda"
 }

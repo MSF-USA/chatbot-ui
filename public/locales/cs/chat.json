@@ -9,5 +9,16 @@
   "chatDisclaimer": "Asistent umělé inteligence MSF může udělat chyby. Zkontrolujte důležité informace.",
   "chatInputPlaceholderFull": "Zde zprávu pro asistenta MSF AI nebo napište \"/\" pro výběr výzvy...",
   "chatInputPlaceholder": "Zpráva MSF AI asistent zde",
-  "chatUrlInputTitle": "Stahovač webových stránek"
+  "chatUrlInputTitle": "Stahovač webových stránek",
+  "defaultWebPullerQuestion": "Prosím, shrňte obsah z této webové stránky.",
+  "webPullerCitationPrompt": "Citujte jakákoli tvrzení, která uvedete z textu, a odkazujte na URL",
+  "webPullerReferencePrompt": "Také uveďte název, zjevný zdroj, autora(autory) a datum vydání, pokud jsou k dispozici a relevantní.",
+  "autoSubmitButton": "Automatické odeslání",
+  "cancelButton": "Zrušit",
+  "generatePromptButton": "Vytvořit výzvu",
+  "submitButton": "Odeslat",
+  "webPullerHandlingContentStatusMessage": "Zpracovávání obsahu...",
+  "webPullerIconScreenReader": "Stáhnout text z webové stránky z URL",
+  "webPullerPullingStatusMessage": "Načítání obsahu z URL...",
+  "webPullerQuestionLabel": "Otázka"
 }

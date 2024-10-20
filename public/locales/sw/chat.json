@@ -9,5 +9,16 @@
   "chatDisclaimer": "Msaidizi wa AI wa MSF anaweza kufanya makosa. Angalia taarifa muhimu.",
   "chatInputPlaceholderFull": "Tuma ujumbe kwa Msaidizi wa MSF AI hapa au andika \"/\" ili kuchagua kidokezo...",
   "chatInputPlaceholder": "Tuma ujumbe kwa Msaidizi wa AI wa MSF hapa",
-  "chatUrlInputTitle": "Kivuta ukurasa wa wavuti"
+  "chatUrlInputTitle": "Kivuta ukurasa wa wavuti",
+  "defaultWebPullerQuestion": "Tafadhali fupisha maudhui kutoka kwa ukurasa huu wa wavuti.",
+  "webPullerCitationPrompt": "Nukuu madai yoyote unayotoa kutoka kwa maandishi na rejelea URL",
+  "webPullerReferencePrompt": "Pia rejelea kichwa, chanzo kinachoonekana, mwandishi (waandishi), na tarehe ya kuchapishwa inapopatikana na inapofaa.",
+  "autoSubmitButton": "Wasilisha kiotomatiki",
+  "cancelButton": "Ghairi",
+  "generatePromptButton": "Tengeneza haraka",
+  "submitButton": "Wasilisha",
+  "webPullerHandlingContentStatusMessage": "Inashughulikia maudhui...",
+  "webPullerIconScreenReader": "Vuta maandishi ya ukurasa wa wavuti kutoka URL",
+  "webPullerPullingStatusMessage": "Inachukua maudhui kutoka kwa URL...",
+  "webPullerQuestionLabel": "Swali"
 }

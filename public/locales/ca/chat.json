@@ -45,5 +45,16 @@
   "appName": "Assistent d'IA de MSF",
   "modelSelectionDialogue": "Selecció de model d'IA:",
   "temperatureDescription": "Valors més alts com 0,8 faran que la sortida sigui més creativa, mentre que valors més baixos com 0,2 la faran més enfocada i determinista.",
-  "Run Typewriter Intro": "Executar introducció de màquina d'escriure"
+  "Run Typewriter Intro": "Executar introducció de màquina d'escriure",
+  "defaultWebPullerQuestion": "Si us plau, resumeix el contingut d'aquesta pàgina web.",
+  "webPullerCitationPrompt": "Cita qualsevol afirmació que facis del text i fes referència a l'URL",
+  "webPullerReferencePrompt": "També referència el títol, la font aparent, l'autor(s) i la data de publicació quan estigui disponible i sigui rellevant.",
+  "autoSubmitButton": "Enviament automàtic",
+  "cancelButton": "Cancel·la",
+  "generatePromptButton": "Generar suggeriment",
+  "submitButton": "Envia",
+  "webPullerHandlingContentStatusMessage": "Gestionant contingut...",
+  "webPullerIconScreenReader": "Extreu text de pàgina web des de l'URL",
+  "webPullerPullingStatusMessage": "Extraient contingut de l'URL...",
+  "webPullerQuestionLabel": "Pregunta"
 }

@@ -45,5 +45,16 @@
   "appName": "MSF এআই সহকারী",
   "modelSelectionDialogue": "এআই মডেল নির্বাচন:",
   "temperatureDescription": "উচ্চতর মান যেমন 0.8 আউটপুটকে আরও সৃজনশীল করে তুলবে, যখন নিম্নতর মান যেমন 0.2 এটিকে আরও মনোযোগী এবং নির্ধারিত করে তুলবে।",
-  "Run Typewriter Intro": "টাইপরাইটার ইন্ট্রো চালান"
+  "Run Typewriter Intro": "টাইপরাইটার ইন্ট্রো চালান",
+  "defaultWebPullerQuestion": "অনুগ্রহ করে এই ওয়েবপেজের বিষয়বস্তু সংক্ষেপে বলুন।",
+  "webPullerCitationPrompt": "আপনি যে কোনো দাবি করেন তা পাঠ্য থেকে উদ্ধৃত করুন এবং URL উল্লেখ করুন",
+  "webPullerReferencePrompt": "এছাড়াও শিরোনাম, আপাত উৎস, লেখক(রা), এবং প্রকাশনার তারিখ যেখানে পাওয়া যায় এবং প্রাসঙ্গিক তা উল্লেখ করুন।",
+  "autoSubmitButton": "স্বয়ংক্রিয় জমা",
+  "cancelButton": "বাতিল",
+  "generatePromptButton": "প্রম্পট তৈরি করুন",
+  "submitButton": "জমা দিন",
+  "webPullerHandlingContentStatusMessage": "সামগ্রী প্রক্রিয়াকরণ হচ্ছে...",
+  "webPullerIconScreenReader": "URL থেকে ওয়েবপেজ টেক্সট টেনে আনুন",
+  "webPullerPullingStatusMessage": "URL থেকে সামগ্রী টানা হচ্ছে...",
+  "webPullerQuestionLabel": "প্রশ্ন"
 }

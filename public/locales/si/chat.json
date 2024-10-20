@@ -45,5 +45,16 @@
   "appName": "MSF AI සහය",
   "modelSelectionDialogue": "ඊඒ මොඩල් තේරීම:",
   "temperatureDescription": "0.8 වැනි ඉහළ අගයන් නිමැවුම වඩාත් නිර්මාණශීලී කරවනු ඇත, 0.2 වැනි අඩු අගයන් එය වඩාත් අවධානයෙන් සහ නියමිත කරවනු ඇත.",
-  "Run Typewriter Intro": "ටයිප්රයිටර් හැදින්වීම ක්‍රියාත්මක කරන්න"
+  "Run Typewriter Intro": "ටයිප්රයිටර් හැදින්වීම ක්‍රියාත්මක කරන්න",
+  "defaultWebPullerQuestion": "කරුණාකර මෙම වෙබ් පිටුවේ අන්තර්ගතය සාරාංශ කරන්න.",
+  "webPullerCitationPrompt": "ඔබ කරන කිසිදු ප්‍රකාශයක් පාඨයෙන් උපුටාගෙන URL යොමු කරන්න",
+  "webPullerReferencePrompt": "තවද, ලැබිය හැකි සහ සම්බන්ධිත නම් ශීර්ෂය, පැහැදිලි මූලාශ්‍රය, කර්තෘ(වරු) සහ ප්‍රකාශන දිනය යොමු කරන්න.",
+  "autoSubmitButton": "ස්වයංක්‍රීය ඉදිරිපත් කිරීම",
+  "cancelButton": "අවලංගු කරන්න",
+  "generatePromptButton": "උපදෙස් ජනනය කරන්න",
+  "submitButton": "ඉදිරිපත් කරන්න",
+  "webPullerHandlingContentStatusMessage": "අන්තර්ගතය සැකසෙමින් පවතී...",
+  "webPullerIconScreenReader": "URL වෙතින් වෙබ් පිටු පාඨය ඇද දමන්න",
+  "webPullerPullingStatusMessage": "URL එකෙන් අන්තර්ගතය ලබා ගන්නා අතර...",
+  "webPullerQuestionLabel": "ප්‍රශ්න"
 }

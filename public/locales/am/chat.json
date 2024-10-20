@@ -9,5 +9,16 @@
   "chatDisclaimer": "የኤምኤስኤፍ ማህበረሰብ አማካሪ ሊያቃጥል ይችላል። አስፈላጊ መረጃ ያረጋግጡ።",
   "chatInputPlaceholderFull": "ይህን ያነቡ ወይም \"/\" በመተው አማራጭ ይምረጡ...",
   "chatInputPlaceholder": "መልእክት MSF AI Assistant እዚህ",
-  "chatUrlInputTitle": "የዌብ ገጽ መጫኛ"
+  "chatUrlInputTitle": "የዌብ ገጽ መጫኛ",
+  "defaultWebPullerQuestion": "እባኮትን ከዚህ ዌብሳይት ይዘት ይዘረዝሩ።",
+  "webPullerCitationPrompt": "ማንኛውንም እንደምታውቁበት ጥቆማ ከጽሑፍ ውስጥ ያቀርቡ እና ዩ.አር.ኤል ያመለክቱ",
+  "webPullerReferencePrompt": "በተጨማሪም ማርማሪያውን፣ የታየውን ምንጭ፣ ደራሲዎችንና የታተመውን ቀን ዝርዝር ይምረጡ።",
+  "autoSubmitButton": "ራስ-ሰርክር",
+  "cancelButton": "ሰርዝ",
+  "generatePromptButton": "አማራጭ ይፍጠሩ",
+  "submitButton": "አስገባ",
+  "webPullerHandlingContentStatusMessage": "ትርጉም በሂደት ላይ ነው...",
+  "webPullerIconScreenReader": "ከURL የዌብ ገፅ ጽሑፍ ይውሰዱ",
+  "webPullerPullingStatusMessage": "ሐረግ ከዩአርኤል እየተገኘ...",
+  "webPullerQuestionLabel": "ጥያቄ"
 }

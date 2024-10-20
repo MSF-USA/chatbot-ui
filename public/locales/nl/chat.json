@@ -9,5 +9,16 @@
   "chatDisclaimer": "De MSF AI-assistent kan fouten maken. Controleer belangrijke informatie.",
   "chatInputPlaceholderFull": "Stuur hier een bericht naar de MSF AI-assistent of typ \"/\" om een prompt te selecteren...",
   "chatInputPlaceholder": "Bericht MSF AI Assistent hier",
-  "chatUrlInputTitle": "Webpagina-trekker"
+  "chatUrlInputTitle": "Webpagina-trekker",
+  "defaultWebPullerQuestion": "Gelieve de inhoud van deze webpagina samen te vatten.",
+  "webPullerCitationPrompt": "Citeer alle beweringen die je uit de tekst maakt en verwijs naar de URL",
+  "webPullerReferencePrompt": "Verwijs ook naar de titel, de schijnbare bron, de auteur(s) en de publicatiedatum indien beschikbaar en relevant.",
+  "autoSubmitButton": "Automatisch verzenden",
+  "cancelButton": "Annuleren",
+  "generatePromptButton": "Prompt genereren",
+  "submitButton": "Verzenden",
+  "webPullerHandlingContentStatusMessage": "Inhoud verwerken...",
+  "webPullerIconScreenReader": "Tekst van webpagina ophalen van URL",
+  "webPullerPullingStatusMessage": "Inhoud ophalen van URL...",
+  "webPullerQuestionLabel": "Vraag"
 }

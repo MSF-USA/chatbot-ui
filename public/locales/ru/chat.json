@@ -45,5 +45,16 @@
   "appName": "Ассистент ИИ MSF",
   "modelSelectionDialogue": "Выбор модели ИИ:",
   "temperatureDescription": "Более высокие значения, такие как 0,8, сделают результат более креативным, в то время как более низкие значения, такие как 0,2, сделают его более сфокусированным и детерминированным.",
-  "Run Typewriter Intro": "Запустить вступление пишущей машинки"
+  "Run Typewriter Intro": "Запустить вступление пишущей машинки",
+  "defaultWebPullerQuestion": "Пожалуйста, подведите итог содержимого этой веб-страницы.",
+  "webPullerCitationPrompt": "Цитируйте любые утверждения, которые вы делаете из текста, и укажите URL",
+  "webPullerReferencePrompt": "Также укажите название, предполагаемый источник, автора(ов) и дату публикации, если они доступны и актуальны.",
+  "autoSubmitButton": "Автоматическая отправка",
+  "cancelButton": "Отмена",
+  "generatePromptButton": "Сгенерировать подсказку",
+  "submitButton": "Отправить",
+  "webPullerHandlingContentStatusMessage": "Обработка содержимого...",
+  "webPullerIconScreenReader": "Извлечь текст веб-страницы по URL",
+  "webPullerPullingStatusMessage": "Извлечение содержимого из URL...",
+  "webPullerQuestionLabel": "Вопрос"
 }

@@ -9,5 +9,16 @@
   "chatDisclaimer": "AI помічник MSF може робити помилки. Перевірте важливу інформацію.",
   "chatInputPlaceholderFull": "Надішліть повідомлення MSF AI Assistant тут або введіть \"/\", щоб вибрати підказку...",
   "chatInputPlaceholder": "Повідомлення асистенту MSF AI тут",
-  "chatUrlInputTitle": "Витягувач веб-сторінок"
+  "chatUrlInputTitle": "Витягувач веб-сторінок",
+  "defaultWebPullerQuestion": "Будь ласка, підсумуйте вміст цієї веб-сторінки.",
+  "webPullerCitationPrompt": "Цитуйте будь-які твердження, які ви робите з тексту, і вказуйте URL",
+  "webPullerReferencePrompt": "Також згадайте заголовок, явне джерело, автора(ів) та дату публікації, якщо це доступно та актуально.",
+  "autoSubmitButton": "Автоматична подача",
+  "cancelButton": "Скасувати",
+  "generatePromptButton": "Створити підказку",
+  "submitButton": "Надіслати",
+  "webPullerHandlingContentStatusMessage": "Обробка вмісту...",
+  "webPullerIconScreenReader": "Витягти текст веб-сторінки з URL",
+  "webPullerPullingStatusMessage": "Отримання вмісту з URL...",
+  "webPullerQuestionLabel": "Питання"
 }

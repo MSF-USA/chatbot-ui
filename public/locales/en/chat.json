@@ -45,5 +45,16 @@
   "modelSelectionDialogue": "AI Model Selection:",
   "appName": "MSF AI Assistant",
   "Run Typewriter Intro": "Run Typewriter Intro",
-  "temperatureDescription": "Higher values like 0.8 will make the output more creative, while lower values like 0.2 will make it more focused and deterministic."
+  "temperatureDescription": "Higher values like 0.8 will make the output more creative, while lower values like 0.2 will make it more focused and deterministic.",
+  "defaultWebPullerQuestion": "Please summarize the content from this webpage.",
+  "webPullerCitationPrompt": "Cite any claims you make from the text and reference the URL",
+  "webPullerReferencePrompt": "Also reference the title, apparent source, author(s), and publication date where available and relevant.",
+  "webPullerIconScreenReader": "Pull webpage text from URL",
+  "webPullerQuestionLabel": "Question",
+  "autoSubmitButton": "Auto-submit",
+  "cancelButton": "Cancel",
+  "submitButton": "Submit",
+  "generatePromptButton": "Generate prompt",
+  "webPullerPullingStatusMessage": "Pulling content from URL...",
+  "webPullerHandlingContentStatusMessage": "Handling content..."
 }

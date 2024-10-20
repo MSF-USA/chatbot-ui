@@ -45,5 +45,16 @@
   "appName": "Asistente de IA de MSF",
   "modelSelectionDialogue": "Selección de modelo de IA:",
   "temperatureDescription": "Valores más altos como 0.8 harán que el resultado sea más creativo, mientras que valores más bajos como 0.2 lo harán más enfocado y determinista.",
-  "Run Typewriter Intro": "Ejecutar introducción de máquina de escribir"
+  "Run Typewriter Intro": "Ejecutar introducción de máquina de escribir",
+  "defaultWebPullerQuestion": "Por favor, resume el contenido de esta página web.",
+  "webPullerCitationPrompt": "Cita cualquier afirmación que hagas del texto y referencia la URL",
+  "webPullerReferencePrompt": "También haga referencia al título, fuente aparente, autor(es) y fecha de publicación cuando estén disponibles y sean relevantes.",
+  "autoSubmitButton": "Envío automático",
+  "cancelButton": "Cancelar",
+  "generatePromptButton": "Generar indicación",
+  "submitButton": "Enviar",
+  "webPullerHandlingContentStatusMessage": "Manejando contenido...",
+  "webPullerIconScreenReader": "Extraer texto de página web desde URL",
+  "webPullerPullingStatusMessage": "Extrayendo contenido de la URL...",
+  "webPullerQuestionLabel": "Pregunta"
 }

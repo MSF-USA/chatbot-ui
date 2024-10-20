@@ -45,5 +45,16 @@
   "appName": "MSF AI-assistent",
   "modelSelectionDialogue": "AI-modellval:",
   "temperatureDescription": "Högre värden som 0,8 gör resultatet mer kreativt, medan lägre värden som 0,2 gör det mer fokuserat och deterministiskt.",
-  "Run Typewriter Intro": "Kör skrivmaskinsintro"
+  "Run Typewriter Intro": "Kör skrivmaskinsintro",
+  "defaultWebPullerQuestion": "Vänligen sammanfatta innehållet från denna webbsida.",
+  "webPullerCitationPrompt": "Citera alla påståenden du gör från texten och referera till URL:en",
+  "webPullerReferencePrompt": "Referera också till titeln, den uppenbara källan, författare och publiceringsdatum där det är tillgängligt och relevant.",
+  "autoSubmitButton": "Automatisk inlämning",
+  "cancelButton": "Avbryt",
+  "generatePromptButton": "Generera prompt",
+  "submitButton": "Skicka in",
+  "webPullerHandlingContentStatusMessage": "Hanterar innehåll...",
+  "webPullerIconScreenReader": "Hämta webbsidetext från URL",
+  "webPullerPullingStatusMessage": "Hämtar innehåll från URL...",
+  "webPullerQuestionLabel": "Fråga"
 }
