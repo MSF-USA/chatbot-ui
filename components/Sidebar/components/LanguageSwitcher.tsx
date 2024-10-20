@@ -27,14 +27,23 @@ const localeToLanguageName: {
     ro: string;
     ca: string;
     nl: string;
-    tr: string
+    tr: string;
+    am: string;
+    cs: string;
+    fa: string;
+    sw: string;
+    th: string;
+    uk: string;
 } = {
+    am: 'አማርኛ',
     en: 'English',
     es: 'Español',
     ar: 'العربية',
     bn: 'বাংলা',
     ca: 'Català',
+    cs: 'Čeština',
     de: 'Deutsch',
+    fa: 'فارسی',
     fi: 'Suomi',
     fr: 'Français',
     he: 'עברית',
@@ -49,8 +58,11 @@ const localeToLanguageName: {
     ru: 'Русский',
     si: 'සිංහල',
     sv: 'Svenska',
+    sw: 'Kiswahili',
     te: 'తెలుగు',
+    th: 'ไทย',
     tr: 'Türkçe',
+    uk: 'Українська',
     vi: 'Tiếng Việt',
     zh: '中文',
 }
