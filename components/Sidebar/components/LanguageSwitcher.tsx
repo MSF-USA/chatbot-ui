@@ -92,6 +92,7 @@ const LanguageSwitcher: FC = () => {
         <select value={locale} onChange={handleLocaleChange} className='w-[100px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm border-none hover:bg-gray-500/10'>
         {locales.map((localeOption) => (
                 <option
+                    className={'bg-white dark:bg-black'}
                     data-te-select-init={'true'}
                     key={localeOption}
                     value={localeOption}>
