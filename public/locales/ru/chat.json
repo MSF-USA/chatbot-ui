@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Обработка содержимого...",
   "webPullerIconScreenReader": "Извлечь текст веб-страницы по URL",
   "webPullerPullingStatusMessage": "Извлечение содержимого из URL...",
-  "webPullerQuestionLabel": "Вопрос"
+  "webPullerQuestionLabel": "Вопрос",
+  "webSearchModalTitle": "Поиск в Интернете",
+  "webSearchModalResultsLabel": "Результаты (макс: 15)",
+  "advancedOptionsButton": "Расширенные настройки",
+  "safeSearchOptionModerate": "Умеренный",
+  "safeSearchOptionOff": "Выключено",
+  "safeSearchOptionStrict": "Строгий",
+  "searchQueryPlaceholder": "Введите ваш поисковый запрос",
+  "webSearchModalSafeSearchLabel": "Безопасный поиск",
+  "webSearchModalOptimizeLabel": "Оптимизировать ввод пользователя",
+  "webSearchModalMarketLabel": "рынок",
+  "webSearchModalDefaultQuestion": "Пожалуйста, подведите итоги найденного вами содержания",
+  "webSearchModalHandlingContentStatusMessage": "Обработка контента...",
+  "webSearchModalOptimizingStatusMessage": "Оптимизация запроса...",
+  "webSearchModalPromptCitation": "Добавляйте цитаты по всему вашему ответу. В конце вашего ответа предоставьте цитаты, которые всегда включают названия и ссылки на оригинальные источники, а также авторов, если они доступны.",
+  "webSearchModalPromptUserContext": "Сделайте все анализы, относящиеся к запросу пользователя ниже",
+  "webSearchModalSearchingStatusMessage": "Поиск..."
 }

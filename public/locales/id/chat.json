@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Memproses konten...",
   "webPullerIconScreenReader": "Tarik teks halaman web dari URL",
   "webPullerPullingStatusMessage": "Menarik konten dari URL...",
-  "webPullerQuestionLabel": "Pertanyaan"
+  "webPullerQuestionLabel": "Pertanyaan",
+  "webSearchModalTitle": "Pencarian Web",
+  "webSearchModalResultsLabel": "Hasil (maks: 15)",
+  "advancedOptionsButton": "Opsi Lanjutan",
+  "safeSearchOptionModerate": "Sedang",
+  "safeSearchOptionOff": "Mati",
+  "safeSearchOptionStrict": "Ketat",
+  "searchQueryPlaceholder": "Masukkan kueri pencarian Anda",
+  "webSearchModalSafeSearchLabel": "Pencarian Aman",
+  "webSearchModalOptimizeLabel": "Optimalkan Masukan Pengguna",
+  "webSearchModalMarketLabel": "pasar",
+  "webSearchModalDefaultQuestion": "Silakan ringkas konten yang Anda temukan",
+  "webSearchModalHandlingContentStatusMessage": "Menangani konten...",
+  "webSearchModalOptimizingStatusMessage": "Mengoptimalkan kueri...",
+  "webSearchModalPromptCitation": "Sertakan kutipan di seluruh tanggapan Anda. Di akhir tanggapan Anda, berikan kutipan yang selalu menyertakan judul dan tautan sumber asli, serta penulis jika tersedia.",
+  "webSearchModalPromptUserContext": "Buat semua analisis relevan dengan permintaan pengguna di bawah ini",
+  "webSearchModalSearchingStatusMessage": "Mencari..."
 }

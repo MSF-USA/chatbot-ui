@@ -20,5 +20,21 @@
   "webPullerHandlingContentStatusMessage": "Zpracovávání obsahu...",
   "webPullerIconScreenReader": "Stáhnout text z webové stránky z URL",
   "webPullerPullingStatusMessage": "Načítání obsahu z URL...",
-  "webPullerQuestionLabel": "Otázka"
+  "webPullerQuestionLabel": "Otázka",
+  "webSearchModalTitle": "Webové vyhledávání",
+  "webSearchModalResultsLabel": "Výsledky (max: 15)",
+  "advancedOptionsButton": "Pokročilé možnosti",
+  "safeSearchOptionModerate": "Střední",
+  "safeSearchOptionOff": "Vypnuto",
+  "safeSearchOptionStrict": "Přísný",
+  "searchQueryPlaceholder": "Zadejte svůj dotaz k vyhledávání",
+  "webSearchModalSafeSearchLabel": "Bezpečné vyhledávání",
+  "webSearchModalOptimizeLabel": "Optimalizujte uživatelské vstupy",
+  "webSearchModalMarketLabel": "trh",
+  "webSearchModalDefaultQuestion": "Prosím, shrňte obsah, který najdete",
+  "webSearchModalHandlingContentStatusMessage": "Zpracování obsahu...",
+  "webSearchModalOptimizingStatusMessage": "Optimalizace dotazu...",
+  "webSearchModalPromptCitation": "Vložte citace do celého vašeho textu. Na konci svého textu uveďte citace, které vždy obsahují názvy a odkazy na původní zdroje, stejně jako autora (autory), pokud jsou dostupní.",
+  "webSearchModalPromptUserContext": "Proveďte všechny analýzy relevantní k níže uvedenému uživatelskému požadavku",
+  "webSearchModalSearchingStatusMessage": "Hledání..."
 }

@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "コンテンツを処理中...",
   "webPullerIconScreenReader": "URLからウェブページのテキストを取得",
   "webPullerPullingStatusMessage": "URLからコンテンツを取得中...",
-  "webPullerQuestionLabel": "質問"
+  "webPullerQuestionLabel": "質問",
+  "webSearchModalTitle": "ウェブ検索",
+  "webSearchModalResultsLabel": "結果（最大：15）",
+  "advancedOptionsButton": "詳細オプション",
+  "safeSearchOptionModerate": "中",
+  "safeSearchOptionOff": "オフ",
+  "safeSearchOptionStrict": "厳格",
+  "searchQueryPlaceholder": "検索クエリを入力してください",
+  "webSearchModalSafeSearchLabel": "セーフサーチ",
+  "webSearchModalOptimizeLabel": "ユーザー入力を最適化する",
+  "webSearchModalMarketLabel": "市場",
+  "webSearchModalDefaultQuestion": "見つけた内容を要約してください",
+  "webSearchModalHandlingContentStatusMessage": "コンテンツを処理中...",
+  "webSearchModalOptimizingStatusMessage": "クエリを最適化しています...",
+  "webSearchModalPromptCitation": "回答全体に引用を入れてください。回答の最後には、必ず元の情報源のタイトルとリンク、および可能であれば著者を含む引用を提供してください。",
+  "webSearchModalPromptUserContext": "以下のユーザーリクエストに関連するすべての分析を行ってください",
+  "webSearchModalSearchingStatusMessage": "検索中..."
 }

@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "সামগ্রী প্রক্রিয়াকরণ হচ্ছে...",
   "webPullerIconScreenReader": "URL থেকে ওয়েবপেজ টেক্সট টেনে আনুন",
   "webPullerPullingStatusMessage": "URL থেকে সামগ্রী টানা হচ্ছে...",
-  "webPullerQuestionLabel": "প্রশ্ন"
+  "webPullerQuestionLabel": "প্রশ্ন",
+  "webSearchModalTitle": "ওয়েব অনুসন্ধান",
+  "webSearchModalResultsLabel": "ফলাফল (সর্বোচ্চ: ১৫)",
+  "advancedOptionsButton": "উন্নত বিকল্পগুলি",
+  "safeSearchOptionModerate": "মধ্যম",
+  "safeSearchOptionOff": "বন্ধ",
+  "safeSearchOptionStrict": "কঠোর",
+  "searchQueryPlaceholder": "আপনার অনুসন্ধানের প্রশ্ন লিখুন",
+  "webSearchModalSafeSearchLabel": "নিরাপদ অনুসন্ধান",
+  "webSearchModalOptimizeLabel": "ব্যবহারকারীর ইনপুট অপটিমাইজ করুন",
+  "webSearchModalMarketLabel": "বাজার",
+  "webSearchModalDefaultQuestion": "আপনি যে বিষয়বস্তুটি খুঁজে পান তা সংক্ষেপে লিখুন",
+  "webSearchModalHandlingContentStatusMessage": "বিষয়বস্তু পরিচালনা করা...",
+  "webSearchModalOptimizingStatusMessage": "জিজ্ঞাসাটি অপ্টিমাইজ করা হচ্ছে...",
+  "webSearchModalPromptCitation": "আপনার উত্তরের প্রতিটি স্থানে উদ্ধৃতি দিন। আপনার উত্তর শেষে এমন উদ্ধৃতি প্রদান করুন যা সর্বদা মূল উৎসের শিরোনাম এবং লিঙ্কগুলি এবং লেখক(গণ) অন্তর্ভুক্ত করে, যদি পাওয়া যায়।",
+  "webSearchModalPromptUserContext": "নিচের ব্যবহারকারীর অনুরোধের সাথে প্রাসঙ্গিক সমস্ত বিশ্লেষণ করুন",
+  "webSearchModalSearchingStatusMessage": "অনুসন্ধান করা হচ্ছে..."
 }

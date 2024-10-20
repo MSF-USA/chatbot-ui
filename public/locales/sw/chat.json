@@ -20,5 +20,21 @@
   "webPullerHandlingContentStatusMessage": "Inashughulikia maudhui...",
   "webPullerIconScreenReader": "Vuta maandishi ya ukurasa wa wavuti kutoka URL",
   "webPullerPullingStatusMessage": "Inachukua maudhui kutoka kwa URL...",
-  "webPullerQuestionLabel": "Swali"
+  "webPullerQuestionLabel": "Swali",
+  "webSearchModalTitle": "Utafutaji wa Wavuti",
+  "webSearchModalResultsLabel": "Matokeo (max: 15)",
+  "advancedOptionsButton": "Chaguo za Juu",
+  "safeSearchOptionModerate": "Wastani",
+  "safeSearchOptionOff": "Zima",
+  "safeSearchOptionStrict": "Mkali",
+  "searchQueryPlaceholder": "Weka swali lako la utafutaji",
+  "webSearchModalSafeSearchLabel": "Utafutaji Salama",
+  "webSearchModalOptimizeLabel": "Boresha Ingizo la Mtumiaji",
+  "webSearchModalMarketLabel": "soko",
+  "webSearchModalDefaultQuestion": "Tafadhali fupisha maudhui unayopata",
+  "webSearchModalHandlingContentStatusMessage": "Kushughulikia maudhui...",
+  "webSearchModalOptimizingStatusMessage": "Inaboresha swali...",
+  "webSearchModalPromptCitation": "Weka nukuu katika majibu yako. Mwishoni mwa jibu lako toa nukuu ambazo kila mara zinajumuisha vyeo na viungo vya vyanzo vya asili, pamoja na waandishi ikiwa wanapatikana.",
+  "webSearchModalPromptUserContext": "Fanya uchambuzi wote kuwa muhimu kwa ombi la mtumiaji hapa chini",
+  "webSearchModalSearchingStatusMessage": "Inatafuta..."
 }

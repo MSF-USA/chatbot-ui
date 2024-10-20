@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "正在处理内容...",
   "webPullerIconScreenReader": "从URL提取网页文本",
   "webPullerPullingStatusMessage": "正在从URL提取内容...",
-  "webPullerQuestionLabel": "问题"
+  "webPullerQuestionLabel": "问题",
+  "webSearchModalTitle": "网页搜索",
+  "webSearchModalResultsLabel": "结果（最多：15）",
+  "advancedOptionsButton": "高级选项",
+  "safeSearchOptionModerate": "中等",
+  "safeSearchOptionOff": "关闭",
+  "safeSearchOptionStrict": "严格",
+  "searchQueryPlaceholder": "输入您的搜索查询",
+  "webSearchModalSafeSearchLabel": "安全搜索",
+  "webSearchModalOptimizeLabel": "优化用户输入",
+  "webSearchModalMarketLabel": "市场",
+  "webSearchModalDefaultQuestion": "请总结您找到的内容",
+  "webSearchModalHandlingContentStatusMessage": "处理内容...",
+  "webSearchModalOptimizingStatusMessage": "正在优化查询...",
+  "webSearchModalPromptCitation": "在你的回答中各处插入引用。在回答的最后提供引用，始终包括原始来源的标题和链接，以及作者（如果有的话）。",
+  "webSearchModalPromptUserContext": "使所有分析与以下用户请求相关",
+  "webSearchModalSearchingStatusMessage": "搜索中..."
 }

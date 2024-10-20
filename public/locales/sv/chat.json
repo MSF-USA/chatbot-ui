@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Hanterar innehåll...",
   "webPullerIconScreenReader": "Hämta webbsidetext från URL",
   "webPullerPullingStatusMessage": "Hämtar innehåll från URL...",
-  "webPullerQuestionLabel": "Fråga"
+  "webPullerQuestionLabel": "Fråga",
+  "webSearchModalTitle": "Webbsökning",
+  "webSearchModalResultsLabel": "Resultat (max: 15)",
+  "advancedOptionsButton": "Avancerade alternativ",
+  "safeSearchOptionModerate": "Måttlig",
+  "safeSearchOptionOff": "Av",
+  "safeSearchOptionStrict": "Strikt",
+  "searchQueryPlaceholder": "Ange din sökfråga",
+  "webSearchModalSafeSearchLabel": "Säker sökning",
+  "webSearchModalOptimizeLabel": "Optimera användarinmatning",
+  "webSearchModalMarketLabel": "marknad",
+  "webSearchModalDefaultQuestion": "Vänligen sammanfatta innehållet du hittar",
+  "webSearchModalHandlingContentStatusMessage": "Hanterar innehåll...",
+  "webSearchModalOptimizingStatusMessage": "Optimerar sökfrågan...",
+  "webSearchModalPromptCitation": "Sätt in citat i hela ditt svar. I slutet av ditt svar, ge citat som alltid inkluderar titlar och länkar till de ursprungliga källorna, samt författare där det är möjligt.",
+  "webSearchModalPromptUserContext": "Gör alla analyser relevanta för den nedanstående användarförfrågan",
+  "webSearchModalSearchingStatusMessage": "Söker..."
 }

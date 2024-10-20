@@ -20,5 +20,21 @@
   "webPullerHandlingContentStatusMessage": "Обробка вмісту...",
   "webPullerIconScreenReader": "Витягти текст веб-сторінки з URL",
   "webPullerPullingStatusMessage": "Отримання вмісту з URL...",
-  "webPullerQuestionLabel": "Питання"
+  "webPullerQuestionLabel": "Питання",
+  "webSearchModalTitle": "Пошук у мережі",
+  "webSearchModalResultsLabel": "Результати (макс: 15)",
+  "advancedOptionsButton": "Розширені налаштування",
+  "safeSearchOptionModerate": "Помірний",
+  "safeSearchOptionOff": "Вимкнено",
+  "safeSearchOptionStrict": "Суворий",
+  "searchQueryPlaceholder": "Введіть свій пошуковий запит",
+  "webSearchModalSafeSearchLabel": "Безпечний пошук",
+  "webSearchModalOptimizeLabel": "Оптимізувати введення користувача",
+  "webSearchModalMarketLabel": "ринок",
+  "webSearchModalDefaultQuestion": "Будь ласка, підсумуйте знайдений вами зміст",
+  "webSearchModalHandlingContentStatusMessage": "Обробка вмісту...",
+  "webSearchModalOptimizingStatusMessage": "Оптимізація запиту...",
+  "webSearchModalPromptCitation": "Вставляйте цитати протягом всього вашого відповіді. Наприкінці вашої відповіді надайте цитати, які завжди містять назви та посилання на оригінальні джерела, а також авторів, якщо вони доступні.",
+  "webSearchModalPromptUserContext": "Зробіть всі аналізи, що стосуються наведеної нижче запиту користувача",
+  "webSearchModalSearchingStatusMessage": "Пошук..."
 }

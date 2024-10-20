@@ -20,5 +20,21 @@
   "webPullerHandlingContentStatusMessage": "Inhoud verwerken...",
   "webPullerIconScreenReader": "Tekst van webpagina ophalen van URL",
   "webPullerPullingStatusMessage": "Inhoud ophalen van URL...",
-  "webPullerQuestionLabel": "Vraag"
+  "webPullerQuestionLabel": "Vraag",
+  "webSearchModalTitle": "Webzoekopdracht",
+  "webSearchModalResultsLabel": "Resultaten (max: 15)",
+  "advancedOptionsButton": "Geavanceerde opties",
+  "safeSearchOptionModerate": "Gemiddeld",
+  "safeSearchOptionOff": "Uit",
+  "safeSearchOptionStrict": "Strikt",
+  "searchQueryPlaceholder": "Voer uw zoekopdracht in",
+  "webSearchModalSafeSearchLabel": "Veilig zoeken",
+  "webSearchModalOptimizeLabel": "Optimaliseer gebruikersinvoer",
+  "webSearchModalMarketLabel": "markt",
+  "webSearchModalDefaultQuestion": "Vat de inhoud samen die je vindt",
+  "webSearchModalHandlingContentStatusMessage": "Inhoud verwerken...",
+  "webSearchModalOptimizingStatusMessage": "Query optimaliseren...",
+  "webSearchModalPromptCitation": "Voeg citaten toe in je hele antwoord. Geef aan het einde van je antwoord citaten die altijd de titels en links van de oorspronkelijke bronnen bevatten, evenals de auteurs indien beschikbaar.",
+  "webSearchModalPromptUserContext": "Maak alle analyses relevant voor het onderstaande gebruikersverzoek",
+  "webSearchModalSearchingStatusMessage": "Zoeken..."
 }

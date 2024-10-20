@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Procesare conținut...",
   "webPullerIconScreenReader": "Extrage textul paginii web din URL",
   "webPullerPullingStatusMessage": "Extrage conținutul de la URL...",
-  "webPullerQuestionLabel": "Întrebare"
+  "webPullerQuestionLabel": "Întrebare",
+  "webSearchModalTitle": "Căutare pe web",
+  "webSearchModalResultsLabel": "Rezultate (max: 15)",
+  "advancedOptionsButton": "Opțiuni avansate",
+  "safeSearchOptionModerate": "Moderată",
+  "safeSearchOptionOff": "Oprit",
+  "safeSearchOptionStrict": "Strict",
+  "searchQueryPlaceholder": "Introduceți interogarea de căutare",
+  "webSearchModalSafeSearchLabel": "Căutare sigură",
+  "webSearchModalOptimizeLabel": "Optimizează intrările utilizatorului",
+  "webSearchModalMarketLabel": "piață",
+  "webSearchModalDefaultQuestion": "Vă rugăm să rezumați conținutul pe care îl găsiți",
+  "webSearchModalHandlingContentStatusMessage": "Gestionarea conținutului...",
+  "webSearchModalOptimizingStatusMessage": "Optimizarea interogării...",
+  "webSearchModalPromptCitation": "Puneți citări pe parcursul răspunsului dumneavoastră. La sfârșitul răspunsului, furnizați citări care includ întotdeauna titlurile și linkurile surselor originale, precum și autorii, dacă sunt disponibili.",
+  "webSearchModalPromptUserContext": "Faceți toate analizele relevante pentru cererea de utilizator de mai jos",
+  "webSearchModalSearchingStatusMessage": "Căutare..."
 }

@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "جاري معالجة المحتوى...",
   "webPullerIconScreenReader": "سحب نص صفحة الويب من عنوان URL",
   "webPullerPullingStatusMessage": "جارٍ سحب المحتوى من عنوان URL...",
-  "webPullerQuestionLabel": "سؤال"
+  "webPullerQuestionLabel": "سؤال",
+  "webSearchModalTitle": "بحث الويب",
+  "webSearchModalResultsLabel": "النتائج (الحد الأقصى: 15)",
+  "advancedOptionsButton": "خيارات متقدمة",
+  "safeSearchOptionModerate": "متوسط",
+  "safeSearchOptionOff": "إيقاف",
+  "safeSearchOptionStrict": "صارم",
+  "searchQueryPlaceholder": "أدخل استعلام البحث الخاص بك",
+  "webSearchModalSafeSearchLabel": "بحث آمن",
+  "webSearchModalOptimizeLabel": "تحسين المدخلات",
+  "webSearchModalMarketLabel": "سوق",
+  "webSearchModalDefaultQuestion": "يرجى تلخيص المحتوى الذي تجده",
+  "webSearchModalHandlingContentStatusMessage": "معالجة المحتوى...",
+  "webSearchModalOptimizingStatusMessage": "جارٍ تحسين الاستعلام...",
+  "webSearchModalPromptCitation": "ضع الاستشهادات في جميع أنحاء ردك. في نهاية ردك، قدم الاستشهادات التي تتضمن دائمًا عناوين وروابط المصادر الأصلية، وكذلك المؤلفين إذا كانوا متاحين.",
+  "webSearchModalPromptUserContext": "اجعل جميع التحليلات ذات صلة بطلب المستخدم أدناه",
+  "webSearchModalSearchingStatusMessage": "جارٍ البحث..."
 }

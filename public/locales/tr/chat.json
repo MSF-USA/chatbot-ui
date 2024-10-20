@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "İçerik işleniyor...",
   "webPullerIconScreenReader": "URL'den web sayfası metni çek",
   "webPullerPullingStatusMessage": "URL'den içerik çekiliyor...",
-  "webPullerQuestionLabel": "Soru"
+  "webPullerQuestionLabel": "Soru",
+  "webSearchModalTitle": "Web Araması",
+  "webSearchModalResultsLabel": "Sonuçlar (maks: 15)",
+  "advancedOptionsButton": "Gelişmiş Seçenekler",
+  "safeSearchOptionModerate": "Orta",
+  "safeSearchOptionOff": "Kapalı",
+  "safeSearchOptionStrict": "Katı",
+  "searchQueryPlaceholder": "Arama sorgunuzu girin",
+  "webSearchModalSafeSearchLabel": "Güvenli Arama",
+  "webSearchModalOptimizeLabel": "Kullanıcı Girdilerini Optimize Et",
+  "webSearchModalMarketLabel": "pazar",
+  "webSearchModalDefaultQuestion": "Lütfen bulduğunuz içeriği özetleyin",
+  "webSearchModalHandlingContentStatusMessage": "İçerik işleniyor...",
+  "webSearchModalOptimizingStatusMessage": "Sorgu optimize ediliyor...",
+  "webSearchModalPromptCitation": "Yanıtınızın her yerine alıntılar ekleyin. Yanıtınızın sonunda, her zaman orijinal kaynakların başlıklarını ve bağlantılarını ve mümkünse yazar(lar)ı içeren alıntılar sağlayın.",
+  "webSearchModalPromptUserContext": "Aşağıdaki kullanıcı isteğiyle ilgili tüm analizleri yapın",
+  "webSearchModalSearchingStatusMessage": "Aranıyor..."
 }

@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "కంటెంట్ నిర్వహణలో ఉంది...",
   "webPullerIconScreenReader": "URL నుండి వెబ్‌పేజ్ పాఠ్యాన్ని లాగండి",
   "webPullerPullingStatusMessage": "URL నుండి కంటెంట్‌ను పొందుతున్నాయి...",
-  "webPullerQuestionLabel": "ప్రశ్న"
+  "webPullerQuestionLabel": "ప్రశ్న",
+  "webSearchModalTitle": "వెబ్ శోధన",
+  "webSearchModalResultsLabel": "ఫలితాలు (గరిష్టం: 15)",
+  "advancedOptionsButton": "అధునాతన ఎంపికలు",
+  "safeSearchOptionModerate": "మోస్తరు",
+  "safeSearchOptionOff": "ఆఫ్",
+  "safeSearchOptionStrict": "కఠినంగా",
+  "searchQueryPlaceholder": "మీ శోధన ప్రశ్నను నమోదు చేయండి",
+  "webSearchModalSafeSearchLabel": "సురక్షితమైన శోధన",
+  "webSearchModalOptimizeLabel": "వినియోగదారు ఇన్‌పుట్‌లను ఆప్టిమైజ్ చేయండి",
+  "webSearchModalMarketLabel": "మార్కెట్",
+  "webSearchModalDefaultQuestion": "మీరు కనుగొన్న విషయం యొక్క సారాంశం ఇవ్వండి",
+  "webSearchModalHandlingContentStatusMessage": "కంటెంట్‌ను నిర్వహించడం...",
+  "webSearchModalOptimizingStatusMessage": "విచారణను ఆప్టిమైజ్ చేస్తున్నారు...",
+  "webSearchModalPromptCitation": "మీ సమాధానం అంతటా ఉదాహరణలు ఉంచండి. మీ సమాధానం ముగింపు వద్ద ఎల్లప్పుడూ మూలాలు, శీర్షికలు, లింకులు మరియు అందుబాటులో ఉంటే రచయిత(లు)ని కలిగి ఉండే ఉదాహరణలు ఇవ్వండి.",
+  "webSearchModalPromptUserContext": "క్రింది వినియోగదారు అభ్యర్థనకు సంబంధిత అన్ని విశ్లేషణలను చేయండి",
+  "webSearchModalSearchingStatusMessage": "వెతుకుతున్న..."
 }

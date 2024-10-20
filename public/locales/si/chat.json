@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "අන්තර්ගතය සැකසෙමින් පවතී...",
   "webPullerIconScreenReader": "URL වෙතින් වෙබ් පිටු පාඨය ඇද දමන්න",
   "webPullerPullingStatusMessage": "URL එකෙන් අන්තර්ගතය ලබා ගන්නා අතර...",
-  "webPullerQuestionLabel": "ප්‍රශ්න"
+  "webPullerQuestionLabel": "ප්‍රශ්න",
+  "webSearchModalTitle": "වෙබ් සෙවීම",
+  "webSearchModalResultsLabel": "ප්‍රතිඵල (උපරිම: 15)",
+  "advancedOptionsButton": "උසස් විකල්ප",
+  "safeSearchOptionModerate": "මධ්‍යස්ථ",
+  "safeSearchOptionOff": "අක්‍රියයි",
+  "safeSearchOptionStrict": "දැඩි",
+  "searchQueryPlaceholder": "ඔබේ සෙවුම් විමසීම ඇතුල් කරන්න",
+  "webSearchModalSafeSearchLabel": "ආරක්ෂිත සෙවීම",
+  "webSearchModalOptimizeLabel": "පරිශීලක ආදාන යාවත්කාලීන කරන්න",
+  "webSearchModalMarketLabel": "වෙළඳපොල",
+  "webSearchModalDefaultQuestion": "ඔබ සොයා ගත් අන්තර්ගතය සාරාංශ කරන්න",
+  "webSearchModalHandlingContentStatusMessage": "අන්තර්ගතය සැකසීම...",
+  "webSearchModalOptimizingStatusMessage": "විමසුම ඔප්ටමයිස් කිරීම...",
+  "webSearchModalPromptCitation": "ඔබේ පිළිතුරේ සෑම ස්ථානයකම උපුටා දැක්වීම් ඇතුළත් කරන්න. ඔබේ පිළිතුර අවසානයේදී සෑම විටම මුල් මූලාශ්‍රවල මාතෘකා සහ සබැඳි, සහ ලේඛකයන් (ඇත්නම්) ඇතුළත් උපුටා දැක්වීම් සපයන්න.",
+  "webSearchModalPromptUserContext": "පහත පරිශීලක ඉල්ලීමට අදාළ සියලු විශ්ලේෂණ කරනු ලැබේ",
+  "webSearchModalSearchingStatusMessage": "සොයමින්..."
 }

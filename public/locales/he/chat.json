@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "מעבד תוכן...",
   "webPullerIconScreenReader": "משוך טקסט מדף אינטרנט מ-URL",
   "webPullerPullingStatusMessage": "מושך תוכן מ-URL...",
-  "webPullerQuestionLabel": "שאלה"
+  "webPullerQuestionLabel": "שאלה",
+  "webSearchModalTitle": "חיפוש באינטרנט",
+  "webSearchModalResultsLabel": "תוצאות (מקסימום: 15)",
+  "advancedOptionsButton": "אפשרויות מתקדמות",
+  "safeSearchOptionModerate": "בינוני",
+  "safeSearchOptionOff": "כבוי",
+  "safeSearchOptionStrict": "קפדני",
+  "searchQueryPlaceholder": "הזן את שאילתת החיפוש שלך",
+  "webSearchModalSafeSearchLabel": "חיפוש בטוח",
+  "webSearchModalOptimizeLabel": "שפר קלטים של המשתמש",
+  "webSearchModalMarketLabel": "שוק",
+  "webSearchModalDefaultQuestion": "אנא סכם את התוכן שאתה מוצא",
+  "webSearchModalHandlingContentStatusMessage": "מטפל בתוכן...",
+  "webSearchModalOptimizingStatusMessage": "מייעל את השאילתה...",
+  "webSearchModalPromptCitation": "שבץ ציטוטים לאורך כל תשובתך. בסוף תשובתך, ספק ציטוטים הכוללים תמיד את הכותרות והקישורים למקורות המקוריים, וכן את שמות המחברים אם ישנם.",
+  "webSearchModalPromptUserContext": "בצע את כל הניתוחים הרלוונטיים לבקשת המשתמש שלהלן",
+  "webSearchModalSearchingStatusMessage": "מחפש..."
 }

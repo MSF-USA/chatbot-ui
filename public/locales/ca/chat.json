@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Gestionant contingut...",
   "webPullerIconScreenReader": "Extreu text de pàgina web des de l'URL",
   "webPullerPullingStatusMessage": "Extraient contingut de l'URL...",
-  "webPullerQuestionLabel": "Pregunta"
+  "webPullerQuestionLabel": "Pregunta",
+  "webSearchModalTitle": "Cerca web",
+  "webSearchModalResultsLabel": "Resultats (màx: 15)",
+  "advancedOptionsButton": "Opcions avançades",
+  "safeSearchOptionModerate": "Moderat",
+  "safeSearchOptionOff": "Desactivat",
+  "safeSearchOptionStrict": "Estricte",
+  "searchQueryPlaceholder": "Introdueix la teva consulta de cerca",
+  "webSearchModalSafeSearchLabel": "Cerca segura",
+  "webSearchModalOptimizeLabel": "Optimitza les entrades de l'usuari",
+  "webSearchModalMarketLabel": "mercat",
+  "webSearchModalDefaultQuestion": "Si us plau, resumeix el contingut que trobis",
+  "webSearchModalHandlingContentStatusMessage": "Gestionant contingut...",
+  "webSearchModalOptimizingStatusMessage": "Optimitzant la consulta...",
+  "webSearchModalPromptCitation": "Posa citacions al llarg de la teva resposta. Al final de la teva resposta proporciona citacions que sempre incloguin els títols i enllaços de les fonts originals, així com els autors si estan disponibles.",
+  "webSearchModalPromptUserContext": "Fes totes les anàlisis rellevants a la sol·licitud de l'usuari següent",
+  "webSearchModalSearchingStatusMessage": "Cercant..."
 }

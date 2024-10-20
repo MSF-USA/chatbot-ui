@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Đang xử lý nội dung...",
   "webPullerIconScreenReader": "Kéo văn bản trang web từ URL",
   "webPullerPullingStatusMessage": "Đang lấy nội dung từ URL...",
-  "webPullerQuestionLabel": "Câu hỏi"
+  "webPullerQuestionLabel": "Câu hỏi",
+  "webSearchModalTitle": "Tìm kiếm trên web",
+  "webSearchModalResultsLabel": "Kết quả (tối đa: 15)",
+  "advancedOptionsButton": "Tùy chọn nâng cao",
+  "safeSearchOptionModerate": "Trung bình",
+  "safeSearchOptionOff": "Tắt",
+  "safeSearchOptionStrict": "Nghiêm ngặt",
+  "searchQueryPlaceholder": "Nhập truy vấn tìm kiếm của bạn",
+  "webSearchModalSafeSearchLabel": "Tìm kiếm an toàn",
+  "webSearchModalOptimizeLabel": "Tối ưu hóa đầu vào người dùng",
+  "webSearchModalMarketLabel": "thị trường",
+  "webSearchModalDefaultQuestion": "Vui lòng tóm tắt nội dung bạn tìm thấy",
+  "webSearchModalHandlingContentStatusMessage": "Xử lý nội dung...",
+  "webSearchModalOptimizingStatusMessage": "Tối ưu hóa truy vấn...",
+  "webSearchModalPromptCitation": "Đặt trích dẫn xuyên suốt câu trả lời của bạn. Ở cuối câu trả lời, cung cấp trích dẫn luôn bao gồm tiêu đề và liên kết của các nguồn gốc, cũng như tác giả nếu có.",
+  "webSearchModalPromptUserContext": "Thực hiện tất cả các phân tích liên quan đến yêu cầu người dùng dưới đây",
+  "webSearchModalSearchingStatusMessage": "Đang tìm kiếm..."
 }

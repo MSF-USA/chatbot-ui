@@ -20,5 +20,21 @@
   "webPullerHandlingContentStatusMessage": "در حال پردازش محتوا...",
   "webPullerIconScreenReader": "متن صفحه وب را از URL بکشید",
   "webPullerPullingStatusMessage": "استخراج محتوا از URL...",
-  "webPullerQuestionLabel": "سؤال"
+  "webPullerQuestionLabel": "سؤال",
+  "webSearchModalTitle": "جستجوی وب",
+  "webSearchModalResultsLabel": "نتایج (حداکثر: 15)",
+  "advancedOptionsButton": "گزینه‌های پیشرفته",
+  "safeSearchOptionModerate": "متوسط",
+  "safeSearchOptionOff": "خاموش",
+  "safeSearchOptionStrict": "سخت‌گیر",
+  "searchQueryPlaceholder": "درخواست جستجوی خود را وارد کنید",
+  "webSearchModalSafeSearchLabel": "جستجوی ایمن",
+  "webSearchModalOptimizeLabel": "بهینه‌سازی ورودی‌های کاربر",
+  "webSearchModalMarketLabel": "بازار",
+  "webSearchModalDefaultQuestion": "لطفاً محتوایی را که پیدا می‌کنید خلاصه کنید",
+  "webSearchModalHandlingContentStatusMessage": "در حال پردازش محتوا...",
+  "webSearchModalOptimizingStatusMessage": "بهینه‌سازی درخواست...",
+  "webSearchModalPromptCitation": "در سراسر پاسخ خود استناد کنید. در پایان پاسخ خود، استناداتی ارائه دهید که همواره شامل عناوین و لینک‌های منابع اصلی و همچنین نویسنده(ها) در صورت امکان باشد.",
+  "webSearchModalPromptUserContext": "تمام تحلیل‌ها را با درخواست کاربر زیر مرتبط کنید",
+  "webSearchModalSearchingStatusMessage": "در حال جستجو..."
 }

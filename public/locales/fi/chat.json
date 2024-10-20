@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Sisältöä käsitellään...",
   "webPullerIconScreenReader": "Hae verkkosivuteksti URL-osoitteesta",
   "webPullerPullingStatusMessage": "Haetaan sisältöä URL-osoitteesta...",
-  "webPullerQuestionLabel": "Kysymys"
+  "webPullerQuestionLabel": "Kysymys",
+  "webSearchModalTitle": "Verkkohaku",
+  "webSearchModalResultsLabel": "Tulokset (enintään: 15)",
+  "advancedOptionsButton": "Lisäasetukset",
+  "safeSearchOptionModerate": "Kohtalainen",
+  "safeSearchOptionOff": "Pois päältä",
+  "safeSearchOptionStrict": "Tiukka",
+  "searchQueryPlaceholder": "Syötä hakukyselysi",
+  "webSearchModalSafeSearchLabel": "Turvallinen haku",
+  "webSearchModalOptimizeLabel": "Optimoi käyttäjän syötteet",
+  "webSearchModalMarketLabel": "markkina",
+  "webSearchModalDefaultQuestion": "Ole hyvä ja tiivistä löytämäsi sisältö",
+  "webSearchModalHandlingContentStatusMessage": "Sisällön käsittely...",
+  "webSearchModalOptimizingStatusMessage": "Optimoidaan kyselyä...",
+  "webSearchModalPromptCitation": "Lisää viittauksia vastauksesi eri kohtiin. Lopussa anna viittaukset, jotka aina sisältävät alkuperäisten lähteiden otsikot ja linkit sekä tekijät, jos saatavilla.",
+  "webSearchModalPromptUserContext": "Tee kaikki analyysit alla olevan käyttäjäpyynnön mukaisiksi",
+  "webSearchModalSearchingStatusMessage": "Etsitään..."
 }

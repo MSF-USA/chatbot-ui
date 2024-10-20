@@ -20,5 +20,21 @@
   "webPullerHandlingContentStatusMessage": "กำลังจัดการเนื้อหา...",
   "webPullerIconScreenReader": "ดึงข้อความหน้าเว็บจาก URL",
   "webPullerPullingStatusMessage": "กำลังดึงเนื้อหาจาก URL...",
-  "webPullerQuestionLabel": "คำถาม"
+  "webPullerQuestionLabel": "คำถาม",
+  "webSearchModalTitle": "ค้นหาเว็บ",
+  "webSearchModalResultsLabel": "ผลลัพธ์ (สูงสุด: 15)",
+  "advancedOptionsButton": "ตัวเลือกขั้นสูง",
+  "safeSearchOptionModerate": "ปานกลาง",
+  "safeSearchOptionOff": "ปิด",
+  "safeSearchOptionStrict": "เข้มงวด",
+  "searchQueryPlaceholder": "ป้อนคำค้นหาของคุณ",
+  "webSearchModalSafeSearchLabel": "ค้นหาปลอดภัย",
+  "webSearchModalOptimizeLabel": "ปรับแต่งการป้อนข้อมูลของผู้ใช้",
+  "webSearchModalMarketLabel": "ตลาด",
+  "webSearchModalDefaultQuestion": "กรุณาสรุปเนื้อหาที่คุณพบ",
+  "webSearchModalHandlingContentStatusMessage": "กำลังจัดการเนื้อหา...",
+  "webSearchModalOptimizingStatusMessage": "กำลังปรับปรุงการค้นหา...",
+  "webSearchModalPromptCitation": "ใส่การอ้างอิงตลอดคำตอบของคุณ ในตอนท้ายของคำตอบให้ระบุการอ้างอิงที่รวมถึงชื่อเรื่องและลิงก์ของแหล่งที่มาเดิมเสมอ รวมถึงผู้เขียนหากมี",
+  "webSearchModalPromptUserContext": "ทำการวิเคราะห์ทั้งหมดที่เกี่ยวข้องกับคำขอของผู้ใช้ด้านล่าง",
+  "webSearchModalSearchingStatusMessage": "กำลังค้นหา..."
 }

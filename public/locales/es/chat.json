@@ -56,5 +56,21 @@
   "webPullerHandlingContentStatusMessage": "Manejando contenido...",
   "webPullerIconScreenReader": "Extraer texto de página web desde URL",
   "webPullerPullingStatusMessage": "Extrayendo contenido de la URL...",
-  "webPullerQuestionLabel": "Pregunta"
+  "webPullerQuestionLabel": "Pregunta",
+  "webSearchModalTitle": "Búsqueda web",
+  "webSearchModalResultsLabel": "Resultados (máx: 15)",
+  "advancedOptionsButton": "Opciones avanzadas",
+  "safeSearchOptionModerate": "Moderado",
+  "safeSearchOptionOff": "Apagado",
+  "safeSearchOptionStrict": "Estricto",
+  "searchQueryPlaceholder": "Introduce tu consulta de búsqueda",
+  "webSearchModalSafeSearchLabel": "Búsqueda segura",
+  "webSearchModalOptimizeLabel": "Optimizar entradas de usuario",
+  "webSearchModalMarketLabel": "mercado",
+  "webSearchModalDefaultQuestion": "Por favor, resume el contenido que encuentres",
+  "webSearchModalHandlingContentStatusMessage": "Manejando contenido...",
+  "webSearchModalOptimizingStatusMessage": "Optimizando consulta...",
+  "webSearchModalPromptCitation": "Coloca citas a lo largo de tu respuesta. Al final de tu respuesta, proporciona citas que siempre incluyan los títulos y enlaces de las fuentes originales, así como los autores si están disponibles.",
+  "webSearchModalPromptUserContext": "Haz todos los análisis relevantes para la solicitud del usuario a continuación",
+  "webSearchModalSearchingStatusMessage": "Buscando..."
 }
