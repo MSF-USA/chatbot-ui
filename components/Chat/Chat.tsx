@@ -582,7 +582,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       {showSplash ? (
         <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
-            Welcome to the MSF AI Assistant
+            {t('welcomeMessage')}
           </div>
           <div className="text-center text-lg text-black dark:text-white">
             <div className="mb-8">{`MSF AI Assistant is an open source clone of OpenAI's ChatGPT UI.`}</div>
@@ -683,7 +683,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               size={16}
                               className="mr-1 text-black dark:text-white/50"
                             />
-                            {t('Send Feedback')}
+                            {t('sendFeedback')}
                           </a>
                         </div>
                       </div>
@@ -709,7 +709,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
                             >
                               <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                                {t('AI Model Selection:')}
+                                {t('modelSelectionDialogue')}
                                 <ModelSelect />
                               </div>
                               <div className="text-black dark:text-white">{t('Temperature')}</div>
@@ -749,7 +749,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 }}
                                 onInit={(typewriter) => {
                                   typewriter
-                                    .typeString('MSF AI Assistant')
+                                    .typeString(t('appName'))
                                     .pauseFor(1200)
                                     .deleteAll()
                                     .callFunction(() => {
@@ -896,7 +896,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         size={16}
                         className={'mr-1 text-black dark:text-white/50'}
                       />
-                      {t('Send Feedback')}
+                      {t('sendFeedback')}
                     </a>
                   </div>
                 </div>
