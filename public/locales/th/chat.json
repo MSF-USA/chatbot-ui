@@ -1,0 +1,13 @@
+{
+  "welcomeMessage": "ยินดีต้อนรับสู่ผู้ช่วย AI ของ MSF",
+  "transcribingChatPlaceholder": "การถอดความ...",
+  "temperatureDescription": "ค่าที่สูงขึ้นเช่น 0.8 จะทำให้ผลลัพธ์มีความคิดสร้างสรรค์มากขึ้น ในขณะที่ค่าที่ต่ำกว่าตัวอย่างเช่น 0.2 จะทำให้มันมีความมุ่งเน้นและเป็นเชิงกำหนดมากขึ้น",
+  "sendFeedback": "ส่งความคิดเห็น",
+  "modelSelectionDialogue": "การเลือกโมเดล AI",
+  "appName": "ผู้ช่วย AI ของ MSF",
+  "Run Typewriter Intro": "เรียกใช้บทนำเครื่องพิมพ์ดีด",
+  "chatDisclaimer": "ผู้ช่วย AI ของ MSF อาจทำผิดพลาดได้ ตรวจสอบข้อมูลสำคัญ",
+  "chatInputPlaceholderFull": "ส่งข้อความถึงผู้ช่วย MSF AI ที่นี่หรือพิมพ์ \"/\" เพื่อเลือกพรอมต์...",
+  "chatInputPlaceholder": "ส่งข้อความถึงผู้ช่วย AI ของ MSF ที่นี่",
+  "chatUrlInputTitle": "ตัวดึงหน้าเว็บ"
+}

@@ -1,0 +1,13 @@
+{
+  "welcomeMessage": "እንኳን ወደ MSF AI አስሸጋገር በደህና መጡ",
+  "transcribingChatPlaceholder": "መቅዳት...",
+  "temperatureDescription": "ከፍተኛ እሴቶች እንደ 0.8 የሚያወጡትን ውጤት ወሲብ ሊያደርጉ ይችላሉ ፣ ከፍተኛ እሴቶች እንደ 0.2 ደግሞ ወሲብ ወይም እንደ ወሲብ የተጠበቀ እንዲሆን ይችላሉ።",
+  "sendFeedback": "አስተያየት ላክ",
+  "modelSelectionDialogue": "የAI ሞዴል ምርጫ",
+  "appName": "ኤምኤስኤፍ ኤአይ አስስታንት",
+  "Run Typewriter Intro": "ተይብራይተር አስጀምር አሰራር እንቅስቃሴ ይሂዱ",
+  "chatDisclaimer": "የኤምኤስኤፍ ማህበረሰብ አማካሪ ሊያቃጥል ይችላል። አስፈላጊ መረጃ ያረጋግጡ።",
+  "chatInputPlaceholderFull": "ይህን ያነቡ ወይም \"/\" በመተው አማራጭ ይምረጡ...",
+  "chatInputPlaceholder": "መልእክት MSF AI Assistant እዚህ",
+  "chatUrlInputTitle": "የዌብ ገጽ መጫኛ"
+}

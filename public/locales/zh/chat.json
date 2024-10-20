@@ -31,7 +31,19 @@
   "View Account Usage": "查阅账户用量",
   "Temperature": "生成温度",
   "Precise": "保守",
-  "Neutral": "中立",
+  "Neutral": "中性",
   "Creative": "随性",
-  "chatUrlInputTitle": "Webpage puller"
+  "chatUrlInputTitle": "网页提取器",
+  "Search...": "搜索...",
+  "Type a message...": "",
+  "chatDisclaimer": "MSF AI助手可能会出错。请检查重要信息。",
+  "chatInputPlaceholder": "在此给MSF AI助理发消息",
+  "chatInputPlaceholderFull": "在此处向MSF AI助手发送消息或键入“/”以选择提示...",
+  "transcribingChatPlaceholder": "转录中...",
+  "sendFeedback": "发送反馈",
+  "welcomeMessage": "欢迎使用 MSF AI 助手",
+  "appName": "MSF AI助手",
+  "modelSelectionDialogue": "AI模型选择：",
+  "temperatureDescription": "较高的值如0.8会使输出更具创造性，而较低的值如0.2会使其更专注和确定性。",
+  "Run Typewriter Intro": "运行打字机介绍"
 }

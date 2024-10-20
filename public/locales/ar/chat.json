@@ -20,14 +20,30 @@
   "Save & Submit": "Save & Submit",
   "Make sure your OpenAI API key is set in the bottom left of the sidebar.": "تأكد من تعيين مفتاح واجهة برمجة تطبيقات الخاص بك في الجزء السفلي الأيسر من الشريط",
   "If you completed this step, OpenAI may be experiencing issues.": "من مشاكل OpenAI إذا اكتملت هذه الخطوة، فقد يعاني",
-
   "click if using a .env.local file": ".env.local انقر إذا كنت تستخدم ملف",
-
   "Message limit is {{maxLength}} characters. You have entered {{valueLength}} characters.": "حرفًا {{maxLength}}  حد الرسالة هو {{valueLength}} لقد أدخلت ",
-
   "Please enter a message": "يرجى إدخال رسالة",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality.": "Chatbot UI هي مجموعة متقدمة للدردشة تستخدم",
   "Are you sure you want to clear all messages?": "هل أنت متأكد أنك تريد مسح كافة الرسائل؟",
   "Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.": "القيم الأعلى مثل 0.8 ستجعل الإخراج أكثر عشوائية، في حين أن القيم الأقل مثل 0.2 ستجعله أكثر تركيزًا وتحديدًا.",
-  "chatUrlInputTitle": "Webpage puller"
+  "chatUrlInputTitle": "مستخرج صفحة الويب",
+  "Creative": "إبداعي",
+  "If you don't have an OpenAI API key, you can get one here: ": "إذا لم يكن لديك مفتاح API من OpenAI، يمكنك الحصول على واحد هنا: ",
+  "Neutral": "محايد",
+  "New Conversation": "محادثة جديدة",
+  "Precise": "دقيق",
+  "Search...": "بحث...",
+  "Temperature": "درجة الحرارة",
+  "Type a message or type \"/\" to select a prompt...": "اكتب رسالة أو اكتب \"/\" لاختيار موجه...",
+  "View Account Usage": "عرض استخدام الحساب",
+  "chatDisclaimer": "مساعد الذكاء الاصطناعي لـ MSF يمكن أن يرتكب أخطاء. تحقق من المعلومات المهمة.",
+  "chatInputPlaceholder": "راسل مساعد الذكاء الاصطناعي MSF هنا",
+  "chatInputPlaceholderFull": "راسل مساعد MSF AI هنا أو اكتب \"/\" لاختيار موجه...",
+  "transcribingChatPlaceholder": "قيد التفريغ...",
+  "sendFeedback": "إرسال ملاحظات",
+  "welcomeMessage": "مرحبًا بك في مساعد MSF AI",
+  "appName": "مساعد MSF AI",
+  "modelSelectionDialogue": "اختيار نموذج الذكاء الاصطناعي:",
+  "temperatureDescription": "القيم الأعلى مثل 0.8 ستجعل الناتج أكثر إبداعًا، بينما القيم الأقل مثل 0.2 ستجعله أكثر تركيزًا وحتمية.",
+  "Run Typewriter Intro": "تشغيل مقدمة الآلة الكاتبة"
 }

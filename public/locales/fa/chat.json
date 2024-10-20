@@ -1,0 +1,13 @@
+{
+  "welcomeMessage": "به دستیار هوش مصنوعی MSF خوش آمدید",
+  "transcribingChatPlaceholder": "در حال رونویسی...",
+  "temperatureDescription": "مقادیر بالاتر مانند 0.8 خروجی را خلاقانه‌تر می‌کند، در حالی که مقادیر پایین‌تر مانند 0.2 آن را متمرکزتر و تعیین‌کننده‌تر می‌کند.",
+  "sendFeedback": "ارسال بازخورد",
+  "modelSelectionDialogue": "انتخاب مدل هوش مصنوعی",
+  "appName": "دستیار هوش مصنوعی MSF",
+  "Run Typewriter Intro": "اجرای معرفی ماشین تحریر",
+  "chatDisclaimer": "دستیار هوش مصنوعی MSF ممکن است اشتباه کند. اطلاعات مهم را بررسی کنید.",
+  "chatInputPlaceholderFull": "پیام به دستیار هوش مصنوعی MSF اینجا ارسال کنید یا \"/\" را برای انتخاب یک پیشنهاد تایپ کنید...",
+  "chatInputPlaceholder": "پیام به دستیار هوش مصنوعی MSF اینجا",
+  "chatUrlInputTitle": "کِشنده صفحه وب"
+}

@@ -1,0 +1,13 @@
+{
+  "welcomeMessage": "Ласкаво просимо до асистента MSF AI",
+  "transcribingChatPlaceholder": "Транскрибування...",
+  "temperatureDescription": "Вищі значення, такі як 0.8, зроблять результат більш творчим, тоді як нижчі значення, такі як 0.2, зроблять його більш зосередженим і детермінованим.",
+  "sendFeedback": "Надіслати відгук",
+  "modelSelectionDialogue": "Вибір AI-моделі",
+  "appName": "Асистент AI MSF",
+  "Run Typewriter Intro": "Запустити вступ машинки",
+  "chatDisclaimer": "AI помічник MSF може робити помилки. Перевірте важливу інформацію.",
+  "chatInputPlaceholderFull": "Надішліть повідомлення MSF AI Assistant тут або введіть \"/\", щоб вибрати підказку...",
+  "chatInputPlaceholder": "Повідомлення асистенту MSF AI тут",
+  "chatUrlInputTitle": "Витягувач веб-сторінок"
+}

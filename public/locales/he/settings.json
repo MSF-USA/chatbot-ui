@@ -1,4 +1,11 @@
 {
   "Dark mode": "מצב כהה",
-  "Light mode": "מצב בהיר"
+  "Light mode": "מצב בהיר",
+  "Save": "שמור",
+  "Settings": "הגדרות",
+  "Theme": "נושא",
+  "sendFeedback": "שלח משוב",
+  "modelSelectionDialogue": "בחירת מודל AI",
+  "Run Typewriter Intro": "הפעל מבוא מכונת כתיבה",
+  "temperatureDescription": "ערכים גבוהים כמו 0.8 יהפכו את התוצאה ליותר יצירתית, בעוד שערכים נמוכים כמו 0.2 יהפכו אותה לממוקדת ודטרמיניסטית יותר."
 }

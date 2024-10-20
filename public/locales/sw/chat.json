@@ -1,0 +1,13 @@
+{
+  "welcomeMessage": "Karibu kwenye Msaidizi wa AI wa MSF",
+  "transcribingChatPlaceholder": "Kuandika...",
+  "temperatureDescription": "Thamani za juu kama 0.8 zitafanya matokeo kuwa ya ubunifu zaidi, wakati thamani za chini kama 0.2 zitafanya kuwa zaidi ya kulenga na kuamua.",
+  "sendFeedback": "Tuma Maoni",
+  "modelSelectionDialogue": "Uteuzi wa Mfano wa AI",
+  "appName": "Msaidizi wa AI wa MSF",
+  "Run Typewriter Intro": "Endesha Utangulizi wa Mashine ya Kuandika",
+  "chatDisclaimer": "Msaidizi wa AI wa MSF anaweza kufanya makosa. Angalia taarifa muhimu.",
+  "chatInputPlaceholderFull": "Tuma ujumbe kwa Msaidizi wa MSF AI hapa au andika \"/\" ili kuchagua kidokezo...",
+  "chatInputPlaceholder": "Tuma ujumbe kwa Msaidizi wa AI wa MSF hapa",
+  "chatUrlInputTitle": "Kivuta ukurasa wa wavuti"
+}

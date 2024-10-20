@@ -8,5 +8,6 @@
   "A description for your prompt.": "A description for your prompt.",
   "Prompt": "Prompt",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}",
-  "Save": "Save"
+  "Save": "Save",
+  "A name for your prompt.": "Название для вашего запроса"
 }

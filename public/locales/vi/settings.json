@@ -1,5 +1,11 @@
 {
   "Dark mode": "Chế độ tối",
   "Light mode": "Chế độ sáng",
-  "Save": "Lưu"
+  "Save": "Lưu",
+  "Settings": "cài đặt",
+  "Theme": "chủ đề",
+  "sendFeedback": "Gửi phản hồi",
+  "modelSelectionDialogue": "Lựa chọn mô hình AI",
+  "Run Typewriter Intro": "Chạy giới thiệu máy đánh chữ",
+  "temperatureDescription": "Các giá trị cao hơn như 0,8 sẽ làm cho kết quả sáng tạo hơn, trong khi các giá trị thấp hơn như 0,2 sẽ làm cho nó tập trung hơn và mang tính quyết định hơn."
 }

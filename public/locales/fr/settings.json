@@ -1,4 +1,11 @@
 {
   "Dark mode": "Mode sombre",
-  "Light mode": "Mode clair"
+  "Light mode": "Mode clair",
+  "Save": "enregistrer",
+  "Settings": "paramètres",
+  "Theme": "thème",
+  "sendFeedback": "Envoyer des commentaires",
+  "modelSelectionDialogue": "Sélection de modèle d'IA",
+  "Run Typewriter Intro": "Lancer l'introduction de la machine à écrire",
+  "temperatureDescription": "Des valeurs plus élevées comme 0,8 rendront la sortie plus créative, tandis que des valeurs plus basses comme 0,2 la rendront plus concentrée et déterministe."
 }

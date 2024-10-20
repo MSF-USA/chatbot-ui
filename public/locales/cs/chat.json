@@ -1,0 +1,13 @@
+{
+  "welcomeMessage": "Vítejte v asistentu MSF AI",
+  "transcribingChatPlaceholder": "Přepisování...",
+  "temperatureDescription": "Vyšší hodnoty jako 0,8 udělají výstup kreativnějším, zatímco nižší hodnoty jako 0,2 ho udělají více zaměřeným a deterministickým.",
+  "sendFeedback": "Odeslat zpětnou vazbu",
+  "modelSelectionDialogue": "Výběr AI modelu",
+  "appName": "Asistent AI MSF",
+  "Run Typewriter Intro": "Spustit úvod psacího stroje",
+  "chatDisclaimer": "Asistent umělé inteligence MSF může udělat chyby. Zkontrolujte důležité informace.",
+  "chatInputPlaceholderFull": "Zde zprávu pro asistenta MSF AI nebo napište \"/\" pro výběr výzvy...",
+  "chatInputPlaceholder": "Zpráva MSF AI asistent zde",
+  "chatUrlInputTitle": "Stahovač webových stránek"
+}

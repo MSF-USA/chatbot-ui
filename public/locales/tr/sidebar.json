@@ -17,7 +17,10 @@
   "Name": "İsim",
   "Description": "Açıklama",
   "A description for your prompt.": "Prompt'unuz için bir açıklama.",
-  "Prompt": "Prompt",
+  "Prompt": "istem",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt içeriği. Değişken belirtmek için {{}} kullanın. Örn: {{ad}} bir {{sıfat}} {{isim}}",
-  "Save": "Kaydet"
+  "Save": "Kaydet",
+  "New Conversation": "Yeni Konuşma",
+  "Settings": "Ayarlar",
+  "A name for your prompt.": "Komutunuz için bir ad."
 }

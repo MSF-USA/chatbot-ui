@@ -1,0 +1,11 @@
+{
+  "Dark mode": "mode fosc",
+  "Light mode": "mode clar",
+  "Save": "desa",
+  "Settings": "configuració",
+  "Theme": "tema",
+  "sendFeedback": "Envia comentaris",
+  "modelSelectionDialogue": "Selecció de model d'IA",
+  "Run Typewriter Intro": "Executa la introducció de màquina d'escriure",
+  "temperatureDescription": "Valors més alts com 0,8 faran que el resultat sigui més creatiu, mentre que valors més baixos com 0,2 el faran més enfocat i determinista."
+}

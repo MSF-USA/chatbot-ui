@@ -14,7 +14,13 @@
   "Name": "Nombre",
   "Description": "Descripción",
   "A description for your prompt.": "Descripción de su prompt.",
-  "Prompt": "Prompt",
+  "Prompt": "indicación",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contenido del prompt. Utilice {{}} para indicar una variable. Ej: {{nombre}} es un {{adjetivo}} {{nombre}}",
-  "Save": "Guardar"
+  "Save": "Guardar",
+  "Plugin Keys": "Claves de complemento",
+  "Light mode": "modo claro",
+  "New Conversation": "Nueva conversación",
+  "Settings": "Configuración",
+  "A name for your prompt.": "Un nombre para tu aviso.",
+  "Dark mode": "modo oscuro"
 }
