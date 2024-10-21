@@ -1,3 +1,10 @@
 {
-  "Settings": "Nastavení"
+  "Settings": "Nastavení",
+  "New Conversation": "Nová konverzace",
+  "New chat": "Nový chat",
+  "Save": "uložit",
+  "Search conversations...": "Vyhledat konverzace...",
+  "New prompt": "Nová výzva",
+  "Dark mode": "tmavý režim",
+  "Light mode": "světlý režim"
 }

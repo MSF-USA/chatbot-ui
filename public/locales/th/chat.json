@@ -72,5 +72,10 @@
   "translatorTranslationDomainGeneral": "ทั่วไป",
   "translatorTranslationDomainLegal": "ถูกกฎหมาย",
   "translatorTranslationDomainMedical": "การแพทย์",
-  "translatorTranslationDomainTechnical": "ทางเทคนิค"
+  "translatorTranslationDomainTechnical": "ทางเทคนิค",
+  "Search...": "ค้นหา...",
+  "New Conversation": "การสนทนาใหม่",
+  "Neutral": "เป็นกลาง",
+  "Creative": "สร้างสรรค์",
+  "Precise": "แม่นยำ"
 }

@@ -72,5 +72,10 @@
   "translatorTranslationDomainGeneral": "obecný",
   "translatorTranslationDomainLegal": "právní",
   "translatorTranslationDomainMedical": "lékařský",
-  "translatorTranslationDomainTechnical": "technický"
+  "translatorTranslationDomainTechnical": "technický",
+  "Search...": "Hledat...",
+  "New Conversation": "Nový rozhovor",
+  "Neutral": "neutrální",
+  "Creative": "kreativní",
+  "Precise": "přesný"
 }
