@@ -3,6 +3,7 @@ import {
   IconFileMusic
 } from '@tabler/icons-react';
 import {ChatInputSubmitTypes} from "@/types/chat";
+import {useTranslation} from "next-i18next";
 
 interface ChatInputTranscribeProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -34,6 +35,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     setUploadProgress,
   }
 ) => {
+  const { t } = useTranslation('transcribeModal');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -71,20 +73,20 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
         setFile(selectedFile);
         setError(null);
       } else {
-        setError('Unsupported file type. Please select an audio or video file.');
+        setError(t('unsupportedFileType'));
       }
     }
   };
 
   const handleTranscribe = async () => {
     if (!file) {
-      setError('Please select a file to transcribe.');
+      setError(t('pleaseSelectFile'));
       return;
     }
 
     setIsTranscribing(true);
     setError(null);
-    setStatusMessage('Uploading file...');
+    setStatusMessage(t('uploadingFile'));
 
     try {
       const filename = encodeURIComponent(file.name);
@@ -122,7 +124,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
       const fileURI = uploadResult.uri;
       const fileID = encodeURIComponent(fileURI.split('/').pop());
 
-      setStatusMessage('Transcribing... This may take a while.');
+      setStatusMessage(t('transcribingStatus'));
 
       const transcribeResponse = await fetch(`/api/v2/file/${fileID}/transcribe?service=whisper`, {
         method: 'GET'
@@ -141,7 +143,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
 
     } catch (error) {
       console.error('Error during transcription:', error);
-      setError('An error occurred during transcription. Please try again.');
+      setError(t('transcriptionError'));
     } finally {
       setIsTranscribing(false);
       setStatusMessage(null);
@@ -152,7 +154,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     navigator.clipboard.writeText(transcript)
       .then(() => {
         // Optionally, provide feedback to user
-        alert('Copied to clipboard!');
+        alert(t('copiedToClipboard'));
       })
       .catch((error) => {
         console.error('Failed to copy text:', error);
@@ -194,7 +196,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
 
   return (
     <div className="inline-block">
-      <button onClick={openModal} title="Upload audio or video file" className="py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+      <button onClick={openModal} title={t('uploadAudioVideoFile')} className="py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
         <IconFileMusic className="text-black dark:text-white h-5 w-5"/>
       </button>
 
@@ -208,15 +210,15 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Upload Audio/Video File</h2>
-              <button onClick={closeModal} title="Close" className="text-2xl leading-none">&times;</button>
+              <h2 className="text-xl font-bold">{t('title')}</h2>
+              <button onClick={closeModal} title={t('close')} className="text-2xl leading-none">&times;</button>
             </div>
             <div className="mb-4">
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                 <label htmlFor="file-upload" className="block cursor-pointer">
                   <div>
-                    <p className="mb-1"><strong>Click to upload</strong> or drag and drop</p>
-                    <p className="text-sm text-gray-500">Supported formats: MP3, WAV, MP4, MOV</p>
+                    <p className="mb-1"><strong>{t('clickToUpload')}</strong> {t('orDragAndDrop')}</p>
+                    <p className="text-sm text-gray-500">{t('supportedFormats')}:  MP3, WAV, MP4, MOV</p>
                   </div>
                   <input
                     id="file-upload"
@@ -229,7 +231,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
               </div>
               {file && (
                 <div className="mt-2">
-                  <p>Selected file: <strong>{file.name}</strong></p>
+                  <p>{t('selectedFile')}: <strong>{file.name}</strong></p>
                 </div>
               )}
               {error && (
@@ -246,7 +248,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
                     : 'bg-green-500 hover:bg-green-600 text-white'
                 }`}
               >
-                {isTranscribing ? 'Transcribing...' : 'Transcribe'}
+                {isTranscribing ? t('transcribingButton') : t('transcribeButton')}
               </button>
             </div>
 
@@ -294,8 +296,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">Transcription Result</h2>
-              <button onClick={closeTranscriptModal} title="Close" className="text-2xl leading-none">&times;</button>
+              <h2 className="text-xl font-bold">{t('transcriptionResult')}</h2>
+              <button onClick={closeTranscriptModal} title={t('close')} className="text-2xl leading-none">&times;</button>
             </div>
             <div className="mb-4">
               <textarea
@@ -309,19 +311,19 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
                 onClick={handleCopyToClipboard}
                 className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
               >
-                Copy to Clipboard
+                {t('copyToClipboard')}
               </button>
               <button
                 onClick={handleDownload}
                 className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
               >
-                Download as TXT
+                {t('downloadAsTXT')}
               </button>
               <button
                 onClick={handleInjectToChat}
                 className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
               >
-                Inject into Chat
+                {t('injectIntoChat')}
               </button>
             </div>
           </div>
