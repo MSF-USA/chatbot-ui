@@ -1,0 +1,21 @@
+{
+  "title": "Transcribe Audio/Video",
+  "unsupportedFileType": "Unsupported file type. Please select an audio or video file.",
+  "pleaseSelectFile": "Please select a file to transcribe.",
+  "uploadingFile": "Uploading file...",
+  "transcribingStatus": "Transcribing... This may take a while.",
+  "transcriptionError": "An error occurred during transcription. Please try again.",
+  "copiedToClipboard": "Copied to clipboard",
+  "uploadAudioVideoFile": "Upload audio or video file",
+  "close": "Close",
+  "clickToUpload": "Click to upload",
+  "orDragAndDrop": "or drag and drop",
+  "supportedFormats": "Supported formats",
+  "selectedFile": "Selected file",
+  "transcribingButton": "Transcribing...",
+  "transcribeButton": "Transcribe",
+  "transcriptionResult": "Transcription Result",
+  "copyToClipboard": "Copy to Clipboard",
+  "downloadAsTXT": "Download as TXT",
+  "injectIntoChat": "Inject into Chat"
+}

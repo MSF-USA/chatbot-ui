@@ -1,0 +1,21 @@
+{
+  "clickToUpload": "Fai clic per caricare",
+  "close": "Chiudi",
+  "copiedToClipboard": "Copiato negli appunti",
+  "copyToClipboard": "Copia negli appunti",
+  "downloadAsTXT": "Scarica come TXT",
+  "injectIntoChat": "Inserisci nella chat",
+  "orDragAndDrop": "o trascina e rilascia",
+  "pleaseSelectFile": "Si prega di selezionare un file da trascrivere.",
+  "selectedFile": "File selezionato",
+  "supportedFormats": "Formati supportati",
+  "title": "Trascrivi audio/video",
+  "transcribeButton": "Trascrivere",
+  "transcribingButton": "Trascrivendo...",
+  "transcribingStatus": "Trascrizione in corso... Questo potrebbe richiedere un po' di tempo.",
+  "transcriptionError": "Si è verificato un errore durante la trascrizione. Per favore riprova.",
+  "transcriptionResult": "Risultato della trascrizione",
+  "unsupportedFileType": "Tipo di file non supportato. Seleziona un file audio o video.",
+  "uploadAudioVideoFile": "Carica file audio o video",
+  "uploadingFile": "Caricamento file in corso..."
+}
