@@ -66,15 +66,15 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
 
     let prompt;
     if (!sourceLanguage) {
-      prompt = `Translate the following text to ${
-        languages.find((l) => l.value === targetLanguage)?.label || "unknown"
-      }:\n\n\`\`\`\n${inputText}\n\`\`\``;
+      prompt = `Translate the following text into the language with iso code \`${
+        languages.find((l) => l.value === targetLanguage)?.value || "unknown"
+      }\`:\n\n\`\`\`\n${inputText}\n\`\`\``;
     } else {
-      prompt = `Translate the following text from ${
-        languages.find((l) => l.value === sourceLanguage)?.label || "the original language"
-      } to ${
-        languages.find((l) => l.value === targetLanguage)?.label || "unknown"
-      }:\n\n\`\`\`${sourceLanguage}\n${inputText}\n\`\`\``;
+      prompt = `Translate the following text from the language with the iso code \`${
+        languages.find((l) => l.value === sourceLanguage)?.value || "the original language"
+      }\` to \`${
+        languages.find((l) => l.value === targetLanguage)?.value || "unknown"
+      }\`:\n\n\`\`\`${sourceLanguage}\n${inputText}\n\`\`\``;
     }
 
     prompt += '\n\nRespond with directly markdown formatted text (not in a code block) matching the original as closely as possible, making only language-appropriate adjustments.';
