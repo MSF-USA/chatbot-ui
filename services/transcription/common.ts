@@ -90,8 +90,8 @@ export async function splitAudioFile(
   console.timeEnd('splitAudioFile');
 
   // Clean up the WAV file after splitting
-  if (isConverted && fs.existsSync(wavFilePath)) {
-    fs.promises.unlink(wavFilePath).catch(err => console.error(`Failed to delete WAV file: ${wavFilePath}`, err));
+  if (isConverted && fs.existsSync(filePath)) {
+    fs.promises.unlink(filePath).catch(err => console.error(`Failed to delete WAV file: ${filePath}`, err));
   }
 
   return segmentPaths;
