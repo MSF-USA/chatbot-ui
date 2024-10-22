@@ -7,14 +7,13 @@ import React, {
   useEffect,
 } from 'react';
 import HomeContext from '@/pages/api/home/home.context';
-import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 import {
   ChatInputSubmitTypes,
   FilePreview,
   FileMessageContent,
   ImageMessageContent,
 } from '@/types/chat';
-import { IconLink, IconChevronUp, IconChevronDown } from '@tabler/icons-react';
+import { IconLink } from '@tabler/icons-react';
 import crypto from 'crypto';
 import BetaBadge from '@/components/Beta/Badge';
 import {useTranslation} from "next-i18next";
