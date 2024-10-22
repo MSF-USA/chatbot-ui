@@ -217,7 +217,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
               <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
                 <label htmlFor="file-upload" className="block cursor-pointer">
                   <div>
-                    <p className="mb-1"><strong>{t('clickToUpload')}</strong> {t('orDragAndDrop')}</p>
+                    <p className="mb-1"><strong>{t('clickToUpload')}</strong> { /* t('orDragAndDrop') */ }</p>
                     <p className="text-sm text-gray-500">{t('supportedFormats')}:  MP3, WAV, MP4, MOV</p>
                   </div>
                   <input
