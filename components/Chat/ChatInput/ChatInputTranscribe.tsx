@@ -1,9 +1,41 @@
 import React, { FC, useState, Dispatch, SetStateAction } from 'react';
 import {
-  IconFileMusic
+  IconFileMusic,
+  IconCopy,
+  IconDownload
 } from '@tabler/icons-react';
 import {ChatInputSubmitTypes} from "@/types/chat";
 import {useTranslation} from "next-i18next";
+
+
+async function retryOperation<T>(
+    operation: () => Promise<T>,
+    maxRetries: number,
+    waitTime: number,
+    onRetry?: (attempt: number, error: any) => void
+): Promise<T> {
+  let attempt = 0;
+  while (attempt < maxRetries) {
+    attempt++;
+    try {
+      return await operation();
+    } catch (error) {
+      if (attempt < maxRetries) {
+        if (onRetry) {
+          onRetry(attempt, error);
+        }
+        // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+      } else {
+        // Max retries reached, throw the error
+        throw error;
+      }
+    }
+  }
+  // Should never reach here
+  throw new Error('An unexpected error occurred in retryOperation.');
+}
+
 
 interface ChatInputTranscribeProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -78,6 +110,37 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     }
   };
 
+  const fetchDataWithRetry = async (url: string, init: RequestInit={method: 'GET'}) => {
+    const maxRetries = 5;
+    const waitTime = 10000; // 10 seconds
+
+    const operation = async () => {
+      const response = await fetch(url, init);
+      if (!response.ok) {
+        if (response.status >= 500) {
+          // Server error, can retry
+          throw new Error(`ServerError: ${response.status}`);
+        } else {
+          // Client error, do not retry
+          throw new Error(`ClientError: ${response.status}`);
+        }
+      }
+      return response.json();
+    };
+
+    const onRetry = (attempt: number, error: any) => {
+      console.log(`Attempt ${attempt} failed: ${error.message}. Retrying in ${waitTime / 1000} seconds...`);
+    };
+
+    try {
+      const data = await retryOperation(operation, maxRetries, waitTime, onRetry);
+      return data;
+    } catch (error) {
+      console.error('Failed to fetch data after retries:', error);
+      throw error;
+    }
+  };
+
   const handleTranscribe = async () => {
     if (!file) {
       setError(t('pleaseSelectFile'));
@@ -126,15 +189,10 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
 
       setStatusMessage(t('transcribingStatus'));
 
-      const transcribeResponse = await fetch(`/api/v2/file/${fileID}/transcribe?service=whisper`, {
+      const transcribeResult = await fetchDataWithRetry(`/api/v2/file/${fileID}/transcribe?service=whisper`, {
         method: 'GET'
       });
 
-      if (!transcribeResponse.ok) {
-        throw new Error('Failed to transcribe file');
-      }
-
-      const transcribeResult = await transcribeResponse.json();
       const transcript = transcribeResult.transcript;
 
       setTranscript(transcript);
@@ -311,17 +369,19 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
                 onClick={handleCopyToClipboard}
                 className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
               >
-                {t('copyToClipboard')}
+                <IconCopy />
+                <span className={'sr-only'}>{t('copyToClipboard')}</span>
               </button>
               <button
-                onClick={handleDownload}
-                className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+                  onClick={handleDownload}
+                  className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
               >
-                {t('downloadAsTXT')}
+                <IconDownload/>
+                <span className={'sr-only'}>{t('downloadAsTXT')}</span>
               </button>
               <button
-                onClick={handleInjectToChat}
-                className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
+                  onClick={handleInjectToChat}
+                  className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
               >
                 {t('injectIntoChat')}
               </button>
