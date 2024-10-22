@@ -5,6 +5,8 @@
   "uploadingFile": "Uploading file...",
   "transcribingStatus": "Transcribing... This may take a while.",
   "transcriptionError": "An error occurred during transcription. Please try again.",
+  "transcriptionErrorAttempt": "Error during transcription (Attempt {{attempt}} of 3). Retrying...",
+  "rateLimitExceededWaiting": "Rate limit exceeded. Waiting {{seconds}} seconds before retrying...",
   "copiedToClipboard": "Copied to clipboard",
   "uploadAudioVideoFile": "Upload audio or video file",
   "close": "Close",
