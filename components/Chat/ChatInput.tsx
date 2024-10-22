@@ -38,6 +38,7 @@ import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCap
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
 import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
 import ChatDropdownWeb from "@/components/Chat/ChatInput/ChatDropdownWeb";
+import ChatInputTranscribe from "@/components/Chat/ChatInput/ChatInputTranscribe";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -350,8 +351,8 @@ export const ChatInput = ({
 
   useEffect(() => {
     const isMobile = window.innerWidth < 600;
-    const fullPlaceholder = t('Message MSF AI Assistant here or type "/" to select a prompt...') || '';
-    const trimmedPlaceholder = isMobile ? fullPlaceholder.replace(' or type "/" to select a prompt', '') : fullPlaceholder;
+    const fullPlaceholder = t('chatInputPlaceholderFull') || '';
+    const trimmedPlaceholder = isMobile ? t('chatInputPlaceholder') : fullPlaceholder;
     setPlaceholderText(trimmedPlaceholder);
   }, [t]);
 
@@ -470,6 +471,18 @@ export const ChatInput = ({
             setUploadProgress={setUploadProgress}
           />
 
+          <ChatInputTranscribe
+            setTextFieldValue={setTextFieldValue}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+            setUploadProgress={setUploadProgress}
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            // @ts-ignore
+            setParentModalIsOpen={(e: boolean) => null}
+          />
+
           <ChatInputTranslate
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
@@ -511,7 +524,7 @@ export const ChatInput = ({
                     : 'hidden'
                 }`,
               }}
-              placeholder={isTranscribing ? 'Transcribing...' : placeholderText}
+              placeholder={isTranscribing ? t("transcribingChatPlaceholder") : placeholderText}
               value={
                 textFieldValue
               }
@@ -572,7 +585,7 @@ export const ChatInput = ({
       <div
         className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
         {t(
-          "MSF AI Assistant can make mistakes. Check important info.",
+          "chatDisclaimer",
         )}
       </div>
     </div>
