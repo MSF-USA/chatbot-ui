@@ -37,15 +37,28 @@ export async function splitAudioFile(
   console.time('splitAudioFile');
   console.log(`Splitting audio file: ${filePath}`);
 
-  // Convert to WAV first
-  const wavFilePath = path.join(os.tmpdir(), `${path.basename(filePath, path.extname(filePath))}_converted.wav`);
-  await convertToWav(filePath, wavFilePath);
-  console.log(`Converted file: ${wavFilePath}`);
+  let wavFilePath: string;
+  let isConverted = false;
+
+  // Check if the file is already a WAV
+  const fileExt: string = path.extname(filePath).toLowerCase();
+  if (fileExt === '.wav') {
+    wavFilePath = filePath;
+  } else {
+    // Convert to WAV
+    wavFilePath = path.join(os.tmpdir(), `${path.basename(filePath, path.extname(filePath))}_converted.wav`);
+    await convertToWav(filePath, wavFilePath);
+    isConverted = true;
+
+    // Clean up the original file after converting
+    fs.promises.unlink(filePath).catch(err => console.error(`Failed to delete original file: ${filePath}`, err));
+  }
 
   const fileSize = fs.statSync(wavFilePath).size;
   if (fileSize <= maxSize) {
     console.log('File size is within limit, no splitting required.');
     console.timeEnd('splitAudioFile');
+
     return [wavFilePath];
   }
 
@@ -75,6 +88,12 @@ export async function splitAudioFile(
 
   console.log('Audio file splitting completed.');
   console.timeEnd('splitAudioFile');
+
+  // Clean up the WAV file after splitting
+  if (isConverted && fs.existsSync(wavFilePath)) {
+    fs.promises.unlink(wavFilePath).catch(err => console.error(`Failed to delete WAV file: ${wavFilePath}`, err));
+  }
+
   return segmentPaths;
 }
 
@@ -169,4 +188,5 @@ export async function convertToWav(inputPath: string, outputPath: string): Promi
     outputPath,
   ];
   await execFileAsync('ffmpeg', args);
+  console.timeEnd('convertToWav');
 }
