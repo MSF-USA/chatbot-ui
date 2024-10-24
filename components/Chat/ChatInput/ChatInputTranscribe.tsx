@@ -1,4 +1,4 @@
-import React, { FC, useState, Dispatch, SetStateAction } from 'react';
+import React, {FC, useState, Dispatch, SetStateAction, useRef, useEffect} from 'react';
 import {
   IconFileMusic,
   IconCopy,
@@ -53,6 +53,7 @@ interface ChatInputTranscribeProps {
   setFileFieldValue: Dispatch<SetStateAction<any>>;
   setImageFieldValue: Dispatch<SetStateAction<any>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
+  simulateClick: boolean;
 }
 
 const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
@@ -64,6 +65,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
                                                              setFileFieldValue,
                                                              setImageFieldValue,
                                                              setUploadProgress,
+  simulateClick,
                                                            }) => {
   const { t } = useTranslation('transcribeModal');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -75,6 +77,13 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     false,
   );
   const [transcript, setTranscript] = useState<string>('');
+  const openModalButtonRef = useRef<HTMLButtonElement>(null)
+
+  useEffect(() => {
+    if (simulateClick && openModalButtonRef.current) {
+      openModalButtonRef.current.click();
+    }
+  }, [simulateClick]);
 
   const openModal = () => {
     setIsModalOpen(true);

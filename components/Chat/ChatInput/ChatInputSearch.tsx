@@ -61,6 +61,7 @@ interface ChatInputSearchProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  simulateClick: boolean;
 }
 
 const ChatInputSearch = ({
@@ -73,6 +74,7 @@ const ChatInputSearch = ({
                            setTextFieldValue,
                            handleSend,
     setParentModalIsOpen,
+  simulateClick,
                          }: ChatInputSearchProps) => {
   const { t } = useTranslation('chat');
 
@@ -96,6 +98,7 @@ const ChatInputSearch = ({
   const [offset, setOffset] = useState<number>(0);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const openModalButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!questionInput) {
@@ -118,6 +121,12 @@ const ChatInputSearch = ({
       setParentModalIsOpen(false);
     }
   }, [isReadyToSend, handleSend]);
+
+  useEffect(() => {
+    if (simulateClick && openModalButtonRef.current) {
+      openModalButtonRef.current.click();
+    }
+  }, [simulateClick]);
 
   const handleSearchSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -248,6 +257,7 @@ ${t('webSearchModalPromptCitation')}`,
           event.preventDefault();
           setModalOpen(true);
         }}
+        ref={openModalButtonRef}
         disabled={isSubmitting} // Disable when submitting
         aria-label="Add document from search"
       >

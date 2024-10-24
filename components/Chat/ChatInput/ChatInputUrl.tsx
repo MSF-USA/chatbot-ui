@@ -55,6 +55,7 @@ interface ChatInputUrlProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  simulateClick: boolean;
 }
 
 const ChatInputUrl = (
@@ -68,6 +69,7 @@ const ChatInputUrl = (
       setTextFieldValue,
       handleSend,
       setParentModalIsOpen,
+      simulateClick,
     }: ChatInputUrlProps
 ) => {
   const { t } = useTranslation('chat');
@@ -83,6 +85,7 @@ const ChatInputUrl = (
   const [isAdvancedOpen, setIsAdvancedOpen] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const urlInputRef = useRef<HTMLInputElement>(null); // Added this line
+  const openModalButtonRef = useRef<HTMLButtonElement>(null)
   const {
     state: { user },
   } = useContext(HomeContext);
@@ -123,6 +126,12 @@ const ChatInputUrl = (
       setParentModalIsOpen(false);
     }
   }, [isReadyToSend, handleSend, setParentModalIsOpen]);
+
+  useEffect(() => {
+    if (simulateClick && openModalButtonRef.current) {
+      openModalButtonRef.current.click();
+    }
+  }, [simulateClick]);
 
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -205,6 +214,7 @@ ${t('webPullerReferencePrompt')}`,
           event.preventDefault();
           setModalOpen(true);
         }}
+        ref={openModalButtonRef}
         disabled={isSubmitting} // Disable when submitting
       >
         <IconLink className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
