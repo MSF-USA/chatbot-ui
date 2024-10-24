@@ -2,17 +2,19 @@ import React, { FC, useState, Dispatch, SetStateAction } from 'react';
 import {
   IconFileMusic,
   IconCopy,
-  IconDownload
+  IconDownload,
+  IconMessagePlus,
+  IconTrash,
 } from '@tabler/icons-react';
-import {ChatInputSubmitTypes} from "@/types/chat";
-import {useTranslation} from "next-i18next";
-
+import { ChatInputSubmitTypes } from '@/types/chat';
+import { useTranslation } from 'next-i18next';
+import toast from "react-hot-toast";
 
 async function retryOperation<T>(
-    operation: () => Promise<T>,
-    maxRetries: number,
-    waitTime: number,
-    onRetry?: (attempt: number, error: any) => void
+  operation: () => Promise<T>,
+  maxRetries: number,
+  waitTime: number,
+  onRetry?: (attempt: number, error: any) => void,
 ): Promise<T> {
   let attempt = 0;
   while (attempt < maxRetries) {
@@ -27,7 +29,6 @@ async function retryOperation<T>(
         // Wait before retrying
         await new Promise((resolve) => setTimeout(resolve, waitTime));
       } else {
-        // Max retries reached, throw the error
         throw error;
       }
     }
@@ -35,7 +36,6 @@ async function retryOperation<T>(
   // Should never reach here
   throw new Error('An unexpected error occurred in retryOperation.');
 }
-
 
 interface ChatInputTranscribeProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -55,25 +55,25 @@ interface ChatInputTranscribeProps {
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
 }
 
-const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
-  {
-    setTextFieldValue,
-    onFileUpload,
-    setParentModalIsOpen,
-    setSubmitType,
-    setFilePreviews,
-    setFileFieldValue,
-    setImageFieldValue,
-    setUploadProgress,
-  }
-) => {
+const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
+                                                             setTextFieldValue,
+                                                             onFileUpload,
+                                                             setParentModalIsOpen,
+                                                             setSubmitType,
+                                                             setFilePreviews,
+                                                             setFileFieldValue,
+                                                             setImageFieldValue,
+                                                             setUploadProgress,
+                                                           }) => {
   const { t } = useTranslation('transcribeModal');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [transcriptModalOpen, setTranscriptModalOpen] = useState<boolean>(false);
+  const [transcriptModalOpen, setTranscriptModalOpen] = useState<boolean>(
+    false,
+  );
   const [transcript, setTranscript] = useState<string>('');
 
   const openModal = () => {
@@ -93,9 +93,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     setTranscript('');
   };
 
-  const handleFileChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
       const selectedFile = event.target.files[0];
       if (
@@ -110,7 +108,10 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     }
   };
 
-  const fetchDataWithRetry = async (url: string, init: RequestInit={method: 'GET'}) => {
+  const fetchDataWithRetry = async (
+    url: string,
+    init: RequestInit = { method: 'GET' },
+  ) => {
     const maxRetries = 5;
     const waitTime = 10000; // 10 seconds
 
@@ -129,7 +130,11 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
     };
 
     const onRetry = (attempt: number, error: any) => {
-      console.log(`Attempt ${attempt} failed: ${error.message}. Retrying in ${waitTime / 1000} seconds...`);
+      console.log(
+        `Attempt ${attempt} failed: ${error.message}. Retrying in ${
+          waitTime / 1000
+        } seconds...`,
+      );
     };
 
     try {
@@ -176,7 +181,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
           headers: {
             'x-file-name': filename,
           },
-        }
+        },
       );
 
       if (!uploadResponse.ok) {
@@ -189,16 +194,18 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
 
       setStatusMessage(t('transcribingStatus'));
 
-      const transcribeResult = await fetchDataWithRetry(`/api/v2/file/${fileID}/transcribe?service=whisper`, {
-        method: 'GET'
-      });
+      const transcribeResult = await fetchDataWithRetry(
+        `/api/v2/file/${fileID}/transcribe?service=whisper`,
+        {
+          method: 'GET',
+        },
+      );
 
       const transcript = transcribeResult.transcript;
 
       setTranscript(transcript);
       closeModal();
       setTranscriptModalOpen(true);
-
     } catch (error) {
       console.error('Error during transcription:', error);
       setError(t('transcriptionError'));
@@ -209,13 +216,14 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
   };
 
   const handleCopyToClipboard = () => {
-    navigator.clipboard.writeText(transcript)
+    navigator.clipboard
+      .writeText(transcript)
       .then(() => {
         // Optionally, provide feedback to user
-        alert(t('copiedToClipboard'));
+        toast.success(t('copiedToClipboard'));
       })
       .catch((error) => {
-        console.error('Failed to copy text:', error);
+        toast.error('Failed to copy text:', error);
       });
   };
 
@@ -254,8 +262,12 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
 
   return (
     <div className="inline-block">
-      <button onClick={openModal} title={t('uploadAudioVideoFile')} className="py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-        <IconFileMusic className="text-black dark:text-white h-5 w-5"/>
+      <button
+        onClick={openModal}
+        title={t('uploadAudioVideoFile')}
+        className="py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+      >
+        <IconFileMusic className="text-black dark:text-white h-5 w-5" />
       </button>
 
       {isModalOpen && (
@@ -269,32 +281,54 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
           >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">{t('title')}</h2>
-              <button onClick={closeModal} title={t('close')} className="text-2xl leading-none">&times;</button>
+              <button
+                onClick={closeModal}
+                title={t('close')}
+                className="text-2xl leading-none"
+              >
+                &times;
+              </button>
             </div>
             <div className="mb-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700">
-                <label htmlFor="file-upload" className="block cursor-pointer">
-                  <div>
-                    <p className="mb-1"><strong>{t('clickToUpload')}</strong> { /* t('orDragAndDrop') */ }</p>
-                    <p className="text-sm text-gray-500">{t('supportedFormats')}:  MP3, WAV, MP4, MOV</p>
+              <div className="border-2 border-dashed border-gray-300 rounded-lg text-center">
+                {!file ? (
+                  <label
+                    htmlFor="file-upload"
+                    className="block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-8"
+                  >
+                    <div>
+                      <p className="mb-1">
+                        <strong>{t('clickToUpload')}</strong>
+                        {/* {t('orDragAndDrop')} */}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {t('supportedFormats')}: MP3, WAV, MP4, MOV
+                      </p>
+                    </div>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="audio/*,video/*"
+                    />
+                  </label>
+                ) : (
+                  <div className="p-8">
+                    <p>
+                      {t('selectedFile')}: <strong>{file.name}</strong>
+                    </p>
+                    <button
+                      onClick={() => setFile(null)}
+                      className="mt-4 px-2 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+                    >
+                      <IconTrash />
+                      <span className={'sr-only'}>{t('removeFile')}</span>
+                    </button>
                   </div>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    accept="audio/*,video/*"
-                  />
-                </label>
+                )}
               </div>
-              {file && (
-                <div className="mt-2">
-                  <p>{t('selectedFile')}: <strong>{file.name}</strong></p>
-                </div>
-              )}
-              {error && (
-                <p className="text-red-500 mt-2">{error}</p>
-              )}
+              {error && <p className="text-red-500 mt-2">{error}</p>}
             </div>
             <div className="text-right">
               <button
@@ -355,7 +389,13 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
           >
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold">{t('transcriptionResult')}</h2>
-              <button onClick={closeTranscriptModal} title={t('close')} className="text-2xl leading-none">&times;</button>
+              <button
+                onClick={closeTranscriptModal}
+                title={t('close')}
+                className="text-2xl leading-none"
+              >
+                &times;
+              </button>
             </div>
             <div className="mb-4">
               <textarea
@@ -367,23 +407,27 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = (
             <div className="flex justify-end space-x-2">
               <button
                 onClick={handleCopyToClipboard}
-                className="px-4 py-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
+                className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
+                title={t('copyToClipboard')}
               >
-                <IconCopy />
-                <span className={'sr-only'}>{t('copyToClipboard')}</span>
+                <IconCopy className="h-5 w-5" />
+                <span className="sr-only">{t('copyToClipboard')}</span>
               </button>
               <button
-                  onClick={handleDownload}
-                  className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 text-white"
+                onClick={handleDownload}
+                className="p-2 rounded bg-green-500 hover:bg-green-600 text-white"
+                title={t('downloadAsTXT')}
               >
-                <IconDownload/>
-                <span className={'sr-only'}>{t('downloadAsTXT')}</span>
+                <IconDownload className="h-5 w-5" />
+                <span className="sr-only">{t('downloadAsTXT')}</span>
               </button>
               <button
-                  onClick={handleInjectToChat}
-                  className="px-4 py-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
+                onClick={handleInjectToChat}
+                className="p-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
+                title={t('injectIntoChat')}
               >
-                {t('injectIntoChat')}
+                <IconMessagePlus className="h-5 w-5" />
+                <span className="sr-only">{t('injectIntoChat')}</span>
               </button>
             </div>
           </div>
