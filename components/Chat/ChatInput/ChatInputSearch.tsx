@@ -253,6 +253,7 @@ ${t('webSearchModalPromptCitation')}`,
   return (
     <>
       <button
+        style={{display: 'none'}}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           event.preventDefault();
           setModalOpen(true);

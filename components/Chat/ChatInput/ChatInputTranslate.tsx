@@ -397,6 +397,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     return (
       <>
         <button
+          style={{display: 'none'}}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             event.preventDefault();
             setIsModalOpen(true);
