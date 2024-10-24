@@ -93,6 +93,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
 
   const closeModal = () => {
     setIsModalOpen(false);
+    setParentModalIsOpen(false);
     setFile(null);
     setError(null);
   };
@@ -272,6 +273,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   return (
     <div className="inline-block">
       <button
+        style={{display: 'none'}}
+        ref={openModalButtonRef}
         onClick={openModal}
         title={t('uploadAudioVideoFile')}
         className="py-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
