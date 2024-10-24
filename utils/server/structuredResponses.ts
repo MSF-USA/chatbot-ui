@@ -72,6 +72,8 @@ export async function generateOptimizedQueryAndQuestion(
 
 Make sure your responses are relevant to the user's original question and fit for their intended purpose. Try to understand the user's intent, but if the context is ambiguous keep that ambiguity in your revisions to avoid drifting from the user's needs. If the user asks for any dates relative to the present, the current date is ${new Date().toISOString()}. But this is a search query, which can handle concepts like 'recent', so only include specific dates if it is directly relevant to the request / response.
 
+Make sure the values of your response matches whatever language the original question was submitted in. 
+
 \`\`\`user-question
 ${question}
 \`\`\`

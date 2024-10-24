@@ -8,5 +8,6 @@
   "A description for your prompt.": "プロンプトの説明",
   "Prompt": "プロンプト",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "プロンプトの内容。変数を表すには {{}} を使ってください。 例: {{name}} is a {{adjective}} {{noun}}",
-  "Save": "保存"
+  "Save": "保存",
+  "A name for your prompt.": "プロンプトの名前"
 }

@@ -8,5 +8,6 @@
   "A description for your prompt.": "Descrierea solicitării prompt.",
   "Prompt": "Îndemnuri",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Conținut prompt. Utilizați {{}} pentru a indica o variabilă. De exemplu: {{nume}} este un {{adjectiv}} {{substantiv}}",
-  "Save": "Salvați"
+  "Save": "Salvați",
+  "A name for your prompt.": "Un nume pentru solicitarea ta"
 }

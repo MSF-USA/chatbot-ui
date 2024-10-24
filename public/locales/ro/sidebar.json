@@ -14,7 +14,13 @@
   "Name": "Nume",
   "Description": "Descriere",
   "A description for your prompt.": "Descrierea solicitării prompt.",
-  "Prompt": "Îndemnuri",
+  "Prompt": "prompt",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Conținut prompt. Utilizați {{}} pentru a indica o variabilă. De exemplu: {{nume}} este un {{adjectiv}} {{substantiv}}",
-  "Save": "Salvați"
+  "Save": "Salvați",
+  "Plugin Keys": "Chei de plugin",
+  "Light mode": "mod lumină",
+  "New Conversation": "Conversație nouă",
+  "Settings": "Setări",
+  "A name for your prompt.": "Un nume pentru promptul tău.",
+  "Dark mode": "mod întunecat"
 }

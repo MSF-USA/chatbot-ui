@@ -8,5 +8,6 @@
   "A description for your prompt.": "Promptisi kuvaus.",
   "Prompt": "Prompt",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Promptin sisältö. Käytä {{}} muuttujien merkitsemiseen. Esim: {{nimi}} on {{adjektiivi}} {{substantiivi}}",
-  "Save": "Tallenna"
+  "Save": "Tallenna",
+  "A name for your prompt.": "Nimi kehotteellesi"
 }

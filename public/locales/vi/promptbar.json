@@ -8,5 +8,6 @@
   "A description for your prompt.": "Một mô tả cho Prompt của bạn.",
   "Prompt": "Prompt",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Nội dung Prompt. Sử dụng {{}} để biểu thị một biến. Ví dụ: {{name}} là một {{adjective}} {{noun}}",
-  "Save": "Lưu"
+  "Save": "Lưu",
+  "A name for your prompt.": "Tên cho lời nhắc của bạn"
 }

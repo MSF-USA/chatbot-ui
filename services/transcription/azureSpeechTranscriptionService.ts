@@ -2,6 +2,7 @@ import {isBase64, saveBase64AsFile, splitAudioFile, cleanUpFiles, convertToWav} 
 import fs from 'fs';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import {ITranscriptionService} from "@/types/transcription";
+import path from "path";
 
 export class ACSTranscriptionService implements ITranscriptionService {
   private apiKey: string;
@@ -27,7 +28,7 @@ export class ACSTranscriptionService implements ITranscriptionService {
       filePath = input;
     }
 
-    const maxSize = 25 * 1024 * 1024; // Adjust if different for ACS
+    const maxSize = 25 * 1024 * 1024;
     const audioSegments = await splitAudioFile(filePath, maxSize);
 
     const transcripts = [];
@@ -39,14 +40,27 @@ export class ACSTranscriptionService implements ITranscriptionService {
     const fullTranscript = transcripts.join(' ');
 
     // Clean up temporary files
-    await cleanUpFiles([filePath, ...audioSegments]);
+    cleanUpFiles([filePath, ...audioSegments]);
 
     return fullTranscript;
   }
 
   private async transcribeSegment(segmentPath: string): Promise<string> {
-    const wavSegmentPath = segmentPath.replace(/\.\w+$/, '.wav');
-    await convertToWav(segmentPath, wavSegmentPath);
+    let wavSegmentPath: string;
+    let isConverted = false;
+
+    // Check if the segment is already a WAV file
+    if (path.extname(segmentPath).toLowerCase() === '.wav') {
+      wavSegmentPath = segmentPath;
+    } else {
+      // Convert to WAV
+      wavSegmentPath = segmentPath.replace(/\.\w+$/, '.wav');
+      await convertToWav(segmentPath, wavSegmentPath);
+      isConverted = true;
+
+      // Clean up the original segment file
+      fs.promises.unlink(segmentPath).catch(err => console.error(`Failed to delete segment file: ${segmentPath}`, err));
+    }
 
     const pushStream = sdk.AudioInputStream.createPushStream();
 
@@ -65,10 +79,8 @@ export class ACSTranscriptionService implements ITranscriptionService {
         });
     });
 
-    const audioFormat = sdk.AudioStreamFormat.getWaveFormatPCM(16000, 16, 1);
-    const audioConfig = sdk.AudioConfig.fromStreamInput(pushStream);
+    const audioConfig = sdk.AudioConfig.fromWavFileInput(fs.readFileSync(wavSegmentPath));
     const speechConfig = sdk.SpeechConfig.fromSubscription(this.apiKey, this.region);
-    // speechConfig.speechRecognitionLanguage = 'en-US';
 
     const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
@@ -86,6 +98,9 @@ export class ACSTranscriptionService implements ITranscriptionService {
       );
     });
 
+    // Clean up the WAV segment file
+    await fs.promises.unlink(wavSegmentPath).catch(err => console.error(`Failed to delete WAV segment file: ${wavSegmentPath}`, err));
+
     if (result.reason === sdk.ResultReason.RecognizedSpeech) {
       return result.text;
     } else if (result.reason === sdk.ResultReason.NoMatch) {
@@ -99,4 +114,3 @@ export class ACSTranscriptionService implements ITranscriptionService {
     }
   }
 }
-

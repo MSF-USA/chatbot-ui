@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AzureBlobStorage, BlobStorage } from "@/utils/server/blob";
-import { getEnvVariable } from "@/utils/app/env";
-import Hasher from "@/utils/app/hash";
-import { getToken } from "next-auth/jwt";
-import {JWT, Session} from "next-auth";
-import {BadRequestError} from "openai";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import { AzureBlobStorage, BlobStorage } from '@/utils/server/blob';
+import { getEnvVariable } from '@/utils/app/env';
+import Hasher from '@/utils/app/hash';
+import { getToken } from 'next-auth/jwt';
+import {JWT, Session} from 'next-auth';
+import {getServerSession} from 'next-auth/next';
+import {authOptions} from '@/pages/api/auth/[...nextauth]';
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);

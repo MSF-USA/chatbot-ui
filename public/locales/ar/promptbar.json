@@ -8,5 +8,6 @@
   "A description for your prompt.": "وصف لمطلبك",
   "Prompt": "مطلب",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "محتوى المطلب. استخدم {{}} للإشارة إلى متغير. مثال: {{الاسم}} هي {{صفة}} {{اسم}}",
-  "Save": "حفظ"
+  "Save": "حفظ",
+  "A name for your prompt.": "اسم لطلبك"
 }

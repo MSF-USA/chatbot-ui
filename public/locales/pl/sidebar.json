@@ -14,7 +14,13 @@
   "Name": "Nazwa",
   "Description": "Opis",
   "A description for your prompt.": "Opis Twojego prompta.",
-  "Prompt": "Prompt",
+  "Prompt": "monit",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Zawartość prompta. Użyj {{}} żeby oznaczyć zmienną. Np.: {{nazwa}} jest {{przymiotnik}} {{rzeczownik}}",
-  "Save": "Zapisz"
+  "Save": "Zapisz",
+  "Plugin Keys": "Klucze wtyczki",
+  "Light mode": "tryb jasny",
+  "New Conversation": "Nowa rozmowa",
+  "Settings": "Ustawienia",
+  "A name for your prompt.": "Nazwa dla Twojej podpowiedzi.",
+  "Dark mode": "tryb ciemny"
 }

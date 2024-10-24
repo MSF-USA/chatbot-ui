@@ -8,5 +8,6 @@
   "A description for your prompt.": "Descripció del teu prompt.",
   "Prompt": "Prompt",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del missatge. Utilitza {{}} per indicar una variable. Ex: {{nom}} és un {{adjectiu}} {{substantiu}}",
-  "Save": "Guardar"
+  "Save": "Guardar",
+  "A name for your prompt.": "Un nom per al teu prompt"
 }

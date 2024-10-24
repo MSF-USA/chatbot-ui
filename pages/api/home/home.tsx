@@ -480,6 +480,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         'markdown',
         'promptbar',
         'settings',
+        'transcribeModal',
       ])),
     },
   };

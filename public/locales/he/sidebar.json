@@ -14,7 +14,13 @@
   "Name": "שם",
   "Description": "תיאור",
   "A description for your prompt.": "תיאור שורת הפקודה למכונה",
-  "Prompt": "פקודה",
+  "Prompt": "הנחיה",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "תיאור הפקודה. השתמש {{}} להגדרת משתנים. לדוגמא {{שם משתנה}} הוא {{תואר}} {{שם עצם}}",
-  "Save": "Save"
+  "Save": "Save",
+  "Plugin Keys": "מפתחות תוסף",
+  "Light mode": "מצב בהיר",
+  "New Conversation": "שיחה חדשה",
+  "Settings": "הגדרות",
+  "A name for your prompt.": "שם להנחיה שלך.",
+  "Dark mode": "מצב כהה"
 }
