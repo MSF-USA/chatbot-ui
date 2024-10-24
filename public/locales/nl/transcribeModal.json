@@ -17,5 +17,8 @@
   "transcriptionResult": "Transcriptieresultaat",
   "unsupportedFileType": "Niet-ondersteund bestandstype. Selecteer een audio- of videobestand.",
   "uploadAudioVideoFile": "Upload een audio- of videobestand",
-  "uploadingFile": "Bestand wordt geüpload..."
+  "uploadingFile": "Bestand wordt geüpload...",
+  "removeFile": "Verwijderen en een ander bestand selecteren",
+  "transcriptionErrorAttempt": "Fout tijdens transcriptie (Poging {{attempt}} van 3). Opnieuw proberen...",
+  "rateLimitExceededWaiting": "Limiet overschreden. Wachten {{seconds}} seconden voordat opnieuw geprobeerd wordt..."
 }

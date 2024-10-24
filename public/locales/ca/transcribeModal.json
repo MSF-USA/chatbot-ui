@@ -17,5 +17,8 @@
   "transcriptionResult": "Resultat de la transcripció",
   "unsupportedFileType": "Tipus de fitxer no compatible. Si us plau, seleccioneu un fitxer d'àudio o vídeo.",
   "uploadAudioVideoFile": "Carrega un fitxer d'àudio o vídeo",
-  "uploadingFile": "Carregant fitxer..."
+  "uploadingFile": "Carregant fitxer...",
+  "removeFile": "Elimina i selecciona un fitxer diferent",
+  "transcriptionErrorAttempt": "Error durant la transcripció (Intent {{attempt}} de 3). Reintentant...",
+  "rateLimitExceededWaiting": "Límit de taxa superat. Esperant {{seconds}} segons abans de tornar-ho a intentar..."
 }

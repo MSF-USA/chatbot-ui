@@ -17,5 +17,8 @@
   "transcriptionResult": "نتيجة النسخ",
   "unsupportedFileType": "نوع الملف غير مدعوم. يرجى اختيار ملف صوتي أو فيديو.",
   "uploadAudioVideoFile": "قم بتحميل ملف صوتي أو فيديو",
-  "uploadingFile": "جارٍ تحميل الملف..."
+  "uploadingFile": "جارٍ تحميل الملف...",
+  "removeFile": "قم بإزالة وتحديد ملف مختلف",
+  "transcriptionErrorAttempt": "خطأ أثناء النسخ (المحاولة {{attempt}} من 3). إعادة المحاولة...",
+  "rateLimitExceededWaiting": "تم تجاوز الحد الأقصى. انتظار {{seconds}} ثانية قبل المحاولة مرة أخرى..."
 }

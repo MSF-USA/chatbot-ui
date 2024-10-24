@@ -17,5 +17,8 @@
   "transcriptionResult": "লিখন ফলাফল",
   "unsupportedFileType": "অসহায় ফাইল প্রকার। অনুগ্রহ করে একটি অডিও বা ভিডিও ফাইল নির্বাচন করুন।",
   "uploadAudioVideoFile": "অডিও বা ভিডিও ফাইল আপলোড করুন",
-  "uploadingFile": "ফাইল আপলোড হচ্ছে..."
+  "uploadingFile": "ফাইল আপলোড হচ্ছে...",
+  "removeFile": "সরান এবং একটি ভিন্ন ফাইল নির্বাচন করুন",
+  "transcriptionErrorAttempt": "ট্রান্সক্রিপশনের সময় ত্রুটি (চেষ্টা {{attempt}} এর মধ্যে 3)। পুনরায় চেষ্টা করা হচ্ছে...",
+  "rateLimitExceededWaiting": "হার সীমা অতিক্রম হয়েছে। {{seconds}} সেকেন্ড অপেক্ষা করুন পুনরায় চেষ্টা করার আগে..."
 }

@@ -17,5 +17,8 @@
   "transcriptionResult": "የቅዳሴ ውጤት",
   "unsupportedFileType": "የማይደገፍ የፋይል አይነት። እባክዎን የድምጽ ወይም የቪዲዮ ፋይል ይመርጡ።",
   "uploadAudioVideoFile": "የድምጽ ወይም የቪዲዮ ፋይል ያስገቡ",
-  "uploadingFile": "ፋይል ማስገባት በሂደት ላይ..."
+  "uploadingFile": "ፋይል ማስገባት በሂደት ላይ...",
+  "removeFile": "አስወግድ እና ሌላ ፋይል ይምረጡ",
+  "transcriptionErrorAttempt": "ስህተት በቃላው ሰዋሰው ላይ (ሙከራ {{attempt}} ከ3). እንደገና ይሞክሩ...",
+  "rateLimitExceededWaiting": "የግምት ክፍተት ተሳልፏል። {{seconds}} ሰከንዶችን ማረፍ እየተጠበቀ..."
 }

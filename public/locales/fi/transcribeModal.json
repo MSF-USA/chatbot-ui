@@ -17,5 +17,8 @@
   "transcriptionResult": "Transkription tulos",
   "unsupportedFileType": "Tiedostotyyppiä ei tueta. Valitse äänitiedosto tai videotiedosto.",
   "uploadAudioVideoFile": "Lataa ääni- tai videotiedosto",
-  "uploadingFile": "Tiedostoa ladataan..."
+  "uploadingFile": "Tiedostoa ladataan...",
+  "removeFile": "Poista ja valitse toinen tiedosto",
+  "transcriptionErrorAttempt": "Virhe transkription aikana (Yritys {{attempt}} 3:sta). Yritetään uudelleen...",
+  "rateLimitExceededWaiting": "Nopeusrajoitus ylitetty. Odotetaan {{seconds}} sekuntia ennen uudelleenyrittämistä..."
 }

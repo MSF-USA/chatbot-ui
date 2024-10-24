@@ -17,5 +17,8 @@
   "transcriptionResult": "Hasil Transkripsi",
   "unsupportedFileType": "Jenis file tidak didukung. Silakan pilih file audio atau video.",
   "uploadAudioVideoFile": "Unggah file audio atau video",
-  "uploadingFile": "Mengunggah file..."
+  "uploadingFile": "Mengunggah file...",
+  "removeFile": "Hapus dan pilih file yang berbeda",
+  "transcriptionErrorAttempt": "Kesalahan selama transkripsi (Percobaan {{attempt}} dari 3). Mencoba lagi...",
+  "rateLimitExceededWaiting": "Batas kecepatan terlampaui. Menunggu {{seconds}} detik sebelum mencoba ulang..."
 }

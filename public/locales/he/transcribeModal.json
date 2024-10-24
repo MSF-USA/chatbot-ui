@@ -17,5 +17,8 @@
   "transcriptionResult": "תוצאה של תמלול",
   "unsupportedFileType": "סוג הקובץ אינו נתמך. אנא בחר קובץ שמע או וידאו.",
   "uploadAudioVideoFile": "העלה קובץ אודיו או וידאו",
-  "uploadingFile": "מעלה קובץ..."
+  "uploadingFile": "מעלה קובץ...",
+  "removeFile": "הסר ובחר קובץ אחר",
+  "transcriptionErrorAttempt": "שגיאה במהלך התמלול (ניסיון {{attempt}} מתוך 3). מנסה שוב...",
+  "rateLimitExceededWaiting": "חריגה ממגבלת הקצב. ממתין {{seconds}} שניות לפני ניסיון חוזר..."
 }

@@ -19,5 +19,6 @@
   "transcriptionResult": "Transcription Result",
   "copyToClipboard": "Copy to Clipboard",
   "downloadAsTXT": "Download as TXT",
-  "injectIntoChat": "Inject into Chat"
+  "injectIntoChat": "Inject into Chat",
+  "removeFile": "Remove and select a different file"
 }

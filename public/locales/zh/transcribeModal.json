@@ -17,5 +17,8 @@
   "transcriptionResult": "转录结果",
   "unsupportedFileType": "不支持的文件类型。请选择音频或视频文件。",
   "uploadAudioVideoFile": "上传音频或视频文件",
-  "uploadingFile": "正在上传文件..."
+  "uploadingFile": "正在上传文件...",
+  "removeFile": "移除并选择不同的文件",
+  "transcriptionErrorAttempt": "转录期间出错（第 {{attempt}} 次尝试，共 3 次）。正在重试...",
+  "rateLimitExceededWaiting": "超出速率限制。等待 {{seconds}} 秒后重试..."
 }

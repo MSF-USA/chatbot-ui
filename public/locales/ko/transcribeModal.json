@@ -17,5 +17,8 @@
   "transcriptionResult": "전사 결과",
   "unsupportedFileType": "지원되지 않는 파일 유형입니다. 오디오 또는 비디오 파일을 선택하세요.",
   "uploadAudioVideoFile": "오디오 또는 비디오 파일 업로드",
-  "uploadingFile": "파일 업로드 중..."
+  "uploadingFile": "파일 업로드 중...",
+  "removeFile": "제거하고 다른 파일 선택",
+  "transcriptionErrorAttempt": "전사 중 오류 (3번 중 {{attempt}}번째 시도). 다시 시도 중...",
+  "rateLimitExceededWaiting": "속도 제한 초과. {{seconds}}초 대기한 후 다시 시도..."
 }

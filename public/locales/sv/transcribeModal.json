@@ -17,5 +17,8 @@
   "transcriptionResult": "Transkriptionsresultat",
   "unsupportedFileType": "Filtypen stöds inte. Vänligen välj en ljud- eller videofil.",
   "uploadAudioVideoFile": "Ladda upp ljud- eller videofil",
-  "uploadingFile": "Laddar upp fil..."
+  "uploadingFile": "Laddar upp fil...",
+  "removeFile": "Ta bort och välj en annan fil",
+  "transcriptionErrorAttempt": "Fel under transkribering (Försök {{attempt}} av 3). Försöker igen...",
+  "rateLimitExceededWaiting": "Gräns för hastighet överskriden. Väntar {{seconds}} sekunder innan omförsök..."
 }

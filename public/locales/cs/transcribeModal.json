@@ -17,5 +17,8 @@
   "transcriptionResult": "Výsledek přepisu",
   "unsupportedFileType": "Nepodporovaný typ souboru. Vyberte prosím zvukový nebo video soubor.",
   "uploadAudioVideoFile": "Nahrajte zvukový nebo video soubor",
-  "uploadingFile": "Nahrávání souboru..."
+  "uploadingFile": "Nahrávání souboru...",
+  "removeFile": "Odeberte a vyberte jiný soubor",
+  "transcriptionErrorAttempt": "Chyba při přepisu (Pokus {{attempt}} ze 3). Opakování...",
+  "rateLimitExceededWaiting": "Překročen limit rychlosti. Čekám {{seconds}} sekund před opětovným pokusem..."
 }

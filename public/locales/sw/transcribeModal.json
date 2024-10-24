@@ -17,5 +17,8 @@
   "transcriptionResult": "Matokeo ya Unakilishi",
   "unsupportedFileType": "Aina ya faili isiyoungwa mkono. Tafadhali chagua faili la sauti au video.",
   "uploadAudioVideoFile": "Pakia faili ya sauti au video",
-  "uploadingFile": "Inapakia faili..."
+  "uploadingFile": "Inapakia faili...",
+  "removeFile": "Ondoa na uchague faili tofauti",
+  "transcriptionErrorAttempt": "Hitilafu wakati wa uandikishaji (Jaribio la {{attempt}} kati ya 3). Kujaribu tena...",
+  "rateLimitExceededWaiting": "Kiwango cha mipaka kimezidi. Kusubiri {{seconds}} sekunde kabla ya kujaribu tena..."
 }

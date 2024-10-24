@@ -17,5 +17,8 @@
   "transcriptionResult": "Risultato della trascrizione",
   "unsupportedFileType": "Tipo di file non supportato. Seleziona un file audio o video.",
   "uploadAudioVideoFile": "Carica file audio o video",
-  "uploadingFile": "Caricamento file in corso..."
+  "uploadingFile": "Caricamento file in corso...",
+  "removeFile": "Rimuovi e seleziona un file diverso",
+  "transcriptionErrorAttempt": "Errore durante la trascrizione (Tentativo {{attempt}} di 3). Ritentando...",
+  "rateLimitExceededWaiting": "Limite di velocità superato. Aspettando {{seconds}} secondi prima di riprovare..."
 }
