@@ -1,5 +1,5 @@
 import { FC } from "preact/compat";
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import { IconLanguage } from "@tabler/icons-react";
 import toast from "react-hot-toast";
 import BetaBadge from "@/components/Beta/Badge";
@@ -8,12 +8,16 @@ import {useTranslation} from "next-i18next";
 interface ChatInputTranslateProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
+  simulateClick: boolean;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   {
     setTextFieldValue,
-    handleSend
+    handleSend,
+    simulateClick,
+    setParentModalIsOpen
   }) => {
   const { t } = useTranslation('chat');
 
@@ -29,14 +33,21 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [useTargetLanguageDropdown, setUseTargetLanguageDropdown] = useState<boolean>(true);
+  const openModalButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isReadyToSend) {
       setIsReadyToSend(false); // Reset the flag
       handleSend();
+      setParentModalIsOpen(false)
     }
   }, [isReadyToSend, handleSend]);
 
+  useEffect(() => {
+    if (simulateClick && openModalButtonRef.current) {
+      openModalButtonRef.current.click();
+    }
+  }, [simulateClick]);
 
   const languages = [
     { value: "en", label: t("languageEnglish"), autonym: "English" },
@@ -107,7 +118,10 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div
             className="fixed inset-0 w-full h-full bg-black opacity-40"
-            onClick={() => setIsModalOpen(false)}
+            onClick={() => {
+              setIsModalOpen(false);
+              setParentModalIsOpen(false);
+            }}
           ></div>
           <div className="flex items-center min-h-screen px-4 py-8">
             <div className="relative w-full max-w-2xl p-6 mx-auto bg-white dark:bg-gray-800 rounded-md shadow-lg">
@@ -120,7 +134,10 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                   {t('translatorTitle')}
                 </h3>
                 <button
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setParentModalIsOpen(false);
+                  }}
                   className="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                 >
                   <svg
@@ -384,6 +401,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
             event.preventDefault();
             setIsModalOpen(true);
           }}
+          ref={openModalButtonRef}
         >
           <IconLanguage
             className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>

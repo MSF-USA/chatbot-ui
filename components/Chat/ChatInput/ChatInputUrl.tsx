@@ -311,7 +311,10 @@ ${t('webPullerReferencePrompt')}`,
                 <div className="flex space-x-2 mt-2 sm:mt-0">
                   <button
                       type="button"
-                      onClick={() => setModalOpen(false)}
+                      onClick={() => {
+                        setModalOpen(false);
+                        setParentModalIsOpen(false);
+                      }}
                       disabled={isSubmitting}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md
                                  hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"

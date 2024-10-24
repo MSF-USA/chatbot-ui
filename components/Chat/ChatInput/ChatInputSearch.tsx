@@ -481,7 +481,10 @@ ${t('webSearchModalPromptCitation')}`,
                 <div className="mt-4 flex justify-end space-x-2">
                   <button
                     type="button"
-                    onClick={() => setModalOpen(false)}
+                    onClick={() => {
+                      setModalOpen(false);
+                      setParentModalIsOpen(false);
+                    }}
                     disabled={isSubmitting}
                     className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
                   >
