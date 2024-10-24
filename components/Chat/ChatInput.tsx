@@ -471,23 +471,6 @@ export const ChatInput = ({
             setUploadProgress={setUploadProgress}
           />
 
-          <ChatInputTranscribe
-            setTextFieldValue={setTextFieldValue}
-            setFileFieldValue={setFileFieldValue}
-            setImageFieldValue={setImageFieldValue}
-            setUploadProgress={setUploadProgress}
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setFilePreviews={setFilePreviews}
-            // @ts-ignore
-            setParentModalIsOpen={(e: boolean) => null}
-          />
-
-          <ChatInputTranslate
-            setTextFieldValue={setTextFieldValue}
-            handleSend={handleSend}
-          />
-
           <ChatDropdownWeb
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
@@ -498,8 +481,6 @@ export const ChatInput = ({
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
           />
-
-
 
           <div
             className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4"
