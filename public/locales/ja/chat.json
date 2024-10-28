@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "一般",
   "translatorTranslationDomainLegal": "法的",
   "translatorTranslationDomainMedical": "医療",
-  "translatorTranslationDomainTechnical": "技術的"
+  "translatorTranslationDomainTechnical": "技術的",
+  "chatFeaturesDropdownWeb": "ウェブ",
+  "chatFeaturesDropdownSearchModal": "検索",
+  "chatFeaturesDropdownURLModal": "URLプラー",
+  "chatFeaturesDropdownTranscribeModal": "書き起こす",
+  "chatFeaturesDropdownTranslateModal": "翻訳する",
+  "chatFeaturesDropdownTransform": "変換",
+  "chatFeaturesDropdownImageModal": "画像",
+  "chatFeaturesDropdownFile": "ファイル",
+  "chatFeaturesDropdownCompose": "構成"
 }

@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "عام",
   "translatorTranslationDomainLegal": "قانوني",
   "translatorTranslationDomainMedical": "طبي",
-  "translatorTranslationDomainTechnical": "تقني"
+  "translatorTranslationDomainTechnical": "تقني",
+  "chatFeaturesDropdownWeb": "ويب",
+  "chatFeaturesDropdownSearchModal": "بحث",
+  "chatFeaturesDropdownURLModal": "مستخرج الرابط",
+  "chatFeaturesDropdownTranscribeModal": "نسخ",
+  "chatFeaturesDropdownTranslateModal": "ترجمة",
+  "chatFeaturesDropdownTransform": "تحويل",
+  "chatFeaturesDropdownImageModal": "صور",
+  "chatFeaturesDropdownFile": "ملف",
+  "chatFeaturesDropdownCompose": "تأليف"
 }

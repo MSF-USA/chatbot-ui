@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "umum",
   "translatorTranslationDomainLegal": "hukum",
   "translatorTranslationDomainMedical": "medis",
-  "translatorTranslationDomainTechnical": "teknis"
+  "translatorTranslationDomainTechnical": "teknis",
+  "chatFeaturesDropdownWeb": "Web",
+  "chatFeaturesDropdownSearchModal": "Cari",
+  "chatFeaturesDropdownURLModal": "Penarik URL",
+  "chatFeaturesDropdownTranscribeModal": "Transkripsi",
+  "chatFeaturesDropdownTranslateModal": "Terjemahkan",
+  "chatFeaturesDropdownTransform": "Ubah",
+  "chatFeaturesDropdownImageModal": "gambar",
+  "chatFeaturesDropdownFile": "Berkas",
+  "chatFeaturesDropdownCompose": "Mengarang"
 }

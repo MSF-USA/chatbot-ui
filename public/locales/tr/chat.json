@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "genel",
   "translatorTranslationDomainLegal": "hukuki",
   "translatorTranslationDomainMedical": "tıbbi",
-  "translatorTranslationDomainTechnical": "teknik"
+  "translatorTranslationDomainTechnical": "teknik",
+  "chatFeaturesDropdownWeb": "Web",
+  "chatFeaturesDropdownSearchModal": "Arama",
+  "chatFeaturesDropdownURLModal": "URL Çekici",
+  "chatFeaturesDropdownTranscribeModal": "Transkribe et",
+  "chatFeaturesDropdownTranslateModal": "Çevir",
+  "chatFeaturesDropdownTransform": "Dönüştür",
+  "chatFeaturesDropdownImageModal": "görseller",
+  "chatFeaturesDropdownFile": "Dosya",
+  "chatFeaturesDropdownCompose": "Bestelemek"
 }

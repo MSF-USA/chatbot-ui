@@ -77,5 +77,14 @@
   "New Conversation": "Нова розмова",
   "Neutral": "нейтральний",
   "Creative": "креативний",
-  "Precise": "точний"
+  "Precise": "точний",
+  "chatFeaturesDropdownWeb": "Веб",
+  "chatFeaturesDropdownSearchModal": "Пошук",
+  "chatFeaturesDropdownURLModal": "Витягувач URL",
+  "chatFeaturesDropdownTranscribeModal": "Транскрибувати",
+  "chatFeaturesDropdownTranslateModal": "Перекласти",
+  "chatFeaturesDropdownTransform": "Перетворити",
+  "chatFeaturesDropdownImageModal": "зображення",
+  "chatFeaturesDropdownFile": "Файл",
+  "chatFeaturesDropdownCompose": "Складати"
 }

@@ -77,5 +77,14 @@
   "New Conversation": "Mazungumzo Mpya",
   "Neutral": "neutrali",
   "Creative": "mbunifu",
-  "Precise": "sahihi"
+  "Precise": "sahihi",
+  "chatFeaturesDropdownWeb": "Wavuti",
+  "chatFeaturesDropdownSearchModal": "Tafuta",
+  "chatFeaturesDropdownURLModal": "Kivuta URL",
+  "chatFeaturesDropdownTranscribeModal": "Nakili",
+  "chatFeaturesDropdownTranslateModal": "Tafsiri",
+  "chatFeaturesDropdownTransform": "Badilisha",
+  "chatFeaturesDropdownImageModal": "picha",
+  "chatFeaturesDropdownFile": "Faili",
+  "chatFeaturesDropdownCompose": "Kuandika"
 }

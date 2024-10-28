@@ -108,5 +108,14 @@
   "translatorTranslationDomainLegal": "Legal",
   "translatorTranslationDomainTechnical": "Technical",
   "translatorTranslationDomainMedical": "Medical",
-  "translatorTranslationDomainGeneral": "General"
+  "translatorTranslationDomainGeneral": "General",
+  "chatFeaturesDropdownSearchModal": "Search",
+  "chatFeaturesDropdownURLModal": "URL Puller",
+  "chatFeaturesDropdownTranscribeModal": "Transcribe",
+  "chatFeaturesDropdownImageModal": "Images",
+  "chatFeaturesDropdownTranslateModal": "Translate",
+  "chatFeaturesDropdownFile": "File",
+  "chatFeaturesDropdownCompose": "Compose",
+  "chatFeaturesDropdownTransform": "Transform",
+  "chatFeaturesDropdownWeb": "Web"
 }

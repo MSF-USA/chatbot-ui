@@ -77,5 +77,14 @@
   "New Conversation": "گفتگوی جدید",
   "Neutral": "بی‌طرف",
   "Creative": "خلاق",
-  "Precise": "دقیق"
+  "Precise": "دقیق",
+  "chatFeaturesDropdownWeb": "وب",
+  "chatFeaturesDropdownSearchModal": "جستجو",
+  "chatFeaturesDropdownURLModal": "استخراج‌کننده URL",
+  "chatFeaturesDropdownTranscribeModal": "رونویسی",
+  "chatFeaturesDropdownTranslateModal": "ترجمه کنید",
+  "chatFeaturesDropdownTransform": "تبدیل",
+  "chatFeaturesDropdownImageModal": "تصاویر",
+  "chatFeaturesDropdownFile": "فایل",
+  "chatFeaturesDropdownCompose": "ترکیب"
 }

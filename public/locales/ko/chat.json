@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "일반",
   "translatorTranslationDomainLegal": "법적",
   "translatorTranslationDomainMedical": "의료의",
-  "translatorTranslationDomainTechnical": "기술적"
+  "translatorTranslationDomainTechnical": "기술적",
+  "chatFeaturesDropdownWeb": "웹",
+  "chatFeaturesDropdownSearchModal": "검색",
+  "chatFeaturesDropdownURLModal": "URL 추출기",
+  "chatFeaturesDropdownTranscribeModal": "기록하다",
+  "chatFeaturesDropdownTranslateModal": "번역",
+  "chatFeaturesDropdownTransform": "변환",
+  "chatFeaturesDropdownImageModal": "이미지",
+  "chatFeaturesDropdownFile": "파일",
+  "chatFeaturesDropdownCompose": "작곡"
 }

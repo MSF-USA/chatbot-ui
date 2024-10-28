@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "సాధారణ",
   "translatorTranslationDomainLegal": "చట్టపరమైన",
   "translatorTranslationDomainMedical": "మెడికల్",
-  "translatorTranslationDomainTechnical": "సాంకేతిక"
+  "translatorTranslationDomainTechnical": "సాంకేతిక",
+  "chatFeaturesDropdownWeb": "వెబ్",
+  "chatFeaturesDropdownSearchModal": "శోధన",
+  "chatFeaturesDropdownURLModal": "URL పుల్లర్",
+  "chatFeaturesDropdownTranscribeModal": "లిఖితం చేయండి",
+  "chatFeaturesDropdownTranslateModal": "అనువదించు",
+  "chatFeaturesDropdownTransform": "మార్చు",
+  "chatFeaturesDropdownImageModal": "చిత్రాలు",
+  "chatFeaturesDropdownFile": "ఫైలు",
+  "chatFeaturesDropdownCompose": "రచన"
 }

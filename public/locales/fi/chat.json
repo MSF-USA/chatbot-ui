@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "yleinen",
   "translatorTranslationDomainLegal": "laillinen",
   "translatorTranslationDomainMedical": "lääketieteellinen",
-  "translatorTranslationDomainTechnical": "tekninen"
+  "translatorTranslationDomainTechnical": "tekninen",
+  "chatFeaturesDropdownWeb": "Web",
+  "chatFeaturesDropdownSearchModal": "Haku",
+  "chatFeaturesDropdownURLModal": "URL:n noutaja",
+  "chatFeaturesDropdownTranscribeModal": "Puhtaaksikirjoita",
+  "chatFeaturesDropdownTranslateModal": "Käännä",
+  "chatFeaturesDropdownTransform": "Muuta",
+  "chatFeaturesDropdownImageModal": "kuvat",
+  "chatFeaturesDropdownFile": "Tiedosto",
+  "chatFeaturesDropdownCompose": "Säveltää"
 }

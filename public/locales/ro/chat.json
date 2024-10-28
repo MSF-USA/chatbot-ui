@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "general",
   "translatorTranslationDomainLegal": "legal",
   "translatorTranslationDomainMedical": "medical",
-  "translatorTranslationDomainTechnical": "tehnic"
+  "translatorTranslationDomainTechnical": "tehnic",
+  "chatFeaturesDropdownWeb": "Web",
+  "chatFeaturesDropdownSearchModal": "Căutare",
+  "chatFeaturesDropdownURLModal": "Extract de URL",
+  "chatFeaturesDropdownTranscribeModal": "Transcrie",
+  "chatFeaturesDropdownTranslateModal": "Tradu",
+  "chatFeaturesDropdownTransform": "Transforma",
+  "chatFeaturesDropdownImageModal": "imagini",
+  "chatFeaturesDropdownFile": "Fișier",
+  "chatFeaturesDropdownCompose": "Compune"
 }

@@ -77,5 +77,14 @@
   "New Conversation": "Nový rozhovor",
   "Neutral": "neutrální",
   "Creative": "kreativní",
-  "Precise": "přesný"
+  "Precise": "přesný",
+  "chatFeaturesDropdownWeb": "Web",
+  "chatFeaturesDropdownSearchModal": "Hledat",
+  "chatFeaturesDropdownURLModal": "Nástroj pro získávání URL",
+  "chatFeaturesDropdownTranscribeModal": "Přepsat",
+  "chatFeaturesDropdownTranslateModal": "Přeložit",
+  "chatFeaturesDropdownTransform": "Přeměnit",
+  "chatFeaturesDropdownImageModal": "obrázky",
+  "chatFeaturesDropdownFile": "Soubor",
+  "chatFeaturesDropdownCompose": "Skládat"
 }

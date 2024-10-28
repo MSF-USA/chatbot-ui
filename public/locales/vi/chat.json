@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "chung",
   "translatorTranslationDomainLegal": "hợp pháp",
   "translatorTranslationDomainMedical": "y tế",
-  "translatorTranslationDomainTechnical": "kỹ thuật"
+  "translatorTranslationDomainTechnical": "kỹ thuật",
+  "chatFeaturesDropdownWeb": "Web",
+  "chatFeaturesDropdownSearchModal": "Tìm kiếm",
+  "chatFeaturesDropdownURLModal": "Trình kéo URL",
+  "chatFeaturesDropdownTranscribeModal": "Phiên âm",
+  "chatFeaturesDropdownTranslateModal": "Dịch",
+  "chatFeaturesDropdownTransform": "Chuyển đổi",
+  "chatFeaturesDropdownImageModal": "hình ảnh",
+  "chatFeaturesDropdownFile": "Tệp",
+  "chatFeaturesDropdownCompose": "Soạn"
 }

@@ -77,5 +77,14 @@
   "New Conversation": "การสนทนาใหม่",
   "Neutral": "เป็นกลาง",
   "Creative": "สร้างสรรค์",
-  "Precise": "แม่นยำ"
+  "Precise": "แม่นยำ",
+  "chatFeaturesDropdownWeb": "เว็บ",
+  "chatFeaturesDropdownSearchModal": "ค้นหา",
+  "chatFeaturesDropdownURLModal": "ตัวดึง URL",
+  "chatFeaturesDropdownTranscribeModal": "ถอดความ",
+  "chatFeaturesDropdownTranslateModal": "แปล",
+  "chatFeaturesDropdownTransform": "แปลง",
+  "chatFeaturesDropdownImageModal": "รูปภาพ",
+  "chatFeaturesDropdownFile": "ไฟล์",
+  "chatFeaturesDropdownCompose": "ประพันธ์"
 }

@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "সাধারণ",
   "translatorTranslationDomainLegal": "আইনগত",
   "translatorTranslationDomainMedical": "চিকিৎসা",
-  "translatorTranslationDomainTechnical": "প্রযুক্তিগত"
+  "translatorTranslationDomainTechnical": "প্রযুক্তিগত",
+  "chatFeaturesDropdownWeb": "ওয়েব",
+  "chatFeaturesDropdownSearchModal": "অনুসন্ধান",
+  "chatFeaturesDropdownURLModal": "ইউআরএল টানার",
+  "chatFeaturesDropdownTranscribeModal": "লিপিবদ্ধ করুন",
+  "chatFeaturesDropdownTranslateModal": "অনুবাদ করুন",
+  "chatFeaturesDropdownTransform": "রূপান্তর",
+  "chatFeaturesDropdownImageModal": "ছবিগুলি",
+  "chatFeaturesDropdownFile": "ফাইল",
+  "chatFeaturesDropdownCompose": "সংকলন"
 }

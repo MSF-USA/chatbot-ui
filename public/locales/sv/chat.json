@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "allmän",
   "translatorTranslationDomainLegal": "juridisk",
   "translatorTranslationDomainMedical": "medicinsk",
-  "translatorTranslationDomainTechnical": "teknisk"
+  "translatorTranslationDomainTechnical": "teknisk",
+  "chatFeaturesDropdownWeb": "Webb",
+  "chatFeaturesDropdownSearchModal": "Sök",
+  "chatFeaturesDropdownURLModal": "URL-dragare",
+  "chatFeaturesDropdownTranscribeModal": "Transkribera",
+  "chatFeaturesDropdownTranslateModal": "Översätt",
+  "chatFeaturesDropdownTransform": "Omvandla",
+  "chatFeaturesDropdownImageModal": "bilder",
+  "chatFeaturesDropdownFile": "Fil",
+  "chatFeaturesDropdownCompose": "Komponera"
 }

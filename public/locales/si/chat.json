@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "සාමාන්‍ය",
   "translatorTranslationDomainLegal": "නීතිමය",
   "translatorTranslationDomainMedical": "වෛද්‍ය",
-  "translatorTranslationDomainTechnical": "තාක්ෂණික"
+  "translatorTranslationDomainTechnical": "තාක්ෂණික",
+  "chatFeaturesDropdownWeb": "වෙබ්",
+  "chatFeaturesDropdownSearchModal": "සෙවීම",
+  "chatFeaturesDropdownURLModal": "URL උස්සන",
+  "chatFeaturesDropdownTranscribeModal": "ලිපිගත කරන්න",
+  "chatFeaturesDropdownTranslateModal": "පරිවර්තනය කරන්න",
+  "chatFeaturesDropdownTransform": "පරිවර්තනය",
+  "chatFeaturesDropdownImageModal": "රූප",
+  "chatFeaturesDropdownFile": "ගොනුව",
+  "chatFeaturesDropdownCompose": "රචනය"
 }

@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "общий",
   "translatorTranslationDomainLegal": "юридический",
   "translatorTranslationDomainMedical": "медицинский",
-  "translatorTranslationDomainTechnical": "технический"
+  "translatorTranslationDomainTechnical": "технический",
+  "chatFeaturesDropdownWeb": "Веб",
+  "chatFeaturesDropdownSearchModal": "Поиск",
+  "chatFeaturesDropdownURLModal": "Извлекатель URL",
+  "chatFeaturesDropdownTranscribeModal": "Транскрибировать",
+  "chatFeaturesDropdownTranslateModal": "Перевести",
+  "chatFeaturesDropdownTransform": "Преобразовать",
+  "chatFeaturesDropdownImageModal": "изображения",
+  "chatFeaturesDropdownFile": "Файл",
+  "chatFeaturesDropdownCompose": "Сочинять"
 }

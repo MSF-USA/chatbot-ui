@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "כללי",
   "translatorTranslationDomainLegal": "חוקי",
   "translatorTranslationDomainMedical": "רפואי",
-  "translatorTranslationDomainTechnical": "טכני"
+  "translatorTranslationDomainTechnical": "טכני",
+  "chatFeaturesDropdownWeb": "ווב",
+  "chatFeaturesDropdownSearchModal": "חיפוש",
+  "chatFeaturesDropdownURLModal": "מושך כתובת URL",
+  "chatFeaturesDropdownTranscribeModal": "לתמלל",
+  "chatFeaturesDropdownTranslateModal": "תרגם",
+  "chatFeaturesDropdownTransform": "להפוך",
+  "chatFeaturesDropdownImageModal": "תמונות",
+  "chatFeaturesDropdownFile": "קובץ",
+  "chatFeaturesDropdownCompose": "לחבר"
 }

@@ -108,5 +108,14 @@
   "translatorTranslationDomainGeneral": "通用",
   "translatorTranslationDomainLegal": "法律",
   "translatorTranslationDomainMedical": "医学的",
-  "translatorTranslationDomainTechnical": "技术的"
+  "translatorTranslationDomainTechnical": "技术的",
+  "chatFeaturesDropdownWeb": "网页",
+  "chatFeaturesDropdownSearchModal": "搜索",
+  "chatFeaturesDropdownURLModal": "URL 提取器",
+  "chatFeaturesDropdownTranscribeModal": "转录",
+  "chatFeaturesDropdownTranslateModal": "翻译",
+  "chatFeaturesDropdownTransform": "转换",
+  "chatFeaturesDropdownImageModal": "图像",
+  "chatFeaturesDropdownFile": "文件",
+  "chatFeaturesDropdownCompose": "撰写"
 }

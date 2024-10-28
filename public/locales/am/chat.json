@@ -77,5 +77,14 @@
   "New Conversation": "አዲስ ውይይት",
   "Neutral": "ነጻ",
   "Creative": "ፈጣሪ",
-  "Precise": "ትክክለኛ"
+  "Precise": "ትክክለኛ",
+  "chatFeaturesDropdownWeb": "ዌብ",
+  "chatFeaturesDropdownSearchModal": "ፍለጋ",
+  "chatFeaturesDropdownURLModal": "የ URL አንሳቃ",
+  "chatFeaturesDropdownTranscribeModal": "ተጽፋ",
+  "chatFeaturesDropdownTranslateModal": "ተርጉም",
+  "chatFeaturesDropdownTransform": "ቀይር",
+  "chatFeaturesDropdownImageModal": "ምስሎች",
+  "chatFeaturesDropdownFile": "ፋይል",
+  "chatFeaturesDropdownCompose": "ደምስስ"
 }
