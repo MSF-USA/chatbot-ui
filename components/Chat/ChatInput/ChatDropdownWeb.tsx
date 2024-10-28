@@ -277,6 +277,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {/* Chat Input Translate Modal */}
       {isTranslateOpen && (
         <ChatInputTranslate
+          defaultText={textFieldValue}
           setTextFieldValue={setTextFieldValue}
           handleSend={handleSend}
           setParentModalIsOpen={setIsTranslateOpen}

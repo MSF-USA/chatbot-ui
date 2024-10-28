@@ -10,6 +10,7 @@ interface ChatInputTranslateProps {
   handleSend: () => void;
   simulateClick: boolean;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  defaultText?: string | null | undefined;
 }
 
 const ChatInputTranslate: FC<ChatInputTranslateProps> = (
@@ -17,13 +18,14 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     setTextFieldValue,
     handleSend,
     simulateClick,
-    setParentModalIsOpen
+    setParentModalIsOpen,
+    defaultText
   }) => {
   const { t } = useTranslation('chat');
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState(defaultText ?? "");
   const [sourceLanguage, setSourceLanguage] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("");
   const [translationType, setTranslationType] = useState("balanced");
