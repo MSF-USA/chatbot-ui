@@ -455,13 +455,7 @@ export const ChatInput = ({
             setImageFieldValue={setFileFieldValue}
             setUploadProgress={setUploadProgress}
           />
-          <ChatInputImage
-            setSubmitType={setSubmitType}
-            prompt={textFieldValue}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
+
           <ChatInputFile
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
@@ -480,6 +474,7 @@ export const ChatInput = ({
             setUploadProgress={setUploadProgress}
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
+            textFieldValue={textFieldValue}
           />
 
           <div
