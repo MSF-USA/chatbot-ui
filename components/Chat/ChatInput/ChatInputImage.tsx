@@ -98,6 +98,7 @@ export interface ChatInputImageProps {
     setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   simulateClick?: boolean;
+  labelText?: string;
 }
 
 const ChatInputImage = ({
@@ -107,6 +108,7 @@ const ChatInputImage = ({
   setFileFieldValue,
   setUploadProgress,
   setParentModalIsOpen,
+  labelText
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
   const openModalButtonRef: MutableRefObject<any> = useRef(null);
@@ -146,7 +148,7 @@ const ChatInputImage = ({
       >
         <ImageIcon
           className="text-black dark:text-white mr-2 rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>
-        <span>Images</span>
+        <span>{labelText ?? 'Images'}</span>
 
         <span className="sr-only">Add image</span>
 
