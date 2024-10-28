@@ -16,6 +16,7 @@ import {
   FilePreview,
   ImageMessageContent,
 } from '@/types/chat';
+import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
 
 interface DropdownProps {
   onFileUpload: (
@@ -53,6 +54,7 @@ interface DropdownProps {
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
+  textFieldValue: string;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -64,13 +66,17 @@ const Dropdown: React.FC<DropdownProps> = ({
                                              setUploadProgress,
                                              setSubmitType,
                                              handleSend,
+                                             textFieldValue,
                                            }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUrlOpen, setIsUrlOpen] = useState(false);
   const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
+  const [isImageOpen, setIsImageOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Escape') {
@@ -79,6 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       setIsUrlOpen(false);
       setIsTranscribeOpen(false);
       setIsTranslateOpen(false);
+      setIsImageOpen(false);
     }
   };
 
@@ -110,61 +117,101 @@ const Dropdown: React.FC<DropdownProps> = ({
           role="menu"
         >
           {/* Dropdown Description */}
-          <div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">
-            These are extra, specialized features
+          {/*<div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">*/}
+          {/*  These are extra, specialized features*/}
+          {/*</div>*/}
+
+          {/* Web Section */}
+          <div className="border-t border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
+              Web
+            </div>
+
+            {/* Search Item */}
+            <button
+              className="flex items-center px-4 py-2 w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={() => {
+                setIsSearchOpen(true);
+                setIsOpen(false);
+              }}
+              role="menuitem"
+            >
+              <IconSearch size={18} className="mr-2" />
+              <span>Search</span>
+            </button>
+
+            {/* URL Puller Item */}
+            <button
+              className="flex items-center px-4 py-2 w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={() => {
+                setIsUrlOpen(true);
+                setIsOpen(false);
+              }}
+              role="menuitem"
+            >
+              <IconLink size={18} className="mr-2" />
+              <span>URL Puller</span>
+            </button>
           </div>
 
-          {/* Search Item */}
-          <button
-            className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-            onClick={() => {
-              setIsSearchOpen(true);
-              setIsOpen(false);
-            }}
-            role="menuitem"
-          >
-            <IconSearch size={18} className="mr-2" />
-            <span>Search</span>
-          </button>
+          {/* File Section */}
+          <div className="border-t border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
+              File
+            </div>
 
-          {/* Add URL Item */}
-          <button
-            className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-            onClick={() => {
-              setIsUrlOpen(true);
-              setIsOpen(false);
-            }}
-            role="menuitem"
-          >
-            <IconLink size={18} className="mr-2" />
-            <span>Add URL</span>
-          </button>
+            {/* Transcribe Item */}
+            <button
+              className="flex items-center px-4 py-2 w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={() => {
+                setIsTranscribeOpen(true);
+                setIsOpen(false);
+              }}
+              role="menuitem"
+            >
+              <IconFileMusic size={18} className="mr-2" />
+              <span>Transcribe</span>
+            </button>
 
-          {/* Transcribe Item */}
-          <button
-            className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-            onClick={() => {
-              setIsTranscribeOpen(true);
-              setIsOpen(false);
-            }}
-            role="menuitem"
-          >
-            <IconFileMusic size={18} className="mr-2" />
-            <span>Transcribe</span>
-          </button>
+            {/* Images Item */}
+            <button
+              className="flex items-center px-4 py-2 w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={() => {
+                chatInputImageRef.current?.openFilePicker();
+              }}
+              role="menuitem"
+            >
+              <ChatInputImage
+                setSubmitType={setSubmitType}
+                prompt={textFieldValue}
+                setFilePreviews={setFilePreviews}
+                setFileFieldValue={setFileFieldValue}
+                setUploadProgress={setUploadProgress}
+                setParentModalIsOpen={setIsImageOpen}
+                simulateClick={false}
+              />
+            </button>
+          </div>
 
-          {/* Translate Item */}
-          <button
-            className="flex items-center px-4 py-2 w-full text-left hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-            onClick={() => {
-              setIsTranslateOpen(true);
-              setIsOpen(false);
-            }}
-            role="menuitem"
-          >
-            <IconLanguage size={18} className="mr-2" />
-            <span>Translate</span>
-          </button>
+          {/* Compose Section */}
+          <div className="border-t border-gray-200 dark:border-gray-700">
+            <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
+              Compose
+            </div>
+
+            {/* Translate Item */}
+            <button
+              className="flex items-center px-4 py-2 w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+              onClick={() => {
+                setIsTranslateOpen(true);
+                setIsOpen(false);
+              }}
+              role="menuitem"
+            >
+              <IconLanguage size={18} className="mr-2" />
+              <span>Translate</span>
+            </button>
+          </div>
         </div>
       )}
 
@@ -180,7 +227,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           setTextFieldValue={setTextFieldValue}
           handleSend={handleSend}
           setParentModalIsOpen={setIsSearchOpen}
-          simulateClick={true} // Added this prop
+          simulateClick={true}
         />
       )}
 
@@ -196,7 +243,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           setTextFieldValue={setTextFieldValue}
           handleSend={handleSend}
           setParentModalIsOpen={setIsUrlOpen}
-          simulateClick={true} // Added this prop
+          simulateClick={true}
         />
       )}
 
@@ -224,6 +271,9 @@ const Dropdown: React.FC<DropdownProps> = ({
           simulateClick={true}
         />
       )}
+
+      {/* Chat Input Image Component */}
+
     </div>
   );
 };
