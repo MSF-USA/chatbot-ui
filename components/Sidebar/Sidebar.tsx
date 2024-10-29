@@ -5,6 +5,7 @@ import {
   IconPlus,
   IconRobotFace,
 } from '@tabler/icons-react';
+import { useFlags } from 'launchdarkly-react-client-sdk';
 import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -38,6 +39,7 @@ const Sidebar = <T,>({
   handleDrop,
 }: Props<T>) => {
   const { t } = useTranslation('promptbar');
+  const { exploreBots } = useFlags();
 
   const allowDrop = (e: any) => {
     e.preventDefault();
@@ -78,9 +80,7 @@ const Sidebar = <T,>({
         onSearch={handleSearchTerm}
       />
 
-      <div className="flex items-center">
-        <BotModal />
-      </div>
+      <div className="flex items-center">{exploreBots && <BotModal />}</div>
 
       <div className="flex-grow overflow-auto">
         <div className="flex border-b border-white/20 pb-2 text-black dark:text-white">

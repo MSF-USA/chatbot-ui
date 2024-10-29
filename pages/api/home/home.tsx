@@ -1,5 +1,6 @@
+import { LDProvider, useLDClient } from 'launchdarkly-react-client-sdk';
 import { signIn, useSession } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { GetServerSideProps } from 'next';
@@ -54,6 +55,54 @@ interface Props {
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
 }
+
+const LaunchDarklyInit: React.FC<{ user: any }> = ({ user }) => {
+  const ldClient = useLDClient();
+
+  const LDContext = useMemo(
+    () => ({
+      kind: 'user',
+      key: user?.id || 'anonymous-user',
+      email: user?.mail,
+      givenName: user?.givenName,
+      surName: user?.surName,
+      displayName: user?.displayName,
+      jobTitle: user?.jobTitle,
+      department: user?.department,
+      companyName: user?.companyName,
+    }),
+    [user],
+  );
+
+  useEffect(() => {
+    let mounted = true;
+
+    const initializeLDClient = async () => {
+      if (!ldClient || !user) return;
+
+      try {
+        await ldClient.waitForInitialization();
+        if (mounted) {
+          await ldClient.identify(LDContext);
+          console.log('LD Context updated:', LDContext);
+        }
+      } catch (error) {
+        console.error('LD initialization/identify failed:', error);
+      }
+    };
+
+    initializeLDClient();
+
+    return () => {
+      mounted = false;
+      if (ldClient) {
+        ldClient.flush();
+      }
+    };
+  }, [ldClient, user, LDContext]);
+
+  return null;
+};
 
 const Home = ({
   serverSideApiKeyIsSet,
@@ -368,15 +417,15 @@ const Home = ({
 
   function selectConversation() {
     const conversationHistory = localStorage.getItem('conversationHistory');
-    let parsedConversationHistory: Conversation[]
+    let parsedConversationHistory: Conversation[];
     if (conversationHistory) {
-      parsedConversationHistory =
-        JSON.parse(conversationHistory);
+      parsedConversationHistory = JSON.parse(conversationHistory);
     } else {
       parsedConversationHistory = [];
     }
 
-    const lastConversation = parsedConversationHistory[parsedConversationHistory.length - 1];
+    const lastConversation =
+      parsedConversationHistory[parsedConversationHistory.length - 1];
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
@@ -393,63 +442,78 @@ const Home = ({
       folderId: null,
     };
 
-    const updatedConversations = [...parsedConversationHistory, newConversation];
+    const updatedConversations = [
+      ...parsedConversationHistory,
+      newConversation,
+    ];
 
     dispatch({ field: 'selectedConversation', value: newConversation });
     dispatch({ field: 'conversations', value: updatedConversations });
   }
 
   return (
-    <HomeContext.Provider
-      value={{
-        ...contextValue,
-        handleNewConversation,
-        handleCreateFolder,
-        handleDeleteFolder,
-        handleUpdateFolder,
-        handleSelectConversation,
-        handleUpdateConversation,
-        user,
+    <LDProvider
+      clientSideID={process.env.NEXT_PUBLIC_LAUNCHDARKLY_CLIENT_ID!}
+      options={{
+        bootstrap: 'localStorage',
+        sendEvents: true,
       }}
     >
-      <Head>
-        <title>MSF AI Assistant</title>
-        <meta
-          name="description"
-          content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
-        />
-        <meta
-          name="viewport"
-          content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      {selectedConversation && (
-        <main
-          className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
-        >
-          <div className="fixed top-0 sm:hidden">
-            <Navbar
-              selectedConversation={selectedConversation}
-              onNewConversation={handleNewConversation}
-            />
-          </div>
-
-          <div className="flex h-full w-full pt-[48px] sm:pt-0">
-            <Chatbar />
-
-            <div className="flex flex-1 w-full">
-              <Chat stopConversationRef={stopConversationRef} />
+      {user && <LaunchDarklyInit user={user} />}
+      <HomeContext.Provider
+        value={{
+          ...contextValue,
+          handleNewConversation,
+          handleCreateFolder,
+          handleDeleteFolder,
+          handleUpdateFolder,
+          handleSelectConversation,
+          handleUpdateConversation,
+          user,
+        }}
+      >
+        <Head>
+          <title>MSF AI Assistant</title>
+          <meta
+            name="description"
+            content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
+          />
+          <meta
+            name="viewport"
+            content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        {selectedConversation && (
+          <main
+            className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
+          >
+            <div className="fixed top-0 sm:hidden">
+              <Navbar
+                selectedConversation={selectedConversation}
+                onNewConversation={handleNewConversation}
+              />
             </div>
-          </div>
-        </main>
-      )}
-    </HomeContext.Provider>
+
+            <div className="flex h-full w-full pt-[48px] sm:pt-0">
+              <Chatbar />
+
+              <div className="flex flex-1 w-full">
+                <Chat stopConversationRef={stopConversationRef} />
+              </div>
+            </div>
+          </main>
+        )}
+      </HomeContext.Provider>
+    </LDProvider>
   );
 };
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+}) => {
   const defaultModelId =
     (process.env.DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(
