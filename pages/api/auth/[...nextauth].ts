@@ -1,41 +1,65 @@
-import NextAuth, { Account, JWT, Session } from 'next-auth';
+import NextAuth, { NextAuthOptions, Session } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import AzureADProvider from 'next-auth/providers/azure-ad';
 
-export const refreshAccessToken = async (token: JWT) => {
-  if (!token || !token.refreshToken) {
-    console.log('refresh token missing');
-    return;
+declare module 'next-auth/jwt' {
+  interface JWT {
+    accessToken: string;
+    accessTokenExpires: number;
+    refreshToken?: string;
+    error?: string;
+  }
+}
+
+interface UserData {
+  id: string;
+  givenName: string;
+  surName: string;
+  displayName: string;
+  jobTitle?: string;
+  department?: string;
+  mail?: string;
+  companyName?: string;
+}
+
+const refreshAccessToken = async (token: JWT): Promise<JWT> => {
+  if (!token.refreshToken) {
+    return { ...token, error: 'RefreshTokenMissing' };
   }
 
   try {
     const url = `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/token`;
 
-    const body = new URLSearchParams();
-    body.append('grant_type', 'refresh_token');
-    body.append('client_id', process.env.AZURE_CLIENT_ID || '');
-    body.append('client_secret', process.env.AZURE_CLIENT_SECRET || '');
-    body.append('refresh_token', token.refreshToken);
-    body.append('scope', 'openid User.Read User.ReadBasic.all offline_access');
+    const formData = {
+      grant_type: 'refresh_token',
+      client_id: process.env.AZURE_CLIENT_ID || '',
+      client_secret: process.env.AZURE_CLIENT_SECRET || '',
+      refresh_token: token.refreshToken,
+      scope: 'openid User.Read User.ReadBasic.all offline_access',
+    };
 
     const response = await fetch(url, {
       method: 'POST',
-      body,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString(),
     });
+
     const refreshedTokens = await response.json();
 
     if (!response.ok) {
-      throw refreshedTokens;
+      throw new Error(
+        refreshedTokens.error_description || 'Failed to refresh token',
+      );
     }
 
     return {
       ...token,
       accessToken: refreshedTokens.access_token,
       accessTokenExpires: Date.now() + refreshedTokens.expires_in * 1000,
-      refreshToken: refreshedTokens.refresh_token ?? token?.refreshToken, // Fall back to old refresh token
+      refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+      error: undefined,
     };
   } catch (error) {
-    console.log(error);
-
     return {
       ...token,
       error: 'RefreshAccessTokenError',
@@ -43,8 +67,36 @@ export const refreshAccessToken = async (token: JWT) => {
   }
 };
 
-export const authOptions = {
-  // Configure one or more authentication providers
+async function fetchUserData(accessToken: string): Promise<UserData> {
+  const selectProperties = `id,userPrincipalName,displayName,givenName,surname,department,jobTitle,mail,companyName`;
+  const response = await fetch(
+    `https://graph.microsoft.com/v1.0/me?$select=${selectProperties}`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-type': 'application/json',
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user data: ${response.statusText}`);
+  }
+
+  const userData = await response.json();
+  return {
+    id: userData.id,
+    givenName: userData.givenName,
+    surName: userData.surname,
+    displayName: userData.displayName,
+    jobTitle: userData.jobTitle,
+    department: userData.department,
+    mail: userData.mail,
+    companyName: userData.companyName,
+  };
+}
+
+export const authOptions: NextAuthOptions = {
   providers: [
     AzureADProvider({
       clientId: process.env.AZURE_CLIENT_ID || '',
@@ -56,64 +108,43 @@ export const authOptions = {
         },
       },
     }),
-    // ...add more providers here
   ],
   pages: {
     signIn: '/auth/signin',
   },
   callbacks: {
-    async jwt({ token, account }: { token: JWT; account: Account }) {
-      let currentDate = new Date();
-
+    async jwt({ token, account }): Promise<JWT> {
       if (account) {
-        // This will only be executed at login. Each next invocation will skip this part.
-
         return {
-          accessToken: account.access_token,
-          accessTokenExpires:
-            account.expires_at != undefined
-              ? account.expires_at * 1000
-              : currentDate.setHours(currentDate.getHours() + 24),
+          ...token,
+          accessToken: account.access_token!,
+          accessTokenExpires: account.expires_at
+            ? account.expires_at * 1000
+            : Date.now() + 24 * 60 * 60 * 1000,
           refreshToken: account.refresh_token,
+          error: undefined,
         };
       }
-      // Return previous token if the access token has not expired yet
+
       if (Date.now() < token.accessTokenExpires) {
         return token;
       }
 
       return refreshAccessToken(token);
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
-      if (token) {
-        session.accessToken = token.accessToken;
-        session.accessTokenExpires = token.accessTokenExpires;
-        session.error = token.error;
-      }
+    async session({ session, token }): Promise<Session> {
+      const userData = await fetchUserData(token.accessToken);
 
-      try {
-        const selectProperties = `id,userPrincipalName,displayName,givenName,surname,department,jobTitle,mail,companyName`;
-        const userInfoUrl = `https://graph.microsoft.com/v1.0/me?$select=${selectProperties}`;
-
-        const userDataResponse = await fetch(userInfoUrl, {
-          method: 'GET',
-          headers: {
-            Authorization: session.accessToken,
-            'Content-type': 'application/json',
-          },
-        });
-
-        const userData = await userDataResponse.json();
-
-        session.user = { ...userData };
-      } catch (error) {
-        console.log('failed to get User Data: ' + error);
-      }
-
-      return session;
+      return {
+        ...session,
+        user: userData,
+        accessToken: token.accessToken,
+        accessTokenExpires: token.accessTokenExpires,
+        error: token.error,
+        expires: session.expires,
+      };
     },
   },
 };
 
-//@ts-ignore
 export default NextAuth(authOptions);

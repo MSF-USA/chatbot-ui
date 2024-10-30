@@ -5,6 +5,7 @@ import { useQuery } from 'react-query';
 
 import { GetServerSideProps } from 'next';
 import { Session } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
@@ -45,6 +46,7 @@ import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
 
+import { authOptions } from '../auth/[...nextauth]';
 import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
@@ -54,68 +56,23 @@ interface Props {
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
+  session: Session | null;
 }
-
-const LaunchDarklyInit: React.FC<{ user: any }> = ({ user }) => {
-  const ldClient = useLDClient();
-
-  const LDContext = useMemo(
-    () => ({
-      kind: 'user',
-      key: user?.id || 'anonymous-user',
-      email: user?.mail,
-      givenName: user?.givenName,
-      surName: user?.surName,
-      displayName: user?.displayName,
-      jobTitle: user?.jobTitle,
-      department: user?.department,
-      companyName: user?.companyName,
-    }),
-    [user],
-  );
-
-  useEffect(() => {
-    let mounted = true;
-
-    const initializeLDClient = async () => {
-      if (!ldClient || !user) return;
-
-      try {
-        await ldClient.waitForInitialization();
-        if (mounted) {
-          await ldClient.identify(LDContext);
-          console.log('LD Context updated:', LDContext);
-        }
-      } catch (error) {
-        console.error('LD initialization/identify failed:', error);
-      }
-    };
-
-    initializeLDClient();
-
-    return () => {
-      mounted = false;
-      if (ldClient) {
-        ldClient.flush();
-      }
-    };
-  }, [ldClient, user, LDContext]);
-
-  return null;
-};
 
 const Home = ({
   serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
+  session: serverSession,
 }: Props) => {
-  const { data: Session } = useSession();
-  const user = Session?.user;
+  const { data: clientSession } = useSession();
+  const user = serverSession?.user || clientSession?.user;
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
   const { getModelsError } = useErrorService();
   const [initialRender, setInitialRender] = useState<boolean>(true);
+  const ldClient = useLDClient();
 
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
@@ -135,6 +92,12 @@ const Home = ({
     dispatch,
   } = contextValue;
 
+  useEffect(() => {
+    if (clientSession?.error === 'RefreshAccessTokenError') {
+      signIn();
+    }
+  }, [clientSession]);
+
   const stopConversationRef = useRef<boolean>(false);
 
   const { data, error, refetch } = useQuery(
@@ -153,16 +116,6 @@ const Home = ({
     },
     { enabled: true, refetchOnMount: false },
   );
-
-  useEffect(() => {
-    if (Session?.error === 'RefreshAccessTokenError') {
-      try {
-        signIn(); // Force sign in to hopefully resolve error
-      } catch (error) {
-        router.push('/auth/signin');
-      }
-    }
-  }, [router, Session]);
 
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
@@ -458,8 +411,18 @@ const Home = ({
         bootstrap: 'localStorage',
         sendEvents: true,
       }}
+      context={{
+        kind: 'user',
+        key: user?.id || 'anonymous-user',
+        email: user?.mail,
+        givenName: user?.givenName,
+        surName: user?.surName,
+        displayName: user?.displayName,
+        jobTitle: user?.jobTitle,
+        department: user?.department,
+        companyName: user?.companyName,
+      }}
     >
-      {user && <LaunchDarklyInit user={user} />}
       <HomeContext.Provider
         value={{
           ...contextValue,
@@ -513,7 +476,24 @@ export default Home;
 export const getServerSideProps: GetServerSideProps = async ({
   locale,
   req,
+  res,
 }) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/signin',
+        permanent: false,
+      },
+    };
+  }
+
+  const serializedSession = {
+    ...session,
+    error: null,
+  };
+
   const defaultModelId =
     (process.env.DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(
@@ -533,6 +513,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
+      serializedSession,
       serverSideApiKeyIsSet:
         !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
       defaultModelId,
