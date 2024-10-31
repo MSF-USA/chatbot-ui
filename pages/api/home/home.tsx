@@ -53,26 +53,25 @@ import { HomeInitialState, initialState } from './home.state';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
+  session: Session | null;
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
-  session: Session | null;
 }
 
 const Home = ({
+  session,
   serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
-  session: serverSession,
 }: Props) => {
   const { data: clientSession } = useSession();
-  const user = serverSession?.user || clientSession?.user;
+  const user = session?.user || clientSession?.user;
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
   const { getModelsError } = useErrorService();
   const [initialRender, setInitialRender] = useState<boolean>(true);
-  const ldClient = useLDClient();
 
   const contextValue = useCreateReducer<HomeInitialState>({
     initialState,
@@ -123,6 +122,7 @@ const Home = ({
 
   useEffect(() => {
     if (user) dispatch({ field: 'user', value: user });
+    console.log(session);
   }, [user, dispatch]);
 
   useEffect(() => {
@@ -513,7 +513,7 @@ export const getServerSideProps: GetServerSideProps = async ({
 
   return {
     props: {
-      serializedSession,
+      session: serializedSession,
       serverSideApiKeyIsSet:
         !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
       defaultModelId,
