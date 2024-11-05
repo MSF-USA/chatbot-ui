@@ -53,6 +53,18 @@ import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion, ChatCompletionChunk } from 'openai/resources';
 import path from 'path';
 
+interface StreamResponse {
+  [Symbol.asyncIterator](): AsyncIterator<any>;
+  choices: Array<{
+    delta: {
+      content?: string;
+      context?: {
+        citations: any[];
+      };
+    };
+  }>;
+}
+
 /**
  * ChatService class for handling chat-related API operations.
  */
@@ -306,6 +318,20 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
+  private getSearchDataSource() {
+    return {
+      type: 'azure_search' as const,
+      parameters: {
+        endpoint: process.env.SEARCH_ENDPOINT,
+        index_name: process.env.SEARCH_INDEX,
+        authentication: {
+          type: 'api_key' as const,
+          key: process.env.SEARCH_ENDPOINT_API_KEY,
+        },
+      },
+    };
+  }
+
   /**
    * Handles a chat completion request by sending the messages to the OpenAI API and returning a response.
    * @param {string} modelToUse - The ID of the model to use for the chat completion.
@@ -320,7 +346,7 @@ export default class ChatService {
     temperatureToUse: number,
     user: Session['user'],
     botId: string | undefined,
-    streamResponse: boolean, // Added this parameter
+    streamResponse: boolean,
   ): Promise<Response> {
     const startTime = Date.now();
     return this.retryWithExponentialBackoff(async () => {
@@ -339,43 +365,242 @@ export default class ChatService {
       });
 
       try {
-        let response;
         const commonParams = {
           model: modelToUse,
           messages:
             messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature: temperatureToUse,
           max_tokens: null,
-          stream: streamResponse, // Use the streamResponse parameter
+          stream: streamResponse,
           user: JSON.stringify(user),
         };
 
-        if (botId) {
-          response = await client.chat.completions.create({
+        let streamData: AsyncIterable<any>;
+
+        if (botId === 'msf_communications') {
+          const response = await client.chat.completions.create({
             ...commonParams,
             //@ts-ignore
-            data_sources: [
-              {
-                type: 'azure_search',
-                parameters: {
-                  endpoint: process.env.SEARCH_ENDPOINT,
-                  index_name: process.env.SEARCH_INDEX,
-                  authentication: {
-                    type: 'api_key',
-                    key: process.env.SEARCH_ENDPOINT_API_KEY,
-                  },
-                },
-              },
-            ],
+            data_sources: [this.getSearchDataSource()],
           });
+
+          // Convert response to async iterable
+          streamData = streamResponse
+            ? (response as AsyncIterable<any>)
+            : {
+                async *[Symbol.asyncIterator]() {
+                  yield {
+                    choices: [
+                      {
+                        delta: {
+                          content: (response as any).choices[0]?.message
+                            ?.content,
+                        },
+                      },
+                    ],
+                  };
+                  // Include citations if they exist
+                  const citations = (response as any).choices[0]?.message
+                    ?.context?.citations;
+                  if (citations) {
+                    yield {
+                      choices: [
+                        {
+                          delta: {
+                            context: { citations },
+                          },
+                        },
+                      ],
+                    };
+                  }
+                },
+              };
+        } else if (botId === 'content_validator') {
+          console.log('Running validation checks...');
+
+          // Run both checks concurrently
+          const [styleCheckResponse, factCheckResponse] = await Promise.all([
+            // Style guide check
+            client.chat.completions.create({
+              model: modelToUse,
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are reviewing this text for adherence to MSF style guidelines. Check for:
+                   - Clear and professional language
+                   - Appropriate formatting and structure
+                   - Consistent terminology and naming conventions
+                   - Proper tone and voice
+                   - Clarity and readability
+                   - Appropriate use of technical terms
+                   Provide specific examples of any issues found and reference relevant style guide rules.`,
+                },
+                ...messagesToSend,
+              ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+              temperature: temperatureToUse,
+              stream: false,
+              user: JSON.stringify(user),
+              //@ts-ignore
+              data_sources: [this.getSearchDataSource()],
+            }),
+
+            // Fact check
+            client.chat.completions.create({
+              model: modelToUse,
+              messages: [
+                {
+                  role: 'system',
+                  content: `You are fact-checking this content against MSF's official communications and data. Check for:
+                   - Accuracy of statistics and numbers
+                   - Correctness of dates and timelines
+                   - Accuracy of program descriptions and locations
+                   - Proper representation of MSF policies and positions
+                   - Verification of claims and statements
+                   Compare against official MSF documents and flag any discrepancies.`,
+                },
+                ...messagesToSend,
+              ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+              temperature: temperatureToUse,
+              stream: false,
+              user: JSON.stringify(user),
+              //@ts-ignore
+              data_sources: [this.getSearchDataSource()],
+            }),
+          ]);
+
+          // Type assertion and get citations
+          const styleResp = styleCheckResponse as any;
+          const factResp = factCheckResponse as any;
+
+          const styleCitations =
+            styleResp?.choices?.[0]?.message?.context?.citations || [];
+          const factCitations =
+            factResp?.choices?.[0]?.message?.context?.citations || [];
+          const allCitations = [...styleCitations, ...factCitations];
+
+          // Create unified prompt for final analysis
+          const unifiedPrompt = `
+
+  STYLE ANALYSIS RESULTS:
+  ${styleResp.choices?.[0]?.message?.content || ''}
+
+  FACT CHECK RESULTS:
+  ${factResp.choices?.[0]?.message?.content || ''}`;
+
+          // Get unified response with citations
+          if (streamResponse) {
+            const response = await client.chat.completions.create({
+              model: modelToUse,
+              messages: [
+                {
+                  role: 'system',
+                  content:
+                    'You are a content validation expert. Create a clear report combining style and fact-check analyses. Be specific about issues found and cite relevant documents.',
+                },
+                {
+                  role: 'user',
+                  content: unifiedPrompt,
+                },
+              ],
+              temperature: temperatureToUse,
+              stream: true,
+              user: JSON.stringify(user),
+            });
+
+            // Create streaming response with citations
+            streamData = {
+              async *[Symbol.asyncIterator]() {
+                for await (const chunk of response as AsyncIterable<any>) {
+                  yield chunk;
+                }
+
+                if (allCitations.length > 0) {
+                  yield {
+                    choices: [
+                      {
+                        delta: {
+                          context: { citations: allCitations },
+                        },
+                      },
+                    ],
+                  };
+                }
+              },
+            };
+          } else {
+            // For non-streaming, get the complete response first
+            const response = await client.chat.completions.create({
+              model: modelToUse,
+              messages: [
+                {
+                  role: 'system',
+                  content:
+                    'You are a content validation expert. Create a clear report combining style and fact-check analyses. Be specific about issues found and cite relevant documents.',
+                },
+                {
+                  role: 'user',
+                  content: unifiedPrompt,
+                },
+              ],
+              temperature: temperatureToUse,
+              stream: false,
+              user: JSON.stringify(user),
+            });
+
+            const content =
+              (response as any).choices?.[0]?.message?.content || '';
+
+            // Create non-streaming response with citations
+            streamData = {
+              async *[Symbol.asyncIterator]() {
+                yield {
+                  choices: [
+                    {
+                      delta: {
+                        content: content,
+                      },
+                    },
+                  ],
+                };
+
+                if (allCitations.length > 0) {
+                  yield {
+                    choices: [
+                      {
+                        delta: {
+                          context: { citations: allCitations },
+                        },
+                      },
+                    ],
+                  };
+                }
+              },
+            };
+          }
         } else {
-          response = await client.chat.completions.create(commonParams);
+          // Handle default case for no botId or unknown botId
+          const response = await client.chat.completions.create(commonParams);
+          streamData = streamResponse
+            ? (response as AsyncIterable<any>)
+            : {
+                async *[Symbol.asyncIterator]() {
+                  yield {
+                    choices: [
+                      {
+                        delta: {
+                          content: (response as any).choices[0]?.message
+                            ?.content,
+                        },
+                      },
+                    ],
+                  };
+                },
+              };
         }
 
         if (streamResponse) {
           const { stream, contentAccumulator, citationsAccumulator } =
-            //@ts-ignore
-            createAzureOpenAIStreamProcessor(response);
+            createAzureOpenAIStreamProcessor(streamData);
 
           const streamingResponse = new StreamingTextResponse(stream);
 
@@ -401,35 +626,46 @@ export default class ChatService {
           });
 
           return streamingResponse;
-        } else {
-          // For non-streaming responses
-          const completionText = (response as ChatCompletion)?.choices?.[0]
-            ?.message?.content;
-
-          // Log the completion
-          const endTime = Date.now();
-          const duration = endTime - startTime;
-          this.loggingService.log({
-            EventType: 'ChatCompletion',
-            Status: 'success',
-            ModelUsed: modelToUse,
-            MessageCount: messagesToSend.length,
-            Temperature: temperatureToUse,
-            UserId: user.id,
-            UserJobTitle: user.jobTitle,
-            UserDisplayName: user.displayName,
-            UserEmail: user.mail,
-            UserCompanyName: user.companyName,
-            FileUpload: false,
-            BotId: botId,
-            Env: process.env.NEXT_PUBLIC_ENV,
-            Duration: duration,
-          });
-
-          return new Response(JSON.stringify({ text: completionText }), {
-            headers: { 'Content-Type': 'application/json' },
-          });
         }
+
+        // Handle non-streaming response
+        const completionText =
+          (streamData as any).choices?.[0]?.message?.content || '';
+        const encoder = new TextEncoder();
+        const stream = new ReadableStream({
+          start(controller) {
+            controller.enqueue(encoder.encode(completionText));
+            controller.close();
+          },
+        });
+
+        // Log the completion
+        const endTime = Date.now();
+        const duration = endTime - startTime;
+        await this.loggingService.log({
+          EventType: 'ChatCompletion',
+          Status: 'success',
+          ModelUsed: modelToUse,
+          MessageCount: messagesToSend.length,
+          Temperature: temperatureToUse,
+          UserId: user.id,
+          UserJobTitle: user.jobTitle,
+          UserDisplayName: user.displayName,
+          UserEmail: user.mail,
+          UserCompanyName: user.companyName,
+          FileUpload: false,
+          BotId: botId,
+          Env: process.env.NEXT_PUBLIC_ENV,
+          Duration: duration,
+        });
+
+        return new Response(stream, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+          },
+        });
       } catch (error) {
         console.error('Error in chat completion:', error);
         let statusCode = 500;

@@ -1,4 +1,4 @@
-import { IconNews } from '@tabler/icons-react';
+import { IconFileCheck, IconNews } from '@tabler/icons-react';
 
 export interface Bot {
   id: string;
@@ -29,6 +29,28 @@ export const bots: Bot[] = [
       {
         name: 'msf.org',
         url: 'https://www.msf.org',
+        updated: 'August 18, 2024',
+      },
+    ],
+  },
+  {
+    id: 'content_validator',
+    name: 'Content Validator',
+    description:
+      'Validates content against MSF style guides and communications data',
+    icon: IconFileCheck,
+    color: '#34a853',
+    prompt:
+      'You are a content validation bot that checks text against MSF style guides and ensures alignment with external communications.',
+    sources: [
+      {
+        name: 'MSF Style Guide',
+        url: '#',
+        updated: 'Current',
+      },
+      {
+        name: 'MSF External Communications',
+        url: '#',
         updated: 'August 18, 2024',
       },
     ],
