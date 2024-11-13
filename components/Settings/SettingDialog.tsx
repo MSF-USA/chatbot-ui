@@ -227,8 +227,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                       dispatch({ field: 'theme', value: event.target.value })
                     }
                   >
-                    <option value="dark">{t('Dark mode')}</option>
-                    <option value="light">{t('Light mode')}</option>
+                    <option className={'bg-white dark:bg-black'} value="dark">{t('Dark mode')}</option>
+                    <option className={'bg-white dark:bg-black'} value="light">{t('Light mode')}</option>
                   </select>
                 </div>
                 <div className="flex flex-row justify-between items-center my-10">
@@ -359,7 +359,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   size={18}
                   className={'inline mr-1 text-black dark:text-white'}
                 />
-                {t('Send your Feedback')}
+                {t('sendFeedback')}
               </a>
             </div>
           </div>

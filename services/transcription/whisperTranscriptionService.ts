@@ -44,7 +44,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     const fullTranscript = transcripts.join(' ');
 
     // Clean up temporary files
-    await cleanUpFiles([filePath, ...audioSegments]);
+    cleanUpFiles([filePath, ...audioSegments]);
 
     return fullTranscript;
   }
@@ -64,8 +64,9 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     const formHeaders = formData.getHeaders();
 
     try {
+      const reqUrl: string = `${this.endpoint.trim()}/openai/deployments/${this.deployment}/audio/transcriptions?api-version=2024-06-01`
       const response = await axios.post(
-        `${this.endpoint}/openai/deployments/${this.deployment}/audio/transcriptions?api-version=2024-06-01`,
+        reqUrl,
         formData,
         {
           headers: {

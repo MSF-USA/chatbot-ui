@@ -25,7 +25,7 @@ export const TemperatureSlider: FC<Props> = ({
     <div className="flex flex-col mt-5">
       <span className="text-[12px] text-black/50 dark:text-white/50 text-sm">
         {t(
-          'Higher values like 0.8 will make the output more creative, while lower values like 0.2 will make it more focused and deterministic.',
+          'temperatureDescription',
         )}
       </span>
       <span className="mt-2 mb-1 text-center text-neutral-900 dark:text-neutral-100">

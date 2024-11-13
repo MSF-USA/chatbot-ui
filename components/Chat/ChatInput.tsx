@@ -38,6 +38,7 @@ import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCap
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
 import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
 import ChatDropdownWeb from "@/components/Chat/ChatInput/ChatDropdownWeb";
+import ChatInputTranscribe from "@/components/Chat/ChatInput/ChatInputTranscribe";
 
 interface Props {
   onSend: (message: Message, plugin: Plugin | null) => void;
@@ -350,8 +351,8 @@ export const ChatInput = ({
 
   useEffect(() => {
     const isMobile = window.innerWidth < 600;
-    const fullPlaceholder = t('Message MSF AI Assistant here or type "/" to select a prompt...') || '';
-    const trimmedPlaceholder = isMobile ? fullPlaceholder.replace(' or type "/" to select a prompt', '') : fullPlaceholder;
+    const fullPlaceholder = t('chatInputPlaceholderFull') || '';
+    const trimmedPlaceholder = isMobile ? t('chatInputPlaceholder') : fullPlaceholder;
     setPlaceholderText(trimmedPlaceholder);
   }, [t]);
 
@@ -454,13 +455,7 @@ export const ChatInput = ({
             setImageFieldValue={setFileFieldValue}
             setUploadProgress={setUploadProgress}
           />
-          <ChatInputImage
-            setSubmitType={setSubmitType}
-            prompt={textFieldValue}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
+
           <ChatInputFile
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
@@ -468,11 +463,6 @@ export const ChatInput = ({
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
-          />
-
-          <ChatInputTranslate
-            setTextFieldValue={setTextFieldValue}
-            handleSend={handleSend}
           />
 
           <ChatDropdownWeb
@@ -484,9 +474,8 @@ export const ChatInput = ({
             setUploadProgress={setUploadProgress}
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
+            textFieldValue={textFieldValue}
           />
-
-
 
           <div
             className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4"
@@ -511,7 +500,7 @@ export const ChatInput = ({
                     : 'hidden'
                 }`,
               }}
-              placeholder={isTranscribing ? 'Transcribing...' : placeholderText}
+              placeholder={isTranscribing ? t("transcribingChatPlaceholder") : placeholderText}
               value={
                 textFieldValue
               }
@@ -572,7 +561,7 @@ export const ChatInput = ({
       <div
         className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
         {t(
-          "MSF AI Assistant can make mistakes. Check important info.",
+          "chatDisclaimer",
         )}
       </div>
     </div>

@@ -7,14 +7,13 @@ import React, {
   useEffect,
 } from 'react';
 import HomeContext from '@/pages/api/home/home.context';
-import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 import {
   ChatInputSubmitTypes,
   FilePreview,
   FileMessageContent,
   ImageMessageContent,
 } from '@/types/chat';
-import { IconLink, IconChevronUp, IconChevronDown } from '@tabler/icons-react';
+import { IconLink } from '@tabler/icons-react';
 import crypto from 'crypto';
 import BetaBadge from '@/components/Beta/Badge';
 import {useTranslation} from "next-i18next";
@@ -56,6 +55,7 @@ interface ChatInputUrlProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  simulateClick: boolean;
 }
 
 const ChatInputUrl = (
@@ -69,8 +69,11 @@ const ChatInputUrl = (
       setTextFieldValue,
       handleSend,
       setParentModalIsOpen,
+      simulateClick,
     }: ChatInputUrlProps
 ) => {
+  const { t } = useTranslation('chat');
+
   const [isModalOpen, setModalOpen] = useState(false);
   const [urlInput, setUrlInput] = useState('');
   const [questionInput, setQuestionInput] = useState('');
@@ -82,13 +85,14 @@ const ChatInputUrl = (
   const [isAdvancedOpen, setIsAdvancedOpen] = useState<boolean>(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const urlInputRef = useRef<HTMLInputElement>(null); // Added this line
+  const openModalButtonRef = useRef<HTMLButtonElement>(null)
   const {
     state: { user },
   } = useContext(HomeContext);
 
   useEffect(() => {
     if (!questionInput) {
-      setQuestionInput(`Please summarize the content from this webpage.`);
+      setQuestionInput(t('defaultWebPullerQuestion'));
     }
   }, [urlInput]);
 
@@ -123,13 +127,16 @@ const ChatInputUrl = (
     }
   }, [isReadyToSend, handleSend, setParentModalIsOpen]);
 
-  const { t } = useTranslation('chat');
-
+  useEffect(() => {
+    if (simulateClick && openModalButtonRef.current) {
+      openModalButtonRef.current.click();
+    }
+  }, [simulateClick]);
 
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
-    setStatusMessage('Pulling content from URL...');
+    setStatusMessage(t('webPullerPullingStatusMessage'));
     setIsSubmitting(true);
 
     try {
@@ -158,7 +165,7 @@ const ChatInputUrl = (
       const fileName = `web-pull-${url.host}_${hash}.txt`;
       const file = new File([blob], fileName, { type: 'text/plain' });
 
-      setStatusMessage('Handling content...');
+      setStatusMessage(t('webPullerHandlingContentStatusMessage'));
 
       // Call onFileUpload with the File as an array
       await onFileUpload(
@@ -175,9 +182,9 @@ const ChatInputUrl = (
         questionInput +
         `
     
-Cite any claims you make from the text and reference the URL: ${urlInput}
+${t('webPullerCitationPrompt')}: ${urlInput}
 
-Also reference the title, apparent source, author(s), and publication date where available and relevant.`,
+${t('webPullerReferencePrompt')}`,
       );
 
       // Close the modal and reset the input
@@ -203,14 +210,16 @@ Also reference the title, apparent source, author(s), and publication date where
   return (
     <>
       <button
+        style={{display: 'none'}}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           event.preventDefault();
           setModalOpen(true);
         }}
+        ref={openModalButtonRef}
         disabled={isSubmitting} // Disable when submitting
       >
         <IconLink className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
-        <span className="sr-only">Add document from URL</span>
+        <span className="sr-only">{t('webPullerIconScreenReader')}</span>
       </button>
 
       {isModalOpen && (
@@ -255,7 +264,7 @@ Also reference the title, apparent source, author(s), and publication date where
                       htmlFor="question-input"
                       className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
                   >
-                    Question
+                    {t('webPullerQuestionLabel')}
                   </label>
                   <input
                       id="question-input"
@@ -297,18 +306,21 @@ Also reference the title, apparent source, author(s), and publication date where
                       htmlFor="auto-submit"
                       className="ml-2 text-sm text-gray-700 dark:text-gray-200"
                   >
-                    Auto-submit
+                    {t('autoSubmitButton')}
                   </label>
                 </div>
                 <div className="flex space-x-2 mt-2 sm:mt-0">
                   <button
                       type="button"
-                      onClick={() => setModalOpen(false)}
+                      onClick={() => {
+                        setModalOpen(false);
+                        setParentModalIsOpen(false);
+                      }}
                       disabled={isSubmitting}
                       className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md
                                  hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
                   >
-                    Cancel
+                    {t('cancelButton')}
                   </button>
                   <button
                       type="submit"
@@ -317,7 +329,7 @@ Also reference the title, apparent source, author(s), and publication date where
                                  hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
                   >
                     <IconLink className="mr-2 h-4 w-4" />
-                    {autoSubmit ? 'Submit' : 'Generate prompt'}
+                    {autoSubmit ? t('submitButton') : t('generatePromptButton')}
                   </button>
                 </div>
               </div>

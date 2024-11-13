@@ -3,6 +3,7 @@ import React, {
   MutableRefObject,
   SetStateAction,
   useContext,
+  useEffect,
   useRef,
 } from 'react';
 import toast from 'react-hot-toast';
@@ -95,6 +96,9 @@ export interface ChatInputImageProps {
     prompt: string;
     setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[]  | null>>;
     setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  simulateClick?: boolean;
+  labelText?: string;
 }
 
 const ChatInputImage = ({
@@ -103,8 +107,11 @@ const ChatInputImage = ({
   setFilePreviews,
   setFileFieldValue,
   setUploadProgress,
+  setParentModalIsOpen,
+  labelText
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
+  const openModalButtonRef: MutableRefObject<any> = useRef(null);
 
   const {
     state: { user },
@@ -128,6 +135,7 @@ const ChatInputImage = ({
               setFileFieldValue,
               setUploadProgress,
             );
+            setParentModalIsOpen(false);
         }}
         accept={'image/*'}
       />
@@ -135,10 +143,15 @@ const ChatInputImage = ({
         onClick={(e) => {
           onImageUploadButtonClick(e, imageInputRef);
         }}
-        className={''}
+        ref={openModalButtonRef}
+        className="flex items-center w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
       >
-        <ImageIcon className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
+        <ImageIcon
+          className="text-black dark:text-white mr-2 rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>
+        <span>{labelText ?? 'Images'}</span>
+
         <span className="sr-only">Add image</span>
+
       </button>
     </>
   );

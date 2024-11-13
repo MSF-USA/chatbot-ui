@@ -16,7 +16,11 @@
   "Name": "Nimi",
   "Description": "Kuvaus",
   "A description for your prompt.": "Promptisi kuvaus.",
-  "Prompt": "Prompt",
+  "Prompt": "kehotus",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Promptin sisältö. Käytä {{}} muuttujien merkitsemiseen. Esim: {{nimi}} on {{adjektiivi}} {{substantiivi}}",
-  "Save": "Tallenna"
+  "Save": "Tallenna",
+  "Light mode": "valotila",
+  "New Conversation": "Uusi keskustelu",
+  "A name for your prompt.": "Nimi kehotteellesi.",
+  "Dark mode": "pimeä tila"
 }
