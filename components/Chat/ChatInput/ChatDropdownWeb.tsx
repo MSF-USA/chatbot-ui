@@ -164,17 +164,17 @@ const Dropdown: React.FC<DropdownProps> = ({
             </div>
 
             {/* Transcribe Item */}
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-              onClick={() => {
-                setIsTranscribeOpen(true);
-                setIsOpen(false);
-              }}
-              role="menuitem"
-            >
-              <IconFileMusic size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownTranscribeModal')}</span>
-            </button>
+            {/*<button*/}
+            {/*  className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"*/}
+            {/*  onClick={() => {*/}
+            {/*    setIsTranscribeOpen(true);*/}
+            {/*    setIsOpen(false);*/}
+            {/*  }}*/}
+            {/*  role="menuitem"*/}
+            {/*>*/}
+            {/*  <IconFileMusic size={18} className="mr-2" />*/}
+            {/*  <span>{t('chatFeaturesDropdownTranscribeModal')}</span>*/}
+            {/*</button>*/}
 
             {/* Images Item */}
             <button
