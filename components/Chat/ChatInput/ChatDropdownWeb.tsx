@@ -1,23 +1,32 @@
-import React, { Dispatch, SetStateAction, useState, useRef, useEffect } from 'react';
 import {
   IconCirclePlus,
-  IconSearch,
-  IconLink,
-  IconLanguage,
   IconFileMusic,
+  IconLanguage,
+  IconLink,
+  IconSearch,
 } from '@tabler/icons-react';
-import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
-import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
-import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
+import { useTranslation } from 'next-i18next';
+
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
 } from '@/types/chat';
-import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
-import { useTranslation } from "next-i18next";
+
+import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
+import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
+import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
+import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
 
 interface DropdownProps {
   onFileUpload: (
@@ -34,7 +43,9 @@ interface DropdownProps {
       >
     >,
     setImageFieldValue: Dispatch<
-      SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
+      SetStateAction<
+        ImageMessageContent | ImageMessageContent[] | null | undefined
+      >
     >,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
@@ -50,7 +61,9 @@ interface DropdownProps {
     >
   >;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
+    SetStateAction<
+      ImageMessageContent | ImageMessageContent[] | null | undefined
+    >
   >;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -59,16 +72,16 @@ interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
-                                             setFileFieldValue,
-                                             onFileUpload,
-                                             setFilePreviews,
-                                             setTextFieldValue,
-                                             setImageFieldValue,
-                                             setUploadProgress,
-                                             setSubmitType,
-                                             handleSend,
-                                             textFieldValue,
-                                           }) => {
+  setFileFieldValue,
+  onFileUpload,
+  setFilePreviews,
+  setTextFieldValue,
+  setImageFieldValue,
+  setUploadProgress,
+  setSubmitType,
+  handleSend,
+  textFieldValue,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUrlOpen, setIsUrlOpen] = useState(false);
@@ -108,7 +121,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         aria-label="Toggle dropdown menu"
         className="py-2 focus:outline-none"
       >
-        <IconCirclePlus size={24} />
+        <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" />
       </button>
 
       {/* Dropdown Menu */}
@@ -139,8 +152,13 @@ const Dropdown: React.FC<DropdownProps> = ({
               }}
               role="menuitem"
             >
-              <IconSearch size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownSearchModal')}</span>
+              <IconSearch
+                size={18}
+                className="mr-2 text-black dark:text-white"
+              />
+              <span className="text-black dark:text-white">
+                {t('chatFeaturesDropdownSearchModal')}
+              </span>
             </button>
 
             {/* URL Puller Item */}
@@ -152,8 +170,10 @@ const Dropdown: React.FC<DropdownProps> = ({
               }}
               role="menuitem"
             >
-              <IconLink size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownURLModal')}</span>
+              <IconLink size={18} className="mr-2 text-black dark:text-white" />
+              <span className="text-black dark:text-white">
+                {t('chatFeaturesDropdownURLModal')}
+              </span>
             </button>
           </div>
 
@@ -220,8 +240,13 @@ const Dropdown: React.FC<DropdownProps> = ({
               }}
               role="menuitem"
             >
-              <IconLanguage size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownTranslateModal')}</span>
+              <IconLanguage
+                size={18}
+                className="mr-2 text-black dark:text-white"
+              />
+              <span className="text-black dark:text-white">
+                {t('chatFeaturesDropdownTranslateModal')}
+              </span>
             </button>
           </div>
         </div>
@@ -286,7 +311,6 @@ const Dropdown: React.FC<DropdownProps> = ({
       )}
 
       {/* Chat Input Image Component */}
-
     </div>
   );
 };
