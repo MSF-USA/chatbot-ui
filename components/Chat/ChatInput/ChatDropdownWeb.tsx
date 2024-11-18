@@ -105,6 +105,26 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
+    {/* Logic to handle clicks outside the Dropdown Menu */}
+    useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+          setIsOpen(false);
+        }
+      };
+  
+      if (isOpen) {
+        document.addEventListener('mousedown', handleClickOutside);
+      } else {
+        document.removeEventListener('mousedown', handleClickOutside);
+      }
+       
+      {/* Cleanup on component unmount or when `isOpen` changes */}
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [isOpen]);  
+
   useEffect(() => {
     if (isOpen) {
       dropdownRef.current?.focus();
