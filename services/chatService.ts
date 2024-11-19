@@ -332,6 +332,20 @@ export default class ChatService {
     };
   }
 
+  private getMSFStandards() {
+    return {
+      type: 'azure_search' as const,
+      parameters: {
+        endpoint: '',
+        index_name: 'msf-standards',
+        authentication: {
+          type: 'api_key' as const,
+          key: '',
+        },
+      },
+    };
+  }
+
   /**
    * Handles a chat completion request by sending the messages to the OpenAI API and returning a response.
    * @param {string} modelToUse - The ID of the model to use for the chat completion.
@@ -426,14 +440,75 @@ export default class ChatService {
               messages: [
                 {
                   role: 'system',
-                  content: `You are reviewing this text for adherence to MSF style guidelines. Check for:
-                   - Clear and professional language
-                   - Appropriate formatting and structure
-                   - Consistent terminology and naming conventions
-                   - Proper tone and voice
-                   - Clarity and readability
-                   - Appropriate use of technical terms
-                   Provide specific examples of any issues found and reference relevant style guide rules.`,
+                  content: `
+                    Analyze the inputted text against the provided style guide rules and determine adherence to these guidelines. Include citations and specific wording from the style guide for each rule when identifying compliance or deviations.
+
+                    Use the provided style guide details to evaluate the text's compliance. Clearly identify any deviations or confirm adherence, citing specific areas.
+
+                    # Steps
+
+                    1. **Receive Input**: Collect the text and style guide rules for analysis.
+                    2. **Compare Text**: Evaluate the text against each rule in the style guide, using direct quotes where violations or compliance are identified.
+                    3. **Identify Deviations**: Highlight specific instances of non-compliance, including citations with precise wording from the style guide.
+                    4. **Confirm Adherence**: Note specific areas where the text adheres to the style policies, again incorporating citations as needed.
+
+                    # Output Format
+
+                    Provide a detailed compliance report in the following JSON format:
+
+                    \`\`\`json
+                    {
+                      "compliance": {
+                        "is_compliant": [true/false],
+                        "non_compliance_areas": [
+                          {
+                            "rule": "[Description of the rule, including citation and wording from the guide]",
+                            "issue": "[Description of the non-compliance issue within the text]"
+                          }
+                        ],
+                        "compliance_areas": [
+                          {
+                            "rule": "[Description of the rule, including citation and wording from the guide]",
+                            "compliant_text": "[Description of the text portion in compliance]"
+                          }
+                        ]
+                      }
+                    }
+                    \`\`\`
+
+                    # Examples
+
+                    **Example Input:**
+
+                    - Text: "The quick brown fox jumps over the lazy dog."
+                    - Style Guide Rule: "Avoid passive voice. Ensure verbs are in active tense."
+
+                    **Example Output:**
+
+                    \`\`\`json
+                    {
+                      "compliance": {
+                        "is_compliant": true,
+                        "non_compliance_areas": [],
+                        "compliance_areas": [
+                          {
+                            "rule": "Avoid passive voice. Ensure verbs are in active tense.",
+                            "compliant_text": "The sentence uses active voice as in 'jumps', complying with the rule."
+                          }
+                        ]
+                      }
+                    }
+                    \`\`\`
+
+                    # Notes
+
+                    - Always use exact citations and wording from the style guide for each rule.
+                    - Handle cases of partial compliance and ambiguity within the guidelines, noting specific examples.
+                  `,
+                },
+                {
+                  role: 'user',
+                  content: `does this align with the style guide?`,
                 },
                 ...messagesToSend,
               ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
@@ -441,7 +516,7 @@ export default class ChatService {
               stream: false,
               user: JSON.stringify(user),
               //@ts-ignore
-              data_sources: [this.getSearchDataSource()],
+              data_sources: [this.getMSFStandards()],
             }),
 
             // Fact check
@@ -494,8 +569,67 @@ export default class ChatService {
               messages: [
                 {
                   role: 'system',
-                  content:
-                    'You are a content validation expert. Create a clear report combining style and fact-check analyses. Be specific about issues found and cite relevant documents.',
+                  content: `You are a content validation expert. Analyze the provided style and fact-check results and create a clear, structured report in table format.
+
+                Create your response in the following format:
+
+                CONTENT VALIDATION REPORT
+                ========================
+
+                SUMMARY
+                -------
+                | Category              | Status | Score | Issues Found |
+                |----------------------|--------|-------|--------------|
+                | Overall Compliance   | ✓/⚠/✗  | 0-100 | #           |
+                | Style Guide          | ✓/⚠/✗  | 0-100 | #           |
+                | Factual Accuracy     | ✓/⚠/✗  | 0-100 | #           |
+
+                STYLE ANALYSIS
+                -------------
+                Compliant Areas:
+                | Category | Rule | Example | Source |
+                |----------|------|---------|--------|
+                | ...      | ...  | ...     | ...    |
+
+                Style Issues Found:
+                | Severity | Category | Rule Violated | Issue Found | Location | Recommendation |
+                |----------|----------|---------------|-------------|----------|----------------|
+                | CRITICAL | ...      | ...           | ...         | ...      | ...            |
+                | MAJOR    | ...      | ...           | ...         | ...      | ...            |
+                | MINOR    | ...      | ...           | ...         | ...      | ...            |
+
+                FACTUAL ANALYSIS
+                ---------------
+                Verified Facts:
+                | Category | Fact | Source | Citation |
+                |----------|------|--------|-----------|
+                | ...      | ...  | ...    | ...       |
+
+                Inaccuracies Found:
+                | Severity | Category | Claim | Correction | Source |
+                |----------|----------|-------|------------|--------|
+                | CRITICAL | ...      | ...   | ...        | ...    |
+                | MAJOR    | ...      | ...   | ...        | ...    |
+                | MINOR    | ...      | ...   | ...        | ...    |
+
+                PRIORITY RECOMMENDATIONS
+                ----------------------
+                Critical Actions:
+                | Issue | Action Required | Reference |
+                |-------|-----------------|-----------|
+                | ...   | ...            | ...       |
+
+                Major Improvements:
+                | Issue | Suggested Action | Reference |
+                |-------|-----------------|-----------|
+                | ...   | ...            | ...       |
+
+                Use these symbols for status:
+                ✓ = Compliant/Verified
+                ⚠ = Needs Review
+                ✗ = Non-Compliant/Incorrect
+
+                Always maintain proper table formatting with aligned columns. Each section should be clearly separated with headers.`,
                 },
                 {
                   role: 'user',
