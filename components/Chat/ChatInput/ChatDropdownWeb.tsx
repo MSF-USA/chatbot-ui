@@ -27,6 +27,7 @@ import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
+import useOutsideClick from '@/hooks/useOutsideClick';
 
 interface DropdownProps {
   onFileUpload: (
@@ -106,24 +107,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
     {/* Logic to handle clicks outside the Dropdown Menu */}
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-          setIsOpen(false);
-        }
-      };
-  
-      if (isOpen) {
-        document.addEventListener('mousedown', handleClickOutside);
-      } else {
-        document.removeEventListener('mousedown', handleClickOutside);
-      }
-       
-      {/* Cleanup on component unmount or when `isOpen` changes */}
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }, [isOpen]);  
+    useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen); 
 
   useEffect(() => {
     if (isOpen) {
