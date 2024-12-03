@@ -53,15 +53,21 @@ const ChatInputFile = (
           );
         }}
       />
+      <div className="relative group">
       <button
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           event.preventDefault();
           fileInputRef.current?.click();
         }}
+        className="flex"
       >
         <FileIcon className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
         <span className="sr-only">Add document</span>
       </button>
+      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+          Upload Document
+        </div>
+      </div>
     </>
   );
 };
