@@ -137,10 +137,18 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
         style={{ display: 'none' }}
       />
       {!isCameraOpen && hasCameraSupport && (
-        <button onClick={handleCameraButtonClick} className="open-photo-button">
+        <div className="relative group">
+        <button
+          onClick={handleCameraButtonClick}
+          className="open-photo-button flex"
+        >
           <IconCamera className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
           <span className="sr-only">Open Camera</span>
         </button>
+        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+          Enable Camera
+        </div>
+      </div>
       )}
       <CameraModal
         isOpen={isModalOpen}

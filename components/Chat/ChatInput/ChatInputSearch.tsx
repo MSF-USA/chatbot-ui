@@ -273,10 +273,33 @@ ${t('webSearchModalPromptCitation')}`,
           aria-modal="true"
           aria-labelledby="modal-title"
         >
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-2 md:w-1/2 lg:w-1/3 shadow-xl">
-            <div className="relative">
-              <div className="flex justify-between items-center mb-4">
-                <h2
+          <div className="bg-white dark:bg-gray-800 p-6 w-full max-w-md mx-2 shadow-xl relative">
+          <div className="relative">
+                <button
+                  onClick={() => {
+                    setModalOpen(false);
+                    setParentModalIsOpen(false);
+                  }}
+                  className="absolute -top-5 -right-5 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  <span className="sr-only">Close modal</span>
+                </button>
+
+              <div className="flex justify-between items-center mb-4">                <h2
                   id="modal-title"
                   className="text-xl font-bold text-gray-900 dark:text-white"
                 >
@@ -479,22 +502,12 @@ ${t('webSearchModalPromptCitation')}`,
                     </p>
                   )}
                 </div>
-                <div className="mt-4 flex justify-end space-x-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setModalOpen(false);
-                      setParentModalIsOpen(false);
-                    }}
-                    disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
-                  >
-                    {t('cancelButton')}
-                  </button>
+                <div className="relative">
+                  <div className="p-1"/>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
+                    className="w-full px-4 py-2 mt-4 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center justify-center"
                   >
                     <IconSearch className="mr-2 h-4 w-4" />
                     {autoSubmit ? t('submitButton') : t('generatePromptButton')}
