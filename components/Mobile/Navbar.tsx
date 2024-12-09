@@ -9,13 +9,17 @@ interface Props {
 }
 
 export const Navbar: FC<Props> = ({
+  selectedConversation,
   onNewConversation,
 }) => {
   return (
     <nav className="flex w-full justify-between bg-[#171717] py-3 px-4">
-      <div></div>
+      <div className="mr-4"/>
+      <div className="max-w-[240px] overflow-hidden text-ellipsis whitespace-nowrap">
+        {selectedConversation.name}
+      </div>
       <IconPlus
-        className="cursor-pointer hover:text-neutral-400 ml-auto"
+        className="cursor-pointer hover:text-neutral-400"
         onClick={onNewConversation}
       />
     </nav>
