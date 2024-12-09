@@ -384,7 +384,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                 <div className="mt-6">
                   <button
                     onClick={handleTranslate}
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-red-600 hover:bg-red-700"
+                    className="w-full flex justify-center py-3 px-4 border border-black rounded-md shadow-sm text-base font-medium text-black hover:bg-neutral-100 dark:bg-white dark:hover:bg-neutral-300"
                   >
                     {autoSubmit ? t('translatorTranslateButton') : t('generatePromptButton')}
                   </button>
