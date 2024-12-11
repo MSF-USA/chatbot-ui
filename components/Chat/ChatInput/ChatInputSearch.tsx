@@ -273,7 +273,7 @@ ${t('webSearchModalPromptCitation')}`,
           aria-modal="true"
           aria-labelledby="modal-title"
         >
-          <div className="bg-white dark:bg-gray-800 p-6 w-full max-w-md mx-2 shadow-xl relative">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-2 shadow-xl relative">
           <div className="relative">
                 <button
                   onClick={() => {
