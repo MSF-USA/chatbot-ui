@@ -325,8 +325,9 @@ ${t('webPullerReferencePrompt')}`,
                   <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md
-                                 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 flex items-center"
+                      className="px-4 py-2 text-sm font-medium text-black border rounded-md shadow border-neutral-500 
+                                text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 
+                                dark:bg-white dark:hover:bg-neutral-300 flex items-center"
                   >
                     <IconLink className="mr-2 h-4 w-4" />
                     {autoSubmit ? t('submitButton') : t('generatePromptButton')}
