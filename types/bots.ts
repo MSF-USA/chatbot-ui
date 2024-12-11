@@ -7,7 +7,7 @@ export interface Bot {
   icon: typeof IconNews;
   color: string;
   prompt: string;
-  sources?: Array<{ name: string; url: string; updated: string }>;
+  sources?: Array<{ name: string; url: string; updated?: string }>;
 }
 
 export const bots: Bot[] = [
@@ -24,12 +24,10 @@ export const bots: Bot[] = [
       {
         name: 'doctorswithoutborders.org',
         url: 'https://www.doctorswithoutborders.org',
-        updated: 'August 18, 2024',
       },
       {
         name: 'msf.org',
         url: 'https://www.msf.org',
-        updated: 'August 18, 2024',
       },
     ],
   },

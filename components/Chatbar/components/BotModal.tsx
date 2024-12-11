@@ -173,9 +173,11 @@ const BotModal: React.FC = () => {
                                   >
                                     {source.name}
                                   </a>
-                                  <span className="text-gray-500 dark:text-gray-400 ml-2">
-                                    Updated: {source.updated}
-                                  </span>
+                                  {source?.updated && (
+                                    <span className="text-gray-500 dark:text-gray-400 ml-2">
+                                      Updated: {source.updated}
+                                    </span>
+                                  )}
                                 </li>
                               ))}
                             </ul>
