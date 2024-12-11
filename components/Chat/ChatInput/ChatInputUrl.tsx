@@ -225,9 +225,33 @@ ${t('webPullerReferencePrompt')}`,
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div
-              ref={modalRef}
-              className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-xl mx-2 sm:mx-auto shadow-xl relative"
+            ref={modalRef}
+            className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-xl mx-2"
           >
+            <div className="relative">
+                <button
+                  onClick={() => {
+                    setModalOpen(false);
+                    setParentModalIsOpen(false);
+                  }}
+                  className="absolute -top-5 -right-5 text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  <span className="sr-only">Close modal</span>
+                </button>
             <div className="flex justify-between items-center mb-4">
               <h2
                   id="modal-title"
@@ -292,8 +316,7 @@ ${t('webPullerReferencePrompt')}`,
                     </p>
                 )}
               </div>
-              <div className="mt-4 flex flex-wrap justify-between items-center">
-                <div className="flex items-center">
+              <div className="justify-between items-center">
                   <input
                       id="auto-submit"
                       type="checkbox"
@@ -308,26 +331,12 @@ ${t('webPullerReferencePrompt')}`,
                   >
                     {t('autoSubmitButton')}
                   </label>
-                </div>
-                <div className="flex space-x-2 mt-2 sm:mt-0">
+                <div className="relative">
+                  <div className="p-1"/>
                   <button
-                      type="button"
-                      onClick={() => {
-                        setModalOpen(false);
-                        setParentModalIsOpen(false);
-                      }}
-                      disabled={isSubmitting}
-                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md
-                                 hover:bg-gray-300 dark:bg-gray-600 dark:text-white dark:hover:bg-gray-500"
-                  >
-                    {t('cancelButton')}
-                  </button>
-                  <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className="px-4 py-2 text-sm font-medium text-black border rounded-md shadow border-neutral-500 
-                                text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 
-                                dark:bg-white dark:hover:bg-neutral-300 flex items-center"
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
                   >
                     <IconLink className="mr-2 h-4 w-4" />
                     {autoSubmit ? t('submitButton') : t('generatePromptButton')}
@@ -368,6 +377,7 @@ ${t('webPullerReferencePrompt')}`,
                 </div>
             )}
           </div>
+        </div>
         </div>
       )}
     </>
