@@ -252,16 +252,18 @@ ${t('webPullerReferencePrompt')}`,
                     </svg>
                   <span className="sr-only">Close modal</span>
                 </button>
-            <div className="flex justify-between items-center mb-4">
-              <h2
-                  id="modal-title"
-                  className="text-xl font-bold text-gray-900 dark:text-white"
-              >
-                {t('chatUrlInputTitle')}
-              </h2>
-              <BetaBadge/>
-            </div>
-            <form onSubmit={handleUrlSubmit} className={'mt-3'}>
+                <div className="flex justify-between items-center">
+                  <div className="flex-1 text-center ml-11">
+                    <h2
+                      id="modal-title"
+                      className="text-xl font-bold text-gray-900 dark:text-white"
+                    >
+                      {t('chatUrlInputTitle')}
+                    </h2>
+                  </div>
+                  <BetaBadge/>
+                </div>
+            <form onSubmit={handleUrlSubmit} className={'mt-1'}>
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
                   <label
@@ -279,7 +281,7 @@ ${t('webPullerReferencePrompt')}`,
                       placeholder="https://example.com"
                       required
                       disabled={isSubmitting}
-                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md
+                      className="col-span-3 mt-1 w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md
                              text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                   />
                 </div>
@@ -297,7 +299,7 @@ ${t('webPullerReferencePrompt')}`,
                       onChange={(e) => setQuestionInput(e.target.value)}
                       placeholder="Enter your question"
                       disabled={isSubmitting}
-                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md
+                      className="col-span-3 mt-1 w-full p-1 border border-gray-300 dark:border-gray-600 rounded-md
                              text-gray-900 dark:text-white bg-white dark:bg-gray-700"
                   />
                 </div>
@@ -317,6 +319,7 @@ ${t('webPullerReferencePrompt')}`,
                 )}
               </div>
               <div className="justify-between items-center">
+                <div className="pl-7 ml-7">
                   <input
                       id="auto-submit"
                       type="checkbox"
@@ -331,6 +334,7 @@ ${t('webPullerReferencePrompt')}`,
                   >
                     {t('autoSubmitButton')}
                   </label>
+                  </div>
                 <div className="relative">
                   <div className="p-1"/>
                   <button
