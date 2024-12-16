@@ -273,6 +273,13 @@ ${t('webSearchModalPromptCitation')}`,
           aria-modal="true"
           aria-labelledby="modal-title"
         >
+          <div
+            className="fixed inset-0 w-full h-full bg-black opacity-40"
+            onClick={() => {
+              setModalOpen(false);
+              setParentModalIsOpen(false);
+            }}
+          ></div>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-2 shadow-xl relative">
           <div className="relative">
                 <button
@@ -298,16 +305,17 @@ ${t('webSearchModalPromptCitation')}`,
                     </svg>
                   <span className="sr-only">Close modal</span>
                 </button>
-
-              <div className="flex justify-between items-center mb-4">                
-                <h2
-                  id="modal-title"
-                  className="text-xl font-bold text-gray-900 dark:text-white"
-                >
-                  {t('webSearchModalTitle')}
-                </h2>
-                <BetaBadge />
-              </div>
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex-1 text-center ml-9">
+                    <h2
+                      id="modal-title"
+                      className="text-xl font-bold text-gray-900 dark:text-white"
+                    >
+                      {t('webSearchModalTitle')}
+                    </h2>
+                  </div>
+                  <BetaBadge />
+                </div>
               <form onSubmit={handleSearchSubmit}>
                 <div className="space-y-4">
                   <div className="flex items-center">
