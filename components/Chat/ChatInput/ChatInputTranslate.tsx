@@ -271,7 +271,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                 <div className="my-4">
                   <button
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-200 hover:underline"
+                    className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500"
                   >
                     {t('advancedOptionsButton')}
                     <svg
