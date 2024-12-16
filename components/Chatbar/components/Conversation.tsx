@@ -148,10 +148,10 @@ export const ConversationComponent = ({ conversation }: Props) => {
       {(isDeleting || isRenaming) &&
         selectedConversation?.id === conversation.id && (
           <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
-            <SidebarActionButton handleClick={handleConfirm}>
+            <SidebarActionButton handleClick={handleConfirm} tooltipText={'Confirm'}>
               <IconCheck size={18} />
             </SidebarActionButton>
-            <SidebarActionButton handleClick={handleCancel}>
+            <SidebarActionButton handleClick={handleCancel} tooltipText={'Cancel'}>
               <IconX size={18} />
             </SidebarActionButton>
           </div>
@@ -161,10 +161,10 @@ export const ConversationComponent = ({ conversation }: Props) => {
         !isDeleting &&
         !isRenaming && (
           <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
-            <SidebarActionButton handleClick={handleOpenRenameModal}>
+            <SidebarActionButton handleClick={handleOpenRenameModal} tooltipText={'Rename'}>
               <IconPencil size={18} />
             </SidebarActionButton>
-            <SidebarActionButton handleClick={handleOpenDeleteModal}>
+            <SidebarActionButton handleClick={handleOpenDeleteModal} tooltipText={'Delete'}>
               <IconTrash size={18} />
             </SidebarActionButton>
           </div>
