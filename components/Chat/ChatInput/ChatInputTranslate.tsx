@@ -271,7 +271,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                 <div className="my-4">
                   <button
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-200 hover:underline"
+                    className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500"
                   >
                     {t('advancedOptionsButton')}
                     <svg
@@ -384,7 +384,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                 <div className="mt-6">
                   <button
                     onClick={handleTranslate}
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="w-full flex justify-center py-3 px-4 text-base font-medium text-black p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300"
                   >
                     {autoSubmit ? t('translatorTranslateButton') : t('generatePromptButton')}
                   </button>

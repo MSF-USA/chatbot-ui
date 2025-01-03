@@ -146,6 +146,7 @@ const Folder = ({
                 setIsDeleting(false);
                 setIsRenaming(false);
               }}
+              tooltipText='Confirm'
             >
               <IconCheck size={18} className='text-black dark:text-white'/>
             </SidebarActionButton>
@@ -155,6 +156,7 @@ const Folder = ({
                 setIsDeleting(false);
                 setIsRenaming(false);
               }}
+              tooltipText='Cancel'
             >
               <IconX size={18} className='text-black dark:text-white'/>
             </SidebarActionButton>
@@ -169,6 +171,7 @@ const Folder = ({
                 setIsRenaming(true);
                 setRenameValue(currentFolder.name);
               }}
+              tooltipText='Rename'
             >
               <IconPencil size={18} className='text-black dark:text-white'/>
             </SidebarActionButton>
@@ -177,6 +180,7 @@ const Folder = ({
                 e.stopPropagation();
                 setIsDeleting(true);
               }}
+              tooltipText='Delete'
             >
               <IconTrash size={18} className='text-black dark:text-white'/>
             </SidebarActionButton>
