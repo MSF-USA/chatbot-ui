@@ -253,7 +253,8 @@ ${t('webPullerReferencePrompt')}`,
                   <span className="sr-only">Close modal</span>
                 </button>
                 <div className="flex justify-between items-center">
-                  <div className="flex-1 text-center ml-11">
+                <BetaBadge/>
+                  <div className="flex-1 text-center mr-11">
                     <h2
                       id="modal-title"
                       className="text-xl font-bold text-gray-900 dark:text-white"
@@ -261,7 +262,6 @@ ${t('webPullerReferencePrompt')}`,
                       {t('chatUrlInputTitle')}
                     </h2>
                   </div>
-                  <BetaBadge/>
                 </div>
             <form onSubmit={handleUrlSubmit} className={'mt-1'}>
               <div className="grid gap-4 py-4">
