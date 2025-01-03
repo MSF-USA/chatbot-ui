@@ -306,7 +306,8 @@ ${t('webSearchModalPromptCitation')}`,
                   <span className="sr-only">Close modal</span>
                 </button>
                 <div className="flex justify-between items-center mb-4">
-                  <div className="flex-1 text-center ml-9">
+                <BetaBadge />
+                  <div className="flex-1 text-center mr-9">
                     <h2
                       id="modal-title"
                       className="text-xl font-bold text-gray-900 dark:text-white"
@@ -314,7 +315,6 @@ ${t('webSearchModalPromptCitation')}`,
                       {t('webSearchModalTitle')}
                     </h2>
                   </div>
-                  <BetaBadge />
                 </div>
               <form onSubmit={handleSearchSubmit}>
                 <div className="space-y-4">
