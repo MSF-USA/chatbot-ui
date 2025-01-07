@@ -33,14 +33,6 @@
             "answer": "While the MSF AI Assistant is a powerful tool designed to assist with various tasks, it should not be considered a replacement for human judgment and expertise. Always confirm and fact-check the information provided by the AI Assistant to ensure accuracy and reliability."
         },
         {
-            "question": "What is the \"Use Knowledge Base\" setting?",
-            "answer": "\"Use Knowledge Base\" enhances our AI model by incorporating information from a curated set of documents sourced from specific, relevant data repositories. While these sources are updated intermittently at present, we plan to ensure they are consistently kept up to date in the future. Additionally, our team is actively working to expand the range of data sources available to provide even more comprehensive information."
-        },
-        {
-            "question": "How do I utilize the data sources from the Knowledge Base?",
-            "answer": "Our AI system automatically leverages the Knowledge Base when it determines that a question or prompt is relevant to the available data. Disabling the \"Use Knowledge Base\" option can make the AI Assistant respond slightly faster, as it skips the step of checking the relevance of your query against our data."
-        },
-        {
             "question": "Where should I go with bug reports, questions, or feedback?",
             "answer": "We welcome feedback. Please reach out to our team at ai@newyork.msf.org."
         }
