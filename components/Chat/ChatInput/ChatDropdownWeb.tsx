@@ -147,7 +147,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           {/*</div>*/}
 
           {/* Web Section */}
-          <div className="border-t border-gray-200 dark:border-gray-700">
+          <div className="border-gray-200 dark:border-gray-700">
 
             {/* Search Item */}
           <div className='group'>
