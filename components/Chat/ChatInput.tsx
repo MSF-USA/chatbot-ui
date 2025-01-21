@@ -37,7 +37,7 @@ import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCap
 import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
 import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
-import ChatDropdownWeb from "@/components/Chat/ChatInput/ChatDropdownWeb";
+import ChatDropdown from "@/components/Chat/ChatInput/Dropdown";
 import ChatInputTranscribe from "@/components/Chat/ChatInput/ChatInputTranscribe";
 
 interface Props {
@@ -465,7 +465,7 @@ export const ChatInput = ({
             setUploadProgress={setUploadProgress}
           />
 
-          <ChatDropdownWeb
+          <ChatDropdown
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
             setFilePreviews={setFilePreviews}
