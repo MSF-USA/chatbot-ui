@@ -91,13 +91,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   };
 
   const handleReset = () => {
+    const defaultTheme: 'light' | 'dark' = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     const defaultSettings: Settings = {
-      theme: 'dark',
+      theme: defaultTheme,
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       runTypeWriterIntroSetting: true,
     };
-    homeDispatch({ field: 'lightMode', value: 'dark' });
+    homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
     homeDispatch({
       field: 'systemPrompt',
