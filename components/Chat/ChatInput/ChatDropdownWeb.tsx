@@ -107,7 +107,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
     {/* Logic to handle clicks outside the Dropdown Menu */}
-    useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen); 
+    useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen);
 
   useEffect(() => {
     if (isOpen) {
@@ -129,7 +129,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" />
         <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
           Expand Actions
-        </div> 
+        </div>
         </button>
       </div>
 
@@ -201,17 +201,17 @@ const Dropdown: React.FC<DropdownProps> = ({
             </div>
 
             {/* Transcribe Item */}
-            {/*<button*/}
-            {/*  className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"*/}
-            {/*  onClick={() => {*/}
-            {/*    setIsTranscribeOpen(true);*/}
-            {/*    setIsOpen(false);*/}
-            {/*  }}*/}
-            {/*  role="menuitem"*/}
-            {/*>*/}
-            {/*  <IconFileMusic size={18} className="mr-2" />*/}
-            {/*  <span>{t('chatFeaturesDropdownTranscribeModal')}</span>*/}
-            {/*</button>*/}
+            <button
+              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none  text-gray-700 dark:text-gray-300"
+              onClick={() => {
+                setIsTranscribeOpen(true);
+                setIsOpen(false);
+              }}
+              role="menuitem"
+            >
+              <IconFileMusic size={18} className="mr-2" />
+              <span>{t('chatFeaturesDropdownTranscribeModal')}</span>
+            </button>
 
             {/* Images Item */}
             <div className="group">
