@@ -11,9 +11,9 @@ export class WhisperTranscriptionService implements ITranscriptionService {
   private deployment: string;
 
   constructor() {
-    const apiKey = process.env.WHISPER_API_KEY;
-    const azureEndpoint = process.env.WHISPER_ENDPOINT;
-    const deployment = process.env.WHISPER_DEPLOYMENT;
+    const apiKey = process.env.WHISPER_API_KEY ?? process.env.OPENAI_API_KEY;
+    const azureEndpoint = process.env.WHISPER_ENDPOINT ?? process.env.AZURE_OPENAI_ENDPOINT;
+    const deployment = process.env.WHISPER_DEPLOYMENT ?? process.env.AZURE_DEPLOYMENT_ID;
 
     if (!apiKey || !azureEndpoint || !deployment) {
       throw new Error('Azure OpenAI API key, endpoint, or deployment are not set.');

@@ -660,18 +660,23 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         </div>
 
                         {/* Settings Button */}
+                        <div className="group">
                         <button
-                            className="ml-2 cursor-pointer hover:opacity-50"
+                            className="cursor-pointer hover:opacity-50"
                             onClick={handleSettings}
                         >
                           <IconSettings
                             size={18}
                             className={`${
-                                showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
+                                showSettings ? 'text-[#D7211E] mt-1' : 'text-black dark:text-white mt-1'
                             }`}
                           />
                         </button>
+                        <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                          Expand Model Settings
+                        </div> 
                       </div>
+                     </div>
 
                         {/* Right-Side Content */}
                         <div className="absolute right-0 flex items-center pr-4">

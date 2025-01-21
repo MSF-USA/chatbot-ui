@@ -1,23 +1,33 @@
-import React, { Dispatch, SetStateAction, useState, useRef, useEffect } from 'react';
 import {
   IconCirclePlus,
-  IconSearch,
-  IconLink,
-  IconLanguage,
   IconFileMusic,
+  IconLanguage,
+  IconLink,
+  IconSearch,
 } from '@tabler/icons-react';
-import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
-import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
-import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+
+import { useTranslation } from 'next-i18next';
+
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
 } from '@/types/chat';
-import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
-import { useTranslation } from "next-i18next";
+
+import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
+import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
+import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
+import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
+import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
+import useOutsideClick from '@/hooks/useOutsideClick';
 
 interface DropdownProps {
   onFileUpload: (
@@ -34,7 +44,9 @@ interface DropdownProps {
       >
     >,
     setImageFieldValue: Dispatch<
-      SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
+      SetStateAction<
+        ImageMessageContent | ImageMessageContent[] | null | undefined
+      >
     >,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
@@ -50,7 +62,9 @@ interface DropdownProps {
     >
   >;
   setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | ImageMessageContent[] | null | undefined>
+    SetStateAction<
+      ImageMessageContent | ImageMessageContent[] | null | undefined
+    >
   >;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -59,16 +73,16 @@ interface DropdownProps {
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
-                                             setFileFieldValue,
-                                             onFileUpload,
-                                             setFilePreviews,
-                                             setTextFieldValue,
-                                             setImageFieldValue,
-                                             setUploadProgress,
-                                             setSubmitType,
-                                             handleSend,
-                                             textFieldValue,
-                                           }) => {
+  setFileFieldValue,
+  onFileUpload,
+  setFilePreviews,
+  setTextFieldValue,
+  setImageFieldValue,
+  setUploadProgress,
+  setSubmitType,
+  handleSend,
+  textFieldValue,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isUrlOpen, setIsUrlOpen] = useState(false);
@@ -92,6 +106,9 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
+    {/* Logic to handle clicks outside the Dropdown Menu */}
+    useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen); 
+
   useEffect(() => {
     if (isOpen) {
       dropdownRef.current?.focus();
@@ -101,15 +118,20 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div className="relative" onKeyDown={handleKeyDown}>
       {/* Toggle Dropdown Button */}
+    <div className="group">
       <button
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="true"
         aria-expanded={isOpen}
         aria-label="Toggle dropdown menu"
-        className="py-2 focus:outline-none"
+        className="focus:outline-none flex"
       >
-        <IconCirclePlus size={24} />
-      </button>
+        <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" />
+        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+          Expand Actions
+        </div> 
+        </button>
+      </div>
 
       {/* Dropdown Menu */}
       {isOpen && (
@@ -131,6 +153,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             </div>
 
             {/* Search Item */}
+          <div className='group'>
             <button
               className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
               onClick={() => {
@@ -139,11 +162,20 @@ const Dropdown: React.FC<DropdownProps> = ({
               }}
               role="menuitem"
             >
-              <IconSearch size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownSearchModal')}</span>
+              <IconSearch
+                size={18}
+                className="mr-2 text-black dark:text-white"
+              />
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                Web Search
+            </div>
+              <span className="text-black dark:text-white">
+                {t('chatFeaturesDropdownSearchModal')}
+              </span>
             </button>
-
+          </div>
             {/* URL Puller Item */}
+            <div className="group">
             <button
               className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
               onClick={() => {
@@ -152,11 +184,16 @@ const Dropdown: React.FC<DropdownProps> = ({
               }}
               role="menuitem"
             >
-              <IconLink size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownURLModal')}</span>
+              <IconLink size={18} className="mr-2 text-black dark:text-white" />
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                  Analyze Webpage
+              </div>
+              <span className="text-black dark:text-white">
+                {t('chatFeaturesDropdownURLModal')}
+              </span>
             </button>
           </div>
-
+        </div>
           {/* File Section */}
           <div className="border-t border-gray-200 dark:border-gray-700">
             <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
@@ -164,19 +201,20 @@ const Dropdown: React.FC<DropdownProps> = ({
             </div>
 
             {/* Transcribe Item */}
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-              onClick={() => {
-                setIsTranscribeOpen(true);
-                setIsOpen(false);
-              }}
-              role="menuitem"
-            >
-              <IconFileMusic size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownTranscribeModal')}</span>
-            </button>
+            {/*<button*/}
+            {/*  className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"*/}
+            {/*  onClick={() => {*/}
+            {/*    setIsTranscribeOpen(true);*/}
+            {/*    setIsOpen(false);*/}
+            {/*  }}*/}
+            {/*  role="menuitem"*/}
+            {/*>*/}
+            {/*  <IconFileMusic size={18} className="mr-2" />*/}
+            {/*  <span>{t('chatFeaturesDropdownTranscribeModal')}</span>*/}
+            {/*</button>*/}
 
             {/* Images Item */}
+            <div className="group">
             <button
               className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
               onClick={() => {
@@ -195,6 +233,10 @@ const Dropdown: React.FC<DropdownProps> = ({
                 labelText={t('chatFeaturesDropdownImageModal')}
               />
             </button>
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                Upload Image
+            </div>
+           </div>
           </div>
 
           {/* Compose Section */}
@@ -212,6 +254,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             </div>
 
             {/* Translate Item */}
+            <div className="group">
             <button
               className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
               onClick={() => {
@@ -220,10 +263,19 @@ const Dropdown: React.FC<DropdownProps> = ({
               }}
               role="menuitem"
             >
-              <IconLanguage size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownTranslateModal')}</span>
+              <IconLanguage
+                size={18}
+                className="mr-2 text-black dark:text-white"
+              />
+              <span className="text-black dark:text-white">
+                {t('chatFeaturesDropdownTranslateModal')}
+              </span>
             </button>
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+              Translate Text
+            </div>
           </div>
+         </div>
         </div>
       )}
 
@@ -286,7 +338,6 @@ const Dropdown: React.FC<DropdownProps> = ({
       )}
 
       {/* Chat Input Image Component */}
-
     </div>
   );
 };

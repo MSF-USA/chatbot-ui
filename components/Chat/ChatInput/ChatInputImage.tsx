@@ -20,14 +20,22 @@ import {
 
 import HomeContext from '@/pages/api/home/home.context';
 
+import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import ImageIcon from '@/components/Icons/image';
-import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onImageUpload = (
-    event: React.ChangeEvent<any>,
-    setFilePreviews:  Dispatch<SetStateAction<FilePreview[]>>,
-    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>>,
+  event: React.ChangeEvent<any>,
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
+  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
+  setFileFieldValue: Dispatch<
+    SetStateAction<
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+    >
+  >,
 ) => {
   event.preventDefault();
   const file = event.target.files[0];
@@ -66,15 +74,15 @@ const onImageUpload = (
           },
         };
         // @ts-ignore
-        setFileFieldValue(prevFieldValue => {
-                    if (Array.isArray(prevFieldValue)) {
-                        return [...prevFieldValue, imageMessage];
-                    } else if (prevFieldValue) {
-                        return [prevFieldValue, imageMessage];
-                    } else {
-                        return [imageMessage]
-                    }
-                });
+        setFileFieldValue((prevFieldValue) => {
+          if (Array.isArray(prevFieldValue)) {
+            return [...prevFieldValue, imageMessage];
+          } else if (prevFieldValue) {
+            return [prevFieldValue, imageMessage];
+          } else {
+            return [imageMessage];
+          }
+        });
       });
     });
   };
@@ -91,11 +99,19 @@ const onImageUploadButtonClick = (
 };
 
 export interface ChatInputImageProps {
-    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-    prompt: string;
-    setFileFieldValue: Dispatch<SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[]  | null>>;
-    setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+  prompt: string;
+  setFileFieldValue: Dispatch<
+    SetStateAction<
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+    >
+  >;
+  setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   simulateClick?: boolean;
   labelText?: string;
@@ -108,7 +124,7 @@ const ChatInputImage = ({
   setFileFieldValue,
   setUploadProgress,
   setParentModalIsOpen,
-  labelText
+  labelText,
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
   const openModalButtonRef: MutableRefObject<any> = useRef(null);
@@ -124,18 +140,18 @@ const ChatInputImage = ({
       <input
         type="file"
         ref={imageInputRef}
-        style={{ display: 'none'}}
-            onChange={(event) => {
-            onFileUpload(
-              event,
-              setSubmitType,
-              setFilePreviews,
-              setFileFieldValue,
-              // @ts-ignore
-              setFileFieldValue,
-              setUploadProgress,
-            );
-            setParentModalIsOpen(false);
+        style={{ display: 'none' }}
+        onChange={(event) => {
+          onFileUpload(
+            event,
+            setSubmitType,
+            setFilePreviews,
+            setFileFieldValue,
+            // @ts-ignore
+            setFileFieldValue,
+            setUploadProgress,
+          );
+          setParentModalIsOpen(false);
         }}
         accept={'image/*'}
       />
@@ -146,12 +162,12 @@ const ChatInputImage = ({
         ref={openModalButtonRef}
         className="flex items-center w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
       >
-        <ImageIcon
-          className="text-black dark:text-white mr-2 rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>
-        <span>{labelText ?? 'Images'}</span>
+        <ImageIcon className="text-black dark:text-white mr-2 rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
+        <span className="text-black dark:text-white">
+          {labelText ?? 'Images'}
+        </span>
 
         <span className="sr-only">Add image</span>
-
       </button>
     </>
   );
