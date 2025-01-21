@@ -30,7 +30,7 @@ describe('Settings Manager', () => {
         (global as any).localStorage.getItem.mockReturnValue(null);
 
         const settings = getSettings();
-        expect(settings).toMatchObject({ theme: 'dark' });
+        expect(settings).toMatchObject({ theme: 'light' });
         expect((global as any).localStorage.getItem).toHaveBeenCalledWith('settings');
     });
 
@@ -53,7 +53,7 @@ describe('Settings Manager', () => {
         expect(console.error).toHaveBeenCalled();
         (console.error as Mock).mockRestore();
 
-        expect(settings).toMatchObject({ theme: 'dark' });
+        expect(settings).toMatchObject({ theme: 'light' });
         expect((global as any).localStorage.getItem).toHaveBeenCalledWith('settings');
 
         console.error = oldCLogger;
