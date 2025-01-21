@@ -7,6 +7,9 @@ import {vi, beforeEach, describe, it, expect, Mock} from 'vitest';
 describe('Settings Manager', () => {
     const dummySettings: Settings = {
         theme: 'dark',
+        temperature: 0.5,
+        systemPrompt: '',
+        runTypeWriterIntroSetting: false
     };
 
     beforeEach(() => {
