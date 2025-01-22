@@ -84,6 +84,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
       const result: Transcription = await this.client.audio.transcriptions.create({
         model: "whisper-1",
         file: audioFile,
+        response_format: "text" // TODO: Support other formats, esp. subtitle like VTT
       });
       return result.text;
     } else {
