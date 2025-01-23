@@ -25,6 +25,7 @@ import {
 import { AzureBlobStorage, BlobProperty } from '@/utils/server/blob';
 import { getMessagesToSend } from '@/utils/server/chat';
 
+import { bots } from '@/types/bots';
 import { MessageType } from '@/types/chat';
 import {
   ChatBody,
@@ -33,12 +34,11 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
-import { SearchIndex } from '@/types/searchIndex';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 import { AzureMonitorLoggingService } from './loggingService';
-import useSearchService from './searchService';
+import { RAGService } from './ragService';
 
 import {
   DefaultAzureCredential,
@@ -50,20 +50,40 @@ import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
-import { ChatCompletion, ChatCompletionChunk } from 'openai/resources';
+import { Stream } from 'openai/streaming';
 import path from 'path';
 
 /**
  * ChatService class for handling chat-related API operations.
  */
 export default class ChatService {
+  private openAIClient: AzureOpenAI;
   private loggingService: AzureMonitorLoggingService;
+  private ragService: RAGService;
 
   constructor() {
+    const azureADTokenProvider = getBearerTokenProvider(
+      new DefaultAzureCredential(),
+      'https://cognitiveservices.azure.com/.default',
+    );
+
+    this.openAIClient = new AzureOpenAI({
+      azureADTokenProvider,
+      apiVersion: '2024-08-01-preview',
+    });
+
     this.loggingService = new AzureMonitorLoggingService(
       process.env.LOGS_INJESTION_ENDPOINT!,
       process.env.DATA_COLLECTION_RULE_ID!,
       process.env.STREAM_NAME!,
+    );
+
+    this.ragService = new RAGService(
+      process.env.SEARCH_ENDPOINT!,
+      process.env.SEARCH_INDEX!,
+      process.env.SEARCH_ENDPOINT_API_KEY!,
+      this.loggingService,
+      this.openAIClient,
     );
   }
   /**
@@ -309,177 +329,117 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  /**
-   * Handles a chat completion request by sending the messages to the OpenAI API and returning a response.
-   * @param {string} modelToUse - The ID of the model to use for the chat completion.
-   * @param {Message[]} messagesToSend - The messages to send in the chat completion request.
-   * @param {number} temperatureToUse - The temperature value to use for the chat completion.
-   * @param {Session['user']} user - User information for logging
-   * @returns {Promise<Response>} A promise that resolves to the response containing the chat completion.
-   */
-  private async handleChatCompletion(
-    modelToUse: string,
-    messagesToSend: Message[],
-    temperatureToUse: number,
-    user: Session['user'],
-    botId: string | undefined,
-    streamResponse: boolean, // Added this parameter
+  private async handleCompletionResponse(
+    response:
+      | Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
+      | OpenAI.Chat.Completions.ChatCompletion,
+    streamResponse: boolean,
+    metadata?: any,
   ): Promise<Response> {
-    const startTime = Date.now();
-    return this.retryWithExponentialBackoff(async () => {
-      const scope = 'https://cognitiveservices.azure.com/.default';
-      const azureADTokenProvider = getBearerTokenProvider(
-        new DefaultAzureCredential(),
-        scope,
+    if (streamResponse) {
+      const { stream } = createAzureOpenAIStreamProcessor(
+        response as Stream<OpenAI.Chat.Completions.ChatCompletionChunk>,
+      );
+      return new StreamingTextResponse(stream);
+    }
+
+    const completionText = (response as OpenAI.Chat.Completions.ChatCompletion)
+      .choices[0]?.message?.content;
+
+    return new Response(
+      JSON.stringify({
+        text: completionText,
+        metadata,
+      }),
+      { headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  private async handleError(
+    error: any,
+    user: Session['user'],
+    modelId: string,
+    messages: Message[],
+    temperature: number,
+    botId?: string,
+  ): Promise<Response> {
+    console.error('Error in chat completion:', error);
+
+    let statusCode = 500;
+    let errorMessage = 'An error occurred while processing your request.';
+
+    if (error instanceof OpenAI.APIError) {
+      statusCode = error.status || 500;
+      errorMessage = error.message;
+    } else if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+
+    await this.loggingService.log({
+      EventType: 'ChatCompletion',
+      Status: 'error',
+      ModelUsed: modelId,
+      MessageCount: messages.length,
+      Temperature: temperature,
+      UserId: user.id,
+      BotId: botId,
+      ErrorMessage: errorMessage,
+      StatusCode: statusCode,
+    });
+
+    return new Response(JSON.stringify({ error: errorMessage }), {
+      status: statusCode,
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
+
+  public async handleChatCompletion(
+    modelId: string,
+    messages: Message[],
+    temperature: number,
+    user: Session['user'],
+    botId?: string,
+    streamResponse: boolean = true,
+  ): Promise<Response> {
+    try {
+      let completionMessages = messages;
+      let searchMetadata = null;
+
+      if (botId) {
+        const { messages: augmentedMessages, metadata } =
+          await this.ragService.augmentMessages(messages, botId, bots, modelId);
+        completionMessages = augmentedMessages;
+        searchMetadata = metadata;
+      }
+
+      const streamingParams = {
+        model: modelId,
+        messages:
+          completionMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+        temperature,
+        stream: streamResponse,
+        user: JSON.stringify(user),
+      };
+
+      const response = await this.openAIClient.chat.completions.create(
+        streamingParams,
       );
 
-      const deployment = modelToUse;
-      const apiVersion = '2024-07-01-preview';
-      const client = new AzureOpenAI({
-        azureADTokenProvider,
-        deployment,
-        apiVersion,
-      });
-
-      try {
-        let response;
-        const commonParams = {
-          model: modelToUse,
-          messages:
-            messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-          temperature: temperatureToUse,
-          max_tokens: null,
-          stream: streamResponse, // Use the streamResponse parameter
-          user: JSON.stringify(user),
-        };
-
-        if (botId) {
-          response = await client.chat.completions.create({
-            ...commonParams,
-            //@ts-ignore
-            data_sources: [
-              {
-                type: 'azure_search',
-                parameters: {
-                  endpoint: process.env.SEARCH_ENDPOINT,
-                  index_name: process.env.SEARCH_INDEX,
-                  authentication: {
-                    type: 'api_key',
-                    key: process.env.SEARCH_ENDPOINT_API_KEY,
-                  },
-                },
-              },
-            ],
-          });
-        } else {
-          response = await client.chat.completions.create(commonParams);
-        }
-
-        if (streamResponse) {
-          const { stream, contentAccumulator, citationsAccumulator } =
-            //@ts-ignore
-            createAzureOpenAIStreamProcessor(response);
-
-          const streamingResponse = new StreamingTextResponse(stream);
-
-          // Log the completion
-          const endTime = Date.now();
-          const duration = endTime - startTime;
-          await this.loggingService.log({
-            EventType: 'ChatCompletion',
-            Status: 'success',
-            ModelUsed: modelToUse,
-            MessageCount: messagesToSend.length,
-            Temperature: temperatureToUse,
-            UserId: user.id,
-            UserJobTitle: user.jobTitle,
-            UserGivenName: user.givenName,
-            UserSurName: user.surName,
-            UserDepartment: user.department,
-            UserDisplayName: user.displayName,
-            UserEmail: user.mail,
-            UserCompanyName: user.companyName,
-            FileUpload: false,
-            BotId: botId,
-            Env: process.env.NEXT_PUBLIC_ENV,
-            CitationsCount: citationsAccumulator.length,
-            Duration: duration,
-          });
-
-          return streamingResponse;
-        } else {
-          // For non-streaming responses
-          const completionText = (response as ChatCompletion)?.choices?.[0]
-            ?.message?.content;
-
-          // Log the completion
-          const endTime = Date.now();
-          const duration = endTime - startTime;
-          this.loggingService.log({
-            EventType: 'ChatCompletion',
-            Status: 'success',
-            ModelUsed: modelToUse,
-            MessageCount: messagesToSend.length,
-            Temperature: temperatureToUse,
-            UserId: user.id,
-            UserJobTitle: user.jobTitle,
-            UserDisplayName: user.displayName,
-            UserGivenName: user.givenName,
-            UserSurName: user.surName,
-            UserDepartment: user.department,
-            UserEmail: user.mail,
-            UserCompanyName: user.companyName,
-            FileUpload: false,
-            BotId: botId,
-            Env: process.env.NEXT_PUBLIC_ENV,
-            Duration: duration,
-          });
-
-          return new Response(JSON.stringify({ text: completionText }), {
-            headers: { 'Content-Type': 'application/json' },
-          });
-        }
-      } catch (error) {
-        console.error('Error in chat completion:', error);
-        let statusCode = 500;
-        let errorMessage =
-          'An error occurred while processing your request. Please try again later.';
-
-        if (error instanceof OpenAI.APIError) {
-          statusCode = error.status || 500;
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
-        }
-
-        const endTime = Date.now();
-        const duration = endTime - startTime;
-        await this.loggingService.log({
-          EventType: 'ChatCompletion',
-          Status: 'error',
-          ModelUsed: modelToUse,
-          MessageCount: messagesToSend.length,
-          Temperature: temperatureToUse,
-          UserId: user.id,
-          UserJobTitle: user.jobTitle,
-          UserDisplayName: user.displayName,
-          UserGivenName: user.givenName,
-          UserSurName: user.surName,
-          UserDepartment: user.department,
-          UserEmail: user.mail,
-          UserCompanyName: user.companyName,
-          BotId: botId,
-          Duration: duration,
-          ErrorMessage: errorMessage,
-          StatusCode: statusCode,
-        });
-
-        return new Response(JSON.stringify({ error: errorMessage }), {
-          status: statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    });
+      return this.handleCompletionResponse(
+        response,
+        streamResponse,
+        searchMetadata,
+      );
+    } catch (error) {
+      return this.handleError(
+        error,
+        user,
+        modelId,
+        messages,
+        temperature,
+        botId,
+      );
+    }
   }
 
   /**
