@@ -1,5 +1,5 @@
 import { Bot } from '@/types/bots';
-import { Message } from '@/types/chat';
+import { Message, MessageType } from '@/types/chat';
 
 import { AzureMonitorLoggingService } from './loggingService';
 
@@ -20,11 +20,18 @@ interface DateRange {
 }
 
 interface RAGResponse {
-  messages: Message[];
+  answer: string;
   metadata: {
     dateRange: DateRange;
     resultCount: number;
-    response?: any;
+    citations: Array<{
+      content: string;
+      title: string;
+      date: string;
+      url: string;
+      number: number;
+    }>;
+    sources_used: number;
   };
 }
 
@@ -49,123 +56,114 @@ export class RAGService {
     this.openAIClient = openAIClient;
   }
 
-  private getCompletionMessages(
-    messages: Message[],
-    bot: Bot,
-    searchDocs: SearchResult[],
-    query: string,
-  ) {
-    return [
-      {
-        role: 'system',
-        content: `${bot.prompt}\n\nProvide answers using the supplied sources. Include relevant quotes and citations.`,
-      },
-      ...messages.slice(0, -1).map((msg) => ({
-        role:
-          msg.role === 'user'
-            ? 'user'
-            : msg.role === 'assistant'
-            ? 'assistant'
-            : 'system',
-        content:
-          typeof msg.content === 'string'
-            ? msg.content
-            : JSON.stringify(msg.content),
-      })),
-      {
-        role: 'user',
-        content: `Context:\n${JSON.stringify(
-          searchDocs,
-        )}\n\nQuestion: ${query}`,
-      },
-    ] as OpenAI.Chat.ChatCompletionMessageParam[];
-  }
-
   async augmentMessages(
     messages: Message[],
     botId: string,
     bots: Bot[],
     modelId: string,
     stream: boolean = false,
-  ): Promise<RAGResponse> {
-    try {
-      const { searchDocs, searchMetadata } = await this.performSearch(
-        messages,
-        botId,
-        bots,
-      );
-      const bot = bots.find((b) => b.id === botId);
-      if (!bot) throw new Error('Bot not found');
-      const query = this.extractQuery(messages);
+  ): Promise<
+    AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk> | RAGResponse
+  > {
+    const { searchDocs, searchMetadata } = await this.performSearch(
+      messages,
+      botId,
+      bots,
+    );
+    const bot = bots.find((b) => b.id === botId);
+    if (!bot) throw new Error('Bot not found');
 
-      const completionMessages = this.getCompletionMessages(
-        messages,
-        bot,
-        searchDocs,
-        query,
-      );
+    const completion = await this.openAIClient.chat.completions.create({
+      model: modelId,
+      messages: this.getCompletionMessages(messages, bot, searchDocs),
+      response_format: {
+        type: 'json_schema' as const,
+        json_schema: this.getResponseSchema(),
+      },
+      temperature: 0.5,
+      stream,
+    });
 
-      console.log(completionMessages);
+    if (stream) {
+      return completion as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>;
+    }
 
-      const requestParams = {
-        model: modelId,
-        messages: completionMessages,
-        response_format: {
-          type: 'json_schema' as const,
-          json_schema: {
-            name: 'StructuredResponse',
-            strict: true,
-            schema: {
+    const content =
+      (
+        completion as OpenAI.Chat.Completions.ChatCompletion
+      ).choices[0]?.message?.content?.trim() ?? '';
+    const parsedContent = JSON.parse(content);
+
+    return {
+      answer: parsedContent.answer,
+      metadata: {
+        citations: parsedContent.citations,
+        sources_used: parsedContent.sources_used,
+        dateRange: searchMetadata.dateRange,
+        resultCount: searchMetadata.resultCount,
+      },
+    };
+  }
+
+  private getResponseSchema() {
+    return {
+      name: 'StructuredResponse',
+      strict: true,
+      schema: {
+        type: 'object',
+        properties: {
+          answer: {
+            type: 'string',
+            description: "The complete answer to the user's question",
+          },
+          citations: {
+            type: 'array',
+            items: {
               type: 'object',
               properties: {
-                answer: {
-                  type: 'string',
-                  description: "The complete answer to the user's question",
-                },
-                citations: {
-                  type: 'array',
-                  items: {
-                    type: 'object',
-                    properties: {
-                      content: { type: 'string' },
-                      title: { type: 'string' },
-                      date: { type: 'string' },
-                      url: { type: 'string' },
-                      number: { type: 'integer' },
-                    },
-                    required: ['content', 'title', 'date', 'url', 'number'],
-                    additionalProperties: false,
-                  },
-                },
-                sources_used: { type: 'integer' },
+                content: { type: 'string' },
+                title: { type: 'string' },
+                date: { type: 'string' },
+                url: { type: 'string' },
+                number: { type: 'integer' },
               },
-              required: ['answer', 'citations', 'sources_used'],
+              required: ['content', 'title', 'date', 'url', 'number'],
               additionalProperties: false,
             },
           },
+          sources_used: { type: 'integer' },
         },
-        temperature: 0.5,
-        stream: false,
-      } as const;
+        required: ['answer', 'citations', 'sources_used'],
+        additionalProperties: false,
+      },
+    };
+  }
 
-      const response = await this.openAIClient.chat.completions.create(
-        requestParams,
-      );
-
-      const content = response?.choices?.[0]?.message?.content?.trim() ?? '';
-      console.log(content);
-
-      return {
-        messages,
-        metadata: {
-          ...searchMetadata,
-          response,
-        },
-      };
-    } catch (error) {
-      console.error('RAG Error:', error);
-      throw error;
-    }
+  private getCompletionMessages(
+    messages: Message[],
+    bot: Bot,
+    searchDocs: SearchResult[],
+  ): OpenAI.Chat.ChatCompletionMessageParam[] {
+    const query = this.extractQuery(messages);
+    return [
+      {
+        role: 'system' as const,
+        content: `${bot.prompt}\n\nProvide answers using the supplied sources. Include relevant quotes and citations.`,
+      },
+      ...messages.slice(0, -1).map((msg) => ({
+        role: msg.role as 'assistant' | 'user' | 'system',
+        content:
+          typeof msg.content === 'string'
+            ? msg.content
+            : JSON.stringify(msg.content),
+      })),
+      {
+        role: 'user' as const,
+        content: `Context:\n${JSON.stringify(
+          searchDocs,
+        )}\n\nQuestion: ${query}`,
+      },
+    ];
   }
 
   private async performSearch(messages: Message[], botId: string, bots: Bot[]) {

@@ -8,6 +8,12 @@ export interface StreamProcessingResult {
 
 export function createAzureOpenAIStreamProcessor(
   response: AsyncIterable<any>,
+  metadata?: {
+    citations: any[];
+    sources_used: number;
+    dateRange: { newest: string | null; oldest: string | null };
+    resultCount: number;
+  },
 ): StreamProcessingResult {
   let contentAccumulator = '';
   let citationsAccumulator: any[] = [];
@@ -19,29 +25,17 @@ export function createAzureOpenAIStreamProcessor(
       (async () => {
         try {
           for await (const chunk of response) {
-            if (chunk.choices && chunk.choices[0]) {
-              const choice = chunk.choices[0];
-              if ('delta' in choice) {
-                const { content, context } = choice.delta as any;
-                if (content) {
-                  contentAccumulator += content;
-                  controller.enqueue(encoder.encode(content));
-                }
-                if (context && context.citations) {
-                  citationsAccumulator = citationsAccumulator.concat(
-                    context.citations,
-                  );
-                }
-              }
+            if (chunk.choices?.[0]?.delta?.content) {
+              const content = chunk.choices[0].delta.content;
+              contentAccumulator += content;
+              controller.enqueue(encoder.encode(content));
             }
           }
 
-          // Append citations as JSON at the end of the content
-          if (citationsAccumulator.length > 0) {
-            const citationsJson = JSON.stringify({
-              citations: citationsAccumulator,
-            });
-            controller.enqueue(encoder.encode('\n\n' + citationsJson));
+          if (metadata) {
+            controller.enqueue(
+              encoder.encode('\n\n' + JSON.stringify(metadata)),
+            );
           }
 
           controller.close();

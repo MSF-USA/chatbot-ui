@@ -53,6 +53,27 @@ import OpenAI, { AzureOpenAI } from 'openai';
 import { Stream } from 'openai/streaming';
 import path from 'path';
 
+interface RAGResponse {
+  answer: string;
+  metadata: {
+    dateRange: DateRange;
+    resultCount: number;
+    citations: Array<{
+      content: string;
+      title: string;
+      date: string;
+      url: string;
+      number: number;
+    }>;
+    sources_used: number;
+  };
+}
+
+interface DateRange {
+  newest: string | null;
+  oldest: string | null;
+}
+
 /**
  * ChatService class for handling chat-related API operations.
  */
@@ -329,32 +350,6 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  private async handleCompletionResponse(
-    response:
-      | Stream<OpenAI.Chat.Completions.ChatCompletionChunk>
-      | OpenAI.Chat.Completions.ChatCompletion,
-    streamResponse: boolean,
-    metadata?: any,
-  ): Promise<Response> {
-    if (streamResponse) {
-      const { stream } = createAzureOpenAIStreamProcessor(
-        response as Stream<OpenAI.Chat.Completions.ChatCompletionChunk>,
-      );
-      return new StreamingTextResponse(stream);
-    }
-
-    const completionText = (response as OpenAI.Chat.Completions.ChatCompletion)
-      .choices[0]?.message?.content;
-
-    return new Response(
-      JSON.stringify({
-        text: completionText,
-        metadata,
-      }),
-      { headers: { 'Content-Type': 'application/json' } },
-    );
-  }
-
   private async handleError(
     error: any,
     user: Session['user'],
@@ -393,7 +388,7 @@ export default class ChatService {
     });
   }
 
-  public async handleChatCompletion(
+  async handleChatCompletion(
     modelId: string,
     messages: Message[],
     temperature: number,
@@ -402,33 +397,56 @@ export default class ChatService {
     streamResponse: boolean = true,
   ): Promise<Response> {
     try {
-      let completionMessages = messages;
-      let searchMetadata = null;
-
       if (botId) {
-        const { messages: augmentedMessages, metadata } =
-          await this.ragService.augmentMessages(messages, botId, bots, modelId);
-        completionMessages = augmentedMessages;
-        searchMetadata = metadata;
+        const response = await this.ragService.augmentMessages(
+          messages,
+          botId,
+          bots,
+          modelId,
+          streamResponse,
+        );
+
+        if (streamResponse) {
+          const streamResponse =
+            response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>;
+          const ragResponse = response as RAGResponse;
+          const { stream } = createAzureOpenAIStreamProcessor(
+            streamResponse,
+            ragResponse.metadata,
+          );
+          return new StreamingTextResponse(stream);
+        }
+
+        const ragResponse = response as RAGResponse;
+        return new Response(
+          JSON.stringify({
+            text: ragResponse.answer,
+            metadata: ragResponse.metadata,
+          }),
+          { headers: { 'Content-Type': 'application/json' } },
+        );
       }
 
-      const streamingParams = {
+      const response = await this.openAIClient.chat.completions.create({
         model: modelId,
         messages:
-          completionMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
         temperature,
         stream: streamResponse,
         user: JSON.stringify(user),
-      };
+      });
 
-      const response = await this.openAIClient.chat.completions.create(
-        streamingParams,
-      );
+      if (streamResponse) {
+        const { stream } = createAzureOpenAIStreamProcessor(
+          response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+        );
+        return new StreamingTextResponse(stream);
+      }
 
-      return this.handleCompletionResponse(
-        response,
-        streamResponse,
-        searchMetadata,
+      const completion = response as OpenAI.Chat.Completions.ChatCompletion;
+      return new Response(
+        JSON.stringify({ text: completion.choices[0]?.message?.content }),
+        { headers: { 'Content-Type': 'application/json' } },
       );
     } catch (error) {
       return this.handleError(
