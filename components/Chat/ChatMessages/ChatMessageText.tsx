@@ -25,13 +25,10 @@ import {
 
 import { useTranslation } from 'next-i18next';
 
-import { extractCitationsAndQuestions } from '@/utils/app/citations';
-
 import { Conversation, Message } from '@/types/chat';
-import { Citation } from '@/types/citation';
+import { Citation } from '@/types/chat';
 
 import { CitationList } from '@/components/Chat/Citations/CitationList';
-import { QuestionList } from '@/components/Chat/Citations/QuestionList';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
@@ -44,7 +41,7 @@ interface Question {
 }
 
 interface AssistantMessageProps {
-  content: string;
+  message: Message;
   copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
@@ -54,7 +51,7 @@ interface AssistantMessageProps {
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
-  content,
+  message,
   copyOnClick,
   messageIsStreaming,
   messageIndex,
@@ -62,8 +59,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageCopied,
   onQuestionClick,
 }) => {
+  const { content, citations } = message;
+  const [AssistantMessageContent, setAssistantMessageContent] =
+    useState<string>(content as string);
+
   const [displayContent, setDisplayContent] = useState('');
-  const [citations, setCitations] = useState<Citation[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
@@ -77,14 +77,14 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   useEffect(() => {
     const processContent = () => {
-      let mainContent = content;
+      let mainContent = AssistantMessageContent;
       let citationsData = [];
 
       // Check for JSON at the end of the content
-      const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+      const jsonMatch = AssistantMessageContent.match(/(\{[\s\S]*\})$/);
       if (jsonMatch) {
         const jsonStr = jsonMatch[1];
-        mainContent = content.slice(0, -jsonStr.length).trim();
+        mainContent = AssistantMessageContent.slice(0, -jsonStr.length).trim();
         try {
           const parsedData = JSON.parse(jsonStr);
           if (parsedData.citations) {
@@ -97,18 +97,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
       setDisplayContent(mainContent);
       if (mainContent.includes('```math')) {
-        setRemarkPlugins([remarkGfm, [remarkMath, {singleDollar: false}]])
+        setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
       }
-      setCitations(citationsData);
       setQuestions([]);
       citationsProcessed.current = true;
     };
 
     processContent();
-  }, [content]);
+  }, [AssistantMessageContent]);
 
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split(/(\{[\s\S]*\})$/)[0]
+    ? AssistantMessageContent.split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
 
   const citationsToShow = citationsProcessed.current
@@ -270,7 +269,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
         </div>
-        {citations.length > 0 && <CitationList citations={citations} />}
+        {citations && <CitationList citations={citations} />}
       </div>
     </div>
   );
@@ -476,7 +475,7 @@ export const ChatMessageText: FC<any> = ({
   onEdit,
   onQuestionClick,
 }: any) => {
-  const { role, content } = message;
+  const { role } = message;
 
   return (
     <div
@@ -489,7 +488,7 @@ export const ChatMessageText: FC<any> = ({
     >
       {role === 'assistant' ? (
         <AssistantMessage
-          content={content}
+          message={message}
           copyOnClick={copyOnClick}
           messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}

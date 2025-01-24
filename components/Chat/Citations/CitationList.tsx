@@ -1,7 +1,7 @@
 import { IconBlockquote } from '@tabler/icons-react';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 
-import { Citation } from '@/types/citation';
+import { Citation } from '@/types/chat';
 
 import { CitationItem } from './CitationItem';
 
@@ -136,13 +136,7 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
       >
         {citations.map((citation, index) => (
           <div key={citation.number} className="flex-shrink-0">
-            <CitationItem
-              key={index}
-              citation={{
-                ...citation,
-                number: (index + 1).toString(),
-              }}
-            />
+            <CitationItem key={citation.number} citation={citation} />
           </div>
         ))}
       </div>

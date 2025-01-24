@@ -4,6 +4,7 @@ import { Message, MessageType } from '@/types/chat';
 import { AzureMonitorLoggingService } from './loggingService';
 
 import { AzureKeyCredential, SearchClient } from '@azure/search-documents';
+import crypto from 'crypto';
 import { AzureOpenAI } from 'openai';
 import OpenAI from 'openai';
 
@@ -21,7 +22,7 @@ interface DateRange {
 
 interface RAGResponse {
   answer: string;
-  metadata: {
+  metadata?: {
     dateRange: DateRange;
     resultCount: number;
     citations: Array<{
@@ -92,17 +93,25 @@ export class RAGService {
       (
         completion as OpenAI.Chat.Completions.ChatCompletion
       ).choices[0]?.message?.content?.trim() ?? '';
-    const parsedContent = JSON.parse(content);
 
-    return {
-      answer: parsedContent.answer,
-      metadata: {
-        citations: parsedContent.citations,
-        sources_used: parsedContent.sources_used,
-        dateRange: searchMetadata.dateRange,
-        resultCount: searchMetadata.resultCount,
-      },
-    };
+    try {
+      const parsedContent = JSON.parse(content);
+
+      return {
+        answer: parsedContent.answer,
+        metadata: {
+          citations: parsedContent.citations,
+          sources_used: parsedContent.sources_used,
+          dateRange: searchMetadata.dateRange,
+          resultCount: searchMetadata.resultCount,
+        },
+      };
+    } catch (error) {
+      console.error('Error parsing JSON response from OpenAI', error, content);
+      return {
+        answer: content,
+      };
+    }
   }
 
   private getResponseSchema() {
@@ -114,26 +123,43 @@ export class RAGService {
         properties: {
           answer: {
             type: 'string',
-            description: "The complete answer to the user's question",
           },
-          citations: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                content: { type: 'string' },
-                title: { type: 'string' },
-                date: { type: 'string' },
-                url: { type: 'string' },
-                number: { type: 'integer' },
+          metadata: {
+            type: 'object',
+            properties: {
+              dateRange: {
+                type: 'object',
+                properties: {
+                  newest: { type: 'string' },
+                  oldest: { type: 'string' },
+                },
+                required: ['newest', 'oldest'],
+                additionalProperties: false,
               },
-              required: ['content', 'title', 'date', 'url', 'number'],
-              additionalProperties: false,
+              resultCount: { type: 'integer' },
+              sources_used: { type: 'integer' },
+              citations: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    title: { type: 'string' },
+                    date: { type: 'string' },
+                    url: { type: 'string' },
+                    number: {
+                      type: 'integer',
+                    },
+                  },
+                  required: ['title', 'date', 'url', 'number'],
+                  additionalProperties: false,
+                },
+              },
             },
+            required: ['dateRange', 'resultCount', 'sources_used', 'citations'],
+            additionalProperties: false,
           },
-          sources_used: { type: 'integer' },
         },
-        required: ['answer', 'citations', 'sources_used'],
+        required: ['answer', 'metadata'],
         additionalProperties: false,
       },
     };
@@ -148,7 +174,7 @@ export class RAGService {
     return [
       {
         role: 'system' as const,
-        content: `${bot.prompt}\n\nProvide answers using the supplied sources. Include relevant quotes and citations.`,
+        content: `${bot.prompt}`,
       },
       ...messages.slice(0, -1).map((msg) => ({
         role: msg.role as 'assistant' | 'user' | 'system',

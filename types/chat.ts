@@ -59,16 +59,18 @@ export function getChatMessageContent(message: Message): string {
   } else if ((message.content as TextMessageContent).type === 'text') {
     return (message.content as TextMessageContent).text;
   } else {
-    throw new Error(`Invalid message type or structure: ${JSON.stringify(message)}`);
+    throw new Error(
+      `Invalid message type or structure: ${JSON.stringify(message)}`,
+    );
   }
 }
 
 export interface Citation {
-  content: string;
-  title?: string;
-  filepath?: string;
-  url?: string;
-  chunk_id?: string;
+  number: string;
+  title: string;
+  url: string;
+  date: string;
+  content?: string;
 }
 
 export interface Message {
@@ -79,6 +81,7 @@ export interface Message {
     | Array<TextMessageContent | ImageMessageContent>
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
+  citations?: Citation[];
 }
 
 export type Role = 'system' | 'assistant' | 'user';
@@ -104,7 +107,7 @@ export interface Conversation {
   bot?: string;
 }
 
-export type ChatInputSubmitTypes = "text" | "image" | "file" | "multi-file";
+export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
 
 type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
 

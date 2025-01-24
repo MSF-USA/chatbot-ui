@@ -407,47 +407,46 @@ export default class ChatService {
         );
 
         if (streamResponse) {
-          const streamResponse =
+          const streamResponseIterable =
             response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>;
-          const ragResponse = response as RAGResponse;
           const { stream } = createAzureOpenAIStreamProcessor(
-            streamResponse,
-            ragResponse.metadata,
+            streamResponseIterable,
+            true,
+          );
+          return new StreamingTextResponse(stream);
+        } else {
+          const { answer, metadata } = response as {
+            answer: string;
+            metadata: any;
+          };
+          return new Response(JSON.stringify({ text: answer, metadata }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
+      } else {
+        const response = await this.openAIClient.chat.completions.create({
+          model: modelId,
+          messages:
+            messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          temperature,
+          stream: streamResponse,
+          user: JSON.stringify(user),
+        });
+
+        if (streamResponse) {
+          const { stream } = createAzureOpenAIStreamProcessor(
+            response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+            false,
           );
           return new StreamingTextResponse(stream);
         }
 
-        const ragResponse = response as RAGResponse;
+        const completion = response as OpenAI.Chat.Completions.ChatCompletion;
         return new Response(
-          JSON.stringify({
-            text: ragResponse.answer,
-            metadata: ragResponse.metadata,
-          }),
+          JSON.stringify({ text: completion.choices[0]?.message?.content }),
           { headers: { 'Content-Type': 'application/json' } },
         );
       }
-
-      const response = await this.openAIClient.chat.completions.create({
-        model: modelId,
-        messages:
-          messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-        temperature,
-        stream: streamResponse,
-        user: JSON.stringify(user),
-      });
-
-      if (streamResponse) {
-        const { stream } = createAzureOpenAIStreamProcessor(
-          response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
-        );
-        return new StreamingTextResponse(stream);
-      }
-
-      const completion = response as OpenAI.Chat.Completions.ChatCompletion;
-      return new Response(
-        JSON.stringify({ text: completion.choices[0]?.message?.content }),
-        { headers: { 'Content-Type': 'application/json' } },
-      );
     } catch (error) {
       return this.handleError(
         error,

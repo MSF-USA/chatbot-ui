@@ -41,6 +41,7 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
+import { Citation } from '@/types/citation';
 import { Plugin } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -233,58 +234,117 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   ) => {
     const reader = data.getReader();
     const decoder = new TextDecoder();
-    let done = false;
-    let text = '';
+    let partialChunk = '';
     let updatedConversationCopy = { ...updatedConversation };
+    let currentCitations: Citation[] = [];
 
-    while (!done) {
+    while (true) {
       const { value, done: doneReading } = await reader.read();
-      done = doneReading;
 
-      if (value) {
-        const chunkValue = decoder.decode(value);
-        text += chunkValue;
-
-        if (
-          updatedConversationCopy.messages.length === 0 ||
-          updatedConversationCopy.messages[
-            updatedConversationCopy.messages.length - 1
-          ].role !== 'assistant'
-        ) {
-          // If there's no assistant message, create a new one
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: [
-              ...updatedConversationCopy.messages,
-              {
-                role: 'assistant',
-                content: text,
-                messageType: MessageType.TEXT,
-              },
-            ],
-          };
-        } else {
-          // Update the existing assistant message
-          const updatedMessages = [
-            ...updatedConversationCopy.messages.slice(0, -1),
-            {
-              ...updatedConversationCopy.messages[
-                updatedConversationCopy.messages.length - 1
-              ],
-              content: text,
-            },
-          ];
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: updatedMessages,
-          };
+      if (doneReading) {
+        try {
+          const parsed = JSON.parse(partialChunk);
+          if (parsed.metadata && parsed.metadata.citations) {
+            currentCitations = parsed.metadata.citations;
+          }
+        } catch (error) {
+          // Ignore parse errors on the final partial chunk
         }
 
-        // Update the state to trigger a re-render
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
+        if (
+          currentCitations.length > 0 &&
+          updatedConversationCopy.messages.length > 0
+        ) {
+          updatedConversationCopy.messages[
+            updatedConversationCopy.messages.length - 1
+          ].citations = currentCitations;
+        }
+        break;
+      }
+
+      const chunk = decoder.decode(value);
+      partialChunk += chunk;
+
+      try {
+        let jsonStartIndex = partialChunk.indexOf('{');
+        if (jsonStartIndex !== -1) {
+          const jsonString = partialChunk.substring(jsonStartIndex);
+          const parsedObject = JSON.parse(jsonString);
+
+          // Extract text *before* the JSON
+          const textBeforeJson = partialChunk
+            .substring(0, jsonStartIndex)
+            .trim();
+          if (textBeforeJson) {
+            if (
+              updatedConversationCopy.messages.length === 0 ||
+              updatedConversationCopy.messages.at(-1)?.role !== 'assistant'
+            ) {
+              updatedConversationCopy.messages.push({
+                role: 'assistant',
+                content: textBeforeJson,
+                messageType: MessageType.TEXT,
+              });
+            } else {
+              updatedConversationCopy.messages.at(-1)!.content +=
+                textBeforeJson;
+            }
+            homeDispatch({
+              field: 'selectedConversation',
+              value: updatedConversationCopy,
+            });
+          }
+
+          if (parsedObject.answer) {
+            if (
+              updatedConversationCopy.messages.length === 0 ||
+              updatedConversationCopy.messages.at(-1)?.role !== 'assistant'
+            ) {
+              updatedConversationCopy.messages.push({
+                role: 'assistant',
+                content: parsedObject.answer,
+                messageType: MessageType.TEXT,
+              });
+            } else {
+              updatedConversationCopy.messages.at(-1)!.content +=
+                parsedObject.answer;
+            }
+            homeDispatch({
+              field: 'selectedConversation',
+              value: updatedConversationCopy,
+            });
+          }
+
+          if (parsedObject.metadata && parsedObject.metadata.citations) {
+            currentCitations = parsedObject.metadata.citations;
+          }
+
+          partialChunk = partialChunk
+            .substring(jsonStartIndex + JSON.stringify(parsedObject).length)
+            .trim(); // Crucial fix here
+        } else {
+          if (
+            updatedConversationCopy.messages.length === 0 ||
+            updatedConversationCopy.messages.at(-1)?.role !== 'assistant'
+          ) {
+            updatedConversationCopy.messages.push({
+              role: 'assistant',
+              content: partialChunk,
+              messageType: MessageType.TEXT,
+            });
+          } else {
+            updatedConversationCopy.messages.at(-1)!.content += partialChunk;
+          }
+          homeDispatch({
+            field: 'selectedConversation',
+            value: updatedConversationCopy,
+          });
+          partialChunk = '';
+        }
+      } catch (jsonError) {
+        if (!(jsonError instanceof SyntaxError)) {
+          console.error('JSON parsing error:', jsonError);
+        }
       }
     }
 
@@ -640,43 +700,48 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div
-                        className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200"
-                      >
+                      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
                         {/* Center Content */}
                         <div className="flex items-center space-x-2">
                           <div className="flex items-center">
-                          {botInfo && (
-                            <>
-                              <span className="font-semibold" style={{color: botInfo.color}}>
-                                {botInfo.name} Bot
-                              </span>
-                              <span className="mx-2 text-white dark:text-white">|</span>
-                            </>
-                          )}
-                          <span>
-                            {t('Model')}: {selectedConversation?.model?.name}
-                          </span>
-                        </div>
+                            {botInfo && (
+                              <>
+                                <span
+                                  className="font-semibold"
+                                  style={{ color: botInfo.color }}
+                                >
+                                  {botInfo.name} Bot
+                                </span>
+                                <span className="mx-2 text-white dark:text-white">
+                                  |
+                                </span>
+                              </>
+                            )}
+                            <span>
+                              {t('Model')}: {selectedConversation?.model?.name}
+                            </span>
+                          </div>
 
-                        {/* Settings Button */}
-                        <div className="group">
-                        <button
-                            className="cursor-pointer hover:opacity-50"
-                            onClick={handleSettings}
-                        >
-                          <IconSettings
-                            size={18}
-                            className={`${
-                                showSettings ? 'text-[#D7211E] mt-1' : 'text-black dark:text-white mt-1'
-                            }`}
-                          />
-                        </button>
-                        <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-                          Expand Model Settings
-                        </div> 
-                      </div>
-                     </div>
+                          {/* Settings Button */}
+                          <div className="group">
+                            <button
+                              className="cursor-pointer hover:opacity-50"
+                              onClick={handleSettings}
+                            >
+                              <IconSettings
+                                size={18}
+                                className={`${
+                                  showSettings
+                                    ? 'text-[#D7211E] mt-1'
+                                    : 'text-black dark:text-white mt-1'
+                                }`}
+                              />
+                            </button>
+                            <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                              Expand Model Settings
+                            </div>
+                          </div>
+                        </div>
 
                         {/* Right-Side Content */}
                         <div className="absolute right-0 flex items-center pr-4">
@@ -708,7 +773,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             className="fixed inset-0 z-50 flex items-center justify-center"
                             onClick={handleClickOutside}
                           >
-                            <div className="fixed inset-0 bg-black opacity-50"/>
+                            <div className="fixed inset-0 bg-black opacity-50" />
                             <div
                               ref={modalRef}
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
@@ -717,14 +782,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 {t('modelSelectionDialogue')}
                                 <ModelSelect />
                               </div>
-                              <div className="text-black dark:text-white">{t('Temperature')}</div>
+                              <div className="text-black dark:text-white">
+                                {t('Temperature')}
+                              </div>
                               <TemperatureSlider
                                 temperature={selectedConversation.temperature}
                                 onChangeTemperature={(temperature) =>
-                                  handleUpdateConversation(selectedConversation, {
+                                  handleUpdateConversation(
+                                    selectedConversation,
+                                    {
                                       key: 'temperature',
                                       value: temperature,
-                                    })
+                                    },
+                                  )
                                 }
                               />
                             </div>
@@ -739,7 +809,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                       {models.length === 0 ? (
                         <div>
-                          <Spinner size="16px" className="mx-auto"/>
+                          <Spinner size="16px" className="mx-auto" />
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
@@ -772,8 +842,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 enter="transition-opacity duration-1000"
                                 enterFrom="opacity-0"
                                 enterTo="opacity-100"
-                              leave="transition-opacity duration-300"
-                              leaveFrom="opacity-100"
+                                leave="transition-opacity duration-300"
+                                leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
                                 <div className="flex-shrink-0 flex flex-col items-center">
