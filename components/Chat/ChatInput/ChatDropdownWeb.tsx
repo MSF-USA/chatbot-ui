@@ -1,4 +1,5 @@
 import {
+  IconCamera,
   IconCirclePlus,
   IconFileMusic,
   IconLanguage,
@@ -27,6 +28,7 @@ import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
+import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import useOutsideClick from '@/hooks/useOutsideClick';
 
 interface DropdownProps {
@@ -70,6 +72,7 @@ interface DropdownProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   textFieldValue: string;
+  onCameraClick: () => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -82,6 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setSubmitType,
   handleSend,
   textFieldValue,
+  onCameraClick
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -265,6 +269,28 @@ const Dropdown: React.FC<DropdownProps> = ({
               Translate Text
             </div>
           </div>
+          {/* Camera Item */}
+          <div className="group">
+          <button
+            className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+            onClick={() => {
+              onCameraClick();
+              setIsOpen(false);
+            }}
+            role="menuitem"
+          >
+            <IconCamera
+              size={18}
+              className="mr-2 text-black dark:text-white"
+            />
+            <span className="text-black dark:text-white">
+              {t('Camera')}
+            </span>
+          </button>            
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
+              Capture Image
+            </div>
+          </div>
          </div>
         </div>
       )}
@@ -282,6 +308,17 @@ const Dropdown: React.FC<DropdownProps> = ({
           handleSend={handleSend}
           setParentModalIsOpen={setIsSearchOpen}
           simulateClick={true}
+        />
+      )}
+
+      {/* Chat Input Image Capture Modal */}
+      {isImageOpen && (
+        <ChatInputImageCapture
+          setFilePreviews={setFilePreviews}
+          setSubmitType={setSubmitType}
+          prompt={textFieldValue}
+          setImageFieldValue={setFileFieldValue}
+          setUploadProgress={setUploadProgress}
         />
       )}
 
