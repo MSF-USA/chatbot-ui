@@ -1,7 +1,8 @@
 import { IconCamera, IconX } from '@tabler/icons-react';
 import React, {
   Dispatch,
-  FC,
+  forwardRef,
+  useImperativeHandle,
   MouseEventHandler,
   MutableRefObject,
   SetStateAction,
@@ -26,7 +27,7 @@ import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-up
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 
 const onImageUploadButtonClick = async (
-  event: React.MouseEvent<HTMLButtonElement>,
+  event: React.MouseEvent<HTMLButtonElement> | MouseEvent,
   videoRef: MutableRefObject<HTMLVideoElement | null>,
   canvasRef: MutableRefObject<HTMLCanvasElement | null>,
   fileInputRef: MutableRefObject<HTMLInputElement | null>,
@@ -55,15 +56,21 @@ export interface ChatInputImageCaptureProps {
     SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
   >;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
+  visible?: boolean;
 }
 
-const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
+export interface ChatInputImageCaptureRef {
+  triggerCamera: () => void;
+}
+
+const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImageCaptureProps>(({
   setSubmitType,
   prompt,
   setFilePreviews,
   setImageFieldValue,
   setUploadProgress,
-}) => {
+  visible = true,
+}, ref) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -73,6 +80,32 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const handleCameraButtonClick = (e: React.MouseEvent<HTMLButtonElement> | null) => {
+    if (isMobile()) {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      }
+    } else {
+      onImageUploadButtonClick(
+        e || new MouseEvent('click') as any,
+        videoRef,
+        canvasRef,
+        fileInputRef,
+        setIsCameraOpen,
+      ).then(() => null);
+      openModal();
+    }
+  };
+
+  // Expose the trigger method through the ref
+  useImperativeHandle(ref, () => ({
+    triggerCamera: () => {
+      if (hasCameraSupport) {
+        handleCameraButtonClick(null);
+      }
+    }
+  }));
 
   useEffect(() => {
     const checkCameraSupport = async () => {
@@ -91,32 +124,15 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
     checkCameraSupport();
   }, []);
 
-  const handleCameraButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (isMobile()) {
-      if (fileInputRef.current) {
-        fileInputRef.current.click();
-      }
-    } else {
-      onImageUploadButtonClick(
-        e,
-        videoRef,
-        canvasRef,
-        fileInputRef,
-        setIsCameraOpen,
-      ).then((r) => null);
-      openModal();
-    }
-  };
-
   const {
     state: { user },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+
   if (!userAuthorizedForFileUploads(user)) return null;
 
   return (
     <>
-      {/*<video ref={videoRef} autoPlay playsInline style={{ display: isCameraOpen ? "block" : "none" }} />*/}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <input
         type="file"
@@ -136,19 +152,19 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
         }}
         style={{ display: 'none' }}
       />
-      {!isCameraOpen && hasCameraSupport && (
+      {!isCameraOpen && hasCameraSupport && visible && (
         <div className="relative group">
-        <button
-          onClick={handleCameraButtonClick}
-          className="open-photo-button flex"
-        >
-          <IconCamera className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
-          <span className="sr-only">Open Camera</span>
-        </button>
-        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-          Enable Camera
+          <button
+            onClick={(e) => handleCameraButtonClick(e)}
+            className="open-photo-button flex"
+          >
+            <IconCamera className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
+            <span className="sr-only">Open Camera</span>
+          </button>
+          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+            Enable Camera
+          </div>
         </div>
-      </div>
       )}
       <CameraModal
         isOpen={isModalOpen}
@@ -164,6 +180,6 @@ const ChatInputImageCapture: FC<ChatInputImageCaptureProps> = ({
       />
     </>
   );
-};
+});
 
 export default ChatInputImageCapture;
