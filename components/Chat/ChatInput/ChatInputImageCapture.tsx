@@ -128,7 +128,7 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
     state: { user },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
-
+  
   if (!userAuthorizedForFileUploads(user)) return null;
 
   return (
@@ -181,5 +181,7 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
     </>
   );
 });
+
+ChatInputImageCapture.displayName = 'ChatInputImageCapture';
 
 export default ChatInputImageCapture;
