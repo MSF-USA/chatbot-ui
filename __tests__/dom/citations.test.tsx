@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
-import { Citation } from '@/types/citation';
+import { Citation } from '@/types/chat';
 
 import { CitationItem } from '@/components/Chat/Citations/CitationItem';
 import { CitationList } from '@/components/Chat/Citations/CitationList';

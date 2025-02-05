@@ -41,7 +41,7 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
-import { Citation } from '@/types/citation';
+import { Citation } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
