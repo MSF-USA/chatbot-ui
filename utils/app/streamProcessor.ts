@@ -19,14 +19,7 @@ export function createAzureOpenAIStreamProcessor(
       (async () => {
         try {
           for await (const chunk of response) {
-            if (
-              !chunk ||
-              !chunk.choices ||
-              !chunk.choices[0] ||
-              !chunk.choices[0].delta ||
-              !chunk.choices[0].delta.content
-            ) {
-              console.log('Skipping invalid chunk:', chunk);
+            if (!chunk?.choices?.[0]?.delta?.content) {
               continue;
             }
 
@@ -38,22 +31,23 @@ export function createAzureOpenAIStreamProcessor(
               try {
                 const jsonObject = JSON.parse(partialJson);
 
+                // Stream the answer text immediately
                 if (jsonObject.answer) {
-                  contentAccumulator += jsonObject.answer;
-                  controller.enqueue(encoder.encode(jsonObject.answer));
+                  const textToStream = jsonObject.answer;
+                  controller.enqueue(encoder.encode(textToStream));
+                  contentAccumulator += textToStream;
                 }
 
-                if (jsonObject.metadata && jsonObject.metadata.citations) {
-                  citationsAccumulator.push(...jsonObject.metadata.citations);
-                  console.log('citations', citationsAccumulator); //Check if citations are being added
+                // Collect sources for the final metadata
+                if (jsonObject.sources_used) {
+                  citationsAccumulator = jsonObject.sources_used;
                 }
 
-                partialJson = ''; // Clear after successful parse
+                partialJson = '';
               } catch (jsonError) {
                 if (!(jsonError instanceof SyntaxError)) {
                   console.error('JSON parsing error:', jsonError);
                 }
-                // Incomplete JSON, wait for more data
               }
             } else {
               contentAccumulator += contentChunk;
@@ -61,13 +55,14 @@ export function createAzureOpenAIStreamProcessor(
             }
           }
 
+          // Send citations in the original format
           if (isRagStream && citationsAccumulator.length > 0) {
             const metadataString = JSON.stringify({
-              metadata: { citations: citationsAccumulator },
+              metadata: {
+                citations: citationsAccumulator,
+              },
             });
             controller.enqueue(encoder.encode(metadataString));
-          } else {
-            console.log('No citations found'); //Check if this is being logged
           }
 
           controller.close();

@@ -4,7 +4,6 @@ import { Message, MessageType } from '@/types/chat';
 import { AzureMonitorLoggingService } from './loggingService';
 
 import { AzureKeyCredential, SearchClient } from '@azure/search-documents';
-import crypto from 'crypto';
 import { AzureOpenAI } from 'openai';
 import OpenAI from 'openai';
 
@@ -22,18 +21,14 @@ interface DateRange {
 
 interface RAGResponse {
   answer: string;
-  metadata?: {
-    dateRange: DateRange;
-    resultCount: number;
-    citations: Array<{
-      content: string;
-      title: string;
-      date: string;
-      url: string;
-      number: number;
-    }>;
-    sources_used: number;
-  };
+  sources_used: Array<{
+    title: string;
+    date: string;
+    url: string;
+    number: number;
+  }>;
+  sources_date_range: DateRange;
+  total_sources: number;
 }
 
 export class RAGService {
@@ -96,20 +91,25 @@ export class RAGService {
 
     try {
       const parsedContent = JSON.parse(content);
-
       return {
         answer: parsedContent.answer,
-        metadata: {
-          citations: parsedContent.citations,
-          sources_used: parsedContent.sources_used,
-          dateRange: searchMetadata.dateRange,
-          resultCount: searchMetadata.resultCount,
+        sources_used: parsedContent.sources_used,
+        sources_date_range: {
+          newest: parsedContent.newestDate?.toISOString().split('T')[0] || null,
+          oldest: parsedContent.oldestDate?.toISOString().split('T')[0] || null,
         },
+        total_sources: parsedContent.total_sources,
       };
     } catch (error) {
       console.error('Error parsing JSON response from OpenAI', error, content);
       return {
         answer: content,
+        sources_used: [],
+        sources_date_range: {
+          newest: null,
+          oldest: null,
+        },
+        total_sources: 0,
       };
     }
   }
@@ -123,43 +123,38 @@ export class RAGService {
         properties: {
           answer: {
             type: 'string',
+            description:
+              'Your response using citations [1], [2], etc. in order of first appearance',
           },
-          metadata: {
-            type: 'object',
-            properties: {
-              dateRange: {
-                type: 'object',
-                properties: {
-                  newest: { type: 'string' },
-                  oldest: { type: 'string' },
+          sources_used: {
+            type: 'array',
+            description:
+              'Citations in order of first appearance in answer, numbered sequentially from 1',
+            items: {
+              type: 'object',
+              properties: {
+                title: { type: 'string' },
+                date: {
+                  type: 'string',
+                  description: 'Date in YYYY-MM-DD format',
                 },
-                required: ['newest', 'oldest'],
-                additionalProperties: false,
-              },
-              resultCount: { type: 'integer' },
-              sources_used: { type: 'integer' },
-              citations: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    title: { type: 'string' },
-                    date: { type: 'string' },
-                    url: { type: 'string' },
-                    number: {
-                      type: 'integer',
-                    },
-                  },
-                  required: ['title', 'date', 'url', 'number'],
-                  additionalProperties: false,
+                url: { type: 'string' },
+                number: {
+                  type: 'integer',
+                  description:
+                    'Sequential number starting from 1, matching order in answer',
                 },
               },
+              required: ['title', 'date', 'url', 'number'],
+              additionalProperties: false,
             },
-            required: ['dateRange', 'resultCount', 'sources_used', 'citations'],
-            additionalProperties: false,
+          },
+          total_sources: {
+            type: 'integer',
+            description: 'Total number of unique sources used in the answer',
           },
         },
-        required: ['answer', 'metadata'],
+        required: ['answer', 'sources_used', 'total_sources'],
         additionalProperties: false,
       },
     };
@@ -171,10 +166,24 @@ export class RAGService {
     searchDocs: SearchResult[],
   ): OpenAI.Chat.ChatCompletionMessageParam[] {
     const query = this.extractQuery(messages);
+
+    const contextString =
+      'Available sources:\n\n' +
+      searchDocs
+        .map((doc, index) => {
+          const date = new Date(doc.date).toISOString().split('T')[0];
+          return `Source ${index + 1}:\nTitle: ${
+            doc.title
+          }\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.content}`;
+        })
+        .join('\n\n');
+
+    const systemPrompt = bot.prompt;
+
     return [
       {
         role: 'system' as const,
-        content: `${bot.prompt}`,
+        content: systemPrompt,
       },
       ...messages.slice(0, -1).map((msg) => ({
         role: msg.role as 'assistant' | 'user' | 'system',
@@ -185,9 +194,7 @@ export class RAGService {
       })),
       {
         role: 'user' as const,
-        content: `Context:\n${JSON.stringify(
-          searchDocs,
-        )}\n\nQuestion: ${query}`,
+        content: `${contextString}\n\nQuestion: ${query}`,
       },
     ];
   }
@@ -219,8 +226,8 @@ export class RAGService {
       searchDocs,
       searchMetadata: {
         dateRange: {
-          newest: newestDate?.toISOString() || null,
-          oldest: oldestDate?.toISOString() || null,
+          newest: newestDate?.toISOString().split('T')[0] || null,
+          oldest: oldestDate?.toISOString().split('T')[0] || null,
         },
         resultCount: searchDocs.length,
       },

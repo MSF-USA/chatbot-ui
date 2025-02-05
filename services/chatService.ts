@@ -55,18 +55,14 @@ import path from 'path';
 
 interface RAGResponse {
   answer: string;
-  metadata: {
-    dateRange: DateRange;
-    resultCount: number;
-    citations: Array<{
-      content: string;
-      title: string;
-      date: string;
-      url: string;
-      number: number;
-    }>;
-    sources_used: number;
-  };
+  sources_used: Array<{
+    title: string;
+    date: string;
+    url: string;
+    number: number;
+  }>;
+  sources_date_range: DateRange;
+  total_sources: number;
 }
 
 interface DateRange {
@@ -253,7 +249,7 @@ export default class ChatService {
           user,
           botId,
           loggingService: this.loggingService,
-          stream: streamResponse, // Pass streamResponse parameter
+          stream: streamResponse,
         });
 
         console.log('File summarized successfully.');
@@ -415,13 +411,32 @@ export default class ChatService {
           );
           return new StreamingTextResponse(stream);
         } else {
-          const { answer, metadata } = response as {
-            answer: string;
-            metadata: any;
-          };
-          return new Response(JSON.stringify({ text: answer, metadata }), {
-            headers: { 'Content-Type': 'application/json' },
-          });
+          const { answer, sources_used, sources_date_range, total_sources } =
+            response as {
+              answer: string;
+              sources_used: Array<{
+                title: string;
+                date: string;
+                url: string;
+                number: number;
+              }>;
+              sources_date_range: {
+                newest: string | null;
+                oldest: string | null;
+              };
+              total_sources: number;
+            };
+          return new Response(
+            JSON.stringify({
+              answer,
+              sources_used,
+              sources_date_range,
+              total_sources,
+            }),
+            {
+              headers: { 'Content-Type': 'application/json' },
+            },
+          );
         }
       } else {
         const response = await this.openAIClient.chat.completions.create({
@@ -471,7 +486,7 @@ export default class ChatService {
       prompt,
       temperature,
       botId,
-      stream = true, // Extract stream parameter (default to true)
+      stream = true,
     } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -520,7 +535,7 @@ export default class ChatService {
         model.id,
         user,
         botId,
-        stream, // Pass stream parameter
+        stream,
       );
     } else {
       return this.handleChatCompletion(
@@ -529,7 +544,7 @@ export default class ChatService {
         temperatureToUse,
         user,
         botId,
-        stream, // Pass stream parameter
+        stream,
       );
     }
   }
