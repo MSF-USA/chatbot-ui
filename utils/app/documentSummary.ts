@@ -3,11 +3,10 @@ import { Session } from 'next-auth';
 
 import { AzureMonitorLoggingService } from '@/services/loggingService';
 
-import {
-  StreamProcessingResult,
-  createAzureOpenAIStreamProcessor,
-} from '@/utils/app/streamProcessor';
+import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 import { loadDocument } from '@/utils/server/file-handling';
+
+import { StreamProcessingResult } from '@/types/rag';
 
 import {
   DefaultAzureCredential,
