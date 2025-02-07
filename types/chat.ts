@@ -1,6 +1,7 @@
 import { Session } from 'next-auth';
 
 import { OpenAIModel } from './openai';
+import { Citation } from './rag';
 
 export enum MessageType {
   TEXT = 'text',
@@ -63,14 +64,6 @@ export function getChatMessageContent(message: Message): string {
       `Invalid message type or structure: ${JSON.stringify(message)}`,
     );
   }
-}
-
-export interface Citation {
-  number: string;
-  title: string;
-  url: string;
-  date: string;
-  content?: string;
 }
 
 export interface Message {

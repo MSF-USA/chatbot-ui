@@ -41,8 +41,8 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
-import { Citation } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
+import { Citation } from '@/types/rag';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -234,117 +234,58 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   ) => {
     const reader = data.getReader();
     const decoder = new TextDecoder();
-    let partialChunk = '';
+    let done = false;
+    let text = '';
     let updatedConversationCopy = { ...updatedConversation };
-    let currentCitations: Citation[] = [];
 
-    while (true) {
+    while (!done) {
       const { value, done: doneReading } = await reader.read();
+      done = doneReading;
 
-      if (doneReading) {
-        try {
-          const parsed = JSON.parse(partialChunk);
-          if (parsed.metadata && parsed.metadata.citations) {
-            currentCitations = parsed.metadata.citations;
-          }
-        } catch (error) {
-          // Ignore parse errors on the final partial chunk
-        }
+      if (value) {
+        const chunkValue = decoder.decode(value);
+        text += chunkValue;
 
         if (
-          currentCitations.length > 0 &&
-          updatedConversationCopy.messages.length > 0
-        ) {
+          updatedConversationCopy.messages.length === 0 ||
           updatedConversationCopy.messages[
             updatedConversationCopy.messages.length - 1
-          ].citations = currentCitations;
-        }
-        break;
-      }
-
-      const chunk = decoder.decode(value);
-      partialChunk += chunk;
-
-      try {
-        let jsonStartIndex = partialChunk.indexOf('{');
-        if (jsonStartIndex !== -1) {
-          const jsonString = partialChunk.substring(jsonStartIndex);
-          const parsedObject = JSON.parse(jsonString);
-
-          // Extract text *before* the JSON
-          const textBeforeJson = partialChunk
-            .substring(0, jsonStartIndex)
-            .trim();
-          if (textBeforeJson) {
-            if (
-              updatedConversationCopy.messages.length === 0 ||
-              updatedConversationCopy.messages.at(-1)?.role !== 'assistant'
-            ) {
-              updatedConversationCopy.messages.push({
+          ].role !== 'assistant'
+        ) {
+          // If there's no assistant message, create a new one
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: [
+              ...updatedConversationCopy.messages,
+              {
                 role: 'assistant',
-                content: textBeforeJson,
+                content: text,
                 messageType: MessageType.TEXT,
-              });
-            } else {
-              updatedConversationCopy.messages.at(-1)!.content +=
-                textBeforeJson;
-            }
-            homeDispatch({
-              field: 'selectedConversation',
-              value: updatedConversationCopy,
-            });
-          }
-
-          if (parsedObject.answer) {
-            if (
-              updatedConversationCopy.messages.length === 0 ||
-              updatedConversationCopy.messages.at(-1)?.role !== 'assistant'
-            ) {
-              updatedConversationCopy.messages.push({
-                role: 'assistant',
-                content: parsedObject.answer,
-                messageType: MessageType.TEXT,
-              });
-            } else {
-              updatedConversationCopy.messages.at(-1)!.content +=
-                parsedObject.answer;
-            }
-            homeDispatch({
-              field: 'selectedConversation',
-              value: updatedConversationCopy,
-            });
-          }
-
-          if (parsedObject.metadata && parsedObject.metadata.citations) {
-            currentCitations = parsedObject.metadata.citations;
-          }
-
-          partialChunk = partialChunk
-            .substring(jsonStartIndex + JSON.stringify(parsedObject).length)
-            .trim(); // Crucial fix here
+              },
+            ],
+          };
         } else {
-          if (
-            updatedConversationCopy.messages.length === 0 ||
-            updatedConversationCopy.messages.at(-1)?.role !== 'assistant'
-          ) {
-            updatedConversationCopy.messages.push({
-              role: 'assistant',
-              content: partialChunk,
-              messageType: MessageType.TEXT,
-            });
-          } else {
-            updatedConversationCopy.messages.at(-1)!.content += partialChunk;
-          }
-          homeDispatch({
-            field: 'selectedConversation',
-            value: updatedConversationCopy,
-          });
-          partialChunk = '';
+          // Update the existing assistant message
+          const updatedMessages = [
+            ...updatedConversationCopy.messages.slice(0, -1),
+            {
+              ...updatedConversationCopy.messages[
+                updatedConversationCopy.messages.length - 1
+              ],
+              content: text,
+            },
+          ];
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: updatedMessages,
+          };
         }
-      } catch (jsonError) {
-        if (!(jsonError instanceof SyntaxError)) {
-          console.error('JSON parsing error:', jsonError);
-        }
+
+        // Update the state to trigger a re-render
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
       }
     }
 

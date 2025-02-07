@@ -1,16 +1,17 @@
-export interface StreamProcessingResult {
-  stream: ReadableStream;
-  contentAccumulator: string;
-  citationsAccumulator: any[];
-}
+import { RAGService } from '@/services/ragService';
+
+import { Citation, StreamProcessingResult } from '@/types/rag';
+
+import OpenAI from 'openai';
+import { TextEncoder } from 'util';
 
 export function createAzureOpenAIStreamProcessor(
-  response: AsyncIterable<any>,
+  response: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
   isRagStream: boolean = true,
+  ragService?: RAGService,
 ): StreamProcessingResult {
   let contentAccumulator = '';
-  let citationsAccumulator: any[] = [];
-  let partialJson = '';
+  let citationsAccumulator: Citation[] = [];
 
   const stream = new ReadableStream({
     start: (controller) => {
@@ -19,50 +20,24 @@ export function createAzureOpenAIStreamProcessor(
       (async () => {
         try {
           for await (const chunk of response) {
-            if (!chunk?.choices?.[0]?.delta?.content) {
-              continue;
-            }
-
-            const contentChunk = chunk.choices[0].delta.content;
-
-            if (isRagStream) {
-              partialJson += contentChunk;
-
-              try {
-                const jsonObject = JSON.parse(partialJson);
-
-                // Stream the answer text immediately
-                if (jsonObject.answer) {
-                  const textToStream = jsonObject.answer;
-                  controller.enqueue(encoder.encode(textToStream));
-                  contentAccumulator += textToStream;
-                }
-
-                // Collect sources for the final metadata
-                if (jsonObject.sources_used) {
-                  citationsAccumulator = jsonObject.sources_used;
-                }
-
-                partialJson = '';
-              } catch (jsonError) {
-                if (!(jsonError instanceof SyntaxError)) {
-                  console.error('JSON parsing error:', jsonError);
-                }
-              }
-            } else {
+            if (chunk?.choices?.[0]?.delta?.content) {
+              const contentChunk = chunk.choices[0].delta.content;
               contentAccumulator += contentChunk;
               controller.enqueue(encoder.encode(contentChunk));
             }
           }
 
-          // Send citations in the original format
-          if (isRagStream && citationsAccumulator.length > 0) {
-            const metadataString = JSON.stringify({
-              metadata: {
+          // Process and send citations once at the end
+          if (isRagStream && ragService) {
+            const citationsAccumulator =
+              ragService.findCitationsInContent(contentAccumulator);
+            if (citationsAccumulator.length > 0) {
+              const citationsJson = JSON.stringify({
                 citations: citationsAccumulator,
-              },
-            });
-            controller.enqueue(encoder.encode(metadataString));
+              });
+              controller.enqueue(encoder.encode('\n\n' + citationsJson));
+              console.log(citationsJson);
+            }
           }
 
           controller.close();
@@ -74,5 +49,9 @@ export function createAzureOpenAIStreamProcessor(
     },
   });
 
-  return { stream, contentAccumulator, citationsAccumulator };
+  return {
+    stream,
+    contentAccumulator,
+    citationsAccumulator,
+  };
 }

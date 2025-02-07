@@ -1,7 +1,7 @@
 import { IconBlockquote } from '@tabler/icons-react';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 
-import { Citation } from '@/types/chat';
+import { Citation } from '@/types/rag';
 
 import { CitationItem } from './CitationItem';
 

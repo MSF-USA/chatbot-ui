@@ -18,10 +18,7 @@ import {
 } from '@/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/utils/app/documentSummary';
 import { getEnvVariable } from '@/utils/app/env';
-import {
-  StreamProcessingResult,
-  createAzureOpenAIStreamProcessor,
-} from '@/utils/app/streamProcessor';
+import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 import { AzureBlobStorage, BlobProperty } from '@/utils/server/blob';
 import { getMessagesToSend } from '@/utils/server/chat';
 
@@ -34,6 +31,7 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
+import { StreamProcessingResult } from '@/types/rag';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
@@ -408,6 +406,7 @@ export default class ChatService {
           const { stream } = createAzureOpenAIStreamProcessor(
             streamResponseIterable,
             true,
+            this.ragService,
           );
           return new StreamingTextResponse(stream);
         } else {

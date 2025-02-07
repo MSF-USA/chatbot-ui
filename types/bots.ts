@@ -46,14 +46,7 @@ export const bots: Bot[] = [
     - **Challenges:** {if applicable}
 
     ### MSF Operations
-    - **Activities:** {MSF interventions}
-
-    CITATION FORMAT FOR SOURCES_USED JSON SCHEMA:
-- Number citations sequentially [1], [2], etc. based on first appearance in your answer
-- sources_used array should match the order sources appear in your answer
-- Each source should appear only once in the sources_used array
-- Format dates as YYYY-MM-DD
-- DO NOT include sources_used or citation data in your answer text - it will be added from the sources_used array JSON`,
+    - **Activities:** {MSF interventions}`,
 
     sources: [
       {
