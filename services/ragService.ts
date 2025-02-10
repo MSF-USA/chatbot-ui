@@ -14,6 +14,12 @@ export class RAGService {
   private openAIClient: AzureOpenAI;
   private searchDocs: SearchResult[] = [];
 
+  // Citation tracking state
+  private citationBuffer: string = '';
+  private citationOrderMap: Map<number, number> = new Map();
+  private nextCitationNumber: number = 1;
+  private currentCitation: string = '';
+
   constructor(
     searchEndpoint: string,
     searchIndex: string,
@@ -54,7 +60,7 @@ export class RAGService {
         {
           role: 'system',
           content: `${bot.prompt}\n\nWhen citing sources:
-      1. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [^5])
+      1. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
       2. Only cite the most relevant sources
       3. Each source should only be cited once
       4. Place source numbers immediately after the relevant information`,
@@ -62,44 +68,31 @@ export class RAGService {
         ...this.getCompletionMessages(messages, bot, searchDocs),
       ];
 
+    if (stream) {
+      return this.openAIClient.chat.completions.create({
+        model: modelId,
+        messages: enhancedMessages,
+        temperature: 0.5,
+        stream: true,
+      });
+    }
+
+    // For non-streaming responses
     const completion = await this.openAIClient.chat.completions.create({
       model: modelId,
       messages: enhancedMessages,
       temperature: 0.5,
-      stream: true,
+      stream: false,
     });
 
-    // For streaming, return the raw completion
-    if (stream) {
-      return completion;
-    }
-
-    // For non-streaming, collect and process the entire response
-    const fullResponse = await this.collectStreamResponse(completion);
+    const content = completion.choices[0]?.message?.content || '';
+    const citations = this.processCitationsInContent(content);
 
     return {
-      answer: fullResponse.content,
-      sources_used: fullResponse.citations,
+      answer: content,
+      sources_used: citations,
       sources_date_range: searchMetadata.dateRange,
-      total_sources: fullResponse.citations.length,
-    };
-  }
-
-  private async collectStreamResponse(
-    stream: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
-  ): Promise<{ content: string; citations: Citation[] }> {
-    let fullContent = '';
-
-    for await (const chunk of stream) {
-      const content = chunk.choices[0]?.delta?.content;
-      if (!content) continue;
-      fullContent += content;
-    }
-
-    const citations = this.findCitationsInContent(fullContent);
-    return {
-      content: fullContent,
-      citations,
+      total_sources: citations.length,
     };
   }
 
@@ -182,36 +175,93 @@ export class RAGService {
       : '';
   }
 
-  public findCitationsInContent(content: string): Citation[] {
+  public resetCitationTracking() {
+    this.citationBuffer = '';
+    this.citationOrderMap.clear();
+    this.nextCitationNumber = 1;
+    this.currentCitation = '';
+  }
+
+  public processCitationInChunk(chunk: string): string {
+    // Add to buffer for tracking complete citations
+    this.citationBuffer += chunk;
+
+    // Start with the chunk we received
+    let result = chunk;
+
+    // Handle citation parts
+    if (chunk.includes('[')) {
+      this.currentCitation = '[';
+    } else if (/^\d+$/.test(chunk)) {
+      if (this.currentCitation?.startsWith('[')) {
+        this.currentCitation += chunk + ']';
+
+        // Try to find a complete citation pattern
+        const match = /\[(\d+)\]/.exec(this.currentCitation);
+        if (match) {
+          const sourceNumber = parseInt(match[1]);
+          if (!this.citationOrderMap.has(sourceNumber)) {
+            this.citationOrderMap.set(sourceNumber, this.nextCitationNumber++);
+          }
+          const newNumber = this.citationOrderMap.get(sourceNumber);
+          console.log(
+            `Updating citation number ${sourceNumber} -> ${newNumber}`,
+          );
+          result = newNumber?.toString() || chunk;
+        }
+
+        // Reset current citation
+        this.currentCitation = '';
+      }
+    } else {
+      if (this.currentCitation) {
+        this.currentCitation += chunk;
+      }
+    }
+
+    console.log('Processed chunk:', {
+      input: chunk,
+      output: result,
+      currentCitation: this.currentCitation,
+      citations: Object.fromEntries(this.citationOrderMap),
+      replacedNumber: result !== chunk,
+    });
+
+    return result;
+  }
+
+  private processCitationsInContent(content: string): Citation[] {
+    this.resetCitationTracking();
+    this.processCitationInChunk(content);
+    return this.getCurrentCitations();
+  }
+
+  public getCurrentCitations(): Citation[] {
     const citations: Citation[] = [];
-    const uniqueCitationsSet = new Set<number>();
-    const citationRegex = /\[\^(\d+)\]/g;
-    let match;
-    const numberMap = new Map<number, number>(); // Map original numbers to new ones
-    let newNumber = 1;
 
-    // First pass: collect unique citations and build number mapping
-    while ((match = citationRegex.exec(content)) !== null) {
-      const originalNumber = parseInt(match[1]);
-      if (!uniqueCitationsSet.has(originalNumber)) {
-        uniqueCitationsSet.add(originalNumber);
-        numberMap.set(originalNumber, newNumber++);
+    // Convert the map to array of [originalNumber, newNumber] pairs and sort by newNumber
+    const sortedCitations = Array.from(this.citationOrderMap.entries()).sort(
+      (a, b) => a[1] - b[1],
+    );
 
-        const docIndex = originalNumber - 1;
-        if (docIndex >= 0 && docIndex < this.searchDocs.length) {
-          const doc = this.searchDocs[docIndex];
+    // Create citation objects in order
+    for (const [originalNumber, newNumber] of sortedCitations) {
+      const docIndex = originalNumber - 1;
+      if (docIndex >= 0 && docIndex < this.searchDocs.length) {
+        const doc = this.searchDocs[docIndex];
+        const existingCitation = citations.find((c) => c.number === newNumber);
+
+        // Only add if we haven't already added this citation number
+        if (!existingCitation) {
           citations.push({
             title: doc.title,
             date: new Date(doc.date).toISOString().split('T')[0],
             url: doc.url,
-            number: numberMap.get(originalNumber)!,
+            number: newNumber,
           });
         }
       }
     }
-
-    // Sort citations by their new numbers
-    citations.sort((a, b) => a.number - b.number);
 
     return citations;
   }

@@ -1,4 +1,8 @@
-import { IconBlockquote } from '@tabler/icons-react';
+import {
+  IconBlockquote,
+  IconChevronDown,
+  IconChevronUp,
+} from '@tabler/icons-react';
 import React, { FC, MouseEvent, useEffect, useRef, useState } from 'react';
 
 import { Citation } from '@/types/rag';
@@ -10,6 +14,7 @@ interface CitationListProps {
 }
 
 export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [scrollDirection, setScrollDirection] = useState<
@@ -113,6 +118,10 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
     setScrollDirection(null);
   };
 
+  const toggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   if (citations.length === 0) return null;
 
   return (
@@ -121,25 +130,45 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <div className="flex items-center mb-2">
-        <IconBlockquote size={20} className="inline-block" />
-        <h3 className="text-lg font-semibold ml-2 mt-3">
-          Sources and Relevant Links
-        </h3>
-      </div>
       <div
-        ref={scrollContainerRef}
-        className="flex w-full overflow-x-auto gap-4 no-scrollbar"
-        style={{ scrollBehavior: 'auto' }}
-        onMouseMove={handleReactMouseMove}
-        onMouseLeave={handleReactMouseLeave}
+        className="flex items-center cursor-pointer group rounded-md px-3 h-7 dark:bg-[#1f1f1f] bg-gray-100 transition-colors duration-300 hover:text-blue-500"
+        onClick={toggleExpand}
       >
-        {citations.map((citation, index) => (
-          <div key={citation.number} className="flex-shrink-0">
-            <CitationItem key={citation.number} citation={citation} />
+        <div className="flex items-center">
+          <IconBlockquote size={19} className="inline-block mb-0.5" />
+          <div className="ml-1 w-6 h-6 flex items-center justify-center text-base">
+            {citations.length + 1}
           </div>
-        ))}
+          {citations.length > 1 ? (
+            <p className="text-base ml-1">Sources</p>
+          ) : (
+            <p className="text-base ml-1">Source</p>
+          )}
+        </div>
+        <div className="ml-auto">
+          {isExpanded ? (
+            <IconChevronUp size={20} />
+          ) : (
+            <IconChevronDown size={20} />
+          )}
+        </div>
       </div>
+
+      {isExpanded && (
+        <div
+          ref={scrollContainerRef}
+          className="flex w-full overflow-x-auto gap-4 no-scrollbar pt-5"
+          style={{ scrollBehavior: 'auto' }}
+          onMouseMove={handleReactMouseMove}
+          onMouseLeave={handleReactMouseLeave}
+        >
+          {citations.map((citation) => (
+            <div key={citation.number} className="flex-shrink-0">
+              <CitationItem key={citation.number} citation={citation} />
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

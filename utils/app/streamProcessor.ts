@@ -17,26 +17,58 @@ export function createAzureOpenAIStreamProcessor(
     start: (controller) => {
       const encoder = new TextEncoder();
 
-      (async () => {
+      if (isRagStream && ragService) {
+        console.log('Starting stream processing with RAG');
+        ragService.resetCitationTracking();
+      }
+
+      (async function () {
         try {
+          let chunkCount = 0;
           for await (const chunk of response) {
             if (chunk?.choices?.[0]?.delta?.content) {
               const contentChunk = chunk.choices[0].delta.content;
-              contentAccumulator += contentChunk;
-              controller.enqueue(encoder.encode(contentChunk));
+              chunkCount++;
+
+              // Process the chunk if it's a RAG stream
+              let processedChunk = contentChunk;
+              if (isRagStream && ragService) {
+                processedChunk =
+                  ragService.processCitationInChunk(contentChunk);
+                console.log(`Processing chunk ${chunkCount}:`, {
+                  original: contentChunk,
+                  processed: processedChunk,
+                });
+              }
+
+              contentAccumulator += processedChunk;
+              controller.enqueue(encoder.encode(processedChunk));
             }
           }
 
-          // Process and send citations once at the end
+          console.log('Stream completed, getting citations...');
+
+          // Send citations only at the end if it's a RAG stream
           if (isRagStream && ragService) {
-            const citationsAccumulator =
-              ragService.findCitationsInContent(contentAccumulator);
-            if (citationsAccumulator.length > 0) {
+            // Process any remaining buffered content
+            const finalProcessedChunk = ragService.processCitationInChunk('');
+            if (finalProcessedChunk) {
+              contentAccumulator += finalProcessedChunk;
+              controller.enqueue(encoder.encode(finalProcessedChunk));
+            }
+
+            const finalCitations = ragService.getCurrentCitations();
+            console.log('Final citations:', finalCitations);
+
+            if (finalCitations.length > 0) {
               const citationsJson = JSON.stringify({
-                citations: citationsAccumulator,
+                citations: finalCitations,
               });
+              console.log('Sending citations JSON:', citationsJson);
               controller.enqueue(encoder.encode('\n\n' + citationsJson));
-              console.log(citationsJson);
+              citationsAccumulator = finalCitations;
+            } else {
+              console.log('No citations found in the response');
             }
           }
 
