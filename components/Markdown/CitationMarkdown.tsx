@@ -148,12 +148,10 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         let match;
 
         while ((match = citationRegex.exec(text)) !== null) {
-          // Add text before the citation
           if (match.index > lastIndex) {
             parts.push(text.slice(lastIndex, match.index));
           }
 
-          // Add the citation element
           const citationNumber = parseInt(match[1], 10);
           parts.push(
             createCitationElement(
@@ -165,7 +163,6 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           lastIndex = match.index + match[0].length;
         }
 
-        // Add any remaining text
         if (lastIndex < text.length) {
           parts.push(text.slice(lastIndex));
         }
@@ -175,28 +172,48 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       [createCitationElement],
     );
 
-    const TextWithCitations: Components['p' | 'li'] = useCallback(
-      ({ children, ...props }) => {
-        const hasCitationHandling = conversation?.bot;
-        if (!hasCitationHandling) {
-          return <p {...props}>{children}</p>;
-        }
+    const ParagraphWithCitations: Components['p'] = ({
+      children,
+      ...props
+    }) => {
+      const hasCitationHandling = conversation?.bot;
+      if (!hasCitationHandling) {
+        return <p {...props}>{children}</p>;
+      }
 
-        return (
-          <p {...props}>
-            {React.Children.map(children, (child) => {
-              if (typeof child === 'string') {
-                return processTextWithCitations(child);
-              }
-              return child;
-            })}
-          </p>
-        );
-      },
-      [conversation?.bot, processTextWithCitations],
-    );
+      return (
+        <p {...props}>
+          {React.Children.map(children, (child) => {
+            if (typeof child === 'string') {
+              return processTextWithCitations(child);
+            }
+            return child;
+          })}
+        </p>
+      );
+    };
 
-    // Clean up timeouts
+    const ListItemWithCitations: Components['li'] = ({
+      children,
+      ...props
+    }) => {
+      const hasCitationHandling = conversation?.bot;
+      if (!hasCitationHandling) {
+        return <li {...props}>{children}</li>;
+      }
+
+      return (
+        <li {...props}>
+          {React.Children.map(children, (child) => {
+            if (typeof child === 'string') {
+              return processTextWithCitations(child);
+            }
+            return child;
+          })}
+        </li>
+      );
+    };
+
     React.useEffect(() => {
       return () => {
         clearHoverTimeout();
@@ -208,8 +225,8 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         {...props}
         components={{
           ...components,
-          p: TextWithCitations,
-          li: TextWithCitations,
+          p: ParagraphWithCitations,
+          li: ListItemWithCitations,
         }}
       />
     );

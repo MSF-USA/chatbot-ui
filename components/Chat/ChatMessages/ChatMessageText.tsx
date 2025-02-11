@@ -184,8 +184,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                         </span>
                       );
                     }
-
-                    children[0] = (children[0] as string).replace('▍', '▍');
                   }
 
                   const match = /language-(\w+)/.exec(className || '');
@@ -245,8 +243,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                         </span>
                       );
                     }
-
-                    children[0] = (children[0] as string).replace('▍', '▍');
                   }
 
                   const match = /language-(\w+)/.exec(className || '');

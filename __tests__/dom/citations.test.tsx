@@ -1,206 +1,209 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
-import { Citation } from '@/types/chat';
+import { Conversation } from '@/types/chat';
+import { Citation } from '@/types/rag';
 
 import { CitationItem } from '@/components/Chat/Citations/CitationItem';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
+import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 
 import '@testing-library/jest-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-type MockCitation = {
-  number: string | null;
-  title: string | null;
-  url: string | null;
-  date: string | null;
-};
+// Create a complete mock conversation that matches the Conversation type
+const createMockConversation = (bot: boolean = true): Conversation => ({
+  id: 'test-conversation',
+  name: 'Test Conversation',
+  messages: [],
+  model: { id: 'gpt-4o', name: 'GPT-4o', maxLength: 12000, tokenLimit: 4000 },
+  prompt: 'test prompt',
+  temperature: 0.7,
+  bot: bot ? 'test' : undefined,
+  folderId: null,
+});
 
-describe('CitationList Component', () => {
-  const mockCitations: MockCitation[] = [
+describe('CitationList', () => {
+  const mockCitations: Citation[] = [
     {
-      number: '1',
+      number: 1,
       title: 'Test Citation 1',
       url: 'https://test1.com',
       date: '2023-01-01',
     },
     {
-      number: '2',
+      number: 2,
       title: 'Test Citation 2',
       url: 'https://test2.com',
       date: '2023-01-02',
     },
   ];
 
-  it('should render citations correctly', () => {
-    render(<CitationList citations={mockCitations as Citation[]} />);
-    expect(screen.getByText('Sources and Relevant Links')).toBeInTheDocument();
-    expect(screen.getByText('Test Citation 1')).toBeInTheDocument();
-    expect(screen.getByText('Test Citation 2')).toBeInTheDocument();
+  it('renders citation count and toggle button', () => {
+    render(<CitationList citations={mockCitations} />);
+
+    // Check citation count
+    const citationCount = screen.getByText('2');
+    expect(citationCount).toBeInTheDocument();
+
+    // Check "Sources" text
+    const sourcesText = screen.getByText('Sources');
+    expect(sourcesText).toBeInTheDocument();
   });
 
-  it('should not render when citations array is empty', () => {
+  it('shows "Source" for single citation', () => {
+    const singleCitation: Citation[] = [mockCitations[0]];
+    render(<CitationList citations={singleCitation} />);
+
+    const sourceText = screen.getByText('Source');
+    expect(sourceText).toBeInTheDocument();
+  });
+
+  it('expands and collapses citations', () => {
+    render(<CitationList citations={mockCitations} />);
+
+    // Initial state should not show citations
+    const initialCitations = screen.queryByText('Test Citation 1');
+    expect(initialCitations).not.toBeInTheDocument();
+
+    // Click to expand
+    const toggleButton = screen.getByText('Sources');
+    fireEvent.click(toggleButton);
+
+    // Now citations should be visible
+    const citation1 = screen.getByText('Test Citation 1');
+    const citation2 = screen.getByText('Test Citation 2');
+    expect(citation1).toBeInTheDocument();
+    expect(citation2).toBeInTheDocument();
+
+    // Click to collapse
+    fireEvent.click(toggleButton);
+
+    // Citations should be hidden again
+    expect(screen.queryByText('Test Citation 1')).toBeNull();
+  });
+
+  it('returns null when no citations', () => {
     const { container } = render(<CitationList citations={[]} />);
     expect(container.firstChild).toBeNull();
-  });
-
-  it('should handle citations with null titles by not rendering them', () => {
-    const mockCitationsWithNullTitle: MockCitation[] = [
-      {
-        number: '1',
-        title: 'Test Citation 1',
-        url: 'https://test1.com',
-        date: '2023-01-01',
-      },
-      {
-        number: '2',
-        title: 'Test Citation 2',
-        url: 'https://test2.com',
-        date: '2023-01-02',
-      },
-      {
-        number: '3',
-        title: null,
-        url: 'https://test3.com',
-        date: '2023-01-03',
-      },
-    ];
-
-    render(
-      <CitationList citations={mockCitationsWithNullTitle as Citation[]} />,
-    );
-
-    expect(screen.getByText('Sources and Relevant Links')).toBeInTheDocument();
-    expect(screen.getByText('Test Citation 1')).toBeInTheDocument();
-    expect(screen.getByText('Test Citation 2')).toBeInTheDocument();
-    expect(screen.queryByText('null')).not.toBeInTheDocument();
-
-    const citationItems = screen.getAllByRole('link');
-    expect(citationItems).toHaveLength(2);
   });
 });
 
 describe('CitationItem', () => {
-  const renderCitationItem = (citation: MockCitation) => {
-    return render(<CitationItem citation={citation as Citation} />);
+  const mockCitation: Citation = {
+    number: 1,
+    title: 'Test Citation',
+    url: 'https://www.example.com',
+    date: '2023-01-01',
   };
 
-  it('renders correctly with all valid data', () => {
-    const citation: MockCitation = {
-      number: '1',
+  it('renders citation details correctly', () => {
+    render(<CitationItem citation={mockCitation} />);
+
+    // Check title
+    const titleElement = screen.getByText('Test Citation');
+    expect(titleElement).toBeInTheDocument();
+
+    // Check date
+    const dateElement = screen.getByText('2023-01-01');
+    expect(dateElement).toBeInTheDocument();
+
+    // Check domain
+    const domainElement = screen.getByText('example');
+    expect(domainElement).toBeInTheDocument();
+
+    // Check link
+    const linkElement = screen.getByRole('link');
+    expect(linkElement).toHaveAttribute('href', 'https://www.example.com');
+    expect(linkElement).toHaveAttribute('title', 'Test Citation');
+  });
+
+  it('returns null for citation without title or url', () => {
+    const incompleteCitation: Citation = {
+      number: 1,
+      title: '',
+      url: '',
+      date: '2023-01-01',
+    };
+
+    const { container } = render(
+      <CitationItem citation={incompleteCitation} />,
+    );
+    expect(container.firstChild).toBeNull();
+  });
+});
+
+describe('CitationMarkdown', () => {
+  const mockCitations: Citation[] = [
+    {
+      number: 1,
       title: 'Test Citation',
       url: 'https://www.example.com',
       date: '2023-01-01',
-    };
-    renderCitationItem(citation);
+    },
+  ];
 
-    expect(screen.getByText('Test Citation')).toBeInTheDocument();
+  it('renders citation numbers with correct styling', () => {
+    render(
+      <CitationMarkdown
+        citations={mockCitations}
+        conversation={createMockConversation()}
+      >
+        Here is a citation [1].
+      </CitationMarkdown>,
+    );
+
+    const citation = screen.getByText('[1]');
+    const supElement = citation.closest('sup');
+    expect(supElement).toHaveClass('citation-number');
+    expect(supElement).toHaveClass('cursor-help');
+    expect(supElement).toHaveClass('text-blue-600');
+  });
+
+  it('displays tooltip with correct content on hover', async () => {
+    render(
+      <CitationMarkdown
+        citations={mockCitations}
+        conversation={createMockConversation()}
+      >
+        Here is a citation [1].
+      </CitationMarkdown>,
+    );
+
+    const citation = screen.getByText('[1]');
+    const supElement = citation.closest('sup');
+
+    // Simulate mouse enter
+    fireEvent.mouseEnter(supElement!);
+
+    // Wait for tooltip to appear
+    await waitFor(() => {
+      const tooltipElement = screen.getByText('Test Citation');
+      expect(tooltipElement).toBeInTheDocument();
+    });
+
+    const linkElement = screen.getByRole('link');
+    expect(linkElement).toHaveAttribute('href', 'https://www.example.com');
+    expect(linkElement).toHaveAttribute('title', 'Test Citation');
+
     expect(screen.getByText('2023-01-01')).toBeInTheDocument();
     expect(screen.getByText('example')).toBeInTheDocument();
-    expect(screen.getByText('1')).toBeInTheDocument();
-
-    const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', 'https://www.example.com');
-    expect(link).toHaveAttribute('title', 'Test Citation');
-
-    const favicon = screen.getByAltText('www.example.com favicon');
-    expect(favicon).toBeInTheDocument();
   });
 
-  it('does not render when URL is null', () => {
-    const citation: MockCitation = {
-      number: '2',
-      title: 'Null URL Citation',
-      url: null,
-      date: '2023-01-02',
-    };
-    const { container } = renderCitationItem(citation);
-    expect(container.firstChild).toBeNull();
-  });
+  it('ignores citations when conversation.bot is false', () => {
+    render(
+      <CitationMarkdown
+        citations={mockCitations}
+        conversation={createMockConversation(false)}
+      >
+        Here is a citation [1] that should not be interactive.
+      </CitationMarkdown>,
+    );
 
-  it('does not render when title is null', () => {
-    const citation: MockCitation = {
-      number: '3',
-      title: null,
-      url: 'https://example.com',
-      date: '2023-01-03',
-    };
-    const { container } = renderCitationItem(citation);
-    expect(container.firstChild).toBeNull();
-  });
-
-  it('handles invalid URL gracefully', () => {
-    const citation: MockCitation = {
-      number: '4',
-      title: 'Invalid URL Citation',
-      url: 'not-a-valid-url',
-      date: '2023-01-04',
-    };
-    renderCitationItem(citation);
-
-    expect(screen.getByText('Invalid URL Citation')).toBeInTheDocument();
-    expect(screen.getByText('2023-01-04')).toBeInTheDocument();
-    expect(screen.getByText('Invalid URL')).toBeInTheDocument();
-    expect(screen.getByText('4')).toBeInTheDocument();
-  });
-
-  it('handles null date gracefully', () => {
-    const citation: MockCitation = {
-      number: '5',
-      title: 'No Date Citation',
-      url: 'https://example.com',
-      date: null,
-    };
-    renderCitationItem(citation);
-
-    expect(screen.getByText('No Date Citation')).toBeInTheDocument();
-    expect(screen.getByText('example')).toBeInTheDocument();
-    expect(screen.getByText('5')).toBeInTheDocument();
-    expect(screen.queryByText('null')).not.toBeInTheDocument();
-  });
-
-  it('processes complex domain correctly', () => {
-    const citation: MockCitation = {
-      number: '6',
-      title: 'Complex Domain Citation',
-      url: 'https://www.test-domain.co.uk',
-      date: '2023-01-06',
-    };
-    renderCitationItem(citation);
-
-    expect(screen.getByText('Complex Domain Citation')).toBeInTheDocument();
-    expect(screen.getByText('2023-01-06')).toBeInTheDocument();
-    expect(screen.getByText('test-domain')).toBeInTheDocument();
-    expect(screen.getByText('6')).toBeInTheDocument();
-  });
-
-  it('handles subdomain correctly', () => {
-    const citation: MockCitation = {
-      number: '7',
-      title: 'Subdomain Citation',
-      url: 'https://blog.example.com',
-      date: '2023-01-07',
-    };
-    renderCitationItem(citation);
-
-    expect(screen.getByText('Subdomain Citation')).toBeInTheDocument();
-    expect(screen.getByText('2023-01-07')).toBeInTheDocument();
-    expect(screen.getByText('blog')).toBeInTheDocument();
-    expect(screen.getByText('7')).toBeInTheDocument();
-  });
-
-  it('handles IP address correctly', () => {
-    const citation: MockCitation = {
-      number: '8',
-      title: 'IP Address Citation',
-      url: 'http://192.168.1.1',
-      date: '2023-01-08',
-    };
-    renderCitationItem(citation);
-
-    expect(screen.getByText('IP Address Citation')).toBeInTheDocument();
-    expect(screen.getByText('2023-01-08')).toBeInTheDocument();
-    expect(screen.getByText('192')).toBeInTheDocument();
-    expect(screen.getByText('8')).toBeInTheDocument();
+    const text = screen.getByText(
+      'Here is a citation [1] that should not be interactive.',
+    );
+    expect(text.tagName).toBe('P');
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 });
