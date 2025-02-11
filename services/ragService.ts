@@ -14,11 +14,11 @@ export class RAGService {
   private openAIClient: AzureOpenAI;
   private searchDocs: SearchResult[] = [];
 
-  // Citation tracking state
+  // Citation tracking properties
   private citationBuffer: string = '';
-  private citationOrderMap: Map<number, number> = new Map();
-  private nextCitationNumber: number = 1;
-  private currentCitation: string = '';
+  private sourceToSequentialMap: Map<number, number> = new Map();
+  private citationsUsed: Set<number> = new Set();
+  private isInCitation: boolean = false;
 
   constructor(
     searchEndpoint: string,
@@ -77,7 +77,6 @@ export class RAGService {
       });
     }
 
-    // For non-streaming responses
     const completion = await this.openAIClient.chat.completions.create({
       model: modelId,
       messages: enhancedMessages,
@@ -177,87 +176,130 @@ export class RAGService {
 
   public resetCitationTracking() {
     this.citationBuffer = '';
-    this.citationOrderMap.clear();
-    this.nextCitationNumber = 1;
-    this.currentCitation = '';
+    this.sourceToSequentialMap.clear();
+    this.citationsUsed.clear();
+    this.isInCitation = false;
   }
 
   public processCitationInChunk(chunk: string): string {
-    // Add to buffer for tracking complete citations
-    this.citationBuffer += chunk;
+    // If we're not in a citation and chunk has no citation markers, return as is
+    if (!this.isInCitation && !chunk.includes('[')) {
+      return chunk;
+    }
 
-    // Start with the chunk we received
-    let result = chunk;
+    let result = '';
+    let currentPosition = 0;
 
-    // Handle citation parts
-    if (chunk.includes('[')) {
-      this.currentCitation = '[';
-    } else if (/^\d+$/.test(chunk)) {
-      if (this.currentCitation?.startsWith('[')) {
-        this.currentCitation += chunk + ']';
+    // Process the chunk character by character
+    while (currentPosition < chunk.length) {
+      // If we're not in a citation, look for the next '['
+      if (!this.isInCitation) {
+        const nextBracket = chunk.indexOf('[', currentPosition);
+        if (nextBracket === -1) {
+          // No more citations in this chunk
+          result += chunk.slice(currentPosition);
+          break;
+        }
+        // Add text before the citation
+        result += chunk.slice(currentPosition, nextBracket);
 
-        // Try to find a complete citation pattern
-        const match = /\[(\d+)\]/.exec(this.currentCitation);
-        if (match) {
-          const sourceNumber = parseInt(match[1]);
-          if (!this.citationOrderMap.has(sourceNumber)) {
-            this.citationOrderMap.set(sourceNumber, this.nextCitationNumber++);
-          }
-          const newNumber = this.citationOrderMap.get(sourceNumber);
-          console.log(
-            `Updating citation number ${sourceNumber} -> ${newNumber}`,
+        // Check if this is a section header bracket
+        const nextCloseBracket = chunk.indexOf(']', nextBracket);
+        if (nextCloseBracket !== -1) {
+          const potentialHeader = chunk.substring(
+            nextBracket,
+            nextCloseBracket + 1,
           );
-          result = newNumber?.toString() || chunk;
+          if (
+            potentialHeader.match(/\[.*Events\]/i) ||
+            potentialHeader.match(/\[.*Analysis\]/i)
+          ) {
+            // This is a section header, not a citation
+            result += potentialHeader;
+            currentPosition = nextCloseBracket + 1;
+            continue;
+          }
         }
 
-        // Reset current citation
-        this.currentCitation = '';
+        this.isInCitation = true;
+        this.citationBuffer = '';
+        currentPosition = nextBracket;
       }
-    } else {
-      if (this.currentCitation) {
-        this.currentCitation += chunk;
+
+      // Add characters to citation buffer until we find ']'
+      while (currentPosition < chunk.length) {
+        const char = chunk[currentPosition];
+        this.citationBuffer += char;
+        currentPosition++;
+
+        if (char === ']') {
+          const match = this.citationBuffer.match(/\[(\d+)\]/);
+          if (match) {
+            const sourceNumber = parseInt(match[1], 10);
+
+            // Get or create sequential number
+            if (!this.sourceToSequentialMap.has(sourceNumber)) {
+              const nextNumber = this.citationsUsed.size + 1;
+              this.sourceToSequentialMap.set(sourceNumber, nextNumber);
+              this.citationsUsed.add(nextNumber);
+            }
+            const sequentialNumber =
+              this.sourceToSequentialMap.get(sourceNumber)!;
+
+            // Replace citation with sequential number
+            result += `[${sequentialNumber}]`;
+            this.citationBuffer = '';
+            this.isInCitation = false;
+            break;
+          } else {
+            // This might be a section header that we missed
+            result += this.citationBuffer;
+            this.citationBuffer = '';
+            this.isInCitation = false;
+            break;
+          }
+        }
       }
     }
 
-    console.log('Processed chunk:', {
-      input: chunk,
-      output: result,
-      currentCitation: this.currentCitation,
-      citations: Object.fromEntries(this.citationOrderMap),
-      replacedNumber: result !== chunk,
-    });
+    // If we're still in a citation, the citation is incomplete
+    if (this.isInCitation) {
+      return ''; // Hold onto the partial citation
+    }
+
+    // Clean up any markdown-style headers that might have been affected
+    result = result.replace(/###\s+\[([^\]]+)\]/g, '### $1');
 
     return result;
   }
 
   private processCitationsInContent(content: string): Citation[] {
     this.resetCitationTracking();
+    // Process the entire content as one chunk to get citation mappings
     this.processCitationInChunk(content);
     return this.getCurrentCitations();
   }
 
   public getCurrentCitations(): Citation[] {
+    // Create array of citations sorted by sequential number
     const citations: Citation[] = [];
 
-    // Convert the map to array of [originalNumber, newNumber] pairs and sort by newNumber
-    const sortedCitations = Array.from(this.citationOrderMap.entries()).sort(
-      (a, b) => a[1] - b[1],
-    );
+    // Go through each sequential number in order
+    for (let i = 1; i <= this.citationsUsed.size; i++) {
+      // Find the source number that maps to this sequential number
+      const sourceNumber = Array.from(
+        this.sourceToSequentialMap.entries(),
+      ).find(([_, seq]) => seq === i)?.[0];
 
-    // Create citation objects in order
-    for (const [originalNumber, newNumber] of sortedCitations) {
-      const docIndex = originalNumber - 1;
-      if (docIndex >= 0 && docIndex < this.searchDocs.length) {
-        const doc = this.searchDocs[docIndex];
-        const existingCitation = citations.find((c) => c.number === newNumber);
-
-        // Only add if we haven't already added this citation number
-        if (!existingCitation) {
+      if (sourceNumber !== undefined) {
+        const docIndex = sourceNumber - 1;
+        if (docIndex >= 0 && docIndex < this.searchDocs.length) {
+          const doc = this.searchDocs[docIndex];
           citations.push({
             title: doc.title,
             date: new Date(doc.date).toISOString().split('T')[0],
             url: doc.url,
-            number: newNumber,
+            number: i,
           });
         }
       }

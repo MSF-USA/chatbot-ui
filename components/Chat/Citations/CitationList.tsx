@@ -137,7 +137,7 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
         <div className="flex items-center">
           <IconBlockquote size={19} className="inline-block mb-0.5" />
           <div className="ml-1 w-6 h-6 flex items-center justify-center text-base">
-            {citations.length + 1}
+            {citations.length}
           </div>
           {citations.length > 1 ? (
             <p className="text-base ml-1">Sources</p>

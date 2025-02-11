@@ -35,10 +35,6 @@ export function createAzureOpenAIStreamProcessor(
               if (isRagStream && ragService) {
                 processedChunk =
                   ragService.processCitationInChunk(contentChunk);
-                console.log(`Processing chunk ${chunkCount}:`, {
-                  original: contentChunk,
-                  processed: processedChunk,
-                });
               }
 
               contentAccumulator += processedChunk;
