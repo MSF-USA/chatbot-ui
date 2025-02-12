@@ -20,13 +20,12 @@ type HoverState = {
 export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
   ({ message, conversation, citations = [], components = {}, ...props }) => {
     const [hoveredCitation, setHoveredCitation] = useState<HoverState>(null);
-    const tooltipRefs = useRef<Record<string, HTMLSpanElement | null>>({});
-    const hoverTimeoutRef = useRef<number | null>(null);
+    const timeoutRef = useRef<number | null>(null);
 
     const clearHoverTimeout = () => {
-      if (hoverTimeoutRef.current !== null) {
-        window.clearTimeout(hoverTimeoutRef.current);
-        hoverTimeoutRef.current = null;
+      if (timeoutRef.current !== null) {
+        window.clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
       }
     };
 
@@ -53,35 +52,32 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           hoveredCitation?.key === key;
 
         return (
-          <sup
-            key={key}
-            className="citation-number cursor-help mx-[1px] text-blue-600 dark:text-blue-400 hover:underline relative inline-block"
-            onMouseEnter={() => {
-              clearHoverTimeout();
-              setHoveredCitation({ number: citationNumber, key });
-            }}
-            onMouseLeave={() => {
-              hoverTimeoutRef.current = window.setTimeout(() => {
-                const tooltipEl = tooltipRefs.current[key];
-                if (tooltipEl && !tooltipEl.matches(':hover')) {
+          <span className="citation-wrapper relative inline-block" key={key}>
+            <sup
+              className="citation-number cursor-help mx-[1px] text-blue-600
+                        dark:text-blue-400 hover:underline"
+              onMouseEnter={() => {
+                clearHoverTimeout();
+                setHoveredCitation({ number: citationNumber, key });
+              }}
+              onMouseLeave={() => {
+                timeoutRef.current = window.setTimeout(() => {
                   setHoveredCitation(null);
-                }
-              }, 300);
-            }}
-          >
-            [{citationNumber}]
+                }, 100);
+              }}
+            >
+              [{citationNumber}]
+            </sup>
             {isHovered && (
-              <span
-                ref={(el) => (tooltipRefs.current[key] = el)}
-                className="citation-tooltip absolute z-10 left-0 bg-gray-200 dark:bg-[#171717] rounded-lg
-                       transition-all duration-300 overflow-hidden text-xs border-2
-                       border-transparent hover:border-blue-500 hover:shadow-lg h-[132px] w-48 p-2 mb-5"
+              <div
+                className="citation-tooltip absolute z-10 left-0 bg-gray-200
+                          dark:bg-[#171717] rounded-lg transition-all duration-300
+                          overflow-hidden text-xs border-2 border-transparent
+                          hover:border-blue-500 hover:shadow-lg h-32 w-48 p-2"
                 style={{
                   top: 'auto',
                   bottom: '100%',
-                  left: 0,
-                  pointerEvents: 'auto',
-                  display: 'inline-block',
+                  transform: 'translateY(-8px)',
                 }}
                 onMouseEnter={() => {
                   clearHoverTimeout();
@@ -97,12 +93,13 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
                   rel="noopener noreferrer"
                   title={citation.title || ''}
                   className="flex flex-col h-full no-underline justify-between"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+                  onClick={(e) => e.stopPropagation()}
                 >
                   <div className="flex-grow">
-                    <div className="text-[12.5px] line-clamp-3 text-gray-800 dark:text-white mb-2">
+                    <div
+                      className="text-[12.5px] line-clamp-3 text-gray-800
+                                  dark:text-white mb-2"
+                    >
                       {citation.title}
                     </div>
                   </div>
@@ -112,9 +109,10 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
                     </div>
                   )}
                   <div
-                    className="absolute bottom-0 left-0 right-0 dark:bg-[#1f1f1f]
-                              bg-gray-100 px-2 py-1 flex items-center dark:text-white
-                              text-gray-500 text-[11.5px] space-x-1"
+                    className="absolute bottom-0 left-0 right-0
+                                dark:bg-[#1f1f1f] bg-gray-100 px-2 py-1
+                                flex items-center dark:text-white text-gray-500
+                                text-[11.5px] space-x-1"
                   >
                     <div className="flex items-center">
                       {hostname && (
@@ -132,13 +130,20 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
                     <span>{citation.number}</span>
                   </div>
                 </Link>
-              </span>
+              </div>
             )}
-          </sup>
+          </span>
         );
       },
       [hoveredCitation, citations],
     );
+
+    // Cleanup timeout on unmount
+    React.useEffect(() => {
+      return () => {
+        clearHoverTimeout();
+      };
+    }, []);
 
     const processTextWithCitations = useCallback(
       (text: string) => {
@@ -213,12 +218,6 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         </li>
       );
     };
-
-    React.useEffect(() => {
-      return () => {
-        clearHoverTimeout();
-      };
-    }, []);
 
     return (
       <ReactMarkdown

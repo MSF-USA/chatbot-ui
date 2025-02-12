@@ -30,6 +30,9 @@ export function createAzureOpenAIStreamProcessor(
               const contentChunk = chunk.choices[0].delta.content;
               chunkCount++;
 
+              // Debug log incoming chunks
+              console.log(`Chunk ${chunkCount}:`, JSON.stringify(contentChunk));
+
               // Process the chunk if it's a RAG stream
               let processedChunk = contentChunk;
               if (isRagStream && ragService) {
@@ -42,13 +45,22 @@ export function createAzureOpenAIStreamProcessor(
             }
           }
 
-          console.log('Stream completed, getting citations...');
+          console.log(
+            'Stream completed, final content:',
+            JSON.stringify(contentAccumulator),
+          );
+          console.log(
+            'Citation map:',
+            Array.from(ragService?.['sourceToSequentialMap'].entries() || []),
+          );
 
-          // Send citations only at the end if it's a RAG stream
           if (isRagStream && ragService) {
-            // Process any remaining buffered content
             const finalProcessedChunk = ragService.processCitationInChunk('');
             if (finalProcessedChunk) {
+              console.log(
+                'Final chunk processing:',
+                JSON.stringify(finalProcessedChunk),
+              );
               contentAccumulator += finalProcessedChunk;
               controller.enqueue(encoder.encode(finalProcessedChunk));
             }
@@ -60,11 +72,8 @@ export function createAzureOpenAIStreamProcessor(
               const citationsJson = JSON.stringify({
                 citations: finalCitations,
               });
-              console.log('Sending citations JSON:', citationsJson);
               controller.enqueue(encoder.encode('\n\n' + citationsJson));
               citationsAccumulator = finalCitations;
-            } else {
-              console.log('No citations found in the response');
             }
           }
 

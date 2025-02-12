@@ -42,11 +42,9 @@ describe('CitationList', () => {
   it('renders citation count and toggle button', () => {
     render(<CitationList citations={mockCitations} />);
 
-    // Check citation count
     const citationCount = screen.getByText('2');
     expect(citationCount).toBeInTheDocument();
 
-    // Check "Sources" text
     const sourcesText = screen.getByText('Sources');
     expect(sourcesText).toBeInTheDocument();
   });
@@ -62,24 +60,19 @@ describe('CitationList', () => {
   it('expands and collapses citations', () => {
     render(<CitationList citations={mockCitations} />);
 
-    // Initial state should not show citations
     const initialCitations = screen.queryByText('Test Citation 1');
     expect(initialCitations).not.toBeInTheDocument();
 
-    // Click to expand
     const toggleButton = screen.getByText('Sources');
     fireEvent.click(toggleButton);
 
-    // Now citations should be visible
     const citation1 = screen.getByText('Test Citation 1');
     const citation2 = screen.getByText('Test Citation 2');
     expect(citation1).toBeInTheDocument();
     expect(citation2).toBeInTheDocument();
 
-    // Click to collapse
     fireEvent.click(toggleButton);
 
-    // Citations should be hidden again
     expect(screen.queryByText('Test Citation 1')).toBeNull();
   });
 
@@ -100,19 +93,15 @@ describe('CitationItem', () => {
   it('renders citation details correctly', () => {
     render(<CitationItem citation={mockCitation} />);
 
-    // Check title
     const titleElement = screen.getByText('Test Citation');
     expect(titleElement).toBeInTheDocument();
 
-    // Check date
     const dateElement = screen.getByText('2023-01-01');
     expect(dateElement).toBeInTheDocument();
 
-    // Check domain
     const domainElement = screen.getByText('example');
     expect(domainElement).toBeInTheDocument();
 
-    // Check link
     const linkElement = screen.getByRole('link');
     expect(linkElement).toHaveAttribute('href', 'https://www.example.com');
     expect(linkElement).toHaveAttribute('title', 'Test Citation');
@@ -137,9 +126,15 @@ describe('CitationMarkdown', () => {
   const mockCitations: Citation[] = [
     {
       number: 1,
-      title: 'Test Citation',
-      url: 'https://www.example.com',
+      title: 'Test Citation 1',
+      url: 'https://www.example1.com',
       date: '2023-01-01',
+    },
+    {
+      number: 2,
+      title: 'Test Citation 2',
+      url: 'https://www.example2.com',
+      date: '2023-01-02',
     },
   ];
 
@@ -154,10 +149,82 @@ describe('CitationMarkdown', () => {
     );
 
     const citation = screen.getByText('[1]');
-    const supElement = citation.closest('sup');
+    const supElement = citation.closest('sup') as HTMLElement;
     expect(supElement).toHaveClass('citation-number');
     expect(supElement).toHaveClass('cursor-help');
     expect(supElement).toHaveClass('text-blue-600');
+  });
+
+  it('renders multiple adjacent citations with correct styling', () => {
+    render(
+      <CitationMarkdown
+        citations={mockCitations}
+        conversation={createMockConversation()}
+      >
+        Here are multiple citations [1][2] in a row.
+      </CitationMarkdown>,
+    );
+
+    // Verify base styling for all citations
+    ['[1]', '[2]'].forEach((text) => {
+      const citation = screen.getByText(text);
+      const supElement = citation.closest('sup') as HTMLElement;
+      expect(supElement).toHaveClass('citation-number');
+      expect(supElement).toHaveClass('cursor-help');
+      expect(supElement).toHaveClass('text-blue-600');
+    });
+  });
+
+  it('shows correct tooltip for first citation', async () => {
+    render(
+      <CitationMarkdown
+        citations={mockCitations}
+        conversation={createMockConversation()}
+      >
+        Here are multiple citations [1][2] in a row.
+      </CitationMarkdown>,
+    );
+
+    const citation = screen.getByText('[1]');
+    const supElement = citation.closest('sup') as HTMLElement;
+
+    fireEvent.mouseEnter(supElement);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Citation 1')).toBeInTheDocument();
+    });
+
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', 'https://www.example1.com');
+    expect(link).toHaveAttribute('title', 'Test Citation 1');
+    expect(screen.getByText('2023-01-01')).toBeInTheDocument();
+    expect(screen.getByText('example1')).toBeInTheDocument();
+  });
+
+  it('shows correct tooltip for second citation', async () => {
+    render(
+      <CitationMarkdown
+        citations={mockCitations}
+        conversation={createMockConversation()}
+      >
+        Here are multiple citations [1][2] in a row.
+      </CitationMarkdown>,
+    );
+
+    const citation = screen.getByText('[2]');
+    const supElement = citation.closest('sup') as HTMLElement;
+
+    fireEvent.mouseEnter(supElement);
+
+    await waitFor(() => {
+      expect(screen.getByText('Test Citation 2')).toBeInTheDocument();
+    });
+
+    const link = screen.getByRole('link');
+    expect(link).toHaveAttribute('href', 'https://www.example2.com');
+    expect(link).toHaveAttribute('title', 'Test Citation 2');
+    expect(screen.getByText('2023-01-02')).toBeInTheDocument();
+    expect(screen.getByText('example2')).toBeInTheDocument();
   });
 
   it('displays tooltip with correct content on hover', async () => {
@@ -171,23 +238,27 @@ describe('CitationMarkdown', () => {
     );
 
     const citation = screen.getByText('[1]');
-    const supElement = citation.closest('sup');
+    const supElement = citation.closest('sup') as HTMLElement;
 
-    // Simulate mouse enter
-    fireEvent.mouseEnter(supElement!);
+    fireEvent.mouseEnter(supElement);
 
-    // Wait for tooltip to appear
     await waitFor(() => {
-      const tooltipElement = screen.getByText('Test Citation');
-      expect(tooltipElement).toBeInTheDocument();
+      const tooltipContent = screen.getByText('Test Citation 1');
+      expect(tooltipContent).toBeInTheDocument();
     });
 
+    const tooltipContent = screen.getByText('Test Citation 1');
+    const tooltipContainer = tooltipContent.closest(
+      '.citation-tooltip',
+    ) as HTMLElement;
+    expect(tooltipContainer).toBeInTheDocument();
+
     const linkElement = screen.getByRole('link');
-    expect(linkElement).toHaveAttribute('href', 'https://www.example.com');
-    expect(linkElement).toHaveAttribute('title', 'Test Citation');
+    expect(linkElement).toHaveAttribute('href', 'https://www.example1.com');
+    expect(linkElement).toHaveAttribute('title', 'Test Citation 1');
 
     expect(screen.getByText('2023-01-01')).toBeInTheDocument();
-    expect(screen.getByText('example')).toBeInTheDocument();
+    expect(screen.getByText('example1')).toBeInTheDocument();
   });
 
   it('ignores citations when conversation.bot is false', () => {

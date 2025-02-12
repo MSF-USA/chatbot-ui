@@ -19,6 +19,7 @@ export class RAGService {
   private sourceToSequentialMap: Map<number, number> = new Map();
   private citationsUsed: Set<number> = new Set();
   private isInCitation: boolean = false;
+  private pendingCitations: string = '';
 
   constructor(
     searchEndpoint: string,
@@ -179,56 +180,57 @@ export class RAGService {
     this.sourceToSequentialMap.clear();
     this.citationsUsed.clear();
     this.isInCitation = false;
+    this.pendingCitations = '';
   }
 
   public processCitationInChunk(chunk: string): string {
-    // If we're not in a citation and chunk has no citation markers, return as is
-    if (!this.isInCitation && !chunk.includes('[')) {
+    if (!this.isInCitation && !chunk.includes('[') && !this.pendingCitations) {
       return chunk;
     }
 
     let result = '';
     let currentPosition = 0;
+    let textBuffer = '';
 
-    // Process the chunk character by character
+    const flushPendingCitations = () => {
+      if (this.pendingCitations) {
+        result += this.pendingCitations;
+        this.pendingCitations = '';
+      }
+    };
+
     while (currentPosition < chunk.length) {
-      // If we're not in a citation, look for the next '['
-      if (!this.isInCitation) {
-        const nextBracket = chunk.indexOf('[', currentPosition);
-        if (nextBracket === -1) {
-          // No more citations in this chunk
-          result += chunk.slice(currentPosition);
-          break;
-        }
-        // Add text before the citation
-        result += chunk.slice(currentPosition, nextBracket);
+      const char = chunk[currentPosition];
 
-        // Check if this is a section header bracket
-        const nextCloseBracket = chunk.indexOf(']', nextBracket);
-        if (nextCloseBracket !== -1) {
-          const potentialHeader = chunk.substring(
-            nextBracket,
-            nextCloseBracket + 1,
-          );
-          if (
-            potentialHeader.match(/\[.*Events\]/i) ||
-            potentialHeader.match(/\[.*Analysis\]/i)
-          ) {
-            // This is a section header, not a citation
-            result += potentialHeader;
-            currentPosition = nextCloseBracket + 1;
-            continue;
+      if (!this.isInCitation && char === '[') {
+        // Check if this is a text bracket (contains letters) rather than a citation number
+        const remainingChunk = chunk.slice(currentPosition);
+        const textBracketMatch = remainingChunk.match(
+          /^\[[^\]]*[a-zA-Z][^\]]*\]/,
+        );
+        if (textBracketMatch) {
+          flushPendingCitations();
+          if (textBuffer) {
+            result += textBuffer;
+            textBuffer = '';
           }
+          result += textBracketMatch[0];
+          currentPosition += textBracketMatch[0].length;
+          continue;
         }
 
+        // Output any buffered text before starting new citation
+        if (textBuffer) {
+          result += textBuffer;
+          textBuffer = '';
+        }
         this.isInCitation = true;
-        this.citationBuffer = '';
-        currentPosition = nextBracket;
+        this.citationBuffer = '[';
+        currentPosition++;
+        continue;
       }
 
-      // Add characters to citation buffer until we find ']'
-      while (currentPosition < chunk.length) {
-        const char = chunk[currentPosition];
+      if (this.isInCitation) {
         this.citationBuffer += char;
         currentPosition++;
 
@@ -236,8 +238,6 @@ export class RAGService {
           const match = this.citationBuffer.match(/\[(\d+)\]/);
           if (match) {
             const sourceNumber = parseInt(match[1], 10);
-
-            // Get or create sequential number
             if (!this.sourceToSequentialMap.has(sourceNumber)) {
               const nextNumber = this.citationsUsed.size + 1;
               this.sourceToSequentialMap.set(sourceNumber, nextNumber);
@@ -245,30 +245,59 @@ export class RAGService {
             }
             const sequentialNumber =
               this.sourceToSequentialMap.get(sourceNumber)!;
+            this.pendingCitations += `[${sequentialNumber}]`;
 
-            // Replace citation with sequential number
-            result += `[${sequentialNumber}]`;
+            // Look ahead for another citation
+            if (
+              currentPosition < chunk.length &&
+              chunk[currentPosition] === '['
+            ) {
+              this.citationBuffer = '';
+              this.isInCitation = false;
+              continue;
+            }
+
+            // No more citations, flush pending
+            flushPendingCitations();
             this.citationBuffer = '';
             this.isInCitation = false;
-            break;
           } else {
-            // This might be a section header that we missed
+            // Invalid citation format
+            if (textBuffer) {
+              result += textBuffer;
+              textBuffer = '';
+            }
             result += this.citationBuffer;
             this.citationBuffer = '';
             this.isInCitation = false;
-            break;
           }
         }
+      } else {
+        textBuffer += char;
+        currentPosition++;
       }
     }
 
-    // If we're still in a citation, the citation is incomplete
+    // End of chunk processing
     if (this.isInCitation) {
-      return ''; // Hold onto the partial citation
+      // In the middle of a citation - keep the buffer
+      if (textBuffer) {
+        result += textBuffer;
+      }
+      return result;
     }
 
-    // Clean up any markdown-style headers that might have been affected
-    result = result.replace(/###\s+\[([^\]]+)\]/g, '### $1');
+    // Flush any remaining citations and text
+    if (this.pendingCitations) {
+      // Only flush pending citations if we have text after them
+      if (textBuffer) {
+        result += this.pendingCitations + textBuffer;
+        this.pendingCitations = '';
+        textBuffer = '';
+      }
+    } else if (textBuffer) {
+      result += textBuffer;
+    }
 
     return result;
   }
