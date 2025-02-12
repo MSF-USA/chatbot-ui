@@ -30,9 +30,6 @@ export function createAzureOpenAIStreamProcessor(
               const contentChunk = chunk.choices[0].delta.content;
               chunkCount++;
 
-              // Debug log incoming chunks
-              console.log(`Chunk ${chunkCount}:`, JSON.stringify(contentChunk));
-
               // Process the chunk if it's a RAG stream
               let processedChunk = contentChunk;
               if (isRagStream && ragService) {

@@ -12,7 +12,7 @@ export class RAGService {
   private searchClient: SearchClient<SearchResult>;
   private loggingService: AzureMonitorLoggingService;
   private openAIClient: AzureOpenAI;
-  private searchDocs: SearchResult[] = [];
+  public searchDocs: SearchResult[] = [];
 
   // Citation tracking properties
   private citationBuffer: string = '';
@@ -96,7 +96,7 @@ export class RAGService {
     };
   }
 
-  private async performSearch(messages: Message[], botId: string, bots: Bot[]) {
+  public async performSearch(messages: Message[], botId: string, bots: Bot[]) {
     const bot = bots.find((b) => b.id === botId);
     if (!bot) throw new Error(`Bot ${botId} not found`);
 
@@ -131,7 +131,7 @@ export class RAGService {
     };
   }
 
-  private getCompletionMessages(
+  public getCompletionMessages(
     messages: Message[],
     bot: Bot,
     searchDocs: SearchResult[],
@@ -164,7 +164,7 @@ export class RAGService {
     ];
   }
 
-  private extractQuery(messages: Message[]): string {
+  public extractQuery(messages: Message[]): string {
     const lastUserMessage = messages
       .slice()
       .reverse()
@@ -302,7 +302,7 @@ export class RAGService {
     return result;
   }
 
-  private processCitationsInContent(content: string): Citation[] {
+  public processCitationsInContent(content: string): Citation[] {
     this.resetCitationTracking();
     // Process the entire content as one chunk to get citation mappings
     this.processCitationInChunk(content);

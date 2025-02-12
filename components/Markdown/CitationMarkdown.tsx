@@ -20,14 +20,31 @@ type HoverState = {
 export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
   ({ message, conversation, citations = [], components = {}, ...props }) => {
     const [hoveredCitation, setHoveredCitation] = useState<HoverState>(null);
-    const timeoutRef = useRef<number | null>(null);
+    const hoverTimeoutRef = useRef<number | null>(null);
+    const activeElementRef = useRef<HTMLElement | null>(null);
 
-    const clearHoverTimeout = () => {
-      if (timeoutRef.current !== null) {
-        window.clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-    };
+    // Global mouse tracking to ensure we catch all movements
+    React.useEffect(() => {
+      const handleGlobalMouseMove = (e: MouseEvent) => {
+        const target = e.target as HTMLElement;
+        const isOverCitation = target.classList.contains('citation-number');
+        const isOverTooltip = target.closest('.citation-tooltip');
+
+        // If we're not over either element and not in transition period
+        if (!isOverCitation && !isOverTooltip && !hoverTimeoutRef.current) {
+          setHoveredCitation(null);
+        }
+      };
+
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      return () => {
+        document.removeEventListener('mousemove', handleGlobalMouseMove);
+        if (hoverTimeoutRef.current) {
+          window.clearTimeout(hoverTimeoutRef.current);
+          hoverTimeoutRef.current = null;
+        }
+      };
+    }, []);
 
     const createCitationElement = useCallback(
       (citationNumber: number, key: string) => {
@@ -51,20 +68,39 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           hoveredCitation?.number === citationNumber &&
           hoveredCitation?.key === key;
 
+        const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
+          if (hoverTimeoutRef.current) {
+            window.clearTimeout(hoverTimeoutRef.current);
+            hoverTimeoutRef.current = null;
+          }
+          activeElementRef.current = e.currentTarget;
+          setHoveredCitation({ number: citationNumber, key });
+        };
+
+        const handleMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
+          const relatedTarget = e.relatedTarget as HTMLElement;
+          const isMovingToTooltip = relatedTarget?.closest('.citation-tooltip');
+
+          if (!isMovingToTooltip) {
+            if (hoverTimeoutRef.current) {
+              window.clearTimeout(hoverTimeoutRef.current);
+            }
+            hoverTimeoutRef.current = window.setTimeout(() => {
+              if (activeElementRef.current === e.currentTarget) {
+                setHoveredCitation(null);
+              }
+              hoverTimeoutRef.current = null;
+            }, 200);
+          }
+        };
+
         return (
           <span className="citation-wrapper relative inline-block" key={key}>
             <sup
               className="citation-number cursor-help mx-[1px] text-blue-600
                         dark:text-blue-400 hover:underline"
-              onMouseEnter={() => {
-                clearHoverTimeout();
-                setHoveredCitation({ number: citationNumber, key });
-              }}
-              onMouseLeave={() => {
-                timeoutRef.current = window.setTimeout(() => {
-                  setHoveredCitation(null);
-                }, 100);
-              }}
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handleMouseLeave}
             >
               [{citationNumber}]
             </sup>
@@ -79,11 +115,9 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
                   bottom: '100%',
                   transform: 'translateY(-8px)',
                 }}
-                onMouseEnter={() => {
-                  clearHoverTimeout();
-                  setHoveredCitation({ number: citationNumber, key });
-                }}
+                onMouseEnter={handleMouseEnter}
                 onMouseLeave={() => {
+                  activeElementRef.current = null;
                   setHoveredCitation(null);
                 }}
               >
@@ -137,13 +171,6 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       },
       [hoveredCitation, citations],
     );
-
-    // Cleanup timeout on unmount
-    React.useEffect(() => {
-      return () => {
-        clearHoverTimeout();
-      };
-    }, []);
 
     const processTextWithCitations = useCallback(
       (text: string) => {
