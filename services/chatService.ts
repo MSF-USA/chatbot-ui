@@ -30,7 +30,6 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
-import { StreamProcessingResult } from '@/types/rag';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
@@ -211,11 +210,15 @@ export default class ChatService {
         console.log('File summarized successfully.');
 
         if (streamResponse) {
-          const { stream } = result as StreamProcessingResult;
-          return new StreamingTextResponse(stream);
+          if (typeof result === 'string') {
+            throw new Error('Expected a ReadableStream for streaming response');
+          }
+          return new StreamingTextResponse(result);
         } else {
-          const responseText = result as string;
-          return new Response(JSON.stringify({ text: responseText }), {
+          if (result instanceof ReadableStream) {
+            throw new Error('Expected a string for non-streaming response');
+          }
+          return new Response(JSON.stringify({ text: result }), {
             headers: { 'Content-Type': 'application/json' },
           });
         }

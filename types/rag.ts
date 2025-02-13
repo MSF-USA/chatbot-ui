@@ -30,9 +30,3 @@ export interface Citation {
   url: string;
   number: number;
 }
-
-export interface StreamProcessingResult {
-  stream: ReadableStream;
-  contentAccumulator: string;
-  citationsAccumulator: Citation[];
-}

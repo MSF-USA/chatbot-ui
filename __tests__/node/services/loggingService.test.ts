@@ -128,11 +128,51 @@ describe('AzureMonitorLoggingService', () => {
     });
   });
 
-  describe('logFileError', () => {
-    it('should log file error', async () => {
+  describe('file operations', () => {
+    it('should log successful file operations with chunk tracking', async () => {
       const startTime = Date.now() - 1000;
-      const testError = new Error('File error');
-      testError.stack = 'File error stack trace';
+
+      await loggingService.logFileSuccess(
+        startTime,
+        'test-model',
+        mockUser,
+        'test.pdf',
+        1024,
+        'test-bot',
+        'documentSummary',
+        10, // total chunks
+        8, // processed chunks
+        2, // failed chunks
+        true, // stream mode
+      );
+
+      expect(mockClient.upload).toHaveBeenCalledWith(
+        'test-rule-id',
+        'test-stream',
+        [
+          expect.objectContaining({
+            EventType: 'FileOperationSuccessdocumentSummary',
+            Status: 'success',
+            ModelUsed: 'test-model',
+            UserId: mockUser.id,
+            BotId: 'test-bot',
+            FileUpload: true,
+            FileName: 'test.pdf',
+            FileSize: 1024,
+            ChunkCount: 10,
+            ProcessedChunkCount: 8,
+            FailedChunkCount: 2,
+            StreamMode: true,
+            Duration: expect.any(Number),
+          }),
+        ],
+      );
+    });
+
+    it('should log file error with chunk processing errors', async () => {
+      const startTime = Date.now() - 1000;
+      const testError = new Error('Chunk processing error');
+      testError.stack = 'Chunk error stack trace';
 
       await loggingService.logFileError(
         startTime,
@@ -142,6 +182,7 @@ describe('AzureMonitorLoggingService', () => {
         'test.pdf',
         1024,
         'test-bot',
+        'chunkSummarization',
       );
 
       expect(mockClient.upload).toHaveBeenCalledWith(
@@ -149,16 +190,130 @@ describe('AzureMonitorLoggingService', () => {
         'test-stream',
         [
           expect.objectContaining({
-            EventType: 'FileConversationError',
+            EventType: 'FileOperationErrorchunkSummarization',
             Status: 'error',
             ModelUsed: 'test-model',
             UserId: mockUser.id,
             BotId: 'test-bot',
-            ErrorMessage: 'File error',
-            ErrorStack: 'File error stack trace',
+            ErrorMessage: 'Chunk processing error',
+            ErrorStack: 'Chunk error stack trace',
             FileUpload: true,
             FileName: 'test.pdf',
             FileSize: 1024,
+            Duration: expect.any(Number),
+          }),
+        ],
+      );
+    });
+
+    it('should handle non-streaming file operations', async () => {
+      const startTime = Date.now() - 1000;
+
+      await loggingService.logFileSuccess(
+        startTime,
+        'test-model',
+        mockUser,
+        'test.pdf',
+        1024,
+        'test-bot',
+        'documentSummary',
+        5, // total chunks
+        5, // processed chunks
+        0, // failed chunks
+        false, // stream mode
+      );
+
+      expect(mockClient.upload).toHaveBeenCalledWith(
+        'test-rule-id',
+        'test-stream',
+        [
+          expect.objectContaining({
+            EventType: 'FileOperationSuccessdocumentSummary',
+            Status: 'success',
+            ModelUsed: 'test-model',
+            UserId: mockUser.id,
+            BotId: 'test-bot',
+            FileUpload: true,
+            FileName: 'test.pdf',
+            FileSize: 1024,
+            ChunkCount: 5,
+            ProcessedChunkCount: 5,
+            FailedChunkCount: 0,
+            StreamMode: false,
+            Duration: expect.any(Number),
+          }),
+        ],
+      );
+    });
+
+    it('should handle file operations without bot ID', async () => {
+      const startTime = Date.now() - 1000;
+
+      await loggingService.logFileSuccess(
+        startTime,
+        'test-model',
+        mockUser,
+        'test.pdf',
+        1024,
+        undefined,
+        'documentSummary',
+        5,
+        5,
+        0,
+        true,
+      );
+
+      expect(mockClient.upload).toHaveBeenCalledWith(
+        'test-rule-id',
+        'test-stream',
+        [
+          expect.objectContaining({
+            EventType: 'FileOperationSuccessdocumentSummary',
+            Status: 'success',
+            ModelUsed: 'test-model',
+            UserId: mockUser.id,
+            BotId: undefined,
+            FileUpload: true,
+            FileName: 'test.pdf',
+            FileSize: 1024,
+            ChunkCount: 5,
+            ProcessedChunkCount: 5,
+            FailedChunkCount: 0,
+            StreamMode: true,
+            Duration: expect.any(Number),
+          }),
+        ],
+      );
+    });
+
+    it('should handle missing optional parameters in file success logging', async () => {
+      const startTime = Date.now() - 1000;
+
+      await loggingService.logFileSuccess(
+        startTime,
+        'test-model',
+        mockUser,
+        'test.pdf',
+        1024,
+      );
+
+      expect(mockClient.upload).toHaveBeenCalledWith(
+        'test-rule-id',
+        'test-stream',
+        [
+          expect.objectContaining({
+            EventType: 'FileOperationSuccess',
+            Status: 'success',
+            ModelUsed: 'test-model',
+            UserId: mockUser.id,
+            FileUpload: true,
+            FileName: 'test.pdf',
+            FileSize: 1024,
+            BotId: undefined,
+            ChunkCount: undefined,
+            ProcessedChunkCount: undefined,
+            FailedChunkCount: undefined,
+            StreamMode: undefined,
             Duration: expect.any(Number),
           }),
         ],

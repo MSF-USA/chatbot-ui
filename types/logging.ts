@@ -65,10 +65,36 @@ export interface MessageSuccessLogEntry extends MessageLogEntry {
 }
 
 /**
+ * File log entry interface for logging file-related operations.
+ */
+export interface FileLogEntry extends BaseLogEntry {
+  EventType:
+    | 'FileUploadSuccess'
+    | 'FileUploadError'
+    | 'DocumentSummarySuccess'
+    | 'DocumentSummaryError'
+    | 'FileOperationSuccess'
+    | 'FileOperationError';
+  ModelUsed: string;
+  Duration: number;
+  FileUpload: boolean;
+  FileName?: string;
+  FileSize?: number;
+  ChunkCount?: number;
+  ProcessedChunkCount?: number;
+  FailedChunkCount?: number;
+  StreamMode?: boolean;
+  Status: 'success' | 'error';
+  ErrorMessage?: string;
+  ErrorStack?: string;
+}
+
+/**
  * Union type of all possible log entry types.
  */
 export type LogEntry =
   | MessageErrorLogEntry
   | MessageSuccessLogEntry
   | SearchErrorLogEntry
-  | SearchLogEntry;
+  | SearchLogEntry
+  | FileLogEntry;

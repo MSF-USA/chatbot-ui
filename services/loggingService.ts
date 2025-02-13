@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 
 import {
   BaseLogEntry,
+  FileLogEntry,
   LogEntry,
   MessageErrorLogEntry,
   MessageLogEntry,
@@ -65,6 +66,39 @@ export class AzureMonitorLoggingService {
       MessageCount: messageCount,
       Temperature: temperature,
       Duration: duration,
+      FileUpload: false,
+      FileName: undefined,
+      FileSize: undefined,
+    };
+  }
+
+  private createFileLogEntry(
+    eventType: FileLogEntry['EventType'],
+    modelId: string,
+    duration: number,
+    status: 'success' | 'error',
+    user?: Session['user'],
+    botId?: string,
+    filename?: string,
+    fileSize?: number,
+    chunkCount?: number,
+    processedChunkCount?: number,
+    failedChunkCount?: number,
+    streamMode?: boolean,
+  ): FileLogEntry {
+    return {
+      ...this.createBaseLogEntry(eventType, user, botId),
+      EventType: eventType,
+      ModelUsed: modelId,
+      Duration: duration,
+      FileUpload: true,
+      FileName: filename,
+      FileSize: fileSize,
+      ChunkCount: chunkCount,
+      ProcessedChunkCount: processedChunkCount,
+      FailedChunkCount: failedChunkCount,
+      StreamMode: streamMode,
+      Status: status,
     };
   }
 
@@ -122,6 +156,42 @@ export class AzureMonitorLoggingService {
     await this.log(errorEntry);
   }
 
+  async logFileSuccess(
+    startTime: number,
+    modelId: string,
+    user: Session['user'],
+    filename?: string,
+    fileSize?: number,
+    botId?: string,
+    eventTypeSuffix?: string,
+    chunkCount?: number,
+    processedChunkCount?: number,
+    failedChunkCount?: number,
+    streamMode?: boolean,
+  ) {
+    const duration = Date.now() - startTime;
+    const successEntry: FileLogEntry = {
+      ...this.createFileLogEntry(
+        `FileOperationSuccess${
+          eventTypeSuffix || ''
+        }` as FileLogEntry['EventType'],
+        modelId,
+        duration,
+        'success',
+        user,
+        botId,
+        filename,
+        fileSize,
+        chunkCount,
+        processedChunkCount,
+        failedChunkCount,
+        streamMode,
+      ),
+    };
+
+    await this.log(successEntry);
+  }
+
   async logFileError(
     startTime: number,
     error: any,
@@ -130,24 +200,24 @@ export class AzureMonitorLoggingService {
     filename?: string,
     fileSize?: number,
     botId?: string,
+    eventTypeSuffix?: string,
   ) {
     const duration = Date.now() - startTime;
-    const errorEntry: MessageErrorLogEntry = {
-      ...this.createMessageLogEntry(
-        'FileConversationError',
+    const errorEntry: FileLogEntry = {
+      ...this.createFileLogEntry(
+        `FileOperationError${
+          eventTypeSuffix || ''
+        }` as FileLogEntry['EventType'],
         modelId,
-        0,
-        0,
         duration,
+        'error',
         user,
         botId,
+        filename,
+        fileSize,
       ),
-      Status: 'error',
       ErrorMessage: error instanceof Error ? error.message : 'Unknown error',
       ErrorStack: error instanceof Error ? error.stack : undefined,
-      FileUpload: true,
-      FileName: filename,
-      FileSize: fileSize,
     };
 
     await this.log(errorEntry);
@@ -193,7 +263,7 @@ export class AzureMonitorLoggingService {
     await this.log(errorEntry);
   }
 
-  private async log(data: LogEntry) {
+  private async log(data: LogEntry | FileLogEntry | SearchLogEntry) {
     try {
       const logEntry = {
         TimeGenerated: new Date().toISOString(),
