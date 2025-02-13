@@ -75,7 +75,6 @@ export class AzureMonitorLoggingService {
     temperature: number,
     user: Session['user'],
     botId?: string,
-    citationsCount?: number,
   ) {
     const duration = Date.now() - startTime;
     const successEntry: MessageSuccessLogEntry = {
@@ -89,7 +88,6 @@ export class AzureMonitorLoggingService {
         botId,
       ),
       Status: 'success',
-      CitationsCount: citationsCount,
     };
 
     await this.log(successEntry);
@@ -180,7 +178,6 @@ export class AzureMonitorLoggingService {
     startTime: number,
     error: any,
     botId: string,
-    queryText: string,
     user?: Session['user'],
   ) {
     const duration = Date.now() - startTime;

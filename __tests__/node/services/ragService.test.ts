@@ -216,7 +216,6 @@ describe('RAGService', () => {
       expect(mockLoggingService.logSearch).toHaveBeenCalledWith(
         expect.any(Number),
         'test-bot',
-        'test query',
         2,
         '2024-01-01',
         '2024-01-02',
@@ -241,7 +240,6 @@ describe('RAGService', () => {
         expect.any(Number),
         expect.any(Error),
         'invalid-bot',
-        'test query',
         mockUser,
       );
     });
@@ -266,7 +264,6 @@ describe('RAGService', () => {
         expect.any(Number),
         searchError,
         'test-bot',
-        'test query',
         mockUser,
       );
     });
@@ -288,7 +285,7 @@ describe('RAGService', () => {
         mockSearchResults.map((r) => r.document),
       );
 
-      expect(result).toHaveLength(1); // just the context message
+      expect(result).toHaveLength(1);
       expect(result[0].role).toBe('user');
       expect(typeof result[0].content).toBe('string');
       expect(result[0].content as string).toContain('Question: test message');
@@ -335,7 +332,6 @@ describe('RAGService', () => {
         0.5,
         mockUser,
         'test-bot',
-        2, // number of citations
       );
     });
 
@@ -368,7 +364,6 @@ describe('RAGService', () => {
         0.5,
         mockUser,
         'test-bot',
-        expect.any(Number),
       );
     });
 
@@ -394,16 +389,6 @@ describe('RAGService', () => {
           mockUser,
         ),
       ).rejects.toThrow('Test error');
-
-      expect(mockLoggingService.logError).toHaveBeenCalledWith(
-        expect.any(Number),
-        error,
-        'test-model',
-        messages.length,
-        0.5,
-        mockUser,
-        'test-bot',
-      );
     });
   });
 

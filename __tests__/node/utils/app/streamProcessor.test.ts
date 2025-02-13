@@ -104,15 +104,11 @@ describe('Azure OpenAI Stream Processor', () => {
     ] as MockChunk[];
 
     const mockResponse = createMockResponse(chunks);
-    const { stream, citationsAccumulator } = createAzureOpenAIStreamProcessor(
-      mockResponse,
-      false,
-    );
+    const stream = createAzureOpenAIStreamProcessor(mockResponse);
 
     const content = await readStreamContent(stream);
 
     expect(content).toBe('Hello World');
-    expect(citationsAccumulator).toEqual([]);
   });
 
   it('processes a RAG stream with citations', async () => {
@@ -129,7 +125,7 @@ describe('Azure OpenAI Stream Processor', () => {
         date: '2023-01-01',
         url: 'https://example.com/1',
         number: 1,
-      } as Citation, // Casting to Citation type
+      } as Citation,
       {
         title: 'Test Source 2',
         date: '2023-01-02',
@@ -138,19 +134,16 @@ describe('Azure OpenAI Stream Processor', () => {
       } as Citation,
     ]);
 
-    const { stream, citationsAccumulator } = createAzureOpenAIStreamProcessor(
+    const stream = createAzureOpenAIStreamProcessor(
       mockResponse,
-      true,
       mockRAGService,
     );
 
     const content = await readStreamContent(stream);
 
-    expect(mockRAGService.resetCitationTracking).toHaveBeenCalled();
     expect(content).toBe('Hello [1] World [2]');
-    expect(mockRAGService.getCurrentCitations).toHaveBeenCalledTimes(1); // Still check that it's called
+    expect(mockRAGService.getCurrentCitations).toHaveBeenCalledTimes(1);
 
-    // *** CORRECTED ASSERTION: Verify the mocked return value of getCurrentCitations ***
     const finalCitations = mockRAGService.getCurrentCitations();
     expect(finalCitations).toHaveLength(2);
     expect(finalCitations[0]).toMatchObject({
@@ -165,10 +158,6 @@ describe('Azure OpenAI Stream Processor', () => {
       url: 'https://example.com/2',
       number: 2,
     });
-
-    // *** No longer assert against citationsAccumulator directly ***
-    // expect(citationsAccumulator).toHaveLength(2); // Removed or commented out
-    // expect(citationsAccumulator[0]).toMatchObject({...}); // Removed or commented out
   });
 
   it('handles stream with empty chunks', async () => {
@@ -178,15 +167,11 @@ describe('Azure OpenAI Stream Processor', () => {
     ] as MockChunk[];
 
     const mockResponse = createMockResponse(chunks);
-    const { stream, citationsAccumulator } = createAzureOpenAIStreamProcessor(
-      mockResponse,
-      false,
-    );
+    const stream = createAzureOpenAIStreamProcessor(mockResponse);
 
     const content = await readStreamContent(stream);
 
     expect(content).toBe('');
-    expect(citationsAccumulator).toEqual([]);
   });
 
   it('propagates stream errors', async () => {
@@ -200,7 +185,7 @@ describe('Azure OpenAI Stream Processor', () => {
       },
     };
 
-    const { stream } = createAzureOpenAIStreamProcessor(errorResponse, false);
+    const stream = createAzureOpenAIStreamProcessor(errorResponse);
 
     await expect(readStreamContent(stream)).rejects.toThrow('Stream error');
   });
@@ -217,9 +202,8 @@ describe('Azure OpenAI Stream Processor', () => {
     ] as MockChunk[];
 
     const mockResponse = createMockResponse(chunks);
-    const { stream } = createAzureOpenAIStreamProcessor(
+    const stream = createAzureOpenAIStreamProcessor(
       mockResponse,
-      true,
       mockRAGService,
     );
 

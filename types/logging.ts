@@ -26,7 +26,6 @@ export interface MessageLogEntry extends BaseLogEntry {
   FileUpload?: boolean;
   FileName?: string;
   FileSize?: number;
-  CitationsCount?: number;
 }
 
 /**

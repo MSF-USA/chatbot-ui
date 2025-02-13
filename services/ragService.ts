@@ -63,7 +63,8 @@ export class RAGService {
    * @param {Bot[]} bots - Available bots configuration.
    * @param {string} modelId - The ID of the model to use for completion.
    * @param {boolean} [stream=false] - Whether to stream the response.
-   * @returns {Promise<AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk> | RAGResponse | ChatCompletion>}
+   * @param {Session['user']} user - User information for logging.
+   * @returns {Promise<ReadableStream | ChatCompletion>}
    *          Returns either a streaming response, RAG response, or chat completion depending on the stream parameter.
    * @throws {Error} If the specified bot is not found.
    */
@@ -126,7 +127,6 @@ export class RAGService {
           0.5,
           user,
           botId,
-          this.getCurrentCitations().length,
         );
 
         return processedStream;
@@ -161,7 +161,6 @@ export class RAGService {
           0.5,
           user,
           botId,
-          citations.length,
         );
 
         return completion;
@@ -177,6 +176,7 @@ export class RAGService {
    * @param {Message[]} messages - The conversation messages to extract query from.
    * @param {string} botId - The ID of the bot making the search request.
    * @param {Bot[]} bots - Available bots configuration.
+   * @param {Session['user']} user - User information for logging.
    * @returns {Promise<{searchDocs: SearchResult[], searchMetadata: {dateRange: DateRange, resultCount: number}}>}
    *          Returns search results and metadata including date range of results.
    * @throws {Error} If the specified bot is not found.
@@ -236,13 +236,7 @@ export class RAGService {
       };
     } catch (error) {
       // Log search error
-      await this.loggingService.logSearchError(
-        startTime,
-        error,
-        botId,
-        this.extractQuery(messages),
-        user,
-      );
+      await this.loggingService.logSearchError(startTime, error, botId, user);
       throw error;
     }
   }

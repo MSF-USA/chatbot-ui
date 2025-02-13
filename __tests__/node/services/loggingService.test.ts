@@ -68,7 +68,6 @@ describe('AzureMonitorLoggingService', () => {
         0.7,
         mockUser,
         'test-bot',
-        2,
       );
 
       expect(mockClient.upload).toHaveBeenCalledWith(
@@ -83,7 +82,6 @@ describe('AzureMonitorLoggingService', () => {
             Temperature: 0.7,
             UserId: mockUser.id,
             BotId: 'test-bot',
-            CitationsCount: 2,
             Duration: expect.any(Number),
           }),
         ],
@@ -190,7 +188,6 @@ describe('AzureMonitorLoggingService', () => {
             Status: 'success',
             UserId: mockUser.id,
             BotId: 'test-bot',
-            QueryText: 'test query',
             ResultCount: 5,
             OldestDate: '2024-01-01',
             NewestDate: '2024-01-31',
@@ -211,7 +208,6 @@ describe('AzureMonitorLoggingService', () => {
         startTime,
         testError,
         'test-bot',
-        'test query',
         mockUser,
       );
 
@@ -224,7 +220,6 @@ describe('AzureMonitorLoggingService', () => {
             Status: 'error',
             UserId: mockUser.id,
             BotId: 'test-bot',
-            QueryText: 'test query',
             ErrorMessage: 'Search error',
             ErrorStack: 'Search error stack trace',
             Duration: expect.any(Number),
