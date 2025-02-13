@@ -1,13 +1,22 @@
+import { Session } from 'next-auth';
+
+import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
+
 import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';
-import { Citation, DateRange, RAGResponse, SearchResult } from '@/types/rag';
+import { Citation, RAGResponse, SearchResult } from '@/types/rag';
 
 import { AzureMonitorLoggingService } from './loggingService';
 
 import { AzureKeyCredential, SearchClient } from '@azure/search-documents';
 import { AzureOpenAI } from 'openai';
 import OpenAI from 'openai';
+import { ChatCompletion } from 'openai/resources';
 
+/**
+ * Service for handling Retrieval-Augmented Generation (RAG) operations.
+ * Integrates search functionality with OpenAI chat completions.
+ */
 export class RAGService {
   private searchClient: SearchClient<SearchResult>;
   private loggingService: AzureMonitorLoggingService;
@@ -21,6 +30,14 @@ export class RAGService {
   private isInCitation: boolean = false;
   private pendingCitations: string = '';
 
+  /**
+   * Creates a new instance of RAGService.
+   * @param {string} searchEndpoint - The endpoint URL for the Azure Search service.
+   * @param {string} searchIndex - The name of the search index to query.
+   * @param {string} searchApiKey - The API key for authenticating with Azure Search.
+   * @param {AzureMonitorLoggingService} loggingService - Service for logging operations.
+   * @param {AzureOpenAI} openAIClient - Client for making OpenAI API calls.
+   */
   constructor(
     searchEndpoint: string,
     searchIndex: string,
@@ -37,100 +54,207 @@ export class RAGService {
     this.openAIClient = openAIClient;
   }
 
+  /**
+   * Augments chat messages with relevant search results and generates a completion.
+   * Supports both streaming and non-streaming responses.
+   *
+   * @param {Message[]} messages - The conversation messages to augment.
+   * @param {string} botId - The ID of the bot to use for the completion.
+   * @param {Bot[]} bots - Available bots configuration.
+   * @param {string} modelId - The ID of the model to use for completion.
+   * @param {boolean} [stream=false] - Whether to stream the response.
+   * @returns {Promise<AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk> | RAGResponse | ChatCompletion>}
+   *          Returns either a streaming response, RAG response, or chat completion depending on the stream parameter.
+   * @throws {Error} If the specified bot is not found.
+   */
   async augmentMessages(
     messages: Message[],
     botId: string,
     bots: Bot[],
     modelId: string,
     stream: boolean = false,
-  ): Promise<
-    AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk> | RAGResponse
-  > {
-    const { searchDocs, searchMetadata } = await this.performSearch(
-      messages,
-      botId,
-      bots,
-    );
-    this.searchDocs = searchDocs;
+    user: Session['user'],
+  ): Promise<ReadableStream | ChatCompletion> {
+    const startTime = Date.now();
 
-    const bot = bots.find((b) => b.id === botId);
-    if (!bot) throw new Error('Bot not found');
+    try {
+      const { searchDocs, searchMetadata } = await this.performSearch(
+        messages,
+        botId,
+        bots,
+        user,
+      );
+      this.searchDocs = searchDocs;
 
-    const enhancedMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] =
-      [
-        {
-          role: 'system',
-          content: `${bot.prompt}\n\nWhen citing sources:
-      1. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
-      2. Only cite the most relevant sources
-      3. Each source should only be cited once
-      4. Place source numbers immediately after the relevant information`,
-        },
-        ...this.getCompletionMessages(messages, bot, searchDocs),
-      ];
+      const bot = bots.find((b) => b.id === botId);
+      if (!bot) throw new Error('Bot not found');
 
-    if (stream) {
-      return this.openAIClient.chat.completions.create({
-        model: modelId,
-        messages: enhancedMessages,
-        temperature: 0.5,
-        stream: true,
-      });
+      const enhancedMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] =
+        [
+          {
+            role: 'system',
+            content: `${bot.prompt}\n\nWhen citing sources:
+            1. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
+            2. Only cite the most relevant sources
+            3. Each source should only be cited once
+            4. Place source numbers immediately after the relevant information`,
+          },
+          ...this.getCompletionMessages(messages, bot, searchDocs),
+        ];
+
+      this.resetCitationTracking(); // Reset citation state before processing
+
+      if (stream) {
+        const streamResponse = await this.openAIClient.chat.completions.create({
+          model: modelId,
+          messages: enhancedMessages,
+          temperature: 0.5,
+          stream: true,
+        });
+
+        // Process the stream and log after citations are processed
+        const processedStream = createAzureOpenAIStreamProcessor(
+          streamResponse,
+          this,
+        );
+
+        // Log after stream is created but before returning
+        await this.loggingService.logChatCompletion(
+          startTime,
+          modelId,
+          messages.length,
+          0.5,
+          user,
+          botId,
+          this.getCurrentCitations().length,
+        );
+
+        return processedStream;
+      } else {
+        const completion = await this.openAIClient.chat.completions.create({
+          model: modelId,
+          messages: enhancedMessages,
+          temperature: 0.5,
+          stream: false,
+        });
+
+        const content = completion.choices[0]?.message?.content || '';
+        const citations = this.processCitationsInContent(content);
+
+        // Format the content to include metadata at the end
+        const metadataSection = `\n\nSources used: ${citations
+          .map((c) => `[${c.number}] ${c.title}`)
+          .join(', ')}
+        Date range: ${searchMetadata.dateRange.oldest || 'N/A'} to ${
+          searchMetadata.dateRange.newest || 'N/A'
+        }
+        Total sources: ${citations.length}`;
+
+        // Update the completion with the enhanced content
+        completion.choices[0].message.content = content + metadataSection;
+
+        // Log after processing is complete
+        await this.loggingService.logChatCompletion(
+          startTime,
+          modelId,
+          messages.length,
+          0.5,
+          user,
+          botId,
+          citations.length,
+        );
+
+        return completion;
+      }
+    } catch (error) {
+      throw error;
     }
-
-    const completion = await this.openAIClient.chat.completions.create({
-      model: modelId,
-      messages: enhancedMessages,
-      temperature: 0.5,
-      stream: false,
-    });
-
-    const content = completion.choices[0]?.message?.content || '';
-    const citations = this.processCitationsInContent(content);
-
-    return {
-      answer: content,
-      sources_used: citations,
-      sources_date_range: searchMetadata.dateRange,
-      total_sources: citations.length,
-    };
   }
 
-  public async performSearch(messages: Message[], botId: string, bots: Bot[]) {
-    const bot = bots.find((b) => b.id === botId);
-    if (!bot) throw new Error(`Bot ${botId} not found`);
+  /**
+   * Performs a search operation based on the conversation messages.
+   *
+   * @param {Message[]} messages - The conversation messages to extract query from.
+   * @param {string} botId - The ID of the bot making the search request.
+   * @param {Bot[]} bots - Available bots configuration.
+   * @returns {Promise<{searchDocs: SearchResult[], searchMetadata: {dateRange: DateRange, resultCount: number}}>}
+   *          Returns search results and metadata including date range of results.
+   * @throws {Error} If the specified bot is not found.
+   */
+  public async performSearch(
+    messages: Message[],
+    botId: string,
+    bots: Bot[],
+    user: Session['user'],
+  ) {
+    const startTime = Date.now();
 
-    const query = this.extractQuery(messages);
-    const searchResults = await this.searchClient.search(query, {
-      select: ['content', 'title', 'date', 'url'],
-      top: 10,
-      queryType: 'simple',
-    });
+    try {
+      const bot = bots.find((b) => b.id === botId);
+      if (!bot) throw new Error(`Bot ${botId} not found`);
 
-    const searchDocs: SearchResult[] = [];
-    let newestDate: Date | null = null;
-    let oldestDate: Date | null = null;
+      const query = this.extractQuery(messages);
+      const searchResults = await this.searchClient.search(query, {
+        select: ['content', 'title', 'date', 'url'],
+        top: 10,
+        queryType: 'simple',
+      });
 
-    for await (const result of searchResults.results) {
-      const doc = result.document;
-      searchDocs.push(doc);
-      const docDate = new Date(doc.date);
-      if (!newestDate || docDate > newestDate) newestDate = docDate;
-      if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
-    }
+      const searchDocs: SearchResult[] = [];
+      let newestDate: Date | null = null;
+      let oldestDate: Date | null = null;
 
-    return {
-      searchDocs,
-      searchMetadata: {
+      for await (const result of searchResults.results) {
+        const doc = result.document;
+        searchDocs.push(doc);
+        const docDate = new Date(doc.date);
+        if (!newestDate || docDate > newestDate) newestDate = docDate;
+        if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
+      }
+
+      const searchMetadata = {
         dateRange: {
           newest: newestDate?.toISOString().split('T')[0] || null,
           oldest: oldestDate?.toISOString().split('T')[0] || null,
         },
         resultCount: searchDocs.length,
-      },
-    };
+      };
+
+      // Log successful search
+      await this.loggingService.logSearch(
+        startTime,
+        botId,
+        searchDocs.length,
+        searchMetadata.dateRange.oldest || undefined,
+        searchMetadata.dateRange.newest || undefined,
+        user,
+      );
+
+      return {
+        searchDocs,
+        searchMetadata,
+      };
+    } catch (error) {
+      // Log search error
+      await this.loggingService.logSearchError(
+        startTime,
+        error,
+        botId,
+        this.extractQuery(messages),
+        user,
+      );
+      throw error;
+    }
   }
 
+  /**
+   * Prepares messages for the chat completion by incorporating search results.
+   *
+   * @param {Message[]} messages - The original conversation messages.
+   * @param {Bot} bot - The bot configuration to use.
+   * @param {SearchResult[]} searchDocs - The search results to incorporate.
+   * @returns {OpenAI.Chat.ChatCompletionMessageParam[]} Messages formatted for the chat completion API.
+   */
   public getCompletionMessages(
     messages: Message[],
     bot: Bot,
@@ -164,6 +288,13 @@ export class RAGService {
     ];
   }
 
+  /**
+   * Extracts the search query from the conversation messages.
+   *
+   * @param {Message[]} messages - The conversation messages to extract from.
+   * @returns {string} The extracted query from the last user message.
+   * @throws {Error} If no user message is found.
+   */
   public extractQuery(messages: Message[]): string {
     const lastUserMessage = messages
       .slice()
@@ -175,6 +306,9 @@ export class RAGService {
       : '';
   }
 
+  /**
+   * Resets all citation tracking state to initial values.
+   */
   public resetCitationTracking() {
     this.citationBuffer = '';
     this.sourceToSequentialMap.clear();
@@ -183,6 +317,13 @@ export class RAGService {
     this.pendingCitations = '';
   }
 
+  /**
+   * Processes citation markers in a chunk of text, maintaining citation tracking state.
+   * Handles both single and consecutive citations, and text within brackets.
+   *
+   * @param {string} chunk - The text chunk to process.
+   * @returns {string} The processed text with sequential citation numbers.
+   */
   public processCitationInChunk(chunk: string): string {
     if (!this.isInCitation && !chunk.includes('[') && !this.pendingCitations) {
       return chunk;
@@ -302,6 +443,12 @@ export class RAGService {
     return result;
   }
 
+  /**
+   * Processes citations in the complete content and returns citation information.
+   *
+   * @param {string} content - The complete content to process citations for.
+   * @returns {Citation[]} Array of citations with metadata.
+   */
   public processCitationsInContent(content: string): Citation[] {
     this.resetCitationTracking();
     // Process the entire content as one chunk to get citation mappings
@@ -309,6 +456,12 @@ export class RAGService {
     return this.getCurrentCitations();
   }
 
+  /**
+   * Gets the current state of processed citations.
+   *
+   * @returns {Citation[]} Array of citations sorted by sequential number,
+   *          including title, date, URL, and citation number.
+   */
   public getCurrentCitations(): Citation[] {
     // Create array of citations sorted by sequential number
     const citations: Citation[] = [];

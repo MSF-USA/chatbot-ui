@@ -1,13 +1,15 @@
 import { IconNews } from '@tabler/icons-react';
 
+import { Session } from 'next-auth';
+
 import { RAGService } from '@/services/ragService';
 
 import { Bot } from '@/types/bots';
 import { Message, MessageType } from '@/types/chat';
-import { RAGResponse, SearchResult } from '@/types/rag';
 
 import { AzureKeyCredential, SearchClient } from '@azure/search-documents';
 import { AzureOpenAI } from 'openai';
+import { ChatCompletion } from 'openai/resources';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Azure Search Documents
@@ -17,6 +19,19 @@ vi.mock('@azure/search-documents', () => {
     AzureKeyCredential: vi.fn(),
   };
 });
+
+// Mock ReadableStream if it's not available in the test environment
+if (typeof ReadableStream === 'undefined') {
+  global.ReadableStream = class MockReadableStream {
+    constructor() {
+      return {
+        getReader: () => ({
+          read: async () => ({ done: true, value: undefined }),
+        }),
+      };
+    }
+  } as any;
+}
 
 describe('RAGService', () => {
   let ragService: RAGService;
@@ -52,6 +67,17 @@ describe('RAGService', () => {
     prompt: 'You are a test bot',
   };
 
+  const mockUser = {
+    id: 'test-user-id',
+    givenName: 'Test',
+    surname: 'User',
+    displayName: 'Test User',
+    jobTitle: 'Software Engineer',
+    department: 'Engineering',
+    mail: 'test.user@example.com',
+    companyName: 'Test Company',
+  } as Session['user'];
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -62,8 +88,11 @@ describe('RAGService', () => {
     };
 
     mockLoggingService = {
+      logChatCompletion: vi.fn(),
       logError: vi.fn(),
-      logInfo: vi.fn(),
+      logFileError: vi.fn(),
+      logSearch: vi.fn(),
+      logSearchError: vi.fn(),
     };
 
     mockOpenAIClient = {
@@ -71,14 +100,14 @@ describe('RAGService', () => {
         completions: {
           create: vi.fn().mockImplementation(({ stream }) => {
             if (stream) {
-              return {
-                [Symbol.asyncIterator]: () => ({
-                  next: async () => ({
-                    done: true,
-                    value: undefined,
-                  }),
-                }),
-              };
+              return new ReadableStream({
+                start(controller) {
+                  controller.enqueue({
+                    choices: [{ delta: { content: 'Test content' } }],
+                  });
+                  controller.close();
+                },
+              });
             }
             return Promise.resolve({
               choices: [
@@ -170,6 +199,7 @@ describe('RAGService', () => {
         messages,
         'test-bot',
         [mockBot],
+        mockUser,
       );
 
       expect(mockSearchClient.search).toHaveBeenCalledWith('test query', {
@@ -182,6 +212,16 @@ describe('RAGService', () => {
         newest: '2024-01-02',
         oldest: '2024-01-01',
       });
+
+      expect(mockLoggingService.logSearch).toHaveBeenCalledWith(
+        expect.any(Number),
+        'test-bot',
+        'test query',
+        2,
+        '2024-01-01',
+        '2024-01-02',
+        mockUser,
+      );
     });
 
     it('should throw error if bot not found', async () => {
@@ -194,8 +234,41 @@ describe('RAGService', () => {
       ];
 
       await expect(
-        ragService.performSearch(messages, 'invalid-bot', [mockBot]),
+        ragService.performSearch(messages, 'invalid-bot', [mockBot], mockUser),
       ).rejects.toThrow('Bot invalid-bot not found');
+
+      expect(mockLoggingService.logSearchError).toHaveBeenCalledWith(
+        expect.any(Number),
+        expect.any(Error),
+        'invalid-bot',
+        'test query',
+        mockUser,
+      );
+    });
+
+    it('should handle search errors and log them', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'test query',
+          messageType: MessageType.TEXT,
+        },
+      ];
+
+      const searchError = new Error('Search failed');
+      mockSearchClient.search.mockRejectedValueOnce(searchError);
+
+      await expect(
+        ragService.performSearch(messages, 'test-bot', [mockBot], mockUser),
+      ).rejects.toThrow('Search failed');
+
+      expect(mockLoggingService.logSearchError).toHaveBeenCalledWith(
+        expect.any(Number),
+        searchError,
+        'test-bot',
+        'test query',
+        mockUser,
+      );
     });
   });
 
@@ -238,16 +311,35 @@ describe('RAGService', () => {
         [mockBot],
         'test-model',
         false,
+        mockUser,
       );
 
-      expect('answer' in result).toBe(true);
-      const response = result as RAGResponse;
-      expect(response.answer).toBe('Test response [1] with citation [2]');
-      expect(response.sources_used).toHaveLength(2);
-      expect(response.sources_date_range).toBeDefined();
+      // Expect ChatCompletion type
+      expect('choices' in result).toBe(true);
+      const completion = result as ChatCompletion;
+      expect(completion.choices[0]?.message?.content).toContain(
+        'Test response [1] with citation [2]',
+      );
+
+      // Verify the content includes metadata
+      const content = completion.choices[0]?.message?.content || '';
+      expect(content).toContain('Sources used:');
+      expect(content).toContain('Date range:');
+      expect(content).toContain('Total sources:');
+
+      // Verify logging was called
+      expect(mockLoggingService.logChatCompletion).toHaveBeenCalledWith(
+        expect.any(Number),
+        'test-model',
+        messages.length,
+        0.5,
+        mockUser,
+        'test-bot',
+        2, // number of citations
+      );
     });
 
-    it('should return stream when streaming is true', async () => {
+    it('should return readable stream when streaming is true', async () => {
       const messages: Message[] = [
         {
           role: 'user',
@@ -262,9 +354,56 @@ describe('RAGService', () => {
         [mockBot],
         'test-model',
         true,
+        mockUser,
       );
 
-      expect(Symbol.asyncIterator in result).toBe(true);
+      // Verify it's a ReadableStream
+      expect(result).toBeInstanceOf(ReadableStream);
+
+      // Verify logging was called
+      expect(mockLoggingService.logChatCompletion).toHaveBeenCalledWith(
+        expect.any(Number),
+        'test-model',
+        messages.length,
+        0.5,
+        mockUser,
+        'test-bot',
+        expect.any(Number),
+      );
+    });
+
+    it('should handle errors and log them', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'test query',
+          messageType: MessageType.TEXT,
+        },
+      ];
+
+      const error = new Error('Test error');
+      mockOpenAIClient.chat.completions.create.mockRejectedValueOnce(error);
+
+      await expect(
+        ragService.augmentMessages(
+          messages,
+          'test-bot',
+          [mockBot],
+          'test-model',
+          false,
+          mockUser,
+        ),
+      ).rejects.toThrow('Test error');
+
+      expect(mockLoggingService.logError).toHaveBeenCalledWith(
+        expect.any(Number),
+        error,
+        'test-model',
+        messages.length,
+        0.5,
+        mockUser,
+        'test-bot',
+      );
     });
   });
 
