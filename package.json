@@ -54,7 +54,6 @@
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
     "sharp": "^0.32.6",
-    "stream-json": "^1.9.1",
     "typewriter-effect": "^2.21.0",
     "uuid": "^9.0.0"
   },
