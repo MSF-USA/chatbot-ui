@@ -33,7 +33,7 @@ import ChatInputImage from "@/components/Chat/ChatInput/ChatInputImage";
 import ChatInputFile from "@/components/Chat/ChatInput/ChatInputFile";
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 import ChatFileUploadPreviews from "@/components/Chat/ChatInput/ChatFileUploadPreviews";
-import ChatInputImageCapture from "@/components/Chat/ChatInput/ChatInputImageCapture";
+import ChatInputImageCapture, { ChatInputImageCaptureRef } from "@/components/Chat/ChatInput/ChatInputImageCapture";
 import ChatInputVoiceCapture from "@/components/Chat/ChatInput/ChatInputVoiceCapture";
 import ChatInputSubmitButton from "@/components/Chat/ChatInput/ChatInputSubmitButton";
 import ChatInputTranslate from "@/components/Chat/ChatInput/ChatInputTranslate";
@@ -89,6 +89,7 @@ export const ChatInput = ({
 
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
+  const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
   const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
     prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
@@ -448,13 +449,15 @@ export const ChatInput = ({
 
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
 
-          <ChatInputImageCapture
-            setFilePreviews={setFilePreviews}
-            setSubmitType={setSubmitType}
-            prompt={textFieldValue}
-            setImageFieldValue={setFileFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
+        <ChatInputImageCapture
+          ref={cameraRef}
+          visible={false}
+          setFilePreviews={setFilePreviews}
+          setSubmitType={setSubmitType}
+          prompt={textFieldValue}
+          setImageFieldValue={setFileFieldValue}
+          setUploadProgress={setUploadProgress}
+        />
 
           <ChatInputFile
             onFileUpload={onFileUpload}
@@ -475,6 +478,9 @@ export const ChatInput = ({
             setTextFieldValue={setTextFieldValue}
             handleSend={handleSend}
             textFieldValue={textFieldValue}
+            onCameraClick={() => {
+              cameraRef.current?.triggerCamera();
+            }}
           />
 
           <div
