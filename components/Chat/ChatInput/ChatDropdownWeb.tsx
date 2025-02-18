@@ -1,4 +1,5 @@
 import {
+  IconCamera,
   IconCirclePlus,
   IconFileMusic,
   IconLanguage,
@@ -27,6 +28,7 @@ import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
+import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import useOutsideClick from '@/hooks/useOutsideClick';
 
 interface DropdownProps {
@@ -70,6 +72,7 @@ interface DropdownProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   textFieldValue: string;
+  onCameraClick: () => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -82,6 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setSubmitType,
   handleSend,
   textFieldValue,
+  onCameraClick
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -137,7 +141,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10 w-fit"
+          className="absolute ml-2 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10 w-fit outline-none"
           tabIndex={-1}
           role="menu"
         >
@@ -147,10 +151,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           {/*</div>*/}
 
           {/* Web Section */}
-          <div className="border-t border-gray-200 dark:border-gray-700">
-            <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
-              {t('chatFeaturesDropdownWeb')}
-            </div>
+          <div className="border-gray-200 dark:border-gray-700">
 
             {/* Search Item */}
           <div className='group'>
@@ -166,7 +167,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 size={18}
                 className="mr-2 text-black dark:text-white"
               />
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
                 Web Search
             </div>
               <span className="text-black dark:text-white">
@@ -185,20 +186,16 @@ const Dropdown: React.FC<DropdownProps> = ({
               role="menuitem"
             >
               <IconLink size={18} className="mr-2 text-black dark:text-white" />
-              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
                   Analyze Webpage
               </div>
-              <span className="text-black dark:text-white">
+              <span className="text-black dark:text-white text-nowrap">
                 {t('chatFeaturesDropdownURLModal')}
               </span>
             </button>
           </div>
         </div>
-          {/* File Section */}
-          <div className="border-t border-gray-200 dark:border-gray-700">
-            <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
-              {t('chatFeaturesDropdownFile')}
-            </div>
+          <div className="border-gray-200 dark:border-gray-700">
 
             {/* Transcribe Item */}
             {/*<button*/}
@@ -233,7 +230,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 labelText={t('chatFeaturesDropdownImageModal')}
               />
             </button>
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
                 Upload Image
             </div>
            </div>
@@ -248,10 +245,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           {/*</div>*/}
 
           {/* Transform Section */}
-          <div className="border-t border-gray-200 dark:border-gray-700">
-            <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">
-              {t('chatFeaturesDropdownTransform')}
-            </div>
+          <div className="border-gray-200 dark:border-gray-700">
 
             {/* Translate Item */}
             <div className="group">
@@ -271,8 +265,30 @@ const Dropdown: React.FC<DropdownProps> = ({
                 {t('chatFeaturesDropdownTranslateModal')}
               </span>
             </button>
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
               Translate Text
+            </div>
+          </div>
+          {/* Camera Item */}
+          <div className="group">
+          <button
+            className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
+            onClick={() => {
+              onCameraClick();
+              setIsOpen(false);
+            }}
+            role="menuitem"
+          >
+            <IconCamera
+              size={18}
+              className="mr-2 text-black dark:text-white"
+            />
+            <span className="text-black dark:text-white">
+              {t('Camera')}
+            </span>
+          </button>            
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
+              Capture Image
             </div>
           </div>
          </div>
@@ -292,6 +308,17 @@ const Dropdown: React.FC<DropdownProps> = ({
           handleSend={handleSend}
           setParentModalIsOpen={setIsSearchOpen}
           simulateClick={true}
+        />
+      )}
+
+      {/* Chat Input Image Capture Modal */}
+      {isImageOpen && (
+        <ChatInputImageCapture
+          setFilePreviews={setFilePreviews}
+          setSubmitType={setSubmitType}
+          prompt={textFieldValue}
+          setImageFieldValue={setFileFieldValue}
+          setUploadProgress={setUploadProgress}
         />
       )}
 
