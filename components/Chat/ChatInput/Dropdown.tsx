@@ -202,7 +202,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
             {/* Transcribe Item */}
             <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none  text-gray-700 dark:text-gray-300"
+              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none  text-black dark:text-white"
               onClick={() => {
                 setIsTranscribeOpen(true);
                 setIsOpen(false);
