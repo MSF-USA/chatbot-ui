@@ -214,7 +214,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       const transcript = transcribeResult.transcript;
 
       setTranscript(transcript);
-      closeModal();
+      // closeModal();
       setTranscriptModalOpen(true);
     } catch (error) {
       console.error('Error during transcription:', error);
@@ -262,7 +262,6 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         setImageFieldValue,
         setUploadProgress,
       );
-
       closeTranscriptModal();
       setParentModalIsOpen(false);
     } catch (error) {
@@ -292,7 +291,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">{t('title')}</h2>
+              <h2 className="text-xl font-bold text-black dark:text-white">{t('title')}</h2>
               <button
                 onClick={closeModal}
                 title={t('close')}
@@ -306,7 +305,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
                 {!file ? (
                   <label
                     htmlFor="file-upload"
-                    className="block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-8"
+                    className="block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-8 text-black dark:text-white"
                   >
                     <div>
                       <p className="mb-1">
@@ -326,7 +325,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
                     />
                   </label>
                 ) : (
-                  <div className="p-8">
+                  <div className="p-8 text-black dark:text-white">
                     <p>
                       {t('selectedFile')}: <strong>{file.name}</strong>
                     </p>
@@ -396,7 +395,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
           onClick={closeTranscriptModal}
         >
           <div
-            className="bg-white dark:bg-gray-800 rounded-lg w-11/12 max-w-md p-6 relative"
+            className="bg-white dark:bg-gray-800 rounded-lg w-11/12 max-w-md p-6 relative text-black dark:text-white"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-4">
