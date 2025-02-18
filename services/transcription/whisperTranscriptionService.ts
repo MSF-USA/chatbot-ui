@@ -27,11 +27,12 @@ export class WhisperTranscriptionService implements ITranscriptionService {
           scope,
       );
 
-      const apiVersion = '2024-07-01-preview';
+      // const apiVersion = '2024-07-01-preview';
       this.client = new AzureOpenAI({
         azureADTokenProvider,
         deployment: 'whisper',
-        apiVersion,
+        endpoint: process.env.AZURE_OPENAI_ENDPOINT ?? azureEndpoint,
+        // apiVersion,
       });
     } else {
       this.client = null;
@@ -67,7 +68,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     const fullTranscript = transcripts.join(' ');
 
     // Clean up temporary files
-    cleanUpFiles([filePath, ...audioSegments]);
+    void cleanUpFiles([filePath, ...audioSegments]);
 
     return fullTranscript;
   }
@@ -82,7 +83,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
 
     if (this.client) {
       const result: Transcription = await this.client.audio.transcriptions.create({
-        model: "whisper-1",
+        model: 'whisper-1',
         file: audioFile,
         response_format: "text" // TODO: Support other formats, esp. subtitle like VTT
       });
