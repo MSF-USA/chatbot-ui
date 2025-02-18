@@ -1,56 +1,54 @@
+import { RAGService } from '@/services/ragService';
+
+import OpenAI from 'openai';
 import { TextEncoder } from 'util';
 
-export interface StreamProcessingResult {
-  stream: ReadableStream;
-  contentAccumulator: string;
-  citationsAccumulator: any[];
-}
-
 export function createAzureOpenAIStreamProcessor(
-  response: AsyncIterable<any>,
-): StreamProcessingResult {
-  let contentAccumulator = '';
-  let citationsAccumulator: any[] = [];
-
-  const stream = new ReadableStream({
+  response: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+  ragService?: RAGService,
+): ReadableStream {
+  return new ReadableStream({
     start: (controller) => {
       const encoder = new TextEncoder();
 
-      (async () => {
+      (async function () {
         try {
           for await (const chunk of response) {
-            if (chunk.choices && chunk.choices[0]) {
-              const choice = chunk.choices[0];
-              if ('delta' in choice) {
-                const { content, context } = choice.delta as any;
-                if (content) {
-                  contentAccumulator += content;
-                  controller.enqueue(encoder.encode(content));
-                }
-                if (context && context.citations) {
-                  citationsAccumulator = citationsAccumulator.concat(
-                    context.citations,
-                  );
-                }
+            if (chunk?.choices?.[0]?.delta?.content) {
+              const contentChunk = chunk.choices[0].delta.content;
+
+              // Process the chunk if it's a RAG stream
+              let processedChunk = contentChunk;
+              if (ragService) {
+                processedChunk =
+                  ragService.processCitationInChunk(contentChunk);
               }
+
+              controller.enqueue(encoder.encode(processedChunk));
             }
           }
 
-          // Append citations as JSON at the end of the content
-          if (citationsAccumulator.length > 0) {
-            const citationsJson = JSON.stringify({
-              citations: citationsAccumulator,
-            });
-            controller.enqueue(encoder.encode('\n\n' + citationsJson));
+          // Process any remaining citations
+          if (ragService) {
+            const finalProcessedChunk = ragService.processCitationInChunk('');
+            if (finalProcessedChunk) {
+              controller.enqueue(encoder.encode(finalProcessedChunk));
+            }
+
+            // Add citations at the end if available
+            const citations = ragService.getCurrentCitations();
+            if (citations.length > 0) {
+              const citationsJson = JSON.stringify({ citations });
+              controller.enqueue(encoder.encode('\n\n' + citationsJson));
+            }
           }
 
           controller.close();
         } catch (error) {
+          console.error('Stream processing error:', error);
           controller.error(error);
         }
       })();
     },
   });
-
-  return { stream, contentAccumulator, citationsAccumulator };
 }

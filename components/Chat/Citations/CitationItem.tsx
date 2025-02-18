@@ -2,7 +2,7 @@ import React from 'react';
 
 import Link from 'next/link';
 
-import { Citation } from '@/types/citation';
+import { Citation } from '@/types/rag';
 
 export const CitationItem: React.FC<{ citation: Citation }> = ({
   citation,

@@ -25,13 +25,11 @@ import {
 
 import { useTranslation } from 'next-i18next';
 
-import { extractCitationsAndQuestions } from '@/utils/app/citations';
-
 import { Conversation, Message } from '@/types/chat';
-import { Citation } from '@/types/citation';
+import { Citation } from '@/types/rag';
 
 import { CitationList } from '@/components/Chat/Citations/CitationList';
-import { QuestionList } from '@/components/Chat/Citations/QuestionList';
+import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
@@ -97,7 +95,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
       setDisplayContent(mainContent);
       if (mainContent.includes('```math')) {
-        setRemarkPlugins([remarkGfm, [remarkMath, {singleDollar: false}]])
+        setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
       }
       setCitations(citationsData);
       setQuestions([]);
@@ -110,14 +108,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const displayContentWithoutCitations = messageIsStreaming
     ? content.split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
-
-  const citationsToShow = citationsProcessed.current
-    ? citations
-    : previousCitations.current;
-
-  const questionsToShow = citationsProcessed.current
-    ? questions
-    : previousQuestions.current;
 
   const handleTTS = async () => {
     try {
@@ -177,66 +167,127 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           </div>
         )}
         <div className="flex flex-row">
-          <MemoizedReactMarkdown
-            className="prose dark:prose-invert flex-1"
-            remarkPlugins={remarkPlugins}
-            rehypePlugins={[rehypeMathjax]}
-            components={{
-              code({ node, inline, className, children, ...props }) {
-                if (children.length) {
-                  if (children[0] == '▍') {
-                    return (
-                      <span className="animate-pulse cursor-default mt-1">
-                        ▍
-                      </span>
-                    );
+          {selectedConversation?.bot ? (
+            <CitationMarkdown
+              className="prose dark:prose-invert flex-1"
+              conversation={selectedConversation}
+              citations={citations}
+              remarkPlugins={remarkPlugins}
+              rehypePlugins={[rehypeMathjax]}
+              components={{
+                code({ node, inline, className, children, ...props }) {
+                  if (children.length) {
+                    if (children[0] == '▍') {
+                      return (
+                        <span className="animate-pulse cursor-default mt-1">
+                          ▍
+                        </span>
+                      );
+                    }
                   }
 
-                  children[0] = (children[0] as string).replace('▍', '▍');
-                }
+                  const match = /language-(\w+)/.exec(className || '');
 
-                const match = /language-(\w+)/.exec(className || '');
-
-                return !inline ? (
-                  <CodeBlock
-                    key={Math.random()}
-                    language={(match && match[1]) || ''}
-                    value={String(children).replace(/\n$/, '')}
-                    {...props}
-                  />
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-              table({ children }) {
-                return (
-                  <div className="overflow-auto">
-                    <table className="border-collapse border border-black px-3 py-1 dark:border-white">
+                  return !inline ? (
+                    <CodeBlock
+                      key={Math.random()}
+                      language={(match && match[1]) || ''}
+                      value={String(children).replace(/\n$/, '')}
+                      {...props}
+                    />
+                  ) : (
+                    <code className={className} {...props}>
                       {children}
-                    </table>
-                  </div>
-                );
-              },
-              th({ children }) {
-                return (
-                  <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-                    {children}
-                  </th>
-                );
-              },
-              td({ children }) {
-                return (
-                  <td className="break-words border border-black px-3 py-1 dark:border-white">
-                    {children}
-                  </td>
-                );
-              },
-            }}
-          >
-            {displayContentWithoutCitations}
-          </MemoizedReactMarkdown>
+                    </code>
+                  );
+                },
+                table({ children }) {
+                  return (
+                    <div className="overflow-auto">
+                      <table className="border-collapse border border-black px-3 py-1 dark:border-white">
+                        {children}
+                      </table>
+                    </div>
+                  );
+                },
+                th({ children }) {
+                  return (
+                    <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
+                      {children}
+                    </th>
+                  );
+                },
+                td({ children }) {
+                  return (
+                    <td className="break-words border border-black px-3 py-1 dark:border-white">
+                      {children}
+                    </td>
+                  );
+                },
+              }}
+            >
+              {displayContentWithoutCitations}
+            </CitationMarkdown>
+          ) : (
+            <MemoizedReactMarkdown
+              className="prose dark:prose-invert flex-1"
+              remarkPlugins={remarkPlugins}
+              rehypePlugins={[rehypeMathjax]}
+              components={{
+                code({ node, inline, className, children, ...props }) {
+                  if (children.length) {
+                    if (children[0] == '▍') {
+                      return (
+                        <span className="animate-pulse cursor-default mt-1">
+                          ▍
+                        </span>
+                      );
+                    }
+                  }
+
+                  const match = /language-(\w+)/.exec(className || '');
+
+                  return !inline ? (
+                    <CodeBlock
+                      key={Math.random()}
+                      language={(match && match[1]) || ''}
+                      value={String(children).replace(/\n$/, '')}
+                      {...props}
+                    />
+                  ) : (
+                    <code className={className} {...props}>
+                      {children}
+                    </code>
+                  );
+                },
+                table({ children }) {
+                  return (
+                    <div className="overflow-auto">
+                      <table className="border-collapse border border-black px-3 py-1 dark:border-white">
+                        {children}
+                      </table>
+                    </div>
+                  );
+                },
+                th({ children }) {
+                  return (
+                    <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
+                      {children}
+                    </th>
+                  );
+                },
+                td({ children }) {
+                  return (
+                    <td className="break-words border border-black px-3 py-1 dark:border-white">
+                      {children}
+                    </td>
+                  );
+                },
+              }}
+            >
+              {displayContentWithoutCitations}
+            </MemoizedReactMarkdown>
+          )}
 
           <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
             {messageCopied ? (
