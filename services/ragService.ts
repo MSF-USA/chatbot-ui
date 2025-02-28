@@ -79,6 +79,8 @@ export class RAGService {
     const startTime = Date.now();
 
     try {
+      this.resetCitationTracking();
+
       const { searchDocs, searchMetadata } = await this.performSearch(
         messages,
         botId,

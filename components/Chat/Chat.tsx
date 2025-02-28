@@ -237,6 +237,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let done = false;
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
+    let extractedCitations: Citation[] = [];
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
@@ -245,6 +246,51 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (value) {
         const chunkValue = decoder.decode(value);
         text += chunkValue;
+
+        // Extract citations if the chunk contains citation data
+        if (
+          text.includes('\n\n---CITATIONS_DATA---\n') ||
+          text.match(/(\{[\s\S]*\})$/)
+        ) {
+          try {
+            // Try new marker format first
+            let citationMatch = text.match(
+              /\n\n---CITATIONS_DATA---\n([\s\S]*?)$/,
+            );
+            if (citationMatch) {
+              const jsonData = JSON.parse(citationMatch[1]);
+              if (jsonData.citations) {
+                extractedCitations = jsonData.citations;
+                // Remove citations from displayed text
+                text = text.split('\n\n---CITATIONS_DATA---\n')[0];
+                console.log(
+                  'Extracted citations using marker format:',
+                  extractedCitations.length,
+                );
+              }
+            }
+            // Fall back to legacy format
+            else {
+              citationMatch = text.match(/(\{[\s\S]*\})$/);
+              if (citationMatch) {
+                const jsonData = JSON.parse(citationMatch[1]);
+                if (jsonData.citations) {
+                  extractedCitations = jsonData.citations;
+                  // Remove citations from displayed text
+                  text = text.slice(0, -citationMatch[1].length);
+                  console.log(
+                    'Extracted citations using legacy format:',
+                    extractedCitations.length,
+                  );
+                }
+              }
+            }
+          } catch (error) {
+            // Citation data might be incomplete during streaming,
+            // we'll try again with the next chunk
+            console.error('Error parsing citation data:', error);
+          }
+        }
 
         if (
           updatedConversationCopy.messages.length === 0 ||
@@ -261,6 +307,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 role: 'assistant',
                 content: text,
                 messageType: MessageType.TEXT,
+                citations:
+                  extractedCitations.length > 0 ? [...extractedCitations] : [],
               },
             ],
           };
@@ -273,6 +321,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 updatedConversationCopy.messages.length - 1
               ],
               content: text,
+              citations:
+                extractedCitations.length > 0
+                  ? [...extractedCitations]
+                  : updatedConversationCopy.messages[
+                      updatedConversationCopy.messages.length - 1
+                    ].citations || [],
             },
           ];
           updatedConversationCopy = {
@@ -286,6 +340,68 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           field: 'selectedConversation',
           value: updatedConversationCopy,
         });
+      }
+    }
+
+    // Final check for citations after stream completes
+    if (extractedCitations.length === 0) {
+      try {
+        // Try new marker format one last time
+        let citationMatch = text.match(/\n\n---CITATIONS_DATA---\n([\s\S]*?)$/);
+        if (citationMatch) {
+          const jsonData = JSON.parse(citationMatch[1]);
+          if (jsonData.citations) {
+            extractedCitations = jsonData.citations;
+            // Remove citations from displayed text
+            text = text.split('\n\n---CITATIONS_DATA---\n')[0];
+            console.log(
+              'Final extraction - citations using marker format:',
+              extractedCitations.length,
+            );
+          }
+        }
+        // Fall back to legacy format
+        else {
+          citationMatch = text.match(/(\{[\s\S]*\})$/);
+          if (citationMatch) {
+            const jsonData = JSON.parse(citationMatch[1]);
+            if (jsonData.citations) {
+              extractedCitations = jsonData.citations;
+              // Remove citations from displayed text
+              text = text.slice(0, -citationMatch[1].length);
+              console.log(
+                'Final extraction - citations using legacy format:',
+                extractedCitations.length,
+              );
+            }
+          }
+        }
+
+        // If we found citations in the final check, update the conversation again
+        if (extractedCitations.length > 0) {
+          const updatedMessages = [
+            ...updatedConversationCopy.messages.slice(0, -1),
+            {
+              ...updatedConversationCopy.messages[
+                updatedConversationCopy.messages.length - 1
+              ],
+              content: text,
+              citations: [...extractedCitations],
+            },
+          ];
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: updatedMessages,
+          };
+
+          // Update state one last time
+          homeDispatch({
+            field: 'selectedConversation',
+            value: updatedConversationCopy,
+          });
+        }
+      } catch (error) {
+        console.error('Error in final citation parsing:', error);
       }
     }
 
