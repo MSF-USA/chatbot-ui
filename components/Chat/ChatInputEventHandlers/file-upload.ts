@@ -115,8 +115,8 @@ export async function onFileUpload(
       return;
     }
 
-    if (file.size > 10485760) {
-      toast.error(`File ${file.name} must be less than 10MB.`);
+    if (file.size > 20971520) {
+      toast.error(`File ${file.name} must be less than 20MB.`);
       return;
     }
 
