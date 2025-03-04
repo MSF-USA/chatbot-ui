@@ -51,7 +51,8 @@ describe('Azure OpenAI Stream Processor', () => {
       reader.releaseLock();
     }
 
-    return content.replace(/\n\n\{.*\}$/, '');
+    // Extract just the content part, not the citations
+    return content.split('\n\n---CITATIONS_DATA---')[0];
   }
 
   beforeEach(() => {
@@ -158,6 +159,56 @@ describe('Azure OpenAI Stream Processor', () => {
       url: 'https://example.com/2',
       number: 2,
     });
+  });
+
+  it('verifies citation data is appended to the stream', async () => {
+    const chunks = [
+      { choices: [{ delta: { content: 'Hello [1]' } }] },
+      { choices: [{ delta: { content: ' World [2]' } }] },
+    ] as MockChunk[];
+
+    const mockResponse = createMockResponse(chunks);
+    // Mock getCurrentCitations to return expected citations
+    vi.spyOn(mockRAGService, 'getCurrentCitations').mockReturnValue([
+      {
+        title: 'Test Source 1',
+        date: '2023-01-01',
+        url: 'https://example.com/1',
+        number: 1,
+      } as Citation,
+      {
+        title: 'Test Source 2',
+        date: '2023-01-02',
+        url: 'https://example.com/2',
+        number: 2,
+      } as Citation,
+    ]);
+
+    const stream = createAzureOpenAIStreamProcessor(
+      mockResponse,
+      mockRAGService,
+    );
+
+    // Read the entire stream content including citations
+    const reader = stream.getReader();
+    const decoder = new TextDecoder();
+    let fullContent = '';
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        fullContent += decoder.decode(value);
+      }
+    } finally {
+      reader.releaseLock();
+    }
+
+    // Verify the citations are appended correctly
+    expect(fullContent).toContain('Hello [1] World [2]');
+    expect(fullContent).toContain('---CITATIONS_DATA---');
+    expect(fullContent).toContain('"title":"Test Source 1"');
+    expect(fullContent).toContain('"title":"Test Source 2"');
   });
 
   it('handles stream with empty chunks', async () => {
