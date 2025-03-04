@@ -262,6 +262,11 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
     const processTextWithCitations = useCallback(
       (text: string) => {
+        // Don't process citations if conversation.bot is undefined
+        if (!conversation?.bot) {
+          return text;
+        }
+
         const parts: React.ReactNode[] = [];
         let lastIndex = 0;
         const citationRegex = /\[(\d+)\]/g;
@@ -289,15 +294,16 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
         return <>{parts}</>;
       },
-      [createCitationElement],
+      [createCitationElement, conversation],
     );
 
     const ParagraphWithCitations: Components['p'] = ({
       children,
       ...props
     }) => {
+      // Only process citations if conversation.bot exists
       const hasCitationHandling =
-        conversation?.bot || extractedCitations.length > 0;
+        !!conversation?.bot && extractedCitations.length > 0;
       if (!hasCitationHandling) {
         return <p {...props}>{children}</p>;
       }
@@ -318,8 +324,9 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       children,
       ...props
     }) => {
+      // Only process citations if conversation.bot exists
       const hasCitationHandling =
-        conversation?.bot || extractedCitations.length > 0;
+        !!conversation?.bot && extractedCitations.length > 0;
       if (!hasCitationHandling) {
         return <li {...props}>{children}</li>;
       }

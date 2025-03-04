@@ -11,7 +11,6 @@ import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
-// Create a complete mock conversation that matches the Conversation type
 const createMockConversation = (bot: boolean = true): Conversation => ({
   id: 'test-conversation',
   name: 'Test Conversation',
@@ -261,8 +260,9 @@ describe('CitationMarkdown', () => {
     expect(screen.getByText('example1')).toBeInTheDocument();
   });
 
-  it('ignores citations when conversation.bot is false', () => {
-    render(
+  it('ignores citations when conversation.bot is undefined', () => {
+    // Render with conversation.bot undefined
+    const { container } = render(
       <CitationMarkdown
         citations={mockCitations}
         conversation={createMockConversation(false)}
@@ -271,10 +271,21 @@ describe('CitationMarkdown', () => {
       </CitationMarkdown>,
     );
 
-    const text = screen.getByText(
+    // 1. Directly check if the rendered output has the correct text content
+    const paragraph = container.querySelector('p');
+    expect(paragraph).not.toBeNull();
+    expect(paragraph?.textContent).toBe(
       'Here is a citation [1] that should not be interactive.',
     );
-    expect(text.tagName).toBe('P');
+
+    // 2. Check that no citation-specific elements exist
+    const citationWrappers = container.querySelectorAll('.citation-wrapper');
+    expect(citationWrappers.length).toBe(0);
+
+    const supElements = container.querySelectorAll('sup.citation-number');
+    expect(supElements.length).toBe(0);
+
+    // 3. Ensure no links were rendered (which would be in tooltips)
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 });
