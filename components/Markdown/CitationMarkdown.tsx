@@ -1,7 +1,10 @@
+// components/Markdown/CitationMarkdown.tsx
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
 import ReactMarkdown, { Components, Options } from 'react-markdown';
 
 import Link from 'next/link';
+
+import { extractCitationsFromContent } from '@/utils/app/citation';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
@@ -35,64 +38,38 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       const processContent = () => {
         let mainContent = props.children?.toString() || '';
         let citationsData: Citation[] = [];
+        let source = 'none';
 
-        // First look for the distinct citation marker
-        const citationMarker = mainContent.indexOf(
-          '\n\n---CITATIONS_DATA---\n',
-        );
-        if (citationMarker !== -1) {
-          const contentBeforeMarker = mainContent.slice(0, citationMarker);
-          const jsonStr = mainContent.slice(citationMarker + 22); // Length of "\n\n---CITATIONS_DATA---\n"
-
-          try {
-            const parsedData = JSON.parse(jsonStr);
-            if (parsedData.citations) {
-              citationsData = parsedData.citations;
-              mainContent = contentBeforeMarker;
-            }
-          } catch (error) {
-            console.error('Error parsing citations JSON with marker:', error);
-          }
-        } else {
-          // Fall back to the legacy regex method
-          const jsonMatch = mainContent.match(/(\{[\s\S]*\})$/);
-          if (jsonMatch) {
-            const jsonStr = jsonMatch[1];
-            try {
-              const parsedData = JSON.parse(jsonStr);
-              if (parsedData.citations) {
-                citationsData = parsedData.citations;
-                mainContent = mainContent.slice(0, -jsonStr.length).trim();
-              }
-            } catch (error) {
-              console.error('Error parsing legacy citations JSON:', error);
-            }
-          }
-        }
-
-        // Check for message-level stored citations if no citations found in content
-        if (
-          citationsData.length === 0 &&
-          message?.citations &&
-          message.citations.length > 0
-        ) {
+        // Priority 1: Use citations from the message object (already extracted during streaming)
+        if (message?.citations && message.citations.length > 0) {
           citationsData = [...message.citations];
-        }
+          source = 'message';
 
-        // Use provided citations as fallback if available
-        if (citationsData.length === 0 && citations.length > 0) {
-          citationsData = citations;
+          // If we're using pre-extracted citations, we need to make sure the content
+          // doesn't still contain the citation data
+          if (mainContent) {
+            const { text } = extractCitationsFromContent(mainContent);
+            mainContent = text;
+          }
         }
-
-        // Debug logging
-        console.debug('Citation processing results:', {
-          contentLength: mainContent.length,
-          citationsFound: citationsData.length,
-          hasMarker: citationMarker !== -1,
-          hasLegacyMatch: !!mainContent.match(/(\{[\s\S]*\})$/),
-          messageCitations: message?.citations ? message.citations.length : 0,
-          providedCitations: citations.length,
-        });
+        // Priority 2: Use provided citations prop
+        else if (citations && citations.length > 0) {
+          citationsData = [...citations];
+          source = 'props';
+        }
+        // Priority 3: Parse the content to extract citations
+        else {
+          const {
+            text,
+            citations: extractedCits,
+            extractionMethod,
+          } = extractCitationsFromContent(mainContent);
+          if (extractedCits.length > 0) {
+            mainContent = text;
+            citationsData = extractedCits;
+            source = `parsed-${extractionMethod}`;
+          }
+        }
 
         setDisplayContent(mainContent);
         if (mainContent.includes('```math')) {

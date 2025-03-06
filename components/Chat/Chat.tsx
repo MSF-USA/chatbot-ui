@@ -21,12 +21,7 @@ import Image from 'next/image';
 
 import { makeRequest } from '@/services/frontendChatServices';
 
-import { getEndpoint } from '@/utils/app/api';
-import {
-  DEFAULT_SYSTEM_PROMPT,
-  DEFAULT_TEMPERATURE,
-  DEFAULT_USE_KNOWLEDGE_BASE,
-} from '@/utils/app/const';
+import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
@@ -247,49 +242,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const chunkValue = decoder.decode(value);
         text += chunkValue;
 
-        // Extract citations if the chunk contains citation data
-        if (
-          text.includes('\n\n---CITATIONS_DATA---\n') ||
-          text.match(/(\{[\s\S]*\})$/)
-        ) {
-          try {
-            // Try new marker format first
-            let citationMatch = text.match(
-              /\n\n---CITATIONS_DATA---\n([\s\S]*?)$/,
-            );
-            if (citationMatch) {
-              const jsonData = JSON.parse(citationMatch[1]);
-              if (jsonData.citations) {
-                extractedCitations = jsonData.citations;
-                // Remove citations from displayed text
-                text = text.split('\n\n---CITATIONS_DATA---\n')[0];
-                console.log(
-                  'Extracted citations using marker format:',
-                  extractedCitations.length,
-                );
-              }
-            }
-            // Fall back to legacy format
-            else {
-              citationMatch = text.match(/(\{[\s\S]*\})$/);
-              if (citationMatch) {
-                const jsonData = JSON.parse(citationMatch[1]);
-                if (jsonData.citations) {
-                  extractedCitations = jsonData.citations;
-                  // Remove citations from displayed text
-                  text = text.slice(0, -citationMatch[1].length);
-                  console.log(
-                    'Extracted citations using legacy format:',
-                    extractedCitations.length,
-                  );
-                }
-              }
-            }
-          } catch (error) {
-            // Citation data might be incomplete during streaming,
-            // we'll try again with the next chunk
-            console.error('Error parsing citation data:', error);
-          }
+        // Extract citations
+        const {
+          text: cleanedText,
+          citations,
+          extractionMethod,
+        } = extractCitationsFromContent(text);
+
+        if (citations.length > 0) {
+          // Use the clean text and extracted citations
+          text = cleanedText;
+          extractedCitations = citations;
+          console.log(
+            `Extracted ${citations.length} citations using ${extractionMethod} format`,
+          );
         }
 
         if (
@@ -345,63 +311,40 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     // Final check for citations after stream completes
     if (extractedCitations.length === 0) {
-      try {
-        // Try new marker format one last time
-        let citationMatch = text.match(/\n\n---CITATIONS_DATA---\n([\s\S]*?)$/);
-        if (citationMatch) {
-          const jsonData = JSON.parse(citationMatch[1]);
-          if (jsonData.citations) {
-            extractedCitations = jsonData.citations;
-            // Remove citations from displayed text
-            text = text.split('\n\n---CITATIONS_DATA---\n')[0];
-            console.log(
-              'Final extraction - citations using marker format:',
-              extractedCitations.length,
-            );
-          }
-        }
-        // Fall back to legacy format
-        else {
-          citationMatch = text.match(/(\{[\s\S]*\})$/);
-          if (citationMatch) {
-            const jsonData = JSON.parse(citationMatch[1]);
-            if (jsonData.citations) {
-              extractedCitations = jsonData.citations;
-              // Remove citations from displayed text
-              text = text.slice(0, -citationMatch[1].length);
-              console.log(
-                'Final extraction - citations using legacy format:',
-                extractedCitations.length,
-              );
-            }
-          }
-        }
+      const {
+        text: cleanedText,
+        citations,
+        extractionMethod,
+      } = extractCitationsFromContent(text);
+
+      if (citations.length > 0) {
+        text = cleanedText;
+        extractedCitations = citations;
+        console.log(
+          `Final extraction - ${citations.length} citations using ${extractionMethod} format`,
+        );
 
         // If we found citations in the final check, update the conversation again
-        if (extractedCitations.length > 0) {
-          const updatedMessages = [
-            ...updatedConversationCopy.messages.slice(0, -1),
-            {
-              ...updatedConversationCopy.messages[
-                updatedConversationCopy.messages.length - 1
-              ],
-              content: text,
-              citations: [...extractedCitations],
-            },
-          ];
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: updatedMessages,
-          };
+        const updatedMessages = [
+          ...updatedConversationCopy.messages.slice(0, -1),
+          {
+            ...updatedConversationCopy.messages[
+              updatedConversationCopy.messages.length - 1
+            ],
+            content: text,
+            citations: [...extractedCitations],
+          },
+        ];
+        updatedConversationCopy = {
+          ...updatedConversationCopy,
+          messages: updatedMessages,
+        };
 
-          // Update state one last time
-          homeDispatch({
-            field: 'selectedConversation',
-            value: updatedConversationCopy,
-          });
-        }
-      } catch (error) {
-        console.error('Error in final citation parsing:', error);
+        // Update state one last time
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
       }
     }
 
@@ -567,9 +510,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     [
       apiKey,
       conversations,
+      handleNormalChatBackendStreaming,
+      homeDispatch,
       pluginKeys,
       selectedConversation,
-      stopConversationRef,
+      systemPrompt,
+      temperature,
     ],
   );
 
