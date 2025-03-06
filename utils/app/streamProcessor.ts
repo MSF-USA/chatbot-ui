@@ -10,12 +10,14 @@ export function createAzureOpenAIStreamProcessor(
   return new ReadableStream({
     start: (controller) => {
       const encoder = new TextEncoder();
+      let allContent = '';
 
       (async function () {
         try {
           for await (const chunk of response) {
             if (chunk?.choices?.[0]?.delta?.content) {
               const contentChunk = chunk.choices[0].delta.content;
+              allContent += contentChunk;
 
               // Process the chunk if it's a RAG stream
               let processedChunk = contentChunk;
@@ -28,18 +30,13 @@ export function createAzureOpenAIStreamProcessor(
             }
           }
 
-          // Process any remaining citations
           if (ragService) {
-            const finalProcessedChunk = ragService.processCitationInChunk('');
-            if (finalProcessedChunk) {
-              controller.enqueue(encoder.encode(finalProcessedChunk));
-            }
-
-            // Add citations at the end if available
             const citations = ragService.getCurrentCitations();
             if (citations.length > 0) {
               const citationsJson = JSON.stringify({ citations });
-              controller.enqueue(encoder.encode('\n\n' + citationsJson));
+              controller.enqueue(
+                encoder.encode('\n\n---CITATIONS_DATA---\n' + citationsJson),
+              );
             }
           }
 

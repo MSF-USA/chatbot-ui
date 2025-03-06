@@ -37,10 +37,6 @@ import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
-interface Question {
-  question: string;
-}
-
 interface AssistantMessageProps {
   content: string;
   copyOnClick: (event: MouseEvent<any>) => void;
@@ -48,7 +44,6 @@ interface AssistantMessageProps {
   messageIndex: number;
   selectedConversation: Conversation;
   messageCopied: boolean;
-  onQuestionClick: (question: string) => void;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
@@ -58,55 +53,106 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageIndex,
   selectedConversation,
   messageCopied,
-  onQuestionClick,
 }) => {
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
-  const [questions, setQuestions] = useState<Question[]>([]);
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
 
-  const previousCitations = useRef<Citation[]>([]);
-  const previousQuestions = useRef<Question[]>([]);
   const citationsProcessed = useRef(false);
+  const processingAttempts = useRef(0);
 
   useEffect(() => {
     const processContent = () => {
       let mainContent = content;
-      let citationsData = [];
+      let citationsData: Citation[] = [];
+      let extractionMethod = 'none';
 
-      // Check for JSON at the end of the content
-      const jsonMatch = content.match(/(\{[\s\S]*\})$/);
-      if (jsonMatch) {
-        const jsonStr = jsonMatch[1];
-        mainContent = content.slice(0, -jsonStr.length).trim();
+      // First check for the newer citation marker format
+      const citationMarker = content.indexOf('\n\n---CITATIONS_DATA---\n');
+      if (citationMarker !== -1) {
+        extractionMethod = 'marker';
+        mainContent = content.slice(0, citationMarker);
+        const jsonStr = content.slice(citationMarker + 22); // Length of marker
+
         try {
           const parsedData = JSON.parse(jsonStr);
           if (parsedData.citations) {
             citationsData = parsedData.citations;
           }
         } catch (error) {
-          console.error('Error parsing citations JSON:', error);
+          console.error('Error parsing citations JSON with marker:', error);
         }
       }
+      // Next try the legacy JSON detection at the end
+      else {
+        const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+        if (jsonMatch) {
+          extractionMethod = 'regex';
+          const jsonStr = jsonMatch[1];
+          mainContent = content.slice(0, -jsonStr.length).trim();
+          try {
+            const parsedData = JSON.parse(jsonStr);
+            if (parsedData.citations) {
+              citationsData = parsedData.citations;
+            }
+          } catch (error) {
+            console.error('Error parsing citations JSON:', error);
+          }
+        }
+      }
+
+      // Check for message-stored citations in the conversation
+      if (
+        citationsData.length === 0 &&
+        selectedConversation?.messages?.[messageIndex]?.citations &&
+        selectedConversation.messages[messageIndex].citations!.length > 0
+      ) {
+        extractionMethod = 'message-stored';
+        citationsData = [
+          ...selectedConversation.messages[messageIndex].citations!,
+        ];
+      }
+
+      // Debug logging
+      console.debug(`[Message ${messageIndex}] Citation extraction:`, {
+        method: extractionMethod,
+        count: citationsData.length,
+        contentLength: content.length,
+        displayContentLength: mainContent.length,
+        processingAttempts: processingAttempts.current,
+        streamingActive: messageIsStreaming,
+      });
+
+      processingAttempts.current++;
 
       setDisplayContent(mainContent);
       if (mainContent.includes('```math')) {
         setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
       }
       setCitations(citationsData);
-      setQuestions([]);
       citationsProcessed.current = true;
     };
 
     processContent();
-  }, [content]);
+
+    // If we're streaming, reprocess when streaming stops to catch final citations
+    if (!messageIsStreaming && processingAttempts.current <= 2) {
+      const timer = setTimeout(processContent, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [
+    content,
+    messageIsStreaming,
+    messageIndex,
+    selectedConversation?.messages,
+  ]);
 
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split(/(\{[\s\S]*\})$/)[0]
+    ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
     : displayContent;
 
   const handleTTS = async () => {
@@ -546,7 +592,6 @@ export const ChatMessageText: FC<any> = ({
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
-          onQuestionClick={onQuestionClick}
         />
       ) : (
         <UserMessage

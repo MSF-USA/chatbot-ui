@@ -21,12 +21,7 @@ import Image from 'next/image';
 
 import { makeRequest } from '@/services/frontendChatServices';
 
-import { getEndpoint } from '@/utils/app/api';
-import {
-  DEFAULT_SYSTEM_PROMPT,
-  DEFAULT_TEMPERATURE,
-  DEFAULT_USE_KNOWLEDGE_BASE,
-} from '@/utils/app/const';
+import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
@@ -237,6 +232,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let done = false;
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
+    let extractedCitations: Citation[] = [];
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
@@ -245,6 +241,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (value) {
         const chunkValue = decoder.decode(value);
         text += chunkValue;
+
+        // Extract citations
+        const {
+          text: cleanedText,
+          citations,
+          extractionMethod,
+        } = extractCitationsFromContent(text);
+
+        if (citations.length > 0) {
+          // Use the clean text and extracted citations
+          text = cleanedText;
+          extractedCitations = citations;
+          console.log(
+            `Extracted ${citations.length} citations using ${extractionMethod} format`,
+          );
+        }
 
         if (
           updatedConversationCopy.messages.length === 0 ||
@@ -261,6 +273,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 role: 'assistant',
                 content: text,
                 messageType: MessageType.TEXT,
+                citations:
+                  extractedCitations.length > 0 ? [...extractedCitations] : [],
               },
             ],
           };
@@ -273,6 +287,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 updatedConversationCopy.messages.length - 1
               ],
               content: text,
+              citations:
+                extractedCitations.length > 0
+                  ? [...extractedCitations]
+                  : updatedConversationCopy.messages[
+                      updatedConversationCopy.messages.length - 1
+                    ].citations || [],
             },
           ];
           updatedConversationCopy = {
@@ -282,6 +302,45 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         }
 
         // Update the state to trigger a re-render
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
+    }
+
+    // Final check for citations after stream completes
+    if (extractedCitations.length === 0) {
+      const {
+        text: cleanedText,
+        citations,
+        extractionMethod,
+      } = extractCitationsFromContent(text);
+
+      if (citations.length > 0) {
+        text = cleanedText;
+        extractedCitations = citations;
+        console.log(
+          `Final extraction - ${citations.length} citations using ${extractionMethod} format`,
+        );
+
+        // If we found citations in the final check, update the conversation again
+        const updatedMessages = [
+          ...updatedConversationCopy.messages.slice(0, -1),
+          {
+            ...updatedConversationCopy.messages[
+              updatedConversationCopy.messages.length - 1
+            ],
+            content: text,
+            citations: [...extractedCitations],
+          },
+        ];
+        updatedConversationCopy = {
+          ...updatedConversationCopy,
+          messages: updatedMessages,
+        };
+
+        // Update state one last time
         homeDispatch({
           field: 'selectedConversation',
           value: updatedConversationCopy,
@@ -451,9 +510,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     [
       apiKey,
       conversations,
+      handleNormalChatBackendStreaming,
+      homeDispatch,
       pluginKeys,
       selectedConversation,
-      stopConversationRef,
+      systemPrompt,
+      temperature,
     ],
   );
 

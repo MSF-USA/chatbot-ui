@@ -1,7 +1,10 @@
+// components/Markdown/CitationMarkdown.tsx
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
 import ReactMarkdown, { Components, Options } from 'react-markdown';
 
 import Link from 'next/link';
+
+import { extractCitationsFromContent } from '@/utils/app/citation';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
@@ -19,9 +22,69 @@ type HoverState = {
 
 export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
   ({ message, conversation, citations = [], components = {}, ...props }) => {
+    const [displayContent, setDisplayContent] = useState('');
     const [hoveredCitation, setHoveredCitation] = useState<HoverState>(null);
+    const [extractedCitations, setExtractedCitations] = useState<Citation[]>(
+      [],
+    );
+    const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+
     const hoverTimeoutRef = useRef<number | null>(null);
     const activeElementRef = useRef<HTMLElement | null>(null);
+    const citationsProcessed = useRef(false);
+
+    // Process content to extract citations
+    React.useEffect(() => {
+      const processContent = () => {
+        let mainContent = props.children?.toString() || '';
+        let citationsData: Citation[] = [];
+        let source = 'none';
+
+        // Priority 1: Use citations from the message object (already extracted during streaming)
+        if (message?.citations && message.citations.length > 0) {
+          citationsData = [...message.citations];
+          source = 'message';
+
+          // If we're using pre-extracted citations, we need to make sure the content
+          // doesn't still contain the citation data
+          if (mainContent) {
+            const { text } = extractCitationsFromContent(mainContent);
+            mainContent = text;
+          }
+        }
+        // Priority 2: Use provided citations prop
+        else if (citations && citations.length > 0) {
+          citationsData = [...citations];
+          source = 'props';
+        }
+        // Priority 3: Parse the content to extract citations
+        else {
+          const {
+            text,
+            citations: extractedCits,
+            extractionMethod,
+          } = extractCitationsFromContent(mainContent);
+          if (extractedCits.length > 0) {
+            mainContent = text;
+            citationsData = extractedCits;
+            source = `parsed-${extractionMethod}`;
+          }
+        }
+
+        setDisplayContent(mainContent);
+        if (mainContent.includes('```math')) {
+          setRemarkPlugins((prev) =>
+            prev.some((p) => p === 'remark-math')
+              ? prev
+              : [...prev, ['remark-math', { singleDollar: false }]],
+          );
+        }
+        setExtractedCitations(citationsData);
+        citationsProcessed.current = true;
+      };
+
+      processContent();
+    }, [props.children, message, citations]);
 
     // Global mouse tracking to ensure we catch all movements
     React.useEffect(() => {
@@ -48,7 +111,9 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
     const createCitationElement = useCallback(
       (citationNumber: number, key: string) => {
-        const citation = citations.find((c) => c.number === citationNumber);
+        const citation = extractedCitations.find(
+          (c) => c.number === citationNumber,
+        );
         if (!citation) return `[${citationNumber}]`;
 
         let hostname = '';
@@ -169,11 +234,16 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           </span>
         );
       },
-      [hoveredCitation, citations],
+      [hoveredCitation, extractedCitations],
     );
 
     const processTextWithCitations = useCallback(
       (text: string) => {
+        // Don't process citations if conversation.bot is undefined
+        if (!conversation?.bot) {
+          return text;
+        }
+
         const parts: React.ReactNode[] = [];
         let lastIndex = 0;
         const citationRegex = /\[(\d+)\]/g;
@@ -201,14 +271,16 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
         return <>{parts}</>;
       },
-      [createCitationElement],
+      [createCitationElement, conversation],
     );
 
     const ParagraphWithCitations: Components['p'] = ({
       children,
       ...props
     }) => {
-      const hasCitationHandling = conversation?.bot;
+      // Only process citations if conversation.bot exists
+      const hasCitationHandling =
+        !!conversation?.bot && extractedCitations.length > 0;
       if (!hasCitationHandling) {
         return <p {...props}>{children}</p>;
       }
@@ -229,7 +301,9 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       children,
       ...props
     }) => {
-      const hasCitationHandling = conversation?.bot;
+      // Only process citations if conversation.bot exists
+      const hasCitationHandling =
+        !!conversation?.bot && extractedCitations.length > 0;
       if (!hasCitationHandling) {
         return <li {...props}>{children}</li>;
       }
@@ -254,13 +328,22 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           p: ParagraphWithCitations,
           li: ListItemWithCitations,
         }}
-      />
+      >
+        {displayContent}
+      </ReactMarkdown>
     );
   },
-  (prevProps, nextProps) =>
-    prevProps.children === nextProps.children &&
-    prevProps.conversation?.bot === nextProps.conversation?.bot &&
-    prevProps.citations === nextProps.citations,
+  (prevProps, nextProps) => {
+    // Only re-render if these props change
+    return (
+      prevProps.children === nextProps.children &&
+      prevProps.conversation?.bot === nextProps.conversation?.bot &&
+      JSON.stringify(prevProps.citations) ===
+        JSON.stringify(nextProps.citations) &&
+      JSON.stringify(prevProps.message?.citations || []) ===
+        JSON.stringify(nextProps.message?.citations || [])
+    );
+  },
 );
 
 CitationMarkdown.displayName = 'CitationMarkdown';
