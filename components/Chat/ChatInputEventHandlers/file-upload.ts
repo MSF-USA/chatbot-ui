@@ -8,6 +8,7 @@ import {
 } from "@/types/chat";
 import { onImageUpload } from "@/components/Chat/ChatInputEventHandlers/image-upload";
 import {isChangeEvent} from "@/components/Chat/ChatInputEventHandlers/common";
+import { getSettings } from "@/utils/app/settings";
 
 const disallowedExtensions: string[] = [
   ".exe",
@@ -100,6 +101,10 @@ export async function onFileUpload(
     return;
   }
 
+  const settings = getSettings();
+  const largeDocumentProcessing = settings.largeDocumentProcessing || false;
+  const fileSizeLimit = largeDocumentProcessing ? 104857600 : 10485760; // 100MB or 10MB
+  const fileSizeLimitDisplay = largeDocumentProcessing ? "100MB" : "10MB";
   const filePreviews: FilePreview[] = [];
   const fileFieldValues: FileMessageContent[] = [];
   const imageFieldValues: ImageMessageContent[] = [];
@@ -115,8 +120,8 @@ export async function onFileUpload(
       return;
     }
 
-    if (file.size > 10485760) {
-      toast.error(`File ${file.name} must be less than 10MB.`);
+    if (file.size > fileSizeLimit) {
+      toast.error(`File ${file.name} must be less than ${fileSizeLimitDisplay}.`);
       return;
     }
 

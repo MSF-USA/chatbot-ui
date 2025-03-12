@@ -32,6 +32,7 @@ export interface HomeInitialState {
   defaultModelId: OpenAIModelID | undefined;
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
+  largeDocumentProcessing: boolean;
 }
 
 export const initialState: HomeInitialState = {
@@ -40,6 +41,7 @@ export const initialState: HomeInitialState = {
   pluginKeys: [],
   lightMode: 'dark',
   runTypeWriterIntroSetting: true,
+  largeDocumentProcessing: false,
   messageIsStreaming: false,
   modelError: null,
   models: [],
