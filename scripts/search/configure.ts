@@ -1,0 +1,58 @@
+import { createOrUpdateDataSource } from './components/create-datasource';
+import { createOrUpdateIndex } from './components/create-index';
+import { createOrUpdateIndexer } from './components/create-indexer';
+
+import {
+  AzureKeyCredential,
+  SearchIndexClient,
+  SearchIndexerClient,
+} from '@azure/search-documents';
+
+export interface SearchConfig {
+  endpoint: string;
+  apiKey: string;
+  indexName: string;
+  dataSourceName: string;
+  indexerName: string;
+  resourceId: string;
+  containerName: string;
+  allowIndexDowntime?: boolean;
+}
+
+export async function configureSearch(config: SearchConfig) {
+  console.log('Starting Azure Search configuration...');
+
+  const credential = new AzureKeyCredential(config.apiKey);
+
+  const indexClient = new SearchIndexClient(config.endpoint, credential);
+
+  const indexerClient = new SearchIndexerClient(config.endpoint, credential);
+
+  try {
+    // Create components in the right order
+    await createOrUpdateIndex(
+      indexClient,
+      config.indexName,
+      config.allowIndexDowntime,
+    );
+
+    await createOrUpdateDataSource(
+      indexerClient,
+      config.dataSourceName,
+      config.resourceId,
+      config.containerName,
+    );
+
+    await createOrUpdateIndexer(
+      indexerClient,
+      config.indexerName,
+      config.dataSourceName,
+      config.indexName,
+    );
+
+    console.log('Azure Search configuration completed successfully!');
+  } catch (error) {
+    console.error('Error configuring Azure Search:', error);
+    throw error;
+  }
+}
