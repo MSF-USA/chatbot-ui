@@ -17,10 +17,13 @@ export interface SearchConfig {
   resourceId: string;
   containerName: string;
   allowIndexDowntime?: boolean;
+  openaiEndpoint?: string;
+  openaiApiKey?: string;
+  openaiEmbeddingDeployment?: string;
 }
 
 export async function configureSearch(config: SearchConfig) {
-  console.log('Starting Azure Search configuration...');
+  console.log('Starting Azure Search configuration for RAG system...');
 
   const credential = new AzureKeyCredential(config.apiKey);
 
@@ -30,12 +33,26 @@ export async function configureSearch(config: SearchConfig) {
 
   try {
     // Create components in the right order
+
+    /*
+    Creating VectorProfile with SDK doesn't seem to work.
+    Using direct API call instead.
+    */
     await createOrUpdateIndex(
       indexClient,
       config.indexName,
       config.allowIndexDowntime,
+      config.endpoint,
+      config.apiKey,
+      config.openaiEndpoint,
+      config.openaiApiKey,
+      config.openaiEmbeddingDeployment,
     );
 
+    /*
+    data source seems to have issues for inital creation with system managed identities
+    but seems fine updating after creation
+    */
     await createOrUpdateDataSource(
       indexerClient,
       config.dataSourceName,

@@ -5,7 +5,7 @@ export function getIndexerConfig(
 ) {
   return {
     name: indexerName,
-    description: 'Indexer for the AI platform.',
+    description: 'Indexer for the comms RAG system',
     dataSourceName: dataSourceName,
     targetIndexName: indexName,
     schedule: {
@@ -14,6 +14,7 @@ export function getIndexerConfig(
     parameters: {
       configuration: {
         parsingMode: 'json' as 'json',
+        indexStorageMetadataOnlyForOversizedDocuments: true,
         excludedFileNameExtensions: '.txt',
       },
     },

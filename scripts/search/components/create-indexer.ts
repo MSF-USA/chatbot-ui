@@ -19,5 +19,19 @@ export async function createOrUpdateIndexer(
   await client.createOrUpdateIndexer(indexerConfig);
 
   console.log(`Indexer ${indexerName} created or updated successfully`);
+
+  // Reset and run the indexer to apply changes immediately
+  try {
+    await client.resetIndexer(indexerName);
+    console.log(`Indexer ${indexerName} reset successfully`);
+
+    await client.runIndexer(indexerName);
+    console.log(`Indexer ${indexerName} started running`);
+  } catch (error: unknown) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+    console.warn(`Warning: Could not reset or run indexer: ${errorMessage}`);
+  }
+
   return indexerName;
 }

@@ -5,15 +5,13 @@ export function getDataSourceConfig(
 ) {
   return {
     name: dataSourceName,
-    description: undefined,
+    description: 'Data source for msf comms articles',
     type: 'azureblob' as 'azureblob',
     credentials: {
-      connectionString: `ResourceId=${resourceId};`,
+      connectionString: `ResourceId=${resourceId}`,
     },
     container: {
       name: containerName,
-      query: undefined,
     },
-    identity: undefined,
   };
 }

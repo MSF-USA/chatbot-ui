@@ -199,7 +199,29 @@ export class RAGService {
       const searchResults = await this.searchClient.search(query, {
         select: ['content', 'title', 'date', 'url'],
         top: 10,
-        queryType: 'simple',
+        queryType: 'semantic' as any,
+        semanticSearchOptions: {
+          configurationName: 'MSFCommsConfig',
+          captions: {
+            captionType: 'extractive',
+            highlight: true,
+          },
+          answers: {
+            answerType: 'extractive',
+            count: 1,
+            threshold: 0.7,
+          },
+        },
+        vectorSearchOptions: {
+          queries: [
+            {
+              kind: 'text',
+              text: query,
+              fields: ['contentVector'] as any,
+              kNearestNeighborsCount: 10,
+            },
+          ],
+        },
       });
 
       const searchDocs: SearchResult[] = [];

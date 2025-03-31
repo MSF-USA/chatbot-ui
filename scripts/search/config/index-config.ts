@@ -1,34 +1,57 @@
-import {
-  BM25Similarity,
-  FreshnessScoringParameters,
-  ScoringProfile,
-  SearchFieldDataType,
-} from '@azure/search-documents';
+export function getIndexConfig(
+  indexName: string,
+  openaiEndpoint?: string,
+  openaiApiKey?: string,
+  openaiEmbeddingDeployment?: string,
+) {
+  // Only include vectorizers if all required OpenAI parameters are provided
+  const vectorizers =
+    openaiEndpoint && openaiApiKey && openaiEmbeddingDeployment
+      ? [
+          {
+            name: 'MSFCommsVectorizer',
+            kind: 'azureOpenAI',
+            azureOpenAIParameters: {
+              resourceUri: openaiEndpoint,
+              deploymentId: openaiEmbeddingDeployment,
+              apiKey: openaiApiKey,
+              modelName: 'text-embedding-ada-002', // to-do: add var to terraform var group
+            },
+          },
+        ]
+      : [];
 
-export function getIndexConfig(indexName: string) {
   return {
     name: indexName,
     defaultScoringProfile: 'dateScore',
     fields: [
       {
         name: 'content',
-        type: 'Edm.String' as SearchFieldDataType,
+        type: 'Edm.String',
         searchable: true,
         filterable: false,
         retrievable: true,
-        stored: true,
         sortable: false,
         facetable: false,
         key: false,
         synonymMaps: [],
+        analyzer: 'standard.lucene',
+      },
+      {
+        name: 'contentVector',
+        type: 'Collection(Edm.Single)',
+        searchable: true,
+        filterable: false,
+        retrievable: true,
+        dimensions: 1536,
+        vectorSearchProfile: 'MSFCommsVectorProfile',
       },
       {
         name: 'url',
-        type: 'Edm.String' as SearchFieldDataType,
+        type: 'Edm.String',
         searchable: true,
         filterable: true,
         retrievable: true,
-        stored: true,
         sortable: false,
         facetable: false,
         key: false,
@@ -36,11 +59,10 @@ export function getIndexConfig(indexName: string) {
       },
       {
         name: 'Id',
-        type: 'Edm.String' as SearchFieldDataType,
+        type: 'Edm.String',
         searchable: false,
         filterable: false,
         retrievable: true,
-        stored: true,
         sortable: true,
         facetable: false,
         key: true,
@@ -48,27 +70,42 @@ export function getIndexConfig(indexName: string) {
       },
       {
         name: 'title',
-        type: 'Edm.String' as SearchFieldDataType,
+        type: 'Edm.String',
         searchable: true,
         filterable: true,
         retrievable: true,
-        stored: true,
+        sortable: true,
+        facetable: false,
+        key: false,
+        synonymMaps: [],
+        analyzer: 'standard.lucene',
+      },
+      {
+        name: 'date',
+        type: 'Edm.DateTimeOffset',
+        searchable: false,
+        filterable: true,
+        retrievable: true,
         sortable: true,
         facetable: false,
         key: false,
         synonymMaps: [],
       },
       {
-        name: 'date',
-        type: 'Edm.DateTimeOffset' as SearchFieldDataType,
-        searchable: false,
+        name: 'locations',
+        type: 'Collection(Edm.String)',
+        searchable: true,
         filterable: true,
         retrievable: true,
-        stored: true,
-        sortable: true,
-        facetable: false,
-        key: false,
-        synonymMaps: [],
+        facetable: true,
+      },
+      {
+        name: 'organizations',
+        type: 'Collection(Edm.String)',
+        searchable: true,
+        filterable: true,
+        retrievable: true,
+        facetable: true,
       },
     ],
     scoringProfiles: [
@@ -81,18 +118,68 @@ export function getIndexConfig(indexName: string) {
             interpolation: 'logarithmic',
             type: 'freshness',
             boost: 5,
-            parameters: {
+            freshness: {
               boostingDuration: 'P60D',
-            } as FreshnessScoringParameters,
+            },
           },
         ],
-      } as ScoringProfile,
+      },
     ],
     suggesters: [],
     similarity: {
-      odatatype: '#Microsoft.Azure.Search.BM25Similarity',
+      '@odata.type': '#Microsoft.Azure.Search.BM25Similarity',
       k1: 1.2,
       b: 0.6,
-    } as BM25Similarity,
+    },
+    vectorSearch: {
+      profiles: [
+        {
+          name: 'MSFCommsVectorProfile',
+          algorithm: 'MSFCommsAlgorithm',
+          vectorizer:
+            openaiEndpoint && openaiApiKey && openaiEmbeddingDeployment
+              ? 'MSFCommsVectorizer'
+              : undefined,
+        },
+      ],
+      algorithms: [
+        {
+          name: 'MSFCommsAlgorithm',
+          kind: 'hnsw',
+          hnswParameters: {
+            m: 4,
+            efConstruction: 400,
+            efSearch: 500,
+            metric: 'cosine',
+          },
+        },
+      ],
+      vectorizers: vectorizers,
+    },
+    semantic: {
+      configurations: [
+        {
+          name: 'MSFCommsConfig',
+          prioritizedFields: {
+            titleField: {
+              fieldName: 'title',
+            },
+            prioritizedContentFields: [
+              {
+                fieldName: 'content',
+              },
+            ],
+            prioritizedKeywordsFields: [
+              {
+                fieldName: 'locations',
+              },
+              {
+                fieldName: 'organizations',
+              },
+            ],
+          },
+        },
+      ],
+    },
   };
 }

@@ -22,12 +22,15 @@ async function main() {
   const config: SearchConfig = {
     endpoint: process.env.SEARCH_ENDPOINT || '',
     apiKey: process.env.SEARCH_ENDPOINT_API_KEY || '',
-    indexName: process.env.SEARCH_INDEX || 'prod-ai-index',
-    dataSourceName: process.env.SEARCH_DATASOURCE || 'msfintlnycprodaiplatform',
-    indexerName: process.env.SEARCH_INDEXER || 'prod-ai-indexer',
-    containerName: process.env.STORAGE_CONTAINER || 'ai-portal-datasources',
+    indexName: process.env.SEARCH_INDEX || '',
+    dataSourceName: process.env.SEARCH_DATASOURCE || '',
+    indexerName: process.env.SEARCH_INDEXER || '',
+    containerName: process.env.STORAGE_DATA_SOURCE_CONTAINER || '',
     resourceId: process.env.STORAGE_RESOURCE_ID || '',
     allowIndexDowntime: allowDowntime,
+    openaiEndpoint: process.env.AZURE_OPENAI_ENDPOINT || '',
+    openaiApiKey: process.env.OPENAI_API_KEY || '',
+    openaiEmbeddingDeployment: process.env.OPENAI_EMBEDDING_DEPLOYMENT || '',
   };
 
   // Validate required config
@@ -43,6 +46,7 @@ async function main() {
 
   try {
     await configureSearch(config);
+    console.log('Search configuration completed successfully!');
   } catch (error) {
     console.error('Error:', error);
     process.exit(1);
