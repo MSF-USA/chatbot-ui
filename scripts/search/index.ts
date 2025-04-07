@@ -23,6 +23,7 @@ async function main() {
     endpoint: process.env.SEARCH_ENDPOINT || '',
     apiKey: process.env.SEARCH_ENDPOINT_API_KEY || '',
     indexName: process.env.SEARCH_INDEX || '',
+    skillsetName: process.env.SEARCH_SKILLSET || 'rag-skillset',
     dataSourceName: process.env.SEARCH_DATASOURCE || '',
     indexerName: process.env.SEARCH_INDEXER || '',
     containerName: process.env.STORAGE_DATA_SOURCE_CONTAINER || '',
@@ -30,7 +31,8 @@ async function main() {
     allowIndexDowntime: allowDowntime,
     openaiEndpoint: process.env.AZURE_OPENAI_ENDPOINT || '',
     openaiApiKey: process.env.OPENAI_API_KEY || '',
-    openaiEmbeddingDeployment: process.env.OPENAI_EMBEDDING_DEPLOYMENT || '',
+    openaiEmbeddingDeployment:
+      process.env.OPENAI_EMBEDDING_DEPLOYMENT || 'text-embedding',
   };
 
   // Validate required config

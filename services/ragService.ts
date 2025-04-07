@@ -4,7 +4,7 @@ import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 
 import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';
-import { Citation, RAGResponse, SearchResult } from '@/types/rag';
+import { Citation, SearchResult } from '@/types/rag';
 
 import { AzureMonitorLoggingService } from './loggingService';
 
@@ -21,7 +21,11 @@ export class RAGService {
   private searchClient: SearchClient<SearchResult>;
   private loggingService: AzureMonitorLoggingService;
   private openAIClient: AzureOpenAI;
+  private searchIndex: string;
   public searchDocs: SearchResult[] = [];
+
+  // Cache for previous search results
+  private previousSearchDocs: SearchResult[] = [];
 
   // Citation tracking properties
   private citationBuffer: string = '';
@@ -52,6 +56,7 @@ export class RAGService {
     );
     this.loggingService = loggingService;
     this.openAIClient = openAIClient;
+    this.searchIndex = searchIndex;
   }
 
   /**
@@ -92,18 +97,23 @@ export class RAGService {
       const bot = bots.find((b) => b.id === botId);
       if (!bot) throw new Error('Bot not found');
 
-      const enhancedMessages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] =
-        [
-          {
-            role: 'system',
-            content: `${bot.prompt}\n\nWhen citing sources:
+      const enhancedMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+        {
+          role: 'system',
+          content: `${bot.prompt}\n\nWhen citing sources:
             1. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
             2. Only cite the most relevant sources
             3. Each source should only be cited once
-            4. Place source numbers immediately after the relevant information`,
-          },
-          ...this.getCompletionMessages(messages, bot, searchDocs),
-        ];
+            4. Place source numbers immediately after the relevant information
+            5. DO NOT include numbered source lists at the beginning or end of your response
+            6. DO NOT include "Sources:" or "References:" sections
+            7. DO NOT create hyperlinked source titles
+            8. Remember that the frontend will automatically display all source information based on your citation numbers
+
+            The frontend system will handle the formatting and display of sources. Any additional source listings or formatting you include will create duplication in the UI.`,
+        },
+        ...this.getCompletionMessages(messages, bot, searchDocs),
+      ];
 
       this.resetCitationTracking(); // Reset citation state before processing
 
@@ -196,19 +206,22 @@ export class RAGService {
       if (!bot) throw new Error(`Bot ${botId} not found`);
 
       const query = this.extractQuery(messages);
+      const semanticConfigName = `${this.searchIndex}-semantic-configuration`;
+
+      // Perform the search
       const searchResults = await this.searchClient.search(query, {
-        select: ['content', 'title', 'date', 'url'],
-        top: 10,
+        select: ['chunk', 'title', 'date', 'url'],
+        top: 7, // Get fewer results since we'll combine with previous
         queryType: 'semantic' as any,
         semanticSearchOptions: {
-          configurationName: 'MSFCommsConfig',
+          configurationName: semanticConfigName,
           captions: {
             captionType: 'extractive',
             highlight: true,
           },
           answers: {
             answerType: 'extractive',
-            count: 1,
+            count: 10,
             threshold: 0.7,
           },
         },
@@ -217,45 +230,74 @@ export class RAGService {
             {
               kind: 'text',
               text: query,
-              fields: ['contentVector'] as any,
+              fields: ['text_vector'] as any,
               kNearestNeighborsCount: 10,
             },
           ],
         },
       });
 
-      const searchDocs: SearchResult[] = [];
+      const currentSearchDocs: SearchResult[] = [];
       let newestDate: Date | null = null;
       let oldestDate: Date | null = null;
 
       for await (const result of searchResults.results) {
         const doc = result.document;
-        searchDocs.push(doc);
+        currentSearchDocs.push(doc);
         const docDate = new Date(doc.date);
         if (!newestDate || docDate > newestDate) newestDate = docDate;
         if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
       }
+
+      // Always combine with previous context (if available)
+      let combinedSearchDocs = [...currentSearchDocs];
+
+      if (
+        this.previousSearchDocs.length > 0 &&
+        messages.filter((m) => m.role === 'user').length > 1
+      ) {
+        // Only add previous context if this isn't the first message
+
+        // Add the top 3 previous results
+        const topPreviousResults = this.previousSearchDocs.slice(0, 3);
+
+        // Combine and deduplicate
+        combinedSearchDocs = this.deduplicateResults([
+          ...currentSearchDocs,
+          ...topPreviousResults,
+        ]);
+
+        // Update date range to include all results
+        for (const doc of topPreviousResults) {
+          const docDate = new Date(doc.date);
+          if (!newestDate || docDate > newestDate) newestDate = docDate;
+          if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
+        }
+      }
+
+      // update the search cache
+      this.previousSearchDocs = currentSearchDocs;
 
       const searchMetadata = {
         dateRange: {
           newest: newestDate?.toISOString().split('T')[0] || null,
           oldest: oldestDate?.toISOString().split('T')[0] || null,
         },
-        resultCount: searchDocs.length,
+        resultCount: combinedSearchDocs.length,
       };
 
       // Log successful search
       await this.loggingService.logSearch(
         startTime,
         botId,
-        searchDocs.length,
+        combinedSearchDocs.length,
         searchMetadata.dateRange.oldest || undefined,
         searchMetadata.dateRange.newest || undefined,
         user,
       );
 
       return {
-        searchDocs,
+        searchDocs: combinedSearchDocs,
         searchMetadata,
       };
     } catch (error) {
@@ -263,6 +305,32 @@ export class RAGService {
       await this.loggingService.logSearchError(startTime, error, botId, user);
       throw error;
     }
+  }
+
+  /**
+   * Deduplication of search results.
+   *
+   * @param {SearchResult[]} results - The search results to deduplicate.
+   * @returns {SearchResult[]} Deduplicated search results.
+   */
+  private deduplicateResults(results: SearchResult[]): SearchResult[] {
+    const uniqueResults: SearchResult[] = [];
+    const seenUrls = new Set<string>();
+    const seenTitles = new Set<string>();
+
+    for (const result of results) {
+      const url = result.url || '';
+      const title = result.title || '';
+
+      // Check if we've seen either the URL or the title before
+      if ((!url || !seenUrls.has(url)) && (!title || !seenTitles.has(title))) {
+        if (url) seenUrls.add(url);
+        if (title) seenTitles.add(title);
+        uniqueResults.push(result);
+      }
+    }
+
+    return uniqueResults;
   }
 
   /**
@@ -280,16 +348,53 @@ export class RAGService {
   ): OpenAI.Chat.ChatCompletionMessageParam[] {
     const query = this.extractQuery(messages);
 
-    const contextString =
-      'Available sources:\n\n' +
-      searchDocs
-        .map((doc, index) => {
-          const date = new Date(doc.date).toISOString().split('T')[0];
-          return `Source ${index + 1}:\nTitle: ${
-            doc.title
-          }\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.content}`;
-        })
-        .join('\n\n');
+    // Determine which results are from the current search and which are from previous context
+    const currentResults = searchDocs.filter(
+      (doc) =>
+        !this.previousSearchDocs.some(
+          (prevDoc) =>
+            (prevDoc.url && prevDoc.url === doc.url) ||
+            (prevDoc.title && prevDoc.title === doc.title),
+        ),
+    );
+
+    const previousResults = searchDocs.filter((doc) =>
+      this.previousSearchDocs.some(
+        (prevDoc) =>
+          (prevDoc.url && prevDoc.url === doc.url) ||
+          (prevDoc.title && prevDoc.title === doc.title),
+      ),
+    );
+
+    // Format current search results
+    const currentContextString =
+      currentResults.length > 0
+        ? 'Search results for current query:\n\n' +
+          currentResults
+            .map((doc, index) => {
+              const date = new Date(doc.date).toISOString().split('T')[0];
+              return `Source ${index + 1}:\nTitle: ${
+                doc.title
+              }\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.chunk}`;
+            })
+            .join('\n\n')
+        : '';
+
+    // Format previous context
+    const previousContextString =
+      previousResults.length > 0
+        ? '\n\nSearch results from previous messages that may include additional context if prompt is a follow up question:\n\n' +
+          previousResults
+            .map((doc, index) => {
+              const sourceIndex = index + currentResults.length + 1;
+              const date = new Date(doc.date).toISOString().split('T')[0];
+              return `Source ${sourceIndex}:\nTitle: ${doc.title}\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.chunk}`;
+            })
+            .join('\n\n')
+        : '';
+
+    // Combine all context
+    const contextString = `${currentContextString}${previousContextString}`;
 
     return [
       ...messages.slice(0, -1).map((msg) => ({
@@ -322,6 +427,15 @@ export class RAGService {
     return typeof lastUserMessage.content === 'string'
       ? lastUserMessage.content
       : '';
+  }
+
+  /**
+   * Resets the conversation context, including cached search results.
+   * Call this when starting a new conversation or topic.
+   */
+  public resetConversationContext() {
+    this.previousSearchDocs = [];
+    this.resetCitationTracking();
   }
 
   /**

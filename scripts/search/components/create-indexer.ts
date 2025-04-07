@@ -7,6 +7,7 @@ export async function createOrUpdateIndexer(
   indexerName: string,
   dataSourceName: string,
   indexName: string,
+  skillsetName: string,
 ) {
   console.log(`Creating/updating indexer: ${indexerName}`);
 
@@ -14,6 +15,7 @@ export async function createOrUpdateIndexer(
     indexerName,
     dataSourceName,
     indexName,
+    skillsetName,
   );
 
   await client.createOrUpdateIndexer(indexerConfig);

@@ -2,12 +2,14 @@ export function getIndexerConfig(
   indexerName: string,
   dataSourceName: string,
   indexName: string,
+  skillsetName: string,
 ) {
   return {
     name: indexerName,
     description: 'Indexer for the comms RAG system',
     dataSourceName: dataSourceName,
     targetIndexName: indexName,
+    skillsetName: skillsetName,
     schedule: {
       interval: 'PT5M',
     },
@@ -20,13 +22,6 @@ export function getIndexerConfig(
     },
     fieldMappings: [
       {
-        sourceFieldName: 'metadata_storage_path',
-        targetFieldName: 'Id',
-        mappingFunction: {
-          name: 'base64Encode',
-        },
-      },
-      {
         sourceFieldName: '/url',
         targetFieldName: 'url',
       },
@@ -37,10 +32,6 @@ export function getIndexerConfig(
       {
         sourceFieldName: '/title',
         targetFieldName: 'title',
-      },
-      {
-        sourceFieldName: '/content',
-        targetFieldName: 'content',
       },
     ],
   };

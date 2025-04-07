@@ -1,7 +1,7 @@
 import { Message } from './chat';
 
 export interface SearchResult {
-  content: string;
+  chunk: string;
   title: string;
   date: string;
   url: string;

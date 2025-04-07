@@ -1,6 +1,7 @@
 import { createOrUpdateDataSource } from './components/create-datasource';
 import { createOrUpdateIndex } from './components/create-index';
 import { createOrUpdateIndexer } from './components/create-indexer';
+import { createOrUpdateSkillset } from './components/create-skillset';
 
 import {
   AzureKeyCredential,
@@ -12,24 +13,31 @@ export interface SearchConfig {
   endpoint: string;
   apiKey: string;
   indexName: string;
+  skillsetName: string;
   dataSourceName: string;
   indexerName: string;
   resourceId: string;
   containerName: string;
   allowIndexDowntime?: boolean;
-  openaiEndpoint?: string;
+  openaiEndpoint: string;
   openaiApiKey?: string;
-  openaiEmbeddingDeployment?: string;
+  openaiEmbeddingDeployment: string;
 }
 
 export async function configureSearch(config: SearchConfig) {
   console.log('Starting Azure Search configuration for RAG system...');
 
+  const apiVersion = '2024-11-01-preview';
+
   const credential = new AzureKeyCredential(config.apiKey);
 
-  const indexClient = new SearchIndexClient(config.endpoint, credential);
+  const indexClient = new SearchIndexClient(config.endpoint, credential, {
+    apiVersion,
+  });
 
-  const indexerClient = new SearchIndexerClient(config.endpoint, credential);
+  const indexerClient = new SearchIndexerClient(config.endpoint, credential, {
+    apiVersion,
+  });
 
   try {
     // Create components in the right order
@@ -45,7 +53,6 @@ export async function configureSearch(config: SearchConfig) {
       config.endpoint,
       config.apiKey,
       config.openaiEndpoint,
-      config.openaiApiKey,
       config.openaiEmbeddingDeployment,
     );
 
@@ -60,11 +67,21 @@ export async function configureSearch(config: SearchConfig) {
       config.containerName,
     );
 
+    await createOrUpdateSkillset(
+      config.skillsetName,
+      config.indexName,
+      config.endpoint,
+      config.apiKey,
+      config.openaiEndpoint,
+      config.openaiEmbeddingDeployment,
+    );
+
     await createOrUpdateIndexer(
       indexerClient,
       config.indexerName,
       config.dataSourceName,
       config.indexName,
+      config.skillsetName,
     );
 
     console.log('Azure Search configuration completed successfully!');
