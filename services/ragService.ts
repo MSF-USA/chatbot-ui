@@ -1,5 +1,6 @@
 import { Session } from 'next-auth';
 
+import { SearchResultsStore } from '@/utils/app/redisCache';
 import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 
 import { Bot } from '@/types/bots';
@@ -22,10 +23,11 @@ export class RAGService {
   private loggingService: AzureMonitorLoggingService;
   private openAIClient: AzureOpenAI;
   private searchIndex: string;
+  private searchResultsStore: SearchResultsStore;
   public searchDocs: SearchResult[] = [];
 
-  // Cache for previous search results
-  private previousSearchDocs: SearchResult[] = [];
+  // Map to track source numbers presented to the model and their corresponding documents
+  private sourcesNumberMap: Map<number, SearchResult> = new Map();
 
   // Citation tracking properties
   private citationBuffer: string = '';
@@ -57,6 +59,7 @@ export class RAGService {
     this.loggingService = loggingService;
     this.openAIClient = openAIClient;
     this.searchIndex = searchIndex;
+    this.searchResultsStore = new SearchResultsStore();
   }
 
   /**
@@ -69,8 +72,9 @@ export class RAGService {
    * @param {string} modelId - The ID of the model to use for completion.
    * @param {boolean} [stream=false] - Whether to stream the response.
    * @param {Session['user']} user - User information for logging.
+   * @param {string} [conversationId] - Optional conversation ID for caching search results.
    * @returns {Promise<ReadableStream | ChatCompletion>}
-   *          Returns either a streaming response, RAG response, or chat completion depending on the stream parameter.
+   *          Returns either a streaming response or chat completion depending on the stream parameter.
    * @throws {Error} If the specified bot is not found.
    */
   async augmentMessages(
@@ -80,17 +84,20 @@ export class RAGService {
     modelId: string,
     stream: boolean = false,
     user: Session['user'],
+    conversationId?: string,
   ): Promise<ReadableStream | ChatCompletion> {
     const startTime = Date.now();
 
     try {
-      this.resetCitationTracking();
+      // Initialize citation tracking for this request
+      this.initCitationTracking(true);
 
       const { searchDocs, searchMetadata } = await this.performSearch(
         messages,
         botId,
         bots,
         user,
+        conversationId,
       );
       this.searchDocs = searchDocs;
 
@@ -101,21 +108,20 @@ export class RAGService {
         {
           role: 'system',
           content: `${bot.prompt}\n\nWhen citing sources:
-            1. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
-            2. Only cite the most relevant sources
-            3. Each source should only be cited once
-            4. Place source numbers immediately after the relevant information
-            5. DO NOT include numbered source lists at the beginning or end of your response
-            6. DO NOT include "Sources:" or "References:" sections
-            7. DO NOT create hyperlinked source titles
-            8. Remember that the frontend will automatically display all source information based on your citation numbers
+            1. ONLY cite source numbers that are actually provided in the search results
+            2. Do not make up or reference source numbers that don't exist in the provided sources
+            3. Use source numbers exactly as provided (e.g., if source 5 is relevant, use [5])
+            4. Each source should only be cited once
+            5. Place source numbers immediately after the relevant information
+            6. DO NOT include numbered source lists at the beginning or end of your response
+            7. DO NOT include "Sources:" or "References:" sections
+            8. DO NOT create hyperlinked source titles
+            9. Remember that the frontend will automatically display all source information based on your citation numbers
 
-            The frontend system will handle the formatting and display of sources. Any additional source listings or formatting you include will create duplication in the UI.`,
+            The frontend system will handle the formatting and display of sources. Only cite sources that actually exist in the provided search results.`,
         },
         ...this.getCompletionMessages(messages, bot, searchDocs),
       ];
-
-      this.resetCitationTracking(); // Reset citation state before processing
 
       if (stream) {
         const streamResponse = await this.openAIClient.chat.completions.create({
@@ -151,16 +157,21 @@ export class RAGService {
         });
 
         const content = completion.choices[0]?.message?.content || '';
+
+        // Process citations but preserve the source mapping
         const citations = this.processCitationsInContent(content);
 
+        // Deduplicate citations for display
+        const uniqueCitations = this.deduplicateCitations(citations);
+
         // Format the content to include metadata at the end
-        const metadataSection = `\n\nSources used: ${citations
+        const metadataSection = `\n\nSources used: ${uniqueCitations
           .map((c) => `[${c.number}] ${c.title}`)
           .join(', ')}
         Date range: ${searchMetadata.dateRange.oldest || 'N/A'} to ${
           searchMetadata.dateRange.newest || 'N/A'
         }
-        Total sources: ${citations.length}`;
+        Total sources: ${uniqueCitations.length}`;
 
         // Update the completion with the enhanced content
         completion.choices[0].message.content = content + metadataSection;
@@ -184,11 +195,13 @@ export class RAGService {
 
   /**
    * Performs a search operation based on the conversation messages.
+   * Uses Redis for caching previous search results between requests.
    *
    * @param {Message[]} messages - The conversation messages to extract query from.
    * @param {string} botId - The ID of the bot making the search request.
    * @param {Bot[]} bots - Available bots configuration.
    * @param {Session['user']} user - User information for logging.
+   * @param {string} [conversationId] - Optional conversation ID for caching search results.
    * @returns {Promise<{searchDocs: SearchResult[], searchMetadata: {dateRange: DateRange, resultCount: number}}>}
    *          Returns search results and metadata including date range of results.
    * @throws {Error} If the specified bot is not found.
@@ -198,6 +211,7 @@ export class RAGService {
     botId: string,
     bots: Bot[],
     user: Session['user'],
+    conversationId?: string,
   ) {
     const startTime = Date.now();
 
@@ -249,17 +263,32 @@ export class RAGService {
         if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
       }
 
-      // Always combine with previous context (if available)
+      // Get previously cached search docs from Redis if conversationId is provided
+      let previousResults: SearchResult[] = [];
+      if (conversationId && user?.id) {
+        try {
+          // Fetch from Redis cache using composite key of user ID and conversation ID
+          previousResults = await this.searchResultsStore.getPreviousSearchDocs(
+            `${user.id}:${conversationId}`,
+          );
+        } catch (error) {
+          console.error('Error retrieving search results from Redis:', error);
+          // If Redis fails, we just use an empty previous results array
+          previousResults = [];
+        }
+      }
+
+      // Combine with previous context if available and not the first message
       let combinedSearchDocs = [...currentSearchDocs];
 
       if (
-        this.previousSearchDocs.length > 0 &&
-        messages.filter((m) => m.role === 'user').length > 1
+        previousResults.length > 0 &&
+        messages.filter((m) => m.role === 'user').length >= 1
       ) {
         // Only add previous context if this isn't the first message
 
         // Add the top 3 previous results
-        const topPreviousResults = this.previousSearchDocs.slice(0, 3);
+        const topPreviousResults = previousResults.slice(0, 3);
 
         // Combine and deduplicate
         combinedSearchDocs = this.deduplicateResults([
@@ -275,8 +304,19 @@ export class RAGService {
         }
       }
 
-      // update the search cache
-      this.previousSearchDocs = currentSearchDocs;
+      // Save the current search results to cache for future queries
+      if (conversationId && user?.id) {
+        try {
+          // Save to Redis using composite key
+          await this.searchResultsStore.savePreviousSearchDocs(
+            `${user.id}:${conversationId}`,
+            currentSearchDocs,
+          );
+        } catch (error) {
+          // Log error but continue without Redis caching
+          console.error('Error saving search results to Redis:', error);
+        }
+      }
 
       const searchMetadata = {
         dateRange: {
@@ -323,18 +363,49 @@ export class RAGService {
       const title = result.title || '';
 
       // Check if we've seen either the URL or the title before
-      if ((!url || !seenUrls.has(url)) && (!title || !seenTitles.has(title))) {
-        if (url) seenUrls.add(url);
-        if (title) seenTitles.add(title);
-        uniqueResults.push(result);
+      if ((url && seenUrls.has(url)) || (title && seenTitles.has(title))) {
+        // Skip this duplicate
+        continue;
       }
+
+      // Add to our seen sets and unique results
+      if (url) seenUrls.add(url);
+      if (title) seenTitles.add(title);
+      uniqueResults.push(result);
     }
 
     return uniqueResults;
   }
 
   /**
+   * Deduplicates citations while preserving the citation numbers used in the text.
+   *
+   * @param {Citation[]} citations - The citations to deduplicate.
+   * @returns {Citation[]} Deduplicated citations with original numbering preserved.
+   */
+  public deduplicateCitations(citations: Citation[]): Citation[] {
+    // Create a map to track unique sources by URL or title
+    const uniqueSources = new Map<string, Citation>();
+    const uniqueCitations: Citation[] = [];
+
+    for (const citation of citations) {
+      const key = citation.url || citation.title; // Use URL as primary key, fallback to title
+
+      if (!uniqueSources.has(key)) {
+        // This is a new unique source
+        uniqueSources.set(key, citation);
+        uniqueCitations.push(citation);
+      }
+      // If we've already seen this source, we don't add it again
+      // The original citation number is preserved in the text
+    }
+
+    return uniqueCitations;
+  }
+
+  /**
    * Prepares messages for the chat completion by incorporating search results.
+   * Now all sources are consolidated and given unique numbers.
    *
    * @param {Message[]} messages - The original conversation messages.
    * @param {Bot} bot - The bot configuration to use.
@@ -348,53 +419,32 @@ export class RAGService {
   ): OpenAI.Chat.ChatCompletionMessageParam[] {
     const query = this.extractQuery(messages);
 
-    // Determine which results are from the current search and which are from previous context
-    const currentResults = searchDocs.filter(
-      (doc) =>
-        !this.previousSearchDocs.some(
-          (prevDoc) =>
-            (prevDoc.url && prevDoc.url === doc.url) ||
-            (prevDoc.title && prevDoc.title === doc.title),
-        ),
-    );
+    // Apply deduplication to ensure unique sources
+    const uniqueSearchDocs = this.deduplicateResults(searchDocs);
 
-    const previousResults = searchDocs.filter((doc) =>
-      this.previousSearchDocs.some(
-        (prevDoc) =>
-          (prevDoc.url && prevDoc.url === doc.url) ||
-          (prevDoc.title && prevDoc.title === doc.title),
-      ),
-    );
+    // Clear the existing sources number map
+    this.sourcesNumberMap.clear();
 
-    // Format current search results
-    const currentContextString =
-      currentResults.length > 0
-        ? 'Search results for current query:\n\n' +
-          currentResults
-            .map((doc, index) => {
-              const date = new Date(doc.date).toISOString().split('T')[0];
-              return `Source ${index + 1}:\nTitle: ${
-                doc.title
-              }\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.chunk}`;
-            })
-            .join('\n\n')
+    // Create a unified context string with deduped sources, consistently numbered
+    const contextString =
+      'Available sources:\n\n' +
+      uniqueSearchDocs
+        .map((doc, index) => {
+          const sourceNumber = index + 1;
+          const date = new Date(doc.date).toISOString().split('T')[0];
+
+          // Store mapping of source number to document
+          this.sourcesNumberMap.set(sourceNumber, doc);
+
+          return `Source ${sourceNumber}:\nTitle: ${doc.title}\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.chunk}`;
+        })
+        .join('\n\n');
+
+    // Add context about search results
+    const searchInfoNote =
+      messages.filter((m) => m.role === 'user').length > 1
+        ? '\n\nNote: Sources include relevant context from previous messages.'
         : '';
-
-    // Format previous context
-    const previousContextString =
-      previousResults.length > 0
-        ? '\n\nSearch results from previous messages that may include additional context if prompt is a follow up question:\n\n' +
-          previousResults
-            .map((doc, index) => {
-              const sourceIndex = index + currentResults.length + 1;
-              const date = new Date(doc.date).toISOString().split('T')[0];
-              return `Source ${sourceIndex}:\nTitle: ${doc.title}\nDate: ${date}\nURL: ${doc.url}\nContent: ${doc.chunk}`;
-            })
-            .join('\n\n')
-        : '';
-
-    // Combine all context
-    const contextString = `${currentContextString}${previousContextString}`;
 
     return [
       ...messages.slice(0, -1).map((msg) => ({
@@ -406,7 +456,7 @@ export class RAGService {
       })),
       {
         role: 'user' as const,
-        content: `${contextString}\n\nQuestion: ${query}`,
+        content: `${contextString}${searchInfoNote}\n\nQuestion: ${query}`,
       },
     ];
   }
@@ -430,23 +480,47 @@ export class RAGService {
   }
 
   /**
-   * Resets the conversation context, including cached search results.
-   * Call this when starting a new conversation or topic.
+   * Resets the Redis cache for a conversation.
+   * This is necessary because Redis persists data across requests.
+   *
+   * @param {string} conversationId - The conversation ID to clear from Redis cache.
+   * @param {Session['user']} user - User information for creating composite key.
    */
-  public resetConversationContext() {
-    this.previousSearchDocs = [];
-    this.resetCitationTracking();
+  public async resetConversationCache(
+    conversationId: string,
+    user: Session['user'],
+  ) {
+    if (conversationId && user?.id) {
+      try {
+        // Use composite key of user ID and conversation ID
+        await this.searchResultsStore.savePreviousSearchDocs(
+          `${user.id}:${conversationId}`,
+          [],
+        );
+      } catch (error) {
+        // Log error but continue without Redis clearing
+        console.error('Error clearing search results from Redis:', error);
+      }
+    }
   }
 
   /**
-   * Resets all citation tracking state to initial values.
+   * Initializes citation tracking state for processing a new response.
+   * This is used within a single request lifecycle and doesn't need to persist.
+   *
+   * @param {boolean} preserveSourceMap - Whether to preserve the source number mapping.
    */
-  public resetCitationTracking() {
+  public initCitationTracking(preserveSourceMap: boolean = false) {
     this.citationBuffer = '';
     this.sourceToSequentialMap.clear();
     this.citationsUsed.clear();
     this.isInCitation = false;
     this.pendingCitations = '';
+
+    // Only clear the source mapping if explicitly requested
+    if (!preserveSourceMap) {
+      this.sourcesNumberMap.clear();
+    }
   }
 
   /**
@@ -577,19 +651,22 @@ export class RAGService {
 
   /**
    * Processes citations in the complete content and returns citation information.
+   * Preserves the source mapping when initializing citation tracking.
    *
    * @param {string} content - The complete content to process citations for.
    * @returns {Citation[]} Array of citations with metadata.
    */
   public processCitationsInContent(content: string): Citation[] {
-    this.resetCitationTracking();
+    // Initialize citation tracking but preserve the source number mapping
+    this.initCitationTracking(true);
+
     // Process the entire content as one chunk to get citation mappings
     this.processCitationInChunk(content);
     return this.getCurrentCitations();
   }
 
   /**
-   * Gets the current state of processed citations.
+   * Gets the current state of processed citations, using the source number mapping.
    *
    * @returns {Citation[]} Array of citations sorted by sequential number,
    *          including title, date, URL, and citation number.
@@ -606,15 +683,20 @@ export class RAGService {
       ).find(([_, seq]) => seq === i)?.[0];
 
       if (sourceNumber !== undefined) {
-        const docIndex = sourceNumber - 1;
-        if (docIndex >= 0 && docIndex < this.searchDocs.length) {
-          const doc = this.searchDocs[docIndex];
+        // Get the document from our mapping, not by array index
+        const doc = this.sourcesNumberMap.get(sourceNumber);
+
+        if (doc) {
           citations.push({
             title: doc.title,
             date: new Date(doc.date).toISOString().split('T')[0],
             url: doc.url,
             number: i,
           });
+        } else {
+          console.warn(
+            `Citation references non-existent source number: ${sourceNumber}`,
+          );
         }
       }
     }

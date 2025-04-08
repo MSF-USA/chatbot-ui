@@ -288,22 +288,8 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  /**
-   * Handles a chat completion request by sending the messages to the OpenAI API and returning a response.
-   * The method supports both standard chat completions and RAG-enhanced completions when a botId is provided.
-   * Can handle both streaming and non-streaming responses.
-   *
-   * @param {string} modelId - The ID of the model to use for the chat completion.
-   * @param {Message[]} messages - The messages to send in the chat completion request.
-   * @param {number} temperature - The temperature value to use for the chat completion.
-   * @param {Session['user']} user - User information for logging.
-   * @param {string} [botId] - Optional bot ID for RAG-enhanced completions.
-   * @param {boolean} [streamResponse=true] - Whether to stream the response or return it all at once.
-   * @returns {Promise<Response>} A promise that resolves to the response containing the chat completion.
-   *                             For streaming responses, returns a StreamingTextResponse.
-   *                             For non-streaming responses, returns a JSON response with the completion text.
-   * @throws {Error} If there's an issue with the chat completion request or processing.
-   */
+  // Modified handleChatCompletion method in ChatService class to pass conversationId to RAGService
+
   async handleChatCompletion(
     modelId: string,
     messages: Message[],
@@ -311,6 +297,7 @@ export default class ChatService {
     user: Session['user'],
     botId?: string,
     streamResponse: boolean = true,
+    conversationId?: string, // Add conversationId parameter
   ): Promise<Response> {
     const startTime = Date.now();
     try {
@@ -322,6 +309,7 @@ export default class ChatService {
           modelId,
           streamResponse,
           user,
+          conversationId, // Pass conversationId to RAGService
         );
 
         if (streamResponse) {
@@ -406,11 +394,7 @@ export default class ChatService {
     }
   }
 
-  /**
-   * Handles an incoming request by processing the chat body and returning an appropriate response.
-   * @param {NextRequest} req - The incoming Next.js request.
-   * @returns {Promise<Response>} A promise that resolves to the response based on the request.
-   */
+  // Modified handleRequest method to extract conversationId from the request
   public async handleRequest(req: NextRequest): Promise<Response> {
     const {
       model,
@@ -419,6 +403,7 @@ export default class ChatService {
       temperature,
       botId,
       stream = true,
+      conversationId,
     } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -477,6 +462,40 @@ export default class ChatService {
         user,
         botId,
         stream,
+        conversationId, // Pass conversationId to handleChatCompletion
+      );
+    }
+  }
+
+  // Reset conversation redis cache only (no in-memory state)
+  public async resetConversation(
+    conversationId: string,
+    req: NextRequest,
+  ): Promise<Response> {
+    try {
+      const token = (await getToken({ req })) as JWT | null;
+      if (!token) throw new Error('Could not pull token!');
+      const session: Session | null = await getServerSession(
+        authOptions as any,
+      );
+      if (!session) throw new Error('Could not pull session!');
+
+      const user = session['user'];
+
+      await this.ragService.resetConversationCache(conversationId, user);
+      return new Response(JSON.stringify({ success: true }), {
+        headers: { 'Content-Type': 'application/json' },
+      });
+    } catch (error) {
+      console.error('Error resetting conversation:', error);
+      return new Response(
+        JSON.stringify({
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }),
+        {
+          status: 500,
+          headers: { 'Content-Type': 'application/json' },
+        },
       );
     }
   }

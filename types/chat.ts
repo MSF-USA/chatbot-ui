@@ -86,6 +86,7 @@ export interface ChatBody {
   prompt: string;
   temperature: number;
   botId: string | undefined;
+  conversationId?: string;
   stream?: boolean;
 }
 
