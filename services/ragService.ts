@@ -61,7 +61,6 @@ export class RAGService {
     this.openAIClient = openAIClient;
     this.searchIndex = searchIndex;
 
-    // Use the SearchResultsStore which now uses the singleton RedisService
     this.searchResultsStore = new SearchResultsStore();
   }
 
@@ -95,7 +94,6 @@ export class RAGService {
       // Initialize citation tracking for this request
       this.initCitationTracking(true);
 
-      // Log the conversationId to verify it's being passed correctly
       console.log(`Processing request with conversationId: ${conversationId}`);
 
       const { searchDocs, searchMetadata } = await this.performSearch(
@@ -232,7 +230,7 @@ export class RAGService {
       // Perform the search
       const searchResults = await this.searchClient.search(query, {
         select: ['chunk', 'title', 'date', 'url'],
-        top: 7, // Get fewer results since we'll combine with previous
+        top: 7, // Get fewer results since we'll combine with previous results on follow up
         queryType: 'semantic' as any,
         semanticSearchOptions: {
           configurationName: semanticConfigName,
@@ -274,11 +272,10 @@ export class RAGService {
       let previousResults: SearchResult[] = [];
       if (conversationId && user?.id) {
         try {
-          // Create the composite key
           const cacheKey = `${user.id}:${conversationId}`;
           console.log(`Fetching previous search results with key: ${cacheKey}`);
 
-          // Fetch from Redis cache using composite key of user ID and conversation ID
+          // Fetch from Redis cache
           previousResults = await this.searchResultsStore.getPreviousSearchDocs(
             cacheKey,
           );
@@ -323,13 +320,13 @@ export class RAGService {
       // Save the current search results to cache for future queries
       if (conversationId && user?.id) {
         try {
-          // Create the composite key
+          // Create the key
           const cacheKey = `${user.id}:${conversationId}`;
           console.log(
             `Saving ${currentSearchDocs.length} search results with key: ${cacheKey}`,
           );
 
-          // Save to Redis using composite key
+          // Save to Redis
           await this.searchResultsStore.savePreviousSearchDocs(
             cacheKey,
             currentSearchDocs,

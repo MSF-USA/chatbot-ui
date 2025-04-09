@@ -4,6 +4,7 @@ import {
   IconChevronDown,
   IconChevronUp,
   IconDeviceFloppy,
+  IconEdit,
   IconPlus,
   IconUser,
   IconX,
@@ -20,20 +21,60 @@ import BetaBadge from '@/components/Beta/Badge';
 
 import { v4 as uuidv4 } from 'uuid';
 
+// Maximum character limit for system prompts
+const MAX_PROMPT_LENGTH = 1000;
+
+// Array of color combinations for bot icons
+const BOT_COLORS = [
+  {
+    bg: 'bg-purple-100 dark:bg-purple-900',
+    text: 'text-purple-600 dark:text-purple-400',
+  },
+  {
+    bg: 'bg-blue-100 dark:bg-blue-900',
+    text: 'text-blue-600 dark:text-blue-400',
+  },
+  {
+    bg: 'bg-green-100 dark:bg-green-900',
+    text: 'text-green-600 dark:text-green-400',
+  },
+  { bg: 'bg-red-100 dark:bg-red-900', text: 'text-red-600 dark:text-red-400' },
+  {
+    bg: 'bg-yellow-100 dark:bg-yellow-900',
+    text: 'text-yellow-600 dark:text-yellow-400',
+  },
+  {
+    bg: 'bg-indigo-100 dark:bg-indigo-900',
+    text: 'text-indigo-600 dark:text-indigo-400',
+  },
+  {
+    bg: 'bg-pink-100 dark:bg-pink-900',
+    text: 'text-pink-600 dark:text-pink-400',
+  },
+  {
+    bg: 'bg-teal-100 dark:bg-teal-900',
+    text: 'text-teal-600 dark:text-teal-400',
+  },
+];
+
 interface SavedCustomBot {
   id: string;
   name: string;
   prompt: string;
   createdAt: string;
+  color?: number; // Index for the color in BOT_COLORS array
 }
 
 const BotModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedBot, setExpandedBot] = useState<string | null>(null);
   const [isCreatingBot, setIsCreatingBot] = useState(false);
+  const [isEditingBot, setIsEditingBot] = useState(false);
+  const [editingBotId, setEditingBotId] = useState<string | null>(null);
   const [savedBots, setSavedBots] = useState<SavedCustomBot[]>([]);
   const [newBotName, setNewBotName] = useState('');
   const [newBotPrompt, setNewBotPrompt] = useState('');
+  const [promptCharCount, setPromptCharCount] = useState(0);
   const [selectedTab, setSelectedTab] = useState<'official' | 'custom'>(
     'official',
   );
@@ -46,6 +87,30 @@ const BotModal: React.FC = () => {
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
+  // Function to assign a unique color to a bot
+  const assignUniqueColor = (existingBots: SavedCustomBot[]) => {
+    // Get all currently used colors
+    const usedColors = existingBots.map((bot) => bot.color);
+
+    // Find the first unused color
+    for (let i = 0; i < BOT_COLORS.length; i++) {
+      if (!usedColors.includes(i)) {
+        return i;
+      }
+    }
+
+    // If all colors are used, find the least used one
+    const colorCounts = Array(BOT_COLORS.length).fill(0);
+    usedColors.forEach((color) => {
+      if (color !== undefined) {
+        colorCounts[color]++;
+      }
+    });
+
+    // Find index of the least used color
+    return colorCounts.indexOf(Math.min(...colorCounts));
+  };
+
   // Load saved bots from localStorage on initial render
   useEffect(() => {
     const loadSavedBots = () => {
@@ -53,7 +118,18 @@ const BotModal: React.FC = () => {
       if (savedBotsString) {
         try {
           const parsedBots = JSON.parse(savedBotsString);
-          setSavedBots(parsedBots);
+
+          // Since we're ignoring backwards compatibility, we can just assign fresh colors
+          const updatedBots = parsedBots.map(
+            (bot: SavedCustomBot, index: number) => {
+              // Assign sequential colors to ensure no duplicates
+              bot.color = index % BOT_COLORS.length;
+              return bot;
+            },
+          );
+
+          setSavedBots(updatedBots);
+          localStorage.setItem('customPromptBots', JSON.stringify(updatedBots));
         } catch (e) {
           console.error('Error parsing saved bots', e);
         }
@@ -72,6 +148,9 @@ const BotModal: React.FC = () => {
         setIsOpen(false);
         setExpandedBot(null);
         setIsCreatingBot(false);
+        setIsEditingBot(false);
+        setEditingBotId(null);
+        resetForm();
       }
     };
 
@@ -117,6 +196,31 @@ const BotModal: React.FC = () => {
   const resetForm = () => {
     setNewBotName('');
     setNewBotPrompt('');
+    setPromptCharCount(0);
+    setEditingBotId(null);
+  };
+
+  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setPromptCharCount(value.length);
+
+    if (value.length <= MAX_PROMPT_LENGTH) {
+      setNewBotPrompt(value);
+    }
+  };
+
+  const handleEditBot = (botId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const botToEdit = savedBots.find((bot) => bot.id === botId);
+
+    if (botToEdit) {
+      setNewBotName(botToEdit.name);
+      setNewBotPrompt(botToEdit.prompt);
+      setPromptCharCount(botToEdit.prompt.length);
+      setEditingBotId(botId);
+      setIsEditingBot(true);
+      setIsCreatingBot(false);
+    }
   };
 
   const handleSaveBot = () => {
@@ -125,14 +229,32 @@ const BotModal: React.FC = () => {
       return;
     }
 
-    const newBot: SavedCustomBot = {
-      id: uuidv4(),
-      name: newBotName.trim(),
-      prompt: newBotPrompt.trim(),
-      createdAt: new Date().toISOString(),
-    };
+    let updatedBots: SavedCustomBot[];
 
-    const updatedBots = [...savedBots, newBot];
+    if (isEditingBot && editingBotId) {
+      // Editing existing bot
+      updatedBots = savedBots.map((bot) => {
+        if (bot.id === editingBotId) {
+          return {
+            ...bot,
+            name: newBotName.trim(),
+            prompt: newBotPrompt.trim(),
+          };
+        }
+        return bot;
+      });
+    } else {
+      // Creating new bot
+      const newBot: SavedCustomBot = {
+        id: uuidv4(),
+        name: newBotName.trim(),
+        prompt: newBotPrompt.trim(),
+        createdAt: new Date().toISOString(),
+        color: assignUniqueColor(savedBots), // Assign unique color
+      };
+      updatedBots = [...savedBots, newBot];
+    }
+
     setSavedBots(updatedBots);
 
     // Save to localStorage
@@ -141,6 +263,7 @@ const BotModal: React.FC = () => {
     // Reset form and return to list view
     resetForm();
     setIsCreatingBot(false);
+    setIsEditingBot(false);
     setSelectedTab('custom');
   };
 
@@ -184,6 +307,8 @@ const BotModal: React.FC = () => {
                     <h2 className="text-xl font-semibold ml-3 text-black dark:text-white">
                       {isCreatingBot
                         ? t('Create Custom Bot')
+                        : isEditingBot
+                        ? t('Edit Custom Bot')
                         : t('Explore Bots')}
                     </h2>
                   </div>
@@ -191,6 +316,7 @@ const BotModal: React.FC = () => {
                     onClick={() => {
                       setIsOpen(false);
                       setIsCreatingBot(false);
+                      setIsEditingBot(false);
                       resetForm();
                     }}
                     className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
@@ -199,8 +325,8 @@ const BotModal: React.FC = () => {
                   </button>
                 </div>
 
-                {isCreatingBot ? (
-                  /* Bot Creation Form */
+                {isCreatingBot || isEditingBot ? (
+                  /* Bot Creation/Editing Form */
                   <div className="p-6">
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
@@ -216,22 +342,40 @@ const BotModal: React.FC = () => {
                     </div>
 
                     <div className="mb-4">
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                        System Instructions
-                      </label>
+                      <div className="flex justify-between">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                          System Instructions
+                        </label>
+                        <span
+                          className={`text-xs ${
+                            promptCharCount > MAX_PROMPT_LENGTH * 0.9
+                              ? 'text-red-500'
+                              : 'text-gray-500'
+                          }`}
+                        >
+                          {promptCharCount}/{MAX_PROMPT_LENGTH}
+                        </span>
+                      </div>
                       <textarea
                         value={newBotPrompt}
-                        onChange={(e) => setNewBotPrompt(e.target.value)}
+                        onChange={handlePromptChange}
                         placeholder="Enter detailed instructions for how the AI should behave, what role it should play, and any specific knowledge or style it should use..."
                         rows={12}
+                        maxLength={MAX_PROMPT_LENGTH}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
                       />
+                      <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                        Keep your instructions clear and concise. Maximum{' '}
+                        {MAX_PROMPT_LENGTH} characters to ensure optimal
+                        performance.
+                      </p>
                     </div>
 
                     <div className="flex justify-end space-x-3">
                       <button
                         onClick={() => {
                           setIsCreatingBot(false);
+                          setIsEditingBot(false);
                           resetForm();
                         }}
                         className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
@@ -244,7 +388,7 @@ const BotModal: React.FC = () => {
                         className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
                       >
                         <IconDeviceFloppy size={18} className="mr-1" />
-                        Save Bot
+                        {isEditingBot ? 'Update Bot' : 'Save Bot'}
                       </button>
                     </div>
                   </div>
@@ -389,13 +533,16 @@ const BotModal: React.FC = () => {
                                 ? 'Your specialized AI assistants.'
                                 : 'Create custom instructions to define specialized AI assistants.'}
                             </p>
-                            <button
-                              onClick={() => setIsCreatingBot(true)}
-                              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                            >
-                              <IconPlus size={18} className="mr-1" />
-                              Create Bot
-                            </button>
+                            {/* Only show this button if there are already bots */}
+                            {savedBots.length > 0 && (
+                              <button
+                                onClick={() => setIsCreatingBot(true)}
+                                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                              >
+                                <IconPlus size={18} className="mr-1" />
+                                Create Bot
+                              </button>
+                            )}
                           </div>
 
                           {savedBots.length === 0 ? (
@@ -429,10 +576,16 @@ const BotModal: React.FC = () => {
                                     className="cursor-pointer p-4 flex items-start transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                                     onClick={() => handleBotSelection(bot)}
                                   >
-                                    <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-purple-100 dark:bg-purple-900">
+                                    <div
+                                      className={`flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mr-4 ${
+                                        BOT_COLORS[bot.color || 0].bg
+                                      }`}
+                                    >
                                       <IconUser
                                         size={26}
-                                        className="flex-shrink-0 text-purple-600 dark:text-purple-400"
+                                        className={`flex-shrink-0 ${
+                                          BOT_COLORS[bot.color || 0].text
+                                        }`}
                                       />
                                     </div>
 
@@ -462,6 +615,16 @@ const BotModal: React.FC = () => {
                                             <IconChevronDown size={16} />
                                           )}
                                           <span className="ml-1">Details</span>
+                                        </button>
+
+                                        <button
+                                          onClick={(e) =>
+                                            handleEditBot(bot.id, e)
+                                          }
+                                          className="flex items-center text-sm text-green-500 hover:text-green-600 transition-colors duration-200 mr-4"
+                                        >
+                                          <IconEdit size={16} />
+                                          <span className="ml-1">Edit</span>
                                         </button>
 
                                         <button

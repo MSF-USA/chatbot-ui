@@ -288,8 +288,6 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  // Modified handleChatCompletion method in ChatService class to pass conversationId to RAGService
-
   async handleChatCompletion(
     modelId: string,
     messages: Message[],
@@ -297,7 +295,8 @@ export default class ChatService {
     user: Session['user'],
     botId?: string,
     streamResponse: boolean = true,
-    conversationId?: string, // Add conversationId parameter
+    conversationId?: string,
+    promptToSend?: string,
   ): Promise<Response> {
     const startTime = Date.now();
     try {
@@ -309,7 +308,7 @@ export default class ChatService {
           modelId,
           streamResponse,
           user,
-          conversationId, // Pass conversationId to RAGService
+          conversationId,
         );
 
         if (streamResponse) {
@@ -322,10 +321,18 @@ export default class ChatService {
           });
         }
       } else {
+        const messagesWithSystemPrompt = [
+          {
+            role: 'system',
+            content: promptToSend || DEFAULT_SYSTEM_PROMPT,
+          },
+          ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
+        ];
+
         const response = await this.openAIClient.chat.completions.create({
           model: modelId,
           messages:
-            messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature,
           stream: streamResponse,
           user: JSON.stringify(user),
@@ -462,12 +469,13 @@ export default class ChatService {
         user,
         botId,
         stream,
-        conversationId, // Pass conversationId to handleChatCompletion
+        conversationId,
+        promptToSend,
       );
     }
   }
 
-  // Reset conversation redis cache only (no in-memory state)
+  // Reset conversation redis cache
   public async resetConversation(
     conversationId: string,
     req: NextRequest,
