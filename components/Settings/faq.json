@@ -33,6 +33,10 @@
             "answer": "While the MSF AI Assistant is a powerful tool designed to assist with various tasks, it should not be considered a replacement for human judgment and expertise. Always confirm and fact-check the information provided by the AI Assistant to ensure accuracy and reliability."
         },
         {
+            "question": "Where are my conversations and custom bots?",
+            "answer": "Your conversations and custom bots are stored locally on your device, specifically in your browser's local storage. This means they will only be accessible when using the same browser on the same device. They will not appear on other devices or browsers."
+        },
+        {
             "question": "Where should I go with bug reports, questions, or feedback?",
             "answer": "We welcome feedback. Please reach out to our team at ai@newyork.msf.org."
         }

@@ -1,9 +1,12 @@
 import {
   IconAssembly,
+  IconBrain,
   IconChevronDown,
   IconChevronUp,
-  IconNews,
+  IconDeviceFloppy,
   IconPlus,
+  IconUser,
+  IconX,
 } from '@tabler/icons-react';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 
@@ -17,9 +20,24 @@ import BetaBadge from '@/components/Beta/Badge';
 
 import { v4 as uuidv4 } from 'uuid';
 
+interface SavedCustomBot {
+  id: string;
+  name: string;
+  prompt: string;
+  createdAt: string;
+}
+
 const BotModal: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [expandedBot, setExpandedBot] = useState<string | null>(null);
+  const [isCreatingBot, setIsCreatingBot] = useState(false);
+  const [savedBots, setSavedBots] = useState<SavedCustomBot[]>([]);
+  const [newBotName, setNewBotName] = useState('');
+  const [newBotPrompt, setNewBotPrompt] = useState('');
+  const [selectedTab, setSelectedTab] = useState<'official' | 'custom'>(
+    'official',
+  );
+
   const modalRef = useRef<HTMLDivElement>(null);
   const { t } = useTranslation('sidebar');
 
@@ -27,6 +45,23 @@ const BotModal: React.FC = () => {
     state: { conversations, selectedConversation },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+
+  // Load saved bots from localStorage on initial render
+  useEffect(() => {
+    const loadSavedBots = () => {
+      const savedBotsString = localStorage.getItem('customPromptBots');
+      if (savedBotsString) {
+        try {
+          const parsedBots = JSON.parse(savedBotsString);
+          setSavedBots(parsedBots);
+        } catch (e) {
+          console.error('Error parsing saved bots', e);
+        }
+      }
+    };
+
+    loadSavedBots();
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -36,6 +71,7 @@ const BotModal: React.FC = () => {
       ) {
         setIsOpen(false);
         setExpandedBot(null);
+        setIsCreatingBot(false);
       }
     };
 
@@ -48,7 +84,10 @@ const BotModal: React.FC = () => {
     };
   }, [isOpen]);
 
-  const handleBotSelection = (bot: Bot) => {
+  const handleBotSelection = (bot: Bot | SavedCustomBot) => {
+    // For official bots, use their ID; for custom bots use the standard approach with a custom prompt
+    const botId = 'id' in bot && 'icon' in bot ? bot.id : undefined;
+
     const newConversation = {
       id: uuidv4(),
       name: bot.name,
@@ -60,7 +99,7 @@ const BotModal: React.FC = () => {
       prompt: bot.prompt,
       temperature: selectedConversation?.temperature ?? 0.5,
       folderId: null,
-      bot: bot.id,
+      bot: botId, // Only set bot ID for official bots
     };
 
     const updatedConversations = [...conversations, newConversation];
@@ -75,10 +114,49 @@ const BotModal: React.FC = () => {
     setExpandedBot(expandedBot === botId ? null : botId);
   };
 
+  const resetForm = () => {
+    setNewBotName('');
+    setNewBotPrompt('');
+  };
+
+  const handleSaveBot = () => {
+    if (!newBotName.trim() || !newBotPrompt.trim()) {
+      alert('Please provide both a name and instructions for your bot');
+      return;
+    }
+
+    const newBot: SavedCustomBot = {
+      id: uuidv4(),
+      name: newBotName.trim(),
+      prompt: newBotPrompt.trim(),
+      createdAt: new Date().toISOString(),
+    };
+
+    const updatedBots = [...savedBots, newBot];
+    setSavedBots(updatedBots);
+
+    // Save to localStorage
+    localStorage.setItem('customPromptBots', JSON.stringify(updatedBots));
+
+    // Reset form and return to list view
+    resetForm();
+    setIsCreatingBot(false);
+    setSelectedTab('custom');
+  };
+
+  const handleDeleteBot = (botId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (confirm('Are you sure you want to delete this bot?')) {
+      const updatedBots = savedBots.filter((bot) => bot.id !== botId);
+      setSavedBots(updatedBots);
+      localStorage.setItem('customPromptBots', JSON.stringify(updatedBots));
+    }
+  };
+
   return (
     <>
       <button
-        className="text-sidebar mt-2 mx-2 flex w-full rounded cursor-pointer select-none items-center gap-3 p-3 text-black dark:text-white transition-colors duration-200 dark:hover:bg-gray-500/10 hover:bg-gray-300"
+        className="text-sidebar mt-2 mx-2 flex w-full rounded-md cursor-pointer select-none items-center gap-3 p-3 text-black dark:text-white transition-colors duration-200 dark:hover:bg-gray-500/10 hover:bg-gray-200"
         onClick={() => setIsOpen(true)}
       >
         <IconAssembly size={20} className="text-black dark:text-white" />
@@ -86,7 +164,7 @@ const BotModal: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300">
           <div className="fixed inset-0 z-10 overflow-hidden">
             <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
               <div
@@ -96,103 +174,328 @@ const BotModal: React.FC = () => {
 
               <div
                 ref={modalRef}
-                className="dark:border-netural-400 inline-block transform overflow-hidden rounded-lg border border-gray-300 bg-white text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 w-full sm:max-w-[800px] sm:align-middle"
+                className="inline-block transform overflow-hidden rounded-lg border border-neutral-300 bg-white text-left align-bottom shadow-xl transition-all dark:border-neutral-700 dark:bg-[#212121] sm:my-8 w-full sm:max-w-[800px] sm:align-middle"
                 role="dialog"
               >
-                <div className="max-h-[90vh] overflow-y-auto px-4 pt-5 pb-4 sm:p-6">
-                  <div className="text-xl font-semibold mb-4 text-black dark:text-white">
+                {/* Header */}
+                <div className="flex justify-between items-center border-b border-neutral-300 dark:border-neutral-700 px-6 py-4">
+                  <div className="flex items-center">
                     <BetaBadge />
-                    <span className="pl-3">{t('Explore Bots')}</span>
+                    <h2 className="text-xl font-semibold ml-3 text-black dark:text-white">
+                      {isCreatingBot
+                        ? t('Create Custom Bot')
+                        : t('Explore Bots')}
+                    </h2>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 mb-4">
-                    {t(
-                      'Discover and interact with our specialized bots to assist you with various tasks.',
-                    )}
-                  </p>
-                  <div className="space-y-4">
-                    {bots.map((bot) => (
-                      <div
-                        key={bot.id}
-                        className="border dark:border-neutral-700 rounded-lg p-4 transition-colors duration-200"
+                  <button
+                    onClick={() => {
+                      setIsOpen(false);
+                      setIsCreatingBot(false);
+                      resetForm();
+                    }}
+                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
+                  >
+                    <IconX size={20} />
+                  </button>
+                </div>
+
+                {isCreatingBot ? (
+                  /* Bot Creation Form */
+                  <div className="p-6">
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        Bot Name
+                      </label>
+                      <input
+                        type="text"
+                        value={newBotName}
+                        onChange={(e) => setNewBotName(e.target.value)}
+                        placeholder="e.g., Shakespeare Bot, Sci-Fi Assistant"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        System Instructions
+                      </label>
+                      <textarea
+                        value={newBotPrompt}
+                        onChange={(e) => setNewBotPrompt(e.target.value)}
+                        placeholder="Enter detailed instructions for how the AI should behave, what role it should play, and any specific knowledge or style it should use..."
+                        rows={12}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                      />
+                    </div>
+
+                    <div className="flex justify-end space-x-3">
+                      <button
+                        onClick={() => {
+                          setIsCreatingBot(false);
+                          resetForm();
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 bg-white hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600"
                       >
-                        <div
-                          className="cursor-pointer dark:hover:bg-gray-500/10 hover:bg-gray-300 flex items-start"
-                          onClick={() => handleBotSelection(bot)}
-                        >
-                          <bot.icon
-                            size={26}
-                            className="mr-4 flex-shrink-0 mt-1"
-                            style={{ color: bot.color }}
-                          />
-                          <div className="flex-grow">
-                            <h3 className="text-lg font-semibold text-black dark:text-white mb-1">
-                              {bot.name}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-300 mb-2">
-                              {bot.description}
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveBot}
+                        disabled={!newBotName.trim() || !newBotPrompt.trim()}
+                        className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                      >
+                        <IconDeviceFloppy size={18} className="mr-1" />
+                        Save Bot
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* Bot List View */
+                  <>
+                    {/* Tabs */}
+                    <div className="flex border-b border-neutral-300 dark:border-neutral-700">
+                      <button
+                        className={`px-6 py-3 text-sm font-medium ${
+                          selectedTab === 'official'
+                            ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                        }`}
+                        onClick={() => setSelectedTab('official')}
+                      >
+                        Official Bots
+                      </button>
+                      <button
+                        className={`px-6 py-3 text-sm font-medium ${
+                          selectedTab === 'custom'
+                            ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                        }`}
+                        onClick={() => setSelectedTab('custom')}
+                      >
+                        Custom Bots{' '}
+                        {savedBots.length > 0 && `(${savedBots.length})`}
+                      </button>
+                    </div>
+
+                    {/* Content */}
+                    <div className="max-h-[70vh] overflow-y-auto px-6 py-5">
+                      {selectedTab === 'official' ? (
+                        <>
+                          <p className="text-gray-600 dark:text-gray-300 mb-6">
+                            {t(
+                              'Discover and interact with our specialized bots to assist you with various tasks.',
+                            )}
+                          </p>
+
+                          <div className="space-y-4">
+                            {bots.map((bot) => (
+                              <div
+                                key={bot.id}
+                                className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
+                              >
+                                <div
+                                  className="cursor-pointer p-4 flex items-start transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                  onClick={() => handleBotSelection(bot)}
+                                >
+                                  <div
+                                    className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mr-4"
+                                    style={{
+                                      backgroundColor: `${bot.color}20`,
+                                    }}
+                                  >
+                                    <bot.icon
+                                      size={26}
+                                      className="flex-shrink-0"
+                                      style={{ color: bot.color }}
+                                    />
+                                  </div>
+
+                                  <div className="flex-grow">
+                                    <h3 className="text-lg font-semibold text-black dark:text-white mb-1">
+                                      {bot.name}
+                                    </h3>
+                                    <p className="text-gray-600 dark:text-gray-300 mb-2">
+                                      {bot.description}
+                                    </p>
+
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleDetails(bot.id);
+                                      }}
+                                      className="flex items-center text-sm text-blue-500 hover:text-blue-600 transition-colors duration-200"
+                                    >
+                                      {expandedBot === bot.id ? (
+                                        <IconChevronUp size={16} />
+                                      ) : (
+                                        <IconChevronDown size={16} />
+                                      )}
+                                      <span className="ml-1">Details</span>
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {expandedBot === bot.id && (
+                                  <div className="p-4 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700">
+                                    <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm">
+                                      The MSF AI Assistant will search for
+                                      relevant information from the following
+                                      sources but may have limited responses if
+                                      the query extends beyond the scope of this
+                                      data.
+                                      <br />
+                                      <br />
+                                      The latest information from these sources
+                                      is highlighted below.
+                                      <br />
+                                      <br />
+                                      Citations will be provided if this data is
+                                      used.
+                                    </p>
+
+                                    <ul className="space-y-2 pl-0">
+                                      {bot.sources?.map((source, index) => (
+                                        <li
+                                          key={index}
+                                          className="flex items-center text-sm"
+                                        >
+                                          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                                          <a
+                                            href={source.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-500 hover:underline"
+                                          >
+                                            {source.name}
+                                          </a>
+                                          {source?.updated && (
+                                            <span className="text-gray-500 dark:text-gray-400 ml-2 text-xs">
+                                              Updated: {source.updated}
+                                            </span>
+                                          )}
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex justify-between items-center mb-6">
+                            <p className="text-gray-600 dark:text-gray-300">
+                              {savedBots.length > 0
+                                ? 'Your specialized AI assistants.'
+                                : 'Create custom instructions to define specialized AI assistants.'}
                             </p>
                             <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                toggleDetails(bot.id);
-                              }}
-                              className="flex items-center text-sm text-blue-500 hover:text-blue-600"
+                              onClick={() => setIsCreatingBot(true)}
+                              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                             >
-                              {expandedBot === bot.id ? (
-                                <IconChevronUp size={16} />
-                              ) : (
-                                <IconChevronDown size={16} />
-                              )}
-                              <span className="ml-1">Details</span>
+                              <IconPlus size={18} className="mr-1" />
+                              Create Bot
                             </button>
                           </div>
-                        </div>
-                        {expandedBot === bot.id && (
-                          <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-800 rounded text-sm">
-                            <p className="text-gray-700 dark:text-gray-300 mb-2">
-                              The MSF AI Assistant will search for relevant
-                              information from the following sources but may
-                              have limited responses if the query extends beyond
-                              the scope of this data.
-                              <br></br>
-                              <br></br>
-                              The latest information from these sources is
-                              highlighted below.
-                              <br></br>
-                              <br></br>
-                              Citations will be provided if this data is used.
-                            </p>
-                            <ul className="list-none pl-0">
-                              {bot.sources?.map((source, index) => (
-                                <li key={index} className="mb-1">
-                                  <a
-                                    href={source.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-blue-500 hover:underline"
-                                  >
-                                    {source.name}
-                                  </a>
-                                  {source?.updated && (
-                                    <span className="text-gray-500 dark:text-gray-400 ml-2">
-                                      Updated: {source.updated}
-                                    </span>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
 
-                  {bots.length === 1 && (
-                    <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm italic">
-                      {t('More bots coming soon!')}
-                    </p>
-                  )}
-                </div>
+                          {savedBots.length === 0 ? (
+                            <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+                              <IconBrain
+                                size={48}
+                                className="mx-auto text-gray-400 dark:text-gray-600 mb-3"
+                              />
+                              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-1">
+                                No custom bots yet
+                              </h3>
+                              <p className="text-gray-500 dark:text-gray-400 mb-4">
+                                Create your first custom bot to get started
+                              </p>
+                              <button
+                                onClick={() => setIsCreatingBot(true)}
+                                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                              >
+                                <IconPlus size={18} className="mr-1" />
+                                Create Bot
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="space-y-4">
+                              {savedBots.map((bot) => (
+                                <div
+                                  key={bot.id}
+                                  className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
+                                >
+                                  <div
+                                    className="cursor-pointer p-4 flex items-start transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                                    onClick={() => handleBotSelection(bot)}
+                                  >
+                                    <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center mr-4 bg-purple-100 dark:bg-purple-900">
+                                      <IconUser
+                                        size={26}
+                                        className="flex-shrink-0 text-purple-600 dark:text-purple-400"
+                                      />
+                                    </div>
+
+                                    <div className="flex-grow">
+                                      <div className="flex items-center mb-1">
+                                        <h3 className="text-lg font-semibold text-black dark:text-white">
+                                          {bot.name}
+                                        </h3>
+                                      </div>
+                                      <p className="text-gray-600 dark:text-gray-300 mb-2">
+                                        {bot.prompt.length > 100
+                                          ? `${bot.prompt.substring(0, 100)}...`
+                                          : bot.prompt}
+                                      </p>
+
+                                      <div className="flex items-center text-sm">
+                                        <button
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            toggleDetails(bot.id);
+                                          }}
+                                          className="flex items-center text-sm text-blue-500 hover:text-blue-600 transition-colors duration-200 mr-4"
+                                        >
+                                          {expandedBot === bot.id ? (
+                                            <IconChevronUp size={16} />
+                                          ) : (
+                                            <IconChevronDown size={16} />
+                                          )}
+                                          <span className="ml-1">Details</span>
+                                        </button>
+
+                                        <button
+                                          onClick={(e) =>
+                                            handleDeleteBot(bot.id, e)
+                                          }
+                                          className="flex items-center text-sm text-red-500 hover:text-red-600 transition-colors duration-200"
+                                        >
+                                          <IconX size={16} />
+                                          <span className="ml-1">Delete</span>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {expandedBot === bot.id && (
+                                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700">
+                                      <h4 className="font-medium text-black dark:text-white mb-2">
+                                        System Instructions
+                                      </h4>
+                                      <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap mb-4">
+                                        {bot.prompt}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>

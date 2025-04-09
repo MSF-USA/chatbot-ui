@@ -1,5 +1,3 @@
-import { Session } from 'next-auth';
-
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
 
@@ -99,6 +97,7 @@ export interface Conversation {
   temperature: number;
   folderId: string | null;
   bot?: string;
+  conversationId?: string;
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';

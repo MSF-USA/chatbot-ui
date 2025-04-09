@@ -1,23 +1,32 @@
-import { SearchResult } from '@/types/rag';
-
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
 } from '@azure/identity';
 import { RedisClientType, createClient } from 'redis';
 
-export class SearchResultsStore {
+export class RedisService {
+  private static instance: RedisService;
   private redisClient!: RedisClientType;
   private tokenProvider!: ReturnType<typeof getBearerTokenProvider>;
   private isInitialized: boolean = false;
   private isRedisAvailable: boolean = true;
+  private initializationPromise: Promise<void> | null = null;
 
-  constructor() {
-    this.initializeAsync();
+  private constructor() {
+    this.initializationPromise = this.initializeAsync();
+  }
+
+  public static getInstance(): RedisService {
+    if (!RedisService.instance) {
+      RedisService.instance = new RedisService();
+    }
+    return RedisService.instance;
   }
 
   private async initializeAsync(): Promise<void> {
     try {
+      console.log('Initializing Redis connection...');
+
       // Create an Azure AD token provider
       this.tokenProvider = getBearerTokenProvider(
         new DefaultAzureCredential(),
@@ -80,15 +89,16 @@ export class SearchResultsStore {
       await this.redisClient.connect();
       this.isInitialized = true;
       this.isRedisAvailable = true;
+      console.log('Redis connection successfully initialized');
     } catch (error) {
       this.isRedisAvailable = false;
       console.error('Redis connection initialization error:', error);
-      // Don't throw - let the application continue without Redis
     }
   }
 
   private async reconnectWithFreshToken(): Promise<boolean> {
     try {
+      console.log('Attempting to reconnect with fresh token');
       // Disconnect if already connected
       if (this.redisClient?.isOpen) {
         await this.redisClient.disconnect();
@@ -96,11 +106,22 @@ export class SearchResultsStore {
 
       // Get a fresh token
       const accessToken = await this.tokenProvider();
+      let objectId = null;
+
+      // Decode JWT token to extract the Object ID
+      const tokenParts = accessToken.split('.');
+      if (tokenParts.length === 3) {
+        const payload = JSON.parse(
+          Buffer.from(tokenParts[1], 'base64').toString(),
+        );
+        objectId = payload.oid;
+      }
 
       // Reconnect with the fresh token
       this.redisClient = createClient({
         url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
-        password: accessToken, // Use the token string directly
+        username: objectId,
+        password: accessToken,
         socket: {
           tls: true,
           connectTimeout: 5000,
@@ -115,6 +136,7 @@ export class SearchResultsStore {
 
       this.redisClient.on('connect', () => {
         this.isRedisAvailable = true;
+        console.log('Successfully reconnected to Redis with fresh token');
       });
 
       await this.redisClient.connect();
@@ -126,64 +148,69 @@ export class SearchResultsStore {
     }
   }
 
-  private async ensureConnection(): Promise<boolean> {
+  public async getClient(): Promise<RedisClientType | null> {
+    // Wait for initialization if it's in progress
+    if (this.initializationPromise) {
+      await this.initializationPromise;
+      this.initializationPromise = null;
+    }
+
     if (!this.isInitialized) {
-      try {
-        await this.initializeAsync();
-        return this.isRedisAvailable;
-      } catch (error) {
-        console.error('Failed to initialize Redis connection:', error);
-        return false;
-      }
+      await this.initializeAsync();
     }
 
-    if (!this.redisClient?.isOpen) {
-      try {
-        return await this.reconnectWithFreshToken();
-      } catch (error) {
-        console.error('Failed to reconnect to Redis:', error);
-        return false;
-      }
+    if (!this.isRedisAvailable || !this.redisClient?.isOpen) {
+      await this.reconnectWithFreshToken();
     }
 
-    return this.isRedisAvailable;
+    return this.isRedisAvailable ? this.redisClient : null;
   }
 
-  async getPreviousSearchDocs(key: string): Promise<SearchResult[]> {
+  // Helper methods for common Redis operations
+  public async get(key: string): Promise<string | null> {
     try {
-      const isConnected = await this.ensureConnection();
-      if (!isConnected) {
-        console.warn('Redis unavailable, returning empty search results.');
-        return [];
-      }
+      const client = await this.getClient();
+      if (!client) return null;
 
-      const data = await this.redisClient.get(`search:${key}`);
-      return data ? JSON.parse(data) : [];
+      return await client.get(key);
     } catch (error) {
-      console.error('Redis get error:', error);
-      return [];
+      console.error(`Redis GET error for key ${key}:`, error);
+      return null;
     }
   }
 
-  async savePreviousSearchDocs(
+  public async set(
     key: string,
-    docs: SearchResult[],
-  ): Promise<void> {
+    value: string,
+    options?: { EX?: number },
+  ): Promise<boolean> {
     try {
-      const isConnected = await this.ensureConnection();
-      if (!isConnected) {
-        console.warn('Redis unavailable, skipping save operation.');
-        return;
-      }
+      const client = await this.getClient();
+      if (!client) return false;
 
-      await this.redisClient.set(
-        `search:${key}`,
-        JSON.stringify(docs),
-        { EX: 3600 }, // Expire after 1 hour
-      );
+      await client.set(key, value, options);
+      return true;
     } catch (error) {
-      console.error('Redis set error:', error);
-      // Don't throw - let the application continue without Redis
+      console.error(`Redis SET error for key ${key}:`, error);
+      return false;
     }
   }
+
+  public async del(key: string): Promise<boolean> {
+    try {
+      const client = await this.getClient();
+      if (!client) return false;
+
+      await client.del(key);
+      return true;
+    } catch (error) {
+      console.error(`Redis DEL error for key ${key}:`, error);
+      return false;
+    }
+  }
+}
+
+// Export a singleton getter
+export function getRedisService() {
+  return RedisService.getInstance();
 }

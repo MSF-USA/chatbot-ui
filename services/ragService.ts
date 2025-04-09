@@ -1,6 +1,7 @@
 import { Session } from 'next-auth';
 
-import { SearchResultsStore } from '@/utils/app/redisCache';
+import { SearchResultsStore } from '@/services/searchResultsStore';
+
 import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 
 import { Bot } from '@/types/bots';
@@ -59,6 +60,8 @@ export class RAGService {
     this.loggingService = loggingService;
     this.openAIClient = openAIClient;
     this.searchIndex = searchIndex;
+
+    // Use the SearchResultsStore which now uses the singleton RedisService
     this.searchResultsStore = new SearchResultsStore();
   }
 
@@ -91,6 +94,9 @@ export class RAGService {
     try {
       // Initialize citation tracking for this request
       this.initCitationTracking(true);
+
+      // Log the conversationId to verify it's being passed correctly
+      console.log(`Processing request with conversationId: ${conversationId}`);
 
       const { searchDocs, searchMetadata } = await this.performSearch(
         messages,
@@ -189,6 +195,7 @@ export class RAGService {
         return completion;
       }
     } catch (error) {
+      console.error('Error in augmentMessages:', error);
       throw error;
     }
   }
@@ -267,9 +274,17 @@ export class RAGService {
       let previousResults: SearchResult[] = [];
       if (conversationId && user?.id) {
         try {
+          // Create the composite key
+          const cacheKey = `${user.id}:${conversationId}`;
+          console.log(`Fetching previous search results with key: ${cacheKey}`);
+
           // Fetch from Redis cache using composite key of user ID and conversation ID
           previousResults = await this.searchResultsStore.getPreviousSearchDocs(
-            `${user.id}:${conversationId}`,
+            cacheKey,
+          );
+
+          console.log(
+            `Retrieved ${previousResults.length} previous search results from Redis`,
           );
         } catch (error) {
           console.error('Error retrieving search results from Redis:', error);
@@ -283,9 +298,10 @@ export class RAGService {
 
       if (
         previousResults.length > 0 &&
-        messages.filter((m) => m.role === 'user').length >= 1
+        messages.filter((m) => m.role === 'user').length > 1
       ) {
         // Only add previous context if this isn't the first message
+        console.log('Adding previous context from cache to search results');
 
         // Add the top 3 previous results
         const topPreviousResults = previousResults.slice(0, 3);
@@ -307,9 +323,15 @@ export class RAGService {
       // Save the current search results to cache for future queries
       if (conversationId && user?.id) {
         try {
+          // Create the composite key
+          const cacheKey = `${user.id}:${conversationId}`;
+          console.log(
+            `Saving ${currentSearchDocs.length} search results with key: ${cacheKey}`,
+          );
+
           // Save to Redis using composite key
           await this.searchResultsStore.savePreviousSearchDocs(
-            `${user.id}:${conversationId}`,
+            cacheKey,
             currentSearchDocs,
           );
         } catch (error) {
@@ -493,10 +515,11 @@ export class RAGService {
     if (conversationId && user?.id) {
       try {
         // Use composite key of user ID and conversation ID
-        await this.searchResultsStore.savePreviousSearchDocs(
-          `${user.id}:${conversationId}`,
-          [],
-        );
+        const cacheKey = `${user.id}:${conversationId}`;
+        console.log(`Clearing cache for conversation: ${cacheKey}`);
+
+        await this.searchResultsStore.clearPreviousSearchDocs(cacheKey);
+        console.log(`Successfully cleared cache for conversation: ${cacheKey}`);
       } catch (error) {
         // Log error but continue without Redis clearing
         console.error('Error clearing search results from Redis:', error);
