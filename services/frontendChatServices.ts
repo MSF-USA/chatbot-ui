@@ -32,7 +32,6 @@ const createChatBody = (
   temperature: number,
   botId: string | undefined,
   stream: boolean,
-  conversationId?: string,
 ): ChatBody => ({
   model: conversation.model,
   messages,
@@ -41,7 +40,6 @@ const createChatBody = (
   temperature: conversation.temperature || temperature,
   botId,
   stream,
-  conversationId,
 });
 
 const appendPluginKeys = (
@@ -87,14 +85,10 @@ export const makeRequest = async (
   temperature: number,
   stream: boolean = true,
   setProgress: Dispatch<SetStateAction<number | null>>,
-  conversationId?: string,
 ) => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
   let hasComplexContent = false;
-
-  // Use the conversation's ID if no specific conversationId is provided
-  const effectiveConversationId = conversationId || updatedConversation.id;
 
   if (
     Array.isArray(lastMessage.content) &&
@@ -154,7 +148,6 @@ Document metadata: ${filename}
         temperature,
         updatedConversation.bot,
         false, // Don't stream intermediate steps
-        effectiveConversationId,
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
@@ -216,8 +209,7 @@ Provide a detailed comparison.
       systemPrompt,
       temperature,
       updatedConversation.bot,
-      stream,
-      effectiveConversationId,
+      stream, // Stream the final comparison response
     );
 
     const endpoint = getEndpoint(plugin);
@@ -250,7 +242,6 @@ Provide a detailed comparison.
       temperature,
       updatedConversation.bot,
       stream,
-      effectiveConversationId,
     );
     const endpoint = getEndpoint(plugin);
 

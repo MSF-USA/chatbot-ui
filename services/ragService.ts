@@ -1,7 +1,5 @@
 import { Session } from 'next-auth';
 
-import { SearchResultsStore } from '@/services/searchResultsStore';
-
 import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 
 import { Bot } from '@/types/bots';
@@ -24,7 +22,6 @@ export class RAGService {
   private loggingService: AzureMonitorLoggingService;
   private openAIClient: AzureOpenAI;
   private searchIndex: string;
-  private searchResultsStore: SearchResultsStore;
   public searchDocs: SearchResult[] = [];
 
   // Map to track source numbers presented to the model and their corresponding documents
@@ -60,8 +57,6 @@ export class RAGService {
     this.loggingService = loggingService;
     this.openAIClient = openAIClient;
     this.searchIndex = searchIndex;
-
-    this.searchResultsStore = new SearchResultsStore();
   }
 
   /**
@@ -74,7 +69,6 @@ export class RAGService {
    * @param {string} modelId - The ID of the model to use for completion.
    * @param {boolean} [stream=false] - Whether to stream the response.
    * @param {Session['user']} user - User information for logging.
-   * @param {string} [conversationId] - Optional conversation ID for caching search results.
    * @returns {Promise<ReadableStream | ChatCompletion>}
    *          Returns either a streaming response or chat completion depending on the stream parameter.
    * @throws {Error} If the specified bot is not found.
@@ -86,7 +80,6 @@ export class RAGService {
     modelId: string,
     stream: boolean = false,
     user: Session['user'],
-    conversationId?: string,
   ): Promise<ReadableStream | ChatCompletion> {
     const startTime = Date.now();
 
@@ -94,14 +87,11 @@ export class RAGService {
       // Initialize citation tracking for this request
       this.initCitationTracking(true);
 
-      console.log(`Processing request with conversationId: ${conversationId}`);
-
       const { searchDocs, searchMetadata } = await this.performSearch(
         messages,
         botId,
         bots,
         user,
-        conversationId,
       );
       this.searchDocs = searchDocs;
 
@@ -199,14 +189,86 @@ export class RAGService {
   }
 
   /**
+   * Uses an LLM to reformulate the query with full conversation context
+   * for improved search results on follow-up questions.
+   *
+   * @param {Message[]} messages - The conversation messages to analyze.
+   * @returns {Promise<string>} The reformulated query with context.
+   */
+  async reformulateQuery(messages: Message[]): Promise<string> {
+    try {
+      // Extract original query from the last user message
+      const originalQuery = this.extractQuery(messages);
+
+      // Get relevant conversation history (last few messages)
+      // Limiting to last 5 messages to keep context focused
+      const conversationHistory = messages
+        .slice(-5)
+        .map(
+          (m) =>
+            `${m.role}: ${
+              typeof m.content === 'string'
+                ? m.content
+                : JSON.stringify(m.content)
+            }`,
+        )
+        .join('\n');
+
+      console.log('Reformulating query with conversation context');
+
+      // Azure-optimized system prompt
+      const systemPrompt = `You are a search query optimizer for Azure AI Search.
+
+        Your task is to create concise, effective search queries that:
+        1. Prioritize recent information by default when appropriate (using terms like "latest," "recent," "this week," "today")
+        2. Respect the original intent when the query is about historical events
+        3. Include key entities and concepts from the original query and conversation context
+        4. Work effectively with Azure AI Search semantic ranking
+
+        GUIDELINES FOR AZURE AI SEARCH:
+        - Keep queries CONCISE (under 20 words)
+        - Focus on CORE CONCEPTS and ENTITIES
+        - Use NATURAL LANGUAGE phrasing
+        - Include 1-2 temporal terms at most when prioritizing recency
+        - Avoid complex boolean operators or syntax
+
+        Return ONLY the reformulated search query with no additional text.`;
+
+      // Ask the model to generate an improved search query
+      const completion = await this.openAIClient.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          {
+            role: 'user',
+            content: `Conversation history:\n${conversationHistory}\n\nOriginal query: ${originalQuery}\n\nGenerate an improved Azure AI Search query that captures the key concepts and appropriately handles recency.`,
+          },
+        ],
+        temperature: 0.2,
+      });
+
+      const expandedQuery =
+        completion.choices[0]?.message?.content?.trim() || originalQuery;
+
+      console.log(`Original query: "${originalQuery}"`);
+      console.log(`Expanded query: "${expandedQuery}"`);
+
+      return expandedQuery;
+    } catch (error) {
+      console.error('Error reformulating query:', error);
+      // Fall back to the original query if reformulation fails
+      return this.extractQuery(messages);
+    }
+  }
+
+  /**
    * Performs a search operation based on the conversation messages.
-   * Uses Redis for caching previous search results between requests.
+   * Uses query reformulation for follow-up questions to capture conversation context.
    *
    * @param {Message[]} messages - The conversation messages to extract query from.
    * @param {string} botId - The ID of the bot making the search request.
    * @param {Bot[]} bots - Available bots configuration.
    * @param {Session['user']} user - User information for logging.
-   * @param {string} [conversationId] - Optional conversation ID for caching search results.
    * @returns {Promise<{searchDocs: SearchResult[], searchMetadata: {dateRange: DateRange, resultCount: number}}>}
    *          Returns search results and metadata including date range of results.
    * @throws {Error} If the specified bot is not found.
@@ -216,7 +278,6 @@ export class RAGService {
     botId: string,
     bots: Bot[],
     user: Session['user'],
-    conversationId?: string,
   ) {
     const startTime = Date.now();
 
@@ -224,13 +285,25 @@ export class RAGService {
       const bot = bots.find((b) => b.id === botId);
       if (!bot) throw new Error(`Bot ${botId} not found`);
 
-      const query = this.extractQuery(messages);
+      // Use query reformulation for follow-up questions
+      const isFollowUpQuestion =
+        messages.filter((m) => m.role === 'user').length > 1;
+      let query;
+
+      if (isFollowUpQuestion) {
+        // Reformulate the query for better context in follow-up questions
+        query = await this.reformulateQuery(messages);
+      } else {
+        // Use the original query for the first question
+        query = this.extractQuery(messages);
+      }
+
       const semanticConfigName = `${this.searchIndex}-semantic-configuration`;
 
       // Perform the search
       const searchResults = await this.searchClient.search(query, {
         select: ['chunk', 'title', 'date', 'url'],
-        top: 7, // Get fewer results since we'll combine with previous results on follow up
+        top: 10, // Increased from 7 since we're not adding previous results anymore
         queryType: 'semantic' as any,
         semanticSearchOptions: {
           configurationName: semanticConfigName,
@@ -256,85 +329,16 @@ export class RAGService {
         },
       });
 
-      const currentSearchDocs: SearchResult[] = [];
+      const searchDocs: SearchResult[] = [];
       let newestDate: Date | null = null;
       let oldestDate: Date | null = null;
 
       for await (const result of searchResults.results) {
         const doc = result.document;
-        currentSearchDocs.push(doc);
+        searchDocs.push(doc);
         const docDate = new Date(doc.date);
         if (!newestDate || docDate > newestDate) newestDate = docDate;
         if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
-      }
-
-      // Get previously cached search docs from Redis if conversationId is provided
-      let previousResults: SearchResult[] = [];
-      if (conversationId && user?.id) {
-        try {
-          const cacheKey = `${user.id}:${conversationId}`;
-          console.log(`Fetching previous search results with key: ${cacheKey}`);
-
-          // Fetch from Redis cache
-          previousResults = await this.searchResultsStore.getPreviousSearchDocs(
-            cacheKey,
-          );
-
-          console.log(
-            `Retrieved ${previousResults.length} previous search results from Redis`,
-          );
-        } catch (error) {
-          console.error('Error retrieving search results from Redis:', error);
-          // If Redis fails, we just use an empty previous results array
-          previousResults = [];
-        }
-      }
-
-      // Combine with previous context if available and not the first message
-      let combinedSearchDocs = [...currentSearchDocs];
-
-      if (
-        previousResults.length > 0 &&
-        messages.filter((m) => m.role === 'user').length > 1
-      ) {
-        // Only add previous context if this isn't the first message
-        console.log('Adding previous context from cache to search results');
-
-        // Add the top 3 previous results
-        const topPreviousResults = previousResults.slice(0, 3);
-
-        // Combine and deduplicate
-        combinedSearchDocs = this.deduplicateResults([
-          ...currentSearchDocs,
-          ...topPreviousResults,
-        ]);
-
-        // Update date range to include all results
-        for (const doc of topPreviousResults) {
-          const docDate = new Date(doc.date);
-          if (!newestDate || docDate > newestDate) newestDate = docDate;
-          if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
-        }
-      }
-
-      // Save the current search results to cache for future queries
-      if (conversationId && user?.id) {
-        try {
-          // Create the key
-          const cacheKey = `${user.id}:${conversationId}`;
-          console.log(
-            `Saving ${currentSearchDocs.length} search results with key: ${cacheKey}`,
-          );
-
-          // Save to Redis
-          await this.searchResultsStore.savePreviousSearchDocs(
-            cacheKey,
-            currentSearchDocs,
-          );
-        } catch (error) {
-          // Log error but continue without Redis caching
-          console.error('Error saving search results to Redis:', error);
-        }
       }
 
       const searchMetadata = {
@@ -342,21 +346,21 @@ export class RAGService {
           newest: newestDate?.toISOString().split('T')[0] || null,
           oldest: oldestDate?.toISOString().split('T')[0] || null,
         },
-        resultCount: combinedSearchDocs.length,
+        resultCount: searchDocs.length,
       };
 
       // Log successful search
       await this.loggingService.logSearch(
         startTime,
         botId,
-        combinedSearchDocs.length,
+        searchDocs.length,
         searchMetadata.dateRange.oldest || undefined,
         searchMetadata.dateRange.newest || undefined,
         user,
       );
 
       return {
-        searchDocs: combinedSearchDocs,
+        searchDocs: this.deduplicateResults(searchDocs), // Still deduplicate results from the current search
         searchMetadata,
       };
     } catch (error) {
@@ -459,11 +463,20 @@ export class RAGService {
         })
         .join('\n\n');
 
-    // Add context about search results
-    const searchInfoNote =
-      messages.filter((m) => m.role === 'user').length > 1
-        ? '\n\nNote: Sources include relevant context from previous messages.'
-        : '';
+    // Add more informative context about the conversation for follow-up questions
+    const isFollowUp = messages.filter((m) => m.role === 'user').length > 1;
+
+    // Enhanced context note with better conversation awareness
+    const searchInfoNote = isFollowUp
+      ? '\n\nNote: This is a follow-up question in an ongoing conversation. ' +
+        'Previous questions include: ' +
+        messages
+          .filter((m) => m.role === 'user')
+          .slice(0, -1) // All except the current question
+          .map((m) => `"${typeof m.content === 'string' ? m.content : ''}"`)
+          .join(', ') +
+        '. The search query has been reformulated to capture the full context of the conversation.'
+      : '';
 
     return [
       ...messages.slice(0, -1).map((msg) => ({
@@ -496,32 +509,6 @@ export class RAGService {
     return typeof lastUserMessage.content === 'string'
       ? lastUserMessage.content
       : '';
-  }
-
-  /**
-   * Resets the Redis cache for a conversation.
-   * This is necessary because Redis persists data across requests.
-   *
-   * @param {string} conversationId - The conversation ID to clear from Redis cache.
-   * @param {Session['user']} user - User information for creating composite key.
-   */
-  public async resetConversationCache(
-    conversationId: string,
-    user: Session['user'],
-  ) {
-    if (conversationId && user?.id) {
-      try {
-        // Use composite key of user ID and conversation ID
-        const cacheKey = `${user.id}:${conversationId}`;
-        console.log(`Clearing cache for conversation: ${cacheKey}`);
-
-        await this.searchResultsStore.clearPreviousSearchDocs(cacheKey);
-        console.log(`Successfully cleared cache for conversation: ${cacheKey}`);
-      } catch (error) {
-        // Log error but continue without Redis clearing
-        console.error('Error clearing search results from Redis:', error);
-      }
-    }
   }
 
   /**

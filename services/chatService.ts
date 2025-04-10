@@ -295,7 +295,6 @@ export default class ChatService {
     user: Session['user'],
     botId?: string,
     streamResponse: boolean = true,
-    conversationId?: string,
     promptToSend?: string,
   ): Promise<Response> {
     const startTime = Date.now();
@@ -308,7 +307,6 @@ export default class ChatService {
           modelId,
           streamResponse,
           user,
-          conversationId,
         );
 
         if (streamResponse) {
@@ -401,7 +399,6 @@ export default class ChatService {
     }
   }
 
-  // Modified handleRequest method to extract conversationId from the request
   public async handleRequest(req: NextRequest): Promise<Response> {
     const {
       model,
@@ -410,7 +407,6 @@ export default class ChatService {
       temperature,
       botId,
       stream = true,
-      conversationId,
     } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -469,41 +465,7 @@ export default class ChatService {
         user,
         botId,
         stream,
-        conversationId,
         promptToSend,
-      );
-    }
-  }
-
-  // Reset conversation redis cache
-  public async resetConversation(
-    conversationId: string,
-    req: NextRequest,
-  ): Promise<Response> {
-    try {
-      const token = (await getToken({ req })) as JWT | null;
-      if (!token) throw new Error('Could not pull token!');
-      const session: Session | null = await getServerSession(
-        authOptions as any,
-      );
-      if (!session) throw new Error('Could not pull session!');
-
-      const user = session['user'];
-
-      await this.ragService.resetConversationCache(conversationId, user);
-      return new Response(JSON.stringify({ success: true }), {
-        headers: { 'Content-Type': 'application/json' },
-      });
-    } catch (error) {
-      console.error('Error resetting conversation:', error);
-      return new Response(
-        JSON.stringify({
-          error: error instanceof Error ? error.message : 'Unknown error',
-        }),
-        {
-          status: 500,
-          headers: { 'Content-Type': 'application/json' },
-        },
       );
     }
   }

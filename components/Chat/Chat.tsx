@@ -393,7 +393,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               temperature,
               true,
               setProgress,
-              updatedConversation.id,
             );
 
           if (hasComplexContent) {

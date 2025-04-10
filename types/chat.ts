@@ -84,7 +84,6 @@ export interface ChatBody {
   prompt: string;
   temperature: number;
   botId: string | undefined;
-  conversationId?: string;
   stream?: boolean;
 }
 
@@ -97,7 +96,6 @@ export interface Conversation {
   temperature: number;
   folderId: string | null;
   bot?: string;
-  conversationId?: string;
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
