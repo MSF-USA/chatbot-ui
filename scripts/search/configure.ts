@@ -4,8 +4,7 @@ import { createOrUpdateIndexer } from './components/create-indexer';
 import { createOrUpdateSkillset } from './components/create-skillset';
 
 import {
-  AzureKeyCredential,
-  SearchIndexClient,
+  AzureKeyCredential, // SearchIndexClient,
   SearchIndexerClient,
 } from '@azure/search-documents';
 
@@ -31,9 +30,9 @@ export async function configureSearch(config: SearchConfig) {
 
   const credential = new AzureKeyCredential(config.apiKey);
 
-  const indexClient = new SearchIndexClient(config.endpoint, credential, {
-    apiVersion,
-  });
+  // const indexClient = new SearchIndexClient(config.endpoint, credential, {
+  //   apiVersion,
+  // });
 
   const indexerClient = new SearchIndexerClient(config.endpoint, credential, {
     apiVersion,
