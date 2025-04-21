@@ -1,7 +1,5 @@
 import { getSkillsetConfig } from '../config/skillset-config';
 
-import { SearchIndexerClient } from '@azure/search-documents';
-
 export async function createOrUpdateSkillset(
   skillsetName: string,
   indexName: string,

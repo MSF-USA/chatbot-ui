@@ -47,7 +47,6 @@ export async function configureSearch(config: SearchConfig) {
     Using direct API call instead.
     */
     await createOrUpdateIndex(
-      indexClient,
       config.indexName,
       config.allowIndexDowntime,
       config.endpoint,

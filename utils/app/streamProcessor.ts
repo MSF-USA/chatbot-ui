@@ -14,13 +14,6 @@ export function createAzureOpenAIStreamProcessor(
   response: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
   ragService?: RAGService,
 ): ReadableStream {
-  // Initialize citation tracking once at the start
-  // Important: preserve the source mapping that was set up during getCompletionMessages
-  // if (ragService) {
-  //   // Reset tracking state but preserve the source mapping
-  //   ragService.resetCitationTracking(true);
-  // }
-
   return new ReadableStream({
     start: (controller) => {
       const encoder = new TextEncoder();

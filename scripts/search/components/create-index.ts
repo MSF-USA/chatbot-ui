@@ -3,7 +3,6 @@ import { getIndexConfig } from '../config/index-config';
 import { SearchIndexClient } from '@azure/search-documents';
 
 export async function createOrUpdateIndex(
-  client: SearchIndexClient,
   indexName: string,
   allowIndexDowntime: boolean = false,
   endpoint: string,

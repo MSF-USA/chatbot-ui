@@ -201,7 +201,6 @@ export class RAGService {
       const originalQuery = this.extractQuery(messages);
 
       // Get relevant conversation history (last few messages)
-      // Limiting to last 5 messages to keep context focused
       const conversationHistory = messages
         .slice(-5)
         .map(
@@ -303,7 +302,7 @@ export class RAGService {
       // Perform the search
       const searchResults = await this.searchClient.search(query, {
         select: ['chunk', 'title', 'date', 'url'],
-        top: 10, // Increased from 7 since we're not adding previous results anymore
+        top: 10,
         queryType: 'semantic' as any,
         semanticSearchOptions: {
           configurationName: semanticConfigName,

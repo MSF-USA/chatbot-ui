@@ -62,7 +62,7 @@ interface SavedCustomBot {
   name: string;
   prompt: string;
   createdAt: string;
-  color?: number; // Index for the color in BOT_COLORS array
+  color?: number;
 }
 
 const BotModal: React.FC = () => {
@@ -119,7 +119,6 @@ const BotModal: React.FC = () => {
         try {
           const parsedBots = JSON.parse(savedBotsString);
 
-          // Since we're ignoring backwards compatibility, we can just assign fresh colors
           const updatedBots = parsedBots.map(
             (bot: SavedCustomBot, index: number) => {
               // Assign sequential colors to ensure no duplicates
@@ -279,6 +278,7 @@ const BotModal: React.FC = () => {
   return (
     <>
       <button
+        data-testid="explore-bots-button"
         className="text-sidebar mt-2 mx-2 flex w-full rounded-md cursor-pointer select-none items-center gap-3 p-3 text-black dark:text-white transition-colors duration-200 dark:hover:bg-gray-500/10 hover:bg-gray-200"
         onClick={() => setIsOpen(true)}
       >
@@ -287,7 +287,10 @@ const BotModal: React.FC = () => {
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300">
+        <div
+          data-testid="bot-modal-overlay"
+          className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300"
+        >
           <div className="fixed inset-0 z-10 overflow-hidden">
             <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
               <div
@@ -297,6 +300,7 @@ const BotModal: React.FC = () => {
 
               <div
                 ref={modalRef}
+                data-testid="bot-modal-dialog"
                 className="inline-block transform overflow-hidden rounded-lg border border-neutral-300 bg-white text-left align-bottom shadow-xl transition-all dark:border-neutral-700 dark:bg-[#212121] sm:my-8 w-full sm:max-w-[800px] sm:align-middle"
                 role="dialog"
               >
@@ -313,6 +317,7 @@ const BotModal: React.FC = () => {
                     </h2>
                   </div>
                   <button
+                    data-testid="close-modal-button"
                     onClick={() => {
                       setIsOpen(false);
                       setIsCreatingBot(false);
@@ -327,12 +332,13 @@ const BotModal: React.FC = () => {
 
                 {isCreatingBot || isEditingBot ? (
                   /* Bot Creation/Editing Form */
-                  <div className="p-6">
+                  <div data-testid="bot-form" className="p-6">
                     <div className="mb-4">
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Bot Name
                       </label>
                       <input
+                        data-testid="bot-name-input"
                         type="text"
                         value={newBotName}
                         onChange={(e) => setNewBotName(e.target.value)}
@@ -347,6 +353,7 @@ const BotModal: React.FC = () => {
                           System Instructions
                         </label>
                         <span
+                          data-testid="prompt-char-count"
                           className={`text-xs ${
                             promptCharCount > MAX_PROMPT_LENGTH * 0.9
                               ? 'text-red-500'
@@ -357,6 +364,7 @@ const BotModal: React.FC = () => {
                         </span>
                       </div>
                       <textarea
+                        data-testid="bot-prompt-input"
                         value={newBotPrompt}
                         onChange={handlePromptChange}
                         placeholder="Enter detailed instructions for how the AI should behave, what role it should play, and any specific knowledge or style it should use..."
@@ -373,6 +381,7 @@ const BotModal: React.FC = () => {
 
                     <div className="flex justify-end space-x-3">
                       <button
+                        data-testid="cancel-button"
                         onClick={() => {
                           setIsCreatingBot(false);
                           setIsEditingBot(false);
@@ -383,6 +392,7 @@ const BotModal: React.FC = () => {
                         Cancel
                       </button>
                       <button
+                        data-testid="save-bot-button"
                         onClick={handleSaveBot}
                         disabled={!newBotName.trim() || !newBotPrompt.trim()}
                         className="px-4 py-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
@@ -398,6 +408,7 @@ const BotModal: React.FC = () => {
                     {/* Tabs */}
                     <div className="flex border-b border-neutral-300 dark:border-neutral-700">
                       <button
+                        data-testid="official-bots-tab"
                         className={`px-6 py-3 text-sm font-medium ${
                           selectedTab === 'official'
                             ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
@@ -408,6 +419,7 @@ const BotModal: React.FC = () => {
                         Official Bots
                       </button>
                       <button
+                        data-testid="custom-bots-tab"
                         className={`px-6 py-3 text-sm font-medium ${
                           selectedTab === 'custom'
                             ? 'text-blue-600 border-b-2 border-blue-600 dark:text-blue-400 dark:border-blue-400'
@@ -434,9 +446,11 @@ const BotModal: React.FC = () => {
                             {bots.map((bot) => (
                               <div
                                 key={bot.id}
+                                data-testid={`official-bot-${bot.id}`}
                                 className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
                               >
                                 <div
+                                  data-testid={`official-bot-card-${bot.id}`}
                                   className="cursor-pointer p-4 flex items-start transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                                   onClick={() => handleBotSelection(bot)}
                                 >
@@ -462,6 +476,7 @@ const BotModal: React.FC = () => {
                                     </p>
 
                                     <button
+                                      data-testid={`details-button-${bot.id}`}
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         toggleDetails(bot.id);
@@ -479,7 +494,10 @@ const BotModal: React.FC = () => {
                                 </div>
 
                                 {expandedBot === bot.id && (
-                                  <div className="p-4 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700">
+                                  <div
+                                    data-testid={`bot-details-${bot.id}`}
+                                    className="p-4 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700"
+                                  >
                                     <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm">
                                       The MSF AI Assistant will search for
                                       relevant information from the following
@@ -536,6 +554,7 @@ const BotModal: React.FC = () => {
                             {/* Only show this button if there are already bots */}
                             {savedBots.length > 0 && (
                               <button
+                                data-testid="create-custom-bot-button"
                                 onClick={() => setIsCreatingBot(true)}
                                 className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                               >
@@ -546,7 +565,10 @@ const BotModal: React.FC = () => {
                           </div>
 
                           {savedBots.length === 0 ? (
-                            <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg">
+                            <div
+                              data-testid="empty-state"
+                              className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg"
+                            >
                               <IconBrain
                                 size={48}
                                 className="mx-auto text-gray-400 dark:text-gray-600 mb-3"
@@ -558,6 +580,7 @@ const BotModal: React.FC = () => {
                                 Create your first custom bot to get started
                               </p>
                               <button
+                                data-testid="empty-state-create-button"
                                 onClick={() => setIsCreatingBot(true)}
                                 className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                               >
@@ -570,9 +593,11 @@ const BotModal: React.FC = () => {
                               {savedBots.map((bot) => (
                                 <div
                                   key={bot.id}
+                                  data-testid={`custom-bot-${bot.id}`}
                                   className="border border-neutral-200 dark:border-neutral-700 rounded-lg overflow-hidden transition-all duration-200 hover:shadow-md"
                                 >
                                   <div
+                                    data-testid={`custom-bot-card-${bot.id}`}
                                     className="cursor-pointer p-4 flex items-start transition-colors duration-200 hover:bg-neutral-100 dark:hover:bg-neutral-800"
                                     onClick={() => handleBotSelection(bot)}
                                   >
@@ -603,6 +628,7 @@ const BotModal: React.FC = () => {
 
                                       <div className="flex items-center text-sm">
                                         <button
+                                          data-testid={`custom-bot-details-button-${bot.id}`}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             toggleDetails(bot.id);
@@ -618,6 +644,7 @@ const BotModal: React.FC = () => {
                                         </button>
 
                                         <button
+                                          data-testid={`edit-bot-button-${bot.id}`}
                                           onClick={(e) =>
                                             handleEditBot(bot.id, e)
                                           }
@@ -628,6 +655,7 @@ const BotModal: React.FC = () => {
                                         </button>
 
                                         <button
+                                          data-testid={`delete-bot-button-${bot.id}`}
                                           onClick={(e) =>
                                             handleDeleteBot(bot.id, e)
                                           }
@@ -641,7 +669,10 @@ const BotModal: React.FC = () => {
                                   </div>
 
                                   {expandedBot === bot.id && (
-                                    <div className="p-4 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700">
+                                    <div
+                                      data-testid={`custom-bot-details-${bot.id}`}
+                                      className="p-4 bg-neutral-50 dark:bg-neutral-800 border-t border-neutral-200 dark:border-neutral-700"
+                                    >
                                       <h4 className="font-medium text-black dark:text-white mb-2">
                                         System Instructions
                                       </h4>
