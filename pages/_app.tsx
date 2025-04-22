@@ -7,6 +7,7 @@ import type { AppProps } from 'next/app';
 import type { Session } from "next-auth"
 import { Inter } from 'next/font/google';
 
+import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
 
 import '@/styles/globals.css';
 
@@ -17,12 +18,14 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ ses
 
   return (
     <SessionProvider session={session}>
-      <div className={inter.className}>
-        <Toaster />
-        <QueryClientProvider client={queryClient}>
-          <Component {...pageProps} />
-        </QueryClientProvider>
-      </div>
+      <TermsAcceptanceProvider>
+        <div className={inter.className}>
+          <Toaster />
+          <QueryClientProvider client={queryClient}>
+            <Component {...pageProps} />
+          </QueryClientProvider>
+        </div>
+      </TermsAcceptanceProvider>
     </SessionProvider>
   );
 }
