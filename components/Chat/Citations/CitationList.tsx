@@ -22,6 +22,20 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
   >(null);
   const scrollIntervalRef = useRef<number | null>(null);
 
+  // Deduplicate citations by URL or title
+  const uniqueCitations = citations.reduce((acc: Citation[], current) => {
+    const isDuplicate = acc.some(
+      (item) =>
+        (item.url && current.url && item.url === current.url) ||
+        (item.title && current.title && item.title === current.title),
+    );
+
+    if (!isDuplicate) {
+      acc.push(current);
+    }
+    return acc;
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
     return () => clearTimeout(timer);
@@ -122,7 +136,7 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
     setIsExpanded(!isExpanded);
   };
 
-  if (citations.length === 0) return null;
+  if (uniqueCitations.length === 0) return null;
 
   return (
     <div
@@ -137,9 +151,9 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
         <div className="flex items-center">
           <IconBlockquote size={19} className="inline-block mb-0.5" />
           <div className="ml-1 w-6 h-6 flex items-center justify-center text-base">
-            {citations.length}
+            {uniqueCitations.length}
           </div>
-          {citations.length > 1 ? (
+          {uniqueCitations.length > 1 ? (
             <p className="text-base ml-1">Sources</p>
           ) : (
             <p className="text-base ml-1">Source</p>
@@ -162,7 +176,7 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
           onMouseMove={handleReactMouseMove}
           onMouseLeave={handleReactMouseLeave}
         >
-          {citations.map((citation) => (
+          {uniqueCitations.map((citation) => (
             <div key={citation.number} className="flex-shrink-0">
               <CitationItem key={citation.number} citation={citation} />
             </div>

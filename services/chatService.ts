@@ -288,22 +288,6 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  /**
-   * Handles a chat completion request by sending the messages to the OpenAI API and returning a response.
-   * The method supports both standard chat completions and RAG-enhanced completions when a botId is provided.
-   * Can handle both streaming and non-streaming responses.
-   *
-   * @param {string} modelId - The ID of the model to use for the chat completion.
-   * @param {Message[]} messages - The messages to send in the chat completion request.
-   * @param {number} temperature - The temperature value to use for the chat completion.
-   * @param {Session['user']} user - User information for logging.
-   * @param {string} [botId] - Optional bot ID for RAG-enhanced completions.
-   * @param {boolean} [streamResponse=true] - Whether to stream the response or return it all at once.
-   * @returns {Promise<Response>} A promise that resolves to the response containing the chat completion.
-   *                             For streaming responses, returns a StreamingTextResponse.
-   *                             For non-streaming responses, returns a JSON response with the completion text.
-   * @throws {Error} If there's an issue with the chat completion request or processing.
-   */
   async handleChatCompletion(
     modelId: string,
     messages: Message[],
@@ -311,6 +295,7 @@ export default class ChatService {
     user: Session['user'],
     botId?: string,
     streamResponse: boolean = true,
+    promptToSend?: string,
   ): Promise<Response> {
     const startTime = Date.now();
     try {
@@ -334,10 +319,18 @@ export default class ChatService {
           });
         }
       } else {
+        const messagesWithSystemPrompt = [
+          {
+            role: 'system',
+            content: promptToSend || DEFAULT_SYSTEM_PROMPT,
+          },
+          ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
+        ];
+
         const response = await this.openAIClient.chat.completions.create({
           model: modelId,
           messages:
-            messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature,
           stream: streamResponse,
           user: JSON.stringify(user),
@@ -406,11 +399,6 @@ export default class ChatService {
     }
   }
 
-  /**
-   * Handles an incoming request by processing the chat body and returning an appropriate response.
-   * @param {NextRequest} req - The incoming Next.js request.
-   * @returns {Promise<Response>} A promise that resolves to the response based on the request.
-   */
   public async handleRequest(req: NextRequest): Promise<Response> {
     const {
       model,
@@ -477,6 +465,7 @@ export default class ChatService {
         user,
         botId,
         stream,
+        promptToSend,
       );
     }
   }

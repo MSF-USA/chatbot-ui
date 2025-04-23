@@ -35,3 +35,9 @@ stages:
               tags: |
                 latest
                 $(Build.BuildId)
+          - task: PublishPipelineArtifact@1
+            displayName: 'Publish Source Code'
+            inputs:
+              targetPath: '$(Build.SourcesDirectory)'
+              artifact: 'ProdBuild'
+              publishLocation: 'pipeline'

@@ -94,7 +94,6 @@ describe('Azure OpenAI Stream Processor', () => {
     );
 
     // Spy on methods to verify they're called
-    vi.spyOn(mockRAGService, 'resetCitationTracking');
     vi.spyOn(mockRAGService, 'getCurrentCitations');
   });
 

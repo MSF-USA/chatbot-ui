@@ -1,5 +1,3 @@
-import { Session } from 'next-auth';
-
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
 
