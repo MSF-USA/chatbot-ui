@@ -125,7 +125,6 @@ export const hasUserAcceptedAllRequiredDocuments = (
   userId: string,
   termsData: TermsData
 ): boolean => {
-  // Check each document in termsData
   for (const [docType, document] of Object.entries(termsData)) {
     if (document.required && !hasUserAcceptedDocument(userId, docType, document.version, document.hash)) {
       return false;
