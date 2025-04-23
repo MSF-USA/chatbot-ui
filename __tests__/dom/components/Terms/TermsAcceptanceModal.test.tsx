@@ -19,7 +19,16 @@ vi.mock('next-i18next', () => ({
 }));
 
 describe('TermsAcceptanceModal', () => {
-  const mockUser = { id: 'user123', name: 'Test User' };
+  const mockUser = {
+    id: 'user123',
+    givenName: 'Test',
+    surname: 'User',
+    displayName: 'Test User',
+    jobTitle: 'Tester',
+    department: 'QA',
+    mail: 'test.user@example.com',
+    companyName: 'Test Company'
+  };
   const mockOnAcceptance = vi.fn();
 
   const mockTermsData = {
@@ -207,7 +216,13 @@ describe('TermsAcceptanceModal', () => {
   });
 
   it('should handle case when user ID is not available', async () => {
-    const userWithoutId = { name: 'Test User' };
+    const userWithoutId = {
+      id: '',
+      givenName: 'Test',
+      surname: 'User',
+      displayName: 'Test User',
+      name: 'Test User'
+    };
 
     render(<TermsAcceptanceModal user={userWithoutId} onAcceptance={mockOnAcceptance} />);
 
