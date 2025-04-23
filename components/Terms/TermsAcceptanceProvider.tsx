@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState, useEffect } from 'react';
+import React, { FC, ReactNode, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { checkUserTermsAcceptance } from '@/utils/app/termsAcceptance';
 import TermsAcceptanceModal from './TermsAcceptanceModal';
