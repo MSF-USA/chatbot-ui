@@ -29,12 +29,18 @@ export interface UserAcceptance {
 // Local storage key
 const TERMS_ACCEPTANCE_KEY = 'chatbot_terms_acceptance';
 
-// Function to get the user's acceptance records from localStorage
 export const getUserAcceptance = (userId: string): UserAcceptance | null => {
   if (typeof window === 'undefined') return null;
 
+  let storage: Storage;
   try {
-    const allAcceptances = localStorage.getItem(TERMS_ACCEPTANCE_KEY);
+    storage = window.localStorage;
+  } catch {
+    return null;
+  }
+
+  try {
+    const allAcceptances = storage.getItem(TERMS_ACCEPTANCE_KEY);
     if (!allAcceptances) return null;
 
     const acceptances: UserAcceptance[] = JSON.parse(allAcceptances);
