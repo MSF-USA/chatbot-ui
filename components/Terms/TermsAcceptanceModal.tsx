@@ -28,7 +28,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   const [allAccepted, setAllAccepted] = useState<boolean>(false);
 
   // Get user ID
-  const userId = (user as any)?.id || user?.email || '';
+  const userId = user?.id || user?.mail || '';
 
   // Fetch terms data
   useEffect(() => {

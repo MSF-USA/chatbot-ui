@@ -148,7 +148,7 @@ export const checkUserTermsAcceptance = async (user: Session['user']): Promise<b
   if (!user) return false;
 
   try {
-    const userId = (user as any)?.id || user?.email || '';
+    const userId = user?.id || user?.mail || '';
     if (!userId) return false;
 
     const termsData = await fetchTermsData();
