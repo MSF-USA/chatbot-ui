@@ -1,10 +1,17 @@
 import { Message } from './chat';
 
 export interface SearchResult {
-  content: string;
+  chunk: string;
   title: string;
   date: string;
   url: string;
+
+  '@search.captions'?: {
+    text: string;
+    highlights: string;
+  }[];
+  '@search.rerankerScore'?: number;
+  '@search.score'?: number;
 }
 
 export interface DateRange {

@@ -11,7 +11,9 @@
     "test:node": "vitest --run --config ./vitest.config.node.ts",
     "test:jsdom": "vitest --run --config ./vitest.config.jsdom.ts",
     "test": "npm run test:node && npm run test:jsdom",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "search:config": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts",
+    "search:config-downtime": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts --allow-downtime"
   },
   "dependencies": {
     "@azure/identity": "^4.4.1",
@@ -26,6 +28,7 @@
     "@langchain/core": "^0.2.8",
     "@langchain/openai": "^0.0.33",
     "@tabler/icons-react": "^2.9.0",
+    "@testing-library/user-event": "^14.6.1",
     "ai": "^3.2.22",
     "axios": "^1.7.7",
     "cheerio": "^1.0.0",
@@ -50,6 +53,7 @@
     "react-markdown": "^8.0.5",
     "react-query": "^3.39.3",
     "react-syntax-highlighter": "^15.5.0",
+    "redis": "^4.7.0",
     "rehype-mathjax": "^4.0.2",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
@@ -76,6 +80,7 @@
     "@vitejs/plugin-react": "^4.3.0",
     "@vitest/coverage-v8": "^1.6.0",
     "autoprefixer": "^10.4.14",
+    "dotenv": "^16.4.7",
     "endent": "^2.1.0",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",

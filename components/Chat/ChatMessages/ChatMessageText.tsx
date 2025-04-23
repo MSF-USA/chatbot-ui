@@ -81,7 +81,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         try {
           const parsedData = JSON.parse(jsonStr);
           if (parsedData.citations) {
-            citationsData = parsedData.citations;
+            // Deduplicate citations by URL or title
+            const uniqueCitationsMap = new Map();
+            parsedData.citations.forEach((citation: Citation) => {
+              const key = citation.url || citation.title;
+              if (key && !uniqueCitationsMap.has(key)) {
+                uniqueCitationsMap.set(key, citation);
+              }
+            });
+            citationsData = Array.from(uniqueCitationsMap.values());
           }
         } catch (error) {
           console.error('Error parsing citations JSON with marker:', error);
@@ -97,7 +105,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           try {
             const parsedData = JSON.parse(jsonStr);
             if (parsedData.citations) {
-              citationsData = parsedData.citations;
+              // Deduplicate citations by URL or title
+              const uniqueCitationsMap = new Map();
+              parsedData.citations.forEach((citation: Citation) => {
+                const key = citation.url || citation.title;
+                if (key && !uniqueCitationsMap.has(key)) {
+                  uniqueCitationsMap.set(key, citation);
+                }
+              });
+              citationsData = Array.from(uniqueCitationsMap.values());
             }
           } catch (error) {
             console.error('Error parsing citations JSON:', error);
@@ -112,9 +128,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         selectedConversation.messages[messageIndex].citations!.length > 0
       ) {
         extractionMethod = 'message-stored';
-        citationsData = [
-          ...selectedConversation.messages[messageIndex].citations!,
-        ];
+
+        // Deduplicate citations by URL or title
+        const uniqueCitationsMap = new Map();
+        selectedConversation.messages[messageIndex].citations!.forEach(
+          (citation: Citation) => {
+            const key = citation.url || citation.title;
+            if (key && !uniqueCitationsMap.has(key)) {
+              uniqueCitationsMap.set(key, citation);
+            }
+          },
+        );
+        citationsData = Array.from(uniqueCitationsMap.values());
       }
 
       // Debug logging
