@@ -13,6 +13,8 @@ import {
 } from '@/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 
+import { Mock } from 'vitest';
+
 const globalWindow = {
   localStorage: {
     getItem: vi.fn(),
@@ -50,11 +52,11 @@ describe('termsAcceptance utility', () => {
   };
 
   beforeEach(() => {
-    global.window = globalWindow as any;
+    (global as any).window = globalWindow as any;
 
-    window.localStorage.getItem.mockClear();
-    window.localStorage.setItem.mockClear();
-    window.localStorage.clear.mockClear();
+    (window.localStorage.getItem as any).mockClear();
+    (window.localStorage.setItem as any).mockClear();
+    (window.localStorage.clear as any).mockClear();
 
     localStorageMock.getItem.mockReset();
     localStorageMock.setItem.mockReset();
@@ -344,48 +346,42 @@ describe('termsAcceptance utility', () => {
           }
         ]
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+
+      // Make sure localStorage mock returns exactly what the function expects
+      localStorageMock.getItem.mockReturnValue(JSON.stringify([mockAcceptance]));
 
       const result = hasUserAcceptedAllRequiredDocuments(mockUserId, mockTermsData);
-      // TODO: Fix this before mergings
-      // expect(result).toBe(true);
+      expect(result).toBe(true);
     });
 
-    // TODO: Implement below if we have any optional terms.
-    // it('should ignore non-required documents', () => {
-    //   const termsDataWithOptional: TermsData = {
-    //     ...mockTermsData,
-    //     optionalTerms: {
-    //       content: 'Optional Terms Content',
-    //       version: '1.0.0',
-    //       hash: 'ghi789',
-    //       required: false
-    //     }
-    //   };
-    //
-    //   const mockAcceptance: UserAcceptance = {
-    //     userId: mockUserId,
-    //     acceptedDocuments: [
-    //       {
-    //         documentType: 'platformTerms',
-    //         version: '1.0.0',
-    //         hash: 'abc123',
-    //         acceptedAt: 1234567890
-    //       },
-    //       {
-    //         documentType: 'privacyPolicy',
-    //         version: '1.0.0',
-    //         hash: 'def456',
-    //         acceptedAt: 1234567890
-    //       }
-    //       // Missing optionalTerms, but that's ok since it's not required
-    //     ]
-    //   };
-    //   localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
-    //
-    //   const result = hasUserAcceptedAllRequiredDocuments(mockUserId, termsDataWithOptional);
-    //   expect(result).toBe(true);
-    // });
+    it('should fetch terms data and check if user has accepted all required documents', async () => {
+      const mockUser = { id: mockUserId } as Session['user'];
+      const mockAcceptance: UserAcceptance = {
+        userId: mockUserId,
+        acceptedDocuments: [
+          {
+            documentType: 'platformTerms',
+            version: '1.0.0',
+            hash: 'abc123',
+            acceptedAt: 1234567890
+          },
+          {
+            documentType: 'privacyPolicy',
+            version: '1.0.0',
+            hash: 'def456',
+            acceptedAt: 1234567890
+          }
+        ]
+      };
+
+      // Make sure localStorage returns the correct value for all calls within this test
+      localStorageMock.getItem.mockReturnValue(JSON.stringify([mockAcceptance]));
+
+      const result = await checkUserTermsAcceptance(mockUser);
+
+      expect(fetch).toHaveBeenCalledWith('/api/v2/terms');
+      expect(result).toBe(true);
+    });
   });
 
   describe('fetchTermsData', () => {
