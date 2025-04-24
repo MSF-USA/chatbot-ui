@@ -2,28 +2,39 @@ import { Settings } from '@/types/settings';
 
 const STORAGE_KEY = 'settings';
 
-export const getSettings = (): Settings => {
-  let settings: Settings = {
-    theme: 'dark',
+const getDefaultSettings = (): Settings => {
+  const userDefaultThemeIsDark =
+    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  return {
+    theme: userDefaultThemeIsDark ? 'dark' : 'light',
     temperature: 0.5,
     systemPrompt:
       process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
       "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     runTypeWriterIntroSetting: true,
-    useKnowledgeBase: true,
   };
-  const settingsJson = localStorage.getItem(STORAGE_KEY);
-  if (settingsJson) {
-    try {
-      let savedSettings = JSON.parse(settingsJson) as Settings;
-      settings = Object.assign(settings, savedSettings);
-    } catch (e) {
-      console.error(e);
-    }
+};
+
+export const getSettings = (): Settings => {
+  const defaultSettings = getDefaultSettings();
+
+  const settingsJson = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+  if (!settingsJson) {
+    return defaultSettings;
   }
-  return settings;
+
+  try {
+    const savedSettings = JSON.parse(settingsJson) as Settings;
+    return { ...defaultSettings, ...savedSettings };
+  } catch (error) {
+    console.error('Error parsing saved settings:', error);
+    return defaultSettings;
+  }
 };
 
 export const saveSettings = (settings: Settings) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+  }
 };

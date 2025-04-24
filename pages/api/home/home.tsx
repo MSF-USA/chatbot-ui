@@ -308,8 +308,6 @@ const Home = ({
         field: 'runTypeWriterIntroSetting',
         value: settings.runTypeWriterIntroSetting,
       });
-    if (settings.useKnowledgeBase === false)
-      dispatch({ field: 'useKnowledgeBase', value: settings.useKnowledgeBase });
   }
 
   function handleApiKey() {
@@ -369,33 +367,36 @@ const Home = ({
   }
 
   function selectConversation() {
-    const selectedConversation = localStorage.getItem('selectedConversation');
-    if (selectedConversation) {
-      const parsedSelectedConversation: Conversation =
-        JSON.parse(selectedConversation);
-      const cleanedSelectedConversation = cleanSelectedConversation(
-        parsedSelectedConversation,
-      );
-      dispatch({
-        field: 'selectedConversation',
-        value: cleanedSelectedConversation,
-      });
+    const conversationHistory = localStorage.getItem('conversationHistory');
+    let parsedConversationHistory: Conversation[]
+    if (conversationHistory) {
+      parsedConversationHistory =
+        JSON.parse(conversationHistory);
     } else {
-      const lastConversation = conversations[conversations.length - 1];
-      dispatch({
-        field: 'selectedConversation',
-        value: {
-          id: uuidv4(),
-          name: t('New Conversation'),
-          messages: [],
-          model: OpenAIModels[defaultModelId],
-          prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
-          temperature:
-            temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
-          folderId: null,
-        },
-      });
+      parsedConversationHistory = [];
     }
+
+    const lastConversation = parsedConversationHistory[parsedConversationHistory.length - 1];
+    const newConversation: Conversation = {
+      id: uuidv4(),
+      name: t('New Conversation'),
+      messages: [],
+      model: lastConversation?.model || {
+        id: OpenAIModels[defaultModelId].id,
+        name: OpenAIModels[defaultModelId].name,
+        maxLength: OpenAIModels[defaultModelId].maxLength,
+        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
+      },
+      prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
+      temperature:
+        temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
+      folderId: null,
+    };
+
+    const updatedConversations = [...parsedConversationHistory, newConversation];
+
+    dispatch({ field: 'selectedConversation', value: newConversation });
+    dispatch({ field: 'conversations', value: updatedConversations });
   }
 
   return (
@@ -437,7 +438,7 @@ const Home = ({
           <div className="flex h-full w-full pt-[48px] sm:pt-0">
             <Chatbar />
 
-            <div className="flex flex-1">
+            <div className="flex flex-1 w-full">
               <Chat stopConversationRef={stopConversationRef} />
             </div>
           </div>
@@ -479,6 +480,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
         'markdown',
         'promptbar',
         'settings',
+        'transcribeModal',
       ])),
     },
   };

@@ -14,6 +14,7 @@ import {
   useState,
 } from 'react';
 
+import { getBotById } from '@/types/bots';
 import { Conversation } from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -37,6 +38,9 @@ export const ConversationComponent = ({ conversation }: Props) => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState('');
+
+  // Get bot information if it exists
+  const bot = conversation.bot ? getBotById(conversation.bot) : undefined;
 
   const handleEnterDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
@@ -87,6 +91,7 @@ export const ConversationComponent = ({ conversation }: Props) => {
     setIsRenaming(true);
     selectedConversation && setRenameValue(selectedConversation.name);
   };
+
   const handleOpenDeleteModal: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.stopPropagation();
     setIsDeleting(true);
@@ -100,69 +105,91 @@ export const ConversationComponent = ({ conversation }: Props) => {
     }
   }, [isRenaming, isDeleting]);
 
+  // Reset renaming and deleting states when the selected conversation changes
+  useEffect(() => {
+    if (selectedConversation?.id !== conversation.id) {
+      setIsRenaming(false);
+      setIsDeleting(false);
+    }
+  }, [selectedConversation, conversation.id]);
+
+  const Icon = bot ? bot.icon : IconMessage;
+
   return (
-    <div className="relative flex items-center">
-      {isRenaming && selectedConversation?.id === conversation.id ? (
-        <div className="flex w-full items-center gap-3 rounded-lg bg-[#212121]/90 p-3">
-          <IconMessage size={18} />
-          <input
-            className="mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-white outline-none focus:border-neutral-100"
-            type="text"
-            value={renameValue}
-            onChange={(e) => setRenameValue(e.target.value)}
-            onKeyDown={handleEnterDown}
-            autoFocus
-          />
-        </div>
-      ) : (
-        <button
-          className={`flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 dark:hover:bg-[#212121]/90 hover:bg-gray-300 ${
-            messageIsStreaming ? 'disabled:cursor-not-allowed' : ''
-          } ${
-            selectedConversation?.id === conversation.id
-              ? 'dark:bg-[#212121]/90 bg-gray-400'
-              : ''
-          }`}
-          onClick={() => handleSelectConversation(conversation)}
-          disabled={messageIsStreaming}
-          draggable="true"
-          onDragStart={(e) => handleDragStart(e, conversation)}
-        >
-          <IconMessage size={18} />
-          <div
-            className={`relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-3 ${
-              selectedConversation?.id === conversation.id ? 'pr-12' : 'pr-1'
-            }`}
-          >
-            {conversation.name}
-          </div>
-        </button>
-      )}
-
-      {(isDeleting || isRenaming) &&
-        selectedConversation?.id === conversation.id && (
-          <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
-            <SidebarActionButton handleClick={handleConfirm}>
-              <IconCheck size={18} />
-            </SidebarActionButton>
-            <SidebarActionButton handleClick={handleCancel}>
-              <IconX size={18} />
-            </SidebarActionButton>
-          </div>
+      <div className="relative flex items-center">
+        {isRenaming && selectedConversation?.id === conversation.id ? (
+            <div className="flex w-full items-center gap-3 rounded-lg bg-[#212121]/90 p-3">
+              <Icon size={18} style={{ color: bot?.color }} />
+              <input
+                  className="mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 text-white outline-none focus:border-neutral-100"
+                  type="text"
+                  value={renameValue}
+                  onChange={(e) => setRenameValue(e.target.value)}
+                  onKeyDown={handleEnterDown}
+                  autoFocus
+              />
+            </div>
+        ) : (
+            <button
+                className={`flex w-full cursor-pointer items-center gap-3 rounded-lg p-3 text-sm transition-colors duration-200 dark:hover:bg-[#212121]/90 hover:bg-gray-300 ${
+                    messageIsStreaming ? 'disabled:cursor-not-allowed' : ''
+                } ${
+                    selectedConversation?.id === conversation.id
+                        ? 'dark:bg-[#212121]/90 bg-gray-400'
+                        : ''
+                }`}
+                onClick={() => handleSelectConversation(conversation)}
+                disabled={messageIsStreaming}
+                draggable="true"
+                onDragStart={(e) => handleDragStart(e, conversation)}
+            >
+              <Icon size={18} style={{ color: bot?.color }} />
+              <div
+                  className={`relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-3 ${
+                      selectedConversation?.id === conversation.id ? 'pr-12' : 'pr-1'
+                  }`}
+              >
+                {conversation.name}
+              </div>
+            </button>
         )}
 
-      {selectedConversation?.id === conversation.id &&
-        !isDeleting &&
-        !isRenaming && (
-          <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
-            <SidebarActionButton handleClick={handleOpenRenameModal}>
-              <IconPencil size={18} />
-            </SidebarActionButton>
-            <SidebarActionButton handleClick={handleOpenDeleteModal}>
-              <IconTrash size={18} />
-            </SidebarActionButton>
-          </div>
-        )}
-    </div>
+        {(isDeleting || isRenaming) &&
+            selectedConversation?.id === conversation.id && (
+                <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
+                  <SidebarActionButton
+                      handleClick={handleConfirm}
+                      tooltipText={'Confirm'}
+                  >
+                    <IconCheck size={18} />
+                  </SidebarActionButton>
+                  <SidebarActionButton
+                      handleClick={handleCancel}
+                      tooltipText={'Cancel'}
+                  >
+                    <IconX size={18} />
+                  </SidebarActionButton>
+                </div>
+            )}
+
+        {selectedConversation?.id === conversation.id &&
+            !isDeleting &&
+            !isRenaming && (
+                <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
+                  <SidebarActionButton
+                      handleClick={handleOpenRenameModal}
+                      tooltipText={'Rename'}
+                  >
+                    <IconPencil size={18} />
+                  </SidebarActionButton>
+                  <SidebarActionButton
+                      handleClick={handleOpenDeleteModal}
+                      tooltipText={'Delete'}
+                  >
+                    <IconTrash size={18} />
+                  </SidebarActionButton>
+                </div>
+            )}
+      </div>
   );
 };

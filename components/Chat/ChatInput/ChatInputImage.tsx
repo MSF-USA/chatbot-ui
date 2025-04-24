@@ -3,6 +3,7 @@ import React, {
   MutableRefObject,
   SetStateAction,
   useContext,
+  useEffect,
   useRef,
 } from 'react';
 import toast from 'react-hot-toast';
@@ -11,22 +12,29 @@ import { userAuthorizedForFileUploads } from '@/utils/app/userAuth';
 
 import {
   ChatInputSubmitTypes,
+  FileMessageContent,
+  FilePreview,
   ImageMessageContent,
   TextMessageContent,
 } from '@/types/chat';
 
 import HomeContext from '@/pages/api/home/home.context';
 
+import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import ImageIcon from '@/components/Icons/image';
 
 const onImageUpload = (
   event: React.ChangeEvent<any>,
-  // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>>,
-  prompt: string,
-  setFilePreviews: Dispatch<SetStateAction<string[]>>,
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+  setFileFieldValue: Dispatch<
+    SetStateAction<
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+    >
   >,
 ) => {
   event.preventDefault();
@@ -65,13 +73,14 @@ const onImageUpload = (
             detail: 'auto',
           },
         };
-        setImageFieldValue(imageMessage);
-        setFilePreviews((prevFilePreviews) => {
-          if (Array.isArray(prevFilePreviews)) {
-            prevFilePreviews.push(base64String);
-            return prevFilePreviews;
+        // @ts-ignore
+        setFileFieldValue((prevFieldValue) => {
+          if (Array.isArray(prevFieldValue)) {
+            return [...prevFieldValue, imageMessage];
+          } else if (prevFieldValue) {
+            return [prevFieldValue, imageMessage];
           } else {
-            return [base64String];
+            return [imageMessage];
           }
         });
       });
@@ -90,22 +99,35 @@ const onImageUploadButtonClick = (
 };
 
 export interface ChatInputImageProps {
-  setFilePreviews: Dispatch<SetStateAction<string[]>>;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
-  // setContent: Dispatch<SetStateAction<string | Array<TextMessageContent | ImageMessageContent>>> | null;
-  setImageFieldValue: Dispatch<
-    SetStateAction<ImageMessageContent | null | undefined>
+  setFileFieldValue: Dispatch<
+    SetStateAction<
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+    >
   >;
+  setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  simulateClick?: boolean;
+  labelText?: string;
 }
 
 const ChatInputImage = ({
   setSubmitType,
   prompt,
   setFilePreviews,
-  setImageFieldValue,
+  setFileFieldValue,
+  setUploadProgress,
+  setParentModalIsOpen,
+  labelText,
 }: ChatInputImageProps) => {
   const imageInputRef: MutableRefObject<any> = useRef(null);
+  const openModalButtonRef: MutableRefObject<any> = useRef(null);
 
   const {
     state: { user },
@@ -120,13 +142,16 @@ const ChatInputImage = ({
         ref={imageInputRef}
         style={{ display: 'none' }}
         onChange={(event) => {
-          onImageUpload(
+          onFileUpload(
             event,
-            prompt,
-            setFilePreviews,
             setSubmitType,
-            setImageFieldValue,
+            setFilePreviews,
+            setFileFieldValue,
+            // @ts-ignore
+            setFileFieldValue,
+            setUploadProgress,
           );
+          setParentModalIsOpen(false);
         }}
         accept={'image/*'}
       />
@@ -134,9 +159,14 @@ const ChatInputImage = ({
         onClick={(e) => {
           onImageUploadButtonClick(e, imageInputRef);
         }}
-        className={''}
+        ref={openModalButtonRef}
+        className="flex items-center w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
       >
-        <ImageIcon className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
+        <ImageIcon className="text-black dark:text-white mr-2 rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
+        <span className="text-black dark:text-white">
+          {labelText ?? 'Images'}
+        </span>
+
         <span className="sr-only">Add image</span>
       </button>
     </>

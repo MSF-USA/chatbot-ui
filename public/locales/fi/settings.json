@@ -1,7 +1,11 @@
 {
   "Settings": "Asetukset",
-  "Theme": "Teema",
+  "Theme": "teema",
   "Dark mode": "Tumma teema",
   "Light mode": "Vaalea teema",
-  "Save": "Tallenna"
+  "Save": "Tallenna",
+  "sendFeedback": "Lähetä palautetta",
+  "modelSelectionDialogue": "AI-mallin valinta",
+  "Run Typewriter Intro": "Suorita kirjoituskoneintro",
+  "temperatureDescription": "Korkeammat arvot, kuten 0,8, tekevät tuloksesta luovemman, kun taas alemmat arvot, kuten 0,2, tekevät siitä keskittyneemmän ja deterministisemmän."
 }

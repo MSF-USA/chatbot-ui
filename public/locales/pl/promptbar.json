@@ -8,5 +8,6 @@
   "A description for your prompt.": "Opis Twojego prompta.",
   "Prompt": "Prompt",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Zawartość prompta. Użyj {{}} żeby oznaczyć zmienną. Np.: {{nazwa}} jest {{przymiotnik}} {{rzeczownik}}",
-  "Save": "Zapisz"
+  "Save": "Zapisz",
+  "A name for your prompt.": "Nazwa dla Twojego polecenia"
 }

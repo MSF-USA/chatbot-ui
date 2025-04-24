@@ -17,10 +17,12 @@ import {
   OPENAI_API_VERSION,
 } from '@/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/utils/app/documentSummary';
+import { getEnvVariable } from '@/utils/app/env';
+import { createAzureOpenAIStreamProcessor } from '@/utils/app/streamProcessor';
 import { AzureBlobStorage, BlobProperty } from '@/utils/server/blob';
 import { getMessagesToSend } from '@/utils/server/chat';
 
-import { MessageType } from '@/types/chat';
+import { bots } from '@/types/bots';
 import {
   ChatBody,
   FileMessageContent,
@@ -28,24 +30,58 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
-import { SearchIndex } from '@/types/searchIndex';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
-import useSearchService from './searchService';
+import { AzureMonitorLoggingService } from './loggingService';
+import { RAGService } from './ragService';
 
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+import '@azure/openai/types';
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
-import OpenAI from 'openai';
+import OpenAI, { AzureOpenAI } from 'openai';
+import { ChatCompletion } from 'openai/resources';
 import path from 'path';
-import { Readable } from 'stream';
 
 /**
  * ChatService class for handling chat-related API operations.
  */
 export default class ChatService {
+  private openAIClient: AzureOpenAI;
+  private loggingService: AzureMonitorLoggingService;
+  private ragService: RAGService;
+
+  constructor() {
+    const azureADTokenProvider = getBearerTokenProvider(
+      new DefaultAzureCredential(),
+      'https://cognitiveservices.azure.com/.default',
+    );
+
+    this.openAIClient = new AzureOpenAI({
+      azureADTokenProvider,
+      apiVersion: '2024-08-01-preview',
+    });
+
+    this.loggingService = new AzureMonitorLoggingService(
+      process.env.LOGS_INJESTION_ENDPOINT!,
+      process.env.DATA_COLLECTION_RULE_ID!,
+      process.env.STREAM_NAME!,
+    );
+
+    this.ragService = new RAGService(
+      process.env.SEARCH_ENDPOINT!,
+      process.env.SEARCH_INDEX!,
+      process.env.SEARCH_ENDPOINT_API_KEY!,
+      this.loggingService,
+      this.openAIClient,
+    );
+  }
   /**
    * Initializes the Tiktoken tokenizer.
    * @returns {Promise<Tiktoken>} A promise that resolves to the initialized Tiktoken instance.
@@ -92,29 +128,6 @@ export default class ChatService {
     throw new Error('Failed after maximum retries');
   }
 
-  /**
-   * Retrieves the OpenAI API arguments based on the provided token and model.
-   * @param {JWT} token - The JWT token for authentication.
-   * @param {string} modelToUse - The ID of the model to use.
-   * @returns {Promise<any>} A promise that resolves to the OpenAI API arguments.
-   */
-  private async getOpenAIArgs(token: JWT, modelToUse: string): Promise<any> {
-    const openAIArgs: any = {
-      baseURL: `${OPENAI_API_HOST}/${APIM_CHAT_ENDPONT}/deployments/${modelToUse}`,
-      defaultQuery: { 'api-version': OPENAI_API_VERSION },
-      defaultHeaders: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token.accessToken}`,
-      },
-    };
-
-    if (process.env.OPENAI_API_KEY)
-      openAIArgs.apiKey = process.env.OPENAI_API_KEY;
-    else openAIArgs.apiKey = '';
-
-    return openAIArgs;
-  }
-
   private async retryReadFile(
     filePath: string,
     maxRetries: number = 2,
@@ -146,7 +159,13 @@ export default class ChatService {
     token: JWT,
     modelId: string,
     user: Session['user'],
+    botId: string | undefined,
+    streamResponse: boolean,
   ): Promise<Response> {
+    const startTime = Date.now();
+    let fileBuffer: Buffer | undefined;
+    let filename: string | undefined;
+
     return this.retryWithExponentialBackoff(async () => {
       const lastMessage: Message = messagesToSend[messagesToSend.length - 1];
       const content = lastMessage.content as Array<
@@ -167,7 +186,7 @@ export default class ChatService {
       if (!prompt) throw new Error('Could not find text content type!');
       if (!fileUrl) throw new Error('Could not find file URL!');
 
-      const filename = (fileUrl as string).split('/').pop();
+      filename = (fileUrl as string).split('/').pop();
       if (!filename) throw new Error('Could not parse filename from URL!');
       const filePath = `/tmp/${filename}`;
 
@@ -175,20 +194,44 @@ export default class ChatService {
         await this.downloadFile(fileUrl, filePath, token, user);
         console.log('File downloaded successfully.');
 
-        const fileBuffer: Buffer = await this.retryReadFile(filePath);
+        fileBuffer = await this.retryReadFile(filePath);
         const file: File = new File([fileBuffer], filename, {});
 
-        const stream: ReadableStream<any> = await parseAndQueryFileOpenAI({
+        const result = await parseAndQueryFileOpenAI({
           file,
           prompt,
-          token,
           modelId,
-        }); //""; // await parseAndQueryFileLangchainOpenAI(file, prompt);
+          user,
+          botId,
+          loggingService: this.loggingService,
+          stream: streamResponse,
+        });
 
         console.log('File summarized successfully.');
-        return new StreamingTextResponse(stream);
+
+        if (streamResponse) {
+          if (typeof result === 'string') {
+            throw new Error('Expected a ReadableStream for streaming response');
+          }
+          return new StreamingTextResponse(result);
+        } else {
+          if (result instanceof ReadableStream) {
+            throw new Error('Expected a string for non-streaming response');
+          }
+          return new Response(JSON.stringify({ text: result }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }
       } catch (error) {
-        console.error('Error processing the file:', error);
+        await this.loggingService.logFileError(
+          startTime,
+          error,
+          modelId,
+          user,
+          filename,
+          fileBuffer?.length,
+          botId,
+        );
         throw error;
       } finally {
         try {
@@ -221,12 +264,22 @@ export default class ChatService {
     token: JWT,
     user: Session['user'],
   ): Promise<void> {
-    const userId: string = (token as any).userId ?? user?.id ?? 'anonymous';
+    const userId: string = user?.id ?? (token as any).userId ?? 'anonymous';
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop();
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
 
-    const blobStorage = new AzureBlobStorage();
+    const blobStorage = new AzureBlobStorage(
+      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user }),
+      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user }),
+      getEnvVariable({
+        name: 'AZURE_BLOB_STORAGE_CONTAINER',
+        throwErrorOnFail: false,
+        defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+        user,
+      }),
+      user,
+    );
     const blob: Buffer = await (blobStorage.get(
       `${remoteFilepath}/${id}`,
       BlobProperty.BLOB,
@@ -235,226 +288,130 @@ export default class ChatService {
     fs.writeFile(filePath, blob, () => null);
   }
 
-  /**
-   * Determines whether a user query is relevant to Médecins Sans Frontières (MSF) or related topics.
-   * @param {string} modelToUse - The ID of the model to use for relevance checking.
-   * @param {JWT} token - The JWT token for authentication.
-   * @param {string} query - The user's query to check for relevance.
-   * @returns {Promise<boolean>} A promise that resolves to true if the query is relevant, false otherwise.
-   */
-  private async isQueryRelevantToMSF(
-    modelToUse: string,
-    token: JWT,
-    query: string,
-  ): Promise<boolean> {
-    const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-    const azureOpenai = new OpenAI(openAIArgs);
-
-    const response = await azureOpenai.chat.completions.create({
-      model: modelToUse,
-      messages: [
-        {
-          role: 'system',
-          content:
-            'You are an AI assistant that determines if a query is related to humanitarian issues, global health crises, or the work of organizations like Médecins Sans Frontières (MSF)/Doctors Without Borders. Consider the following as relevant:\n' +
-            '1. Direct questions about MSF, their work, or similar NGOs\n' +
-            '2. Queries about humanitarian aid or medical assistance in any context\n' +
-            '3. Questions about ongoing conflicts, natural disasters, or health crises anywhere in the world\n' +
-            '4. General inquiries about the situation in areas known for humanitarian challenges\n' +
-            '5. Topics related to global health, epidemic outbreaks, or access to healthcare in developing countries\n' +
-            '6. Questions about refugee health, displacement, or migration due to conflicts or disasters\n' +
-            "Respond with only 'yes' if the query is related to any of these topics, or 'no' if it's completely unrelated.",
-        },
-        {
-          role: 'user',
-          content: `Is the following query related to humanitarian issues, global health crises, or the work of organizations like MSF? Query: "${query}"`,
-        },
-      ],
-    });
-
-    const answer = response.choices[0]?.message?.content?.toLowerCase().trim();
-    console.log('relevant: ', answer);
-    return answer === 'yes';
-  }
-
-  /**
-   * Extracts the text content from a message.
-   * @param {Message} message - The message to extract text content from.
-   * @returns {string | null} The extracted text content, or null if not found.
-   */
-  private getTextContent(message: Message): string | null {
-    if (typeof message.content === 'string') return message.content;
-    if ((message.content as TextMessageContent).type === 'text')
-      return (message.content as TextMessageContent).text;
-    return null;
-  }
-
-  /**
-   * Reformats the user query to Azure OpenAI for RAG captabilities.
-   * @param {string} userQuestion - The original user question.
-   * @param {any[]} searchResults - The search results to include in the augmented content.
-   * @returns {string} The formatted augmented content.
-   */
-  private formatAugmentedContent(
-    userQuestion: string,
-    searchResults: any[],
-  ): string {
-    const formattedResults = searchResults
-      .map(
-        (result, index) =>
-          `[${index + 1}] ${result.title}: date ${result.date} : ${
-            result.content
-          } (URL: ${result.url})`,
-      )
-      .join('\n');
-
-    return `
-User's question: ${userQuestion}
-
-Relevant information:
-${formattedResults}
-
-Instructions:
-1. Provide a clear and concise answer to the user's question based on the provided information and your general knowledge.
-2. Use the most recent and relevant information available from the provided sources.
-3. When citing information from the provided sources in your answer, use the format [X] where X is the original number of the source as listed in the "Relevant information" section above. Do NOT renumber these in-text citations.
-4. Use multiple sources when appropriate to provide a comprehensive answer.
-5. If information from the provided sources contradicts your general knowledge, prioritize the provided information as it's likely more up-to-date.
-6. Do not cite general knowledge that isn't from these sources.
-7. Structure your response as follows:
-   a. Start with a direct answer to the user's question, highlighting the MOST RECENT data or information available.
-   b. Provide supporting details and explanations, using citations where appropriate. Clearly indicate when you're presenting older vs. newer information.
-   c. If relevant, include a brief conclusion or summary, emphasizing the latest findings or data.
-8. After your main response, you MUST include a "CITATIONS" section, followed by a "FOLLOW_UP_QUESTIONS" section. Always include both sections in this order, even if one is empty.
-9. The CITATIONS section:
-   a. Must be preceded by the exact string "[[CITATIONS_START]]" on a new line.
-   b. Must be followed by "[[CITATIONS_END]]" on a new line after the last citation.
-   c. Must list ALL sources from the relevant information provided, including those not directly cited in your answer.
-   d. Must maintain the original numbering from the "Relevant information" section for each source.
-   e. Each citation should be on a new line and in the following format:
-      [{"number": "X", "title": "Source Title", "url": "https://example.com", "date": "Source Date as Month Day, Year"}]
-10. The FOLLOW_UP_QUESTIONS section:
-    a. Must be preceded by the exact string "[[FOLLOW_UP_QUESTIONS_START]]" on a new line.
-    b. Must be followed by "[[FOLLOW_UP_QUESTIONS_END]]" on a new line after the last question.
-    c. Should include 3 relevant follow-up questions based on your response and the available information.
-    d. Each follow-up question should be on a new line and in the following format:
-       {"question": "Follow-up question text here?"}
-
-Your response MUST always include both the CITATIONS and FOLLOW_UP_QUESTIONS sections with their respective start and end markers, in that order, even if one section is empty.
-
-Example format:
-
-Your detailed response here... According to [2], some relevant information... Another study [1] suggests...
-
-[[CITATIONS_START]]
-[{"number": "1", "title": "Source Title 1", "url": "https://example1.com", "date": "January 1, 2023"}]
-[{"number": "2", "title": "Source Title 2", "url": "https://example2.com", "date": "February 2, 2023"}]
-[{"number": "3", "title": "Unused Source Title 3", "url": "https://example3.com", "date": "March 3, 2023"}]
-[[CITATIONS_END]]
-
-[[FOLLOW_UP_QUESTIONS_START]]
-{"question": "How do the findings from the Smith et al. study compare to previous research in this field?"}
-{"question": "What are the potential implications of the WHO report for global health policies?"}
-{"question": "Are there any ongoing studies or upcoming reports that might provide more recent data on this topic?"}
-[[FOLLOW_UP_QUESTIONS_END]]
-`;
-  }
-
-  /**
-   * Handles a chat completion request by sending the messages to the OpenAI API and returning a streaming response.
-   * @param {string} modelToUse - The ID of the model to use for the chat completion.
-   * @param {Message[]} messagesToSend - The messages to send in the chat completion request.
-   * @param {number} temperatureToUse - The temperature value to use for the chat completion.
-   * @param {JWT} token - The JWT token for authentication.
-   * @param {Session['user']} user - User information for logging
-   * @param {boolean} useAISearch - Whether to use Azure AI Search and use RAG capabilities
-   * @returns {Promise<StreamingTextResponse>} A promise that resolves to the streaming response containing the chat completion.
-   */
-  private async handleChatCompletion(
-    modelToUse: string,
-    messagesToSend: Message[],
-    temperatureToUse: number,
-    token: JWT,
+  async handleChatCompletion(
+    modelId: string,
+    messages: Message[],
+    temperature: number,
     user: Session['user'],
-    useAISearch: boolean,
+    botId?: string,
+    streamResponse: boolean = true,
+    promptToSend?: string,
   ): Promise<Response> {
-    return this.retryWithExponentialBackoff(async () => {
-      const openAIArgs = await this.getOpenAIArgs(token, modelToUse);
-      const azureOpenai = new OpenAI(openAIArgs);
+    const startTime = Date.now();
+    try {
+      if (botId) {
+        const response = await this.ragService.augmentMessages(
+          messages,
+          botId,
+          bots,
+          modelId,
+          streamResponse,
+          user,
+        );
 
-      const lastMessage = messagesToSend[messagesToSend.length - 1];
-      const textContent = this.getTextContent(lastMessage);
-
-      if (textContent && useAISearch) {
-        try {
-          const isRelevant = await this.isQueryRelevantToMSF(
-            modelToUse,
-            token,
-            textContent,
-          );
-          if (isRelevant) {
-            const searchResults = await useSearchService(textContent);
-            const augmentedUserMessage = this.formatAugmentedContent(
-              textContent,
-              searchResults,
-            );
-            messagesToSend[messagesToSend.length - 1] = {
-              ...lastMessage,
-              content: augmentedUserMessage,
-            };
-          }
-        } catch (error) {
-          console.error('Error in AI search or relevance check:', error);
+        if (streamResponse) {
+          return new StreamingTextResponse(response as ReadableStream);
+        } else {
+          const completionText = (response as ChatCompletion)?.choices?.[0]
+            ?.message?.content;
+          return new Response(JSON.stringify({ text: completionText }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
         }
-      }
+      } else {
+        const messagesWithSystemPrompt = [
+          {
+            role: 'system',
+            content: promptToSend || DEFAULT_SYSTEM_PROMPT,
+          },
+          ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
+        ];
 
-      try {
-        const response = await azureOpenai.chat.completions.create({
-          model: modelToUse,
+        const response = await this.openAIClient.chat.completions.create({
+          model: modelId,
           messages:
-            messagesToSend as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-          temperature: temperatureToUse,
-          max_tokens: null,
-          stream: true,
+            messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          temperature,
+          stream: streamResponse,
           user: JSON.stringify(user),
         });
 
-        const stream = OpenAIStream(response);
-        return new StreamingTextResponse(stream);
-      } catch (error) {
-        console.error('Error in chat completion:', error);
-        let statusCode = 500;
-        let errorMessage =
-          'An error occurred while processing your request. Please try again later.';
+        if (streamResponse) {
+          const processedStream = createAzureOpenAIStreamProcessor(
+            response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+          );
 
-        if (error instanceof OpenAI.APIError) {
-          statusCode = error.status || 500;
-          errorMessage = error.message;
-        } else if (error instanceof Error) {
-          errorMessage = error.message;
+          // Log regular chat completion
+          await this.loggingService.logChatCompletion(
+            startTime,
+            modelId,
+            messages.length,
+            temperature,
+            user,
+            botId,
+          );
+
+          return new StreamingTextResponse(processedStream);
         }
 
-        return new Response(JSON.stringify({ error: errorMessage }), {
-          status: statusCode,
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const completion = response as OpenAI.Chat.Completions.ChatCompletion;
+
+        // Log regular chat completion
+        await this.loggingService.logChatCompletion(
+          startTime,
+          modelId,
+          messages.length,
+          temperature,
+          user,
+          botId,
+        );
+
+        return new Response(
+          JSON.stringify({ text: completion.choices[0]?.message?.content }),
+          { headers: { 'Content-Type': 'application/json' } },
+        );
       }
-    });
+    } catch (error) {
+      await this.loggingService.logError(
+        startTime,
+        error,
+        modelId,
+        messages.length,
+        temperature,
+        user,
+        botId,
+      );
+
+      let statusCode = 500;
+      let errorMessage = 'An error occurred while processing your request.';
+
+      if (error instanceof OpenAI.APIError) {
+        statusCode = error.status || 500;
+        errorMessage = error.message;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      return new Response(JSON.stringify({ error: errorMessage }), {
+        status: statusCode,
+        headers: { 'Content-Type': 'application/json' },
+      });
+    }
   }
 
-  /**
-   * Handles an incoming request by processing the chat body and returning an appropriate response.
-   * @param {NextRequest} req - The incoming Next.js request.
-   * @returns {Promise<Response>} A promise that resolves to the response based on the request.
-   */
   public async handleRequest(req: NextRequest): Promise<Response> {
-    const { model, messages, prompt, temperature, useKnowledgeBase } =
-      (await req.json()) as ChatBody;
+    const {
+      model,
+      messages,
+      prompt,
+      temperature,
+      botId,
+      stream = true,
+    } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
     const temperatureToUse = temperature ?? DEFAULT_TEMPERATURE;
-    const useAISearch = useKnowledgeBase || false;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
     const needsToHandleFiles: boolean =
@@ -492,15 +449,23 @@ Your detailed response here... According to [2], some relevant information... An
     encoding.free();
 
     if (needsToHandleFiles) {
-      return this.handleFileConversation(messagesToSend, token, model.id, user);
+      return this.handleFileConversation(
+        messagesToSend,
+        token,
+        model.id,
+        user,
+        botId,
+        stream,
+      );
     } else {
       return this.handleChatCompletion(
         modelToUse,
         messagesToSend,
         temperatureToUse,
-        token,
         user,
-        useAISearch,
+        botId,
+        stream,
+        promptToSend,
       );
     }
   }

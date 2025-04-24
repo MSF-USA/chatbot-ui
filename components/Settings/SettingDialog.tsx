@@ -87,32 +87,24 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       field: 'runTypeWriterIntroSetting',
       value: state.runTypeWriterIntroSetting,
     });
-    homeDispatch({
-      field: 'useKnowledgeBase',
-      value: state.useKnowledgeBase,
-    });
     saveSettings(state);
   };
 
   const handleReset = () => {
+    const defaultTheme: 'light' | 'dark' = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     const defaultSettings: Settings = {
-      theme: 'dark',
+      theme: defaultTheme,
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       runTypeWriterIntroSetting: true,
-      useKnowledgeBase: true,
     };
-    homeDispatch({ field: 'lightMode', value: 'dark' });
+    homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
     homeDispatch({
       field: 'systemPrompt',
       value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
     });
     homeDispatch({ field: 'runTypeWriterIntroSetting', value: true });
-    homeDispatch({
-      field: 'useKnowledgeBase',
-      value: true,
-    });
     saveSettings(defaultSettings);
   };
 
@@ -196,68 +188,6 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   })
                 }
               /> */}
-                <hr className="mb-10 border-gray-300 dark:border-neutral-700" />
-                <div className="flex flex-row justify-between items-center my-10">
-                  <div className="text-sm font-bold text-black dark:text-neutral-200">
-                    {t('Use Knowledge Base')}
-                  </div>
-                  <Switch
-                    checked={state.useKnowledgeBase}
-                    onChange={(value) =>
-                      dispatch({ field: 'useKnowledgeBase', value })
-                    }
-                    className={`${
-                      state.useKnowledgeBase ? 'bg-blue-600' : 'bg-gray-400'
-                    } relative inline-flex h-6 w-14 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`${
-                        state.useKnowledgeBase
-                          ? 'translate-x-8'
-                          : 'translate-x-0'
-                      } inline-block h-6 w-6 transform rounded-full dark:bg-white bg-gray-300 shadow-lg transition duration-200 ease-in-out`}
-                    />
-                  </Switch>
-                </div>
-                <span className="mb-4 block text-[12px] text-black/50 dark:text-white/50 text-sm">
-                  {t(
-                    'MSF AI Assistant can use data from the following sources for relevant queries. The latest information from these sources is highlighted below. Citations will be provided if this data is used.',
-                  )}
-                </span>
-                <span className="mb-4 block text-[12px] text-black/50 dark:text-white/50 text-sm">
-                  {t('Turning this setting off speeds up queries slightly.')}
-                </span>
-                <table className="mb-10 w-full border-spacing-y-4">
-                  <tbody>
-                    <tr>
-                      <td className="py-2 text-black dark:text-neutral-100">
-                        <a
-                          href="https://www.doctorswithoutborders.org"
-                          className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-                        >
-                          doctorswithoutborders.org
-                        </a>
-                      </td>
-                      <td className="py-2 text-right text-black/50 dark:text-neutral-300">
-                        Updated: August 18, 2024
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="py-2 text-black dark:text-neutral-100">
-                        <a
-                          href="https://www.msf.org"
-                          className="text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
-                        >
-                          msf.org
-                        </a>
-                      </td>
-                      <td className="py-2 text-right text-black/50 dark:text-neutral-300">
-                        Updated: August 18, 2024
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
                 <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
                 <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
                   {t(
@@ -298,8 +228,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                       dispatch({ field: 'theme', value: event.target.value })
                     }
                   >
-                    <option value="dark">{t('Dark mode')}</option>
-                    <option value="light">{t('Light mode')}</option>
+                    <option className={'bg-white dark:bg-black'} value="dark">{t('Dark mode')}</option>
+                    <option className={'bg-white dark:bg-black'} value="light">{t('Light mode')}</option>
                   </select>
                 </div>
                 <div className="flex flex-row justify-between items-center my-10">
@@ -430,7 +360,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   size={18}
                   className={'inline mr-1 text-black dark:text-white'}
                 />
-                {t('Send your Feedback')}
+                {t('sendFeedback')}
               </a>
             </div>
           </div>

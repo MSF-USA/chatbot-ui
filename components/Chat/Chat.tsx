@@ -19,25 +19,25 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
-import { getEndpoint } from '@/utils/app/api';
-import {
-  DEFAULT_SYSTEM_PROMPT,
-  DEFAULT_TEMPERATURE,
-  DEFAULT_USE_KNOWLEDGE_BASE,
-} from '@/utils/app/const';
+import { makeRequest } from '@/services/frontendChatServices';
+
+import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
+import { getBotById } from '@/types/bots';
 import {
   ChatBody,
   Conversation,
   FileMessageContent,
+  FilePreview,
   Message,
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
+import { Citation } from '@/types/rag';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -84,7 +84,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
-      useKnowledgeBase,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -103,10 +102,19 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [showSettings, setShowSettings] = useState<boolean>(false);
   const [showScrollDownButton, setShowScrollDownButton] =
     useState<boolean>(false);
-  const [filePreviews, setFilePreviews] = useState<string[]>([]);
+  const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
   const [randomPrompts, setRandomPrompts] = useState<
     { title: string; prompt: string; icon: React.ElementType | null }[]
   >([]);
+  const [botInfo, setBotInfo] = useState<{
+    id: string;
+    name: string;
+    color: string;
+  } | null>(null);
+  const [requestStatusMessage, setRequestStatusMessage] = useState<
+    string | null
+  >(null);
+  const [progress, setProgress] = useState<number | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -138,68 +146,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     return updatedConversation;
   };
 
-  const makeRequest = async (
-    plugin: Plugin | null,
-    updatedConversation: Conversation,
-  ) => {
-    const chatBody: ChatBody = {
-      model: updatedConversation.model,
-      messages: updatedConversation.messages.slice(-6),
-      key: apiKey,
-      prompt:
-        updatedConversation.prompt || systemPrompt || DEFAULT_SYSTEM_PROMPT,
-      temperature:
-        updatedConversation.temperature || temperature || DEFAULT_TEMPERATURE,
-      useKnowledgeBase: useKnowledgeBase || DEFAULT_USE_KNOWLEDGE_BASE,
-    };
-    const endpoint = getEndpoint(plugin);
-    let body;
-    if (!plugin) {
-      body = JSON.stringify(chatBody);
-    } else {
-      body = JSON.stringify({
-        ...chatBody,
-        googleAPIKey: pluginKeys
-          .find((key) => key.pluginId === 'google-search')
-          ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-        googleCSEId: pluginKeys
-          .find((key) => key.pluginId === 'google-search')
-          ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
-      });
-    }
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 60000);
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: controller.signal,
-        body,
-        mode: 'cors',
-      });
-
-      clearTimeout(timeoutId);
-
-      return {
-        controller,
-        body,
-        response,
-      };
-    } catch (error: unknown) {
-      clearTimeout(timeoutId);
-
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out');
-        }
-        throw error;
+  const updateBotInfo = useCallback(() => {
+    if (selectedConversation?.bot) {
+      const bot = getBotById(selectedConversation.bot);
+      if (bot) {
+        setBotInfo({ id: bot.id, name: bot.name, color: bot.color });
+      } else {
+        setBotInfo(null);
       }
-      throw new Error('An unknown error occurred');
+    } else {
+      setBotInfo(null);
     }
-  };
+  }, [selectedConversation]);
+
+  useEffect(() => {
+    updateBotInfo();
+  }, [selectedConversation, updateBotInfo]);
 
   const setConversationTitle = (
     updatedConversation: Conversation,
@@ -259,7 +221,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   );
 
   const handleNormalChatBackendStreaming = async (
-    data: any,
+    data: ReadableStream,
     controller: AbortController,
     updatedConversation: Conversation,
     selectedConversation: Conversation,
@@ -270,35 +232,99 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let done = false;
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
+    let extractedCitations: Citation[] = [];
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
       done = doneReading;
 
-      const chunkValue = decoder.decode(value);
-      const regex = /\d+:"((?:\\.|[^"\\])*?)"/g;
-      let match;
-      while ((match = regex.exec(chunkValue)) !== null) {
-        // Unescape any escaped characters (like newlines)
-        text += JSON.parse('"' + match[1] + '"');
-      }
+      if (value) {
+        const chunkValue = decoder.decode(value);
+        text += chunkValue;
 
-      if (
-        updatedConversationCopy.messages.length === 0 ||
-        updatedConversationCopy.messages[
-          updatedConversationCopy.messages.length - 1
-        ].role !== 'assistant'
-      ) {
-        // If there's no assistant message, create a new one
-        updatedConversationCopy = {
-          ...updatedConversationCopy,
-          messages: [
-            ...updatedConversationCopy.messages,
-            { role: 'assistant', content: text, messageType: MessageType.TEXT },
-          ],
-        };
-      } else {
-        // Update the existing assistant message
+        // Extract citations
+        const {
+          text: cleanedText,
+          citations,
+          extractionMethod,
+        } = extractCitationsFromContent(text);
+
+        if (citations.length > 0) {
+          // Use the clean text and extracted citations
+          text = cleanedText;
+          extractedCitations = citations;
+          console.log(
+            `Extracted ${citations.length} citations using ${extractionMethod} format`,
+          );
+        }
+
+        if (
+          updatedConversationCopy.messages.length === 0 ||
+          updatedConversationCopy.messages[
+            updatedConversationCopy.messages.length - 1
+          ].role !== 'assistant'
+        ) {
+          // If there's no assistant message, create a new one
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: [
+              ...updatedConversationCopy.messages,
+              {
+                role: 'assistant',
+                content: text,
+                messageType: MessageType.TEXT,
+                citations:
+                  extractedCitations.length > 0 ? [...extractedCitations] : [],
+              },
+            ],
+          };
+        } else {
+          // Update the existing assistant message
+          const updatedMessages = [
+            ...updatedConversationCopy.messages.slice(0, -1),
+            {
+              ...updatedConversationCopy.messages[
+                updatedConversationCopy.messages.length - 1
+              ],
+              content: text,
+              citations:
+                extractedCitations.length > 0
+                  ? [...extractedCitations]
+                  : updatedConversationCopy.messages[
+                      updatedConversationCopy.messages.length - 1
+                    ].citations || [],
+            },
+          ];
+          updatedConversationCopy = {
+            ...updatedConversationCopy,
+            messages: updatedMessages,
+          };
+        }
+
+        // Update the state to trigger a re-render
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
+    }
+
+    // Final check for citations after stream completes
+    if (extractedCitations.length === 0) {
+      const {
+        text: cleanedText,
+        citations,
+        extractionMethod,
+      } = extractCitationsFromContent(text);
+
+      if (citations.length > 0) {
+        text = cleanedText;
+        extractedCitations = citations;
+        console.log(
+          `Final extraction - ${citations.length} citations using ${extractionMethod} format`,
+        );
+
+        // If we found citations in the final check, update the conversation again
         const updatedMessages = [
           ...updatedConversationCopy.messages.slice(0, -1),
           {
@@ -306,18 +332,20 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               updatedConversationCopy.messages.length - 1
             ],
             content: text,
+            citations: [...extractedCitations],
           },
         ];
         updatedConversationCopy = {
           ...updatedConversationCopy,
           messages: updatedMessages,
         };
-      }
 
-      homeDispatch({
-        field: 'selectedConversation',
-        value: updatedConversationCopy,
-      });
+        // Update state one last time
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
     }
 
     saveConversation(updatedConversationCopy);
@@ -345,6 +373,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           selectedConversation,
           deleteCount,
         );
+
         homeDispatch({
           field: 'selectedConversation',
           value: updatedConversation,
@@ -353,10 +382,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         try {
-          const { controller, body, response } = await makeRequest(
-            plugin,
-            updatedConversation,
-          );
+          const { controller, body, response, hasComplexContent } =
+            await makeRequest(
+              plugin,
+              setRequestStatusMessage,
+              updatedConversation,
+              apiKey,
+              pluginKeys,
+              systemPrompt,
+              temperature,
+              true,
+              setProgress,
+            );
+
+          if (hasComplexContent) {
+            // Handle complex content case
+            console.log('Message contains complex content');
+            // Add your logic here
+          }
 
           if (!response.ok) {
             homeDispatch({ field: 'loading', value: false });
@@ -373,6 +416,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             return;
           }
           const data = response.body;
+
           if (!data) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
@@ -466,22 +510,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     [
       apiKey,
       conversations,
+      handleNormalChatBackendStreaming,
+      homeDispatch,
       pluginKeys,
       selectedConversation,
-      stopConversationRef,
-      useKnowledgeBase,
+      systemPrompt,
+      temperature,
     ],
-  );
-
-  const handleQuestionClick = useCallback(
-    (question: string) => {
-      handleSend({
-        role: 'user',
-        content: question,
-        messageType: MessageType.TEXT,
-      });
-    },
-    [handleSend],
   );
 
   const scrollToBottom = useCallback(() => {
@@ -552,14 +587,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     }
   };
 
-  // useEffect(() => {
-  //   console.log('currentMessage', currentMessage);
-  //   if (currentMessage) {
-  //     handleSend(currentMessage);
-  //     homeDispatch({ field: 'currentMessage', value: undefined });
-  //   }
-  // }, [currentMessage]);
-
   useEffect(() => {
     throttledScrollDown();
     selectedConversation &&
@@ -614,11 +641,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, []);
 
   return (
-    <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#212121]">
+    <div className="flex flex-col h-full w-full bg-white dark:bg-[#212121]">
       {showSplash ? (
-        <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
+        <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
-            Welcome to the MSF AI Assistant
+            {t('welcomeMessage')}
           </div>
           <div className="text-center text-lg text-black dark:text-white">
             <div className="mb-8">{`MSF AI Assistant is an open source clone of OpenAI's ChatGPT UI.`}</div>
@@ -658,7 +685,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       ) : (
         <>
           <div
-            className="max-h-full overflow-x-hidden"
+            className="flex-1 overflow-auto"
             ref={chatContainerRef}
             onScroll={handleScroll}
           >
@@ -676,34 +703,64 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div className="absolute w-full top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                        {t('Model')}: {selectedConversation?.model?.name}
-                        <button
-                          className="ml-2 cursor-pointer hover:opacity-50"
-                          onClick={handleSettings}
-                        >
-                          <IconSettings
-                            size={18}
-                            className={`${
-                              showSettings
-                                ? 'text-[#D7211E]'
-                                : 'text-black dark:text-white'
-                            }`}
-                          />
-                        </button>
-                        <div className="absolute right-0">
+                      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                        {/* Center Content */}
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center">
+                            {botInfo && (
+                              <>
+                                <span
+                                  className="font-semibold"
+                                  style={{ color: botInfo.color }}
+                                >
+                                  {botInfo.name} Bot
+                                </span>
+                                <span className="mx-2 text-white dark:text-white">
+                                  |
+                                </span>
+                              </>
+                            )}
+                            <span>
+                              {t('Model')}: {selectedConversation?.model?.name}
+                            </span>
+                          </div>
+
+                          {/* Settings Button */}
+                          <div className="group">
+                            <button
+                              className="cursor-pointer hover:opacity-50"
+                              onClick={handleSettings}
+                            >
+                              <IconSettings
+                                size={18}
+                                className={`${
+                                  showSettings
+                                    ? 'text-[#D7211E] mt-1'
+                                    : 'text-black dark:text-white mt-1'
+                                }`}
+                              />
+                            </button>
+                            <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                              Expand Model Settings
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right-Side Content */}
+                        <div className="absolute right-0 flex items-center pr-4">
                           <a
                             href={`mailto:${email}`}
-                            className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                            className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
                           >
                             <IconExternalLink
                               size={16}
-                              className={'mr-1 text-black dark:text-white/50'}
+                              className="mr-1 text-black dark:text-white/50"
                             />
-                            {t('Send Feedback')}
+                            {t('sendFeedback')}
                           </a>
                         </div>
                       </div>
+
                       {showSettings && (
                         <Transition
                           appear={true}
@@ -725,7 +782,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
                             >
                               <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                                {t('AI Model Selection:')}
+                                {t('modelSelectionDialogue')}
                                 <ModelSelect />
                               </div>
                               <div className="text-black dark:text-white">
@@ -750,8 +807,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     </div>
                   </Transition>
                 )}
-                <div className="flex items-center justify-center h-screen">
-                  <div className="mx-auto flex flex-col px-3 sm:max-w-[600px]">
+                <div className="flex h-[88%] items-center justify-center">
+                  <div className="mx-auto flex flex-col px-3">
                     <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                       {models.length === 0 ? (
                         <div>
@@ -770,7 +827,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 }}
                                 onInit={(typewriter) => {
                                   typewriter
-                                    .typeString('MSF AI Assistant')
+                                    .typeString(t('appName'))
                                     .pauseFor(1200)
                                     .deleteAll()
                                     .callFunction(() => {
@@ -868,7 +925,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             ) : (
               <>
                 <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  {t('Model')}: {selectedConversation?.model?.name}
+                  <div className="flex items-center">
+                    {botInfo && (
+                      <>
+                        <span
+                          className="font-semibold"
+                          style={{ color: botInfo.color }}
+                        >
+                          {botInfo.name} Bot
+                        </span>
+                        <span className="mx-2 text-white dark:text-white">
+                          |
+                        </span>
+                      </>
+                    )}
+                    <span>
+                      {t('Model')}: {selectedConversation?.model?.name}
+                    </span>
+                  </div>
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={handleSettings}
@@ -900,7 +974,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         size={16}
                         className={'mr-1 text-black dark:text-white/50'}
                       />
-                      {t('Send Feedback')}
+                      {t('sendFeedback')}
                     </a>
                   </div>
                 </div>
@@ -962,14 +1036,18 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         selectedConversation?.messages.length - index,
                       );
                     }}
-                    onQuestionClick={handleQuestionClick}
                   />
                 ))}
 
-                {loading && <ChatLoader />}
+                {loading && (
+                  <ChatLoader
+                    requestStatusMessage={requestStatusMessage}
+                    progress={progress}
+                  />
+                )}
 
                 <div
-                  className="h-[162px] bg-white dark:bg-[#212121]"
+                  className="h-[2px] bg-white dark:bg-[#212121]"
                   ref={messagesEndRef}
                 />
               </>

@@ -1,4 +1,11 @@
 {
   "Dark mode": "Modul întunecat",
-  "Light mode": "Modul de golire"
+  "Light mode": "Modul de golire",
+  "Save": "Salvează",
+  "Settings": "Setări",
+  "Theme": "temă",
+  "sendFeedback": "Trimite feedback",
+  "modelSelectionDialogue": "Selectare model AI",
+  "Run Typewriter Intro": "Rulează Introducere Mașină de Scris",
+  "temperatureDescription": "Valori mai mari, cum ar fi 0,8, vor face rezultatul mai creativ, în timp ce valori mai mici, cum ar fi 0,2, îl vor face mai concentrat și determinist."
 }

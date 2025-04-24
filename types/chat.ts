@@ -1,6 +1,5 @@
-import { Session } from 'next-auth';
-
 import { OpenAIModel } from './openai';
+import { Citation } from './rag';
 
 export enum MessageType {
   TEXT = 'text',
@@ -59,9 +58,12 @@ export function getChatMessageContent(message: Message): string {
   } else if ((message.content as TextMessageContent).type === 'text') {
     return (message.content as TextMessageContent).text;
   } else {
-    throw new Error(`Invalid message type or structure: ${message}`);
+    throw new Error(
+      `Invalid message type or structure: ${JSON.stringify(message)}`,
+    );
   }
 }
+
 export interface Message {
   role: Role;
   content:
@@ -70,6 +72,7 @@ export interface Message {
     | Array<TextMessageContent | ImageMessageContent>
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
+  citations?: Citation[];
 }
 
 export type Role = 'system' | 'assistant' | 'user';
@@ -80,7 +83,8 @@ export interface ChatBody {
   key: string;
   prompt: string;
   temperature: number;
-  useKnowledgeBase: boolean;
+  botId: string | undefined;
+  stream?: boolean;
 }
 
 export interface Conversation {
@@ -91,6 +95,16 @@ export interface Conversation {
   prompt: string;
   temperature: number;
   folderId: string | null;
+  bot?: string;
 }
 
-export type ChatInputSubmitTypes = 'text' | 'image' | 'file';
+export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
+
+type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
+
+export interface FilePreview {
+  name: string;
+  type: string;
+  status: UploadStatus;
+  previewUrl: string;
+}

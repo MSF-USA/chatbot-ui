@@ -29,11 +29,22 @@ export const getMessageContentType = (
       content.some((contentItem) => contentItem.type === 'image_url')
     ) {
       return 'image';
+    } else if (content.length === 1) {
+      switch (content[0].type) {
+        case ('file_url'):
+          return 'file';
+        case ('image_url'):
+          return 'image';
+        case ('text'):
+          return 'text';
+        default:
+          throw new Error (`Invalid content type: ${(content[0] as any).type}`)
+      }
     } else {
-      throw new Error('Invalid content type or structure: ' + content);
+      throw new Error('Invalid content type or structure: ' + JSON.stringify(content));
     }
   } else {
-    throw new Error('Invalid content type ' + content);
+    throw new Error('Invalid content type ' + JSON.stringify(content));
   }
 };
 
@@ -177,6 +188,7 @@ const processImageUrl = async (
         contentSection.image_url.url.split('/').length - 1
       ],
       'images',
+      user
     );
     contentSection.image_url = {
       url,

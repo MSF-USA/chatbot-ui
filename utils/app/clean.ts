@@ -97,3 +97,20 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
     return acc;
   }, []);
 };
+
+export const cleanMarkdown = (text: string): string => {
+  // Remove headers (# symbols)
+  text = text.replace(/^#+\s*/gm, '');
+  // Remove asterisks for bold and italic
+  text = text.replace(/[*_]{1,3}(.*?)[*_]{1,3}/g, '$1');
+  // Remove inline code backticks
+  text = text.replace(/`([^`]+)`/g, '$1');
+  // Remove links, keeping only the text
+  text = text.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
+  // Remove horizontal rules
+  text = text.replace(/^(-{3,}|\*{3,})$/gm, '');
+  // Remove blockquotes
+  text = text.replace(/^>\s*/gm, '');
+
+  return text.trim();
+}
