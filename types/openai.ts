@@ -11,8 +11,12 @@ export interface OpenAIModel {
 export enum OpenAIModelID {
   GPT_3_5 = 'gpt-35-turbo',
   GPT_4o = 'gpt-4o',
+  GPT_4o_mini = 'gpt-4o-mini',
   GPT_4 = 'gpt-4',
-  GPT_o1 = 'o1-preview',
+  GPT_45 = 'gpt-45',
+  GPT_o1 = 'gpt-o1',
+  GPT_o1_mini = 'gpt-o1-mini',
+  GPT_o3_mini = 'o3-mini',
 }
 
 export enum OpenAIVisionModelID {
@@ -42,9 +46,37 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 80000,
     tokenLimit: 8000,
   },
+  [OpenAIModelID.GPT_4o_mini]: {
+    id: OpenAIModelID.GPT_4o_mini,
+    name: 'GPT-4o-mini',
+    maxLength: 80000,
+    tokenLimit: 8000,
+  },
+  [OpenAIModelID.GPT_45]: {
+    id: OpenAIModelID.GPT_45,
+    name: 'gpt-4.5-preview',
+    maxLength: 80000,
+    tokenLimit: 8000,
+  },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
     name: 'o1',
+    maxLength: 80000,
+    tokenLimit: 8000,
+    stream: false,
+    temperature: 1,
+  },
+  [OpenAIModelID.GPT_o1_mini]: {
+    id: OpenAIModelID.GPT_o1_mini,
+    name: 'o1-mini',
+    maxLength: 80000,
+    tokenLimit: 8000,
+    stream: false,
+    temperature: 1,
+  },
+  [OpenAIModelID.GPT_o3_mini]: {
+    id: OpenAIModelID.GPT_o3_mini,
+    name: 'o3-mini',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,
