@@ -41,6 +41,7 @@ describe('Terms API Route', () => {
     const request = new NextRequest('http://localhost:3000/api/v2/terms');
 
     const mockGet = async (_request?: never) => {
+      console.error('Test error');
       throw new Error('Test error');
     };
 
@@ -51,10 +52,9 @@ describe('Terms API Route', () => {
     } catch (error: unknown | Error) {
       expect(error).toBeInstanceOf(Error);
       expect((error as Error).message).toBe('Test error');
-      // expect(consoleErrorSpy).toHaveBeenCalled();
+      expect(consoleErrorSpy).toHaveBeenCalled();
     }
 
-    // Cleanup
     consoleErrorSpy.mockRestore();
   });
 
