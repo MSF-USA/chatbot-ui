@@ -207,7 +207,7 @@ const handler = async (
       });
 
       //Formatting changed significantly on 'ai' package > 3.0.19
-      const stream: ReadableStream<any> = OpenAIStream(response);
+      const stream: ReadableStream<any> = OpenAIStream(response as any);
 
       res.status(200);
       res.setHeader('Content-Type', 'text/event-stream');
