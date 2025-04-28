@@ -6,6 +6,8 @@ export interface OpenAIModel {
   tokenLimit: number;
   temperature?: number;
   stream?: boolean;
+  modelType?: 'foundational' | 'omni' | 'reasoning';
+  description?: string;
 }
 
 export enum OpenAIModelID {
@@ -33,30 +35,35 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     name: 'GPT-3.5',
     maxLength: 12000,
     tokenLimit: 4000,
+    modelType: 'foundational',
   },
   [OpenAIModelID.GPT_4]: {
     id: OpenAIModelID.GPT_4,
     name: 'GPT-4',
     maxLength: 24000,
     tokenLimit: 8000,
+    modelType: 'foundational',
   },
   [OpenAIModelID.GPT_4o]: {
     id: OpenAIModelID.GPT_4o,
     name: 'GPT-4o',
     maxLength: 80000,
     tokenLimit: 8000,
+    modelType: 'omni',
   },
   [OpenAIModelID.GPT_4o_mini]: {
     id: OpenAIModelID.GPT_4o_mini,
     name: 'GPT-4o-mini',
     maxLength: 80000,
     tokenLimit: 8000,
+    modelType: 'omni',
   },
   [OpenAIModelID.GPT_45]: {
     id: OpenAIModelID.GPT_45,
     name: 'gpt-4.5-preview',
     maxLength: 80000,
     tokenLimit: 8000,
+    modelType: 'foundational',
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
@@ -65,6 +72,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     stream: false,
     temperature: 1,
+    modelType: 'reasoning',
   },
   [OpenAIModelID.GPT_o1_mini]: {
     id: OpenAIModelID.GPT_o1_mini,
@@ -73,6 +81,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     stream: false,
     temperature: 1,
+    modelType: 'reasoning',
   },
   [OpenAIModelID.GPT_o3_mini]: {
     id: OpenAIModelID.GPT_o3_mini,
@@ -81,5 +90,6 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     stream: false,
     temperature: 1,
+    modelType: 'reasoning',
   }
 };
