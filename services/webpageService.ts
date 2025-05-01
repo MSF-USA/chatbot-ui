@@ -126,7 +126,7 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
             'User-Agent': process.env.USER_AGENT ?? 'MSF Assistant',
           },
           redirect: 'manual', // We'll handle redirects manually
-          signal: controller.signal,
+          signal: controller.signal as any,
         });
 
         if (response.status >= 300 && response.status < 400) {
@@ -153,7 +153,7 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
         if (error instanceof HttpError) {
           throw error;
         }
-        if (error.name === 'AbortError') {
+        if ((error as Error).name === 'AbortError') {
           throw new HttpError(408, 'Request timeout: The request took too long to complete');
         }
         throw new HttpError(500, 'Network error: Failed to fetch the URL');
@@ -223,8 +223,8 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
       let html = '';
 
       // Stream the response to check size as we go
-      const reader = response.body?.getReader();
-      if (!reader) {
+      const reader = (response.body as unknown as ReadableStream<Uint8Array>)?.getReader();
+      if (!response.body || !reader) {
         throw new HttpError(500, 'Failed to read response body');
       }
 
@@ -269,7 +269,7 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
 
       // Remove on* attributes (event handlers) from all elements
       $('*').each((_, element) => {
-        const attributes = element.attribs;
+        const attributes = (element as any).attribs || {};
         for (const attr in attributes) {
           if (attr.toLowerCase().startsWith('on')) {
             $(element).removeAttr(attr);
@@ -298,6 +298,6 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
     if (error instanceof HttpError) {
       throw error;
     }
-    throw new HttpError(500, 'Failed to process content: ' + (error.message || 'Unknown error'));
+    throw new HttpError(500, 'Failed to process content: ' + ((error as Error).message || 'Unknown error'));
   }
 }
