@@ -222,44 +222,32 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
       // Since it's HTML, proceed to parse it with enhanced sanitization
       let html = '';
 
-      // Stream the response to check size as we go
-      const reader = (response.body as unknown as ReadableStream<Uint8Array>)?.getReader();
-      if (!response.body || !reader) {
+// Handle as a Node.js stream
+      if (!response.body) {
         throw new HttpError(500, 'Failed to read response body');
       }
 
       let receivedLength = 0;
-      const chunks: Uint8Array[] = [];
+      const chunks: Buffer[] = [];
 
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          break;
-        }
-
-        chunks.push(value);
-        receivedLength += value.length;
+// Process the response body as a Node.js stream
+      for await (const chunk of response.body) {
+        chunks.push(Buffer.from(chunk));
+        receivedLength += chunk.length;
 
         if (receivedLength > MAX_CONTENT_SIZE) {
-          reader.cancel();
+          // For Node streams, we can destroy the stream
+          (response.body as any)?.destroy?.();
           throw new HttpError(413, `Content too large: Maximum size is ${MAX_CONTENT_SIZE / (1024 * 1024)}MB`);
         }
       }
 
-      // Concatenate chunks into a single Uint8Array
-      const chunksAll = new Uint8Array(receivedLength);
-      let position = 0;
-      for (const chunk of chunks) {
-        chunksAll.set(chunk, position);
-        position += chunk.length;
-      }
+// Concatenate chunks into a single Buffer and convert to string
+      html = Buffer.concat(chunks).toString('utf-8');
 
-      // Convert to text
-      html = new TextDecoder('utf-8').decode(chunksAll);
-
-      // Load HTML into cheerio for parsing
+// Load HTML into cheerio for parsing
       const $ = cheerio.load(html);
+
 
       // Extract title
       title = $('title').text().trim() || 'No title found';
