@@ -277,10 +277,12 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
         }
       });
 
-      // Remove href attributes that use javascript: protocol
       $('a[href]').each((_, element) => {
         const href = $(element).attr('href') || '';
-        if (href.toLowerCase().startsWith('javascript:')) {
+        const lowercaseHref = href.toLowerCase();
+        if (lowercaseHref.startsWith('javascript:') ||
+            lowercaseHref.startsWith('data:') ||
+            lowercaseHref.startsWith('vbscript:')) {
           $(element).removeAttr('href');
         }
       });
