@@ -7,86 +7,53 @@ By using ai.msf.org, you agree with the following terms and conditions:
 
 **You will NOT use ai.msf.org for any of the following purposes:**
 
--   **Health care** *(to provide healthcare or answer health-related
-    questions)*
+-   **Health care** *(to provide healthcare or answer health-related questions)*
 
--   **Surveillance or monitoring of MSF patients or communities or any
-    other individual(s)**
+-   **Surveillance or monitoring of MSF patients or communities or any other individual(s)**
 
--   **Employment-related decisions** *(to assist or replace
-    employment-related decisions)*
+-   **Employment-related decisions** *(to assist or replace employment-related decisions)*
 
--   **Automated decision-making** *(to make decisions that could be
-    detrimental to an individual or community)*
+-   **Automated decision-making** *(to make decisions that could be detrimental to an individual or community)*
 
--   **Creating media content for external communications on matters of
-    public interest**
+-   **Creating media content for external communications on matters of public interest**
 
 -   **Illegal or harmful activities**
 
-**You will NOT put into ai.msf.org prompts/ upload into it any the
-following information:**
+**You will NOT put into ai.msf.org prompts/ upload into it any the following information:**
 
--   **Personal data** (names, phone numbers, CVs, testimonies; anything
-    which can directly or indirectly identify an individual -- this
-    includes a combination of data that together can make it possible to
-    identify an individual)
+-   **Personal data** (names, phone numbers, CVs, testimonies; anything which can directly or indirectly identify an individual -- this includes a combination of data that together can make it possible to identify an individual)
 
--   **Highly sensitive data** (data that can be intentionally or
-    unintentionally used to harm individuals, communities, MSF or its
-    staff -- determining the sensitivity of data requires incorporating
-    context analysis e.g. locations of sensitive projects or at-risk
-    groups, security incidents, and other operational details)
+-   **Highly sensitive data** (data that can be intentionally or unintentionally used to harm individuals, communities, MSF or its staff -- determining the sensitivity of data requires incorporating context analysis e.g. locations of sensitive projects or at-risk groups, security incidents, and other operational details)
 
 # Responsible use
 
 You agree you will use ai.msf.org responsibly. You will:
 
--   Use it in accordance with your MSF entities' applicable ICT, AI and
-    other policies.
+-   Use it in accordance with your MSF entities' applicable ICT, AI and other policies.
 
--   Always check outputs for accuracy, inclusivity and bias. Ai.msf.org
-    uses experimental technology -- it gives no guarantee the outputs
-    will be accurate. In addition, the technology has not been trained
-    using data representative of MSF patients and communities. AI
-    outputs can perpetuate bias, discrimination and stereotypes. You are
-    responsible for checking the outputs produced.
+-   Always check outputs for accuracy, inclusivity and bias. Ai.msf.org uses experimental technology -- it gives no guarantee the outputs will be accurate. In addition, the technology has not been trained using data representative of MSF patients and communities. AI outputs can perpetuate bias, discrimination and stereotypes. You are responsible for checking the outputs produced.
 
--   Always be very careful about what you put into the prompt. Entering
-    links that contain malware can have serious security repercussions.
+-   Always be very careful about what you put into the prompt. Entering links that contain malware can have serious security repercussions.
 
--   Check outputs don't infringe third party intellectual property
-    rights -- especially for anything used publicly. Like other
-    generative AI systems, the technology behind ai.msf.org has been
-    trained on third party intellectual property without clear
-    permissions and licenses.
+-   Check outputs don't infringe third party intellectual property rights -- especially for anything used publicly. Like other generative AI systems, the technology behind ai.msf.org has been trained on third party intellectual property without clear permissions and licenses.
 
--   Consider the environment. Generative AI technologies use a lot of
-    energy.
+-   Consider the environment. Generative AI technologies use a lot of energy.
 
 -   Not allow anyone else access to your account.
 
--   Be transparent about your AI use. Tell people if something you use
-    has been produced by AI, and mark outputs as AI-generated.
+-   Be transparent about your AI use. Tell people if something you use has been produced by AI, and mark outputs as AI-generated.
 
 # Privacy
 
-Using ai.msf.org is a safer and more secure environment than using other
-external free AI tools, which offer very little privacy guarantees.
-However, be aware there are still limits and caveats -- look at the
-usage policy for further details.
+Using ai.msf.org is a safer and more secure environment than using other external free AI tools, which offer very little privacy guarantees. However, be aware there are still limits and caveats -- look at the usage policy for further details.
 
-Like other Microsoft products, your login information will be processed
-by MSF as outlined in your MSF entity's privacy policy.
+Like other Microsoft products, your login information will be processed by MSF as outlined in your MSF entity's privacy policy.
 
 # Breaches / feedback
 
-If you have any concerns, want to notify an incident, please contact:
-[aiteam@amsterdam.msf.org](mailto:aiteam@amsterdam.msf.org)
+If you have any concerns, want to notify an incident, please contact: [aiteam@amsterdam.msf.org](mailto:aiteam@amsterdam.msf.org)
 
-These terms can be modifying at any time by MSF -- we'll provide notice
-to you if we change them -- your continued use of ai.msf.org constitutes
-acceptance of any changes.`
+These terms can be modifying at any time by MSF -- we'll provide notice to you if we change them -- your continued use of ai.msf.org constitutes acceptance of any changes.`
 
 
 const calculateHash = (content: string): string => {
