@@ -4,10 +4,23 @@ import { checkUserTermsAcceptance } from '@/utils/app/termsAcceptance';
 import TermsAcceptanceModal from './TermsAcceptanceModal';
 import {isUSBased} from "@/utils/app/userAuth";
 
+/**
+ * Props interface for the TermsAcceptanceProvider component.
+ * @interface TermsAcceptanceProviderProps
+ * @property {ReactNode} children - Child components to be rendered within the provider.
+ */
 interface TermsAcceptanceProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Provider component that manages the terms and conditions acceptance flow for non-US based users.
+ * Checks if the user has accepted the terms and shows a modal if they haven't.
+ *
+ * @component
+ * @param {TermsAcceptanceProviderProps} props - Component props
+ * @returns {ReactElement} The wrapped children with terms acceptance handling
+ */
 export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
   children
 }) => {
@@ -15,7 +28,6 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
   const [showTermsModal, setShowTermsModal] = useState<boolean>(false);
   const [checkingTerms, setCheckingTerms] = useState<boolean>(true);
 
-  // Check if user has accepted terms whenever session changes
   useEffect(() => {
     const checkTermsAcceptance = async () => {
       if (status === 'loading') return;
@@ -42,6 +54,10 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
     checkTermsAcceptance();
   }, [session, status]);
 
+  /**
+   * Handles the acceptance of terms and conditions by the user.
+   * Closes the terms acceptance modal.
+   */
   const handleTermsAccepted = () => {
     setShowTermsModal(false);
   };
