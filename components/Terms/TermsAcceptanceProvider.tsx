@@ -2,6 +2,7 @@ import React, { FC, ReactNode, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { checkUserTermsAcceptance } from '@/utils/app/termsAcceptance';
 import TermsAcceptanceModal from './TermsAcceptanceModal';
+import {isUSBased} from "@/utils/app/userAuth";
 
 interface TermsAcceptanceProviderProps {
   children: ReactNode;
@@ -19,7 +20,9 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
     const checkTermsAcceptance = async () => {
       if (status === 'loading') return;
 
-      if (status === 'authenticated' && session?.user) {
+      if (
+          status === 'authenticated' && session?.user && !isUSBased(session?.user?.mail ?? '')
+      ) {
         setCheckingTerms(true);
         try {
           const hasAcceptedTerms = await checkUserTermsAcceptance(session.user);
