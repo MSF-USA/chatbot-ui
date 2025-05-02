@@ -33,7 +33,7 @@ describe('TermsAcceptanceModal', () => {
 
   const mockTermsData = {
     platformTerms: {
-      content: '# Platform Terms of Service\n\nThis is the terms content.',
+      content: '# ai.msf.org Terms of Service\n\nThis is the terms content.',
       version: '1.0.0',
       hash: 'abc123',
       required: true
