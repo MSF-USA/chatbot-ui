@@ -41,7 +41,8 @@ import { Citation } from '@/types/rag';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import logo from '../../public/msf_logo2.png';
+import darkTextLogo from '../../public/international_logo_white.png';
+import lightTextLogo from '../../public/international_logo_black.png';
 import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
@@ -86,7 +87,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
-      user
+      user, lightMode
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -853,11 +854,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 <div className="flex-shrink-0 flex flex-col items-center">
                                   <div className="ml-2 group relative flex flex-row">
                                     <Image
-                                      src={logo}
+                                      src={ lightMode === 'light' ? lightTextLogo : darkTextLogo }
                                       alt="MSF Logo"
                                       style={{
-                                        maxWidth: '75px',
-                                        maxHeight: '75px',
+                                        maxWidth: '300px',
+                                        maxHeight: '300px',
                                       }}
                                     />
                                     <IconInfoCircle
