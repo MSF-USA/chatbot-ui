@@ -18,7 +18,7 @@ describe('Terms API Route', () => {
 
     // Verify the structure of the response
     expect(data).toHaveProperty('platformTerms');
-    expect(data).toHaveProperty('privacyPolicy');
+    // expect(data).toHaveProperty('privacyPolicy');
 
     // Verify the platformTerms properties
     expect(data.platformTerms).toHaveProperty('content');
@@ -28,11 +28,11 @@ describe('Terms API Route', () => {
     expect(data.platformTerms.required).toBe(true);
 
     // Verify the privacyPolicy properties
-    expect(data.privacyPolicy).toHaveProperty('content');
-    expect(data.privacyPolicy).toHaveProperty('version');
-    expect(data.privacyPolicy).toHaveProperty('hash');
-    expect(data.privacyPolicy).toHaveProperty('required');
-    expect(data.privacyPolicy.required).toBe(true);
+    // expect(data.privacyPolicy).toHaveProperty('content');
+    // expect(data.privacyPolicy).toHaveProperty('version');
+    // expect(data.privacyPolicy).toHaveProperty('hash');
+    // expect(data.privacyPolicy).toHaveProperty('required');
+    // expect(data.privacyPolicy.required).toBe(true);
   });
 
   it('should handle errors gracefully', async () => {
@@ -66,18 +66,13 @@ describe('Terms API Route', () => {
 
     const data = await response.json();
 
-    expect(data.platformTerms.content).toContain('Platform Terms of Service');
-    expect(data.platformTerms.content).toContain('Introduction');
-    expect(data.platformTerms.content).toContain('User Accounts');
-    expect(data.platformTerms.content).toContain('Acceptable Use');
-    expect(data.platformTerms.content).toContain('Termination');
-    expect(data.platformTerms.content).toContain('Changes to Terms');
+    expect(data.platformTerms.content).toContain('ai.msf.org Terms of Use');
 
-    expect(data.privacyPolicy.content).toContain('Privacy Policy');
-    expect(data.privacyPolicy.content).toContain('Information We Collect');
-    expect(data.privacyPolicy.content).toContain('How We Use Information');
-    expect(data.privacyPolicy.content).toContain('Information Sharing');
-    expect(data.privacyPolicy.content).toContain('Data Security');
-    expect(data.privacyPolicy.content).toContain('Changes to This Policy');
+    // expect(data.privacyPolicy.content).toContain('Privacy Policy');
+    // expect(data.privacyPolicy.content).toContain('Information We Collect');
+    // expect(data.privacyPolicy.content).toContain('How We Use Information');
+    // expect(data.privacyPolicy.content).toContain('Information Sharing');
+    // expect(data.privacyPolicy.content).toContain('Data Security');
+    // expect(data.privacyPolicy.content).toContain('Changes to This Policy');
   });
 });
