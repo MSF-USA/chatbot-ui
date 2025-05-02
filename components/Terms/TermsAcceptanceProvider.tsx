@@ -29,13 +29,11 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
           setShowTermsModal(!hasAcceptedTerms);
         } catch (error) {
           console.error('Error checking terms acceptance:', error);
-          // Default to showing the modal if there's an error
           setShowTermsModal(true);
         } finally {
           setCheckingTerms(false);
         }
       } else {
-        // User is not authenticated, no need to show terms
         setShowTermsModal(false);
         setCheckingTerms(false);
       }
@@ -44,7 +42,6 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
     checkTermsAcceptance();
   }, [session, status]);
 
-  // Handle terms acceptance
   const handleTermsAccepted = () => {
     setShowTermsModal(false);
   };
@@ -54,7 +51,6 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
     return <>{children}</>;
   }
 
-  // If terms need to be accepted, show the modal
   if (showTermsModal && session?.user) {
     return (
       <>
@@ -67,7 +63,6 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
     );
   }
 
-  // Terms are accepted, render children
   return <>{children}</>;
 };
 
