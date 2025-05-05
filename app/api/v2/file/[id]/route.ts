@@ -23,8 +23,11 @@ const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   return idHash.length === SHA256_HASH_LENGTH && VALID_HASH_REGEX.test(idHash);
 };
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
   const { searchParams } = new URL(request.url);
   const requestedFileType = searchParams.get('filetype');
 
