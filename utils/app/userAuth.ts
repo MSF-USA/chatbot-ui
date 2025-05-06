@@ -1,6 +1,6 @@
 import {Session} from "next-auth";
 
-const isUSBased = (email: string): boolean => {
+export const isUSBased = (email: string): boolean => {
   return email?.toLowerCase().indexOf('newyork') >= 0;
 }
 

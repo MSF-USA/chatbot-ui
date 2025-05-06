@@ -25,6 +25,8 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { FAQ } from './faq';
 import faqData from './faq.json';
+import {isUSBased} from "@/utils/app/userAuth";
+import {FEEDBACK_EMAIL, US_FEEDBACK_EMAIL} from "@/types/contact";
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -91,13 +93,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   };
 
   const handleReset = () => {
+    const defaultTheme: 'light' | 'dark' = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
     const defaultSettings: Settings = {
-      theme: 'dark',
+      theme: defaultTheme,
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       runTypeWriterIntroSetting: true,
     };
-    homeDispatch({ field: 'lightMode', value: 'dark' });
+    homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
     homeDispatch({
       field: 'systemPrompt',
@@ -227,8 +230,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                       dispatch({ field: 'theme', value: event.target.value })
                     }
                   >
-                    <option value="dark">{t('Dark mode')}</option>
-                    <option value="light">{t('Light mode')}</option>
+                    <option className={'bg-white dark:bg-black'} value="dark">{t('Dark mode')}</option>
+                    <option className={'bg-white dark:bg-black'} value="light">{t('Light mode')}</option>
                   </select>
                 </div>
                 <div className="flex flex-row justify-between items-center my-10">
@@ -352,14 +355,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 v{version}.{build}.{env}
               </div>
               <a
-                href={`mailto:${email}`}
+                href={`mailto:${isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL}`}
                 className="flex items-center mt-2 md:mt-0 text-black dark:text-white"
               >
                 <IconExternalLink
                   size={18}
                   className={'inline mr-1 text-black dark:text-white'}
                 />
-                {t('Send your Feedback')}
+                {t('sendFeedback')}
               </a>
             </div>
           </div>

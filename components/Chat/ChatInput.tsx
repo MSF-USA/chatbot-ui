@@ -1,5 +1,4 @@
 import { IconArrowDown, IconRepeat } from '@tabler/icons-react';
-import { useFlags } from 'launchdarkly-react-client-sdk';
 import {
   Dispatch,
   KeyboardEvent,
@@ -29,14 +28,17 @@ import { Prompt } from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import ChatDropdownWeb from '@/components/Chat/ChatInput/ChatDropdownWeb';
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
-import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
+import ChatInputImageCapture, {
+  ChatInputImageCaptureRef,
+} from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import ChatInputSubmitButton from '@/components/Chat/ChatInput/ChatInputSubmitButton';
+import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputVoiceCapture from '@/components/Chat/ChatInput/ChatInputVoiceCapture';
+import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 
 import { PromptList } from './PromptList';
@@ -97,16 +99,9 @@ export const ChatInput = ({
     [key: string]: number;
   }>({});
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
-  const {
-    chatInputImageCapture,
-    chatInputImage,
-    chatInputFile,
-    chatInputVoiceCapture,
-    chatDropdownWeb,
-    chatInputTranslation,
-  } = useFlags();
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
+  const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
   const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
     prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
@@ -396,11 +391,9 @@ export const ChatInput = ({
 
   useEffect(() => {
     const isMobile = window.innerWidth < 600;
-    const fullPlaceholder =
-      t('Message MSF AI Assistant here or type "/" to select a prompt...') ||
-      '';
+    const fullPlaceholder = t('chatInputPlaceholderFull') || '';
     const trimmedPlaceholder = isMobile
-      ? fullPlaceholder.replace(' or type "/" to select a prompt', '')
+      ? t('chatInputPlaceholder')
       : fullPlaceholder;
     setPlaceholderText(trimmedPlaceholder);
   }, [t]);
@@ -494,63 +487,46 @@ export const ChatInput = ({
 
       <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
-          {chatInputImageCapture && (
-            <ChatInputImageCapture
-              setFilePreviews={setFilePreviews}
-              setSubmitType={setSubmitType}
-              prompt={textFieldValue}
-              setImageFieldValue={setFileFieldValue}
-              setUploadProgress={setUploadProgress}
-            />
-          )}
-          {chatInputImage && (
-            <ChatInputImage
-              setSubmitType={setSubmitType}
-              prompt={textFieldValue}
-              setFilePreviews={setFilePreviews}
-              setFileFieldValue={setFileFieldValue}
-              setUploadProgress={setUploadProgress}
-            />
-          )}
-          {chatInputFile && (
-            <ChatInputFile
-              onFileUpload={onFileUpload}
-              setSubmitType={setSubmitType}
-              setFilePreviews={setFilePreviews}
-              setFileFieldValue={setFileFieldValue}
-              setImageFieldValue={setImageFieldValue}
-              setUploadProgress={setUploadProgress}
-            />
-          )}
+          <ChatInputImageCapture
+            ref={cameraRef}
+            visible={false}
+            setFilePreviews={setFilePreviews}
+            setSubmitType={setSubmitType}
+            prompt={textFieldValue}
+            setImageFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
+          />
 
-          {chatInputTranslation && (
-            <ChatInputTranslate
-              setTextFieldValue={setTextFieldValue}
-              handleSend={handleSend}
-            />
-          )}
+          <ChatInputFile
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+            setUploadProgress={setUploadProgress}
+          />
 
-          {chatDropdownWeb && (
-            <ChatDropdownWeb
-              onFileUpload={onFileUpload}
-              setSubmitType={setSubmitType}
-              setFilePreviews={setFilePreviews}
-              setFileFieldValue={setFileFieldValue}
-              setImageFieldValue={setImageFieldValue}
-              setUploadProgress={setUploadProgress}
-              setTextFieldValue={setTextFieldValue}
-              handleSend={handleSend}
-            />
-          )}
+          <ChatDropdown
+            onFileUpload={onFileUpload}
+            setSubmitType={setSubmitType}
+            setFilePreviews={setFilePreviews}
+            setFileFieldValue={setFileFieldValue}
+            setImageFieldValue={setImageFieldValue}
+            setUploadProgress={setUploadProgress}
+            setTextFieldValue={setTextFieldValue}
+            handleSend={handleSend}
+            textFieldValue={textFieldValue}
+            onCameraClick={() => {
+              cameraRef.current?.triggerCamera();
+            }}
+          />
 
           <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
             <div className="absolute left-2 top-3">
-              {chatInputVoiceCapture && (
-                <ChatInputVoiceCapture
-                  setTextFieldValue={setTextFieldValue}
-                  setIsTranscribing={setIsTranscribing}
-                />
-              )}
+              <ChatInputVoiceCapture
+                setTextFieldValue={setTextFieldValue}
+                setIsTranscribing={setIsTranscribing}
+              />
             </div>
 
             <textarea
@@ -569,7 +545,11 @@ export const ChatInput = ({
                     : 'hidden'
                 }`,
               }}
-              placeholder={isTranscribing ? 'Transcribing...' : placeholderText}
+              placeholder={
+                isTranscribing
+                  ? t('transcribingChatPlaceholder')
+                  : placeholderText
+              }
               value={textFieldValue}
               rows={1}
               onCompositionStart={() => setIsTyping(true)}
@@ -624,7 +604,7 @@ export const ChatInput = ({
         </div>
       </div>
       <div className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
-        {t('MSF AI Assistant can make mistakes. Check important info.')}
+        {t('chatDisclaimer')}
       </div>
     </div>
   );

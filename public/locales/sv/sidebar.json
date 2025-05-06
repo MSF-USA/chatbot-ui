@@ -14,7 +14,13 @@
   "Name": "Namn",
   "Description": "Beskrivning",
   "A description for your prompt.": "En beskrivning för din prompt.",
-  "Prompt": "Prompt",
+  "Prompt": "uppmaning",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt-innehåll. Använd {{}} för att beteckna en variabel. Ex: {{namn}} är ett {{adjektiv}} {{substantiv}}",
-  "Save": "Spara"
+  "Save": "Spara",
+  "Plugin Keys": "Plugin-nycklar",
+  "Light mode": "ljusläge",
+  "New Conversation": "Ny konversation",
+  "Settings": "Inställningar",
+  "A name for your prompt.": "Ett namn för din uppmaning.",
+  "Dark mode": "mörkt läge"
 }

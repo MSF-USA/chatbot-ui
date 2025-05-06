@@ -416,7 +416,7 @@ const Home = ({
         key: user?.id || 'anonymous-user',
         email: user?.mail,
         givenName: user?.givenName,
-        surName: user?.surName,
+        surName: user?.surname,
         displayName: user?.displayName,
         jobTitle: user?.jobTitle,
         department: user?.department,
@@ -451,7 +451,7 @@ const Home = ({
           <main
             className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
           >
-            <div className="fixed top-0 sm:hidden">
+            <div className="fixed top-0 w-full sm:hidden">
               <Navbar
                 selectedConversation={selectedConversation}
                 onNewConversation={handleNewConversation}
@@ -525,6 +525,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         'markdown',
         'promptbar',
         'settings',
+        'transcribeModal',
       ])),
     },
   };

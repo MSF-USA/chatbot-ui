@@ -14,14 +14,12 @@ export const Navbar: FC<Props> = ({
 }) => {
   return (
     <nav className="flex w-full justify-between bg-[#171717] py-3 px-4">
-      <div className="mr-4"></div>
-
+      <div className="mr-4"/>
       <div className="max-w-[240px] overflow-hidden text-ellipsis whitespace-nowrap">
         {selectedConversation.name}
       </div>
-
       <IconPlus
-        className="cursor-pointer hover:text-neutral-400 mr-8"
+        className="cursor-pointer hover:text-neutral-400"
         onClick={onNewConversation}
       />
     </nav>

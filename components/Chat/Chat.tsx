@@ -21,14 +21,10 @@ import Image from 'next/image';
 
 import { makeRequest } from '@/services/frontendChatServices';
 
-import { getEndpoint } from '@/utils/app/api';
-import {
-  DEFAULT_SYSTEM_PROMPT,
-  DEFAULT_TEMPERATURE,
-  DEFAULT_USE_KNOWLEDGE_BASE,
-} from '@/utils/app/const';
+import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
+import { isUSBased } from '@/utils/app/userAuth';
 import { throttle } from '@/utils/data/throttle';
 
 import { getBotById } from '@/types/bots';
@@ -41,11 +37,14 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
+import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Plugin } from '@/types/plugin';
+import { Citation } from '@/types/rag';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import logo from '../../public/msf_logo2.png';
+import lightTextLogo from '../../public/international_logo_black.png';
+import darkTextLogo from '../../public/international_logo_white.png';
 import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
@@ -88,6 +87,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       temperature,
       systemPrompt,
       runTypeWriterIntroSetting,
+      user,
+      lightMode,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -98,8 +99,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
   }
-
-  const email = process.env.NEXT_PUBLIC_EMAIL;
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -236,6 +235,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let done = false;
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
+    let extractedCitations: Citation[] = [];
 
     while (!done) {
       const { value, done: doneReading } = await reader.read();
@@ -244,6 +244,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (value) {
         const chunkValue = decoder.decode(value);
         text += chunkValue;
+
+        // Extract citations
+        const {
+          text: cleanedText,
+          citations,
+          extractionMethod,
+        } = extractCitationsFromContent(text);
+
+        if (citations.length > 0) {
+          // Use the clean text and extracted citations
+          text = cleanedText;
+          extractedCitations = citations;
+          console.log(
+            `Extracted ${citations.length} citations using ${extractionMethod} format`,
+          );
+        }
 
         if (
           updatedConversationCopy.messages.length === 0 ||
@@ -260,6 +276,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 role: 'assistant',
                 content: text,
                 messageType: MessageType.TEXT,
+                citations:
+                  extractedCitations.length > 0 ? [...extractedCitations] : [],
               },
             ],
           };
@@ -272,6 +290,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 updatedConversationCopy.messages.length - 1
               ],
               content: text,
+              citations:
+                extractedCitations.length > 0
+                  ? [...extractedCitations]
+                  : updatedConversationCopy.messages[
+                      updatedConversationCopy.messages.length - 1
+                    ].citations || [],
             },
           ];
           updatedConversationCopy = {
@@ -281,6 +305,45 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         }
 
         // Update the state to trigger a re-render
+        homeDispatch({
+          field: 'selectedConversation',
+          value: updatedConversationCopy,
+        });
+      }
+    }
+
+    // Final check for citations after stream completes
+    if (extractedCitations.length === 0) {
+      const {
+        text: cleanedText,
+        citations,
+        extractionMethod,
+      } = extractCitationsFromContent(text);
+
+      if (citations.length > 0) {
+        text = cleanedText;
+        extractedCitations = citations;
+        console.log(
+          `Final extraction - ${citations.length} citations using ${extractionMethod} format`,
+        );
+
+        // If we found citations in the final check, update the conversation again
+        const updatedMessages = [
+          ...updatedConversationCopy.messages.slice(0, -1),
+          {
+            ...updatedConversationCopy.messages[
+              updatedConversationCopy.messages.length - 1
+            ],
+            content: text,
+            citations: [...extractedCitations],
+          },
+        ];
+        updatedConversationCopy = {
+          ...updatedConversationCopy,
+          messages: updatedMessages,
+        };
+
+        // Update state one last time
         homeDispatch({
           field: 'selectedConversation',
           value: updatedConversationCopy,
@@ -450,9 +513,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     [
       apiKey,
       conversations,
+      handleNormalChatBackendStreaming,
+      homeDispatch,
       pluginKeys,
       selectedConversation,
-      stopConversationRef,
+      systemPrompt,
+      temperature,
     ],
   );
 
@@ -582,7 +648,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       {showSplash ? (
         <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
-            Welcome to the MSF AI Assistant
+            {t('welcomeMessage')}
           </div>
           <div className="text-center text-lg text-black dark:text-white">
             <div className="mb-8">{`MSF AI Assistant is an open source clone of OpenAI's ChatGPT UI.`}</div>
@@ -640,50 +706,64 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div
-                        className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200"
-                      >
+                      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
                         {/* Center Content */}
                         <div className="flex items-center space-x-2">
                           <div className="flex items-center">
-                          {botInfo && (
-                            <>
-                              <span className="font-semibold" style={{color: botInfo.color}}>
-                                {botInfo.name} Bot
-                              </span>
-                              <span className="mx-2 text-white dark:text-white">|</span>
-                            </>
-                          )}
-                          <span>
-                            {t('Model')}: {selectedConversation?.model?.name}
-                          </span>
-                        </div>
+                            {botInfo && (
+                              <>
+                                <span
+                                  className="font-semibold"
+                                  style={{ color: botInfo.color }}
+                                >
+                                  {botInfo.name} Bot
+                                </span>
+                                <span className="mx-2 text-white dark:text-white">
+                                  |
+                                </span>
+                              </>
+                            )}
+                            <span>
+                              {t('Model')}: {selectedConversation?.model?.name}
+                            </span>
+                          </div>
 
-                        {/* Settings Button */}
-                        <button
-                            className="ml-2 cursor-pointer hover:opacity-50"
-                            onClick={handleSettings}
-                        >
-                          <IconSettings
-                            size={18}
-                            className={`${
-                                showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
-                            }`}
-                          />
-                        </button>
-                      </div>
+                          {/* Settings Button */}
+                          <div className="group">
+                            <button
+                              className="cursor-pointer hover:opacity-50"
+                              onClick={handleSettings}
+                            >
+                              <IconSettings
+                                size={18}
+                                className={`${
+                                  showSettings
+                                    ? 'text-[#D7211E] mt-1'
+                                    : 'text-black dark:text-white mt-1'
+                                }`}
+                              />
+                            </button>
+                            <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                              Expand Model Settings
+                            </div>
+                          </div>
+                        </div>
 
                         {/* Right-Side Content */}
                         <div className="absolute right-0 flex items-center pr-4">
                           <a
-                            href={`mailto:${email}`}
+                            href={`mailto:${
+                              isUSBased(user?.mail ?? '')
+                                ? US_FEEDBACK_EMAIL
+                                : FEEDBACK_EMAIL
+                            }`}
                             className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
                           >
                             <IconExternalLink
                               size={16}
                               className="mr-1 text-black dark:text-white/50"
                             />
-                            {t('Send Feedback')}
+                            {t('sendFeedback')}
                           </a>
                         </div>
                       </div>
@@ -703,23 +783,28 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             className="fixed inset-0 z-50 flex items-center justify-center"
                             onClick={handleClickOutside}
                           >
-                            <div className="fixed inset-0 bg-black opacity-50"/>
+                            <div className="fixed inset-0 bg-black opacity-50" />
                             <div
                               ref={modalRef}
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
                             >
                               <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                                {t('AI Model Selection:')}
+                                {t('modelSelectionDialogue')}
                                 <ModelSelect />
                               </div>
-                              <div className="text-black dark:text-white">{t('Temperature')}</div>
+                              <div className="text-black dark:text-white">
+                                {t('Temperature')}
+                              </div>
                               <TemperatureSlider
                                 temperature={selectedConversation.temperature}
                                 onChangeTemperature={(temperature) =>
-                                  handleUpdateConversation(selectedConversation, {
+                                  handleUpdateConversation(
+                                    selectedConversation,
+                                    {
                                       key: 'temperature',
                                       value: temperature,
-                                    })
+                                    },
+                                  )
                                 }
                               />
                             </div>
@@ -734,7 +819,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
                       {models.length === 0 ? (
                         <div>
-                          <Spinner size="16px" className="mx-auto"/>
+                          <Spinner size="16px" className="mx-auto" />
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
@@ -749,7 +834,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 }}
                                 onInit={(typewriter) => {
                                   typewriter
-                                    .typeString('MSF AI Assistant')
+                                    .typeString(t('appName'))
                                     .pauseFor(1200)
                                     .deleteAll()
                                     .callFunction(() => {
@@ -767,18 +852,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 enter="transition-opacity duration-1000"
                                 enterFrom="opacity-0"
                                 enterTo="opacity-100"
-                              leave="transition-opacity duration-300"
-                              leaveFrom="opacity-100"
+                                leave="transition-opacity duration-300"
+                                leaveFrom="opacity-100"
                                 leaveTo="opacity-0"
                               >
                                 <div className="flex-shrink-0 flex flex-col items-center">
                                   <div className="ml-2 group relative flex flex-row">
                                     <Image
-                                      src={logo}
+                                      src={
+                                        lightMode === 'light'
+                                          ? lightTextLogo
+                                          : darkTextLogo
+                                      }
                                       alt="MSF Logo"
                                       style={{
-                                        maxWidth: '75px',
-                                        maxHeight: '75px',
+                                        maxWidth: '150px',
+                                        maxHeight: '150px',
                                       }}
                                     />
                                     <IconInfoCircle
@@ -889,14 +978,18 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </button>
                   <div className="absolute right-0">
                     <a
-                      href={`mailto:${email}`}
+                      href={`mailto:${
+                        isUSBased(user?.mail ?? '')
+                          ? US_FEEDBACK_EMAIL
+                          : FEEDBACK_EMAIL
+                      }`}
                       className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
                     >
                       <IconExternalLink
                         size={16}
                         className={'mr-1 text-black dark:text-white/50'}
                       />
-                      {t('Send Feedback')}
+                      {t('sendFeedback')}
                     </a>
                   </div>
                 </div>

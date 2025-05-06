@@ -14,7 +14,13 @@
   "Name": "নাম",
   "Description": "বর্ণনা",
   "A description for your prompt.": "আপনার Prompt জন্য একটি বিবরণ লিখুন.",
-  "Prompt": "Prompt",
+  "Prompt": "প্রম্পট",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}",
-  "Save": "সংরক্ষণ করুন"
+  "Save": "সংরক্ষণ করুন",
+  "Plugin Keys": "প্লাগইন কীসমূহ",
+  "Light mode": "আলো মোড",
+  "New Conversation": "নতুন কথোপকথন",
+  "Settings": "সেটিংস",
+  "A name for your prompt.": "আপনার প্রম্পটের জন্য একটি নাম।",
+  "Dark mode": "ডার্ক মোড"
 }

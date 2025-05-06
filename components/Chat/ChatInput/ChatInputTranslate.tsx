@@ -1,22 +1,31 @@
 import { FC } from "preact/compat";
-import React, {Dispatch, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
 import { IconLanguage } from "@tabler/icons-react";
 import toast from "react-hot-toast";
 import BetaBadge from "@/components/Beta/Badge";
+import {useTranslation} from "next-i18next";
 
 interface ChatInputTranslateProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
+  simulateClick: boolean;
+  setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
+  defaultText?: string | null | undefined;
 }
 
 const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   {
     setTextFieldValue,
-    handleSend
+    handleSend,
+    simulateClick,
+    setParentModalIsOpen,
+    defaultText
   }) => {
+  const { t } = useTranslation('chat');
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [inputText, setInputText] = useState("");
+  const [inputText, setInputText] = useState(defaultText ?? "");
   const [sourceLanguage, setSourceLanguage] = useState("");
   const [targetLanguage, setTargetLanguage] = useState("");
   const [translationType, setTranslationType] = useState("balanced");
@@ -26,52 +35,59 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
   const [useTargetLanguageDropdown, setUseTargetLanguageDropdown] = useState<boolean>(true);
+  const openModalButtonRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (isReadyToSend) {
       setIsReadyToSend(false); // Reset the flag
       handleSend();
+      setParentModalIsOpen(false)
     }
   }, [isReadyToSend, handleSend]);
 
+  useEffect(() => {
+    if (simulateClick && openModalButtonRef.current) {
+      openModalButtonRef.current.click();
+    }
+  }, [simulateClick]);
 
   const languages = [
-    { value: "en", label: "English", autonym: "English" },
-    { value: "es", label: "Spanish", autonym: "Español" },
-    { value: "fr", label: "French", autonym: "Français" },
-    { value: "de", label: "German", autonym: "Deutsch" },
-    { value: "nl", label: "Dutch", autonym: "Nederlands" },
-    { value: "it", label: "Italian", autonym: "Italiano" },
-    { value: "pt", label: "Portuguese", autonym: "Português" },
-    { value: "ru", label: "Russian", autonym: "Русский" },
-    { value: "zh", label: "Chinese", autonym: "中文" },
-    { value: "ja", label: "Japanese", autonym: "日本語" },
-    { value: "ko", label: "Korean", autonym: "한국어" },
-    { value: "ar", label: "Arabic", autonym: "العربية" },
-    { value: "hi", label: "Hindi", autonym: "हिन्दी" },
+    { value: "en", label: t("languageEnglish"), autonym: "English" },
+    { value: "es", label: t("languageSpanish"), autonym: "Español" },
+    { value: "fr", label: t("languageFrench"), autonym: "Français" },
+    { value: "de", label: t("languageGerman"), autonym: "Deutsch" },
+    { value: "nl", label: t("languageDutch"), autonym: "Nederlands" },
+    { value: "it", label: t("languageItalian"), autonym: "Italiano" },
+    { value: "pt", label: t("languagePortuguese"), autonym: "Português" },
+    { value: "ru", label: t("languageRussian"), autonym: "Русский" },
+    { value: "zh", label: t("languageChinese"), autonym: "中文" },
+    { value: "ja", label: t("languageJapanese"), autonym: "日本語" },
+    { value: "ko", label: t("languageKorean"), autonym: "한국어" },
+    { value: "ar", label: t("languageArabic"), autonym: "العربية" },
+    { value: "hi", label: t("languageHindi"), autonym: "हिन्दी" },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const handleTranslate = () => {
     if (!inputText.trim()) {
-      toast.error("Please enter text to translate.");
+      toast.error(t('translatorNoTextError'));
       return;
     }
     if (!targetLanguage) {
-      toast.error("Please select a target language.");
+      toast.error(t('translatorNoTargetLanguageError'));
       return;
     }
 
     let prompt;
     if (!sourceLanguage) {
-      prompt = `Translate the following text to ${
-        languages.find((l) => l.value === targetLanguage)?.label || "unknown"
-      }:\n\n\`\`\`\n${inputText}\n\`\`\``;
+      prompt = `Translate the following text into the language with iso code \`${
+        languages.find((l) => l.value === targetLanguage)?.value || "unknown"
+      }\`:\n\n\`\`\`\n${inputText}\n\`\`\``;
     } else {
-      prompt = `Translate the following text from ${
-        languages.find((l) => l.value === sourceLanguage)?.label || "the original language"
-      } to ${
-        languages.find((l) => l.value === targetLanguage)?.label || "unknown"
-      }:\n\n\`\`\`${sourceLanguage}\n${inputText}\n\`\`\``;
+      prompt = `Translate the following text from the language with the iso code \`${
+        languages.find((l) => l.value === sourceLanguage)?.value || "the original language"
+      }\` to \`${
+        languages.find((l) => l.value === targetLanguage)?.value || "unknown"
+      }\`:\n\n\`\`\`${sourceLanguage}\n${inputText}\n\`\`\``;
     }
 
     prompt += '\n\nRespond with directly markdown formatted text (not in a code block) matching the original as closely as possible, making only language-appropriate adjustments.';
@@ -104,7 +120,10 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div
             className="fixed inset-0 w-full h-full bg-black opacity-40"
-            onClick={() => setIsModalOpen(false)}
+            onClick={() => {
+              setIsModalOpen(false);
+              setParentModalIsOpen(false);
+            }}
           ></div>
           <div className="flex items-center min-h-screen px-4 py-8">
             <div className="relative w-full max-w-2xl p-6 mx-auto bg-white dark:bg-gray-800 rounded-md shadow-lg">
@@ -114,10 +133,13 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
 
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-white flex items-center">
                   <IconLanguage className="h-8 w-8 mr-2" />
-                  Language Translator
+                  {t('translatorTitle')}
                 </h3>
                 <button
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setParentModalIsOpen(false);
+                  }}
                   className="text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
                 >
                   <svg
@@ -141,7 +163,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       htmlFor="source-language"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                     >
-                      From
+                      {t('translatorSourceLanguageLabel')}
                     </label>
                     <select
                       id="source-language"
@@ -149,7 +171,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       value={sourceLanguage}
                       onChange={(e) => setSourceLanguage(e.target.value)}
                     >
-                      <option value="" className={'text-gray-400 dark:text-gray-400'}>Auto-detect</option>
+                      <option value="" className={'text-gray-400 dark:text-gray-400'}>{t('translatorEmptyFromLanguage')}</option>
                       {languages.map((language) => (
                         <option key={language.value} value={language.value}>
                           {language.label} ({language.autonym})
@@ -187,7 +209,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                       htmlFor="target-language"
                       className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                     >
-                      To
+                      {t('translatorTargetLanguageLabel')}
                     </label>
                     {/*<div className="flex items-center space-x-2 mt-1">*/}
                     {/*  <button*/}
@@ -210,7 +232,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                         value={targetLanguage}
                         onChange={(e) => setTargetLanguage(e.target.value)}
                       >
-                        <option value="" className={'text-gray-400 dark:text-gray-400'}>Select language</option>
+                        <option value="" className={'text-gray-400 dark:text-gray-400'}>{t('translatorEmptyToLanguage')}</option>
                         {languages.map((language) => (
                           <option key={language.value} value={language.value}>
                             {language.label} ({language.autonym})
@@ -234,13 +256,13 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                     htmlFor="input-text"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                   >
-                    Enter text
+                    {t('translatorTextToTranslateLabel')}
                   </label>
                   <textarea
                     id="input-text"
                     rows={6}
                     className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="Type or paste your text here"
+                    placeholder={t('translatorTextToTranslatePlaceholder')}
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
                   ></textarea>
@@ -249,9 +271,9 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                 <div className="my-4">
                   <button
                     onClick={() => setShowAdvanced(!showAdvanced)}
-                    className="flex items-center text-sm font-medium text-gray-700 dark:text-gray-200 hover:underline"
+                    className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500"
                   >
-                    Advanced Options
+                    {t('advancedOptionsButton')}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className={`h-5 w-5 ml-1 transform ${showAdvanced ? "rotate-180" : ""}`}
@@ -271,7 +293,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                             htmlFor="translation-type"
                             className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                           >
-                            Translation Type
+                            {t('translatorTranslationTypeLabel')}
                           </label>
                           <select
                             id="translation-type"
@@ -279,10 +301,10 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                             value={translationType}
                             onChange={(e) => setTranslationType(e.target.value)}
                           >
-                            <option value="literal">Literal</option>
-                            <option value="balanced">Balanced</option>
-                            <option value="figurative">Figurative</option>
-                            <option value="cultural">Cultural</option>
+                            <option value="literal">{t('translatorTranslationTypeLiteral')}</option>
+                            <option value="balanced">{t('translatorTranslationTypeBalanced')}</option>
+                            <option value="figurative">{t('translatorTranslationTypeFigurative')}</option>
+                            <option value="cultural">{t('translatorTranslationTypeCultural')}</option>
                           </select>
                         </div>
                         <div>
@@ -290,7 +312,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                             htmlFor="domain-specific"
                             className="block text-sm font-medium text-gray-700 dark:text-gray-200"
                           >
-                            Domain-Specific Terminology
+                            {t('translatorTranslationDomainLabel')}
                           </label>
                           <select
                             id="domain-specific"
@@ -298,11 +320,11 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                             value={domainSpecific}
                             onChange={(e) => setDomainSpecific(e.target.value)}
                           >
-                            <option value="general">General</option>
-                            <option value="medical">Medical</option>
-                            <option value="legal">Legal</option>
-                            <option value="technical">Technical</option>
-                            <option value="business">Business</option>
+                            <option value="general">{t('translatorTranslationDomainGeneral')}</option>
+                            <option value="medical">{t('translatorTranslationDomainMedical')}</option>
+                            <option value="legal">{t('translatorTranslationDomainLegal')}</option>
+                            <option value="technical">{t('translatorTranslationDomainTechnical')}</option>
+                            <option value="business">{t('translatorTranslationDomainBusiness')}</option>
                           </select>
                         </div>
                       </div>
@@ -320,7 +342,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                             htmlFor="use-formal-language"
                             className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
                           >
-                            Use formal language
+                            {t('translatorFormalLanguageLabel')}
                           </label>
                         </div>
                         <div className="flex items-center">
@@ -335,7 +357,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                             htmlFor="use-gender-neutral-language"
                             className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
                           >
-                            Use gender-neutral language
+                            {t('translatorGenderNeutralLabel')}
                           </label>
                         </div>
                       </div>
@@ -355,16 +377,16 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                     htmlFor="auto-submit"
                     className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
                   >
-                    Auto-submit translation
+                    {t('autoSubmitButton')}
                   </label>
                 </div>
                 {/* Translate button */}
                 <div className="mt-6">
                   <button
                     onClick={handleTranslate}
-                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700"
+                    className="w-full flex justify-center py-3 px-4 text-base font-medium text-black p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300"
                   >
-                    {autoSubmit ? "Translate" : "Generate Prompt"}
+                    {autoSubmit ? t('translatorTranslateButton') : t('generatePromptButton')}
                   </button>
                 </div>
               </div>
@@ -377,10 +399,12 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     return (
       <>
         <button
+          style={{display: 'none'}}
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             event.preventDefault();
             setIsModalOpen(true);
           }}
+          ref={openModalButtonRef}
         >
           <IconLanguage
             className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>
