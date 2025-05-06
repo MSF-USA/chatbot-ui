@@ -72,9 +72,9 @@ const Sidebar = <T,>({
         onSearch={handleSearchTerm}
       />
 
-      {/* <div className="flex items-center">
+      <div className="flex items-center">
         <BotModal />
-      </div> */}
+      </div>
 
       <div className="flex-grow overflow-auto">
         <div className="flex border-b border-white/20 pb-2 text-black dark:text-white">
