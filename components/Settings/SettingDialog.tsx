@@ -89,6 +89,10 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       field: 'runTypeWriterIntroSetting',
       value: state.runTypeWriterIntroSetting,
     });
+    homeDispatch({
+      field: 'largeDocumentProcessing',
+      value: state.largeDocumentProcessing,
+    });
     saveSettings(state);
   };
 
@@ -99,6 +103,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       runTypeWriterIntroSetting: true,
+      largeDocumentProcessing: false,
     };
     homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
@@ -253,6 +258,31 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                       aria-hidden="true"
                       className={`${
                         state.runTypeWriterIntroSetting
+                          ? 'translate-x-8'
+                          : 'translate-x-0'
+                      } inline-block h-6 w-6 transform rounded-full dark:bg-white bg-gray-300 shadow-lg transition duration-200 ease-in-out`}
+                    />
+                  </Switch>
+                </div>
+                <div className="flex flex-row justify-between items-center my-10">
+                  <div className="text-sm font-bold text-black dark:text-neutral-200">
+                    {t('Large Document Processing')}
+                  </div>
+                  <Switch
+                    checked={state.largeDocumentProcessing}
+                    onChange={(value) =>
+                      dispatch({ field: 'largeDocumentProcessing', value })
+                    }
+                    className={`${
+                      state.largeDocumentProcessing
+                        ? 'bg-blue-600'
+                        : 'bg-gray-400'
+                    } relative inline-flex h-6 w-14 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`${
+                        state.largeDocumentProcessing
                           ? 'translate-x-8'
                           : 'translate-x-0'
                       } inline-block h-6 w-6 transform rounded-full dark:bg-white bg-gray-300 shadow-lg transition duration-200 ease-in-out`}
