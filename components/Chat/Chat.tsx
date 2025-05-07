@@ -706,51 +706,53 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                        {/* Center Content */}
-                        <div className="flex items-center space-x-2">
-                          <div className="flex items-center">
-                            {botInfo && (
-                              <>
-                                <span
-                                  className="font-semibold"
-                                  style={{ color: botInfo.color }}
-                                >
-                                  {botInfo.name} Bot
-                                </span>
-                                <span className="mx-2 text-white dark:text-white">
-                                  |
-                                </span>
-                              </>
-                            )}
-                            <span>
-                              {t('Model')}: {selectedConversation?.model?.name}
-                            </span>
-                          </div>
+                      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                        {/* Left/Center Content */}
+                        <div className="flex-grow flex items-center justify-center">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex items-center">
+                              {botInfo && (
+                                <>
+                                  <span
+                                    className="font-semibold"
+                                    style={{ color: botInfo.color }}
+                                  >
+                                    {botInfo.name} Bot
+                                  </span>
+                                  <span className="mx-2 text-white dark:text-white">
+                                    |
+                                  </span>
+                                </>
+                              )}
+                              <span className="truncate">
+                                <span className={'hidden'}>{t('Model')}: </span>{selectedConversation?.model?.name}
+                              </span>
+                            </div>
 
-                          {/* Settings Button */}
-                          <div className="group">
-                            <button
-                              className="cursor-pointer hover:opacity-50"
-                              onClick={handleSettings}
-                            >
-                              <IconSettings
-                                size={18}
-                                className={`${
-                                  showSettings
-                                    ? 'text-[#D7211E] mt-1'
-                                    : 'text-black dark:text-white mt-1'
-                                }`}
-                              />
-                            </button>
-                            <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-                              Expand Model Settings
+                            {/* Settings Button */}
+                            <div className="group">
+                              <button
+                                className="cursor-pointer hover:opacity-50"
+                                onClick={handleSettings}
+                              >
+                                <IconSettings
+                                  size={18}
+                                  className={`${
+                                    showSettings
+                                      ? 'text-[#D7211E] mt-1'
+                                      : 'text-black dark:text-white mt-1'
+                                  }`}
+                                />
+                              </button>
+                              <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+                                Expand Model Settings
+                              </div>
                             </div>
                           </div>
                         </div>
 
                         {/* Right-Side Content */}
-                        <div className="absolute right-0 flex items-center pr-4">
+                        <div className="flex items-center">
                           <a
                             href={`mailto:${
                               isUSBased(user?.mail ?? '')
@@ -763,6 +765,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                               size={16}
                               className="mr-1 text-black dark:text-white/50"
                             />
+                            {/*<span className="hidden sm:inline">{t('sendFeedback')}</span>*/}
+                            {/*<span className="sm:hidden">Feedback</span>*/}
                             {t('sendFeedback')}
                           </a>
                         </div>
@@ -935,61 +939,69 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               </>
             ) : (
               <>
-                <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  <div className="flex items-center">
-                    {botInfo && (
-                      <>
-                        <span
-                          className="font-semibold"
-                          style={{ color: botInfo.color }}
-                        >
-                          {botInfo.name} Bot
-                        </span>
-                        <span className="mx-2 text-white dark:text-white">
-                          |
-                        </span>
-                      </>
-                    )}
-                    <span>
-                      {t('Model')}: {selectedConversation?.model?.name}
-                    </span>
+                <div className="sticky top-0 z-10 flex justify-between border border-b-neutral-300 bg-neutral-100 py-2 px-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+                  {/* Left/Center Content */}
+                  <div className="flex-grow flex items-center justify-center">
+                    <div className="flex items-center">
+                      {botInfo && (
+                        <>
+                          <span
+                            className="font-semibold"
+                            style={{ color: botInfo.color }}
+                          >
+                            {botInfo.name} Bot
+                          </span>
+                          <span className="mx-2 text-white dark:text-white">
+                            |
+                          </span>
+                        </>
+                      )}
+                      <span className="truncate">
+                        {t('Model')}: {selectedConversation?.model?.name}
+                      </span>
+                    </div>
+                    <div className="flex items-center ml-2">
+                      <button
+                        className="cursor-pointer hover:opacity-50 mx-1"
+                        onClick={handleSettings}
+                      >
+                        <IconSettings
+                          size={18}
+                          className={`${
+                            showSettings
+                              ? 'text-[#D7211E]'
+                              : 'text-black dark:text-white'
+                          }`}
+                        />
+                      </button>
+                      <button
+                        className="cursor-pointer hover:opacity-50 mx-1"
+                        onClick={onClearAll}
+                      >
+                        <IconClearAll
+                          size={18}
+                          className="text-black dark:text-white"
+                        />
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={handleSettings}
-                  >
-                    <IconSettings
-                      size={18}
-                      className={`${
-                        showSettings
-                          ? 'text-[#D7211E]'
-                          : 'text-black dark:text-white'
-                      }`}
-                    />
-                  </button>
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={onClearAll}
-                  >
-                    <IconClearAll
-                      size={18}
-                      className="text-black dark:text-white"
-                    />
-                  </button>
-                  <div className="absolute right-0">
+
+                  {/* Right-Side Content */}
+                  <div className="flex items-center">
                     <a
                       href={`mailto:${
                         isUSBased(user?.mail ?? '')
                           ? US_FEEDBACK_EMAIL
                           : FEEDBACK_EMAIL
                       }`}
-                      className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
+                      className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
                     >
                       <IconExternalLink
                         size={16}
-                        className={'mr-1 text-black dark:text-white/50'}
+                        className="mr-1 text-black dark:text-white/50"
                       />
-                      {t('sendFeedback')}
+                      <span className="hidden sm:inline">{t('sendFeedback')}</span>
+                      <span className="sm:hidden">Feedback</span>
                     </a>
                   </div>
                 </div>
