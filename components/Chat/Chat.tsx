@@ -709,7 +709,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-between relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
                         {/* Left/Center Content */}
                         <div className="flex-grow flex items-center justify-center">
-                          <div className="flex items-center space-x-2">
+                          <div className={`flex items-center ${!botInfo ? 'justify-start w-full' : 'justify-center'}`}>
                             <div className="flex items-center">
                               {botInfo && (
                                 <>
@@ -725,7 +725,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 </>
                               )}
                               <span className="truncate">
-                                <span className={'hidden'}>{t('Model')}: </span>{selectedConversation?.model?.name}
+                                <span className={'text-sm'}>{t('Model')}: </span>{selectedConversation?.model?.name}
                               </span>
                             </div>
 
