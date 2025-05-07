@@ -644,7 +644,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full w-full bg-white dark:bg-[#212121]">
+    <div className="flex flex-col h-full w-full overflow-x-hidden bg-white dark:bg-[#212121]">
       {showSplash ? (
         <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
