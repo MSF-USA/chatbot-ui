@@ -420,13 +420,13 @@ const Home = ({
         />
         <meta
           name="viewport"
-          content="height=device-height ,width=device-width, initial-scale=1, user-scalable=no"
+          content="height=device-height,width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {selectedConversation && (
         <main
-          className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white ${lightMode}`}
+          className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white overflow-x-hidden ${lightMode}`}
         >
           <div className="fixed top-0 w-full sm:hidden">
             <Navbar
