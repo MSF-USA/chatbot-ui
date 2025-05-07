@@ -1,0 +1,165 @@
+import { Session } from 'next-auth';
+
+// Types for terms and privacy policy
+export interface TermsDocument {
+  content: string;
+  version: string;
+  hash: string;
+  required: boolean;
+}
+
+export interface TermsData {
+  platformTerms: TermsDocument;
+  privacyPolicy: TermsDocument;
+  [key: string]: TermsDocument; // Allow for future additional documents
+}
+
+export interface AcceptanceRecord {
+  documentType: string;
+  version: string;
+  hash: string;
+  acceptedAt: number; // timestamp
+}
+
+export interface UserAcceptance {
+  userId: string;
+  acceptedDocuments: AcceptanceRecord[];
+}
+
+// Local storage key
+const TERMS_ACCEPTANCE_KEY = 'chatbot_terms_acceptance';
+
+export const getUserAcceptance = (userId: string): UserAcceptance | null => {
+  if (typeof window === 'undefined') return null;
+
+  let storage: Storage;
+  try {
+    storage = window.localStorage;
+  } catch {
+    return null;
+  }
+
+  try {
+    const allAcceptances = storage.getItem(TERMS_ACCEPTANCE_KEY);
+    if (!allAcceptances) return null;
+
+    const acceptances: UserAcceptance[] = JSON.parse(allAcceptances);
+    return acceptances.find(a => a.userId === userId) || null;
+  } catch (error) {
+    console.error('Error retrieving terms acceptance from localStorage:', error);
+    return null;
+  }
+};
+
+// Function to save user acceptance to localStorage
+export const saveUserAcceptance = (
+  userId: string,
+  documentType: string,
+  version: string,
+  hash: string
+): void => {
+  if (typeof window === 'undefined') return; // Not in browser environment
+
+  try {
+    const allAcceptancesStr = localStorage.getItem(TERMS_ACCEPTANCE_KEY);
+    const allAcceptances: UserAcceptance[] = allAcceptancesStr
+      ? JSON.parse(allAcceptancesStr)
+      : [];
+
+    const userAcceptance = allAcceptances.find(a => a.userId === userId);
+
+    const newAcceptanceRecord: AcceptanceRecord = {
+      documentType,
+      version,
+      hash,
+      acceptedAt: Date.now()
+    };
+
+    if (userAcceptance) {
+      // Update existing record or add new one
+      const existingRecordIndex = userAcceptance.acceptedDocuments.findIndex(
+        doc => doc.documentType === documentType
+      );
+
+      if (existingRecordIndex >= 0) {
+        userAcceptance.acceptedDocuments[existingRecordIndex] = newAcceptanceRecord;
+      } else {
+        userAcceptance.acceptedDocuments.push(newAcceptanceRecord);
+      }
+    } else {
+      // Create new user acceptance record
+      allAcceptances.push({
+        userId,
+        acceptedDocuments: [newAcceptanceRecord]
+      });
+    }
+
+    localStorage.setItem(TERMS_ACCEPTANCE_KEY, JSON.stringify(allAcceptances));
+  } catch (error) {
+    console.error('Error saving terms acceptance to localStorage:', error);
+  }
+};
+
+// Function to check if a user has accepted a specific document
+export const hasUserAcceptedDocument = (
+  userId: string,
+  documentType: string,
+  version: string,
+  hash: string
+): boolean => {
+  const userAcceptance = getUserAcceptance(userId);
+  if (!userAcceptance) return false;
+
+  const acceptedDocument = userAcceptance.acceptedDocuments.find(
+    doc => doc.documentType === documentType
+  );
+
+  if (!acceptedDocument) return false;
+
+  // Check if the version and hash match
+  return acceptedDocument.version === version && acceptedDocument.hash === hash;
+};
+
+// Function to check if a user has accepted all required documents
+export const hasUserAcceptedAllRequiredDocuments = (
+  userId: string,
+  termsData: TermsData
+): boolean => {
+  for (const [docType, document] of Object.entries(termsData)) {
+    if (document.required && !hasUserAcceptedDocument(userId, docType, document.version, document.hash)) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+// Function to fetch the latest terms data from the API
+export const fetchTermsData = async (): Promise<TermsData> => {
+  try {
+    const response = await fetch('/api/v2/terms');
+    if (!response.ok) {
+      throw new Error('Failed to fetch terms data');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching terms data:', error);
+    throw error;
+  }
+};
+
+// Function to check if the user needs to accept terms
+export const checkUserTermsAcceptance = async (user: Session['user']): Promise<boolean> => {
+  if (!user) return false;
+
+  try {
+    const userId = user?.id || user?.mail || '';
+    if (!userId) return false;
+
+    const termsData = await fetchTermsData();
+    return hasUserAcceptedAllRequiredDocuments(userId, termsData);
+  } catch (error) {
+    console.error('Error checking terms acceptance:', error);
+    return false; // Default to requiring acceptance if there's an error
+  }
+};
