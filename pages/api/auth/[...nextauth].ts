@@ -14,7 +14,7 @@ declare module 'next-auth/jwt' {
 interface UserData {
   id: string;
   givenName: string;
-  surName: string;
+  surname: string;
   displayName: string;
   jobTitle?: string;
   department?: string;
@@ -87,7 +87,7 @@ async function fetchUserData(accessToken: string): Promise<UserData> {
   return {
     id: userData.id,
     givenName: userData.givenName,
-    surName: userData.surname,
+    surname: userData.surname,
     displayName: userData.displayName,
     jobTitle: userData.jobTitle,
     department: userData.department,
