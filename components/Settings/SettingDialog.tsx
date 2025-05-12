@@ -83,10 +83,6 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     homeDispatch({ field: 'lightMode', value: state.theme });
     homeDispatch({ field: 'temperature', value: state.temperature });
     homeDispatch({ field: 'systemPrompt', value: state.systemPrompt });
-    homeDispatch({
-      field: 'runTypeWriterIntroSetting',
-      value: state.runTypeWriterIntroSetting,
-    });
     saveSettings(state);
   };
 
@@ -96,7 +92,6 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       theme: defaultTheme,
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
-      runTypeWriterIntroSetting: true,
     };
     homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
@@ -104,7 +99,6 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       field: 'systemPrompt',
       value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
     });
-    homeDispatch({ field: 'runTypeWriterIntroSetting', value: true });
     saveSettings(defaultSettings);
   };
 
@@ -231,31 +225,6 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                     <option className={'bg-white dark:bg-black'} value="dark">{t('Dark mode')}</option>
                     <option className={'bg-white dark:bg-black'} value="light">{t('Light mode')}</option>
                   </select>
-                </div>
-                <div className="flex flex-row justify-between items-center my-10">
-                  <div className="text-sm font-bold text-black dark:text-neutral-200">
-                    {t('Run Typewriter Intro')}
-                  </div>
-                  <Switch
-                    checked={state.runTypeWriterIntroSetting}
-                    onChange={(value) =>
-                      dispatch({ field: 'runTypeWriterIntroSetting', value })
-                    }
-                    className={`${
-                      state.runTypeWriterIntroSetting
-                        ? 'bg-blue-600'
-                        : 'bg-gray-400'
-                    } relative inline-flex h-6 w-14 cursor-pointer rounded-full transition-colors duration-200 ease-in-out focus:outline-none`}
-                  >
-                    <span
-                      aria-hidden="true"
-                      className={`${
-                        state.runTypeWriterIntroSetting
-                          ? 'translate-x-8'
-                          : 'translate-x-0'
-                      } inline-block h-6 w-6 transform rounded-full dark:bg-white bg-gray-300 shadow-lg transition duration-200 ease-in-out`}
-                    />
-                  </Switch>
                 </div>
                 <div className="flex justify-end mr-1">
                   <button
