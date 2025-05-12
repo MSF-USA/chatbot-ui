@@ -6,6 +6,5 @@
   "Theme": "tema",
   "sendFeedback": "Geri bildirim gönder",
   "modelSelectionDialogue": "AI Model Seçimi",
-  "Run Typewriter Intro": "Daktilo Girişini Çalıştır",
   "temperatureDescription": "0.8 gibi daha yüksek değerler çıktıyı daha yaratıcı yaparken, 0.2 gibi daha düşük değerler çıktıyı daha odaklı ve deterministik yapar."
 }

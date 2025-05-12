@@ -45,7 +45,6 @@
   "appName": "עוזר AI של MSF",
   "modelSelectionDialogue": "בחירת מודל AI:",
   "temperatureDescription": "ערכים גבוהים יותר כמו 0.8 יהפכו את הפלט ליצירתי יותר, בעוד שערכים נמוכים יותר כמו 0.2 יהפכו אותו לממוקד ודטרמיניסטי יותר.",
-  "Run Typewriter Intro": "הפעל הקדמה של מכונת כתיבה",
   "defaultWebPullerQuestion": "אנא סכם את התוכן מהעמוד הזה.",
   "webPullerCitationPrompt": "ציין כל טענה שאתה מבצע מהטקסט והתייחס לכתובת ה-URL",
   "webPullerReferencePrompt": "התייחס גם לכותרת, למקור המשוער, למחבר(ים) ולתאריך הפרסום כאשר הם זמינים ורלוונטיים.",

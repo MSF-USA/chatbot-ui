@@ -45,7 +45,6 @@
   "appName": "MSF AIアシスタント",
   "modelSelectionDialogue": "AIモデル選択：",
   "temperatureDescription": "0.8のような高い値は出力をより創造的にし、0.2のような低い値はより集中して決定論的にします。",
-  "Run Typewriter Intro": "タイプライターイントロを実行",
   "defaultWebPullerQuestion": "このウェブページの内容を要約してください。",
   "webPullerCitationPrompt": "文中の主張を引用し、URLを参照してください",
   "webPullerReferencePrompt": "また、タイトル、明らかな出典、著者、および利用可能で関連する場合の発行日を参照してください。",
