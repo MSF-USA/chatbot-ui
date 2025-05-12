@@ -1,6 +1,6 @@
 import {AzureOpenAI, OpenAI} from "openai";
 import { Session } from "next-auth";
-import ChatCompletionMessageParam = OpenAI.ChatCompletionMessageParam;
+import {ChatCompletionMessageParam} from "openai/resources/chat/completions/completions";
 
 type OptimizedQueryResponse = {
   optimizedQuery: string;

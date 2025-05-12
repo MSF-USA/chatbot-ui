@@ -13,7 +13,10 @@ import {promisify} from "util";
 
 const unlinkAsync = promisify(fs.unlink);
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+    request: NextRequest,
+    { params }: { params: Promise<{ id: string }> }
+) {
   // @ts-ignore
   const token: JWT | null = await getToken({ req: request });
   if (!token) throw new Error(`Token could not be pulled from request: ${request}`);
@@ -21,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const session: Session | null = await getServerSession(authOptions as any);
   if (!session) throw new Error("Failed to pull session!");
 
-  const { id } = params;
+  const { id } = await params;
 
   const { searchParams } = new URL(request.url);
   let transcriptionServiceName = searchParams.get('service');

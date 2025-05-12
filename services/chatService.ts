@@ -48,6 +48,7 @@ import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion } from 'openai/resources';
 import path from 'path';
+import {ResponseCreateParamsBase, ResponseInput} from "openai/resources/responses/responses";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -65,7 +66,7 @@ export default class ChatService {
 
     this.openAIClient = new AzureOpenAI({
       azureADTokenProvider,
-      apiVersion: '2024-08-01-preview',
+      apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
     });
 
     this.loggingService = new AzureMonitorLoggingService(
@@ -319,6 +320,58 @@ export default class ChatService {
           });
         }
       } else {
+        // TODO: Fix special handling for reasoning models
+        if (this.isReasoningModel(modelId)) {
+        // For reasoning models:
+        // 1. Skip system messages
+        // 2. Force temperature to 1 or leave out
+        // 3. Don't stream responses
+        // 4. Don't specify max tokens (I think this is no longer required)
+        if (promptToSend && messages.length > 0 && messages[0].role === 'user') {
+          const firstUserMessage = messages[0];
+          const content = firstUserMessage.content;
+
+          // If content is a string, prepend the system prompt
+          if (typeof content === 'string') {
+            firstUserMessage.content = `${promptToSend}\n\n${content}`;
+          } else if (Array.isArray(content)) {
+            // If content is an array, add system prompt to the first text element
+            const textContent = (content as any[]).find(item => item.type === 'text');
+            if (textContent && 'text' in textContent) {
+              textContent.text = `${promptToSend}\n\n${textContent.text}`;
+            }
+          }
+        }
+
+        const chatCompletionParams: ResponseCreateParamsBase = {
+          model: modelId,
+          input: messages as ResponseInput,
+          user: JSON.stringify(user),
+          stream: false
+        }
+        console.log("chatCompletionParams", chatCompletionParams)
+
+        const responseData = await this.openAIClient.responses.create(chatCompletionParams);
+        const response = responseData as OpenAI.Responses.Response;
+
+        const completion = response.output_text;
+
+        // Log regular chat completion
+        await this.loggingService.logChatCompletion(
+            startTime,
+            modelId,
+            messages.length,
+            1, // Log with temperature = 1
+            user,
+            botId,
+        );
+
+        return new Response(
+            JSON.stringify({ text: completion }),
+            { headers: { 'Content-Type': 'application/json' } },
+        );
+      } else {
+        // Normal model handling (unchanged)
         const messagesWithSystemPrompt = [
           {
             role: 'system',
@@ -330,7 +383,7 @@ export default class ChatService {
         const response = await this.openAIClient.chat.completions.create({
           model: modelId,
           messages:
-            messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+              messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature,
           stream: streamResponse,
           user: JSON.stringify(user),
@@ -338,17 +391,17 @@ export default class ChatService {
 
         if (streamResponse) {
           const processedStream = createAzureOpenAIStreamProcessor(
-            response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+              response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
           );
 
           // Log regular chat completion
           await this.loggingService.logChatCompletion(
-            startTime,
-            modelId,
-            messages.length,
-            temperature,
-            user,
-            botId,
+              startTime,
+              modelId,
+              messages.length,
+              temperature,
+              user,
+              botId,
           );
 
           return new StreamingTextResponse(processedStream);
@@ -358,18 +411,19 @@ export default class ChatService {
 
         // Log regular chat completion
         await this.loggingService.logChatCompletion(
-          startTime,
-          modelId,
-          messages.length,
-          temperature,
-          user,
-          botId,
+            startTime,
+            modelId,
+            messages.length,
+            temperature,
+            user,
+            botId,
         );
 
         return new Response(
           JSON.stringify({ text: completion.choices[0]?.message?.content }),
           { headers: { 'Content-Type': 'application/json' } },
         );
+      }
       }
     } catch (error) {
       await this.loggingService.logError(
@@ -411,7 +465,12 @@ export default class ChatService {
 
     const encoding = await this.initTiktoken();
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
-    const temperatureToUse = temperature ?? DEFAULT_TEMPERATURE;
+
+    // Use fixed temperature of 1 for reasoning models, otherwise use provided temperature or default
+    const temperatureToUse = this.isReasoningModel(model.id) ? 1 : (temperature ?? DEFAULT_TEMPERATURE);
+
+    // Never stream for reasoning models, otherwise use provided stream value
+    const shouldStream = this.isReasoningModel(model.id) ? false : stream;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
     const needsToHandleFiles: boolean =
@@ -455,7 +514,7 @@ export default class ChatService {
         model.id,
         user,
         botId,
-        stream,
+        shouldStream,
       );
     } else {
       return this.handleChatCompletion(
@@ -464,9 +523,17 @@ export default class ChatService {
         temperatureToUse,
         user,
         botId,
-        stream,
+        shouldStream,
         promptToSend,
       );
     }
+  }
+
+  private isReasoningModel(id: OpenAIModelID | string) {
+    return [
+      OpenAIModelID.GPT_o1,
+      OpenAIModelID.GPT_o1_mini,
+      OpenAIModelID.GPT_o3_mini
+    ].includes(id as OpenAIModelID);
   }
 }
