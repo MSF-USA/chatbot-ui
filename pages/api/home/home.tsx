@@ -122,7 +122,6 @@ const Home = ({
 
   useEffect(() => {
     if (user) dispatch({ field: 'user', value: user });
-    console.log(session);
   }, [user, dispatch]);
 
   useEffect(() => {
