@@ -395,7 +395,7 @@ const ChatInputSearch = ({
               {t('chatUrlInputTitle')}
             </button>
             <button
-              onClick={onClose} // Use onClose to tell parent to close
+              onClick={onClose}
               className="absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
               aria-label={t('closeModalAriaLabel') || 'Close modal'}
             >
@@ -418,42 +418,40 @@ const ChatInputSearch = ({
 
           {mode === 'url' && (
             <form onSubmit={handleUrlSubmit} className={'mt-1'}>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label
-                    htmlFor="url-input"
-                    className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                  >
-                    URL
-                  </label>
-                  <input
-                    ref={urlInputRef}
-                    id="url-input"
-                    type="url"
-                    value={urlInput}
-                    onChange={(e) => setUrlInput(e.target.value)}
-                    placeholder="https://example.com"
-                    required
-                    disabled={isSubmitting}
-                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                  />
+              <div className="space-y-4 py-4">
+                <div className="flex flex-col">
+                  <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
+                    {t('webUrlInputDescription')}
+                  </em>
+                  <div className="flex items-center gap-4">
+                    <input
+                      ref={urlInputRef}
+                      id="url-input"
+                      type="url"
+                      value={urlInput}
+                      onChange={(e) => setUrlInput(e.target.value)}
+                      placeholder="https://example.com"
+                      required
+                      disabled={isSubmitting}
+                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <label
-                    htmlFor="url-question-input"
-                    className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                  >
-                    {t('webPullerQuestionLabel')}
-                  </label>
-                  <input
-                    id="url-question-input"
-                    type="text"
-                    value={urlQuestionInput}
-                    onChange={(e) => setUrlQuestionInput(e.target.value)}
-                    placeholder={t('webPullerQuestionPlaceholder')}
-                    disabled={isSubmitting}
-                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                  />
+                <div className="flex flex-col">
+                  <em className="text-sm text-gray-500 dark:text-gray-400 mb-1 ml-1">
+                    {t('webUrlQuestionDescription')}
+                  </em>
+                  <div className="flex items-center gap-4">
+                    <input
+                      id="url-question-input"
+                      type="text"
+                      value={urlQuestionInput}
+                      onChange={(e) => setUrlQuestionInput(e.target.value)}
+                      placeholder={t('defaultWebPullerQuestion')}
+                      disabled={isSubmitting}
+                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                    />
+                  </div>
                 </div>
                 {urlError && (
                   <p className="text-red-500 text-sm mt-2 col-span-4 text-center">
@@ -466,9 +464,7 @@ const ChatInputSearch = ({
                   </p>
                 )}
               </div>
-              <div className="flex justify-start items-center mt-4 ml-[calc(25%+0.5rem)]">
-                {' '}
-                {/* Aligns with start of input fields */}
+              <div className="flex items-center">
                 <input
                   id="auto-submit-url"
                   type="checkbox"
@@ -498,21 +494,26 @@ const ChatInputSearch = ({
           {mode === 'search' && (
             <form onSubmit={handleSearchSubmit} className={'mt-1'}>
               <div className="space-y-4 py-4">
-                <div className="flex items-center">
-                  <div className="relative w-full">
-                    <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      id="search-term"
-                      type="text"
-                      value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                      placeholder={t('searchQueryPlaceholder')}
-                      required
-                      disabled={isSubmitting}
-                      title={t('searchQueryPlaceholder')}
-                      ref={searchInputRef}
-                      className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                    />
+                <div className="flex flex-col">
+                  <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
+                    {t('webSearchInputDescription')}
+                  </em>
+                  <div className="flex items-center">
+                    <div className="relative w-full">
+                      <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        id="search-term"
+                        type="text"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
+                        placeholder={t('searchQueryPlaceholder')}
+                        required
+                        disabled={isSubmitting}
+                        title={t('searchQueryPlaceholder')}
+                        ref={searchInputRef}
+                        className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">

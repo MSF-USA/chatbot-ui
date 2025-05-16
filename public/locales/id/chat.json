@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "Ubah",
   "chatFeaturesDropdownImageModal": "gambar",
   "chatFeaturesDropdownFile": "Berkas",
-  "chatFeaturesDropdownCompose": "Mengarang"
+  "chatFeaturesDropdownCompose": "Mengarang",
+  "webUrlInputDescription": "Masukkan URL situs web untuk analisis AI",
+  "webUrlQuestionDescription": "Apa yang ingin Anda ketahui tentang situs web ini?",
+  "webSearchInputDescription": "Cari di internet dengan analisis bertenaga AI"
 }

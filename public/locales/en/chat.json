@@ -117,5 +117,8 @@
   "chatFeaturesDropdownFile": "File",
   "chatFeaturesDropdownCompose": "Compose",
   "chatFeaturesDropdownTransform": "Transform",
-  "chatFeaturesDropdownWeb": "Web"
+  "chatFeaturesDropdownWeb": "Web",
+  "webUrlInputDescription": "Enter a website URL for AI to analyze",
+  "webUrlQuestionDescription": "What would you like to know about this website?",
+  "webSearchInputDescription": "Search the internet with AI-powered analysis"
 }

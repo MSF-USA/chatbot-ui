@@ -86,5 +86,8 @@
   "chatFeaturesDropdownTransform": "Přeměnit",
   "chatFeaturesDropdownImageModal": "obrázky",
   "chatFeaturesDropdownFile": "Soubor",
-  "chatFeaturesDropdownCompose": "Skládat"
+  "chatFeaturesDropdownCompose": "Skládat",
+  "webUrlInputDescription": "Zadejte URL webu pro analýzu pomocí AI",
+  "webUrlQuestionDescription": "Co byste chtěli vědět o této webové stránce?",
+  "webSearchInputDescription": "Prohledejte internet s AI-podporovanou analýzou"
 }

@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "Omvandla",
   "chatFeaturesDropdownImageModal": "bilder",
   "chatFeaturesDropdownFile": "Fil",
-  "chatFeaturesDropdownCompose": "Komponera"
+  "chatFeaturesDropdownCompose": "Komponera",
+  "webUrlInputDescription": "Ange en webbadress för AI-analys",
+  "webUrlQuestionDescription": "Vad vill du veta om denna webbplats?",
+  "webSearchInputDescription": "Sök på internet med AI-driven analys"
 }

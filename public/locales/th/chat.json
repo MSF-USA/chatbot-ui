@@ -86,5 +86,8 @@
   "chatFeaturesDropdownTransform": "แปลง",
   "chatFeaturesDropdownImageModal": "รูปภาพ",
   "chatFeaturesDropdownFile": "ไฟล์",
-  "chatFeaturesDropdownCompose": "ประพันธ์"
+  "chatFeaturesDropdownCompose": "ประพันธ์",
+  "webUrlInputDescription": "ป้อน URL เว็บไซต์สำหรับการวิเคราะห์ด้วย AI",
+  "webUrlQuestionDescription": "คุณต้องการทราบอะไรเกี่ยวกับเว็บไซต์นี้?",
+  "webSearchInputDescription": "ค้นหาข้อมูลในอินเทอร์เน็ตด้วยการวิเคราะห์จาก AI"
 }

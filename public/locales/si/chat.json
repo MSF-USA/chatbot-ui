@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "පරිවර්තනය",
   "chatFeaturesDropdownImageModal": "රූප",
   "chatFeaturesDropdownFile": "ගොනුව",
-  "chatFeaturesDropdownCompose": "රචනය"
+  "chatFeaturesDropdownCompose": "රචනය",
+  "webUrlInputDescription": "AI විශ්ලේෂණය සඳහා වෙබ් අඩවි URL ඇතුළත් කරන්න",
+  "webUrlQuestionDescription": "ඔබට මෙම වෙබ් අඩවිය ගැන දැන ගැනීමට අවශ්‍ය කුමක්ද?",
+  "webSearchInputDescription": "AI-බලගැන්වූ විශ්ලේෂණය සමඟ අන්තර්ජාලය සොයන්න"
 }

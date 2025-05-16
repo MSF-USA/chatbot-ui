@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "Umwandeln",
   "chatFeaturesDropdownImageModal": "Bilder",
   "chatFeaturesDropdownFile": "Datei",
-  "chatFeaturesDropdownCompose": "Komponieren"
+  "chatFeaturesDropdownCompose": "Komponieren",
+  "webUrlInputDescription": "Geben Sie eine URL für die KI-Analyse ein",
+  "webUrlQuestionDescription": "Was möchten Sie über diese Website wissen?",
+  "webSearchInputDescription": "Durchsuchen Sie das Internet mit KI-gestützter Analyse"
 }

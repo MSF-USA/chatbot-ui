@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "Преобразовать",
   "chatFeaturesDropdownImageModal": "изображения",
   "chatFeaturesDropdownFile": "Файл",
-  "chatFeaturesDropdownCompose": "Сочинять"
+  "chatFeaturesDropdownCompose": "Сочинять",
+  "webUrlInputDescription": "Введите URL сайта для анализа с помощью ИИ",
+  "webUrlQuestionDescription": "Что вы хотите узнать об этом сайте?",
+  "webSearchInputDescription": "Поиск в интернете с ИИ-анализом"
 }

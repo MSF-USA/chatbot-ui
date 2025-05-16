@@ -86,5 +86,8 @@
   "chatFeaturesDropdownTransform": "تبدیل",
   "chatFeaturesDropdownImageModal": "تصاویر",
   "chatFeaturesDropdownFile": "فایل",
-  "chatFeaturesDropdownCompose": "ترکیب"
+  "chatFeaturesDropdownCompose": "ترکیب",
+  "webUrlInputDescription": "URL وب‌سایت را برای تحلیل هوش مصنوعی وارد کنید",
+  "webUrlQuestionDescription": "می‌خواهید در مورد این وب‌سایت چه چیزی بدانید؟",
+  "webSearchInputDescription": "جستجو در اینترنت با تحلیل مبتنی بر هوش مصنوعی"
 }

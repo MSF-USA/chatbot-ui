@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "تحويل",
   "chatFeaturesDropdownImageModal": "صور",
   "chatFeaturesDropdownFile": "ملف",
-  "chatFeaturesDropdownCompose": "تأليف"
+  "chatFeaturesDropdownCompose": "تأليف",
+  "webUrlInputDescription": "أدخل عنوان URL لموقع للتحليل بواسطة الذكاء الاصطناعي",
+  "webUrlQuestionDescription": "ماذا تريد أن تعرف عن هذا الموقع؟",
+  "webSearchInputDescription": "ابحث في الإنترنت مع تحليل الذكاء الاصطناعي"
 }

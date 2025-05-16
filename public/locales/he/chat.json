@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "להפוך",
   "chatFeaturesDropdownImageModal": "תמונות",
   "chatFeaturesDropdownFile": "קובץ",
-  "chatFeaturesDropdownCompose": "לחבר"
+  "chatFeaturesDropdownCompose": "לחבר",
+  "webUrlInputDescription": "הזן כתובת URL של אתר לניתוח באמצעות בינה מלאכותית",
+  "webUrlQuestionDescription": "מה תרצה לדעת על אתר זה?",
+  "webSearchInputDescription": "חפש באינטרנט עם ניתוח מבוסס בינה מלאכותית"
 }

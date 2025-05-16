@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "Transformer",
   "chatFeaturesDropdownImageModal": "images",
   "chatFeaturesDropdownFile": "Fichier",
-  "chatFeaturesDropdownCompose": "Composer"
+  "chatFeaturesDropdownCompose": "Composer",
+  "webUrlInputDescription": "Saisissez une URL pour l'analyse par IA",
+  "webUrlQuestionDescription": "Que souhaitez-vous savoir sur ce site web ?",
+  "webSearchInputDescription": "Recherchez sur Internet avec une analyse IA"
 }

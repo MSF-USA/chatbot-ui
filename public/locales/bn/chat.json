@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "রূপান্তর",
   "chatFeaturesDropdownImageModal": "ছবিগুলি",
   "chatFeaturesDropdownFile": "ফাইল",
-  "chatFeaturesDropdownCompose": "সংকলন"
+  "chatFeaturesDropdownCompose": "সংকলন",
+  "webUrlInputDescription": "এআই বিশ্লেষণের জন্য ওয়েবসাইট URL লিখুন",
+  "webUrlQuestionDescription": "আপনি এই ওয়েবসাইট সম্পর্কে কী জানতে চান?",
+  "webSearchInputDescription": "এআই-চালিত বিশ্লেষণ সহ ইন্টারনেট অনুসন্ধান করুন"
 }

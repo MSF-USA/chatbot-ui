@@ -117,5 +117,8 @@
   "chatFeaturesDropdownTransform": "Transformar",
   "chatFeaturesDropdownImageModal": "imatges",
   "chatFeaturesDropdownFile": "Fitxer",
-  "chatFeaturesDropdownCompose": "Compondre"
+  "chatFeaturesDropdownCompose": "Compondre",
+  "webUrlInputDescription": "Introduïu una URL per a l'anàlisi amb IA",
+  "webUrlQuestionDescription": "Què voleu saber sobre aquest lloc web?",
+  "webSearchInputDescription": "Cerqueu a Internet amb anàlisi potenciat per IA"
 }
