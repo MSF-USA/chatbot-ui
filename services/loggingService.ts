@@ -124,7 +124,7 @@ export class AzureMonitorLoggingService {
       Status: 'success',
     };
 
-    await this.log(successEntry);
+    void this.log(successEntry);
   }
 
   async logError(
@@ -153,7 +153,7 @@ export class AzureMonitorLoggingService {
       StatusCode: error instanceof Error ? (error as any).status : 500,
     };
 
-    await this.log(errorEntry);
+    void this.log(errorEntry);
   }
 
   async logFileSuccess(
@@ -189,7 +189,7 @@ export class AzureMonitorLoggingService {
       ),
     };
 
-    await this.log(successEntry);
+    void this.log(successEntry);
   }
 
   async logFileError(
@@ -220,7 +220,7 @@ export class AzureMonitorLoggingService {
       ErrorStack: error instanceof Error ? error.stack : undefined,
     };
 
-    await this.log(errorEntry);
+    void this.log(errorEntry);
   }
 
   async logSearch(
@@ -241,7 +241,7 @@ export class AzureMonitorLoggingService {
       Duration: duration,
     };
 
-    await this.log(successEntry);
+    void this.log(successEntry);
   }
 
   async logSearchError(
@@ -260,7 +260,7 @@ export class AzureMonitorLoggingService {
       ErrorStack: error instanceof Error ? error.stack : undefined,
     };
 
-    await this.log(errorEntry);
+    void this.log(errorEntry);
   }
 
   private async log(data: LogEntry | FileLogEntry | SearchLogEntry) {
@@ -273,7 +273,7 @@ export class AzureMonitorLoggingService {
       console.log('Using Data Collection Rule ID:', this.ruleId);
       console.log('Using Stream Name:', this.streamName);
 
-      await this.client.upload(this.ruleId, this.streamName, [logEntry]);
+      void this.client.upload(this.ruleId, this.streamName, [logEntry]);
       console.log('Log entry sent successfully');
     } catch (error) {
       console.error('Error sending log entry:', error);
