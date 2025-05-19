@@ -9,6 +9,17 @@ import rehypeMathjax from "rehype-mathjax";
 import {CodeBlock} from "@/components/Markdown/CodeBlock";
 import {fetchImageBase64FromMessageContent} from "@/services/imageService";
 
+/**
+ * Properties for styling images in chat messages
+ */
+interface ImageStyleProps {
+    maxHeight?: string;
+    maxWidth?: string;
+}
+
+/**
+ * Props for the ChatMessageImage component
+ */
 interface ChatMessageImageProps {
     message: Message
     isEditing: boolean;
@@ -21,13 +32,15 @@ interface ChatMessageImageProps {
     toggleEditing: (event: any) => void;
     handleDeleteMessage: () => void;
     onEdit: (message: Message) => void;
-
 }
 
-interface ImageStyleProps {
-    maxHeight?: string;
-    maxWidth?: string;
-}
+/**
+ * ChatMessageImage Component
+ * 
+ * Renders a chat message that contains an image and optional text content.
+ * Provides responsive display with loading states and error handling for images.
+ * Supports expandable/collapsible image viewing and text editing.
+ */
 
 const ChatMessageImage: FC<ChatMessageImageProps> = (
   {
@@ -48,11 +61,13 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
     const {role, content} = message;
     const defaultImageStyleProps: ImageStyleProps = {maxHeight: '20rem', maxWidth: '30rem'}
 
-    const [image, setImage] = useState<ImageMessageContent | null>(null)
+    const [image, setImage] = useState<ImageMessageContent | null>(null);
     const [text, setText] = useState<TextMessageContent | null>(null);
     const [imageStyleProps, setImageStyleProps] = useState<ImageStyleProps>(defaultImageStyleProps);
     const [localTextContent, setLocalTextContent] = useState<string>("");
     const [imageBase64, setImageBase64] = useState("");
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [loadError, setLoadError] = useState<boolean>(false);
 
     useEffect(() => {
         if (text) {
@@ -71,24 +86,42 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
             } else if (contentMessage.type === 'text') {
                 setText(contentMessage);
             } else {
-                throw new Error(`Unexpected message type for message: ${contentMessage}`)
+                throw new Error(`Unexpected message type for message: ${contentMessage}`);
             }
-        })
+        });
     }, [content]);
 
     useEffect(() => {
         if (image) {
-            fetchImageBase64FromMessageContent(image).then(imageBase64String => {
-                setImageBase64(imageBase64String);
-            });
+            setIsLoading(true);
+            setLoadError(false);
+            
+            fetchImageBase64FromMessageContent(image)
+                .then(imageBase64String => {
+                    if (imageBase64String.length > 0) {
+                        setImageBase64(imageBase64String);
+                    } else {
+                        setLoadError(true);
+                    }
+                })
+                .catch(() => {
+                    setLoadError(true);
+                })
+                .finally(() => {
+                    setIsLoading(false);
+                });
         }
     }, [image]);
 
-    const toggleImageStyleProps = (event: any) => {
-        if (imageStyleProps?.maxHeight)
-            setImageStyleProps({})
-        else
+    /**
+     * Toggles between constrained and unconstrained image display
+     */
+    const toggleImageStyleProps = () => {
+        if (imageStyleProps?.maxHeight) {
+            setImageStyleProps({});
+        } else {
             setImageStyleProps(defaultImageStyleProps);
+        }
     }
 
     return <div
@@ -108,8 +141,39 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                   <IconUser size={30}/>
                 )}
             </div>
-            <img onClick={toggleImageStyleProps} className={'block hover:cursor-pointer'} style={imageStyleProps}
-                 src={imageBase64}/>
+            
+            {isLoading && (
+              <div className="w-full flex justify-center items-center min-h-[100px]">
+                <div className="bg-gray-200 dark:bg-gray-700 animate-pulse rounded w-2/3 h-[150px] flex items-center justify-center">
+                  <span className="text-gray-500 dark:text-gray-400">Loading image...</span>
+                </div>
+              </div>
+            )}
+            
+            {loadError && (
+              <div className="w-full flex justify-center items-center min-h-[100px]">
+                <div className="border border-red-300 dark:border-red-700 rounded p-4 text-red-500">
+                  <span>Failed to load image</span>
+                </div>
+              </div>
+            )}
+            
+            {!isLoading && !loadError && imageBase64 && (
+              <img 
+                onClick={toggleImageStyleProps} 
+                className="block hover:cursor-pointer max-w-full" 
+                style={{
+                  ...imageStyleProps,
+                  objectFit: 'contain',
+                  maxWidth: '100%',
+                  margin: '0 auto',
+                  height: 'auto'
+                }}
+                src={imageBase64}
+                alt="Chat message image"
+                onLoad={() => setIsLoading(false)}
+              />
+            )}
         </div>
         <div
           className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
