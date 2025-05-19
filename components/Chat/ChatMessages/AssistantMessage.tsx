@@ -164,6 +164,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
+  // Determine what to display - when streaming, use the raw content with citations stripped
+  // When not streaming, use the processed content
   const displayContentWithoutCitations = messageIsStreaming
     ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
     : displayContent;
@@ -198,6 +200,78 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
+  const StreamingIndicator = () => (
+    <span className="animate-pulse cursor-default inline-flex items-center ml-1 text-gray-500">
+      <IconLoader2 size={16} className="animate-spin mr-1" />
+    </span>
+  );
+
+  // Custom components for markdown processing
+  const customMarkdownComponents = {
+    code({ node, inline, className, children, ...props }: {
+      node: any;
+      inline?: boolean;
+      className?: string;
+      children: React.ReactNode[];
+      [key: string]: any;
+    }) {
+      if (children.length) {
+        if (children[0] == '▍') {
+          return (
+            <span className="animate-pulse cursor-default mt-1">
+              ▍
+            </span>
+          );
+        }
+      }
+
+      const match = /language-(\w+)/.exec(className || '');
+
+      return !inline ? (
+        <CodeBlock
+          key={Math.random()}
+          language={(match && match[1]) || ''}
+          value={String(children).replace(/\n$/, '')}
+          {...props}
+        />
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+    table({ children }: { children: React.ReactNode }) {
+      return (
+        <div className="overflow-auto">
+          <table className="border-collapse border border-black px-3 py-1 dark:border-white">
+            {children}
+          </table>
+        </div>
+      );
+    },
+    th({ children }: { children: React.ReactNode }) {
+      return (
+        <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
+          {children}
+        </th>
+      );
+    },
+    td({ children }: { children: React.ReactNode }) {
+      return (
+        <td className="break-words border border-black px-3 py-1 dark:border-white">
+          {children}
+        </td>
+      );
+    },
+    p({ children, ...props }: { children: React.ReactNode; [key: string]: any }) {
+      return (
+        <p {...props}>
+          {children}
+        </p>
+      );
+    }
+  };
+
   return (
     <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
       <div className="min-w-[40px] text-right font-bold">
@@ -226,127 +300,41 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           </div>
         )}
         <div className="flex flex-row">
-          {selectedConversation?.bot ? (
-            <CitationMarkdown
-              className="prose dark:prose-invert flex-1"
-              conversation={selectedConversation}
-              citations={citations}
-              remarkPlugins={remarkPlugins}
-              rehypePlugins={[rehypeMathjax]}
-              components={{
-                code({ node, inline, className, children, ...props }) {
-                  if (children.length) {
-                    if (children[0] == '▍') {
-                      return (
-                        <span className="animate-pulse cursor-default mt-1">
-                          ▍
-                        </span>
-                      );
-                    }
-                  }
-
-                  const match = /language-(\w+)/.exec(className || '');
-
-                  return !inline ? (
-                    <CodeBlock
-                      key={Math.random()}
-                      language={(match && match[1]) || ''}
-                      value={String(children).replace(/\n$/, '')}
-                      {...props}
-                    />
-                  ) : (
-                    <code className={className} {...props}>
-                      {children}
-                    </code>
-                  );
-                },
-                table({ children }) {
-                  return (
-                    <div className="overflow-auto">
-                      <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-                        {children}
-                      </table>
-                    </div>
-                  );
-                },
-                th({ children }) {
-                  return (
-                    <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-                      {children}
-                    </th>
-                  );
-                },
-                td({ children }) {
-                  return (
-                    <td className="break-words border border-black px-3 py-1 dark:border-white">
-                      {children}
-                    </td>
-                  );
-                },
-              }}
-            >
-              {displayContentWithoutCitations}
-            </CitationMarkdown>
-          ) : (
-            <MemoizedReactMarkdown
-              className="prose dark:prose-invert flex-1"
-              remarkPlugins={remarkPlugins}
-              rehypePlugins={[rehypeMathjax]}
-              components={{
-                code({ node, inline, className, children, ...props }) {
-                  if (children.length) {
-                    if (children[0] == '▍') {
-                      return (
-                        <span className="animate-pulse cursor-default mt-1">
-                          ▍
-                        </span>
-                      );
-                    }
-                  }
-
-                  const match = /language-(\w+)/.exec(className || '');
-
-                  return !inline ? (
-                    <CodeBlock
-                      key={Math.random()}
-                      language={(match && match[1]) || ''}
-                      value={String(children).replace(/\n$/, '')}
-                      {...props}
-                    />
-                  ) : (
-                    <code className={className} {...props}>
-                      {children}
-                    </code>
-                  );
-                },
-                table({ children }) {
-                  return (
-                    <div className="overflow-auto">
-                      <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-                        {children}
-                      </table>
-                    </div>
-                  );
-                },
-                th({ children }) {
-                  return (
-                    <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-                      {children}
-                    </th>
-                  );
-                },
-                td({ children }) {
-                  return (
-                    <td className="break-words border border-black px-3 py-1 dark:border-white">
-                      {children}
-                    </td>
-                  );
-                },
-              }}
-            >
-              {displayContentWithoutCitations}
-            </MemoizedReactMarkdown>
-          )}
+          <div className="flex-1 overflow-hidden">
+            {selectedConversation?.bot ? (
+              <>
+                <CitationMarkdown
+                  className="prose dark:prose-invert flex-1"
+                  conversation={selectedConversation}
+                  citations={citations}
+                  remarkPlugins={remarkPlugins}
+                  rehypePlugins={[rehypeMathjax]}
+                  components={customMarkdownComponents}
+                >
+                  {displayContentWithoutCitations}
+                </CitationMarkdown>
+                {/* Add streaming indicator at the end if content is streaming */}
+                {messageIsStreaming && displayContentWithoutCitations.length > 0 && (
+                  <StreamingIndicator />
+                )}
+              </>
+            ) : (
+              <>
+                <MemoizedReactMarkdown
+                  className="prose dark:prose-invert flex-1"
+                  remarkPlugins={remarkPlugins}
+                  rehypePlugins={[rehypeMathjax]}
+                  components={customMarkdownComponents}
+                >
+                  {displayContentWithoutCitations}
+                </MemoizedReactMarkdown>
+                {/* Add streaming indicator at the end if content is streaming */}
+                {messageIsStreaming && displayContentWithoutCitations.length > 0 && (
+                  <StreamingIndicator />
+                )}
+              </>
+            )}
+          </div>
 
           <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
             {messageCopied ? (
