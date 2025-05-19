@@ -416,14 +416,10 @@ const Home = ({
    */
   const swipeHandlers = useSwipeable({
     onSwipedLeft: () => {
-      if (!showChatbar) {
-        handleToggleChatbar();
-      }
+      handleToggleChatbar();
     },
     onSwipedRight: () => {
-      if (showChatbar) {
-        handleToggleChatbar();
-      }
+      handleToggleChatbar();
     },
     trackMouse: false,
     swipeDuration: 500,
