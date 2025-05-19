@@ -2,8 +2,12 @@ import {
   IconCheck,
   IconCopy,
   IconLoader2,
+  IconPlayerPause,
+  IconPlayerPlay,
   IconRobot,
   IconVolume,
+  IconVolumeOff,
+  IconX,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -47,11 +51,27 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioDuration, setAudioDuration] = useState<number>(0);
+  const [audioProgress, setAudioProgress] = useState<number>(0);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
-
+  
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const citationsProcessed = useRef(false);
   const processingAttempts = useRef(0);
+  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Clean up resources when component unmounts
+  useEffect(() => {
+    return () => {
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+      if (progressIntervalRef.current) {
+        clearInterval(progressIntervalRef.current);
+      }
+    };
+  }, [audioUrl]);
 
   useEffect(() => {
     const processContent = () => {
@@ -164,6 +184,60 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
+  // Format time from seconds to MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+
+  // Handle audio playback
+  const togglePlayback = () => {
+    if (!audioRef.current) return;
+    
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+  };
+
+  // Update progress bar during playback
+  const updateProgress = () => {
+    if (!audioRef.current) return;
+    
+    const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+    setAudioProgress(progress);
+  };
+
+  // Seek to position in audio when progress bar is clicked
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!audioRef.current) return;
+    
+    const progressBar = e.currentTarget;
+    const rect = progressBar.getBoundingClientRect();
+    const clickPosition = (e.clientX - rect.left) / rect.width;
+    
+    audioRef.current.currentTime = clickPosition * audioRef.current.duration;
+    setAudioProgress(clickPosition * 100);
+  };
+
+  // Clean up resources when audio playback ends
+  const handleAudioEnd = () => {
+    setIsPlaying(false);
+    setAudioProgress(0);
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  };
+
+  // Setup audio metadata when loaded
+  const handleAudioLoad = () => {
+    if (!audioRef.current) return;
+    setAudioDuration(audioRef.current.duration);
+  };
+
   // Determine what to display - when streaming, use the raw content with citations stripped
   // When not streaming, use the processed content
   const displayContentWithoutCitations = messageIsStreaming
@@ -192,12 +266,45 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setAudioUrl(url);
       setIsGeneratingAudio(false);
       setLoadingMessage(null);
+      
+      // Auto-play the audio after it's generated
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.play()
+            .then(() => {
+              setIsPlaying(true);
+              // Set up progress tracking interval
+              progressIntervalRef.current = setInterval(updateProgress, 100);
+            })
+            .catch(err => {
+              console.error('Failed to autoplay audio:', err);
+            });
+        }
+      }, 500);
     } catch (error) {
       console.error('Error in TTS:', error);
       setIsGeneratingAudio(false);
       setLoadingMessage('Error generating audio. Please try again.');
       setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
     }
+  };
+
+  // Close audio player and clean up resources
+  const handleCloseAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+    setIsPlaying(false);
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setAudioUrl(null);
+    }
+    setAudioProgress(0);
+    setAudioDuration(0);
   };
 
   const StreamingIndicator = () => (
@@ -284,21 +391,73 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             {loadingMessage}
           </div>
         )}
+        
+        {/* Enhanced Audio Player */}
         {audioUrl && (
-          <div className={'flex flex-row'}>
+          <div className="mb-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-2">
+            {/* Hidden native audio element for functionality */}
             <audio
+              ref={audioRef}
               src={audioUrl}
-              controls
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              onEnded={() => {
-                setIsPlaying(false);
-                URL.revokeObjectURL(audioUrl);
-                setAudioUrl(null);
+              onPlay={() => {
+                setIsPlaying(true);
+                if (progressIntervalRef.current === null) {
+                  progressIntervalRef.current = setInterval(updateProgress, 100);
+                }
               }}
+              onPause={() => {
+                setIsPlaying(false);
+                if (progressIntervalRef.current) {
+                  clearInterval(progressIntervalRef.current);
+                  progressIntervalRef.current = null;
+                }
+              }}
+              onEnded={handleAudioEnd}
+              onLoadedMetadata={handleAudioLoad}
+              className="hidden"
             />
+            
+            {/* Custom audio player UI */}
+            <div className="flex flex-col">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center">
+                  <button 
+                    onClick={togglePlayback}
+                    className="mr-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+                    aria-label={isPlaying ? "Pause" : "Play"}
+                  >
+                    {isPlaying ? 
+                      <IconPlayerPause size={20} /> : 
+                      <IconPlayerPlay size={20} />
+                    }
+                  </button>
+                  <div className="text-xs text-gray-600 dark:text-gray-300">
+                    {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(audioDuration)}
+                  </div>
+                </div>
+                <button
+                  onClick={handleCloseAudio}
+                  className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+                  aria-label="Close audio player"
+                >
+                  <IconX size={16} />
+                </button>
+              </div>
+              
+              {/* Progress bar */}
+              <div 
+                className="relative h-2 rounded-full bg-gray-200 dark:bg-gray-700 cursor-pointer"
+                onClick={handleSeek}
+              >
+                <div 
+                  className="absolute top-0 left-0 h-2 rounded-full bg-blue-500 dark:bg-blue-600"
+                  style={{ width: `${audioProgress}%` }}
+                ></div>
+              </div>
+            </div>
           </div>
         )}
+        
         <div className="flex flex-row">
           <div className="flex-1 overflow-hidden">
             {selectedConversation?.bot ? (
@@ -350,24 +509,28 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 <IconCopy size={20} />
               </button>
             )}
-            {!audioUrl && (
-              <button
-                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                onClick={handleTTS}
-                disabled={isGeneratingAudio}
-              >
-                {isGeneratingAudio ? (
-                  <div className="flex items-center">
-                    <IconLoader2 size={20} className="animate-spin mr-2" />
-                    <span className="text-xs">{loadingMessage}</span>
-                  </div>
-                ) : (
-                  <IconVolume size={20} />
-                )}
-              </button>
-            )}
+            
+            {/* Audio button */}
+            <button
+              className={`${audioUrl ? 'text-blue-500 dark:text-blue-400' : 'invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}
+              onClick={audioUrl ? handleCloseAudio : handleTTS}
+              disabled={isGeneratingAudio || messageIsStreaming}
+              aria-label={audioUrl ? "Stop audio" : "Listen to message"}
+              title={audioUrl ? "Stop audio" : "Listen to message"}
+            >
+              {isGeneratingAudio ? (
+                <div className="flex items-center">
+                  <IconLoader2 size={20} className="animate-spin mr-1" />
+                </div>
+              ) : audioUrl ? (
+                <IconVolumeOff size={20} />
+              ) : (
+                <IconVolume size={20} />
+              )}
+            </button>
           </div>
         </div>
+        
         {citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
