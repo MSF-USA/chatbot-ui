@@ -1,6 +1,7 @@
 import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
+import { useSwipeable } from 'react-swipeable';
 
 import { GetServerSideProps } from 'next';
 import { Session } from 'next-auth';
@@ -82,6 +83,7 @@ const Home = ({
       prompts,
       temperature,
       systemPrompt,
+      showChatbar
     },
     dispatch,
   } = contextValue;
@@ -399,6 +401,36 @@ const Home = ({
     dispatch({ field: 'conversations', value: updatedConversations });
   }
 
+  /**
+   * Toggles the visibility of the chatbar
+   */
+  const handleToggleChatbar = () => {
+    dispatch({ field: 'showChatbar', value: !showChatbar });
+    localStorage.setItem('showChatbar', JSON.stringify(!showChatbar));
+  };
+
+  /**
+   * Swipe handlers for mobile devices
+   * Swipe left: Open the chatbar if closed
+   * Swipe right: Close the chatbar if open
+   */
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      if (!showChatbar) {
+        handleToggleChatbar();
+      }
+    },
+    onSwipedRight: () => {
+      if (showChatbar) {
+        handleToggleChatbar();
+      }
+    },
+    trackMouse: false,
+    swipeDuration: 500,
+    preventScrollOnSwipe: true,
+    delta: 50,
+  });
+
   return (
     <HomeContext.Provider
       value={{
@@ -410,6 +442,7 @@ const Home = ({
         handleSelectConversation,
         handleUpdateConversation,
         user,
+        showChatbar
       }}
     >
       <Head>
@@ -438,7 +471,7 @@ const Home = ({
           <div className="flex h-full w-full pt-[48px] sm:pt-0">
             <Chatbar />
 
-            <div className="flex flex-1 w-full">
+            <div className="flex flex-1 w-full" {...swipeHandlers}>
               <Chat stopConversationRef={stopConversationRef} />
             </div>
           </div>
