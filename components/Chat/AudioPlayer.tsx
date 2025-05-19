@@ -16,17 +16,17 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
   const [audioDuration, setAudioDuration] = useState<number>(0);
   const [audioProgress, setAudioProgress] = useState<number>(0);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1);
-  
+
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  
+
   // Format time from seconds to MM:SS
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
-  
+
   // Clean up resources when component unmounts
   useEffect(() => {
     // Auto-play the audio when component mounts
@@ -41,45 +41,45 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
           console.error('Failed to autoplay audio:', err);
         });
     }
-    
+
     return () => {
       if (progressIntervalRef.current) {
         clearInterval(progressIntervalRef.current);
       }
     };
   }, []);
-  
+
   // Update progress bar during playback
   const updateProgress = () => {
     if (!audioRef.current) return;
-    
+
     const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
     setAudioProgress(progress);
   };
-  
+
   // Toggle play/pause
   const togglePlayback = () => {
     if (!audioRef.current) return;
-    
+
     if (isPlaying) {
       audioRef.current.pause();
     } else {
       audioRef.current.play();
     }
   };
-  
+
   // Seek to position in audio when progress bar is clicked
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!audioRef.current) return;
-    
+
     const progressBar = e.currentTarget;
     const rect = progressBar.getBoundingClientRect();
     const clickPosition = (e.clientX - rect.left) / rect.width;
-    
+
     audioRef.current.currentTime = clickPosition * audioRef.current.duration;
     setAudioProgress(clickPosition * 100);
   };
-  
+
   // Clean up resources when audio playback ends
   const handleAudioEnd = () => {
     setIsPlaying(false);
@@ -89,27 +89,27 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
       progressIntervalRef.current = null;
     }
   };
-  
+
   // Setup audio metadata when loaded
   const handleAudioLoad = () => {
     if (!audioRef.current) return;
     setAudioDuration(audioRef.current.duration);
   };
-  
+
   // Change playback speed
   const changePlaybackSpeed = () => {
     if (!audioRef.current) return;
-    
+
     // Cycle through common playback speeds: 1.0 -> 1.5 -> 2.0 -> 0.75 -> 1.0
-    const speeds = [1, 1.5, 2, 0.75];
+    const speeds = [1, 1.25, 1.5, 1.75, 2, 0.75];
     const currentIndex = speeds.indexOf(playbackSpeed);
     const nextIndex = (currentIndex + 1) % speeds.length;
     const newSpeed = speeds[nextIndex];
-    
+
     setPlaybackSpeed(newSpeed);
     audioRef.current.playbackRate = newSpeed;
   };
-  
+
   // Download audio file
   const handleDownload = () => {
     const a = document.createElement('a');
@@ -119,7 +119,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     a.click();
     document.body.removeChild(a);
   };
-  
+
   return (
     <div className="mb-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
       {/* Hidden native audio element for functionality */}
@@ -143,18 +143,18 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
         onLoadedMetadata={handleAudioLoad}
         className="hidden"
       />
-      
+
       {/* Custom audio player UI */}
       <div className="flex flex-col">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center">
-            <button 
+            <button
               onClick={togglePlayback}
               className="mr-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
               aria-label={isPlaying ? "Pause" : "Play"}
             >
-              {isPlaying ? 
-                <IconPlayerPause size={20} /> : 
+              {isPlaying ?
+                <IconPlayerPause size={20} /> :
                 <IconPlayerPlay size={20} />
               }
             </button>
@@ -162,7 +162,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
               {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(audioDuration)}
             </div>
           </div>
-          
+
           <div className="flex items-center">
             {/* Playback speed button */}
             <button
@@ -173,9 +173,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             >
               {playbackSpeed}x
             </button>
-            
+
             {/* Download button */}
-            <button 
+            <button
               onClick={handleDownload}
               className="mx-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
               aria-label="Download audio"
@@ -183,7 +183,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             >
               <IconDownload size={18} />
             </button>
-            
+
             {/* Close button */}
             <button
               onClick={onClose}
@@ -195,13 +195,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             </button>
           </div>
         </div>
-        
+
         {/* Progress bar */}
-        <div 
+        <div
           className="relative h-2 rounded-full bg-gray-200 dark:bg-gray-700 cursor-pointer"
           onClick={handleSeek}
         >
-          <div 
+          <div
             className="absolute top-0 left-0 h-2 rounded-full bg-blue-500 dark:bg-blue-600 transition-all duration-100"
             style={{ width: `${audioProgress}%` }}
           ></div>
