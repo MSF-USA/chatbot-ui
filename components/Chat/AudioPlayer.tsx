@@ -190,9 +190,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
                   {playbackSpeed}x <IconChevronDown size={14} className="ml-1" />
                 </button>
 
-                {/* Speed dropdown menu */}
+                {/* Speed dropdown menu - now appears above the button */}
                 {showSpeedDropdown && (
-                    <div className="absolute right-0 mt-1 w-20 bg-white dark:bg-gray-800 rounded shadow-lg border border-gray-200 dark:border-gray-700 z-10">
+                    <div className="absolute right-0 bottom-full mb-1 w-20 bg-white dark:bg-gray-800 rounded shadow-lg border border-gray-200 dark:border-gray-700 z-10">
                       {speeds.map((speed) => (
                           <button
                               key={speed}
