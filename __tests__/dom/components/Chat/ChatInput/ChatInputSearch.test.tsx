@@ -99,6 +99,7 @@ describe('ChatInputSearch Component', () => {
     (fetch as Mock).mockClear();
 
     // Spy on global.URL and provide our mock implementation for its constructor
+    //@ts-ignore
     urlSpy = vi.spyOn(globalThis, 'URL', 'get');
     urlSpy.mockImplementation(() => {
       const MockURLConstructor = function (urlStringInput: string | URL) {
