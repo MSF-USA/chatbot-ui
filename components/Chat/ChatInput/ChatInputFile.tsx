@@ -3,6 +3,7 @@ import React, {ChangeEvent, Dispatch, MutableRefObject, SetStateAction, useConte
 import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from "@/types/chat";
 import {userAuthorizedForFileUploads} from "@/utils/app/userAuth";
 import HomeContext from "@/pages/api/home/home.context";
+import toast from "react-hot-toast";
 
 interface ChatInputFileProps {
     onFileUpload: (
@@ -34,13 +35,30 @@ const ChatInputFile = (
   } = useContext(HomeContext);
   if (!userAuthorizedForFileUploads(user)) return null;
 
+  const handleFileButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    try {
+      if (fileInputRef.current) {
+        fileInputRef.current.click();
+      } else {
+        console.error("File input reference is not available");
+        toast.error("Could not open file picker. Try using drag and drop instead.");
+      }
+    } catch (error) {
+      console.error("Error triggering file input:", error);
+      toast.error("Could not open file picker. Try using drag and drop instead.");
+    }
+  };
+
   return (
     <>
       <input
         type="file"
         multiple
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        className="opacity-0 absolute w-px h-px overflow-hidden" 
+        aria-hidden="true"
+        tabIndex={-1}
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           event.preventDefault();
           onFileUpload(
@@ -55,10 +73,7 @@ const ChatInputFile = (
       />
       <div className="relative group">
       <button
-        onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-          event.preventDefault();
-          fileInputRef.current?.click();
-        }}
+        onClick={handleFileButtonClick}
         className="flex"
       >
         <FileIcon className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
