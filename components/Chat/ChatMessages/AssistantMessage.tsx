@@ -184,7 +184,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     try {
       setIsGeneratingAudio(true);
       setLoadingMessage('Generating audio...');
-      
+
       const response = await fetch('/api/v2/tts', {
         method: 'POST',
         headers: {
@@ -303,16 +303,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             {loadingMessage}
           </div>
         )}
-        
-        {/* Use our new AudioPlayer component */}
-        {audioUrl && (
-          <AudioPlayer 
-            audioUrl={audioUrl} 
-            onClose={handleCloseAudio} 
-          />
-        )}
-        
-        <div className="flex flex-row">
+
+        <div className="flex flex-col">
           <div className="flex-1 overflow-hidden">
             {selectedConversation?.bot ? (
               <>
@@ -349,42 +341,68 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
 
-          <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
-            {messageCopied ? (
-              <IconCheck
-                size={20}
-                className="text-green-500 dark:text-green-400"
-              />
-            ) : (
-              <button
-                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                onClick={copyOnClick}
-              >
-                <IconCopy size={20} />
-              </button>
-            )}
-            
-            {/* Audio button */}
+          {/* Fixed action buttons at the bottom of the message */}
+          <div className="flex justify-end items-center mt-3 sm:mt-4 space-x-2">
+            {/* Copy button */}
             <button
-              className={`${audioUrl ? 'text-blue-500 dark:text-blue-400' : 'invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'}`}
+              className={`px-2 py-1 text-sm rounded-md flex items-center ${
+                messageCopied 
+                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              }`}
+              onClick={copyOnClick}
+              aria-label={messageCopied ? "Copied" : "Copy message"}
+              title={messageCopied ? "Copied" : "Copy message"}
+            >
+              {messageCopied ? (
+                <>
+                  <IconCheck size={16} className="mr-1" />
+                </>
+              ) : (
+                <>
+                  <IconCopy size={16} className="mr-1" />
+                </>
+              )}
+            </button>
+
+            {/* Listen button */}
+            <button
+              className={`px-2 py-1 text-sm rounded-md flex items-center ${
+                audioUrl
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  : isGeneratingAudio
+                    ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              }`}
               onClick={audioUrl ? handleCloseAudio : handleTTS}
               disabled={isGeneratingAudio || messageIsStreaming}
-              aria-label={audioUrl ? "Stop audio" : "Listen to message"}
-              title={audioUrl ? "Stop audio" : "Listen to message"}
+              aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
+              title={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen to this message"}
             >
               {isGeneratingAudio ? (
-                <div className="flex items-center">
-                  <IconLoader2 size={20} className="animate-spin mr-1" />
-                </div>
+                <>
+                  <IconLoader2 size={16} className="animate-spin mr-1" />
+                </>
               ) : audioUrl ? (
-                <IconVolumeOff size={20} />
+                <>
+                  <IconVolumeOff size={16} className="mr-1" />
+                </>
               ) : (
-                <IconVolume size={20} />
+                <>
+                  <IconVolume size={16} className="mr-1" />
+                </>
               )}
             </button>
           </div>
+
+          {audioUrl && (
+              <AudioPlayer
+                  audioUrl={audioUrl}
+                  onClose={handleCloseAudio}
+              />
+          )}
         </div>
-        
+
         {citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
