@@ -229,8 +229,12 @@ const Dropdown: React.FC<DropdownProps> = ({
       {/* Toggle Dropdown Button */}
       <div className="group">
         <button
-          onClick={() => setIsOpen(!isOpen)}
-          aria-haspopup="true"
+            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+              event.stopPropagation();
+              setIsOpen(!isOpen);
+            }}
+
+            aria-haspopup="true"
           aria-expanded={isOpen}
           aria-label="Toggle dropdown menu"
           className="focus:outline-none flex"
@@ -246,7 +250,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute ml-8 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
+          className="absolute ml-12 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
           tabIndex={-1}
           role="menu"
         >
