@@ -1,11 +1,11 @@
 {
-  "Dark mode": "Dark mode",
-  "Light mode": "Light mode",
-  "Save": "Save",
-  "Settings": "Settings",
-  "Theme": "Theme",
-  "sendFeedback": "Request Support",
-  "Run Typewriter Intro": "Run Typewriter Intro",
-  "temperatureDescription": "Higher values like 0.8 will make the output more creative, while lower values like 0.2 will make it more focused and deterministic.",
-  "modelSelectionDialogue": "AI Model Selection:"
+  "Light mode": "لائٹ موڈ",
+  "Run Typewriter Intro": "ٹائپ رائٹر تعارف چلائیں",
+  "Theme": "تھیم",
+  "Save": "محفوظ کریں",
+  "modelSelectionDialogue": "مصنوعی ذہانت ماڈل انتخاب:",
+  "temperatureDescription": "0.8 جیسی اعلی قدریں آؤٹ پٹ کو زیادہ تخلیقی بنائیں گی، جبکہ 0.2 جیسی کم قدریں اسے زیادہ مرکوز اور متعین بنائیں گی۔",
+  "Settings": "ترتیبات",
+  "Dark mode": "ڈارک موڈ",
+  "sendFeedback": "معاونت کی درخواست کریں"
 }
