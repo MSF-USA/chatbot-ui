@@ -4,6 +4,7 @@ import React, {
   SetStateAction,
   useContext,
   useEffect,
+  useImperativeHandle,
   useRef,
 } from 'react';
 import toast from 'react-hot-toast';
@@ -115,6 +116,7 @@ export interface ChatInputImageProps {
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   simulateClick?: boolean;
   labelText?: string;
+  imageInputRef?: React.RefObject<{ openFilePicker: () => void }>;
 }
 
 const ChatInputImage = ({
@@ -125,8 +127,16 @@ const ChatInputImage = ({
   setUploadProgress,
   setParentModalIsOpen,
   labelText,
+  imageInputRef,
 }: ChatInputImageProps) => {
-  const imageInputRef: MutableRefObject<any> = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(imageInputRef, () => ({
+    openFilePicker: () => {
+      fileInputRef.current?.click();
+    }
+  }));
+
   const openModalButtonRef: MutableRefObject<any> = useRef(null);
 
   const {
@@ -139,7 +149,7 @@ const ChatInputImage = ({
     <>
       <input
         type="file"
-        ref={imageInputRef}
+        ref={fileInputRef}
         style={{ display: 'none' }}
         onChange={(event) => {
           onFileUpload(
@@ -156,8 +166,9 @@ const ChatInputImage = ({
         accept={'image/*'}
       />
       <button
+        style={{display: 'none' }}
         onClick={(e) => {
-          onImageUploadButtonClick(e, imageInputRef);
+          onImageUploadButtonClick(e, imageInputRef as MutableRefObject<any>);
         }}
         ref={openModalButtonRef}
         className="flex items-center w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
@@ -173,4 +184,5 @@ const ChatInputImage = ({
   );
 };
 
+// @ts-ignore
 export default ChatInputImage;
