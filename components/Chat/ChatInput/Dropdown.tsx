@@ -116,9 +116,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
-  {
-    /* Logic to handle clicks outside the Dropdown Menu */
-  }
+  {/* Logic to handle clicks outside the Dropdown Menu */}
   useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen);
 
   useEffect(() => {
