@@ -40,7 +40,7 @@ export const ModelSelect = () => {
                         value={model.id}
                         className={`dark:bg-[#212121] dark:text-white ${
                             isLegacy
-                                ? 'italic font-bold text-amber-700 dark:text-amber-500 bg-amber-100 dark:bg-amber-900/30'
+                                ? 'italic font-bold text-amber-700 dark:text-amber-500'
                                 : 'text-neutral-900'
                         }`}
                     >
