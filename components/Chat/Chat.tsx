@@ -24,6 +24,7 @@ import { makeRequest } from '@/services/frontendChatServices';
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
+import { isUSBased } from '@/utils/app/userAuth';
 import { throttle } from '@/utils/data/throttle';
 
 import { getBotById } from '@/types/bots';
@@ -36,12 +37,14 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
+import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
 
 import HomeContext from '@/pages/api/home/home.context';
 
-import logo from '../../public/msf_logo2.png';
+import lightTextLogo from '../../public/international_logo_black.png';
+import darkTextLogo from '../../public/international_logo_white.png';
 import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
@@ -82,6 +85,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       prompts,
       temperature,
       systemPrompt,
+      user,
+      lightMode,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -92,8 +97,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   if (typeof pluginKeys === 'string') {
     pluginKeys = JSON.parse(pluginKeys);
   }
-
-  const email = process.env.NEXT_PUBLIC_EMAIL;
 
   const [currentMessage, setCurrentMessage] = useState<Message>();
   const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
@@ -734,7 +737,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         {/* Right-Side Content */}
                         <div className="absolute right-0 flex items-center pr-4">
                           <a
-                            href={`mailto:${email}`}
+                            href={`mailto:${
+                              isUSBased(user?.mail ?? '')
+                                ? US_FEEDBACK_EMAIL
+                                : FEEDBACK_EMAIL
+                            }`}
                             className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
                           >
                             <IconExternalLink
@@ -816,11 +823,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                                 <div className="flex-shrink-0 flex flex-col items-center">
                                   <div className="ml-2 group relative flex flex-row">
                                     <Image
-                                      src={logo}
+                                      src={
+                                        lightMode === 'light'
+                                          ? lightTextLogo
+                                          : darkTextLogo
+                                      }
                                       alt="MSF Logo"
                                       style={{
-                                        maxWidth: '75px',
-                                        maxHeight: '75px',
+                                        maxWidth: '150px',
+                                        maxHeight: '150px',
                                       }}
                                     />
                                     <IconInfoCircle
@@ -931,7 +942,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   </button>
                   <div className="absolute right-0">
                     <a
-                      href={`mailto:${email}`}
+                      href={`mailto:${
+                        isUSBased(user?.mail ?? '')
+                          ? US_FEEDBACK_EMAIL
+                          : FEEDBACK_EMAIL
+                      }`}
                       className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
                     >
                       <IconExternalLink

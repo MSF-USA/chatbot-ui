@@ -25,6 +25,8 @@ import { SystemPrompt } from './SystemPrompt';
 import { TemperatureSlider } from './Temperature';
 import { FAQ } from './faq';
 import faqData from './faq.json';
+import {isUSBased} from "@/utils/app/userAuth";
+import {FEEDBACK_EMAIL, US_FEEDBACK_EMAIL} from "@/types/contact";
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -322,7 +324,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 v{version}.{build}.{env}
               </div>
               <a
-                href={`mailto:${email}`}
+                href={`mailto:${isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL}`}
                 className="flex items-center mt-2 md:mt-0 text-black dark:text-white"
               >
                 <IconExternalLink
