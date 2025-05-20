@@ -6,6 +6,5 @@
   "Theme": "tema",
   "sendFeedback": "Kirim Tanggapan",
   "modelSelectionDialogue": "Pemilihan Model AI",
-  "Run Typewriter Intro": "Jalankan Intro Mesin Ketik",
   "temperatureDescription": "Nilai yang lebih tinggi seperti 0.8 akan membuat keluaran lebih kreatif, sedangkan nilai yang lebih rendah seperti 0.2 akan membuatnya lebih fokus dan deterministik."
 }

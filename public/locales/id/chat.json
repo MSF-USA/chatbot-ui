@@ -45,7 +45,6 @@
   "appName": "Asisten AI MSF",
   "modelSelectionDialogue": "Pemilihan Model AI:",
   "temperatureDescription": "Nilai yang lebih tinggi seperti 0.8 akan membuat keluaran lebih kreatif, sementara nilai yang lebih rendah seperti 0.2 akan membuatnya lebih fokus dan deterministik.",
-  "Run Typewriter Intro": "Jalankan Intro Mesin Ketik",
   "defaultWebPullerQuestion": "Tolong ringkas isi dari halaman web ini.",
   "webPullerCitationPrompt": "Sebutkan setiap klaim yang Anda buat dari teks dan referensikan URL-nya",
   "webPullerReferencePrompt": "Juga rujuk judul, sumber yang jelas, penulis, dan tanggal publikasi jika tersedia dan relevan.",

@@ -6,6 +6,5 @@
   "Theme": "tema",
   "sendFeedback": "Skicka feedback",
   "modelSelectionDialogue": "Val av AI-modell",
-  "Run Typewriter Intro": "Kör skrivmaskinsintro",
   "temperatureDescription": "Högre värden som 0,8 gör resultatet mer kreativt, medan lägre värden som 0,2 gör det mer fokuserat och deterministiskt."
 }

@@ -45,7 +45,6 @@
   "appName": "مساعد MSF AI",
   "modelSelectionDialogue": "اختيار نموذج الذكاء الاصطناعي:",
   "temperatureDescription": "القيم الأعلى مثل 0.8 ستجعل الناتج أكثر إبداعًا، بينما القيم الأقل مثل 0.2 ستجعله أكثر تركيزًا وحتمية.",
-  "Run Typewriter Intro": "تشغيل مقدمة الآلة الكاتبة",
   "defaultWebPullerQuestion": "يرجى تلخيص المحتوى من هذه الصفحة.",
   "webPullerCitationPrompt": "اذكر أي ادعاءات تدلي بها من النص وارجع إلى عنوان URL",
   "webPullerReferencePrompt": "انظر أيضًا إلى العنوان والمصدر الظاهر والمؤلف(ين) وتاريخ النشر حيثما كان متاحًا وملائمًا.",

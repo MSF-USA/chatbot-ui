@@ -6,6 +6,5 @@
   "Save": "保存",
   "sendFeedback": "发送反馈",
   "modelSelectionDialogue": "AI模型选择",
-  "Run Typewriter Intro": "运行打字机介绍",
   "temperatureDescription": "较高的值如0.8会使输出更加具有创造性，而较低的值如0.2会使其更加专注和确定性。"
 }

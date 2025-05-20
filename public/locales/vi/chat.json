@@ -45,7 +45,6 @@
   "appName": "Trợ lý AI MSF",
   "modelSelectionDialogue": "Chọn mô hình AI:",
   "temperatureDescription": "Giá trị cao hơn như 0.8 sẽ làm cho đầu ra sáng tạo hơn, trong khi giá trị thấp hơn như 0.2 sẽ làm cho nó tập trung và quyết đoán hơn.",
-  "Run Typewriter Intro": "Chạy Giới thiệu Máy đánh chữ",
   "defaultWebPullerQuestion": "Vui lòng tóm tắt nội dung từ trang web này.",
   "webPullerCitationPrompt": "Trích dẫn bất kỳ tuyên bố nào bạn thực hiện từ văn bản và tham chiếu URL",
   "webPullerReferencePrompt": "Cũng tham khảo tiêu đề, nguồn rõ ràng, tác giả và ngày xuất bản nếu có sẵn và phù hợp.",
