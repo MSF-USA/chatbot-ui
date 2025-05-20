@@ -109,18 +109,28 @@ const Dropdown: React.FC<DropdownProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const filterInputRef = useRef<HTMLInputElement>(null);
 
+  const closeDropdown = () => {
+    setIsOpen(false);
+    setFilterQuery('');
+  }
+
   const { t } = useTranslation('chat');
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Escape') {
-      setIsOpen(false);
-      setIsSearchOpen(false);
-      setIsUrlOpen(false);
-      setIsTranscribeOpen(false);
-      setIsTranslateOpen(false);
-      setIsImageOpen(false);
+      if (filterQuery?.length > 0) {
+        setFilterQuery('');
+      } else {
+        setIsOpen(false);
+        setFilterQuery('');
+        setIsSearchOpen(false);
+        setIsUrlOpen(false);
+        setIsTranscribeOpen(false);
+        setIsTranslateOpen(false);
+        setIsImageOpen(false);
+      }
     }
   };
 
@@ -133,7 +143,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       tooltip: 'Web Search',
       onClick: () => {
         setIsSearchOpen(true);
-        setIsOpen(false);
+        closeDropdown();
       },
       category: 'web',
     },
@@ -144,7 +154,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       tooltip: 'Analyze Webpage',
       onClick: () => {
         setIsUrlOpen(true);
-        setIsOpen(false);
+        closeDropdown();
       },
       category: 'web',
     },
@@ -155,7 +165,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       tooltip: 'Transcribe Audio',
       onClick: () => {
         setIsTranscribeOpen(true);
-        setIsOpen(false);
+        closeDropdown();
       },
       category: 'media',
     },
@@ -165,6 +175,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       label: t('chatFeaturesDropdownImageModal'),
       tooltip: 'Upload Image',
       onClick: () => {
+        closeDropdown();
         chatInputImageRef.current?.openFilePicker();
       },
       category: 'media',
@@ -176,7 +187,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       tooltip: 'Translate Text',
       onClick: () => {
         setIsTranslateOpen(true);
-        setIsOpen(false);
+        closeDropdown();
       },
       category: 'transform',
     },
@@ -187,7 +198,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       tooltip: 'Capture Image',
       onClick: () => {
         onCameraClick();
-        setIsOpen(false);
+        closeDropdown();
       },
       category: 'media',
     },
@@ -213,7 +224,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, {} as Record<string, MenuItem[]>);
 
   // Logic to handle clicks outside the Dropdown Menu
-  useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen);
+  useOutsideClick(dropdownRef, () => closeDropdown(), isOpen);
 
   // Focus on search input when dropdown opens
   useEffect(() => {
