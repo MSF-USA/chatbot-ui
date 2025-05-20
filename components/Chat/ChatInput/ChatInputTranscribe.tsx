@@ -9,6 +9,7 @@ import {
 import { ChatInputSubmitTypes } from '@/types/chat';
 import { useTranslation } from 'next-i18next';
 import toast from "react-hot-toast";
+import useCloseOnOutsideAndEscape from "@/hooks/useCloseOnOutsideAndEscape";
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
@@ -67,6 +68,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
                                                              setUploadProgress,
   simulateClick,
                                                            }) => {
+  const modalRef = useCloseOnOutsideAndEscape(true, () => setParentModalIsOpen(false));
+
   const { t } = useTranslation('transcribeModal');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -283,6 +286,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
 
       {isModalOpen && (
         <div
+          ref={modalRef}
           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           onClick={closeModal}
         >

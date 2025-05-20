@@ -21,6 +21,7 @@ import {
 } from '@tabler/icons-react';
 import BetaBadge from '@/components/Beta/Badge';
 import {useTranslation} from "next-i18next";
+import useCloseOnOutsideAndEscape from '@/hooks/useCloseOnOutsideAndEscape';
 
 interface ChatInputSearchProps {
   onFileUpload: (
@@ -76,6 +77,8 @@ const ChatInputSearch = ({
     setParentModalIsOpen,
   simulateClick,
                          }: ChatInputSearchProps) => {
+  const modalRef = useCloseOnOutsideAndEscape(true, () => setParentModalIsOpen(false));
+
   const { t } = useTranslation('chat');
 
   const [isModalOpen, setModalOpen] = useState(false);
@@ -268,7 +271,8 @@ ${t('webSearchModalPromptCitation')}`,
 
       {isModalOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+            ref={modalRef}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
           role="dialog"
           aria-modal="true"
           aria-labelledby="modal-title"

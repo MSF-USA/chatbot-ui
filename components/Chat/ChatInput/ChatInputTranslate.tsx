@@ -4,6 +4,7 @@ import { IconLanguage } from "@tabler/icons-react";
 import toast from "react-hot-toast";
 import BetaBadge from "@/components/Beta/Badge";
 import {useTranslation} from "next-i18next";
+import useCloseOnOutsideAndEscape from "@/hooks/useCloseOnOutsideAndEscape";
 
 interface ChatInputTranslateProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -21,6 +22,8 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     setParentModalIsOpen,
     defaultText
   }) => {
+  const modalRef = useCloseOnOutsideAndEscape(true, () => setParentModalIsOpen(false));
+
   const { t } = useTranslation('chat');
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -119,6 +122,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
       <>
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div
+            ref={modalRef}
             className="fixed inset-0 w-full h-full bg-black opacity-40"
             onClick={() => {
               setIsModalOpen(false);
