@@ -6,6 +6,5 @@
   "Theme": "tema",
   "sendFeedback": "Invia feedback",
   "modelSelectionDialogue": "Selezione del modello IA",
-  "Run Typewriter Intro": "Esegui introduzione macchina da scrivere",
   "temperatureDescription": "Valori più alti come 0.8 renderanno l'output più creativo, mentre valori più bassi come 0.2 lo renderanno più focalizzato e deterministico."
 }

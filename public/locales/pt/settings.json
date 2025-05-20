@@ -6,6 +6,5 @@
   "Theme": "tema",
   "sendFeedback": "Enviar feedback",
   "modelSelectionDialogue": "Seleção de modelo de IA",
-  "Run Typewriter Intro": "Executar Introdução de Máquina de Escrever",
   "temperatureDescription": "Valores mais altos como 0,8 tornarão a saída mais criativa, enquanto valores mais baixos como 0,2 a tornarão mais focada e determinística."
 }

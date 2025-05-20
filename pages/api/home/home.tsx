@@ -303,11 +303,6 @@ const Home = ({
       dispatch({ field: 'temperature', value: settings.temperature });
     if (settings.systemPrompt)
       dispatch({ field: 'systemPrompt', value: settings.systemPrompt });
-    if (settings.runTypeWriterIntroSetting === false)
-      dispatch({
-        field: 'runTypeWriterIntroSetting',
-        value: settings.runTypeWriterIntroSetting,
-      });
   }
 
   function handleApiKey() {

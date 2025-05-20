@@ -6,6 +6,5 @@
   "Theme": "motyw",
   "sendFeedback": "Prześlij opinię",
   "modelSelectionDialogue": "Wybór modelu AI",
-  "Run Typewriter Intro": "Uruchom wprowadzenie maszyny do pisania",
   "temperatureDescription": "Wyższe wartości, takie jak 0,8, sprawią, że wynik będzie bardziej kreatywny, podczas gdy niższe wartości, takie jak 0,2, sprawią, że będzie bardziej skoncentrowany i deterministyczny."
 }

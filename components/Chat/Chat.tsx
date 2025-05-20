@@ -55,7 +55,6 @@ import { ModelSelect } from './ModelSelect';
 import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
-import Typewriter from 'typewriter-effect';
 
 interface Props {
   stopConversationRef: MutableRefObject<boolean>;
@@ -86,7 +85,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       prompts,
       temperature,
       systemPrompt,
-      runTypeWriterIntroSetting,
       user,
       lightMode,
     },
@@ -624,20 +622,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const showSplash =
     !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim';
 
-  const [image, setImage] = useState(false);
-  const [runTypewriter, setRunTypewriter] = useState(false);
-
-  useEffect(() => {
-    if (!image) {
-      if (runTypeWriterIntroSetting) {
-        setRunTypewriter(true);
-      } else {
-        setImage(true);
-      }
-    } else {
-      setRunTypewriter(false);
-    }
-  }, []);
+  const [image, setImage] = useState(true);
 
   useEffect(() => {
     setRandomPrompts(getRandomPrompts(3));
@@ -694,7 +679,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages?.length === 0 ? (
               <>
-                {models.length > 0 && !runTypewriter && (
+                {models.length > 0 && (
                   <Transition
                     appear={true}
                     show={image}
@@ -824,28 +809,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       ) : (
                         <div className="flex flex-col items-center">
                           <div className="flex flex-row justify-center items-end">
-                            {runTypewriter && (
-                              <Typewriter
-                                options={{
-                                  loop: false,
-                                  cursor: '',
-                                  delay: 50,
-                                  deleteSpeed: 1,
-                                }}
-                                onInit={(typewriter) => {
-                                  typewriter
-                                    .typeString(t('appName'))
-                                    .pauseFor(1200)
-                                    .deleteAll()
-                                    .callFunction(() => {
-                                      setImage(true);
-                                      setRunTypewriter(false);
-                                    })
-                                    .start();
-                                }}
-                              />
-                            )}
-                            {image && !showSettings && (
+                            {!showSettings && (
                               <Transition
                                 appear={true}
                                 show={image}

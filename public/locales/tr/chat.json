@@ -45,7 +45,6 @@
   "appName": "MSF AI Asistanı",
   "modelSelectionDialogue": "AI Model Seçimi:",
   "temperatureDescription": "0.8 gibi daha yüksek değerler çıktıyı daha yaratıcı hale getirirken, 0.2 gibi daha düşük değerler onu daha odaklanmış ve deterministik yapar.",
-  "Run Typewriter Intro": "Daktilo Girişini Çalıştır",
   "defaultWebPullerQuestion": "Lütfen bu web sayfasının içeriğini özetleyin.",
   "webPullerCitationPrompt": "Metinden yaptığınız iddiaları alıntılayın ve URL'yi referans gösterin",
   "webPullerReferencePrompt": "Ayrıca başlık, görünen kaynak, yazar(lar) ve yayın tarihine, mevcut ve ilgili olduğu yerlerde atıfta bulunun.",
