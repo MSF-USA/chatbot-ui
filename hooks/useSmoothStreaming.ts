@@ -10,13 +10,13 @@ interface SmoothStreamingOptions {
 
 /**
  * Custom hook to provide a smooth text streaming animation between actual content chunks
- * 
+ *
  * @returns {string} The text to display with the smooth animation effect
  */
 export const useSmoothStreaming = ({
   isStreaming,
   content,
-  charsPerFrame = 3,
+  charsPerFrame = 6,
   frameDelay = 10,
   enabled = true,
 }: SmoothStreamingOptions): string => {
@@ -24,11 +24,8 @@ export const useSmoothStreaming = ({
   const contentRef = useRef<string>('');
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number>(0);
-  
-  // If smooth streaming is disabled, simply return the full content
-  if (!enabled) {
-    return content;
-  }
+
+
 
   useEffect(() => {
     // If not streaming, immediately show full content
@@ -58,13 +55,13 @@ export const useSmoothStreaming = ({
           if (prev.length >= contentRef.current.length) {
             return contentRef.current;
           }
-          
+
           // Calculate how many characters to add in this frame
           const nextCharsCount = Math.min(
-            charsPerFrame, 
+            charsPerFrame,
             contentRef.current.length - prev.length
           );
-          
+
           // Add the next set of characters from the content
           return prev + contentRef.current.slice(prev.length, prev.length + nextCharsCount);
         });
@@ -89,6 +86,11 @@ export const useSmoothStreaming = ({
       }
     };
   }, [content, displayedContent, isStreaming, frameDelay, charsPerFrame]);
+
+  // If smooth streaming is disabled, simply return the full content
+  if (!enabled) {
+    return content;
+  }
 
   return displayedContent;
 };
