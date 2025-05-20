@@ -33,10 +33,10 @@ export const ChatTopbar = ({
   const { t } = useTranslation('chat');
 
   return (
-    <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 px-3 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-      <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between gap-2">
+    <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
+      <div className="mx-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         {/* Bot/Model Info */}
-        <div className="flex items-center flex-grow sm:flex-grow-0 min-w-0 mr-2">
+        <div className="flex items-center min-w-0 justify-center sm:justify-start">
           {botInfo && (
             <div className="flex items-center mr-2 shrink-0">
               <span
@@ -64,7 +64,7 @@ export const ChatTopbar = ({
         </div>
 
         {/* Controls */}
-        <div className="flex items-center justify-end space-x-3">
+        <div className="flex items-center justify-center space-x-3">
           {/* Settings Button */}
           <div className="relative">
             <button
