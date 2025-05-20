@@ -396,9 +396,10 @@ describe('AzureMonitorLoggingService', () => {
         '2024-01-01',
         '2024-01-31',
         mockUser,
+        true
       );
 
-      // expect(console.error).toHaveBeenCalled();
+      expect(console.error).toHaveBeenCalled();
       // Service should not throw error
       expect(mockClient.upload).toHaveBeenCalled();
     });
