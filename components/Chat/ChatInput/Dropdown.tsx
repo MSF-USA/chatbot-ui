@@ -106,33 +106,19 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [filterQuery, setFilterQuery] = useState('');
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const filterInputRef = useRef<HTMLInputElement>(null);
 
   const closeDropdown = () => {
     setIsOpen(false);
     setFilterQuery('');
+    setSelectedIndex(0);
   }
 
   const { t } = useTranslation('chat');
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
-
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (event.key === 'Escape') {
-      if (filterQuery?.length > 0) {
-        setFilterQuery('');
-      } else {
-        setIsOpen(false);
-        setFilterQuery('');
-        setIsSearchOpen(false);
-        setIsUrlOpen(false);
-        setIsTranscribeOpen(false);
-        setIsTranslateOpen(false);
-        setIsImageOpen(false);
-      }
-    }
-  };
 
   // Define menu items
   const menuItems: MenuItem[] = [
@@ -214,6 +200,51 @@ const Dropdown: React.FC<DropdownProps> = ({
       )
     : menuItems;
 
+  const flattenedItems = filteredItems;
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (!isOpen) return;
+
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setSelectedIndex((prevIndex) =>
+          prevIndex < flattenedItems.length - 1 ? prevIndex + 1 : 0
+        );
+        break;
+
+      case 'ArrowUp':
+        event.preventDefault();
+        setSelectedIndex((prevIndex) =>
+          prevIndex > 0 ? prevIndex - 1 : flattenedItems.length - 1
+        );
+        break;
+
+      case 'Enter':
+        event.preventDefault();
+        if (flattenedItems[selectedIndex]) {
+          flattenedItems[selectedIndex].onClick();
+        }
+        break;
+
+      case 'Escape':
+        event.preventDefault();
+        if (filterQuery) {
+          setFilterQuery('');
+          setSelectedIndex(0);
+        } else {
+          closeDropdown();
+        }
+        break;
+
+      default:
+        if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+          filterInputRef.current?.focus();
+        }
+        break;
+    }
+  };
+
   // Group menu items by category
   const groupedItems = filteredItems.reduce((acc, item) => {
     if (!acc[item.category]) {
@@ -226,6 +257,11 @@ const Dropdown: React.FC<DropdownProps> = ({
   // Logic to handle clicks outside the Dropdown Menu
   useOutsideClick(dropdownRef, () => closeDropdown(), isOpen);
 
+  // Reset selected index when filtered items change
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [filterQuery]);
+
   // Focus on search input when dropdown opens
   useEffect(() => {
     if (isOpen && filterInputRef.current) {
@@ -236,16 +272,15 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, [isOpen]);
 
   return (
-    <div className="relative" onKeyDown={handleKeyDown}>
+    <div className="relative">
       {/* Toggle Dropdown Button */}
       <div className="group">
         <button
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              event.stopPropagation();
-              setIsOpen(!isOpen);
-            }}
-
-            aria-haspopup="true"
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            event.stopPropagation();
+            setIsOpen(!isOpen);
+          }}
+          aria-haspopup="true"
           aria-expanded={isOpen}
           aria-label="Toggle dropdown menu"
           className="focus:outline-none flex"
@@ -264,6 +299,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           className="absolute ml-12 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
           tabIndex={-1}
           role="menu"
+          onKeyDown={handleKeyDown}
         >
           {/* Search/Filter Input */}
           <div className="sticky top-0 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
@@ -275,12 +311,15 @@ const Dropdown: React.FC<DropdownProps> = ({
                 value={filterQuery}
                 onChange={(e) => setFilterQuery(e.target.value)}
                 className="w-full px-3 py-2 pl-10 pr-8 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-label="Search features"
+                role="searchbox"
               />
               <IconSearch className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500" size={16} />
               {filterQuery && (
                 <button
                   onClick={() => setFilterQuery('')}
                   className="absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                  aria-label="Clear search"
                 >
                   <IconX size={16} />
                 </button>
@@ -291,25 +330,36 @@ const Dropdown: React.FC<DropdownProps> = ({
           <div className="max-h-80 overflow-y-auto custom-scrollbar">
             {Object.entries(groupedItems).length > 0 ? (
               Object.entries(groupedItems).map(([category, items]) => (
-                <div key={category} className="px-1 py-1">
+                <div key={category} className="px-1 py-1" role="group" aria-label={category}>
                   <h3 className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </h3>
-                  {items.map((item) => (
-                    <div key={item.id} className="group relative">
-                      <button
-                        className="flex items-center px-3 py-2.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition-colors duration-150"
-                        onClick={item.onClick}
-                        role="menuitem"
-                      >
-                        {item.icon}
-                        <span>{item.label}</span>
-                      </button>
-                      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap z-20">
-                        {item.tooltip}
+                  {items.map((item) => {
+                    const itemIndex = flattenedItems.findIndex((i) => i.id === item.id);
+                    const isSelected = itemIndex === selectedIndex;
+
+                    return (
+                      <div key={item.id} className="group relative">
+                        <button
+                          className={`flex items-center px-3 py-2.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 transition-colors duration-150 ${
+                            isSelected
+                              ? 'bg-gray-100 dark:bg-gray-700'
+                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
+                          onClick={item.onClick}
+                          role="menuitem"
+                          aria-selected={isSelected}
+                          tabIndex={isSelected ? 0 : -1}
+                        >
+                          {item.icon}
+                          <span>{item.label}</span>
+                        </button>
+                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap z-20">
+                          {item.tooltip}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ))
             ) : (
