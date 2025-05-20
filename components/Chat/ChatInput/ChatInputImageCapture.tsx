@@ -7,11 +7,9 @@ import React, {
   MutableRefObject,
   SetStateAction,
   useContext,
-  useEffect,
   useRef,
   useState,
 } from 'react';
-import toast from 'react-hot-toast';
 
 import { useTranslation } from 'next-i18next';
 
@@ -57,6 +55,7 @@ export interface ChatInputImageCaptureProps {
   >;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   visible?: boolean;
+  hasCameraSupport: boolean;
 }
 
 export interface ChatInputImageCaptureRef {
@@ -70,13 +69,13 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
   setImageFieldValue,
   setUploadProgress,
   visible = true,
+  hasCameraSupport
 }, ref) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [hasCameraSupport, setHasCameraSupport] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -107,28 +106,11 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
     }
   }));
 
-  useEffect(() => {
-    const checkCameraSupport = async () => {
-      try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasCamera = devices.some(
-          (device) => device.kind === 'videoinput',
-        );
-        setHasCameraSupport(hasCamera);
-      } catch (error) {
-        console.error('Error checking camera support:', error);
-        setHasCameraSupport(false);
-      }
-    };
-
-    checkCameraSupport();
-  }, []);
-
   const {
     state: { user },
     dispatch: homeDispatch,
   } = useContext(HomeContext);
-  
+
   if (!userAuthorizedForFileUploads(user)) return null;
 
   return (

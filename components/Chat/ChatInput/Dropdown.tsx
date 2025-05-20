@@ -107,8 +107,26 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [filterQuery, setFilterQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [hasCameraSupport, setHasCameraSupport] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const filterInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const checkCameraSupport = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const hasCamera = devices.some(
+          (device) => device.kind === 'videoinput',
+        );
+        setHasCameraSupport(hasCamera);
+      } catch (error) {
+        console.error('Error checking camera support:', error);
+        setHasCameraSupport(false);
+      }
+    };
+
+    checkCameraSupport();
+  }, []);
 
   const closeDropdown = () => {
     setIsOpen(false);
@@ -177,7 +195,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       },
       category: 'transform',
     },
-    {
+    ...(hasCameraSupport ? [{
       id: 'camera',
       icon: <IconCamera size={18} className="mr-3 text-red-500" />,
       label: t('Camera'),
@@ -186,8 +204,8 @@ const Dropdown: React.FC<DropdownProps> = ({
         onCameraClick();
         closeDropdown();
       },
-      category: 'media',
-    },
+      category: 'media' as 'web' | 'media' | 'transform',
+    }] : []),
   ];
 
   // Filter menu items based on search query
@@ -395,6 +413,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           prompt={textFieldValue}
           setImageFieldValue={setFileFieldValue}
           setUploadProgress={setUploadProgress}
+          hasCameraSupport={hasCameraSupport}
         />
       )}
 
