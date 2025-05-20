@@ -20,7 +20,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
   const [showSpeedDropdown, setShowSpeedDropdown] = useState<boolean>(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const progressIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
   const speedDropdownRef = useRef<HTMLDivElement>(null);
 
   // Available playback speeds
@@ -40,8 +40,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
       audioRef.current.play()
           .then(() => {
             setIsPlaying(true);
-            // Set up progress tracking interval
-            progressIntervalRef.current = setInterval(updateProgress, 100);
+            startAnimationLoop();
           })
           .catch(err => {
             console.error('Failed to autoplay audio:', err);
@@ -58,19 +57,77 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      if (progressIntervalRef.current) {
-        clearInterval(progressIntervalRef.current);
-      }
+      stopAnimationLoop();
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  // Start animation loop for progress updates
+  const startAnimationLoop = () => {
+    if (!audioRef.current) return;
+
+    // First ensure any existing loop is stopped
+    stopAnimationLoop();
+
+    // Check if the audio is actually playing
+    // Sometimes the audioRef.current.paused state may not be accurate immediately after a seek
+    if (!audioRef.current.paused || isPlaying) {
+      const animate = () => {
+        if (!audioRef.current) {
+          stopAnimationLoop();
+          return;
+        }
+
+        // Update the progress
+        updateProgress();
+
+        // Continue the loop only if we're still the active animation frame
+        // and the audio element still exists
+        if (audioRef.current && !audioRef.current.paused) {
+          animationFrameRef.current = requestAnimationFrame(animate);
+        } else {
+          // Double check the playing state - this helps handle edge cases
+          if (isPlaying && !audioRef.current?.paused) {
+            // Still playing but maybe there was a glitch - try again
+            animationFrameRef.current = requestAnimationFrame(animate);
+          } else {
+            // Really stopped
+            stopAnimationLoop();
+          }
+        }
+      };
+
+      // Start the animation loop
+      animationFrameRef.current = requestAnimationFrame(animate);
+    }
+  };
+
+  // Stop animation loop
+  const stopAnimationLoop = () => {
+    if (animationFrameRef.current !== null) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+  };
 
   // Update progress bar during playback
   const updateProgress = () => {
     if (!audioRef.current) return;
 
-    const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
-    setAudioProgress(progress);
+    // Get current time and duration
+    const currentTime = audioRef.current.currentTime;
+    const duration = audioRef.current.duration;
+
+    if (isNaN(duration)) return; // Check if duration is available
+
+    // Calculate progress percentage
+    const progress = (currentTime / duration) * 100;
+
+    // Update the progress state if it's changed significantly
+    // This prevents unnecessary re-renders for tiny changes
+    if (Math.abs(progress - audioProgress) > 0.1) {
+      setAudioProgress(progress);
+    }
   };
 
   // Toggle play/pause
@@ -80,7 +137,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play();
+      audioRef.current.play()
+        .then(() => {
+          // Explicit restart of animation loop on play
+          startAnimationLoop();
+        })
+        .catch(err => {
+          console.error('Failed to play audio:', err);
+        });
     }
   };
 
@@ -92,18 +156,30 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     const rect = progressBar.getBoundingClientRect();
     const clickPosition = (e.clientX - rect.left) / rect.width;
 
-    audioRef.current.currentTime = clickPosition * audioRef.current.duration;
+    // Calculate the new time position
+    const newTime = clickPosition * audioRef.current.duration;
+
+    // Set the new time
+    audioRef.current.currentTime = newTime;
+
+    // Update progress immediately for better UX
     setAudioProgress(clickPosition * 100);
+
+    // Restart the animation loop if the audio is playing
+    if (isPlaying) {
+      stopAnimationLoop();
+      startAnimationLoop();
+    } else {
+      // If paused and we seek, we still want to update the UI once
+      updateProgress();
+    }
   };
 
-  // Clean up resources when audio playback ends
+  // Handle audio end
   const handleAudioEnd = () => {
     setIsPlaying(false);
     setAudioProgress(0);
-    if (progressIntervalRef.current) {
-      clearInterval(progressIntervalRef.current);
-      progressIntervalRef.current = null;
-    }
+    stopAnimationLoop();
   };
 
   // Setup audio metadata when loaded
@@ -120,8 +196,17 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
   // Change playback speed
   const changePlaybackSpeed = (speed: number) => {
     if (!audioRef.current) return;
+
+    // Update playback speed
     setPlaybackSpeed(speed);
     audioRef.current.playbackRate = speed;
+
+    // If currently playing, restart the animation loop to adapt to the new speed
+    if (isPlaying) {
+      stopAnimationLoop();
+      startAnimationLoop();
+    }
+
     setShowSpeedDropdown(false);
   };
 
@@ -143,19 +228,21 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             src={audioUrl}
             onPlay={() => {
               setIsPlaying(true);
-              if (progressIntervalRef.current === null) {
-                progressIntervalRef.current = setInterval(updateProgress, 100);
-              }
+              startAnimationLoop();
             }}
             onPause={() => {
               setIsPlaying(false);
-              if (progressIntervalRef.current) {
-                clearInterval(progressIntervalRef.current);
-                progressIntervalRef.current = null;
-              }
+              stopAnimationLoop();
             }}
             onEnded={handleAudioEnd}
             onLoadedMetadata={handleAudioLoad}
+            onSeeked={() => {
+              // Ensure animation continues after seeking
+              if (isPlaying) {
+                stopAnimationLoop();
+                startAnimationLoop();
+              }
+            }}
             className="hidden"
         />
 
@@ -175,6 +262,11 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
               </button>
               <div className="text-xs text-gray-600 dark:text-gray-300">
                 {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(audioDuration)}
+                {playbackSpeed !== 1 && (
+                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
+                    ({playbackSpeed}x)
+                  </span>
+                )}
               </div>
             </div>
 
