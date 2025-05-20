@@ -34,6 +34,8 @@ const localeToLanguageName: {
     sw: string;
     th: string;
     uk: string;
+    hi: string;
+    ur: string;
 } = {
     am: 'አማርኛ',
     en: 'English',
@@ -65,6 +67,8 @@ const localeToLanguageName: {
     uk: 'Українська',
     vi: 'Tiếng Việt',
     zh: '中文',
+    hi: 'हिन्दी',
+    ur: 'اردو',
 }
 
 const LanguageSwitcher: FC = () => {
