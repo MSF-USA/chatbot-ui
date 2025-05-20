@@ -37,10 +37,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
   useEffect(() => {
     // Auto-play the audio when component mounts
     if (audioRef.current) {
+      // Set up initial animation loop regardless of auto-play status
+      // This ensures UI updates even if autoplay is blocked
+      startAnimationLoop();
+      
       audioRef.current.play()
           .then(() => {
             setIsPlaying(true);
-            startAnimationLoop();
           })
           .catch(err => {
             console.error('Failed to autoplay audio:', err);
@@ -64,42 +67,34 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
 
   // Start animation loop for progress updates
   const startAnimationLoop = () => {
-    if (!audioRef.current) return;
-
-    // First ensure any existing loop is stopped
+    // First ensure any existing loop is stopped to prevent multiple loops
     stopAnimationLoop();
-
-    // Check if the audio is actually playing
-    // Sometimes the audioRef.current.paused state may not be accurate immediately after a seek
-    if (!audioRef.current.paused || isPlaying) {
-      const animate = () => {
-        if (!audioRef.current) {
-          stopAnimationLoop();
-          return;
-        }
-
-        // Update the progress
+    
+    // Check if audio element exists
+    if (!audioRef.current) return;
+    
+    // Define animation function
+    const animate = () => {
+      // Safety check for audio element
+      if (!audioRef.current) {
+        stopAnimationLoop();
+        return;
+      }
+      
+      // Update the progress state - only if playing
+      if (audioRef.current && !audioRef.current.paused) {
         updateProgress();
-
-        // Continue the loop only if we're still the active animation frame
-        // and the audio element still exists
-        if (audioRef.current && !audioRef.current.paused) {
-          animationFrameRef.current = requestAnimationFrame(animate);
-        } else {
-          // Double check the playing state - this helps handle edge cases
-          if (isPlaying && !audioRef.current?.paused) {
-            // Still playing but maybe there was a glitch - try again
-            animationFrameRef.current = requestAnimationFrame(animate);
-          } else {
-            // Really stopped
-            stopAnimationLoop();
-          }
-        }
-      };
-
-      // Start the animation loop
+      }
+      
+      // Schedule the next frame - always continue the loop
       animationFrameRef.current = requestAnimationFrame(animate);
-    }
+    };
+    
+    // Start the animation loop immediately
+    animationFrameRef.current = requestAnimationFrame(animate);
+    
+    // Debug log
+    console.log("Animation loop started", new Date().toISOString());
   };
 
   // Stop animation loop
@@ -117,17 +112,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     // Get current time and duration
     const currentTime = audioRef.current.currentTime;
     const duration = audioRef.current.duration;
-
-    if (isNaN(duration)) return; // Check if duration is available
-
+    
+    if (isNaN(duration) || duration === 0) return; // Check if duration is valid
+    
     // Calculate progress percentage
     const progress = (currentTime / duration) * 100;
-
-    // Update the progress state if it's changed significantly
-    // This prevents unnecessary re-renders for tiny changes
-    if (Math.abs(progress - audioProgress) > 0.1) {
-      setAudioProgress(progress);
-    }
+    
+    // Always update during playback - optimizing this too much can cause visual glitches
+    setAudioProgress(progress);
   };
 
   // Toggle play/pause
@@ -187,6 +179,34 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     if (!audioRef.current) return;
     setAudioDuration(audioRef.current.duration);
   };
+
+  // Effect to force time display updates even if progress isn't changing
+  // This ensures the time display updates even when progress calculation has small differences
+  useEffect(() => {
+    if (!isPlaying || !audioRef.current) return;
+    
+    // Force timer updates every 250ms during playback
+    const timerInterval = setInterval(() => {
+      // This forces a re-render of the component to update the time display
+      // We use a different mechanism than the progress bar to ensure smooth updates
+      // even if progress calculation has small differences
+      if (audioRef.current) {
+        setAudioProgress(prev => {
+          const currentTime = audioRef.current?.currentTime || 0;
+          const duration = audioRef.current?.duration || 1;
+          const exactProgress = (currentTime / duration) * 100;
+          
+          // Only update if the difference is significant or if we haven't updated in a while
+          if (Math.abs(exactProgress - prev) > 0.5) {
+            return exactProgress;
+          }
+          return prev;
+        });
+      }
+    }, 250);
+    
+    return () => clearInterval(timerInterval);
+  }, [isPlaying]);
 
   // Toggle speed dropdown visibility
   const toggleSpeedDropdown = () => {
