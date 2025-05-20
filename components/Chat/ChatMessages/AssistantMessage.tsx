@@ -3,6 +3,7 @@ import {
   IconCopy,
   IconLoader2,
   IconRobot,
+  IconSettings,
   IconVolume,
   IconVolumeOff,
 } from '@tabler/icons-react';
@@ -16,6 +17,9 @@ import {
 
 import { Conversation } from '@/types/chat';
 import { Citation } from '@/types/rag';
+
+import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
@@ -50,9 +54,22 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
+  const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
+
+  // Get streaming settings from context
+  const { settings, updateSettings } = useStreamingSettings();
 
   const citationsProcessed = useRef(false);
   const processingAttempts = useRef(0);
+
+  // Use smooth streaming hook for animated text display
+  const smoothContent = useSmoothStreaming({
+    isStreaming: messageIsStreaming,
+    content: displayContent,
+    charsPerFrame: settings.charsPerFrame,
+    frameDelay: settings.frameDelay,
+    enabled: settings.smoothStreamingEnabled,
+  });
 
   // Clean up resources when component unmounts
   useEffect(() => {
@@ -179,6 +196,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const displayContentWithoutCitations = messageIsStreaming
     ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
     : displayContent;
+    
+  // Use the smooth content for display when streaming and smooth streaming is enabled
+  const contentToDisplay = settings.smoothStreamingEnabled && messageIsStreaming
+    ? smoothContent
+    : displayContentWithoutCitations;
 
   const handleTTS = async () => {
     try {
@@ -316,10 +338,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   rehypePlugins={[rehypeMathjax]}
                   components={customMarkdownComponents}
                 >
-                  {displayContentWithoutCitations}
+                  {contentToDisplay}
                 </CitationMarkdown>
                 {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && displayContentWithoutCitations.length > 0 && (
+                {messageIsStreaming && contentToDisplay.length > 0 && (
                   <StreamingIndicator />
                 )}
               </>
@@ -331,10 +353,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   rehypePlugins={[rehypeMathjax]}
                   components={customMarkdownComponents}
                 >
-                  {displayContentWithoutCitations}
+                  {contentToDisplay}
                 </MemoizedReactMarkdown>
                 {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && displayContentWithoutCitations.length > 0 && (
+                {messageIsStreaming && contentToDisplay.length > 0 && (
                   <StreamingIndicator />
                 )}
               </>
@@ -363,6 +385,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   <IconCopy size={16} className="mr-1" />
                 </>
               )}
+            </button>
+
+            {/* Streaming Settings button */}
+            <button
+              className={`px-2 py-1 text-sm rounded-md flex items-center ${
+                showStreamingSettings
+                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+              }`}
+              onClick={() => setShowStreamingSettings(!showStreamingSettings)}
+              aria-label="Text streaming settings"
+              title="Text streaming settings"
+            >
+              <IconSettings size={16} className="mr-1" />
             </button>
 
             {/* Listen button */}
@@ -394,6 +430,73 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               )}
             </button>
           </div>
+
+          {/* Streaming Settings Modal */}
+          {showStreamingSettings && (
+            <div className="mt-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-md text-sm">
+              <h4 className="font-medium mb-2 text-gray-700 dark:text-gray-300">Text Streaming Settings</h4>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="cursor-pointer text-gray-700 dark:text-gray-300">
+                    Smooth streaming
+                    <input
+                      type="checkbox"
+                      className="ml-2"
+                      checked={settings.smoothStreamingEnabled}
+                      onChange={(e) => 
+                        updateSettings({ smoothStreamingEnabled: e.target.checked })
+                      }
+                    />
+                  </label>
+                </div>
+                
+                <div>
+                  <label className="block mb-1 text-gray-700 dark:text-gray-300">
+                    Speed (characters per frame)
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={settings.charsPerFrame}
+                    onChange={(e) => 
+                      updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                    }
+                    className="w-full"
+                    disabled={!settings.smoothStreamingEnabled}
+                  />
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                    <span>Slower</span>
+                    <span>{settings.charsPerFrame}</span>
+                    <span>Faster</span>
+                  </div>
+                </div>
+                
+                <div>
+                  <label className="block mb-1 text-gray-700 dark:text-gray-300">
+                    Delay between frames (ms)
+                  </label>
+                  <input
+                    type="range"
+                    min="5"
+                    max="50"
+                    step="5"
+                    value={settings.frameDelay}
+                    onChange={(e) => 
+                      updateSettings({ frameDelay: parseInt(e.target.value) })
+                    }
+                    className="w-full"
+                    disabled={!settings.smoothStreamingEnabled}
+                  />
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                    <span>Faster</span>
+                    <span>{settings.frameDelay}ms</span>
+                    <span>Slower</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {audioUrl && (
               <AudioPlayer
