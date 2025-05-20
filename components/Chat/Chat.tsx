@@ -1,7 +1,5 @@
 import { Transition } from '@headlessui/react';
 import {
-  IconClearAll,
-  IconExternalLink,
   IconInfoCircle,
   IconSettings,
 } from '@tabler/icons-react';
@@ -24,7 +22,6 @@ import { makeRequest } from '@/services/frontendChatServices';
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
-import { isUSBased } from '@/utils/app/userAuth';
 import { throttle } from '@/utils/data/throttle';
 
 import { getBotById } from '@/types/bots';
@@ -37,7 +34,6 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
 
@@ -52,6 +48,7 @@ import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
+import { ChatTopbar } from './ChatTopbar';
 import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
@@ -707,80 +704,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   >
                     <div>
                       {/* Topbar w/o content */}
-                      <div className="fixed top-0 left-0 right-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 px-3 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                        <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between gap-2">
-                          {/* Bot/Model Info */}
-                          <div className="flex items-center flex-grow sm:flex-grow-0 min-w-0 mr-2">
-                            {botInfo && (
-                                <div className="flex items-center mr-2 shrink-0">
-                                  <span
-                                      className="font-semibold truncate sm:max-w-[200px]"
-                                      style={{ color: botInfo.color }}
-                                      title={`${botInfo.name} Bot`}
-                                  >
-                                    {botInfo.name} Bot
-                                  </span>
-                                  <span className="mx-2 text-white dark:text-white">|</span>
-                                </div>
-                            )}
-                            <div className="truncate min-w-0">
-                              <button
-                                  className="flex items-center justify-center  rounded-md transition-colors"
-                                  onClick={handleSettings}
-                                  aria-label="Model Settings"
-                                  title="Model Settings"
-                              >
-                                <span className="truncate" title={selectedConversation?.model?.name}>
-                                  {selectedConversation?.model?.name}
-                                </span>
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Controls */}
-                          <div className="flex items-center justify-end space-x-3">
-                            {/* Settings Button */}
-                            <div className="relative">
-                              <button
-                                  className="flex items-center justify-center p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                                  onClick={handleSettings}
-                                  aria-label="Model Settings"
-                                  title="Model Settings"
-                              >
-                                <IconSettings
-                                    size={18}
-                                    className={`${
-                                        showSettings
-                                            ? 'text-[#D7211E]'
-                                            : 'text-black dark:text-white'
-                                    }`}
-                                />
-                              </button>
-                              <div className="absolute transform -translate-x-1/2 left-1/2 top-full mt-1 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md whitespace-nowrap">
-                                Expand Model Settings
-                              </div>
-                            </div>
-
-                            {/* Feedback Link */}
-                            <a
-                                href={`mailto:${
-                                    isUSBased(user?.mail ?? '')
-                                        ? US_FEEDBACK_EMAIL
-                                        : FEEDBACK_EMAIL
-                                }`}
-                                className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
-                                title={t('sendFeedback')}
-                            >
-                              <IconExternalLink
-                                  size={16}
-                                  className="mr-1 text-black dark:text-white/50"
-                              />
-                              <span className="hidden sm:inline">{t('sendFeedback')}</span>
-                              <span className="sm:hidden">Feedback</span>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
+                      <ChatTopbar 
+                        botInfo={botInfo}
+                        selectedModelName={selectedConversation?.model?.name}
+                        showSettings={showSettings}
+                        onSettingsClick={handleSettings}
+                        userEmail={user?.mail}
+                      />
 
                       {showSettings && (
                         <Transition
@@ -949,89 +879,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               </>
             ) : (
               <>
-                <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 px-3 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  {/* Topbar with content*/}
-                  <div className="max-w-screen-xl mx-auto flex flex-wrap items-center justify-between gap-2">
-                    {/* Bot/Model Info */}
-                    <div className="flex items-center min-w-0 mr-2">
-                      {botInfo && (
-                          <div className="flex items-center mr-2 shrink-0">
-                            <span
-                                className="font-semibold truncate max-w-[200px]"
-                                style={{ color: botInfo.color }}
-                                title={`${botInfo.name} Bot`}
-                            >
-                              {botInfo.name} Bot
-                            </span>
-                            <span className="mx-2 text-white dark:text-white">|</span>
-                          </div>
-                      )}
-                      <div className="truncate min-w-0">
-                        <button
-                            className="flex items-center justify-center  rounded-md transition-colors"
-                            onClick={handleSettings}
-                            aria-label="Model Settings"
-                            title="Model Settings"
-                        >
-                                <span className="truncate" title={selectedConversation?.model?.name}>
-                                  {selectedConversation?.model?.name}
-                                </span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Controls */}
-                    <div className="flex items-center space-x-2">
-                      {/* Settings Button */}
-                      <button
-                          className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                          onClick={handleSettings}
-                          aria-label="Model Settings"
-                          title="Model Settings"
-                      >
-                        <IconSettings
-                            size={18}
-                            className={`${
-                                showSettings
-                                    ? 'text-[#D7211E]'
-                                    : 'text-black dark:text-white'
-                            }`}
-                        />
-                      </button>
-
-                      {/* Clear All Button */}
-                      <button
-                          className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-                          onClick={onClearAll}
-                          aria-label="Clear Conversation"
-                          title="Clear Conversation"
-                      >
-                        <IconClearAll
-                            size={18}
-                            className="text-black dark:text-white"
-                        />
-                      </button>
-
-                      {/* Feedback Link */}
-                      <a
-                          href={`mailto:${
-                              isUSBased(user?.mail ?? '')
-                                  ? US_FEEDBACK_EMAIL
-                                  : FEEDBACK_EMAIL
-                          }`}
-                          className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
-                          title={t('sendFeedback')}
-                      >
-                        <IconExternalLink
-                            size={16}
-                            className="mr-1 text-black dark:text-white/50"
-                        />
-                        <span className="hidden sm:inline">{t('sendFeedback')}</span>
-                        <span className="sm:hidden">Feedback</span>
-                      </a>
-                    </div>
-                  </div>
-                </div>
+                <ChatTopbar 
+                  botInfo={botInfo}
+                  selectedModelName={selectedConversation?.model?.name}
+                  showSettings={showSettings}
+                  onSettingsClick={handleSettings}
+                  onClearAll={onClearAll}
+                  userEmail={user?.mail}
+                  hasMessages={true}
+                />
                 {showSettings && (
                   <Transition
                     appear={true}
