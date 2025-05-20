@@ -96,6 +96,8 @@ export interface Conversation {
   temperature: number;
   folderId: string | null;
   bot?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
