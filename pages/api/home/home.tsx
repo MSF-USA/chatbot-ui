@@ -226,6 +226,8 @@ const Home = ({
       temperature:
         temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
       folderId: null,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     };
 
     const updatedConversations = [...conversations, newConversation];
@@ -245,9 +247,10 @@ const Home = ({
   ) => {
     const updatedConversation = {
       ...conversation,
+      updatedAt: new Date().toISOString(),
+      createdAt: conversation?.createdAt ?? new Date().toISOString(), // just to set this at some point
       [data.key]: data.value,
     };
-
     const { single, all } = updateConversation(
       updatedConversation,
       conversations,
