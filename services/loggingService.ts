@@ -109,22 +109,27 @@ export class AzureMonitorLoggingService {
     temperature: number,
     user: Session['user'],
     botId?: string,
+    shouldAwait: boolean = false,
   ) {
     const duration = Date.now() - startTime;
     const successEntry: MessageSuccessLogEntry = {
       ...this.createMessageLogEntry(
-        'ChatCompletion',
-        modelId,
-        messageCount,
-        temperature,
-        duration,
-        user,
-        botId,
+          'ChatCompletion',
+          modelId,
+          messageCount,
+          temperature,
+          duration,
+          user,
+          botId,
       ),
       Status: 'success',
     };
 
-    void this.log(successEntry);
+    if (shouldAwait) {
+      await this.log(successEntry);
+    } else {
+      void this.log(successEntry);
+    }
   }
 
   async logError(
@@ -135,17 +140,18 @@ export class AzureMonitorLoggingService {
     temperature: number,
     user: Session['user'],
     botId?: string,
+    shouldAwait: boolean = false,
   ) {
     const duration = Date.now() - startTime;
     const errorEntry: MessageErrorLogEntry = {
       ...this.createMessageLogEntry(
-        'ChatCompletion',
-        modelId,
-        messageCount,
-        temperature,
-        duration,
-        user,
-        botId,
+          'ChatCompletion',
+          modelId,
+          messageCount,
+          temperature,
+          duration,
+          user,
+          botId,
       ),
       Status: 'error',
       ErrorMessage: error instanceof Error ? error.message : 'Unknown error',
@@ -153,7 +159,11 @@ export class AzureMonitorLoggingService {
       StatusCode: error instanceof Error ? (error as any).status : 500,
     };
 
-    void this.log(errorEntry);
+    if (shouldAwait) {
+      await this.log(errorEntry);
+    } else {
+      void this.log(errorEntry);
+    }
   }
 
   async logFileSuccess(
@@ -168,28 +178,33 @@ export class AzureMonitorLoggingService {
     processedChunkCount?: number,
     failedChunkCount?: number,
     streamMode?: boolean,
+    shouldAwait: boolean = false,
   ) {
     const duration = Date.now() - startTime;
     const successEntry: FileLogEntry = {
       ...this.createFileLogEntry(
-        `FileOperationSuccess${
-          eventTypeSuffix || ''
-        }` as FileLogEntry['EventType'],
-        modelId,
-        duration,
-        'success',
-        user,
-        botId,
-        filename,
-        fileSize,
-        chunkCount,
-        processedChunkCount,
-        failedChunkCount,
-        streamMode,
+          `FileOperationSuccess${
+              eventTypeSuffix || ''
+          }` as FileLogEntry['EventType'],
+          modelId,
+          duration,
+          'success',
+          user,
+          botId,
+          filename,
+          fileSize,
+          chunkCount,
+          processedChunkCount,
+          failedChunkCount,
+          streamMode,
       ),
     };
 
-    void this.log(successEntry);
+    if (shouldAwait) {
+      await this.log(successEntry);
+    } else {
+      void this.log(successEntry);
+    }
   }
 
   async logFileError(
@@ -201,26 +216,31 @@ export class AzureMonitorLoggingService {
     fileSize?: number,
     botId?: string,
     eventTypeSuffix?: string,
+    shouldAwait: boolean = false,
   ) {
     const duration = Date.now() - startTime;
     const errorEntry: FileLogEntry = {
       ...this.createFileLogEntry(
-        `FileOperationError${
-          eventTypeSuffix || ''
-        }` as FileLogEntry['EventType'],
-        modelId,
-        duration,
-        'error',
-        user,
-        botId,
-        filename,
-        fileSize,
+          `FileOperationError${
+              eventTypeSuffix || ''
+          }` as FileLogEntry['EventType'],
+          modelId,
+          duration,
+          'error',
+          user,
+          botId,
+          filename,
+          fileSize,
       ),
       ErrorMessage: error instanceof Error ? error.message : 'Unknown error',
       ErrorStack: error instanceof Error ? error.stack : undefined,
     };
 
-    void this.log(errorEntry);
+    if (shouldAwait) {
+      await this.log(errorEntry);
+    } else {
+      void this.log(errorEntry);
+    }
   }
 
   async logSearch(
@@ -230,6 +250,7 @@ export class AzureMonitorLoggingService {
     oldestDate?: string,
     newestDate?: string,
     user?: Session['user'],
+    shouldAwait: boolean = false,
   ) {
     const duration = Date.now() - startTime;
     const successEntry: SearchLogEntry = {
@@ -241,7 +262,11 @@ export class AzureMonitorLoggingService {
       Duration: duration,
     };
 
-    void this.log(successEntry);
+    if (shouldAwait) {
+      await this.log(successEntry);
+    } else {
+      void this.log(successEntry);
+    }
   }
 
   async logSearchError(
@@ -249,6 +274,7 @@ export class AzureMonitorLoggingService {
     error: any,
     botId: string,
     user?: Session['user'],
+    shouldAwait: boolean = false,
   ) {
     const duration = Date.now() - startTime;
     const errorEntry: SearchErrorLogEntry = {
@@ -260,7 +286,11 @@ export class AzureMonitorLoggingService {
       ErrorStack: error instanceof Error ? error.stack : undefined,
     };
 
-    void this.log(errorEntry);
+    if (shouldAwait) {
+      await this.log(errorEntry);
+    } else {
+      void this.log(errorEntry);
+    }
   }
 
   private async log(data: LogEntry | FileLogEntry | SearchLogEntry) {
@@ -273,8 +303,17 @@ export class AzureMonitorLoggingService {
       console.log('Using Data Collection Rule ID:', this.ruleId);
       console.log('Using Stream Name:', this.streamName);
 
-      void this.client.upload(this.ruleId, this.streamName, [logEntry]);
-      console.log('Log entry sent successfully');
+      try {
+        await this.client.upload(this.ruleId, this.streamName, [logEntry]);
+        console.log('Log entry sent successfully');
+      } catch (uploadError) {
+        console.error('Error uploading log entry:', uploadError);
+        if (uploadError instanceof Error) {
+          console.error('Upload error name:', uploadError.name);
+          console.error('Upload error message:', uploadError.message);
+          console.error('Upload error stack:', uploadError.stack);
+        }
+      }
     } catch (error) {
       console.error('Error sending log entry:', error);
       if (error instanceof Error) {
