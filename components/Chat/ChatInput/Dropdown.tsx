@@ -5,6 +5,7 @@ import {
   IconLanguage,
   IconLink,
   IconSearch,
+  IconX,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -30,6 +31,7 @@ import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import useOutsideClick from '@/hooks/useOutsideClick';
+import ImageIcon from "@/components/Icons/image";
 
 interface DropdownProps {
   onFileUpload: (
@@ -75,6 +77,16 @@ interface DropdownProps {
   onCameraClick: () => void;
 }
 
+// Define the menu item structure
+interface MenuItem {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+  tooltip: string;
+  onClick: () => void;
+  category: 'web' | 'media' | 'transform';
+}
+
 const Dropdown: React.FC<DropdownProps> = ({
   setFileFieldValue,
   onFileUpload,
@@ -93,7 +105,9 @@ const Dropdown: React.FC<DropdownProps> = ({
   const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const [filterQuery, setFilterQuery] = useState('');
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const filterInputRef = useRef<HTMLInputElement>(null);
 
   const { t } = useTranslation('chat');
 
@@ -110,188 +124,185 @@ const Dropdown: React.FC<DropdownProps> = ({
     }
   };
 
-    {/* Logic to handle clicks outside the Dropdown Menu */}
-    useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen);
+  // Define menu items
+  const menuItems: MenuItem[] = [
+    {
+      id: 'search',
+      icon: <IconSearch size={18} className="mr-3 text-blue-500" />,
+      label: t('chatFeaturesDropdownSearchModal'),
+      tooltip: 'Web Search',
+      onClick: () => {
+        setIsSearchOpen(true);
+        setIsOpen(false);
+      },
+      category: 'web',
+    },
+    {
+      id: 'url',
+      icon: <IconLink size={18} className="mr-3 text-green-500" />,
+      label: t('chatFeaturesDropdownURLModal'),
+      tooltip: 'Analyze Webpage',
+      onClick: () => {
+        setIsUrlOpen(true);
+        setIsOpen(false);
+      },
+      category: 'web',
+    },
+    {
+      id: 'transcribe',
+      icon: <IconFileMusic size={18} className="mr-3 text-purple-500" />,
+      label: t('chatFeaturesDropdownTranscribeModal'),
+      tooltip: 'Transcribe Audio',
+      onClick: () => {
+        setIsTranscribeOpen(true);
+        setIsOpen(false);
+      },
+      category: 'media',
+    },
+    {
+      id: 'image',
+      icon: <ImageIcon size={18} className="mr-3 text-amber-500" />,
+      label: t('chatFeaturesDropdownImageModal'),
+      tooltip: 'Upload Image',
+      onClick: () => {
+        chatInputImageRef.current?.openFilePicker();
+      },
+      category: 'media',
+    },
+    {
+      id: 'translate',
+      icon: <IconLanguage size={18} className="mr-3 text-teal-500" />,
+      label: t('chatFeaturesDropdownTranslateModal'),
+      tooltip: 'Translate Text',
+      onClick: () => {
+        setIsTranslateOpen(true);
+        setIsOpen(false);
+      },
+      category: 'transform',
+    },
+    {
+      id: 'camera',
+      icon: <IconCamera size={18} className="mr-3 text-red-500" />,
+      label: t('Camera'),
+      tooltip: 'Capture Image',
+      onClick: () => {
+        onCameraClick();
+        setIsOpen(false);
+      },
+      category: 'media',
+    },
+  ];
 
+  // Filter menu items based on search query
+  const filteredItems = filterQuery
+    ? menuItems.filter(
+        item =>
+          item.label.toLowerCase().includes(filterQuery.toLowerCase()) ||
+          item.tooltip.toLowerCase().includes(filterQuery.toLowerCase()) ||
+          item.category.toLowerCase().includes(filterQuery.toLowerCase())
+      )
+    : menuItems;
+
+  // Group menu items by category
+  const groupedItems = filteredItems.reduce((acc, item) => {
+    if (!acc[item.category]) {
+      acc[item.category] = [];
+    }
+    acc[item.category].push(item);
+    return acc;
+  }, {} as Record<string, MenuItem[]>);
+
+  // Logic to handle clicks outside the Dropdown Menu
+  useOutsideClick(dropdownRef, () => setIsOpen(false), isOpen);
+
+  // Focus on search input when dropdown opens
   useEffect(() => {
-    if (isOpen) {
-      dropdownRef.current?.focus();
+    if (isOpen && filterInputRef.current) {
+      setTimeout(() => {
+        filterInputRef.current?.focus();
+      }, 100);
     }
   }, [isOpen]);
 
   return (
     <div className="relative" onKeyDown={handleKeyDown}>
       {/* Toggle Dropdown Button */}
-    <div className="group">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        aria-haspopup="true"
-        aria-expanded={isOpen}
-        aria-label="Toggle dropdown menu"
-        className="focus:outline-none flex"
-      >
-        <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" />
-        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-          Expand Actions
-        </div>
+      <div className="group">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+          aria-label="Toggle dropdown menu"
+          className="focus:outline-none flex"
+        >
+          <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
+          <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+            Expand Actions
+          </div>
         </button>
       </div>
 
-      {/* Dropdown Menu */}
+      {/* Enhanced Dropdown Menu */}
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute ml-2 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded shadow-lg z-10 w-fit outline-none"
+          className="absolute ml-2 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
           tabIndex={-1}
           role="menu"
         >
-          {/* Dropdown Description */}
-          {/*<div className="px-4 py-2 text-sm text-gray-500 dark:text-gray-400">*/}
-          {/*  These are extra, specialized features*/}
-          {/*</div>*/}
-
-          {/* Web Section */}
-          <div className="border-gray-200 dark:border-gray-700">
-
-            {/* Search Item */}
-          <div className='group'>
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-              onClick={() => {
-                setIsSearchOpen(true);
-                setIsOpen(false);
-              }}
-              role="menuitem"
-            >
-              <IconSearch
-                size={18}
-                className="mr-2 text-black dark:text-white"
+          {/* Search/Filter Input */}
+          <div className="sticky top-0 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+            <div className="relative">
+              <input
+                ref={filterInputRef}
+                type="text"
+                placeholder="Search features..."
+                value={filterQuery}
+                onChange={(e) => setFilterQuery(e.target.value)}
+                className="w-full px-3 py-2 pl-10 pr-8 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
-                Web Search
+              <IconSearch className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500" size={16} />
+              {filterQuery && (
+                <button
+                  onClick={() => setFilterQuery('')}
+                  className="absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <IconX size={16} />
+                </button>
+              )}
             </div>
-              <span className="text-black dark:text-white">
-                {t('chatFeaturesDropdownSearchModal')}
-              </span>
-            </button>
           </div>
-            {/* URL Puller Item */}
-            <div className="group">
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-              onClick={() => {
-                setIsUrlOpen(true);
-                setIsOpen(false);
-              }}
-              role="menuitem"
-            >
-              <IconLink size={18} className="mr-2 text-black dark:text-white" />
-              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
-                  Analyze Webpage
+
+          <div className="max-h-80 overflow-y-auto custom-scrollbar">
+            {Object.entries(groupedItems).length > 0 ? (
+              Object.entries(groupedItems).map(([category, items]) => (
+                <div key={category} className="px-1 py-1">
+                  <h3 className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                    {category.charAt(0).toUpperCase() + category.slice(1)}
+                  </h3>
+                  {items.map((item) => (
+                    <div key={item.id} className="group relative">
+                      <button
+                        className="flex items-center px-3 py-2.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:bg-gray-100 dark:focus:bg-gray-700 transition-colors duration-150"
+                        onClick={item.onClick}
+                        role="menuitem"
+                      >
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </button>
+                      <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap z-20">
+                        {item.tooltip}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))
+            ) : (
+              <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
+                No features match your search
               </div>
-              <span className="text-black dark:text-white text-nowrap">
-                {t('chatFeaturesDropdownURLModal')}
-              </span>
-            </button>
+            )}
           </div>
-        </div>
-          <div className="border-gray-200 dark:border-gray-700">
-
-            {/* Transcribe Item */}
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none  text-black dark:text-white"
-              onClick={() => {
-                setIsTranscribeOpen(true);
-                setIsOpen(false);
-              }}
-              role="menuitem"
-            >
-              <IconFileMusic size={18} className="mr-2" />
-              <span>{t('chatFeaturesDropdownTranscribeModal')}</span>
-            </button>
-
-            {/* Images Item */}
-            <div className="group">
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-              onClick={() => {
-                chatInputImageRef.current?.openFilePicker();
-              }}
-              role="menuitem"
-            >
-              <ChatInputImage
-                setSubmitType={setSubmitType}
-                prompt={textFieldValue}
-                setFilePreviews={setFilePreviews}
-                setFileFieldValue={setFileFieldValue}
-                setUploadProgress={setUploadProgress}
-                setParentModalIsOpen={setIsImageOpen}
-                simulateClick={false}
-                labelText={t('chatFeaturesDropdownImageModal')}
-              />
-            </button>
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
-                Upload Image
-            </div>
-           </div>
-          </div>
-
-          {/* Compose Section */}
-          {/*<div className="border-t border-gray-200 dark:border-gray-700">*/}
-          {/*  <div className="px-4 py-2 text-sm text-center font-semibold text-gray-700 dark:text-gray-300 opacity-60">*/}
-          {/*    Compose*/}
-          {/*  </div>*/}
-
-          {/*</div>*/}
-
-          {/* Transform Section */}
-          <div className="border-gray-200 dark:border-gray-700">
-
-            {/* Translate Item */}
-            <div className="group">
-            <button
-              className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-              onClick={() => {
-                setIsTranslateOpen(true);
-                setIsOpen(false);
-              }}
-              role="menuitem"
-            >
-              <IconLanguage
-                size={18}
-                className="mr-2 text-black dark:text-white"
-              />
-              <span className="text-black dark:text-white">
-                {t('chatFeaturesDropdownTranslateModal')}
-              </span>
-            </button>
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
-              Translate Text
-            </div>
-          </div>
-          {/* Camera Item */}
-          <div className="group">
-          <button
-            className="flex items-center px-4 py-2 w-full hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"
-            onClick={() => {
-              onCameraClick();
-              setIsOpen(false);
-            }}
-            role="menuitem"
-          >
-            <IconCamera
-              size={18}
-              className="mr-2 text-black dark:text-white"
-            />
-            <span className="text-black dark:text-white">
-              {t('Camera')}
-            </span>
-          </button>            
-            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap">
-              Capture Image
-            </div>
-          </div>
-         </div>
         </div>
       )}
 
@@ -364,7 +375,18 @@ const Dropdown: React.FC<DropdownProps> = ({
         />
       )}
 
-      {/* Chat Input Image Component */}
+      {/* Chat Input Image Component (hidden) */}
+      <ChatInputImage
+        imageInputRef={chatInputImageRef}
+        setSubmitType={setSubmitType}
+        prompt={textFieldValue}
+        setFilePreviews={setFilePreviews}
+        setFileFieldValue={setFileFieldValue}
+        setUploadProgress={setUploadProgress}
+        setParentModalIsOpen={setIsImageOpen}
+        simulateClick={false}
+        labelText=""
+      />
     </div>
   );
 };
