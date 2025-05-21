@@ -35,6 +35,10 @@ module.exports = {
           '50%': { opacity: 0.5 },
           '100%': { opacity: 1 },
         },
+        'spin-slow': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
       },
       animation: {
         'scroll-text': 'scroll-text 10s linear infinite',
@@ -42,6 +46,7 @@ module.exports = {
         indeterminate: 'indeterminate 1.5s infinite',
         'progress-bar-stripes': 'progress-bar-stripes 1s linear infinite',
         'animate-pulse': 'pulse 2s infinite',
+        'spin-slow': 'spin-slow 4s linear infinite',
       },
     },
   },

@@ -3,6 +3,7 @@ import {
   IconCopy,
   IconLoader2,
   IconRobot,
+  IconSettings,
   IconVolume,
   IconVolumeOff,
 } from '@tabler/icons-react';
@@ -16,6 +17,9 @@ import {
 
 import { Conversation } from '@/types/chat';
 import { Citation } from '@/types/rag';
+
+import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
@@ -50,9 +54,22 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
+  const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
+
+  // Get streaming settings from context
+  const { settings, updateSettings } = useStreamingSettings();
 
   const citationsProcessed = useRef(false);
   const processingAttempts = useRef(0);
+
+  // Use smooth streaming hook for animated text display
+  const smoothContent = useSmoothStreaming({
+    isStreaming: messageIsStreaming,
+    content: displayContent,
+    charsPerFrame: settings.charsPerFrame,
+    frameDelay: settings.frameDelay,
+    enabled: settings.smoothStreamingEnabled,
+  });
 
   // Clean up resources when component unmounts
   useEffect(() => {
@@ -179,6 +196,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const displayContentWithoutCitations = messageIsStreaming
     ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
     : displayContent;
+
+  // Use the smooth content for display when streaming and smooth streaming is enabled
+  const contentToDisplay = settings.smoothStreamingEnabled && messageIsStreaming
+    ? smoothContent
+    : displayContentWithoutCitations;
 
   const handleTTS = async () => {
     try {
@@ -316,10 +338,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   rehypePlugins={[rehypeMathjax]}
                   components={customMarkdownComponents}
                 >
-                  {displayContentWithoutCitations}
+                  {contentToDisplay}
                 </CitationMarkdown>
                 {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && displayContentWithoutCitations.length > 0 && (
+                {messageIsStreaming && contentToDisplay.length > 0 && (
                   <StreamingIndicator />
                 )}
               </>
@@ -331,10 +353,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   rehypePlugins={[rehypeMathjax]}
                   components={customMarkdownComponents}
                 >
-                  {displayContentWithoutCitations}
+                  {contentToDisplay}
                 </MemoizedReactMarkdown>
                 {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && displayContentWithoutCitations.length > 0 && (
+                {messageIsStreaming && contentToDisplay.length > 0 && (
                   <StreamingIndicator />
                 )}
               </>
@@ -342,58 +364,171 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           </div>
 
           {/* Fixed action buttons at the bottom of the message */}
-          <div className="flex justify-end items-center mt-3 sm:mt-4 space-x-2">
-            {/* Copy button */}
-            <button
-              className={`px-2 py-1 text-sm rounded-md flex items-center ${
-                messageCopied 
-                  ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-              }`}
-              onClick={copyOnClick}
-              aria-label={messageCopied ? "Copied" : "Copy message"}
-              title={messageCopied ? "Copied" : "Copy message"}
-            >
-              {messageCopied ? (
-                <>
-                  <IconCheck size={16} className="mr-1" />
-                </>
-              ) : (
-                <>
-                  <IconCopy size={16} className="mr-1" />
-                </>
-              )}
-            </button>
+          <div className="flex justify-end items-center mt-3 sm:mt-4">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+              {/* Copy button */}
+              <div className="relative group">
+                <button
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    messageCopied 
+                      ? 'bg-green-500 text-white dark:bg-green-600 scale-105'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
+                  }`}
+                  onClick={copyOnClick}
+                  aria-label={messageCopied ? "Copied" : "Copy message"}
+                >
+                  {messageCopied ? (
+                    <IconCheck size={18} />
+                  ) : (
+                    <IconCopy size={18} />
+                  )}
+                </button>
+                <span className="sr-only">
+                  {messageCopied ? "Copied!" : "Copy message"}
+                </span>
+              </div>
 
-            {/* Listen button */}
-            <button
-              className={`px-2 py-1 text-sm rounded-md flex items-center ${
-                audioUrl
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                  : isGeneratingAudio
-                    ? 'bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
-              }`}
-              onClick={audioUrl ? handleCloseAudio : handleTTS}
-              disabled={isGeneratingAudio || messageIsStreaming}
-              aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-              title={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen to this message"}
-            >
-              {isGeneratingAudio ? (
-                <>
-                  <IconLoader2 size={16} className="animate-spin mr-1" />
-                </>
-              ) : audioUrl ? (
-                <>
-                  <IconVolumeOff size={16} className="mr-1" />
-                </>
-              ) : (
-                <>
-                  <IconVolume size={16} className="mr-1" />
-                </>
-              )}
-            </button>
+              {/* Streaming Settings button */}
+              <div className="relative group ml-1">
+                <button
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    showStreamingSettings
+                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
+                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
+                  }`}
+                  onClick={() => setShowStreamingSettings(!showStreamingSettings)}
+                  aria-label="Text streaming settings"
+                >
+                  <IconSettings size={18} className={showStreamingSettings ? 'animate-spin-slow' : ''} />
+                </button>
+                <span className="sr-only">
+                  Streaming settings
+                </span>
+              </div>
+
+              {/* Listen button */}
+              <div className="relative group ml-1">
+                <button
+                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
+                    audioUrl
+                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
+                      : isGeneratingAudio
+                        ? 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed'
+                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
+                  }`}
+                  onClick={audioUrl ? handleCloseAudio : handleTTS}
+                  disabled={isGeneratingAudio || messageIsStreaming}
+                  aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
+                >
+                  {isGeneratingAudio ? (
+                    <IconLoader2 size={18} className="animate-spin" />
+                  ) : audioUrl ? (
+                    <IconVolumeOff size={18} className="animate-pulse" />
+                  ) : (
+                    <IconVolume size={18} />
+                  )}
+                </button>
+                <span className="sr-only">
+                  {audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
+                </span>
+              </div>
+            </div>
           </div>
+
+          {/* Streaming Settings Modal */}
+          {showStreamingSettings && (
+            <div className="mt-3 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm shadow-md border border-gray-200 dark:border-gray-700 transition-all">
+              <h4 className="font-medium mb-3 text-gray-700 dark:text-gray-300 flex items-center">
+                <IconSettings size={16} className="mr-2" />
+                Text Streaming Settings
+              </h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <label className="cursor-pointer text-gray-700 dark:text-gray-300 flex items-center">
+                    <span>Smooth streaming</span>
+                    <div className="relative inline-block w-10 h-5 ml-2">
+                      <input
+                        type="checkbox"
+                        className="opacity-0 w-0 h-0"
+                        checked={settings.smoothStreamingEnabled}
+                        onChange={(e) =>
+                          updateSettings({ smoothStreamingEnabled: e.target.checked })
+                        }
+                      />
+                      <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
+                        settings.smoothStreamingEnabled 
+                          ? 'bg-blue-500 dark:bg-blue-600' 
+                          : 'bg-gray-300 dark:bg-gray-600'
+                      }`}>
+                        <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                          settings.smoothStreamingEnabled 
+                            ? 'translate-x-5' 
+                            : 'translate-x-0.5'
+                        } top-0.5 left-0`}></span>
+                      </span>
+                    </div>
+                  </label>
+                </div>
+
+                <div>
+                  <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
+                    <span>Speed (characters per frame)</span>
+                    <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                      {settings.charsPerFrame}
+                    </span>
+                  </label>
+                  <input
+                    type="range"
+                    min="1"
+                    max="10"
+                    value={settings.charsPerFrame}
+                    onChange={(e) =>
+                      updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                    }
+                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+                      settings.smoothStreamingEnabled
+                        ? 'bg-gray-300 dark:bg-gray-600'
+                        : 'bg-gray-200 dark:bg-gray-700 opacity-50'
+                    }`}
+                    disabled={!settings.smoothStreamingEnabled}
+                  />
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                    <span>Slower</span>
+                    <span>Faster</span>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
+                    <span>Delay between frames (ms)</span>
+                    <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                      {settings.frameDelay}ms
+                    </span>
+                  </label>
+                  <input
+                    type="range"
+                    min="5"
+                    max="50"
+                    step="5"
+                    value={settings.frameDelay}
+                    onChange={(e) =>
+                      updateSettings({ frameDelay: parseInt(e.target.value) })
+                    }
+                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+                      settings.smoothStreamingEnabled
+                        ? 'bg-gray-300 dark:bg-gray-600'
+                        : 'bg-gray-200 dark:bg-gray-700 opacity-50'
+                    }`}
+                    disabled={!settings.smoothStreamingEnabled}
+                  />
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                    <span>Faster</span>
+                    <span>Slower</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {audioUrl && (
               <AudioPlayer

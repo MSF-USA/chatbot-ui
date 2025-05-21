@@ -461,16 +461,6 @@ export const ChatInput = ({
 
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
 
-        <ChatInputImageCapture
-          ref={cameraRef}
-          visible={false}
-          setFilePreviews={setFilePreviews}
-          setSubmitType={setSubmitType}
-          prompt={textFieldValue}
-          setImageFieldValue={setFileFieldValue}
-          setUploadProgress={setUploadProgress}
-        />
-
           <ChatInputFile
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
@@ -478,6 +468,17 @@ export const ChatInput = ({
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
+          />
+
+          <ChatInputImageCapture
+            ref={cameraRef}
+            setSubmitType={setSubmitType}
+            prompt={textFieldValue}
+            setFilePreviews={setFilePreviews}
+            setImageFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
+            visible={false}
+            hasCameraSupport={true}
           />
 
           <ChatDropdown

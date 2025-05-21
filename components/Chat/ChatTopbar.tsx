@@ -2,6 +2,7 @@ import {
   IconClearAll,
   IconExternalLink,
   IconSettings,
+  IconChevronDown,
 } from '@tabler/icons-react';
 import { useTranslation } from 'next-i18next';
 import { isUSBased } from '@/utils/app/userAuth';
@@ -51,14 +52,15 @@ export const ChatTopbar = ({
           )}
           <div className="truncate min-w-0">
             <button
-              className="flex items-center justify-center rounded-md transition-colors"
+              className="flex items-center justify-center rounded-md transition-colors px-2 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600"
               onClick={onSettingsClick}
               aria-label="Model Settings"
               title="Model Settings"
             >
-              <span className="truncate" title={selectedModelName}>
+              <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
                 {selectedModelName}
               </span>
+              <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
             </button>
           </div>
         </div>

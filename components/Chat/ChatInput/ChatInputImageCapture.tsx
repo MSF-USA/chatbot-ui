@@ -92,8 +92,10 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
         canvasRef,
         fileInputRef,
         setIsCameraOpen,
-      ).then(() => null);
-      openModal();
+      ).then(() => {
+        // Only open the modal after the camera is initialized
+        openModal();
+      });
     }
   };
 
