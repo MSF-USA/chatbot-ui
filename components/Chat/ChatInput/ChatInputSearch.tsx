@@ -151,23 +151,6 @@ const ChatInputSearch = ({
     isOpen,
   ]);
 
-  // Handle clicks outside the modal to close it
-  useEffect(() => {
-    if (!isOpen) return; // Only run if modal is open
-
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        modalRef.current &&
-        !modalRef.current.contains(event.target as Node)
-      ) {
-        onClose(); // Tell parent to close
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen, onClose]);
 
   // Focus input when modal opens or mode changes
   useEffect(() => {
