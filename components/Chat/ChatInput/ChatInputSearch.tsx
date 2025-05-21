@@ -88,7 +88,8 @@ const ChatInputSearch = ({
   handleSend,
   initialMode = 'search',
 }: ChatInputSearchProps) => {
-  const modalRef = useCloseOnOutsideAndEscape(true, () => setParentModalIsOpen(false));
+  const modalRef = useCloseOnOutsideAndEscape(true, () => onClose());
+  // const modalRef = useRef();
   const { t } = useTranslation('chat');
   const {
     state: { user },
@@ -122,7 +123,6 @@ const ChatInputSearch = ({
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
 
-  const modalRef = useRef<HTMLDivElement>(null);
   const urlInputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
