@@ -93,8 +93,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     // Start the animation loop immediately
     animationFrameRef.current = requestAnimationFrame(animate);
 
-    // Debug log
-    console.log("Animation loop started", new Date().toISOString());
+    // console.log("Animation loop started", new Date().toISOString());
   };
 
   // Stop animation loop
