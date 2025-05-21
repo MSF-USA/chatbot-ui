@@ -212,16 +212,21 @@ const Home = ({
   const handleNewConversation = () => {
     const lastConversation = conversations[conversations.length - 1];
 
+    // Check if last used model is legacy or not set
+    const lastModelIsLegacy = lastConversation?.model?.id &&
+      OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
+
+    // TODO: Replace with an actual default value given by environment variables, not hardcoded
+    // to always use GPT-4o as default, forcing code changes on model deployment changes.
+    const modelToUse = (!lastConversation?.model || lastModelIsLegacy) ?
+      OpenAIModels[OpenAIModelID.GPT_4o] :
+      lastConversation.model;
+
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
       messages: [],
-      model: lastConversation?.model || {
-        id: OpenAIModels[defaultModelId].id,
-        name: OpenAIModels[defaultModelId].name,
-        maxLength: OpenAIModels[defaultModelId].maxLength,
-        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
-      },
+      model: modelToUse,
       prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
@@ -377,16 +382,22 @@ const Home = ({
     }
 
     const lastConversation = parsedConversationHistory[parsedConversationHistory.length - 1];
+
+    // Check if last used model is legacy or not set
+    const lastModelIsLegacy = lastConversation?.model?.id &&
+      OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
+
+    // TODO: same as above, use environment variable for defaults rather than
+    // always using GPT-4o as default if last model was legacy
+    const modelToUse = (!lastConversation?.model || lastModelIsLegacy) ?
+      OpenAIModels[OpenAIModelID.GPT_4o] :
+      lastConversation.model;
+
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
       messages: [],
-      model: lastConversation?.model || {
-        id: OpenAIModels[defaultModelId].id,
-        name: OpenAIModels[defaultModelId].name,
-        maxLength: OpenAIModels[defaultModelId].maxLength,
-        tokenLimit: OpenAIModels[defaultModelId].tokenLimit,
-      },
+      model: modelToUse,
       prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
         temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
