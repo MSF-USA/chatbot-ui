@@ -56,7 +56,7 @@ export const ChatTopbar = ({
               aria-label="Model Settings"
               title="Model Settings"
             >
-              <span className="truncate" title={selectedModelName}>
+              <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
                 {selectedModelName}
               </span>
             </button>
