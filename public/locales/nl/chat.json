@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "Transformeren",
   "chatFeaturesDropdownImageModal": "afbeeldingen",
   "chatFeaturesDropdownFile": "Bestand",
-  "chatFeaturesDropdownCompose": "Componeren"
+  "chatFeaturesDropdownCompose": "Componeren",
+  "webUrlInputDescription": "Voer een website-URL in voor AI-analyse",
+  "webUrlQuestionDescription": "Wat wilt u weten over deze website?",
+  "webSearchInputDescription": "Zoek op internet met AI-gestuurde analyse"
 }

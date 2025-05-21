@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "Transforma",
   "chatFeaturesDropdownImageModal": "imagini",
   "chatFeaturesDropdownFile": "Fișier",
-  "chatFeaturesDropdownCompose": "Compune"
+  "chatFeaturesDropdownCompose": "Compune",
+  "webUrlInputDescription": "Introduceți URL-ul site-ului pentru analiza AI",
+  "webUrlQuestionDescription": "Ce doriți să știți despre acest site web?",
+  "webSearchInputDescription": "Căutați pe internet cu analiză bazată pe AI"
 }

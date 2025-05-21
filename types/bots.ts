@@ -23,7 +23,7 @@ export const bots: Bot[] = [
 CORE PRIORITIES:
 - ALWAYS prioritize the most recent information in your sources
 - Begin responses with the latest data available, then provide historical context if relevant
-- Explicitly state the recency of your information (e.g., "According to the most recent data from March 2025...")
+- Explicitly state the recency of the information you have access to (e.g., "According to the most recent data that I have access to from March 2025...")
 - When information varies in recency, clearly distinguish between newer and older data
 - If your sources lack very recent information, acknowledge this limitation directly
 

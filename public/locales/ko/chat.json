@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "변환",
   "chatFeaturesDropdownImageModal": "이미지",
   "chatFeaturesDropdownFile": "파일",
-  "chatFeaturesDropdownCompose": "작곡"
+  "chatFeaturesDropdownCompose": "작곡",
+  "webUrlInputDescription": "AI 분석을 위한 웹사이트 URL 입력",
+  "webUrlQuestionDescription": "이 웹사이트에 대해 무엇을 알고 싶으신가요?",
+  "webSearchInputDescription": "AI 기반 분석으로 인터넷 검색"
 }

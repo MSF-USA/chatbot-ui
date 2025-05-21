@@ -85,5 +85,8 @@
   "chatFeaturesDropdownTransform": "Badilisha",
   "chatFeaturesDropdownImageModal": "picha",
   "chatFeaturesDropdownFile": "Faili",
-  "chatFeaturesDropdownCompose": "Kuandika"
+  "chatFeaturesDropdownCompose": "Kuandika",
+  "webUrlInputDescription": "Ingiza URL ya tovuti kwa uchambuzi wa AI",
+  "webUrlQuestionDescription": "Ungependa kujua nini kuhusu tovuti hii?",
+  "webSearchInputDescription": "Tafuta mtandaoni kwa uchambuzi unaoendeshwa na AI"
 }

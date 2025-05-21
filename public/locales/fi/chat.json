@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "Muuta",
   "chatFeaturesDropdownImageModal": "kuvat",
   "chatFeaturesDropdownFile": "Tiedosto",
-  "chatFeaturesDropdownCompose": "Säveltää"
+  "chatFeaturesDropdownCompose": "Säveltää",
+  "webUrlInputDescription": "Syötä verkkosivuston URL tekoälyanalyysiä varten",
+  "webUrlQuestionDescription": "Mitä haluaisit tietää tästä verkkosivustosta?",
+  "webSearchInputDescription": "Etsi internetistä tekoälypohjaisella analyysillä"
 }
