@@ -31,9 +31,6 @@ import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCap
 import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
-import ChatInputUrl from '@/components/Chat/ChatInput/ChatInputUrl';
-import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import useOutsideClick from '@/hooks/useOutsideClick';
 import ImageIcon from "@/components/Icons/image";
 
 interface DropdownProps {
@@ -162,18 +159,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       label: t('chatFeaturesDropdownSearchModal'),
       tooltip: 'Web Search',
       onClick: () => {
-        setIsSearchOpen(true);
-        closeDropdown();
-      },
-      category: 'web',
-    },
-    {
-      id: 'url',
-      icon: <IconLink size={18} className="mr-3 text-green-500" />,
-      label: t('chatFeaturesDropdownURLModal'),
-      tooltip: 'Analyze Webpage',
-      onClick: () => {
-        setIsUrlOpen(true);
+        setSearchConfig((prev) => ({ ...prev, isOpen: true }));
         closeDropdown();
       },
       category: 'web',
