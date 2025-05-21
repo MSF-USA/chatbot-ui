@@ -114,11 +114,17 @@ const Dropdown: React.FC<DropdownProps> = ({
   useEffect(() => {
     const checkCameraSupport = async () => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const hasCamera = devices.some(
-          (device) => device.kind === 'videoinput',
-        );
-        setHasCameraSupport(hasCamera);
+        if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+          const devices = await navigator.mediaDevices.enumerateDevices();
+          const hasCamera = devices.some(
+            (device) => device.kind === 'videoinput',
+          );
+          // console.log('Camera support detected:', hasCamera, devices);
+          setHasCameraSupport(hasCamera);
+        } else {
+          console.error('MediaDevices API not supported');
+          setHasCameraSupport(false);
+        }
       } catch (error) {
         console.error('Error checking camera support:', error);
         setHasCameraSupport(false);
