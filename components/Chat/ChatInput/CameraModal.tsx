@@ -100,24 +100,40 @@ export const CameraModal: FC<CameraModalProps> = ({
 
   useEffect(() => {
     const getDevices = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === 'videoinput',
-      );
-      setCameras(videoDevices);
-      if (videoDevices.length > 0) {
-        setSelectedCamera(videoDevices[0].deviceId);
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === 'videoinput',
+        );
+        setCameras(videoDevices);
+        if (videoDevices.length > 0) {
+          setSelectedCamera(videoDevices[0].deviceId);
+          // Initialize camera with the first device when modal opens
+          if (isOpen) {
+            await startCamera(videoDevices[0].deviceId);
+          }
+        }
+      } catch (error) {
+        console.error('Error enumerating devices:', error);
       }
     };
+
     getDevices();
-  }, []);
+  }, [isOpen]);
 
   const startCamera = async (deviceId: string) => {
-    const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId },
-    });
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
+    try {
+      const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId },
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      console.error('Error starting camera:', error);
+      // Show an error message to the user
+      alert('Could not access camera. Please check your camera permissions and try again.');
+      closeModal();
     }
   };
 
