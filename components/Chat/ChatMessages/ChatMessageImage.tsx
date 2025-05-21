@@ -36,7 +36,7 @@ interface ChatMessageImageProps {
 
 /**
  * ChatMessageImage Component
- * 
+ *
  * Renders a chat message that contains an image and optional text content.
  * Provides responsive display with loading states and error handling for images.
  * Supports expandable/collapsible image viewing and text editing.
@@ -86,7 +86,9 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
             } else if (contentMessage.type === 'text') {
                 setText(contentMessage);
             } else {
-                throw new Error(`Unexpected message type for message: ${contentMessage}`);
+                throw new Error(`Unexpected message type for message: ${
+                    JSON.stringify(contentMessage, null, 2)
+                }`);
             }
         });
     }, [content]);
@@ -95,7 +97,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
         if (image) {
             setIsLoading(true);
             setLoadError(false);
-            
+
             fetchImageBase64FromMessageContent(image)
                 .then(imageBase64String => {
                     if (imageBase64String.length > 0) {
@@ -141,7 +143,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                   <IconUser size={30}/>
                 )}
             </div>
-            
+
             {isLoading && (
               <div className="w-full flex justify-center items-center min-h-[100px]">
                 <div className="bg-gray-200 dark:bg-gray-700 animate-pulse rounded w-2/3 h-[150px] flex items-center justify-center">
@@ -149,7 +151,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                 </div>
               </div>
             )}
-            
+
             {loadError && (
               <div className="w-full flex justify-center items-center min-h-[100px]">
                 <div className="border border-red-300 dark:border-red-700 rounded p-4 text-red-500">
@@ -157,11 +159,11 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                 </div>
               </div>
             )}
-            
+
             {!isLoading && !loadError && imageBase64 && (
-              <img 
-                onClick={toggleImageStyleProps} 
-                className="block hover:cursor-pointer max-w-full" 
+              <img
+                onClick={toggleImageStyleProps}
+                className="block hover:cursor-pointer max-w-full"
                 style={{
                   ...imageStyleProps,
                   objectFit: 'contain',
