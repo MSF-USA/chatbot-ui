@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "Chuyển đổi",
   "chatFeaturesDropdownImageModal": "hình ảnh",
   "chatFeaturesDropdownFile": "Tệp",
-  "chatFeaturesDropdownCompose": "Soạn"
+  "chatFeaturesDropdownCompose": "Soạn",
+  "webUrlInputDescription": "Nhập URL trang web để phân tích bằng AI",
+  "webUrlQuestionDescription": "Bạn muốn biết gì về trang web này?",
+  "webSearchInputDescription": "Tìm kiếm trên internet với phân tích được hỗ trợ bởi AI"
 }

@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "Przekształć",
   "chatFeaturesDropdownImageModal": "obrazy",
   "chatFeaturesDropdownFile": "Plik",
-  "chatFeaturesDropdownCompose": "Komponować"
+  "chatFeaturesDropdownCompose": "Komponować",
+  "webUrlInputDescription": "Wprowadź adres URL strony do analizy AI",
+  "webUrlQuestionDescription": "Co chcesz wiedzieć o tej stronie?",
+  "webSearchInputDescription": "Przeszukaj internet z analizą wspieraną przez AI"
 }

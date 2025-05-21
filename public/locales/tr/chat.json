@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "Dönüştür",
   "chatFeaturesDropdownImageModal": "görseller",
   "chatFeaturesDropdownFile": "Dosya",
-  "chatFeaturesDropdownCompose": "Bestelemek"
+  "chatFeaturesDropdownCompose": "Bestelemek",
+  "webUrlInputDescription": "AI analizi için bir web sitesi URL'si girin",
+  "webUrlQuestionDescription": "Bu web sitesi hakkında ne öğrenmek istersiniz?",
+  "webSearchInputDescription": "AI destekli analiz ile internette arama yapın"
 }

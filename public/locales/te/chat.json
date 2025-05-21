@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "మార్చు",
   "chatFeaturesDropdownImageModal": "చిత్రాలు",
   "chatFeaturesDropdownFile": "ఫైలు",
-  "chatFeaturesDropdownCompose": "రచన"
+  "chatFeaturesDropdownCompose": "రచన",
+  "webUrlInputDescription": "AI విశ్లేషణ కోసం వెబ్‌సైట్ URLని నమోదు చేయండి",
+  "webUrlQuestionDescription": "ఈ వెబ్‌సైట్ గురించి మీరు ఏమి తెలుసుకోవాలనుకుంటున్నారు?",
+  "webSearchInputDescription": "AI-ఆధారిత విశ్లేషణతో ఇంటర్నెట్‌లో శోధించండి"
 }

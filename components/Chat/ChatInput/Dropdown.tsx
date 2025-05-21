@@ -17,6 +17,8 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
+import useOutsideClick from '@/hooks/useOutsideClick';
+
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
@@ -25,6 +27,7 @@ import {
 } from '@/types/chat';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
+import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
 import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
@@ -97,11 +100,18 @@ const Dropdown: React.FC<DropdownProps> = ({
   setSubmitType,
   handleSend,
   textFieldValue,
-  onCameraClick
+  onCameraClick,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isUrlOpen, setIsUrlOpen] = useState(false);
+
+  const [SearchConfig, setSearchConfig] = useState<{
+    isOpen: boolean;
+    mode: 'search' | 'url';
+  }>({
+    isOpen: false,
+    mode: 'search',
+  });
+
   const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
@@ -258,6 +268,10 @@ const Dropdown: React.FC<DropdownProps> = ({
           setSelectedIndex(0);
         } else {
           closeDropdown();
+          setSearchConfig((prev) => ({ ...prev, isOpen: false }));
+          setIsTranscribeOpen(false);
+          setIsTranslateOpen(false);
+          setIsImageOpen(false);
         }
         break;
 
@@ -395,21 +409,20 @@ const Dropdown: React.FC<DropdownProps> = ({
         </div>
       )}
 
-      {/* Chat Input Search Modal */}
-      {isSearchOpen && (
-        <ChatInputSearch
-          onFileUpload={onFileUpload}
-          setSubmitType={setSubmitType}
-          setFilePreviews={setFilePreviews}
-          setFileFieldValue={setFileFieldValue}
-          setImageFieldValue={setImageFieldValue}
-          setUploadProgress={setUploadProgress}
-          setTextFieldValue={setTextFieldValue}
-          handleSend={handleSend}
-          setParentModalIsOpen={setIsSearchOpen}
-          simulateClick={true}
-        />
-      )}
+      {/* Search/URL Modal */}
+      <ChatInputSearch
+        isOpen={SearchConfig.isOpen}
+        onClose={() => setSearchConfig((prev) => ({ ...prev, isOpen: false }))}
+        initialMode={SearchConfig.mode}
+        onFileUpload={onFileUpload}
+        setSubmitType={setSubmitType}
+        setFilePreviews={setFilePreviews}
+        setFileFieldValue={setFileFieldValue}
+        setImageFieldValue={setImageFieldValue}
+        setUploadProgress={setUploadProgress}
+        setTextFieldValue={setTextFieldValue}
+        handleSend={handleSend}
+      />
 
       {/* Chat Input Image Capture Modal */}
       {isImageOpen && (
@@ -420,22 +433,6 @@ const Dropdown: React.FC<DropdownProps> = ({
           setImageFieldValue={setFileFieldValue}
           setUploadProgress={setUploadProgress}
           hasCameraSupport={hasCameraSupport}
-        />
-      )}
-
-      {/* Chat Input URL Modal */}
-      {isUrlOpen && (
-        <ChatInputUrl
-          onFileUpload={onFileUpload}
-          setSubmitType={setSubmitType}
-          setFilePreviews={setFilePreviews}
-          setFileFieldValue={setFileFieldValue}
-          setImageFieldValue={setImageFieldValue}
-          setUploadProgress={setUploadProgress}
-          setTextFieldValue={setTextFieldValue}
-          handleSend={handleSend}
-          setParentModalIsOpen={setIsUrlOpen}
-          simulateClick={true}
         />
       )}
 

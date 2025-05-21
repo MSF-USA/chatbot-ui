@@ -85,5 +85,8 @@
   "chatFeaturesDropdownTransform": "Перетворити",
   "chatFeaturesDropdownImageModal": "зображення",
   "chatFeaturesDropdownFile": "Файл",
-  "chatFeaturesDropdownCompose": "Складати"
+  "chatFeaturesDropdownCompose": "Складати",
+  "webUrlInputDescription": "Введіть URL веб-сайту для аналізу за допомогою ШІ",
+  "webUrlQuestionDescription": "Що ви хочете дізнатися про цей веб-сайт?",
+  "webSearchInputDescription": "Пошук в інтернеті з аналізом на базі ШІ"
 }

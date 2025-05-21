@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "変換",
   "chatFeaturesDropdownImageModal": "画像",
   "chatFeaturesDropdownFile": "ファイル",
-  "chatFeaturesDropdownCompose": "構成"
+  "chatFeaturesDropdownCompose": "構成",
+  "webUrlInputDescription": "AI分析用のURLを入力してください",
+  "webUrlQuestionDescription": "このウェブサイトについて何を知りたいですか？",
+  "webSearchInputDescription": "AI分析を活用してインターネットを検索"
 }

@@ -116,5 +116,8 @@
   "chatFeaturesDropdownTransform": "转换",
   "chatFeaturesDropdownImageModal": "图像",
   "chatFeaturesDropdownFile": "文件",
-  "chatFeaturesDropdownCompose": "撰写"
+  "chatFeaturesDropdownCompose": "撰写",
+  "webUrlInputDescription": "输入网站URL以供AI分析",
+  "webUrlQuestionDescription": "您想了解这个网站的什么信息？",
+  "webSearchInputDescription": "使用AI驱动的分析搜索互联网"
 }
