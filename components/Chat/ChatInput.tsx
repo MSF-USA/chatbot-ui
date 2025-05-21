@@ -470,6 +470,17 @@ export const ChatInput = ({
             setUploadProgress={setUploadProgress}
           />
 
+          <ChatInputImageCapture
+            ref={cameraRef}
+            setSubmitType={setSubmitType}
+            prompt={textFieldValue}
+            setFilePreviews={setFilePreviews}
+            setImageFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
+            visible={false}
+            hasCameraSupport={true}
+          />
+
           <ChatDropdown
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
