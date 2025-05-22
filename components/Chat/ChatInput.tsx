@@ -195,10 +195,9 @@ export const ChatInput = ({
   };
 
   const handleStopConversation = () => {
+    console.log('Stop button pressed');
     stopConversationRef.current = true;
-    setTimeout(() => {
-      stopConversationRef.current = false;
-    }, 1000);
+    homeDispatch({ field: 'messageIsStreaming', value: false });
   };
 
   const isMobile = () => {
