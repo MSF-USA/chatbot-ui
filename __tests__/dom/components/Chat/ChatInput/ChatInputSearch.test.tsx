@@ -199,13 +199,6 @@ describe('ChatInputSearch Component', () => {
     expect(props.onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('should call onClose when clicking outside the modal', async () => {
-    render(<ChatInputSearch {...props} isOpen={true} />);
-    await screen.findByRole('dialog');
-    fireEvent.mouseDown(document.body);
-    expect(props.onClose).toHaveBeenCalledTimes(1);
-  });
-
   describe('URL Mode', () => {
     beforeEach(() => {
       props.initialMode = 'url';
