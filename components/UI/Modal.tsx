@@ -72,17 +72,22 @@ const Modal: React.FC<ModalProps> = ({
 
   if (!isOpen) return null;
 
+  // Check if header should be shown
+  const showHeader = title || icon;
+  // Only show divider if there's actually content in the header
+  const showDivider = showHeader && title;
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto">
       {/* Backdrop/overlay */}
-      <div 
-        className="fixed inset-0 bg-black bg-opacity-40 transition-opacity" 
+      <div
+        className="fixed inset-0 bg-black bg-opacity-40 transition-opacity"
         onClick={!preventOutsideClick ? onClose : undefined}
         aria-hidden="true"
       />
-      
+
       {/* Modal container */}
-      <div 
+      <div
         ref={modalContentRef}
         className={`${sizeClasses} w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative z-10 ${className}`}
         role="dialog"
@@ -95,19 +100,44 @@ const Modal: React.FC<ModalProps> = ({
             {betaBadge}
           </div>
         )}
-        
-        {/* Header with title and close button */}
-        {(title || icon || showCloseButton) && (
-          <div className={`flex justify-between items-center border-b pb-3 mb-4 ${headerClassName}`}>
+
+        {/* Close button - standalone if not in header */}
+        {showCloseButton && !showHeader && (
+          <button
+              onClick={onClose}
+              className={`text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors ${
+                  closeWithButton ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full' : 'absolute top-4 right-4'
+              }`}
+              aria-label="Close modal"
+          >
+          {closeWithButton ? (
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          ) : (
+              <IconX size={24} />
+          )}
+          </button>
+        )}
+
+        {/* Header with title and close button - only if title or icon exists */}
+        {showHeader && (
+          <div className={`flex justify-between items-center ${showDivider ? 'border-b dark:border-gray-700 pb-3 mb-4' : 'mb-4'} ${headerClassName}`}>
             <div className="flex items-center">
               {icon && <div className="mr-2">{icon}</div>}
               {title && (
-                typeof title === 'string' 
-                  ? <h3 id="modal-title" className="text-xl font-semibold text-gray-800 dark:text-white">{title}</h3>
-                  : <div id="modal-title">{title}</div>
+                  typeof title === 'string'
+                      ? <h3 id="modal-title" className="text-xl font-semibold text-gray-800 dark:text-white">{title}</h3>
+                      : <div id="modal-title">{title}</div>
               )}
             </div>
-            
+
             {showCloseButton && (
               <button
                 onClick={onClose}
@@ -131,7 +161,7 @@ const Modal: React.FC<ModalProps> = ({
             )}
           </div>
         )}
-        
+
         {/* Modal content */}
         <div className={`modal-content ${contentClassName}`}>
           {children}
