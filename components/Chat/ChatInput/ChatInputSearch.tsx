@@ -538,11 +538,11 @@ const ChatInputSearch = ({
                 type="text"
                 value={searchQuestionInput}
                 onChange={(e) => setSearchQuestionInput(e.target.value)}
-                placeholder={t('webSearchModalQuestionPlaceholder')}
+                placeholder={t('webSearchModalDefaultQuestion')}
                 disabled={isSubmitting}
                 title={
                   t('processPagesTooltip') ||
-                  'Enter what you want the AI to do to process the pages it finds'
+                  'Enter what you want the AI to do to pre-process the pages it finds'
                 }
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
               />
