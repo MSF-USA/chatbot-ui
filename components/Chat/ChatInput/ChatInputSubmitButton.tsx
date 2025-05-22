@@ -23,8 +23,9 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
         <button
           className="flex items-center gap-1 rounded px-3 py-1 text-black
                     hover:opacity-80 dark:border-neutral-600 dark:text-red-600"
-          onClick={messageIsStreaming ? handleStopConversation : () => null}
-        >
+          onClick={handleStopConversation}
+          disabled={!messageIsStreaming}
+          >
           <IconPlayerStop size={18}/>
         </button> : <IconLoader2 className="animate-spin text-gray-500" size={18}/>
       // <div
