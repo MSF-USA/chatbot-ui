@@ -138,7 +138,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  backdrop-blur-sm">
         <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
             <p className="text-white">{t('Loading terms and conditions...')}</p>
@@ -150,7 +150,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  backdrop-blur-sm">
         <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
             <p className="text-red-500">{error}</p>
@@ -176,7 +176,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
       '';
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  backdrop-blur-sm">
       <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-white">
@@ -259,7 +259,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
                     ? (currentLocale === 'fr' ? 'Conditions d\'utilisation' : 'Terms of Service')
                     : docType === 'privacyPolicy'
                         ? (currentLocale === 'fr' ? 'Politique de confidentialité' : 'Privacy Policy')
-                        : docType}
+                        : docType} <span className={'font-light'}>v{doc?.version}</span>
                 {doc?.required && <span className="ml-1 text-red-500">*</span>}
               </label>
             </div>
