@@ -10,6 +10,7 @@ import {
 } from '@/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 import ReactMarkdown from 'react-markdown';
+import {IconLanguage} from "@tabler/icons-react";
 
 interface TermsAcceptanceModalProps {
   user: Session['user'];
@@ -185,7 +186,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
           {/* Language selector */}
           <div className="flex items-center">
             <label htmlFor="language-select" className="text-white mr-2">
-              {t('Language')}:
+              <IconLanguage />
             </label>
             <select
                 id="language-select"
@@ -243,10 +244,22 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
                 onChange={() => handleAcceptDocument(docType)}
                 className="mr-2"
               />
+              {/* TODO: re-implement actual localization */}
+              {/* <label htmlFor={`accept-${docType}`} className="text-white">
+  {t('I accept the')} {docType === 'platformTerms' ? t('Terms of Service') :
+    docType === 'privacyPolicy' ? t('Privacy Policy') :
+        docType}
+  {doc?.required && <span className="ml-1 text-red-500">*</span>}
+</label> */}
+
+              {/* Temporary implementation with language-specific text */}
               <label htmlFor={`accept-${docType}`} className="text-white">
-                {t('I accept the')} {docType === 'platformTerms' ? t('Terms of Service') :
-                  docType === 'privacyPolicy' ? t('Privacy Policy') :
-                      docType}
+                {currentLocale === 'fr' ? 'J\'accepte ' : 'I accept the '}
+                {docType === 'platformTerms'
+                    ? (currentLocale === 'fr' ? 'Conditions d\'utilisation' : 'Terms of Service')
+                    : docType === 'privacyPolicy'
+                        ? (currentLocale === 'fr' ? 'Politique de confidentialité' : 'Privacy Policy')
+                        : docType}
                 {doc?.required && <span className="ml-1 text-red-500">*</span>}
               </label>
             </div>
