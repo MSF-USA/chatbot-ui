@@ -1,10 +1,12 @@
+import { LDProvider, useLDClient } from 'launchdarkly-react-client-sdk';
 import { signIn, useSession } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useSwipeable } from 'react-swipeable';
 
 import { GetServerSideProps } from 'next';
 import { Session } from 'next-auth';
+import { getServerSession } from 'next-auth';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
@@ -45,24 +47,27 @@ import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
 
+import { authOptions } from '../auth/[...nextauth]';
 import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
+  session: Session | null;
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
 }
 
 const Home = ({
+  session,
   serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
 }: Props) => {
-  const { data: Session } = useSession();
-  const user = Session?.user;
+  const { data: clientSession } = useSession();
+  const user = session?.user || clientSession?.user;
   const router = useRouter();
   const { t } = useTranslation('chat');
   const { getModels } = useApiService();
@@ -88,6 +93,12 @@ const Home = ({
     dispatch,
   } = contextValue;
 
+  useEffect(() => {
+    if (clientSession?.error === 'RefreshAccessTokenError') {
+      signIn();
+    }
+  }, [clientSession]);
+
   const stopConversationRef = useRef<boolean>(false);
 
   const { data, error, refetch } = useQuery(
@@ -106,16 +117,6 @@ const Home = ({
     },
     { enabled: true, refetchOnMount: false },
   );
-
-  useEffect(() => {
-    if (Session?.error === 'RefreshAccessTokenError') {
-      try {
-        signIn(); // Force sign in to hopefully resolve error
-      } catch (error) {
-        router.push('/auth/signin');
-      }
-    }
-  }, [router, Session]);
 
   useEffect(() => {
     if (data) dispatch({ field: 'models', value: data });
@@ -373,15 +374,15 @@ const Home = ({
 
   function selectConversation() {
     const conversationHistory = localStorage.getItem('conversationHistory');
-    let parsedConversationHistory: Conversation[]
+    let parsedConversationHistory: Conversation[];
     if (conversationHistory) {
-      parsedConversationHistory =
-        JSON.parse(conversationHistory);
+      parsedConversationHistory = JSON.parse(conversationHistory);
     } else {
       parsedConversationHistory = [];
     }
 
-    const lastConversation = parsedConversationHistory[parsedConversationHistory.length - 1];
+    const lastConversation =
+      parsedConversationHistory[parsedConversationHistory.length - 1];
 
     // Check if last used model is legacy or not set
     const lastModelIsLegacy = lastConversation?.model?.id &&
@@ -392,7 +393,6 @@ const Home = ({
     const modelToUse = (!lastConversation?.model || lastModelIsLegacy) ?
       OpenAIModels[OpenAIModelID.GPT_4o] :
       lastConversation.model;
-
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
@@ -404,7 +404,10 @@ const Home = ({
       folderId: null,
     };
 
-    const updatedConversations = [...parsedConversationHistory, newConversation];
+    const updatedConversations = [
+      ...parsedConversationHistory,
+      newConversation,
+    ];
 
     dispatch({ field: 'selectedConversation', value: newConversation });
     dispatch({ field: 'conversations', value: updatedConversations });
@@ -437,7 +440,25 @@ const Home = ({
   });
 
   return (
-    <HomeContext.Provider
+    <LDProvider
+      clientSideID={process.env.NEXT_PUBLIC_LAUNCHDARKLY_CLIENT_ID!}
+      options={{
+        bootstrap: 'localStorage',
+        sendEvents: true,
+      }}
+      context={{
+        kind: 'user',
+        key: user?.id || 'anonymous-user',
+        email: user?.mail,
+        givenName: user?.givenName,
+        surName: user?.surname,
+        displayName: user?.displayName,
+        jobTitle: user?.jobTitle,
+        department: user?.department,
+        companyName: user?.companyName,
+      }}
+    >
+      <HomeContext.Provider
       value={{
         ...contextValue,
         handleNewConversation,
@@ -459,12 +480,12 @@ const Home = ({
         <meta
           name="viewport"
           content="height=device-height,width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      {selectedConversation && (
-        <main
-          className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white overflow-x-hidden ${lightMode}`}
+          />
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
+        {selectedConversation && (
+          <main
+            className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white overflow-x-hidden ${lightMode}`}
         >
           <div className="fixed top-0 w-full sm:hidden">
             <Navbar
@@ -473,21 +494,42 @@ const Home = ({
             />
           </div>
 
-          <div className="flex h-full w-full pt-[48px] sm:pt-0">
-            <Chatbar />
+            <div className="flex h-full w-full pt-[48px] sm:pt-0">
+              <Chatbar />
 
-            <div className="flex flex-1 w-full" {...swipeHandlers}>
-              <Chat stopConversationRef={stopConversationRef} />
+              <div className="flex flex-1 w-full" {...swipeHandlers}>
+                <Chat stopConversationRef={stopConversationRef} />
+              </div>
             </div>
-          </div>
-        </main>
-      )}
-    </HomeContext.Provider>
+          </main>
+        )}
+      </HomeContext.Provider>
+    </LDProvider>
   );
 };
 export default Home;
 
-export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  locale,
+  req,
+  res,
+}) => {
+  const session = await getServerSession(req, res, authOptions);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/signin',
+        permanent: false,
+      },
+    };
+  }
+
+  const serializedSession = {
+    ...session,
+    error: null,
+  };
+
   const defaultModelId =
     (process.env.DEFAULT_MODEL &&
       Object.values(OpenAIModelID).includes(
@@ -507,6 +549,7 @@ export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
 
   return {
     props: {
+      session: serializedSession,
       serverSideApiKeyIsSet:
         !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
       defaultModelId,

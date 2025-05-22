@@ -100,7 +100,17 @@ export async function onFileUpload(
     return;
   }
 
-  const filePreviews: FilePreview[] = [];
+  // Initialize all file previews at once before processing
+  const allFilePreviews: FilePreview[] = Array.from(files).map(file => ({
+    name: file.name,
+    type: file.type,
+    status: 'pending',
+    previewUrl: file.type.startsWith("image/") ? URL.createObjectURL(file) : '',
+  }));
+  
+  // Set all previews at once
+  setFilePreviews(prevState => [...prevState, ...allFilePreviews]);
+  
   const fileFieldValues: FileMessageContent[] = [];
   const imageFieldValues: ImageMessageContent[] = [];
 
@@ -122,17 +132,6 @@ export async function onFileUpload(
 
     const isImage = file.type.startsWith("image/")
 
-    const filePreview: FilePreview = {
-      name: file.name,
-      type: file.type,
-      status: 'pending',
-      previewUrl: isImage ? URL.createObjectURL(file) : '',
-    };
-
-
-    filePreviews.push(filePreview);
-    setFilePreviews((prevState) => [...prevState, ...filePreviews]);
-
     if (isImage) {
       // Handle image upload
       return new Promise<void>((resolve, reject) => {
@@ -144,6 +143,7 @@ export async function onFileUpload(
             // @ts-ignore
             setFileFieldValue,
         );
+        resolve();
       });
     } else {
       // Handle non-image file upload
@@ -195,17 +195,25 @@ export async function onFileUpload(
                     url: resp.uri ?? resp.filename,
                     originalFilename: file.name,
                   };
-                  fileFieldValues.push(newValue);
-
-                  // @ts-ignore
+                  
                   setFileFieldValue((prevValue) => {
+                    let newFileArray: FileMessageContent[];
                     if (prevValue && Array.isArray(prevValue)) {
-                      return [...prevValue, ...fileFieldValues];
+                      newFileArray = [
+                        ...((prevValue as (FileMessageContent | ImageMessageContent)[]).filter(
+                          (item): item is FileMessageContent => (item as FileMessageContent).type === "file_url"
+                        )),
+                        newValue,
+                      ];
+                    } else if (prevValue && (prevValue as FileMessageContent).type === "file_url") {
+                      newFileArray = [prevValue as FileMessageContent, newValue];
                     } else {
-                      return [...fileFieldValues];
+                      newFileArray = [newValue];
                     }
+
+                    setSubmitType(newFileArray.length > 1 ? "multi-file" : "file");
+                    return newFileArray;
                   });
-                  setSubmitType(fileFieldValues.length > 1 ? "multi-file" : "file");
 
                   setFilePreviews((prevPreviews) =>
                     prevPreviews.map((preview) =>
@@ -243,32 +251,6 @@ export async function onFileUpload(
       });
     }
   });
-
-  if (fileFieldValues.length > 0) {
-    // @ts-ignore
-    setFileFieldValue((prevValue) => {
-      if (prevValue && Array.isArray(prevValue)) {
-        return [...prevValue, ...fileFieldValues];
-      } else {
-        return [...fileFieldValues];
-      }
-    });
-    setSubmitType(fileFieldValues.length > 1 ? "multi-file" : "file");
-  }
-
-  if (imageFieldValues.length > 0) {
-    setFilePreviews((prevState) => [...prevState, ...filePreviews]);
-    setImageFieldValue((prevValue) => {
-      if (prevValue && Array.isArray(prevValue)) {
-        return [...prevValue, ...imageFieldValues];
-      } else {
-        return [...imageFieldValues];
-      }
-    });
-    setSubmitType(
-      imageFieldValues.length > 1 ? "multi-file" : "image"
-    );
-  }
 
   // Wait for all uploads to complete
   await Promise.all(uploadPromises);
