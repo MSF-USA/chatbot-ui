@@ -1,10 +1,25 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { FC, useState, useEffect } from 'react';
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TermsAcceptanceModal } from '@/components/Terms/TermsAcceptanceModal';
 import * as termsAcceptance from '@/utils/app/termsAcceptance';
 import '@testing-library/jest-dom';
+
+vi.mock('next/router', () => ({
+  useRouter: () => ({
+    locale: 'en',
+    locales: ['en', 'fr'],
+    push: vi.fn(),
+    asPath: '/',
+    pathname: '/',
+    query: {},
+    events: {
+      on: vi.fn(),
+      off: vi.fn(),
+    },
+  }),
+}));
+
 
 vi.mock('@/utils/app/termsAcceptance', () => ({
   fetchTermsData: vi.fn(),
@@ -14,7 +29,10 @@ vi.mock('@/utils/app/termsAcceptance', () => ({
 
 vi.mock('next-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key // Return the key as the translation
+    t: (key: string) => key, // Return the key as the translation
+    i18n: {
+      language: 'en'
+    }
   })
 }));
 
@@ -31,17 +49,20 @@ describe('TermsAcceptanceModal', () => {
   };
   const mockOnAcceptance = vi.fn();
 
+  // Updated mock data structure to match the new format
   const mockTermsData = {
     platformTerms: {
-      content: '# ai.msf.org Terms of Service\n\nThis is the terms content.',
-      version: '1.0.0',
-      hash: 'abc123',
-      required: true
-    },
-    privacyPolicy: {
-      content: '# Privacy Policy\n\nThis is the privacy policy content.',
-      version: '1.0.0',
-      hash: 'def456',
+      localized: {
+        en: {
+          content: '# ai.msf.org Terms of Service\n\nThis is the terms content.',
+          hash: 'abc123'
+        },
+        fr: {
+          content: '# Conditions d\'utilisation\n\nCeci est le contenu des conditions.',
+          hash: 'xyz789'
+        }
+      },
+      version: '1.0.1',
       required: true
     }
   };
@@ -53,7 +74,6 @@ describe('TermsAcceptanceModal', () => {
 
   it('should render loading state initially', () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
-
     expect(screen.getByText('Loading terms and conditions...')).toBeInTheDocument();
   });
 
@@ -65,8 +85,7 @@ describe('TermsAcceptanceModal', () => {
     });
 
     expect(screen.getByText('Terms and Conditions')).toBeInTheDocument();
-    expect(screen.getByText('Terms of Service')).toBeInTheDocument();
-    expect(screen.getByText('Privacy Policy')).toBeInTheDocument();
+    expect(screen.getByText(/ai.msf.org Terms of Service/)).toBeInTheDocument();
   });
 
   it('should handle API error', async () => {
@@ -81,21 +100,17 @@ describe('TermsAcceptanceModal', () => {
     expect(screen.getByText('Retry')).toBeInTheDocument();
   });
 
-  it('should switch between documents when tabs are clicked', async () => {
+  it('should display version information', async () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
       expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText('Version: 1.0.0')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByText('Privacy Policy'));
-
-    expect(screen.getByText('Version: 1.0.0')).toBeInTheDocument();
+    expect(screen.getByText('Version: 1.0.1')).toBeInTheDocument();
   });
 
-  it('should toggle acceptance checkboxes when clicked', async () => {
+  it('should toggle acceptance checkbox when clicked', async () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
@@ -103,25 +118,17 @@ describe('TermsAcceptanceModal', () => {
     });
 
     const termsCheckbox = screen.getByLabelText(/I accept the Terms of Service/);
-    const privacyCheckbox = screen.getByLabelText(/I accept the Privacy Policy/);
 
     expect(termsCheckbox).not.toBeChecked();
-    expect(privacyCheckbox).not.toBeChecked();
 
     fireEvent.click(termsCheckbox);
     expect(termsCheckbox).toBeChecked();
-    expect(privacyCheckbox).not.toBeChecked();
-
-    fireEvent.click(privacyCheckbox);
-    expect(termsCheckbox).toBeChecked();
-    expect(privacyCheckbox).toBeChecked();
 
     fireEvent.click(termsCheckbox);
     expect(termsCheckbox).not.toBeChecked();
-    expect(privacyCheckbox).toBeChecked();
   });
 
-  it('should enable the accept button only when all required documents are accepted', async () => {
+  it('should enable the accept button only when the required document is accepted', async () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
@@ -135,12 +142,6 @@ describe('TermsAcceptanceModal', () => {
 
     // Accept the terms
     fireEvent.click(screen.getByLabelText(/I accept the Terms of Service/));
-
-    // Button should still be disabled because privacy policy is not accepted
-    expect(acceptButton).toBeDisabled();
-
-    // Accept the privacy policy
-    fireEvent.click(screen.getByLabelText(/I accept the Privacy Policy/));
 
     // Now the button should be enabled
     expect(acceptButton).not.toBeDisabled();
@@ -160,26 +161,20 @@ describe('TermsAcceptanceModal', () => {
       expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
     });
 
-    // Accept both documents
+    // Accept the document
     fireEvent.click(screen.getByLabelText(/I accept the Terms of Service/));
-    fireEvent.click(screen.getByLabelText(/I accept the Privacy Policy/));
 
     // Click the accept button
     fireEvent.click(screen.getByText('Accept and Continue'));
 
-    // Check that saveUserAcceptance was called for both documents
-    expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledTimes(2);
+    // Check that saveUserAcceptance was called with the correct parameters
+    expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledTimes(1);
     expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledWith(
-      'user123',
-      'platformTerms',
-      '1.0.0',
-      'abc123'
-    );
-    expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledWith(
-      'user123',
-      'privacyPolicy',
-      '1.0.0',
-      'def456'
+        'user123',
+        'platformTerms',
+        '1.0.1',
+        'abc123',
+        'en'
     );
 
     // Check that onAcceptance was called
@@ -199,9 +194,8 @@ describe('TermsAcceptanceModal', () => {
       expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
     });
 
-    // Accept both documents
+    // Accept the document
     fireEvent.click(screen.getByLabelText(/I accept the Terms of Service/));
-    fireEvent.click(screen.getByLabelText(/I accept the Privacy Policy/));
 
     // Click the accept button
     fireEvent.click(screen.getByText('Accept and Continue'));
@@ -231,9 +225,8 @@ describe('TermsAcceptanceModal', () => {
       expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
     });
 
-    // Accept both documents
+    // Accept the document
     fireEvent.click(screen.getByLabelText(/I accept the Terms of Service/));
-    fireEvent.click(screen.getByLabelText(/I accept the Privacy Policy/));
 
     // Click the accept button
     fireEvent.click(screen.getByText('Accept and Continue'));
