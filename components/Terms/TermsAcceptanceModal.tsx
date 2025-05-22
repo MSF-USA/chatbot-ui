@@ -1,5 +1,6 @@
 import React, { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import {
   TermsData,
   TermsDocument,
@@ -20,11 +21,16 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   onAcceptance
 }) => {
   const { t } = useTranslation('common');
+  const router = useRouter();
+  const userLocale = router.locale || 'en';
+
   const [termsData, setTermsData] = useState<TermsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState<Record<string, boolean>>({});
   const [currentDocument, setCurrentDocument] = useState<string>('platformTerms');
+  const [currentLocale, setCurrentLocale] = useState<string>(userLocale);
+  const [availableLocales, setAvailableLocales] = useState<string[]>(['en']);
   const [allAccepted, setAllAccepted] = useState<boolean>(false);
 
   // Get user ID
@@ -45,6 +51,16 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         });
         setAcceptedTerms(initialAcceptance);
 
+        // Determine available locales
+        if (data.platformTerms) {
+          const locales = Object.keys(data.platformTerms.localized);
+          setAvailableLocales(locales);
+
+          // Set initial locale - use user's locale if available, otherwise English
+          const userLocaleAvailable = locales.includes(userLocale);
+          setCurrentLocale(userLocaleAvailable ? userLocale : 'en');
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching terms data:', error);
@@ -54,7 +70,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     };
 
     getTermsData();
-  }, []);
+  }, [userLocale]);
 
   // Check if all required terms are accepted
   useEffect(() => {
@@ -62,7 +78,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
     let allRequired = true;
     Object.entries(termsData).forEach(([key, doc]) => {
-      if (doc.required && !acceptedTerms[key]) {
+      if (doc?.required && !acceptedTerms[key]) {
         allRequired = false;
       }
     });
@@ -85,8 +101,9 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     try {
       // Save acceptance for each document
       Object.entries(termsData).forEach(([docType, doc]) => {
-        if (acceptedTerms[docType]) {
-          saveUserAcceptance(userId, docType, doc.version, doc.hash);
+        if (acceptedTerms[docType] && doc) {
+          const hash = doc.localized[currentLocale]?.hash || doc.localized['en'].hash;
+          saveUserAcceptance(userId, docType, doc.version, hash, currentLocale);
         }
       });
 
@@ -101,6 +118,21 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   // Switch between documents
   const handleSwitchDocument = (documentType: string) => {
     setCurrentDocument(documentType);
+  };
+
+  // Handle locale change
+  const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrentLocale(e.target.value);
+  };
+
+  // Get localized name for a language
+  const getLanguageName = (locale: string): string => {
+    const localeNames: Record<string, string> = {
+      en: 'English',
+      fr: 'Français'
+      // Add more as needed
+    };
+    return localeNames[locale] || locale;
   };
 
   if (loading) {
@@ -138,13 +170,37 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   }
 
   const currentDocumentData = termsData[currentDocument];
+  const documentContent = currentDocumentData?.localized[currentLocale]?.content ||
+      currentDocumentData?.localized['en']?.content ||
+      '';
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-        <h2 className="text-xl font-bold text-white mb-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-white">
           {t('Terms and Conditions')}
         </h2>
+
+          {/* Language selector */}
+          <div className="flex items-center">
+            <label htmlFor="language-select" className="text-white mr-2">
+              {t('Language')}:
+            </label>
+            <select
+                id="language-select"
+                value={currentLocale}
+                onChange={handleLocaleChange}
+                className="bg-[#2a2b32] text-white rounded p-1 border border-gray-700"
+            >
+              {availableLocales.map(locale => (
+                  <option key={locale} value={locale}>
+                    {getLanguageName(locale)}
+                  </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         {/* Document tabs */}
         <div className="flex mb-4 border-b border-gray-700">
@@ -159,9 +215,9 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
               onClick={() => handleSwitchDocument(docType)}
             >
               {docType === 'platformTerms' ? t('Terms of Service') :
-               docType === 'privacyPolicy' ? t('Privacy Policy') :
-               docType}
-              {doc.required && <span className="ml-1 text-red-500">*</span>}
+              docType === 'privacyPolicy' ? t('Privacy Policy') :
+                docType}
+              {doc?.required && <span className="ml-1 text-red-500">*</span>}
             </button>
           ))}
         </div>
@@ -169,10 +225,10 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         {/* Document content */}
         <div className="overflow-y-auto flex-grow mb-4 bg-[#2a2b32] p-4 rounded">
           <ReactMarkdown className="prose prose-invert max-w-none">
-            {currentDocumentData.content}
+            {documentContent}
           </ReactMarkdown>
           <div className="text-sm text-gray-400 mt-4">
-            {t('Version')}: {currentDocumentData.version}
+            {t('Version')}: {currentDocumentData?.version}
           </div>
         </div>
 
@@ -189,9 +245,9 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
               />
               <label htmlFor={`accept-${docType}`} className="text-white">
                 {t('I accept the')} {docType === 'platformTerms' ? t('Terms of Service') :
-                                    docType === 'privacyPolicy' ? t('Privacy Policy') :
-                                    docType}
-                {doc.required && <span className="ml-1 text-red-500">*</span>}
+                  docType === 'privacyPolicy' ? t('Privacy Policy') :
+                      docType}
+                {doc?.required && <span className="ml-1 text-red-500">*</span>}
               </label>
             </div>
           ))}
