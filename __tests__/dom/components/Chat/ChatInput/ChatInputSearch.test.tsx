@@ -364,7 +364,7 @@ describe('ChatInputSearch Component', () => {
         'searchQueryPlaceholder',
       );
       const questionInputEl = screen.getByPlaceholderText(
-        'webSearchModalQuestionPlaceholder',
+        'webSearchModalDefaultQuestion',
       );
       await user.type(questionInputEl, 'Custom search question');
       await user.type(searchInputEl, 'test query');
