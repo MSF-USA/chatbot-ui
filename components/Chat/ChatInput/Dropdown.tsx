@@ -17,7 +17,7 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
-import useOutsideClick from '@/hooks/useOutsideClick';
+import useEnhancedOutsideClick from '@/hooks/useEnhancedOutsideClick';
 
 import {
   ChatInputSubmitTypes,
@@ -142,9 +142,12 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, []);
 
   const closeDropdown = () => {
-    setIsOpen(false);
-    setFilterQuery('');
-    setSelectedIndex(0);
+    // Use a short timeout to prevent immediate reopening
+    setTimeout(() => {
+      setIsOpen(false);
+      setFilterQuery('');
+      setSelectedIndex(0);
+    }, 10);
   }
 
   const { t } = useTranslation('chat');
@@ -279,7 +282,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, {} as Record<string, MenuItem[]>);
 
   // Logic to handle clicks outside the Dropdown Menu
-  useOutsideClick(dropdownRef, () => closeDropdown(), isOpen);
+  useEnhancedOutsideClick(dropdownRef, closeDropdown, isOpen, true);
 
   // Reset selected index when filtered items change
   useEffect(() => {
@@ -301,9 +304,13 @@ const Dropdown: React.FC<DropdownProps> = ({
       <div className="group">
         <button
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            event.stopPropagation();
-            setIsOpen(!isOpen);
-          }}
+            if (isOpen) {
+              closeDropdown();
+            } else {
+              setIsOpen(true)
+              }
+            }
+          }
           aria-haspopup="true"
           aria-expanded={isOpen}
           aria-label="Toggle dropdown menu"
