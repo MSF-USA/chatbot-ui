@@ -26,9 +26,9 @@ import {
 import HomeContext from '@/pages/api/home/home.context';
 
 import BetaBadge from '@/components/Beta/Badge';
+import Modal from '@/components/UI/Modal';
 
 import crypto from 'crypto';
-import useCloseOnOutsideAndEscape from '@/hooks/useCloseOnOutsideAndEscape';
 
 interface ChatInputSearchProps {
   isOpen: boolean; // Directly controls visibility
@@ -88,8 +88,6 @@ const ChatInputSearch = ({
   handleSend,
   initialMode = 'search',
 }: ChatInputSearchProps) => {
-  const modalRef = useCloseOnOutsideAndEscape(true, () => onClose());
-  // const modalRef = useRef();
   const { t } = useTranslation('chat');
   const {
     state: { user },
@@ -150,7 +148,6 @@ const ChatInputSearch = ({
     searchQuestionInput,
     isOpen,
   ]);
-
 
   // Focus input when modal opens or mode changes
   useEffect(() => {
@@ -335,430 +332,414 @@ const ChatInputSearch = ({
 
   const isSubmitting = isUrlSubmitting || isSearchSubmitting;
 
+  const renderTabs = () => (
+    <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
+      <button
+        onClick={() => setMode('search')}
+        disabled={isSubmitting}
+        className={`px-4 py-2 font-medium ${
+          mode === 'search'
+            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+        }`}
+        aria-pressed={mode === 'search'}
+      >
+        {t('webSearchModalTitle')}
+      </button>
+      <button
+        onClick={() => setMode('url')}
+        disabled={isSubmitting}
+        className={`px-4 py-2 font-medium ${
+          mode === 'url'
+            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+        }`}
+        aria-pressed={mode === 'url'}
+      >
+        {t('chatUrlInputTitle')}
+      </button>
+    </div>
+  );
+
+  const renderUrlForm = () => (
+    <form onSubmit={handleUrlSubmit} className={'mt-1'}>
+      <div className="space-y-4 py-4">
+        <div className="flex flex-col">
+          <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
+            {t('webUrlInputDescription')}
+          </em>
+          <div className="flex items-center gap-4">
+            <input
+              ref={urlInputRef}
+              id="url-input"
+              type="url"
+              value={urlInput}
+              onChange={(e) => setUrlInput(e.target.value)}
+              placeholder="https://example.com"
+              required
+              disabled={isSubmitting}
+              className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+            />
+          </div>
+        </div>
+        <div className="flex flex-col">
+          <em className="text-sm text-gray-500 dark:text-gray-400 mb-1 ml-1">
+            {t('webUrlQuestionDescription')}
+          </em>
+          <div className="flex items-center gap-4">
+            <input
+              id="url-question-input"
+              type="text"
+              value={urlQuestionInput}
+              onChange={(e) => setUrlQuestionInput(e.target.value)}
+              placeholder={t('defaultWebPullerQuestion')}
+              disabled={isSubmitting}
+              className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+            />
+          </div>
+        </div>
+        {urlError && (
+          <p className="text-red-500 text-sm mt-2 col-span-4 text-center">
+            {urlError}
+          </p>
+        )}
+        {urlStatusMessage && !isUrlSubmitting && (
+          <p className="text-gray-500 text-sm mt-2 col-span-4 text-center animate-pulse">
+            {urlStatusMessage}
+          </p>
+        )}
+      </div>
+      <div className="flex items-center">
+        <input
+          id="auto-submit-url"
+          type="checkbox"
+          checked={autoSubmit}
+          onChange={(e) => setAutoSubmit(e.target.checked)}
+          disabled={isSubmitting}
+          className="h-4 w-4 mr-2"
+        />
+        <label
+          htmlFor="auto-submit-url"
+          className="text-sm text-gray-700 dark:text-gray-200"
+        >
+          {t('autoSubmitButton')}
+        </label>
+      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
+      >
+        <IconLink className="mr-2 h-4 w-4" />
+        {autoSubmit ? t('submitButton') : t('generatePromptButton')}
+      </button>
+    </form>
+  );
+
+  const renderSearchForm = () => (
+    <form onSubmit={handleSearchSubmit} className={'mt-1'}>
+      <div className="space-y-4 py-4">
+        <div className="flex flex-col">
+          <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
+            {t('webSearchInputDescription')}
+          </em>
+          <div className="flex items-center">
+            <div className="relative w-full">
+              <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                id="search-term"
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder={t('searchQueryPlaceholder')}
+                required
+                disabled={isSubmitting}
+                title={t('searchQueryPlaceholder')}
+                ref={searchInputRef}
+                className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+              />
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <input
+              id="auto-submit-search"
+              type="checkbox"
+              checked={autoSubmit}
+              onChange={(e) => setAutoSubmit(e.target.checked)}
+              disabled={isSubmitting}
+              title={
+                t('autoSubmitTooltip') ||
+                'Automatically submit the question after search'
+              }
+              className="h-4 w-4 mr-2"
+            />
+            <label
+              htmlFor="auto-submit-search"
+              className="text-sm text-gray-700 dark:text-gray-200"
+            >
+              {t('autoSubmitButton')}
+            </label>
+          </div>
+          <button
+            type="button"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
+            onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
+            disabled={isSubmitting}
+            aria-expanded={isAdvancedOpen}
+            aria-controls="advanced-options-search"
+          >
+            {t('advancedOptionsButton')}
+            {isAdvancedOpen ? (
+              <IconChevronUp className="ml-2 h-4 w-4" />
+            ) : (
+              <IconChevronDown className="ml-2 h-4 w-4" />
+            )}
+          </button>
+        </div>
+
+        {isAdvancedOpen && (
+          <div
+            id="advanced-options-search"
+            className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4"
+          >
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label
+                htmlFor="optimize-input"
+                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                {t('webSearchModalOptimizeLabel')}
+              </label>
+              <input
+                id="optimize-input"
+                type="checkbox"
+                checked={shouldOptimizeInput}
+                onChange={(e) =>
+                  setShouldOptimizeInput(e.target.checked)
+                }
+                disabled={isSubmitting}
+                title={
+                  t('optimizeQueryTooltip') ||
+                  'Do you want us to use AI to generate a more targeted set of queries to answer your question?'
+                }
+                className="h-4 w-4"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label
+                htmlFor="search-question-input"
+                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                {t('webPullerQuestionLabel')}
+              </label>
+              <input
+                id="search-question-input"
+                type="text"
+                value={searchQuestionInput}
+                onChange={(e) => setSearchQuestionInput(e.target.value)}
+                placeholder={t('webSearchModalQuestionPlaceholder')}
+                disabled={isSubmitting}
+                title={
+                  t('processPagesTooltip') ||
+                  'Enter what you want the AI to do to process the pages it finds'
+                }
+                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+              />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label
+                htmlFor="market"
+                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                {t('webSearchModalMarketLabel')}
+              </label>
+              <select
+                id="market"
+                value={mkt}
+                onChange={(e) => setMkt(e.target.value)}
+                disabled={isSubmitting}
+                title={t('selectMarketTooltip') || 'Select the market'}
+                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="">
+                  {t('marketOptionAny') || 'Any'}
+                </option>
+                <option value="ar">
+                  {t('marketOptionAr') || 'Arabic (General)'}
+                </option>
+                <option value="en">
+                  {t('marketOptionEn') || 'English (General)'}
+                </option>
+                <option value="en-US">
+                  {t('marketOptionEnUs') || 'English (United States)'}
+                </option>
+                <option value="en-GB">
+                  {t('marketOptionEnGb') || 'English (United Kingdom)'}
+                </option>
+                <option value="fr-FR">
+                  {t('marketOptionFrFr') || 'French (France)'}
+                </option>
+                <option value="es">
+                  {t('marketOptionEs') || 'Spanish (General)'}
+                </option>
+                <option value="es-ES">
+                  {t('marketOptionEsEs') || 'Spanish (Spain)'}
+                </option>
+                <option value="de-DE">
+                  {t('marketOptionDeDe') || 'German (Germany)'}
+                </option>
+              </select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label
+                htmlFor="safe-search"
+                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                {t('webSearchModalSafeSearchLabel')}
+              </label>
+              <select
+                id="safe-search"
+                value={safeSearch}
+                onChange={(e) => setSafeSearch(e.target.value)}
+                disabled={isSubmitting}
+                title={
+                  t('selectSafeSearchTooltip') ||
+                  'Select the safe search level'
+                }
+                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              >
+                <option value="Off">{t('safeSearchOptionOff')}</option>
+                <option value="Moderate">
+                  {t('safeSearchOptionModerate')}
+                </option>
+                <option value="Strict">
+                  {t('safeSearchOptionStrict')}
+                </option>
+              </select>
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <label
+                htmlFor="count"
+                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
+              >
+                {t('webSearchModalResultsLabel')}
+              </label>
+              <input
+                id="count"
+                type="number"
+                min="1"
+                max="15"
+                value={count === null ? '' : count}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setCount(val === '' ? null : parseInt(val, 10));
+                }}
+                onBlur={() => {
+                  if (count !== null) {
+                    const adjusted = Math.max(1, Math.min(count, 15));
+                    if (adjusted !== count) setCount(adjusted);
+                  } else {
+                    setCount(5);
+                  }
+                }}
+                disabled={isSubmitting}
+                title={
+                  t('numResultsTooltip') ||
+                  'Enter the number of results (1-15)'
+                }
+                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+              />
+            </div>
+          </div>
+        )}
+        {searchError && (
+          <p
+            className="text-red-500 text-sm mt-2 text-center"
+            role="alert"
+          >
+            {searchError}
+          </p>
+        )}
+        {searchStatusMessage && !isSearchSubmitting && (
+          <p
+            className="text-gray-500 text-sm mt-2 animate-pulse text-center"
+            aria-live="polite"
+          >
+            {searchStatusMessage}
+          </p>
+        )}
+      </div>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
+      >
+        <IconSearch className="mr-2 h-4 w-4" />
+        {autoSubmit ? t('submitButton') : t('generatePromptButton')}
+      </button>
+    </form>
+  );
+
+  const modalContent = (
+    <div className="relative">
+      {renderTabs()}
+      {mode === 'search' && renderSearchForm()}
+      {mode === 'url' && renderUrlForm()}
+
+      {isSubmitting && (
+        <div
+          className="absolute inset-0 flex flex-col items-center justify-center bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75"
+          aria-live="assertive"
+        >
+          <svg
+            className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            role="img"
+            aria-label={t('loadingAriaLabel') || 'Loading'}
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
+          </svg>
+          {(mode === 'url' ? urlStatusMessage : searchStatusMessage) && (
+            <p className="mt-2 text-gray-700 dark:text-gray-200">
+              {mode === 'url' ? urlStatusMessage : searchStatusMessage}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
   if (!isOpen) {
     return null; // Don't render anything if not open
   }
 
   return (
-    <div
-            ref={modalRef}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="search-modal-title"
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      size="md"
+      className="mx-2"
+      betaBadge={<BetaBadge />}
+      closeWithButton={true}
+      initialFocusRef={mode === 'url' ? urlInputRef : searchInputRef}
     >
-      <div
-        ref={modalRef}
-        className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-xl mx-2 shadow-xl"
-      >
-        <div className="relative">
-          <div className="absolute -top-4 -left-4">
-            <BetaBadge />
-          </div>
-          <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
-            <button
-              onClick={() => setMode('search')}
-              disabled={isSubmitting}
-              className={`px-4 py-2 font-medium ${
-                mode === 'search'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-              aria-pressed={mode === 'search'}
-            >
-              {t('webSearchModalTitle')}
-            </button>
-            <button
-              onClick={() => setMode('url')}
-              disabled={isSubmitting}
-              className={`px-4 py-2 font-medium ${
-                mode === 'url'
-                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-              }`}
-              aria-pressed={mode === 'url'}
-            >
-              {t('chatUrlInputTitle')}
-            </button>
-            <button
-              onClick={onClose}
-              className="absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white"
-              aria-label={t('closeModalAriaLabel') || 'Close modal'}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          {mode === 'url' && (
-            <form onSubmit={handleUrlSubmit} className={'mt-1'}>
-              <div className="space-y-4 py-4">
-                <div className="flex flex-col">
-                  <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
-                    {t('webUrlInputDescription')}
-                  </em>
-                  <div className="flex items-center gap-4">
-                    <input
-                      ref={urlInputRef}
-                      id="url-input"
-                      type="url"
-                      value={urlInput}
-                      onChange={(e) => setUrlInput(e.target.value)}
-                      placeholder="https://example.com"
-                      required
-                      disabled={isSubmitting}
-                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                    />
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <em className="text-sm text-gray-500 dark:text-gray-400 mb-1 ml-1">
-                    {t('webUrlQuestionDescription')}
-                  </em>
-                  <div className="flex items-center gap-4">
-                    <input
-                      id="url-question-input"
-                      type="text"
-                      value={urlQuestionInput}
-                      onChange={(e) => setUrlQuestionInput(e.target.value)}
-                      placeholder={t('defaultWebPullerQuestion')}
-                      disabled={isSubmitting}
-                      className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                    />
-                  </div>
-                </div>
-                {urlError && (
-                  <p className="text-red-500 text-sm mt-2 col-span-4 text-center">
-                    {urlError}
-                  </p>
-                )}
-                {urlStatusMessage && !isUrlSubmitting && (
-                  <p className="text-gray-500 text-sm mt-2 col-span-4 text-center animate-pulse">
-                    {urlStatusMessage}
-                  </p>
-                )}
-              </div>
-              <div className="flex items-center">
-                <input
-                  id="auto-submit-url"
-                  type="checkbox"
-                  checked={autoSubmit}
-                  onChange={(e) => setAutoSubmit(e.target.checked)}
-                  disabled={isSubmitting}
-                  className="h-4 w-4 mr-2"
-                />
-                <label
-                  htmlFor="auto-submit-url"
-                  className="text-sm text-gray-700 dark:text-gray-200"
-                >
-                  {t('autoSubmitButton')}
-                </label>
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
-              >
-                <IconLink className="mr-2 h-4 w-4" />
-                {autoSubmit ? t('submitButton') : t('generatePromptButton')}
-              </button>
-            </form>
-          )}
-
-          {mode === 'search' && (
-            <form onSubmit={handleSearchSubmit} className={'mt-1'}>
-              <div className="space-y-4 py-4">
-                <div className="flex flex-col">
-                  <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
-                    {t('webSearchInputDescription')}
-                  </em>
-                  <div className="flex items-center">
-                    <div className="relative w-full">
-                      <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                      <input
-                        id="search-term"
-                        type="text"
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        placeholder={t('searchQueryPlaceholder')}
-                        required
-                        disabled={isSubmitting}
-                        title={t('searchQueryPlaceholder')}
-                        ref={searchInputRef}
-                        className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <input
-                      id="auto-submit-search"
-                      type="checkbox"
-                      checked={autoSubmit}
-                      onChange={(e) => setAutoSubmit(e.target.checked)}
-                      disabled={isSubmitting}
-                      title={
-                        t('autoSubmitTooltip') ||
-                        'Automatically submit the question after search'
-                      }
-                      className="h-4 w-4 mr-2"
-                    />
-                    <label
-                      htmlFor="auto-submit-search"
-                      className="text-sm text-gray-700 dark:text-gray-200"
-                    >
-                      {t('autoSubmitButton')}
-                    </label>
-                  </div>
-                  <button
-                    type="button"
-                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
-                    onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-                    disabled={isSubmitting}
-                    aria-expanded={isAdvancedOpen}
-                    aria-controls="advanced-options-search"
-                  >
-                    {t('advancedOptionsButton')}
-                    {isAdvancedOpen ? (
-                      <IconChevronUp className="ml-2 h-4 w-4" />
-                    ) : (
-                      <IconChevronDown className="ml-2 h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-
-                {isAdvancedOpen && (
-                  <div
-                    id="advanced-options-search"
-                    className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4"
-                  >
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label
-                        htmlFor="optimize-input"
-                        className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                      >
-                        {t('webSearchModalOptimizeLabel')}
-                      </label>
-                      <input
-                        id="optimize-input"
-                        type="checkbox"
-                        checked={shouldOptimizeInput}
-                        onChange={(e) =>
-                          setShouldOptimizeInput(e.target.checked)
-                        }
-                        disabled={isSubmitting}
-                        title={
-                          t('optimizeQueryTooltip') ||
-                          'Do you want us to use AI to generate a more targeted set of queries to answer your question?'
-                        }
-                        className="h-4 w-4"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label
-                        htmlFor="search-question-input"
-                        className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                      >
-                        {t('webPullerQuestionLabel')}
-                      </label>
-                      <input
-                        id="search-question-input"
-                        type="text"
-                        value={searchQuestionInput}
-                        onChange={(e) => setSearchQuestionInput(e.target.value)}
-                        placeholder={t('webSearchModalQuestionPlaceholder')}
-                        disabled={isSubmitting}
-                        title={
-                          t('processPagesTooltip') ||
-                          'Enter what you want the AI to do to process the pages it finds'
-                        }
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                      />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label
-                        htmlFor="market"
-                        className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                      >
-                        {t('webSearchModalMarketLabel')}
-                      </label>
-                      <select
-                        id="market"
-                        value={mkt}
-                        onChange={(e) => setMkt(e.target.value)}
-                        disabled={isSubmitting}
-                        title={t('selectMarketTooltip') || 'Select the market'}
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        <option value="">
-                          {t('marketOptionAny') || 'Any'}
-                        </option>
-                        <option value="ar">
-                          {t('marketOptionAr') || 'Arabic (General)'}
-                        </option>
-                        <option value="en">
-                          {t('marketOptionEn') || 'English (General)'}
-                        </option>
-                        <option value="en-US">
-                          {t('marketOptionEnUs') || 'English (United States)'}
-                        </option>
-                        <option value="en-GB">
-                          {t('marketOptionEnGb') || 'English (United Kingdom)'}
-                        </option>
-                        <option value="fr-FR">
-                          {t('marketOptionFrFr') || 'French (France)'}
-                        </option>
-                        <option value="es">
-                          {t('marketOptionEs') || 'Spanish (General)'}
-                        </option>
-                        <option value="es-ES">
-                          {t('marketOptionEsEs') || 'Spanish (Spain)'}
-                        </option>
-                        <option value="de-DE">
-                          {t('marketOptionDeDe') || 'German (Germany)'}
-                        </option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label
-                        htmlFor="safe-search"
-                        className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                      >
-                        {t('webSearchModalSafeSearchLabel')}
-                      </label>
-                      <select
-                        id="safe-search"
-                        value={safeSearch}
-                        onChange={(e) => setSafeSearch(e.target.value)}
-                        disabled={isSubmitting}
-                        title={
-                          t('selectSafeSearchTooltip') ||
-                          'Select the safe search level'
-                        }
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      >
-                        <option value="Off">{t('safeSearchOptionOff')}</option>
-                        <option value="Moderate">
-                          {t('safeSearchOptionModerate')}
-                        </option>
-                        <option value="Strict">
-                          {t('safeSearchOptionStrict')}
-                        </option>
-                      </select>
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <label
-                        htmlFor="count"
-                        className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-                      >
-                        {t('webSearchModalResultsLabel')}
-                      </label>
-                      <input
-                        id="count"
-                        type="number"
-                        min="1"
-                        max="15"
-                        value={count === null ? '' : count}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setCount(val === '' ? null : parseInt(val, 10));
-                        }}
-                        onBlur={() => {
-                          if (count !== null) {
-                            const adjusted = Math.max(1, Math.min(count, 15));
-                            if (adjusted !== count) setCount(adjusted);
-                          } else {
-                            setCount(5);
-                          }
-                        }}
-                        disabled={isSubmitting}
-                        title={
-                          t('numResultsTooltip') ||
-                          'Enter the number of results (1-15)'
-                        }
-                        className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-                      />
-                    </div>
-                  </div>
-                )}
-                {searchError && (
-                  <p
-                    className="text-red-500 text-sm mt-2 text-center"
-                    role="alert"
-                  >
-                    {searchError}
-                  </p>
-                )}
-                {searchStatusMessage && !isSearchSubmitting && (
-                  <p
-                    className="text-gray-500 text-sm mt-2 animate-pulse text-center"
-                    aria-live="polite"
-                  >
-                    {searchStatusMessage}
-                  </p>
-                )}
-              </div>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
-              >
-                <IconSearch className="mr-2 h-4 w-4" />
-                {autoSubmit ? t('submitButton') : t('generatePromptButton')}
-              </button>
-            </form>
-          )}
-
-          {isSubmitting && (
-            <div
-              className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center"
-              aria-live="assertive"
-            >
-              <svg
-                className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                role="img"
-                aria-label={t('loadingAriaLabel') || 'Loading'}
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                />
-              </svg>
-              {(mode === 'url' ? urlStatusMessage : searchStatusMessage) && (
-                <p className="mt-2 text-gray-700 dark:text-gray-200">
-                  {mode === 'url' ? urlStatusMessage : searchStatusMessage}
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+      {modalContent}
+    </Modal>
   );
 };
 

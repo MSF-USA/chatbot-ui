@@ -1,9 +1,8 @@
-import { IconCamera, IconX } from '@tabler/icons-react';
+import { IconCamera } from '@tabler/icons-react';
 import React, {
   Dispatch,
   forwardRef,
   useImperativeHandle,
-  MouseEventHandler,
   MutableRefObject,
   SetStateAction,
   useContext,
@@ -21,8 +20,7 @@ import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageConte
 import HomeContext from '@/pages/api/home/home.context';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
-import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
-import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
+import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement> | MouseEvent,
@@ -71,6 +69,7 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
   visible = true,
   hasCameraSupport
 }, ref) => {
+  const { t } = useTranslation('chat');
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -110,7 +109,6 @@ const ChatInputImageCapture = forwardRef<ChatInputImageCaptureRef, ChatInputImag
 
   const {
     state: { user },
-    dispatch: homeDispatch,
   } = useContext(HomeContext);
 
   if (!userAuthorizedForFileUploads(user)) return null;
