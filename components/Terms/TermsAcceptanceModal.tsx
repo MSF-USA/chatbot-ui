@@ -1,3 +1,4 @@
+
 import React, { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
@@ -138,10 +139,10 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  backdrop-blur-sm">
-        <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
-            <p className="text-white">{t('Loading terms and conditions...')}</p>
+            <p className="text-gray-800 dark:text-white">{t('Loading terms and conditions...')}</p>
           </div>
         </div>
       </div>
@@ -150,8 +151,8 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  backdrop-blur-sm">
-        <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
             <p className="text-red-500">{error}</p>
             <button
@@ -176,23 +177,23 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
       '';
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50  backdrop-blur-sm">
-      <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-white">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white">
           {t('Terms and Conditions')}
         </h2>
 
           {/* Language selector */}
           <div className="flex items-center">
-            <label htmlFor="language-select" className="text-white mr-2">
+            <label htmlFor="language-select" className="text-gray-700 dark:text-white mr-2">
               <IconLanguage />
             </label>
             <select
                 id="language-select"
                 value={currentLocale}
                 onChange={handleLocaleChange}
-                className="bg-[#2a2b32] text-white rounded p-1 border border-gray-700"
+                className="bg-gray-100 text-gray-800 dark:bg-[#2a2b32] dark:text-white rounded p-1 border border-gray-300 dark:border-gray-700"
             >
               {availableLocales.map(locale => (
                   <option key={locale} value={locale}>
@@ -204,14 +205,14 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         </div>
 
         {/* Document tabs */}
-        <div className="flex mb-4 border-b border-gray-700">
+        <div className="flex mb-4 border-b border-gray-300 dark:border-gray-700">
           {Object.entries(termsData).map(([docType, doc]) => (
             <button
               key={docType}
               className={`px-4 py-2 ${
                 currentDocument === docType
                   ? 'border-b-2 border-blue-500 text-blue-500'
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white'
               }`}
               onClick={() => handleSwitchDocument(docType)}
             >
@@ -224,11 +225,11 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         </div>
 
         {/* Document content */}
-        <div className="overflow-y-auto flex-grow mb-4 bg-[#2a2b32] p-4 rounded">
-          <ReactMarkdown className="prose prose-invert max-w-none">
+        <div className="overflow-y-auto flex-grow mb-4 bg-gray-100 dark:bg-[#2a2b32] p-4 rounded">
+          <ReactMarkdown className="prose dark:prose-invert max-w-none">
             {documentContent}
           </ReactMarkdown>
-          <div className="text-sm text-gray-400 mt-4">
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-4">
             {t('Version')}: {currentDocumentData?.version}
           </div>
         </div>
@@ -244,16 +245,8 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
                 onChange={() => handleAcceptDocument(docType)}
                 className="mr-2"
               />
-              {/* TODO: re-implement actual localization */}
-              {/* <label htmlFor={`accept-${docType}`} className="text-white">
-  {t('I accept the')} {docType === 'platformTerms' ? t('Terms of Service') :
-    docType === 'privacyPolicy' ? t('Privacy Policy') :
-        docType}
-  {doc?.required && <span className="ml-1 text-red-500">*</span>}
-</label> */}
-
               {/* Temporary implementation with language-specific text */}
-              <label htmlFor={`accept-${docType}`} className="text-white">
+              <label htmlFor={`accept-${docType}`} className="text-gray-800 dark:text-white">
                 {currentLocale === 'fr' ? 'J\'accepte ' : 'I accept the '}
                 {docType === 'platformTerms'
                     ? (currentLocale === 'fr' ? 'Conditions d\'utilisation' : 'Terms of Service')
@@ -272,7 +265,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
             className={`px-4 py-2 rounded ${
               allAccepted
                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-300 cursor-not-allowed'
             }`}
             onClick={handleAcceptAllTerms}
             disabled={!allAccepted}
