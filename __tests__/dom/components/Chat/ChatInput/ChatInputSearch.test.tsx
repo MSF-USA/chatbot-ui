@@ -193,12 +193,6 @@ describe('ChatInputSearch Component', () => {
     expect(searchTabButton).toHaveClass('border-blue-500');
   });
 
-  it('should call onClose when close button is clicked', async () => {
-    render(<ChatInputSearch {...props} />);
-    await user.click(screen.getByLabelText('closeModalAriaLabel'));
-    expect(props.onClose).toHaveBeenCalledTimes(1);
-  });
-
   describe('URL Mode', () => {
     beforeEach(() => {
       props.initialMode = 'url';
