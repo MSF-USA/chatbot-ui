@@ -81,7 +81,7 @@ const Modal: React.FC<ModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto">
       {/* Backdrop/overlay */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-40 transition-opacity"
+        className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity"
         onClick={!preventOutsideClick ? onClose : undefined}
         aria-hidden="true"
       />
