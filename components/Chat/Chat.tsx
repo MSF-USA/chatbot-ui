@@ -232,13 +232,36 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let updatedConversationCopy = { ...updatedConversation };
     let extractedCitations: Citation[] = [];
 
+    const checkStopInterval = setInterval(() => {
+      if (stopConversationRef.current) {
+        console.log('Stop detected in handleNormalChatBackendStreaming');
+        done = true;
+        clearInterval(checkStopInterval);
+      }
+    }, 100);
+
     while (!done) {
-      const { value, done: doneReading } = await reader.read();
-      done = doneReading;
+      // Check if a stop was requested before reading more data
+      if (stopConversationRef.current) {
+        console.log('Stop detected in streaming loop - breaking');
+        break;
+      }
+      
+      try {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        
+        if (stopConversationRef.current) {
+          break;
+        }
 
       if (value) {
         const chunkValue = decoder.decode(value);
         text += chunkValue;
+
+      if (stopConversationRef.current) {
+          break;
+        }
 
         // Extract citations
         const {
@@ -305,7 +328,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           value: updatedConversationCopy,
         });
       }
+    } catch (error) {
+      console.error('Error in stream processing:', error);
+      clearInterval(checkStopInterval);
+      break;
+     }
     }
+    
+    clearInterval(checkStopInterval);
+
 
     // Final check for citations after stream completes
     if (extractedCitations.length === 0) {
@@ -366,6 +397,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
       if (selectedConversation) {
+        
+        stopConversationRef.current = false;
+
         let updatedConversation: Conversation = updateConversationFromUserInput(
           message,
           selectedConversation,
@@ -380,7 +414,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         try {
-          const { controller, body, response, hasComplexContent } =
+
+         // Sets up a manual check for the stop button being pressed
+          const abortCheckInterval = setInterval(() => {
+            if (stopConversationRef.current) {
+              console.log('Stop requested - updating UI state');
+              homeDispatch({ field: 'loading', value: false });
+              homeDispatch({ field: 'messageIsStreaming', value: false });
+              stopConversationRef.current = false;
+              clearInterval(abortCheckInterval);
+            }
+          }, 100);
+          
+          // Clean up interval after 60 seconds as a safety measure
+          setTimeout(() => clearInterval(abortCheckInterval), 60000);
+
+          const { controller, body, response, hasComplexContent, setOnAbort } =
             await makeRequest(
               plugin,
               setRequestStatusMessage,
@@ -391,7 +440,17 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               temperature,
               true,
               setProgress,
+              stopConversationRef,
             );
+
+          clearInterval(abortCheckInterval);
+          
+          // Set up the abort handler to reset UI state when the conversation is stopped
+          setOnAbort?.(() => {
+            homeDispatch({ field: 'loading', value: false });
+            homeDispatch({ field: 'messageIsStreaming', value: false });
+            stopConversationRef.current = false;
+          });
 
           if (hasComplexContent) {
             // Handle complex content case
@@ -438,6 +497,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   const reader = data.getReader();
 
                   function push() {
+
+                  // Check if stop was requested before reading more data
+                    if (stopConversationRef.current) {
+                      console.log('Stopping stream in ReadableStream - user requested stop');
+                      controller.close();
+                      return;
+                    }
+
                     reader.read().then(({ done, value }) => {
                       if (done) {
                         controller.close();
