@@ -26,6 +26,7 @@ const localeToLanguageName: {
     he: string;
     ro: string;
     ca: string;
+    my: string;
     nl: string;
     tr: string;
     am: string;
@@ -53,6 +54,7 @@ const localeToLanguageName: {
     it: 'Italiano',
     ja: '日本語',
     ko: '한국어',
+    my: "မြန်မာဘာသာ",
     nl: 'Nederlands',
     pl: 'Polski',
     pt: 'Português',
