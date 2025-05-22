@@ -22,6 +22,7 @@ export interface HomeContextProps {
     conversation: Conversation,
     data: KeyValuePair,
   ) => void;
+  showChatbar: boolean;
 }
 
 const HomeContext = createContext<HomeContextProps>(undefined!);

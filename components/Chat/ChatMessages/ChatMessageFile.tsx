@@ -28,16 +28,34 @@ import {
 import ImageIcon from "@/components/Icons/image";
 import {fetchImageBase64FromMessageContent} from "@/services/imageService";
 
+/**
+ * Component to display image files in chat messages
+ * Provides responsive display, loading state, and modal view
+ */
 const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => {
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [loadError, setLoadError] = useState<boolean>(false);
 
     useEffect(() => {
-        fetchImageBase64FromMessageContent(image).then((imageBase64String) => {
-            if (imageBase64String.length > 0) {
-                setImageSrc(imageBase64String);
-            }
-        });
+        setIsLoading(true);
+        setLoadError(false);
+
+        fetchImageBase64FromMessageContent(image)
+            .then((imageBase64String) => {
+                if (imageBase64String.length > 0) {
+                    setImageSrc(imageBase64String);
+                } else {
+                    setLoadError(true);
+                }
+            })
+            .catch(() => {
+                setLoadError(true);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }, [image]);
 
     const handleImageClick = () => {
@@ -50,24 +68,34 @@ const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => 
 
     return (
       <div
-        className="relative p-1 m-1 rounded-lg overflow-hidden border border-black dark:border-white"
-        style={{ width: 'calc(50% - 0.5rem)' }}
+        className="relative p-1 m-1 rounded-lg overflow-hidden border border-black dark:border-white w-full sm:w-[calc(50%-0.5rem)]"
       >
           <div className="flex items-center">
               <ImageIcon className="w-8 h-8 mr-2 flex-shrink-0" />
 
-              {imageSrc ? (
+              {isLoading ? (
+                <div className="flex-grow flex items-center">
+                    <div className="h-12 w-full bg-gray-200 dark:bg-gray-700 animate-pulse rounded">
+                        <span className="sr-only">Loading image...</span>
+                    </div>
+                </div>
+              ) : loadError ? (
+                <div className="relative flex-grow overflow-hidden text-red-500 text-sm">
+                    <span>Failed to load image</span>
+                </div>
+              ) : imageSrc ? (
                 <img
                   src={imageSrc}
                   alt="Image Content"
-                  className="h-12 w-auto object-cover cursor-pointer"
+                  className="h-12 w-auto max-w-[calc(100%-40px)] object-cover cursor-pointer"
                   onClick={handleImageClick}
+                  onLoad={() => setIsLoading(false)}
                 />
               ) : (
                 <div className="relative flex-grow overflow-hidden">
-            <span className="block whitespace-nowrap hover:animate-scroll-text">
-              {image.image_url.url.split('/').pop()}
-            </span>
+                  <span className="block whitespace-nowrap hover:animate-scroll-text">
+                    {image.image_url.url.split('/').pop()}
+                  </span>
                 </div>
               )}
           </div>
@@ -75,17 +103,17 @@ const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => 
           {/* Modal */}
           {isModalOpen && imageSrc && (
             <div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+              className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4"
               onClick={handleCloseModal}
             >
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
+                <div className="relative max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
                     <img
                       src={imageSrc}
                       alt="Full Size Image"
-                      className="max-h-screen max-w-screen"
+                      className="max-h-[85vh] max-w-[95vw] object-contain"
                     />
                     <button
-                      className="absolute top-0 right-0 m-2 text-white text-3xl leading-none focus:outline-none"
+                      className="absolute top-0 right-0 m-2 text-white text-3xl leading-none focus:outline-none bg-black/30 rounded-full w-8 h-8 flex items-center justify-center"
                       onClick={handleCloseModal}
                       aria-label="Close"
                     >
@@ -112,6 +140,13 @@ export interface ChatMessageFileProps {
     onEdit: (message: Message) => void | undefined;
 }
 
+/**
+ * ChatMessageFile Component
+ *
+ * Renders a chat message that contains files, images, and/or text content.
+ * Supports responsive layout for different screen sizes, loading states for
+ * images, and interactive features like editing, downloading, and viewing.
+ */
 const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                        message,
                                                        isEditing,
@@ -204,16 +239,15 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                           <div
                             key={`file-${index}`}
                             onClick={(event) => downloadFile(event, file.url)}
-                            className="relative flex items-center justify-between p-3 m-1 rounded-lg border border-black dark:border-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                                style={{ width: "calc(50% - 0.5rem)" }}
+                            className="relative flex items-center justify-between p-3 m-1 rounded-lg border border-black dark:border-white cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors w-full sm:w-[calc(50%-0.5rem)]"
                             >
                                 <FileIcon className="w-8 h-8 mr-2 flex-shrink-0" />
                                 <div className="relative flex-grow overflow-hidden">
-                                  <span className="block whitespace-nowrap hover:animate-scroll-text">
+                                  <span className="block whitespace-nowrap text-sm md:text-base overflow-ellipsis hover:animate-scroll-text">
                                     {file.originalFilename || file.url.split("/").pop()}
                                   </span>
                                 </div>
-                                <IconDownload className="opacity-50 group-hover:opacity-100 flex-shrink-0" />
+                                <IconDownload className="ml-2 opacity-50 group-hover:opacity-100 flex-shrink-0" />
                             </div>
                         ))}
                     </div>

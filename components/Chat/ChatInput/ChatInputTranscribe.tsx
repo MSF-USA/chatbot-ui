@@ -9,6 +9,7 @@ import {
 import { ChatInputSubmitTypes } from '@/types/chat';
 import { useTranslation } from 'next-i18next';
 import toast from "react-hot-toast";
+import Modal from "@/components/UI/Modal";
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
@@ -57,16 +58,16 @@ interface ChatInputTranscribeProps {
 }
 
 const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
-                                                             setTextFieldValue,
-                                                             onFileUpload,
-                                                             setParentModalIsOpen,
-                                                             setSubmitType,
-                                                             setFilePreviews,
-                                                             setFileFieldValue,
-                                                             setImageFieldValue,
-                                                             setUploadProgress,
+  setTextFieldValue,
+  onFileUpload,
+  setParentModalIsOpen,
+  setSubmitType,
+  setFilePreviews,
+  setFileFieldValue,
+  setImageFieldValue,
+  setUploadProgress,
   simulateClick,
-                                                           }) => {
+}) => {
   const { t } = useTranslation('transcribeModal');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
@@ -77,7 +78,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     false,
   );
   const [transcript, setTranscript] = useState<string>('');
-  const openModalButtonRef = useRef<HTMLButtonElement>(null)
+  const openModalButtonRef = useRef<HTMLButtonElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (simulateClick && openModalButtonRef.current) {
@@ -269,6 +271,105 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     }
   };
 
+  const transcribeModalContent = (
+    <div className="mb-4">
+      <div className="border-2 border-dashed border-gray-300 rounded-lg text-center">
+        {!file ? (
+          <label
+            htmlFor="file-upload"
+            className="block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-8 text-black dark:text-white"
+          >
+            <div>
+              <p className="mb-1">
+                <strong>{t('clickToUpload')}</strong>
+              </p>
+              <p className="text-sm text-gray-500">
+                {t('supportedFormats')}: MP3, WAV, MP4, MOV
+              </p>
+            </div>
+            <input
+              id="file-upload"
+              type="file"
+              className="hidden"
+              onChange={handleFileChange}
+              accept="audio/*,video/*"
+              ref={fileInputRef}
+            />
+          </label>
+        ) : (
+          <div className="p-8 text-black dark:text-white">
+            <p>
+              {t('selectedFile')}: <strong>{file.name}</strong>
+            </p>
+            <button
+              onClick={() => setFile(null)}
+              className="mt-4 px-2 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
+            >
+              <IconTrash />
+              <span className={'sr-only'}>{t('removeFile')}</span>
+            </button>
+          </div>
+        )}
+      </div>
+      {error && <p className="text-red-500 mt-2">{error}</p>}
+    </div>
+  );
+
+  const transcribeModalFooter = (
+    <div className="text-right">
+      <button
+        onClick={handleTranscribe}
+        disabled={!file || isTranscribing}
+        className={`px-4 py-2 rounded ${
+          !file || isTranscribing
+            ? 'bg-gray-300 cursor-not-allowed'
+            : 'bg-green-500 hover:bg-green-600 text-white'
+        }`}
+      >
+        {isTranscribing ? t('transcribingButton') : t('transcribeButton')}
+      </button>
+    </div>
+  );
+
+  const transcriptModalContent = (
+    <div className="mb-4">
+      <textarea
+        readOnly
+        value={transcript}
+        className="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+      />
+    </div>
+  );
+
+  const transcriptModalFooter = (
+    <div className="flex justify-end space-x-2">
+      <button
+        onClick={handleCopyToClipboard}
+        className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
+        title={t('copyToClipboard')}
+      >
+        <IconCopy className="h-5 w-5" />
+        <span className="sr-only">{t('copyToClipboard')}</span>
+      </button>
+      <button
+        onClick={handleDownload}
+        className="p-2 rounded bg-green-500 hover:bg-green-600 text-white"
+        title={t('downloadAsTXT')}
+      >
+        <IconDownload className="h-5 w-5" />
+        <span className="sr-only">{t('downloadAsTXT')}</span>
+      </button>
+      <button
+        onClick={handleInjectToChat}
+        className="p-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
+        title={t('injectIntoChat')}
+      >
+        <IconMessagePlus className="h-5 w-5" />
+        <span className="sr-only">{t('injectIntoChat')}</span>
+      </button>
+    </div>
+  );
+
   return (
     <div className="inline-block">
       <button
@@ -281,169 +382,53 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         <IconFileMusic className="text-black dark:text-white h-5 w-5" />
       </button>
 
-      {isModalOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={closeModal}
-        >
-          <div
-            className="bg-white dark:bg-gray-800 rounded-lg w-11/12 max-w-md p-6 relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold text-black dark:text-white">{t('title')}</h2>
-              <button
-                onClick={closeModal}
-                title={t('close')}
-                className="text-2xl leading-none"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="mb-4">
-              <div className="border-2 border-dashed border-gray-300 rounded-lg text-center">
-                {!file ? (
-                  <label
-                    htmlFor="file-upload"
-                    className="block cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 p-8 text-black dark:text-white"
-                  >
-                    <div>
-                      <p className="mb-1">
-                        <strong>{t('clickToUpload')}</strong>
-                        {/* {t('orDragAndDrop')} */}
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        {t('supportedFormats')}: MP3, WAV, MP4, MOV
-                      </p>
-                    </div>
-                    <input
-                      id="file-upload"
-                      type="file"
-                      className="hidden"
-                      onChange={handleFileChange}
-                      accept="audio/*,video/*"
-                    />
-                  </label>
-                ) : (
-                  <div className="p-8 text-black dark:text-white">
-                    <p>
-                      {t('selectedFile')}: <strong>{file.name}</strong>
-                    </p>
-                    <button
-                      onClick={() => setFile(null)}
-                      className="mt-4 px-2 py-2 bg-red-500 hover:bg-red-600 text-white rounded"
-                    >
-                      <IconTrash />
-                      <span className={'sr-only'}>{t('removeFile')}</span>
-                    </button>
-                  </div>
-                )}
-              </div>
-              {error && <p className="text-red-500 mt-2">{error}</p>}
-            </div>
-            <div className="text-right">
-              <button
-                onClick={handleTranscribe}
-                disabled={!file || isTranscribing}
-                className={`px-4 py-2 rounded ${
-                  !file || isTranscribing
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-green-500 hover:bg-green-600 text-white'
-                }`}
-              >
-                {isTranscribing ? t('transcribingButton') : t('transcribeButton')}
-              </button>
-            </div>
-
-            {/* Overlay when transcribing */}
-            {isTranscribing && (
-              <div className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center">
-                <svg
-                  className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                  />
-                </svg>
-                {statusMessage && (
-                  <p className="mt-2 text-gray-700 dark:text-gray-200">
-                    {statusMessage}
-                  </p>
-                )}
-              </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title={<h2 className="text-xl font-bold text-black dark:text-white">{t('title')}</h2>}
+        footer={transcribeModalFooter}
+        icon={<IconFileMusic size={24} />}
+      >
+        {transcribeModalContent}
+        {isTranscribing && (
+          <div className="absolute inset-0 bg-white bg-opacity-75 dark:bg-gray-800 dark:bg-opacity-75 flex flex-col items-center justify-center">
+            <svg
+              className="animate-spin h-8 w-8 text-blue-600 dark:text-blue-400"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+            {statusMessage && (
+              <p className="mt-2 text-gray-700 dark:text-gray-200">
+                {statusMessage}
+              </p>
             )}
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
-      {transcriptModalOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          onClick={closeTranscriptModal}
-        >
-          <div
-            className="bg-white dark:bg-gray-800 rounded-lg w-11/12 max-w-md p-6 relative text-black dark:text-white"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-bold">{t('transcriptionResult')}</h2>
-              <button
-                onClick={closeTranscriptModal}
-                title={t('close')}
-                className="text-2xl leading-none"
-              >
-                &times;
-              </button>
-            </div>
-            <div className="mb-4">
-              <textarea
-                readOnly
-                value={transcript}
-                className="w-full h-40 p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-              />
-            </div>
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={handleCopyToClipboard}
-                className="p-2 rounded bg-blue-500 hover:bg-blue-600 text-white"
-                title={t('copyToClipboard')}
-              >
-                <IconCopy className="h-5 w-5" />
-                <span className="sr-only">{t('copyToClipboard')}</span>
-              </button>
-              <button
-                onClick={handleDownload}
-                className="p-2 rounded bg-green-500 hover:bg-green-600 text-white"
-                title={t('downloadAsTXT')}
-              >
-                <IconDownload className="h-5 w-5" />
-                <span className="sr-only">{t('downloadAsTXT')}</span>
-              </button>
-              <button
-                onClick={handleInjectToChat}
-                className="p-2 rounded bg-purple-500 hover:bg-purple-600 text-white"
-                title={t('injectIntoChat')}
-              >
-                <IconMessagePlus className="h-5 w-5" />
-                <span className="sr-only">{t('injectIntoChat')}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={transcriptModalOpen}
+        onClose={closeTranscriptModal}
+        title={<h2 className="text-xl font-bold">{t('transcriptionResult')}</h2>}
+        footer={transcriptModalFooter}
+      >
+        {transcriptModalContent}
+      </Modal>
     </div>
   );
 };

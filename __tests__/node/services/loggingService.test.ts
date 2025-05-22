@@ -396,6 +396,7 @@ describe('AzureMonitorLoggingService', () => {
         '2024-01-01',
         '2024-01-31',
         mockUser,
+        true
       );
 
       expect(console.error).toHaveBeenCalled();

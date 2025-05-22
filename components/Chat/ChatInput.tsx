@@ -457,8 +457,20 @@ export const ChatInput = ({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className="bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50"
+      className={`bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50 transition-colors ${isDragOver ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700' : ''}`}
     >
+      {isDragOver && (
+        <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 dark:bg-blue-900/30 backdrop-blur-sm z-10 pointer-events-none">
+          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
+            <div className="text-blue-500 mb-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              </svg>
+            </div>
+          </div>
+        </div>
+      )}
+
       {filePreviews.length > 0 && (
         <div className="px-4 py-2 max-h-52 overflow-y-auto">
           <div className="w-full flex justify-center items-center space-x-2">
@@ -487,16 +499,6 @@ export const ChatInput = ({
 
       <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
-          <ChatInputImageCapture
-            ref={cameraRef}
-            visible={false}
-            setFilePreviews={setFilePreviews}
-            setSubmitType={setSubmitType}
-            prompt={textFieldValue}
-            setImageFieldValue={setFileFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
-
           <ChatInputFile
             onFileUpload={onFileUpload}
             setSubmitType={setSubmitType}
@@ -504,6 +506,17 @@ export const ChatInput = ({
             setFileFieldValue={setFileFieldValue}
             setImageFieldValue={setImageFieldValue}
             setUploadProgress={setUploadProgress}
+          />
+
+          <ChatInputImageCapture
+            ref={cameraRef}
+            setSubmitType={setSubmitType}
+            prompt={textFieldValue}
+            setFilePreviews={setFilePreviews}
+            setImageFieldValue={setFileFieldValue}
+            setUploadProgress={setUploadProgress}
+            visible={false}
+            hasCameraSupport={true}
           />
 
           <ChatDropdown

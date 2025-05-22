@@ -1,4 +1,4 @@
-import { IconCamera, IconX } from '@tabler/icons-react';
+import { IconCamera } from '@tabler/icons-react';
 import React, {
   Dispatch,
   FC,
@@ -13,6 +13,7 @@ import { useTranslation } from 'next-i18next';
 import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
 
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
+import Modal from '@/components/UI/Modal';
 
 const onTakePhotoButtonClick = (
   videoRef: MutableRefObject<HTMLVideoElement | null>,
@@ -100,24 +101,47 @@ export const CameraModal: FC<CameraModalProps> = ({
 
   useEffect(() => {
     const getDevices = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const videoDevices = devices.filter(
-        (device) => device.kind === 'videoinput',
-      );
-      setCameras(videoDevices);
-      if (videoDevices.length > 0) {
-        setSelectedCamera(videoDevices[0].deviceId);
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === 'videoinput',
+        );
+        setCameras(videoDevices);
+        if (videoDevices.length > 0) {
+          setSelectedCamera(videoDevices[0].deviceId);
+          // Initialize camera with the first device when modal opens
+          if (isOpen) {
+            await startCamera(videoDevices[0].deviceId);
+          }
+        }
+      } catch (error) {
+        console.error('Error enumerating devices:', error);
       }
     };
+
     getDevices();
-  }, []);
+    
+    // Cleanup function to stop media stream when component unmounts or modal closes
+    return () => {
+      if (isOpen === false) {
+        stopMediaStream(videoRef.current);
+      }
+    };
+  }, [isOpen, videoRef]);
 
   const startCamera = async (deviceId: string) => {
-    const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId },
-    });
-    if (videoRef.current) {
-      videoRef.current.srcObject = stream;
+    try {
+      const stream: MediaStream = await navigator.mediaDevices.getUserMedia({
+        video: { deviceId },
+      });
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+    } catch (error) {
+      console.error('Error starting camera:', error);
+      // Show an error message to the user
+      alert('Could not access camera. Please check your camera permissions and try again.');
+      closeModal();
     }
   };
 
@@ -127,70 +151,77 @@ export const CameraModal: FC<CameraModalProps> = ({
     startCamera(deviceId);
   };
 
-  if (!isOpen) return null;
-
   const exitModal = () => {
     stopMediaStream(videoRef.current);
     setIsCameraOpen(false);
     closeModal();
   };
 
-  return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-white dark:bg-black rounded-lg shadow-lg p-6 relative max-w-lg w-full">
-        <button
-          onClick={exitModal}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+  const modalContent = (
+    <>
+      {cameras.length > 1 && (
+        <select
+          value={selectedCamera}
+          onChange={(e) => handleCameraChange(e.target.value)}
+          className="mb-4 w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white"
         >
-          <IconX />
-        </button>
-        {cameras.length > 1 && (
-          <select
-            value={selectedCamera}
-            onChange={(e) => handleCameraChange(e.target.value)}
-            className="mb-4 w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {cameras.map((camera) => (
-              <option key={camera.deviceId} value={camera.deviceId}>
-                {camera.label || `Camera (${camera.deviceId})`}
-              </option>
-            ))}
-          </select>
-        )}
-        {cameras.length === 1 && (
-          <div className="mb-4 text-center dark:text-white text-gray-900">
-            {cameras[0].label || 'Camera'}
-          </div>
-        )}
-        <div className="relative mb-4">
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            className="w-full h-auto rounded-md"
-          />
-          <canvas ref={canvasRef} style={{ display: 'none' }} />
+          {cameras.map((camera) => (
+            <option key={camera.deviceId} value={camera.deviceId}>
+              {camera.label || `Camera (${camera.deviceId})`}
+            </option>
+          ))}
+        </select>
+      )}
+      {cameras.length === 1 && (
+        <div className="mb-4 text-center dark:text-white text-gray-900">
+          {cameras[0].label || 'Camera'}
         </div>
-        <button
-          onClick={() => {
-            onTakePhotoButtonClick(
-              videoRef,
-              canvasRef,
-              fileInputRef,
-              setIsCameraOpen,
-              setFilePreviews,
-              setSubmitType,
-              setImageFieldValue,
-              closeModal,
-              setUploadProgress
-            );
-          }}
-          className="w-full bg-blue-500 text-white px-4 py-2 rounded-md flex items-center justify-center"
-        >
-          <IconCamera className="w-6 h-6 mr-2 text-black dark:text-white" />
-          <span>{t('Take photo')}</span>
-        </button>
+      )}
+      <div className="relative mb-4">
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          className="w-full h-auto rounded-md"
+        />
+        <canvas ref={canvasRef} style={{ display: 'none' }} />
       </div>
-    </div>
+    </>
+  );
+  
+  const modalFooter = (
+    <button
+      onClick={() => {
+        onTakePhotoButtonClick(
+          videoRef,
+          canvasRef,
+          fileInputRef,
+          setIsCameraOpen,
+          setFilePreviews,
+          setSubmitType,
+          setImageFieldValue,
+          closeModal,
+          setUploadProgress
+        );
+      }}
+      className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center justify-center"
+    >
+      <IconCamera className="w-6 h-6 mr-2" />
+      <span>{t('Take photo')}</span>
+    </button>
+  );
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={exitModal}
+      title={t('Camera')}
+      icon={<IconCamera size={24} />}
+      footer={modalFooter}
+      size="md"
+      className="dark:bg-gray-900"
+    >
+      {modalContent}
+    </Modal>
   );
 };

@@ -1,23 +1,31 @@
 import { Session } from 'next-auth';
 
+// Types for localized content
+export interface LocalizedContent {
+  [locale: string]: {
+    content: string;
+    hash: string;
+  };
+}
+
 // Types for terms and privacy policy
 export interface TermsDocument {
-  content: string;
+  localized: LocalizedContent;
   version: string;
-  hash: string;
   required: boolean;
 }
 
 export interface TermsData {
   platformTerms: TermsDocument;
-  privacyPolicy: TermsDocument;
-  [key: string]: TermsDocument; // Allow for future additional documents
+  privacyPolicy?: TermsDocument;
+  [key: string]: TermsDocument | undefined; // Allow for future additional documents
 }
 
 export interface AcceptanceRecord {
   documentType: string;
   version: string;
-  hash: string;
+  hash: string; // Hash of the accepted content
+  locale: string; // The language version that was accepted
   acceptedAt: number; // timestamp
 }
 
@@ -53,18 +61,19 @@ export const getUserAcceptance = (userId: string): UserAcceptance | null => {
 
 // Function to save user acceptance to localStorage
 export const saveUserAcceptance = (
-  userId: string,
-  documentType: string,
-  version: string,
-  hash: string
+    userId: string,
+    documentType: string,
+    version: string,
+    hash: string,
+    locale: string = 'en'
 ): void => {
   if (typeof window === 'undefined') return; // Not in browser environment
 
   try {
     const allAcceptancesStr = localStorage.getItem(TERMS_ACCEPTANCE_KEY);
     const allAcceptances: UserAcceptance[] = allAcceptancesStr
-      ? JSON.parse(allAcceptancesStr)
-      : [];
+        ? JSON.parse(allAcceptancesStr)
+        : [];
 
     const userAcceptance = allAcceptances.find(a => a.userId === userId);
 
@@ -72,13 +81,14 @@ export const saveUserAcceptance = (
       documentType,
       version,
       hash,
+      locale,
       acceptedAt: Date.now()
     };
 
     if (userAcceptance) {
       // Update existing record or add new one
       const existingRecordIndex = userAcceptance.acceptedDocuments.findIndex(
-        doc => doc.documentType === documentType
+          doc => doc.documentType === documentType
       );
 
       if (existingRecordIndex >= 0) {
@@ -102,31 +112,41 @@ export const saveUserAcceptance = (
 
 // Function to check if a user has accepted a specific document
 export const hasUserAcceptedDocument = (
-  userId: string,
-  documentType: string,
-  version: string,
-  hash: string
+    userId: string,
+    documentType: string,
+    version: string,
+    termsData: TermsData,
+    locale: string = 'en'
 ): boolean => {
   const userAcceptance = getUserAcceptance(userId);
   if (!userAcceptance) return false;
 
   const acceptedDocument = userAcceptance.acceptedDocuments.find(
-    doc => doc.documentType === documentType
+      doc => doc.documentType === documentType
   );
 
   if (!acceptedDocument) return false;
 
-  // Check if the version and hash match
-  return acceptedDocument.version === version && acceptedDocument.hash === hash;
+  // Get the document from terms data
+  const document = termsData[documentType];
+  if (!document) return false;
+
+  // Check if the version matches and the hash matches the localized content
+  return (
+      acceptedDocument.version === version &&
+      document.localized[acceptedDocument.locale] &&
+      acceptedDocument.hash === document.localized[acceptedDocument.locale].hash
+  );
 };
 
 // Function to check if a user has accepted all required documents
 export const hasUserAcceptedAllRequiredDocuments = (
-  userId: string,
-  termsData: TermsData
+    userId: string,
+    termsData: TermsData,
+    locale: string = 'en'
 ): boolean => {
   for (const [docType, document] of Object.entries(termsData)) {
-    if (document.required && !hasUserAcceptedDocument(userId, docType, document.version, document.hash)) {
+    if (document && document.required && !hasUserAcceptedDocument(userId, docType, document.version, termsData, locale)) {
       return false;
     }
   }
@@ -149,7 +169,7 @@ export const fetchTermsData = async (): Promise<TermsData> => {
 };
 
 // Function to check if the user needs to accept terms
-export const checkUserTermsAcceptance = async (user: Session['user']): Promise<boolean> => {
+export const checkUserTermsAcceptance = async (user: Session['user'], locale: string = 'en'): Promise<boolean> => {
   if (!user) return false;
 
   try {
@@ -157,7 +177,7 @@ export const checkUserTermsAcceptance = async (user: Session['user']): Promise<b
     if (!userId) return false;
 
     const termsData = await fetchTermsData();
-    return hasUserAcceptedAllRequiredDocuments(userId, termsData);
+    return hasUserAcceptedAllRequiredDocuments(userId, termsData, locale);
   } catch (error) {
     console.error('Error checking terms acceptance:', error);
     return false; // Default to requiring acceptance if there's an error

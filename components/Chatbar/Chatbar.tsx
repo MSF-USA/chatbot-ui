@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
-
+import { useSwipeable } from 'react-swipeable';
 import { useTranslation } from 'next-i18next';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
@@ -59,6 +59,37 @@ export const Chatbar = () => {
     handleNewConversation,
     handleUpdateConversation,
   } = useContext(HomeContext);
+
+  /**
+   * Toggles the visibility of the chatbar
+   */
+  const handleToggleChatbar = () => {
+    homeDispatch({ field: 'showChatbar', value: !showChatbar });
+    localStorage.setItem('showChatbar', JSON.stringify(!showChatbar));
+  };
+
+  /**
+   * Swipe handlers for mobile devices
+   * Swipe left: Open the chatbar if closed
+   * Swipe right: Close the chatbar if open
+   */
+  const swipeHandlers = useSwipeable({
+    onSwipedRight: () => {
+      if (!showChatbar) {
+        handleToggleChatbar();
+      }
+    },
+    onSwipedLeft: () => {
+      if (showChatbar) {
+        handleToggleChatbar();
+      }
+    },
+    trackMouse: false,
+    // Configuring swipe detection sensitivity
+    swipeDuration: 500,
+    preventScrollOnSwipe: true,
+    delta: 50,
+  });
 
   enum Tab {
     CONVERSATIONS = 'CONVERSATIONS',
@@ -205,11 +236,6 @@ export const Chatbar = () => {
     }
   };
 
-  const handleToggleChatbar = () => {
-    homeDispatch({ field: 'showChatbar', value: !showChatbar });
-    localStorage.setItem('showChatbar', JSON.stringify(!showChatbar));
-  };
-
   const handleDrop = (e: any) => {
     if (e.dataTransfer) {
       const conversation = JSON.parse(e.dataTransfer.getData('conversation'));
@@ -335,7 +361,7 @@ export const Chatbar = () => {
       }}
     >
 
-    <div className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto">
+    <div className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto" {...swipeHandlers}>
         <div className="flex flex-col h-full w-64 bg-gray-200 dark:bg-[#171717] z-30 md:relative md:w-auto">
           <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5 text-black dark:text-white">
             <button
@@ -407,6 +433,8 @@ export const Chatbar = () => {
       <CloseSidebarButton onClick={handleToggleChatbar} side={'left'} />
     </ChatbarContext.Provider>
 ) : (
-    <OpenSidebarButton onClick={handleToggleChatbar} side={'left'} />
+    <div className="md:w-auto" {...swipeHandlers}>
+      <OpenSidebarButton onClick={handleToggleChatbar} side={'left'} />
+    </div>
   )
 };

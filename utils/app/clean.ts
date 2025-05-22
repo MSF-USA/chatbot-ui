@@ -1,5 +1,5 @@
 import { Conversation } from '@/types/chat';
-import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import {OpenAIModel, OpenAIModelID, OpenAIModels} from '@/types/openai';
 
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from './const';
 
@@ -66,8 +66,9 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
 
   return history.reduce((acc: any[], conversation) => {
     try {
-      if (!conversation.model) {
-        conversation.model = OpenAIModels[OpenAIModelID.GPT_3_5];
+      if (!conversation.model || (conversation.model as OpenAIModel)?.isLegacy) {
+        // TODO: Replace with environmentally set default model so fixing doesn't require code change
+        conversation.model = OpenAIModels[OpenAIModelID.GPT_4o];
       }
 
       if (!conversation.prompt) {

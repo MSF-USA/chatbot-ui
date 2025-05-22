@@ -1,7 +1,5 @@
 import { Transition } from '@headlessui/react';
 import {
-  IconClearAll,
-  IconExternalLink,
   IconInfoCircle,
   IconSettings,
 } from '@tabler/icons-react';
@@ -24,7 +22,6 @@ import { makeRequest } from '@/services/frontendChatServices';
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import { saveConversation, saveConversations } from '@/utils/app/conversation';
-import { isUSBased } from '@/utils/app/userAuth';
 import { throttle } from '@/utils/data/throttle';
 
 import { getBotById } from '@/types/bots';
@@ -37,7 +34,6 @@ import {
   MessageType,
   TextMessageContent,
 } from '@/types/chat';
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
 
@@ -52,6 +48,7 @@ import { ChatLoader } from './ChatLoader';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
+import { ChatTopbar } from './ChatTopbar';
 import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
@@ -629,7 +626,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   }, []);
 
   return (
-    <div className="flex flex-col h-full w-full bg-white dark:bg-[#212121]">
+    <div className="flex flex-col h-full w-full overflow-x-hidden bg-white dark:bg-[#212121]">
       {showSplash ? (
         <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
           <div className="text-center text-4xl font-bold text-black dark:text-white">
@@ -691,67 +688,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                     leaveTo="opacity-0"
                   >
                     <div>
-                      <div className="fixed top-0 left-0 right-0 z-10 flex items-center justify-center relative border border-b-neutral-300 bg-neutral-100 py-2 px-4 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                        {/* Center Content */}
-                        <div className="flex items-center space-x-2">
-                          <div className="flex items-center">
-                            {botInfo && (
-                              <>
-                                <span
-                                  className="font-semibold"
-                                  style={{ color: botInfo.color }}
-                                >
-                                  {botInfo.name} Bot
-                                </span>
-                                <span className="mx-2 text-white dark:text-white">
-                                  |
-                                </span>
-                              </>
-                            )}
-                            <span>
-                              {t('Model')}: {selectedConversation?.model?.name}
-                            </span>
-                          </div>
-
-                          {/* Settings Button */}
-                          <div className="group">
-                            <button
-                              className="cursor-pointer hover:opacity-50"
-                              onClick={handleSettings}
-                            >
-                              <IconSettings
-                                size={18}
-                                className={`${
-                                  showSettings
-                                    ? 'text-[#D7211E] mt-1'
-                                    : 'text-black dark:text-white mt-1'
-                                }`}
-                              />
-                            </button>
-                            <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-                              Expand Model Settings
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Right-Side Content */}
-                        <div className="absolute right-0 flex items-center pr-4">
-                          <a
-                            href={`mailto:${
-                              isUSBased(user?.mail ?? '')
-                                ? US_FEEDBACK_EMAIL
-                                : FEEDBACK_EMAIL
-                            }`}
-                            className="flex items-center text-black/50 dark:text-white/50 text-[12px]"
-                          >
-                            <IconExternalLink
-                              size={16}
-                              className="mr-1 text-black dark:text-white/50"
-                            />
-                            {t('sendFeedback')}
-                          </a>
-                        </div>
-                      </div>
+                      {/* Topbar w/o content */}
+                      <ChatTopbar 
+                        botInfo={botInfo}
+                        selectedModelName={selectedConversation?.model?.name}
+                        showSettings={showSettings}
+                        onSettingsClick={handleSettings}
+                        userEmail={user?.mail}
+                      />
 
                       {showSettings && (
                         <Transition
@@ -899,64 +843,15 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               </>
             ) : (
               <>
-                <div className="sticky top-0 z-10 flex justify-center border border-b-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-                  <div className="flex items-center">
-                    {botInfo && (
-                      <>
-                        <span
-                          className="font-semibold"
-                          style={{ color: botInfo.color }}
-                        >
-                          {botInfo.name} Bot
-                        </span>
-                        <span className="mx-2 text-white dark:text-white">
-                          |
-                        </span>
-                      </>
-                    )}
-                    <span>
-                      {t('Model')}: {selectedConversation?.model?.name}
-                    </span>
-                  </div>
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={handleSettings}
-                  >
-                    <IconSettings
-                      size={18}
-                      className={`${
-                        showSettings
-                          ? 'text-[#D7211E]'
-                          : 'text-black dark:text-white'
-                      }`}
-                    />
-                  </button>
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={onClearAll}
-                  >
-                    <IconClearAll
-                      size={18}
-                      className="text-black dark:text-white"
-                    />
-                  </button>
-                  <div className="absolute right-0">
-                    <a
-                      href={`mailto:${
-                        isUSBased(user?.mail ?? '')
-                          ? US_FEEDBACK_EMAIL
-                          : FEEDBACK_EMAIL
-                      }`}
-                      className="flex flex-row mr-2 text-black/50 dark:text-white/50 text-[12px]"
-                    >
-                      <IconExternalLink
-                        size={16}
-                        className={'mr-1 text-black dark:text-white/50'}
-                      />
-                      {t('sendFeedback')}
-                    </a>
-                  </div>
-                </div>
+                <ChatTopbar 
+                  botInfo={botInfo}
+                  selectedModelName={selectedConversation?.model?.name}
+                  showSettings={showSettings}
+                  onSettingsClick={handleSettings}
+                  onClearAll={onClearAll}
+                  userEmail={user?.mail}
+                  hasMessages={true}
+                />
                 {showSettings && (
                   <Transition
                     appear={true}

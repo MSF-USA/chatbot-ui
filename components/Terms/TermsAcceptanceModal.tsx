@@ -1,5 +1,7 @@
+
 import React, { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 import {
   TermsData,
   TermsDocument,
@@ -9,6 +11,7 @@ import {
 } from '@/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 import ReactMarkdown from 'react-markdown';
+import {IconLanguage} from "@tabler/icons-react";
 
 interface TermsAcceptanceModalProps {
   user: Session['user'];
@@ -20,11 +23,16 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   onAcceptance
 }) => {
   const { t } = useTranslation('common');
+  const router = useRouter();
+  const userLocale = router.locale || 'en';
+
   const [termsData, setTermsData] = useState<TermsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [acceptedTerms, setAcceptedTerms] = useState<Record<string, boolean>>({});
   const [currentDocument, setCurrentDocument] = useState<string>('platformTerms');
+  const [currentLocale, setCurrentLocale] = useState<string>(userLocale);
+  const [availableLocales, setAvailableLocales] = useState<string[]>(['en']);
   const [allAccepted, setAllAccepted] = useState<boolean>(false);
 
   // Get user ID
@@ -45,6 +53,16 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         });
         setAcceptedTerms(initialAcceptance);
 
+        // Determine available locales
+        if (data.platformTerms) {
+          const locales = Object.keys(data.platformTerms.localized);
+          setAvailableLocales(locales);
+
+          // Set initial locale - use user's locale if available, otherwise English
+          const userLocaleAvailable = locales.includes(userLocale);
+          setCurrentLocale(userLocaleAvailable ? userLocale : 'en');
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('Error fetching terms data:', error);
@@ -54,7 +72,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     };
 
     getTermsData();
-  }, []);
+  }, [userLocale]);
 
   // Check if all required terms are accepted
   useEffect(() => {
@@ -62,7 +80,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
     let allRequired = true;
     Object.entries(termsData).forEach(([key, doc]) => {
-      if (doc.required && !acceptedTerms[key]) {
+      if (doc?.required && !acceptedTerms[key]) {
         allRequired = false;
       }
     });
@@ -85,8 +103,9 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     try {
       // Save acceptance for each document
       Object.entries(termsData).forEach(([docType, doc]) => {
-        if (acceptedTerms[docType]) {
-          saveUserAcceptance(userId, docType, doc.version, doc.hash);
+        if (acceptedTerms[docType] && doc) {
+          const hash = doc.localized[currentLocale]?.hash || doc.localized['en'].hash;
+          saveUserAcceptance(userId, docType, doc.version, hash, currentLocale);
         }
       });
 
@@ -103,12 +122,27 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     setCurrentDocument(documentType);
   };
 
+  // Handle locale change
+  const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setCurrentLocale(e.target.value);
+  };
+
+  // Get localized name for a language
+  const getLanguageName = (locale: string): string => {
+    const localeNames: Record<string, string> = {
+      en: 'English',
+      fr: 'Français'
+      // Add more as needed
+    };
+    return localeNames[locale] || locale;
+  };
+
   if (loading) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
-            <p className="text-white">{t('Loading terms and conditions...')}</p>
+            <p className="text-gray-800 dark:text-white">{t('Loading terms and conditions...')}</p>
           </div>
         </div>
       </div>
@@ -117,8 +151,8 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   if (error) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
+      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+        <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
             <p className="text-red-500">{error}</p>
             <button
@@ -138,41 +172,65 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   }
 
   const currentDocumentData = termsData[currentDocument];
+  const documentContent = currentDocumentData?.localized[currentLocale]?.content ||
+      currentDocumentData?.localized['en']?.content ||
+      '';
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-        <h2 className="text-xl font-bold text-white mb-4">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
+      <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800 dark:text-white">
           {t('Terms and Conditions')}
         </h2>
 
+          {/* Language selector */}
+          <div className="flex items-center">
+            <label htmlFor="language-select" className="text-gray-700 dark:text-white mr-2">
+              <IconLanguage />
+            </label>
+            <select
+                id="language-select"
+                value={currentLocale}
+                onChange={handleLocaleChange}
+                className="bg-gray-100 text-gray-800 dark:bg-[#2a2b32] dark:text-white rounded p-1 border border-gray-300 dark:border-gray-700"
+            >
+              {availableLocales.map(locale => (
+                  <option key={locale} value={locale}>
+                    {getLanguageName(locale)}
+                  </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
         {/* Document tabs */}
-        <div className="flex mb-4 border-b border-gray-700">
+        <div className="flex mb-4 border-b border-gray-300 dark:border-gray-700">
           {Object.entries(termsData).map(([docType, doc]) => (
             <button
               key={docType}
               className={`px-4 py-2 ${
                 currentDocument === docType
                   ? 'border-b-2 border-blue-500 text-blue-500'
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white'
               }`}
               onClick={() => handleSwitchDocument(docType)}
             >
               {docType === 'platformTerms' ? t('Terms of Service') :
-               docType === 'privacyPolicy' ? t('Privacy Policy') :
-               docType}
-              {doc.required && <span className="ml-1 text-red-500">*</span>}
+              docType === 'privacyPolicy' ? t('Privacy Policy') :
+                docType}
+              {doc?.required && <span className="ml-1 text-red-500">*</span>}
             </button>
           ))}
         </div>
 
         {/* Document content */}
-        <div className="overflow-y-auto flex-grow mb-4 bg-[#2a2b32] p-4 rounded">
-          <ReactMarkdown className="prose prose-invert max-w-none">
-            {currentDocumentData.content}
+        <div className="overflow-y-auto flex-grow mb-4 bg-gray-100 dark:bg-[#2a2b32] p-4 rounded">
+          <ReactMarkdown className="prose dark:prose-invert max-w-none">
+            {documentContent}
           </ReactMarkdown>
-          <div className="text-sm text-gray-400 mt-4">
-            {t('Version')}: {currentDocumentData.version}
+          <div className="text-sm text-gray-500 dark:text-gray-400 mt-4">
+            {t('Version')}: {currentDocumentData?.version}
           </div>
         </div>
 
@@ -187,11 +245,15 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
                 onChange={() => handleAcceptDocument(docType)}
                 className="mr-2"
               />
-              <label htmlFor={`accept-${docType}`} className="text-white">
-                {t('I accept the')} {docType === 'platformTerms' ? t('Terms of Service') :
-                                    docType === 'privacyPolicy' ? t('Privacy Policy') :
-                                    docType}
-                {doc.required && <span className="ml-1 text-red-500">*</span>}
+              {/* Temporary implementation with language-specific text */}
+              <label htmlFor={`accept-${docType}`} className="text-gray-800 dark:text-white">
+                {currentLocale === 'fr' ? 'J\'accepte ' : 'I accept the '}
+                {docType === 'platformTerms'
+                    ? (currentLocale === 'fr' ? 'Conditions d\'utilisation' : 'Terms of Service')
+                    : docType === 'privacyPolicy'
+                        ? (currentLocale === 'fr' ? 'Politique de confidentialité' : 'Privacy Policy')
+                        : docType} <span className={'font-light'}>v{doc?.version}</span>
+                {doc?.required && <span className="ml-1 text-red-500">*</span>}
               </label>
             </div>
           ))}
@@ -203,7 +265,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
             className={`px-4 py-2 rounded ${
               allAccepted
                 ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'bg-gray-600 text-gray-300 cursor-not-allowed'
+                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-300 cursor-not-allowed'
             }`}
             onClick={handleAcceptAllTerms}
             disabled={!allAccepted}
