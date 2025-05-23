@@ -38,7 +38,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     // Prepare the prompt for title generation
-    const prompt = `Generate a concise, descriptive title for this conversation. The title should be less than 35 characters and should capture the main topic or purpose of the conversation.`;
+    const prompt = `Generate a concise, descriptive title for this conversation. The title should be less than 35 characters and should capture the main topic or purpose of the conversation. Use simple, direct language. Make it in whatever language the dominant conversation is in.`;
 
     const systemMessage = {
       role: "system",
@@ -88,7 +88,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       properties: {
         title: {
           type: "string",
-          description: "A concise title for the conversation (less than 50 characters)",
+          description: "A concise title for the conversation (less than 35 characters)",
         },
       },
       required: ["title"],
