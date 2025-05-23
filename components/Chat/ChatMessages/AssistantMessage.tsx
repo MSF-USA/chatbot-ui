@@ -1,6 +1,7 @@
 import {
   IconLoader2,
   IconRobot, IconSettings,
+  IconLanguage,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -15,6 +16,7 @@ import { Citation } from '@/types/rag';
 
 import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
 import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { getAutonym } from '@/utils/app/locales';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
@@ -52,7 +54,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
   const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
   const [isTranslating, setIsTranslating] = useState<boolean>(false);
-  const [translatedContent, setTranslatedContent] = useState<string | null>(null);
+  const [translations, setTranslations] = useState<Record<string, string>>({});
+  const [currentLanguage, setCurrentLanguage] = useState<string | null>(null);
 
   // Get streaming settings from context
   const { settings, updateSettings } = useStreamingSettings();
@@ -197,9 +200,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
   // If translated content is available, use that instead of the original content
-  // TODO: Add UI to allow switching between translated and original content
-  const contentToDisplay = translatedContent
-    ? translatedContent
+  const contentToDisplay = currentLanguage && translations[currentLanguage]
+    ? translations[currentLanguage]
     : (settings.smoothStreamingEnabled && messageIsStreaming
         ? smoothContent
         : displayContentWithoutCitations);
@@ -214,7 +216,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: displayContentWithoutCitations }),
+        body: JSON.stringify({ text: contentToDisplay }),
       });
 
       if (!response.ok) {
@@ -245,6 +247,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   const handleTranslate = async (targetLocale: string) => {
     try {
+      // If we already have this translation, just switch to it
+      if (translations[targetLocale]) {
+        setCurrentLanguage(targetLocale);
+        return;
+      }
+
       setIsTranslating(true);
       setLoadingMessage('Translating...');
 
@@ -265,7 +273,14 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       }
 
       const data = await response.json();
-      setTranslatedContent(data.translatedText);
+
+      // Store the translation and set it as current
+      setTranslations(prev => ({
+        ...prev,
+        [targetLocale]: data.translatedText
+      }));
+      setCurrentLanguage(targetLocale);
+
       setIsTranslating(false);
       setLoadingMessage(null);
     } catch (error) {
@@ -274,6 +289,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setLoadingMessage('Error translating text. Please try again.');
       setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
     }
+  };
+
+  // Function to switch back to original text
+  const handleResetTranslation = () => {
+    setCurrentLanguage(null);
   };
 
   const StreamingIndicator = () => (
@@ -362,6 +382,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         )}
 
         <div className="flex flex-col">
+
+
           <div className="flex-1 overflow-hidden">
             {selectedConversation?.bot ? (
               <>
@@ -513,6 +535,73 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   audioUrl={audioUrl}
                   onClose={handleCloseAudio}
               />
+          )}
+
+          {/* Translation indicator */}
+          {(currentLanguage || Object.keys(translations).length > 0) && (
+              <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <IconLanguage size={16} className="mr-1" />
+                <span className="mr-2">
+                {currentLanguage
+                    ? `${getAutonym(currentLanguage)}`
+                    : "Original text"}
+              </span>
+
+                {/* Translation selector dropdown */}
+                <div className="relative inline-block">
+                  <button
+                      className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline text-xs"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const dropdown = document.getElementById(`translation-dropdown-${messageIndex}`);
+                        if (dropdown) {
+                          dropdown.classList.toggle('hidden');
+                        }
+                      }}
+                  >
+                    Change
+                  </button>
+
+                  <div
+                      id={`translation-dropdown-${messageIndex}`}
+                      className="hidden absolute left-0 bottom-full mb-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto"
+                  >
+                    <div className="py-1">
+                      <button
+                          className={`w-full text-left px-4 py-2 text-sm ${
+                              currentLanguage === null
+                                  ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                          }`}
+                          onClick={() => {
+                            handleResetTranslation();
+                            document.getElementById(`translation-dropdown-${messageIndex}`)?.classList.add('hidden');
+                          }}
+                      >
+                        Original text
+                      </button>
+
+                      {Object.keys(translations).map((locale) => (
+                          <button
+                              key={locale}
+                              className={`w-full text-left px-4 py-2 text-sm ${
+                                  currentLanguage === locale
+                                      ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                              }`}
+                              onClick={() => {
+                                setCurrentLanguage(locale);
+                                document.getElementById(`translation-dropdown-${messageIndex}`)?.classList.add('hidden');
+                              }}
+                          >
+                            {getAutonym(locale)}
+                          </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
           )}
         </div>
 
