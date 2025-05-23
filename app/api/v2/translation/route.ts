@@ -8,6 +8,7 @@ import { ChatCompletionMessageParam, ChatCompletionSystemMessageParam } from "op
 
 type TranslationResponse = {
   translatedText: string;
+  notes: string;
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
