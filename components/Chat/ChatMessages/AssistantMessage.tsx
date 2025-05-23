@@ -1,11 +1,6 @@
 import {
-  IconCheck,
-  IconCopy,
   IconLoader2,
-  IconRobot,
-  IconSettings,
-  IconVolume,
-  IconVolumeOff,
+  IconRobot, IconSettings,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -26,6 +21,7 @@ import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+import { AssistantMessageActionButtons } from '@/components/Chat/ChatMessages/AssistantMessageActionButtons';
 
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
@@ -55,6 +51,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
   const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [translatedContent, setTranslatedContent] = useState<string | null>(null);
 
   // Get streaming settings from context
   const { settings, updateSettings } = useStreamingSettings();
@@ -198,9 +196,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
-  const contentToDisplay = settings.smoothStreamingEnabled && messageIsStreaming
-    ? smoothContent
-    : displayContentWithoutCitations;
+  // If translated content is available, use that instead of the original content
+  // TODO: Add UI to allow switching between translated and original content
+  const contentToDisplay = translatedContent
+    ? translatedContent
+    : (settings.smoothStreamingEnabled && messageIsStreaming
+        ? smoothContent
+        : displayContentWithoutCitations);
 
   const handleTTS = async () => {
     try {
@@ -238,6 +240,39 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
       setAudioUrl(null);
+    }
+  };
+
+  const handleTranslate = async (targetLocale: string) => {
+    try {
+      setIsTranslating(true);
+      setLoadingMessage('Translating...');
+
+      const response = await fetch('/api/v2/translation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sourceText: displayContentWithoutCitations,
+          targetLocale,
+          modelId: selectedConversation.model?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Translation failed');
+      }
+
+      const data = await response.json();
+      setTranslatedContent(data.translatedText);
+      setIsTranslating(false);
+      setLoadingMessage(null);
+    } catch (error) {
+      console.error('Error in translation:', error);
+      setIsTranslating(false);
+      setLoadingMessage('Error translating text. Please try again.');
+      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
     }
   };
 
@@ -363,77 +398,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
 
-          {/* Fixed action buttons at the bottom of the message */}
-          <div className="flex justify-end items-center mt-3 sm:mt-4">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              {/* Copy button */}
-              <div className="relative group">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    messageCopied 
-                      ? 'bg-green-500 text-white dark:bg-green-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={copyOnClick}
-                  aria-label={messageCopied ? "Copied" : "Copy message"}
-                >
-                  {messageCopied ? (
-                    <IconCheck size={18} />
-                  ) : (
-                    <IconCopy size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {messageCopied ? "Copied!" : "Copy message"}
-                </span>
-              </div>
-
-              {/* Streaming Settings button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    showStreamingSettings
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={() => setShowStreamingSettings(!showStreamingSettings)}
-                  aria-label="Text streaming settings"
-                >
-                  <IconSettings size={18} className={showStreamingSettings ? 'animate-spin-slow' : ''} />
-                </button>
-                <span className="sr-only">
-                  Streaming settings
-                </span>
-              </div>
-
-              {/* Listen button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    audioUrl
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : isGeneratingAudio
-                        ? 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={audioUrl ? handleCloseAudio : handleTTS}
-                  disabled={isGeneratingAudio || messageIsStreaming}
-                  aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                >
-                  {isGeneratingAudio ? (
-                    <IconLoader2 size={18} className="animate-spin" />
-                  ) : audioUrl ? (
-                    <IconVolumeOff size={18} className="animate-pulse" />
-                  ) : (
-                    <IconVolume size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* Action buttons at the bottom of the message */}
+          <AssistantMessageActionButtons
+            messageCopied={messageCopied}
+            copyOnClick={copyOnClick}
+            isGeneratingAudio={isGeneratingAudio}
+            audioUrl={audioUrl}
+            handleTTS={handleTTS}
+            handleCloseAudio={handleCloseAudio}
+            messageIsStreaming={messageIsStreaming}
+            showStreamingSettings={showStreamingSettings}
+            setShowStreamingSettings={setShowStreamingSettings}
+            onTranslate={handleTranslate}
+            isTranslating={isTranslating}
+          />
 
           {/* Streaming Settings Modal */}
           {showStreamingSettings && (
