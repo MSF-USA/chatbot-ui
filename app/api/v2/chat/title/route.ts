@@ -107,7 +107,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     );
 
     return NextResponse.json(
-        { title: titleResponse.title },
+        { title: titleResponse.title.slice(0,31), fullTitle: titleResponse.title },
         { status: 200 }
     );
   } catch (error) {
