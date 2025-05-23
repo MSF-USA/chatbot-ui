@@ -21,7 +21,12 @@ import { makeRequest } from '@/services/frontendChatServices';
 
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
-import { saveConversation, saveConversations } from '@/utils/app/conversation';
+import {
+  saveConversation,
+  saveConversations,
+  generateTitleFromAPI,
+  setConversationTitle
+} from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
 import { getBotById } from '@/types/bots';
@@ -161,99 +166,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     updateBotInfo();
   }, [selectedConversation, updateBotInfo]);
 
-  const generateTitleFromAPI = async (
-    conversation: Conversation,
-    user: any,
-  ): Promise<string | null> => {
-    try {
-      // Only attempt to generate a title if there's at least one response message
-      const hasResponseMessage = conversation.messages.some(
-        (msg) => msg.role === 'assistant'
-      );
-
-      if (!hasResponseMessage) {
-        return null;
-      }
-
-      const response = await fetch('/api/v2/chat/title', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          messages: conversation.messages,
-          user: user,
-          modelId: conversation.model?.id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to generate title');
-      }
-
-      const data = await response.json();
-      return data.title;
-    } catch (error) {
-      console.error('Error generating title:', error);
-      return null;
-    }
-  };
-
-  const setConversationTitle = async (
-    updatedConversation: Conversation,
-    message: Message,
-  ): Promise<Conversation> => {
-    // First try to generate a title using the API
-    const generatedTitle = await generateTitleFromAPI(updatedConversation, user);
-
-    if (generatedTitle) {
-      return {
-        ...updatedConversation,
-        name: generatedTitle,
-      };
-    }
-
-    // Fallback to the old method if API fails or there's not enough conversation
-    let title = '';
-    if (typeof message.content === 'string') {
-      title = message.content.substring(0, 30);
-    } else if (Array.isArray(message.content)) {
-      const contentTypes = message.content.map((section) => section.type);
-      if (contentTypes.includes('image_url')) {
-        title = 'Image Chat';
-      } else if (contentTypes.includes('file_url')) {
-        const fileSection = (
-          message.content as (FileMessageContent | TextMessageContent)[]
-        ).find(
-          (section) => (section as FileMessageContent).originalFilename,
-        ) as FileMessageContent;
-        title = fileSection?.originalFilename
-          ? `File: ${fileSection.originalFilename.substring(0, 20)}`
-          : 'File Chat';
-      } else {
-        const textSection = (
-          message.content as (TextMessageContent | any)[]
-        ).find(
-          (section) => (section as TextMessageContent).type === 'text',
-        ) as TextMessageContent;
-        title = textSection?.text
-          ? textSection.text.substring(0, 30)
-          : 'New Chat';
-      }
-    } else if ((message.content as TextMessageContent)?.type === 'text') {
-      title = (message.content as TextMessageContent).text.substring(0, 30);
-    } else {
-      title = 'New Chat';
-    }
-
-    title = title.trim().length > 0 ? title : 'New Chat';
-    title = title.length > 30 ? title.substring(0, 30) + '...' : title;
-
-    return {
-      ...updatedConversation,
-      name: title,
-    };
-  };
 
   const debouncedUpdateConversation = useCallback(
     debounce(
@@ -471,46 +383,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           if (!plugin) {
             // Set initial title based on first message
             if (updatedConversation.messages.length === 1) {
-              // Use the old method for initial title
-              let initialTitle = '';
-              if (typeof message.content === 'string') {
-                initialTitle = message.content.substring(0, 30);
-              } else if (Array.isArray(message.content)) {
-                const contentTypes = message.content.map((section) => section.type);
-                if (contentTypes.includes('image_url')) {
-                  initialTitle = 'Image Chat';
-                } else if (contentTypes.includes('file_url')) {
-                  const fileSection = (
-                    message.content as (FileMessageContent | TextMessageContent)[]
-                  ).find(
-                    (section) => (section as FileMessageContent).originalFilename,
-                  ) as FileMessageContent;
-                  initialTitle = fileSection?.originalFilename
-                    ? `File: ${fileSection.originalFilename.substring(0, 20)}`
-                    : 'File Chat';
-                } else {
-                  const textSection = (
-                    message.content as (TextMessageContent | any)[]
-                  ).find(
-                    (section) => (section as TextMessageContent).type === 'text',
-                  ) as TextMessageContent;
-                  initialTitle = textSection?.text
-                    ? textSection.text.substring(0, 30)
-                    : 'New Chat';
-                }
-              } else if ((message.content as TextMessageContent)?.type === 'text') {
-                initialTitle = (message.content as TextMessageContent).text.substring(0, 30);
-              } else {
-                initialTitle = 'New Chat';
-              }
-
-              initialTitle = initialTitle.trim().length > 0 ? initialTitle : 'New Chat';
-              initialTitle = initialTitle.length > 30 ? initialTitle.substring(0, 30) + '...' : initialTitle;
-
-              updatedConversation = {
-                ...updatedConversation,
-                name: initialTitle,
-              };
+              // Use the utility function to set the initial title
+              updatedConversation = await setConversationTitle(updatedConversation, message, user);
             }
             homeDispatch({ field: 'loading', value: false });
 
@@ -654,6 +528,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       apiKey,
       conversations,
       generateTitleFromAPI,
+      setConversationTitle,
       handleNormalChatBackendStreaming,
       homeDispatch,
       pluginKeys,
