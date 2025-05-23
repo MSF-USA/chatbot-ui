@@ -2,6 +2,7 @@ import {
   IconLoader2,
   IconRobot, IconSettings,
   IconLanguage,
+  IconSearch,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -9,6 +10,7 @@ import {
   useEffect,
   useRef,
   useState,
+  KeyboardEvent,
 } from 'react';
 
 import { Conversation } from '@/types/chat';
@@ -56,6 +58,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [isTranslating, setIsTranslating] = useState<boolean>(false);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [currentLanguage, setCurrentLanguage] = useState<string | null>(null);
+  const [showTranslationDropdown, setShowTranslationDropdown] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const translationDropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Get streaming settings from context
   const { settings, updateSettings } = useStreamingSettings();
@@ -294,7 +301,95 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   // Function to switch back to original text
   const handleResetTranslation = () => {
     setCurrentLanguage(null);
+    setShowTranslationDropdown(false);
   };
+
+  // Filter available translations based on search query
+  const getFilteredTranslations = () => {
+    const availableOptions = Object.keys(translations);
+
+    // Add original text option
+    const allOptions = ['original', ...availableOptions];
+
+    return allOptions.filter(option => {
+      if (option === 'original') {
+        return 'original text'.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+
+      const autonym = getAutonym(option);
+      return option.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             autonym.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+  };
+
+  // Handle keyboard events for translation dropdown navigation
+  const handleTranslationKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!showTranslationDropdown) return;
+
+    const filteredOptions = getFilteredTranslations();
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        if (searchQuery?.length > 0) {
+          setSearchQuery('');
+        } else {
+          setShowTranslationDropdown(false);
+        }
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev > 0 ? prev - 1 : 0));
+        break;
+      case 'Enter':
+        if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
+          const selected = filteredOptions[selectedIndex];
+          if (selected === 'original') {
+            handleResetTranslation();
+          } else {
+            setCurrentLanguage(selected);
+            setShowTranslationDropdown(false);
+          }
+        }
+        break;
+    }
+  };
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (showTranslationDropdown && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showTranslationDropdown]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (translationDropdownRef.current && !translationDropdownRef.current.contains(event.target as Node)) {
+        setShowTranslationDropdown(false);
+      }
+    };
+
+    if (showTranslationDropdown) {
+      document.addEventListener('mousedown', handleClickOutside as any);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside as any);
+    };
+  }, [showTranslationDropdown]);
+
+  // Reset search and selection when dropdown closes
+  useEffect(() => {
+    if (!showTranslationDropdown) {
+      setSearchQuery('');
+      setSelectedIndex(-1);
+    }
+  }, [showTranslationDropdown]);
 
   const StreamingIndicator = () => (
     <span className="animate-pulse cursor-default inline-flex items-center ml-1 text-gray-500">
@@ -554,52 +649,94 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        const dropdown = document.getElementById(`translation-dropdown-${messageIndex}`);
-                        if (dropdown) {
-                          dropdown.classList.toggle('hidden');
-                        }
+                        setShowTranslationDropdown(!showTranslationDropdown);
                       }}
                   >
                     Change
                   </button>
 
-                  <div
-                      id={`translation-dropdown-${messageIndex}`}
-                      className="hidden absolute left-0 bottom-full mb-1 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-60 overflow-y-auto"
-                  >
-                    <div className="py-1">
-                      <button
-                          className={`w-full text-left px-4 py-2 text-sm ${
-                              currentLanguage === null
-                                  ? 'bg-gray-100 dark:bg-gray-700 font-medium'
-                                  : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                          }`}
-                          onClick={() => {
-                            handleResetTranslation();
-                            document.getElementById(`translation-dropdown-${messageIndex}`)?.classList.add('hidden');
-                          }}
-                      >
-                        Original text
-                      </button>
+                  {showTranslationDropdown && (
+                    <div
+                      ref={translationDropdownRef}
+                      className="absolute left-0 bottom-full mb-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-80 overflow-hidden flex flex-col"
+                      onKeyDown={handleTranslationKeyDown}
+                    >
+                      {/* Search input */}
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <IconSearch size={16} className="text-gray-400" />
+                          </div>
+                          <input
+                            ref={searchInputRef}
+                            type="text"
+                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder="Search languages..."
+                            value={searchQuery}
+                            onChange={(e) => {
+                              setSearchQuery(e.target.value);
+                              setSelectedIndex(-1);
+                            }}
+                          />
+                        </div>
+                      </div>
 
-                      {Object.keys(translations).map((locale) => (
-                          <button
-                              key={locale}
-                              className={`w-full text-left px-4 py-2 text-sm ${
-                                  currentLanguage === locale
-                                      ? 'bg-gray-100 dark:bg-gray-700 font-medium'
-                                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                              }`}
-                              onClick={() => {
-                                setCurrentLanguage(locale);
-                                document.getElementById(`translation-dropdown-${messageIndex}`)?.classList.add('hidden');
-                              }}
-                          >
-                            {getAutonym(locale)}
-                          </button>
-                      ))}
+                      {/* Language list */}
+                      <div className="overflow-y-auto">
+                        {getFilteredTranslations().length > 0 ? (
+                          <div className="py-1">
+                            {getFilteredTranslations().map((option, index) => {
+                              if (option === 'original') {
+                                return (
+                                  <button
+                                    key="original"
+                                    className={`w-full text-left px-4 py-2 text-sm ${
+                                      index === selectedIndex
+                                        ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                        : currentLanguage === null
+                                          ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => {
+                                      handleResetTranslation();
+                                    }}
+                                    onMouseEnter={() => setSelectedIndex(index)}
+                                  >
+                                    Original text
+                                  </button>
+                                );
+                              } else {
+                                return (
+                                  <button
+                                    key={option}
+                                    className={`w-full text-left px-4 py-2 text-sm ${
+                                      index === selectedIndex
+                                        ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                        : currentLanguage === option
+                                          ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => {
+                                      setCurrentLanguage(option);
+                                      setShowTranslationDropdown(false);
+                                    }}
+                                    onMouseEnter={() => setSelectedIndex(index)}
+                                  >
+                                    <span className="font-medium">{getAutonym(option)}</span>
+                                    <span className="ml-2 text-xs opacity-70">{option}</span>
+                                  </button>
+                                );
+                              }
+                            })}
+                          </div>
+                        ) : (
+                          <div className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">
+                            No languages found
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
           )}
