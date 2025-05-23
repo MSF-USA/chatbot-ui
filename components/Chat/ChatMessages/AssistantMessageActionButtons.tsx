@@ -13,7 +13,7 @@ import { getSupportedLocales, getAutonym } from '@/utils/app/locales';
 
 interface AssistantMessageActionButtonsProps {
   messageCopied: boolean;
-  copyOnClick: (event: MouseEvent<any>) => void;
+  copyOnClick: () => void;
   isGeneratingAudio: boolean;
   audioUrl: string | null;
   handleTTS: () => void;

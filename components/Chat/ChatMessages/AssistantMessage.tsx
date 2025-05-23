@@ -33,7 +33,7 @@ import remarkMath from 'remark-math';
 
 interface AssistantMessageProps {
   content: string;
-  copyOnClick: (event: MouseEvent<any>) => void;
+  copyOnClick: (content: string) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
   selectedConversation: Conversation;
@@ -518,7 +518,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           {/* Action buttons at the bottom of the message */}
           <AssistantMessageActionButtons
             messageCopied={messageCopied}
-            copyOnClick={copyOnClick}
+            copyOnClick={() => copyOnClick(currentLanguage ? translations[currentLanguage] : displayContent)}
             isGeneratingAudio={isGeneratingAudio}
             audioUrl={audioUrl}
             handleTTS={handleTTS}
