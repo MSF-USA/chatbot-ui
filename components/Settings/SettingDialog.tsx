@@ -6,8 +6,10 @@ import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
+import { useStorageMonitor } from '@/context/StorageMonitorContext';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
+import { getStorageUsage } from '@/utils/app/storageMonitor';
 
 import { FAQData } from '@/types/faq';
 import { Settings } from '@/types/settings';
@@ -59,6 +61,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   } = useContext(ChatbarContext);
 
   const { state: homeState, dispatch: homeDispatch } = useContext(HomeContext);
+  const { storagePercentage, checkStorage } = useStorageMonitor();
+  const [storageData, setStorageData] = useState(() => getStorageUsage());
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
 
@@ -81,6 +85,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     };
   }, [onClose]);
 
+  // Update storage data when dialog opens
+  useEffect(() => {
+    if (open) {
+      setStorageData(getStorageUsage());
+      checkStorage();
+    }
+  }, [open, checkStorage]);
+
   const handleSave = () => {
     homeDispatch({ field: 'lightMode', value: state.theme });
     homeDispatch({ field: 'temperature', value: state.temperature });
@@ -102,6 +114,15 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
     });
     saveSettings(defaultSettings);
+  };
+
+  // Format bytes to more readable format
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(2)} KB`;
+    const mb = kb / 1024;
+    return `${mb.toFixed(2)} MB`;
   };
 
   // Render nothing if the dialog is not open.
@@ -274,16 +295,57 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 </table>
                 <hr className="my-10 border-gray-300 dark:border-neutral-700" />
                 <div className="flex flex-row justify-between">
-                  <div className="text-sm mb-5 font-bold text-black dark:text-neutral-200">
-                    Chat Data
+                  <div className="flex flex-col">
+                    <div className="text-sm mb-5 font-bold text-black dark:text-neutral-200">
+                      Chat Data
+                    </div>
+
+                    {/* Storage Usage Information */}
+                    <div className="mb-5 text-sm text-black dark:text-neutral-300">
+                      <div className="mb-2">
+                        <span className="font-medium">Storage Usage:</span> {formatBytes(storageData.currentUsage)} / {formatBytes(storageData.maxUsage)} ({storageData.percentUsed.toFixed(1)}%)
+                      </div>
+
+                      <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2.5 mb-2">
+                        <div
+                          className={`h-2.5 rounded-full ${storageData.percentUsed > 85 ? 'bg-red-600' : storageData.percentUsed > 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                          style={{ width: `${Math.min(storageData.percentUsed, 100)}%` }}
+                        ></div>
+                      </div>
+
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        {storageData.percentUsed > 85 ? (
+                          <span className="text-red-600 dark:text-red-400">Storage almost full! Consider clearing old conversations.</span>
+                        ) : storageData.percentUsed > 70 ? (
+                          <span className="text-yellow-600 dark:text-yellow-400">Storage usage is getting high.</span>
+                        ) : (
+                          <span>Storage usage is normal.</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
+
                   <div className="flex justify-end mr-1 mb-10 items-center flex-col">
                     {homeState.conversations.length > 0 ? (
                       <ClearConversations
-                        onClearConversations={handleClearConversations}
+                        onClearConversations={() => {
+                          handleClearConversations();
+                          // Update storage data after clearing conversations
+                          setTimeout(() => {
+                            setStorageData(getStorageUsage());
+                            checkStorage();
+                          }, 100);
+                        }}
                       />
                     ) : null}
-                    <Import onImport={handleImportConversations} />
+                    <Import onImport={(data) => {
+                      handleImportConversations(data);
+                      // Update storage data after importing conversations
+                      setTimeout(() => {
+                        setStorageData(getStorageUsage());
+                        checkStorage();
+                      }, 100);
+                    }} />
 
                     <SidebarButton
                       text={t('Export data')}
