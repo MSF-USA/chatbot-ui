@@ -27,10 +27,14 @@ const STORAGE_KEYS = {
   SELECTED_CONVERSATION: 'selectedConversation',
 };
 
+// Helper to check if we're in a browser environment
+const isBrowserEnv = () => typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+
 /**
  * Calculate the size of a string in bytes
  */
 export const getStringSizeInBytes = (str: string): number => {
+  // This function doesn't directly use browser APIs that would fail in Node
   return new Blob([str]).size;
 };
 
@@ -38,6 +42,8 @@ export const getStringSizeInBytes = (str: string): number => {
  * Get the size of an item in localStorage
  */
 export const getItemSize = (key: string): number => {
+  if (!isBrowserEnv()) return 0;
+
   try {
     const item = localStorage.getItem(key);
     if (!item) return 0;
@@ -52,6 +58,16 @@ export const getItemSize = (key: string): number => {
  * Get the total size of localStorage and its limit
  */
 export const getStorageUsage = () => {
+  // Check if we're in a browser environment
+  if (!isBrowserEnv()) {
+    return {
+      currentUsage: 0,
+      maxUsage: 5 * 1024 * 1024,
+      percentUsed: 0,
+      isNearingLimit: false,
+    };
+  }
+
   try {
     let totalSize = 0;
     for (let i = 0; i < localStorage.length; i++) {
@@ -102,11 +118,14 @@ export const updateStorageStats = () => {
   };
 };
 
-
 /**
  * Get conversations sorted by date (most recent first)
  */
 export const getSortedConversations = (): Conversation[] => {
+  if (!isBrowserEnv()) {
+    return [];
+  }
+
   try {
     const conversationsJson = localStorage.getItem(STORAGE_KEYS.CONVERSATIONS);
     if (!conversationsJson) return [];
@@ -159,6 +178,10 @@ export const calculateSpaceFreed = (keepCount: number): {
   conversationsRemoved: number;
   percentFreed: number;
 } => {
+  if (!isBrowserEnv()) {
+    return { spaceFreed: 0, conversationsRemoved: 0, percentFreed: 0 };
+  }
+
   try {
     const sortedConversations = getSortedConversations();
     if (sortedConversations.length <= keepCount) {
@@ -191,6 +214,10 @@ export const calculateSpaceFreed = (keepCount: number): {
  * Clear older conversations while keeping the most recent ones
  */
 export const clearOlderConversations = (keepCount: number): boolean => {
+  if (!isBrowserEnv()) {
+    return false;
+  }
+
   try {
     if (keepCount < 1) keepCount = MIN_RETAINED_CONVERSATIONS;
 
@@ -204,8 +231,8 @@ export const clearOlderConversations = (keepCount: number): boolean => {
 
     // Save the kept conversations back to localStorage
     localStorage.setItem(
-      STORAGE_KEYS.CONVERSATIONS,
-      JSON.stringify(keptConversations)
+        STORAGE_KEYS.CONVERSATIONS,
+        JSON.stringify(keptConversations)
     );
 
     // If the selected conversation was removed, update it to the most recent one
