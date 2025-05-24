@@ -8,6 +8,7 @@ import type { Session } from "next-auth"
 import { Inter } from 'next/font/google';
 
 import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
+import { StorageMonitorProvider } from '@/context/StorageMonitorContext';
 import { StreamingSettingsProvider } from '@/context/StreamingSettingsContext';
 
 import '@/styles/globals.css';
@@ -21,12 +22,14 @@ function App({ Component, pageProps: { session, ...pageProps } }: AppProps<{ ses
     <SessionProvider session={session}>
       <TermsAcceptanceProvider>
         <StreamingSettingsProvider>
-          <div className={inter.className}>
-            <Toaster />
-            <QueryClientProvider client={queryClient}>
-              <Component {...pageProps} />
-            </QueryClientProvider>
-          </div>
+          <StorageMonitorProvider>
+            <div className={inter.className}>
+              <Toaster />
+              <QueryClientProvider client={queryClient}>
+                <Component {...pageProps} />
+              </QueryClientProvider>
+            </div>
+          </StorageMonitorProvider>
         </StreamingSettingsProvider>
       </TermsAcceptanceProvider>
     </SessionProvider>
