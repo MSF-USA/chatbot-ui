@@ -12,6 +12,9 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
+import { StorageMonitorProvider, useStorageMonitor } from '@/context/StorageMonitorContext';
+import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
+
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
 import useErrorService from '@/services/errorService';
@@ -60,6 +63,25 @@ interface Props {
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
 }
+
+// This component manages the storage warning modal
+const StorageWarningManager = () => {
+  const { showStorageWarning, setShowStorageWarning, checkStorage } = useStorageMonitor();
+  const { t } = useTranslation('storage');
+
+  const handleClear = () => {
+    // Update storage stats after clearing
+    checkStorage();
+  };
+
+  return (
+    <StorageWarningModal
+      isOpen={showStorageWarning}
+      onClose={() => setShowStorageWarning(false)}
+      onClear={handleClear}
+    />
+  );
+};
 
 const Home = ({
   session,
@@ -520,6 +542,7 @@ const Home = ({
             </div>
           </main>
         )}
+        <StorageWarningManager />
       </HomeContext.Provider>
     </LDProvider>
   );
