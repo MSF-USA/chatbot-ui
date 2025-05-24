@@ -111,22 +111,6 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
           </div>
         </div>
 
-        {/* Reset Settings */}
-        <div className="pt-4">
-          <h3 className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-            {t('Reset Settings')}
-          </h3>
-          <button
-            type="button"
-            className="w-full p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-            onClick={() => {
-              handleReset();
-              onClose();
-            }}
-          >
-            {t('Reset to Default Settings')}
-          </button>
-        </div>
       </div>
     </div>
   );

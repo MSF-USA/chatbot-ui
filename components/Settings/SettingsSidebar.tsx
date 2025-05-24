@@ -5,19 +5,30 @@ import {
   IconMessage,
   IconDatabase,
   IconUser,
-  IconHelp
+  IconHelp,
+  IconRefresh,
+  IconExternalLink
 } from '@tabler/icons-react';
 import { NavigationItem } from './NavigationItem';
 import { SettingsSection } from './types';
+import { SidebarButton } from '../Sidebar/SidebarButton';
+import { isUSBased } from "@/utils/app/userAuth";
+import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from "@/types/contact";
 
 interface SettingsSidebarProps {
   activeSection: SettingsSection;
   setActiveSection: (section: SettingsSection) => void;
+  handleReset: () => void;
+  onClose: () => void;
+  user?: any; // Using any for simplicity, should be refined based on actual user type
 }
 
 export const SettingsSidebar: FC<SettingsSidebarProps> = ({
   activeSection,
   setActiveSection,
+  handleReset,
+  onClose,
+  user,
 }) => {
   const { t } = useTranslation('settings');
 
@@ -66,6 +77,34 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           label={t('Help & Support')}
           icon={<IconHelp size={18} />}
           onClick={setActiveSection}
+        />
+      </div>
+
+      {/* Divider */}
+      <div className="my-4 border-t border-gray-300 dark:border-neutral-700"></div>
+
+      {/* Action buttons at the bottom */}
+      <div className="space-y-2 mt-auto">
+        {/* Feedback link */}
+        <a
+          href={`mailto:${isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL}`}
+          className="block"
+        >
+          <SidebarButton
+            text={t('sendFeedback')}
+            icon={<IconExternalLink size={18} />}
+            onClick={() => {}}
+          />
+        </a>
+
+        {/* Reset settings button */}
+        <SidebarButton
+          text={t('Reset Settings')}
+          icon={<IconRefresh size={18} />}
+          onClick={() => {
+            handleReset();
+            onClose();
+          }}
         />
       </div>
     </div>

@@ -186,6 +186,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
               <SettingsSidebar
                 activeSection={activeSection}
                 setActiveSection={setActiveSection}
+                handleReset={handleReset}
+                onClose={onClose}
+                user={user}
               />
 
               {/* Content area */}
@@ -254,6 +257,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                   build={build || ''}
                   env={env || ''}
                   user={user}
+                  handleReset={handleReset}
+                  onClose={onClose}
                 />
               </div>
             </div>
