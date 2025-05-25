@@ -142,6 +142,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       theme: defaultTheme,
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
+      advancedMode: false,
     };
     homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
@@ -189,6 +190,8 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 handleReset={handleReset}
                 onClose={onClose}
                 user={user}
+                state={state}
+                dispatch={dispatch}
               />
 
               {/* Content area */}
