@@ -4,6 +4,8 @@ import { Session } from 'next-auth';
 import { Settings } from '@/types/settings';
 import { TemperatureSlider } from '../Temperature';
 import { SystemPrompt } from '../SystemPrompt';
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { IconSettings } from '@tabler/icons-react';
 
 interface ChatSettingsSectionProps {
   state: Settings;
@@ -26,6 +28,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation('settings');
+  const { settings, updateSettings } = useStreamingSettings();
 
   return (
     <div className="p-4">
@@ -45,6 +48,105 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
               dispatch({ field: 'temperature', value: temperature })
             }
           />
+        </div>
+
+        {/* Streaming Settings */}
+        <div>
+          <div className="flex items-center mb-3">
+            <div className="text-sm font-bold text-black dark:text-neutral-200">
+              {t('Text Streaming Settings')}
+            </div>
+            <IconSettings size={16} className="ml-2 text-gray-500" />
+          </div>
+
+          <div className="space-y-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+            {/* Smooth Streaming Toggle */}
+            <div className="flex items-center justify-between">
+              <label className="cursor-pointer text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                <span>{t('Smooth streaming')}</span>
+                <div className="relative inline-block w-10 h-5 ml-2">
+                  <input
+                      type="checkbox"
+                      className="opacity-0 w-0 h-0"
+                      checked={settings.smoothStreamingEnabled}
+                      onChange={(e) =>
+                          updateSettings({ smoothStreamingEnabled: e.target.checked })
+                      }
+                  />
+                  <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
+                      settings.smoothStreamingEnabled
+                          ? 'bg-blue-500 dark:bg-blue-600'
+                          : 'bg-gray-300 dark:bg-gray-600'
+                  }`}>
+                  <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                      settings.smoothStreamingEnabled
+                          ? 'translate-x-5'
+                          : 'translate-x-0.5'
+                  } top-0.5 left-0`}></span>
+                </span>
+                </div>
+              </label>
+            </div>
+
+            {/* Characters Per Frame Slider */}
+            <div>
+              <label className="block mb-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                <span>{t('Speed (characters per frame)')}</span>
+                <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                {settings.charsPerFrame}
+              </span>
+              </label>
+              <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={settings.charsPerFrame}
+                  onChange={(e) =>
+                      updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                  }
+                  className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+                      settings.smoothStreamingEnabled
+                          ? 'bg-gray-300 dark:bg-gray-600'
+                          : 'bg-gray-200 dark:bg-gray-700 opacity-50'
+                  }`}
+                  disabled={!settings.smoothStreamingEnabled}
+              />
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                <span>{t('Slower')}</span>
+                <span>{t('Faster')}</span>
+              </div>
+            </div>
+
+            {/* Frame Delay Slider */}
+            <div>
+              <label className="block mb-2 text-sm text-gray-700 dark:text-gray-300 flex items-center">
+                <span>{t('Delay between frames (ms)')}</span>
+                <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
+                {settings.frameDelay}ms
+              </span>
+              </label>
+              <input
+                  type="range"
+                  min="5"
+                  max="50"
+                  step="5"
+                  value={settings.frameDelay}
+                  onChange={(e) =>
+                      updateSettings({ frameDelay: parseInt(e.target.value) })
+                  }
+                  className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
+                      settings.smoothStreamingEnabled
+                          ? 'bg-gray-300 dark:bg-gray-600'
+                          : 'bg-gray-200 dark:bg-gray-700 opacity-50'
+                  }`}
+                  disabled={!settings.smoothStreamingEnabled}
+              />
+              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
+                <span>{t('Faster')}</span>
+                <span>{t('Slower')}</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* System Prompt */}
