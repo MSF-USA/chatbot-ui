@@ -47,23 +47,30 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
           />
         </div>
 
-        {/* System Prompt - Commented out in original code */}
-        {/* <div>
-          <div className="text-sm font-bold text-black dark:text-neutral-200 mb-3">
-            {t('Default System Prompt') + '*'}
+        {/* System Prompt */}
+        {state.advancedMode && (
+          <div>
+            <div className="flex items-center mb-3">
+              <div className="text-sm font-bold text-black dark:text-neutral-200">
+                {t('Default System Prompt') + '*'}
+              </div>
+              <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 rounded-full">
+                {t('Advanced')}
+              </span>
+            </div>
+            <SystemPrompt
+              prompts={homeState.prompts}
+              systemPrompt={state.systemPrompt}
+              user={user}
+              onChangePrompt={(prompt) =>
+                dispatch({
+                  field: 'systemPrompt',
+                  value: prompt,
+                })
+              }
+            />
           </div>
-          <SystemPrompt
-            prompts={homeState.prompts}
-            systemPrompt={state.systemPrompt}
-            user={user}
-            onChangePrompt={(prompt) =>
-              dispatch({
-                field: 'systemPrompt',
-                value: prompt,
-              })
-            }
-          />
-        </div> */}
+        )}
 
         <hr className="border-gray-300 dark:border-neutral-700" />
         <span className="block text-[12px] text-black/50 dark:text-white/50">
