@@ -239,7 +239,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 )}
 
                 {activeSection === SettingsSection.ACCOUNT && (
-                  <AccountSection />
+                  <AccountSection
+                    user={user}
+                  />
                 )}
 
                 {activeSection === SettingsSection.HELP_SUPPORT && (
