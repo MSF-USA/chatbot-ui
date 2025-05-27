@@ -1,6 +1,6 @@
 import { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
-import { IconFileExport } from '@tabler/icons-react';
+import {IconFileExport, IconInfoCircle} from '@tabler/icons-react';
 import { ClearConversations } from '../ClearConversations';
 import { Import } from '../Import';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
@@ -65,14 +65,15 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
               ></div>
             </div>
 
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
               {storageData.percentUsed > 85 ? (
-                <span className="text-red-600 dark:text-red-400">Storage almost full! Consider clearing old conversations.</span>
+                  <span className="text-red-600 dark:text-red-400">Storage almost full! Consider clearing old conversations.</span>
               ) : storageData.percentUsed > 70 ? (
-                <span className="text-yellow-600 dark:text-yellow-400">Storage usage is getting high.</span>
+                  <span className="text-yellow-600 dark:text-yellow-400">Storage usage is getting high.</span>
               ) : (
-                <span>Storage usage is normal.</span>
+                  <span>Storage usage is normal.</span>
               )}
+              <p><IconInfoCircle /> {"All data is stored locally in your browser's localStorage and remains entirely on your device."}</p>
             </div>
           </div>
         </div>
