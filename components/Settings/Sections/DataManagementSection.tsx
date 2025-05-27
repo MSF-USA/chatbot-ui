@@ -65,6 +65,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
               ></div>
             </div>
 
+
             <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
               {storageData.percentUsed > 85 ? (
                   <span className="text-red-600 dark:text-red-400">Storage almost full! Consider clearing old conversations.</span>
@@ -73,7 +74,12 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
               ) : (
                   <span>Storage usage is normal.</span>
               )}
-              <p><IconInfoCircle /> {"All data is stored locally in your browser's localStorage and remains entirely on your device."}</p>
+              <p className="flex items-center">
+                <IconInfoCircle size={14} className="inline-block mr-1 text-blue-500" />
+                <span className="italic">
+                  {"All data is stored locally in your browser's localStorage and remains entirely on your device."}
+                </span>
+              </p>
             </div>
           </div>
         </div>
