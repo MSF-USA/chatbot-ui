@@ -17,6 +17,17 @@ export interface ImageMessageContent {
   };
 }
 
+export interface RequestResult {
+  controller: AbortController;
+  body: string;
+  response: Response;
+}
+
+export interface ChatRequestResult extends RequestResult {
+  hasComplexContent: boolean;
+  setOnAbort?: (callback: () => void) => void;
+}
+
 /*
  * This is an arbitrary content type since we are just using it to handle
  * the retrieval and parsing on the server-side. This is unlike ImageMessageContent,

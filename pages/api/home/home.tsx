@@ -62,6 +62,7 @@ interface Props {
   serverSideApiKeyIsSet: boolean;
   serverSidePluginKeysSet: boolean;
   defaultModelId: OpenAIModelID;
+  launchDarklyClientId: string;
 }
 
 // This component manages the storage warning modal
@@ -103,6 +104,7 @@ const Home = ({
   serverSideApiKeyIsSet,
   serverSidePluginKeysSet,
   defaultModelId,
+  launchDarklyClientId,
 }: Props) => {
   const { data: clientSession } = useSession();
   const user = session?.user || clientSession?.user;
@@ -126,7 +128,7 @@ const Home = ({
       prompts,
       temperature,
       systemPrompt,
-      showChatbar
+      showChatbar,
     },
     dispatch,
   } = contextValue;
@@ -268,14 +270,16 @@ const Home = ({
     }
 
     // Check if last used model is legacy or not set
-    const lastModelIsLegacy = lastConversation?.model?.id &&
+    const lastModelIsLegacy =
+      lastConversation?.model?.id &&
         OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
 
     // TODO: Replace with an actual default value given by environment variables, not hardcoded
     // to always use GPT-4o as default, forcing code changes on model deployment changes.
-    const modelToUse = (!lastConversation?.model || lastModelIsLegacy) ?
-        OpenAIModels[OpenAIModelID.GPT_4o] :
-        lastConversation.model;
+    const modelToUse =
+      !lastConversation?.model || lastModelIsLegacy
+        ? OpenAIModels[OpenAIModelID.GPT_4o]
+        : lastConversation.model;
 
     const newConversation: Conversation = {
       id: uuidv4(),
@@ -439,14 +443,16 @@ const Home = ({
       parsedConversationHistory[parsedConversationHistory.length - 1];
 
     // Check if last used model is legacy or not set
-    const lastModelIsLegacy = lastConversation?.model?.id &&
+    const lastModelIsLegacy =
+      lastConversation?.model?.id &&
       OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
 
     // TODO: same as above, use environment variable for defaults rather than
     // always using GPT-4o as default if last model was legacy
-    const modelToUse = (!lastConversation?.model || lastModelIsLegacy) ?
-      OpenAIModels[OpenAIModelID.GPT_4o] :
-      lastConversation.model;
+    const modelToUse =
+      !lastConversation?.model || lastModelIsLegacy
+        ? OpenAIModels[OpenAIModelID.GPT_4o]
+        : lastConversation.model;
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
@@ -495,7 +501,7 @@ const Home = ({
 
   return (
     <LDProvider
-      clientSideID={process.env.NEXT_PUBLIC_LAUNCHDARKLY_CLIENT_ID!}
+      clientSideID={launchDarklyClientId}
       options={{
         bootstrap: 'localStorage',
         sendEvents: true,
@@ -513,40 +519,40 @@ const Home = ({
       }}
     >
       <HomeContext.Provider
-      value={{
-        ...contextValue,
-        handleNewConversation,
-        handleCreateFolder,
-        handleDeleteFolder,
-        handleUpdateFolder,
-        handleSelectConversation,
-        handleUpdateConversation,
-        user,
-        showChatbar
-      }}
-    >
-      <Head>
-        <title>MSF AI Assistant</title>
-        <meta
-          name="description"
-          content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
-        />
-        <meta
-          name="viewport"
-          content="height=device-height,width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"
+        value={{
+          ...contextValue,
+          handleNewConversation,
+          handleCreateFolder,
+          handleDeleteFolder,
+          handleUpdateFolder,
+          handleSelectConversation,
+          handleUpdateConversation,
+          user,
+          showChatbar,
+        }}
+      >
+        <Head>
+          <title>MSF AI Assistant</title>
+          <meta
+            name="description"
+            content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
+          />
+          <meta
+            name="viewport"
+            content="height=device-height,width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
         {selectedConversation && (
           <main
             className={`flex h-screen w-screen flex-col text-sm text-white dark:text-white overflow-x-hidden ${lightMode}`}
-        >
-          <div className="fixed top-0 w-full sm:hidden">
-            <Navbar
-              selectedConversation={selectedConversation}
-              onNewConversation={handleNewConversation}
-            />
-          </div>
+          >
+            <div className="fixed top-0 w-full sm:hidden">
+              <Navbar
+                selectedConversation={selectedConversation}
+                onNewConversation={handleNewConversation}
+              />
+            </div>
 
             <div className="flex h-full w-full pt-[48px] sm:pt-0">
               <Chatbar />
@@ -609,6 +615,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         !!process.env.OPENAI_API_KEY || OPENAI_API_HOST_TYPE === 'apim',
       defaultModelId,
       serverSidePluginKeysSet,
+      launchDarklyClientId: process.env.LAUNCHDARKLY_CLIENT_ID || '',
       ...(await serverSideTranslations(locale ?? 'en', [
         'common',
         'chat',

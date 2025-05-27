@@ -9,6 +9,8 @@ import {
   ImageMessageContent,
   Message,
   TextMessageContent,
+  RequestResult,
+  ChatRequestResult,
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
 
@@ -55,26 +57,68 @@ const appendPluginKeys = (
     ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
 });
 
-const sendRequest = async (endpoint: string, body: string) => {
-  const controller = new AbortController();
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    signal: controller.signal,
-    body,
-    mode: 'cors',
-  });
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(
-      `Request failed with status ${response.status}: ${errorText}`,
-    );
-  }
-  return { controller, body, response };
-};
+let checkStopInterval: NodeJS.Timeout | null = null;
 
+const sendRequest = async (endpoint: string, body: string, stopConversationRef?: { current: boolean }): Promise<RequestResult> => {
+  const controller = new AbortController();
+  try {
+    if (stopConversationRef) {
+      checkStopInterval = setInterval(() => {
+        if (stopConversationRef.current && !controller.signal.aborted) {
+          console.log('Aborting due to stop request');
+          controller.abort();
+          clearInterval(checkStopInterval!);
+          checkStopInterval = null;
+        }
+      }, 100);
+    }
+    
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body,
+      mode: 'cors',
+    });
+    
+    // Clears the interval upon successful completion
+    if (checkStopInterval) {
+      clearInterval(checkStopInterval);
+      checkStopInterval = null;
+    }
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(
+        `Request failed with status ${response.status}: ${errorText}`,
+      );
+    }
+    
+    return { controller, body, response };
+  } catch (error: any) {
+    if (checkStopInterval) {
+      clearInterval(checkStopInterval);
+    }
+    
+    if (error.name === 'AbortError') {
+      console.log('Request was aborted by user');
+      const emptyResponse = new Response(new ReadableStream({
+        start(controller) {
+          controller.close();
+        }
+      }), {
+        status: 200,
+        statusText: 'OK',
+      });
+      
+      return { controller, body, response: emptyResponse };
+    }
+
+    throw error;
+  }
+};
 export const makeRequest = async (
   plugin: Plugin | null,
   setRequestStatusMessage: Dispatch<SetStateAction<string | null>>,
@@ -85,7 +129,8 @@ export const makeRequest = async (
   temperature: number,
   stream: boolean = true,
   setProgress: Dispatch<SetStateAction<number | null>>,
-) => {
+  stopConversationRef?: { current: boolean }
+): Promise<ChatRequestResult> => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
   let hasComplexContent = false;
@@ -222,7 +267,23 @@ Provide a detailed comparison.
     const { controller, body, response } = await sendRequest(
       endpoint,
       requestBody,
+      stopConversationRef,
     );
+
+    let onAbort: (() => void) | null = null;
+    
+    if (stopConversationRef) {
+      const handleStopRequest = () => {
+        if (stopConversationRef.current && !controller.signal.aborted) {
+          
+          if (onAbort) {
+            onAbort();
+          }
+        }
+      };
+      setTimeout(handleStopRequest, 100);
+    }
+
 
     setRequestStatusMessage(null);
     setProgress(null);
@@ -232,6 +293,10 @@ Provide a detailed comparison.
       body,
       response,
       hasComplexContent,
+      setOnAbort: (callback: () => void) => {
+      onAbort = callback;
+      }
+
     };
   } else {
     const chatBody = createChatBody(
@@ -251,13 +316,33 @@ Provide a detailed comparison.
     const { controller, body, response } = await sendRequest(
       endpoint,
       requestBody,
+      stopConversationRef
     );
+
+    let onAbort: (() => void) | null = null;
+    
+    if (stopConversationRef) {
+      const handleStopRequest = () => {
+        if (stopConversationRef.current && !controller.signal.aborted) {
+          console.log('Stop requested');
+          
+          if (onAbort) {
+            onAbort();
+          }
+        }
+      };
+      setTimeout(handleStopRequest, 100);
+    }
+
 
     return {
       controller,
       body,
       response,
       hasComplexContent,
+      setOnAbort: (callback: () => void) => {
+      onAbort = callback;
+      }
     };
   }
 };
