@@ -93,7 +93,7 @@ export const getStorageUsage = () => {
       currentUsage: totalSize,
       maxUsage: maxSize,
       percentUsed: percentUsed,
-      isNearingLimit: percentUsed >= STORAGE_WARNING_THRESHOLD,
+      isNearingLimit: percentUsed >= STORAGE_THRESHOLDS.WARNING,
     };
   } catch (error) {
     console.error('Error calculating storage usage:', error);
