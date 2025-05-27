@@ -1,8 +1,8 @@
 import { FC, useState, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
-import { 
-  getStorageUsage, 
-  calculateSpaceFreed, 
+import {
+  getStorageUsage,
+  calculateSpaceFreed,
   clearOlderConversations,
   MIN_RETAINED_CONVERSATIONS
 } from '@/utils/app/storageMonitor';
@@ -12,12 +12,20 @@ interface StorageWarningModalProps {
   isOpen: boolean;
   onClose: () => void;
   onClear: () => void;
+  currentThreshold?: string | null;
+  isEmergencyLevel?: boolean;
+  isCriticalLevel?: boolean;
+  onDismissThreshold?: () => void;
 }
 
-export const StorageWarningModal: FC<StorageWarningModalProps> = ({ 
+export const StorageWarningModal: FC<StorageWarningModalProps> = ({
   isOpen,
   onClose,
-  onClear
+  onClear,
+  currentThreshold = null,
+  isEmergencyLevel = false,
+  isCriticalLevel = false,
+  onDismissThreshold
 }) => {
   const { t } = useTranslation('storage');
   const [keepCount, setKeepCount] = useState(MIN_RETAINED_CONVERSATIONS);
@@ -65,39 +73,75 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
     return `${mb.toFixed(2)} MB`;
   };
 
+  // Get appropriate title and message based on threshold level
+  const getThresholdTitle = () => {
+    if (isEmergencyLevel) return t('Storage Emergency');
+    if (isCriticalLevel) return t('Storage Critical');
+    return t('Storage Warning');
+  };
+
+  const getThresholdMessage = () => {
+    if (isEmergencyLevel) {
+      return t('Your browser storage is critically full! You must free up space to continue using the application.');
+    }
+    if (isCriticalLevel) {
+      return t('Your browser storage is almost full! It is strongly recommended to free up space soon.');
+    }
+    return t('Your browser storage is getting full. Consider freeing up some space.');
+  };
+
+  // Handle close or dismiss
+  const handleCloseOrDismiss = () => {
+    if (onDismissThreshold) {
+      onDismissThreshold();
+    } else {
+      onClose();
+    }
+  };
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white dark:bg-[#171717] rounded-lg p-6 max-w-md w-full shadow-xl">
-        <h2 className="text-xl font-bold mb-4 text-black dark:text-white">
-          {t('Storage Warning')}
+        <h2 className={`text-xl font-bold mb-4 text-black dark:text-white ${isEmergencyLevel ? 'text-red-600 dark:text-red-400' : ''}`}>
+          {getThresholdTitle()}
         </h2>
-        
+
         <div className="mb-4">
-          <p className="text-red-600 dark:text-red-400 font-semibold mb-2">
-            {t('Your browser storage is almost full!')}
+          <p className={`font-semibold mb-2 ${
+            isEmergencyLevel ? 'text-red-600 dark:text-red-400' : 
+            isCriticalLevel ? 'text-orange-500 dark:text-orange-400' : 
+            'text-yellow-500 dark:text-yellow-400'
+          }`}>
+            {getThresholdMessage()}
           </p>
-          
+
           <p className="mb-2 text-black dark:text-neutral-300">
             {t('Current usage')}: {formatBytes(currentUsage)} / {formatBytes(maxUsage)} ({percentUsed.toFixed(1)}%)
           </p>
-          
+
           <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2.5 mb-4">
-            <div 
-              className={`h-2.5 rounded-full ${percentUsed > 90 ? 'bg-red-600' : 'bg-yellow-500'}`} 
+            <div
+              className={`h-2.5 rounded-full ${
+                isEmergencyLevel ? 'bg-red-600' : 
+                isCriticalLevel ? 'bg-orange-500' : 
+                'bg-yellow-500'
+              }`}
               style={{ width: `${Math.min(percentUsed, 100)}%` }}
             ></div>
           </div>
-          
+
           <p className="text-black dark:text-neutral-300 mb-4">
-            {t('If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.')}
+            {isEmergencyLevel
+              ? t('Your storage is critically full. The application may stop working correctly and you could lose access to your conversations if you don\'t free up space immediately.')
+              : t('If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.')}
           </p>
         </div>
-        
+
         <div className="mb-4">
           <h3 className="font-bold text-black dark:text-white mb-2">
             {t('Options to free up space')}:
           </h3>
-          
+
           <div className="mb-4 p-3 border border-gray-300 dark:border-gray-700 rounded">
             <p className="font-medium text-black dark:text-white mb-2">
               {t('1. Export your conversations')}
@@ -105,38 +149,38 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
               {t('Save your conversations to your computer before clearing them.')}
             </p>
-            <button 
+            <button
               className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
               onClick={handleExport}
             >
               {t('Export All Data')}
             </button>
           </div>
-          
+
           <div className="p-3 border border-gray-300 dark:border-gray-700 rounded">
             <p className="font-medium text-black dark:text-white mb-2">
               {t('2. Clear older conversations')}
             </p>
-            
+
             <div className="mb-3">
               <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
                 {t('Keep recent conversations')}:
               </label>
-              <input 
-                type="number" 
+              <input
+                type="number"
                 min="1"
-                value={keepCount} 
+                value={keepCount}
                 onChange={handleKeepCountChange}
                 className="w-20 px-2 py-1 border border-gray-300 dark:border-gray-700 rounded bg-white dark:bg-gray-800 text-black dark:text-white"
               />
             </div>
-            
+
             <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
               <p>{t('This will remove')} {conversationsRemoved} {t('older conversations')}</p>
               <p>{t('Space freed')}: {formatBytes(spaceFreed)} ({percentFreed.toFixed(1)}%)</p>
             </div>
-            
-            <button 
+
+            <button
               className="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded text-sm"
               onClick={handleClear}
               disabled={conversationsRemoved === 0}
@@ -145,14 +189,43 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
             </button>
           </div>
         </div>
-        
-        <div className="flex justify-end mt-4">
-          <button 
-            className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-black dark:text-white py-2 px-4 rounded"
-            onClick={onClose}
-          >
-            {t('Close')}
-          </button>
+
+        <div className="flex justify-end mt-4 space-x-2">
+          {/* For emergency level, show a disabled close button */}
+          {isEmergencyLevel ? (
+            <button
+              className="bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-2 px-4 rounded opacity-50 cursor-not-allowed"
+              disabled={true}
+              title={t('You must free up space before dismissing this warning')}
+            >
+              {t('Close')}
+            </button>
+          ) : (
+            <>
+              {/* For warning and critical levels, show a dismiss button */}
+              <button
+                className={`
+                  ${isCriticalLevel 
+                    ? 'bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700' 
+                    : 'bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'} 
+                  text-white py-2 px-4 rounded
+                `}
+                onClick={handleCloseOrDismiss}
+              >
+                {t('Dismiss Warning')}
+              </button>
+            </>
+          )}
+
+          {/* Always show the close button for non-emergency levels */}
+          {!isEmergencyLevel && (
+            <button
+              className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-black dark:text-white py-2 px-4 rounded"
+              onClick={onClose}
+            >
+              {t('Close')}
+            </button>
+          )}
         </div>
       </div>
     </div>

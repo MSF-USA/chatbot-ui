@@ -66,10 +66,21 @@ interface Props {
 
 // This component manages the storage warning modal
 const StorageWarningManager = () => {
-  const { showStorageWarning, setShowStorageWarning, checkStorage } = useStorageMonitor();
+  const {
+    showStorageWarning,
+    setShowStorageWarning,
+    checkStorage,
+    currentThreshold,
+    isEmergencyLevel,
+    isCriticalLevel,
+    dismissCurrentThreshold,
+    resetDismissedThresholds
+  } = useStorageMonitor();
   const { t } = useTranslation('storage');
 
   const handleClear = () => {
+    // Reset dismissed thresholds when user takes action to clear space
+    resetDismissedThresholds();
     // Update storage stats after clearing
     checkStorage();
   };
@@ -79,6 +90,10 @@ const StorageWarningManager = () => {
       isOpen={showStorageWarning}
       onClose={() => setShowStorageWarning(false)}
       onClear={handleClear}
+      currentThreshold={currentThreshold}
+      isEmergencyLevel={isEmergencyLevel}
+      isCriticalLevel={isCriticalLevel}
+      onDismissThreshold={dismissCurrentThreshold}
     />
   );
 };
