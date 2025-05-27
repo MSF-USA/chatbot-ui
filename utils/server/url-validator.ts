@@ -93,11 +93,13 @@ function isIPAddress(hostname: string): boolean {
 }
 
 /**
- * Validates a hostname string
+ * Validates a hostname string according to RFC standards
  * @param hostname - The hostname to validate
  * @returns boolean indicating if the hostname is valid
  */
 function isValidHostname(hostname: string): boolean {
-    const hostnameRegex = /^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])(\.[a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])*$/;
-    return hostnameRegex.test(hostname);
+    // Each label can be alphanumeric, start and end with alphanumeric, and contain hyphens in between
+    // Labels are separated by dots, and the entire hostname must be 253 characters or less
+    const hostnameRegex = /^(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)*[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?$/;
+    return hostname.length <= 253 && hostnameRegex.test(hostname);
 }
