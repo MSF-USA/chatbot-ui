@@ -15,8 +15,15 @@ import { Prompt } from '@/types/prompt';
 import { Settings } from '@/types/settings';
 
 // Constants
-export const STORAGE_WARNING_THRESHOLD = 85; // Show warning when storage is 85% full
+export const STORAGE_THRESHOLDS = {
+  WARNING: 70,    // First warning level at 70% full
+  CRITICAL: 85,   // Critical level at 85% full
+  EMERGENCY: 95,  // Emergency level at 95% full
+};
 export const MIN_RETAINED_CONVERSATIONS = 5; // Minimum number of conversations to keep
+
+// Local storage key for dismissed thresholds
+const DISMISSED_THRESHOLDS_KEY = 'dismissedStorageThresholds';
 
 // Storage keys used in the application
 const STORAGE_KEYS = {
@@ -100,7 +107,73 @@ export const getStorageUsage = () => {
 };
 
 /**
+ * Get the current storage threshold level
+ * @returns The current threshold level or null if below all thresholds
+ */
+export const getCurrentThresholdLevel = (): string | null => {
+  if (!isBrowserEnv()) return null;
+
+  const { percentUsed } = getStorageUsage();
+
+  if (percentUsed >= STORAGE_THRESHOLDS.EMERGENCY) {
+    return 'EMERGENCY';
+  } else if (percentUsed >= STORAGE_THRESHOLDS.CRITICAL) {
+    return 'CRITICAL';
+  } else if (percentUsed >= STORAGE_THRESHOLDS.WARNING) {
+    return 'WARNING';
+  }
+
+  return null;
+};
+
+/**
+ * Get dismissed thresholds from localStorage
+ */
+export const getDismissedThresholds = (): string[] => {
+  if (!isBrowserEnv()) return [];
+
+  try {
+    const dismissed = localStorage.getItem(DISMISSED_THRESHOLDS_KEY);
+    return dismissed ? JSON.parse(dismissed) : [];
+  } catch (error) {
+    console.error('Error getting dismissed thresholds:', error);
+    return [];
+  }
+};
+
+/**
+ * Save dismissed threshold to localStorage
+ */
+export const dismissThreshold = (threshold: string): void => {
+  if (!isBrowserEnv()) return;
+
+  try {
+    const dismissed = getDismissedThresholds();
+    if (!dismissed.includes(threshold)) {
+      dismissed.push(threshold);
+      localStorage.setItem(DISMISSED_THRESHOLDS_KEY, JSON.stringify(dismissed));
+    }
+  } catch (error) {
+    console.error('Error dismissing threshold:', error);
+  }
+};
+
+/**
+ * Reset dismissed thresholds (called when user takes action to free space)
+ */
+export const resetDismissedThresholds = (): void => {
+  if (!isBrowserEnv()) return;
+
+  try {
+    localStorage.removeItem(DISMISSED_THRESHOLDS_KEY);
+  } catch (error) {
+    console.error('Error resetting dismissed thresholds:', error);
+  }
+};
+
+/**
  * Check if storage is nearing its limit
+ * @deprecated Use getCurrentThresholdLevel instead
  */
 export const isStorageNearingLimit = (): boolean => {
   const { isNearingLimit } = getStorageUsage();
@@ -108,13 +181,44 @@ export const isStorageNearingLimit = (): boolean => {
 };
 
 /**
+ * Check if a storage warning should be shown
+ * @returns Object with shouldShow flag and current threshold level
+ */
+export const shouldShowStorageWarning = () => {
+  const currentThreshold = getCurrentThresholdLevel();
+
+  // If no threshold is reached, don't show warning
+  if (!currentThreshold) {
+    return { shouldShow: false, currentThreshold: null };
+  }
+
+  // For EMERGENCY level, always show warning
+  if (currentThreshold === 'EMERGENCY') {
+    return { shouldShow: true, currentThreshold };
+  }
+
+  // Check if this threshold has been dismissed
+  const dismissedThresholds = getDismissedThresholds();
+  const isDismissed = dismissedThresholds.includes(currentThreshold);
+
+  return {
+    shouldShow: !isDismissed,
+    currentThreshold
+  };
+};
+
+/**
  * Update storage statistics
  */
 export const updateStorageStats = () => {
   const usageData = getStorageUsage();
+  const { shouldShow, currentThreshold } = shouldShowStorageWarning();
+
   return {
     usageData,
-    isNearingLimit: usageData.isNearingLimit,
+    isNearingLimit: usageData.isNearingLimit, // For backward compatibility
+    currentThreshold,
+    shouldShowWarning: shouldShow,
   };
 };
 
@@ -234,6 +338,9 @@ export const clearOlderConversations = (keepCount: number): boolean => {
         STORAGE_KEYS.CONVERSATIONS,
         JSON.stringify(keptConversations)
     );
+
+    // Reset dismissed thresholds since user has taken action
+    resetDismissedThresholds();
 
     // If the selected conversation was removed, update it to the most recent one
     const selectedConversationJson = localStorage.getItem(STORAGE_KEYS.SELECTED_CONVERSATION);
