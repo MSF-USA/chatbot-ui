@@ -240,7 +240,7 @@ export class ImageGenerationService {
       if (typeof lastUserMessage.content === 'string') {
         prompt = lastUserMessage.content;
       } else if (Array.isArray(lastUserMessage.content)) {
-        const textContents = lastUserMessage.content
+        const textContents = (lastUserMessage.content as (TextMessageContent | FileMessageContent | ImageMessageContent)[] )
           .filter(item => item.type === 'text') as TextMessageContent[];
         prompt = textContents.map(item => item.text).join(' ');
       } else if (typeof lastUserMessage.content === 'object' &&
