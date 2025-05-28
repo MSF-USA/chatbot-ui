@@ -6,5 +6,16 @@
   "Save": "保存",
   "sendFeedback": "发送反馈",
   "modelSelectionDialogue": "AI模型选择",
-  "temperatureDescription": "较高的值如0.8会使输出更加具有创造性，而较低的值如0.2会使其更加专注和确定性。"
+  "temperatureDescription": "较高的值如0.8会使输出更加具有创造性，而较低的值如0.2会使其更加专注和确定性。",
+  "General": "常规",
+  "Chat Settings": "聊天设置",
+  "Data Management": "数据管理",
+  "Account": "账户",
+  "Help & Support": "帮助与支持",
+  "Advanced Settings": "高级设置",
+  "Reset Settings": "重置设置",
+  "Confirm Reset": "确认重置",
+  "Reset Confirmation Message": "您确定要将所有设置重置为默认值吗？此操作无法撤消。",
+  "Cancel": "取消",
+  "Reset": "重置"
 }

@@ -170,7 +170,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
                   {t('Confirm Reset')}
                 </h3>
                 <p className="text-neutral-700 dark:text-neutral-300 mb-4">
-                  {t('Are you sure you want to reset all settings to their default values? This action cannot be undone.')}
+                  {t('Reset Confirmation Message')}
                 </p>
                 <div className="flex justify-end space-x-3">
                   <button

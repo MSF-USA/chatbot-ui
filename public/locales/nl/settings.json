@@ -4,5 +4,18 @@
   "sendFeedback": "Feedback verzenden",
   "Save": "Opslaan",
   "Settings": "Instellingen",
-  "Theme": "thema"
+  "Theme": "thema",
+  "Dark mode": "Donkere modus",
+  "Light mode": "Lichte modus",
+  "General": "Algemeen",
+  "Chat Settings": "Chatinstellingen",
+  "Data Management": "Gegevensbeheer",
+  "Account": "Account",
+  "Help & Support": "Hulp & Ondersteuning",
+  "Advanced Settings": "Geavanceerde instellingen",
+  "Reset Settings": "Instellingen resetten",
+  "Confirm Reset": "Reset bevestigen",
+  "Reset Confirmation Message": "Weet u zeker dat u alle instellingen wilt resetten naar hun standaardwaarden? Deze actie kan niet ongedaan worden gemaakt.",
+  "Cancel": "Annuleren",
+  "Reset": "Resetten"
 }

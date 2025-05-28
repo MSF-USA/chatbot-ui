@@ -6,5 +6,16 @@
   "Theme": "thème",
   "sendFeedback": "Envoyer des commentaires",
   "modelSelectionDialogue": "Sélection de modèle d'IA",
-  "temperatureDescription": "Des valeurs plus élevées comme 0,8 rendront la sortie plus créative, tandis que des valeurs plus basses comme 0,2 la rendront plus concentrée et déterministe."
+  "temperatureDescription": "Des valeurs plus élevées comme 0,8 rendront la sortie plus créative, tandis que des valeurs plus basses comme 0,2 la rendront plus concentrée et déterministe.",
+  "General": "Général",
+  "Chat Settings": "Paramètres de discussion",
+  "Data Management": "Gestion des données",
+  "Account": "Compte",
+  "Help & Support": "Aide et support",
+  "Advanced Settings": "Paramètres avancés",
+  "Reset Settings": "Réinitialiser les paramètres",
+  "Confirm Reset": "Confirmer la réinitialisation",
+  "Reset Confirmation Message": "Êtes-vous sûr de vouloir réinitialiser tous les paramètres à leurs valeurs par défaut? Cette action ne peut pas être annulée.",
+  "Cancel": "Annuler",
+  "Reset": "Réinitialiser"
 }
