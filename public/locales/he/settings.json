@@ -17,5 +17,13 @@
   "Confirm Reset": "אשר איפוס",
   "Reset Confirmation Message": "האם אתה בטוח שברצונך לאפס את כל ההגדרות לערכי ברירת המחדל שלהן? פעולה זו אינה ניתנת לביטול.",
   "Cancel": "ביטול",
-  "Reset": "איפוס"
+  "Reset": "איפוס",
+  "Storage Information": "מידע אחסון",
+  "Storage Usage": "שימוש באחסון",
+  "Storage usage is normal": "שימוש באחסון הוא רגיל.",
+  "Storage usage is getting high": "שימוש באחסון מתחיל להיות גבוה.",
+  "Storage almost full": "האחסון כמעט מלא! שקול לנקות שיחות ישנות.",
+  "Local storage info": "כל הנתונים מאוחסנים באופן מקומי באחסון המקומי של הדפדפן שלך ונשארים לחלוטין במכשיר שלך.",
+  "Data Actions": "פעולות נתונים",
+  "Export data": "ייצוא נתונים"
 }

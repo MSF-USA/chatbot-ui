@@ -18,5 +18,13 @@
   "Confirm Reset": "Conferma ripristino",
   "Reset Confirmation Message": "Sei sicuro di voler ripristinare tutte le impostazioni ai valori predefiniti? Questa azione non può essere annullata.",
   "Cancel": "Annulla",
-  "Reset": "Ripristina"
+  "Reset": "Ripristina",
+  "Storage Information": "Informazioni di archiviazione",
+  "Storage Usage": "Utilizzo dello spazio",
+  "Storage usage is normal": "L'utilizzo dello spazio è normale.",
+  "Storage usage is getting high": "L'utilizzo dello spazio sta diventando elevato.",
+  "Storage almost full": "Spazio quasi esaurito! Considera di eliminare le conversazioni vecchie.",
+  "Local storage info": "Tutti i dati sono archiviati localmente nel localStorage del tuo browser e rimangono interamente sul tuo dispositivo.",
+  "Data Actions": "Azioni sui dati",
+  "Export data": "Esporta dati"
 }

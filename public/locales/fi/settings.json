@@ -17,5 +17,13 @@
   "Confirm Reset": "Vahvista palautus",
   "Reset Confirmation Message": "Haluatko varmasti palauttaa kaikki asetukset oletusarvoihin? Tätä toimintoa ei voi kumota.",
   "Cancel": "Peruuta",
-  "Reset": "Palauta"
+  "Reset": "Palauta",
+  "Storage Information": "Tallennustilan tiedot",
+  "Storage Usage": "Tallennustilan käyttö",
+  "Storage usage is normal": "Tallennustilan käyttö on normaalia.",
+  "Storage usage is getting high": "Tallennustilan käyttö on kasvamassa.",
+  "Storage almost full": "Tallennustila melkein täynnä! Harkitse vanhojen keskustelujen poistamista.",
+  "Local storage info": "Kaikki tiedot tallennetaan paikallisesti selaimesi localStorageen ja pysyvät kokonaan laitteellasi.",
+  "Data Actions": "Tietotoiminnot",
+  "Export data": "Vie tiedot"
 }

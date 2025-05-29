@@ -18,5 +18,13 @@
   "Confirm Reset": "Confirmar restablecimiento",
   "Reset Confirmation Message": "¿Está seguro de que desea restablecer todas las configuraciones a sus valores predeterminados? Esta acción no se puede deshacer.",
   "Cancel": "Cancelar",
-  "Reset": "Restablecer"
+  "Reset": "Restablecer",
+  "Storage Information": "Información de almacenamiento",
+  "Storage Usage": "Uso de almacenamiento",
+  "Storage usage is normal": "El uso de almacenamiento es normal.",
+  "Storage usage is getting high": "El uso de almacenamiento es alto.",
+  "Storage almost full": "¡Almacenamiento casi lleno! Considere borrar conversaciones antiguas.",
+  "Local storage info": "Todos los datos se almacenan localmente en el localStorage de su navegador y permanecen completamente en su dispositivo.",
+  "Data Actions": "Acciones de datos",
+  "Export data": "Exportar datos"
 }

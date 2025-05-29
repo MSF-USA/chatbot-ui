@@ -18,5 +18,13 @@
   "Confirm Reset": "Confirmer la réinitialisation",
   "Reset Confirmation Message": "Êtes-vous sûr de vouloir réinitialiser tous les paramètres à leurs valeurs par défaut? Cette action ne peut pas être annulée.",
   "Cancel": "Annuler",
-  "Reset": "Réinitialiser"
+  "Reset": "Réinitialiser",
+  "Storage Information": "Informations de stockage",
+  "Storage Usage": "Utilisation du stockage",
+  "Storage usage is normal": "L'utilisation du stockage est normale.",
+  "Storage usage is getting high": "L'utilisation du stockage est élevée.",
+  "Storage almost full": "Stockage presque plein ! Envisagez de supprimer d'anciennes conversations.",
+  "Local storage info": "Toutes les données sont stockées localement dans le localStorage de votre navigateur et restent entièrement sur votre appareil.",
+  "Data Actions": "Actions de données",
+  "Export data": "Exporter les données"
 }

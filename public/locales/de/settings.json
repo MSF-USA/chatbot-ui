@@ -18,5 +18,13 @@
   "Confirm Reset": "Zurücksetzen bestätigen",
   "Reset Confirmation Message": "Sind Sie sicher, dass Sie alle Einstellungen auf ihre Standardwerte zurücksetzen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
   "Cancel": "Abbrechen",
-  "Reset": "Zurücksetzen"
+  "Reset": "Zurücksetzen",
+  "Storage Information": "Speicherinformationen",
+  "Storage Usage": "Speichernutzung",
+  "Storage usage is normal": "Speichernutzung ist normal.",
+  "Storage usage is getting high": "Speichernutzung wird hoch.",
+  "Storage almost full": "Speicher fast voll! Erwägen Sie, alte Gespräche zu löschen.",
+  "Local storage info": "Alle Daten werden lokal im localStorage Ihres Browsers gespeichert und verbleiben vollständig auf Ihrem Gerät.",
+  "Data Actions": "Datenaktionen",
+  "Export data": "Daten exportieren"
 }

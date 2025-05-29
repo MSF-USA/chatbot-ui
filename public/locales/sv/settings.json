@@ -17,5 +17,13 @@
   "Confirm Reset": "Bekräfta återställning",
   "Reset Confirmation Message": "Är du säker på att du vill återställa alla inställningar till standardvärdena? Denna åtgärd kan inte ångras.",
   "Cancel": "Avbryt",
-  "Reset": "Återställ"
+  "Reset": "Återställ",
+  "Storage Information": "Storage Information",
+  "Storage Usage": "Storage Usage",
+  "Storage usage is normal": "Storage usage is normal.",
+  "Storage usage is getting high": "Storage usage is getting high.",
+  "Storage almost full": "Storage almost full! Consider clearing old conversations.",
+  "Local storage info": "All data is stored locally in your browser's localStorage and remains entirely on your device.",
+  "Data Actions": "Data Actions",
+  "Export data": "Export data"
 }

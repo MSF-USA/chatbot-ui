@@ -17,5 +17,13 @@
   "Confirm Reset": "Confirmar restabliment",
   "Reset Confirmation Message": "Estàs segur que vols restablir totes les configuracions als seus valors predeterminats? Aquesta acció no es pot desfer.",
   "Cancel": "Cancel·lar",
-  "Reset": "Restablir"
+  "Reset": "Restablir",
+  "Storage Information": "Informació d'emmagatzematge",
+  "Storage Usage": "Ús d'emmagatzematge",
+  "Storage usage is normal": "L'ús d'emmagatzematge és normal.",
+  "Storage usage is getting high": "L'ús d'emmagatzematge està augmentant.",
+  "Storage almost full": "Emmagatzematge gairebé ple! Considera eliminar converses antigues.",
+  "Local storage info": "Totes les dades s'emmagatzemen localment en el localStorage del teu navegador i romanen totalment en el teu dispositiu.",
+  "Data Actions": "Accions de dades",
+  "Export data": "Exporta dades"
 }

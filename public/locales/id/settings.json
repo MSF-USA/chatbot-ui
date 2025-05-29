@@ -17,5 +17,13 @@
   "Confirm Reset": "Konfirmasi Pengaturan Ulang",
   "Reset Confirmation Message": "Apakah Anda yakin ingin mengatur ulang semua pengaturan ke nilai default? Tindakan ini tidak dapat dibatalkan.",
   "Cancel": "Batal",
-  "Reset": "Atur Ulang"
+  "Reset": "Atur Ulang",
+  "Storage Information": "Informasi Penyimpanan",
+  "Storage Usage": "Penggunaan Penyimpanan",
+  "Storage usage is normal": "Penggunaan penyimpanan normal.",
+  "Storage usage is getting high": "Penggunaan penyimpanan semakin tinggi.",
+  "Storage almost full": "Penyimpanan hampir penuh! Pertimbangkan untuk membersihkan percakapan lama.",
+  "Local storage info": "Semua data disimpan secara lokal di localStorage browser Anda dan tetap sepenuhnya ada di perangkat Anda.",
+  "Data Actions": "Tindakan Data",
+  "Export data": "Ekspor data"
 }

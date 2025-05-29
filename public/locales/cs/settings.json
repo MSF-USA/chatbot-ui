@@ -4,7 +4,7 @@
   "temperatureDescription": "Vyšší hodnoty jako 0,8 způsobí, že výsledek bude kreativnější, zatímco nižší hodnoty jako 0,2 ho učiní více zaměřeným a deterministickým.",
   "Save": "Uložit",
   "Settings": "Nastavení",
-  "Theme": "téma",
+  "Theme": "Téma",
   "Dark mode": "Tmavý režim",
   "Light mode": "Světlý režim",
   "General": "Obecné",
@@ -17,5 +17,13 @@
   "Confirm Reset": "Potvrdit obnovení",
   "Reset Confirmation Message": "Opravdu chcete obnovit všechna nastavení na výchozí hodnoty? Tuto akci nelze vrátit zpět.",
   "Cancel": "Zrušit",
-  "Reset": "Obnovit"
+  "Reset": "Obnovit",
+  "Storage Information": "Informace o úložišti",
+  "Storage Usage": "Využití úložiště",
+  "Storage usage is normal": "Využití úložiště je normální.",
+  "Storage usage is getting high": "Využití úložiště se zvyšuje.",
+  "Storage almost full": "Úložiště je téměř plné! Zvažte vymazání starých konverzací.",
+  "Local storage info": "Všechna data jsou uložena lokálně v localStorage vašeho prohlížeče a zůstávají zcela na vašem zařízení.",
+  "Data Actions": "Akce s daty",
+  "Export data": "Exportovat data"
 }

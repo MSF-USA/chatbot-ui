@@ -4,7 +4,7 @@
   "sendFeedback": "Feedback verzenden",
   "Save": "Opslaan",
   "Settings": "Instellingen",
-  "Theme": "thema",
+  "Theme": "Thema",
   "Language": "Taal",
   "Dark mode": "Donkere modus",
   "Light mode": "Lichte modus",
@@ -18,5 +18,13 @@
   "Confirm Reset": "Reset bevestigen",
   "Reset Confirmation Message": "Weet u zeker dat u alle instellingen wilt resetten naar hun standaardwaarden? Deze actie kan niet ongedaan worden gemaakt.",
   "Cancel": "Annuleren",
-  "Reset": "Resetten"
+  "Reset": "Resetten",
+  "Storage Information": "Opslaginformatie",
+  "Storage Usage": "Opslaggebruik",
+  "Storage usage is normal": "Opslaggebruik is normaal.",
+  "Storage usage is getting high": "Opslaggebruik neemt toe.",
+  "Storage almost full": "Opslag bijna vol! Overweeg oude gesprekken te wissen.",
+  "Local storage info": "Alle gegevens worden lokaal opgeslagen in de localStorage van uw browser en blijven volledig op uw apparaat.",
+  "Data Actions": "Gegevensacties",
+  "Export data": "Gegevens exporteren"
 }
