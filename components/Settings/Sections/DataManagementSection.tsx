@@ -55,7 +55,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
           </h3>
           <div className="mb-5 text-sm text-black dark:text-neutral-300">
             <div className="mb-2">
-              <span className="font-medium">Storage Usage:</span> {formatBytes(storageData.currentUsage)} / {formatBytes(storageData.maxUsage)} ({storageData.percentUsed.toFixed(1)}%)
+              <span className="font-medium">{t('Storage Usage')}:</span> {formatBytes(storageData.currentUsage)} / {formatBytes(storageData.maxUsage)} ({storageData.percentUsed.toFixed(1)}%)
             </div>
 
             <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2.5 mb-2">
@@ -72,12 +72,12 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
               ) : storageData.percentUsed > 70 ? (
                   <span className="text-yellow-600 dark:text-yellow-400">Storage usage is getting high.</span>
               ) : (
-                  <span>Storage usage is normal.</span>
+                  <span>{t('Storage usage is normal')}</span>
               )}
               <p className="flex items-center">
                 <IconInfoCircle size={14} className="inline-block mr-1 text-blue-500" />
                 <span className="italic">
-                  {"All data is stored locally in your browser's localStorage and remains entirely on your device."}
+                  {t("Local storage info")}
                 </span>
               </p>
             </div>

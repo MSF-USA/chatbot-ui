@@ -27,7 +27,7 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
   isCriticalLevel = false,
   onDismissThreshold
 }) => {
-  const { t } = useTranslation('storage');
+  const { t } = useTranslation('settings');
   const [keepCount, setKeepCount] = useState(MIN_RETAINED_CONVERSATIONS);
   const [storageData, setStorageData] = useState(() => getStorageUsage());
   const [spaceFreedInfo, setSpaceFreedInfo] = useState(() => calculateSpaceFreed(keepCount));
