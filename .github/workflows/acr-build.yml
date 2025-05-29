@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Test, and Push Docker Image
 
 on:
   pull_request:
@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # IMAGE_NAME is chosen by event type: dev for PRs, prod for main
-      IMAGE_NAME: ${{ github.event_name == 'pull_request' && 'myapp-dev' || 'myapp' }}
+      IMAGE_NAME: ${{ github.event_name == 'pull_request' && 'ai-assistant-dev' || 'ai-assistant' }}
       IMAGE_TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.event.pull_request.number, github.sha) || github.sha }}
 
     steps:
@@ -28,6 +27,24 @@ jobs:
       - name: Azure Container Registry login
         run: az acr login --name ${{ vars.ACR_NAME }}
 
+      # ---- Build Docker image for unit testing ----
+      - name: Build Docker image for testing
+        run: docker build --target test -t ai-assistant .
+
+      - name: Run unit tests in Docker
+        run: docker run --rm ai-assistant
+
+      - name: Generate and upload coverage report
+        run: |
+          docker create --name extract-coverage ai-assistant
+          docker cp extract-coverage:/app/coverage ./coverage || true
+          docker rm extract-coverage
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+
+      # ---- Build and push the production image ----
       - name: Build Docker image
         run: |
           docker build -t ${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .

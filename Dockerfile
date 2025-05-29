@@ -10,6 +10,11 @@ RUN apk add --no-cache curl
 FROM base AS dependencies
 RUN npm ci
 
+# ---- Test ----
+FROM dependencies AS test
+COPY . .
+RUN npm run coverage
+
 # ---- Build ----
 FROM dependencies AS build
 COPY . .
@@ -46,7 +51,6 @@ EXPOSE 3000
 RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 RUN chown -R appuser:appgroup /app
 USER appuser
-
 
 # Start the application
 CMD ["npm", "start"]
