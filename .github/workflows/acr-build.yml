@@ -31,7 +31,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Azure Container Registry login
-        run: az acr login --name ${{ vars.ACR_NAME }}
+        run: az acr login --name msfintlnyc${{ env.ENV_NAME }}ai
 
       # ---- Build Docker image for unit testing ----
       - name: Build Docker image for testing
