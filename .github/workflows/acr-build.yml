@@ -13,12 +13,12 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: ${{ github.event_name == 'pull_request' && 'dev' || 'prod' }}
-
 
     env:
       IMAGE_NAME: ${{ github.event_name == 'pull_request' && 'ai-assistant-dev' || 'ai-assistant' }}
       IMAGE_TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.event.pull_request.number, github.sha) || github.sha }}
+      ENV_NAME: ${{ github.event_name == 'pull_request' && 'dev' || 'prod' }}
+
 
     steps:
       - uses: actions/checkout@v4
@@ -53,14 +53,14 @@ jobs:
       # ---- Build and push the production image ----
       - name: Build Docker image
         run: |
-          docker build -t ${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+          docker build -t msfintlnyc${{ env.ENV_NAME }}ai.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
 
       - name: Push Docker image
         run: |
-          docker push ${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          docker push msfintlnyc${{ env.ENV_NAME }}ai.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: Upload image metadata
-        run: echo "${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" > image.txt
+        run: echo "msfintlnyc${{ env.ENV_NAME }}ai.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" > image.txt
       - uses: actions/upload-artifact@v4
         with:
           name: image-tag
