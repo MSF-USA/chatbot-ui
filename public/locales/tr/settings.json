@@ -6,5 +6,16 @@
   "Theme": "tema",
   "sendFeedback": "Geri bildirim gönder",
   "modelSelectionDialogue": "AI Model Seçimi",
-  "temperatureDescription": "0.8 gibi daha yüksek değerler çıktıyı daha yaratıcı yaparken, 0.2 gibi daha düşük değerler çıktıyı daha odaklı ve deterministik yapar."
+  "temperatureDescription": "0.8 gibi daha yüksek değerler çıktıyı daha yaratıcı yaparken, 0.2 gibi daha düşük değerler çıktıyı daha odaklı ve deterministik yapar.",
+  "General": "Genel",
+  "Chat Settings": "Sohbet Ayarları",
+  "Data Management": "Veri Yönetimi",
+  "Account": "Hesap",
+  "Help & Support": "Yardım ve Destek",
+  "Advanced Settings": "Gelişmiş Ayarlar",
+  "Reset Settings": "Ayarları Sıfırla",
+  "Confirm Reset": "Sıfırlamayı Onayla",
+  "Reset Confirmation Message": "Tüm ayarları varsayılan değerlerine sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+  "Cancel": "İptal",
+  "Reset": "Sıfırla"
 }

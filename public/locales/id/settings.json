@@ -6,5 +6,16 @@
   "Theme": "tema",
   "sendFeedback": "Kirim Tanggapan",
   "modelSelectionDialogue": "Pemilihan Model AI",
-  "temperatureDescription": "Nilai yang lebih tinggi seperti 0.8 akan membuat keluaran lebih kreatif, sedangkan nilai yang lebih rendah seperti 0.2 akan membuatnya lebih fokus dan deterministik."
+  "temperatureDescription": "Nilai yang lebih tinggi seperti 0.8 akan membuat keluaran lebih kreatif, sedangkan nilai yang lebih rendah seperti 0.2 akan membuatnya lebih fokus dan deterministik.",
+  "General": "Umum",
+  "Chat Settings": "Pengaturan Obrolan",
+  "Data Management": "Manajemen Data",
+  "Account": "Akun",
+  "Help & Support": "Bantuan & Dukungan",
+  "Advanced Settings": "Pengaturan Lanjutan",
+  "Reset Settings": "Atur Ulang Pengaturan",
+  "Confirm Reset": "Konfirmasi Pengaturan Ulang",
+  "Reset Confirmation Message": "Apakah Anda yakin ingin mengatur ulang semua pengaturan ke nilai default? Tindakan ini tidak dapat dibatalkan.",
+  "Cancel": "Batal",
+  "Reset": "Atur Ulang"
 }

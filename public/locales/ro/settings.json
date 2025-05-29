@@ -6,5 +6,16 @@
   "Theme": "temă",
   "sendFeedback": "Trimite feedback",
   "modelSelectionDialogue": "Selectare model AI",
-  "temperatureDescription": "Valori mai mari, cum ar fi 0,8, vor face rezultatul mai creativ, în timp ce valori mai mici, cum ar fi 0,2, îl vor face mai concentrat și determinist."
+  "temperatureDescription": "Valori mai mari, cum ar fi 0,8, vor face rezultatul mai creativ, în timp ce valori mai mici, cum ar fi 0,2, îl vor face mai concentrat și determinist.",
+  "General": "General",
+  "Chat Settings": "Setări chat",
+  "Data Management": "Gestionarea datelor",
+  "Account": "Cont",
+  "Help & Support": "Ajutor și asistență",
+  "Advanced Settings": "Setări avansate",
+  "Reset Settings": "Resetare setări",
+  "Confirm Reset": "Confirmă resetarea",
+  "Reset Confirmation Message": "Sigur doriți să resetați toate setările la valorile implicite? Această acțiune nu poate fi anulată.",
+  "Cancel": "Anulare",
+  "Reset": "Resetare"
 }

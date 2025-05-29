@@ -6,5 +6,16 @@
   "Save": "Tallenna",
   "sendFeedback": "Lähetä palautetta",
   "modelSelectionDialogue": "AI-mallin valinta",
-  "temperatureDescription": "Korkeammat arvot, kuten 0,8, tekevät tuloksesta luovemman, kun taas alemmat arvot, kuten 0,2, tekevät siitä keskittyneemmän ja deterministisemmän."
+  "temperatureDescription": "Korkeammat arvot, kuten 0,8, tekevät tuloksesta luovemman, kun taas alemmat arvot, kuten 0,2, tekevät siitä keskittyneemmän ja deterministisemmän.",
+  "General": "Yleiset",
+  "Chat Settings": "Keskusteluasetukset",
+  "Data Management": "Tietojen hallinta",
+  "Account": "Tili",
+  "Help & Support": "Ohje ja tuki",
+  "Advanced Settings": "Lisäasetukset",
+  "Reset Settings": "Palauta asetukset",
+  "Confirm Reset": "Vahvista palautus",
+  "Reset Confirmation Message": "Haluatko varmasti palauttaa kaikki asetukset oletusarvoihin? Tätä toimintoa ei voi kumota.",
+  "Cancel": "Peruuta",
+  "Reset": "Palauta"
 }

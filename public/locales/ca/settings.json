@@ -6,5 +6,16 @@
   "Theme": "tema",
   "sendFeedback": "Envia comentaris",
   "modelSelectionDialogue": "Selecció de model d'IA",
-  "temperatureDescription": "Valors més alts com 0,8 faran que el resultat sigui més creatiu, mentre que valors més baixos com 0,2 el faran més enfocat i determinista."
+  "temperatureDescription": "Valors més alts com 0,8 faran que el resultat sigui més creatiu, mentre que valors més baixos com 0,2 el faran més enfocat i determinista.",
+  "General": "General",
+  "Chat Settings": "Configuració del xat",
+  "Data Management": "Gestió de dades",
+  "Account": "Compte",
+  "Help & Support": "Ajuda i suport",
+  "Advanced Settings": "Configuració avançada",
+  "Reset Settings": "Restablir configuració",
+  "Confirm Reset": "Confirmar restabliment",
+  "Reset Confirmation Message": "Estàs segur que vols restablir totes les configuracions als seus valors predeterminats? Aquesta acció no es pot desfer.",
+  "Cancel": "Cancel·lar",
+  "Reset": "Restablir"
 }

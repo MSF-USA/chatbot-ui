@@ -6,5 +6,16 @@
   "Theme": "motyw",
   "sendFeedback": "Prześlij opinię",
   "modelSelectionDialogue": "Wybór modelu AI",
-  "temperatureDescription": "Wyższe wartości, takie jak 0,8, sprawią, że wynik będzie bardziej kreatywny, podczas gdy niższe wartości, takie jak 0,2, sprawią, że będzie bardziej skoncentrowany i deterministyczny."
+  "temperatureDescription": "Wyższe wartości, takie jak 0,8, sprawią, że wynik będzie bardziej kreatywny, podczas gdy niższe wartości, takie jak 0,2, sprawią, że będzie bardziej skoncentrowany i deterministyczny.",
+  "General": "Ogólne",
+  "Chat Settings": "Ustawienia czatu",
+  "Data Management": "Zarządzanie danymi",
+  "Account": "Konto",
+  "Help & Support": "Pomoc i wsparcie",
+  "Advanced Settings": "Zaawansowane ustawienia",
+  "Reset Settings": "Resetuj ustawienia",
+  "Confirm Reset": "Potwierdź reset",
+  "Reset Confirmation Message": "Czy na pewno chcesz zresetować wszystkie ustawienia do wartości domyślnych? Tej akcji nie można cofnąć.",
+  "Cancel": "Anuluj",
+  "Reset": "Reset"
 }

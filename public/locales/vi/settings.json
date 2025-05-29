@@ -6,5 +6,16 @@
   "Theme": "chủ đề",
   "sendFeedback": "Gửi phản hồi",
   "modelSelectionDialogue": "Lựa chọn mô hình AI",
-  "temperatureDescription": "Các giá trị cao hơn như 0,8 sẽ làm cho kết quả sáng tạo hơn, trong khi các giá trị thấp hơn như 0,2 sẽ làm cho nó tập trung hơn và mang tính quyết định hơn."
+  "temperatureDescription": "Các giá trị cao hơn như 0,8 sẽ làm cho kết quả sáng tạo hơn, trong khi các giá trị thấp hơn như 0,2 sẽ làm cho nó tập trung hơn và mang tính quyết định hơn.",
+  "General": "Chung",
+  "Chat Settings": "Cài đặt trò chuyện",
+  "Data Management": "Quản lý dữ liệu",
+  "Account": "Tài khoản",
+  "Help & Support": "Trợ giúp & Hỗ trợ",
+  "Advanced Settings": "Cài đặt nâng cao",
+  "Reset Settings": "Đặt lại cài đặt",
+  "Confirm Reset": "Xác nhận đặt lại",
+  "Reset Confirmation Message": "Bạn có chắc chắn muốn đặt lại tất cả cài đặt về giá trị mặc định không? Hành động này không thể hoàn tác.",
+  "Cancel": "Hủy",
+  "Reset": "Đặt lại"
 }
