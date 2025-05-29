@@ -13,6 +13,8 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'pull_request' && 'dev' || 'prod' }}
+
 
     env:
       IMAGE_NAME: ${{ github.event_name == 'pull_request' && 'ai-assistant-dev' || 'ai-assistant' }}
