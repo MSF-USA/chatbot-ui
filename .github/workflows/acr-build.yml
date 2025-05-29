@@ -1,0 +1,44 @@
+name: Build and Push Docker Image
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    env:
+      # IMAGE_NAME is chosen by event type: dev for PRs, prod for main
+      IMAGE_NAME: ${{ github.event_name == 'pull_request' && 'myapp-dev' || 'myapp' }}
+      IMAGE_TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.event.pull_request.number, github.sha) || github.sha }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure Container Registry login
+        run: az acr login --name ${{ vars.ACR_NAME }}
+
+      - name: Build Docker image
+        run: |
+          docker build -t ${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+
+      - name: Push Docker image
+        run: |
+          docker push ${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+      - name: Upload image metadata
+        run: echo "${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" > image.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: image-tag
+          path: image.txt
