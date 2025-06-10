@@ -1,0 +1,209 @@
+name: CI & CD for Container Apps
+
+on:
+  # Trigger for PR Previews, Build, Test, and Cleanup
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+
+  # Trigger for Staging deployment
+  push:
+    branches:
+      - main
+
+  # Trigger for Production deployment
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy to Production (must exist in prod ACR)'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  # JOB 1: Handles the entire PR lifecycle: Build, Test, Push, and Deploy Preview
+  build_and_preview_pr:
+    # Only run when a PR is opened or updated, NOT when it's closed
+    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to DEV Azure Container Registry
+        run: az acr login --name ${{ vars.DEV_ACR_NAME }}
+
+      - name: Run tests and extract coverage
+        run: |
+          docker buildx build \
+            --target test \
+            --output type=local,dest=./coverage \
+            .
+
+      - name: Generate coverage comment body
+        id: coverage-comment
+        run: |
+          JSON_PATH="./coverage/coverage-summary.json"
+          LINES=$(jq -r '.total.lines.pct' $JSON_PATH)
+          FUNCTIONS=$(jq -r '.total.functions.pct' $JSON_PATH)
+          BRANCHES=$(jq -r '.total.branches.pct' $JSON_PATH)
+          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          COMMENT_BODY=$(cat <<EOF
+          ### Vitest Code Coverage
+
+          | Category  | Coverage |
+          |-----------|:--------:|
+          | Lines     |  \`$LINES%\`   |
+          | Functions |  \`$FUNCTIONS%\` |
+          | Branches  |  \`$BRANCHES%\` |
+
+          [View Full HTML Report (expires in 90 days)]($ARTIFACT_URL)
+          EOF
+          )
+          echo "comment_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMENT_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post or Update coverage comment on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('Vitest Code Coverage')
+            );
+            const commentBody = `${{ steps.coverage-comment.outputs.comment_body }}`;
+            if (botComment) {
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body: commentBody });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: commentBody });
+            }
+
+      - name: Build and Push PR Image to DEV Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 🚀 Deploy PR Preview to DEV Environment
+        id: deploy
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
+          containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
+          imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+
+      - name: Post Preview URL to PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const previewUrl = `${{ steps.deploy.outputs.containerAppUrl }}`;
+            const body = `🚀 **PR Preview Deployed!**\n\n[Click here to view the live preview](${previewUrl})`;
+            const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
+            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('PR Preview Deployed!'));
+            if (botComment) {
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+            }
+
+  # JOB 2: Cleans up the PR preview environment when the PR is closed
+  cleanup_pr_preview:
+    if: github.event.name == 'pull_request' && github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🧹 Delete PR Preview Environment
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az containerapp delete \
+              --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
+              --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
+              --yes
+
+  # JOB 3: Build for PROD and Deploy to STAGING after a merge to main
+  build_and_deploy_staging:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Log in to PROD Azure Container Registry
+        run: az acr login --name ${{ vars.ACR_NAME }}
+
+      - name: Build and Push to PROD Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: 🚀 Deploy to STAGING Environment
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ vars.RESOURCE_GROUP }}
+          containerAppName: ${{ vars.CONTAINER_APP_NAME }}
+          imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+
+  # JOB 4: Manual deployment to PRODUCTION
+  deploy_prod_manual:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🚀 Deploy to PRODUCTION Environment
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ vars.RESOURCE_GROUP }}
+          containerAppName: ${{ vars.CONTAINER_APP_NAME }}
+          imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
