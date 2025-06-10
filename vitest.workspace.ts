@@ -2,6 +2,7 @@ import path from 'path';
 import { defineWorkspace } from 'vitest/config';
 
 export default defineWorkspace([
+  // Project for DOM/browser tests
   {
     test: {
       name: 'dom',
@@ -14,6 +15,8 @@ export default defineWorkspace([
       },
     },
   },
+
+  // Project for Node.js tests
   {
     test: {
       name: 'node',
