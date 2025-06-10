@@ -1,40 +1,35 @@
 name: Deploy to Azure Container Apps
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Target environment (dev, stage, prod)'
-        required: true
-        type: choice
-        options:
-          - dev
-          - stage
-          - prod
-      image_tag:
-        description: 'Docker image tag to deploy (e.g. pr-23-abcdef or abcdef)'
-        required: true
+  # Trigger for PR Previews (dev environments)
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
 
+  # Trigger for Staging deployment
   push:
     branches:
       - main
 
+  # Trigger for Production deployment
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy to Production (must exist in prod ACR)'
+        required: true
+        type: string
+
 permissions:
   id-token: write
   contents: read
+  pull-requests: write # Needed to comment on PRs with the preview URL
 
 jobs:
-  deploy:
+  # JOB 1: Deploy a temporary preview environment for a pull request
+  deploy-pr-preview:
+    # Only run when a PR is opened or updated
+    if: github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened'
     runs-on: ubuntu-latest
-
-    # Set the environment for GitHub Environments; enables use of environment secrets/vars
-    environment: ${{ github.event_name == 'push' && github.ref_name == 'main' && 'prod' || github.event_name == 'workflow_dispatch' && github.event.inputs.environment || 'dev' }}
-
-    env:
-      # IMAGE_NAME is chosen by event/environment: dev repo for dev/stage, prod for prod
-      IMAGE_NAME: ${{ (github.event_name == 'push' && github.ref_name == 'main') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prod') && 'myapp' || 'myapp-dev' }}
-      IMAGE_TAG: ${{ github.event_name == 'push' && github.sha || github.event.inputs.image_tag }}
-
+    environment: dev # Use the 'dev' environment for variables/secrets
     steps:
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -43,12 +38,94 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Azure Container Registry login
-        run: az acr login --name ${{ vars.ACR_NAME }}
+      - name: 🚀 Deploy PR Preview to DEV
+        id: deploy
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
+          # Create a unique app name for the PR to allow parallel previews
+          name: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
+          # Use the temporary PR image from the dev registry
+          image: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
 
-      - name: Deploy to Azure Container Apps
+      - name: Post Preview URL to PR Comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // This is the auto-generated URL you will use in your CORS policy regex
+            const previewUrl = `${{ steps.deploy.outputs.container-app-url }}`;
+            const body = `🚀 **PR Preview Deployed!**\n\n[Click here to view the live preview](${previewUrl})`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('PR Preview Deployed!'));
+            if (botComment) {
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+            }
+
+  # JOB 2: Clean up and delete the temporary preview environment when the PR is closed
+  cleanup-pr-preview:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🧹 Delete PR Preview Environment
+        run: |
+          az containerapp delete \
+            --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
+            --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
+            --yes
+
+  # JOB 3: Deploy to STAGING after a merge to main
+  deploy-staging:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🚀 Deploy to STAGING Environment
         uses: azure/container-apps-deploy-action@v1
         with:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           name: ${{ vars.CONTAINER_APP_NAME }}
-          image: ${{ vars.ACR_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          # Staging pulls the 'main' image from the PROD registry
+          image: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+
+  # JOB 4: Manual deployment to PRODUCTION
+  deploy-prod:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🚀 Deploy to PRODUCTION Environment
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          resourceGroup: ${{ vars.RESOURCE_GROUP }}
+          name: ${{ vars.CONTAINER_APP_NAME }}
+          # Production pulls from the PROD registry with the manually specified tag
+          image: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}

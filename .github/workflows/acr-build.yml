@@ -6,22 +6,26 @@ on:
   push:
     branches: [main]
 
+env:
+  # Logic: If it's a push to main, use 'prod' settings for the image build, otherwise use 'dev' for PRs.
+  ENV_TYPE: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main' && 'prod') || 'dev' }}
+  REGISTRY_NAME: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main' && 'msfintlnycprodai') || 'msfintlnycdevai' }}
+  IMAGE_NAME: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main' && 'ai-assistant') || 'ai-assistant-dev' }}
+
 permissions:
   id-token: write
   contents: read
+  pull-requests: write
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
-
-    env:
-      IMAGE_NAME: ${{ github.event_name == 'pull_request' && 'ai-assistant-dev' || 'ai-assistant' }}
-      IMAGE_TAG: ${{ github.event_name == 'pull_request' && format('pr-{0}-{1}', github.event.pull_request.number, github.sha) || github.sha }}
-      ENV_NAME: ${{ github.event_name == 'pull_request' && 'dev' || 'prod' }}
-
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Azure Login (OIDC)
         uses: azure/login@v2
@@ -30,38 +34,104 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Azure Container Registry login
-        run: az acr login --name msfintlnyc${{ env.ENV_NAME }}ai
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ env.REGISTRY_NAME }}
 
-      # ---- Build Docker image for unit testing ----
-      - name: Build Docker image for testing
-        run: docker build --target test -t ai-assistant .
-
-      - name: Run unit tests in Docker
-        run: docker run --rm ai-assistant
-
-      - name: Generate and upload coverage report
+      - name: Build test stage and extract coverage report
         run: |
-          docker create --name extract-coverage ai-assistant
-          docker cp extract-coverage:/app/coverage ./coverage || true
-          docker rm extract-coverage
-      - uses: actions/upload-artifact@v4
+          docker buildx build \
+            --target test \
+            --output type=local,dest=./coverage \
+            .
+
+      - name: Archive full coverage report
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: ./coverage/
 
-      # ---- Build and push the production image ----
-      - name: Build Docker image
+      - name: Generate coverage comment body
+        id: coverage-comment
+        if: github.event_name == 'pull_request'
         run: |
-          docker build -t msfintlnyc${{ env.ENV_NAME }}ai.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }} .
+          # This step uses 'jq' to parse the JSON summary and constructs a markdown body
+          JSON_PATH="./coverage/coverage-summary.json"
 
-      - name: Push Docker image
-        run: |
-          docker push msfintlnyc${{ env.ENV_NAME }}ai.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+          # Extract coverage percentages
+          LINES=$(jq -r '.total.lines.pct' $JSON_PATH)
+          FUNCTIONS=$(jq -r '.total.functions.pct' $JSON_PATH)
+          BRANCHES=$(jq -r '.total.branches.pct' $JSON_PATH)
 
-      - name: Upload image metadata
-        run: echo "msfintlnyc${{ env.ENV_NAME }}ai.azurecr.io/${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}" > image.txt
-      - uses: actions/upload-artifact@v4
+          # Construct the link to the uploaded artifact
+          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+          # Use a HEREDOC to create the multi-line comment body
+          COMMENT_BODY=$(cat <<EOF
+          ### Vitest Code Coverage
+
+          | Category  | Coverage |
+          |-----------|:--------:|
+          | Lines     |  \`$LINES%\`   |
+          | Functions |  \`$FUNCTIONS%\` |
+          | Branches  |  \`$BRANCHES%\` |
+
+          [View Full HTML Report (expires in 90 days)]($ARTIFACT_URL)
+          EOF
+          )
+
+          # Use GITHUB_OUTPUT to pass the multi-line body to the next step
+          echo "comment_body<<EOF" >> $GITHUB_OUTPUT
+          echo "$COMMENT_BODY" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post or Update coverage comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
         with:
-          name: image-tag
-          path: image.txt
+          script: |
+            // Search for an existing comment by this Action to update it
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('Vitest Code Coverage')
+            );
+            const commentBody = `${{ steps.coverage-comment.outputs.comment_body }}`;
+
+            if (botComment) {
+              github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+            } else {
+              github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: commentBody
+              });
+            }
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,prefix=
+            type=ref,event=pr,prefix=pr-
+
+      # This step pushes for BOTH PRs (to dev ACR) and merges to main (to prod ACR)
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
