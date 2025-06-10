@@ -47,12 +47,20 @@ jobs:
       - name: Log in to DEV Azure Container Registry
         run: az acr login --name ${{ vars.DEV_ACR_NAME }}
 
-      - name: Run tests and extract coverage
+      - name: Build the test-stage image
+        run: docker build --target test -t test-runner-image .
+
+      - name: Run tests in a container to generate coverage files
+        run: docker run --name test-container test-runner-image
+
+      - name: Copy coverage report from the container
+        if: always()
         run: |
-          docker buildx build \
-            --target test \
-            --output type=local,dest=./coverage \
-            .
+          docker cp test-container:/app/coverage ./coverage || true
+
+      - name: Clean up the test container
+        if: always()
+        run: docker rm test-container
 
       - name: Generate coverage comment body
         id: coverage-comment
@@ -82,14 +90,8 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            });
-            const botComment = comments.find(comment =>
-              comment.user.type === 'Bot' && comment.body.includes('Vitest Code Coverage')
-            );
+            const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
+            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('Vitest Code Coverage'));
             const commentBody = `${{ steps.coverage-comment.outputs.comment_body }}`;
             if (botComment) {
               await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body: commentBody });
@@ -123,14 +125,14 @@ jobs:
             const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
             const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('PR Preview Deployed!'));
             if (botComment) {
-              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body });
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body: body });
             } else {
-              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: body });
             }
 
   # JOB 2: Cleans up the PR preview environment when the PR is closed
   cleanup_pr_preview:
-    if: github.event.name == 'pull_request' && github.event.action == 'closed'
+    if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
     environment: dev
     steps:
