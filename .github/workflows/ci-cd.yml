@@ -55,49 +55,19 @@ jobs:
 
       - name: Copy coverage report from the container
         if: always()
-        run: |
-          docker cp test-container:/app/coverage ./coverage || true
+        run: docker cp test-container:/app/coverage ./coverage || true
 
       - name: Clean up the test container
         if: always()
         run: docker rm test-container
 
-      - name: Generate coverage comment body
-        id: coverage-comment
+      - name: Generate coverage stats
+        id: coverage-stats
         run: |
           JSON_PATH="./coverage/coverage-summary.json"
-          LINES=$(jq -r '.total.lines.pct' $JSON_PATH)
-          FUNCTIONS=$(jq -r '.total.functions.pct' $JSON_PATH)
-          BRANCHES=$(jq -r '.total.branches.pct' $JSON_PATH)
-          ARTIFACT_URL="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          COMMENT_BODY=$(cat <<EOF
-          ### Vitest Code Coverage
-
-          | Category  | Coverage |
-          |-----------|:--------:|
-          | Lines     |  \`$LINES%\`   |
-          | Functions |  \`$FUNCTIONS%\` |
-          | Branches  |  \`$BRANCHES%\` |
-
-          [View Full HTML Report (expires in 90 days)]($ARTIFACT_URL)
-          EOF
-          )
-          echo "comment_body<<EOF" >> $GITHUB_OUTPUT
-          echo "$COMMENT_BODY" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-
-      - name: Post or Update coverage comment on PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
-            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('Vitest Code Coverage'));
-            const commentBody = `${{ steps.coverage-comment.outputs.comment_body }}`;
-            if (botComment) {
-              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body: commentBody });
-            } else {
-              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: commentBody });
-            }
+          echo "lines=$(jq -r '.total.lines.pct' $JSON_PATH)" >> $GITHUB_OUTPUT
+          echo "functions=$(jq -r '.total.functions.pct' $JSON_PATH)" >> $GITHUB_OUTPUT
+          echo "branches=$(jq -r '.total.branches.pct' $JSON_PATH)" >> $GITHUB_OUTPUT
 
       - name: Build and Push PR Image to DEV Registry
         uses: docker/build-push-action@v6
@@ -116,18 +86,49 @@ jobs:
           containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
           imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
 
-      - name: Post Preview URL to PR Comment
+      - name: Post Unified Comment to PR
         uses: actions/github-script@v7
         with:
           script: |
+            // Get data from previous steps
+            const lines = ${{ steps.coverage-stats.outputs.lines }};
+            const functions = ${{ steps.coverage-stats.outputs.functions }};
+            const branches = ${{ steps.coverage-stats.outputs.branches }};
+            const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const previewUrl = `${{ steps.deploy.outputs.containerAppUrl }}`;
-            const body = `🚀 **PR Preview Deployed!**\n\n[Click here to view the live preview](${previewUrl})`;
-            const { data: comments } = await github.rest.issues.listComments({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number });
-            const botComment = comments.find(comment => comment.user.type === 'Bot' && comment.body.includes('PR Preview Deployed!'));
+
+            // Build the unified comment body
+            const body = `
+            🚀 **PR Preview Deployed!**
+            [Click here to view the live preview](${previewUrl})
+
+            ---
+
+            ### Vitest Code Coverage
+
+            | Category  | Coverage |
+            |-----------|:--------:|
+            | Lines     |  \`${lines}%\`   |
+            | Functions |  \`${functions}%\` |
+            | Branches  |  \`${branches}%\` |
+
+            [View Full HTML Report (expires in 90 days)](${artifactUrl})
+            `;
+
+            // Find an existing comment to update, or create a new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' && comment.body.includes('PR Preview Deployed!')
+            );
+
             if (botComment) {
-              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body: body });
+              await github.rest.issues.updateComment({ owner: context.repo.owner, repo: context.repo.repo, comment_id: botComment.id, body });
             } else {
-              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body: body });
+              await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
             }
 
   # JOB 2: Cleans up the PR preview environment when the PR is closed
