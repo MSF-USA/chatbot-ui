@@ -1,50 +1,47 @@
-import { Switch } from '@headlessui/react';
-import { IconExternalLink, IconFileExport } from '@tabler/icons-react';
-import { FC, useContext, useEffect, useReducer, useRef, useState } from 'react';
-
+import { FC, useContext, useEffect, useRef, useState } from 'react';
+import { useSwipeable } from 'react-swipeable';
 import { Session } from 'next-auth';
-import { useTranslation } from 'next-i18next';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
+import { useStorageMonitor } from '@/context/StorageMonitorContext';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
-
-import { FAQData } from '@/types/faq';
-import { Settings } from '@/types/settings';
+import { getStorageUsage } from '@/utils/app/storageMonitor';
 
 import HomeContext from '@/pages/api/home/home.context';
-
-import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
-
 import ChatbarContext from '../Chatbar/Chatbar.context';
-import { SidebarButton } from '../Sidebar/SidebarButton';
-import { ClearConversations } from './ClearConversations';
-import { Import } from './Import';
-import { SignInSignOut } from './SignInSignOut';
-import { SystemPrompt } from './SystemPrompt';
-import { TemperatureSlider } from './Temperature';
-import { FAQ } from './faq';
+
+import { SettingsSection } from './types';
+import { GeneralSection } from './Sections/GeneralSection';
+import { ChatSettingsSection } from './Sections/ChatSettingsSection';
+import { DataManagementSection } from './Sections/DataManagementSection';
+import { AccountSection } from './Sections/AccountSection';
+import { HelpSupportSection } from './Sections/HelpSupportSection';
+import { SettingsSidebar } from './SettingsSidebar';
+import { MobileHeader } from './MobileHeader';
+import { MobileNavigation } from './MobileNavigation';
+import { SettingsFooter } from './SettingsFooter';
 import faqData from './faq.json';
-import {isUSBased} from "@/utils/app/userAuth";
-import {FEEDBACK_EMAIL, US_FEEDBACK_EMAIL} from "@/types/contact";
+import { useTranslation } from 'next-i18next';
+import {Settings} from "@/types/settings";
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
 const env = process.env.NEXT_PUBLIC_ENV;
-const email = process.env.NEXT_PUBLIC_EMAIL;
 
-enum Tab {
-  CHAT_SETTINGS = 'CHAT_SETTINGS',
-  APP_SETTINGS = 'APP_SETTINGS',
-  FAQ = 'FAQ',
-}
-
+/**
+ * Props for the SettingDialog component
+ */
 interface Props {
   open: boolean;
   onClose: () => void;
   user?: Session['user'];
 }
 
+/**
+ * SettingDialog component
+ * Renders a modal dialog with settings for the application
+ */
 export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
@@ -59,8 +56,11 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   } = useContext(ChatbarContext);
 
   const { state: homeState, dispatch: homeDispatch } = useContext(HomeContext);
+  const { storagePercentage, checkStorage } = useStorageMonitor();
+  const [storageData, setStorageData] = useState(() => getStorageUsage());
   const modalRef = useRef<HTMLDivElement>(null);
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.CHAT_SETTINGS);
+  const [activeSection, setActiveSection] = useState<SettingsSection>(SettingsSection.GENERAL);
+  const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
@@ -81,6 +81,54 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
     };
   }, [onClose]);
 
+  // Update storage data when dialog opens
+  useEffect(() => {
+    if (open) {
+      setStorageData(getStorageUsage());
+      checkStorage();
+    }
+  }, [open, checkStorage]);
+
+  // Check screen size to determine if it's in mobile view
+  useEffect(() => {
+    const checkMobileView = () => {
+      setIsMobileView(window.innerWidth < 768);
+    };
+
+    // Initial check
+    checkMobileView();
+
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobileView);
+
+    // Clean up event listener
+    return () => {
+      window.removeEventListener('resize', checkMobileView);
+    };
+  }, []);
+
+  // Configure swipe handlers for mobile navigation
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      // Navigate to next section if available
+      const sections = Object.values(SettingsSection);
+      const currentIndex = sections.indexOf(activeSection);
+      if (currentIndex < sections.length - 1) {
+        setActiveSection(sections[currentIndex + 1]);
+      }
+    },
+    onSwipedRight: () => {
+      // Navigate to previous section if available
+      const sections = Object.values(SettingsSection);
+      const currentIndex = sections.indexOf(activeSection);
+      if (currentIndex > 0) {
+        setActiveSection(sections[currentIndex - 1]);
+      }
+    },
+    preventScrollOnSwipe: true,
+    trackMouse: false
+  });
+
   const handleSave = () => {
     homeDispatch({ field: 'lightMode', value: state.theme });
     homeDispatch({ field: 'temperature', value: state.temperature });
@@ -94,6 +142,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       theme: defaultTheme,
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
+      advancedMode: false,
     };
     homeDispatch({ field: 'lightMode', value: defaultTheme });
     homeDispatch({ field: 'temperature', value: 0.5 });
@@ -102,6 +151,15 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       value: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
     });
     saveSettings(defaultSettings);
+  };
+
+  // Format bytes to more readable format
+  const formatBytes = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    const kb = bytes / 1024;
+    if (kb < 1024) return `${kb.toFixed(2)} KB`;
+    const mb = kb / 1024;
+    return `${mb.toFixed(2)} MB`;
   };
 
   // Render nothing if the dialog is not open.
@@ -121,218 +179,93 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 sm:max-h-[600px] w-full md:max-w-[400px] lg:max-w-[600px] xl:max-w-[800px] sm:p-6 sm:align-middle overflow-hidden"
+            className="dark:border-netural-400 inline-block transform rounded-lg border border-gray-300 bg-white text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 w-full md:max-w-[700px] lg:max-w-[800px] xl:max-w-[900px] sm:align-middle"
             role="dialog"
           >
-            <div className="flex">
-              <button
-                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
-                  activeTab === Tab.CHAT_SETTINGS
-                    ? 'border-b-2 border-black dark:border-white'
-                    : 'border-0'
-                }`}
-                onClick={() => setActiveTab(Tab.CHAT_SETTINGS)}
-              >
-                {t('Chat') + ' ' + t('Settings')}
-              </button>
-              <button
-                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
-                  activeTab === Tab.APP_SETTINGS
-                    ? 'border-b-2 border-black dark:border-white'
-                    : 'border-0'
-                }`}
-                onClick={() => setActiveTab(Tab.APP_SETTINGS)}
-              >
-                {t('App') + ' ' + t('Settings')}
-              </button>
-              <button
-                className={`flex-grow text-sm font-bold mb-2 mr-4 py-2 focus:outline-none text-black dark:text-white ${
-                  activeTab === Tab.FAQ
-                    ? 'border-b-2 border-black dark:border-white'
-                    : 'border-0'
-                }`}
-                onClick={() => setActiveTab(Tab.FAQ)}
-              >
-                {t('FAQ')}
-              </button>
-            </div>
-
-            {activeTab === Tab.CHAT_SETTINGS && (
-              <>
-                <div className="text-sm font-bold my-10 text-black dark:text-neutral-200">
-                  {t('Default') + ' ' + t('Temperature') + '*'}
-                </div>
-
-                <TemperatureSlider
-                  temperature={state.temperature}
-                  onChangeTemperature={(temperature) =>
-                    dispatch({ field: 'temperature', value: temperature })
-                  }
-                />
-                {/* <hr className="my-10 border-gray-300 dark:border-neutral-700" /> */}
-                {/* <div className="text-sm font-bold text-black dark:text-neutral-200 mb-10">
-                {t('Default System Prompt') + '*'}
-              </div>
-              <SystemPrompt
-                prompts={homeState.prompts}
-                systemPrompt={state.systemPrompt}
+            <div className="flex flex-col md:flex-row h-[500px] md:h-[600px]">
+              {/* Navigation sidebar - hidden on mobile */}
+              <SettingsSidebar
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+                handleReset={handleReset}
+                onClose={onClose}
                 user={user}
-                onChangePrompt={(prompt) =>
-                  dispatch({
-                    field: 'systemPrompt',
-                    value: prompt,
-                  })
-                }
-              /> */}
-                <hr className="mt-5 mb-2 border-gray-300 dark:border-neutral-700" />
-                <span className="mb-5 text-[12px] text-black/50 dark:text-white/50 text-sm">
-                  {t(
-                    '*Note that these default settings only apply to new conversations once saved.',
-                  )}
-                </span>
-                <div className="flex justify-end mr-1 mt-10">
-                  <button
-                    type="button"
-                    className="w-[120px] p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-                    onClick={() => {
-                      handleSave();
-                      onClose();
-                    }}
-                  >
-                    {t('Save')}
-                  </button>
-                </div>
-              </>
-            )}
+                state={state}
+                dispatch={dispatch}
+              />
 
-            {activeTab === Tab.APP_SETTINGS && (
-              <>
-                <div className="flex flex-row justify-between items-center my-10">
-                  <div className="text-sm font-bold text-black dark:text-neutral-200">
-                    {t('Language')}
-                  </div>
-                  <LanguageSwitcher />
-                </div>
-                <div className="flex flex-row justify-between items-center my-10">
-                  <div className="text-sm font-bold text-black dark:text-neutral-200">
-                    {t('Theme')}
-                  </div>
-                  <select
-                    className="w-[120px] cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200 text-center text-sm border-none hover:bg-gray-500/10"
-                    value={state.theme}
-                    onChange={(event) =>
-                      dispatch({ field: 'theme', value: event.target.value })
-                    }
-                  >
-                    <option className={'bg-white dark:bg-black'} value="dark">{t('Dark mode')}</option>
-                    <option className={'bg-white dark:bg-black'} value="light">{t('Light mode')}</option>
-                  </select>
-                </div>
-                <div className="flex justify-end mr-1">
-                  <button
-                    type="button"
-                    className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-                    onClick={() => {
-                      handleSave();
-                      onClose();
-                    }}
-                  >
-                    {t('Save')}
-                  </button>
-                </div>
-                <hr className="mb-10 border-gray-300 dark:border-neutral-700" />
-                <div className="text-sm font-bold mb-5 text-black dark:text-neutral-200">
-                  User
-                </div>
-                <table>
-                  <tbody>
-                    <tr>
-                      {/* <td className="pr-4 text-black dark:text-neutral-300">Name:</td> */}
-                      <td className="text-black dark:text-neutral-100">
-                        {user?.displayName}
-                      </td>
-                    </tr>
-                    <tr>
-                      {/* <td className="pr-4 text-black dark:text-neutral-300">Department:</td> */}
-                      <td className="text-black dark:text-neutral-100">
-                        {user?.department}
-                      </td>
-                    </tr>
-                    <tr>
-                      {/* <td className="pr-4 text-black dark:text-neutral-300">Position:</td> */}
-                      <td className="text-black dark:text-neutral-100">
-                        {user?.jobTitle}
-                      </td>
-                    </tr>
-                    <tr>
-                      {/* <td className="pr-4 text-black dark:text-neutral-300">Email:</td> */}
-                      <td className="text-black dark:text-neutral-100">
-                        {user?.mail}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <hr className="my-10 border-gray-300 dark:border-neutral-700" />
-                <div className="flex flex-row justify-between">
-                  <div className="text-sm mb-5 font-bold text-black dark:text-neutral-200">
-                    Chat Data
-                  </div>
-                  <div className="flex justify-end mr-1 mb-10 items-center flex-col">
-                    {homeState.conversations.length > 0 ? (
-                      <ClearConversations
-                        onClearConversations={handleClearConversations}
-                      />
-                    ) : null}
-                    <Import onImport={handleImportConversations} />
-
-                    <SidebarButton
-                      text={t('Export data')}
-                      icon={<IconFileExport size={18} />}
-                      onClick={() => handleExportData()}
-                    />
-                  </div>
-                </div>
-                <div className="flex justify-end mr-1">
-                  <button
-                    type="button"
-                    className="w-[120px] p-2 border mb-10 rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-                    onClick={() => {
-                      handleReset();
-                      onClose();
-                    }}
-                  >
-                    {t('Reset Settings')}
-                  </button>
-                </div>
-                <div className="flex justify-end mr-1">
-                  <SignInSignOut />
-                </div>
-              </>
-            )}
-            {activeTab === Tab.FAQ && (
-              <>
-                <div>
-                  <div className="text-sm font-bold text-black dark:text-neutral-200 mt-10 mb-5">
-                    {t('Frequently Asked Questions')}
-                  </div>
-                  <FAQ faq={faqData.faq} />
-                </div>
-              </>
-            )}
-            <div className="flex flex-col md:flex-row px-1 md:justify-between mt-10 mr-1">
-              <div className="text-gray-500">
-                v{version}.{build}.{env}
-              </div>
-              <a
-                href={`mailto:${isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL}`}
-                className="flex items-center mt-2 md:mt-0 text-black dark:text-white"
+              {/* Content area */}
+              <div
+                className="flex-grow overflow-y-auto relative"
+                {...swipeHandlers}
               >
-                <IconExternalLink
-                  size={18}
-                  className={'inline mr-1 text-black dark:text-white'}
+                {/* Mobile header - only visible on mobile */}
+                {isMobileView && (
+                  <MobileHeader activeSection={activeSection} />
+                )}
+
+                {/* Section content */}
+                {activeSection === SettingsSection.GENERAL && (
+                  <GeneralSection
+                    state={state}
+                    dispatch={dispatch}
+                    user={user}
+                    onSave={handleSave}
+                    onClose={onClose}
+                  />
+                )}
+
+                {activeSection === SettingsSection.CHAT_SETTINGS && (
+                  <ChatSettingsSection
+                    state={state}
+                    dispatch={dispatch}
+                    homeState={homeState}
+                    user={user}
+                    onSave={handleSave}
+                    onClose={onClose}
+                  />
+                )}
+
+                {activeSection === SettingsSection.DATA_MANAGEMENT && (
+                  <DataManagementSection
+                    homeState={homeState}
+                    handleClearConversations={handleClearConversations}
+                    handleImportConversations={handleImportConversations}
+                    handleExportData={handleExportData}
+                    handleReset={handleReset}
+                    onClose={onClose}
+                    checkStorage={checkStorage}
+                  />
+                )}
+
+                {activeSection === SettingsSection.ACCOUNT && (
+                  <AccountSection
+                    user={user}
+                  />
+                )}
+
+                {activeSection === SettingsSection.HELP_SUPPORT && (
+                  <HelpSupportSection faqData={faqData} />
+                )}
+
+                {/* Mobile navigation */}
+                {isMobileView && (
+                  <MobileNavigation
+                    activeSection={activeSection}
+                    setActiveSection={setActiveSection}
+                  />
+                )}
+
+                {/* Footer */}
+                <SettingsFooter
+                  version={version || ''}
+                  build={build || ''}
+                  env={env || ''}
+                  user={user}
+                  handleReset={handleReset}
+                  onClose={onClose}
                 />
-                {t('sendFeedback')}
-              </a>
+              </div>
             </div>
           </div>
         </div>
