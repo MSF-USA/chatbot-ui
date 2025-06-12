@@ -121,7 +121,30 @@ describe('Storage Monitor', () => {
 
     describe('clearOlderConversations', () => {
         const mockConversations: Conversation[] = [
-            // ... same mock data as above
+            {
+                id: '1',
+                name: 'Old Conversation',
+                messages: [],
+                createdAt: '2023-01-01T00:00:00Z',
+                updatedAt: '2023-01-01T00:00:00Z',
+                // @ts-expect-error only keeping relevant elements of the model
+                model: { id: 'gpt-4' },
+                prompt: '',
+                temperature: 1,
+                folderId: null
+            },
+            {
+                id: '2',
+                name: 'New Conversation',
+                messages: [],
+                createdAt: '2023-12-01T00:00:00Z',
+                updatedAt: '2023-12-01T00:00:00Z',
+                // @ts-expect-error only keeping relevant elements of the model
+                model: { id: 'gpt-4' },
+                prompt: '',
+                temperature: 1,
+                folderId: null
+            }
         ]
 
         it('should keep specified number of recent conversations', () => {

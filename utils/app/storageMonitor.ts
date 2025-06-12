@@ -341,6 +341,9 @@ export const clearOlderConversations = (keepCount: number): boolean => {
       return false; // Nothing to clear
     }
 
+    // Get original length to verify if something was cleared
+    const originalLength = sortedConversations.length;
+
     // Keep only the most recent conversations
     const keptConversations = sortedConversations.slice(0, keepCount);
 
@@ -368,7 +371,8 @@ export const clearOlderConversations = (keepCount: number): boolean => {
       }
     }
 
-    return true;
+    // Verify that conversations were actually removed
+    return originalLength > keptConversations.length;
   } catch (error) {
     console.error('Error clearing older conversations:', error);
     return false;
