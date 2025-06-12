@@ -35,21 +35,39 @@ const STORAGE_KEYS = {
 };
 
 // Helper to check if we're in a browser environment
-const isBrowserEnv = () => typeof window !== 'undefined' && typeof localStorage !== 'undefined';
+export const isBrowserEnv = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+
+/**
+ * Throws an error if not in a browser environment
+ * Use this instead of isBrowserEnv checks when browser features are required
+ */
+export const requireBrowser = (): void => {
+  if (!isBrowserEnv()) {
+    throw new Error('Browser environment required. This operation needs localStorage or other browser APIs.');
+  }
+};
 
 /**
  * Calculate the size of a string in bytes
  */
 export const getStringSizeInBytes = (str: string): number => {
-  // This function doesn't directly use browser APIs that would fail in Node
-  return new Blob([str]).size;
+  if (!str) return 0;
+  try {
+    // This function doesn't directly use browser APIs that would fail in Node
+    const blob = new Blob([str]);
+    return blob.size;
+  } catch (error) {
+    console.error('Error calculating string size:', error);
+    // Fallback to string length which is approximately the byte size for ASCII
+    return str.length;
+  }
 };
 
 /**
  * Get the size of an item in localStorage
  */
 export const getItemSize = (key: string): number => {
-  if (!isBrowserEnv()) return 0;
+  requireBrowser();
 
   try {
     const item = localStorage.getItem(key);
@@ -66,14 +84,7 @@ export const getItemSize = (key: string): number => {
  */
 export const getStorageUsage = () => {
   // Check if we're in a browser environment
-  if (!isBrowserEnv()) {
-    return {
-      currentUsage: 0,
-      maxUsage: 5 * 1024 * 1024,
-      percentUsed: 0,
-      isNearingLimit: false,
-    };
-  }
+  requireBrowser();
 
   try {
     let totalSize = 0;
@@ -111,15 +122,20 @@ export const getStorageUsage = () => {
  * @returns The current threshold level or null if below all thresholds
  */
 export const getCurrentThresholdLevel = (): string | null => {
-  if (!isBrowserEnv()) return null;
+  requireBrowser();
 
   const { percentUsed } = getStorageUsage();
 
+  // Check thresholds from highest to lowest
   if (percentUsed >= STORAGE_THRESHOLDS.EMERGENCY) {
     return 'EMERGENCY';
-  } else if (percentUsed >= STORAGE_THRESHOLDS.CRITICAL) {
+  }
+
+  if (percentUsed >= STORAGE_THRESHOLDS.CRITICAL) {
     return 'CRITICAL';
-  } else if (percentUsed >= STORAGE_THRESHOLDS.WARNING) {
+  }
+
+  if (percentUsed >= STORAGE_THRESHOLDS.WARNING) {
     return 'WARNING';
   }
 
@@ -130,7 +146,7 @@ export const getCurrentThresholdLevel = (): string | null => {
  * Get dismissed thresholds from localStorage
  */
 export const getDismissedThresholds = (): string[] => {
-  if (!isBrowserEnv()) return [];
+  requireBrowser();
 
   try {
     const dismissed = localStorage.getItem(DISMISSED_THRESHOLDS_KEY);
@@ -145,7 +161,7 @@ export const getDismissedThresholds = (): string[] => {
  * Save dismissed threshold to localStorage
  */
 export const dismissThreshold = (threshold: string): void => {
-  if (!isBrowserEnv()) return;
+  requireBrowser();
 
   try {
     const dismissed = getDismissedThresholds();
@@ -162,7 +178,7 @@ export const dismissThreshold = (threshold: string): void => {
  * Reset dismissed thresholds (called when user takes action to free space)
  */
 export const resetDismissedThresholds = (): void => {
-  if (!isBrowserEnv()) return;
+  requireBrowser();
 
   try {
     localStorage.removeItem(DISMISSED_THRESHOLDS_KEY);
@@ -176,8 +192,9 @@ export const resetDismissedThresholds = (): void => {
  * @deprecated Use getCurrentThresholdLevel instead
  */
 export const isStorageNearingLimit = (): boolean => {
+  requireBrowser();
   const { isNearingLimit } = getStorageUsage();
-  return isNearingLimit;
+  return isNearingLimit === true;
 };
 
 /**
@@ -192,7 +209,7 @@ export const shouldShowStorageWarning = () => {
     return { shouldShow: false, currentThreshold: null };
   }
 
-  // For EMERGENCY level, always show warning
+  // For EMERGENCY level, always show warning regardless of dismissals
   if (currentThreshold === 'EMERGENCY') {
     return { shouldShow: true, currentThreshold };
   }
@@ -226,9 +243,7 @@ export const updateStorageStats = () => {
  * Get conversations sorted by date (most recent first)
  */
 export const getSortedConversations = (): Conversation[] => {
-  if (!isBrowserEnv()) {
-    return [];
-  }
+  requireBrowser();
 
   try {
     const conversationsJson = localStorage.getItem(STORAGE_KEYS.CONVERSATIONS);
@@ -282,9 +297,7 @@ export const calculateSpaceFreed = (keepCount: number): {
   conversationsRemoved: number;
   percentFreed: number;
 } => {
-  if (!isBrowserEnv()) {
-    return { spaceFreed: 0, conversationsRemoved: 0, percentFreed: 0 };
-  }
+  requireBrowser();
 
   try {
     const sortedConversations = getSortedConversations();
@@ -305,7 +318,7 @@ export const calculateSpaceFreed = (keepCount: number): {
 
     // Calculate percentage of total storage freed
     const { currentUsage } = getStorageUsage();
-    const percentFreed = (spaceFreed / currentUsage) * 100;
+    const percentFreed = currentUsage > 0 ? (spaceFreed / currentUsage) * 100 : 0;
 
     return { spaceFreed, conversationsRemoved, percentFreed };
   } catch (error) {
@@ -318,9 +331,7 @@ export const calculateSpaceFreed = (keepCount: number): {
  * Clear older conversations while keeping the most recent ones
  */
 export const clearOlderConversations = (keepCount: number): boolean => {
-  if (!isBrowserEnv()) {
-    return false;
-  }
+  requireBrowser();
 
   try {
     if (keepCount < 1) keepCount = MIN_RETAINED_CONVERSATIONS;
@@ -349,6 +360,7 @@ export const clearOlderConversations = (keepCount: number): boolean => {
       const isSelectedKept = keptConversations.some(c => c.id === selectedConversation.id);
 
       if (!isSelectedKept && keptConversations.length > 0) {
+        // Always use the first (most recent) conversation as the new selected one
         localStorage.setItem(
           STORAGE_KEYS.SELECTED_CONVERSATION,
           JSON.stringify(keptConversations[0])
