@@ -164,10 +164,11 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
             </p>
 
             <div className="mb-3">
-              <label className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+              <label htmlFor="keepCountInput" className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
                 {t('Keep recent conversations')}:
               </label>
               <input
+                id="keepCountInput"
                 type="number"
                 min="1"
                 value={keepCount}

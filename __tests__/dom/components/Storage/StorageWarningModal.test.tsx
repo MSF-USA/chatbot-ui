@@ -373,28 +373,28 @@ describe('StorageWarningModal', () => {
     );
 
     // Try to set keepCount to 0
-    // const keepCountInput = screen.getByLabelText(/Keep recent conversations/);
-    // await act(async () => {
-    //   fireEvent.change(keepCountInput, { target: { value: '0' } });
-    // });
-    //
-    // // Should not update the value
-    // expect(keepCountInput).toHaveValue(5);
-    //
-    // // Try to set keepCount to a negative number
-    // await act(async () => {
-    //   fireEvent.change(keepCountInput, { target: { value: '-3' } });
-    // });
-    //
-    // // Should not update the value
-    // expect(keepCountInput).toHaveValue(5);
-    //
-    // // Try to set keepCount to a non-number
-    // await act(async () => {
-    //   fireEvent.change(keepCountInput, { target: { value: 'abc' } });
-    // });
-    //
-    // // Should not update the value
-    // expect(keepCountInput).toHaveValue(5);
+    const keepCountInput = screen.getByLabelText(/Keep recent conversations/);
+    await act(async () => {
+      fireEvent.change(keepCountInput, { target: { value: '0' } });
+    });
+
+    // Should not update the value
+    expect(keepCountInput).toHaveValue(5);
+
+    // Try to set keepCount to a negative number
+    await act(async () => {
+      fireEvent.change(keepCountInput, { target: { value: '-3' } });
+    });
+
+    // Should not update the value
+    expect(keepCountInput).toHaveValue(5);
+
+    // Try to set keepCount to a non-number
+    await act(async () => {
+      fireEvent.change(keepCountInput, { target: { value: 'abc' } });
+    });
+
+    // Should not update the value
+    expect(keepCountInput).toHaveValue(5);
   });
 });
