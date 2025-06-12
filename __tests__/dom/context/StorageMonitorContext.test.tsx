@@ -289,29 +289,34 @@ describe('StorageMonitorContext', () => {
     const mockSetInterval = vi.fn().mockReturnValue(123);
     const mockClearInterval = vi.fn();
 
+    // Replace global functions with mocks before rendering
     global.setInterval = mockSetInterval as any;
     global.clearInterval = mockClearInterval as any;
 
-    await act(async () => {
-      const { unmount } = render(
-        <StorageMonitorProvider>
-          <TestConsumer />
-        </StorageMonitorProvider>
-      );
+    try {
+      await act(async () => {
+        const { unmount } = render(
+          <StorageMonitorProvider>
+            <TestConsumer />
+          </StorageMonitorProvider>
+        );
 
-      // Unmount to test cleanup
-      unmount();
-    });
+        // Ensure all effects have run
+        await waitFor(() => {
+          expect(mockSetInterval).toHaveBeenCalledWith(expect.any(Function), 50);
+        });
 
-    // Should set up interval with correct parameters
-    // expect(mockSetInterval).toHaveBeenCalledWith(expect.any(Function), 5 * 60 * 1000);
+        // Unmount to test cleanup
+        unmount();
+      });
 
-    // Should clear interval on unmount
-    // expect(mockClearInterval).toHaveBeenCalledWith(123);
-
-    // Restore original functions
-    global.setInterval = originalSetInterval;
-    global.clearInterval = originalClearInterval;
+      // Should clear interval on unmount
+      expect(mockClearInterval).toHaveBeenCalledWith(123);
+    } finally {
+      // Restore original functions
+      global.setInterval = originalSetInterval;
+      global.clearInterval = originalClearInterval;
+    }
   });
 
   it('should update warning visibility when shouldShowWarning changes', async () => {
