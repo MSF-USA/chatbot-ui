@@ -6,6 +6,7 @@ import {
   FC,
   ReactNode
 } from 'react';
+import React from 'react';
 import {
   updateStorageStats,
   dismissThreshold,

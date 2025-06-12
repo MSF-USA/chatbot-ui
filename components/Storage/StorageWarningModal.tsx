@@ -1,4 +1,5 @@
 import { FC, useState, useEffect } from 'react';
+import React from 'react';
 import { useTranslation } from 'next-i18next';
 import {
   getStorageUsage,
