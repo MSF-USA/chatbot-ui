@@ -16,11 +16,8 @@ import {
   OPENAI_API_HOST,
   OPENAI_API_VERSION,
 } from '@/utils/app/const';
-import { parseAndQueryFileLangchainOpenAI } from '@/utils/app/langchain';
-import { OpenAIError } from '@/utils/server';
 import { getMessagesToSend } from '@/utils/server/chat';
 
-import { ApimChatResponseDataStructure } from '@/types/apim';
 import {
   ChatBody,
   FileMessageContent,
