@@ -1,6 +1,4 @@
-import {
-  FC,
-} from 'react';
+import { FC } from 'react';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';
@@ -46,6 +44,7 @@ export const ChatMessageText: FC<any> = ({
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
+          message={message}
         />
       ) : (
         <UserMessage

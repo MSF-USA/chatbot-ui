@@ -91,7 +91,7 @@ export const PromptComponent = ({ prompt }: Props) => {
           setRenameValue('');
         }}
       >
-        <IconBulbFilled size={18} className='text-black dark:text-white'/>
+        <IconBulbFilled size={18} className="text-black dark:text-white" />
 
         <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all pr-4 text-left text-[12.5px] leading-3">
           {prompt.name}
@@ -100,20 +100,26 @@ export const PromptComponent = ({ prompt }: Props) => {
 
       {(isDeleting || isRenaming) && (
         <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
-          <SidebarActionButton handleClick={handleDelete} tooltipText='Confirm'>
-            <IconCheck size={18} className='text-black dark:text-white'/>
+          <SidebarActionButton handleClick={handleDelete} tooltipText="Confirm">
+            <IconCheck size={18} className="text-black dark:text-white" />
           </SidebarActionButton>
 
-          <SidebarActionButton handleClick={handleCancelDelete} tooltipText='Cancel'>
-            <IconX size={18} className='text-black dark:text-white'/>
+          <SidebarActionButton
+            handleClick={handleCancelDelete}
+            tooltipText="Cancel"
+          >
+            <IconX size={18} className="text-black dark:text-white" />
           </SidebarActionButton>
         </div>
       )}
 
       {!isDeleting && !isRenaming && (
         <div className="absolute right-1 z-10 flex dark:text-gray-300 text-black">
-          <SidebarActionButton handleClick={handleOpenDeleteModal} tooltipText="Delete">
-            <IconTrash size={18} className='text-black dark:text-white'/>
+          <SidebarActionButton
+            handleClick={handleOpenDeleteModal}
+            tooltipText="Delete"
+          >
+            <IconTrash size={18} className="text-black dark:text-white" />
           </SidebarActionButton>
         </div>
       )}

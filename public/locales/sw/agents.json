@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Utafutaji wa Wavuti",
+      "code_interpreter": "Mkalimani wa Msimbo",
+      "url_pull": "Uchambuzi wa URL",
+      "local_knowledge": "Msingi wa Maarifa",
+      "standard_chat": "Gumzo la Kawaida",
+      "foundry": "Foundry",
+      "third_party": "Mtu wa Tatu"
+    },
+    "error": {
+      "title": "Kosa la Wakala",
+      "unknown": "Kosa lisilojulikana limetokea",
+      "retry": "Jaribu tena",
+      "fallback": "Tumia mbadala"
+    },
+    "metadata": {
+      "processingTime": "Muda wa uchakataji",
+      "confidence": "Uhakika",
+      "tokens": "Alama zilizotumika"
+    },
+    "resultsPanel": {
+      "placeholder": "Matokeo ya wakala yataonyeshwa hapa"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Utafutaji wa Wavuti - Hutafuta kwenye wavuti kwa taarifa za wakati halisi",
+      "code_interpreter": "Mkalimani wa Msimbo - Hutekeleza na kuchambua msimbo katika lugha nyingi",
+      "url_pull": "Uchambuzi wa URL - Huchambua na kutoa maudhui kutoka kurasa za wavuti",
+      "local_knowledge": "Msingi wa Maarifa - Hutafuta katika msingi wa maarifa ya ndani na nyaraka",
+      "standard_chat": "Gumzo la Kawaida - AI ya mazungumzo ya kawaida bila zana",
+      "foundry": "Foundry - Hutumia Azure AI Foundry kwa uwezo wa hali ya juu",
+      "third_party": "Mtu wa Tatu - Wakala wa mtu wa tatu au ujumuishaji wa zana maalum"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Matokeo ya utafutaji wa wavuti yataonyeshwa hapa",
+      "title": "Matokeo ya Utafutaji",
+      "noResults": "Hakuna matokeo yaliyopatikana",
+      "noData": "Hakuna data ya utafutaji iliyopatikana",
+      "results": "matokeo",
+      "confidence": "Uhusiano",
+      "relevance": "Uhusiano",
+      "source": "Chanzo",
+      "citations": "Nukuu",
+      "cite": "Nukuu",
+      "open": "Fungua",
+      "openLink": "Fungua kiungo katika kichupo kipya",
+      "filters": "Vichujio",
+      "sortBy": "Panga kwa",
+      "filterBy": "Chuja kwa",
+      "all": "Zote",
+      "date": "Tarehe",
+      "query": "Hoja",
+      "searchTime": "Muda wa utafutaji",
+      "cached": "Imehifadhiwa",
+      "contentTypes": {
+        "webpage": "Kurasa za wavuti",
+        "news": "Habari",
+        "academic": "Kitaaluma",
+        "image": "Picha",
+        "video": "Video"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Idadi ya matokeo",
+      "safeSearch": "Utafutaji salama",
+      "market": "Soko la utafutaji"
+    },
+    "status": {
+      "searching": "Kutafuta kwenye wavuti...",
+      "optimizing": "Kuboresha hoja ya utafutaji...",
+      "processing": "Kuchakata matokeo ya utafutaji..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Matokeo ya utekelezaji wa msimbo yataonyeshwa hapa",
+      "title": "Matokeo ya Utekelezaji",
+      "noData": "Hakuna data ya utekelezaji wa msimbo iliyopatikana",
+      "output": "Matokeo",
+      "errors": "Makosa",
+      "logs": "Kumbukumbu",
+      "executionTime": "Muda wa utekelezaji",
+      "memoryUsage": "Utumiaji wa kumbukumbu",
+      "cpuUsage": "Utumiaji wa CPU",
+      "outputLines": "Mistari ya matokeo",
+      "executedCode": "Msimbo Uliotekelezwa",
+      "download": "Pakua",
+      "noOutput": "Hakuna matokeo yaliyozalishwa",
+      "noFiles": "Hakuna faili zilizozalishwa",
+      "outputSize": "Ukubwa wa matokeo",
+      "unsupportedOutput": "Umbizo la matokeo lisilotumika",
+      "status": {
+        "success": "Mafanikio",
+        "error": "Kosa",
+        "timeout": "Muda umekwisha",
+        "memory_limit": "Kikomo cha kumbukumbu kimezidiwa",
+        "security_violation": "Ukiukaji wa usalama",
+        "invalid_code": "Msimbo batili"
+      },
+      "outputTypes": {
+        "stdout": "Matokeo ya kawaida",
+        "stderr": "Matokeo ya makosa",
+        "return_value": "Thamani ya kurudi",
+        "exception": "Ubaguzi"
+      },
+      "tabs": {
+        "output": "Matokeo",
+        "code": "Msimbo",
+        "files": "Faili"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "Matokeo ya Uchambuzi wa URL",
+      "noData": "Hakuna data ya uchambuzi wa URL iliyopatikana",
+      "summary": "Muhtasari",
+      "metadata": "Taarifa za Waraka",
+      "processingTime": "Muda wa uchakataji",
+      "preview": "Hakiki",
+      "view": "Tazama"
+    },
+    "configuration": {
+      "timeout": "Muda wa ombi umekwisha"
+    },
+    "status": {
+      "pulling": "Kuchukua maudhui ya URL...",
+      "analyzing": "Kuchambua waraka...",
+      "complete": "Uchambuzi umekamilika"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Matokeo ya Msingi wa Maarifa",
+      "noData": "Hakuna data ya msingi wa maarifa iliyopatikana",
+      "documents": "nyaraka",
+      "insights": "Ufahamu Muhimu",
+      "relevance": "Uhusiano",
+      "suggestions": "Mapendekezo"
+    },
+    "configuration": {
+      "searchMode": "Hali ya utafutaji",
+      "threshold": "Kizingiti cha uhusiano"
+    },
+    "status": {
+      "searching": "Kutafuta katika msingi wa maarifa...",
+      "analyzing": "Kuchambua matokeo..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Matokeo ya uchambuzi wa waraka yataonyeshwa hapa",
+      "title": "Matokeo ya Uchambuzi",
+      "noData": "Hakuna data ya uchambuzi wa waraka iliyopatikana",
+      "documents": "nyaraka",
+      "noDocuments": "Hakuna nyaraka zilizopatikana",
+      "summary": "Muhtasari",
+      "insights": "Ufahamu Muhimu",
+      "metadata": "Taarifa za Waraka",
+      "processingTime": "Muda wa uchakataji",
+      "searchTime": "Muda wa utafutaji",
+      "relevance": "Uhusiano",
+      "cached": "Imehifadhiwa",
+      "preview": "Hakiki",
+      "view": "Tazama",
+      "open": "Fungua",
+      "bookmark": "Alama ya kitabu",
+      "suggestions": "Mapendekezo",
+      "tabs": {
+        "documents": "Nyaraka",
+        "insights": "Ufahamu",
+        "failed": "Imeshindwa"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Inapakia...",
+      "searching": "Inatafuta...",
+      "processing": "Inachakata...",
+      "analyzing": "Inachambua..."
+    },
+    "buttons": {
+      "retry": "Jaribu tena",
+      "cancel": "Ghairi",
+      "expand": "Panua",
+      "collapse": "Kunja",
+      "configure": "Sanidi",
+      "submit": "Wasilisha"
+    },
+    "labels": {
+      "priority": "Kipaumbele",
+      "estimatedTime": "Muda uliokadiriwa",
+      "availability": "Upatikanaji",
+      "configuration": "Usanidi"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Kosa lisilojulikana limetokea",
+      "network": "Kosa la muunganisho wa mtandao",
+      "timeout": "Ombi limechelewa",
+      "unauthorized": "Ufikiaji umekataliwa",
+      "rateLimit": "Kikomo cha kiwango kimezidiwa",
+      "serviceUnavailable": "Huduma haipatikani kwa muda"
+    },
+    "webSearch": {
+      "searchFailed": "Utafutaji wa wavuti umeshindwa",
+      "invalidQuery": "Hoja ya utafutaji batili"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Utekelezaji wa msimbo umeshindwa",
+      "invalidCode": "Msimbo batili au usio salama"
+    },
+    "urlPull": {
+      "fetchFailed": "Imeshindwa kuchukua maudhui ya URL",
+      "invalidUrl": "URL batili au isiyoweza kufikiwa"
+    },
+    "localKnowledge": {
+      "searchFailed": "Utafutaji wa msingi wa maarifa umeshindwa",
+      "noAccess": "Hakuna ufikiaji wa msingi wa maarifa"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Wasilisha kiotomatiki baada ya uchakataji",
+    "advancedOptions": "Chaguo za kina",
+    "priority": {
+      "high": "Juu",
+      "medium": "Wastani",
+      "low": "Chini"
+    },
+    "safeSearch": {
+      "off": "Imezimwa",
+      "moderate": "Wastani",
+      "strict": "Mkali"
+    },
+    "market": {
+      "any": "Mkoa wowote",
+      "local": "Mkoa wa eneo"
+    }
+  }
+}

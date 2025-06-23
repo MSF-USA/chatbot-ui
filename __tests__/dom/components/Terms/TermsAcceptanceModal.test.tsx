@@ -1,9 +1,12 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { TermsAcceptanceModal } from '@/components/Terms/TermsAcceptanceModal';
+
 import * as termsAcceptance from '@/utils/app/termsAcceptance';
+
+import { TermsAcceptanceModal } from '@/components/Terms/TermsAcceptanceModal';
+
 import '@testing-library/jest-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('next/router', () => ({
   useRouter: () => ({
@@ -20,20 +23,19 @@ vi.mock('next/router', () => ({
   }),
 }));
 
-
 vi.mock('@/utils/app/termsAcceptance', () => ({
   fetchTermsData: vi.fn(),
   saveUserAcceptance: vi.fn(),
-  hasUserAcceptedAllRequiredDocuments: vi.fn()
+  hasUserAcceptedAllRequiredDocuments: vi.fn(),
 }));
 
 vi.mock('next-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key, // Return the key as the translation
     i18n: {
-      language: 'en'
-    }
-  })
+      language: 'en',
+    },
+  }),
 }));
 
 describe('TermsAcceptanceModal', () => {
@@ -45,7 +47,7 @@ describe('TermsAcceptanceModal', () => {
     jobTitle: 'Tester',
     department: 'QA',
     mail: 'test.user@example.com',
-    companyName: 'Test Company'
+    companyName: 'Test Company',
   };
   const mockOnAcceptance = vi.fn();
 
@@ -54,17 +56,19 @@ describe('TermsAcceptanceModal', () => {
     platformTerms: {
       localized: {
         en: {
-          content: '# ai.msf.org Terms of Service\n\nThis is the terms content.',
-          hash: 'abc123'
+          content:
+            '# ai.msf.org Terms of Service\n\nThis is the terms content.',
+          hash: 'abc123',
         },
         fr: {
-          content: '# Conditions d\'utilisation\n\nCeci est le contenu des conditions.',
-          hash: 'xyz789'
-        }
+          content:
+            "# Conditions d'utilisation\n\nCeci est le contenu des conditions.",
+          hash: 'xyz789',
+        },
       },
       version: '1.0.1',
-      required: true
-    }
+      required: true,
+    },
   };
 
   beforeEach(() => {
@@ -73,15 +77,23 @@ describe('TermsAcceptanceModal', () => {
   });
 
   it('should render loading state initially', () => {
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
-    expect(screen.getByText('Loading terms and conditions...')).toBeInTheDocument();
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
+    expect(
+      screen.getByText('Loading terms and conditions...'),
+    ).toBeInTheDocument();
   });
 
   it('should render terms content after loading', async () => {
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
     expect(screen.getByText('Terms and Conditions')).toBeInTheDocument();
@@ -89,35 +101,53 @@ describe('TermsAcceptanceModal', () => {
   });
 
   it('should handle API error', async () => {
-    vi.mocked(termsAcceptance.fetchTermsData).mockRejectedValueOnce(new Error('API error'));
+    vi.mocked(termsAcceptance.fetchTermsData).mockRejectedValueOnce(
+      new Error('API error'),
+    );
 
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     await waitFor(() => {
-      expect(screen.getByText('Failed to load terms and conditions. Please try again later.')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Failed to load terms and conditions. Please try again later.',
+        ),
+      ).toBeInTheDocument();
     });
 
     expect(screen.getByText('Retry')).toBeInTheDocument();
   });
 
   it('should display version information', async () => {
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
     expect(screen.getByText('Version: 1.0.1')).toBeInTheDocument();
   });
 
   it('should toggle acceptance checkbox when clicked', async () => {
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
-    const termsCheckbox = screen.getByLabelText(/I accept the Terms of Service/);
+    const termsCheckbox = screen.getByLabelText(
+      /I accept the Terms of Service/,
+    );
 
     expect(termsCheckbox).not.toBeChecked();
 
@@ -129,10 +159,14 @@ describe('TermsAcceptanceModal', () => {
   });
 
   it('should enable the accept button only when the required document is accepted', async () => {
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
     const acceptButton = screen.getByText('Accept and Continue');
@@ -154,11 +188,15 @@ describe('TermsAcceptanceModal', () => {
   });
 
   it('should call saveUserAcceptance and onAcceptance when accept button is clicked', async () => {
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     // Wait for the terms to load
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
     // Accept the document
@@ -170,11 +208,11 @@ describe('TermsAcceptanceModal', () => {
     // Check that saveUserAcceptance was called with the correct parameters
     expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledTimes(1);
     expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledWith(
-        'user123',
-        'platformTerms',
-        '1.0.1',
-        'abc123',
-        'en'
+      'user123',
+      'platformTerms',
+      '1.0.1',
+      'abc123',
+      'en',
     );
 
     // Check that onAcceptance was called
@@ -187,11 +225,15 @@ describe('TermsAcceptanceModal', () => {
       throw new Error('Save error');
     });
 
-    render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
 
     // Wait for the terms to load
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
     // Accept the document
@@ -202,7 +244,9 @@ describe('TermsAcceptanceModal', () => {
 
     // Check that the error message is displayed
     await waitFor(() => {
-      expect(screen.getByText('Failed to save your acceptance. Please try again.')).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to save your acceptance. Please try again.'),
+      ).toBeInTheDocument();
     });
 
     // Check that onAcceptance was not called
@@ -215,14 +259,21 @@ describe('TermsAcceptanceModal', () => {
       givenName: 'Test',
       surname: 'User',
       displayName: 'Test User',
-      name: 'Test User'
+      name: 'Test User',
     };
 
-    render(<TermsAcceptanceModal user={userWithoutId} onAcceptance={mockOnAcceptance} />);
+    render(
+      <TermsAcceptanceModal
+        user={userWithoutId}
+        onAcceptance={mockOnAcceptance}
+      />,
+    );
 
     // Wait for the terms to load
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
     });
 
     // Accept the document

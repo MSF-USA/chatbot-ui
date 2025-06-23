@@ -1,11 +1,11 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface SmoothStreamingOptions {
-  isStreaming: boolean;      // Whether the actual data is streaming
-  content: string;           // The full content to display
-  charsPerFrame?: number;    // How many characters to add per animation frame
-  frameDelay?: number;       // Milliseconds between frames
-  enabled?: boolean;         // Whether smooth streaming is enabled
+  isStreaming: boolean; // Whether the actual data is streaming
+  content: string; // The full content to display
+  charsPerFrame?: number; // How many characters to add per animation frame
+  frameDelay?: number; // Milliseconds between frames
+  enabled?: boolean; // Whether smooth streaming is enabled
 }
 
 /**
@@ -24,8 +24,6 @@ export const useSmoothStreaming = ({
   const contentRef = useRef<string>('');
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number>(0);
-
-
 
   useEffect(() => {
     // If not streaming, immediately show full content
@@ -50,7 +48,7 @@ export const useSmoothStreaming = ({
         // Update the timestamp reference
         lastTimestampRef.current = timestamp;
 
-        setDisplayedContent(prev => {
+        setDisplayedContent((prev) => {
           // If the animation has caught up, stop
           if (prev.length >= contentRef.current.length) {
             return contentRef.current;
@@ -59,11 +57,14 @@ export const useSmoothStreaming = ({
           // Calculate how many characters to add in this frame
           const nextCharsCount = Math.min(
             charsPerFrame,
-            contentRef.current.length - prev.length
+            contentRef.current.length - prev.length,
           );
 
           // Add the next set of characters from the content
-          return prev + contentRef.current.slice(prev.length, prev.length + nextCharsCount);
+          return (
+            prev +
+            contentRef.current.slice(prev.length, prev.length + nextCharsCount)
+          );
         });
 
         // Continue animation if not caught up

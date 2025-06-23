@@ -7,13 +7,13 @@ import {
   useState,
 } from 'react';
 
+import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
 
 import { DEFAULT_SYSTEM_PROMPT } from '@/utils/app/const';
 
 import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
-import { Session } from 'next-auth';
 
 import { PromptList } from '../Chat/PromptList';
 import { VariableModal } from '../Chat/VariableModal';
@@ -21,7 +21,7 @@ import { VariableModal } from '../Chat/VariableModal';
 interface Props {
   prompts: Prompt[];
   systemPrompt?: string;
-  user?: Session['user']
+  user?: Session['user'];
   onChangePrompt: (prompt: string) => void;
 }
 
@@ -29,7 +29,7 @@ export const SystemPrompt: FC<Props> = ({
   prompts,
   systemPrompt = '',
   user,
-  onChangePrompt
+  onChangePrompt,
 }) => {
   const { t } = useTranslation('chat');
 
