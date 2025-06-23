@@ -76,7 +76,7 @@ OPENAI_API_KEY=YOUR_KEY
 
 > Additionally, if you have multiple OpenAI Organizations, you can set `OPENAI_ORGANIZATION` to specify one.
 
-The full `.env.local` file is located in your Keeper Password Manager under Product & Innovation > AI Platform > .envlocal.
+The full `.env.local` file is located in your Keeper Password Manager under Product & Innovation > AI Platform > .env.local
 
 **4. Run App**
 
