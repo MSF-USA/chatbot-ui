@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
+    "cy:open": "cypress open",
     "test:node": "vitest --run --config ./vitest.config.node.ts",
     "test:jsdom": "vitest --run --config ./vitest.config.jsdom.ts",
     "test": "npm run test:node && npm run test:jsdom",
