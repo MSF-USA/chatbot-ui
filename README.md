@@ -69,7 +69,7 @@ npm i
 Create a .env.local file in the root of the repo with your OpenAI API Key:
 
 ```bash
-OPENAI_API_KEY=YOUR_KEY
+OPENAI_API_KEY=your_open_api_key
 ```
 
 > You can set `OPENAI_API_HOST` where access to the official OpenAI host is restricted or unavailable, allowing users to configure an alternative host for their specific needs.
