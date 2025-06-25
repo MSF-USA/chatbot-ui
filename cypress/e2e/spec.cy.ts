@@ -1,5 +1,5 @@
 describe('My First Test', () => {
-  it('Does not do much!', () => {
-    expect(true).to.equal(true)
+  it('Visiting AI Assistant', () => {
+    cy.visit('https://ai.msf.org/')
   })
 })
