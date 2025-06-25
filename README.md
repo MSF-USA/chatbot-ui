@@ -41,13 +41,13 @@ Build locally:
 
 ```shell
 docker build -t chatgpt-ui .
-docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 chatgpt-ui
+docker run -e OPENAI_API_KEY=your_open_api_key -e NEXTAUTH_SECRET=your_nextauth_secret -p 3000:3000 chatgpt-ui
 ```
 
 Pull from ghcr:
 
 ```
-docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 ghcr.io/mckaywrigley/chatbot-ui:main
+docker run -e OPENAI_API_KEY=your_open_api_key -p 3000:3000 ghcr.io/mckaywrigley/chatbot-ui:main
 ```
 
 ## Running Locally
@@ -69,12 +69,14 @@ npm i
 Create a .env.local file in the root of the repo with your OpenAI API Key:
 
 ```bash
-OPENAI_API_KEY=YOUR_KEY
+OPENAI_API_KEY=your_open_api_key
 ```
 
 > You can set `OPENAI_API_HOST` where access to the official OpenAI host is restricted or unavailable, allowing users to configure an alternative host for their specific needs.
 
 > Additionally, if you have multiple OpenAI Organizations, you can set `OPENAI_ORGANIZATION` to specify one.
+
+The full `.env.local` file is located in your Keeper Password Manager under Product & Innovation > AI Platform > .env.local
 
 **4. Run App**
 
