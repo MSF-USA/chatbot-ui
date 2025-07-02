@@ -45,13 +45,13 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: 'Grant AcrPull role to OIDC principal'
-              uses: azure/CLI@v1
-              with:
-                inlineScript: |
-                  az role assignment create \
-                    --assignee ${{ secrets.AZURE_CLIENT_ID }} \
-                    --scope $(az acr show --name ${{ vars.DEV_ACR_NAME }} --query "id" --output tsv) \
-                    --role "AcrPull"
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az role assignment create \
+              --assignee ${{ secrets.AZURE_CLIENT_ID }} \
+              --scope $(az acr show --name ${{ vars.DEV_ACR_NAME }} --query "id" --output tsv) \
+              --role "AcrPull"
 
       - name: Log in to DEV Azure Container Registry
         run: az acr login --name ${{ vars.DEV_ACR_NAME }}
