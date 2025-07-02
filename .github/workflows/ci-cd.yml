@@ -44,15 +44,6 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 'Grant AcrPull role to OIDC principal'
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az role assignment create \
-              --assignee ${{ secrets.AZURE_CLIENT_ID }} \
-              --scope $(az acr show --name ${{ vars.DEV_ACR_NAME }} --query "id" --output tsv) \
-              --role "AcrPull"
-
       - name: Log in to DEV Azure Container Registry
         run: az acr login --name ${{ vars.DEV_ACR_NAME }}
 
@@ -94,7 +85,12 @@ jobs:
           resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
           containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
           imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-          acrName: ${{ vars.DEV_ACR_NAME }}
+          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
+          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
+          # We are using registry credentials as a fallback.
+          registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
+          registryUsername: ${{ secrets.ACR_USERNAME }}
+          registryPassword: ${{ secrets.ACR_PASSWORD }}
 
       - name: Post Unified Comment to PR
         uses: actions/github-script@v7
@@ -200,6 +196,12 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
+          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
+          # We are using registry credentials as a fallback.
+          registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
+          registryUsername: ${{ secrets.ACR_USERNAME }}
+          registryPassword: ${{ secrets.ACR_PASSWORD }}
 
   # JOB 4: Manual deployment to PRODUCTION
   deploy_prod_manual:
@@ -220,3 +222,9 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
+          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
+          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
+          # We are using registry credentials as a fallback.
+          registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
+          registryUsername: ${{ secrets.ACR_USERNAME }}
+          registryPassword: ${{ secrets.ACR_PASSWORD }}
