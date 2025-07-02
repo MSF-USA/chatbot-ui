@@ -85,6 +85,7 @@ jobs:
           resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
           containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
           imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          acrName: ${{ vars.DEV_ACR_NAME }}
 
       - name: Post Unified Comment to PR
         uses: actions/github-script@v7
