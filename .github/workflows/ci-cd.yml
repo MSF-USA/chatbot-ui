@@ -87,26 +87,36 @@ jobs:
 
       - name: 🚀 Deploy PR Preview to DEV Environment
         id: deploy
-        uses: azure/container-apps-deploy-action@v1
+        uses: azure/container-apps-deploy-action@v2
         with:
-          resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
-          containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
-          imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-          targetPort: 3000
+          resource-group: ${{ vars.DEV_RESOURCE_GROUP }}
+          container-app-name: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
+          image-to-deploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          target-port: 3000
           ingress: 'external'
-          registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
-          registryUsername: ${{ secrets.ACR_USERNAME }}
-          registryPassword: ${{ secrets.ACR_PASSWORD }}
-          # For PR previews, environment variables are loaded from a GitHub secret.
-          # Stable environments (dev, staging, prod) should have their configuration
-          # managed by Terraform for consistency and to prevent drift.
-          environmentVariables: ${{ secrets.DEV_ENVIRONMENT_VARS }}
-          secureEnvironmentVariables: |
-            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
-            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
-            LAUNCHDARKLY_SDK_KEY=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
-            AZURE_BLOB_STORAGE_KEY=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
-            SEARCH_ENDPOINT_API_KEY=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
+          registry-url: ${{ vars.DEV_ACR_NAME }}.azurecr.io
+          registry-username: ${{ secrets.ACR_USERNAME }}
+          registry-password: ${{ secrets.ACR_PASSWORD }}
+
+          # This creates secure objects in Azure from your GitHub Secrets.
+          secrets: |
+            nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
+            openai-api-key=${{ secrets.OPENAI_API_KEY }}
+            launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
+            azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
+            search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
+
+          # This sets the final environment variables for your application.
+          environment-variables: |
+            # These variables reference the secure objects created above.
+            NEXTAUTH_SECRET=secretref:nextauth-secret
+            OPENAI_API_KEY=secretref:openai-api-key
+            LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
+            AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
+            SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
+
+            # These non-sensitive variables are loaded from a GitHub Variable.
+            ${{ vars.DEV_ENVIRONMENT_VARS }}
 
       - name: Get Container App URL
         id: get_url
