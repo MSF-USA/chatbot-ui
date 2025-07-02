@@ -101,7 +101,7 @@ jobs:
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
 
-      - name: Set Environment Variables and Secrets for PR Preview
+      - name: Set Environment Variables and Secrets via CLI
         uses: azure/CLI@v1
         with:
           inlineScript: |
@@ -116,7 +116,10 @@ jobs:
                 "azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}" \
                 "search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}"
 
-            # Next, update the app to use these secrets and add the other env vars
+            # Convert the multi-line variable into a single-line, space-separated string
+            FORMATTED_VARS=$(echo "${{ vars.DEV_ENVIRONMENT_VARS }}" | tr '\n' ' ')
+
+            # Next, update the app using the correctly formatted variables
             az containerapp update \
               --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
               --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
@@ -126,7 +129,7 @@ jobs:
                 "LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key" \
                 "AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key" \
                 "SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key" \
-                "${{ vars.DEV_ENVIRONMENT_VARS }}"
+                $FORMATTED_VARS
 
       - name: Get Container App URL
         id: get_url
