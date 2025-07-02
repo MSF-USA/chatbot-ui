@@ -116,10 +116,12 @@ jobs:
                 "azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}" \
                 "search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}"
 
-            # Convert the multi-line variable into a single-line, space-separated string
-            FORMATTED_VARS=$(echo "${{ vars.DEV_ENVIRONMENT_VARS }}" | tr '\n' ' ')
+            # Read the multi-line variable into a bash array.
+            # This is the most reliable way to handle spaces and special characters.
+            readarray -t env_vars <<< "${{ vars.DEV_ENVIRONMENT_VARS }}"
 
-            # Next, update the app using the correctly formatted variables
+            # Next, update the app using the array of variables.
+            # The quotes around "${env_vars[@]}" are critical.
             az containerapp update \
               --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
               --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
@@ -129,7 +131,7 @@ jobs:
                 "LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key" \
                 "AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key" \
                 "SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key" \
-                $FORMATTED_VARS
+                "${env_vars[@]}"
 
       - name: Get Container App URL
         id: get_url
