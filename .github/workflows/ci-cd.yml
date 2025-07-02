@@ -76,14 +76,14 @@ jobs:
           path: ./coverage
           retention-days: 90
 
-      # - name: Build and Push PR Image to DEV Registry
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     push: true
-      #     tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
+      - name: Build and Push PR Image to DEV Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: 🚀 Deploy PR Preview to DEV Environment
         id: deploy
@@ -97,6 +97,10 @@ jobs:
           registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
+          # For PR previews, environment variables are loaded from a GitHub secret.
+          # Stable environments (dev, staging, prod) should have their configuration
+          # managed by Terraform for consistency and to prevent drift.
+          environmentVariables: ${{ secrets.DEV_ENVIRONMENT_VARS }}
 
       - name: Get Container App URL
         id: get_url
@@ -116,12 +120,15 @@ jobs:
             const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const previewUrl = `${{ steps.get_url.outputs.containerAppUrl }}`;
 
+            // Helper function to generate a color-coded table row using diff syntax
             const statusLine = (name, pct) => {
-              let symbol = ' ';
-              if (pct >= 80) symbol = '+';
-              if (pct < 60) symbol = '-';
+              let symbol = ' '; // Neutral
+              if (pct >= 80) symbol = '+'; // Good
+              if (pct < 60) symbol = '-'; // Below Threshold
+
               const paddedName = name.padEnd(10);
-              return `${symbol} | ${paddedName}|  \`${pct}%\``;
+              const row = `| ${paddedName}| \`${pct}%\``;
+              return `${symbol} ${row}`;
             };
 
             const body = `
