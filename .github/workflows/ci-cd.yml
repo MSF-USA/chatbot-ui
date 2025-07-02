@@ -89,33 +89,26 @@ jobs:
         id: deploy
         uses: azure/container-apps-deploy-action@v2
         with:
-          resource-group: ${{ vars.DEV_RESOURCE_GROUP }}
-          container-app-name: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
-          image-to-deploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-          target-port: 3000
+          resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
+          containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
+          imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          targetPort: 3000
           ingress: 'external'
-          registry-url: ${{ vars.DEV_ACR_NAME }}.azurecr.io
-          registry-username: ${{ secrets.ACR_USERNAME }}
-          registry-password: ${{ secrets.ACR_PASSWORD }}
-
-          # This creates secure objects in Azure from your GitHub Secrets.
+          registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
+          registryUsername: ${{ secrets.ACR_USERNAME }}
+          registryPassword: ${{ secrets.ACR_PASSWORD }}
           secrets: |
             nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
             openai-api-key=${{ secrets.OPENAI_API_KEY }}
             launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
             azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
             search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
-
-          # This sets the final environment variables for your application.
-          environment-variables: |
-            # These variables reference the secure objects created above.
+          environmentVariables: |
             NEXTAUTH_SECRET=secretref:nextauth-secret
             OPENAI_API_KEY=secretref:openai-api-key
             LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
             AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
             SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
-
-            # These non-sensitive variables are loaded from a GitHub Variable.
             ${{ vars.DEV_ENVIRONMENT_VARS }}
 
       - name: Get Container App URL
@@ -234,7 +227,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: 🚀 Deploy to STAGING Environment
-        uses: azure/container-apps-deploy-action@v1
+        uses: azure/container-apps-deploy-action@v2
         with:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
@@ -244,6 +237,19 @@ jobs:
           registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
+          secrets: |
+            nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
+            openai-api-key=${{ secrets.OPENAI_API_KEY }}
+            launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
+            azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
+            search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
+          environmentVariables: |
+            NEXTAUTH_SECRET=secretref:nextauth-secret
+            OPENAI_API_KEY=secretref:openai-api-key
+            LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
+            AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
+            SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
+            ${{ vars.STAGING_ENVIRONMENT_VARS }}
 
   # JOB 4: Manual deployment to PRODUCTION
   deploy_prod_manual:
@@ -259,7 +265,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: 🚀 Deploy to PRODUCTION Environment
-        uses: azure/container-apps-deploy-action@v1
+        uses: azure/container-apps-deploy-action@v2
         with:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
@@ -269,3 +275,16 @@ jobs:
           registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
+          secrets: |
+            nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
+            openai-api-key=${{ secrets.OPENAI_API_KEY }}
+            launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
+            azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
+            search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
+          environmentVariables: |
+            NEXTAUTH_SECRET=secretref:nextauth-secret
+            OPENAI_API_KEY=secretref:openai-api-key
+            LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
+            AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
+            SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
+            ${{ vars.PROD_ENVIRONMENT_VARS }}
