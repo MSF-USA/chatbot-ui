@@ -76,14 +76,14 @@ jobs:
           path: ./coverage
           retention-days: 90
 
-      - name: Build and Push PR Image to DEV Registry
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+      # - name: Build and Push PR Image to DEV Registry
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
 
       - name: 🚀 Deploy PR Preview to DEV Environment
         id: deploy
@@ -101,6 +101,12 @@ jobs:
           # Stable environments (dev, staging, prod) should have their configuration
           # managed by Terraform for consistency and to prevent drift.
           environmentVariables: ${{ secrets.DEV_ENVIRONMENT_VARS }}
+          secureEnvironmentVariables: |
+            NEXTAUTH_SECRET=${{ secrets.NEXTAUTH_SECRET }}
+            OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}
+            LAUNCHDARKLY_SDK_KEY=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
+            AZURE_BLOB_STORAGE_KEY=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
+            SEARCH_ENDPOINT_API_KEY=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
 
       - name: Get Container App URL
         id: get_url
