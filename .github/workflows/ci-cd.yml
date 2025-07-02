@@ -85,7 +85,7 @@ jobs:
       #     cache-from: type=gha
       #     cache-to: type=gha,mode=max
 
-      - name: 🚀 Deploy PR Preview to DEV Environment
+      - name: 🚀 Deploy or Update Container App infrastructure
         id: deploy
         uses: azure/container-apps-deploy-action@v2
         with:
@@ -94,22 +94,39 @@ jobs:
           imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
           targetPort: 3000
           ingress: 'external'
+          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
+          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
+          # We are using registry credentials as a fallback for the Container App to pull the image.
           registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
-          secrets: |
-            nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
-            openai-api-key=${{ secrets.OPENAI_API_KEY }}
-            launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
-            azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
-            search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
-          environmentVariables: |
-            NEXTAUTH_SECRET=secretref:nextauth-secret
-            OPENAI_API_KEY=secretref:openai-api-key
-            LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
-            AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
-            SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
-            ${{ vars.DEV_ENVIRONMENT_VARS }}
+
+      - name: Set Environment Variables and Secrets for PR Preview
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            # First, create or update the secret objects in the Container App
+            az containerapp secret set \
+              --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
+              --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
+              --secrets \
+                "nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}" \
+                "openai-api-key=${{ secrets.OPENAI_API_KEY }}" \
+                "launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}" \
+                "azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}" \
+                "search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}"
+
+            # Next, update the app to use these secrets and add the other env vars
+            az containerapp update \
+              --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
+              --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
+              --set-env-vars \
+                "NEXTAUTH_SECRET=secretref:nextauth-secret" \
+                "OPENAI_API_KEY=secretref:openai-api-key" \
+                "LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key" \
+                "AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key" \
+                "SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key" \
+                ${{ vars.DEV_ENVIRONMENT_VARS }}
 
       - name: Get Container App URL
         id: get_url
@@ -232,24 +249,12 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
-          targetPort: 3000
-          ingress: 'external'
+          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
+          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
+          # We are using registry credentials as a fallback for the Container App to pull the image.
           registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
-          secrets: |
-            nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
-            openai-api-key=${{ secrets.OPENAI_API_KEY }}
-            launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
-            azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
-            search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
-          environmentVariables: |
-            NEXTAUTH_SECRET=secretref:nextauth-secret
-            OPENAI_API_KEY=secretref:openai-api-key
-            LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
-            AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
-            SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
-            ${{ vars.STAGING_ENVIRONMENT_VARS }}
 
   # JOB 4: Manual deployment to PRODUCTION
   deploy_prod_manual:
@@ -270,21 +275,9 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
-          targetPort: 3000
-          ingress: 'external'
+          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
+          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
+          # We are using registry credentials as a fallback for the Container App to pull the image.
           registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
-          secrets: |
-            nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}
-            openai-api-key=${{ secrets.OPENAI_API_KEY }}
-            launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}
-            azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}
-            search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}
-          environmentVariables: |
-            NEXTAUTH_SECRET=secretref:nextauth-secret
-            OPENAI_API_KEY=secretref:openai-api-key
-            LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key
-            AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key
-            SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key
-            ${{ vars.PROD_ENVIRONMENT_VARS }}
