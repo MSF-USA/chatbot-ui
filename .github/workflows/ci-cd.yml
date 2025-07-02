@@ -126,7 +126,7 @@ jobs:
                 "LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key" \
                 "AZURE_BLOB_STORAGE_KEY=secretref:azure-blob-storage-key" \
                 "SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key" \
-                ${{ vars.DEV_ENVIRONMENT_VARS }}
+                "${{ vars.DEV_ENVIRONMENT_VARS }}"
 
       - name: Get Container App URL
         id: get_url
