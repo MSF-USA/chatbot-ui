@@ -69,14 +69,21 @@ jobs:
           echo "functions=$(jq -r '.total.functions.pct' $JSON_PATH)" >> $GITHUB_OUTPUT
           echo "branches=$(jq -r '.total.branches.pct' $JSON_PATH)" >> $GITHUB_OUTPUT
 
-      - name: Build and Push PR Image to DEV Registry
-        uses: docker/build-push-action@v6
+      - name: Upload coverage report as artifact
+        uses: actions/upload-artifact@v4
         with:
-          context: .
-          push: true
-          tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          name: coverage-report
+          path: ./coverage
+          retention-days: 90
+
+      # - name: Build and Push PR Image to DEV Registry
+      #   uses: docker/build-push-action@v6
+      #   with:
+      #     context: .
+      #     push: true
+      #     tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+      #     cache-from: type=gha
+      #     cache-to: type=gha,mode=max
 
       - name: 🚀 Deploy PR Preview to DEV Environment
         id: deploy
@@ -85,6 +92,7 @@ jobs:
           resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
           containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
           imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          targetPort: 3000
           # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
           # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
           # We are using registry credentials as a fallback.
@@ -103,6 +111,13 @@ jobs:
             const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const previewUrl = `${{ steps.deploy.outputs.containerAppUrl }}`;
 
+            // Helper function to determine status text
+            const status = (pct) => {
+              if (pct >= 80) return '```diff\n+ Good\n```';
+              if (pct < 60) return '```diff\n- Below Threshold\n```';
+              return 'Acceptable';
+            };
+
             // Build the unified comment body
             const body = `
             🚀 **PR Preview Deployed!**
@@ -112,11 +127,11 @@ jobs:
 
             ### Vitest Code Coverage
 
-            | Category  | Coverage |
-            |-----------|:--------:|
-            | Lines     |  \`${lines}%\`   |
-            | Functions |  \`${functions}%\` |
-            | Branches  |  \`${branches}%\` |
+            | Category  | Coverage | Status |
+            |-----------|:--------:|:-----------|
+            | Lines     |  \`${lines}%\`   |   ${status(lines)}   |
+            | Functions |  \`${functions}%\` |   ${status(functions)}   |
+            | Branches  |  \`${branches}%\`  |   ${status(branches)}   |
 
             [View Full HTML Report (expires in 90 days)](${artifactUrl})
             `;
@@ -196,6 +211,7 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+          targetPort: 3000
           # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
           # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
           # We are using registry credentials as a fallback.
@@ -222,6 +238,7 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
+          targetPort: 3000
           # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
           # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
           # We are using registry credentials as a fallback.
