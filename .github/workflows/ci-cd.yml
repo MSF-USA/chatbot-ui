@@ -1,9 +1,9 @@
 name: CI & CD for Container Apps
 
 on:
-  # Trigger for PR Previews, Build, Test, and Cleanup
+  # Trigger for PR Previews and Build/Test
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
 
   # Trigger for Staging deployment
   push:
@@ -24,10 +24,10 @@ permissions:
   pull-requests: write
 
 jobs:
-  # JOB 1: Handles the entire PR lifecycle: Build, Test, Push, and Deploy Preview
+  # JOB 1: Handles the PR lifecycle: Build, Test, Push, and Deploy to a SHARED Preview Environment
   build_and_preview_pr:
-    # Only run when a PR is opened or updated, NOT when it's closed
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    # Only run when a PR is opened or updated
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -47,11 +47,19 @@ jobs:
       - name: Log in to DEV Azure Container Registry
         run: az acr login --name ${{ vars.DEV_ACR_NAME }}
 
-      - name: Build the test-stage image
-        run: docker build --target test -t test-runner-image .
+      - name: Build and Push PR Image to DEV Registry
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Run tests in a container to generate coverage files
-        run: docker run --name test-container test-runner-image
+        run: |
+          docker build --target test -t test-runner-image .
+          docker run --name test-container test-runner-image
 
       - name: Copy coverage report from the container
         if: always()
@@ -76,27 +84,16 @@ jobs:
           path: ./coverage
           retention-days: 90
 
-      # - name: Build and Push PR Image to DEV Registry
-      #   uses: docker/build-push-action@v6
-      #   with:
-      #     context: .
-      #     push: true
-      #     tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-      #     cache-from: type=gha
-      #     cache-to: type=gha,mode=max
-
-      - name: 🚀 Deploy or Update Container App infrastructure
+      - name: 🚀 Deploy DEV Container App
         id: deploy
         uses: azure/container-apps-deploy-action@v2
         with:
           resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
-          containerAppName: ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }}
+          # IMPORTANT: Use a static name for your single preview app from a GitHub variable
+          containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
           targetPort: 3000
           ingress: 'external'
-          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
-          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
-          # We are using registry credentials as a fallback for the Container App to pull the image.
           registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
@@ -105,9 +102,9 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            # First, create or update the secret objects in the Container App
+            # Target the static app name for secrets
             az containerapp secret set \
-              --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
+              --name ${{ vars.CONTAINER_APP_NAME }} \
               --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
               --secrets \
                 "nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}" \
@@ -116,14 +113,11 @@ jobs:
                 "azure-blob-storage-key=${{ secrets.AZURE_BLOB_STORAGE_KEY }}" \
                 "search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}"
 
-            # Read the multi-line variable into a bash array.
-            # This is the most reliable way to handle spaces and special characters.
             readarray -t env_vars <<< "${{ vars.DEV_ENVIRONMENT_VARS }}"
 
-            # Next, update the app using the array of variables.
-            # The quotes around "${env_vars[@]}" are critical.
+            # Target the static app name for environment variables
             az containerapp update \
-              --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
+              --name ${{ vars.CONTAINER_APP_NAME }} \
               --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
               --set-env-vars \
                 "NEXTAUTH_SECRET=secretref:nextauth-secret" \
@@ -138,10 +132,10 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            APP_URL=$(az containerapp show --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} --resource-group ${{ vars.DEV_RESOURCE_GROUP }} --query "properties.configuration.ingress.fqdn" -o tsv)
+            APP_URL=$(az containerapp show --name ${{ vars.CONTAINER_APP_NAME }} --resource-group ${{ vars.DEV_RESOURCE_GROUP }} --query "properties.configuration.ingress.fqdn" -o tsv)
             echo "containerAppUrl=https://${APP_URL}" >> $GITHUB_OUTPUT
 
-      - name: Post Unified Comment to PR
+      - name: Post Updated Status Comment to PR
         uses: actions/github-script@v7
         with:
           script: |
@@ -150,8 +144,8 @@ jobs:
             const branches = ${{ steps.coverage-stats.outputs.branches }};
             const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const previewUrl = `${{ steps.get_url.outputs.containerAppUrl }}`;
+            const prNumber = context.issue.number;
 
-            // Helper function to generate a color-coded table row using diff syntax
             const statusLine = (name, pct) => {
               let symbol = ' '; // Neutral
               if (pct >= 80) symbol = '+'; // Good
@@ -163,8 +157,13 @@ jobs:
             };
 
             const body = `
-            🚀 **PR Preview Deployed!**
-            [Click here to view the live preview](${previewUrl})
+            🚀 **PR Preview Ready**
+
+            The preview environment has been updated with the changes from this PR.
+
+            [**View Live Preview**](${previewUrl})
+
+            > **Warning:** This is a shared environment. It will be overwritten by the next PR that is pushed. The content at this URL currently reflects commit \`${context.sha.substring(0, 7)}\` from PR #${prNumber}.
 
             ---
 
@@ -177,7 +176,7 @@ jobs:
             ${statusLine('Branches', branches)}
             \`\`\`
 
-            [View Full HTML Report (expires in 90 days)](${artifactUrl})
+            [View detailed coverage report](${artifactUrl})
             `;
 
             const { data: comments } = await github.rest.issues.listComments({
@@ -186,7 +185,7 @@ jobs:
               issue_number: context.issue.number,
             });
             const botComment = comments.find(comment =>
-              comment.user.type === 'Bot' && comment.body.includes('PR Preview Deployed!')
+              comment.user.type === 'Bot' && comment.body.includes('PR Preview Ready')
             );
 
             if (botComment) {
@@ -195,27 +194,7 @@ jobs:
               await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: context.issue.number, body });
             }
 
-  # JOB 2: Cleans up the PR preview environment when the PR is closed
-  cleanup_pr_preview:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    environment: dev
-    steps:
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: 🧹 Delete PR Preview Environment
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            az containerapp delete \
-              --name ${{ vars.DEV_CONTAINER_APP_NAME_PREFIX }}-${{ github.event.number }} \
-              --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
-              --yes
+  # JOB 2: This job has been removed as the preview environment is now permanent and should not be cleaned up.
 
   # JOB 3: Build for PROD and Deploy to STAGING after a merge to main
   build_and_deploy_staging:
@@ -254,9 +233,6 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
-          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
-          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
-          # We are using registry credentials as a fallback for the Container App to pull the image.
           registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
@@ -280,9 +256,6 @@ jobs:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
-          # The 'acrName' parameter is the best practice for auth, as it configures a secure managed identity.
-          # However, it requires the OIDC principal to have User Access Administrator permissions to assign roles.
-          # We are using registry credentials as a fallback for the Container App to pull the image.
           registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
