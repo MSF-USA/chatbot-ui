@@ -97,6 +97,7 @@ jobs:
           registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
           registryUsername: ${{ secrets.ACR_USERNAME }}
           registryPassword: ${{ secrets.ACR_PASSWORD }}
+          revisionMode: 'single'
 
       - name: Set Environment Variables and Secrets via CLI
         uses: azure/CLI@v1
