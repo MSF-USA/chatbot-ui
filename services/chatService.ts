@@ -224,7 +224,7 @@ export default class ChatService {
           });
         }
       } catch (error) {
-        await this.loggingService.logFileError(
+       void this.loggingService.logFileError(
           startTime,
           error,
           modelId,
@@ -357,7 +357,7 @@ export default class ChatService {
         const completion = response.output_text;
 
         // Log regular chat completion
-        await this.loggingService.logChatCompletion(
+        void this.loggingService.logChatCompletion(
             startTime,
             modelId,
             messages.length,
@@ -395,7 +395,7 @@ export default class ChatService {
           );
 
           // Log regular chat completion
-          await this.loggingService.logChatCompletion(
+          void this.loggingService.logChatCompletion(
               startTime,
               modelId,
               messages.length,
@@ -410,7 +410,7 @@ export default class ChatService {
         const completion = response as OpenAI.Chat.Completions.ChatCompletion;
 
         // Log regular chat completion
-        await this.loggingService.logChatCompletion(
+        void this.loggingService.logChatCompletion(
             startTime,
             modelId,
             messages.length,
@@ -426,7 +426,7 @@ export default class ChatService {
       }
       }
     } catch (error) {
-      await this.loggingService.logError(
+      void this.loggingService.logError(
         startTime,
         error,
         modelId,
