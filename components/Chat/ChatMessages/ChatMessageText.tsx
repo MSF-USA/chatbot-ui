@@ -1,6 +1,4 @@
-import {
-  FC,
-} from 'react';
+import { FC } from 'react';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';

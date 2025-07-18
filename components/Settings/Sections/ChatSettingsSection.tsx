@@ -1,11 +1,15 @@
-import { FC } from 'react';
-import { useTranslation } from 'next-i18next';
-import { Session } from 'next-auth';
-import { Settings } from '@/types/settings';
-import { TemperatureSlider } from '../Temperature';
-import { SystemPrompt } from '../SystemPrompt';
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 import { IconSettings } from '@tabler/icons-react';
+import { FC } from 'react';
+
+import { Session } from 'next-auth';
+import { useTranslation } from 'next-i18next';
+
+import { Settings } from '@/types/settings';
+
+import { SystemPrompt } from '../SystemPrompt';
+import { TemperatureSlider } from '../Temperature';
+
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 
 interface ChatSettingsSectionProps {
   state: Settings;
@@ -55,7 +59,9 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
               }
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              {t('Higher values produce more creative and varied responses, lower values are more focused and deterministic.')}
+              {t(
+                'Higher values produce more creative and varied responses, lower values are more focused and deterministic.',
+              )}
             </p>
           </div>
         </div>
@@ -87,16 +93,20 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                     updateSettings({ smoothStreamingEnabled: e.target.checked })
                   }
                 />
-                <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                  settings.smoothStreamingEnabled
-                    ? 'bg-blue-500 dark:bg-blue-600'
-                    : 'bg-gray-300 dark:bg-gray-600'
-                }`}>
-                  <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                <span
+                  className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
                     settings.smoothStreamingEnabled
-                      ? 'translate-x-5'
-                      : 'translate-x-0.5'
-                  } top-0.5 left-0`}></span>
+                      ? 'bg-blue-500 dark:bg-blue-600'
+                      : 'bg-gray-300 dark:bg-gray-600'
+                  }`}
+                >
+                  <span
+                    className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                      settings.smoothStreamingEnabled
+                        ? 'translate-x-5'
+                        : 'translate-x-0.5'
+                    } top-0.5 left-0`}
+                  ></span>
                 </span>
               </div>
             </div>

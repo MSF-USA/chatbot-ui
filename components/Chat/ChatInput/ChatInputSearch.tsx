@@ -515,9 +515,7 @@ const ChatInputSearch = ({
                 id="optimize-input"
                 type="checkbox"
                 checked={shouldOptimizeInput}
-                onChange={(e) =>
-                  setShouldOptimizeInput(e.target.checked)
-                }
+                onChange={(e) => setShouldOptimizeInput(e.target.checked)}
                 disabled={isSubmitting}
                 title={
                   t('optimizeQueryTooltip') ||
@@ -562,9 +560,7 @@ const ChatInputSearch = ({
                 title={t('selectMarketTooltip') || 'Select the market'}
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
-                <option value="">
-                  {t('marketOptionAny') || 'Any'}
-                </option>
+                <option value="">{t('marketOptionAny') || 'Any'}</option>
                 <option value="ar">
                   {t('marketOptionAr') || 'Arabic (General)'}
                 </option>
@@ -604,8 +600,7 @@ const ChatInputSearch = ({
                 onChange={(e) => setSafeSearch(e.target.value)}
                 disabled={isSubmitting}
                 title={
-                  t('selectSafeSearchTooltip') ||
-                  'Select the safe search level'
+                  t('selectSafeSearchTooltip') || 'Select the safe search level'
                 }
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
@@ -613,9 +608,7 @@ const ChatInputSearch = ({
                 <option value="Moderate">
                   {t('safeSearchOptionModerate')}
                 </option>
-                <option value="Strict">
-                  {t('safeSearchOptionStrict')}
-                </option>
+                <option value="Strict">{t('safeSearchOptionStrict')}</option>
               </select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -645,8 +638,7 @@ const ChatInputSearch = ({
                 }}
                 disabled={isSubmitting}
                 title={
-                  t('numResultsTooltip') ||
-                  'Enter the number of results (1-15)'
+                  t('numResultsTooltip') || 'Enter the number of results (1-15)'
                 }
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
               />
@@ -654,10 +646,7 @@ const ChatInputSearch = ({
           </div>
         )}
         {searchError && (
-          <p
-            className="text-red-500 text-sm mt-2 text-center"
-            role="alert"
-          >
+          <p className="text-red-500 text-sm mt-2 text-center" role="alert">
             {searchError}
           </p>
         )}

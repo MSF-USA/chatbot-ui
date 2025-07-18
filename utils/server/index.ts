@@ -3,12 +3,15 @@ import { OpenAIModel } from '@/types/openai';
 
 import {
   AZURE_DEPLOYMENT_ID,
-  BackendConfiguration, DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE,
-  findWorkingConfiguration, getAuthHeaders,
+  BackendConfiguration,
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_TEMPERATURE,
   OPENAI_API_HOST,
   OPENAI_API_TYPE,
   OPENAI_API_VERSION,
-  OPENAI_ORGANIZATION
+  OPENAI_ORGANIZATION,
+  findWorkingConfiguration,
+  getAuthHeaders,
 } from '../app/const';
 
 import {
@@ -43,19 +46,17 @@ const getConfig = async (key: string): Promise<BackendConfiguration> => {
       AZURE_DEPLOYMENT_ID: AZURE_DEPLOYMENT_ID,
       DEFAULT_TEMPERATURE: DEFAULT_TEMPERATURE,
       DEFAULT_SYSTEM_PROMPT: DEFAULT_SYSTEM_PROMPT,
-    }
+    };
   }
 };
 
 export const OpenAIStream = async (
   model: OpenAIModel,
   systemPrompt: string,
-  temperature : number,
+  temperature: number,
   key: string,
   messages: Message[],
 ) => {
-
-
   const configData: BackendConfiguration = await getConfig(key);
 
   let url = `${configData.OPENAI_API_HOST}/v1/chat/completions`;
@@ -66,7 +67,7 @@ export const OpenAIStream = async (
     headers: getAuthHeaders(configData, key),
     method: 'POST',
     body: JSON.stringify({
-      ...(configData.OPENAI_API_TYPE === 'openai' && {model: model.id}),
+      ...(configData.OPENAI_API_TYPE === 'openai' && { model: model.id }),
       messages: [
         {
           role: 'system',

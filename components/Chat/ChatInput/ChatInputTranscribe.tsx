@@ -1,15 +1,25 @@
-import React, {FC, useState, Dispatch, SetStateAction, useRef, useEffect} from 'react';
 import {
-  IconFileMusic,
   IconCopy,
   IconDownload,
+  IconFileMusic,
   IconMessagePlus,
   IconTrash,
 } from '@tabler/icons-react';
-import { ChatInputSubmitTypes } from '@/types/chat';
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import toast from 'react-hot-toast';
+
 import { useTranslation } from 'next-i18next';
-import toast from "react-hot-toast";
-import Modal from "@/components/UI/Modal";
+
+import { ChatInputSubmitTypes } from '@/types/chat';
+
+import Modal from '@/components/UI/Modal';
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
@@ -74,9 +84,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   const [error, setError] = useState<string | null>(null);
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
-  const [transcriptModalOpen, setTranscriptModalOpen] = useState<boolean>(
-    false,
-  );
+  const [transcriptModalOpen, setTranscriptModalOpen] =
+    useState<boolean>(false);
   const [transcript, setTranscript] = useState<string>('');
   const openModalButtonRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -150,7 +159,12 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     };
 
     try {
-      const data = await retryOperation(operation, maxRetries, waitTime, onRetry);
+      const data = await retryOperation(
+        operation,
+        maxRetries,
+        waitTime,
+        onRetry,
+      );
       return data;
     } catch (error) {
       console.error('Failed to fetch data after retries:', error);
@@ -373,7 +387,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   return (
     <div className="inline-block">
       <button
-        style={{display: 'none'}}
+        style={{ display: 'none' }}
         ref={openModalButtonRef}
         onClick={openModal}
         title={t('uploadAudioVideoFile')}
@@ -385,7 +399,11 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={<h2 className="text-xl font-bold text-black dark:text-white">{t('title')}</h2>}
+        title={
+          <h2 className="text-xl font-bold text-black dark:text-white">
+            {t('title')}
+          </h2>
+        }
         footer={transcribeModalFooter}
         icon={<IconFileMusic size={24} />}
       >
@@ -424,7 +442,9 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       <Modal
         isOpen={transcriptModalOpen}
         onClose={closeTranscriptModal}
-        title={<h2 className="text-xl font-bold">{t('transcriptionResult')}</h2>}
+        title={
+          <h2 className="text-xl font-bold">{t('transcriptionResult')}</h2>
+        }
         footer={transcriptModalFooter}
       >
         {transcriptModalContent}

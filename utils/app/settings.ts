@@ -4,7 +4,8 @@ const STORAGE_KEY = 'settings';
 
 const getDefaultSettings = (): Settings => {
   const userDefaultThemeIsDark =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   return {
     theme: userDefaultThemeIsDark ? 'dark' : 'light',
@@ -19,7 +20,10 @@ const getDefaultSettings = (): Settings => {
 export const getSettings = (): Settings => {
   const defaultSettings = getDefaultSettings();
 
-  const settingsJson = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+  const settingsJson =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem(STORAGE_KEY)
+      : null;
   if (!settingsJson) {
     return defaultSettings;
   }

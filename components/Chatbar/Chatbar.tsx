@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
+
 import { useTranslation } from 'next-i18next';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
@@ -9,10 +10,6 @@ import { saveConversation, saveConversations } from '@/utils/app/conversation';
 import { saveFolders } from '@/utils/app/folders';
 import { exportData, importData } from '@/utils/app/importExport';
 import { savePrompts } from '@/utils/app/prompts';
-import {
-  CloseSidebarButton,
-  OpenSidebarButton,
-} from '../Sidebar/components/OpenCloseButton';
 
 import { Conversation } from '@/types/chat';
 import { LatestExportFormat, SupportedExportFormats } from '@/types/export';
@@ -22,14 +19,16 @@ import { Prompt } from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
 
+import {
+  CloseSidebarButton,
+  OpenSidebarButton,
+} from '../Sidebar/components/OpenCloseButton';
 import { ChatFolders } from './components/ChatFolders';
 import { ChatbarSettings } from './components/ChatbarSettings';
 import { Conversations } from './components/Conversations';
-
 import { PromptFolders } from './components/PromptFolders';
 import { PromptbarSettings } from './components/PromptbarSettings';
 import { Prompts } from './components/Prompts';
-
 
 import Sidebar from '../Sidebar';
 import ChatbarContext from './Chatbar.context';
@@ -45,14 +44,15 @@ export const Chatbar = () => {
   });
 
   const {
-    state: { conversations,
+    state: {
+      conversations,
       showChatbar,
       defaultModelId,
       folders,
       prompts,
       showPromptbar,
       temperature,
-      systemPrompt
+      systemPrompt,
     },
     dispatch: homeDispatch,
     handleCreateFolder,
@@ -106,7 +106,12 @@ export const Chatbar = () => {
   }
 
   const {
-    state: { searchTerm, filteredConversations, promptSearchTerm, filteredPrompts },
+    state: {
+      searchTerm,
+      filteredConversations,
+      promptSearchTerm,
+      filteredPrompts,
+    },
     dispatch: chatDispatch,
   } = chatBarContextValue;
 
@@ -324,7 +329,6 @@ export const Chatbar = () => {
     }
   }, [chatDispatch, searchTerm, conversations]);
 
-
   useEffect(() => {
     if (promptSearchTerm) {
       chatDispatch({
@@ -360,8 +364,10 @@ export const Chatbar = () => {
         handleUpdatePrompt,
       }}
     >
-
-    <div className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto" {...swipeHandlers}>
+      <div
+        className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto"
+        {...swipeHandlers}
+      >
         <div className="flex flex-col h-full w-64 bg-gray-200 dark:bg-[#171717] z-30 md:relative md:w-auto">
           <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5 text-black dark:text-white">
             <button
@@ -389,7 +395,9 @@ export const Chatbar = () => {
             {activeTab === Tab.CONVERSATIONS && (
               <Sidebar<Conversation>
                 addItemButtonTitle={t('New chat')}
-                itemComponent={<Conversations conversations={filteredConversations} />}
+                itemComponent={
+                  <Conversations conversations={filteredConversations} />
+                }
                 folderComponent={<ChatFolders searchTerm={searchTerm} />}
                 items={filteredConversations}
                 searchTerm={searchTerm}
@@ -397,7 +405,9 @@ export const Chatbar = () => {
                   chatDispatch({ field: 'searchTerm', value: searchTerm })
                 }
                 handleCreateItem={handleNewConversation}
-                handleCreateFolder={() => handleCreateFolder(t('New folder'), 'chat')}
+                handleCreateFolder={() =>
+                  handleCreateFolder(t('New folder'), 'chat')
+                }
                 handleDrop={handleDrop}
               />
             )}
@@ -406,7 +416,9 @@ export const Chatbar = () => {
                 addItemButtonTitle={t('New prompt')}
                 itemComponent={
                   <Prompts
-                    prompts={filteredPrompts.filter((prompt) => !prompt.folderId)}
+                    prompts={filteredPrompts.filter(
+                      (prompt) => !prompt.folderId,
+                    )}
                   />
                 }
                 folderComponent={<PromptFolders />}
@@ -416,7 +428,9 @@ export const Chatbar = () => {
                   chatDispatch({ field: 'promptSearchTerm', value: searchTerm })
                 }
                 handleCreateItem={handleCreatePrompt}
-                handleCreateFolder={() => handleCreateFolder(t('New folder'), 'prompt')}
+                handleCreateFolder={() =>
+                  handleCreateFolder(t('New folder'), 'prompt')
+                }
                 handleDrop={handleDropPrompt}
               />
             )}
@@ -432,9 +446,9 @@ export const Chatbar = () => {
       </div>
       <CloseSidebarButton onClick={handleToggleChatbar} side={'left'} />
     </ChatbarContext.Provider>
-) : (
+  ) : (
     <div className="md:w-auto" {...swipeHandlers}>
       <OpenSidebarButton onClick={handleToggleChatbar} side={'left'} />
     </div>
-  )
+  );
 };

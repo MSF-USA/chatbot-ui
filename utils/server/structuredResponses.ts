@@ -1,6 +1,7 @@
-import {AzureOpenAI, OpenAI} from "openai";
-import { Session } from "next-auth";
-import {ChatCompletionMessageParam} from "openai/resources/chat/completions/completions";
+import { Session } from 'next-auth';
+
+import { AzureOpenAI, OpenAI } from 'openai';
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions/completions';
 
 type OptimizedQueryResponse = {
   optimizedQuery: string;
@@ -22,18 +23,18 @@ export async function getStructuredResponse<T>(
   openai: AzureOpenAI,
   messages: ChatCompletionMessageParam[],
   modelId: string,
-  user: Session["user"],
+  user: Session['user'],
   jsonSchema: Record<string, unknown> | undefined,
   temperature: number = 0.7,
-  maxTokens: number = 500
+  maxTokens: number = 500,
 ): Promise<T> {
   const response = await openai.chat.completions.create({
     model: modelId,
     messages: messages,
     response_format: {
-      type: "json_schema",
+      type: 'json_schema',
       json_schema: {
-        name: "StructuredResponse",
+        name: 'StructuredResponse',
         strict: true,
         schema: jsonSchema,
       },
@@ -43,14 +44,14 @@ export async function getStructuredResponse<T>(
     user: JSON.stringify(user),
   });
 
-  const content = response?.choices?.[0]?.message?.content?.trim() ?? "";
+  const content = response?.choices?.[0]?.message?.content?.trim() ?? '';
 
   try {
     const output = JSON.parse(content) as T;
     return output;
   } catch (error) {
-    console.error("Failed to parse OpenAI response as JSON:", content);
-    throw new Error("Failed to parse output");
+    console.error('Failed to parse OpenAI response as JSON:', content);
+    throw new Error('Failed to parse output');
   }
 }
 
@@ -65,8 +66,8 @@ export async function getStructuredResponse<T>(
 export async function generateOptimizedQueryAndQuestion(
   openai: AzureOpenAI,
   question: string,
-  user: Session["user"],
-  modelId: string
+  user: Session['user'],
+  modelId: string,
 ): Promise<OptimizedQueryResponse> {
   const prompt = `Given the user's raw question, generate an optimized search query to find relevant data from a search engine and an optimized question, which will be passed to an AI along with the found web pages to give the user useful information. Do not ignore or discard parts of the user query. Assume that every aspect is important and provides context.
 
@@ -89,27 +90,27 @@ Output format:
 
   const messages: ChatCompletionMessageParam[] = [
     {
-      role: "system",
+      role: 'system',
       content:
-        "You are an AI assistant that transforms user questions into optimized search queries and optimized questions for further processing.",
+        'You are an AI assistant that transforms user questions into optimized search queries and optimized questions for further processing.',
     },
     {
-      role: "user",
+      role: 'user',
       content: prompt,
     },
   ];
 
   const jsonSchema: Record<string, unknown> | undefined = {
-    type: "object",
+    type: 'object',
     properties: {
       optimizedQuery: {
-        type: "string",
+        type: 'string',
       },
       optimizedQuestion: {
-        type: "string",
+        type: 'string',
       },
     },
-    required: ["optimizedQuery", "optimizedQuestion"],
+    required: ['optimizedQuery', 'optimizedQuestion'],
     additionalProperties: false,
   };
 
@@ -120,7 +121,7 @@ Output format:
     user,
     jsonSchema,
     0.7, // temperature
-    500 // maxTokens
+    500, // maxTokens
   );
 
   return response;

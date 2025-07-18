@@ -1,5 +1,5 @@
 import { Conversation } from '@/types/chat';
-import {OpenAIModel, OpenAIModelID, OpenAIModels} from '@/types/openai';
+import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from './const';
 
@@ -66,7 +66,10 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
 
   return history.reduce((acc: any[], conversation) => {
     try {
-      if (!conversation.model || (conversation.model as OpenAIModel)?.isLegacy) {
+      if (
+        !conversation.model ||
+        (conversation.model as OpenAIModel)?.isLegacy
+      ) {
         // TODO: Replace with environmentally set default model so fixing doesn't require code change
         conversation.model = OpenAIModels[OpenAIModelID.GPT_4o];
       }
@@ -114,4 +117,4 @@ export const cleanMarkdown = (text: string): string => {
   text = text.replace(/^>\s*/gm, '');
 
   return text.trim();
-}
+};

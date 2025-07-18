@@ -1,11 +1,14 @@
-import { FC, useState, useEffect } from 'react';
+import { IconFileExport, IconInfoCircle } from '@tabler/icons-react';
+import { FC, useEffect, useState } from 'react';
+
 import { useTranslation } from 'next-i18next';
-import {IconFileExport, IconInfoCircle} from '@tabler/icons-react';
+
+import { getStorageUsage } from '@/utils/app/storageMonitor';
+import { formatBytes } from '@/utils/app/storageUtils';
+
+import { SidebarButton } from '../../Sidebar/SidebarButton';
 import { ClearConversations } from '../ClearConversations';
 import { Import } from '../Import';
-import { SidebarButton } from '../../Sidebar/SidebarButton';
-import { getStorageUsage } from '@/utils/app/storageMonitor';
-import {formatBytes} from "@/utils/app/storageUtils";
 
 interface StorageData {
   currentUsage: number;
@@ -33,7 +36,9 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
   checkStorage,
 }) => {
   const { t } = useTranslation('settings');
-  const [storageData, setStorageData] = useState<StorageData>(() => getStorageUsage());
+  const [storageData, setStorageData] = useState<StorageData>(() =>
+    getStorageUsage(),
+  );
 
   // Update storage data when component mounts
   useEffect(() => {
@@ -55,30 +60,43 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
           </h3>
           <div className="mb-5 text-sm text-black dark:text-neutral-300">
             <div className="mb-2">
-              <span className="font-medium">{t('Storage Usage')}:</span> {formatBytes(storageData.currentUsage)} / {formatBytes(storageData.maxUsage)} ({storageData.percentUsed.toFixed(1)}%)
+              <span className="font-medium">{t('Storage Usage')}:</span>{' '}
+              {formatBytes(storageData.currentUsage)} /{' '}
+              {formatBytes(storageData.maxUsage)} (
+              {storageData.percentUsed.toFixed(1)}%)
             </div>
 
             <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2.5 mb-2">
               <div
-                className={`h-2.5 rounded-full ${storageData.percentUsed > 85 ? 'bg-red-600' : storageData.percentUsed > 70 ? 'bg-yellow-500' : 'bg-green-500'}`}
+                className={`h-2.5 rounded-full ${
+                  storageData.percentUsed > 85
+                    ? 'bg-red-600'
+                    : storageData.percentUsed > 70
+                    ? 'bg-yellow-500'
+                    : 'bg-green-500'
+                }`}
                 style={{ width: `${Math.min(storageData.percentUsed, 100)}%` }}
               ></div>
             </div>
 
-
             <div className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
               {storageData.percentUsed > 85 ? (
-                  <span className="text-red-600 dark:text-red-400">Storage almost full! Consider clearing old conversations.</span>
+                <span className="text-red-600 dark:text-red-400">
+                  Storage almost full! Consider clearing old conversations.
+                </span>
               ) : storageData.percentUsed > 70 ? (
-                  <span className="text-yellow-600 dark:text-yellow-400">Storage usage is getting high.</span>
+                <span className="text-yellow-600 dark:text-yellow-400">
+                  Storage usage is getting high.
+                </span>
               ) : (
-                  <span>{t('Storage usage is normal')}</span>
+                <span>{t('Storage usage is normal')}</span>
               )}
               <p className="flex items-center">
-                <IconInfoCircle size={14} className="inline-block mr-1 text-blue-500" />
-                <span className="italic">
-                  {t("Local storage info")}
-                </span>
+                <IconInfoCircle
+                  size={14}
+                  className="inline-block mr-1 text-blue-500"
+                />
+                <span className="italic">{t('Local storage info')}</span>
               </p>
             </div>
           </div>
@@ -102,14 +120,16 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
                 }}
               />
             ) : null}
-            <Import onImport={(data) => {
-              handleImportConversations(data);
-              // Update storage data after importing conversations
-              setTimeout(() => {
-                setStorageData(getStorageUsage());
-                checkStorage();
-              }, 100);
-            }} />
+            <Import
+              onImport={(data) => {
+                handleImportConversations(data);
+                // Update storage data after importing conversations
+                setTimeout(() => {
+                  setStorageData(getStorageUsage());
+                  checkStorage();
+                }, 100);
+              }}
+            />
             <SidebarButton
               text={t('Export data')}
               icon={<IconFileExport size={18} />}
@@ -117,7 +137,6 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
             />
           </div>
         </div>
-
       </div>
     </div>
   );

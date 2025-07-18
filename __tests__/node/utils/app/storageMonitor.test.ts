@@ -1,23 +1,25 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as storageMonitor from '@/utils/app/storageMonitor';
 import {
-  getStringSizeInBytes,
-  getItemSize,
-  getStorageUsage,
-  getCurrentThresholdLevel,
-  getDismissedThresholds,
-  dismissThreshold,
-  resetDismissedThresholds,
-  isStorageNearingLimit,
-  shouldShowStorageWarning,
-  updateStorageStats,
-  getSortedConversations,
+  MIN_RETAINED_CONVERSATIONS,
+  STORAGE_THRESHOLDS,
   calculateSpaceFreed,
   clearOlderConversations,
-  STORAGE_THRESHOLDS,
-  MIN_RETAINED_CONVERSATIONS
+  dismissThreshold,
+  getCurrentThresholdLevel,
+  getDismissedThresholds,
+  getItemSize,
+  getSortedConversations,
+  getStorageUsage,
+  getStringSizeInBytes,
+  isStorageNearingLimit,
+  resetDismissedThresholds,
+  shouldShowStorageWarning,
+  updateStorageStats,
 } from '@/utils/app/storageMonitor';
+
 import { Conversation } from '@/types/chat';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Define Message interface for tests
 interface Message {
@@ -42,7 +44,7 @@ const mockLocalStorage = (() => {
     key: vi.fn((index: number) => Object.keys(store)[index] || null),
     get length() {
       return Object.keys(store).length;
-    }
+    },
   };
 })();
 
@@ -58,7 +60,7 @@ if (typeof global.window.localStorage === 'undefined') {
 
 // Define global localStorage if not exists
 if (typeof global.localStorage === 'undefined') {
-  global["localStorage"] = mockLocalStorage;
+  global['localStorage'] = mockLocalStorage;
 }
 
 // Mock Blob
@@ -74,11 +76,11 @@ class MockBlob {
     // Calculate size based on content
     if (Array.isArray(content)) {
       // If content is an array of strings, join them and get the length
-      if (content.every(item => typeof item === 'string')) {
+      if (content.every((item) => typeof item === 'string')) {
         this.size = content.join('').length;
       } else {
         // If content contains non-strings, convert to string and get length
-        this.size = content.map(item => String(item)).join('').length;
+        this.size = content.map((item) => String(item)).join('').length;
       }
     } else {
       // Fallback for any other case
@@ -107,18 +109,18 @@ describe('Storage Monitor Utilities', () => {
     // Mock window and localStorage
     Object.defineProperty(global, 'window', {
       value: { localStorage: mockLocalStorage },
-      writable: true
+      writable: true,
     });
 
     Object.defineProperty(global, 'localStorage', {
       value: mockLocalStorage,
-      writable: true
+      writable: true,
     });
 
     // Mock Blob
     Object.defineProperty(global, 'Blob', {
       value: MockBlob,
-      writable: true
+      writable: true,
     });
 
     // Clear localStorage mock
@@ -129,12 +131,12 @@ describe('Storage Monitor Utilities', () => {
     // Restore original objects or set to undefined if they didn't exist
     Object.defineProperty(global, 'window', {
       value: originalWindow,
-      writable: true
+      writable: true,
     });
 
     Object.defineProperty(global, 'Blob', {
       value: originalBlob,
-      writable: true
+      writable: true,
     });
 
     // Remove localStorage if it was added during tests
@@ -200,7 +202,9 @@ describe('Storage Monitor Utilities', () => {
       const result = getStorageUsage();
 
       expect(result.isNearingLimit).toBe(true);
-      expect(result.percentUsed).toBeGreaterThanOrEqual(STORAGE_THRESHOLDS.WARNING);
+      expect(result.percentUsed).toBeGreaterThanOrEqual(
+        STORAGE_THRESHOLDS.WARNING,
+      );
     });
 
     it('should handle errors gracefully', () => {
@@ -220,7 +224,7 @@ describe('Storage Monitor Utilities', () => {
     // Save original implementation to restore after tests
     const originalIsBrowserEnv = Object.getOwnPropertyDescriptor(
       storageMonitor,
-      'isBrowserEnv'
+      'isBrowserEnv',
     );
 
     beforeEach(() => {
@@ -229,14 +233,18 @@ describe('Storage Monitor Utilities', () => {
       // Mock isBrowserEnv to always return true in tests
       Object.defineProperty(storageMonitor, 'isBrowserEnv', {
         value: () => true,
-        configurable: true
+        configurable: true,
       });
     });
 
     afterEach(() => {
       // Restore original implementation
       if (originalIsBrowserEnv) {
-        Object.defineProperty(storageMonitor, 'isBrowserEnv', originalIsBrowserEnv);
+        Object.defineProperty(
+          storageMonitor,
+          'isBrowserEnv',
+          originalIsBrowserEnv,
+        );
       }
     });
 
@@ -246,7 +254,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 1000,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 0.1,
-        isNearingLimit: false
+        isNearingLimit: false,
       });
 
       expect(getCurrentThresholdLevel()).toBeNull();
@@ -258,7 +266,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 3.5 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: STORAGE_THRESHOLDS.WARNING + 1, // Just over warning threshold
-        isNearingLimit: true
+        isNearingLimit: true,
       });
 
       // expect(getCurrentThresholdLevel()).toBe('WARNING');
@@ -270,7 +278,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 4.3 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: STORAGE_THRESHOLDS.CRITICAL + 1, // Just over critical threshold
-        isNearingLimit: true
+        isNearingLimit: true,
       });
 
       // expect(getCurrentThresholdLevel()).toBe('CRITICAL');
@@ -282,7 +290,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 4.8 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: STORAGE_THRESHOLDS.EMERGENCY + 1, // Just over emergency threshold
-        isNearingLimit: true
+        isNearingLimit: true,
       });
 
       // expect(getCurrentThresholdLevel()).toBe('EMERGENCY');
@@ -295,7 +303,10 @@ describe('Storage Monitor Utilities', () => {
     });
 
     it('should return the dismissed thresholds', () => {
-      mockLocalStorage.setItem('dismissedStorageThresholds', JSON.stringify(['WARNING']));
+      mockLocalStorage.setItem(
+        'dismissedStorageThresholds',
+        JSON.stringify(['WARNING']),
+      );
 
       expect(getDismissedThresholds()).toEqual(['WARNING']);
     });
@@ -315,18 +326,21 @@ describe('Storage Monitor Utilities', () => {
 
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         'dismissedStorageThresholds',
-        JSON.stringify(['WARNING'])
+        JSON.stringify(['WARNING']),
       );
     });
 
     it('should not add duplicate thresholds', () => {
-      mockLocalStorage.setItem('dismissedStorageThresholds', JSON.stringify(['WARNING']));
+      mockLocalStorage.setItem(
+        'dismissedStorageThresholds',
+        JSON.stringify(['WARNING']),
+      );
 
       dismissThreshold('WARNING');
 
       expect(mockLocalStorage.setItem).toHaveBeenCalledWith(
         'dismissedStorageThresholds',
-        JSON.stringify(['WARNING'])
+        JSON.stringify(['WARNING']),
       );
     });
 
@@ -343,11 +357,16 @@ describe('Storage Monitor Utilities', () => {
 
   describe('resetDismissedThresholds', () => {
     it('should remove all dismissed thresholds', () => {
-      mockLocalStorage.setItem('dismissedStorageThresholds', JSON.stringify(['WARNING', 'CRITICAL']));
+      mockLocalStorage.setItem(
+        'dismissedStorageThresholds',
+        JSON.stringify(['WARNING', 'CRITICAL']),
+      );
 
       resetDismissedThresholds();
 
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('dismissedStorageThresholds');
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(
+        'dismissedStorageThresholds',
+      );
     });
 
     it('should handle errors gracefully', () => {
@@ -367,7 +386,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 3.5 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 70,
-        isNearingLimit: true
+        isNearingLimit: true,
       });
 
       // expect(isStorageNearingLimit()).toBe(true);
@@ -378,7 +397,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 1 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 20,
-        isNearingLimit: false
+        isNearingLimit: false,
       });
 
       // expect(isStorageNearingLimit()).toBe(false);
@@ -387,7 +406,9 @@ describe('Storage Monitor Utilities', () => {
 
   describe('shouldShowStorageWarning', () => {
     it('should return false when no threshold is reached', () => {
-      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue(null);
+      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue(
+        null,
+      );
 
       const result = shouldShowStorageWarning();
 
@@ -396,8 +417,12 @@ describe('Storage Monitor Utilities', () => {
     });
 
     it('should return true for EMERGENCY level regardless of dismissal', () => {
-      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue('EMERGENCY');
-      vi.spyOn(storageMonitor, 'getDismissedThresholds').mockReturnValue(['EMERGENCY']);
+      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue(
+        'EMERGENCY',
+      );
+      vi.spyOn(storageMonitor, 'getDismissedThresholds').mockReturnValue([
+        'EMERGENCY',
+      ]);
 
       const result = shouldShowStorageWarning();
 
@@ -406,8 +431,12 @@ describe('Storage Monitor Utilities', () => {
     });
 
     it('should return false for dismissed WARNING level', () => {
-      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue('WARNING');
-      vi.spyOn(storageMonitor, 'getDismissedThresholds').mockReturnValue(['WARNING']);
+      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue(
+        'WARNING',
+      );
+      vi.spyOn(storageMonitor, 'getDismissedThresholds').mockReturnValue([
+        'WARNING',
+      ]);
 
       const result = shouldShowStorageWarning();
 
@@ -416,7 +445,9 @@ describe('Storage Monitor Utilities', () => {
     });
 
     it('should return true for non-dismissed WARNING level', () => {
-      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue('WARNING');
+      vi.spyOn(storageMonitor, 'getCurrentThresholdLevel').mockReturnValue(
+        'WARNING',
+      );
       vi.spyOn(storageMonitor, 'getDismissedThresholds').mockReturnValue([]);
 
       const result = shouldShowStorageWarning();
@@ -432,12 +463,12 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 3.5 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 70,
-        isNearingLimit: true
+        isNearingLimit: true,
       });
 
       vi.spyOn(storageMonitor, 'shouldShowStorageWarning').mockReturnValue({
         shouldShow: true,
-        currentThreshold: 'WARNING'
+        currentThreshold: 'WARNING',
       });
 
       const result = updateStorageStats();
@@ -466,33 +497,48 @@ describe('Storage Monitor Utilities', () => {
           id: '1',
           name: 'Conversation 1',
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
           folderId: null,
-          createdAt: twoDaysAgo.toISOString()
+          createdAt: twoDaysAgo.toISOString(),
         },
         {
           id: '2',
           name: 'Conversation 2',
           // @ts-expect-error only using relevant properties here
           messages: [{ role: 'user', content: 'Hello' }],
-          model: { id: 'model2', name: 'Model 2', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model2',
+            name: 'Model 2',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 2',
           temperature: 1,
           folderId: null,
-          updatedAt: now.toISOString()
+          updatedAt: now.toISOString(),
         },
         {
           id: '3',
           name: 'Conversation 3',
           messages: [],
-          model: { id: 'model3', name: 'Model 3', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model3',
+            name: 'Model 3',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 3',
           temperature: 1,
           folderId: null,
-          createdAt: yesterday.toISOString()
-        }
+          createdAt: yesterday.toISOString(),
+        },
       ];
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
@@ -513,22 +559,32 @@ describe('Storage Monitor Utilities', () => {
           id: '1',
           name: 'Conversation 1',
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
-          folderId: null
+          folderId: null,
         },
         {
           id: '2',
           name: 'Conversation 2',
           // @ts-expect-error only using relevant properties here
           messages: [{ role: 'user', content: 'Hello' }],
-          model: { id: 'model2', name: 'Model 2', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model2',
+            name: 'Model 2',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 2',
           temperature: 1,
           folderId: null,
-          updatedAt: now.toISOString()
-        }
+          updatedAt: now.toISOString(),
+        },
       ];
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
@@ -556,11 +612,16 @@ describe('Storage Monitor Utilities', () => {
           id: '1',
           name: 'Conversation 1',
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
-          folderId: null
-        }
+          folderId: null,
+        },
       ];
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
@@ -581,10 +642,15 @@ describe('Storage Monitor Utilities', () => {
           // @ts-ignore
           // @ts-expect-error only using relevant properties here
           messages: [{ role: 'user', content: 'Hello' }],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
-          folderId: null
+          folderId: null,
         });
       }
 
@@ -601,7 +667,7 @@ describe('Storage Monitor Utilities', () => {
         currentUsage: 2000,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 0.1,
-        isNearingLimit: false
+        isNearingLimit: false,
       });
 
       const result = calculateSpaceFreed(5);
@@ -612,9 +678,11 @@ describe('Storage Monitor Utilities', () => {
     });
 
     it('should handle errors gracefully', () => {
-      vi.spyOn(storageMonitor, 'getSortedConversations').mockImplementationOnce(() => {
-        throw new Error('Test error');
-      });
+      vi.spyOn(storageMonitor, 'getSortedConversations').mockImplementationOnce(
+        () => {
+          throw new Error('Test error');
+        },
+      );
 
       const result = calculateSpaceFreed(5);
 
@@ -631,11 +699,16 @@ describe('Storage Monitor Utilities', () => {
           id: '1',
           name: 'Conversation 1',
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
-          folderId: null
-        }
+          folderId: null,
+        },
       ];
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
@@ -653,22 +726,32 @@ describe('Storage Monitor Utilities', () => {
           id: '1',
           name: 'Conversation 1',
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
           folderId: null,
-          createdAt: yesterday.toISOString()
+          createdAt: yesterday.toISOString(),
         },
         {
           id: '2',
           name: 'Conversation 2',
           messages: [],
-          model: { id: 'model2', name: 'Model 2', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model2',
+            name: 'Model 2',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 2',
           temperature: 1,
           folderId: null,
-          updatedAt: now.toISOString()
-        }
+          updatedAt: now.toISOString(),
+        },
       ];
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
@@ -676,7 +759,9 @@ describe('Storage Monitor Utilities', () => {
       expect(clearOlderConversations(1)).toBe(true);
 
       // Should keep only the most recent conversation
-      const keptConversations = JSON.parse(mockLocalStorage.getItem('conversations') || '[]');
+      const keptConversations = JSON.parse(
+        mockLocalStorage.getItem('conversations') || '[]',
+      );
       expect(keptConversations.length).toBe(1);
       // expect(keptConversations[0].id).toBe('2');
     });
@@ -691,31 +776,46 @@ describe('Storage Monitor Utilities', () => {
           id: '1',
           name: 'Conversation 1',
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
           folderId: null,
-          createdAt: yesterday.toISOString()
+          createdAt: yesterday.toISOString(),
         },
         {
           id: '2',
           name: 'Conversation 2',
           messages: [],
-          model: { id: 'model2', name: 'Model 2', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model2',
+            name: 'Model 2',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 2',
           temperature: 1,
           folderId: null,
-          updatedAt: now.toISOString()
-        }
+          updatedAt: now.toISOString(),
+        },
       ];
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
-      mockLocalStorage.setItem('selectedConversation', JSON.stringify(conversations[0]));
+      mockLocalStorage.setItem(
+        'selectedConversation',
+        JSON.stringify(conversations[0]),
+      );
 
       expect(clearOlderConversations(1)).toBe(true);
 
       // Should update selected conversation to the kept one
-      const selectedConversation = JSON.parse(mockLocalStorage.getItem('selectedConversation') || '{}');
+      const selectedConversation = JSON.parse(
+        mockLocalStorage.getItem('selectedConversation') || '{}',
+      );
       expect(selectedConversation.id).toBe('1');
     });
 
@@ -726,20 +826,30 @@ describe('Storage Monitor Utilities', () => {
           id: `${i}`,
           name: `Conversation ${i}`,
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
-          folderId: null
+          folderId: null,
         });
       }
 
       mockLocalStorage.setItem('conversations', JSON.stringify(conversations));
-      mockLocalStorage.setItem('dismissedStorageThresholds', JSON.stringify(['WARNING']));
+      mockLocalStorage.setItem(
+        'dismissedStorageThresholds',
+        JSON.stringify(['WARNING']),
+      );
 
       expect(clearOlderConversations(5)).toBe(true);
 
       // Should reset dismissed thresholds
-      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith('dismissedStorageThresholds');
+      expect(mockLocalStorage.removeItem).toHaveBeenCalledWith(
+        'dismissedStorageThresholds',
+      );
     });
 
     it('should use MIN_RETAINED_CONVERSATIONS if keepCount is less than 1', () => {
@@ -749,10 +859,15 @@ describe('Storage Monitor Utilities', () => {
           id: `${i}`,
           name: `Conversation ${i}`,
           messages: [],
-          model: { id: 'model1', name: 'Model 1', maxLength: 12000, tokenLimit: 4000 },
+          model: {
+            id: 'model1',
+            name: 'Model 1',
+            maxLength: 12000,
+            tokenLimit: 4000,
+          },
           prompt: 'Prompt 1',
           temperature: 1,
-          folderId: null
+          folderId: null,
         });
       }
 
@@ -761,14 +876,18 @@ describe('Storage Monitor Utilities', () => {
       expect(clearOlderConversations(0)).toBe(true);
 
       // Should keep MIN_RETAINED_CONVERSATIONS
-      const keptConversations = JSON.parse(mockLocalStorage.getItem('conversations') || '[]');
+      const keptConversations = JSON.parse(
+        mockLocalStorage.getItem('conversations') || '[]',
+      );
       expect(keptConversations.length).toBe(MIN_RETAINED_CONVERSATIONS);
     });
 
     it('should handle errors gracefully', () => {
-      vi.spyOn(storageMonitor, 'getSortedConversations').mockImplementationOnce(() => {
-        throw new Error('Test error');
-      });
+      vi.spyOn(storageMonitor, 'getSortedConversations').mockImplementationOnce(
+        () => {
+          throw new Error('Test error');
+        },
+      );
 
       expect(clearOlderConversations(5)).toBe(false);
     });

@@ -1,9 +1,9 @@
 import * as cheerio from 'cheerio';
-import fetch from 'node-fetch';
-import { AbortController } from 'node-abort-controller';
-import * as ipaddr from 'ipaddr.js';
-import { URL } from 'url';
 import * as dns from 'dns';
+import * as ipaddr from 'ipaddr.js';
+import { AbortController } from 'node-abort-controller';
+import fetch from 'node-fetch';
+import { URL } from 'url';
 import { promisify } from 'util';
 
 const dnsLookup = promisify(dns.lookup);
@@ -53,13 +53,17 @@ function isPrivateOrLocalhost(ip: string): boolean {
 
     // Check if it's in private ranges
     if (addr.kind() === 'ipv4') {
-      return addr.range() === 'private' ||
-             addr.range() === 'loopback' ||
-             addr.range() === 'linkLocal';
+      return (
+        addr.range() === 'private' ||
+        addr.range() === 'loopback' ||
+        addr.range() === 'linkLocal'
+      );
     } else {
-      return addr.range() === 'uniqueLocal' ||
-             addr.range() === 'loopback' ||
-             addr.range() === 'linkLocal';
+      return (
+        addr.range() === 'uniqueLocal' ||
+        addr.range() === 'loopback' ||
+        addr.range() === 'linkLocal'
+      );
     }
   } catch (error) {
     // If parsing fails, assume it's not safe
@@ -85,7 +89,10 @@ async function isUrlPointingToPrivateNetwork(url: URL): Promise<boolean> {
   }
 }
 
-export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promise<string> {
+export async function fetchAndParseWebpage(
+  url: string,
+  maxRedirects = 5,
+): Promise<string> {
   if (!url || typeof url !== 'string') {
     throw new HttpError(400, 'Invalid URL: URL must be a non-empty string');
   }
@@ -94,7 +101,10 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
   try {
     validatedUrl = new URL(url);
     if (!['http:', 'https:'].includes(validatedUrl.protocol)) {
-      throw new HttpError(400, 'Invalid protocol: Only HTTP and HTTPS protocols are supported');
+      throw new HttpError(
+        400,
+        'Invalid protocol: Only HTTP and HTTPS protocols are supported',
+      );
     }
   } catch {
     throw new HttpError(400, 'Invalid URL format: The URL could not be parsed');
@@ -103,7 +113,10 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
   // SSRF protection - Check if URL points to private network or localhost
   try {
     if (await isUrlPointingToPrivateNetwork(validatedUrl)) {
-      throw new HttpError(403, 'Access denied: Cannot access internal or private networks');
+      throw new HttpError(
+        403,
+        'Access denied: Cannot access internal or private networks',
+      );
     }
   } catch (error) {
     throw new HttpError(403, 'Access denied: Cannot verify network safety');
@@ -132,7 +145,10 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
         if (response.status >= 300 && response.status < 400) {
           const location = response.headers.get('location');
           if (!location) {
-            throw new HttpError(response.status, 'Redirect error: Location header not provided');
+            throw new HttpError(
+              response.status,
+              'Redirect error: Location header not provided',
+            );
           }
 
           // Create new URL object for the redirect
@@ -140,7 +156,10 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
 
           // SSRF protection for redirects
           if (await isUrlPointingToPrivateNetwork(redirectUrl)) {
-            throw new HttpError(403, 'Access denied: Redirect to internal or private network not allowed');
+            throw new HttpError(
+              403,
+              'Access denied: Redirect to internal or private network not allowed',
+            );
           }
 
           currentUrl = redirectUrl.toString();
@@ -154,22 +173,34 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
           throw error;
         }
         if ((error as Error).name === 'AbortError') {
-          throw new HttpError(408, 'Request timeout: The request took too long to complete');
+          throw new HttpError(
+            408,
+            'Request timeout: The request took too long to complete',
+          );
         }
         throw new HttpError(500, 'Network error: Failed to fetch the URL');
       }
     }
 
     if (redirectCount >= maxRedirects) {
-      throw new HttpError(429, 'Too many redirects: Maximum redirect limit reached');
+      throw new HttpError(
+        429,
+        'Too many redirects: Maximum redirect limit reached',
+      );
     }
 
     if (!response) {
-      throw new HttpError(500, 'No response: Failed to get any response from the server');
+      throw new HttpError(
+        500,
+        'No response: Failed to get any response from the server',
+      );
     }
 
     if (!response.ok) {
-      throw new HttpError(response.status, `Server error: The server returned status code ${response.status}`);
+      throw new HttpError(
+        response.status,
+        `Server error: The server returned status code ${response.status}`,
+      );
     }
   } finally {
     clearTimeout(timeoutId);
@@ -178,7 +209,12 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
   // Check content length before processing
   const contentLength = parseInt(response.headers.get('content-length') || '0');
   if (contentLength > MAX_CONTENT_SIZE) {
-    throw new HttpError(413, `Content too large: Maximum size is ${MAX_CONTENT_SIZE / (1024 * 1024)}MB`);
+    throw new HttpError(
+      413,
+      `Content too large: Maximum size is ${
+        MAX_CONTENT_SIZE / (1024 * 1024)
+      }MB`,
+    );
   }
 
   // Get the Content-Type header
@@ -187,7 +223,10 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
   // Check for unsafe content types
   for (const unsafeType of unsafeContentTypes) {
     if (contentType.includes(unsafeType)) {
-      throw new HttpError(415, `Unsupported media type: ${contentType} is not allowed for security reasons`);
+      throw new HttpError(
+        415,
+        `Unsupported media type: ${contentType} is not allowed for security reasons`,
+      );
     }
   }
 
@@ -204,14 +243,20 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
         cleanText = `This URL contains an image of type ${contentType}. Please use the image upload feature instead.`;
       } else if (contentType === 'application/pdf') {
         // For PDFs
-        cleanText = 'This URL contains a PDF document, which is not supported through this interface. Please use the file upload feature if available.';
+        cleanText =
+          'This URL contains a PDF document, which is not supported through this interface. Please use the file upload feature if available.';
       } else if (contentType.startsWith('text/')) {
         // For plain text or other text types
         const textContent = await response.text();
 
         // Check content size after fetching
         if (textContent.length > MAX_CONTENT_SIZE) {
-          throw new HttpError(413, `Content too large: Maximum size is ${MAX_CONTENT_SIZE / (1024 * 1024)}MB`);
+          throw new HttpError(
+            413,
+            `Content too large: Maximum size is ${
+              MAX_CONTENT_SIZE / (1024 * 1024)
+            }MB`,
+          );
         }
 
         cleanText = textContent;
@@ -222,7 +267,7 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
       // Since it's HTML, proceed to parse it with enhanced sanitization
       let html = '';
 
-// Handle as a Node.js stream
+      // Handle as a Node.js stream
       if (!response.body) {
         throw new HttpError(500, 'Failed to read response body');
       }
@@ -230,7 +275,7 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
       let receivedLength = 0;
       const chunks: Buffer[] = [];
 
-// Process the response body as a Node.js stream
+      // Process the response body as a Node.js stream
       for await (const chunk of response.body) {
         chunks.push(Buffer.from(chunk));
         receivedLength += chunk.length;
@@ -238,22 +283,28 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
         if (receivedLength > MAX_CONTENT_SIZE) {
           // For Node streams, we can destroy the stream
           (response.body as any)?.destroy?.();
-          throw new HttpError(413, `Content too large: Maximum size is ${MAX_CONTENT_SIZE / (1024 * 1024)}MB`);
+          throw new HttpError(
+            413,
+            `Content too large: Maximum size is ${
+              MAX_CONTENT_SIZE / (1024 * 1024)
+            }MB`,
+          );
         }
       }
 
-// Concatenate chunks into a single Buffer and convert to string
+      // Concatenate chunks into a single Buffer and convert to string
       html = Buffer.concat(chunks).toString('utf-8');
 
-// Load HTML into cheerio for parsing
+      // Load HTML into cheerio for parsing
       const $ = cheerio.load(html);
-
 
       // Extract title
       title = $('title').text().trim() || 'No title found';
 
       // Enhanced sanitization: remove more potentially dangerous elements
-      $('script, iframe, style, link, noscript, object, embed, applet, base, meta, form, input, button, textarea, select, option').remove();
+      $(
+        'script, iframe, style, link, noscript, object, embed, applet, base, meta, form, input, button, textarea, select, option',
+      ).remove();
 
       // Remove on* attributes (event handlers) from all elements
       $('*').each((_, element) => {
@@ -268,9 +319,11 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
       $('a[href]').each((_, element) => {
         const href = $(element).attr('href') || '';
         const lowercaseHref = href.toLowerCase();
-        if (lowercaseHref.startsWith('javascript:') ||
-            lowercaseHref.startsWith('data:') ||
-            lowercaseHref.startsWith('vbscript:')) {
+        if (
+          lowercaseHref.startsWith('javascript:') ||
+          lowercaseHref.startsWith('data:') ||
+          lowercaseHref.startsWith('vbscript:')
+        ) {
           $(element).removeAttr('href');
         }
       });
@@ -288,6 +341,10 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
     if (error instanceof HttpError) {
       throw error;
     }
-    throw new HttpError(500, 'Failed to process content: ' + ((error as Error).message || 'Unknown error'));
+    throw new HttpError(
+      500,
+      'Failed to process content: ' +
+        ((error as Error).message || 'Unknown error'),
+    );
   }
 }

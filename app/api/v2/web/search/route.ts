@@ -1,14 +1,21 @@
+import { Session } from 'next-auth';
+import { getServerSession } from 'next-auth/next';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { fetchAndParseBingSearch } from '@/services/bingService';
+import { HttpError, fetchAndParseWebpage } from '@/services/webpageService';
+
+import { SearchResult } from '@/types/bing';
+
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
+
 export const runtime = 'nodejs';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { fetchAndParseWebpage, HttpError } from "@/services/webpageService";
-import { Session } from "next-auth";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
-import { fetchAndParseBingSearch } from "@/services/bingService";
-import { SearchResult } from "@/types/bing";
-
-const formatArticle = (index: number, article: SearchResult, content: string): string => {
+const formatArticle = (
+  index: number,
+  article: SearchResult,
+  content: string,
+): string => {
   return `\`\`\`article-${index}.md
 # ${article.name}
 
@@ -23,23 +30,26 @@ ${content}
 ## Citation Details
 
 ${JSON.stringify({
-    title: article.name,
-    url: article.url,
-    displayUrl: article.displayUrl,
-    language: article.language,
-    dateLastCrawled: article.dateLastCrawled,
-  })}
+  title: article.name,
+  url: article.url,
+  displayUrl: article.displayUrl,
+  language: article.language,
+  dateLastCrawled: article.dateLastCrawled,
+})}
 \`\`\``;
-}
+};
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const session: Session | null = await getServerSession(authOptions as any);
-  if (!session) throw new Error("Failed to pull session!");
+  if (!session) throw new Error('Failed to pull session!');
 
   const { searchParams } = new URL(req.url);
   const q = searchParams.get('q');
   if (!q) {
-    return NextResponse.json({ message: "Please submit a query" }, { status: 400 });
+    return NextResponse.json(
+      { message: 'Please submit a query' },
+      { status: 400 },
+    );
   }
 
   // Get optional parameters with default values
@@ -47,7 +57,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const count = parseInt(searchParams.get('count') ?? '5', 10);
   const offset = parseInt(searchParams.get('offset') ?? '0', 10);
 
-  let safeSearch = searchParams.get('safeSearch') as 'Off' | 'Moderate' | 'Strict' | null;
+  let safeSearch = searchParams.get('safeSearch') as
+    | 'Off'
+    | 'Moderate'
+    | 'Strict'
+    | null;
   if (!safeSearch || !['Off', 'Moderate', 'Strict'].includes(safeSearch)) {
     safeSearch = 'Moderate';
   }
@@ -76,7 +90,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         const content = await fetchAndParseWebpage(article.url);
         return formatArticle(articleIndex, article, content);
       } catch (error) {
-        return formatArticle(articleIndex, article, '*Failed to fetch content for article*');
+        return formatArticle(
+          articleIndex,
+          article,
+          '*Failed to fetch content for article*',
+        );
       }
     });
 
@@ -87,7 +105,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       {
         status: 200,
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   } catch (error: any) {
     const status = error instanceof HttpError ? error.status : 500;
@@ -97,7 +115,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       {
         status: status,
         headers: { 'Content-Type': 'application/json' },
-      }
+      },
     );
   }
 }

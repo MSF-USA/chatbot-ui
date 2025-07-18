@@ -1,6 +1,12 @@
-import fetch from 'node-fetch';
 import { HttpError } from '@/services/webpageService';
-import { BingSearchParams, BingSearchResponse, SearchResult } from "@/types/bing";
+
+import {
+  BingSearchParams,
+  BingSearchResponse,
+  SearchResult,
+} from '@/types/bing';
+
+import fetch from 'node-fetch';
 
 export async function fetchAndParseBingSearch(
   params: BingSearchParams,

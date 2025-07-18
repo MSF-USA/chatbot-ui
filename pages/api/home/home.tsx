@@ -1,6 +1,7 @@
 import { LDProvider, useLDClient } from 'launchdarkly-react-client-sdk';
 import { signIn, useSession } from 'next-auth/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useQuery } from 'react-query';
 import { useSwipeable } from 'react-swipeable';
 
@@ -11,9 +12,6 @@ import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-
-import { StorageMonitorProvider, useStorageMonitor } from '@/context/StorageMonitorContext';
-import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
 
@@ -49,13 +47,17 @@ import { Settings } from '@/types/settings';
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
+import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
 
 import { authOptions } from '../auth/[...nextauth]';
 import HomeContext from './home.context';
 import { HomeInitialState, initialState } from './home.state';
 
+import {
+  StorageMonitorProvider,
+  useStorageMonitor,
+} from '@/context/StorageMonitorContext';
 import { v4 as uuidv4 } from 'uuid';
-import toast from 'react-hot-toast';
 
 interface Props {
   session: Session | null;
@@ -75,7 +77,7 @@ const StorageWarningManager = () => {
     isEmergencyLevel,
     isCriticalLevel,
     dismissCurrentThreshold,
-    resetDismissedThresholds
+    resetDismissedThresholds,
   } = useStorageMonitor();
   const { t } = useTranslation('storage');
 
@@ -254,11 +256,16 @@ const Home = ({
     const lastConversation = conversations[conversations.length - 1];
 
     // Check if the last conversation exists, has no messages, and is already selected
-    if (lastConversation &&
-        lastConversation.messages.length === 0 &&
-        selectedConversation?.id === lastConversation.id) {
+    if (
+      lastConversation &&
+      lastConversation.messages.length === 0 &&
+      selectedConversation?.id === lastConversation.id
+    ) {
       // Show a toast notification explaining why nothing is happening
-      toast('Current conversation is empty. Add a message to create a new one.', {duration: 2500});
+      toast(
+        'Current conversation is empty. Add a message to create a new one.',
+        { duration: 2500 },
+      );
       return;
     }
 
@@ -272,7 +279,7 @@ const Home = ({
     // Check if last used model is legacy or not set
     const lastModelIsLegacy =
       lastConversation?.model?.id &&
-        OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
+      OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
 
     // TODO: Replace with an actual default value given by environment variables, not hardcoded
     // to always use GPT-4o as default, forcing code changes on model deployment changes.
@@ -288,7 +295,7 @@ const Home = ({
       model: modelToUse,
       prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
       temperature:
-          temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
+        temperature || lastConversation?.temperature || DEFAULT_TEMPERATURE,
       folderId: null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),

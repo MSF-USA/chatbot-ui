@@ -1,4 +1,9 @@
-import { Conversation, Message, FileMessageContent, TextMessageContent } from '@/types/chat';
+import {
+  Conversation,
+  FileMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
 
 export const updateConversation = (
   updatedConversation: Conversation,
@@ -36,7 +41,7 @@ export const generateTitleFromAPI = async (
   try {
     // Only attempt to generate a title if there's at least one response message
     const hasResponseMessage = conversation.messages.some(
-      (msg) => msg.role === 'assistant'
+      (msg) => msg.role === 'assistant',
     );
 
     if (!hasResponseMessage) {

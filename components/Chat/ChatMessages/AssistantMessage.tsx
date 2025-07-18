@@ -1,32 +1,34 @@
 import {
-  IconLoader2,
-  IconRobot, IconSettings,
   IconLanguage,
+  IconLoader2,
+  IconRobot,
   IconSearch,
+  IconSettings,
 } from '@tabler/icons-react';
 import {
   FC,
+  KeyboardEvent,
   MouseEvent,
   useEffect,
   useRef,
   useState,
-  KeyboardEvent,
 } from 'react';
+
+import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
+
+import { getAutonym } from '@/utils/app/locales';
 
 import { Conversation } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
-import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
-import { getAutonym } from '@/utils/app/locales';
-
 import AudioPlayer from '@/components/Chat/AudioPlayer';
+import { AssistantMessageActionButtons } from '@/components/Chat/ChatMessages/AssistantMessageActionButtons';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
-import { AssistantMessageActionButtons } from '@/components/Chat/ChatMessages/AssistantMessageActionButtons';
 
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -54,11 +56,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
-  const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
+  const [showStreamingSettings, setShowStreamingSettings] =
+    useState<boolean>(false);
   const [isTranslating, setIsTranslating] = useState<boolean>(false);
   const [translations, setTranslations] = useState<Record<string, string>>({});
   const [currentLanguage, setCurrentLanguage] = useState<string | null>(null);
-  const [showTranslationDropdown, setShowTranslationDropdown] = useState<boolean>(false);
+  const [showTranslationDropdown, setShowTranslationDropdown] =
+    useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const translationDropdownRef = useRef<HTMLDivElement>(null);
@@ -207,11 +211,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
   // If translated content is available, use that instead of the original content
-  const contentToDisplay = currentLanguage && translations[currentLanguage]
-    ? translations[currentLanguage]
-    : (settings.smoothStreamingEnabled && messageIsStreaming
-        ? smoothContent
-        : displayContentWithoutCitations);
+  const contentToDisplay =
+    currentLanguage && translations[currentLanguage]
+      ? translations[currentLanguage]
+      : settings.smoothStreamingEnabled && messageIsStreaming
+      ? smoothContent
+      : displayContentWithoutCitations;
 
   const handleTTS = async () => {
     try {
@@ -282,9 +287,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       const data = await response.json();
 
       // Store the translation and set it as current
-      setTranslations(prev => ({
+      setTranslations((prev) => ({
         ...prev,
-        [targetLocale]: data.translatedText
+        [targetLocale]: data.translatedText,
       }));
       setCurrentLanguage(targetLocale);
 
@@ -311,14 +316,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     // Add original text option
     const allOptions = ['original', ...availableOptions];
 
-    return allOptions.filter(option => {
+    return allOptions.filter((option) => {
       if (option === 'original') {
-        return 'original text'.toLowerCase().includes(searchQuery.toLowerCase());
+        return 'original text'
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase());
       }
 
       const autonym = getAutonym(option);
-      return option.toLowerCase().includes(searchQuery.toLowerCase()) ||
-             autonym.toLowerCase().includes(searchQuery.toLowerCase());
+      return (
+        option.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        autonym.toLowerCase().includes(searchQuery.toLowerCase())
+      );
     });
   };
 
@@ -339,11 +348,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         break;
       case 'ArrowDown':
         e.preventDefault();
-        setSelectedIndex(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
+        setSelectedIndex((prev) =>
+          prev < filteredOptions.length - 1 ? prev + 1 : prev,
+        );
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setSelectedIndex(prev => (prev > 0 ? prev - 1 : 0));
+        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
         break;
       case 'Enter':
         if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
@@ -369,7 +380,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (translationDropdownRef.current && !translationDropdownRef.current.contains(event.target as Node)) {
+      if (
+        translationDropdownRef.current &&
+        !translationDropdownRef.current.contains(event.target as Node)
+      ) {
         setShowTranslationDropdown(false);
       }
     };
@@ -399,7 +413,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   // Custom components for markdown processing
   const customMarkdownComponents = {
-    code({ node, inline, className, children, ...props }: {
+    code({
+      node,
+      inline,
+      className,
+      children,
+      ...props
+    }: {
       node: any;
       inline?: boolean;
       className?: string;
@@ -408,11 +428,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }) {
       if (children.length) {
         if (children[0] == '▍') {
-          return (
-            <span className="animate-pulse cursor-default mt-1">
-              ▍
-            </span>
-          );
+          return <span className="animate-pulse cursor-default mt-1">▍</span>;
         }
       }
 
@@ -454,13 +470,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </td>
       );
     },
-    p({ children, ...props }: { children: React.ReactNode; [key: string]: any }) {
-      return (
-        <p {...props}>
-          {children}
-        </p>
-      );
-    }
+    p({
+      children,
+      ...props
+    }: {
+      children: React.ReactNode;
+      [key: string]: any;
+    }) {
+      return <p {...props}>{children}</p>;
+    },
   };
 
   return (
@@ -477,8 +495,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         )}
 
         <div className="flex flex-col">
-
-
           <div className="flex-1 overflow-hidden">
             {selectedConversation?.bot ? (
               <>
@@ -518,7 +534,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           {/* Action buttons at the bottom of the message */}
           <AssistantMessageActionButtons
             messageCopied={messageCopied}
-            copyOnClick={() => copyOnClick(currentLanguage ? translations[currentLanguage] : displayContent)}
+            copyOnClick={() =>
+              copyOnClick(
+                currentLanguage
+                  ? translations[currentLanguage]
+                  : displayContent,
+              )
+            }
             isGeneratingAudio={isGeneratingAudio}
             audioUrl={audioUrl}
             handleTTS={handleTTS}
@@ -547,19 +569,25 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                         className="opacity-0 w-0 h-0"
                         checked={settings.smoothStreamingEnabled}
                         onChange={(e) =>
-                          updateSettings({ smoothStreamingEnabled: e.target.checked })
+                          updateSettings({
+                            smoothStreamingEnabled: e.target.checked,
+                          })
                         }
                       />
-                      <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                        settings.smoothStreamingEnabled 
-                          ? 'bg-blue-500 dark:bg-blue-600' 
-                          : 'bg-gray-300 dark:bg-gray-600'
-                      }`}>
-                        <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                          settings.smoothStreamingEnabled 
-                            ? 'translate-x-5' 
-                            : 'translate-x-0.5'
-                        } top-0.5 left-0`}></span>
+                      <span
+                        className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
+                          settings.smoothStreamingEnabled
+                            ? 'bg-blue-500 dark:bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <span
+                          className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                            settings.smoothStreamingEnabled
+                              ? 'translate-x-5'
+                              : 'translate-x-0.5'
+                          } top-0.5 left-0`}
+                        ></span>
                       </span>
                     </div>
                   </label>
@@ -578,7 +606,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     max="10"
                     value={settings.charsPerFrame}
                     onChange={(e) =>
-                      updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                      updateSettings({
+                        charsPerFrame: parseInt(e.target.value),
+                      })
                     }
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
                       settings.smoothStreamingEnabled
@@ -626,119 +656,120 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           )}
 
           {audioUrl && (
-              <AudioPlayer
-                  audioUrl={audioUrl}
-                  onClose={handleCloseAudio}
-              />
+            <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
           )}
 
           {/* Translation indicator */}
           {(currentLanguage || Object.keys(translations).length > 0) && (
-              <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
-                <IconLanguage size={16} className="mr-1" />
-                <span className="mr-2">
+            <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+              <IconLanguage size={16} className="mr-1" />
+              <span className="mr-2">
                 {currentLanguage
-                    ? `${getAutonym(currentLanguage)}`
-                    : "Original text"}
+                  ? `${getAutonym(currentLanguage)}`
+                  : 'Original text'}
               </span>
 
-                {/* Translation selector dropdown */}
-                <div className="relative inline-block">
-                  <button
-                      className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline text-xs"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setShowTranslationDropdown(!showTranslationDropdown);
-                      }}
+              {/* Translation selector dropdown */}
+              <div className="relative inline-block">
+                <button
+                  className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline text-xs"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowTranslationDropdown(!showTranslationDropdown);
+                  }}
+                >
+                  Change
+                </button>
+
+                {showTranslationDropdown && (
+                  <div
+                    ref={translationDropdownRef}
+                    className="absolute left-0 bottom-full mb-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-80 overflow-hidden flex flex-col"
+                    onKeyDown={handleTranslationKeyDown}
                   >
-                    Change
-                  </button>
-
-                  {showTranslationDropdown && (
-                    <div
-                      ref={translationDropdownRef}
-                      className="absolute left-0 bottom-full mb-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-80 overflow-hidden flex flex-col"
-                      onKeyDown={handleTranslationKeyDown}
-                    >
-                      {/* Search input */}
-                      <div className="p-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
-                        <div className="relative">
-                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <IconSearch size={16} className="text-gray-400" />
-                          </div>
-                          <input
-                            ref={searchInputRef}
-                            type="text"
-                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                            placeholder="Search languages..."
-                            value={searchQuery}
-                            onChange={(e) => {
-                              setSearchQuery(e.target.value);
-                              setSelectedIndex(-1);
-                            }}
-                          />
+                    {/* Search input */}
+                    <div className="p-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
+                      <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                          <IconSearch size={16} className="text-gray-400" />
                         </div>
-                      </div>
-
-                      {/* Language list */}
-                      <div className="overflow-y-auto">
-                        {getFilteredTranslations().length > 0 ? (
-                          <div className="py-1">
-                            {getFilteredTranslations().map((option, index) => {
-                              if (option === 'original') {
-                                return (
-                                  <button
-                                    key="original"
-                                    className={`w-full text-left px-4 py-2 text-sm ${
-                                      index === selectedIndex
-                                        ? 'bg-blue-500 text-white dark:bg-blue-600'
-                                        : currentLanguage === null
-                                          ? 'bg-gray-100 dark:bg-gray-700 font-medium'
-                                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }`}
-                                    onClick={() => {
-                                      handleResetTranslation();
-                                    }}
-                                    onMouseEnter={() => setSelectedIndex(index)}
-                                  >
-                                    Original text
-                                  </button>
-                                );
-                              } else {
-                                return (
-                                  <button
-                                    key={option}
-                                    className={`w-full text-left px-4 py-2 text-sm ${
-                                      index === selectedIndex
-                                        ? 'bg-blue-500 text-white dark:bg-blue-600'
-                                        : currentLanguage === option
-                                          ? 'bg-gray-100 dark:bg-gray-700 font-medium'
-                                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                                    }`}
-                                    onClick={() => {
-                                      setCurrentLanguage(option);
-                                      setShowTranslationDropdown(false);
-                                    }}
-                                    onMouseEnter={() => setSelectedIndex(index)}
-                                  >
-                                    <span className="font-medium">{getAutonym(option)}</span>
-                                    <span className="ml-2 text-xs opacity-70">{option}</span>
-                                  </button>
-                                );
-                              }
-                            })}
-                          </div>
-                        ) : (
-                          <div className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-                            No languages found
-                          </div>
-                        )}
+                        <input
+                          ref={searchInputRef}
+                          type="text"
+                          className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                          placeholder="Search languages..."
+                          value={searchQuery}
+                          onChange={(e) => {
+                            setSearchQuery(e.target.value);
+                            setSelectedIndex(-1);
+                          }}
+                        />
                       </div>
                     </div>
-                  )}
-                </div>
+
+                    {/* Language list */}
+                    <div className="overflow-y-auto">
+                      {getFilteredTranslations().length > 0 ? (
+                        <div className="py-1">
+                          {getFilteredTranslations().map((option, index) => {
+                            if (option === 'original') {
+                              return (
+                                <button
+                                  key="original"
+                                  className={`w-full text-left px-4 py-2 text-sm ${
+                                    index === selectedIndex
+                                      ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                      : currentLanguage === null
+                                      ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                  }`}
+                                  onClick={() => {
+                                    handleResetTranslation();
+                                  }}
+                                  onMouseEnter={() => setSelectedIndex(index)}
+                                >
+                                  Original text
+                                </button>
+                              );
+                            } else {
+                              return (
+                                <button
+                                  key={option}
+                                  className={`w-full text-left px-4 py-2 text-sm ${
+                                    index === selectedIndex
+                                      ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                      : currentLanguage === option
+                                      ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                      : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                  }`}
+                                  onClick={() => {
+                                    setCurrentLanguage(option);
+                                    setShowTranslationDropdown(false);
+                                  }}
+                                  onMouseEnter={() => setSelectedIndex(index)}
+                                >
+                                  <span className="font-medium">
+                                    {getAutonym(option)}
+                                  </span>
+                                  <span className="ml-2 text-xs opacity-70">
+                                    {option}
+                                  </span>
+                                </button>
+                              );
+                            }
+                          })}
+                        </div>
+                      ) : (
+                        <div className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">
+                          No languages found
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
+            </div>
           )}
         </div>
 

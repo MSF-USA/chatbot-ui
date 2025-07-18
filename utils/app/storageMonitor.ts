@@ -8,17 +8,16 @@
  * - Provide functions to manage conversations by recency
  * - Calculate potential space savings
  */
-
-import {Conversation, Message} from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 import { Prompt } from '@/types/prompt';
 import { Settings } from '@/types/settings';
 
 // Constants
 export const STORAGE_THRESHOLDS = {
-  WARNING: 70,    // First warning level at 70% full
-  CRITICAL: 85,   // Critical level at 85% full
-  EMERGENCY: 95,  // Emergency level at 95% full
+  WARNING: 70, // First warning level at 70% full
+  CRITICAL: 85, // Critical level at 85% full
+  EMERGENCY: 95, // Emergency level at 95% full
 };
 export const MIN_RETAINED_CONVERSATIONS = 5; // Minimum number of conversations to keep
 
@@ -35,7 +34,8 @@ const STORAGE_KEYS = {
 };
 
 // Helper to check if we're in a browser environment
-export const isBrowserEnv = () => typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
+export const isBrowserEnv = () =>
+  typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 
 /**
  * Throws an error if not in a browser environment
@@ -43,7 +43,9 @@ export const isBrowserEnv = () => typeof window !== 'undefined' && typeof window
  */
 export const requireBrowser = (): void => {
   if (!isBrowserEnv()) {
-    throw new Error('Browser environment required. This operation needs localStorage or other browser APIs.');
+    throw new Error(
+      'Browser environment required. This operation needs localStorage or other browser APIs.',
+    );
   }
 };
 
@@ -220,7 +222,7 @@ export const shouldShowStorageWarning = () => {
 
   return {
     shouldShow: !isDismissed,
-    currentThreshold
+    currentThreshold,
   };
 };
 
@@ -266,17 +268,19 @@ export const getSortedConversations = (): Conversation[] => {
 
     // Sort conversations with dates (most recent first)
     conversationsWithDates.sort((a, b) => {
-      const dateA = a.messages.length > 0 && a.updatedAt
+      const dateA =
+        a.messages.length > 0 && a.updatedAt
           ? new Date(a.updatedAt).getTime()
           : a.createdAt
-              ? new Date(a.createdAt).getTime()
-              : 0;
+          ? new Date(a.createdAt).getTime()
+          : 0;
 
-      const dateB = b.messages.length > 0 && b.updatedAt
+      const dateB =
+        b.messages.length > 0 && b.updatedAt
           ? new Date(b.updatedAt).getTime()
           : b.createdAt
-              ? new Date(b.createdAt).getTime()
-              : 0;
+          ? new Date(b.createdAt).getTime()
+          : 0;
 
       return dateB - dateA;
     });
@@ -292,7 +296,9 @@ export const getSortedConversations = (): Conversation[] => {
 /**
  * Calculate space that would be freed by removing older conversations
  */
-export const calculateSpaceFreed = (keepCount: number): {
+export const calculateSpaceFreed = (
+  keepCount: number,
+): {
   spaceFreed: number;
   conversationsRemoved: number;
   percentFreed: number;
@@ -318,7 +324,8 @@ export const calculateSpaceFreed = (keepCount: number): {
 
     // Calculate percentage of total storage freed
     const { currentUsage } = getStorageUsage();
-    const percentFreed = currentUsage > 0 ? (spaceFreed / currentUsage) * 100 : 0;
+    const percentFreed =
+      currentUsage > 0 ? (spaceFreed / currentUsage) * 100 : 0;
 
     return { spaceFreed, conversationsRemoved, percentFreed };
   } catch (error) {
@@ -349,24 +356,30 @@ export const clearOlderConversations = (keepCount: number): boolean => {
 
     // Save the kept conversations back to localStorage
     localStorage.setItem(
-        STORAGE_KEYS.CONVERSATIONS,
-        JSON.stringify(keptConversations)
+      STORAGE_KEYS.CONVERSATIONS,
+      JSON.stringify(keptConversations),
     );
 
     // Reset dismissed thresholds since user has taken action
     resetDismissedThresholds();
 
     // If the selected conversation was removed, update it to the most recent one
-    const selectedConversationJson = localStorage.getItem(STORAGE_KEYS.SELECTED_CONVERSATION);
+    const selectedConversationJson = localStorage.getItem(
+      STORAGE_KEYS.SELECTED_CONVERSATION,
+    );
     if (selectedConversationJson) {
-      const selectedConversation: Conversation = JSON.parse(selectedConversationJson);
-      const isSelectedKept = keptConversations.some(c => c.id === selectedConversation.id);
+      const selectedConversation: Conversation = JSON.parse(
+        selectedConversationJson,
+      );
+      const isSelectedKept = keptConversations.some(
+        (c) => c.id === selectedConversation.id,
+      );
 
       if (!isSelectedKept && keptConversations.length > 0) {
         // Always use the first (most recent) conversation as the new selected one
         localStorage.setItem(
           STORAGE_KEYS.SELECTED_CONVERSATION,
-          JSON.stringify(keptConversations[0])
+          JSON.stringify(keptConversations[0]),
         );
       }
     }

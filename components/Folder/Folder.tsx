@@ -97,9 +97,12 @@ const Folder = ({
         {isRenaming ? (
           <div className="flex w-full items-center gap-3 bg-gray-400 dark:bg-[#212121]/90 p-3">
             {isOpen ? (
-              <IconCaretDown size={18} className='text-black dark:text-white'/>
+              <IconCaretDown size={18} className="text-black dark:text-white" />
             ) : (
-              <IconCaretRight size={18} className='text-black dark:text-white'/>
+              <IconCaretRight
+                size={18}
+                className="text-black dark:text-white"
+              />
             )}
             <input
               className="mr-12 flex-1 overflow-hidden overflow-ellipsis border-neutral-400 bg-transparent text-left text-[12.5px] leading-3 dark:text-white  text-black outline-none focus:border-neutral-100"
@@ -120,9 +123,12 @@ const Folder = ({
             onDragLeave={removeHighlight}
           >
             {isOpen ? (
-              <IconCaretDown size={18} className='text-black dark:text-white'/>
+              <IconCaretDown size={18} className="text-black dark:text-white" />
             ) : (
-              <IconCaretRight size={18} className='text-black dark:text-white'/>
+              <IconCaretRight
+                size={18}
+                className="text-black dark:text-white"
+              />
             )}
 
             <div className="relative max-h-5 flex-1 overflow-hidden text-ellipsis whitespace-nowrap break-all text-left text-[12.5px] leading-3">
@@ -146,9 +152,9 @@ const Folder = ({
                 setIsDeleting(false);
                 setIsRenaming(false);
               }}
-              tooltipText='Confirm'
+              tooltipText="Confirm"
             >
-              <IconCheck size={18} className='text-black dark:text-white'/>
+              <IconCheck size={18} className="text-black dark:text-white" />
             </SidebarActionButton>
             <SidebarActionButton
               handleClick={(e) => {
@@ -156,9 +162,9 @@ const Folder = ({
                 setIsDeleting(false);
                 setIsRenaming(false);
               }}
-              tooltipText='Cancel'
+              tooltipText="Cancel"
             >
-              <IconX size={18} className='text-black dark:text-white'/>
+              <IconX size={18} className="text-black dark:text-white" />
             </SidebarActionButton>
           </div>
         )}
@@ -171,18 +177,18 @@ const Folder = ({
                 setIsRenaming(true);
                 setRenameValue(currentFolder.name);
               }}
-              tooltipText='Rename'
+              tooltipText="Rename"
             >
-              <IconPencil size={18} className='text-black dark:text-white'/>
+              <IconPencil size={18} className="text-black dark:text-white" />
             </SidebarActionButton>
             <SidebarActionButton
               handleClick={(e) => {
                 e.stopPropagation();
                 setIsDeleting(true);
               }}
-              tooltipText='Delete'
+              tooltipText="Delete"
             >
-              <IconTrash size={18} className='text-black dark:text-white'/>
+              <IconTrash size={18} className="text-black dark:text-white" />
             </SidebarActionButton>
           </div>
         )}

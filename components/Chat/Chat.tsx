@@ -1,8 +1,5 @@
 import { Transition } from '@headlessui/react';
-import {
-  IconInfoCircle,
-  IconSettings,
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconSettings } from '@tabler/icons-react';
 import {
   MutableRefObject,
   memo,
@@ -22,10 +19,10 @@ import { makeRequest } from '@/services/frontendChatServices';
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 import {
+  generateTitleFromAPI,
   saveConversation,
   saveConversations,
-  generateTitleFromAPI,
-  setConversationTitle
+  setConversationTitle,
 } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
@@ -50,10 +47,10 @@ import { TemperatureSlider } from '../Settings/Temperature';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
+import { ChatTopbar } from './ChatTopbar';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
-import { ChatTopbar } from './ChatTopbar';
 import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
@@ -166,7 +163,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     updateBotInfo();
   }, [selectedConversation, updateBotInfo]);
 
-
   const debouncedUpdateConversation = useCallback(
     debounce(
       window,
@@ -206,97 +202,98 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         console.log('Stop detected in streaming loop - breaking');
         break;
       }
-      
+
       try {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-        
+
         if (stopConversationRef.current) {
           break;
         }
 
-      if (value) {
-        const chunkValue = decoder.decode(value);
-        text += chunkValue;
+        if (value) {
+          const chunkValue = decoder.decode(value);
+          text += chunkValue;
 
-      if (stopConversationRef.current) {
-          break;
-        }
+          if (stopConversationRef.current) {
+            break;
+          }
 
-        // Extract citations
-        const {
-          text: cleanedText,
-          citations,
-          extractionMethod,
-        } = extractCitationsFromContent(text);
+          // Extract citations
+          const {
+            text: cleanedText,
+            citations,
+            extractionMethod,
+          } = extractCitationsFromContent(text);
 
-        if (citations.length > 0) {
-          // Use the clean text and extracted citations
-          text = cleanedText;
-          extractedCitations = citations;
-          console.log(
-            `Extracted ${citations.length} citations using ${extractionMethod} format`,
-          );
-        }
+          if (citations.length > 0) {
+            // Use the clean text and extracted citations
+            text = cleanedText;
+            extractedCitations = citations;
+            console.log(
+              `Extracted ${citations.length} citations using ${extractionMethod} format`,
+            );
+          }
 
-        if (
-          updatedConversationCopy.messages.length === 0 ||
-          updatedConversationCopy.messages[
-            updatedConversationCopy.messages.length - 1
-          ].role !== 'assistant'
-        ) {
-          // If there's no assistant message, create a new one
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: [
-              ...updatedConversationCopy.messages,
-              {
-                role: 'assistant',
-                content: text,
-                messageType: MessageType.TEXT,
-                citations:
-                  extractedCitations.length > 0 ? [...extractedCitations] : [],
-              },
-            ],
-          };
-        } else {
-          // Update the existing assistant message
-          const updatedMessages = [
-            ...updatedConversationCopy.messages.slice(0, -1),
-            {
-              ...updatedConversationCopy.messages[
-                updatedConversationCopy.messages.length - 1
+          if (
+            updatedConversationCopy.messages.length === 0 ||
+            updatedConversationCopy.messages[
+              updatedConversationCopy.messages.length - 1
+            ].role !== 'assistant'
+          ) {
+            // If there's no assistant message, create a new one
+            updatedConversationCopy = {
+              ...updatedConversationCopy,
+              messages: [
+                ...updatedConversationCopy.messages,
+                {
+                  role: 'assistant',
+                  content: text,
+                  messageType: MessageType.TEXT,
+                  citations:
+                    extractedCitations.length > 0
+                      ? [...extractedCitations]
+                      : [],
+                },
               ],
-              content: text,
-              citations:
-                extractedCitations.length > 0
-                  ? [...extractedCitations]
-                  : updatedConversationCopy.messages[
-                      updatedConversationCopy.messages.length - 1
-                    ].citations || [],
-            },
-          ];
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: updatedMessages,
-          };
+            };
+          } else {
+            // Update the existing assistant message
+            const updatedMessages = [
+              ...updatedConversationCopy.messages.slice(0, -1),
+              {
+                ...updatedConversationCopy.messages[
+                  updatedConversationCopy.messages.length - 1
+                ],
+                content: text,
+                citations:
+                  extractedCitations.length > 0
+                    ? [...extractedCitations]
+                    : updatedConversationCopy.messages[
+                        updatedConversationCopy.messages.length - 1
+                      ].citations || [],
+              },
+            ];
+            updatedConversationCopy = {
+              ...updatedConversationCopy,
+              messages: updatedMessages,
+            };
+          }
+
+          // Update the state to trigger a re-render
+          homeDispatch({
+            field: 'selectedConversation',
+            value: updatedConversationCopy,
+          });
         }
-
-        // Update the state to trigger a re-render
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
+      } catch (error) {
+        console.error('Error in stream processing:', error);
+        clearInterval(checkStopInterval);
+        break;
       }
-    } catch (error) {
-      console.error('Error in stream processing:', error);
-      clearInterval(checkStopInterval);
-      break;
-     }
     }
-    
-    clearInterval(checkStopInterval);
 
+    clearInterval(checkStopInterval);
 
     // Final check for citations after stream completes
     if (extractedCitations.length === 0) {
@@ -357,7 +354,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const handleSend = useCallback(
     async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
       if (selectedConversation) {
-        
         stopConversationRef.current = false;
 
         let updatedConversation: Conversation = updateConversationFromUserInput(
@@ -374,8 +370,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         try {
-
-         // Sets up a manual check for the stop button being pressed
+          // Sets up a manual check for the stop button being pressed
           const abortCheckInterval = setInterval(() => {
             if (stopConversationRef.current) {
               console.log('Stop requested - updating UI state');
@@ -385,7 +380,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               clearInterval(abortCheckInterval);
             }
           }, 100);
-          
+
           // Clean up interval after 60 seconds as a safety measure
           setTimeout(() => clearInterval(abortCheckInterval), 60000);
 
@@ -404,7 +399,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             );
 
           clearInterval(abortCheckInterval);
-          
+
           // Set up the abort handler to reset UI state when the conversation is stopped
           setOnAbort?.(() => {
             homeDispatch({ field: 'loading', value: false });
@@ -443,7 +438,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             // Set initial title based on first message
             if (updatedConversation.messages.length === 1) {
               // Use the utility function to set the initial title
-              updatedConversation = await setConversationTitle(updatedConversation, message, user);
+              updatedConversation = await setConversationTitle(
+                updatedConversation,
+                message,
+                user,
+              );
             }
             homeDispatch({ field: 'loading', value: false });
 
@@ -456,10 +455,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   const reader = data.getReader();
 
                   function push() {
-
-                  // Check if stop was requested before reading more data
+                    // Check if stop was requested before reading more data
                     if (stopConversationRef.current) {
-                      console.log('Stopping stream in ReadableStream - user requested stop');
+                      console.log(
+                        'Stopping stream in ReadableStream - user requested stop',
+                      );
                       controller.close();
                       return;
                     }
@@ -477,29 +477,31 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   push();
                 },
               });
-              let updatedConversations =
-                await handleNormalChatBackendStreaming(
-                  stream,
-                  controller,
-                  updatedConversation,
-                  selectedConversation,
-                  conversations,
-                );
+              let updatedConversations = await handleNormalChatBackendStreaming(
+                stream,
+                controller,
+                updatedConversation,
+                selectedConversation,
+                conversations,
+              );
 
               // Try to update the title using the API after we have a response
               const currentConversation = updatedConversations.find(
-                (conv) => conv.id === selectedConversation.id
+                (conv) => conv.id === selectedConversation.id,
               );
 
               if (currentConversation) {
                 // Check if there's at least one response message
                 const hasResponseMessage = currentConversation.messages.some(
-                  (msg) => msg.role === 'assistant'
+                  (msg) => msg.role === 'assistant',
                 );
 
                 if (hasResponseMessage) {
                   // Try to generate a better title using the API
-                  const generatedTitle = await generateTitleFromAPI(currentConversation, user);
+                  const generatedTitle = await generateTitleFromAPI(
+                    currentConversation,
+                    user,
+                  );
 
                   if (generatedTitle) {
                     // Update the title in the conversation
@@ -510,7 +512,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
                     // Update the conversation in the list
                     updatedConversations = updatedConversations.map((conv) =>
-                      conv.id === selectedConversation.id ? updatedWithTitle : conv
+                      conv.id === selectedConversation.id
+                        ? updatedWithTitle
+                        : conv,
                     );
                   }
                 }
@@ -524,29 +528,31 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               homeDispatch({ field: 'messageIsStreaming', value: false });
             } else {
               const reader = data.getReader();
-              let updatedConversations =
-                await handleNormalChatBackendStreaming(
-                  data,
-                  controller,
-                  updatedConversation,
-                  selectedConversation,
-                  conversations,
-                );
+              let updatedConversations = await handleNormalChatBackendStreaming(
+                data,
+                controller,
+                updatedConversation,
+                selectedConversation,
+                conversations,
+              );
 
               // Try to update the title using the API after we have a response
               const currentConversation = updatedConversations.find(
-                (conv) => conv.id === selectedConversation.id
+                (conv) => conv.id === selectedConversation.id,
               );
 
               if (currentConversation) {
                 // Check if there's at least one response message
                 const hasResponseMessage = currentConversation.messages.some(
-                  (msg) => msg.role === 'assistant'
+                  (msg) => msg.role === 'assistant',
                 );
 
                 if (hasResponseMessage) {
                   // Try to generate a better title using the API
-                  const generatedTitle = await generateTitleFromAPI(currentConversation, user);
+                  const generatedTitle = await generateTitleFromAPI(
+                    currentConversation,
+                    user,
+                  );
 
                   if (generatedTitle) {
                     // Update the title in the conversation
@@ -557,7 +563,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
                     // Update the conversation in the list
                     updatedConversations = updatedConversations.map((conv) =>
-                      conv.id === selectedConversation.id ? updatedWithTitle : conv
+                      conv.id === selectedConversation.id
+                        ? updatedWithTitle
+                        : conv,
                     );
                   }
                 }

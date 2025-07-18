@@ -1,9 +1,14 @@
+import { act, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, act, waitFor } from '@testing-library/react';
-import { StorageMonitorProvider, useStorageMonitor } from '@/context/StorageMonitorContext';
+
 import * as storageMonitor from '@/utils/app/storageMonitor';
+
+import {
+  StorageMonitorProvider,
+  useStorageMonitor,
+} from '@/context/StorageMonitorContext';
 import '@testing-library/jest-dom';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the storageMonitor utility functions
 vi.mock('@/utils/app/storageMonitor', () => ({
@@ -14,7 +19,7 @@ vi.mock('@/utils/app/storageMonitor', () => ({
     WARNING: 70,
     CRITICAL: 85,
     EMERGENCY: 95,
-  }
+  },
 }));
 
 // Test component that uses the context
@@ -29,7 +34,7 @@ const TestConsumer = () => {
     dismissCurrentThreshold,
     resetDismissedThresholds,
     isEmergencyLevel,
-    isCriticalLevel
+    isCriticalLevel,
   } = useStorageMonitor();
 
   return (
@@ -37,14 +42,32 @@ const TestConsumer = () => {
       <div data-testid="isNearingLimit">{isNearingLimit.toString()}</div>
       <div data-testid="storagePercentage">{storagePercentage}</div>
       <div data-testid="currentThreshold">{currentThreshold || 'null'}</div>
-      <div data-testid="showStorageWarning">{showStorageWarning.toString()}</div>
+      <div data-testid="showStorageWarning">
+        {showStorageWarning.toString()}
+      </div>
       <div data-testid="isEmergencyLevel">{isEmergencyLevel.toString()}</div>
       <div data-testid="isCriticalLevel">{isCriticalLevel.toString()}</div>
-      <button data-testid="checkStorage" onClick={checkStorage}>Check Storage</button>
-      <button data-testid="setShowWarningTrue" onClick={() => setShowStorageWarning(true)}>Show Warning</button>
-      <button data-testid="setShowWarningFalse" onClick={() => setShowStorageWarning(false)}>Hide Warning</button>
-      <button data-testid="dismissThreshold" onClick={dismissCurrentThreshold}>Dismiss Threshold</button>
-      <button data-testid="resetThresholds" onClick={resetDismissedThresholds}>Reset Thresholds</button>
+      <button data-testid="checkStorage" onClick={checkStorage}>
+        Check Storage
+      </button>
+      <button
+        data-testid="setShowWarningTrue"
+        onClick={() => setShowStorageWarning(true)}
+      >
+        Show Warning
+      </button>
+      <button
+        data-testid="setShowWarningFalse"
+        onClick={() => setShowStorageWarning(false)}
+      >
+        Hide Warning
+      </button>
+      <button data-testid="dismissThreshold" onClick={dismissCurrentThreshold}>
+        Dismiss Threshold
+      </button>
+      <button data-testid="resetThresholds" onClick={resetDismissedThresholds}>
+        Reset Thresholds
+      </button>
     </div>
   );
 };
@@ -60,10 +83,10 @@ describe('StorageMonitorContext', () => {
         currentUsage: 1000,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 0.1,
-        isNearingLimit: false
+        isNearingLimit: false,
       },
       currentThreshold: null,
-      shouldShowWarning: false
+      shouldShowWarning: false,
     });
   });
 
@@ -72,7 +95,7 @@ describe('StorageMonitorContext', () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -89,7 +112,7 @@ describe('StorageMonitorContext', () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -104,17 +127,17 @@ describe('StorageMonitorContext', () => {
         currentUsage: 3.5 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 70,
-        isNearingLimit: true
+        isNearingLimit: true,
       },
       currentThreshold: 'WARNING',
-      shouldShowWarning: true
+      shouldShowWarning: true,
     });
 
     await act(async () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -132,7 +155,7 @@ describe('StorageMonitorContext', () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -143,10 +166,10 @@ describe('StorageMonitorContext', () => {
         currentUsage: 4.3 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 86,
-        isNearingLimit: true
+        isNearingLimit: true,
       },
       currentThreshold: 'CRITICAL',
-      shouldShowWarning: true
+      shouldShowWarning: true,
     });
 
     // Trigger checkStorage
@@ -156,7 +179,9 @@ describe('StorageMonitorContext', () => {
 
     expect(screen.getByTestId('isNearingLimit')).toHaveTextContent('true');
     expect(screen.getByTestId('storagePercentage')).toHaveTextContent('86');
-    expect(screen.getByTestId('currentThreshold')).toHaveTextContent('CRITICAL');
+    expect(screen.getByTestId('currentThreshold')).toHaveTextContent(
+      'CRITICAL',
+    );
     expect(screen.getByTestId('showStorageWarning')).toHaveTextContent('true');
     expect(screen.getByTestId('isEmergencyLevel')).toHaveTextContent('false');
     expect(screen.getByTestId('isCriticalLevel')).toHaveTextContent('true');
@@ -167,7 +192,7 @@ describe('StorageMonitorContext', () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -197,17 +222,17 @@ describe('StorageMonitorContext', () => {
         currentUsage: 3.5 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 70,
-        isNearingLimit: true
+        isNearingLimit: true,
       },
       currentThreshold: 'WARNING',
-      shouldShowWarning: true
+      shouldShowWarning: true,
     });
 
     await act(async () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -234,17 +259,17 @@ describe('StorageMonitorContext', () => {
         currentUsage: 4.8 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 96,
-        isNearingLimit: true
+        isNearingLimit: true,
       },
       currentThreshold: 'EMERGENCY',
-      shouldShowWarning: true
+      shouldShowWarning: true,
     });
 
     await act(async () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -269,7 +294,7 @@ describe('StorageMonitorContext', () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -298,12 +323,15 @@ describe('StorageMonitorContext', () => {
         const { unmount } = render(
           <StorageMonitorProvider>
             <TestConsumer />
-          </StorageMonitorProvider>
+          </StorageMonitorProvider>,
         );
 
         // Ensure all effects have run
         await waitFor(() => {
-          expect(mockSetInterval).toHaveBeenCalledWith(expect.any(Function), 50);
+          expect(mockSetInterval).toHaveBeenCalledWith(
+            expect.any(Function),
+            50,
+          );
         });
 
         // Unmount to test cleanup
@@ -327,17 +355,17 @@ describe('StorageMonitorContext', () => {
         currentUsage: 1000,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 0.1,
-        isNearingLimit: false
+        isNearingLimit: false,
       },
       currentThreshold: null,
-      shouldShowWarning: false
+      shouldShowWarning: false,
     });
 
     await act(async () => {
       render(
         <StorageMonitorProvider>
           <TestConsumer />
-        </StorageMonitorProvider>
+        </StorageMonitorProvider>,
       );
     });
 
@@ -350,10 +378,10 @@ describe('StorageMonitorContext', () => {
         currentUsage: 3.5 * 1024 * 1024,
         maxUsage: 5 * 1024 * 1024,
         percentUsed: 70,
-        isNearingLimit: true
+        isNearingLimit: true,
       },
       currentThreshold: 'WARNING',
-      shouldShowWarning: true
+      shouldShowWarning: true,
     });
 
     // Trigger checkStorage

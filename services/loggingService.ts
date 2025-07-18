@@ -114,13 +114,13 @@ export class AzureMonitorLoggingService {
     const duration = Date.now() - startTime;
     const successEntry: MessageSuccessLogEntry = {
       ...this.createMessageLogEntry(
-          'ChatCompletion',
-          modelId,
-          messageCount,
-          temperature,
-          duration,
-          user,
-          botId,
+        'ChatCompletion',
+        modelId,
+        messageCount,
+        temperature,
+        duration,
+        user,
+        botId,
       ),
       Status: 'success',
     };
@@ -145,13 +145,13 @@ export class AzureMonitorLoggingService {
     const duration = Date.now() - startTime;
     const errorEntry: MessageErrorLogEntry = {
       ...this.createMessageLogEntry(
-          'ChatCompletion',
-          modelId,
-          messageCount,
-          temperature,
-          duration,
-          user,
-          botId,
+        'ChatCompletion',
+        modelId,
+        messageCount,
+        temperature,
+        duration,
+        user,
+        botId,
       ),
       Status: 'error',
       ErrorMessage: error instanceof Error ? error.message : 'Unknown error',
@@ -183,20 +183,20 @@ export class AzureMonitorLoggingService {
     const duration = Date.now() - startTime;
     const successEntry: FileLogEntry = {
       ...this.createFileLogEntry(
-          `FileOperationSuccess${
-              eventTypeSuffix || ''
-          }` as FileLogEntry['EventType'],
-          modelId,
-          duration,
-          'success',
-          user,
-          botId,
-          filename,
-          fileSize,
-          chunkCount,
-          processedChunkCount,
-          failedChunkCount,
-          streamMode,
+        `FileOperationSuccess${
+          eventTypeSuffix || ''
+        }` as FileLogEntry['EventType'],
+        modelId,
+        duration,
+        'success',
+        user,
+        botId,
+        filename,
+        fileSize,
+        chunkCount,
+        processedChunkCount,
+        failedChunkCount,
+        streamMode,
       ),
     };
 
@@ -221,16 +221,16 @@ export class AzureMonitorLoggingService {
     const duration = Date.now() - startTime;
     const errorEntry: FileLogEntry = {
       ...this.createFileLogEntry(
-          `FileOperationError${
-              eventTypeSuffix || ''
-          }` as FileLogEntry['EventType'],
-          modelId,
-          duration,
-          'error',
-          user,
-          botId,
-          filename,
-          fileSize,
+        `FileOperationError${
+          eventTypeSuffix || ''
+        }` as FileLogEntry['EventType'],
+        modelId,
+        duration,
+        'error',
+        user,
+        botId,
+        filename,
+        fileSize,
       ),
       ErrorMessage: error instanceof Error ? error.message : 'Unknown error',
       ErrorStack: error instanceof Error ? error.stack : undefined,

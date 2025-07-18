@@ -31,7 +31,7 @@ import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCap
 import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
-import ImageIcon from "@/components/Icons/image";
+import ImageIcon from '@/components/Icons/image';
 
 interface DropdownProps {
   onFileUpload: (
@@ -148,7 +148,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       setFilterQuery('');
       setSelectedIndex(0);
     }, 10);
-  }
+  };
 
   const { t } = useTranslation('chat');
 
@@ -200,26 +200,30 @@ const Dropdown: React.FC<DropdownProps> = ({
       },
       category: 'transform',
     },
-    ...(hasCameraSupport ? [{
-      id: 'camera',
-      icon: <IconCamera size={18} className="mr-3 text-red-500" />,
-      label: t('Camera'),
-      tooltip: 'Capture Image',
-      onClick: () => {
-        onCameraClick();
-        closeDropdown();
-      },
-      category: 'media' as 'web' | 'media' | 'transform',
-    }] : []),
+    ...(hasCameraSupport
+      ? [
+          {
+            id: 'camera',
+            icon: <IconCamera size={18} className="mr-3 text-red-500" />,
+            label: t('Camera'),
+            tooltip: 'Capture Image',
+            onClick: () => {
+              onCameraClick();
+              closeDropdown();
+            },
+            category: 'media' as 'web' | 'media' | 'transform',
+          },
+        ]
+      : []),
   ];
 
   // Filter menu items based on search query
   const filteredItems = filterQuery
     ? menuItems.filter(
-        item =>
+        (item) =>
           item.label.toLowerCase().includes(filterQuery.toLowerCase()) ||
           item.tooltip.toLowerCase().includes(filterQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(filterQuery.toLowerCase())
+          item.category.toLowerCase().includes(filterQuery.toLowerCase()),
       )
     : menuItems;
 
@@ -232,14 +236,14 @@ const Dropdown: React.FC<DropdownProps> = ({
       case 'ArrowDown':
         event.preventDefault();
         setSelectedIndex((prevIndex) =>
-          prevIndex < flattenedItems.length - 1 ? prevIndex + 1 : 0
+          prevIndex < flattenedItems.length - 1 ? prevIndex + 1 : 0,
         );
         break;
 
       case 'ArrowUp':
         event.preventDefault();
         setSelectedIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : flattenedItems.length - 1
+          prevIndex > 0 ? prevIndex - 1 : flattenedItems.length - 1,
         );
         break;
 
@@ -265,7 +269,12 @@ const Dropdown: React.FC<DropdownProps> = ({
         break;
 
       default:
-        if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
+        if (
+          event.key.length === 1 &&
+          !event.ctrlKey &&
+          !event.altKey &&
+          !event.metaKey
+        ) {
           filterInputRef.current?.focus();
         }
         break;
@@ -307,10 +316,9 @@ const Dropdown: React.FC<DropdownProps> = ({
             if (isOpen) {
               closeDropdown();
             } else {
-              setIsOpen(true)
-              }
+              setIsOpen(true);
             }
-          }
+          }}
           aria-haspopup="true"
           aria-expanded={isOpen}
           aria-label="Toggle dropdown menu"
@@ -345,7 +353,10 @@ const Dropdown: React.FC<DropdownProps> = ({
                 aria-label="Search features"
                 role="searchbox"
               />
-              <IconSearch className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500" size={16} />
+              <IconSearch
+                className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500"
+                size={16}
+              />
               {filterQuery && (
                 <button
                   onClick={() => setFilterQuery('')}
@@ -361,12 +372,19 @@ const Dropdown: React.FC<DropdownProps> = ({
           <div className="max-h-80 overflow-y-auto custom-scrollbar">
             {Object.entries(groupedItems).length > 0 ? (
               Object.entries(groupedItems).map(([category, items]) => (
-                <div key={category} className="px-1 py-1" role="group" aria-label={category}>
+                <div
+                  key={category}
+                  className="px-1 py-1"
+                  role="group"
+                  aria-label={category}
+                >
                   <h3 className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                     {category.charAt(0).toUpperCase() + category.slice(1)}
                   </h3>
                   {items.map((item) => {
-                    const itemIndex = flattenedItems.findIndex((i) => i.id === item.id);
+                    const itemIndex = flattenedItems.findIndex(
+                      (i) => i.id === item.id,
+                    );
                     const isSelected = itemIndex === selectedIndex;
 
                     return (

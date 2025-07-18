@@ -1,9 +1,16 @@
-import { isBase64, saveBase64AsFile, splitAudioFile, cleanUpFiles } from '@/services/transcription/common';
-import fs from 'fs';
+import {
+  cleanUpFiles,
+  isBase64,
+  saveBase64AsFile,
+  splitAudioFile,
+} from '@/services/transcription/common';
+
+import { ITranscriptionService } from '@/types/transcription';
+
+import { DefaultAzureCredential } from '@azure/identity';
 import axios from 'axios';
 import FormData from 'form-data';
-import { ITranscriptionService } from '@/types/transcription';
-import { DefaultAzureCredential } from '@azure/identity';
+import fs from 'fs';
 
 export class WhisperTranscriptionService implements ITranscriptionService {
   private modelName: string = 'whisper-1';
@@ -15,7 +22,8 @@ export class WhisperTranscriptionService implements ITranscriptionService {
 
   constructor() {
     const apiKey = process.env.WHISPER_API_KEY ?? process.env.OPENAI_API_KEY;
-    const azureEndpoint = process.env.WHISPER_ENDPOINT ?? process.env.AZURE_OPENAI_ENDPOINT;
+    const azureEndpoint =
+      process.env.WHISPER_ENDPOINT ?? process.env.AZURE_OPENAI_ENDPOINT;
     const deployment = process.env.WHISPER_DEPLOYMENT ?? 'whisper';
 
     this.apiKey = apiKey;
@@ -75,24 +83,23 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     const formHeaders = formData.getHeaders();
 
     try {
-      const reqUrl: string = `${this.endpoint!.trim()}/openai/deployments/${this.deployment}/audio/transcriptions?api-version=2024-06-01`;
+      const reqUrl: string = `${this.endpoint!.trim()}/openai/deployments/${
+        this.deployment
+      }/audio/transcriptions?api-version=2024-06-01`;
       const headers = formHeaders;
       if (this.apiKey) {
         headers['api-key'] = this.apiKey;
       } else {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const response = await axios.post(
-          reqUrl,
-          formData,
-          {
-            headers
-          }
-      );
+      const response = await axios.post(reqUrl, formData, {
+        headers,
+      });
 
       return response.data.text || '';
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error?.message || error.message;
+      const errorMessage =
+        error.response?.data?.error?.message || error.message;
       throw new Error(`Error transcribing segment: ${errorMessage}`);
     }
   }

@@ -4,13 +4,13 @@ import { getEndpoint } from '@/utils/app/api';
 
 import {
   ChatBody,
+  ChatRequestResult,
   Conversation,
   FileMessageContent,
   ImageMessageContent,
   Message,
-  TextMessageContent,
   RequestResult,
-  ChatRequestResult,
+  TextMessageContent,
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
 
@@ -59,7 +59,11 @@ const appendPluginKeys = (
 
 let checkStopInterval: NodeJS.Timeout | null = null;
 
-const sendRequest = async (endpoint: string, body: string, stopConversationRef?: { current: boolean }): Promise<RequestResult> => {
+const sendRequest = async (
+  endpoint: string,
+  body: string,
+  stopConversationRef?: { current: boolean },
+): Promise<RequestResult> => {
   const controller = new AbortController();
   try {
     if (stopConversationRef) {
@@ -72,7 +76,7 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
         }
       }, 100);
     }
-    
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -82,37 +86,40 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
       body,
       mode: 'cors',
     });
-    
+
     // Clears the interval upon successful completion
     if (checkStopInterval) {
       clearInterval(checkStopInterval);
       checkStopInterval = null;
     }
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
         `Request failed with status ${response.status}: ${errorText}`,
       );
     }
-    
+
     return { controller, body, response };
   } catch (error: any) {
     if (checkStopInterval) {
       clearInterval(checkStopInterval);
     }
-    
+
     if (error.name === 'AbortError') {
       console.log('Request was aborted by user');
-      const emptyResponse = new Response(new ReadableStream({
-        start(controller) {
-          controller.close();
-        }
-      }), {
-        status: 200,
-        statusText: 'OK',
-      });
-      
+      const emptyResponse = new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.close();
+          },
+        }),
+        {
+          status: 200,
+          statusText: 'OK',
+        },
+      );
+
       return { controller, body, response: emptyResponse };
     }
 
@@ -129,7 +136,7 @@ export const makeRequest = async (
   temperature: number,
   stream: boolean = true,
   setProgress: Dispatch<SetStateAction<number | null>>,
-  stopConversationRef?: { current: boolean }
+  stopConversationRef?: { current: boolean },
 ): Promise<ChatRequestResult> => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
@@ -271,11 +278,10 @@ Provide a detailed comparison.
     );
 
     let onAbort: (() => void) | null = null;
-    
+
     if (stopConversationRef) {
       const handleStopRequest = () => {
         if (stopConversationRef.current && !controller.signal.aborted) {
-          
           if (onAbort) {
             onAbort();
           }
@@ -283,7 +289,6 @@ Provide a detailed comparison.
       };
       setTimeout(handleStopRequest, 100);
     }
-
 
     setRequestStatusMessage(null);
     setProgress(null);
@@ -294,9 +299,8 @@ Provide a detailed comparison.
       response,
       hasComplexContent,
       setOnAbort: (callback: () => void) => {
-      onAbort = callback;
-      }
-
+        onAbort = callback;
+      },
     };
   } else {
     const chatBody = createChatBody(
@@ -316,16 +320,16 @@ Provide a detailed comparison.
     const { controller, body, response } = await sendRequest(
       endpoint,
       requestBody,
-      stopConversationRef
+      stopConversationRef,
     );
 
     let onAbort: (() => void) | null = null;
-    
+
     if (stopConversationRef) {
       const handleStopRequest = () => {
         if (stopConversationRef.current && !controller.signal.aborted) {
           console.log('Stop requested');
-          
+
           if (onAbort) {
             onAbort();
           }
@@ -334,15 +338,14 @@ Provide a detailed comparison.
       setTimeout(handleStopRequest, 100);
     }
 
-
     return {
       controller,
       body,
       response,
       hasComplexContent,
       setOnAbort: (callback: () => void) => {
-      onAbort = callback;
-      }
+        onAbort = callback;
+      },
     };
   }
 };

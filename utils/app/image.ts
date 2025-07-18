@@ -18,25 +18,28 @@
  * const imageBase64 = await getBase64FromImageURL('https://example.com/image.jpg');
  * console.log(imageBase64);
  */
-export const getBase64FromImageURL = async (imageUrl: string, init?: RequestInit | undefined): Promise<string> => {
-    try {
-        const response = await fetch(imageUrl, init);
+export const getBase64FromImageURL = async (
+  imageUrl: string,
+  init?: RequestInit | undefined,
+): Promise<string> => {
+  try {
+    const response = await fetch(imageUrl, init);
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        try {
-            // More efficient server-side method
-            const buffer = Buffer.from(await response.arrayBuffer());
-            return buffer.toString();
-        } catch (bufferError) {
-            // less efficient, client-side compatible method
-            const arrayBuffer = await response.arrayBuffer();
-            // @ts-ignore
-            return String.fromCharCode(...new Uint8Array(arrayBuffer));
-        }
-    } catch (error) {
-        throw new Error(`Error fetching the image: ${error}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-}
+
+    try {
+      // More efficient server-side method
+      const buffer = Buffer.from(await response.arrayBuffer());
+      return buffer.toString();
+    } catch (bufferError) {
+      // less efficient, client-side compatible method
+      const arrayBuffer = await response.arrayBuffer();
+      // @ts-ignore
+      return String.fromCharCode(...new Uint8Array(arrayBuffer));
+    }
+  } catch (error) {
+    throw new Error(`Error fetching the image: ${error}`);
+  }
+};

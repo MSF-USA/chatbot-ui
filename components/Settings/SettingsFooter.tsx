@@ -1,9 +1,12 @@
-import { FC } from 'react';
-import { useTranslation } from 'next-i18next';
 import { IconExternalLink } from '@tabler/icons-react';
+import { FC } from 'react';
+
 import { Session } from 'next-auth';
-import { isUSBased } from "@/utils/app/userAuth";
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from "@/types/contact";
+import { useTranslation } from 'next-i18next';
+
+import { isUSBased } from '@/utils/app/userAuth';
+
+import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 interface SettingsFooterProps {
   version: string;
@@ -45,7 +48,9 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
           v{version}.{build}.{env}
         </div>
         <a
-          href={`mailto:${isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL}`}
+          href={`mailto:${
+            isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
+          }`}
           className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm"
         >
           <IconExternalLink

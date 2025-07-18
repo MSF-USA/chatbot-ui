@@ -1,6 +1,7 @@
-import fetch from 'node-fetch';
-import { XMLParser } from 'fast-xml-parser';
 import { HttpError } from '@/services/webpageService';
+
+import { XMLParser } from 'fast-xml-parser';
+import fetch from 'node-fetch';
 
 export interface Article {
   title: string;
@@ -11,7 +12,7 @@ export interface Article {
 
 export async function fetchAndParseNewsSearch(
   q: string | null,
-  n: number
+  n: number,
 ): Promise<Article[]> {
   if (!q || typeof q !== 'string') {
     throw new HttpError(400, 'Invalid search query');

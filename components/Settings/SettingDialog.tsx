@@ -1,29 +1,32 @@
 import { FC, useContext, useEffect, useRef, useState } from 'react';
 import { useSwipeable } from 'react-swipeable';
+
 import { Session } from 'next-auth';
+import { useTranslation } from 'next-i18next';
 
 import { useCreateReducer } from '@/hooks/useCreateReducer';
-import { useStorageMonitor } from '@/context/StorageMonitorContext';
 
 import { getSettings, saveSettings } from '@/utils/app/settings';
 import { getStorageUsage } from '@/utils/app/storageMonitor';
 
-import HomeContext from '@/pages/api/home/home.context';
-import ChatbarContext from '../Chatbar/Chatbar.context';
+import { Settings } from '@/types/settings';
 
-import { SettingsSection } from './types';
-import { GeneralSection } from './Sections/GeneralSection';
-import { ChatSettingsSection } from './Sections/ChatSettingsSection';
-import { DataManagementSection } from './Sections/DataManagementSection';
-import { AccountSection } from './Sections/AccountSection';
-import { HelpSupportSection } from './Sections/HelpSupportSection';
-import { SettingsSidebar } from './SettingsSidebar';
+import HomeContext from '@/pages/api/home/home.context';
+
+import ChatbarContext from '../Chatbar/Chatbar.context';
 import { MobileHeader } from './MobileHeader';
 import { MobileNavigation } from './MobileNavigation';
+import { AccountSection } from './Sections/AccountSection';
+import { ChatSettingsSection } from './Sections/ChatSettingsSection';
+import { DataManagementSection } from './Sections/DataManagementSection';
+import { GeneralSection } from './Sections/GeneralSection';
+import { HelpSupportSection } from './Sections/HelpSupportSection';
 import { SettingsFooter } from './SettingsFooter';
+import { SettingsSidebar } from './SettingsSidebar';
 import faqData from './faq.json';
-import { useTranslation } from 'next-i18next';
-import {Settings} from "@/types/settings";
+import { SettingsSection } from './types';
+
+import { useStorageMonitor } from '@/context/StorageMonitorContext';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -59,7 +62,9 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const { storagePercentage, checkStorage } = useStorageMonitor();
   const [storageData, setStorageData] = useState(() => getStorageUsage());
   const modalRef = useRef<HTMLDivElement>(null);
-  const [activeSection, setActiveSection] = useState<SettingsSection>(SettingsSection.GENERAL);
+  const [activeSection, setActiveSection] = useState<SettingsSection>(
+    SettingsSection.GENERAL,
+  );
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
   useEffect(() => {
@@ -126,7 +131,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       }
     },
     preventScrollOnSwipe: true,
-    trackMouse: false
+    trackMouse: false,
   });
 
   const handleSave = () => {
@@ -137,7 +142,11 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   };
 
   const handleReset = () => {
-    const defaultTheme: 'light' | 'dark' = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+    const defaultTheme: 'light' | 'dark' = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches
+      ? 'dark'
+      : 'light';
     const defaultSettings: Settings = {
       theme: defaultTheme,
       temperature: 0.5,
@@ -200,9 +209,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 {...swipeHandlers}
               >
                 {/* Mobile header - only visible on mobile */}
-                {isMobileView && (
-                  <MobileHeader activeSection={activeSection} />
-                )}
+                {isMobileView && <MobileHeader activeSection={activeSection} />}
 
                 {/* Section content */}
                 {activeSection === SettingsSection.GENERAL && (
@@ -239,9 +246,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                 )}
 
                 {activeSection === SettingsSection.ACCOUNT && (
-                  <AccountSection
-                    user={user}
-                  />
+                  <AccountSection user={user} />
                 )}
 
                 {activeSection === SettingsSection.HELP_SUPPORT && (

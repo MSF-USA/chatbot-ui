@@ -1,17 +1,18 @@
 import {
+  FC,
+  ReactNode,
   createContext,
-  useState,
   useContext,
   useEffect,
-  FC,
-  ReactNode
+  useState,
 } from 'react';
 import React from 'react';
+
 import {
-  updateStorageStats,
+  STORAGE_THRESHOLDS,
   dismissThreshold,
   resetDismissedThresholds,
-  STORAGE_THRESHOLDS
+  updateStorageStats,
 } from '@/utils/app/storageMonitor';
 
 interface StorageMonitorContextProps {
@@ -45,7 +46,7 @@ interface StorageMonitorProviderProps {
 }
 
 export const StorageMonitorProvider: FC<StorageMonitorProviderProps> = ({
-  children
+  children,
 }) => {
   const [isNearingLimit, setIsNearingLimit] = useState<boolean>(false);
   const [storagePercentage, setStoragePercentage] = useState<number>(0);
@@ -65,7 +66,12 @@ export const StorageMonitorProvider: FC<StorageMonitorProviderProps> = ({
 
   // Function to check storage status
   const checkStorage = () => {
-    const { isNearingLimit, usageData, currentThreshold: newThreshold, shouldShowWarning } = updateStorageStats();
+    const {
+      isNearingLimit,
+      usageData,
+      currentThreshold: newThreshold,
+      shouldShowWarning,
+    } = updateStorageStats();
 
     setIsNearingLimit(isNearingLimit);
     setStoragePercentage(usageData.percentUsed);

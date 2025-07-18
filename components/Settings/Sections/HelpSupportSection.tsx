@@ -1,7 +1,10 @@
 import { FC } from 'react';
+
 import { useTranslation } from 'next-i18next';
-import { FAQ } from '../faq';
+
 import { FAQData } from '@/types/faq';
+
+import { FAQ } from '../faq';
 
 interface HelpSupportSectionProps {
   faqData: FAQData;

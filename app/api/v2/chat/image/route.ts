@@ -1,7 +1,12 @@
-import { NextRequest, NextResponse } from "next/server";
-import { Message } from "@/types/chat";
-import { Session } from "next-auth";
-import { ImageGenerationService, ImageGenerationOptions } from "@/services/imageService";
+import { Session } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+
+import {
+  ImageGenerationOptions,
+  ImageGenerationService,
+} from '@/services/imageService';
+
+import { Message } from '@/types/chat';
 
 /**
  * Handles POST requests to generate images based on conversation context
@@ -16,19 +21,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       messages,
       user,
       modelId,
-      options = {}
+      options = {},
     } = body as {
-      messages: Message[],
-      user: Session['user'],
-      modelId: string,
-      options?: ImageGenerationOptions
+      messages: Message[];
+      user: Session['user'];
+      modelId: string;
+      options?: ImageGenerationOptions;
     };
 
     // Validate the messages
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return NextResponse.json(
-        { error: "No messages provided or invalid messages format" },
-        { status: 400 }
+        { error: 'No messages provided or invalid messages format' },
+        { status: 400 },
       );
     }
 
@@ -40,18 +45,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       messages,
       user,
       modelId,
-      options
+      options,
     );
 
-    return NextResponse.json(
-      response,
-      { status: 200 }
-    );
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Internal server error" },
-      { status: 500 }
+      {
+        error: error instanceof Error ? error.message : 'Internal server error',
+      },
+      { status: 500 },
     );
   }
 }

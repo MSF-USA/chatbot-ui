@@ -1,16 +1,19 @@
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
-import * as storageMonitor from '@/utils/app/storageMonitor';
+
 import * as importExport from '@/utils/app/importExport';
+import * as storageMonitor from '@/utils/app/storageMonitor';
+
+import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
+
 import '@testing-library/jest-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the i18n
 vi.mock('next-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key
-  })
+    t: (key: string) => key,
+  }),
 }));
 
 // Mock the storageMonitor utility functions
@@ -18,12 +21,12 @@ vi.mock('@/utils/app/storageMonitor', () => ({
   getStorageUsage: vi.fn(),
   calculateSpaceFreed: vi.fn(),
   clearOlderConversations: vi.fn(),
-  MIN_RETAINED_CONVERSATIONS: 5
+  MIN_RETAINED_CONVERSATIONS: 5,
 }));
 
 // Mock the importExport utility functions
 vi.mock('@/utils/app/importExport', () => ({
-  exportData: vi.fn()
+  exportData: vi.fn(),
 }));
 
 describe('StorageWarningModal', () => {
@@ -39,13 +42,13 @@ describe('StorageWarningModal', () => {
       currentUsage: 3.5 * 1024 * 1024, // 3.5MB
       maxUsage: 5 * 1024 * 1024, // 5MB
       percentUsed: 70,
-      isNearingLimit: true
+      isNearingLimit: true,
     });
 
     vi.mocked(storageMonitor.calculateSpaceFreed).mockReturnValue({
       spaceFreed: 1 * 1024 * 1024, // 1MB
       conversationsRemoved: 10,
-      percentFreed: 20
+      percentFreed: 20,
     });
 
     vi.mocked(storageMonitor.clearOlderConversations).mockReturnValue(true);
@@ -58,7 +61,7 @@ describe('StorageWarningModal', () => {
         isOpen={false}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Modal should not be in the document
@@ -71,7 +74,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Title should be "Storage Warning"
@@ -82,8 +85,12 @@ describe('StorageWarningModal', () => {
 
     // Should show options to free up space
     expect(screen.getByText('Options to free up space:')).toBeInTheDocument();
-    expect(screen.getByText('1. Export your conversations')).toBeInTheDocument();
-    expect(screen.getByText('2. Clear older conversations')).toBeInTheDocument();
+    expect(
+      screen.getByText('1. Export your conversations'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('2. Clear older conversations'),
+    ).toBeInTheDocument();
 
     // Should have export and clear buttons
     expect(screen.getByText('Export All Data')).toBeInTheDocument();
@@ -102,14 +109,18 @@ describe('StorageWarningModal', () => {
         onClear={mockOnClear}
         currentThreshold="CRITICAL"
         isCriticalLevel={true}
-      />
+      />,
     );
 
     // Title should be "Storage Critical"
     expect(screen.getByText('Storage Critical')).toBeInTheDocument();
 
     // Should show critical message
-    expect(screen.getByText('Your browser storage is almost full! It is strongly recommended to free up space soon.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Your browser storage is almost full! It is strongly recommended to free up space soon.',
+      ),
+    ).toBeInTheDocument();
 
     // Dismiss button should have critical styling (checking for class would be implementation-specific)
     const dismissButton = screen.getByText('Dismiss Warning');
@@ -124,19 +135,26 @@ describe('StorageWarningModal', () => {
         onClear={mockOnClear}
         currentThreshold="EMERGENCY"
         isEmergencyLevel={true}
-      />
+      />,
     );
 
     // Title should be "Storage Emergency"
     expect(screen.getByText('Storage Emergency')).toBeInTheDocument();
 
     // Should show emergency message
-    expect(screen.getByText('Your browser storage is critically full! You must free up space to continue using the application.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Your browser storage is critically full! You must free up space to continue using the application.',
+      ),
+    ).toBeInTheDocument();
 
     // Close button should be disabled
     const closeButton = screen.getByText('Close');
     expect(closeButton).toBeDisabled();
-    expect(closeButton).toHaveAttribute('title', 'You must free up space before dismissing this warning');
+    expect(closeButton).toHaveAttribute(
+      'title',
+      'You must free up space before dismissing this warning',
+    );
 
     // Dismiss button should not be present
     expect(screen.queryByText('Dismiss Warning')).not.toBeInTheDocument();
@@ -148,7 +166,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Click export button
@@ -165,7 +183,7 @@ describe('StorageWarningModal', () => {
     vi.mocked(storageMonitor.calculateSpaceFreed).mockReturnValueOnce({
       spaceFreed: 1 * 1024 * 1024, // 1MB
       conversationsRemoved: 10,
-      percentFreed: 20
+      percentFreed: 20,
     });
 
     render(
@@ -173,18 +191,22 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Initial values
-    expect(screen.getByText(/This will remove 10 older conversations/)).toBeInTheDocument();
-    expect(screen.getByText(/Space freed: 1.00 MB \(20.0%\)/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/This will remove 10 older conversations/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Space freed: 1.00 MB \(20.0%\)/),
+    ).toBeInTheDocument();
 
     // Mock new calculation for changed keepCount
     vi.mocked(storageMonitor.calculateSpaceFreed).mockReturnValueOnce({
       spaceFreed: 2 * 1024 * 1024, // 2MB
       conversationsRemoved: 15,
-      percentFreed: 40
+      percentFreed: 40,
     });
 
     // Change keepCount input
@@ -207,7 +229,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Click clear button
@@ -231,7 +253,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Click clear button
@@ -253,7 +275,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Click close button
@@ -272,7 +294,7 @@ describe('StorageWarningModal', () => {
         onClose={mockOnClose}
         onClear={mockOnClear}
         onDismissThreshold={mockOnDismissThreshold}
-      />
+      />,
     );
 
     // Click dismiss button
@@ -288,7 +310,7 @@ describe('StorageWarningModal', () => {
     vi.mocked(storageMonitor.calculateSpaceFreed).mockReturnValue({
       spaceFreed: 0,
       conversationsRemoved: 0,
-      percentFreed: 0
+      percentFreed: 0,
     });
 
     render(
@@ -296,7 +318,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Clear button should be disabled
@@ -310,7 +332,7 @@ describe('StorageWarningModal', () => {
       currentUsage: 500, // 500 bytes
       maxUsage: 5 * 1024 * 1024, // 5MB
       percentUsed: 0.01,
-      isNearingLimit: false
+      isNearingLimit: false,
     });
 
     render(
@@ -318,7 +340,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Should format bytes correctly
@@ -329,7 +351,7 @@ describe('StorageWarningModal', () => {
       currentUsage: 1.5 * 1024, // 1.5KB
       maxUsage: 5 * 1024 * 1024, // 5MB
       percentUsed: 0.03,
-      isNearingLimit: false
+      isNearingLimit: false,
     });
 
     render(
@@ -337,7 +359,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Should format KB correctly
@@ -348,7 +370,7 @@ describe('StorageWarningModal', () => {
       currentUsage: 2.75 * 1024 * 1024, // 2.75MB
       maxUsage: 5 * 1024 * 1024, // 5MB
       percentUsed: 55,
-      isNearingLimit: false
+      isNearingLimit: false,
     });
 
     render(
@@ -356,7 +378,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Should format MB correctly
@@ -369,7 +391,7 @@ describe('StorageWarningModal', () => {
         isOpen={true}
         onClose={mockOnClose}
         onClear={mockOnClear}
-      />
+      />,
     );
 
     // Try to set keepCount to 0

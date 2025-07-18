@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {getEnvVariable, isMobile} from "@/utils/app/env";
+import { getEnvVariable, isMobile } from '@/utils/app/env';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('getEnvVariable', () => {
   const originalEnv = process.env;
@@ -19,11 +20,15 @@ describe('getEnvVariable', () => {
   });
 
   it('should throw an error when variable is not set and throwErrorOnFail is true', () => {
-    expect(() => getEnvVariable('NON_EXISTENT_VAR')).toThrow('Environment variable NON_EXISTENT_VAR not set');
+    expect(() => getEnvVariable('NON_EXISTENT_VAR')).toThrow(
+      'Environment variable NON_EXISTENT_VAR not set',
+    );
   });
 
   it('should return default value when variable is not set and throwErrorOnFail is false', () => {
-    expect(getEnvVariable('NON_EXISTENT_VAR', false, 'default')).toBe('default');
+    expect(getEnvVariable('NON_EXISTENT_VAR', false, 'default')).toBe(
+      'default',
+    );
   });
 
   it('should return empty string as default value when not specified', () => {
@@ -38,14 +43,18 @@ describe('getEnvVariable', () => {
   it('should use EU variable for EU users', () => {
     process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
     // @ts-ignore
-    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', { mail: 'user@amsterdam.msf.org' });
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@amsterdam.msf.org',
+    });
     expect(result).toBe('eu_storage');
   });
 
   it('should use non-EU variable for non-EU users', () => {
     process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
     // @ts-ignore
-    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', { mail: 'user@newyork.msf.org' });
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@newyork.msf.org',
+    });
     expect(result).toBe('non_eu_storage');
   });
 
@@ -57,7 +66,9 @@ describe('getEnvVariable', () => {
   it('should handle non-mapped variables for EU users', () => {
     process.env.NON_MAPPED_VAR = 'non_mapped_value';
     // @ts-ignore
-    const result = getEnvVariable('NON_MAPPED_VAR', false, '', { mail: 'user@example.com' });
+    const result = getEnvVariable('NON_MAPPED_VAR', false, '', {
+      mail: 'user@example.com',
+    });
     expect(result).toBe('non_mapped_value');
   });
 });
@@ -86,7 +97,8 @@ describe('isMobile', () => {
   it('should return true for mobile user agents', () => {
     global.window = {} as Window & typeof globalThis;
     global.navigator = {
-      userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1'
+      userAgent:
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
     } as Navigator;
 
     expect(isMobile()).toBe(true);
@@ -95,7 +107,8 @@ describe('isMobile', () => {
   it('should return false for desktop user agents', () => {
     global.window = {} as Window & typeof globalThis;
     global.navigator = {
-      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      userAgent:
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     } as Navigator;
 
     expect(isMobile()).toBe(false);

@@ -1,13 +1,15 @@
-import { FC, useState, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 import React from 'react';
+
 import { useTranslation } from 'next-i18next';
+
+import { exportData } from '@/utils/app/importExport';
 import {
-  getStorageUsage,
+  MIN_RETAINED_CONVERSATIONS,
   calculateSpaceFreed,
   clearOlderConversations,
-  MIN_RETAINED_CONVERSATIONS
+  getStorageUsage,
 } from '@/utils/app/storageMonitor';
-import { exportData } from '@/utils/app/importExport';
 
 interface StorageWarningModalProps {
   isOpen: boolean;
@@ -26,12 +28,14 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
   currentThreshold = null,
   isEmergencyLevel = false,
   isCriticalLevel = false,
-  onDismissThreshold
+  onDismissThreshold,
 }) => {
   const { t } = useTranslation('settings');
   const [keepCount, setKeepCount] = useState(MIN_RETAINED_CONVERSATIONS);
   const [storageData, setStorageData] = useState(() => getStorageUsage());
-  const [spaceFreedInfo, setSpaceFreedInfo] = useState(() => calculateSpaceFreed(keepCount));
+  const [spaceFreedInfo, setSpaceFreedInfo] = useState(() =>
+    calculateSpaceFreed(keepCount),
+  );
 
   // Update calculations when keepCount changes
   useEffect(() => {
@@ -83,12 +87,18 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
 
   const getThresholdMessage = () => {
     if (isEmergencyLevel) {
-      return t('Your browser storage is critically full! You must free up space to continue using the application.');
+      return t(
+        'Your browser storage is critically full! You must free up space to continue using the application.',
+      );
     }
     if (isCriticalLevel) {
-      return t('Your browser storage is almost full! It is strongly recommended to free up space soon.');
+      return t(
+        'Your browser storage is almost full! It is strongly recommended to free up space soon.',
+      );
     }
-    return t('Your browser storage is getting full. Consider freeing up some space.');
+    return t(
+      'Your browser storage is getting full. Consider freeing up some space.',
+    );
   };
 
   // Handle close or dismiss
@@ -103,29 +113,40 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
       <div className="bg-white dark:bg-[#171717] rounded-lg p-6 max-w-md w-full shadow-xl">
-        <h2 className={`text-xl font-bold mb-4 text-black dark:text-white ${isEmergencyLevel ? 'text-red-600 dark:text-red-400' : ''}`}>
+        <h2
+          className={`text-xl font-bold mb-4 text-black dark:text-white ${
+            isEmergencyLevel ? 'text-red-600 dark:text-red-400' : ''
+          }`}
+        >
           {getThresholdTitle()}
         </h2>
 
         <div className="mb-4">
-          <p className={`font-semibold mb-2 ${
-            isEmergencyLevel ? 'text-red-600 dark:text-red-400' : 
-            isCriticalLevel ? 'text-orange-500 dark:text-orange-400' : 
-            'text-yellow-500 dark:text-yellow-400'
-          }`}>
+          <p
+            className={`font-semibold mb-2 ${
+              isEmergencyLevel
+                ? 'text-red-600 dark:text-red-400'
+                : isCriticalLevel
+                ? 'text-orange-500 dark:text-orange-400'
+                : 'text-yellow-500 dark:text-yellow-400'
+            }`}
+          >
             {getThresholdMessage()}
           </p>
 
           <p className="mb-2 text-black dark:text-neutral-300">
-            {t('Current usage')}: {formatBytes(currentUsage)} / {formatBytes(maxUsage)} ({percentUsed.toFixed(1)}%)
+            {t('Current usage')}: {formatBytes(currentUsage)} /{' '}
+            {formatBytes(maxUsage)} ({percentUsed.toFixed(1)}%)
           </p>
 
           <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2.5 mb-4">
             <div
               className={`h-2.5 rounded-full ${
-                isEmergencyLevel ? 'bg-red-600' : 
-                isCriticalLevel ? 'bg-orange-500' : 
-                'bg-yellow-500'
+                isEmergencyLevel
+                  ? 'bg-red-600'
+                  : isCriticalLevel
+                  ? 'bg-orange-500'
+                  : 'bg-yellow-500'
               }`}
               style={{ width: `${Math.min(percentUsed, 100)}%` }}
             ></div>
@@ -133,8 +154,12 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
 
           <p className="text-black dark:text-neutral-300 mb-4">
             {isEmergencyLevel
-              ? t('Your storage is critically full. The application may stop working correctly and you could lose access to your conversations if you don\'t free up space immediately.')
-              : t('If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.')}
+              ? t(
+                  "Your storage is critically full. The application may stop working correctly and you could lose access to your conversations if you don't free up space immediately.",
+                )
+              : t(
+                  'If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.',
+                )}
           </p>
         </div>
 
@@ -148,7 +173,9 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
               {t('1. Export your conversations')}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-              {t('Save your conversations to your computer before clearing them.')}
+              {t(
+                'Save your conversations to your computer before clearing them.',
+              )}
             </p>
             <button
               className="bg-blue-600 hover:bg-blue-700 text-white py-1 px-3 rounded text-sm"
@@ -164,7 +191,10 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
             </p>
 
             <div className="mb-3">
-              <label htmlFor="keepCountInput" className="block text-sm text-gray-600 dark:text-gray-400 mb-1">
+              <label
+                htmlFor="keepCountInput"
+                className="block text-sm text-gray-600 dark:text-gray-400 mb-1"
+              >
                 {t('Keep recent conversations')}:
               </label>
               <input
@@ -178,8 +208,14 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
             </div>
 
             <div className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              <p>{t('This will remove')} {conversationsRemoved} {t('older conversations')}</p>
-              <p>{t('Space freed')}: {formatBytes(spaceFreed)} ({percentFreed.toFixed(1)}%)</p>
+              <p>
+                {t('This will remove')} {conversationsRemoved}{' '}
+                {t('older conversations')}
+              </p>
+              <p>
+                {t('Space freed')}: {formatBytes(spaceFreed)} (
+                {percentFreed.toFixed(1)}%)
+              </p>
             </div>
 
             <button
@@ -207,9 +243,11 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
               {/* For warning and critical levels, show a dismiss button */}
               <button
                 className={`
-                  ${isCriticalLevel 
-                    ? 'bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700' 
-                    : 'bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'} 
+                  ${
+                    isCriticalLevel
+                      ? 'bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700'
+                      : 'bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+                  } 
                   text-white py-2 px-4 rounded
                 `}
                 onClick={handleCloseOrDismiss}

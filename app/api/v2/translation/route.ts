@@ -1,10 +1,18 @@
-import { NextRequest, NextResponse } from "next/server";
-import {AzureOpenAI} from "openai";
-import { DefaultAzureCredential, getBearerTokenProvider } from "@azure/identity";
-import { getStructuredResponse } from "@/utils/server/structuredResponses";
-import { getAutonym } from "@/utils/app/locales";
-import { Session } from "next-auth";
-import { ChatCompletionMessageParam, ChatCompletionSystemMessageParam } from "openai/resources/chat/completions";
+import { Session } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { getAutonym } from '@/utils/app/locales';
+import { getStructuredResponse } from '@/utils/server/structuredResponses';
+
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+import { AzureOpenAI } from 'openai';
+import {
+  ChatCompletionMessageParam,
+  ChatCompletionSystemMessageParam,
+} from 'openai/resources/chat/completions';
 
 type TranslationResponse = {
   translatedText: string;
@@ -17,23 +25,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
     const body = await req.json();
     const { sourceText, targetLocale, user, modelId } = body as {
-      sourceText: string,
-      targetLocale: string,
-      user: Session['user'],
-      modelId: string
+      sourceText: string;
+      targetLocale: string;
+      user: Session['user'];
+      modelId: string;
     };
 
     if (!sourceText) {
       return NextResponse.json(
-        { error: "No source text provided" },
-        { status: 400 }
+        { error: 'No source text provided' },
+        { status: 400 },
       );
     }
 
     if (!targetLocale) {
       return NextResponse.json(
-        { error: "No target locale provided" },
-        { status: 400 }
+        { error: 'No target locale provided' },
+        { status: 400 },
       );
     }
 
@@ -66,52 +74,55 @@ ${sourceText}
 Provide only the translated text in your response.`;
 
     const systemMessage: ChatCompletionSystemMessageParam = {
-      role: "system",
-      content: "You are a professional translator with expertise in multiple languages. Your task is to provide accurate and natural-sounding translations while preserving the original meaning and tone.",
+      role: 'system',
+      content:
+        'You are a professional translator with expertise in multiple languages. Your task is to provide accurate and natural-sounding translations while preserving the original meaning and tone.',
     };
 
     const userMessage: ChatCompletionMessageParam = {
-      role: "user",
+      role: 'user',
       content: prompt,
     };
 
     // Define JSON schema for the structured response
     const jsonSchema = {
-      type: "object",
+      type: 'object',
       properties: {
         translatedText: {
-          type: "string",
-          description: "The translated text in the target language",
+          type: 'string',
+          description: 'The translated text in the target language',
         },
         notes: {
-          type: "string",
-          description: "Any optional translation notes capturing difficulties or lost subtleties."
-        }
+          type: 'string',
+          description:
+            'Any optional translation notes capturing difficulties or lost subtleties.',
+        },
       },
-      required: ["translatedText", "notes"],
+      required: ['translatedText', 'notes'],
       additionalProperties: false,
     };
 
     // Generate translation using structured response
-    const translationResponse = await getStructuredResponse<TranslationResponse>(
-      openai,
-      [systemMessage, userMessage],
-      modelId,
-      user,
-      jsonSchema,
-      0.3, // Lower temperature for more accurate translations
-      2000  // Increased max tokens to accommodate longer texts
-    );
+    const translationResponse =
+      await getStructuredResponse<TranslationResponse>(
+        openai,
+        [systemMessage, userMessage],
+        modelId,
+        user,
+        jsonSchema,
+        0.3, // Lower temperature for more accurate translations
+        2000, // Increased max tokens to accommodate longer texts
+      );
 
     return NextResponse.json(
       { translatedText: translationResponse.translatedText },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error(error);
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: 'Internal server error' },
+      { status: 500 },
     );
   }
 }

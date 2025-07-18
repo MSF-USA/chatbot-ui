@@ -113,13 +113,13 @@
  * Please use an alternative implementation for file parsing and querying.
  */
 export async function parseAndQueryFileLangchainOpenAI(
-    file: File,
-    prompt: string,
-    chunkSize: number = 2000
+  file: File,
+  prompt: string,
+  chunkSize: number = 2000,
 ): Promise<string> {
-    throw new Error(
-        'parseAndQueryFileLangchainOpenAI is deprecated and no longer available. ' +
-        'The langchain dependency has been removed from this project. ' +
-        'Please use an alternative implementation for file parsing and querying.'
-    );
+  throw new Error(
+    'parseAndQueryFileLangchainOpenAI is deprecated and no longer available. ' +
+      'The langchain dependency has been removed from this project. ' +
+      'Please use an alternative implementation for file parsing and querying.',
+  );
 }
