@@ -90,6 +90,47 @@ export interface FileLogEntry extends BaseLogEntry {
 }
 
 /**
+ * Base metadata interface for agent logging
+ */
+export interface LogMetadata {
+  agentId?: string;
+  agentType?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Info log metadata interface
+ */
+export interface InfoLogMetadata extends LogMetadata {
+  language?: string;
+  sandboxPath?: string;
+  processingTime?: number;
+  codeBlocksExecuted?: number;
+  totalExecutionTime?: number;
+  supportedLanguages?: string[];
+}
+
+/**
+ * Error log metadata interface
+ */
+export interface ErrorLogMetadata extends LogMetadata {
+  language?: string;
+  sandboxPath?: string;
+  processingTime?: number;
+  query?: string;
+  executionTime?: number;
+  correlationId?: string;
+}
+
+/**
+ * Warning log metadata interface
+ */
+export interface WarningLogMetadata extends LogMetadata {
+  error?: string;
+  sandboxPath?: string;
+}
+
+/**
  * Union type of all possible log entry types.
  */
 export type LogEntry =
