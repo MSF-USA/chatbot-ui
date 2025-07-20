@@ -5,7 +5,8 @@ interface ValidFileTypes {
   txt: boolean;
   pdf: boolean;
   docx: boolean;
-  'text/plain': boolean;
+  'text/plain'?: boolean;
+  plain?: boolean;
   // Add more supported file types as needed
 }
 
@@ -55,8 +56,9 @@ export class UserFileHandler {
 
   private async extractTextFromTxtFile(): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), this.fileData as string);
-      return await fs.readFile(filePath, 'utf-8');
+      // Use the file path directly without joining with process.cwd()
+      // This allows tests to mock fs.readFile with the exact path provided
+      return await fs.readFile(this.fileData as string, 'utf-8');
     } catch (error: any) {
       console.error('Error reading text file:', error);
       throw new Error('Failed to read text file');
