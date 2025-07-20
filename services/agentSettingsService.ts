@@ -381,7 +381,7 @@ export class AgentSettingsService {
           priority: 80,
           parameters: {
             freshness: 'week',
-            count: 10,
+            count: 15,
             market: 'en-US',
           },
         };
