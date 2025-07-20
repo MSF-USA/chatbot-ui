@@ -34,6 +34,7 @@ const createChatBody = (
   temperature: number,
   botId: string | undefined,
   stream: boolean,
+  forceStandardChat?: boolean,
 ): ChatBody => ({
   model: conversation.model,
   messages,
@@ -42,6 +43,7 @@ const createChatBody = (
   temperature: conversation.temperature || temperature,
   botId,
   stream,
+  ...(forceStandardChat && { forceStandardChat }),
 });
 
 const appendPluginKeys = (
@@ -137,6 +139,7 @@ export const makeRequest = async (
   stream: boolean = true,
   setProgress: Dispatch<SetStateAction<number | null>>,
   stopConversationRef?: { current: boolean },
+  forceStandardChat?: boolean,
 ): Promise<ChatRequestResult> => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
@@ -200,6 +203,7 @@ Document metadata: ${filename}
         temperature,
         updatedConversation.bot,
         false, // Don't stream intermediate steps
+        forceStandardChat,
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
@@ -262,6 +266,7 @@ Provide a detailed comparison.
       temperature,
       updatedConversation.bot,
       stream, // Stream the final comparison response
+      forceStandardChat,
     );
 
     const endpoint = getEndpoint(plugin);
@@ -311,6 +316,7 @@ Provide a detailed comparison.
       temperature,
       updatedConversation.bot,
       stream,
+      forceStandardChat,
     );
     const endpoint = getEndpoint(plugin);
 
