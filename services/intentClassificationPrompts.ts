@@ -219,6 +219,16 @@ export const USER_PROMPT_TEMPLATES = {
 - "Update my calendar with this meeting"
 - "Query the sales database for Q4 results"
 
+**IMPORTANT - User Exclusions:**
+Always check if the user explicitly requests to AVOID certain agent types. Pay special attention to phrases like:
+- "don't search the web" / "without searching" → AVOID web_search agent
+- "don't run code" / "no code execution" → AVOID code_interpreter agent  
+- "don't access urls" / "no external links" → AVOID url_pull agent
+- "don't use internal" / "external sources only" → AVOID local_knowledge agent
+- "offline only" / "local only" → AVOID web_search and url_pull agents
+
+If a user explicitly requests to avoid an agent type, give that agent type a very low confidence score (0.05-0.1) regardless of other indicators.
+
 Provide your classification with detailed reasoning.`,
 
   es: `Analiza la siguiente consulta del usuario y clasifícala para determinar el tipo de agente más apropiado.
@@ -600,3 +610,129 @@ export function getAgentGuidance(agentType: AgentType) {
 export function validateConfidenceScore(confidence: number): boolean {
   return confidence >= 0 && confidence <= 1 && !isNaN(confidence);
 }
+
+/**
+ * Agent exclusion patterns for detecting when users want to avoid specific agents
+ */
+export const AGENT_EXCLUSION_PATTERNS = {
+  [AgentType.WEB_SEARCH]: {
+    avoidancePatterns: [
+      'don\'t search the web',
+      'without searching',
+      'no web search',
+      'avoid search',
+      'don\'t look online',
+      'offline only',
+      'without internet',
+      'no online search',
+      'don\'t browse',
+      'without browsing',
+      'no external search',
+      'local only',
+      'don\'t fetch online',
+      'avoid web lookup'
+    ],
+    negativePatterns: [
+      /don't\s+(search|look|browse|fetch|find)\s+(the\s+)?(web|online|internet)/i,
+      /without\s+(searching|browsing|looking)\s+(the\s+)?(web|online|internet)/i,
+      /no\s+(web\s+)?(search|browsing|online\s+search)/i,
+      /avoid\s+(web\s+)?(search|browsing)/i,
+      /not?\s+(search|look|browse)\s+(online|web)/i
+    ],
+    exclusionKeywords: [
+      'offline', 'local only', 'no internet', 'internal only', 'cached only'
+    ]
+  },
+  [AgentType.CODE_INTERPRETER]: {
+    avoidancePatterns: [
+      'don\'t run code',
+      'no code execution',
+      'without running',
+      'avoid execution',
+      'don\'t execute',
+      'no script',
+      'text only',
+      'explanation only',
+      'theory only',
+      'conceptual only',
+      'without coding',
+      'no programming',
+      'don\'t compile',
+      'static only'
+    ],
+    negativePatterns: [
+      /don't\s+(run|execute|compile)\s+(code|script|program)/i,
+      /no\s+(code\s+)?(execution|running|compilation)/i,
+      /without\s+(running|executing|coding)/i,
+      /avoid\s+(code\s+)?(execution|running)/i,
+      /(explanation|theory|concept)\s+only/i,
+      /text\s+only/i
+    ],
+    exclusionKeywords: [
+      'theory only', 'explanation only', 'conceptual', 'static analysis', 'no execution'
+    ]
+  },
+  [AgentType.URL_PULL]: {
+    avoidancePatterns: [
+      'don\'t access urls',
+      'no url fetching',
+      'without pulling',
+      'avoid external links',
+      'don\'t fetch',
+      'no website access',
+      'offline content',
+      'local content only',
+      'don\'t visit',
+      'no external access',
+      'without accessing',
+      'don\'t pull from'
+    ],
+    negativePatterns: [
+      /don't\s+(access|fetch|pull|visit)\s+(url|link|website|site)/i,
+      /no\s+(url|link|website)\s+(access|fetching|pulling)/i,
+      /without\s+(accessing|pulling|fetching)\s+(url|link|website)/i,
+      /avoid\s+(external\s+)?(link|url|website)/i,
+      /local\s+(content\s+)?only/i
+    ],
+    exclusionKeywords: [
+      'local only', 'offline content', 'no external', 'internal only'
+    ]
+  },
+  [AgentType.LOCAL_KNOWLEDGE]: {
+    avoidancePatterns: [
+      'don\'t use internal',
+      'no local knowledge',
+      'external only',
+      'fresh information',
+      'current data only',
+      'no cached',
+      'live data only',
+      'real-time only'
+    ],
+    negativePatterns: [
+      /don't\s+use\s+(internal|local|cached)/i,
+      /no\s+(local|internal|cached)\s+(knowledge|data|info)/i,
+      /(fresh|current|live|real-time)\s+(data|info|information)\s+only/i,
+      /external\s+(sources\s+)?only/i
+    ],
+    exclusionKeywords: [
+      'external only', 'fresh only', 'current only', 'live data', 'real-time'
+    ]
+  },
+  [AgentType.STANDARD_CHAT]: {
+    avoidancePatterns: [
+      'use special tools',
+      'enhanced features',
+      'agent assistance',
+      'advanced capabilities'
+    ],
+    negativePatterns: [
+      /use\s+(special\s+)?(tools|agents|features)/i,
+      /enhanced\s+(features|capabilities)/i,
+      /advanced\s+(help|assistance)/i
+    ],
+    exclusionKeywords: [
+      'enhanced', 'advanced tools', 'special features'
+    ]
+  }
+} as const;
