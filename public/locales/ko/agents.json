@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "[KO] Web Search",
+      "code_interpreter": "[KO] Code Interpreter",
+      "url_pull": "[KO] URL Analysis",
+      "local_knowledge": "[KO] Knowledge Base",
+      "standard_chat": "[KO] Standard Chat",
+      "foundry": "[KO] Foundry",
+      "third_party": "[KO] Third Party"
+    },
+    "error": {
+      "title": "[KO] Agent Error",
+      "unknown": "[KO] An unknown error occurred",
+      "retry": "[KO] Retry",
+      "fallback": "[KO] Use fallback"
+    },
+    "metadata": {
+      "processingTime": "[KO] Processing time",
+      "confidence": "[KO] Confidence",
+      "tokens": "[KO] Tokens used"
+    },
+    "resultsPanel": {
+      "placeholder": "[KO] Agent results will be displayed here"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "[KO] Searches the web for real-time information",
+      "code_interpreter": "[KO] Executes and analyzes code in multiple languages",
+      "url_pull": "[KO] Analyzes and extracts content from web pages",
+      "local_knowledge": "[KO] Searches internal knowledge base and documents",
+      "standard_chat": "[KO] Standard conversational AI without tools",
+      "foundry": "[KO] Uses Azure AI Foundry for advanced capabilities",
+      "third_party": "[KO] Third-party agent or custom tool integration"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "[KO] Web search results will be displayed here",
+      "title": "[KO] Title",
+      "noResults": "[KO] No results found",
+      "noData": "[KO] No search data available",
+      "results": "[KO] results",
+      "confidence": "[KO] Relevance",
+      "relevance": "[KO] Relevance",
+      "source": "[KO] Source",
+      "citations": "[KO] Citations",
+      "cite": "[KO] Cite",
+      "open": "[KO] Open",
+      "openLink": "[KO] Open link in new tab",
+      "filters": "[KO] Filters",
+      "sortBy": "[KO] Sort by",
+      "filterBy": "[KO] Filter by",
+      "all": "[KO] All",
+      "date": "[KO] Date",
+      "query": "[KO] Query",
+      "searchTime": "[KO] Search time",
+      "cached": "[KO] Cached",
+      "contentTypes": {
+        "webpage": "[KO] Web pages",
+        "news": "[KO] News",
+        "academic": "[KO] Academic",
+        "image": "[KO] Images",
+        "video": "[KO] Videos"
+      }
+    },
+    "configuration": {
+      "resultsCount": "[KO] Number of results",
+      "safeSearch": "[KO] Safe search",
+      "market": "[KO] Search market"
+    },
+    "status": {
+      "searching": "[KO] Searching the web...",
+      "optimizing": "[KO] Optimizing search query...",
+      "processing": "[KO] Processing search results..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "[KO] Code execution results will be displayed here",
+      "title": "[KO] Execution Results",
+      "noData": "[KO] No code execution data available",
+      "output": "[KO] Output",
+      "errors": "[KO] Errors",
+      "logs": "[KO] Logs",
+      "executionTime": "[KO] Execution time",
+      "memoryUsage": "[KO] Memory usage",
+      "cpuUsage": "[KO] CPU usage",
+      "outputLines": "[KO] Output lines",
+      "executedCode": "[KO] Executed Code",
+      "download": "[KO] Download",
+      "noOutput": "[KO] No output generated",
+      "noFiles": "[KO] No files generated",
+      "outputSize": "[KO] Output size",
+      "unsupportedOutput": "[KO] Unsupported output format",
+      "status": {
+        "success": "[KO] Success",
+        "error": "[KO] Error",
+        "timeout": "[KO] Timeout",
+        "memory_limit": "[KO] Memory limit exceeded",
+        "security_violation": "[KO] Security violation",
+        "invalid_code": "[KO] Invalid code"
+      },
+      "outputTypes": {
+        "stdout": "[KO] Standard output",
+        "stderr": "[KO] Error output",
+        "return_value": "[KO] Return value",
+        "exception": "[KO] Exception"
+      },
+      "tabs": {
+        "output": "[KO] Output",
+        "code": "[KO] Code",
+        "files": "[KO] Files"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "[KO] URL Analysis Results",
+      "noData": "[KO] No URL analysis data available",
+      "summary": "[KO] Summary",
+      "metadata": "[KO] Document Info",
+      "processingTime": "[KO] Processing time",
+      "preview": "[KO] Preview",
+      "view": "[KO] View"
+    },
+    "configuration": {
+      "timeout": "[KO] Request timeout"
+    },
+    "status": {
+      "pulling": "[KO] Fetching URL content...",
+      "analyzing": "[KO] Analyzing document...",
+      "complete": "[KO] Analysis complete"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "[KO] Knowledge Base Results",
+      "noData": "[KO] No knowledge base data available",
+      "documents": "[KO] documents",
+      "insights": "[KO] Key Insights",
+      "relevance": "[KO] Relevance",
+      "suggestions": "[KO] Suggestions"
+    },
+    "configuration": {
+      "searchMode": "[KO] Search mode",
+      "threshold": "[KO] Relevance threshold"
+    },
+    "status": {
+      "searching": "[KO] Searching knowledge base...",
+      "analyzing": "[KO] Analyzing results..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "[KO] Document analysis results will be displayed here",
+      "title": "[KO] Analysis Results",
+      "noData": "[KO] No document analysis data available",
+      "documents": "[KO] documents",
+      "noDocuments": "[KO] No documents found",
+      "summary": "[KO] Summary",
+      "insights": "[KO] Key Insights",
+      "metadata": "[KO] Document Info",
+      "processingTime": "[KO] Processing time",
+      "searchTime": "[KO] Search time",
+      "relevance": "[KO] Relevance",
+      "cached": "[KO] Cached",
+      "preview": "[KO] Preview",
+      "view": "[KO] View",
+      "open": "[KO] Open",
+      "bookmark": "[KO] Bookmark",
+      "suggestions": "[KO] Suggestions",
+      "tabs": {
+        "documents": "[KO] Documents",
+        "insights": "[KO] Insights",
+        "failed": "[KO] Failed"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "[KO] Loading...",
+      "searching": "[KO] Searching...",
+      "processing": "[KO] Processing...",
+      "analyzing": "[KO] Analyzing..."
+    },
+    "buttons": {
+      "retry": "[KO] Retry",
+      "cancel": "[KO] Cancel",
+      "expand": "[KO] Expand",
+      "collapse": "[KO] Collapse",
+      "configure": "[KO] Configure",
+      "submit": "[KO] Submit"
+    },
+    "labels": {
+      "priority": "[KO] Priority",
+      "estimatedTime": "[KO] Estimated time",
+      "availability": "[KO] Availability",
+      "configuration": "[KO] Configuration"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "[KO] An unknown error occurred",
+      "network": "[KO] Network connection error",
+      "timeout": "[KO] Request timed out",
+      "unauthorized": "[KO] Access denied",
+      "rateLimit": "[KO] Rate limit exceeded",
+      "serviceUnavailable": "[KO] Service temporarily unavailable"
+    },
+    "webSearch": {
+      "searchFailed": "[KO] Web search failed",
+      "invalidQuery": "[KO] Invalid search query"
+    },
+    "codeInterpreter": {
+      "executionFailed": "[KO] Code execution failed",
+      "invalidCode": "[KO] Invalid or unsafe code"
+    },
+    "urlPull": {
+      "fetchFailed": "[KO] Failed to fetch URL content",
+      "invalidUrl": "[KO] Invalid or inaccessible URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "[KO] Knowledge base search failed",
+      "noAccess": "[KO] No access to knowledge base"
+    }
+  },
+  "settings": {
+    "autoSubmit": "[KO] Auto-submit after processing",
+    "advancedOptions": "[KO] Advanced options",
+    "priority": {
+      "high": "[KO] High",
+      "medium": "[KO] Medium",
+      "low": "[KO] Low"
+    },
+    "safeSearch": {
+      "off": "[KO] Off",
+      "moderate": "[KO] Moderate",
+      "strict": "[KO] Strict"
+    },
+    "market": {
+      "any": "[KO] Any region",
+      "local": "[KO] Local region"
+    }
+  }
+}

@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "ウェブ検索",
+      "code_interpreter": "コードインタープリター",
+      "url_pull": "URL解析",
+      "local_knowledge": "ナレッジベース",
+      "standard_chat": "標準チャット",
+      "foundry": "Foundry",
+      "third_party": "サードパーティ"
+    },
+    "error": {
+      "title": "エージェントエラー",
+      "unknown": "不明なエラーが発生しました",
+      "retry": "再試行",
+      "fallback": "フォールバックを使用"
+    },
+    "metadata": {
+      "processingTime": "処理時間",
+      "confidence": "信頼度",
+      "tokens": "使用トークン"
+    },
+    "resultsPanel": {
+      "placeholder": "エージェントの結果がここに表示されます"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "[JA] Searches the web for real-time information",
+      "code_interpreter": "[JA] Executes and analyzes code in multiple languages",
+      "url_pull": "[JA] Analyzes and extracts content from web pages",
+      "local_knowledge": "[JA] Searches internal knowledge base and documents",
+      "standard_chat": "[JA] Standard conversational AI without tools",
+      "foundry": "[JA] Uses Azure AI Foundry for advanced capabilities",
+      "third_party": "[JA] Third-party agent or custom tool integration"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "[JA] Web search results will be displayed here",
+      "title": "タイトル",
+      "noResults": "結果が見つかりません",
+      "noData": "検索データがありません",
+      "results": "結果",
+      "confidence": "関連性",
+      "relevance": "関連性",
+      "source": "ソース",
+      "citations": "引用",
+      "cite": "引用する",
+      "open": "開く",
+      "openLink": "新しいタブでリンクを開く",
+      "filters": "フィルター",
+      "sortBy": "並び替え",
+      "filterBy": "フィルター",
+      "all": "すべて",
+      "date": "日付",
+      "query": "クエリ",
+      "searchTime": "検索時間",
+      "cached": "キャッシュ済み",
+      "contentTypes": {
+        "webpage": "[JA] Web pages",
+        "news": "[JA] News",
+        "academic": "[JA] Academic",
+        "image": "[JA] Images",
+        "video": "[JA] Videos"
+      }
+    },
+    "configuration": {
+      "resultsCount": "[JA] Number of results",
+      "safeSearch": "[JA] Safe search",
+      "market": "[JA] Search market"
+    },
+    "status": {
+      "searching": "[JA] Searching the web...",
+      "optimizing": "[JA] Optimizing search query...",
+      "processing": "[JA] Processing search results..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "[JA] Code execution results will be displayed here",
+      "title": "[JA] Execution Results",
+      "noData": "[JA] No code execution data available",
+      "output": "[JA] Output",
+      "errors": "[JA] Errors",
+      "logs": "[JA] Logs",
+      "executionTime": "[JA] Execution time",
+      "memoryUsage": "[JA] Memory usage",
+      "cpuUsage": "[JA] CPU usage",
+      "outputLines": "[JA] Output lines",
+      "executedCode": "[JA] Executed Code",
+      "download": "[JA] Download",
+      "noOutput": "[JA] No output generated",
+      "noFiles": "[JA] No files generated",
+      "outputSize": "[JA] Output size",
+      "unsupportedOutput": "[JA] Unsupported output format",
+      "status": {
+        "success": "[JA] Success",
+        "error": "[JA] Error",
+        "timeout": "[JA] Timeout",
+        "memory_limit": "[JA] Memory limit exceeded",
+        "security_violation": "[JA] Security violation",
+        "invalid_code": "[JA] Invalid code"
+      },
+      "outputTypes": {
+        "stdout": "[JA] Standard output",
+        "stderr": "[JA] Error output",
+        "return_value": "[JA] Return value",
+        "exception": "[JA] Exception"
+      },
+      "tabs": {
+        "output": "[JA] Output",
+        "code": "[JA] Code",
+        "files": "[JA] Files"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "[JA] URL Analysis Results",
+      "noData": "[JA] No URL analysis data available",
+      "summary": "[JA] Summary",
+      "metadata": "[JA] Document Info",
+      "processingTime": "処理時間",
+      "preview": "[JA] Preview",
+      "view": "[JA] View"
+    },
+    "configuration": {
+      "timeout": "[JA] Request timeout"
+    },
+    "status": {
+      "pulling": "[JA] Fetching URL content...",
+      "analyzing": "[JA] Analyzing document...",
+      "complete": "[JA] Analysis complete"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "[JA] Knowledge Base Results",
+      "noData": "[JA] No knowledge base data available",
+      "documents": "[JA] documents",
+      "insights": "[JA] Key Insights",
+      "relevance": "関連性",
+      "suggestions": "[JA] Suggestions"
+    },
+    "configuration": {
+      "searchMode": "[JA] Search mode",
+      "threshold": "[JA] Relevance threshold"
+    },
+    "status": {
+      "searching": "[JA] Searching knowledge base...",
+      "analyzing": "[JA] Analyzing results..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "[JA] Document analysis results will be displayed here",
+      "title": "[JA] Analysis Results",
+      "noData": "[JA] No document analysis data available",
+      "documents": "[JA] documents",
+      "noDocuments": "[JA] No documents found",
+      "summary": "[JA] Summary",
+      "insights": "[JA] Key Insights",
+      "metadata": "[JA] Document Info",
+      "processingTime": "処理時間",
+      "searchTime": "検索時間",
+      "relevance": "関連性",
+      "cached": "キャッシュ済み",
+      "preview": "[JA] Preview",
+      "view": "[JA] View",
+      "open": "開く",
+      "bookmark": "[JA] Bookmark",
+      "suggestions": "[JA] Suggestions",
+      "tabs": {
+        "documents": "[JA] Documents",
+        "insights": "[JA] Insights",
+        "failed": "[JA] Failed"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "読み込み中...",
+      "searching": "検索中...",
+      "processing": "処理中...",
+      "analyzing": "分析中..."
+    },
+    "buttons": {
+      "retry": "再試行",
+      "cancel": "キャンセル",
+      "expand": "[JA] Expand",
+      "collapse": "[JA] Collapse",
+      "configure": "設定",
+      "submit": "送信"
+    },
+    "labels": {
+      "priority": "優先度",
+      "estimatedTime": "推定時間",
+      "availability": "可用性",
+      "configuration": "設定"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "不明なエラーが発生しました",
+      "network": "[JA] Network connection error",
+      "timeout": "[JA] Request timed out",
+      "unauthorized": "[JA] Access denied",
+      "rateLimit": "[JA] Rate limit exceeded",
+      "serviceUnavailable": "[JA] Service temporarily unavailable"
+    },
+    "webSearch": {
+      "searchFailed": "[JA] Web search failed",
+      "invalidQuery": "[JA] Invalid search query"
+    },
+    "codeInterpreter": {
+      "executionFailed": "[JA] Code execution failed",
+      "invalidCode": "[JA] Invalid or unsafe code"
+    },
+    "urlPull": {
+      "fetchFailed": "[JA] Failed to fetch URL content",
+      "invalidUrl": "[JA] Invalid or inaccessible URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "[JA] Knowledge base search failed",
+      "noAccess": "[JA] No access to knowledge base"
+    }
+  },
+  "settings": {
+    "autoSubmit": "[JA] Auto-submit after processing",
+    "advancedOptions": "[JA] Advanced options",
+    "priority": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "safeSearch": {
+      "off": "[JA] Off",
+      "moderate": "[JA] Moderate",
+      "strict": "[JA] Strict"
+    },
+    "market": {
+      "any": "[JA] Any region",
+      "local": "[JA] Local region"
+    }
+  }
+}

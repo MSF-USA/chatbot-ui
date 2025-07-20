@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "[ZH] Web Search",
+      "code_interpreter": "[ZH] Code Interpreter",
+      "url_pull": "[ZH] URL Analysis",
+      "local_knowledge": "[ZH] Knowledge Base",
+      "standard_chat": "[ZH] Standard Chat",
+      "foundry": "[ZH] Foundry",
+      "third_party": "[ZH] Third Party"
+    },
+    "error": {
+      "title": "[ZH] Agent Error",
+      "unknown": "[ZH] An unknown error occurred",
+      "retry": "[ZH] Retry",
+      "fallback": "[ZH] Use fallback"
+    },
+    "metadata": {
+      "processingTime": "[ZH] Processing time",
+      "confidence": "[ZH] Confidence",
+      "tokens": "[ZH] Tokens used"
+    },
+    "resultsPanel": {
+      "placeholder": "[ZH] Agent results will be displayed here"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "[ZH] Searches the web for real-time information",
+      "code_interpreter": "[ZH] Executes and analyzes code in multiple languages",
+      "url_pull": "[ZH] Analyzes and extracts content from web pages",
+      "local_knowledge": "[ZH] Searches internal knowledge base and documents",
+      "standard_chat": "[ZH] Standard conversational AI without tools",
+      "foundry": "[ZH] Uses Azure AI Foundry for advanced capabilities",
+      "third_party": "[ZH] Third-party agent or custom tool integration"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "[ZH] Web search results will be displayed here",
+      "title": "[ZH] Title",
+      "noResults": "[ZH] No results found",
+      "noData": "[ZH] No search data available",
+      "results": "[ZH] results",
+      "confidence": "[ZH] Relevance",
+      "relevance": "[ZH] Relevance",
+      "source": "[ZH] Source",
+      "citations": "[ZH] Citations",
+      "cite": "[ZH] Cite",
+      "open": "[ZH] Open",
+      "openLink": "[ZH] Open link in new tab",
+      "filters": "[ZH] Filters",
+      "sortBy": "[ZH] Sort by",
+      "filterBy": "[ZH] Filter by",
+      "all": "[ZH] All",
+      "date": "[ZH] Date",
+      "query": "[ZH] Query",
+      "searchTime": "[ZH] Search time",
+      "cached": "[ZH] Cached",
+      "contentTypes": {
+        "webpage": "[ZH] Web pages",
+        "news": "[ZH] News",
+        "academic": "[ZH] Academic",
+        "image": "[ZH] Images",
+        "video": "[ZH] Videos"
+      }
+    },
+    "configuration": {
+      "resultsCount": "[ZH] Number of results",
+      "safeSearch": "[ZH] Safe search",
+      "market": "[ZH] Search market"
+    },
+    "status": {
+      "searching": "[ZH] Searching the web...",
+      "optimizing": "[ZH] Optimizing search query...",
+      "processing": "[ZH] Processing search results..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "[ZH] Code execution results will be displayed here",
+      "title": "[ZH] Execution Results",
+      "noData": "[ZH] No code execution data available",
+      "output": "[ZH] Output",
+      "errors": "[ZH] Errors",
+      "logs": "[ZH] Logs",
+      "executionTime": "[ZH] Execution time",
+      "memoryUsage": "[ZH] Memory usage",
+      "cpuUsage": "[ZH] CPU usage",
+      "outputLines": "[ZH] Output lines",
+      "executedCode": "[ZH] Executed Code",
+      "download": "[ZH] Download",
+      "noOutput": "[ZH] No output generated",
+      "noFiles": "[ZH] No files generated",
+      "outputSize": "[ZH] Output size",
+      "unsupportedOutput": "[ZH] Unsupported output format",
+      "status": {
+        "success": "[ZH] Success",
+        "error": "[ZH] Error",
+        "timeout": "[ZH] Timeout",
+        "memory_limit": "[ZH] Memory limit exceeded",
+        "security_violation": "[ZH] Security violation",
+        "invalid_code": "[ZH] Invalid code"
+      },
+      "outputTypes": {
+        "stdout": "[ZH] Standard output",
+        "stderr": "[ZH] Error output",
+        "return_value": "[ZH] Return value",
+        "exception": "[ZH] Exception"
+      },
+      "tabs": {
+        "output": "[ZH] Output",
+        "code": "[ZH] Code",
+        "files": "[ZH] Files"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "[ZH] URL Analysis Results",
+      "noData": "[ZH] No URL analysis data available",
+      "summary": "[ZH] Summary",
+      "metadata": "[ZH] Document Info",
+      "processingTime": "[ZH] Processing time",
+      "preview": "[ZH] Preview",
+      "view": "[ZH] View"
+    },
+    "configuration": {
+      "timeout": "[ZH] Request timeout"
+    },
+    "status": {
+      "pulling": "[ZH] Fetching URL content...",
+      "analyzing": "[ZH] Analyzing document...",
+      "complete": "[ZH] Analysis complete"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "[ZH] Knowledge Base Results",
+      "noData": "[ZH] No knowledge base data available",
+      "documents": "[ZH] documents",
+      "insights": "[ZH] Key Insights",
+      "relevance": "[ZH] Relevance",
+      "suggestions": "[ZH] Suggestions"
+    },
+    "configuration": {
+      "searchMode": "[ZH] Search mode",
+      "threshold": "[ZH] Relevance threshold"
+    },
+    "status": {
+      "searching": "[ZH] Searching knowledge base...",
+      "analyzing": "[ZH] Analyzing results..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "[ZH] Document analysis results will be displayed here",
+      "title": "[ZH] Analysis Results",
+      "noData": "[ZH] No document analysis data available",
+      "documents": "[ZH] documents",
+      "noDocuments": "[ZH] No documents found",
+      "summary": "[ZH] Summary",
+      "insights": "[ZH] Key Insights",
+      "metadata": "[ZH] Document Info",
+      "processingTime": "[ZH] Processing time",
+      "searchTime": "[ZH] Search time",
+      "relevance": "[ZH] Relevance",
+      "cached": "[ZH] Cached",
+      "preview": "[ZH] Preview",
+      "view": "[ZH] View",
+      "open": "[ZH] Open",
+      "bookmark": "[ZH] Bookmark",
+      "suggestions": "[ZH] Suggestions",
+      "tabs": {
+        "documents": "[ZH] Documents",
+        "insights": "[ZH] Insights",
+        "failed": "[ZH] Failed"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "[ZH] Loading...",
+      "searching": "[ZH] Searching...",
+      "processing": "[ZH] Processing...",
+      "analyzing": "[ZH] Analyzing..."
+    },
+    "buttons": {
+      "retry": "[ZH] Retry",
+      "cancel": "[ZH] Cancel",
+      "expand": "[ZH] Expand",
+      "collapse": "[ZH] Collapse",
+      "configure": "[ZH] Configure",
+      "submit": "[ZH] Submit"
+    },
+    "labels": {
+      "priority": "[ZH] Priority",
+      "estimatedTime": "[ZH] Estimated time",
+      "availability": "[ZH] Availability",
+      "configuration": "[ZH] Configuration"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "[ZH] An unknown error occurred",
+      "network": "[ZH] Network connection error",
+      "timeout": "[ZH] Request timed out",
+      "unauthorized": "[ZH] Access denied",
+      "rateLimit": "[ZH] Rate limit exceeded",
+      "serviceUnavailable": "[ZH] Service temporarily unavailable"
+    },
+    "webSearch": {
+      "searchFailed": "[ZH] Web search failed",
+      "invalidQuery": "[ZH] Invalid search query"
+    },
+    "codeInterpreter": {
+      "executionFailed": "[ZH] Code execution failed",
+      "invalidCode": "[ZH] Invalid or unsafe code"
+    },
+    "urlPull": {
+      "fetchFailed": "[ZH] Failed to fetch URL content",
+      "invalidUrl": "[ZH] Invalid or inaccessible URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "[ZH] Knowledge base search failed",
+      "noAccess": "[ZH] No access to knowledge base"
+    }
+  },
+  "settings": {
+    "autoSubmit": "[ZH] Auto-submit after processing",
+    "advancedOptions": "[ZH] Advanced options",
+    "priority": {
+      "high": "[ZH] High",
+      "medium": "[ZH] Medium",
+      "low": "[ZH] Low"
+    },
+    "safeSearch": {
+      "off": "[ZH] Off",
+      "moderate": "[ZH] Moderate",
+      "strict": "[ZH] Strict"
+    },
+    "market": {
+      "any": "[ZH] Any region",
+      "local": "[ZH] Local region"
+    }
+  }
+}
