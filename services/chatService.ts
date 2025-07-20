@@ -463,7 +463,7 @@ export default class ChatService {
     }
   }
 
-  public async handleRequest(req: NextRequest): Promise<Response> {
+  public async handleRequest(req: NextRequest, providedSession?: Session | null, providedToken?: JWT | null): Promise<Response> {
     const {
       model,
       messages,
@@ -501,9 +501,10 @@ export default class ChatService {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
-    const token = (await getToken({ req })) as JWT | null;
+    // Use provided session/token or extract them if not provided
+    const token = providedToken ?? (await getToken({ req })) as JWT | null;
     if (!token) throw new Error('Could not pull token!');
-    const session: Session | null = await getServerSession(authOptions as any);
+    const session: Session | null = providedSession ?? await getServerSession(authOptions as any);
     if (!session) throw new Error('Could not pull session!');
 
     const user = session['user'];
