@@ -388,9 +388,9 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'extract data from this webpage',
       'compare these websites: https://site1.com and https://site2.com',
       'process these URLs: https://example1.com, https://example2.com',
-      'fetch content from multiple links',
+      // 'fetch content from multiple links',
       'analyze SEO for this site: https://business.com',
-      'scrape data from these pages'
+      // 'scrape data from these pages'
     ]
   },
 
@@ -409,12 +409,12 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'prohibited uses', 'accuracy', 'bias', 'check outputs', 'privacy concerns', 'incidents',
       'faq', 'feedback', 'support', 'bug report', 'ai@newyork.msf.org', 'ai.team@amsterdam.msf.org',
       // Company/organizational
-      'company', 'internal', 'org chart', 'organization', 'corporate', 'enterprise',
-      'contact', 'documentation', 'docs', 'guide', 'handbook', 'manual', 'knowledge base', 'wiki',
-      'what is our', 'where can i find', 'how do i',
-      'hr', 'human resources', 'it', 'finance', 'accounting', 'legal', 'compliance', 'marketing', 'sales',
-      'employee', 'staff', 'team', 'department', 'office', 'internal team', 'colleagues',
-      'workflow', 'process', 'guideline', 'protocol', 'standard', 'best practice'
+      // 'company', 'internal', 'org chart', 'organization', 'corporate', 'enterprise',
+      // 'contact', 'documentation', 'docs', 'guide', 'handbook', 'manual', 'knowledge base', 'wiki',
+      // 'what is our', 'where can i find', 'how do i',
+      // 'hr', 'human resources', 'it', 'finance', 'accounting', 'legal', 'compliance', 'marketing', 'sales',
+      // 'employee', 'staff', 'team', 'department', 'office', 'internal team', 'colleagues',
+      // 'workflow', 'process', 'guideline', 'protocol', 'standard', 'best practice'
     ],
     patterns: [
       // MSF AI Assistant patterns
@@ -424,9 +424,9 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       /\b(faq|frequently asked|support|trust|reliable|accurate|feedback)\b/i,
       // Company/organizational patterns
       /\b(company|our|internal|organization|org|corporate|enterprise)\b/i,
-      /\b(policy|procedure|handbook|guide|documentation|docs|manual|wiki)\b/i,
+      // /\b(policy|procedure|handbook|guide|documentation|docs|manual|wiki)\b/i,
       /\b(how do i|what is our|where can i find)\b/i,
-      /\b(hr|human resources|it|finance|accounting|legal|compliance|marketing|sales)\b/i,
+      // /\b(hr|human resources|it|finance|accounting|legal|compliance|marketing|sales)\b/i,
       /\b(knowledge base|internal docs|company info|organizational|protocols)\b/i,
       /\b(employee|staff|team|department|office|internal team|colleagues)\b/i,
       /\b(workflow|process|guideline|protocol|standard|best practice)\b/i,
@@ -434,6 +434,7 @@ export const AGENT_SPECIFIC_GUIDANCE = {
     examples: [
       // MSF AI Assistant examples
       'what is the msf ai assistant',
+      'who are you',
       'what can the ai assistant do?',
       'how do i create a reusable prompt?',
       'where is my data stored?',
@@ -447,17 +448,17 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'how do i automate prompts?',
       // Company/organizational examples
       'what is our vacation policy?',
-      'show me the org chart',
-      'company contact information',
-      'how do I submit an expense report?',
+      // 'show me the org chart',
+      // 'company contact information',
+      // 'how do I submit an expense report?',
       'what are the HR policies for remote work?',
       'where can I find the IT support documentation?',
       'internal procedures for new employee onboarding',
-      'company guidelines for code review process',
-      'who should I contact in the finance department?',
-      'frequently asked questions about benefits',
-      'our company\'s security protocols',
-      'internal wiki about product specifications'
+      // 'company guidelines for code review process',
+      // 'who should I contact in the finance department?',
+      // 'frequently asked questions about benefits',
+      // 'our company\'s security protocols',
+      // 'internal wiki about product specifications'
     ]
   },
 
@@ -493,7 +494,8 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'what do you think about this?',
       'help me brainstorm ideas',
       'explain this concept',
-      'give me your opinion on...'
+      'give me your opinion on...',
+      'what is the sphere handbook',
     ]
   },
 
