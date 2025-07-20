@@ -1,6 +1,6 @@
-import { Dispatch, SetStateAction } from 'react';
+import {Dispatch, SetStateAction} from 'react';
 
-import { makeRequest } from '@/services/frontendChatServices';
+import {makeRequest} from '@/services/frontendChatServices';
 
 import {
   AgentExecutionApiRequest,
@@ -8,18 +8,17 @@ import {
   IntentAnalysisApiRequest,
   IntentAnalysisApiResponse,
 } from '@/types/agentApi';
-import { AgentType } from '@/types/agent';
+import {AgentType} from '@/types/agent';
 import {
-  ChatBody,
   ChatRequestResult,
   Conversation,
+  FileMessageContent,
   Message,
   MessageType,
   TextMessageContent,
-  FileMessageContent,
 } from '@/types/chat';
-import { Plugin, PluginID } from '@/types/plugin';
-import { AgentSettings } from '@/types/settings';
+import {Plugin, PluginID} from '@/types/plugin';
+import {AgentSettings} from '@/types/settings';
 
 /**
  * Result of agentic chat processing
@@ -208,10 +207,11 @@ export class AgenticFrontendService {
           stream,
           setProgress,
           stopConversationRef,
-          { usedAgent: false, fellBackToStandardChat: false, startTime }
+          { usedAgent: false, fellBackToStandardChat: false, startTime },
+          true // ai has determined this is standard, so do not check again
         );
       }
-      
+
       this.log(`✅ Proceeding with ${agentType} agent execution`);
 
       // Step 4: Execute agent workflow
@@ -475,6 +475,20 @@ ${agentData.content}`;
 
     enhancedPrompt += `\n\nPlease synthesize this information and provide a helpful, accurate response to the user's question.`;
 
+    // Add agent-specific instructions based on the agent type used
+    if (agentData.agentType === AgentType.WEB_SEARCH) {
+      this.log('Adding web search specific instruction: include references and citations');
+      enhancedPrompt += `\n\nAdditionally, when presenting your response, please include proper references and citations to the sources provided in the agent findings. Use numbered, markdown citations and provide a reference list at the end if multiple sources are cited.`;
+    } else if (agentData.agentType === AgentType.LOCAL_KNOWLEDGE) {
+      this.log('Adding local knowledge specific instruction: respond directly without meta-commentary');
+      enhancedPrompt += `\n\nPlease respond directly to the user's original question using the provided information. Do not include additional commentary about the request, explanations about the information source, or meta-discussion about the response process. Focus solely on answering the user's question.`;
+    } else if (agentData.agentType === AgentType.URL_PULL) {
+      this.log('Adding URL pull specific instruction: try to be clear what information relates to what url, if multiple are provided');
+      enhancedPrompt += `\n\nPlease respond directly to the user's original question using the provided information. If multiple urls are provided, please try to be clear which information relates to which url. If the article is in a different language from what the user is using, provide at least a translation of the title.`;
+    } else {
+      this.log(`No specific instructions for agent type: ${agentData.agentType}`);
+    }
+
     // Create a new message with the enhanced prompt
     const enhancedMessage: Message = {
       role: 'user',
@@ -546,19 +560,54 @@ ${agentData.content}`;
       return false;
     }
 
-    // Check if this is a complex content conversation (skip agents for file/image processing)
+    // Check the most recent user message for conditions that should skip agents
     const lastMessage = conversation.messages[conversation.messages.length - 1];
-    const isComplexContent = Array.isArray(lastMessage.content) && lastMessage.content.length > 1;
-    this.log(`Message content complexity check:`, {
-      isArray: Array.isArray(lastMessage.content),
-      contentLength: Array.isArray(lastMessage.content) ? lastMessage.content.length : 'not array',
-      isComplexContent
-    });
     
-    if (isComplexContent) {
-      this.log('❌ Complex content detected, skipping agents');
+    // Skip if not a user message
+    if (lastMessage.role !== 'user') {
+      this.log('❌ Last message is not from user, skipping agents');
       return false;
     }
+
+    const messageContent = lastMessage.content;
+    const isArrayContent = Array.isArray(messageContent);
+    
+    this.log(`Message content analysis:`, {
+      isArray: isArrayContent,
+      contentLength: isArrayContent ? messageContent.length : 'not array',
+      messageType: lastMessage.messageType
+    });
+
+    // Check for file uploads (FileMessageContent)
+    if (isArrayContent) {
+      const hasFileUpload = messageContent.some((content: any) => content.type === 'file_url');
+      if (hasFileUpload) {
+        this.log('❌ File upload detected, skipping agents for better performance');
+        return false;
+      }
+
+      // Check for image uploads (ImageMessageContent)
+      const hasImageUpload = messageContent.some((content: any) => content.type === 'image_url');
+      if (hasImageUpload) {
+        this.log('❌ Image upload detected, skipping agents for better performance');
+        return false;
+      }
+
+      // Check for multiple content items (complex content)
+      if (messageContent.length > 1) {
+        this.log('❌ Multiple content items detected, skipping agents for existing compatibility');
+        return false;
+      }
+    }
+
+    // Check for very long text messages (> 2000 characters)
+    const textContent = this.extractMessageText(lastMessage);
+    if (textContent.length > 2000) {
+      this.log(`❌ Very long message detected (${textContent.length} chars), skipping agents for performance`);
+      return false;
+    }
+
+    this.log(`✅ Message content checks passed (${textContent.length} chars), agents can be used`);
 
     this.log('✅ All checks passed, agents should be used');
     return true;
