@@ -14,11 +14,13 @@
     "test:node": "vitest --run --config ./vitest.config.node.ts",
     "test:jsdom": "vitest --run --config ./vitest.config.jsdom.ts",
     "test": "npm run test:node && npm run test:jsdom",
+    "typecheck": "tsc --noEmit --skipLibCheck",
     "coverage": "vitest run --coverage",
     "search:config": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts",
     "search:config-downtime": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts --allow-downtime"
   },
   "dependencies": {
+    "@azure/ai-agents": "^1.0.0-beta.1",
     "@azure/identity": "^4.4.1",
     "@azure/monitor-ingestion": "^1.1.0",
     "@azure/openai": "^2.0.0-beta.2",
