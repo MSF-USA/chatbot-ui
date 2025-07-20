@@ -446,12 +446,12 @@ export class ThirdPartyAgent extends BaseAgent {
   }
 
   private validateServiceConfig(): void {
-    if (!this.serviceConfig.baseUrl) {
+    if (!this.serviceConfig?.baseUrl) {
       throw new AgentCreationError('Base URL is required');
     }
 
     try {
-      new URL(this.serviceConfig.baseUrl);
+      new URL(this.serviceConfig?.baseUrl);
     } catch {
       throw new AgentCreationError('Invalid base URL format');
     }
