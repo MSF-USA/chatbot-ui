@@ -1,5 +1,6 @@
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
+import { AgentType, AgentResponse } from './agent';
 
 export enum MessageType {
   TEXT = 'text',
@@ -84,6 +85,7 @@ export interface Message {
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
+  agentResponse?: AgentResponse;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
