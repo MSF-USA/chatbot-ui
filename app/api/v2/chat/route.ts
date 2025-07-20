@@ -30,6 +30,7 @@ interface ChatV2Request extends ChatBody {
   conversationId?: string;
   userContext?: Partial<UserContext>;
   forceAgentType?: AgentType;
+  forceStandardChat?: boolean;
   enableStreaming?: boolean;
   enableFallback?: boolean;
   metadata?: {
@@ -154,14 +155,19 @@ export async function POST(req: NextRequest): Promise<Response> {
     console.log('[INFO] Processing chat request v2:', { requestId });
 
     // Parse the request body once at the beginning
-    const bodyData = await req.json();
+    const bodyData = await req.json() as ChatV2Request;
 
     // Extract session and token once at the beginning to avoid duplicate extraction
     const session: Session | null = await getServerSession(authOptions as any);
     const token = await getToken({ req: req as any });
 
-    // Check if enhanced service should be used
-    const useEnhancedService = AGENT_ROUTING_ENABLED || req.headers.get('x-use-agents') === 'true';
+    // Check if enhanced service should be used (but not if standard chat is forced)
+    const useEnhancedService = !bodyData.forceStandardChat && 
+                              (AGENT_ROUTING_ENABLED || req.headers.get('x-use-agents') === 'true');
+    
+    if (bodyData.forceStandardChat) {
+      console.log('[INFO] Force standard chat requested, bypassing agent routing');
+    }
 
     if (useEnhancedService) {
       console.log('[INFO] Using Enhanced Chat Service for v2 API');
