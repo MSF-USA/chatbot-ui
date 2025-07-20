@@ -31,7 +31,12 @@ import { KnowledgeBaseService } from '../knowledgeBaseService';
 import { SemanticSearchEngine } from '../semanticSearchEngine';
 import { KnowledgeGraphService } from '../knowledgeGraphService';
 import { AzureMonitorLoggingService } from '../loggingService';
-import { SimpleKnowledgeLoader, getKnowledgeLoader, SimpleSearchResult } from '../../utils/knowledge/simpleKnowledgeLoader';
+import {
+  SimpleKnowledgeLoader,
+  getKnowledgeLoader,
+  SimpleSearchResult,
+  SimpleKnowledgeItem
+} from '../../utils/knowledge/simpleKnowledgeLoader';
 
 /**
  * Local Knowledge Agent Implementation
@@ -607,6 +612,14 @@ export class LocalKnowledgeAgent extends BaseAgent {
     try {
       console.log(`[INFO] Performing simple knowledge search for: "${query.query}"`);
 
+      // Check if we should use the ultra-simple mode (send all content)
+      const useUltraSimple = process.env.ULTRA_SIMPLE_KNOWLEDGE === 'true' || true; // Default to true for now
+      
+      if (useUltraSimple) {
+        return await this.performUltraSimpleSearch(query);
+      }
+
+      // Original filtered approach (kept for potential future use)
       // Determine search type based on query content
       let searchType: 'faq' | 'privacy_policy' | undefined;
       
@@ -640,7 +653,138 @@ export class LocalKnowledgeAgent extends BaseAgent {
   }
 
   /**
-   * Convert SimpleSearchResult to KnowledgeSearchResult
+   * Ultra-simple search: return ALL FAQ and privacy content for AI processing
+   */
+  private async performUltraSimpleSearch(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult[]> {
+    try {
+      console.log(`[INFO] Performing ultra-simple knowledge search (sending all content)`);
+
+      // Ensure SimpleKnowledgeLoader is properly initialized before accessing items
+      await this.simpleLoader.initialize();
+      console.log(`[INFO] SimpleKnowledgeLoader initialization confirmed`);
+
+      // Get statistics to verify loader has content
+      const stats = this.simpleLoader.getStatistics();
+      console.log(`[INFO] Knowledge loader stats:`, {
+        totalItems: stats.totalItems,
+        faqItems: stats.faqItems,
+        privacyItems: stats.privacyItems,
+        initialized: stats.initialized
+      });
+
+      if (stats.totalItems === 0) {
+        console.warn(`[WARN] Knowledge loader has no items after initialization`);
+        throw new LocalKnowledgeError(
+          'Knowledge loader contains no items',
+          LocalKnowledgeErrorType.SEARCH_FAILED,
+          new Error('Empty knowledge base'),
+          query.query
+        );
+      }
+
+      // Determine which content type to include based on query
+      let includeTypes: ('faq' | 'privacy_policy')[] = [];
+      
+      if (this.simpleLoader.isFaqQuery(query.query)) {
+        includeTypes = ['faq'];
+        console.log(`[INFO] Detected FAQ query - including all FAQ content (${stats.faqItems} items)`);
+      } else if (this.simpleLoader.isPrivacyQuery(query.query)) {
+        includeTypes = ['privacy_policy'];
+        console.log(`[INFO] Detected privacy query - including all privacy content (${stats.privacyItems} items)`);
+      } else {
+        // If unclear, include both
+        includeTypes = ['faq', 'privacy_policy'];
+        console.log(`[INFO] Unclear query type - including all FAQ and privacy content (${stats.totalItems} items total)`);
+      }
+
+      // Get all items of the determined types
+      const allItems: SimpleKnowledgeItem[] = [];
+      for (const type of includeTypes) {
+        const typeItems = this.simpleLoader.getItemsByType(type);
+        console.log(`[INFO] Retrieved ${typeItems.length} items of type: ${type}`);
+        allItems.push(...typeItems);
+      }
+
+      if (allItems.length === 0) {
+        console.error(`[ERROR] No items found for types: ${includeTypes.join(', ')}`);
+        throw new LocalKnowledgeError(
+          `No knowledge items found for content types: ${includeTypes.join(', ')}`,
+          LocalKnowledgeErrorType.SEARCH_FAILED,
+          new Error('No matching content types'),
+          query.query
+        );
+      }
+
+      // Convert all items to KnowledgeSearchResult format with perfect scores
+      const knowledgeResults: KnowledgeSearchResult[] = allItems.map((item, index) => {
+        return this.convertSimpleItemToKnowledgeResult(item, 1.0, `All ${item.type} content included`);
+      });
+
+      console.log(`[INFO] Ultra-simple search completed successfully: ${knowledgeResults.length} items included`);
+      return knowledgeResults;
+    } catch (error) {
+      console.error('[ERROR] Ultra-simple knowledge search failed:', error);
+      
+      // If it's already a LocalKnowledgeError, re-throw it
+      if (error instanceof LocalKnowledgeError) {
+        throw error;
+      }
+      
+      throw new LocalKnowledgeError(
+        'Ultra-simple knowledge search failed',
+        LocalKnowledgeErrorType.SEARCH_FAILED,
+        error,
+        query.query
+      );
+    }
+  }
+
+  /**
+   * Convert SimpleKnowledgeItem to KnowledgeSearchResult (for ultra-simple mode)
+   */
+  private convertSimpleItemToKnowledgeResult(
+    item: SimpleKnowledgeItem,
+    score: number,
+    explanation: string
+  ): KnowledgeSearchResult {
+    // Create a KnowledgeDocument from the simple item
+    const document: KnowledgeDocument = {
+      id: item.id,
+      title: item.question || `${item.type === 'faq' ? 'FAQ' : 'Privacy Policy'}: ${item.category}`,
+      content: item.answer,
+      type: item.type === 'faq' ? KnowledgeDocumentType.FAQ : KnowledgeDocumentType.POLICY,
+      source: KnowledgeSourceType.LOCAL_FILE,
+      accessLevel: AccessLevel.INTERNAL,
+      allowedRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN],
+      metadata: {
+        author: 'MSF AI Team',
+        department: 'Technology',
+        status: 'published' as const,
+        customFields: {
+          category: item.category,
+          keywords: item.keywords,
+        },
+      },
+      createdAt: new Date('2025-01-20'),
+      updatedAt: new Date('2025-01-20'),
+      version: '1.0.0',
+      tags: [item.category, item.type, ...item.keywords.slice(0, 3)],
+      language: 'en',
+      searchableContent: `${item.question || ''} ${item.answer} ${item.keywords.join(' ')}`,
+    };
+
+    return {
+      document,
+      score,
+      highlights: [item.answer.substring(0, 200) + (item.answer.length > 200 ? '...' : '')],
+      explanation,
+      relatedDocuments: [],
+      matchedEntities: [],
+    };
+  }
+
+  /**
+   * Convert SimpleSearchResult to KnowledgeSearchResult (for filtered mode)
    */
   private convertSimpleResultToKnowledgeResult(
     simpleResult: SimpleSearchResult, 
@@ -889,6 +1033,16 @@ export class LocalKnowledgeAgent extends BaseAgent {
       return `I couldn't find any relevant information in our knowledge base for "${response.query}". You might want to try rephrasing your question or checking if the information is available in a different format.`;
     }
 
+    // Check if we're in ultra-simple mode (all results have perfect scores)
+    const isUltraSimpleMode = response.results.length > 1 && 
+                             response.results.every(result => result.score === 1.0);
+
+    if (isUltraSimpleMode) {
+      // Ultra-simple mode: format as comprehensive knowledge base content
+      return this.formatUltraSimpleResponse(response);
+    }
+
+    // Original filtered mode formatting
     let content = '';
 
     // Add answer summary if available
@@ -917,6 +1071,41 @@ export class LocalKnowledgeAgent extends BaseAgent {
         content += `• ${suggestion}\n`;
       }
     }
+
+    return content;
+  }
+
+  /**
+   * Format response for ultra-simple mode (all content included)
+   */
+  private formatUltraSimpleResponse(response: LocalKnowledgeResponse): string {
+    let content = `Here is the complete knowledge base content relevant to your question:\n\n`;
+
+    // Group results by type
+    const faqResults = response.results.filter(r => r.document.type === KnowledgeDocumentType.FAQ);
+    const privacyResults = response.results.filter(r => r.document.type === KnowledgeDocumentType.POLICY);
+
+    // Add FAQ content if present
+    if (faqResults.length > 0) {
+      content += `## Frequently Asked Questions\n\n`;
+      for (const result of faqResults) {
+        const doc = result.document;
+        content += `**Q: ${doc.title.replace(/^FAQ: /, '')}**\n`;
+        content += `A: ${doc.content}\n\n`;
+      }
+    }
+
+    // Add Privacy Policy content if present
+    if (privacyResults.length > 0) {
+      content += `## Privacy Policy & Terms of Use\n\n`;
+      for (const result of privacyResults) {
+        const doc = result.document;
+        content += `**${doc.title.replace(/^Privacy Policy: /, '')}**\n`;
+        content += `${doc.content}\n\n`;
+      }
+    }
+
+    content += `\nPlease use this information to answer the user's question directly and accurately.`;
 
     return content;
   }
