@@ -115,10 +115,14 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private async initializeAsync(): Promise<void> {
     try {
       // Initialize knowledge base service
-      await this.knowledgeBaseService.initialize();
+      if (this.knowledgeBaseService) {
+        await this.knowledgeBaseService.initialize();
+      }
 
       // Initialize semantic search engine
-      await this.searchEngine.initialize();
+      if (this.searchEngine) {
+        await this.searchEngine.initialize();
+      }
 
       // Initialize knowledge graph service if enabled
       if (this.knowledgeGraphService) {
@@ -377,16 +381,24 @@ export class LocalKnowledgeAgent extends BaseAgent {
   protected async performCleanup(): Promise<void> {
     try {
       // Clear caches
-      this.searchCache.clear();
-      this.queryHistory.length = 0;
+      if (this.searchCache) {
+        this.searchCache.clear();
+      }
+      if (this.queryHistory) {
+        this.queryHistory.length = 0;
+      }
 
       if (this.useSimpleMode) {
         // Simple mode cleanup - minimal resources to clean up
         console.log(`[INFO] Simple Knowledge Agent cleanup completed: ${this.config.id}`);
       } else {
         // Enterprise mode cleanup
-        await this.knowledgeBaseService.cleanup();
-        this.searchEngine.clearCache();
+        if (this.knowledgeBaseService) {
+          await this.knowledgeBaseService.cleanup();
+        }
+        if (this.searchEngine) {
+          this.searchEngine.clearCache();
+        }
         
         // Cleanup knowledge graph if enabled
         if (this.knowledgeGraphService) {
@@ -530,6 +542,11 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private async loadInitialKnowledge(): Promise<void> {
     // Placeholder for loading initial knowledge documents
     // In production, this would load from configured sources
+    // Make sure services are initialized before loading knowledge
+    if (!this.knowledgeBaseService || !this.searchEngine) {
+      console.warn('[WARN] Cannot load initial knowledge: services not initialized');
+      return;
+    }
     console.log('[INFO] Initial knowledge loading completed (placeholder)');
   }
 

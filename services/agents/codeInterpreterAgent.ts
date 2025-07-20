@@ -41,10 +41,13 @@ export class CodeInterpreterAgent extends BaseAgent {
 
   protected async initializeAgent(): Promise<void> {
     // Initialize Code Interpreter Agent specific components
-    this.executionCache.clear();
+    // Check if executionCache is initialized before calling clear()
+    if (this.executionCache) {
+      this.executionCache.clear();
+    }
     
     // Validate configuration
-    if (!this.codeInterpreterConfig.codeInterpreterConfig) {
+    if (!this.codeInterpreterConfig?.codeInterpreterConfig) {
       throw new Error('Code interpreter configuration is required');
     }
   }
