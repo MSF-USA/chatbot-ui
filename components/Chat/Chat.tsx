@@ -15,6 +15,7 @@ import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
 import { makeRequest } from '@/services/frontendChatServices';
+import { createAgenticFrontendService, AgenticChatResult } from '@/services/agenticFrontendService';
 
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
@@ -86,6 +87,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       systemPrompt,
       user,
       lightMode,
+      agentSettings,
+      agentRoutingEnabled,
     },
     handleUpdateConversation,
     dispatch: homeDispatch,
@@ -115,6 +118,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     string | null
   >(null);
   const [progress, setProgress] = useState<number | null>(null);
+  const [currentAgentResult, setCurrentAgentResult] = useState<AgenticChatResult | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -159,6 +163,33 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     }
   }, [selectedConversation]);
 
+  /**
+   * Determine if we should use agentic routing for this message
+   */
+  const shouldUseAgenticRouting = useCallback((message: Message): boolean => {
+    // Check if agentic routing is enabled globally
+    if (!agentRoutingEnabled || !agentSettings.enabled) {
+      return false;
+    }
+
+    // Check if user has any agents enabled
+    if (agentSettings.enabledAgentTypes.length === 0) {
+      return false;
+    }
+
+    // Skip agentic routing for complex content (files, images)
+    if (Array.isArray(message.content) && message.content.length > 1) {
+      return false;
+    }
+
+    // Skip if there's already a bot selected (RAG/specialized bots)
+    if (selectedConversation?.bot) {
+      return false;
+    }
+
+    return true;
+  }, [agentRoutingEnabled, agentSettings, selectedConversation]);
+
   useEffect(() => {
     updateBotInfo();
   }, [selectedConversation, updateBotInfo]);
@@ -187,6 +218,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
     let extractedCitations: Citation[] = [];
+    let processedEnhancedResponse = false;
 
     const checkStopInterval = setInterval(() => {
       if (stopConversationRef.current) {
@@ -213,26 +245,68 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         if (value) {
           const chunkValue = decoder.decode(value);
-          text += chunkValue;
+          
+          // Check if this is a complete JSON response from enhanced service
+          let isEnhancedResponse = false;
+          let enhancedData = null;
+          
+          // Try to parse the chunk as JSON (enhanced service response)
+          try {
+            enhancedData = JSON.parse(chunkValue);
+            if (enhancedData && enhancedData.success && enhancedData.data && enhancedData.data.text) {
+              isEnhancedResponse = true;
+              processedEnhancedResponse = true;
+              // Extract the text content from the enhanced response
+              text = enhancedData.data.text;
+              
+              // Handle enhanced sources if available
+              if (enhancedData.data.sources && enhancedData.data.sources.length > 0) {
+                extractedCitations = enhancedData.data.sources.map((source: any, index: number) => ({
+                  id: `enhanced_${index}`,
+                  title: source.title || source.name || `Source ${index + 1}`,
+                  url: source.url || source.link || '',
+                  text: source.snippet || source.content || source.text || '',
+                  page_number: source.page || null,
+                  source_type: source.type || 'web',
+                }));
+              }
+              
+              console.log('Enhanced service response detected:', {
+                processingTime: enhancedData.data.processingTime,
+                usedFallback: enhancedData.data.usedFallback,
+                sourcesCount: enhancedData.data.sources?.length || 0,
+              });
+            }
+          } catch (e) {
+            // Not JSON, continue with standard streaming
+            isEnhancedResponse = false;
+          }
+
+          if (!isEnhancedResponse) {
+            // Standard streaming behavior - accumulate chunks
+            text += chunkValue;
+          }
 
           if (stopConversationRef.current) {
             break;
           }
 
-          // Extract citations
-          const {
-            text: cleanedText,
-            citations,
-            extractionMethod,
-          } = extractCitationsFromContent(text);
+          // Extract citations (skip if enhanced response already processed them)
+          if (!isEnhancedResponse) {
+            const {
+              text: cleanedText,
+              citations,
+              extractionMethod,
+            } = extractCitationsFromContent(text);
 
-          if (citations.length > 0) {
-            // Use the clean text and extracted citations
-            text = cleanedText;
-            extractedCitations = citations;
-            console.log(
-              `Extracted ${citations.length} citations using ${extractionMethod} format`,
-            );
+            if (citations.length > 0) {
+              // Use the clean text and extracted citations
+              text = cleanedText;
+              extractedCitations = citations;
+              console.log(
+                `Extracted ${citations.length} citations using ${extractionMethod} format`,
+              );
+            }
           }
 
           if (
@@ -295,8 +369,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
     clearInterval(checkStopInterval);
 
-    // Final check for citations after stream completes
-    if (extractedCitations.length === 0) {
+    // Final check for citations after stream completes (skip for enhanced responses)
+    if (extractedCitations.length === 0 && !processedEnhancedResponse) {
       const {
         text: cleanedText,
         citations,
@@ -384,8 +458,22 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           // Clean up interval after 60 seconds as a safety measure
           setTimeout(() => clearInterval(abortCheckInterval), 60000);
 
-          const { controller, body, response, hasComplexContent, setOnAbort } =
-            await makeRequest(
+          // Determine if we should use agentic routing
+          const useAgenticRouting = shouldUseAgenticRouting(message);
+          console.log('[Chat] Using agentic routing:', useAgenticRouting);
+
+          let requestResult: any;
+          
+          if (useAgenticRouting) {
+            // Use agentic frontend service
+            const agenticService = createAgenticFrontendService({
+              agentSettings,
+              enableDebugLogging: true,
+              intentAnalysisTimeout: 5000,
+              agentExecutionTimeout: 30000,
+            });
+
+            requestResult = await agenticService.handleRequest(
               plugin,
               setRequestStatusMessage,
               updatedConversation,
@@ -397,6 +485,29 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               setProgress,
               stopConversationRef,
             );
+
+            // Store agent result for potential UI indicators
+            setCurrentAgentResult(requestResult);
+          } else {
+            // Use standard makeRequest
+            requestResult = await makeRequest(
+              plugin,
+              setRequestStatusMessage,
+              updatedConversation,
+              apiKey,
+              pluginKeys,
+              systemPrompt,
+              temperature,
+              true,
+              setProgress,
+              stopConversationRef,
+            );
+
+            // Clear any previous agent results
+            setCurrentAgentResult(null);
+          }
+
+          const { controller, body, response, hasComplexContent, setOnAbort } = requestResult;
 
           clearInterval(abortCheckInterval);
 
@@ -464,7 +575,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       return;
                     }
 
-                    reader.read().then(({ done, value }) => {
+                    reader.read().then(({ done, value }: { done: boolean; value: Uint8Array }) => {
                       if (done) {
                         controller.close();
                         return;
@@ -611,6 +722,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       systemPrompt,
       temperature,
       user,
+      shouldUseAgenticRouting,
+      agentSettings,
     ],
   );
 
