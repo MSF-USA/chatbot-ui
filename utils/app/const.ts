@@ -43,6 +43,21 @@ export const FORCE_LOGOUT_ON_REFRESH_FAILURE =
 
 export const OPENAI_API_HOST_TYPE = process.env.OPEN_AI_HOST_TYPE || 'apim';
 
+// Feature Flag Configuration
+export const LAUNCHDARKLY_SDK_KEY = process.env.LAUNCHDARKLY_SDK_KEY || '';
+export const LAUNCHDARKLY_CLIENT_ID = process.env.LAUNCHDARKLY_CLIENT_ID || '';
+
+// Agent Routing Configuration
+export const AGENT_ROUTING_ENABLED = process.env.AGENT_ROUTING_ENABLED === 'true' || false;
+export const DEFAULT_AGENT_TIMEOUT = parseInt(process.env.DEFAULT_AGENT_TIMEOUT || '30000');
+export const AGENT_POOL_SIZE = parseInt(process.env.AGENT_POOL_SIZE || '10');
+
+// Azure Bing Grounding Configuration
+export const AZURE_GROUNDING_CONNECTION_ID = process.env.AZURE_GROUNDING_CONNECTION_ID || '';
+export const BING_CONNECTION_NAME = process.env.BING_CONNECTION_NAME || '';
+export const PROJECT_ENDPOINT = process.env.AZURE_AI_FOUNDRY_ENDPOINT || process.env.PROJECT_ENDPOINT || '';
+export const MODEL_DEPLOYMENT_NAME = process.env.MODEL_DEPLOYMENT_NAME || process.env.AZURE_DEPLOYMENT_ID || 'gpt-4o';
+
 const COMMON_CONFIGURATION: any = {
   OPENAI_API_VERSION: OPENAI_API_VERSION,
   OPENAI_API_TYPE: OPENAI_API_TYPE,
