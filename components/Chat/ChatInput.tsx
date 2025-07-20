@@ -38,6 +38,7 @@ import ChatInputSubmitButton from '@/components/Chat/ChatInput/ChatInputSubmitBu
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputVoiceCapture from '@/components/Chat/ChatInput/ChatInputVoiceCapture';
+import { ChatInputAgentToggle } from '@/components/Chat/ChatInput/ChatInputAgentToggle';
 import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 
@@ -45,7 +46,7 @@ import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
 
 interface Props {
-  onSend: (message: Message, plugin: Plugin | null) => void;
+  onSend: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean | null) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -99,6 +100,13 @@ export const ChatInput = ({
     [key: string]: number;
   }>({});
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
+  const [agentToggleEnabled, setAgentToggleEnabled] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('chatAgentsEnabled');
+      return saved !== null ? JSON.parse(saved) : true;
+    }
+    return true;
+  });
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
@@ -171,6 +179,8 @@ export const ChatInput = ({
       return;
     }
 
+    const forceStandardChat = agentToggleEnabled ? null : true;
+
     onSend(
       {
         role: 'user',
@@ -178,6 +188,7 @@ export const ChatInput = ({
         messageType: submitType ?? 'text',
       },
       plugin,
+      forceStandardChat,
     );
     setTextFieldValue('');
     setImageFieldValue(null);
@@ -549,10 +560,21 @@ export const ChatInput = ({
           />
 
           <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
-            <div className="absolute left-2 top-3">
+            <div className="absolute left-2 top-3 flex items-center space-x-1">
               <ChatInputVoiceCapture
                 setTextFieldValue={setTextFieldValue}
                 setIsTranscribing={setIsTranscribing}
+              />
+              <ChatInputAgentToggle
+                enabled={agentToggleEnabled}
+                onToggle={() => {
+                  const newValue = !agentToggleEnabled;
+                  setAgentToggleEnabled(newValue);
+                  if (typeof window !== 'undefined') {
+                    localStorage.setItem('chatAgentsEnabled', JSON.stringify(newValue));
+                  }
+                }}
+                disabled={isTranscribing || messageIsStreaming}
               />
             </div>
 
