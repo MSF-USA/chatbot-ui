@@ -38,7 +38,7 @@ export class UrlPullAgent extends BaseAgent {
   protected async initializeAgent(): Promise<void> {
     // Initialize URL Pull Agent specific components
     this.cache?.clear();
-    this.processingQueue.clear();
+    this.processingQueue?.clear();
     this.activeJobs = 0;
   }
 
@@ -73,7 +73,7 @@ export class UrlPullAgent extends BaseAgent {
 
   protected async executeInternal(context: AgentExecutionContext): Promise<AgentResponse> {
     const startTime = Date.now();
-    
+
     try {
       const request = this.parseRequest(context.query);
       const response = await this.processUrls(request, context);
