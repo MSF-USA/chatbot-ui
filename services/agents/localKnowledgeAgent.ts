@@ -42,14 +42,14 @@ import {
  * Local Knowledge Agent Implementation
  */
 export class LocalKnowledgeAgent extends BaseAgent {
-  private knowledgeBaseService: KnowledgeBaseService;
-  private searchEngine: SemanticSearchEngine;
+  private knowledgeBaseService!: KnowledgeBaseService;
+  private searchEngine!: SemanticSearchEngine;
   private knowledgeGraphService?: KnowledgeGraphService;
-  private logger: AzureMonitorLoggingService;
+  private logger!: AzureMonitorLoggingService;
   
   // Simple knowledge loader for minimal implementation
-  private simpleLoader: SimpleKnowledgeLoader;
-  private useSimpleMode: boolean;
+  private simpleLoader!: SimpleKnowledgeLoader;
+  private useSimpleMode!: boolean;
   
   // Performance tracking
   private searchCache: Map<string, { results: LocalKnowledgeResponse; timestamp: number }> = new Map();
