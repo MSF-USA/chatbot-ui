@@ -32,14 +32,44 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
 }) => {
   const { t } = useTranslation('settings');
   const [keepCount, setKeepCount] = useState(MIN_RETAINED_CONVERSATIONS);
-  const [storageData, setStorageData] = useState(() => getStorageUsage());
-  const [spaceFreedInfo, setSpaceFreedInfo] = useState(() =>
-    calculateSpaceFreed(keepCount),
-  );
+  const [storageData, setStorageData] = useState<{
+    currentUsage: number;
+    maxUsage: number;
+    percentUsed: number;
+    isNearingLimit: boolean;
+  } | null>(null);
+  const [spaceFreedInfo, setSpaceFreedInfo] = useState<{
+    spaceFreed: number;
+    conversationsRemoved: number;
+    percentFreed: number;
+  } | null>(null);
+
+  // Initialize storage data on client side only
+  useEffect(() => {
+    try {
+      const usage = getStorageUsage();
+      setStorageData(usage);
+      setSpaceFreedInfo(calculateSpaceFreed(keepCount));
+    } catch (error) {
+      console.error('Failed to get storage usage:', error);
+      // Set a default value if storage access fails
+      setStorageData({
+        currentUsage: 0,
+        maxUsage: 5 * 1024 * 1024, // Default 5MB
+        percentUsed: 0,
+        isNearingLimit: false
+      });
+      setSpaceFreedInfo({
+        spaceFreed: 0,
+        conversationsRemoved: 0,
+        percentFreed: 0,
+      });
+    }
+  }, [keepCount]);
 
   // Update calculations when keepCount changes
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && storageData) {
       setSpaceFreedInfo(calculateSpaceFreed(keepCount));
     }
   }, [keepCount, isOpen]);
@@ -65,6 +95,11 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
   };
 
   if (!isOpen) return null;
+
+  // Don't render until storage data is loaded
+  if (!storageData || !spaceFreedInfo) {
+    return null;
+  }
 
   const { currentUsage, maxUsage, percentUsed } = storageData;
   const { spaceFreed, conversationsRemoved, percentFreed } = spaceFreedInfo;
