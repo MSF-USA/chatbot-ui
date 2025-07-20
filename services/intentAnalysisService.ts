@@ -54,11 +54,54 @@ export class IntentAnalysisService {
       'algorithm', 'data structure', 'api', 'database', 'sql'
     ];
 
-    // Local knowledge indicators
+    // Local knowledge indicators (FAQ and privacy related)
     const knowledgeKeywords = [
       'explain', 'how to', 'why does', 'what does', 'define', 'meaning',
       'difference between', 'compare', 'tutorial', 'guide', 'best practices',
       'recommend', 'suggest', 'advice'
+    ];
+
+    // FAQ-specific indicators (based on actual FAQ content)
+    const faqKeywords = [
+      // Core MSF AI Assistant terms
+      'msf ai assistant', 'msf ai', 'ai assistant', 'chatbot', 'assistant', 'ai tool', 'chat tool',
+      'médecins sans frontières', 'doctors without borders', 'msf', 'humanitarian',
+      // Question patterns from FAQ
+      'what is', 'what can', 'how can', 'how do', 'where', 'can you', 'what are', 'should',
+      // Capabilities and features
+      'capabilities', 'features', 'assist', 'help', 'tasks', 'employees', 'staff',
+      'technical questions', 'reports', 'documentation', 'translation', 'brainstorming',
+      // Prompts and automation
+      'prompt', 'reusable prompt', 'create prompt', 'automate', 'slash command', 'prompts tab',
+      'new prompt', 'save prompt', 'instructions', 'interface',
+      // Storage and reliability
+      'conversation', 'custom bot', 'stored', 'local storage', 'browser', 'device',
+      'trust', 'reliable', 'accurate', 'fact-check', 'verify', 'confirm', '100% trusted',
+      // Examples and support
+      'example', 'examples', 'sample', 'what to ask', 'summarize', 'translate',
+      'bug report', 'feedback', 'support', 'contact', 'ai@newyork.msf.org'
+    ];
+
+    // Privacy and security indicators (based on actual privacy policy content)
+    const privacyKeywords = [
+      // Core privacy terms
+      'privacy', 'data protection', 'privacy policy', 'terms of use', 'privacy guarantees',
+      // Data storage and processing
+      'data', 'storage', 'stored', 'where stored', 'data storage', 'local', 'computer',
+      'msf systems', 'microsoft azure', 'within msf', 'processed by msf',
+      // Security and safety
+      'secure', 'safety', 'safer', 'external tools', 'internal', 'control',
+      // Prohibited content and uses
+      'prohibited', 'personal data', 'sensitive data', 'what not to put', 'should not',
+      'names', 'phone numbers', 'cvs', 'testimonies', 'identify individual',
+      'prohibited uses', 'health care', 'surveillance', 'monitoring', 'employment decisions',
+      'automated decision-making', 'media content', 'illegal activities', 'harmful activities',
+      // Responsible use
+      'responsible use', 'guidelines', 'msf policies', 'ict policies', 'ai policies',
+      'check outputs', 'accuracy', 'bias', 'intellectual property', 'transparency', 'ai-generated',
+      // Support and incidents
+      'privacy concerns', 'incidents', 'ai.team@amsterdam.msf.org', 'dpo', 'data protection officer',
+      'terms', 'policy', 'breach', 'incident', 'protection', 'confidential', 'security'
     ];
 
     let intent = 'general';
@@ -103,23 +146,65 @@ export class IntentAnalysisService {
       keywords.push(...foundCodeKeywords);
     }
 
-    // Check for knowledge/explanation intent
+    // Check for FAQ-specific intent
+    const faqScore = this.calculateKeywordScore(lowerMessage, faqKeywords);
+    const foundFaqKeywords = faqKeywords.filter(kw => lowerMessage.includes(kw));
+    console.log('[IntentAnalysis] FAQ analysis:', {
+      score: faqScore,
+      threshold: 0.1,
+      foundKeywords: foundFaqKeywords
+    });
+
+    // Check for privacy/policy intent
+    const privacyScore = this.calculateKeywordScore(lowerMessage, privacyKeywords);
+    const foundPrivacyKeywords = privacyKeywords.filter(kw => lowerMessage.includes(kw));
+    console.log('[IntentAnalysis] Privacy/policy analysis:', {
+      score: privacyScore,
+      threshold: 0.1,
+      foundKeywords: foundPrivacyKeywords
+    });
+
+    // Check for general knowledge/explanation intent
     const knowledgeScore = this.calculateKeywordScore(lowerMessage, knowledgeKeywords);
     const foundKnowledgeKeywords = knowledgeKeywords.filter(kw => lowerMessage.includes(kw));
-    console.log('[IntentAnalysis] Knowledge/explanation analysis:', {
+    console.log('[IntentAnalysis] General knowledge analysis:', {
       score: knowledgeScore,
       threshold: 0.2,
-      higherThanOthers: knowledgeScore > Math.max(webSearchScore, codeScore),
-      passed: knowledgeScore > Math.max(webSearchScore, codeScore) && knowledgeScore > 0.2,
       foundKeywords: foundKnowledgeKeywords
     });
+
+    // Calculate combined local knowledge score (FAQ + Privacy + General)
+    const combinedKnowledgeScore = Math.max(faqScore, privacyScore, knowledgeScore);
+    const isLocalKnowledgeQuery = combinedKnowledgeScore > Math.max(webSearchScore, codeScore) && 
+                                  (faqScore > 0.1 || privacyScore > 0.1 || knowledgeScore > 0.15);
+
+    console.log('[IntentAnalysis] Combined local knowledge analysis:', {
+      combinedScore: combinedKnowledgeScore,
+      higherThanOthers: combinedKnowledgeScore > Math.max(webSearchScore, codeScore),
+      meetsThreshold: faqScore > 0.1 || privacyScore > 0.1 || knowledgeScore > 0.15,
+      finalDecision: isLocalKnowledgeQuery
+    });
     
-    if (knowledgeScore > Math.max(webSearchScore, codeScore) && knowledgeScore > 0.2) {
-      intent = 'knowledge-query';
-      confidence = Math.min(0.8, 0.5 + knowledgeScore);
+    if (isLocalKnowledgeQuery) {
+      // Determine specific type of local knowledge query
+      if (faqScore > privacyScore && faqScore > knowledgeScore) {
+        intent = 'faq-query';
+        confidence = Math.min(0.9, 0.6 + faqScore);
+        reasoning = 'Message appears to be asking about MSF AI Assistant features or capabilities';
+        keywords.push(...foundFaqKeywords);
+      } else if (privacyScore > faqScore && privacyScore > knowledgeScore) {
+        intent = 'privacy-query';
+        confidence = Math.min(0.9, 0.6 + privacyScore);
+        reasoning = 'Message appears to be asking about privacy, data protection, or terms of use';
+        keywords.push(...foundPrivacyKeywords);
+      } else {
+        intent = 'knowledge-query';
+        confidence = Math.min(0.8, 0.5 + knowledgeScore);
+        reasoning = 'Message requests explanation or educational content';
+        keywords.push(...foundKnowledgeKeywords);
+      }
+      
       suggestedAgentType = 'local-knowledge';
-      reasoning = 'Message requests explanation or educational content';
-      keywords.push(...foundKnowledgeKeywords);
     }
 
     // Special patterns

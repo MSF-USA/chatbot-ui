@@ -39,12 +39,15 @@ AVAILABLE AGENT TYPES AND THEIR USE CASES:
 - SEO analysis and website auditing
 
 📚 **local_knowledge** - Use for:
-- Company-specific information and policies
-- Internal documentation and procedures
-- Knowledge base queries
-- Organizational charts and contacts
-- Product catalogs and specifications
-- Training materials and guides
+- Questions about the MSF AI Assistant itself ("What is the MSF AI Assistant?", capabilities, features, how it assists MSF staff)
+- FAQ about the AI chatbot (prompts, reusable prompts, slash commands, automation, examples)
+- Data storage and privacy questions ("Where is my data stored?", conversation storage, local storage, browser storage)
+- Privacy policy and terms of use (prohibited data, responsible use, prohibited uses, accuracy disclaimers)
+- MSF-specific AI policies and guidelines (what not to put in the AI, security, data protection)
+- Reliability and trust questions (fact-checking, verification, human judgment)
+- Support and contact information (bug reports, feedback, ai@newyork.msf.org, ai.team@amsterdam.msf.org)
+- Help with chatbot features (creating prompts, custom bots, interface navigation)
+- Médecins Sans Frontières / Doctors Without Borders organizational AI usage
 
 💬 **standard_chat** - Use for:
 - General conversation and casual questions
@@ -183,10 +186,20 @@ export const USER_PROMPT_TEMPLATES = {
 - "Extract data from this webpage"
 
 📚 **local_knowledge** examples:
-- "What's our company's vacation policy?"
-- "Show me the org chart for engineering"
-- "Find documentation for our API"
-- "Who is the contact for HR issues?"
+- "What is the MSF AI Assistant?"
+- "How can the MSF AI Assistant assist MSF employees?"
+- "How do I create a reusable prompt?"
+- "How can I automate and reuse prompts?"
+- "Where is my conversation data stored?"
+- "Where are my conversations and custom bots?"
+- "What data should I NOT put into the MSF AI Assistant?"
+- "Should the MSF AI Assistant's responses be 100% trusted?"
+- "What are the prohibited uses of the MSF AI Assistant?"
+- "Who should I contact for privacy concerns?"
+- "Where should I go with bug reports or feedback?"
+- "What are some example questions I can ask?"
+- "What is a prompt and how do I use it?"
+- "How does the MSF AI Assistant protect privacy?"
 
 💬 **standard_chat** examples:
 - "Tell me a joke"
@@ -383,23 +396,56 @@ export const AGENT_SPECIFIC_GUIDANCE = {
 
   [AgentType.LOCAL_KNOWLEDGE]: {
     keywords: [
-      'company', 'policy', 'procedure', 'internal', 'org chart', 'organization', 'corporate', 'enterprise',
+      // MSF AI Assistant specific (from actual FAQ content)
+      'msf ai assistant', 'msf ai', 'ai assistant', 'chatbot', 'ai tool', 'chat tool', 'assistant',
+      'médecins sans frontières', 'doctors without borders', 'msf', 'humanitarian',
+      'what is', 'what can', 'how can', 'how do', 'capabilities', 'features', 'assist', 'help',
+      'prompt', 'reusable prompt', 'create prompt', 'automate', 'slash command', 'prompts tab',
+      'conversation', 'custom bot', 'stored', 'local storage', 'browser', 'device',
+      'trust', 'reliable', 'accurate', 'fact-check', '100% trusted', 'verify', 'confirm',
+      // Privacy and data protection (from actual privacy policy)
+      'privacy', 'data protection', 'data storage', 'where stored', 'privacy policy', 'terms of use',
+      'prohibited data', 'personal data', 'sensitive data', 'what not to put', 'responsible use',
+      'prohibited uses', 'accuracy', 'bias', 'check outputs', 'privacy concerns', 'incidents',
+      'faq', 'feedback', 'support', 'bug report', 'ai@newyork.msf.org', 'ai.team@amsterdam.msf.org',
+      // Company/organizational
+      'company', 'internal', 'org chart', 'organization', 'corporate', 'enterprise',
       'contact', 'documentation', 'docs', 'guide', 'handbook', 'manual', 'knowledge base', 'wiki',
-      'faq', 'frequently asked', 'help', 'support', 'how do i', 'what is our', 'where can i find',
+      'what is our', 'where can i find', 'how do i',
       'hr', 'human resources', 'it', 'finance', 'accounting', 'legal', 'compliance', 'marketing', 'sales',
       'employee', 'staff', 'team', 'department', 'office', 'internal team', 'colleagues',
       'workflow', 'process', 'guideline', 'protocol', 'standard', 'best practice'
     ],
     patterns: [
+      // MSF AI Assistant patterns
+      /\b(msf ai assistant|msf ai|ai assistant|chatbot|what is|what can|how can|how do)\b/i,
+      /\b(prompt|reusable prompt|conversation|custom bot|help|feature|capability)\b/i,
+      /\b(privacy|data|storage|stored|secure|policy|terms|personal|sensitive)\b/i,
+      /\b(faq|frequently asked|support|trust|reliable|accurate|feedback)\b/i,
+      // Company/organizational patterns
       /\b(company|our|internal|organization|org|corporate|enterprise)\b/i,
       /\b(policy|procedure|handbook|guide|documentation|docs|manual|wiki)\b/i,
-      /\b(faq|frequently asked|help|support|how do i|what is our|where can i find)\b/i,
+      /\b(how do i|what is our|where can i find)\b/i,
       /\b(hr|human resources|it|finance|accounting|legal|compliance|marketing|sales)\b/i,
       /\b(knowledge base|internal docs|company info|organizational|protocols)\b/i,
       /\b(employee|staff|team|department|office|internal team|colleagues)\b/i,
       /\b(workflow|process|guideline|protocol|standard|best practice)\b/i,
     ],
     examples: [
+      // MSF AI Assistant examples
+      'what is the msf ai assistant',
+      'what can the ai assistant do?',
+      'how do i create a reusable prompt?',
+      'where is my data stored?',
+      'what data do you store about me?',
+      'how can i use prompts?',
+      'privacy policy questions',
+      'what are the features of this chatbot?',
+      'how should i trust the ai responses?',
+      'where are my conversations stored?',
+      'what can you help me to do?',
+      'how do i automate prompts?',
+      // Company/organizational examples
       'what is our vacation policy?',
       'show me the org chart',
       'company contact information',
