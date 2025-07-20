@@ -36,22 +36,20 @@ export async function GET(
   const { id } = await params;
 
   const { searchParams } = new URL(request.url);
-  let transcriptionServiceName = searchParams.get('service');
+  let transcriptionServiceName: 'whisper' | 'azureCognitiveSpeechService' = 'azureCognitiveSpeechService';
+  const serviceParam = searchParams.get('service');
   if (
-    !transcriptionServiceName ||
-    !['whisper', 'azureCognitiveSpeechService'].includes(
-      transcriptionServiceName,
-    )
+    serviceParam &&
+    ['whisper', 'azureCognitiveSpeechService'].includes(serviceParam)
   ) {
-    transcriptionServiceName = 'azureCognitiveSpeechService';
+    transcriptionServiceName = serviceParam as 'whisper' | 'azureCognitiveSpeechService';
   }
 
   let transcript: string | undefined;
 
   try {
-    // @ts-ignore
     const userId: string =
-      (session.user as any)?.id ?? token.userId ?? 'anonymous';
+      (session.user as any)?.id ?? (token as any)?.userId ?? 'anonymous';
 
     let blobStorageClient: BlobStorage = new AzureBlobStorage(
       getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user: session.user }),
@@ -72,7 +70,6 @@ export async function GET(
     const tmpFilePath = join(tmpdir(), `${Date.now()}_${id}`);
     await blockBlobClient.downloadToFile(tmpFilePath);
 
-    // @ts-expect-error This is handled in logic above making sure that the name is not null and valid
     const transcriptionService =
       TranscriptionServiceFactory.getTranscriptionService(
         transcriptionServiceName,
