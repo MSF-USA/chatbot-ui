@@ -5,7 +5,9 @@ import {
   IconHelp,
   IconMessage,
   IconRefresh,
+  IconRobot,
   IconSettings,
+  IconShield,
   IconUser,
 } from '@tabler/icons-react';
 import { FC, useState } from 'react';
@@ -81,6 +83,22 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
             activeSection={activeSection}
             label={t('Chat Settings')}
             icon={<IconMessage size={18} />}
+            onClick={setActiveSection}
+          />
+
+          <NavigationItem
+            section={SettingsSection.AGENT_FEATURES}
+            activeSection={activeSection}
+            label={t('Agent Features')}
+            icon={<IconRobot size={18} />}
+            onClick={setActiveSection}
+          />
+
+          <NavigationItem
+            section={SettingsSection.PRIVACY_CONTROL}
+            activeSection={activeSection}
+            label={t('Privacy & Security')}
+            icon={<IconShield size={18} />}
             onClick={setActiveSection}
           />
 
