@@ -147,8 +147,8 @@ export class ThirdPartyAgent extends BaseAgent {
     } catch (error) {
       const errorMessage = `Failed to initialize ThirdPartyAgent: ${error instanceof Error ? error.message : String(error)}`;
       this.logError(errorMessage, error as Error, {
-        agentId: this.config.id,
-        baseUrl: this.serviceConfig.baseUrl,
+        agentId: this.config?.id,
+        baseUrl: this.serviceConfig?.baseUrl,
       });
       throw new AgentCreationError(errorMessage, error);
     }
