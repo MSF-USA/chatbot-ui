@@ -48,6 +48,8 @@
   "defaultWebPullerQuestion": "Please summarize the content from this webpage.",
   "webSearchModalDefaultQuestion": "Please summarize the content you find",
   "webPullerCitationPrompt": "Cite any claims you make from the text and reference the URL",
+  "enableAgents": "Enable AI agents for enhanced responses",
+  "disableAgents": "Disable AI agents (use standard chat only)",
   "webPullerReferencePrompt": "Also reference the title, apparent source, author(s), and publication date where available and relevant.",
   "webPullerIconScreenReader": "Pull webpage text from URL",
   "webPullerQuestionLabel": "Question",
