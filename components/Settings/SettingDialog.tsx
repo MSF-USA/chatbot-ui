@@ -17,10 +17,12 @@ import ChatbarContext from '../Chatbar/Chatbar.context';
 import { MobileHeader } from './MobileHeader';
 import { MobileNavigation } from './MobileNavigation';
 import { AccountSection } from './Sections/AccountSection';
+import { AgentFeaturesSection } from './Sections/AgentFeaturesSection';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
 import { GeneralSection } from './Sections/GeneralSection';
 import { HelpSupportSection } from './Sections/HelpSupportSection';
+import { PrivacyControlSection } from './Sections/PrivacyControlSection';
 import { SettingsFooter } from './SettingsFooter';
 import { SettingsSidebar } from './SettingsSidebar';
 import faqData from './faq.json';
@@ -231,6 +233,14 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
                     onSave={handleSave}
                     onClose={onClose}
                   />
+                )}
+
+                {activeSection === SettingsSection.AGENT_FEATURES && (
+                  <AgentFeaturesSection onClose={onClose} />
+                )}
+
+                {activeSection === SettingsSection.PRIVACY_CONTROL && (
+                  <PrivacyControlSection onClose={onClose} />
                 )}
 
                 {activeSection === SettingsSection.DATA_MANAGEMENT && (
