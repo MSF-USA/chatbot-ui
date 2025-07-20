@@ -204,7 +204,7 @@ const getDefaultSettings = (): Settings => {
       ],
       agentConfigurations: Object.values(AgentType).reduce((configs, agentType) => {
         configs[agentType] = {
-          enabled: agentType !== AgentType.THIRD_PARTY, // Disable third-party by default
+          enabled: agentType !== AgentType.THIRD_PARTY && agentType !== AgentType.CODE_INTERPRETER, // Disable third-party by default
           priority: 50,
           timeout: 30000,
           maxRetries: 2,
