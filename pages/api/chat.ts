@@ -15,6 +15,7 @@ import {
   DEFAULT_TEMPERATURE,
   OPENAI_API_HOST,
   OPENAI_API_VERSION,
+  AGENT_ROUTING_ENABLED,
 } from '@/utils/app/const';
 import { getMessagesToSend } from '@/utils/server/chat';
 
@@ -28,6 +29,10 @@ import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
+// Enhanced Chat Service with Agent Routing
+import { getEnhancedChatService } from '@/services/enhancedChatService';
+import { UserContext } from '@/services/simpleFeatureFlags';
+
 // @ts-expect-error
 import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
 
@@ -39,11 +44,81 @@ import OpenAI from 'openai';
 import path from 'path';
 import { Readable } from 'stream';
 
+/**
+ * Enhanced handler with agent routing support
+ */
 const handler = async (
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> => {
+  const startTime = Date.now();
+  
   try {
+    // Check if enhanced chat service with agents should be used
+    const useEnhancedService = AGENT_ROUTING_ENABLED || req.headers['x-use-agents'] === 'true';
+    
+    if (useEnhancedService) {
+      console.log('[INFO] Using Enhanced Chat Service with agent routing');
+      
+      try {
+        // Get enhanced chat service
+        const enhancedChatService = getEnhancedChatService();
+        
+        // Create NextRequest compatible object for the enhanced service
+        const enhancedRequest = new Request(`${req.headers.host || 'localhost'}/api/chat`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            'authorization': Array.isArray(req.headers.authorization) ? req.headers.authorization[0] : req.headers.authorization || '',
+            'user-agent': Array.isArray(req.headers['user-agent']) ? req.headers['user-agent'][0] : req.headers['user-agent'] || '',
+            'x-user-id': Array.isArray(req.headers['x-user-id']) ? req.headers['x-user-id'][0] : req.headers['x-user-id'] || `user_${Date.now()}`,
+            'x-user-email': Array.isArray(req.headers['x-user-email']) ? req.headers['x-user-email'][0] : req.headers['x-user-email'] || '',
+            'x-user-role': Array.isArray(req.headers['x-user-role']) ? req.headers['x-user-role'][0] : req.headers['x-user-role'] || 'user',
+            'x-conversation-id': Array.isArray(req.headers['x-conversation-id']) ? req.headers['x-conversation-id'][0] : req.headers['x-conversation-id'] || `conv_${Date.now()}`,
+          },
+          body: JSON.stringify(req.body),
+        });
+
+        // Handle with enhanced service
+        const response = await enhancedChatService.handleRequest(enhancedRequest as any);
+        
+        // Forward response
+        const responseText = await response.text();
+        const responseHeaders = Object.fromEntries(response.headers.entries());
+        
+        // Set response headers
+        Object.entries(responseHeaders).forEach(([key, value]) => {
+          res.setHeader(key, value);
+        });
+        
+        res.status(response.status);
+        
+        // Check if it's a streaming response
+        if (responseHeaders['content-type']?.includes('text/event-stream')) {
+          // Handle streaming response
+          res.write(responseText);
+          res.end();
+        } else {
+          // Handle regular JSON response
+          try {
+            const jsonData = JSON.parse(responseText);
+            res.json(jsonData);
+          } catch {
+            res.send(responseText);
+          }
+        }
+        
+        return;
+        
+      } catch (enhancedError) {
+        console.error('[ERROR] Enhanced chat service failed, falling back to standard chat:', enhancedError);
+        
+        // Continue to standard implementation below
+      }
+    }
+    
+    // Standard chat implementation starts here
+    console.log('[INFO] Using standard chat service');
     const { model, messages, prompt, temperature } = req.body as ChatBody;
 
     const wasmPath = path.resolve(
