@@ -18,7 +18,7 @@ import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
 
 import { getAutonym } from '@/utils/app/locales';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
@@ -27,6 +27,7 @@ import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+import { AgentResponsePanel } from '@/components/Chat/AgentResponsePanel';
 
 import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 import rehypeMathjax from 'rehype-mathjax';
@@ -40,6 +41,7 @@ interface AssistantMessageProps {
   messageIndex: number;
   selectedConversation: Conversation;
   messageCopied: boolean;
+  message?: Message;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
@@ -49,6 +51,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageIndex,
   selectedConversation,
   messageCopied,
+  message,
 }) => {
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
@@ -774,6 +777,16 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </div>
 
         {citations.length > 0 && <CitationList citations={citations} />}
+        
+        {/* Agent Response Panel - Display agent-specific content if available */}
+        {message?.agentResponse && (
+          <div className="mt-4">
+            <AgentResponsePanel 
+              message={message}
+              agentResponse={message.agentResponse}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
