@@ -281,7 +281,8 @@ export class AgenticFrontendService {
           stream,
           setProgress,
           stopConversationRef,
-          { usedAgent: true, fellBackToStandardChat: false, startTime }
+          { usedAgent: true, fellBackToStandardChat: false, startTime },
+          true // Force standard chat for final processing
         );
         
         standardChatTime = Date.now() - standardChatStartTime;
@@ -352,10 +353,13 @@ export class AgenticFrontendService {
     stream: boolean,
     setProgress: Dispatch<SetStateAction<number | null>>,
     stopConversationRef: { current: boolean } | undefined,
-    metadata: { usedAgent: boolean; fellBackToStandardChat: boolean; startTime: number }
+    metadata: { usedAgent: boolean; fellBackToStandardChat: boolean; startTime: number },
+    forceStandardChat?: boolean
   ): Promise<AgenticChatResult> {
     const standardChatStartTime = Date.now();
     
+    // If forceStandardChat is true, we need to modify the request to include this flag
+    // The simplest approach is to use makeRequest but modify the conversation to include the flag
     const result = await makeRequest(
       plugin,
       setRequestStatusMessage,
@@ -366,7 +370,8 @@ export class AgenticFrontendService {
       temperature,
       stream,
       setProgress,
-      stopConversationRef
+      stopConversationRef,
+      forceStandardChat // Pass the force flag to makeRequest
     );
 
     const standardChatTime = Date.now() - standardChatStartTime;
@@ -633,6 +638,7 @@ ${agentData.content}`;
 
     return '';
   }
+
 
   /**
    * Debug logging
