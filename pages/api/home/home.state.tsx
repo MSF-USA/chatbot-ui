@@ -87,7 +87,7 @@ const createDefaultAgentSettings = (): AgentSettings => ({
       priority: 3,
       timeout: 30000,
       maxRetries: 2,
-      confidenceThreshold: 0.5, // Broad knowledge queries, allow lower threshold
+      confidenceThreshold: 0.65, // Broad knowledge queries, allow lower threshold
       parameters: {
         maxResults: 10,
         enableSemanticSearch: true,
@@ -101,7 +101,7 @@ const createDefaultAgentSettings = (): AgentSettings => ({
       priority: 4,
       timeout: 60000,
       maxRetries: 1,
-      confidenceThreshold: 0.6, // Code patterns are distinctive, moderate threshold
+      confidenceThreshold: 1, // Code patterns are distinctive, moderate threshold
       parameters: {
         enableCodeExecution: true,
         enablePythonSupport: true,
