@@ -43,6 +43,7 @@ export const ChatMessageText: FC<any> = ({
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
+          message={message}
         />
       ) : (
         <UserMessage
