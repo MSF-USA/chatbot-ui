@@ -22,12 +22,16 @@ import {
   UserRole,
   AccessLevel,
   DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
+  KnowledgeDocument,
+  KnowledgeDocumentType,
+  KnowledgeSourceType,
 } from '../../types/localKnowledge';
 
 import { KnowledgeBaseService } from '../knowledgeBaseService';
 import { SemanticSearchEngine } from '../semanticSearchEngine';
 import { KnowledgeGraphService } from '../knowledgeGraphService';
 import { AzureMonitorLoggingService } from '../loggingService';
+import { SimpleKnowledgeLoader, getKnowledgeLoader, SimpleSearchResult } from '../../utils/knowledge/simpleKnowledgeLoader';
 
 /**
  * Local Knowledge Agent Implementation
@@ -38,6 +42,10 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private knowledgeGraphService?: KnowledgeGraphService;
   private logger: AzureMonitorLoggingService;
   
+  // Simple knowledge loader for minimal implementation
+  private simpleLoader: SimpleKnowledgeLoader;
+  private useSimpleMode: boolean;
+  
   // Performance tracking
   private searchCache: Map<string, { results: LocalKnowledgeResponse; timestamp: number }> = new Map();
   private queryHistory: Array<{ query: string; timestamp: Date; results: number }> = [];
@@ -45,16 +53,28 @@ export class LocalKnowledgeAgent extends BaseAgent {
   constructor(config: LocalKnowledgeAgentConfig) {
     super(config);
     
-    // Initialize services
-    const knowledgeConfig = config.knowledgeBaseConfig || DEFAULT_LOCAL_KNOWLEDGE_CONFIG;
-    this.knowledgeBaseService = new KnowledgeBaseService(knowledgeConfig);
-    this.searchEngine = new SemanticSearchEngine(knowledgeConfig.searchConfig);
-    this.logger = AzureMonitorLoggingService.getInstance() || new AzureMonitorLoggingService();
+    // Check if we should use simple mode (no complex dependencies)
+    this.useSimpleMode = process.env.SIMPLE_KNOWLEDGE_MODE === 'true' || 
+                        !process.env.AZURE_SEARCH_ENDPOINT || 
+                        !process.env.AZURE_SEARCH_API_KEY;
     
-    // Initialize knowledge graph service if enabled
-    if (config.enableKnowledgeGraph) {
-      this.knowledgeGraphService = new KnowledgeGraphService(knowledgeConfig);
+    if (this.useSimpleMode) {
+      console.log('[INFO] LocalKnowledgeAgent: Using simple mode (FAQ + Privacy Policy)');
+      this.simpleLoader = getKnowledgeLoader();
+    } else {
+      console.log('[INFO] LocalKnowledgeAgent: Using full enterprise mode');
+      // Initialize services
+      const knowledgeConfig = config.knowledgeBaseConfig || DEFAULT_LOCAL_KNOWLEDGE_CONFIG;
+      this.knowledgeBaseService = new KnowledgeBaseService(knowledgeConfig);
+      this.searchEngine = new SemanticSearchEngine(knowledgeConfig.searchConfig);
+      
+      // Initialize knowledge graph service if enabled
+      if (config.enableKnowledgeGraph) {
+        this.knowledgeGraphService = new KnowledgeGraphService(knowledgeConfig);
+      }
     }
+    
+    this.logger = AzureMonitorLoggingService.getInstance() || new AzureMonitorLoggingService();
   }
 
   /**
@@ -64,10 +84,17 @@ export class LocalKnowledgeAgent extends BaseAgent {
     try {
       console.log(`[INFO] Initializing Local Knowledge Agent: ${this.config.id}`);
 
-      // Initialize services asynchronously in the background
-      this.initializeAsync();
-
-      console.log(`[INFO] Local Knowledge Agent initialization started: ${this.config.id}`);
+      if (this.useSimpleMode) {
+        // Simple initialization - just initialize the loader
+        this.simpleLoader.initialize().catch(error => {
+          console.error('[ERROR] Failed to initialize SimpleKnowledgeLoader:', error);
+        });
+        console.log(`[INFO] Simple Knowledge Agent initialized: ${this.config.id}`);
+      } else {
+        // Initialize services asynchronously in the background
+        this.initializeAsync();
+        console.log(`[INFO] Enterprise Knowledge Agent initialization started: ${this.config.id}`);
+      }
     } catch (error) {
       console.error(`[ERROR] Failed to initialize Local Knowledge Agent: ${this.config.id}`, error);
       throw new AgentExecutionError(
@@ -294,31 +321,45 @@ export class LocalKnowledgeAgent extends BaseAgent {
    */
   protected async performHealthCheck(): Promise<boolean> {
     try {
-      // Check knowledge base service health
-      const kbStats = await this.knowledgeBaseService.getStatistics();
-      if (kbStats.totalDocuments === 0) {
-        console.warn('[WARN] Knowledge base contains no documents');
-        return false;
+      if (this.useSimpleMode) {
+        // Simple mode health check
+        const stats = this.simpleLoader.getStatistics();
+        if (stats.totalItems === 0) {
+          console.warn('[WARN] Simple knowledge loader contains no items');
+          return false;
+        }
+
+        // Perform test search
+        const testResults = await this.simpleLoader.search('MSF AI Assistant');
+        console.log(`[INFO] Health check: found ${testResults.length} test results`);
+        
+        return stats.initialized && stats.totalItems > 0;
+      } else {
+        // Enterprise mode health check
+        const kbStats = await this.knowledgeBaseService.getStatistics();
+        if (kbStats.totalDocuments === 0) {
+          console.warn('[WARN] Knowledge base contains no documents');
+          return false;
+        }
+
+        // Check search engine health
+        const searchStats = this.searchEngine.getStatistics();
+        if (searchStats.indexedDocuments === 0) {
+          console.warn('[WARN] Search engine has no indexed documents');
+          return false;
+        }
+
+        // Perform test search
+        const testQuery: KnowledgeSearchQuery = {
+          query: 'test health check',
+          userRole: UserRole.EMPLOYEE,
+          searchMode: 'keyword',
+          maxResults: 1,
+        };
+
+        await this.searchEngine.keywordSearch(testQuery);
+        return true;
       }
-
-      // Check search engine health
-      const searchStats = this.searchEngine.getStatistics();
-      if (searchStats.indexedDocuments === 0) {
-        console.warn('[WARN] Search engine has no indexed documents');
-        return false;
-      }
-
-      // Perform test search
-      const testQuery: KnowledgeSearchQuery = {
-        query: 'test health check',
-        userRole: UserRole.EMPLOYEE,
-        searchMode: 'keyword',
-        maxResults: 1,
-      };
-
-      await this.searchEngine.keywordSearch(testQuery);
-
-      return true;
     } catch (error) {
       console.error('[ERROR] Knowledge agent health check failed:', error);
       return false;
@@ -334,16 +375,20 @@ export class LocalKnowledgeAgent extends BaseAgent {
       this.searchCache.clear();
       this.queryHistory.length = 0;
 
-      // Cleanup services
-      await this.knowledgeBaseService.cleanup();
-      this.searchEngine.clearCache();
-      
-      // Cleanup knowledge graph if enabled
-      if (this.knowledgeGraphService) {
-        this.knowledgeGraphService.clear();
+      if (this.useSimpleMode) {
+        // Simple mode cleanup - minimal resources to clean up
+        console.log(`[INFO] Simple Knowledge Agent cleanup completed: ${this.config.id}`);
+      } else {
+        // Enterprise mode cleanup
+        await this.knowledgeBaseService.cleanup();
+        this.searchEngine.clearCache();
+        
+        // Cleanup knowledge graph if enabled
+        if (this.knowledgeGraphService) {
+          this.knowledgeGraphService.clear();
+        }
+        console.log(`[INFO] Enterprise Knowledge Agent cleanup completed: ${this.config.id}`);
       }
-
-      console.log(`[INFO] Local Knowledge Agent cleanup completed: ${this.config.id}`);
     } catch (error) {
       console.error(`[ERROR] Local Knowledge Agent cleanup failed: ${this.config.id}`, error);
       throw error;
@@ -440,19 +485,33 @@ export class LocalKnowledgeAgent extends BaseAgent {
    * Get knowledge base statistics
    */
   async getKnowledgeStatistics() {
-    const kbStats = await this.knowledgeBaseService.getStatistics();
-    const searchStats = this.searchEngine.getStatistics();
-    const agentStats = this.getExecutionStats();
-    const knowledgeGraphStats = this.knowledgeGraphService?.getStatistics();
+    if (this.useSimpleMode) {
+      const simpleStats = this.simpleLoader.getStatistics();
+      const agentStats = this.getExecutionStats();
+      
+      return {
+        mode: 'simple',
+        knowledgeBase: simpleStats,
+        agent: agentStats,
+        recentQueries: this.queryHistory.slice(-10),
+        cacheSize: this.searchCache.size,
+      };
+    } else {
+      const kbStats = await this.knowledgeBaseService.getStatistics();
+      const searchStats = this.searchEngine.getStatistics();
+      const agentStats = this.getExecutionStats();
+      const knowledgeGraphStats = this.knowledgeGraphService?.getStatistics();
 
-    return {
-      knowledgeBase: kbStats,
-      searchEngine: searchStats,
-      knowledgeGraph: knowledgeGraphStats,
-      agent: agentStats,
-      recentQueries: this.queryHistory.slice(-10),
-      cacheSize: this.searchCache.size,
-    };
+      return {
+        mode: 'enterprise',
+        knowledgeBase: kbStats,
+        searchEngine: searchStats,
+        knowledgeGraph: knowledgeGraphStats,
+        agent: agentStats,
+        recentQueries: this.queryHistory.slice(-10),
+        cacheSize: this.searchCache.size,
+      };
+    }
   }
 
   /**
@@ -508,6 +567,10 @@ export class LocalKnowledgeAgent extends BaseAgent {
 
   private async performKnowledgeSearch(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult[]> {
     try {
+      if (this.useSimpleMode) {
+        return await this.performSimpleSearch(query);
+      }
+
       let results: KnowledgeSearchResult[] = [];
 
       switch (query.searchMode) {
@@ -535,6 +598,113 @@ export class LocalKnowledgeAgent extends BaseAgent {
         query.query
       );
     }
+  }
+
+  /**
+   * Perform simple search using the SimpleKnowledgeLoader
+   */
+  private async performSimpleSearch(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult[]> {
+    try {
+      console.log(`[INFO] Performing simple knowledge search for: "${query.query}"`);
+
+      // Determine search type based on query content
+      let searchType: 'faq' | 'privacy_policy' | undefined;
+      
+      if (this.simpleLoader.isFaqQuery(query.query)) {
+        searchType = 'faq';
+        console.log(`[INFO] Detected FAQ query`);
+      } else if (this.simpleLoader.isPrivacyQuery(query.query)) {
+        searchType = 'privacy_policy';
+        console.log(`[INFO] Detected privacy policy query`);
+      }
+
+      // Perform the search
+      const simpleResults = await this.simpleLoader.search(query.query, searchType);
+
+      // Convert simple results to KnowledgeSearchResult format
+      const knowledgeResults: KnowledgeSearchResult[] = simpleResults.map((result, index) => 
+        this.convertSimpleResultToKnowledgeResult(result, index)
+      );
+
+      console.log(`[INFO] Simple search completed: ${knowledgeResults.length} results`);
+      return knowledgeResults;
+    } catch (error) {
+      console.error('[ERROR] Simple knowledge search failed:', error);
+      throw new LocalKnowledgeError(
+        'Simple knowledge search failed',
+        LocalKnowledgeErrorType.SEARCH_FAILED,
+        error,
+        query.query
+      );
+    }
+  }
+
+  /**
+   * Convert SimpleSearchResult to KnowledgeSearchResult
+   */
+  private convertSimpleResultToKnowledgeResult(
+    simpleResult: SimpleSearchResult, 
+    index: number
+  ): KnowledgeSearchResult {
+    const item = simpleResult.item;
+    
+    // Create a KnowledgeDocument from the simple item
+    const document: KnowledgeDocument = {
+      id: item.id,
+      title: item.question || `${item.type === 'faq' ? 'FAQ' : 'Privacy Policy'}: ${item.category}`,
+      content: item.answer,
+      type: item.type === 'faq' ? KnowledgeDocumentType.FAQ : KnowledgeDocumentType.POLICY,
+      source: KnowledgeSourceType.LOCAL_FILE,
+      accessLevel: AccessLevel.INTERNAL,
+      allowedRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN],
+      metadata: {
+        author: 'MSF AI Team',
+        department: 'Technology',
+        status: 'published' as const,
+        customFields: {
+          category: item.category,
+          keywords: item.keywords,
+        },
+      },
+      createdAt: new Date('2025-01-20'),
+      updatedAt: new Date('2025-01-20'),
+      version: '1.0.0',
+      tags: [item.category, item.type, ...item.keywords.slice(0, 3)],
+      language: 'en',
+      searchableContent: `${item.question || ''} ${item.answer} ${item.keywords.join(' ')}`,
+    };
+
+    // Create highlights from matched keywords
+    const highlights = simpleResult.matchedKeywords
+      .map(keyword => {
+        const regex = new RegExp(`(${keyword})`, 'gi');
+        const match = item.answer.match(regex);
+        if (match) {
+          const start = item.answer.toLowerCase().indexOf(keyword.toLowerCase());
+          if (start >= 0) {
+            const contextStart = Math.max(0, start - 50);
+            const contextEnd = Math.min(item.answer.length, start + keyword.length + 50);
+            return item.answer.substring(contextStart, contextEnd) + (contextEnd < item.answer.length ? '...' : '');
+          }
+        }
+        return null;
+      })
+      .filter(highlight => highlight !== null)
+      .slice(0, 3) as string[];
+
+    // Add fallback highlight if no keyword highlights found
+    if (highlights.length === 0) {
+      highlights.push(item.answer.substring(0, 150) + (item.answer.length > 150 ? '...' : ''));
+    }
+
+    return {
+      document,
+      score: simpleResult.score,
+      highlights,
+      explanation: simpleResult.explanation,
+      relatedDocuments: [], // No related documents in simple mode
+      matchedEntities: [], // No entity matching in simple mode
+    };
   }
 
   private async createKnowledgeResponse(
