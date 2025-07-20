@@ -16,6 +16,7 @@ import {
   ConfidenceWeights,
   MultiLanguageConfig,
   ParameterExtractionConfig,
+  AgentExclusionResult,
 } from '@/types/intentAnalysis';
 import { getStructuredResponse } from '@/utils/server/structuredResponses';
 import { AzureMonitorLoggingService } from './loggingService';
@@ -453,6 +454,18 @@ export class IntentAnalysisService {
       });
     }
     confidence = boostedConfidence;
+
+    // Apply user exclusions (most important - can significantly reduce confidence)
+    console.log(`[IntentAnalysis] Checking for user exclusions for ${agentType}`);
+    const excludedConfidence = this.applyUserExclusions(query, agentType, confidence);
+    if (excludedConfidence < confidence) {
+      console.log(`[IntentAnalysis] Applied user exclusion penalty for ${agentType}:`, {
+        before: confidence,
+        after: excludedConfidence,
+        penalty: confidence - excludedConfidence
+      });
+    }
+    confidence = excludedConfidence;
 
     const finalConfidence = Math.min(0.95, confidence);
     console.log(`[IntentAnalysis] Final confidence for ${agentType}: ${finalConfidence}`);
@@ -1059,6 +1072,105 @@ export class IntentAnalysisService {
         knowledgeBaseIndicators: ['knowledge base', 'wiki', 'documentation', 'docs', 'manual', 'handbook', 'faq', 'frequently asked', 'help', 'support'],
       },
     };
+  }
+
+  /**
+   * Detect which agents the user explicitly wants to avoid
+   */
+  public detectAgentExclusions(query: string): AgentExclusionResult {
+    console.log('[IntentAnalysis] Detecting agent exclusions for query:', query.substring(0, 100));
+    
+    const queryLower = query.toLowerCase();
+    const excludedAgents: AgentType[] = [];
+    const matchedPatterns: string[] = [];
+    let maxPenalty = 0;
+    const reasoningParts: string[] = [];
+
+    // Import exclusion patterns
+    const { AGENT_EXCLUSION_PATTERNS } = require('./intentClassificationPrompts');
+
+    // Check each agent type for exclusion patterns
+    for (const [agentType, patterns] of Object.entries(AGENT_EXCLUSION_PATTERNS)) {
+      const agentEnum = agentType as AgentType;
+      let agentExcluded = false;
+      let agentPatterns: string[] = [];
+      const typedPatterns = patterns as any; // Type assertion for patterns
+
+      // Check avoidance patterns (exact string matches)
+      for (const pattern of typedPatterns.avoidancePatterns) {
+        if (queryLower.includes(pattern.toLowerCase())) {
+          agentExcluded = true;
+          agentPatterns.push(pattern);
+          console.log(`[IntentAnalysis] Found avoidance pattern for ${agentType}:`, pattern);
+        }
+      }
+
+      // Check negative patterns (regex matches)
+      for (const pattern of typedPatterns.negativePatterns) {
+        if (pattern.test(query)) {
+          agentExcluded = true;
+          agentPatterns.push(pattern.toString());
+          console.log(`[IntentAnalysis] Found negative pattern for ${agentType}:`, pattern.toString());
+        }
+      }
+
+      // Check exclusion keywords
+      for (const keyword of typedPatterns.exclusionKeywords) {
+        if (queryLower.includes(keyword.toLowerCase())) {
+          agentExcluded = true;
+          agentPatterns.push(keyword);
+          console.log(`[IntentAnalysis] Found exclusion keyword for ${agentType}:`, keyword);
+        }
+      }
+
+      if (agentExcluded) {
+        excludedAgents.push(agentEnum);
+        matchedPatterns.push(...agentPatterns);
+        maxPenalty = Math.max(maxPenalty, 0.9); // Heavy penalty for explicit exclusions
+        reasoningParts.push(`User explicitly requested to avoid ${agentType}`);
+        console.log(`[IntentAnalysis] Agent ${agentType} marked for exclusion`);
+      }
+    }
+
+    const result = {
+      excludedAgents,
+      confidencePenalty: maxPenalty,
+      matchedPatterns: [...new Set(matchedPatterns)], // Remove duplicates
+      reasoning: reasoningParts.length > 0 
+        ? reasoningParts.join('; ')
+        : 'No explicit agent exclusions detected'
+    };
+
+    console.log('[IntentAnalysis] Agent exclusion detection result:', {
+      excludedAgents: result.excludedAgents,
+      penalty: result.confidencePenalty,
+      patternsCount: result.matchedPatterns.length
+    });
+
+    return result;
+  }
+
+  /**
+   * Apply agent exclusions to confidence scores
+   */
+  private applyUserExclusions(
+    query: string,
+    agentType: AgentType,
+    currentConfidence: number
+  ): number {
+    const exclusions = this.detectAgentExclusions(query);
+    
+    if (exclusions.excludedAgents.includes(agentType)) {
+      const penalizedConfidence = Math.max(0.05, currentConfidence - exclusions.confidencePenalty);
+      console.log(`[IntentAnalysis] Applied exclusion penalty to ${agentType}:`, {
+        originalConfidence: currentConfidence,
+        penalty: exclusions.confidencePenalty,
+        finalConfidence: penalizedConfidence
+      });
+      return penalizedConfidence;
+    }
+
+    return currentConfidence;
   }
 }
 
