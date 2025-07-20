@@ -352,3 +352,29 @@ export interface IntentClassificationSchema {
   required: ['agent_type', 'confidence', 'reasoning'];
   additionalProperties: false;
 }
+
+/**
+ * Agent exclusion detection result
+ */
+export interface AgentExclusionResult {
+  /** Agents that user explicitly requested to avoid */
+  excludedAgents: AgentType[];
+  /** Confidence penalty to apply to excluded agents (0-1) */
+  confidencePenalty: number;
+  /** Matched exclusion patterns for debugging */
+  matchedPatterns: string[];
+  /** Reasoning for exclusions */
+  reasoning: string;
+}
+
+/**
+ * Exclusion pattern configuration for each agent type
+ */
+export interface AgentExclusionPatterns {
+  /** Patterns that indicate user wants to avoid this agent */
+  avoidancePatterns: string[];
+  /** Patterns that indicate user explicitly doesn't want this agent */
+  negativePatterns: string[];
+  /** Keywords that suggest avoiding this agent */
+  exclusionKeywords: string[];
+}
