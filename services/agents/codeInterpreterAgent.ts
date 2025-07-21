@@ -45,11 +45,6 @@ export class CodeInterpreterAgent extends BaseAgent {
     if (this.executionCache) {
       this.executionCache.clear();
     }
-    
-    // Validate configuration
-    if (!this.codeInterpreterConfig?.codeInterpreterConfig) {
-      throw new Error('Code interpreter configuration is required');
-    }
   }
 
   protected validateSpecificConfig(): string[] {
