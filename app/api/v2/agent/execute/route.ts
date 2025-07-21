@@ -50,6 +50,19 @@ function validateRequest(body: any): {
     errors.push('query is too long (max 10,000 characters)');
   }
 
+  // Validate conversation history
+  if (body.conversationHistory && !Array.isArray(body.conversationHistory)) {
+    errors.push('conversationHistory must be an array');
+  }
+
+  if (body.conversationHistory && body.conversationHistory.length > 10) {
+    errors.push('conversationHistory is too long (max 10 messages)');
+  }
+
+  if (body.conversationHistory && body.conversationHistory.some((msg: any) => typeof msg !== 'string')) {
+    errors.push('conversationHistory items must be strings');
+  }
+
   // Validate optional fields
   if (body.model && typeof body.model !== 'object') {
     errors.push('model must be an object');
@@ -335,6 +348,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const context: AgentExecutionContext = {
       query: request.query,
       messages: [], // Empty for API usage
+      conversationHistory: request.conversationHistory, // Include conversation history
       user: session.user,
       model: {
         id: request.model?.id || 'gpt-4o-mini',
