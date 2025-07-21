@@ -16,47 +16,50 @@ import { LogsIngestionClient } from '@azure/monitor-ingestion';
 
 export class AzureMonitorLoggingService {
   private static instance: AzureMonitorLoggingService | null = null;
-  private client: LogsIngestionClient;
+  private client: LogsIngestionClient | null;
   private ruleId: string;
   private streamName: string;
+  private configurationMode: 'azure' | 'console';
 
   constructor(
-    logsIngestionEndpoint: string = process.env.LOGS_INJESTION_ENDPOINT!,
-    ruleId: string = process.env.DATA_COLLECTION_RULE_ID!,
-    streamName: string = process.env.STREAM_NAME!,
+    logsIngestionEndpoint?: string,
+    ruleId?: string,
+    streamName?: string,
   ) {
-    const credential = new DefaultAzureCredential();
-    this.client = new LogsIngestionClient(logsIngestionEndpoint, credential);
-    this.ruleId = ruleId;
-    this.streamName = streamName;
+    const endpoint = logsIngestionEndpoint || process.env.LOGS_INJESTION_ENDPOINT;
+    const dcr = ruleId || process.env.DATA_COLLECTION_RULE_ID;
+    const stream = streamName || process.env.STREAM_NAME;
+
+    if (endpoint && dcr && stream) {
+      try {
+        const credential = new DefaultAzureCredential();
+        this.client = new LogsIngestionClient(endpoint, credential);
+        this.ruleId = dcr;
+        this.streamName = stream;
+        this.configurationMode = 'azure';
+        console.log('AzureMonitorLoggingService: Initialized with Azure Monitor configuration');
+      } catch (error) {
+        console.warn('AzureMonitorLoggingService: Failed to initialize Azure Monitor client, falling back to console logging', error);
+        this.client = null;
+        this.ruleId = dcr;
+        this.streamName = stream;
+        this.configurationMode = 'console';
+      }
+    } else {
+      console.warn('AzureMonitorLoggingService: Missing Azure Monitor configuration, using console logging mode');
+      this.client = null;
+      this.ruleId = ruleId || 'console-mode';
+      this.streamName = streamName || 'console-mode';
+      this.configurationMode = 'console';
+    }
   }
 
   /**
    * Get singleton instance of the logging service
    */
-  public static getInstance(): AzureMonitorLoggingService | null {
+  public static getInstance(): AzureMonitorLoggingService {
     if (!this.instance) {
-      try {
-        const logsIngestionEndpoint = process.env.LOGS_INJESTION_ENDPOINT;
-        const ruleId = process.env.DATA_COLLECTION_RULE_ID;
-        const streamName = process.env.STREAM_NAME;
-
-        if (logsIngestionEndpoint && ruleId && streamName) {
-          this.instance = new AzureMonitorLoggingService(
-            logsIngestionEndpoint,
-            ruleId,
-            streamName
-          );
-          console.log('AzureMonitorLoggingService: Singleton instance created successfully');
-        } else {
-          console.warn('AzureMonitorLoggingService: Missing required environment variables for Azure Monitor Logging');
-          console.warn('Set LOGS_INGESTION_ENDPOINT, DATA_COLLECTION_RULE_ID, and STREAM_NAME to enable logging');
-          return null;
-        }
-      } catch (error) {
-        console.error('AzureMonitorLoggingService: Failed to create singleton instance', error);
-        return null;
-      }
+      this.instance = new AzureMonitorLoggingService();
     }
     return this.instance;
   }
@@ -699,13 +702,20 @@ export class AzureMonitorLoggingService {
     }));
 
     try {
-      if (shouldAwait) {
-        await this.client.upload(this.ruleId, this.streamName, batchEntries);
+      if (this.configurationMode === 'azure' && this.client) {
+        if (shouldAwait) {
+          await this.client.upload(this.ruleId, this.streamName, batchEntries);
+        } else {
+          void this.client.upload(this.ruleId, this.streamName, batchEntries);
+        }
       } else {
-        void this.client.upload(this.ruleId, this.streamName, batchEntries);
+        // Console logging mode
+        console.log('Batch metrics (console mode):', JSON.stringify(batchEntries, null, 2));
       }
     } catch (error) {
       console.error('Error batch uploading metrics:', error);
+      // Fallback to console logging
+      console.log('Fallback batch metrics:', JSON.stringify(batchEntries, null, 2));
     }
   }
 
@@ -714,18 +724,15 @@ export class AzureMonitorLoggingService {
    */
   getHealthStatus() {
     try {
-      const isConfigured = !!(
-        process.env.LOGS_INJESTION_ENDPOINT &&
-        process.env.DATA_COLLECTION_RULE_ID &&
-        process.env.STREAM_NAME
-      );
+      const isConfigured = this.configurationMode === 'azure' && !!this.client;
 
       return {
-        status: isConfigured && this.client ? 'healthy' : 'degraded',
+        status: isConfigured ? 'healthy' : 'degraded',
         isConfigured,
         hasClient: !!this.client,
-        ruleId: this.ruleId ? this.ruleId.substring(0, 8) + '...' : 'not-set',
-        streamName: this.streamName || 'not-set',
+        configurationMode: this.configurationMode,
+        ruleId: this.ruleId && this.ruleId !== 'console-mode' ? this.ruleId.substring(0, 8) + '...' : 'console-mode',
+        streamName: this.streamName && this.streamName !== 'console-mode' ? this.streamName : 'console-mode',
         lastChecked: new Date().toISOString(),
       };
     } catch (error) {
@@ -733,6 +740,7 @@ export class AzureMonitorLoggingService {
         status: 'unhealthy',
         isConfigured: false,
         hasClient: false,
+        configurationMode: this.configurationMode,
         error: error instanceof Error ? error.message : 'Unknown error',
         lastChecked: new Date().toISOString(),
       };
@@ -745,28 +753,27 @@ export class AzureMonitorLoggingService {
         TimeGenerated: new Date().toISOString(),
         ...data,
       };
-      console.log('Attempting to send log entry:', logEntry);
-      console.log('Using Data Collection Rule ID:', this.ruleId);
-      console.log('Using Stream Name:', this.streamName);
 
-      try {
-        await this.client.upload(this.ruleId, this.streamName, [logEntry]);
-        console.log('Log entry sent successfully');
-      } catch (uploadError) {
-        console.error('Error uploading log entry:', uploadError);
-        if (uploadError instanceof Error) {
-          console.error('Upload error name:', uploadError.name);
-          console.error('Upload error message:', uploadError.message);
-          console.error('Upload error stack:', uploadError.stack);
+      if (this.configurationMode === 'azure' && this.client) {
+        console.log('Attempting to send log entry to Azure Monitor:', logEntry);
+        console.log('Using Data Collection Rule ID:', this.ruleId);
+        console.log('Using Stream Name:', this.streamName);
+
+        try {
+          await this.client.upload(this.ruleId, this.streamName, [logEntry]);
+          console.log('Log entry sent successfully to Azure Monitor');
+        } catch (uploadError) {
+          console.error('Error uploading log entry to Azure Monitor, falling back to console:', uploadError);
+          console.log('Log entry (console fallback):', JSON.stringify(logEntry, null, 2));
         }
+      } else {
+        // Console logging mode
+        console.log('Log entry (console mode):', JSON.stringify(logEntry, null, 2));
       }
     } catch (error) {
-      console.error('Error sending log entry:', error);
-      if (error instanceof Error) {
-        console.error('Error name:', error.name);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
-      }
+      console.error('Error in logging service:', error);
+      // Always ensure we log something, even if everything fails
+      console.log('Fallback log entry:', JSON.stringify(data, null, 2));
     }
   }
 }
