@@ -622,17 +622,17 @@ export class AgentFactory {
    */
   private logInfo(message: string, data?: any): void {
     // Log to console for debugging
-    console.log(`[INFO] AgentFactory: ${message}`, data);
+    console.log(`[INFO] AgentFactory: %s`, message, data);
   }
 
   private logWarning(message: string, data?: any): void {
     // Log to console for debugging
-    console.warn(`[WARNING] AgentFactory: ${message}`, data);
+    console.warn(`[WARNING] AgentFactory: %s`, message, data);
   }
 
   private logError(message: string, error: Error, data?: any): void {
     // Log to console for debugging
-    console.error(`[ERROR] AgentFactory: ${message}`, error, data);
+    console.error(`[ERROR] AgentFactory: %s`, message, error, data);
   }
 
   private startMetricsCollection(): void {
