@@ -68,6 +68,7 @@ export class SemanticSearchEngine {
   // Vector storage (placeholder for actual vector database)
   private vectorStore: Map<string, VectorEmbedding[]> = new Map();
   private searchIndex: Map<string, SearchIndexEntry> = new Map();
+  private documentStorage: Map<string, KnowledgeDocument> = new Map();
   
   // Caching
   private embeddingCache: Map<string, number[]> = new Map();
@@ -286,7 +287,15 @@ export class SemanticSearchEngine {
    */
   async indexDocument(document: KnowledgeDocument): Promise<void> {
     try {
+      // Validate document
+      if (!document.id || document.id.trim() === '') {
+        throw new Error('Document ID is required');
+      }
+      
       console.log(`[INFO] Indexing document: ${document.id}`);
+      
+      // Store full document data for retrieval
+      this.documentStorage.set(document.id, document);
       
       // Create search index entry
       const indexEntry: SearchIndexEntry = {
@@ -328,6 +337,9 @@ export class SemanticSearchEngine {
     try {
       // Remove from search index
       this.searchIndex.delete(documentId);
+      
+      // Remove from document storage
+      this.documentStorage.delete(documentId);
       
       // Remove from vector store
       this.vectorStore.delete(documentId);
@@ -586,7 +598,13 @@ export class SemanticSearchEngine {
   }
 
   private createPlaceholderDocument(documentId: string, indexEntry: SearchIndexEntry): KnowledgeDocument {
-    // This would normally retrieve the full document from storage
+    // Retrieve the full document from storage if available
+    const storedDocument = this.documentStorage.get(documentId);
+    if (storedDocument) {
+      return storedDocument;
+    }
+    
+    // Fallback to creating placeholder document
     return {
       id: documentId,
       title: indexEntry.title,
@@ -614,6 +632,13 @@ export class SemanticSearchEngine {
     if (query.documentTypes && query.documentTypes.length > 0) {
       filtered = filtered.filter(result => 
         query.documentTypes!.includes(result.document.type)
+      );
+    }
+    
+    // Apply user role filter
+    if (query.userRole) {
+      filtered = filtered.filter(result => 
+        result.document.allowedRoles.includes(query.userRole!)
       );
     }
     
