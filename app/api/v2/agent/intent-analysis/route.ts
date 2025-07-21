@@ -190,7 +190,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const session = token ? (await getServerSession(authOptions as any)) as Session | null : null;
 
     // Log request (optional authentication)
-    console.log(`[IntentAnalysisAPI] Analyzing intent for message: ${request.message.substring(0, 100)}...`, {
+    console.log('[IntentAnalysisAPI] Analyzing intent for message: %s...', request.message.substring(0, 100), {
       userId: session?.user?.id || 'anonymous',
       messageLength: request.message.length,
     });
