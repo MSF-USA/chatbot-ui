@@ -135,7 +135,31 @@ export class BingGroundingService {
     this.baseDelay = 1000;
 
     // Initialize logging service
-    this.logger = AzureMonitorLoggingService.getInstance() || new AzureMonitorLoggingService();
+    try {
+      this.logger = AzureMonitorLoggingService.getInstance();
+      if (!this.logger) {
+        // Create a mock logger for testing/development environments
+        console.warn('AzureMonitorLoggingService: Missing required environment variables for Azure Monitor Logging');
+        console.warn('Set LOGS_INGESTION_ENDPOINT, DATA_COLLECTION_RULE_ID, and STREAM_NAME to enable logging');
+        // Create a minimal mock logger
+        this.logger = {
+          logMessage: () => Promise.resolve(),
+          logFileProcess: () => Promise.resolve(),
+          logSearch: () => Promise.resolve(),
+          logError: () => Promise.resolve(),
+          logCustomMetric: () => Promise.resolve()
+        } as any;
+      }
+    } catch (error) {
+      // Fallback to mock logger if initialization fails
+      this.logger = {
+        logMessage: () => Promise.resolve(),
+        logFileProcess: () => Promise.resolve(),
+        logSearch: () => Promise.resolve(),
+        logError: () => Promise.resolve(),
+        logCustomMetric: () => Promise.resolve()
+      } as any;
+    }
 
     // Validate required configuration for Azure AI Agents
     const configErrors = this.validateConfiguration();
