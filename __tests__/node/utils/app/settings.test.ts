@@ -9,6 +9,7 @@ describe('Settings Manager', () => {
     theme: 'dark',
     temperature: 0.5,
     systemPrompt: '',
+    advancedMode: false
   };
 
   beforeEach(() => {
@@ -41,10 +42,20 @@ describe('Settings Manager', () => {
   it('saveSettings should save settings to localStorage', () => {
     saveSettings(dummySettings);
 
+    // saveSettings adds version and lastModified fields, so we just check it was called
     expect((global as any).localStorage.setItem).toHaveBeenCalledWith(
       'settings',
-      JSON.stringify(dummySettings),
+      expect.stringContaining('"theme":"dark"'),
     );
+    
+    // Verify the saved data includes our original settings plus metadata
+    const [[key, value]] = (global as any).localStorage.setItem.mock.calls;
+    expect(key).toBe('settings');
+    const savedSettings = JSON.parse(value);
+    expect(savedSettings).toMatchObject(dummySettings);
+    expect(savedSettings).toHaveProperty('version', '1.1.0');
+    expect(savedSettings).toHaveProperty('lastModified');
+    expect(typeof savedSettings.lastModified).toBe('number');
   });
 
   it('getSettings should catch if JSON parsing fails', () => {
