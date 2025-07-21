@@ -47,7 +47,7 @@ import {
   getBearerTokenProvider,
 } from '@azure/identity';
 import { AzureMonitorLoggingService } from './loggingService';
-import { azureMonitorDashboard } from './azureMonitorDashboard';
+// import { azureMonitorDashboard } from './azureMonitorDashboard';
 import {BaseAgent} from "@/services/agents/baseAgent";
 import { StreamingTextResponse } from 'ai';
 
@@ -155,7 +155,7 @@ export class EnhancedChatService {
       console.log('[INFO] Enhanced Chat Service initialized successfully');
 
       // Start Azure Monitor metrics collection
-      azureMonitorDashboard.startMetricsCollection(60000); // Collect metrics every minute
+      // azureMonitorDashboard.startMetricsCollection(60000); // Collect metrics every minute
 
       await this.logger?.logCustomMetric(
         'EnhancedChatServiceInitialized',
@@ -228,16 +228,17 @@ export class EnhancedChatService {
       const responseTime = Date.now() - startTime;
       this.updateMetrics(routingDecision.shouldUseAgents, responseTime);
 
+      // TODO: Re-enable if/when Azure Monitor Dashboard is implemented
       // Record metrics in Azure Monitor Dashboard
-      azureMonitorDashboard.recordRequest(true, responseTime);
+      // azureMonitorDashboard.recordRequest(true, responseTime);
       
-      if (routingDecision.shouldUseAgents) {
-        azureMonitorDashboard.recordAgentRouting(
-          'agent-selected',
-          routingDecision.agentType || 'unknown',
-          responseTime
-        );
-      }
+      // if (routingDecision.shouldUseAgents) {
+      //   azureMonitorDashboard.recordAgentRouting(
+      //     'agent-selected',
+      //     routingDecision.agentType || 'unknown',
+      //     responseTime
+      //   );
+      // }
 
       // Log successful completion
       await this.logger?.logCustomMetric(
@@ -260,14 +261,15 @@ export class EnhancedChatService {
       
       const processingTime = Date.now() - startTime;
       
+      // TODO: Re-enable if/when Azure Monitor Dashboard is implemented
       // Record failed request
-      azureMonitorDashboard.recordRequest(false, processingTime);
-      azureMonitorDashboard.recordAgentRouting(
-        'agent-failed',
-        'unknown',
-        processingTime,
-        error instanceof Error ? error.message : String(error)
-      );
+      // azureMonitorDashboard.recordRequest(false, processingTime);
+      // azureMonitorDashboard.recordAgentRouting(
+      //   'agent-failed',
+      //   'unknown',
+      //   processingTime,
+      //   error instanceof Error ? error.message : String(error)
+      // );
       
       // Log error
       await this.logger?.logCustomMetric(
@@ -300,14 +302,15 @@ export class EnhancedChatService {
         
         const fallbackTime = Date.now() - startTime;
         
+        // TODO: Re-enable when Azure Monitor Dashboard is implemented
         // Record successful fallback
-        azureMonitorDashboard.recordRequest(true, fallbackTime);
-        azureMonitorDashboard.recordAgentRouting(
-          'fallback-used',
-          'standard-chat',
-          fallbackTime,
-          'Agent system failure'
-        );
+        // azureMonitorDashboard.recordRequest(true, fallbackTime);
+        // azureMonitorDashboard.recordAgentRouting(
+        //   'fallback-used',
+        //   'standard-chat',
+        //   fallbackTime,
+        //   'Agent system failure'
+        // );
         
         await this.logger?.logCustomMetric(
           'ChatFallbackSucceeded',
@@ -1144,8 +1147,9 @@ export class EnhancedChatService {
     try {
       console.log('[INFO] Shutting down Enhanced Chat Service');
       
+      // TODO: Re-enable when Azure Monitor Dashboard is implemented
       // Stop Azure Monitor metrics collection
-      azureMonitorDashboard.stopMetricsCollection();
+      // azureMonitorDashboard.stopMetricsCollection();
       
       if (this.agentPoolingService) {
         await this.agentPoolingService.shutdown();
