@@ -1,5 +1,6 @@
 import { Session } from 'next-auth';
 import { AzureOpenAI } from 'openai';
+import * as crypto from 'crypto';
 
 import { AgentType, AgentExecutionRequest, AgentExecutionResult, AgentExecutionEnvironment } from '@/types/agent';
 import {
@@ -463,7 +464,9 @@ export class AgentChatIntegrationService {
   }
 
   private generateSessionId(user: Session['user']): string {
-    return `${user.id || 'anonymous'}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    // Generate a cryptographically secure random string for session ID
+    const randomPart = crypto.randomBytes(9).toString('base64url'); // 9 bytes ≈ 12 base64url chars
+    return `${user.id || 'anonymous'}-${Date.now()}-${randomPart}`;
   }
 
   private calculateRecommendationConfidence(recommendation: any): number {
