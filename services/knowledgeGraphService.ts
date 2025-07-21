@@ -52,7 +52,7 @@ export class KnowledgeGraphService {
 
   constructor(config: KnowledgeBaseConfig) {
     this.config = config;
-    this.logger = AzureMonitorLoggingService.getInstance() || new AzureMonitorLoggingService();
+    this.logger = AzureMonitorLoggingService.getInstance();
   }
 
   /**
@@ -107,6 +107,7 @@ export class KnowledgeGraphService {
       );
     }
   }
+
 
   /**
    * Remove a document from the knowledge graph
@@ -174,9 +175,9 @@ export class KnowledgeGraphService {
   /**
    * Get entities by name
    */
-  getEntitiesByName(name: string): Entity[] {
+  getEntitiesByName(name: string, fuzzyMatch: boolean = false): Entity[] {
     try {
-      console.log('[INFO] Getting entities by name:', name);
+      console.log('[INFO] Getting entities by name:', name, 'fuzzy:', fuzzyMatch);
       
       // Simplified implementation - return empty array
       return [];
@@ -184,6 +185,23 @@ export class KnowledgeGraphService {
       console.error('[ERROR] Failed to get entities by name:', error);
       throw new LocalKnowledgeError(
         'Failed to get entities by name',
+        LocalKnowledgeErrorType.SEARCH_FAILED,
+        error
+      );
+    }
+  }
+
+  /**
+   * Get entity by ID
+   */
+  getEntity(entityId: string): Entity | null {
+    try {
+      console.log('[INFO] Getting entity by ID:', entityId);
+      return this.entities.get(entityId) || null;
+    } catch (error) {
+      console.error('[ERROR] Failed to get entity by ID:', error);
+      throw new LocalKnowledgeError(
+        'Failed to get entity by ID',
         LocalKnowledgeErrorType.SEARCH_FAILED,
         error
       );
