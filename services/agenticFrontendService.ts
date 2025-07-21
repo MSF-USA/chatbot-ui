@@ -131,7 +131,10 @@ export class AgenticFrontendService {
       const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
       const messageText = this.extractMessageText(lastMessage);
       
-      const intentResult = await this.analyzeIntent(messageText);
+      // Format conversation history for intent analysis as well
+      const conversationHistory = this.formatConversationHistory(updatedConversation);
+      
+      const intentResult = await this.analyzeIntent(messageText, conversationHistory);
       intentAnalysisTime = Date.now() - intentStartTime;
       
       this.log('=== INTENT ANALYSIS RESULT ===');
@@ -400,9 +403,13 @@ export class AgenticFrontendService {
   ): Promise<AgentExecutionApiResponse> {
     this.log('=== executeAgentWorkflow START ===');
     
+    // Format conversation history for context
+    const conversationHistory = this.formatConversationHistory(conversation);
+    
     const request: AgentExecutionApiRequest = {
       agentType,
       query,
+      conversationHistory,
       model: {
         id: conversation.model.id,
         tokenLimit: conversation.model.tokenLimit,
@@ -414,6 +421,7 @@ export class AgenticFrontendService {
     this.log('Agent execution request:', {
       agentType,
       query: query.substring(0, 100) + (query.length > 100 ? '...' : ''),
+      conversationHistoryLength: conversationHistory.length,
       model: request.model,
       configKeys: Object.keys(request.config || {}),
       timeout: request.timeout
@@ -473,7 +481,7 @@ ${agentData.content}`;
       });
     }
 
-    enhancedPrompt += `\n\nPlease synthesize this information and provide a helpful, accurate response to the user's question.`;
+    enhancedPrompt += `\n\nPlease synthesize this information and provide a helpful, accurate response to the user's question. Take the full conversation history into account when responding, though allow the user to switch to a different topic if necessary.`;
 
     // Add agent-specific instructions based on the agent type used
     if (agentData.agentType === AgentType.WEB_SEARCH) {
@@ -508,8 +516,11 @@ ${agentData.content}`;
   /**
    * Analyze user intent using the intent analysis API
    */
-  private async analyzeIntent(message: string): Promise<IntentAnalysisApiResponse> {
-    const request: IntentAnalysisApiRequest = { message };
+  private async analyzeIntent(message: string, conversationHistory?: string[]): Promise<IntentAnalysisApiResponse> {
+    const request: IntentAnalysisApiRequest = { 
+      message,
+      conversationHistory 
+    };
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
@@ -686,6 +697,56 @@ ${agentData.content}`;
     }
 
     return '';
+  }
+
+  /**
+   * Format conversation history for agent context
+   * Converts the last N messages into formatted strings showing who said what
+   */
+  private formatConversationHistory(conversation: Conversation, maxMessages: number = 5): string[] {
+    if (!conversation.messages || conversation.messages.length <= 1) {
+      return [];
+    }
+
+    // Get the last N messages, excluding the current one (last message)
+    const messagesToInclude = conversation.messages.slice(-maxMessages - 1, -1);
+    
+    const formattedHistory: string[] = [];
+
+    for (const message of messagesToInclude) {
+      let roleLabel: string;
+      switch (message.role) {
+        case 'user':
+          roleLabel = 'User';
+          break;
+        case 'assistant':
+          roleLabel = 'Assistant';
+          break;
+        case 'system':
+          roleLabel = 'System';
+          break;
+        default:
+          roleLabel = 'Unknown';
+      }
+
+      const messageText = this.extractMessageText(message);
+      
+      // Skip empty messages
+      if (!messageText.trim()) {
+        continue;
+      }
+
+      // Format the message with role and content
+      // Truncate very long messages to avoid token overflow
+      const truncatedText = messageText.length > 500 
+        ? messageText.substring(0, 500) + '...'
+        : messageText;
+
+      formattedHistory.push(`${roleLabel}: ${truncatedText}`);
+    }
+
+    this.log(`Formatted conversation history: ${formattedHistory.length} messages`);
+    return formattedHistory;
   }
 
 
