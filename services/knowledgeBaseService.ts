@@ -138,8 +138,10 @@ export class KnowledgeBaseService {
       return documentId;
     } catch (error) {
       console.error(`[ERROR] Failed to add document:`, error);
+      // Preserve specific validation error messages
+      const errorMessage = error instanceof Error ? error.message : 'Failed to add document to knowledge base';
       throw new LocalKnowledgeError(
-        'Failed to add document to knowledge base',
+        errorMessage,
         LocalKnowledgeErrorType.INDEXING_ERROR,
         error,
         documentId
@@ -300,8 +302,11 @@ export class KnowledgeBaseService {
       return results;
     } catch (error) {
       console.error(`[ERROR] Search failed:`, error);
+      // Preserve specific validation error messages
+      const errorMessage = error instanceof LocalKnowledgeError ? error.message : 
+                          error instanceof Error ? error.message : 'Search operation failed';
       throw new LocalKnowledgeError(
-        'Search operation failed',
+        errorMessage,
         LocalKnowledgeErrorType.SEARCH_FAILED,
         error,
         query.query
