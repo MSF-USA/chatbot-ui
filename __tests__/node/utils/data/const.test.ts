@@ -73,6 +73,9 @@ describe('findWorkingConfiguration Function', () => {
   };
 
   beforeEach(() => {
+    // Clear OPENAI_API_KEY to force the function to test configurations
+    delete process.env.OPENAI_API_KEY;
+    
     // Mock fetch function
     global.fetch = vi
       .fn()
