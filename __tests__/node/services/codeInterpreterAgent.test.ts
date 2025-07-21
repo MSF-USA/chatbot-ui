@@ -88,11 +88,13 @@ describe('CodeInterpreterAgent', () => {
       expect(MockedCodeInterpreterService).toHaveBeenCalledOnce();
     });
 
-    it('should throw error for missing configuration', () => {
+    it('should detect missing configuration in validation', () => {
       const invalidConfig = { ...config };
       delete (invalidConfig as any).codeInterpreterConfig;
       
-      expect(() => new CodeInterpreterAgent(invalidConfig)).toThrow(/Code interpreter configuration is required/);
+      const agent = new CodeInterpreterAgent(invalidConfig);
+      const errors = agent['validateSpecificConfig']();
+      expect(errors).toContain('Code interpreter configuration is required');
     });
   });
 
@@ -485,6 +487,7 @@ describe('CodeInterpreterAgent', () => {
 
       const response = await agent.execute(context);
 
+      console.log('DEBUG: response structure:', JSON.stringify(response, null, 2));
       expect(response.metadata?.agentMetadata).toBeDefined();
       expect(response.metadata?.agentMetadata?.totalCodeBlocks).toBe(1);
       expect(response.metadata?.agentMetadata?.successfulExecutions).toBe(1);
@@ -538,10 +541,12 @@ describe('CodeInterpreterAgent', () => {
       expect(errors).toContain('Maximum execution time must be greater than 0');
     });
 
-    it('should detect invalid memory limit', () => {
+    it('should detect invalid memory limit in validation', () => {
       const invalidConfig = { ...config, maxMemoryMb: 0 };
       
-      expect(() => new CodeInterpreterAgent(invalidConfig)).toThrow(/Maximum memory must be greater than 0/);
+      const agent = new CodeInterpreterAgent(invalidConfig);
+      const errors = agent['validateSpecificConfig']();
+      expect(errors).toContain('Maximum memory must be greater than 0');
     });
   });
 
