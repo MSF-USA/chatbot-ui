@@ -9,6 +9,8 @@ export interface AgentExecutionApiRequest {
   agentType: AgentType;
   /** User query/message to process */
   query: string;
+  /** Optional conversation history for context (recent messages) */
+  conversationHistory?: string[];
   /** Optional model configuration */
   model?: {
     id: string;

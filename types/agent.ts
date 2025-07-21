@@ -171,6 +171,8 @@ export interface AgentExecutionContext {
   query: string;
   /** Conversation history */
   messages: Message[];
+  /** Optional conversation history as formatted strings for context */
+  conversationHistory?: string[];
   /** User session information */
   user: Session['user'];
   /** Model configuration */
