@@ -260,6 +260,7 @@ export abstract class BaseAgent implements BaseAgentInstance {
         ...response.metadata,
         processingTime: executionTime,
         agentMetadata: {
+          ...response.metadata?.agentMetadata,
           agentId: this.config.id,
           usageCount: this.usageCount,
           correlationId,
