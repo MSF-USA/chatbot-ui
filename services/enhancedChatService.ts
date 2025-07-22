@@ -50,6 +50,7 @@ import { AzureMonitorLoggingService } from './loggingService';
 // import { azureMonitorDashboard } from './azureMonitorDashboard';
 import {BaseAgent} from "@/services/agents/baseAgent";
 import { StreamingTextResponse } from 'ai';
+import { generateOptimizedWebSearchQuery } from '@/utils/server/structuredResponses';
 
 /**
  * Enhanced chat request interface
@@ -536,8 +537,17 @@ export class EnhancedChatService {
         mail: userContext.email,
       };
 
+      // Extract the current query and optimize it for web search if needed
+      const currentQuery = this.extractMessageText(chatRequest.messages[chatRequest.messages.length - 1]);
+      const optimizedQuery = await this.optimizeQueryForWebSearch(
+        chatRequest,
+        routingDecision,
+        currentQuery,
+        providedSession
+      );
+
       const agentExecutionContext: AgentExecutionContext = {
-        query: this.extractMessageText(chatRequest.messages[chatRequest.messages.length - 1]),
+        query: optimizedQuery,
         messages: chatRequest.messages,
         user: mockUser,
         model: chatRequest.model,
@@ -627,8 +637,17 @@ export class EnhancedChatService {
         mail: userContext.email,
       };
 
+      // Extract the current query and optimize it for web search if needed
+      const currentQuery = this.extractMessageText(chatRequest.messages[chatRequest.messages.length - 1]);
+      const optimizedQuery = await this.optimizeQueryForWebSearch(
+        chatRequest,
+        routingDecision,
+        currentQuery,
+        providedSession
+      );
+
       const agentExecutionContext: AgentExecutionContext = {
-        query: this.extractMessageText(chatRequest.messages[chatRequest.messages.length - 1]),
+        query: optimizedQuery,
         messages: chatRequest.messages,
         user: mockUser,
         model: chatRequest.model,
@@ -942,6 +961,59 @@ export class EnhancedChatService {
   /**
    * Helper methods
    */
+
+  /**
+   * Optimize query for web search agents by analyzing conversation context
+   */
+  private async optimizeQueryForWebSearch(
+    chatRequest: EnhancedChatRequest,
+    routingDecision: RoutingDecision,
+    currentQuery: string,
+    userSession?: Session | null
+  ): Promise<string> {
+    // Only optimize for web search agents
+    if (routingDecision.agentType !== AgentType.WEB_SEARCH) {
+      return currentQuery;
+    }
+
+    // Only optimize if we have conversation history (more than just the current message)
+    if (chatRequest.messages.length <= 1) {
+      return currentQuery;
+    }
+
+    try {
+      const openaiForAnalysis = this.getValidOpenAIInstance();
+      const modelIdForAnalysis = this.getValidModelId();
+
+      // Ensure we have the required dependencies
+      if (!openaiForAnalysis || !userSession?.user) {
+        console.log('[INFO] Skipping web search query optimization: missing OpenAI instance or user session');
+        return currentQuery;
+      }
+
+      console.log('[INFO] Optimizing web search query with conversation context');
+      
+      const optimizedResult = await generateOptimizedWebSearchQuery(
+        openaiForAnalysis,
+        chatRequest.messages,
+        currentQuery,
+        userSession.user,
+        modelIdForAnalysis
+      );
+
+      console.log('[INFO] Web search query optimized:', {
+        originalQuery: currentQuery,
+        optimizedQuery: optimizedResult.optimizedQuery,
+        messageCount: chatRequest.messages.length
+      });
+
+      return optimizedResult.optimizedQuery;
+      
+    } catch (error) {
+      console.error('[ERROR] Failed to optimize web search query, using original query:', error);
+      return currentQuery;
+    }
+  }
 
   private async parseRequest(req: NextRequest): Promise<EnhancedChatRequest> {
     const body = await req.json();
