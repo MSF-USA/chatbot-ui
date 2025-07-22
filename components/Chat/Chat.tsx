@@ -117,6 +117,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [requestStatusMessage, setRequestStatusMessage] = useState<
     string | null
   >(null);
+  const [requestStatusSecondLine, setRequestStatusSecondLine] = useState<
+    string | null
+  >(null);
   const [progress, setProgress] = useState<number | null>(null);
   const [currentAgentResult, setCurrentAgentResult] = useState<AgenticChatResult | null>(null);
 
@@ -450,6 +453,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               console.log('Stop requested - updating UI state');
               homeDispatch({ field: 'loading', value: false });
               homeDispatch({ field: 'messageIsStreaming', value: false });
+              setRequestStatusMessage(null);
+              setRequestStatusSecondLine(null);
               stopConversationRef.current = false;
               clearInterval(abortCheckInterval);
             }
@@ -484,6 +489,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               true,
               setProgress,
               stopConversationRef,
+              setRequestStatusSecondLine,
             );
 
             // Store agent result for potential UI indicators
@@ -515,6 +521,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           setOnAbort?.(() => {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
             stopConversationRef.current = false;
           });
 
@@ -527,6 +535,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           if (!response.ok) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
             let errorResp: any;
             try {
               errorResp = await response.json();
@@ -543,6 +553,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           if (!data) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
             return;
           }
           if (!plugin) {
@@ -556,6 +568,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               );
             }
             homeDispatch({ field: 'loading', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
 
             // TODO: Either force everything through streaming or implement a
             //    non-streaming version of this as well
@@ -688,6 +702,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               });
               saveConversations(updatedConversations);
               homeDispatch({ field: 'messageIsStreaming', value: false });
+              setRequestStatusMessage(null);
+              setRequestStatusSecondLine(null);
             }
           } else {
             throw new Error('Plugins not currently supported.');
@@ -695,6 +711,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         } catch (error: unknown) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
+          setRequestStatusMessage(null);
+          setRequestStatusSecondLine(null);
 
           if (error instanceof Error) {
             if (error.message === 'Request timed out') {
@@ -1126,6 +1144,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 {loading && (
                   <ChatLoader
                     requestStatusMessage={requestStatusMessage}
+                    requestStatusSecondLine={requestStatusSecondLine}
                     progress={progress}
                   />
                 )}
