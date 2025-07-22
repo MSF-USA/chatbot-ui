@@ -1,12 +1,26 @@
 import { IconLoader2, IconRobot } from '@tabler/icons-react';
 import { FC } from 'react';
 
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { useSmoothLoadingMessage } from '@/hooks/useSmoothLoadingMessage';
+
 interface Props {
   requestStatusMessage: string | null;
   progress: number | null; // Progress from 0 to 100
 }
 
 export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
+  // Get streaming settings from context
+  const { settings } = useStreamingSettings();
+
+  // Use smooth loading message hook for enhanced loading states
+  // Note: skipFirstMessage=true because first message often doesn't display properly in loading chains
+  const smoothRequestStatusMessage = useSmoothLoadingMessage({
+    message: requestStatusMessage,
+    enabled: settings.smoothStreamingEnabled,
+    skipFirstMessage: true, // Skip first message animation for cleaner loading sequences
+  });
+
   // Determine the loader to display (spinner or progress bar)
   let loader;
 
@@ -18,7 +32,7 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
     loader = (
       <div
         className={
-          requestStatusMessage ? 'w-24 relative' : 'w-full max-w-xs relative'
+          (requestStatusMessage || smoothRequestStatusMessage) ? 'w-24 relative' : 'w-full max-w-xs relative'
         }
       >
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden relative">
@@ -32,7 +46,7 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
   } else {
     // Show determinate progress bar with percentage and animated stripes
     loader = (
-      <div className={requestStatusMessage ? 'w-24' : 'w-full max-w-xs'}>
+      <div className={(requestStatusMessage || smoothRequestStatusMessage) ? 'w-24' : 'w-full max-w-xs'}>
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
           <div
             className="
@@ -64,12 +78,12 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
   const loaderElement = (
     <div className="flex items-center">
       {loader}
-      {requestStatusMessage && (
+      {(requestStatusMessage || smoothRequestStatusMessage) && (
         <span
           className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs"
           aria-live="polite"
         >
-          {requestStatusMessage}
+          {smoothRequestStatusMessage}
         </span>
       )}
     </div>
