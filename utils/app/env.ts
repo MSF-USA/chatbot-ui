@@ -1,4 +1,4 @@
-import { Session } from 'next-auth';
+import type { Session } from 'next-auth';
 
 const EUVariableMap: any = {
   AZURE_BLOB_STORAGE_NAME: 'AZURE_BLOB_STORAGE_NAME_EU',
@@ -45,7 +45,9 @@ export function getEnvVariable(
   }
 
   let euUser: boolean = true;
-  if (user?.mail && user.mail.toLowerCase()?.indexOf('newyork.msf.org') > -1) {
+  // Type assertion to access mail property from augmented Session user type
+  const userWithMail = user as { mail?: string } | undefined;
+  if (userWithMail?.mail && userWithMail.mail.toLowerCase().endsWith('@newyork.msf.org')) {
     euUser = false;
   }
 
