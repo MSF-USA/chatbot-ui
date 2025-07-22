@@ -24,7 +24,9 @@ import {
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
+  Message,
 } from '@/types/chat';
+import { Plugin, PluginID } from '@/types/plugin';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
@@ -75,6 +77,15 @@ interface DropdownProps {
   handleSend: () => void;
   textFieldValue: string;
   onCameraClick: () => void;
+  // New props for agent-based web search
+  onSend?: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean) => void;
+  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
+  setProgress?: Dispatch<SetStateAction<number | null>>;
+  stopConversationRef?: { current: boolean };
+  apiKey?: string;
+  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
+  systemPrompt?: string;
+  temperature?: number;
 }
 
 // Define the menu item structure
@@ -98,6 +109,14 @@ const Dropdown: React.FC<DropdownProps> = ({
   handleSend,
   textFieldValue,
   onCameraClick,
+  onSend,
+  setRequestStatusMessage,
+  setProgress,
+  stopConversationRef,
+  apiKey,
+  pluginKeys,
+  systemPrompt,
+  temperature,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -433,6 +452,14 @@ const Dropdown: React.FC<DropdownProps> = ({
         setUploadProgress={setUploadProgress}
         setTextFieldValue={setTextFieldValue}
         handleSend={handleSend}
+        onSend={onSend}
+        setRequestStatusMessage={setRequestStatusMessage}
+        setProgress={setProgress}
+        stopConversationRef={stopConversationRef}
+        apiKey={apiKey}
+        pluginKeys={pluginKeys}
+        systemPrompt={systemPrompt}
+        temperature={temperature}
       />
 
       {/* Chat Input Image Capture Modal */}
