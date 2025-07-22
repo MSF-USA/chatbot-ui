@@ -1,5 +1,6 @@
 import { Session } from 'next-auth';
 import { AzureOpenAI } from 'openai';
+import * as crypto from 'crypto';
 
 import { 
   AgentType, 
@@ -620,11 +621,13 @@ export class AgentRequestPipeline {
   }
 
   private generatePipelineId(): string {
-    return `pipeline-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const randomPart = crypto.randomBytes(9).toString('base64url').substr(0, 9);
+    return `pipeline-${Date.now()}-${randomPart}`;
   }
 
   private generateSessionId(user: Session['user']): string {
-    return `${user.id || 'anonymous'}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const randomPart = crypto.randomBytes(9).toString('base64url').substr(0, 9);
+    return `${user.id || 'anonymous'}-${Date.now()}-${randomPart}`;
   }
 
   private generateRequestHash(chatBody: ChatBody, user: Session['user']): string {
