@@ -8,6 +8,7 @@ import {
   validateResponseContentType,
   createSecureRequestOptions
 } from './networkSecurity';
+import { JSDOM } from 'jsdom';
 
 // Security Configuration
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -96,19 +97,26 @@ function validateImageFormat(buffer: Buffer, contentType: string): boolean {
 }
 
 /**
- * Sanitize SVG content to remove potential security threats
+ * Sanitize SVG content to remove potential security threats using DOMPurify
  */
 function sanitizeSVG(content: string): string {
-  // Remove script tags and event handlers
-  let sanitized = content
-    .replace(/<script[^>]*>.*?<\/script>/gis, '')
-    .replace(/on\w+="[^"]*"/gi, '')
-    .replace(/on\w+='[^']*'/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/<foreignObject[^>]*>.*?<\/foreignObject>/gis, '')
-    .replace(/<iframe[^>]*>.*?<\/iframe>/gis, '')
-    .replace(/<object[^>]*>.*?<\/object>/gis, '')
-    .replace(/<embed[^>]*>/gi, '');
+  // Create JSDOM window for DOMPurify to work in Node.js environment
+  const window = new JSDOM('').window;
+  // I hate this but can't control how javascript / typescript handles imports in node
+  const createDOMPurify = require('dompurify');
+  const purify = createDOMPurify(window);
+  
+  // Configure DOMPurify for SVG sanitization
+  const sanitized = purify.sanitize(content, {
+    USE_PROFILES: { svg: true, svgFilters: true },
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'foreignObject'],
+    FORBID_ATTR: ['onload', 'onerror', 'onclick', 'onmouseover', 'onfocus', 'onblur'],
+    ALLOW_UNKNOWN_PROTOCOLS: false,
+    SANITIZE_DOM: true,
+    RETURN_DOM: false,
+    RETURN_DOM_FRAGMENT: false,
+    RETURN_TRUSTED_TYPE: false
+  });
     
   return sanitized;
 }
