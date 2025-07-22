@@ -52,7 +52,23 @@ const { hoistedMockHomeState, hoistedMockHomeDispatch } = vi.hoisted(() => ({
 vi.mock('@/pages/api/home/home.context', () => ({
   __esModule: true,
   default: React.createContext({
-    state: hoistedMockHomeState,
+    state: {
+      ...hoistedMockHomeState,
+      selectedConversation: {
+        id: 'test-conversation',
+        name: 'Test Chat',
+        messages: [],
+        model: {
+          id: 'gpt-4o-mini',
+          name: 'GPT-4o Mini',
+          maxLength: 128000,
+          tokenLimit: 128000,
+        },
+        prompt: '',
+        temperature: 0.7,
+        folderId: null,
+      },
+    },
     dispatch: hoistedMockHomeDispatch,
   }),
 }));
@@ -79,6 +95,15 @@ vi.mock('crypto', () => ({
   createHash: hoistedMockCryptoCreateHash,
 }));
 
+// Mock makeRequest from frontendChatServices
+const { mockMakeRequest } = vi.hoisted(() => ({
+  mockMakeRequest: vi.fn().mockResolvedValue({ success: true })
+}));
+
+vi.mock('@/services/frontendChatServices', () => ({
+  makeRequest: mockMakeRequest,
+}));
+
 // --- Global Fetch Mock ---
 global.fetch = vi.fn();
 
@@ -95,6 +120,7 @@ describe('ChatInputSearch Component', () => {
     hoistedMockUpdate.mockClear();
     hoistedMockDigest.mockClear();
     hoistedMockDigest.mockReturnValue('mockedhash123');
+    mockMakeRequest.mockClear();
 
     (fetch as Mock).mockClear();
 
@@ -157,6 +183,15 @@ describe('ChatInputSearch Component', () => {
       setUploadProgress: vi.fn(),
       setTextFieldValue: vi.fn(),
       handleSend: vi.fn(),
+      // New props for agent-based search
+      onSend: vi.fn(),
+      setRequestStatusMessage: vi.fn(),
+      setProgress: vi.fn(),
+      stopConversationRef: { current: false },
+      apiKey: 'test-api-key',
+      pluginKeys: [],
+      systemPrompt: 'You are a helpful assistant',
+      temperature: 0.7,
       initialMode: 'search',
     };
   });
@@ -348,7 +383,19 @@ describe('ChatInputSearch Component', () => {
     it('should handle successful search submission without optimization', async () => {
       (fetch as Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ content: 'Search results content' }),
+        json: async () => ({ 
+          success: true,
+          data: {
+            agentType: 'web_search',
+            content: 'Search results content',
+            structuredContent: {
+              items: [{
+                source: 'example.com',
+                content: 'Test content from search'
+              }]
+            }
+          }
+        }),
       });
       render(<ChatInputSearch {...props} />);
       await user.click(
@@ -363,21 +410,42 @@ describe('ChatInputSearch Component', () => {
       const searchInputEl = screen.getByPlaceholderText(
         'searchQueryPlaceholder',
       );
-      const questionInputEl = screen.getByPlaceholderText(
-        'webSearchModalDefaultQuestion',
-      );
-      await user.type(questionInputEl, 'Custom search question');
       await user.type(searchInputEl, 'test query');
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
       await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
       expect(fetch).toHaveBeenCalledWith(
-        '/api/v2/web/search?q=test+query&mkt=&safeSearch=Moderate&count=5&offset=0',
+        '/api/v2/agent/execute',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agentType: 'web_search',
+            query: 'test query',
+            conversationHistory: [],
+            model: { id: 'gpt-4o-mini', tokenLimit: 128000 },
+            config: {
+              maxResults: 5,
+              defaultMarket: 'en-US',
+              defaultSafeSearch: 'Moderate'
+            },
+            timeout: 30000
+          })
+        }
       );
-      await waitFor(() => expect(props.onFileUpload).toHaveBeenCalledTimes(1));
-      expect(props.setTextFieldValue).toHaveBeenCalledWith(
-        `Custom search question\n\nwebSearchModalPromptUserContext:\n\n\`\`\`user-request\ntest query\n\`\`\`\n\nwebSearchModalPromptCitation`,
+      // Expect onSend to be called with user's original message
+      await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
+      expect(props.onSend).toHaveBeenCalledWith(
+        {
+          role: 'user',
+          content: 'test query',
+          messageType: 'text'
+        },
+        null,
+        undefined
       );
-      expect(props.handleSend).toHaveBeenCalledTimes(1);
+      // Expect makeRequest to be called for internal processing
+      await waitFor(() => expect(mockMakeRequest).toHaveBeenCalledTimes(1));
+      expect(props.onClose).toHaveBeenCalledTimes(1);
     });
     it('should handle successful search submission WITH optimization', async () => {
       (fetch as Mock)
@@ -390,7 +458,19 @@ describe('ChatInputSearch Component', () => {
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ content: 'Optimized search results content' }),
+          json: async () => ({ 
+            success: true,
+            data: {
+              agentType: 'web_search',
+              content: 'Optimized search results content',
+              structuredContent: {
+                items: [{
+                  source: 'example.com',
+                  content: 'Optimized test content from search'
+                }]
+              }
+            }
+          }),
         });
       render(<ChatInputSearch {...props} />);
       const searchInput = screen.getByPlaceholderText('searchQueryPlaceholder');
@@ -407,19 +487,57 @@ describe('ChatInputSearch Component', () => {
       );
       expect(fetch).toHaveBeenNthCalledWith(
         2,
-        '/api/v2/web/search?q=optimized+test+query&mkt=&safeSearch=Moderate&count=5&offset=0',
+        '/api/v2/agent/execute',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            agentType: 'web_search',
+            query: 'optimized test query',
+            conversationHistory: [],
+            model: { id: 'gpt-4o-mini', tokenLimit: 128000 },
+            config: {
+              maxResults: 5,
+              defaultMarket: 'en-US',
+              defaultSafeSearch: 'Moderate'
+            },
+            timeout: 30000
+          })
+        }
       );
-      await waitFor(() => expect(props.onFileUpload).toHaveBeenCalledTimes(1));
-      expect(props.setTextFieldValue).toHaveBeenCalledWith(
-        `optimized search question\n\nwebSearchModalPromptUserContext:\n\n\`\`\`user-request\noptimized test query\n\`\`\`\n\nwebSearchModalPromptCitation`,
+      // Expect onSend to be called with user's original message
+      await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
+      expect(props.onSend).toHaveBeenCalledWith(
+        {
+          role: 'user',
+          content: 'test query',
+          messageType: 'text'
+        },
+        null,
+        undefined
       );
+      // Expect makeRequest to be called for internal processing
+      await waitFor(() => expect(mockMakeRequest).toHaveBeenCalledTimes(1));
+      expect(props.onClose).toHaveBeenCalledTimes(1);
     });
     it('should handle failed optimization but proceed with original query', async () => {
       (fetch as Mock)
         .mockResolvedValueOnce({ ok: false, statusText: 'Optimization Failed' })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ content: 'Search results (no opt)' }),
+          json: async () => ({ 
+            success: true,
+            data: {
+              agentType: 'web_search',
+              content: 'Search results (no opt)',
+              structuredContent: {
+                items: [{
+                  source: 'example.com',
+                  content: 'Test content without optimization'
+                }]
+              }
+            }
+          }),
         });
       const consoleWarnSpy = vi
         .spyOn(console, 'warn')
@@ -431,14 +549,40 @@ describe('ChatInputSearch Component', () => {
       );
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
       await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
-      expect((fetch as Mock).mock.calls[1][0]).toContain(
-        '/api/v2/web/search?q=original+query',
-      );
+      expect((fetch as Mock).mock.calls[1][0]).toBe('/api/v2/agent/execute');
+      expect((fetch as Mock).mock.calls[1][1]).toEqual({
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agentType: 'web_search',
+          query: 'original query',
+          conversationHistory: [],
+          model: { id: 'gpt-4o-mini', tokenLimit: 128000 },
+          config: {
+            maxResults: 5,
+            defaultMarket: 'en-US',
+            defaultSafeSearch: 'Moderate'
+          },
+          timeout: 30000
+        })
+      });
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         'Failed to optimize query:',
         'Optimization Failed',
       );
-      await waitFor(() => expect(props.handleSend).toHaveBeenCalled());
+      // Expect onSend to be called with user's original message
+      await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
+      expect(props.onSend).toHaveBeenCalledWith(
+        {
+          role: 'user',
+          content: 'original query',
+          messageType: 'text'
+        },
+        null,
+        undefined
+      );
+      // Expect makeRequest to be called for internal processing
+      await waitFor(() => expect(mockMakeRequest).toHaveBeenCalledTimes(1));
       consoleWarnSpy.mockRestore();
     });
     it('should adjust "Number of Results" input (min 1, max 15, default 5 on blur)', async () => {
