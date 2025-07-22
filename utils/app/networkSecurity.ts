@@ -4,7 +4,8 @@ import {
   SECURITY_CONSTANTS, 
   isUrlPointingToPrivateNetwork,
   createTimeoutController,
-  handleAbortError
+  handleAbortError,
+  validateUrlSecurity
 } from './security';
 
 /**
@@ -27,7 +28,10 @@ export interface SecureRequestResult {
 }
 
 /**
- * Handle secure redirects with SSRF protection
+ * Handle secure network requests with comprehensive SSRF protection
+ * 
+ * This function validates both the initial URL and any redirect URLs to prevent
+ * Server-Side Request Forgery (SSRF) attacks against internal networks.
  * 
  * @param initialUrl - The initial URL to fetch
  * @param options - Request configuration options
@@ -54,9 +58,12 @@ export async function executeSecureRequest(
     signal: externalSignal
   } = options;
 
+  const initialUrlString = typeof initialUrl === 'string' ? initialUrl : initialUrl.toString();
+  const validatedInitialUrl = await validateUrlSecurity(initialUrlString);
+  
   let response: Response | null = null;
   let redirectCount = 0;
-  let currentUrl = typeof initialUrl === 'string' ? initialUrl : initialUrl.toString();
+  let currentUrl = validatedInitialUrl.toString();
 
   // Create timeout controller, but respect external signal if provided
   const { controller: timeoutController, cleanup } = createTimeoutController(timeout);
