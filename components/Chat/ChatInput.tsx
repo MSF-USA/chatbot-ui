@@ -46,7 +46,7 @@ import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
 
 interface Props {
-  onSend: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean | null) => void;
+  onSend: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -179,7 +179,7 @@ export const ChatInput = ({
       return;
     }
 
-    const forceStandardChat = agentToggleEnabled ? null : true;
+    const forceStandardChat = agentToggleEnabled ? undefined : true;
 
     onSend(
       {

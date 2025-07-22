@@ -429,7 +429,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
 
   const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null = null, forceStandardChat: boolean | null = null) => {
+    async (message: Message, deleteCount = 0, plugin: Plugin | null = null, forceStandardChat?: boolean) => {
       if (selectedConversation) {
         stopConversationRef.current = false;
 
@@ -464,7 +464,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           setTimeout(() => clearInterval(abortCheckInterval), 60000);
 
           // Determine if we should use agentic routing
-          const useAgenticRouting = forceStandardChat === true ? false : shouldUseAgenticRouting(message);
+          const useAgenticRouting = forceStandardChat ? false : shouldUseAgenticRouting(message);
           console.log('[Chat] Using agentic routing:', useAgenticRouting, '(forceStandardChat:', forceStandardChat, ')');
 
           let requestResult: any;
@@ -507,6 +507,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               true,
               setProgress,
               stopConversationRef,
+              forceStandardChat,
+              agentSettings,
             );
 
             // Clear any previous agent results
