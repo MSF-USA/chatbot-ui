@@ -14,7 +14,8 @@ import {
   UrlProcessingJob,
   UrlMetadata,
 } from '@/types/urlPull';
-import { fetchAndParseWebpage, HttpError } from '../webpageService';
+import { HttpError } from '@/utils/app/security';
+import { fetchAndParseWebpage } from '../webpageService';
 import * as cheerio from 'cheerio';
 import { URL } from 'url';
 
@@ -429,7 +430,7 @@ export class UrlPullAgent extends BaseAgent {
           const failedUrl: FailedUrl = {
             url,
             error: error instanceof Error ? error.message : 'Unknown error',
-            errorType: this.categorizeError(error),
+            errorType: this.categorizeError(error as Error),
             statusCode: error instanceof HttpError ? error.status : undefined,
             retryAttempts: retryAttempts - 1,
             processingTime,
