@@ -35,6 +35,7 @@ const createChatBody = (
   botId: string | undefined,
   stream: boolean,
   forceStandardChat?: boolean,
+  agentSettings?: { enabled: boolean; enabledAgentTypes: any[] },
 ): ChatBody => ({
   model: conversation.model,
   messages,
@@ -44,6 +45,7 @@ const createChatBody = (
   botId,
   stream,
   ...(forceStandardChat && { forceStandardChat }),
+  ...(agentSettings && { agentSettings }),
 });
 
 const appendPluginKeys = (
@@ -140,6 +142,7 @@ export const makeRequest = async (
   setProgress: Dispatch<SetStateAction<number | null>>,
   stopConversationRef?: { current: boolean },
   forceStandardChat?: boolean,
+  agentSettings?: { enabled: boolean; enabledAgentTypes: any[] },
 ): Promise<ChatRequestResult> => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
@@ -204,6 +207,7 @@ Document metadata: ${filename}
         updatedConversation.bot,
         false, // Don't stream intermediate steps
         forceStandardChat,
+        agentSettings,
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
@@ -267,6 +271,7 @@ Provide a detailed comparison.
       updatedConversation.bot,
       stream, // Stream the final comparison response
       forceStandardChat,
+      agentSettings,
     );
 
     const endpoint = getEndpoint(plugin);
@@ -317,6 +322,7 @@ Provide a detailed comparison.
       updatedConversation.bot,
       stream,
       forceStandardChat,
+      agentSettings,
     );
     const endpoint = getEndpoint(plugin);
 

@@ -415,7 +415,8 @@ export class AgenticFrontendService {
       stream,
       setProgress,
       stopConversationRef,
-      forceStandardChat // Pass the force flag to makeRequest
+      forceStandardChat, // Pass the force flag to makeRequest
+      this.config.agentSettings, // Pass agent settings
     );
 
     const standardChatTime = Date.now() - standardChatStartTime;

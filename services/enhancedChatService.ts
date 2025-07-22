@@ -59,6 +59,10 @@ export interface EnhancedChatRequest extends ChatBody {
   userContext?: UserContext;
   forceAgentType?: AgentType;
   enableFallback?: boolean;
+  agentSettings?: {
+    enabled: boolean;
+    enabledAgentTypes: AgentType[];
+  };
 }
 
 /**
@@ -395,13 +399,32 @@ export class EnhancedChatService {
         };
       }
 
+      // Check if we have agent settings that restrict available agents
+      const enabledAgents = chatRequest.agentSettings?.enabledAgentTypes || [
+        AgentType.WEB_SEARCH,
+        AgentType.LOCAL_KNOWLEDGE,
+        AgentType.URL_PULL
+      ];
+      
+      // If agents are disabled in settings, don't use them
+      if (chatRequest.agentSettings && !chatRequest.agentSettings.enabled) {
+        return {
+          shouldUseAgents: false,
+          agentType: AgentType.WEB_SEARCH,
+          confidence: 1.0,
+          reason: 'Agents disabled in user settings',
+          flags,
+        };
+      }
+      
       // Analyze intent to determine best agent using AI-powered analysis
       const lastMessage = chatRequest.messages[chatRequest.messages.length - 1];
       const messageContent = this.extractMessageText(lastMessage);
       
       console.log('[EnhancedChatService] Analyzing message intent:', {
         messageLength: messageContent.length,
-        messagePreview: messageContent.substring(0, 100) + (messageContent.length > 100 ? '...' : '')
+        messagePreview: messageContent.substring(0, 100) + (messageContent.length > 100 ? '...' : ''),
+        enabledAgents
       });
       
       // Build intent analysis context
@@ -446,7 +469,14 @@ export class EnhancedChatService {
         modelIdForAnalysis,
         userSession?.user
       );
-      const agentType = this.selectAgentType(intentAnalysis, flags);
+      let agentType = this.selectAgentType(intentAnalysis, flags);
+      
+      // Filter agent type based on enabled agents
+      if (!enabledAgents.includes(agentType)) {
+        console.log(`[EnhancedChatService] Recommended agent ${agentType} is disabled, selecting from enabled agents`);
+        // Fall back to the first enabled agent or web search
+        agentType = enabledAgents.length > 0 ? enabledAgents[0] : AgentType.WEB_SEARCH;
+      }
       
       console.log('[EnhancedChatService] Intent analysis complete:', {
         recommendedAgent: intentAnalysis.recommendedAgent,
