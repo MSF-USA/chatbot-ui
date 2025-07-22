@@ -3,7 +3,8 @@ import { getServerSession } from 'next-auth/next';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { fetchAndParseBingSearch } from '@/services/bingService';
-import { HttpError, fetchAndParseWebpage } from '@/services/webpageService';
+import { HttpError } from '@/utils/app/security';
+import { fetchAndParseWebpage } from '@/services/webpageService';
 
 import { SearchResult } from '@/types/bing';
 
