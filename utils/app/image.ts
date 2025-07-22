@@ -1,22 +1,14 @@
-import * as dns from 'dns';
-import * as ipaddr from 'ipaddr.js';
-import { URL } from 'url';
-import { promisify } from 'util';
-
-const dnsLookup = promisify(dns.lookup);
-
-/**
- * HTTP Error class for consistent error handling
- */
-export class HttpError extends Error {
-  status: number;
-
-  constructor(status: number, message?: string) {
-    super(message);
-    this.status = status;
-    this.name = 'HttpError';
-  }
-}
+import { 
+  HttpError, 
+  validateUrlSecurity,
+  ContentValidation 
+} from './security';
+import { 
+  executeSecureRequest,
+  streamResponseContent,
+  validateResponseContentType,
+  createSecureRequestOptions
+} from './networkSecurity';
 
 // Security Configuration
 const ALLOWED_IMAGE_TYPES = new Set([
@@ -44,58 +36,6 @@ const REQUEST_TIMEOUT = 30000;
 // Maximum redirects
 const MAX_REDIRECTS = 5;
 
-/**
- * Check if an IP address is private or localhost
- */
-function isPrivateOrLocalhost(ip: string): boolean {
-  try {
-    const addr = ipaddr.parse(ip);
-
-    // Check if it's localhost
-    if (ip === '127.0.0.1' || ip === '::1') {
-      return true;
-    }
-
-    // Check if it's in private ranges
-    if (addr.kind() === 'ipv4') {
-      return (
-        addr.range() === 'private' ||
-        addr.range() === 'loopback' ||
-        addr.range() === 'linkLocal'
-      );
-    } else {
-      return (
-        addr.range() === 'uniqueLocal' ||
-        addr.range() === 'loopback' ||
-        addr.range() === 'linkLocal'
-      );
-    }
-  } catch (error) {
-    // If parsing fails, assume it's not safe
-    return true;
-  }
-}
-
-/**
- * Check if URL points to private network or localhost
- */
-async function isUrlPointingToPrivateNetwork(url: URL): Promise<boolean> {
-  try {
-    const hostname = url.hostname;
-
-    // Check if hostname is an IP address
-    if (ipaddr.isValid(hostname)) {
-      return isPrivateOrLocalhost(hostname);
-    }
-
-    // If it's a domain name, resolve it to an IP address
-    const { address } = await dnsLookup(hostname);
-    return isPrivateOrLocalhost(address);
-  } catch (error) {
-    // If DNS lookup fails, assume it's not safe
-    return true;
-  }
-}
 
 /**
  * Validate image format using magic bytes (file signatures)
@@ -198,130 +138,24 @@ export const getSecureBase64FromImageURL = async (
     allowSVG = true 
   } = options;
 
-  // Validate URL format and protocol
-  if (!imageUrl || typeof imageUrl !== 'string') {
-    throw new HttpError(400, 'Invalid URL: URL must be a non-empty string');
-  }
+  // Validate URL format and SSRF protection
+  const validatedUrl = await validateUrlSecurity(imageUrl);
 
-  let validatedUrl: URL;
-  try {
-    validatedUrl = new URL(imageUrl);
-    if (!['http:', 'https:'].includes(validatedUrl.protocol)) {
-      throw new HttpError(
-        400,
-        'Invalid protocol: Only HTTP and HTTPS protocols are supported'
-      );
+  // Execute secure request with image-specific headers
+  const { response } = await executeSecureRequest(validatedUrl, {
+    timeout,
+    maxRedirects: MAX_REDIRECTS,
+    userAgent: process.env.USER_AGENT ?? 'MSF Assistant Image Fetcher',
+    additionalHeaders: {
+      'Accept': 'image/*,*/*;q=0.8'
     }
-  } catch {
-    throw new HttpError(400, 'Invalid URL format: The URL could not be parsed');
-  }
+  });
 
-  // SSRF protection - Check if URL points to private network or localhost
-  try {
-    if (await isUrlPointingToPrivateNetwork(validatedUrl)) {
-      throw new HttpError(
-        403,
-        'Access denied: Cannot access internal or private networks'
-      );
-    }
-  } catch (error) {
-    if (error instanceof HttpError) throw error;
-    throw new HttpError(403, 'Access denied: Cannot verify network safety');
-  }
-
-  // Set up abort controller for timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
-
-  let response: Response | null = null;
-  let redirectCount = 0;
-  let currentUrl = validatedUrl.toString();
-
-  try {
-    // Handle redirects manually for security validation
-    while (redirectCount < MAX_REDIRECTS) {
-      try {
-        response = await fetch(currentUrl, {
-          headers: {
-            'User-Agent': process.env.USER_AGENT ?? 'MSF Assistant Image Fetcher',
-            'Accept': 'image/*,*/*;q=0.8'
-          },
-          redirect: 'manual',
-          signal: controller.signal,
-        });
-
-        if (response.status >= 300 && response.status < 400) {
-          const location = response.headers.get('location');
-          if (!location) {
-            throw new HttpError(
-              response.status,
-              'Redirect error: Location header not provided'
-            );
-          }
-
-          // Create new URL object for the redirect
-          const redirectUrl = new URL(location, currentUrl);
-
-          // SSRF protection for redirects
-          if (await isUrlPointingToPrivateNetwork(redirectUrl)) {
-            throw new HttpError(
-              403,
-              'Access denied: Redirect to internal or private network not allowed'
-            );
-          }
-
-          currentUrl = redirectUrl.toString();
-          redirectCount++;
-        } else {
-          break;
-        }
-      } catch (error) {
-        if (error instanceof HttpError) {
-          throw error;
-        }
-        if ((error as Error).name === 'AbortError') {
-          throw new HttpError(
-            408,
-            'Request timeout: The request took too long to complete'
-          );
-        }
-        throw new HttpError(500, 'Network error: Failed to fetch the image');
-      }
-    }
-
-    if (redirectCount >= MAX_REDIRECTS) {
-      throw new HttpError(
-        429,
-        'Too many redirects: Maximum redirect limit reached'
-      );
-    }
-
-    if (!response) {
-      throw new HttpError(
-        500,
-        'No response: Failed to get any response from the server'
-      );
-    }
-
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        `Server error: The server returned status code ${response.status}`
-      );
-    }
-  } finally {
-    clearTimeout(timeoutId);
-  }
-
-  // Validate Content-Type
-  const contentType = response.headers.get('content-type')?.toLowerCase() || '';
-  
-  if (!ALLOWED_IMAGE_TYPES.has(contentType) && !contentType.startsWith('image/')) {
-    throw new HttpError(
-      415,
-      `Unsupported media type: ${contentType} is not a valid image format`
-    );
-  }
+  // Validate image content type
+  const contentType = validateResponseContentType(response, {
+    allowedTypes: ALLOWED_IMAGE_TYPES,
+    contentTypeDescription: 'image'
+  });
 
   // Block SVG if not explicitly allowed
   if (contentType.includes('svg') && !allowSVG) {
@@ -331,47 +165,8 @@ export const getSecureBase64FromImageURL = async (
     );
   }
 
-  // Check content length before processing
-  const contentLength = parseInt(response.headers.get('content-length') || '0');
-  if (contentLength > 0 && contentLength > maxSize) {
-    throw new HttpError(
-      413,
-      `Image too large: Maximum size is ${maxSize / (1024 * 1024)}MB`
-    );
-  }
-
-  // Stream and validate content
-  const chunks: Buffer[] = [];
-  let receivedLength = 0;
-  
-  if (!response.body) {
-    throw new HttpError(500, 'Failed to read response body');
-  }
-
-  // Read response body with size checking
-  const reader = response.body.getReader();
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      
-      const chunk = Buffer.from(value);
-      chunks.push(chunk);
-      receivedLength += chunk.length;
-
-      if (receivedLength > maxSize) {
-        throw new HttpError(
-          413,
-          `Image too large: Maximum size is ${maxSize / (1024 * 1024)}MB`
-        );
-      }
-    }
-  } finally {
-    reader.releaseLock();
-  }
-
-  // Combine all chunks
-  const buffer = Buffer.concat(chunks);
+  // Stream and validate content with size checking
+  const buffer = await streamResponseContent(response, maxSize);
 
   // Validate actual image format matches Content-Type
   if (!validateImageFormat(buffer, contentType)) {
@@ -393,24 +188,17 @@ export const getSecureBase64FromImageURL = async (
 };
 
 /**
- * This function fetches an image from a given URL and converts it to a Base64 string.
- *
- * @deprecated Use getSecureBase64FromImageURL for enhanced security
+ * Fetches an image from a given URL and converts it to a Base64 string with comprehensive security measures.
  * 
- * The function first makes a fetch request to the given `imageUrl`. If the response is not OK (HTTP status code not in the range 200-299), it throws an error.
- * If the request is successful, it attempts to create a buffer from the array buffer of the response body. This operation can be more efficient if running server-side.
- * If creating the buffer operation fails for any reason, the function falls back to a less efficient but more compatible method. It creates a new Uint8Array out of the response array buffer and converts it to a string.
+ * This function now uses secure image fetching with SSRF protection, content validation, and size limits.
+ * It maintains backward compatibility with the original API while providing enhanced security.
  *
- * If there are any errors during these processes, it throws an error with a relevant message.
- *
- * @async
- * @param {string} imageUrl - The URL of the image to fetch and convert to Base64.
- * @return {Promise<string>} A promise that resolves with the Base64 string of the image.
- *
- * @throws {Error} If the network response is not OK or if there is an error during the fetch request or the Buffer/arrayBuffer creation
+ * @param imageUrl - The URL of the image to fetch and convert to Base64
+ * @param init - Optional RequestInit configuration (mapped to security options)
+ * @returns Promise that resolves with the Base64 string of the image
+ * @throws Error for various security and validation failures
  *
  * @example
- *
  * const imageBase64 = await getBase64FromImageURL('https://example.com/image.jpg');
  * console.log(imageBase64);
  */
@@ -419,23 +207,69 @@ export const getBase64FromImageURL = async (
   init?: RequestInit | undefined,
 ): Promise<string> => {
   try {
-    const response = await fetch(imageUrl, init);
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+    // Extract timeout from AbortSignal if available
+    let timeout = REQUEST_TIMEOUT;
+    if (init?.signal) {
+      // Use a reasonable timeout if signal is provided
+      timeout = 30000; // 30 seconds default
     }
 
-    try {
-      // More efficient server-side method
-      const buffer = Buffer.from(await response.arrayBuffer());
-      return buffer.toString();
-    } catch (bufferError) {
-      // less efficient, client-side compatible method
-      const arrayBuffer = await response.arrayBuffer();
-      // @ts-ignore
-      return String.fromCharCode(...new Uint8Array(arrayBuffer));
+    // Validate URL format and SSRF protection
+    const validatedUrl = await validateUrlSecurity(imageUrl);
+
+    // Create secure options from RequestInit, preserving headers
+    const secureOptions = createSecureRequestOptions(init, {
+      timeout,
+      userAgent: process.env.USER_AGENT ?? 'MSF Assistant Image Fetcher',
+      additionalHeaders: {
+        'Accept': 'image/*,*/*;q=0.8'
+      }
+    });
+
+    // Execute secure request with custom headers
+    const { response } = await executeSecureRequest(validatedUrl, {
+      timeout: secureOptions.timeout!,
+      maxRedirects: MAX_REDIRECTS,
+      userAgent: secureOptions.userAgent!,
+      additionalHeaders: secureOptions.additionalHeaders!,
+      headers: secureOptions.headers,
+      method: secureOptions.method,
+      body: secureOptions.body,
+      signal: secureOptions.signal
+    });
+
+    // Validate image content type
+    const contentType = validateResponseContentType(response, {
+      allowedTypes: ALLOWED_IMAGE_TYPES,
+      contentTypeDescription: 'image'
+    });
+
+    // Stream and validate content with size checking
+    const buffer = await streamResponseContent(response, MAX_IMAGE_SIZE);
+
+    // Validate actual image format matches Content-Type
+    if (!validateImageFormat(buffer, contentType)) {
+      throw new HttpError(
+        415,
+        'Invalid image: File format does not match Content-Type header'
+      );
     }
+
+    // Special handling for SVG
+    if (contentType.includes('svg')) {
+      let svgContent = buffer.toString('utf8');
+      svgContent = sanitizeSVG(svgContent);
+      return Buffer.from(svgContent).toString('base64');
+    }
+
+    // For other image formats, return base64 directly
+    return buffer.toString('base64');
+    
   } catch (error) {
+    // Convert HttpError to generic Error for API compatibility
+    if (error instanceof HttpError) {
+      throw new Error(`Error fetching the image: ${error.message}`);
+    }
     throw new Error(`Error fetching the image: ${error}`);
   }
 };
