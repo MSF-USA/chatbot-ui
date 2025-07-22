@@ -71,6 +71,55 @@ describe('getEnvVariable', () => {
     });
     expect(result).toBe('non_mapped_value');
   });
+
+  // Security tests for email domain validation
+  it('should treat email with newyork.msf.org as subdomain as EU user', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'attacker-newyork.msf.org@evil.com',
+    });
+    expect(result).toBe('eu_storage');
+  });
+
+  it('should treat email with newyork.msf.org in username as EU user', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'newyork.msf.org@attacker.com',
+    });
+    expect(result).toBe('eu_storage');
+  });
+
+  it('should treat email with newyork.msf.org.com domain as EU user', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@evil-newyork.msf.org.com',
+    });
+    expect(result).toBe('eu_storage');
+  });
+
+  it('should handle uppercase newyork.msf.org domain correctly', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@NEWYORK.MSF.ORG',
+    });
+    expect(result).toBe('non_eu_storage');
+  });
+
+  it('should handle mixed case newyork.msf.org domain correctly', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@NewYork.MSF.Org',
+    });
+    expect(result).toBe('non_eu_storage');
+  });
 });
 
 describe('isMobile', () => {
