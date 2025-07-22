@@ -23,7 +23,7 @@ import {
   TextMessageContent,
   getChatMessageContent,
 } from '@/types/chat';
-import { Plugin } from '@/types/plugin';
+import { Plugin, PluginID } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -54,6 +54,12 @@ interface Props {
   showScrollDownButton: boolean;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   filePreviews: FilePreview[];
+  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
+  setProgress?: Dispatch<SetStateAction<number | null>>;
+  apiKey?: string;
+  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
+  systemPrompt?: string;
+  temperature?: number;
 }
 
 export const ChatInput = ({
@@ -65,6 +71,12 @@ export const ChatInput = ({
   showScrollDownButton,
   filePreviews,
   setFilePreviews,
+  setRequestStatusMessage,
+  setProgress,
+  apiKey,
+  pluginKeys,
+  systemPrompt,
+  temperature,
 }: Props) => {
   const { t } = useTranslation('chat');
 
@@ -557,6 +569,13 @@ export const ChatInput = ({
             onCameraClick={() => {
               cameraRef.current?.triggerCamera();
             }}
+            onSend={onSend}
+            setRequestStatusMessage={setRequestStatusMessage}
+            setProgress={setProgress}
+            apiKey={apiKey}
+            pluginKeys={pluginKeys}
+            systemPrompt={systemPrompt}
+            temperature={temperature}
           />
 
           <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">

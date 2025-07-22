@@ -1175,6 +1175,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             showScrollDownButton={showScrollDownButton}
             setFilePreviews={setFilePreviews}
             filePreviews={filePreviews}
+            setRequestStatusMessage={setRequestStatusMessage}
+            setProgress={setProgress}
+            apiKey={apiKey}
+            pluginKeys={pluginKeys}
+            systemPrompt={systemPrompt}
+            temperature={temperature}
           />
         </>
       )}
