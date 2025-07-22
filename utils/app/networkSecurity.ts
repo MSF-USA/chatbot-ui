@@ -270,14 +270,14 @@ export function validateResponseContentType(
 
   // Check blocked types first
   if (blockedTypes) {
-    for (const blockedType of blockedTypes) {
+    blockedTypes.forEach(blockedType => {
       if (contentType.includes(blockedType)) {
         throw new HttpError(
           415,
           `Unsupported media type: ${contentType} is not allowed for security reasons`
         );
       }
-    }
+    });
   }
 
   // Check allowed types
@@ -315,7 +315,7 @@ export function createSecureRequestOptions(
   headers?: Record<string, string>;
   method?: string;
   body?: any;
-  signal?: AbortSignal | null;
+  signal?: AbortSignal;
 } {
   const headers: Record<string, string> = {};
   
@@ -342,6 +342,6 @@ export function createSecureRequestOptions(
     headers,
     method: init?.method || 'GET',
     body: init?.body,
-    signal: init?.signal,
+    signal: init?.signal || undefined,
   };
 }
