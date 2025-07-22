@@ -1,6 +1,5 @@
 import { 
   HttpError, 
-  validateUrlSecurity,
   ContentValidation 
 } from './security';
 import { 
@@ -138,11 +137,8 @@ export const getSecureBase64FromImageURL = async (
     allowSVG = true 
   } = options;
 
-  // Validate URL format and SSRF protection
-  const validatedUrl = await validateUrlSecurity(imageUrl);
-
-  // Execute secure request with image-specific headers
-  const { response } = await executeSecureRequest(validatedUrl, {
+  // Execute secure request with image-specific headers (includes SSRF protection)
+  const { response } = await executeSecureRequest(imageUrl, {
     timeout,
     maxRedirects: MAX_REDIRECTS,
     userAgent: process.env.USER_AGENT ?? 'MSF Assistant Image Fetcher',
@@ -214,9 +210,6 @@ export const getBase64FromImageURL = async (
       timeout = 30000; // 30 seconds default
     }
 
-    // Validate URL format and SSRF protection
-    const validatedUrl = await validateUrlSecurity(imageUrl);
-
     // Create secure options from RequestInit, preserving headers
     const secureOptions = createSecureRequestOptions(init, {
       timeout,
@@ -226,8 +219,8 @@ export const getBase64FromImageURL = async (
       }
     });
 
-    // Execute secure request with custom headers
-    const { response } = await executeSecureRequest(validatedUrl, {
+    // Execute secure request with custom headers (includes SSRF protection)
+    const { response } = await executeSecureRequest(imageUrl, {
       timeout: secureOptions.timeout!,
       maxRedirects: MAX_REDIRECTS,
       userAgent: secureOptions.userAgent!,
