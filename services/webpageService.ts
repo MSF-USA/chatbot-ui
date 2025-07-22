@@ -4,7 +4,6 @@ import fetch from 'node-fetch';
 
 import { 
   HttpError, 
-  validateUrlSecurity,
   ContentValidation 
 } from '@/utils/app/security';
 import { 
@@ -40,11 +39,8 @@ export async function fetchAndParseWebpage(
   url: string,
   maxRedirects = 5,
 ): Promise<string> {
-  // Validate URL format and SSRF protection
-  const validatedUrl = await validateUrlSecurity(url);
-
-  // Execute secure request with redirect handling
-  const { response, finalUrl } = await executeSecureRequest(validatedUrl, {
+  // Execute secure request with redirect handling (includes SSRF protection)
+  const { response, finalUrl } = await executeSecureRequest(url, {
     timeout: REQUEST_TIMEOUT,
     maxRedirects,
     userAgent: process.env.USER_AGENT ?? 'MSF Assistant',
