@@ -39,6 +39,10 @@ interface ChatV2Request extends ChatBody {
   forceStandardChat?: boolean;
   enableStreaming?: boolean;
   enableFallback?: boolean;
+  agentSettings?: {
+    enabled: boolean;
+    enabledAgentTypes: AgentType[];
+  };
   metadata?: {
     clientVersion?: string;
     sessionId?: string;
@@ -330,9 +334,14 @@ export async function POST(req: NextRequest): Promise<Response> {
         });
 
         // Step 2: Check if we should use an agent (simplified server-side logic)
+        // Get enabled agents from request or default to all available
+        const enabledAgents = bodyData.agentSettings?.enabledAgentTypes || 
+                            [AgentType.WEB_SEARCH, AgentType.LOCAL_KNOWLEDGE, AgentType.URL_PULL];
+        
         const shouldUseAgent = agentType && 
                               confidence >= 0.5 && // Use simplified threshold
-                              [AgentType.WEB_SEARCH, AgentType.LOCAL_KNOWLEDGE, AgentType.URL_PULL].includes(agentType);
+                              enabledAgents.includes(agentType) &&
+                              bodyData.agentSettings?.enabled !== false;
 
         if (!shouldUseAgent) {
           console.log('[INFO] Agent not recommended, falling back to standard chat');
