@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[KO] Web Search",
-      "code_interpreter": "[KO] Code Interpreter",
-      "url_pull": "[KO] URL Analysis",
-      "local_knowledge": "[KO] Knowledge Base",
-      "standard_chat": "[KO] Standard Chat",
-      "foundry": "[KO] Foundry",
-      "third_party": "[KO] Third Party"
+      "web_search": "웹 검색",
+      "code_interpreter": "코드 인터프리터",
+      "url_pull": "URL 분석",
+      "local_knowledge": "지식 베이스",
+      "standard_chat": "표준 채팅",
+      "foundry": "Foundry",
+      "third_party": "제3자"
     },
     "error": {
-      "title": "[KO] Agent Error",
-      "unknown": "[KO] An unknown error occurred",
-      "retry": "[KO] Retry",
-      "fallback": "[KO] Use fallback"
+      "title": "에이전트 오류",
+      "unknown": "알 수 없는 오류가 발생했습니다",
+      "retry": "다시 시도",
+      "fallback": "대안 사용"
     },
     "metadata": {
-      "processingTime": "[KO] Processing time",
-      "confidence": "[KO] Confidence",
-      "tokens": "[KO] Tokens used"
+      "processingTime": "처리 시간",
+      "confidence": "신뢰도",
+      "tokens": "사용된 토큰"
     },
     "resultsPanel": {
-      "placeholder": "[KO] Agent results will be displayed here"
+      "placeholder": "에이전트 결과가 여기에 표시됩니다"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[KO] Searches the web for real-time information",
-      "code_interpreter": "[KO] Executes and analyzes code in multiple languages",
-      "url_pull": "[KO] Analyzes and extracts content from web pages",
-      "local_knowledge": "[KO] Searches internal knowledge base and documents",
-      "standard_chat": "[KO] Standard conversational AI without tools",
-      "foundry": "[KO] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[KO] Third-party agent or custom tool integration"
+      "web_search": "웹 검색 - 실시간 정보를 위해 웹 검색",
+      "code_interpreter": "코드 인터프리터 - 여러 언어로 코드를 실행하고 분석",
+      "url_pull": "URL 분석 - 웹 페이지에서 콘텐츠를 분석하고 추출",
+      "local_knowledge": "지식 베이스 - 내부 지식 기반 및 문서 검색",
+      "standard_chat": "표준 채팅 - 도구 없는 표준 대화형 AI",
+      "foundry": "Foundry - 고급 기능을 위해 Azure AI Foundry 사용",
+      "third_party": "제3자 - 타사 에이전트 또는 사용자 정의 도구 통합"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[KO] Web search results will be displayed here",
-      "title": "[KO] Title",
-      "noResults": "[KO] No results found",
-      "noData": "[KO] No search data available",
-      "results": "[KO] results",
-      "confidence": "[KO] Relevance",
-      "relevance": "[KO] Relevance",
-      "source": "[KO] Source",
-      "citations": "[KO] Citations",
-      "cite": "[KO] Cite",
-      "open": "[KO] Open",
-      "openLink": "[KO] Open link in new tab",
-      "filters": "[KO] Filters",
-      "sortBy": "[KO] Sort by",
-      "filterBy": "[KO] Filter by",
-      "all": "[KO] All",
-      "date": "[KO] Date",
-      "query": "[KO] Query",
-      "searchTime": "[KO] Search time",
-      "cached": "[KO] Cached",
+      "placeholder": "웹 검색 결과가 여기에 표시됩니다",
+      "title": "검색 결과",
+      "noResults": "결과를 찾을 수 없습니다",
+      "noData": "검색 데이터가 없습니다",
+      "results": "결과",
+      "confidence": "관련성",
+      "relevance": "관련성",
+      "source": "출처",
+      "citations": "인용",
+      "cite": "인용하기",
+      "open": "열기",
+      "openLink": "새 탭에서 링크 열기",
+      "filters": "필터",
+      "sortBy": "정렬 기준",
+      "filterBy": "필터 기준",
+      "all": "전체",
+      "date": "날짜",
+      "query": "쿼리",
+      "searchTime": "검색 시간",
+      "cached": "캐시됨",
       "contentTypes": {
-        "webpage": "[KO] Web pages",
-        "news": "[KO] News",
-        "academic": "[KO] Academic",
-        "image": "[KO] Images",
-        "video": "[KO] Videos"
+        "webpage": "웹 페이지",
+        "news": "뉴스",
+        "academic": "학술",
+        "image": "이미지",
+        "video": "비디오"
       }
     },
     "configuration": {
-      "resultsCount": "[KO] Number of results",
-      "safeSearch": "[KO] Safe search",
-      "market": "[KO] Search market"
+      "resultsCount": "결과 수",
+      "safeSearch": "안전 검색",
+      "market": "검색 시장"
     },
     "status": {
-      "searching": "[KO] Searching the web...",
-      "optimizing": "[KO] Optimizing search query...",
-      "processing": "[KO] Processing search results..."
+      "searching": "웹 검색 중...",
+      "optimizing": "검색 쿼리 최적화 중...",
+      "processing": "검색 결과 처리 중..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[KO] Code execution results will be displayed here",
-      "title": "[KO] Execution Results",
-      "noData": "[KO] No code execution data available",
-      "output": "[KO] Output",
-      "errors": "[KO] Errors",
-      "logs": "[KO] Logs",
-      "executionTime": "[KO] Execution time",
-      "memoryUsage": "[KO] Memory usage",
-      "cpuUsage": "[KO] CPU usage",
-      "outputLines": "[KO] Output lines",
-      "executedCode": "[KO] Executed Code",
-      "download": "[KO] Download",
-      "noOutput": "[KO] No output generated",
-      "noFiles": "[KO] No files generated",
-      "outputSize": "[KO] Output size",
-      "unsupportedOutput": "[KO] Unsupported output format",
+      "placeholder": "코드 실행 결과가 여기에 표시됩니다",
+      "title": "실행 결과",
+      "noData": "코드 실행 데이터가 없습니다",
+      "output": "출력",
+      "errors": "오류",
+      "logs": "로그",
+      "executionTime": "실행 시간",
+      "memoryUsage": "메모리 사용량",
+      "cpuUsage": "CPU 사용량",
+      "outputLines": "출력 줄 수",
+      "executedCode": "실행된 코드",
+      "download": "다운로드",
+      "noOutput": "출력이 생성되지 않았습니다",
+      "noFiles": "파일이 생성되지 않았습니다",
+      "outputSize": "출력 크기",
+      "unsupportedOutput": "지원되지 않는 출력 형식",
       "status": {
-        "success": "[KO] Success",
-        "error": "[KO] Error",
-        "timeout": "[KO] Timeout",
-        "memory_limit": "[KO] Memory limit exceeded",
-        "security_violation": "[KO] Security violation",
-        "invalid_code": "[KO] Invalid code"
+        "success": "성공",
+        "error": "오류",
+        "timeout": "시간 초과",
+        "memory_limit": "메모리 한계 초과",
+        "security_violation": "보안 위반",
+        "invalid_code": "유효하지 않은 코드"
       },
       "outputTypes": {
-        "stdout": "[KO] Standard output",
-        "stderr": "[KO] Error output",
-        "return_value": "[KO] Return value",
-        "exception": "[KO] Exception"
+        "stdout": "표준 출력",
+        "stderr": "오류 출력",
+        "return_value": "반환값",
+        "exception": "예외"
       },
       "tabs": {
-        "output": "[KO] Output",
-        "code": "[KO] Code",
-        "files": "[KO] Files"
+        "output": "출력",
+        "code": "코드",
+        "files": "파일"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[KO] URL Analysis Results",
-      "noData": "[KO] No URL analysis data available",
-      "summary": "[KO] Summary",
-      "metadata": "[KO] Document Info",
-      "processingTime": "[KO] Processing time",
-      "preview": "[KO] Preview",
-      "view": "[KO] View"
+      "title": "URL 분석 결과",
+      "noData": "URL 분석 데이터가 없습니다",
+      "summary": "요약",
+      "metadata": "문서 정보",
+      "processingTime": "처리 시간",
+      "preview": "미리보기",
+      "view": "보기"
     },
     "configuration": {
-      "timeout": "[KO] Request timeout"
+      "timeout": "요청 시간 초과"
     },
     "status": {
-      "pulling": "[KO] Fetching URL content...",
-      "analyzing": "[KO] Analyzing document...",
-      "complete": "[KO] Analysis complete"
+      "pulling": "URL 콘텐츠 가져오는 중...",
+      "analyzing": "문서 분석 중...",
+      "complete": "분석 완료"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[KO] Knowledge Base Results",
-      "noData": "[KO] No knowledge base data available",
-      "documents": "[KO] documents",
-      "insights": "[KO] Key Insights",
-      "relevance": "[KO] Relevance",
-      "suggestions": "[KO] Suggestions"
+      "title": "지식 베이스 결과",
+      "noData": "지식 베이스 데이터가 없습니다",
+      "documents": "문서",
+      "insights": "주요 통찰",
+      "relevance": "관련성",
+      "suggestions": "제안"
     },
     "configuration": {
-      "searchMode": "[KO] Search mode",
-      "threshold": "[KO] Relevance threshold"
+      "searchMode": "검색 모드",
+      "threshold": "관련성 임계값"
     },
     "status": {
-      "searching": "[KO] Searching knowledge base...",
-      "analyzing": "[KO] Analyzing results..."
+      "searching": "지식 베이스 검색 중...",
+      "analyzing": "결과 분석 중..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[KO] Document analysis results will be displayed here",
-      "title": "[KO] Analysis Results",
-      "noData": "[KO] No document analysis data available",
-      "documents": "[KO] documents",
-      "noDocuments": "[KO] No documents found",
-      "summary": "[KO] Summary",
-      "insights": "[KO] Key Insights",
-      "metadata": "[KO] Document Info",
-      "processingTime": "[KO] Processing time",
-      "searchTime": "[KO] Search time",
-      "relevance": "[KO] Relevance",
-      "cached": "[KO] Cached",
-      "preview": "[KO] Preview",
-      "view": "[KO] View",
-      "open": "[KO] Open",
-      "bookmark": "[KO] Bookmark",
-      "suggestions": "[KO] Suggestions",
+      "placeholder": "문서 분석 결과가 여기에 표시됩니다",
+      "title": "분석 결과",
+      "noData": "문서 분석 데이터가 없습니다",
+      "documents": "문서",
+      "noDocuments": "문서를 찾을 수 없습니다",
+      "summary": "요약",
+      "insights": "주요 통찰",
+      "metadata": "문서 정보",
+      "processingTime": "처리 시간",
+      "searchTime": "검색 시간",
+      "relevance": "관련성",
+      "cached": "캐시됨",
+      "preview": "미리보기",
+      "view": "보기",
+      "open": "열기",
+      "bookmark": "북마크",
+      "suggestions": "제안",
       "tabs": {
-        "documents": "[KO] Documents",
-        "insights": "[KO] Insights",
-        "failed": "[KO] Failed"
+        "documents": "문서",
+        "insights": "통찰",
+        "failed": "실패"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[KO] Loading...",
-      "searching": "[KO] Searching...",
-      "processing": "[KO] Processing...",
-      "analyzing": "[KO] Analyzing..."
+      "default": "로드 중...",
+      "searching": "검색 중...",
+      "processing": "처리 중...",
+      "analyzing": "분석 중..."
     },
     "buttons": {
-      "retry": "[KO] Retry",
-      "cancel": "[KO] Cancel",
-      "expand": "[KO] Expand",
-      "collapse": "[KO] Collapse",
-      "configure": "[KO] Configure",
-      "submit": "[KO] Submit"
+      "retry": "다시 시도",
+      "cancel": "취소",
+      "expand": "확장",
+      "collapse": "축소",
+      "configure": "구성",
+      "submit": "제출"
     },
     "labels": {
-      "priority": "[KO] Priority",
-      "estimatedTime": "[KO] Estimated time",
-      "availability": "[KO] Availability",
-      "configuration": "[KO] Configuration"
+      "priority": "우선순위",
+      "estimatedTime": "예상 시간",
+      "availability": "가용성",
+      "configuration": "구성"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[KO] An unknown error occurred",
-      "network": "[KO] Network connection error",
-      "timeout": "[KO] Request timed out",
-      "unauthorized": "[KO] Access denied",
-      "rateLimit": "[KO] Rate limit exceeded",
-      "serviceUnavailable": "[KO] Service temporarily unavailable"
+      "unknown": "알 수 없는 오류가 발생했습니다",
+      "network": "네트워크 연결 오류",
+      "timeout": "요청 시간이 초과되었습니다",
+      "unauthorized": "액세스가 거부되었습니다",
+      "rateLimit": "속도 제한을 초과했습니다",
+      "serviceUnavailable": "서비스가 일시적으로 이용할 수 없습니다"
     },
     "webSearch": {
-      "searchFailed": "[KO] Web search failed",
-      "invalidQuery": "[KO] Invalid search query"
+      "searchFailed": "웹 검색이 실패했습니다",
+      "invalidQuery": "잘못된 검색 쿼리입니다"
     },
     "codeInterpreter": {
-      "executionFailed": "[KO] Code execution failed",
-      "invalidCode": "[KO] Invalid or unsafe code"
+      "executionFailed": "코드 실행이 실패했습니다",
+      "invalidCode": "잘못되거나 안전하지 않은 코드입니다"
     },
     "urlPull": {
-      "fetchFailed": "[KO] Failed to fetch URL content",
-      "invalidUrl": "[KO] Invalid or inaccessible URL"
+      "fetchFailed": "URL 콘텐츠를 가져오는 데 실패했습니다",
+      "invalidUrl": "잘못되거나 액세스할 수 없는 URL입니다"
     },
     "localKnowledge": {
-      "searchFailed": "[KO] Knowledge base search failed",
-      "noAccess": "[KO] No access to knowledge base"
+      "searchFailed": "지식 베이스 검색이 실패했습니다",
+      "noAccess": "지식 베이스에 액세스할 수 없습니다"
     }
   },
   "settings": {
-    "autoSubmit": "[KO] Auto-submit after processing",
-    "advancedOptions": "[KO] Advanced options",
+    "autoSubmit": "처리 후 자동 제출",
+    "advancedOptions": "고급 옵션",
     "priority": {
-      "high": "[KO] High",
-      "medium": "[KO] Medium",
-      "low": "[KO] Low"
+      "high": "높음",
+      "medium": "보통",
+      "low": "낮음"
     },
     "safeSearch": {
-      "off": "[KO] Off",
-      "moderate": "[KO] Moderate",
-      "strict": "[KO] Strict"
+      "off": "끄기",
+      "moderate": "보통",
+      "strict": "엄격"
     },
     "market": {
-      "any": "[KO] Any region",
-      "local": "[KO] Local region"
+      "any": "모든 지역",
+      "local": "로컬 지역"
     }
   }
 }

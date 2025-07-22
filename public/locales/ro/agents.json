@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[RO] Web Search",
-      "code_interpreter": "[RO] Code Interpreter",
-      "url_pull": "[RO] URL Analysis",
-      "local_knowledge": "[RO] Knowledge Base",
-      "standard_chat": "[RO] Standard Chat",
-      "foundry": "[RO] Foundry",
-      "third_party": "[RO] Third Party"
+      "web_search": "Căutare web",
+      "code_interpreter": "Interpretor de cod",
+      "url_pull": "Analiză URL",
+      "local_knowledge": "Bază de cunoștințe",
+      "standard_chat": "Chat standard",
+      "foundry": "Foundry",
+      "third_party": "Terță parte"
     },
     "error": {
-      "title": "[RO] Agent Error",
-      "unknown": "[RO] An unknown error occurred",
-      "retry": "[RO] Retry",
-      "fallback": "[RO] Use fallback"
+      "title": "Eroare agent",
+      "unknown": "A apărut o eroare necunoscută",
+      "retry": "Reîncearcă",
+      "fallback": "Folosește alternativa"
     },
     "metadata": {
-      "processingTime": "[RO] Processing time",
-      "confidence": "[RO] Confidence",
-      "tokens": "[RO] Tokens used"
+      "processingTime": "Timp de procesare",
+      "confidence": "Încredere",
+      "tokens": "Jetoane utilizate"
     },
     "resultsPanel": {
-      "placeholder": "[RO] Agent results will be displayed here"
+      "placeholder": "Rezultatele agentului vor fi afișate aici"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[RO] Searches the web for real-time information",
-      "code_interpreter": "[RO] Executes and analyzes code in multiple languages",
-      "url_pull": "[RO] Analyzes and extracts content from web pages",
-      "local_knowledge": "[RO] Searches internal knowledge base and documents",
-      "standard_chat": "[RO] Standard conversational AI without tools",
-      "foundry": "[RO] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[RO] Third-party agent or custom tool integration"
+      "web_search": "Căutare web - Caută pe web informații în timp real",
+      "code_interpreter": "Interpretor de cod - Execută și analizează cod în mai multe limbaje",
+      "url_pull": "Analiză URL - Analizează și extrage conținut din paginile web",
+      "local_knowledge": "Bază de cunoștințe - Caută în baza de cunoștințe internă și documente",
+      "standard_chat": "Chat standard - AI conversațional standard fără instrumente",
+      "foundry": "Foundry - Folosește Azure AI Foundry pentru capabilități avansate",
+      "third_party": "Terță parte - Agent terță parte sau integrare instrument personalizat"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[RO] Web search results will be displayed here",
-      "title": "[RO] Title",
-      "noResults": "[RO] No results found",
-      "noData": "[RO] No search data available",
-      "results": "[RO] results",
-      "confidence": "[RO] Relevance",
-      "relevance": "[RO] Relevance",
-      "source": "[RO] Source",
-      "citations": "[RO] Citations",
-      "cite": "[RO] Cite",
-      "open": "[RO] Open",
-      "openLink": "[RO] Open link in new tab",
-      "filters": "[RO] Filters",
-      "sortBy": "[RO] Sort by",
-      "filterBy": "[RO] Filter by",
-      "all": "[RO] All",
-      "date": "[RO] Date",
-      "query": "[RO] Query",
-      "searchTime": "[RO] Search time",
-      "cached": "[RO] Cached",
+      "placeholder": "Rezultatele căutării web vor fi afișate aici",
+      "title": "Rezultate de căutare",
+      "noResults": "Nu s-au găsit rezultate",
+      "noData": "Nu sunt disponibile date de căutare",
+      "results": "rezultate",
+      "confidence": "Relevanță",
+      "relevance": "Relevanță",
+      "source": "Sursă",
+      "citations": "Citări",
+      "cite": "Citează",
+      "open": "Deschide",
+      "openLink": "Deschide link în tab nou",
+      "filters": "Filtre",
+      "sortBy": "Sortează după",
+      "filterBy": "Filtrează după",
+      "all": "Toate",
+      "date": "Data",
+      "query": "Interogare",
+      "searchTime": "Timp de căutare",
+      "cached": "În cache",
       "contentTypes": {
-        "webpage": "[RO] Web pages",
-        "news": "[RO] News",
-        "academic": "[RO] Academic",
-        "image": "[RO] Images",
-        "video": "[RO] Videos"
+        "webpage": "Pagini web",
+        "news": "Știri",
+        "academic": "Academic",
+        "image": "Imagini",
+        "video": "Videoclipuri"
       }
     },
     "configuration": {
-      "resultsCount": "[RO] Number of results",
-      "safeSearch": "[RO] Safe search",
-      "market": "[RO] Search market"
+      "resultsCount": "Numărul de rezultate",
+      "safeSearch": "Căutare sigură",
+      "market": "Piață de căutare"
     },
     "status": {
-      "searching": "[RO] Searching the web...",
-      "optimizing": "[RO] Optimizing search query...",
-      "processing": "[RO] Processing search results..."
+      "searching": "Căutare pe web...",
+      "optimizing": "Optimizarea interogării de căutare...",
+      "processing": "Procesarea rezultatelor de căutare..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[RO] Code execution results will be displayed here",
-      "title": "[RO] Execution Results",
-      "noData": "[RO] No code execution data available",
-      "output": "[RO] Output",
-      "errors": "[RO] Errors",
-      "logs": "[RO] Logs",
-      "executionTime": "[RO] Execution time",
-      "memoryUsage": "[RO] Memory usage",
-      "cpuUsage": "[RO] CPU usage",
-      "outputLines": "[RO] Output lines",
-      "executedCode": "[RO] Executed Code",
-      "download": "[RO] Download",
-      "noOutput": "[RO] No output generated",
-      "noFiles": "[RO] No files generated",
-      "outputSize": "[RO] Output size",
-      "unsupportedOutput": "[RO] Unsupported output format",
+      "placeholder": "Rezultatele execuției codului vor fi afișate aici",
+      "title": "Rezultate de execuție",
+      "noData": "Nu sunt disponibile date de execuție a codului",
+      "output": "Ieșire",
+      "errors": "Erori",
+      "logs": "Loguri",
+      "executionTime": "Timp de execuție",
+      "memoryUsage": "Utilizarea memoriei",
+      "cpuUsage": "Utilizarea CPU",
+      "outputLines": "Linii de ieșire",
+      "executedCode": "Cod executat",
+      "download": "Descarcă",
+      "noOutput": "Nicio ieșire generată",
+      "noFiles": "Niciun fișier generat",
+      "outputSize": "Dimensiunea ieșirii",
+      "unsupportedOutput": "Format de ieșire nesuportat",
       "status": {
-        "success": "[RO] Success",
-        "error": "[RO] Error",
-        "timeout": "[RO] Timeout",
-        "memory_limit": "[RO] Memory limit exceeded",
-        "security_violation": "[RO] Security violation",
-        "invalid_code": "[RO] Invalid code"
+        "success": "Succes",
+        "error": "Eroare",
+        "timeout": "Timeout",
+        "memory_limit": "Limită de memorie depășită",
+        "security_violation": "Violare de securitate",
+        "invalid_code": "Cod invalid"
       },
       "outputTypes": {
-        "stdout": "[RO] Standard output",
-        "stderr": "[RO] Error output",
-        "return_value": "[RO] Return value",
-        "exception": "[RO] Exception"
+        "stdout": "Ieșire standard",
+        "stderr": "Ieșire de eroare",
+        "return_value": "Valoarea de returnare",
+        "exception": "Excepție"
       },
       "tabs": {
-        "output": "[RO] Output",
-        "code": "[RO] Code",
-        "files": "[RO] Files"
+        "output": "Ieșire",
+        "code": "Cod",
+        "files": "Fișiere"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[RO] URL Analysis Results",
-      "noData": "[RO] No URL analysis data available",
-      "summary": "[RO] Summary",
-      "metadata": "[RO] Document Info",
-      "processingTime": "[RO] Processing time",
-      "preview": "[RO] Preview",
-      "view": "[RO] View"
+      "title": "Rezultate analiză URL",
+      "noData": "Nu sunt disponibile date de analiză URL",
+      "summary": "Rezumat",
+      "metadata": "Informații document",
+      "processingTime": "Timp de procesare",
+      "preview": "Previzualizare",
+      "view": "Vizualizează"
     },
     "configuration": {
-      "timeout": "[RO] Request timeout"
+      "timeout": "Timeout cerere"
     },
     "status": {
-      "pulling": "[RO] Fetching URL content...",
-      "analyzing": "[RO] Analyzing document...",
-      "complete": "[RO] Analysis complete"
+      "pulling": "Preluarea conținutului URL...",
+      "analyzing": "Analizarea documentului...",
+      "complete": "Analiza completă"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[RO] Knowledge Base Results",
-      "noData": "[RO] No knowledge base data available",
-      "documents": "[RO] documents",
-      "insights": "[RO] Key Insights",
-      "relevance": "[RO] Relevance",
-      "suggestions": "[RO] Suggestions"
+      "title": "Rezultate bază de cunoștințe",
+      "noData": "Nu sunt disponibile date din baza de cunoștințe",
+      "documents": "documente",
+      "insights": "Informații cheie",
+      "relevance": "Relevanță",
+      "suggestions": "Sugestii"
     },
     "configuration": {
-      "searchMode": "[RO] Search mode",
-      "threshold": "[RO] Relevance threshold"
+      "searchMode": "Modul de căutare",
+      "threshold": "Prag de relevanță"
     },
     "status": {
-      "searching": "[RO] Searching knowledge base...",
-      "analyzing": "[RO] Analyzing results..."
+      "searching": "Căutare în baza de cunoștințe...",
+      "analyzing": "Analizarea rezultatelor..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[RO] Document analysis results will be displayed here",
-      "title": "[RO] Analysis Results",
-      "noData": "[RO] No document analysis data available",
-      "documents": "[RO] documents",
-      "noDocuments": "[RO] No documents found",
-      "summary": "[RO] Summary",
-      "insights": "[RO] Key Insights",
-      "metadata": "[RO] Document Info",
-      "processingTime": "[RO] Processing time",
-      "searchTime": "[RO] Search time",
-      "relevance": "[RO] Relevance",
-      "cached": "[RO] Cached",
-      "preview": "[RO] Preview",
-      "view": "[RO] View",
-      "open": "[RO] Open",
-      "bookmark": "[RO] Bookmark",
-      "suggestions": "[RO] Suggestions",
+      "placeholder": "Rezultatele analizei documentelor vor fi afișate aici",
+      "title": "Rezultate analiză",
+      "noData": "Nu sunt disponibile date de analiză a documentelor",
+      "documents": "documente",
+      "noDocuments": "Nu s-au găsit documente",
+      "summary": "Rezumat",
+      "insights": "Informații cheie",
+      "metadata": "Informații document",
+      "processingTime": "Timp de procesare",
+      "searchTime": "Timp de căutare",
+      "relevance": "Relevanță",
+      "cached": "În cache",
+      "preview": "Previzualizare",
+      "view": "Vizualizează",
+      "open": "Deschide",
+      "bookmark": "Marcaj",
+      "suggestions": "Sugestii",
       "tabs": {
-        "documents": "[RO] Documents",
-        "insights": "[RO] Insights",
-        "failed": "[RO] Failed"
+        "documents": "Documente",
+        "insights": "Informații",
+        "failed": "Eșuat"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[RO] Loading...",
-      "searching": "[RO] Searching...",
-      "processing": "[RO] Processing...",
-      "analyzing": "[RO] Analyzing..."
+      "default": "Se încarcă...",
+      "searching": "Căutare...",
+      "processing": "Procesare...",
+      "analyzing": "Analizare..."
     },
     "buttons": {
-      "retry": "[RO] Retry",
-      "cancel": "[RO] Cancel",
-      "expand": "[RO] Expand",
-      "collapse": "[RO] Collapse",
-      "configure": "[RO] Configure",
-      "submit": "[RO] Submit"
+      "retry": "Încearca din nou",
+      "cancel": "Anulează",
+      "expand": "Extinde",
+      "collapse": "Restrânge",
+      "configure": "Configurează",
+      "submit": "Trimite"
     },
     "labels": {
-      "priority": "[RO] Priority",
-      "estimatedTime": "[RO] Estimated time",
-      "availability": "[RO] Availability",
-      "configuration": "[RO] Configuration"
+      "priority": "Prioritate",
+      "estimatedTime": "Timp estimat",
+      "availability": "Disponibilitate",
+      "configuration": "Configurare"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[RO] An unknown error occurred",
-      "network": "[RO] Network connection error",
-      "timeout": "[RO] Request timed out",
-      "unauthorized": "[RO] Access denied",
-      "rateLimit": "[RO] Rate limit exceeded",
-      "serviceUnavailable": "[RO] Service temporarily unavailable"
+      "unknown": "A apărut o eroare necunoscuută",
+      "network": "Eroare de conexiune la rețea",
+      "timeout": "Cererea a expirat",
+      "unauthorized": "Acces refuzat",
+      "rateLimit": "Limită de rată depășită",
+      "serviceUnavailable": "Serviciu temporar indisponibil"
     },
     "webSearch": {
-      "searchFailed": "[RO] Web search failed",
-      "invalidQuery": "[RO] Invalid search query"
+      "searchFailed": "Căutarea web a eșuat",
+      "invalidQuery": "Interogare de căutare invalidă"
     },
     "codeInterpreter": {
-      "executionFailed": "[RO] Code execution failed",
-      "invalidCode": "[RO] Invalid or unsafe code"
+      "executionFailed": "Execuția codului a eșuat",
+      "invalidCode": "Cod invalid sau nesigur"
     },
     "urlPull": {
-      "fetchFailed": "[RO] Failed to fetch URL content",
-      "invalidUrl": "[RO] Invalid or inaccessible URL"
+      "fetchFailed": "Eșec în preluarea conținutului URL",
+      "invalidUrl": "URL invalid sau inaccesibil"
     },
     "localKnowledge": {
-      "searchFailed": "[RO] Knowledge base search failed",
-      "noAccess": "[RO] No access to knowledge base"
+      "searchFailed": "Căutarea în baza de cunoștințe a eșuat",
+      "noAccess": "Fără acces la baza de cunoștințe"
     }
   },
   "settings": {
-    "autoSubmit": "[RO] Auto-submit after processing",
-    "advancedOptions": "[RO] Advanced options",
+    "autoSubmit": "Trimitere automată după procesare",
+    "advancedOptions": "Opțiuni avansate",
     "priority": {
-      "high": "[RO] High",
-      "medium": "[RO] Medium",
-      "low": "[RO] Low"
+      "high": "Ridicată",
+      "medium": "Medie",
+      "low": "Scăzută"
     },
     "safeSearch": {
-      "off": "[RO] Off",
-      "moderate": "[RO] Moderate",
-      "strict": "[RO] Strict"
+      "off": "Dezactivat",
+      "moderate": "Moderat",
+      "strict": "Strict"
     },
     "market": {
-      "any": "[RO] Any region",
-      "local": "[RO] Local region"
+      "any": "Orice regiune",
+      "local": "Regiunea locală"
     }
   }
 }

@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[CS] Web Search",
-      "code_interpreter": "[CS] Code Interpreter",
-      "url_pull": "[CS] URL Analysis",
-      "local_knowledge": "[CS] Knowledge Base",
-      "standard_chat": "[CS] Standard Chat",
-      "foundry": "[CS] Foundry",
-      "third_party": "[CS] Third Party"
+      "web_search": "Webové vyhledávání",
+      "code_interpreter": "Překladač kódu",
+      "url_pull": "Analýza URL",
+      "local_knowledge": "Znalostní báze",
+      "standard_chat": "Standardní chat",
+      "foundry": "Foundry",
+      "third_party": "Třetí strana"
     },
     "error": {
-      "title": "[CS] Agent Error",
-      "unknown": "[CS] An unknown error occurred",
-      "retry": "[CS] Retry",
-      "fallback": "[CS] Use fallback"
+      "title": "Chyba agenta",
+      "unknown": "Došlo k neznámé chybě",
+      "retry": "Zkusit znovu",
+      "fallback": "Použít záložní"
     },
     "metadata": {
-      "processingTime": "[CS] Processing time",
-      "confidence": "[CS] Confidence",
-      "tokens": "[CS] Tokens used"
+      "processingTime": "Doba zpracování",
+      "confidence": "Důvěra",
+      "tokens": "Použité tokeny"
     },
     "resultsPanel": {
-      "placeholder": "[CS] Agent results will be displayed here"
+      "placeholder": "Výsledky agenta se zobrazí zde"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[CS] Searches the web for real-time information",
-      "code_interpreter": "[CS] Executes and analyzes code in multiple languages",
-      "url_pull": "[CS] Analyzes and extracts content from web pages",
-      "local_knowledge": "[CS] Searches internal knowledge base and documents",
-      "standard_chat": "[CS] Standard conversational AI without tools",
-      "foundry": "[CS] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[CS] Third-party agent or custom tool integration"
+      "web_search": "Webové vyhledávání - Vyhledává na webu informace v reálném čase",
+      "code_interpreter": "Překladač kódu - Spouští a analyzuje kód ve více jazycích",
+      "url_pull": "Analýza URL - Analyzuje a extrahuje obsah z webových stránek",
+      "local_knowledge": "Znalostní báze - Prohledává interní znalostní bázi a dokumenty",
+      "standard_chat": "Standardní chat - Standardní konverzační AI bez nástrojů",
+      "foundry": "Foundry - Používá Azure AI Foundry pro pokročilé schopnosti",
+      "third_party": "Třetí strana - Agent třetí strany nebo integrace vlastního nástroje"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[CS] Web search results will be displayed here",
-      "title": "[CS] Title",
-      "noResults": "[CS] No results found",
-      "noData": "[CS] No search data available",
-      "results": "[CS] results",
-      "confidence": "[CS] Relevance",
-      "relevance": "[CS] Relevance",
-      "source": "[CS] Source",
-      "citations": "[CS] Citations",
-      "cite": "[CS] Cite",
-      "open": "[CS] Open",
-      "openLink": "[CS] Open link in new tab",
-      "filters": "[CS] Filters",
-      "sortBy": "[CS] Sort by",
-      "filterBy": "[CS] Filter by",
-      "all": "[CS] All",
-      "date": "[CS] Date",
-      "query": "[CS] Query",
-      "searchTime": "[CS] Search time",
-      "cached": "[CS] Cached",
+      "placeholder": "Výsledky webového vyhledávání se zobrazí zde",
+      "title": "Výsledky vyhledávání",
+      "noResults": "Nebyly nalezeny žádné výsledky",
+      "noData": "Nejsou dostupná žádná data vyhledávání",
+      "results": "výsledků",
+      "confidence": "Relevance",
+      "relevance": "Relevance",
+      "source": "Zdroj",
+      "citations": "Citace",
+      "cite": "Citovat",
+      "open": "Otevřít",
+      "openLink": "Otevřít odkaz v nové záložce",
+      "filters": "Filtry",
+      "sortBy": "Řadit podle",
+      "filterBy": "Filtrovat podle",
+      "all": "Vše",
+      "date": "Datum",
+      "query": "Dotaz",
+      "searchTime": "Čas vyhledávání",
+      "cached": "Uloženo v mezipaměti",
       "contentTypes": {
-        "webpage": "[CS] Web pages",
-        "news": "[CS] News",
-        "academic": "[CS] Academic",
-        "image": "[CS] Images",
-        "video": "[CS] Videos"
+        "webpage": "Webové stránky",
+        "news": "Zprávy",
+        "academic": "Akademické",
+        "image": "Obrázky",
+        "video": "Videa"
       }
     },
     "configuration": {
-      "resultsCount": "[CS] Number of results",
-      "safeSearch": "[CS] Safe search",
-      "market": "[CS] Search market"
+      "resultsCount": "Počet výsledků",
+      "safeSearch": "Bezpečné vyhledávání",
+      "market": "Trh vyhledávání"
     },
     "status": {
-      "searching": "[CS] Searching the web...",
-      "optimizing": "[CS] Optimizing search query...",
-      "processing": "[CS] Processing search results..."
+      "searching": "Vyhledávání na webu...",
+      "optimizing": "Optimalizace vyhledávacího dotazu...",
+      "processing": "Zpracování výsledků vyhledávání..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[CS] Code execution results will be displayed here",
-      "title": "[CS] Execution Results",
-      "noData": "[CS] No code execution data available",
-      "output": "[CS] Output",
-      "errors": "[CS] Errors",
-      "logs": "[CS] Logs",
-      "executionTime": "[CS] Execution time",
-      "memoryUsage": "[CS] Memory usage",
-      "cpuUsage": "[CS] CPU usage",
-      "outputLines": "[CS] Output lines",
-      "executedCode": "[CS] Executed Code",
-      "download": "[CS] Download",
-      "noOutput": "[CS] No output generated",
-      "noFiles": "[CS] No files generated",
-      "outputSize": "[CS] Output size",
-      "unsupportedOutput": "[CS] Unsupported output format",
+      "placeholder": "Výsledky spuštění kódu se zobrazí zde",
+      "title": "Výsledky spuštění",
+      "noData": "Nejsou dostupná data o spuštění kódu",
+      "output": "Výstup",
+      "errors": "Chyby",
+      "logs": "Záznamy",
+      "executionTime": "Čas spuštění",
+      "memoryUsage": "Využití paměti",
+      "cpuUsage": "Využití CPU",
+      "outputLines": "Řádky výstupu",
+      "executedCode": "Spuštěný kód",
+      "download": "Stáhnout",
+      "noOutput": "Nebyl vygenerován žádný výstup",
+      "noFiles": "Nebyly vygenerovány žádné soubory",
+      "outputSize": "Velikost výstupu",
+      "unsupportedOutput": "Nepodporovaný formát výstupu",
       "status": {
-        "success": "[CS] Success",
-        "error": "[CS] Error",
-        "timeout": "[CS] Timeout",
-        "memory_limit": "[CS] Memory limit exceeded",
-        "security_violation": "[CS] Security violation",
-        "invalid_code": "[CS] Invalid code"
+        "success": "Úspěch",
+        "error": "Chyba",
+        "timeout": "Časový limit",
+        "memory_limit": "Překročen limit paměti",
+        "security_violation": "Narušení zabezpečení",
+        "invalid_code": "Neplatný kód"
       },
       "outputTypes": {
-        "stdout": "[CS] Standard output",
-        "stderr": "[CS] Error output",
-        "return_value": "[CS] Return value",
-        "exception": "[CS] Exception"
+        "stdout": "Standardní výstup",
+        "stderr": "Chybový výstup",
+        "return_value": "Návratová hodnota",
+        "exception": "Výjimka"
       },
       "tabs": {
-        "output": "[CS] Output",
-        "code": "[CS] Code",
-        "files": "[CS] Files"
+        "output": "Výstup",
+        "code": "Kód",
+        "files": "Soubory"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[CS] URL Analysis Results",
-      "noData": "[CS] No URL analysis data available",
-      "summary": "[CS] Summary",
-      "metadata": "[CS] Document Info",
-      "processingTime": "[CS] Processing time",
-      "preview": "[CS] Preview",
-      "view": "[CS] View"
+      "title": "Výsledky analýzy URL",
+      "noData": "Nejsou dostupná data analýzy URL",
+      "summary": "Shrnutí",
+      "metadata": "Informace o dokumentu",
+      "processingTime": "Doba zpracování",
+      "preview": "Náhled",
+      "view": "Zobrazit"
     },
     "configuration": {
-      "timeout": "[CS] Request timeout"
+      "timeout": "Časový limit požadavku"
     },
     "status": {
-      "pulling": "[CS] Fetching URL content...",
-      "analyzing": "[CS] Analyzing document...",
-      "complete": "[CS] Analysis complete"
+      "pulling": "Načítání obsahu URL...",
+      "analyzing": "Analýza dokumentu...",
+      "complete": "Analýza dokončena"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[CS] Knowledge Base Results",
-      "noData": "[CS] No knowledge base data available",
-      "documents": "[CS] documents",
-      "insights": "[CS] Key Insights",
-      "relevance": "[CS] Relevance",
-      "suggestions": "[CS] Suggestions"
+      "title": "Výsledky znalostнí báze",
+      "noData": "Nejsou dostupná data znalostнí báze",
+      "documents": "dokumenty",
+      "insights": "Klíčové poznatky",
+      "relevance": "Relevance",
+      "suggestions": "Návrhy"
     },
     "configuration": {
-      "searchMode": "[CS] Search mode",
-      "threshold": "[CS] Relevance threshold"
+      "searchMode": "Režim vyhledávání",
+      "threshold": "Práh relevance"
     },
     "status": {
-      "searching": "[CS] Searching knowledge base...",
-      "analyzing": "[CS] Analyzing results..."
+      "searching": "Prohledávání znalostнí báze...",
+      "analyzing": "Analýza výsledků..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[CS] Document analysis results will be displayed here",
-      "title": "[CS] Analysis Results",
-      "noData": "[CS] No document analysis data available",
-      "documents": "[CS] documents",
-      "noDocuments": "[CS] No documents found",
-      "summary": "[CS] Summary",
-      "insights": "[CS] Key Insights",
-      "metadata": "[CS] Document Info",
-      "processingTime": "[CS] Processing time",
-      "searchTime": "[CS] Search time",
-      "relevance": "[CS] Relevance",
-      "cached": "[CS] Cached",
-      "preview": "[CS] Preview",
-      "view": "[CS] View",
-      "open": "[CS] Open",
-      "bookmark": "[CS] Bookmark",
-      "suggestions": "[CS] Suggestions",
+      "placeholder": "Výsledky analýzy dokumentů se zobrazí zde",
+      "title": "Výsledky analýzy",
+      "noData": "Nejsou dostupná data analýzy dokumentů",
+      "documents": "dokumenty",
+      "noDocuments": "Nebyly nalezeny žádné dokumenty",
+      "summary": "Shrnutí",
+      "insights": "Klíčové poznatky",
+      "metadata": "Informace o dokumentu",
+      "processingTime": "Doba zpracování",
+      "searchTime": "Čas vyhledávání",
+      "relevance": "Relevance",
+      "cached": "Uloženo v mezipaměti",
+      "preview": "Náhled",
+      "view": "Zobrazit",
+      "open": "Otevřít",
+      "bookmark": "Záložka",
+      "suggestions": "Návrhy",
       "tabs": {
-        "documents": "[CS] Documents",
-        "insights": "[CS] Insights",
-        "failed": "[CS] Failed"
+        "documents": "Dokumenty",
+        "insights": "Poznatky",
+        "failed": "Neúspěšné"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[CS] Loading...",
-      "searching": "[CS] Searching...",
-      "processing": "[CS] Processing...",
-      "analyzing": "[CS] Analyzing..."
+      "default": "Načítání...",
+      "searching": "Vyhledávání...",
+      "processing": "Zpracování...",
+      "analyzing": "Analýza..."
     },
     "buttons": {
-      "retry": "[CS] Retry",
-      "cancel": "[CS] Cancel",
-      "expand": "[CS] Expand",
-      "collapse": "[CS] Collapse",
-      "configure": "[CS] Configure",
-      "submit": "[CS] Submit"
+      "retry": "Zkusit znovu",
+      "cancel": "Zrušit",
+      "expand": "Rozbalit",
+      "collapse": "Sbalit",
+      "configure": "Konfigurovat",
+      "submit": "Odeslat"
     },
     "labels": {
-      "priority": "[CS] Priority",
-      "estimatedTime": "[CS] Estimated time",
-      "availability": "[CS] Availability",
-      "configuration": "[CS] Configuration"
+      "priority": "Priorita",
+      "estimatedTime": "Odhadovaný čas",
+      "availability": "Dostupnost",
+      "configuration": "Konfigurace"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[CS] An unknown error occurred",
-      "network": "[CS] Network connection error",
-      "timeout": "[CS] Request timed out",
-      "unauthorized": "[CS] Access denied",
-      "rateLimit": "[CS] Rate limit exceeded",
-      "serviceUnavailable": "[CS] Service temporarily unavailable"
+      "unknown": "Došlo k neznámé chybě",
+      "network": "Chyba síťového připojení",
+      "timeout": "Požadavek vypršel",
+      "unauthorized": "Přístup odepřen",
+      "rateLimit": "Překročen limit počtu požadavků",
+      "serviceUnavailable": "Služba dočasně nedostupná"
     },
     "webSearch": {
-      "searchFailed": "[CS] Web search failed",
-      "invalidQuery": "[CS] Invalid search query"
+      "searchFailed": "Webové vyhledávání se nezdařilo",
+      "invalidQuery": "Neplatný vyhledávací dotaz"
     },
     "codeInterpreter": {
-      "executionFailed": "[CS] Code execution failed",
-      "invalidCode": "[CS] Invalid or unsafe code"
+      "executionFailed": "Spuštění kódu se nezdařilo",
+      "invalidCode": "Neplatný nebo nebezpečný kód"
     },
     "urlPull": {
-      "fetchFailed": "[CS] Failed to fetch URL content",
-      "invalidUrl": "[CS] Invalid or inaccessible URL"
+      "fetchFailed": "Načtení obsahu URL se nezdařilo",
+      "invalidUrl": "Neplatné nebo nepřístupné URL"
     },
     "localKnowledge": {
-      "searchFailed": "[CS] Knowledge base search failed",
-      "noAccess": "[CS] No access to knowledge base"
+      "searchFailed": "Vyhledávání ve znalostнí bázi se nezdařilo",
+      "noAccess": "Žádný přístup ke znalostнí bázi"
     }
   },
   "settings": {
-    "autoSubmit": "[CS] Auto-submit after processing",
-    "advancedOptions": "[CS] Advanced options",
+    "autoSubmit": "Automatické odeslání po zpracování",
+    "advancedOptions": "Pokročilé možnosti",
     "priority": {
-      "high": "[CS] High",
-      "medium": "[CS] Medium",
-      "low": "[CS] Low"
+      "high": "Vysoká",
+      "medium": "Střední",
+      "low": "Nízká"
     },
     "safeSearch": {
-      "off": "[CS] Off",
-      "moderate": "[CS] Moderate",
-      "strict": "[CS] Strict"
+      "off": "Vypnuto",
+      "moderate": "Mírné",
+      "strict": "Přísné"
     },
     "market": {
-      "any": "[CS] Any region",
-      "local": "[CS] Local region"
+      "any": "Jakýkoliv region",
+      "local": "Místní region"
     }
   }
 }

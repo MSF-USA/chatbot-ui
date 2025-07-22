@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[BN] Web Search",
-      "code_interpreter": "[BN] Code Interpreter",
-      "url_pull": "[BN] URL Analysis",
-      "local_knowledge": "[BN] Knowledge Base",
-      "standard_chat": "[BN] Standard Chat",
-      "foundry": "[BN] Foundry",
-      "third_party": "[BN] Third Party"
+      "web_search": "ওয়েব অনুসন্ধান",
+      "code_interpreter": "কোড ইন্টারপ্রেটার",
+      "url_pull": "URL বিশ্লেষণ",
+      "local_knowledge": "জ্ঞান ভিত্তি",
+      "standard_chat": "স্ট্যান্ডার্ড চ্যাট",
+      "foundry": "ফাউন্ড্রি",
+      "third_party": "তৃতীয় পক্ষ"
     },
     "error": {
-      "title": "[BN] Agent Error",
-      "unknown": "[BN] An unknown error occurred",
-      "retry": "[BN] Retry",
-      "fallback": "[BN] Use fallback"
+      "title": "এজেন্ট ত্রুটি",
+      "unknown": "একটি অজানা ত্রুটি ঘটেছে",
+      "retry": "পুনরায় চেষ্টা করুন",
+      "fallback": "বিকল্প ব্যবহার করুন"
     },
     "metadata": {
-      "processingTime": "[BN] Processing time",
-      "confidence": "[BN] Confidence",
-      "tokens": "[BN] Tokens used"
+      "processingTime": "প্রক্রিয়াকরণ সময়",
+      "confidence": "আত্মবিশ্বাস",
+      "tokens": "ব্যবহৃত টোকেন"
     },
     "resultsPanel": {
-      "placeholder": "[BN] Agent results will be displayed here"
+      "placeholder": "এজেন্ট ফলাফল এখানে প্রদর্শিত হবে"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[BN] Searches the web for real-time information",
-      "code_interpreter": "[BN] Executes and analyzes code in multiple languages",
-      "url_pull": "[BN] Analyzes and extracts content from web pages",
-      "local_knowledge": "[BN] Searches internal knowledge base and documents",
-      "standard_chat": "[BN] Standard conversational AI without tools",
-      "foundry": "[BN] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[BN] Third-party agent or custom tool integration"
+      "web_search": "ওয়েব অনুসন্ধান - রিয়েল-টাইম তথ্যের জন্য ওয়েব অনুসন্ধান করে",
+      "code_interpreter": "কোড ইন্টারপ্রেটার - একাধিক ভাষায় কোড কার্যকর এবং বিশ্লেষণ করে",
+      "url_pull": "URL বিশ্লেষণ - ওয়েব পৃষ্ঠাগুলি থেকে সামগ্রী বিশ্লেষণ এবং নিষ্কাশন করে",
+      "local_knowledge": "জ্ঞান ভিত্তি - অভ্যন্তরীণ জ্ঞান ভিত্তি এবং নথি অনুসন্ধান করে",
+      "standard_chat": "স্ট্যান্ডার্ড চ্যাট - সরঞ্জাম ছাড়া স্ট্যান্ডার্ড কথোপকথন AI",
+      "foundry": "ফাউন্ড্রি - উন্নত ক্ষমতার জন্য Azure AI Foundry ব্যবহার করে",
+      "third_party": "তৃতীয় পক্ষ - তৃতীয় পক্ষের এজেন্ট বা কাস্টম টুল ইন্টিগ্রেশন"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[BN] Web search results will be displayed here",
-      "title": "[BN] Title",
-      "noResults": "[BN] No results found",
-      "noData": "[BN] No search data available",
-      "results": "[BN] results",
-      "confidence": "[BN] Relevance",
-      "relevance": "[BN] Relevance",
-      "source": "[BN] Source",
-      "citations": "[BN] Citations",
-      "cite": "[BN] Cite",
-      "open": "[BN] Open",
-      "openLink": "[BN] Open link in new tab",
-      "filters": "[BN] Filters",
-      "sortBy": "[BN] Sort by",
-      "filterBy": "[BN] Filter by",
-      "all": "[BN] All",
-      "date": "[BN] Date",
-      "query": "[BN] Query",
-      "searchTime": "[BN] Search time",
-      "cached": "[BN] Cached",
+      "placeholder": "ওয়েব অনুসন্ধানের ফলাফল এখানে প্রদর্শিত হবে",
+      "title": "অনুসন্ধানের ফলাফল",
+      "noResults": "কোন ফলাফল পাওয়া যায়নি",
+      "noData": "কোন অনুসন্ধান ডেটা উপলব্ধ নেই",
+      "results": "ফলাফল",
+      "confidence": "প্রাসঙ্গিকতা",
+      "relevance": "প্রাসঙ্গিকতা",
+      "source": "উৎস",
+      "citations": "উদ্ধৃতি",
+      "cite": "উদ্ধৃত করুন",
+      "open": "খুলুন",
+      "openLink": "নতুন ট্যাবে লিঙ্ক খুলুন",
+      "filters": "ফিল্টার",
+      "sortBy": "ক্রম অনুযায়ী",
+      "filterBy": "ফিল্টার করুন",
+      "all": "সব",
+      "date": "তারিখ",
+      "query": "অনুসন্ধান",
+      "searchTime": "অনুসন্ধানের সময়",
+      "cached": "ক্যাশ করা",
       "contentTypes": {
-        "webpage": "[BN] Web pages",
-        "news": "[BN] News",
-        "academic": "[BN] Academic",
-        "image": "[BN] Images",
-        "video": "[BN] Videos"
+        "webpage": "ওয়েব পৃষ্ঠা",
+        "news": "সংবাদ",
+        "academic": "একাডেমিক",
+        "image": "ছবি",
+        "video": "ভিডিও"
       }
     },
     "configuration": {
-      "resultsCount": "[BN] Number of results",
-      "safeSearch": "[BN] Safe search",
-      "market": "[BN] Search market"
+      "resultsCount": "ফলাফলের সংখ্যা",
+      "safeSearch": "নিরাপদ অনুসন্ধান",
+      "market": "অনুসন্ধান বাজার"
     },
     "status": {
-      "searching": "[BN] Searching the web...",
-      "optimizing": "[BN] Optimizing search query...",
-      "processing": "[BN] Processing search results..."
+      "searching": "ওয়েব অনুসন্ধান করছে...",
+      "optimizing": "অনুসন্ধান অপটিমাইজ করছে...",
+      "processing": "অনুসন্ধান ফলাফল প্রক্রিয়া করছে..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[BN] Code execution results will be displayed here",
-      "title": "[BN] Execution Results",
-      "noData": "[BN] No code execution data available",
-      "output": "[BN] Output",
-      "errors": "[BN] Errors",
-      "logs": "[BN] Logs",
-      "executionTime": "[BN] Execution time",
-      "memoryUsage": "[BN] Memory usage",
-      "cpuUsage": "[BN] CPU usage",
-      "outputLines": "[BN] Output lines",
-      "executedCode": "[BN] Executed Code",
-      "download": "[BN] Download",
-      "noOutput": "[BN] No output generated",
-      "noFiles": "[BN] No files generated",
-      "outputSize": "[BN] Output size",
-      "unsupportedOutput": "[BN] Unsupported output format",
+      "placeholder": "কোড এক্সিকিউশনের ফলাফল এখানে প্রদর্শিত হবে",
+      "title": "এক্সিকিউশন ফলাফল",
+      "noData": "কোন কোড এক্সিকিউশন ডেটা উপলব্ধ নেই",
+      "output": "আউটপুট",
+      "errors": "ত্রুটি",
+      "logs": "লগ",
+      "executionTime": "এক্সিকিউশন সময়",
+      "memoryUsage": "মেমরি ব্যবহার",
+      "cpuUsage": "CPU ব্যবহার",
+      "outputLines": "আউটপুট লাইন",
+      "executedCode": "এক্সিকিউট করা কোড",
+      "download": "ডাউনলোড",
+      "noOutput": "কোন আউটপুট তৈরি হয়নি",
+      "noFiles": "কোন ফাইল তৈরি হয়নি",
+      "outputSize": "আউটপুটের আকার",
+      "unsupportedOutput": "অসাপোর্টেড আউটপুট ফর্ম্যাট",
       "status": {
-        "success": "[BN] Success",
-        "error": "[BN] Error",
-        "timeout": "[BN] Timeout",
-        "memory_limit": "[BN] Memory limit exceeded",
-        "security_violation": "[BN] Security violation",
-        "invalid_code": "[BN] Invalid code"
+        "success": "সফল",
+        "error": "ত্রুটি",
+        "timeout": "টাইমআউট",
+        "memory_limit": "মেমরি সীমা অতিক্রম করেছে",
+        "security_violation": "নিরাপত্তা লঙ্ঘন",
+        "invalid_code": "অবৈধ কোড"
       },
       "outputTypes": {
-        "stdout": "[BN] Standard output",
-        "stderr": "[BN] Error output",
-        "return_value": "[BN] Return value",
-        "exception": "[BN] Exception"
+        "stdout": "মান আউটপুট",
+        "stderr": "ত্রুটি আউটপুট",
+        "return_value": "রিটার্ন ভ্যালু",
+        "exception": "এক্সেপশন"
       },
       "tabs": {
-        "output": "[BN] Output",
-        "code": "[BN] Code",
-        "files": "[BN] Files"
+        "output": "আউটপুট",
+        "code": "কোড",
+        "files": "ফাইল"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[BN] URL Analysis Results",
-      "noData": "[BN] No URL analysis data available",
-      "summary": "[BN] Summary",
-      "metadata": "[BN] Document Info",
-      "processingTime": "[BN] Processing time",
-      "preview": "[BN] Preview",
-      "view": "[BN] View"
+      "title": "URL বিশ্লেষণের ফলাফল",
+      "noData": "কোন URL বিশ্লেষণ ডেটা উপলব্ধ নেই",
+      "summary": "সারসংক্ষেপ",
+      "metadata": "নথির তথ্য",
+      "processingTime": "প্রক্রিয়াকরণের সময়",
+      "preview": "প্রাকদর্শন",
+      "view": "দেখুন"
     },
     "configuration": {
-      "timeout": "[BN] Request timeout"
+      "timeout": "অনুরোধ টাইমআউট"
     },
     "status": {
-      "pulling": "[BN] Fetching URL content...",
-      "analyzing": "[BN] Analyzing document...",
-      "complete": "[BN] Analysis complete"
+      "pulling": "URL কনটেন্ট আনছে...",
+      "analyzing": "নথি বিশ্লেষণ করছে...",
+      "complete": "বিশ্লেষণ সম্পন্ন"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[BN] Knowledge Base Results",
-      "noData": "[BN] No knowledge base data available",
-      "documents": "[BN] documents",
-      "insights": "[BN] Key Insights",
-      "relevance": "[BN] Relevance",
-      "suggestions": "[BN] Suggestions"
+      "title": "জ্ঞান ভিত্তির ফলাফল",
+      "noData": "কোন জ্ঞান ভিত্তি ডেটা উপলব্ধ নেই",
+      "documents": "নথিসমূহ",
+      "insights": "মুখ্য অন্তর্দৃষ্টি",
+      "relevance": "প্রাসঙ্গিকতা",
+      "suggestions": "পরামর্শ"
     },
     "configuration": {
-      "searchMode": "[BN] Search mode",
-      "threshold": "[BN] Relevance threshold"
+      "searchMode": "অনুসন্ধান মোড",
+      "threshold": "প্রাসঙ্গিকতার সীমা"
     },
     "status": {
-      "searching": "[BN] Searching knowledge base...",
-      "analyzing": "[BN] Analyzing results..."
+      "searching": "জ্ঞান ভিত্তি অনুসন্ধান করছে...",
+      "analyzing": "ফলাফল বিশ্লেষণ করছে..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[BN] Document analysis results will be displayed here",
-      "title": "[BN] Analysis Results",
-      "noData": "[BN] No document analysis data available",
-      "documents": "[BN] documents",
-      "noDocuments": "[BN] No documents found",
-      "summary": "[BN] Summary",
-      "insights": "[BN] Key Insights",
-      "metadata": "[BN] Document Info",
-      "processingTime": "[BN] Processing time",
-      "searchTime": "[BN] Search time",
-      "relevance": "[BN] Relevance",
-      "cached": "[BN] Cached",
-      "preview": "[BN] Preview",
-      "view": "[BN] View",
-      "open": "[BN] Open",
-      "bookmark": "[BN] Bookmark",
-      "suggestions": "[BN] Suggestions",
+      "placeholder": "নথি বিশ্লেষণের ফলাফল এখানে প্রদর্শিত হবে",
+      "title": "বিশ্লেষণের ফলাফল",
+      "noData": "কোন নথি বিশ্লেষণ ডেটা উপলব্ধ নেই",
+      "documents": "নথিসমূহ",
+      "noDocuments": "কোন নথি পাওয়া যায়নি",
+      "summary": "সারসংক্ষেপ",
+      "insights": "মুখ্য অন্তর্দৃষ্টি",
+      "metadata": "নথির তথ্য",
+      "processingTime": "প্রক্রিয়াকরণের সময়",
+      "searchTime": "অনুসন্ধানের সময়",
+      "relevance": "প্রাসঙ্গিকতা",
+      "cached": "ক্যাশ করা",
+      "preview": "প্রাকদর্শন",
+      "view": "দেখুন",
+      "open": "খুলুন",
+      "bookmark": "বুকমার্ক",
+      "suggestions": "পরামর্শ",
       "tabs": {
-        "documents": "[BN] Documents",
-        "insights": "[BN] Insights",
-        "failed": "[BN] Failed"
+        "documents": "নথিসমূহ",
+        "insights": "অন্তর্দৃষ্টি",
+        "failed": "ব্যর্থ"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[BN] Loading...",
-      "searching": "[BN] Searching...",
-      "processing": "[BN] Processing...",
-      "analyzing": "[BN] Analyzing..."
+      "default": "লোড হচ্ছে...",
+      "searching": "অনুসন্ধান করছে...",
+      "processing": "প্রক্রিয়া করছে...",
+      "analyzing": "বিশ্লেষণ করছে..."
     },
     "buttons": {
-      "retry": "[BN] Retry",
-      "cancel": "[BN] Cancel",
-      "expand": "[BN] Expand",
-      "collapse": "[BN] Collapse",
-      "configure": "[BN] Configure",
-      "submit": "[BN] Submit"
+      "retry": "পুনরায় চেষ্টা করুন",
+      "cancel": "বাতিল",
+      "expand": "বিস্তৃত করুন",
+      "collapse": "সঙ্কুচিত করুন",
+      "configure": "কনফিগার করুন",
+      "submit": "জমা দিন"
     },
     "labels": {
-      "priority": "[BN] Priority",
-      "estimatedTime": "[BN] Estimated time",
-      "availability": "[BN] Availability",
-      "configuration": "[BN] Configuration"
+      "priority": "অগ্রাধিকার",
+      "estimatedTime": "আনুমানিক সময়",
+      "availability": "প্রাপ্ততা",
+      "configuration": "কনফিগারেশন"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[BN] An unknown error occurred",
-      "network": "[BN] Network connection error",
-      "timeout": "[BN] Request timed out",
-      "unauthorized": "[BN] Access denied",
-      "rateLimit": "[BN] Rate limit exceeded",
-      "serviceUnavailable": "[BN] Service temporarily unavailable"
+      "unknown": "একটি অজানা ত্রুটি ঘটেছে",
+      "network": "নেটওয়ার্ক সংযোগ ত্রুটি",
+      "timeout": "অনুরোধের সময় শেষ",
+      "unauthorized": "প্রবেশাধিকার নাকচ",
+      "rateLimit": "হারের সীমা অতিক্রম",
+      "serviceUnavailable": "সেবা অস্থায়ীভাবে অনুপলব্ধ"
     },
     "webSearch": {
-      "searchFailed": "[BN] Web search failed",
-      "invalidQuery": "[BN] Invalid search query"
+      "searchFailed": "ওয়েব অনুসন্ধান ব্যর্থ",
+      "invalidQuery": "অবৈধ অনুসন্ধান কোয়েরি"
     },
     "codeInterpreter": {
-      "executionFailed": "[BN] Code execution failed",
-      "invalidCode": "[BN] Invalid or unsafe code"
+      "executionFailed": "কোড এক্সিকিউশন ব্যর্থ",
+      "invalidCode": "অবৈধ বা অনারক্ষিত কোড"
     },
     "urlPull": {
-      "fetchFailed": "[BN] Failed to fetch URL content",
-      "invalidUrl": "[BN] Invalid or inaccessible URL"
+      "fetchFailed": "URL কনটেন্ট আনতে ব্যর্থ",
+      "invalidUrl": "অবৈধ বা অপ্রাপ্ত URL"
     },
     "localKnowledge": {
-      "searchFailed": "[BN] Knowledge base search failed",
-      "noAccess": "[BN] No access to knowledge base"
+      "searchFailed": "জ্ঞান ভিত্তি অনুসন্ধান ব্যর্থ",
+      "noAccess": "জ্ঞান ভিত্তিতে প্রবেশাধিকার নেই"
     }
   },
   "settings": {
-    "autoSubmit": "[BN] Auto-submit after processing",
-    "advancedOptions": "[BN] Advanced options",
+    "autoSubmit": "প্রক্রিয়ার পর স্বয়ংক্রিয় জমা",
+    "advancedOptions": "উন্নত বিকল্প",
     "priority": {
-      "high": "[BN] High",
-      "medium": "[BN] Medium",
-      "low": "[BN] Low"
+      "high": "উচ্চ",
+      "medium": "মধ্যম",
+      "low": "নিম্ন"
     },
     "safeSearch": {
-      "off": "[BN] Off",
-      "moderate": "[BN] Moderate",
-      "strict": "[BN] Strict"
+      "off": "বন্ধ",
+      "moderate": "মধ্যম",
+      "strict": "কঠোর"
     },
     "market": {
-      "any": "[BN] Any region",
-      "local": "[BN] Local region"
+      "any": "যে কোন অঞ্চল",
+      "local": "স্থানীয় অঞ্চল"
     }
   }
 }

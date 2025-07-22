@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[HE] Web Search",
-      "code_interpreter": "[HE] Code Interpreter",
-      "url_pull": "[HE] URL Analysis",
-      "local_knowledge": "[HE] Knowledge Base",
-      "standard_chat": "[HE] Standard Chat",
-      "foundry": "[HE] Foundry",
-      "third_party": "[HE] Third Party"
+      "web_search": "חיפוש באינטרנט",
+      "code_interpreter": "מפרש קוד",
+      "url_pull": "ניתוח URL",
+      "local_knowledge": "בסיס ידע",
+      "standard_chat": "צ'אט רגיל",
+      "foundry": "Foundry",
+      "third_party": "צד שלישי"
     },
     "error": {
-      "title": "[HE] Agent Error",
-      "unknown": "[HE] An unknown error occurred",
-      "retry": "[HE] Retry",
-      "fallback": "[HE] Use fallback"
+      "title": "שגיאת סוכן",
+      "unknown": "אירעה שגיאה לא ידועה",
+      "retry": "נסה שוב",
+      "fallback": "השתמש בחלופה"
     },
     "metadata": {
-      "processingTime": "[HE] Processing time",
-      "confidence": "[HE] Confidence",
-      "tokens": "[HE] Tokens used"
+      "processingTime": "זמן עיבוד",
+      "confidence": "ביטחון",
+      "tokens": "אסימונים בשימוש"
     },
     "resultsPanel": {
-      "placeholder": "[HE] Agent results will be displayed here"
+      "placeholder": "תוצאות הסוכן יוצגו כאן"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[HE] Searches the web for real-time information",
-      "code_interpreter": "[HE] Executes and analyzes code in multiple languages",
-      "url_pull": "[HE] Analyzes and extracts content from web pages",
-      "local_knowledge": "[HE] Searches internal knowledge base and documents",
-      "standard_chat": "[HE] Standard conversational AI without tools",
-      "foundry": "[HE] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[HE] Third-party agent or custom tool integration"
+      "web_search": "חיפוש באינטרנט - מחפש באינטרנט מידע בזמן אמת",
+      "code_interpreter": "מפרש קוד - מריץ ומנתח קוד במספר שפות",
+      "url_pull": "ניתוח URL - מנתח ומחלץ תוכן מדפי אינטרנט",
+      "local_knowledge": "בסיס ידע - מחפש במאגר הידע הפנימי ובמסמכים",
+      "standard_chat": "צ'אט רגיל - AI שיחתי סטנדרטי ללא כלים",
+      "foundry": "Foundry - משתמש ב-Azure AI Foundry ליכולות מתקדמות",
+      "third_party": "צד שלישי - סוכן צד שלישי או שילוב כלי מותאם אישית"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[HE] Web search results will be displayed here",
-      "title": "[HE] Title",
-      "noResults": "[HE] No results found",
-      "noData": "[HE] No search data available",
-      "results": "[HE] results",
-      "confidence": "[HE] Relevance",
-      "relevance": "[HE] Relevance",
-      "source": "[HE] Source",
-      "citations": "[HE] Citations",
-      "cite": "[HE] Cite",
-      "open": "[HE] Open",
-      "openLink": "[HE] Open link in new tab",
-      "filters": "[HE] Filters",
-      "sortBy": "[HE] Sort by",
-      "filterBy": "[HE] Filter by",
-      "all": "[HE] All",
-      "date": "[HE] Date",
-      "query": "[HE] Query",
-      "searchTime": "[HE] Search time",
-      "cached": "[HE] Cached",
+      "placeholder": "תוצאות חיפוש באינטרנט יוצגו כאן",
+      "title": "תוצאות חיפוש",
+      "noResults": "לא נמצאו תוצאות",
+      "noData": "אין נתוני חיפוש זמינים",
+      "results": "תוצאות",
+      "confidence": "רלוונטיות",
+      "relevance": "רלוונטיות",
+      "source": "מקור",
+      "citations": "ציטוטים",
+      "cite": "צטט",
+      "open": "פתח",
+      "openLink": "פתח קישור בכרטיסייה חדשה",
+      "filters": "מסננים",
+      "sortBy": "מיין לפי",
+      "filterBy": "סנן לפי",
+      "all": "הכל",
+      "date": "תאריך",
+      "query": "שאילתה",
+      "searchTime": "זמן חיפוש",
+      "cached": "מושמר במטמון",
       "contentTypes": {
-        "webpage": "[HE] Web pages",
-        "news": "[HE] News",
-        "academic": "[HE] Academic",
-        "image": "[HE] Images",
-        "video": "[HE] Videos"
+        "webpage": "דפי אינטרנט",
+        "news": "חדשות",
+        "academic": "אקדמי",
+        "image": "תמונות",
+        "video": "סרטונים"
       }
     },
     "configuration": {
-      "resultsCount": "[HE] Number of results",
-      "safeSearch": "[HE] Safe search",
-      "market": "[HE] Search market"
+      "resultsCount": "מספר תוצאות",
+      "safeSearch": "חיפוש בטוח",
+      "market": "שוק חיפוש"
     },
     "status": {
-      "searching": "[HE] Searching the web...",
-      "optimizing": "[HE] Optimizing search query...",
-      "processing": "[HE] Processing search results..."
+      "searching": "מחפש באינטרנט...",
+      "optimizing": "מבצע אופטימיזציה של שאילתת החיפוש...",
+      "processing": "מעבד תוצאות חיפוש..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[HE] Code execution results will be displayed here",
-      "title": "[HE] Execution Results",
-      "noData": "[HE] No code execution data available",
-      "output": "[HE] Output",
-      "errors": "[HE] Errors",
-      "logs": "[HE] Logs",
-      "executionTime": "[HE] Execution time",
-      "memoryUsage": "[HE] Memory usage",
-      "cpuUsage": "[HE] CPU usage",
-      "outputLines": "[HE] Output lines",
-      "executedCode": "[HE] Executed Code",
-      "download": "[HE] Download",
-      "noOutput": "[HE] No output generated",
-      "noFiles": "[HE] No files generated",
-      "outputSize": "[HE] Output size",
-      "unsupportedOutput": "[HE] Unsupported output format",
+      "placeholder": "תוצאות הרצת הקוד יוצגו כאן",
+      "title": "תוצאות הרצה",
+      "noData": "אין נתוני הרצת קוד זמינים",
+      "output": "פלט",
+      "errors": "שגיאות",
+      "logs": "לוגים",
+      "executionTime": "זמן הרצה",
+      "memoryUsage": "שימוש בזיכרון",
+      "cpuUsage": "שימוש ב-CPU",
+      "outputLines": "שורות פלט",
+      "executedCode": "קוד שהורץ",
+      "download": "הורד",
+      "noOutput": "לא נוצר פלט",
+      "noFiles": "לא נוצרו קבצים",
+      "outputSize": "גודל פלט",
+      "unsupportedOutput": "פורמט פלט לא נתמך",
       "status": {
-        "success": "[HE] Success",
-        "error": "[HE] Error",
-        "timeout": "[HE] Timeout",
-        "memory_limit": "[HE] Memory limit exceeded",
-        "security_violation": "[HE] Security violation",
-        "invalid_code": "[HE] Invalid code"
+        "success": "הצלחה",
+        "error": "שגיאה",
+        "timeout": "פסק זמן",
+        "memory_limit": "חרג מגבלת הזיכרון",
+        "security_violation": "הפרת בטיחות",
+        "invalid_code": "קוד לא תקין"
       },
       "outputTypes": {
-        "stdout": "[HE] Standard output",
-        "stderr": "[HE] Error output",
-        "return_value": "[HE] Return value",
-        "exception": "[HE] Exception"
+        "stdout": "פלט סטנדרטי",
+        "stderr": "פלט שגיאות",
+        "return_value": "ערך החזרה",
+        "exception": "חריגה"
       },
       "tabs": {
-        "output": "[HE] Output",
-        "code": "[HE] Code",
-        "files": "[HE] Files"
+        "output": "פלט",
+        "code": "קוד",
+        "files": "קבצים"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[HE] URL Analysis Results",
-      "noData": "[HE] No URL analysis data available",
-      "summary": "[HE] Summary",
-      "metadata": "[HE] Document Info",
-      "processingTime": "[HE] Processing time",
-      "preview": "[HE] Preview",
-      "view": "[HE] View"
+      "title": "תוצאות ניתוח URL",
+      "noData": "אין נתוני ניתוח URL זמינים",
+      "summary": "סיכום",
+      "metadata": "מידע על המסמך",
+      "processingTime": "זמן עיבוד",
+      "preview": "תצוגה מקדימה",
+      "view": "צפה"
     },
     "configuration": {
-      "timeout": "[HE] Request timeout"
+      "timeout": "פסק זמן לבקשה"
     },
     "status": {
-      "pulling": "[HE] Fetching URL content...",
-      "analyzing": "[HE] Analyzing document...",
-      "complete": "[HE] Analysis complete"
+      "pulling": "מוריד תוכן URL...",
+      "analyzing": "מנתח מסמך...",
+      "complete": "הניתוח הושלם"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[HE] Knowledge Base Results",
-      "noData": "[HE] No knowledge base data available",
-      "documents": "[HE] documents",
-      "insights": "[HE] Key Insights",
-      "relevance": "[HE] Relevance",
-      "suggestions": "[HE] Suggestions"
+      "title": "תוצאות בסיס הידע",
+      "noData": "אין נתוני בסיס ידע זמינים",
+      "documents": "מסמכים",
+      "insights": "תובנות מרכזיות",
+      "relevance": "רלוונטיות",
+      "suggestions": "הצעות"
     },
     "configuration": {
-      "searchMode": "[HE] Search mode",
-      "threshold": "[HE] Relevance threshold"
+      "searchMode": "מצב חיפוש",
+      "threshold": "סף רלוונטיות"
     },
     "status": {
-      "searching": "[HE] Searching knowledge base...",
-      "analyzing": "[HE] Analyzing results..."
+      "searching": "מחפש בבסיס הידע...",
+      "analyzing": "מנתח תוצאות..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[HE] Document analysis results will be displayed here",
-      "title": "[HE] Analysis Results",
-      "noData": "[HE] No document analysis data available",
-      "documents": "[HE] documents",
-      "noDocuments": "[HE] No documents found",
-      "summary": "[HE] Summary",
-      "insights": "[HE] Key Insights",
-      "metadata": "[HE] Document Info",
-      "processingTime": "[HE] Processing time",
-      "searchTime": "[HE] Search time",
-      "relevance": "[HE] Relevance",
-      "cached": "[HE] Cached",
-      "preview": "[HE] Preview",
-      "view": "[HE] View",
-      "open": "[HE] Open",
-      "bookmark": "[HE] Bookmark",
-      "suggestions": "[HE] Suggestions",
+      "placeholder": "תוצאות ניתוח מסמכים יוצגו כאן",
+      "title": "תוצאות ניתוח",
+      "noData": "אין נתוני ניתוח מסמכים זמינים",
+      "documents": "מסמכים",
+      "noDocuments": "לא נמצאו מסמכים",
+      "summary": "סיכום",
+      "insights": "תובנות מרכזיות",
+      "metadata": "מידע על המסמך",
+      "processingTime": "זמן עיבוד",
+      "searchTime": "זמן חיפוש",
+      "relevance": "רלוונטיות",
+      "cached": "מושמר במטמון",
+      "preview": "תצוגה מקדימה",
+      "view": "צפה",
+      "open": "פתח",
+      "bookmark": "סימניה",
+      "suggestions": "הצעות",
       "tabs": {
-        "documents": "[HE] Documents",
-        "insights": "[HE] Insights",
-        "failed": "[HE] Failed"
+        "documents": "מסמכים",
+        "insights": "תובנות",
+        "failed": "נכשל"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[HE] Loading...",
-      "searching": "[HE] Searching...",
-      "processing": "[HE] Processing...",
-      "analyzing": "[HE] Analyzing..."
+      "default": "טוען...",
+      "searching": "מחפש...",
+      "processing": "מעבד...",
+      "analyzing": "מנתח..."
     },
     "buttons": {
-      "retry": "[HE] Retry",
-      "cancel": "[HE] Cancel",
-      "expand": "[HE] Expand",
-      "collapse": "[HE] Collapse",
-      "configure": "[HE] Configure",
-      "submit": "[HE] Submit"
+      "retry": "נסה שוב",
+      "cancel": "ביטול",
+      "expand": "הרחב",
+      "collapse": "צמצם",
+      "configure": "הגדר",
+      "submit": "שלח"
     },
     "labels": {
-      "priority": "[HE] Priority",
-      "estimatedTime": "[HE] Estimated time",
-      "availability": "[HE] Availability",
-      "configuration": "[HE] Configuration"
+      "priority": "עדיפות",
+      "estimatedTime": "זמן משוער",
+      "availability": "זמינות",
+      "configuration": "תצורה"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[HE] An unknown error occurred",
-      "network": "[HE] Network connection error",
-      "timeout": "[HE] Request timed out",
-      "unauthorized": "[HE] Access denied",
-      "rateLimit": "[HE] Rate limit exceeded",
-      "serviceUnavailable": "[HE] Service temporarily unavailable"
+      "unknown": "אירעה שגיאה לא ידועה",
+      "network": "שגיאת חיבור רשת",
+      "timeout": "הבקשה פסקה זמן",
+      "unauthorized": "גישה נדחתה",
+      "rateLimit": "חרג מגבלת הקצב",
+      "serviceUnavailable": "השירות אינו זמין זמנית"
     },
     "webSearch": {
-      "searchFailed": "[HE] Web search failed",
-      "invalidQuery": "[HE] Invalid search query"
+      "searchFailed": "חיפוש באינטרנט נכשל",
+      "invalidQuery": "שאילתת חיפוש לא תקינה"
     },
     "codeInterpreter": {
-      "executionFailed": "[HE] Code execution failed",
-      "invalidCode": "[HE] Invalid or unsafe code"
+      "executionFailed": "הרצת הקוד נכשלה",
+      "invalidCode": "קוד לא תקין או לא בטוח"
     },
     "urlPull": {
-      "fetchFailed": "[HE] Failed to fetch URL content",
-      "invalidUrl": "[HE] Invalid or inaccessible URL"
+      "fetchFailed": "נכשל בהורדת תוכן URL",
+      "invalidUrl": "URL לא תקין או לא נגיש"
     },
     "localKnowledge": {
-      "searchFailed": "[HE] Knowledge base search failed",
-      "noAccess": "[HE] No access to knowledge base"
+      "searchFailed": "חיפוש בבסיס הידע נכשל",
+      "noAccess": "אין גישה לבסיס הידע"
     }
   },
   "settings": {
-    "autoSubmit": "[HE] Auto-submit after processing",
-    "advancedOptions": "[HE] Advanced options",
+    "autoSubmit": "שליחה אוטומטית לאחר עיבוד",
+    "advancedOptions": "אפשרויות מתקדמות",
     "priority": {
-      "high": "[HE] High",
-      "medium": "[HE] Medium",
-      "low": "[HE] Low"
+      "high": "גבוה",
+      "medium": "בינוני",
+      "low": "נמוך"
     },
     "safeSearch": {
-      "off": "[HE] Off",
-      "moderate": "[HE] Moderate",
-      "strict": "[HE] Strict"
+      "off": "כבוי",
+      "moderate": "מתון",
+      "strict": "מחמיר"
     },
     "market": {
-      "any": "[HE] Any region",
-      "local": "[HE] Local region"
+      "any": "כל אזור",
+      "local": "אזור מקומי"
     }
   }
 }

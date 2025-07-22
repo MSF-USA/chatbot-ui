@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[NL] Web Search",
-      "code_interpreter": "[NL] Code Interpreter",
-      "url_pull": "[NL] URL Analysis",
-      "local_knowledge": "[NL] Knowledge Base",
-      "standard_chat": "[NL] Standard Chat",
-      "foundry": "[NL] Foundry",
-      "third_party": "[NL] Third Party"
+      "web_search": "Webzoeken",
+      "code_interpreter": "Code-interpreter",
+      "url_pull": "URL-analyse",
+      "local_knowledge": "Kennisbank",
+      "standard_chat": "Standaard chat",
+      "foundry": "Foundry",
+      "third_party": "Derde partij"
     },
     "error": {
-      "title": "[NL] Agent Error",
-      "unknown": "[NL] An unknown error occurred",
-      "retry": "[NL] Retry",
-      "fallback": "[NL] Use fallback"
+      "title": "Agent fout",
+      "unknown": "Er is een onbekende fout opgetreden",
+      "retry": "Opnieuw proberen",
+      "fallback": "Alternatief gebruiken"
     },
     "metadata": {
-      "processingTime": "[NL] Processing time",
-      "confidence": "[NL] Confidence",
-      "tokens": "[NL] Tokens used"
+      "processingTime": "Verwerkingstijd",
+      "confidence": "Vertrouwen",
+      "tokens": "Gebruikte tokens"
     },
     "resultsPanel": {
-      "placeholder": "[NL] Agent results will be displayed here"
+      "placeholder": "Agent resultaten worden hier weergegeven"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[NL] Searches the web for real-time information",
-      "code_interpreter": "[NL] Executes and analyzes code in multiple languages",
-      "url_pull": "[NL] Analyzes and extracts content from web pages",
-      "local_knowledge": "[NL] Searches internal knowledge base and documents",
-      "standard_chat": "[NL] Standard conversational AI without tools",
-      "foundry": "[NL] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[NL] Third-party agent or custom tool integration"
+      "web_search": "Webzoeken - Zoekt op het web naar realtime informatie",
+      "code_interpreter": "Code-interpreter - Voert code uit en analyseert in meerdere talen",
+      "url_pull": "URL-analyse - Analyseert en extraheert inhoud van webpagina's",
+      "local_knowledge": "Kennisbank - Zoekt in interne kennisbank en documenten",
+      "standard_chat": "Standaard chat - Standaard conversatie-AI zonder tools",
+      "foundry": "Foundry - Gebruikt Azure AI Foundry voor geavanceerde mogelijkheden",
+      "third_party": "Derde partij - Agent van derden of aangepaste tool-integratie"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[NL] Web search results will be displayed here",
-      "title": "[NL] Title",
-      "noResults": "[NL] No results found",
-      "noData": "[NL] No search data available",
-      "results": "[NL] results",
-      "confidence": "[NL] Relevance",
-      "relevance": "[NL] Relevance",
-      "source": "[NL] Source",
-      "citations": "[NL] Citations",
-      "cite": "[NL] Cite",
-      "open": "[NL] Open",
-      "openLink": "[NL] Open link in new tab",
-      "filters": "[NL] Filters",
-      "sortBy": "[NL] Sort by",
-      "filterBy": "[NL] Filter by",
-      "all": "[NL] All",
-      "date": "[NL] Date",
-      "query": "[NL] Query",
-      "searchTime": "[NL] Search time",
-      "cached": "[NL] Cached",
+      "placeholder": "Webzoekresultaten worden hier weergegeven",
+      "title": "Zoekresultaten",
+      "noResults": "Geen resultaten gevonden",
+      "noData": "Geen zoekgegevens beschikbaar",
+      "results": "resultaten",
+      "confidence": "Relevantie",
+      "relevance": "Relevantie",
+      "source": "Bron",
+      "citations": "Citaten",
+      "cite": "Citeren",
+      "open": "Openen",
+      "openLink": "Link openen in nieuw tabblad",
+      "filters": "Filters",
+      "sortBy": "Sorteren op",
+      "filterBy": "Filteren op",
+      "all": "Alle",
+      "date": "Datum",
+      "query": "Zoekopdracht",
+      "searchTime": "Zoektijd",
+      "cached": "In cache",
       "contentTypes": {
-        "webpage": "[NL] Web pages",
-        "news": "[NL] News",
-        "academic": "[NL] Academic",
-        "image": "[NL] Images",
-        "video": "[NL] Videos"
+        "webpage": "Webpagina's",
+        "news": "Nieuws",
+        "academic": "Academisch",
+        "image": "Afbeeldingen",
+        "video": "Video's"
       }
     },
     "configuration": {
-      "resultsCount": "[NL] Number of results",
-      "safeSearch": "[NL] Safe search",
-      "market": "[NL] Search market"
+      "resultsCount": "Aantal resultaten",
+      "safeSearch": "Veilig zoeken",
+      "market": "Zoekmarkt"
     },
     "status": {
-      "searching": "[NL] Searching the web...",
-      "optimizing": "[NL] Optimizing search query...",
-      "processing": "[NL] Processing search results..."
+      "searching": "Zoeken op het web...",
+      "optimizing": "Zoekopdracht optimaliseren...",
+      "processing": "Zoekresultaten verwerken..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[NL] Code execution results will be displayed here",
-      "title": "[NL] Execution Results",
-      "noData": "[NL] No code execution data available",
-      "output": "[NL] Output",
-      "errors": "[NL] Errors",
-      "logs": "[NL] Logs",
-      "executionTime": "[NL] Execution time",
-      "memoryUsage": "[NL] Memory usage",
-      "cpuUsage": "[NL] CPU usage",
-      "outputLines": "[NL] Output lines",
-      "executedCode": "[NL] Executed Code",
-      "download": "[NL] Download",
-      "noOutput": "[NL] No output generated",
-      "noFiles": "[NL] No files generated",
-      "outputSize": "[NL] Output size",
-      "unsupportedOutput": "[NL] Unsupported output format",
+      "placeholder": "Code-uitvoeringsresultaten worden hier weergegeven",
+      "title": "Uitvoeringsresultaten",
+      "noData": "Geen code-uitvoeringsgegevens beschikbaar",
+      "output": "Uitvoer",
+      "errors": "Fouten",
+      "logs": "Logboeken",
+      "executionTime": "Uitvoeringstijd",
+      "memoryUsage": "Geheugengebruik",
+      "cpuUsage": "CPU-gebruik",
+      "outputLines": "Uitvoerregels",
+      "executedCode": "Uitgevoerde code",
+      "download": "Downloaden",
+      "noOutput": "Geen uitvoer gegenereerd",
+      "noFiles": "Geen bestanden gegenereerd",
+      "outputSize": "Uitvoergrootte",
+      "unsupportedOutput": "Niet-ondersteunde uitvoerindeling",
       "status": {
-        "success": "[NL] Success",
-        "error": "[NL] Error",
-        "timeout": "[NL] Timeout",
-        "memory_limit": "[NL] Memory limit exceeded",
-        "security_violation": "[NL] Security violation",
-        "invalid_code": "[NL] Invalid code"
+        "success": "Succesvol",
+        "error": "Fout",
+        "timeout": "Time-out",
+        "memory_limit": "Geheugenlimiet overschreden",
+        "security_violation": "Beveiligingsschending",
+        "invalid_code": "Ongeldige code"
       },
       "outputTypes": {
-        "stdout": "[NL] Standard output",
-        "stderr": "[NL] Error output",
-        "return_value": "[NL] Return value",
-        "exception": "[NL] Exception"
+        "stdout": "Standaarduitvoer",
+        "stderr": "Foutuitvoer",
+        "return_value": "Retourwaarde",
+        "exception": "Uitzondering"
       },
       "tabs": {
-        "output": "[NL] Output",
-        "code": "[NL] Code",
-        "files": "[NL] Files"
+        "output": "Uitvoer",
+        "code": "Code",
+        "files": "Bestanden"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[NL] URL Analysis Results",
-      "noData": "[NL] No URL analysis data available",
-      "summary": "[NL] Summary",
-      "metadata": "[NL] Document Info",
-      "processingTime": "[NL] Processing time",
-      "preview": "[NL] Preview",
-      "view": "[NL] View"
+      "title": "URL-analyseresultaten",
+      "noData": "Geen URL-analysegegevens beschikbaar",
+      "summary": "Samenvatting",
+      "metadata": "Documentinformatie",
+      "processingTime": "Verwerkingstijd",
+      "preview": "Voorbeeld",
+      "view": "Bekijken"
     },
     "configuration": {
-      "timeout": "[NL] Request timeout"
+      "timeout": "Verzoek time-out"
     },
     "status": {
-      "pulling": "[NL] Fetching URL content...",
-      "analyzing": "[NL] Analyzing document...",
-      "complete": "[NL] Analysis complete"
+      "pulling": "URL-inhoud ophalen...",
+      "analyzing": "Document analyseren...",
+      "complete": "Analyse voltooid"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[NL] Knowledge Base Results",
-      "noData": "[NL] No knowledge base data available",
-      "documents": "[NL] documents",
-      "insights": "[NL] Key Insights",
-      "relevance": "[NL] Relevance",
-      "suggestions": "[NL] Suggestions"
+      "title": "Kennisbankresultaten",
+      "noData": "Geen kennisbankgegevens beschikbaar",
+      "documents": "documenten",
+      "insights": "Belangrijke inzichten",
+      "relevance": "Relevantie",
+      "suggestions": "Suggesties"
     },
     "configuration": {
-      "searchMode": "[NL] Search mode",
-      "threshold": "[NL] Relevance threshold"
+      "searchMode": "Zoekmodus",
+      "threshold": "Relevantiedrempel"
     },
     "status": {
-      "searching": "[NL] Searching knowledge base...",
-      "analyzing": "[NL] Analyzing results..."
+      "searching": "Kennisbank doorzoeken...",
+      "analyzing": "Resultaten analyseren..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[NL] Document analysis results will be displayed here",
-      "title": "[NL] Analysis Results",
-      "noData": "[NL] No document analysis data available",
-      "documents": "[NL] documents",
-      "noDocuments": "[NL] No documents found",
-      "summary": "[NL] Summary",
-      "insights": "[NL] Key Insights",
-      "metadata": "[NL] Document Info",
-      "processingTime": "[NL] Processing time",
-      "searchTime": "[NL] Search time",
-      "relevance": "[NL] Relevance",
-      "cached": "[NL] Cached",
-      "preview": "[NL] Preview",
-      "view": "[NL] View",
-      "open": "[NL] Open",
-      "bookmark": "[NL] Bookmark",
-      "suggestions": "[NL] Suggestions",
+      "placeholder": "Documentanalyseresultaten worden hier weergegeven",
+      "title": "Analyseresultaten",
+      "noData": "Geen documentanalysegegevens beschikbaar",
+      "documents": "documenten",
+      "noDocuments": "Geen documenten gevonden",
+      "summary": "Samenvatting",
+      "insights": "Belangrijke inzichten",
+      "metadata": "Documentinformatie",
+      "processingTime": "Verwerkingstijd",
+      "searchTime": "Zoektijd",
+      "relevance": "Relevantie",
+      "cached": "In cache",
+      "preview": "Voorbeeld",
+      "view": "Bekijken",
+      "open": "Openen",
+      "bookmark": "Bladwijzer",
+      "suggestions": "Suggesties",
       "tabs": {
-        "documents": "[NL] Documents",
-        "insights": "[NL] Insights",
-        "failed": "[NL] Failed"
+        "documents": "Documenten",
+        "insights": "Inzichten",
+        "failed": "Mislukt"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[NL] Loading...",
-      "searching": "[NL] Searching...",
-      "processing": "[NL] Processing...",
-      "analyzing": "[NL] Analyzing..."
+      "default": "Laden...",
+      "searching": "Zoeken...",
+      "processing": "Verwerken...",
+      "analyzing": "Analyseren..."
     },
     "buttons": {
-      "retry": "[NL] Retry",
-      "cancel": "[NL] Cancel",
-      "expand": "[NL] Expand",
-      "collapse": "[NL] Collapse",
-      "configure": "[NL] Configure",
-      "submit": "[NL] Submit"
+      "retry": "Opnieuw proberen",
+      "cancel": "Annuleren",
+      "expand": "Uitvouwen",
+      "collapse": "Samenvouwen",
+      "configure": "Configureren",
+      "submit": "Verzenden"
     },
     "labels": {
-      "priority": "[NL] Priority",
-      "estimatedTime": "[NL] Estimated time",
-      "availability": "[NL] Availability",
-      "configuration": "[NL] Configuration"
+      "priority": "Prioriteit",
+      "estimatedTime": "Geschatte tijd",
+      "availability": "Beschikbaarheid",
+      "configuration": "Configuratie"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[NL] An unknown error occurred",
-      "network": "[NL] Network connection error",
-      "timeout": "[NL] Request timed out",
-      "unauthorized": "[NL] Access denied",
-      "rateLimit": "[NL] Rate limit exceeded",
-      "serviceUnavailable": "[NL] Service temporarily unavailable"
+      "unknown": "Er is een onbekende fout opgetreden",
+      "network": "Netwerkverbindingsfout",
+      "timeout": "Verzoek verlopen",
+      "unauthorized": "Toegang geweigerd",
+      "rateLimit": "Snelheidslimiet overschreden",
+      "serviceUnavailable": "Service tijdelijk niet beschikbaar"
     },
     "webSearch": {
-      "searchFailed": "[NL] Web search failed",
-      "invalidQuery": "[NL] Invalid search query"
+      "searchFailed": "Webzoeken mislukt",
+      "invalidQuery": "Ongeldige zoekopdracht"
     },
     "codeInterpreter": {
-      "executionFailed": "[NL] Code execution failed",
-      "invalidCode": "[NL] Invalid or unsafe code"
+      "executionFailed": "Code-uitvoering mislukt",
+      "invalidCode": "Ongeldige of onveilige code"
     },
     "urlPull": {
-      "fetchFailed": "[NL] Failed to fetch URL content",
-      "invalidUrl": "[NL] Invalid or inaccessible URL"
+      "fetchFailed": "Kon URL-inhoud niet ophalen",
+      "invalidUrl": "Ongeldige of ontoegankelijke URL"
     },
     "localKnowledge": {
-      "searchFailed": "[NL] Knowledge base search failed",
-      "noAccess": "[NL] No access to knowledge base"
+      "searchFailed": "Kennisbank zoeken mislukt",
+      "noAccess": "Geen toegang tot kennisbank"
     }
   },
   "settings": {
-    "autoSubmit": "[NL] Auto-submit after processing",
-    "advancedOptions": "[NL] Advanced options",
+    "autoSubmit": "Automatisch verzenden na verwerking",
+    "advancedOptions": "Geavanceerde opties",
     "priority": {
-      "high": "[NL] High",
-      "medium": "[NL] Medium",
-      "low": "[NL] Low"
+      "high": "Hoog",
+      "medium": "Gemiddeld",
+      "low": "Laag"
     },
     "safeSearch": {
-      "off": "[NL] Off",
-      "moderate": "[NL] Moderate",
-      "strict": "[NL] Strict"
+      "off": "Uit",
+      "moderate": "Gematigd",
+      "strict": "Strikt"
     },
     "market": {
-      "any": "[NL] Any region",
-      "local": "[NL] Local region"
+      "any": "Elke regio",
+      "local": "Lokale regio"
     }
   }
 }

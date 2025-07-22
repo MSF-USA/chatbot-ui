@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[CA] Web Search",
-      "code_interpreter": "[CA] Code Interpreter",
-      "url_pull": "[CA] URL Analysis",
-      "local_knowledge": "[CA] Knowledge Base",
-      "standard_chat": "[CA] Standard Chat",
-      "foundry": "[CA] Foundry",
-      "third_party": "[CA] Third Party"
+      "web_search": "Cerca web",
+      "code_interpreter": "Intèrpret de codi",
+      "url_pull": "Anàlisi d'URL",
+      "local_knowledge": "Base de coneixement",
+      "standard_chat": "Xat estàndard",
+      "foundry": "Foneria",
+      "third_party": "Tercer"
     },
     "error": {
-      "title": "[CA] Agent Error",
-      "unknown": "[CA] An unknown error occurred",
-      "retry": "[CA] Retry",
-      "fallback": "[CA] Use fallback"
+      "title": "Error d'agent",
+      "unknown": "S'ha produït un error desconegut",
+      "retry": "Torna-ho a provar",
+      "fallback": "Utilitza l'alternativa"
     },
     "metadata": {
-      "processingTime": "[CA] Processing time",
-      "confidence": "[CA] Confidence",
-      "tokens": "[CA] Tokens used"
+      "processingTime": "Temps de processament",
+      "confidence": "Confiança",
+      "tokens": "Fitxes utilitzades"
     },
     "resultsPanel": {
-      "placeholder": "[CA] Agent results will be displayed here"
+      "placeholder": "Els resultats de l'agent es mostraran aquí"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[CA] Searches the web for real-time information",
-      "code_interpreter": "[CA] Executes and analyzes code in multiple languages",
-      "url_pull": "[CA] Analyzes and extracts content from web pages",
-      "local_knowledge": "[CA] Searches internal knowledge base and documents",
-      "standard_chat": "[CA] Standard conversational AI without tools",
-      "foundry": "[CA] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[CA] Third-party agent or custom tool integration"
+      "web_search": "Cerca web - Cerca al web informació en temps real",
+      "code_interpreter": "Intèrpret de codi - Executa i analitza codi en diversos idiomes",
+      "url_pull": "Anàlisi d'URL - Analitza i extreu contingut de pàgines web",
+      "local_knowledge": "Base de coneixement - Cerca a la base de coneixement intern i documents",
+      "standard_chat": "Xat estàndard - IA conversacional estàndard sense eines",
+      "foundry": "Foneria - Utilitza Azure AI Foundry per a capacitats avançades",
+      "third_party": "Tercer - Agent de tercers o integració d'eines personalitzades"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[CA] Web search results will be displayed here",
-      "title": "[CA] Title",
-      "noResults": "[CA] No results found",
-      "noData": "[CA] No search data available",
-      "results": "[CA] results",
-      "confidence": "[CA] Relevance",
-      "relevance": "[CA] Relevance",
-      "source": "[CA] Source",
-      "citations": "[CA] Citations",
-      "cite": "[CA] Cite",
-      "open": "[CA] Open",
-      "openLink": "[CA] Open link in new tab",
-      "filters": "[CA] Filters",
-      "sortBy": "[CA] Sort by",
-      "filterBy": "[CA] Filter by",
-      "all": "[CA] All",
-      "date": "[CA] Date",
-      "query": "[CA] Query",
-      "searchTime": "[CA] Search time",
-      "cached": "[CA] Cached",
+      "placeholder": "Els resultats de la cerca web es mostraran aquí",
+      "title": "Resultats de cerca",
+      "noResults": "No s'han trobat resultats",
+      "noData": "No hi ha dades de cerca disponibles",
+      "results": "resultats",
+      "confidence": "Relevància",
+      "relevance": "Relevància",
+      "source": "Font",
+      "citations": "Citacions",
+      "cite": "Citar",
+      "open": "Obrir",
+      "openLink": "Obrir enllaç en nova pestanya",
+      "filters": "Filtres",
+      "sortBy": "Ordenar per",
+      "filterBy": "Filtrar per",
+      "all": "Tot",
+      "date": "Data",
+      "query": "Consulta",
+      "searchTime": "Temps de cerca",
+      "cached": "En memòria cau",
       "contentTypes": {
-        "webpage": "[CA] Web pages",
-        "news": "[CA] News",
-        "academic": "[CA] Academic",
-        "image": "[CA] Images",
-        "video": "[CA] Videos"
+        "webpage": "Pàgines web",
+        "news": "Notícies",
+        "academic": "Acadèmic",
+        "image": "Imatges",
+        "video": "Vídeos"
       }
     },
     "configuration": {
-      "resultsCount": "[CA] Number of results",
-      "safeSearch": "[CA] Safe search",
-      "market": "[CA] Search market"
+      "resultsCount": "Nombre de resultats",
+      "safeSearch": "Cerca segura",
+      "market": "Mercat de cerca"
     },
     "status": {
-      "searching": "[CA] Searching the web...",
-      "optimizing": "[CA] Optimizing search query...",
-      "processing": "[CA] Processing search results..."
+      "searching": "Cercant al web...",
+      "optimizing": "Optimitzant la consulta de cerca...",
+      "processing": "Processant els resultats de cerca..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[CA] Code execution results will be displayed here",
-      "title": "[CA] Execution Results",
-      "noData": "[CA] No code execution data available",
-      "output": "[CA] Output",
-      "errors": "[CA] Errors",
-      "logs": "[CA] Logs",
-      "executionTime": "[CA] Execution time",
-      "memoryUsage": "[CA] Memory usage",
-      "cpuUsage": "[CA] CPU usage",
-      "outputLines": "[CA] Output lines",
-      "executedCode": "[CA] Executed Code",
-      "download": "[CA] Download",
-      "noOutput": "[CA] No output generated",
-      "noFiles": "[CA] No files generated",
-      "outputSize": "[CA] Output size",
-      "unsupportedOutput": "[CA] Unsupported output format",
+      "placeholder": "Els resultats d'execució del codi es mostraran aquí",
+      "title": "Resultats d'execució",
+      "noData": "No hi ha dades d'execució de codi disponibles",
+      "output": "Sortida",
+      "errors": "Errors",
+      "logs": "Registres",
+      "executionTime": "Temps d'execució",
+      "memoryUsage": "Ús de memòria",
+      "cpuUsage": "Ús de CPU",
+      "outputLines": "Línies de sortida",
+      "executedCode": "Codi executat",
+      "download": "Descarregar",
+      "noOutput": "No s'ha generat cap sortida",
+      "noFiles": "No s'ha generat cap fitxer",
+      "outputSize": "Mida de la sortida",
+      "unsupportedOutput": "Format de sortida no compatible",
       "status": {
-        "success": "[CA] Success",
-        "error": "[CA] Error",
-        "timeout": "[CA] Timeout",
-        "memory_limit": "[CA] Memory limit exceeded",
-        "security_violation": "[CA] Security violation",
-        "invalid_code": "[CA] Invalid code"
+        "success": "Èxit",
+        "error": "Error",
+        "timeout": "Temps d'espera esgotat",
+        "memory_limit": "Límit de memòria superat",
+        "security_violation": "Violació de seguretat",
+        "invalid_code": "Codi invàlid"
       },
       "outputTypes": {
-        "stdout": "[CA] Standard output",
-        "stderr": "[CA] Error output",
-        "return_value": "[CA] Return value",
-        "exception": "[CA] Exception"
+        "stdout": "Sortida estàndard",
+        "stderr": "Sortida d'error",
+        "return_value": "Valor de retorn",
+        "exception": "Excepció"
       },
       "tabs": {
-        "output": "[CA] Output",
-        "code": "[CA] Code",
-        "files": "[CA] Files"
+        "output": "Sortida",
+        "code": "Codi",
+        "files": "Fitxers"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[CA] URL Analysis Results",
-      "noData": "[CA] No URL analysis data available",
-      "summary": "[CA] Summary",
-      "metadata": "[CA] Document Info",
-      "processingTime": "[CA] Processing time",
-      "preview": "[CA] Preview",
-      "view": "[CA] View"
+      "title": "Resultats d'anàlisi d'URL",
+      "noData": "No hi ha dades d'anàlisi d'URL disponibles",
+      "summary": "Resum",
+      "metadata": "Informació del document",
+      "processingTime": "Temps de processament",
+      "preview": "Vista prèvia",
+      "view": "Veure"
     },
     "configuration": {
-      "timeout": "[CA] Request timeout"
+      "timeout": "Temps d'espera de la sol·licitud"
     },
     "status": {
-      "pulling": "[CA] Fetching URL content...",
-      "analyzing": "[CA] Analyzing document...",
-      "complete": "[CA] Analysis complete"
+      "pulling": "Obtenint contingut de l'URL...",
+      "analyzing": "Analitzant document...",
+      "complete": "Anàlisi complet"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[CA] Knowledge Base Results",
-      "noData": "[CA] No knowledge base data available",
-      "documents": "[CA] documents",
-      "insights": "[CA] Key Insights",
-      "relevance": "[CA] Relevance",
-      "suggestions": "[CA] Suggestions"
+      "title": "Resultats de la base de coneixement",
+      "noData": "No hi ha dades de la base de coneixement disponibles",
+      "documents": "documents",
+      "insights": "Coneixements clau",
+      "relevance": "Relevància",
+      "suggestions": "Suggeriments"
     },
     "configuration": {
-      "searchMode": "[CA] Search mode",
-      "threshold": "[CA] Relevance threshold"
+      "searchMode": "Mode de cerca",
+      "threshold": "Llindar de relevància"
     },
     "status": {
-      "searching": "[CA] Searching knowledge base...",
-      "analyzing": "[CA] Analyzing results..."
+      "searching": "Cercant a la base de coneixement...",
+      "analyzing": "Analitzant resultats..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[CA] Document analysis results will be displayed here",
-      "title": "[CA] Analysis Results",
-      "noData": "[CA] No document analysis data available",
-      "documents": "[CA] documents",
-      "noDocuments": "[CA] No documents found",
-      "summary": "[CA] Summary",
-      "insights": "[CA] Key Insights",
-      "metadata": "[CA] Document Info",
-      "processingTime": "[CA] Processing time",
-      "searchTime": "[CA] Search time",
-      "relevance": "[CA] Relevance",
-      "cached": "[CA] Cached",
-      "preview": "[CA] Preview",
-      "view": "[CA] View",
-      "open": "[CA] Open",
-      "bookmark": "[CA] Bookmark",
-      "suggestions": "[CA] Suggestions",
+      "placeholder": "Els resultats d'anàlisi de documents es mostraran aquí",
+      "title": "Resultats d'anàlisi",
+      "noData": "No hi ha dades d'anàlisi de documents disponibles",
+      "documents": "documents",
+      "noDocuments": "No s'han trobat documents",
+      "summary": "Resum",
+      "insights": "Coneixements clau",
+      "metadata": "Informació del document",
+      "processingTime": "Temps de processament",
+      "searchTime": "Temps de cerca",
+      "relevance": "Relevància",
+      "cached": "En memòria cau",
+      "preview": "Vista prèvia",
+      "view": "Veure",
+      "open": "Obrir",
+      "bookmark": "Marcador",
+      "suggestions": "Suggeriments",
       "tabs": {
-        "documents": "[CA] Documents",
-        "insights": "[CA] Insights",
-        "failed": "[CA] Failed"
+        "documents": "Documents",
+        "insights": "Coneixements",
+        "failed": "Fallit"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[CA] Loading...",
-      "searching": "[CA] Searching...",
-      "processing": "[CA] Processing...",
-      "analyzing": "[CA] Analyzing..."
+      "default": "Carregant...",
+      "searching": "Cercant...",
+      "processing": "Processant...",
+      "analyzing": "Analitzant..."
     },
     "buttons": {
-      "retry": "[CA] Retry",
-      "cancel": "[CA] Cancel",
-      "expand": "[CA] Expand",
-      "collapse": "[CA] Collapse",
-      "configure": "[CA] Configure",
-      "submit": "[CA] Submit"
+      "retry": "Tornar a provar",
+      "cancel": "Cancel·lar",
+      "expand": "Expandir",
+      "collapse": "Contraure",
+      "configure": "Configurar",
+      "submit": "Enviar"
     },
     "labels": {
-      "priority": "[CA] Priority",
-      "estimatedTime": "[CA] Estimated time",
-      "availability": "[CA] Availability",
-      "configuration": "[CA] Configuration"
+      "priority": "Prioritat",
+      "estimatedTime": "Temps estimat",
+      "availability": "Disponibilitat",
+      "configuration": "Configuració"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[CA] An unknown error occurred",
-      "network": "[CA] Network connection error",
-      "timeout": "[CA] Request timed out",
-      "unauthorized": "[CA] Access denied",
-      "rateLimit": "[CA] Rate limit exceeded",
-      "serviceUnavailable": "[CA] Service temporarily unavailable"
+      "unknown": "S'ha produït un error desconegut",
+      "network": "Error de connexió de xarxa",
+      "timeout": "La sol·licitud ha superat el temps d'espera",
+      "unauthorized": "Accés denegat",
+      "rateLimit": "Límit de velocitat superat",
+      "serviceUnavailable": "Servei temporalment no disponible"
     },
     "webSearch": {
-      "searchFailed": "[CA] Web search failed",
-      "invalidQuery": "[CA] Invalid search query"
+      "searchFailed": "La cerca web ha fallat",
+      "invalidQuery": "Consulta de cerca invàlida"
     },
     "codeInterpreter": {
-      "executionFailed": "[CA] Code execution failed",
-      "invalidCode": "[CA] Invalid or unsafe code"
+      "executionFailed": "L'execució del codi ha fallat",
+      "invalidCode": "Codi invàlid o insegur"
     },
     "urlPull": {
-      "fetchFailed": "[CA] Failed to fetch URL content",
-      "invalidUrl": "[CA] Invalid or inaccessible URL"
+      "fetchFailed": "Error en obtenir el contingut de l'URL",
+      "invalidUrl": "URL invàlid o inaccessible"
     },
     "localKnowledge": {
-      "searchFailed": "[CA] Knowledge base search failed",
-      "noAccess": "[CA] No access to knowledge base"
+      "searchFailed": "La cerca a la base de coneixement ha fallat",
+      "noAccess": "Sense accés a la base de coneixement"
     }
   },
   "settings": {
-    "autoSubmit": "[CA] Auto-submit after processing",
-    "advancedOptions": "[CA] Advanced options",
+    "autoSubmit": "Enviament automàtic després del processament",
+    "advancedOptions": "Opcions avançades",
     "priority": {
-      "high": "[CA] High",
-      "medium": "[CA] Medium",
-      "low": "[CA] Low"
+      "high": "Alta",
+      "medium": "Mitjana",
+      "low": "Baixa"
     },
     "safeSearch": {
-      "off": "[CA] Off",
-      "moderate": "[CA] Moderate",
-      "strict": "[CA] Strict"
+      "off": "Desactivat",
+      "moderate": "Moderat",
+      "strict": "Estricte"
     },
     "market": {
-      "any": "[CA] Any region",
-      "local": "[CA] Local region"
+      "any": "Qualsevol regió",
+      "local": "Regió local"
     }
   }
 }

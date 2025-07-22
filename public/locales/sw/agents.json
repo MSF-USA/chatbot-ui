@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[SW] Web Search",
-      "code_interpreter": "[SW] Code Interpreter",
-      "url_pull": "[SW] URL Analysis",
-      "local_knowledge": "[SW] Knowledge Base",
-      "standard_chat": "[SW] Standard Chat",
-      "foundry": "[SW] Foundry",
-      "third_party": "[SW] Third Party"
+      "web_search": "Utafutaji wa Wavuti",
+      "code_interpreter": "Mkalimani wa Msimbo",
+      "url_pull": "Uchambuzi wa URL",
+      "local_knowledge": "Msingi wa Maarifa",
+      "standard_chat": "Gumzo la Kawaida",
+      "foundry": "Foundry",
+      "third_party": "Mtu wa Tatu"
     },
     "error": {
-      "title": "[SW] Agent Error",
-      "unknown": "[SW] An unknown error occurred",
-      "retry": "[SW] Retry",
-      "fallback": "[SW] Use fallback"
+      "title": "Kosa la Wakala",
+      "unknown": "Kosa lisilojulikana limetokea",
+      "retry": "Jaribu tena",
+      "fallback": "Tumia mbadala"
     },
     "metadata": {
-      "processingTime": "[SW] Processing time",
-      "confidence": "[SW] Confidence",
-      "tokens": "[SW] Tokens used"
+      "processingTime": "Muda wa uchakataji",
+      "confidence": "Uhakika",
+      "tokens": "Alama zilizotumika"
     },
     "resultsPanel": {
-      "placeholder": "[SW] Agent results will be displayed here"
+      "placeholder": "Matokeo ya wakala yataonyeshwa hapa"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[SW] Searches the web for real-time information",
-      "code_interpreter": "[SW] Executes and analyzes code in multiple languages",
-      "url_pull": "[SW] Analyzes and extracts content from web pages",
-      "local_knowledge": "[SW] Searches internal knowledge base and documents",
-      "standard_chat": "[SW] Standard conversational AI without tools",
-      "foundry": "[SW] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[SW] Third-party agent or custom tool integration"
+      "web_search": "Utafutaji wa Wavuti - Hutafuta kwenye wavuti kwa taarifa za wakati halisi",
+      "code_interpreter": "Mkalimani wa Msimbo - Hutekeleza na kuchambua msimbo katika lugha nyingi",
+      "url_pull": "Uchambuzi wa URL - Huchambua na kutoa maudhui kutoka kurasa za wavuti",
+      "local_knowledge": "Msingi wa Maarifa - Hutafuta katika msingi wa maarifa ya ndani na nyaraka",
+      "standard_chat": "Gumzo la Kawaida - AI ya mazungumzo ya kawaida bila zana",
+      "foundry": "Foundry - Hutumia Azure AI Foundry kwa uwezo wa hali ya juu",
+      "third_party": "Mtu wa Tatu - Wakala wa mtu wa tatu au ujumuishaji wa zana maalum"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[SW] Web search results will be displayed here",
-      "title": "[SW] Title",
-      "noResults": "[SW] No results found",
-      "noData": "[SW] No search data available",
-      "results": "[SW] results",
-      "confidence": "[SW] Relevance",
-      "relevance": "[SW] Relevance",
-      "source": "[SW] Source",
-      "citations": "[SW] Citations",
-      "cite": "[SW] Cite",
-      "open": "[SW] Open",
-      "openLink": "[SW] Open link in new tab",
-      "filters": "[SW] Filters",
-      "sortBy": "[SW] Sort by",
-      "filterBy": "[SW] Filter by",
-      "all": "[SW] All",
-      "date": "[SW] Date",
-      "query": "[SW] Query",
-      "searchTime": "[SW] Search time",
-      "cached": "[SW] Cached",
+      "placeholder": "Matokeo ya utafutaji wa wavuti yataonyeshwa hapa",
+      "title": "Matokeo ya Utafutaji",
+      "noResults": "Hakuna matokeo yaliyopatikana",
+      "noData": "Hakuna data ya utafutaji iliyopatikana",
+      "results": "matokeo",
+      "confidence": "Uhusiano",
+      "relevance": "Uhusiano",
+      "source": "Chanzo",
+      "citations": "Nukuu",
+      "cite": "Nukuu",
+      "open": "Fungua",
+      "openLink": "Fungua kiungo katika kichupo kipya",
+      "filters": "Vichujio",
+      "sortBy": "Panga kwa",
+      "filterBy": "Chuja kwa",
+      "all": "Zote",
+      "date": "Tarehe",
+      "query": "Hoja",
+      "searchTime": "Muda wa utafutaji",
+      "cached": "Imehifadhiwa",
       "contentTypes": {
-        "webpage": "[SW] Web pages",
-        "news": "[SW] News",
-        "academic": "[SW] Academic",
-        "image": "[SW] Images",
-        "video": "[SW] Videos"
+        "webpage": "Kurasa za wavuti",
+        "news": "Habari",
+        "academic": "Kitaaluma",
+        "image": "Picha",
+        "video": "Video"
       }
     },
     "configuration": {
-      "resultsCount": "[SW] Number of results",
-      "safeSearch": "[SW] Safe search",
-      "market": "[SW] Search market"
+      "resultsCount": "Idadi ya matokeo",
+      "safeSearch": "Utafutaji salama",
+      "market": "Soko la utafutaji"
     },
     "status": {
-      "searching": "[SW] Searching the web...",
-      "optimizing": "[SW] Optimizing search query...",
-      "processing": "[SW] Processing search results..."
+      "searching": "Kutafuta kwenye wavuti...",
+      "optimizing": "Kuboresha hoja ya utafutaji...",
+      "processing": "Kuchakata matokeo ya utafutaji..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[SW] Code execution results will be displayed here",
-      "title": "[SW] Execution Results",
-      "noData": "[SW] No code execution data available",
-      "output": "[SW] Output",
-      "errors": "[SW] Errors",
-      "logs": "[SW] Logs",
-      "executionTime": "[SW] Execution time",
-      "memoryUsage": "[SW] Memory usage",
-      "cpuUsage": "[SW] CPU usage",
-      "outputLines": "[SW] Output lines",
-      "executedCode": "[SW] Executed Code",
-      "download": "[SW] Download",
-      "noOutput": "[SW] No output generated",
-      "noFiles": "[SW] No files generated",
-      "outputSize": "[SW] Output size",
-      "unsupportedOutput": "[SW] Unsupported output format",
+      "placeholder": "Matokeo ya utekelezaji wa msimbo yataonyeshwa hapa",
+      "title": "Matokeo ya Utekelezaji",
+      "noData": "Hakuna data ya utekelezaji wa msimbo iliyopatikana",
+      "output": "Matokeo",
+      "errors": "Makosa",
+      "logs": "Kumbukumbu",
+      "executionTime": "Muda wa utekelezaji",
+      "memoryUsage": "Utumiaji wa kumbukumbu",
+      "cpuUsage": "Utumiaji wa CPU",
+      "outputLines": "Mistari ya matokeo",
+      "executedCode": "Msimbo Uliotekelezwa",
+      "download": "Pakua",
+      "noOutput": "Hakuna matokeo yaliyozalishwa",
+      "noFiles": "Hakuna faili zilizozalishwa",
+      "outputSize": "Ukubwa wa matokeo",
+      "unsupportedOutput": "Umbizo la matokeo lisilotumika",
       "status": {
-        "success": "[SW] Success",
-        "error": "[SW] Error",
-        "timeout": "[SW] Timeout",
-        "memory_limit": "[SW] Memory limit exceeded",
-        "security_violation": "[SW] Security violation",
-        "invalid_code": "[SW] Invalid code"
+        "success": "Mafanikio",
+        "error": "Kosa",
+        "timeout": "Muda umekwisha",
+        "memory_limit": "Kikomo cha kumbukumbu kimezidiwa",
+        "security_violation": "Ukiukaji wa usalama",
+        "invalid_code": "Msimbo batili"
       },
       "outputTypes": {
-        "stdout": "[SW] Standard output",
-        "stderr": "[SW] Error output",
-        "return_value": "[SW] Return value",
-        "exception": "[SW] Exception"
+        "stdout": "Matokeo ya kawaida",
+        "stderr": "Matokeo ya makosa",
+        "return_value": "Thamani ya kurudi",
+        "exception": "Ubaguzi"
       },
       "tabs": {
-        "output": "[SW] Output",
-        "code": "[SW] Code",
-        "files": "[SW] Files"
+        "output": "Matokeo",
+        "code": "Msimbo",
+        "files": "Faili"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[SW] URL Analysis Results",
-      "noData": "[SW] No URL analysis data available",
-      "summary": "[SW] Summary",
-      "metadata": "[SW] Document Info",
-      "processingTime": "[SW] Processing time",
-      "preview": "[SW] Preview",
-      "view": "[SW] View"
+      "title": "Matokeo ya Uchambuzi wa URL",
+      "noData": "Hakuna data ya uchambuzi wa URL iliyopatikana",
+      "summary": "Muhtasari",
+      "metadata": "Taarifa za Waraka",
+      "processingTime": "Muda wa uchakataji",
+      "preview": "Hakiki",
+      "view": "Tazama"
     },
     "configuration": {
-      "timeout": "[SW] Request timeout"
+      "timeout": "Muda wa ombi umekwisha"
     },
     "status": {
-      "pulling": "[SW] Fetching URL content...",
-      "analyzing": "[SW] Analyzing document...",
-      "complete": "[SW] Analysis complete"
+      "pulling": "Kuchukua maudhui ya URL...",
+      "analyzing": "Kuchambua waraka...",
+      "complete": "Uchambuzi umekamilika"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[SW] Knowledge Base Results",
-      "noData": "[SW] No knowledge base data available",
-      "documents": "[SW] documents",
-      "insights": "[SW] Key Insights",
-      "relevance": "[SW] Relevance",
-      "suggestions": "[SW] Suggestions"
+      "title": "Matokeo ya Msingi wa Maarifa",
+      "noData": "Hakuna data ya msingi wa maarifa iliyopatikana",
+      "documents": "nyaraka",
+      "insights": "Ufahamu Muhimu",
+      "relevance": "Uhusiano",
+      "suggestions": "Mapendekezo"
     },
     "configuration": {
-      "searchMode": "[SW] Search mode",
-      "threshold": "[SW] Relevance threshold"
+      "searchMode": "Hali ya utafutaji",
+      "threshold": "Kizingiti cha uhusiano"
     },
     "status": {
-      "searching": "[SW] Searching knowledge base...",
-      "analyzing": "[SW] Analyzing results..."
+      "searching": "Kutafuta katika msingi wa maarifa...",
+      "analyzing": "Kuchambua matokeo..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[SW] Document analysis results will be displayed here",
-      "title": "[SW] Analysis Results",
-      "noData": "[SW] No document analysis data available",
-      "documents": "[SW] documents",
-      "noDocuments": "[SW] No documents found",
-      "summary": "[SW] Summary",
-      "insights": "[SW] Key Insights",
-      "metadata": "[SW] Document Info",
-      "processingTime": "[SW] Processing time",
-      "searchTime": "[SW] Search time",
-      "relevance": "[SW] Relevance",
-      "cached": "[SW] Cached",
-      "preview": "[SW] Preview",
-      "view": "[SW] View",
-      "open": "[SW] Open",
-      "bookmark": "[SW] Bookmark",
-      "suggestions": "[SW] Suggestions",
+      "placeholder": "Matokeo ya uchambuzi wa waraka yataonyeshwa hapa",
+      "title": "Matokeo ya Uchambuzi",
+      "noData": "Hakuna data ya uchambuzi wa waraka iliyopatikana",
+      "documents": "nyaraka",
+      "noDocuments": "Hakuna nyaraka zilizopatikana",
+      "summary": "Muhtasari",
+      "insights": "Ufahamu Muhimu",
+      "metadata": "Taarifa za Waraka",
+      "processingTime": "Muda wa uchakataji",
+      "searchTime": "Muda wa utafutaji",
+      "relevance": "Uhusiano",
+      "cached": "Imehifadhiwa",
+      "preview": "Hakiki",
+      "view": "Tazama",
+      "open": "Fungua",
+      "bookmark": "Alama ya kitabu",
+      "suggestions": "Mapendekezo",
       "tabs": {
-        "documents": "[SW] Documents",
-        "insights": "[SW] Insights",
-        "failed": "[SW] Failed"
+        "documents": "Nyaraka",
+        "insights": "Ufahamu",
+        "failed": "Imeshindwa"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[SW] Loading...",
-      "searching": "[SW] Searching...",
-      "processing": "[SW] Processing...",
-      "analyzing": "[SW] Analyzing..."
+      "default": "Inapakia...",
+      "searching": "Inatafuta...",
+      "processing": "Inachakata...",
+      "analyzing": "Inachambua..."
     },
     "buttons": {
-      "retry": "[SW] Retry",
-      "cancel": "[SW] Cancel",
-      "expand": "[SW] Expand",
-      "collapse": "[SW] Collapse",
-      "configure": "[SW] Configure",
-      "submit": "[SW] Submit"
+      "retry": "Jaribu tena",
+      "cancel": "Ghairi",
+      "expand": "Panua",
+      "collapse": "Kunja",
+      "configure": "Sanidi",
+      "submit": "Wasilisha"
     },
     "labels": {
-      "priority": "[SW] Priority",
-      "estimatedTime": "[SW] Estimated time",
-      "availability": "[SW] Availability",
-      "configuration": "[SW] Configuration"
+      "priority": "Kipaumbele",
+      "estimatedTime": "Muda uliokadiriwa",
+      "availability": "Upatikanaji",
+      "configuration": "Usanidi"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[SW] An unknown error occurred",
-      "network": "[SW] Network connection error",
-      "timeout": "[SW] Request timed out",
-      "unauthorized": "[SW] Access denied",
-      "rateLimit": "[SW] Rate limit exceeded",
-      "serviceUnavailable": "[SW] Service temporarily unavailable"
+      "unknown": "Kosa lisilojulikana limetokea",
+      "network": "Kosa la muunganisho wa mtandao",
+      "timeout": "Ombi limechelewa",
+      "unauthorized": "Ufikiaji umekataliwa",
+      "rateLimit": "Kikomo cha kiwango kimezidiwa",
+      "serviceUnavailable": "Huduma haipatikani kwa muda"
     },
     "webSearch": {
-      "searchFailed": "[SW] Web search failed",
-      "invalidQuery": "[SW] Invalid search query"
+      "searchFailed": "Utafutaji wa wavuti umeshindwa",
+      "invalidQuery": "Hoja ya utafutaji batili"
     },
     "codeInterpreter": {
-      "executionFailed": "[SW] Code execution failed",
-      "invalidCode": "[SW] Invalid or unsafe code"
+      "executionFailed": "Utekelezaji wa msimbo umeshindwa",
+      "invalidCode": "Msimbo batili au usio salama"
     },
     "urlPull": {
-      "fetchFailed": "[SW] Failed to fetch URL content",
-      "invalidUrl": "[SW] Invalid or inaccessible URL"
+      "fetchFailed": "Imeshindwa kuchukua maudhui ya URL",
+      "invalidUrl": "URL batili au isiyoweza kufikiwa"
     },
     "localKnowledge": {
-      "searchFailed": "[SW] Knowledge base search failed",
-      "noAccess": "[SW] No access to knowledge base"
+      "searchFailed": "Utafutaji wa msingi wa maarifa umeshindwa",
+      "noAccess": "Hakuna ufikiaji wa msingi wa maarifa"
     }
   },
   "settings": {
-    "autoSubmit": "[SW] Auto-submit after processing",
-    "advancedOptions": "[SW] Advanced options",
+    "autoSubmit": "Wasilisha kiotomatiki baada ya uchakataji",
+    "advancedOptions": "Chaguo za kina",
     "priority": {
-      "high": "[SW] High",
-      "medium": "[SW] Medium",
-      "low": "[SW] Low"
+      "high": "Juu",
+      "medium": "Wastani",
+      "low": "Chini"
     },
     "safeSearch": {
-      "off": "[SW] Off",
-      "moderate": "[SW] Moderate",
-      "strict": "[SW] Strict"
+      "off": "Imezimwa",
+      "moderate": "Wastani",
+      "strict": "Mkali"
     },
     "market": {
-      "any": "[SW] Any region",
-      "local": "[SW] Local region"
+      "any": "Mkoa wowote",
+      "local": "Mkoa wa eneo"
     }
   }
 }

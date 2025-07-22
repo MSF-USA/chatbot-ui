@@ -3,8 +3,8 @@
     "agentTypes": {
       "web_search": "ウェブ検索",
       "code_interpreter": "コードインタープリター",
-      "url_pull": "URL解析",
-      "local_knowledge": "ナレッジベース",
+      "url_pull": "URL分析",
+      "local_knowledge": "知識ベース",
       "standard_chat": "標準チャット",
       "foundry": "Foundry",
       "third_party": "サードパーティ"
@@ -13,12 +13,12 @@
       "title": "エージェントエラー",
       "unknown": "不明なエラーが発生しました",
       "retry": "再試行",
-      "fallback": "フォールバックを使用"
+      "fallback": "代替を使用"
     },
     "metadata": {
       "processingTime": "処理時間",
       "confidence": "信頼度",
-      "tokens": "使用トークン"
+      "tokens": "使用されたトークン"
     },
     "resultsPanel": {
       "placeholder": "エージェントの結果がここに表示されます"
@@ -26,19 +26,19 @@
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[JA] Searches the web for real-time information",
-      "code_interpreter": "[JA] Executes and analyzes code in multiple languages",
-      "url_pull": "[JA] Analyzes and extracts content from web pages",
-      "local_knowledge": "[JA] Searches internal knowledge base and documents",
-      "standard_chat": "[JA] Standard conversational AI without tools",
-      "foundry": "[JA] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[JA] Third-party agent or custom tool integration"
+      "web_search": "ウェブ検索 - リアルタイム情報のためにウェブを検索",
+      "code_interpreter": "コードインタープリター - 複数の言語でコードを実行および分析",
+      "url_pull": "URL分析 - ウェブページからコンテンツを分析および抽出",
+      "local_knowledge": "知識ベース - 内部知識ベースとドキュメントを検索",
+      "standard_chat": "標準チャット - ツールなしの標準的な会話型AI",
+      "foundry": "Foundry - 高度な機能のためにAzure AI Foundryを使用",
+      "third_party": "サードパーティ - サードパーティエージェントまたはカスタムツール統合"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[JA] Web search results will be displayed here",
-      "title": "タイトル",
+      "placeholder": "ウェブ検索結果がここに表示されます",
+      "title": "検索結果",
       "noResults": "結果が見つかりません",
       "noData": "検索データがありません",
       "results": "結果",
@@ -51,130 +51,130 @@
       "openLink": "新しいタブでリンクを開く",
       "filters": "フィルター",
       "sortBy": "並び替え",
-      "filterBy": "フィルター",
+      "filterBy": "フィルター条件",
       "all": "すべて",
       "date": "日付",
       "query": "クエリ",
       "searchTime": "検索時間",
       "cached": "キャッシュ済み",
       "contentTypes": {
-        "webpage": "[JA] Web pages",
-        "news": "[JA] News",
-        "academic": "[JA] Academic",
-        "image": "[JA] Images",
-        "video": "[JA] Videos"
+        "webpage": "ウェブページ",
+        "news": "ニュース",
+        "academic": "学術",
+        "image": "画像",
+        "video": "動画"
       }
     },
     "configuration": {
-      "resultsCount": "[JA] Number of results",
-      "safeSearch": "[JA] Safe search",
-      "market": "[JA] Search market"
+      "resultsCount": "結果数",
+      "safeSearch": "セーフサーチ",
+      "market": "検索市場"
     },
     "status": {
-      "searching": "[JA] Searching the web...",
-      "optimizing": "[JA] Optimizing search query...",
-      "processing": "[JA] Processing search results..."
+      "searching": "ウェブを検索中...",
+      "optimizing": "検索クエリを最適化中...",
+      "processing": "検索結果を処理中..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[JA] Code execution results will be displayed here",
-      "title": "[JA] Execution Results",
-      "noData": "[JA] No code execution data available",
-      "output": "[JA] Output",
-      "errors": "[JA] Errors",
-      "logs": "[JA] Logs",
-      "executionTime": "[JA] Execution time",
-      "memoryUsage": "[JA] Memory usage",
-      "cpuUsage": "[JA] CPU usage",
-      "outputLines": "[JA] Output lines",
-      "executedCode": "[JA] Executed Code",
-      "download": "[JA] Download",
-      "noOutput": "[JA] No output generated",
-      "noFiles": "[JA] No files generated",
-      "outputSize": "[JA] Output size",
-      "unsupportedOutput": "[JA] Unsupported output format",
+      "placeholder": "コード実行結果がここに表示されます",
+      "title": "実行結果",
+      "noData": "コード実行データがありません",
+      "output": "出力",
+      "errors": "エラー",
+      "logs": "ログ",
+      "executionTime": "実行時間",
+      "memoryUsage": "メモリ使用量",
+      "cpuUsage": "CPU使用量",
+      "outputLines": "出力行数",
+      "executedCode": "実行されたコード",
+      "download": "ダウンロード",
+      "noOutput": "出力が生成されませんでした",
+      "noFiles": "ファイルが生成されませんでした",
+      "outputSize": "出力サイズ",
+      "unsupportedOutput": "サポートされていない出力形式",
       "status": {
-        "success": "[JA] Success",
-        "error": "[JA] Error",
-        "timeout": "[JA] Timeout",
-        "memory_limit": "[JA] Memory limit exceeded",
-        "security_violation": "[JA] Security violation",
-        "invalid_code": "[JA] Invalid code"
+        "success": "成功",
+        "error": "エラー",
+        "timeout": "タイムアウト",
+        "memory_limit": "メモリ制限超過",
+        "security_violation": "セキュリティ違反",
+        "invalid_code": "無効なコード"
       },
       "outputTypes": {
-        "stdout": "[JA] Standard output",
-        "stderr": "[JA] Error output",
-        "return_value": "[JA] Return value",
-        "exception": "[JA] Exception"
+        "stdout": "標準出力",
+        "stderr": "エラー出力",
+        "return_value": "戻り値",
+        "exception": "例外"
       },
       "tabs": {
-        "output": "[JA] Output",
-        "code": "[JA] Code",
-        "files": "[JA] Files"
+        "output": "出力",
+        "code": "コード",
+        "files": "ファイル"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[JA] URL Analysis Results",
-      "noData": "[JA] No URL analysis data available",
-      "summary": "[JA] Summary",
-      "metadata": "[JA] Document Info",
+      "title": "URL分析結果",
+      "noData": "URL分析データがありません",
+      "summary": "概要",
+      "metadata": "ドキュメント情報",
       "processingTime": "処理時間",
-      "preview": "[JA] Preview",
-      "view": "[JA] View"
+      "preview": "プレビュー",
+      "view": "表示"
     },
     "configuration": {
-      "timeout": "[JA] Request timeout"
+      "timeout": "リクエストタイムアウト"
     },
     "status": {
-      "pulling": "[JA] Fetching URL content...",
-      "analyzing": "[JA] Analyzing document...",
-      "complete": "[JA] Analysis complete"
+      "pulling": "URLコンテンツを取得中...",
+      "analyzing": "ドキュメントを分析中...",
+      "complete": "分析完了"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[JA] Knowledge Base Results",
-      "noData": "[JA] No knowledge base data available",
-      "documents": "[JA] documents",
-      "insights": "[JA] Key Insights",
+      "title": "知識ベース結果",
+      "noData": "知識ベースデータがありません",
+      "documents": "ドキュメント",
+      "insights": "主要な洞察",
       "relevance": "関連性",
-      "suggestions": "[JA] Suggestions"
+      "suggestions": "提案"
     },
     "configuration": {
-      "searchMode": "[JA] Search mode",
-      "threshold": "[JA] Relevance threshold"
+      "searchMode": "検索モード",
+      "threshold": "関連性闾値"
     },
     "status": {
-      "searching": "[JA] Searching knowledge base...",
-      "analyzing": "[JA] Analyzing results..."
+      "searching": "知識ベースを検索中...",
+      "analyzing": "結果を分析中..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[JA] Document analysis results will be displayed here",
-      "title": "[JA] Analysis Results",
-      "noData": "[JA] No document analysis data available",
-      "documents": "[JA] documents",
-      "noDocuments": "[JA] No documents found",
-      "summary": "[JA] Summary",
-      "insights": "[JA] Key Insights",
-      "metadata": "[JA] Document Info",
+      "placeholder": "ドキュメント分析結果がここに表示されます",
+      "title": "分析結果",
+      "noData": "ドキュメント分析データがありません",
+      "documents": "ドキュメント",
+      "noDocuments": "ドキュメントが見つかりません",
+      "summary": "概要",
+      "insights": "主要な洞察",
+      "metadata": "ドキュメント情報",
       "processingTime": "処理時間",
       "searchTime": "検索時間",
       "relevance": "関連性",
       "cached": "キャッシュ済み",
-      "preview": "[JA] Preview",
-      "view": "[JA] View",
+      "preview": "プレビュー",
+      "view": "表示",
       "open": "開く",
-      "bookmark": "[JA] Bookmark",
-      "suggestions": "[JA] Suggestions",
+      "bookmark": "ブックマーク",
+      "suggestions": "提案",
       "tabs": {
-        "documents": "[JA] Documents",
-        "insights": "[JA] Insights",
-        "failed": "[JA] Failed"
+        "documents": "ドキュメント",
+        "insights": "洞察",
+        "failed": "失敗"
       }
     }
   },
@@ -188,60 +188,60 @@
     "buttons": {
       "retry": "再試行",
       "cancel": "キャンセル",
-      "expand": "[JA] Expand",
-      "collapse": "[JA] Collapse",
+      "expand": "展開",
+      "collapse": "折りたたみ",
       "configure": "設定",
       "submit": "送信"
     },
     "labels": {
       "priority": "優先度",
-      "estimatedTime": "推定時間",
-      "availability": "可用性",
+      "estimatedTime": "予想時間",
+      "availability": "利用可能性",
       "configuration": "設定"
     }
   },
   "errors": {
     "common": {
       "unknown": "不明なエラーが発生しました",
-      "network": "[JA] Network connection error",
-      "timeout": "[JA] Request timed out",
-      "unauthorized": "[JA] Access denied",
-      "rateLimit": "[JA] Rate limit exceeded",
-      "serviceUnavailable": "[JA] Service temporarily unavailable"
+      "network": "ネットワーク接続エラー",
+      "timeout": "リクエストがタイムアウトしました",
+      "unauthorized": "アクセスが拒否されました",
+      "rateLimit": "レート制限を超過しました",
+      "serviceUnavailable": "サービスが一時的に利用不可です"
     },
     "webSearch": {
-      "searchFailed": "[JA] Web search failed",
-      "invalidQuery": "[JA] Invalid search query"
+      "searchFailed": "ウェブ検索が失敗しました",
+      "invalidQuery": "無効な検索クエリです"
     },
     "codeInterpreter": {
-      "executionFailed": "[JA] Code execution failed",
-      "invalidCode": "[JA] Invalid or unsafe code"
+      "executionFailed": "コード実行が失敗しました",
+      "invalidCode": "無効または安全でないコードです"
     },
     "urlPull": {
-      "fetchFailed": "[JA] Failed to fetch URL content",
-      "invalidUrl": "[JA] Invalid or inaccessible URL"
+      "fetchFailed": "URLコンテンツの取得に失敗しました",
+      "invalidUrl": "無効またはアクセス不可なURLです"
     },
     "localKnowledge": {
-      "searchFailed": "[JA] Knowledge base search failed",
-      "noAccess": "[JA] No access to knowledge base"
+      "searchFailed": "知識ベース検索が失敗しました",
+      "noAccess": "知識ベースへのアクセスがありません"
     }
   },
   "settings": {
-    "autoSubmit": "[JA] Auto-submit after processing",
-    "advancedOptions": "[JA] Advanced options",
+    "autoSubmit": "処理後の自動送信",
+    "advancedOptions": "高度なオプション",
     "priority": {
       "high": "高",
       "medium": "中",
       "low": "低"
     },
     "safeSearch": {
-      "off": "[JA] Off",
-      "moderate": "[JA] Moderate",
-      "strict": "[JA] Strict"
+      "off": "オフ",
+      "moderate": "中程度",
+      "strict": "厳格"
     },
     "market": {
-      "any": "[JA] Any region",
-      "local": "[JA] Local region"
+      "any": "すべての地域",
+      "local": "ローカル地域"
     }
   }
 }

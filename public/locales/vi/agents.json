@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[VI] Web Search",
-      "code_interpreter": "[VI] Code Interpreter",
-      "url_pull": "[VI] URL Analysis",
-      "local_knowledge": "[VI] Knowledge Base",
-      "standard_chat": "[VI] Standard Chat",
-      "foundry": "[VI] Foundry",
-      "third_party": "[VI] Third Party"
+      "web_search": "Tìm kiếm Web",
+      "code_interpreter": "Trình thông dịch mã",
+      "url_pull": "Phân tích URL",
+      "local_knowledge": "Cơ sở kiến thức",
+      "standard_chat": "Trò chuyện tiêu chuẩn",
+      "foundry": "Foundry",
+      "third_party": "Bên thứ ba"
     },
     "error": {
-      "title": "[VI] Agent Error",
-      "unknown": "[VI] An unknown error occurred",
-      "retry": "[VI] Retry",
-      "fallback": "[VI] Use fallback"
+      "title": "Lỗi tác nhân",
+      "unknown": "Đã xảy ra lỗi không xác định",
+      "retry": "Thử lại",
+      "fallback": "Sử dụng thay thế"
     },
     "metadata": {
-      "processingTime": "[VI] Processing time",
-      "confidence": "[VI] Confidence",
-      "tokens": "[VI] Tokens used"
+      "processingTime": "Thời gian xử lý",
+      "confidence": "Độ tin cậy",
+      "tokens": "Token đã sử dụng"
     },
     "resultsPanel": {
-      "placeholder": "[VI] Agent results will be displayed here"
+      "placeholder": "Kết quả tác nhân sẽ được hiển thị ở đây"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[VI] Searches the web for real-time information",
-      "code_interpreter": "[VI] Executes and analyzes code in multiple languages",
-      "url_pull": "[VI] Analyzes and extracts content from web pages",
-      "local_knowledge": "[VI] Searches internal knowledge base and documents",
-      "standard_chat": "[VI] Standard conversational AI without tools",
-      "foundry": "[VI] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[VI] Third-party agent or custom tool integration"
+      "web_search": "Tìm kiếm Web - Tìm kiếm trên web để có thông tin thời gian thực",
+      "code_interpreter": "Trình thông dịch mã - Thực thi và phân tích mã bằng nhiều ngôn ngữ",
+      "url_pull": "Phân tích URL - Phân tích và trích xuất nội dung từ các trang web",
+      "local_knowledge": "Cơ sở kiến thức - Tìm kiếm cơ sở kiến thức nội bộ và tài liệu",
+      "standard_chat": "Trò chuyện tiêu chuẩn - AI hội thoại tiêu chuẩn không có công cụ",
+      "foundry": "Foundry - Sử dụng Azure AI Foundry cho các khả năng nâng cao",
+      "third_party": "Bên thứ ba - Tác nhân bên thứ ba hoặc tích hợp công cụ tùy chỉnh"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[VI] Web search results will be displayed here",
-      "title": "[VI] Title",
-      "noResults": "[VI] No results found",
-      "noData": "[VI] No search data available",
-      "results": "[VI] results",
-      "confidence": "[VI] Relevance",
-      "relevance": "[VI] Relevance",
-      "source": "[VI] Source",
-      "citations": "[VI] Citations",
-      "cite": "[VI] Cite",
-      "open": "[VI] Open",
-      "openLink": "[VI] Open link in new tab",
-      "filters": "[VI] Filters",
-      "sortBy": "[VI] Sort by",
-      "filterBy": "[VI] Filter by",
-      "all": "[VI] All",
-      "date": "[VI] Date",
-      "query": "[VI] Query",
-      "searchTime": "[VI] Search time",
-      "cached": "[VI] Cached",
+      "placeholder": "Kết quả tìm kiếm web sẽ được hiển thị ở đây",
+      "title": "Kết quả tìm kiếm",
+      "noResults": "Không tìm thấy kết quả",
+      "noData": "Không có dữ liệu tìm kiếm",
+      "results": "kết quả",
+      "confidence": "Mức độ liên quan",
+      "relevance": "Mức độ liên quan",
+      "source": "Nguồn",
+      "citations": "Trích dẫn",
+      "cite": "Trích dẫn",
+      "open": "Mở",
+      "openLink": "Mở liên kết trong tab mới",
+      "filters": "Bộ lọc",
+      "sortBy": "Sắp xếp theo",
+      "filterBy": "Lọc theo",
+      "all": "Tất cả",
+      "date": "Ngày",
+      "query": "Truy vấn",
+      "searchTime": "Thời gian tìm kiếm",
+      "cached": "Đã cache",
       "contentTypes": {
-        "webpage": "[VI] Web pages",
-        "news": "[VI] News",
-        "academic": "[VI] Academic",
-        "image": "[VI] Images",
-        "video": "[VI] Videos"
+        "webpage": "Trang web",
+        "news": "Tin tức",
+        "academic": "Học thuật",
+        "image": "Hình ảnh",
+        "video": "Video"
       }
     },
     "configuration": {
-      "resultsCount": "[VI] Number of results",
-      "safeSearch": "[VI] Safe search",
-      "market": "[VI] Search market"
+      "resultsCount": "Số lượng kết quả",
+      "safeSearch": "Tìm kiếm an toàn",
+      "market": "Thị trường tìm kiếm"
     },
     "status": {
-      "searching": "[VI] Searching the web...",
-      "optimizing": "[VI] Optimizing search query...",
-      "processing": "[VI] Processing search results..."
+      "searching": "Đang tìm kiếm trên web...",
+      "optimizing": "Đang tối ưu hóa truy vấn tìm kiếm...",
+      "processing": "Đang xử lý kết quả tìm kiếm..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[VI] Code execution results will be displayed here",
-      "title": "[VI] Execution Results",
-      "noData": "[VI] No code execution data available",
-      "output": "[VI] Output",
-      "errors": "[VI] Errors",
-      "logs": "[VI] Logs",
-      "executionTime": "[VI] Execution time",
-      "memoryUsage": "[VI] Memory usage",
-      "cpuUsage": "[VI] CPU usage",
-      "outputLines": "[VI] Output lines",
-      "executedCode": "[VI] Executed Code",
-      "download": "[VI] Download",
-      "noOutput": "[VI] No output generated",
-      "noFiles": "[VI] No files generated",
-      "outputSize": "[VI] Output size",
-      "unsupportedOutput": "[VI] Unsupported output format",
+      "placeholder": "Kết quả thực thi mã sẽ được hiển thị ở đây",
+      "title": "Kết quả thực thi",
+      "noData": "Không có dữ liệu thực thi mã",
+      "output": "Đầu ra",
+      "errors": "Lỗi",
+      "logs": "Nhật ký",
+      "executionTime": "Thời gian thực thi",
+      "memoryUsage": "Sử dụng bộ nhớ",
+      "cpuUsage": "Sử dụng CPU",
+      "outputLines": "Dòng đầu ra",
+      "executedCode": "Mã đã thực thi",
+      "download": "Tải xuống",
+      "noOutput": "Không có đầu ra",
+      "noFiles": "Không có tệp",
+      "outputSize": "Kích thước đầu ra",
+      "unsupportedOutput": "Định dạng đầu ra không được hỗ trợ",
       "status": {
-        "success": "[VI] Success",
-        "error": "[VI] Error",
-        "timeout": "[VI] Timeout",
-        "memory_limit": "[VI] Memory limit exceeded",
-        "security_violation": "[VI] Security violation",
-        "invalid_code": "[VI] Invalid code"
+        "success": "Thành công",
+        "error": "Lỗi",
+        "timeout": "Hết thời gian chờ",
+        "memory_limit": "Vượt quá giới hạn bộ nhớ",
+        "security_violation": "Vi phạm bảo mật",
+        "invalid_code": "Mã không hợp lệ"
       },
       "outputTypes": {
-        "stdout": "[VI] Standard output",
-        "stderr": "[VI] Error output",
-        "return_value": "[VI] Return value",
-        "exception": "[VI] Exception"
+        "stdout": "Đầu ra tiêu chuẩn",
+        "stderr": "Đầu ra lỗi",
+        "return_value": "Giá trị trả về",
+        "exception": "Ngoại lệ"
       },
       "tabs": {
-        "output": "[VI] Output",
-        "code": "[VI] Code",
-        "files": "[VI] Files"
+        "output": "Đầu ra",
+        "code": "Mã",
+        "files": "Tệp"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[VI] URL Analysis Results",
-      "noData": "[VI] No URL analysis data available",
-      "summary": "[VI] Summary",
-      "metadata": "[VI] Document Info",
-      "processingTime": "[VI] Processing time",
-      "preview": "[VI] Preview",
-      "view": "[VI] View"
+      "title": "Kết quả phân tích URL",
+      "noData": "Không có dữ liệu phân tích URL",
+      "summary": "Tóm tắt",
+      "metadata": "Thông tin tài liệu",
+      "processingTime": "Thời gian xử lý",
+      "preview": "Xem trước",
+      "view": "Xem"
     },
     "configuration": {
-      "timeout": "[VI] Request timeout"
+      "timeout": "Hết thời gian chờ yêu cầu"
     },
     "status": {
-      "pulling": "[VI] Fetching URL content...",
-      "analyzing": "[VI] Analyzing document...",
-      "complete": "[VI] Analysis complete"
+      "pulling": "Đang tải nội dung URL...",
+      "analyzing": "Đang phân tích tài liệu...",
+      "complete": "Phân tích hoàn tất"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[VI] Knowledge Base Results",
-      "noData": "[VI] No knowledge base data available",
-      "documents": "[VI] documents",
-      "insights": "[VI] Key Insights",
-      "relevance": "[VI] Relevance",
-      "suggestions": "[VI] Suggestions"
+      "title": "Kết quả cơ sở kiến thức",
+      "noData": "Không có dữ liệu cơ sở kiến thức",
+      "documents": "tài liệu",
+      "insights": "Thông tin quan trọng",
+      "relevance": "Mức độ liên quan",
+      "suggestions": "Gợi ý"
     },
     "configuration": {
-      "searchMode": "[VI] Search mode",
-      "threshold": "[VI] Relevance threshold"
+      "searchMode": "Chế độ tìm kiếm",
+      "threshold": "Ngưỡng liên quan"
     },
     "status": {
-      "searching": "[VI] Searching knowledge base...",
-      "analyzing": "[VI] Analyzing results..."
+      "searching": "Đang tìm kiếm cơ sở kiến thức...",
+      "analyzing": "Đang phân tích kết quả..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[VI] Document analysis results will be displayed here",
-      "title": "[VI] Analysis Results",
-      "noData": "[VI] No document analysis data available",
-      "documents": "[VI] documents",
-      "noDocuments": "[VI] No documents found",
-      "summary": "[VI] Summary",
-      "insights": "[VI] Key Insights",
-      "metadata": "[VI] Document Info",
-      "processingTime": "[VI] Processing time",
-      "searchTime": "[VI] Search time",
-      "relevance": "[VI] Relevance",
-      "cached": "[VI] Cached",
-      "preview": "[VI] Preview",
-      "view": "[VI] View",
-      "open": "[VI] Open",
-      "bookmark": "[VI] Bookmark",
-      "suggestions": "[VI] Suggestions",
+      "placeholder": "Kết quả phân tích tài liệu sẽ được hiển thị ở đây",
+      "title": "Kết quả phân tích",
+      "noData": "Không có dữ liệu phân tích tài liệu",
+      "documents": "tài liệu",
+      "noDocuments": "Không tìm thấy tài liệu",
+      "summary": "Tóm tắt",
+      "insights": "Thông tin quan trọng",
+      "metadata": "Thông tin tài liệu",
+      "processingTime": "Thời gian xử lý",
+      "searchTime": "Thời gian tìm kiếm",
+      "relevance": "Mức độ liên quan",
+      "cached": "Đã cache",
+      "preview": "Xem trước",
+      "view": "Xem",
+      "open": "Mở",
+      "bookmark": "Đánh dấu",
+      "suggestions": "Gợi ý",
       "tabs": {
-        "documents": "[VI] Documents",
-        "insights": "[VI] Insights",
-        "failed": "[VI] Failed"
+        "documents": "Tài liệu",
+        "insights": "Thông tin",
+        "failed": "Thất bại"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[VI] Loading...",
-      "searching": "[VI] Searching...",
-      "processing": "[VI] Processing...",
-      "analyzing": "[VI] Analyzing..."
+      "default": "Đang tải...",
+      "searching": "Đang tìm kiếm...",
+      "processing": "Đang xử lý...",
+      "analyzing": "Đang phân tích..."
     },
     "buttons": {
-      "retry": "[VI] Retry",
-      "cancel": "[VI] Cancel",
-      "expand": "[VI] Expand",
-      "collapse": "[VI] Collapse",
-      "configure": "[VI] Configure",
-      "submit": "[VI] Submit"
+      "retry": "Thử lại",
+      "cancel": "Hủy",
+      "expand": "Mở rộng",
+      "collapse": "Thu gọn",
+      "configure": "Cấu hình",
+      "submit": "Gửi"
     },
     "labels": {
-      "priority": "[VI] Priority",
-      "estimatedTime": "[VI] Estimated time",
-      "availability": "[VI] Availability",
-      "configuration": "[VI] Configuration"
+      "priority": "Ưu tiên",
+      "estimatedTime": "Thời gian ước tính",
+      "availability": "Sẵn sàng",
+      "configuration": "Cấu hình"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[VI] An unknown error occurred",
-      "network": "[VI] Network connection error",
-      "timeout": "[VI] Request timed out",
-      "unauthorized": "[VI] Access denied",
-      "rateLimit": "[VI] Rate limit exceeded",
-      "serviceUnavailable": "[VI] Service temporarily unavailable"
+      "unknown": "Đã xảy ra lỗi không xác định",
+      "network": "Lỗi kết nối mạng",
+      "timeout": "Yêu cầu hết thời gian chờ",
+      "unauthorized": "Quyền truy cập bị từ chối",
+      "rateLimit": "Vượt quá giới hạn tốc độ",
+      "serviceUnavailable": "Dịch vụ tạm thời không khả dụng"
     },
     "webSearch": {
-      "searchFailed": "[VI] Web search failed",
-      "invalidQuery": "[VI] Invalid search query"
+      "searchFailed": "Tìm kiếm web thất bại",
+      "invalidQuery": "Truy vấn tìm kiếm không hợp lệ"
     },
     "codeInterpreter": {
-      "executionFailed": "[VI] Code execution failed",
-      "invalidCode": "[VI] Invalid or unsafe code"
+      "executionFailed": "Thực thi mã thất bại",
+      "invalidCode": "Mã không hợp lệ hoặc không an toàn"
     },
     "urlPull": {
-      "fetchFailed": "[VI] Failed to fetch URL content",
-      "invalidUrl": "[VI] Invalid or inaccessible URL"
+      "fetchFailed": "Không thể tải nội dung URL",
+      "invalidUrl": "URL không hợp lệ hoặc không thể truy cập"
     },
     "localKnowledge": {
-      "searchFailed": "[VI] Knowledge base search failed",
-      "noAccess": "[VI] No access to knowledge base"
+      "searchFailed": "Tìm kiếm cơ sở kiến thức thất bại",
+      "noAccess": "Không có quyền truy cập cơ sở kiến thức"
     }
   },
   "settings": {
-    "autoSubmit": "[VI] Auto-submit after processing",
-    "advancedOptions": "[VI] Advanced options",
+    "autoSubmit": "Tự động gửi sau khi xử lý",
+    "advancedOptions": "Tùy chọn nâng cao",
     "priority": {
-      "high": "[VI] High",
-      "medium": "[VI] Medium",
-      "low": "[VI] Low"
+      "high": "Cao",
+      "medium": "Trung bình",
+      "low": "Thấp"
     },
     "safeSearch": {
-      "off": "[VI] Off",
-      "moderate": "[VI] Moderate",
-      "strict": "[VI] Strict"
+      "off": "Tắt",
+      "moderate": "Trung bình",
+      "strict": "Nghiêm ngặt"
     },
     "market": {
-      "any": "[VI] Any region",
-      "local": "[VI] Local region"
+      "any": "Bất kỳ khu vực",
+      "local": "Khu vực địa phương"
     }
   }
 }

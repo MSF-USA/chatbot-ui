@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[UR] Web Search",
-      "code_interpreter": "[UR] Code Interpreter",
-      "url_pull": "[UR] URL Analysis",
-      "local_knowledge": "[UR] Knowledge Base",
-      "standard_chat": "[UR] Standard Chat",
-      "foundry": "[UR] Foundry",
-      "third_party": "[UR] Third Party"
+      "web_search": "ویب تلاش",
+      "code_interpreter": "کوڈ مترجم",
+      "url_pull": "URL تجزیہ",
+      "local_knowledge": "علم کی بنیاد",
+      "standard_chat": "معیاری چیٹ",
+      "foundry": "Foundry",
+      "third_party": "تیسری پارٹی"
     },
     "error": {
-      "title": "[UR] Agent Error",
-      "unknown": "[UR] An unknown error occurred",
-      "retry": "[UR] Retry",
-      "fallback": "[UR] Use fallback"
+      "title": "ایجنٹ کی خرابی",
+      "unknown": "ایک نامعلوم خرابی پیش آئی",
+      "retry": "دوبارہ کوشش کریں",
+      "fallback": "متبادل استعمال کریں"
     },
     "metadata": {
-      "processingTime": "[UR] Processing time",
-      "confidence": "[UR] Confidence",
-      "tokens": "[UR] Tokens used"
+      "processingTime": "پروسیسنگ وقت",
+      "confidence": "اعتماد",
+      "tokens": "استعمال شدہ ٹوکنز"
     },
     "resultsPanel": {
-      "placeholder": "[UR] Agent results will be displayed here"
+      "placeholder": "ایجنٹ کے نتائج یہاں دکھائے جائیں گے"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[UR] Searches the web for real-time information",
-      "code_interpreter": "[UR] Executes and analyzes code in multiple languages",
-      "url_pull": "[UR] Analyzes and extracts content from web pages",
-      "local_knowledge": "[UR] Searches internal knowledge base and documents",
-      "standard_chat": "[UR] Standard conversational AI without tools",
-      "foundry": "[UR] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[UR] Third-party agent or custom tool integration"
+      "web_search": "ویب تلاش - حقیقی وقت کی معلومات کے لیے ویب تلاش کرتا ہے",
+      "code_interpreter": "کوڈ مترجم - متعدد زبانوں میں کوڈ چلاتا اور تجزیہ کرتا ہے",
+      "url_pull": "URL تجزیہ - ویب صفحات سے مواد کا تجزیہ اور اخذ کرتا ہے",
+      "local_knowledge": "علم کی بنیاد - اندرونی علم کی بنیاد اور دستاویزات میں تلاش کرتا ہے",
+      "standard_chat": "معیاری چیٹ - آلات کے بغیر معیاری بات چیت AI",
+      "foundry": "Foundry - جدید صلاحیتوں کے لیے Azure AI Foundry استعمال کرتا ہے",
+      "third_party": "تیسری پارٹی - تیسری پارٹی ایجنٹ یا اپنی مرضی کے آلے کا انضمام"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[UR] Web search results will be displayed here",
-      "title": "[UR] Title",
-      "noResults": "[UR] No results found",
-      "noData": "[UR] No search data available",
-      "results": "[UR] results",
-      "confidence": "[UR] Relevance",
-      "relevance": "[UR] Relevance",
-      "source": "[UR] Source",
-      "citations": "[UR] Citations",
-      "cite": "[UR] Cite",
-      "open": "[UR] Open",
-      "openLink": "[UR] Open link in new tab",
-      "filters": "[UR] Filters",
-      "sortBy": "[UR] Sort by",
-      "filterBy": "[UR] Filter by",
-      "all": "[UR] All",
-      "date": "[UR] Date",
-      "query": "[UR] Query",
-      "searchTime": "[UR] Search time",
-      "cached": "[UR] Cached",
+      "placeholder": "ویب تلاش کے نتائج یہاں دکھائے جائیں گے",
+      "title": "تلاش کے نتائج",
+      "noResults": "کوئی نتائج نہیں ملے",
+      "noData": "تلاش کا ڈیٹا دستیاب نہیں",
+      "results": "نتائج",
+      "confidence": "مطابقت",
+      "relevance": "مطابقت",
+      "source": "ذریعہ",
+      "citations": "حوالہ جات",
+      "cite": "حوالہ دیں",
+      "open": "کھولیں",
+      "openLink": "نئے ٹیب میں لنک کھولیں",
+      "filters": "فلٹرز",
+      "sortBy": "ترتیب دیں",
+      "filterBy": "فلٹر کریں",
+      "all": "تمام",
+      "date": "تاریخ",
+      "query": "سوال",
+      "searchTime": "تلاش کا وقت",
+      "cached": "محفوظ شدہ",
       "contentTypes": {
-        "webpage": "[UR] Web pages",
-        "news": "[UR] News",
-        "academic": "[UR] Academic",
-        "image": "[UR] Images",
-        "video": "[UR] Videos"
+        "webpage": "ویب صفحات",
+        "news": "خبریں",
+        "academic": "تعلیمی",
+        "image": "تصاویر",
+        "video": "ویڈیوز"
       }
     },
     "configuration": {
-      "resultsCount": "[UR] Number of results",
-      "safeSearch": "[UR] Safe search",
-      "market": "[UR] Search market"
+      "resultsCount": "نتائج کی تعداد",
+      "safeSearch": "محفوظ تلاش",
+      "market": "تلاش مارکیٹ"
     },
     "status": {
-      "searching": "[UR] Searching the web...",
-      "optimizing": "[UR] Optimizing search query...",
-      "processing": "[UR] Processing search results..."
+      "searching": "ویب میں تلاش کر رہا ہے...",
+      "optimizing": "تلاش کی درخواست کو بہتر بنا رہا ہے...",
+      "processing": "تلاش کے نتائج پروسیس کر رہا ہے..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[UR] Code execution results will be displayed here",
-      "title": "[UR] Execution Results",
-      "noData": "[UR] No code execution data available",
-      "output": "[UR] Output",
-      "errors": "[UR] Errors",
-      "logs": "[UR] Logs",
-      "executionTime": "[UR] Execution time",
-      "memoryUsage": "[UR] Memory usage",
-      "cpuUsage": "[UR] CPU usage",
-      "outputLines": "[UR] Output lines",
-      "executedCode": "[UR] Executed Code",
-      "download": "[UR] Download",
-      "noOutput": "[UR] No output generated",
-      "noFiles": "[UR] No files generated",
-      "outputSize": "[UR] Output size",
-      "unsupportedOutput": "[UR] Unsupported output format",
+      "placeholder": "کوڈ کے نفاذ کے نتائج یہاں دکھائے جائیں گے",
+      "title": "نفاذ کے نتائج",
+      "noData": "کوڈ کے نفاذ کا ڈیٹا دستیاب نہیں",
+      "output": "آؤٹ پٹ",
+      "errors": "خرابیاں",
+      "logs": "لاگز",
+      "executionTime": "نفاذ کا وقت",
+      "memoryUsage": "میموری کا استعمال",
+      "cpuUsage": "CPU کا استعمال",
+      "outputLines": "آؤٹ پٹ لائنیں",
+      "executedCode": "نافذ شدہ کوڈ",
+      "download": "ڈاؤن لوڈ",
+      "noOutput": "کوئی آؤٹ پٹ تیار نہیں ہوا",
+      "noFiles": "کوئی فائلیں تیار نہیں ہوئیں",
+      "outputSize": "آؤٹ پٹ کا سائز",
+      "unsupportedOutput": "غیر مدد شدہ آؤٹ پٹ فارمیٹ",
       "status": {
-        "success": "[UR] Success",
-        "error": "[UR] Error",
-        "timeout": "[UR] Timeout",
-        "memory_limit": "[UR] Memory limit exceeded",
-        "security_violation": "[UR] Security violation",
-        "invalid_code": "[UR] Invalid code"
+        "success": "کامیابی",
+        "error": "خرابی",
+        "timeout": "وقت ختم",
+        "memory_limit": "میموری کی حد سے زیادہ",
+        "security_violation": "سیکیورٹی کی خلاف ورزی",
+        "invalid_code": "غلط کوڈ"
       },
       "outputTypes": {
-        "stdout": "[UR] Standard output",
-        "stderr": "[UR] Error output",
-        "return_value": "[UR] Return value",
-        "exception": "[UR] Exception"
+        "stdout": "معیاری آؤٹ پٹ",
+        "stderr": "خرابی کا آؤٹ پٹ",
+        "return_value": "واپسی کی قیمت",
+        "exception": "استثناء"
       },
       "tabs": {
-        "output": "[UR] Output",
-        "code": "[UR] Code",
-        "files": "[UR] Files"
+        "output": "آؤٹ پٹ",
+        "code": "کوڈ",
+        "files": "فائلیں"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[UR] URL Analysis Results",
-      "noData": "[UR] No URL analysis data available",
-      "summary": "[UR] Summary",
-      "metadata": "[UR] Document Info",
-      "processingTime": "[UR] Processing time",
-      "preview": "[UR] Preview",
-      "view": "[UR] View"
+      "title": "URL تجزیہ کے نتائج",
+      "noData": "URL تجزیہ کا ڈیٹا دستیاب نہیں",
+      "summary": "خلاصہ",
+      "metadata": "دستاویز کی معلومات",
+      "processingTime": "پروسیسنگ کا وقت",
+      "preview": "پیش نظارہ",
+      "view": "دیکھیں"
     },
     "configuration": {
-      "timeout": "[UR] Request timeout"
+      "timeout": "درخواست کا وقت ختم"
     },
     "status": {
-      "pulling": "[UR] Fetching URL content...",
-      "analyzing": "[UR] Analyzing document...",
-      "complete": "[UR] Analysis complete"
+      "pulling": "URL کا مواد حاصل کر رہا ہے...",
+      "analyzing": "دستاویز کا تجزیہ کر رہا ہے...",
+      "complete": "تجزیہ مکمل"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[UR] Knowledge Base Results",
-      "noData": "[UR] No knowledge base data available",
-      "documents": "[UR] documents",
-      "insights": "[UR] Key Insights",
-      "relevance": "[UR] Relevance",
-      "suggestions": "[UR] Suggestions"
+      "title": "علم کی بنیاد کے نتائج",
+      "noData": "علم کی بنیاد کا ڈیٹا دستیاب نہیں",
+      "documents": "دستاویزات",
+      "insights": "اہم بصیرت",
+      "relevance": "مطابقت",
+      "suggestions": "تجاویز"
     },
     "configuration": {
-      "searchMode": "[UR] Search mode",
-      "threshold": "[UR] Relevance threshold"
+      "searchMode": "تلاش کا طریقہ",
+      "threshold": "مطابقت کی حد"
     },
     "status": {
-      "searching": "[UR] Searching knowledge base...",
-      "analyzing": "[UR] Analyzing results..."
+      "searching": "علم کی بنیاد میں تلاش کر رہا ہے...",
+      "analyzing": "نتائج کا تجزیہ کر رہا ہے..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[UR] Document analysis results will be displayed here",
-      "title": "[UR] Analysis Results",
-      "noData": "[UR] No document analysis data available",
-      "documents": "[UR] documents",
-      "noDocuments": "[UR] No documents found",
-      "summary": "[UR] Summary",
-      "insights": "[UR] Key Insights",
-      "metadata": "[UR] Document Info",
-      "processingTime": "[UR] Processing time",
-      "searchTime": "[UR] Search time",
-      "relevance": "[UR] Relevance",
-      "cached": "[UR] Cached",
-      "preview": "[UR] Preview",
-      "view": "[UR] View",
-      "open": "[UR] Open",
-      "bookmark": "[UR] Bookmark",
-      "suggestions": "[UR] Suggestions",
+      "placeholder": "دستاویز کے تجزیہ کے نتائج یہاں دکھائے جائیں گے",
+      "title": "تجزیہ کے نتائج",
+      "noData": "دستاویز کے تجزیہ کا ڈیٹا دستیاب نہیں",
+      "documents": "دستاویزات",
+      "noDocuments": "کوئی دستاویزات نہیں ملے",
+      "summary": "خلاصہ",
+      "insights": "اہم بصیرت",
+      "metadata": "دستاویز کی معلومات",
+      "processingTime": "پروسیسنگ کا وقت",
+      "searchTime": "تلاش کا وقت",
+      "relevance": "مطابقت",
+      "cached": "محفوظ شدہ",
+      "preview": "پیش نظارہ",
+      "view": "دیکھیں",
+      "open": "کھولیں",
+      "bookmark": "بک مارک",
+      "suggestions": "تجاویز",
       "tabs": {
-        "documents": "[UR] Documents",
-        "insights": "[UR] Insights",
-        "failed": "[UR] Failed"
+        "documents": "دستاویزات",
+        "insights": "بصیرت",
+        "failed": "ناکام"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[UR] Loading...",
-      "searching": "[UR] Searching...",
-      "processing": "[UR] Processing...",
-      "analyzing": "[UR] Analyzing..."
+      "default": "لوڈ ہو رہا ہے...",
+      "searching": "تلاش کر رہا ہے...",
+      "processing": "پروسیس کر رہا ہے...",
+      "analyzing": "تجزیہ کر رہا ہے..."
     },
     "buttons": {
-      "retry": "[UR] Retry",
-      "cancel": "[UR] Cancel",
-      "expand": "[UR] Expand",
-      "collapse": "[UR] Collapse",
-      "configure": "[UR] Configure",
-      "submit": "[UR] Submit"
+      "retry": "دوبارہ کوشش کریں",
+      "cancel": "منسوخ کریں",
+      "expand": "پھیلائیں",
+      "collapse": "سکیڑیں",
+      "configure": "ترتیب دیں",
+      "submit": "جمع کریں"
     },
     "labels": {
-      "priority": "[UR] Priority",
-      "estimatedTime": "[UR] Estimated time",
-      "availability": "[UR] Availability",
-      "configuration": "[UR] Configuration"
+      "priority": "ترجیح",
+      "estimatedTime": "تخمینی وقت",
+      "availability": "دستیابی",
+      "configuration": "ترتیبات"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[UR] An unknown error occurred",
-      "network": "[UR] Network connection error",
-      "timeout": "[UR] Request timed out",
-      "unauthorized": "[UR] Access denied",
-      "rateLimit": "[UR] Rate limit exceeded",
-      "serviceUnavailable": "[UR] Service temporarily unavailable"
+      "unknown": "ایک نامعلوم خرابی پیش آئی",
+      "network": "نیٹ ورک کنکشن کی خرابی",
+      "timeout": "درخواست کا وقت ختم ہو گیا",
+      "unauthorized": "رسائی مسترد",
+      "rateLimit": "حد سے زیادہ درخواستیں",
+      "serviceUnavailable": "سروس عارضی طور پر دستیاب نہیں"
     },
     "webSearch": {
-      "searchFailed": "[UR] Web search failed",
-      "invalidQuery": "[UR] Invalid search query"
+      "searchFailed": "ویب تلاش ناکام",
+      "invalidQuery": "غلط تلاش کی درخواست"
     },
     "codeInterpreter": {
-      "executionFailed": "[UR] Code execution failed",
-      "invalidCode": "[UR] Invalid or unsafe code"
+      "executionFailed": "کوڈ کا نفاذ ناکام",
+      "invalidCode": "غلط یا غیر محفوظ کوڈ"
     },
     "urlPull": {
-      "fetchFailed": "[UR] Failed to fetch URL content",
-      "invalidUrl": "[UR] Invalid or inaccessible URL"
+      "fetchFailed": "URL کا مواد حاصل کرنے میں ناکامی",
+      "invalidUrl": "غلط یا ناقابل رسائی URL"
     },
     "localKnowledge": {
-      "searchFailed": "[UR] Knowledge base search failed",
-      "noAccess": "[UR] No access to knowledge base"
+      "searchFailed": "علم کی بنیاد میں تلاش ناکام",
+      "noAccess": "علم کی بنیاد تک رسائی نہیں"
     }
   },
   "settings": {
-    "autoSubmit": "[UR] Auto-submit after processing",
-    "advancedOptions": "[UR] Advanced options",
+    "autoSubmit": "پروسیسنگ کے بعد خودکار جمع کریں",
+    "advancedOptions": "اعلیٰ درجے کے اختیارات",
     "priority": {
-      "high": "[UR] High",
-      "medium": "[UR] Medium",
-      "low": "[UR] Low"
+      "high": "زیادہ",
+      "medium": "درمیانہ",
+      "low": "کم"
     },
     "safeSearch": {
-      "off": "[UR] Off",
-      "moderate": "[UR] Moderate",
-      "strict": "[UR] Strict"
+      "off": "بند",
+      "moderate": "درمیانہ",
+      "strict": "سخت"
     },
     "market": {
-      "any": "[UR] Any region",
-      "local": "[UR] Local region"
+      "any": "کوئی بھی علاقہ",
+      "local": "مقامی علاقہ"
     }
   }
 }

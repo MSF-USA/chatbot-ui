@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[AR] Web Search",
-      "code_interpreter": "[AR] Code Interpreter",
-      "url_pull": "[AR] URL Analysis",
-      "local_knowledge": "[AR] Knowledge Base",
-      "standard_chat": "[AR] Standard Chat",
-      "foundry": "[AR] Foundry",
-      "third_party": "[AR] Third Party"
+      "web_search": "بحث الويب",
+      "code_interpreter": "مترجم الكود",
+      "url_pull": "تحليل URL",
+      "local_knowledge": "قاعدة المعرفة",
+      "standard_chat": "محادثة قياسية",
+      "foundry": "مسبك Azure",
+      "third_party": "طرف ثالث"
     },
     "error": {
-      "title": "[AR] Agent Error",
-      "unknown": "[AR] An unknown error occurred",
-      "retry": "[AR] Retry",
-      "fallback": "[AR] Use fallback"
+      "title": "خطأ الوكيل",
+      "unknown": "حدث خطأ غير معروف",
+      "retry": "إعادة المحاولة",
+      "fallback": "استخدام البديل"
     },
     "metadata": {
-      "processingTime": "[AR] Processing time",
-      "confidence": "[AR] Confidence",
-      "tokens": "[AR] Tokens used"
+      "processingTime": "وقت المعالجة",
+      "confidence": "الثقة",
+      "tokens": "الرموز المستخدمة"
     },
     "resultsPanel": {
-      "placeholder": "[AR] Agent results will be displayed here"
+      "placeholder": "ستظهر نتائج الوكيل هنا"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[AR] Searches the web for real-time information",
-      "code_interpreter": "[AR] Executes and analyzes code in multiple languages",
-      "url_pull": "[AR] Analyzes and extracts content from web pages",
-      "local_knowledge": "[AR] Searches internal knowledge base and documents",
-      "standard_chat": "[AR] Standard conversational AI without tools",
-      "foundry": "[AR] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[AR] Third-party agent or custom tool integration"
+      "web_search": "بحث الويب - يبحث في الويب عن معلومات في الوقت الفعلي",
+      "code_interpreter": "مترجم الكود - ينفذ ويحلل الكود بلغات متعددة",
+      "url_pull": "تحليل URL - يحلل ويستخرج المحتوى من صفحات الويب",
+      "local_knowledge": "قاعدة المعرفة - يبحث في قاعدة المعرفة الداخلية والوثائق",
+      "standard_chat": "محادثة قياسية - ذكاء اصطناعي محادثة قياسي بدون أدوات",
+      "foundry": "مسبك Azure - يستخدم Azure AI Foundry للقدرات المتقدمة",
+      "third_party": "طرف ثالث - وكيل طرف ثالث أو تكامل أداة مخصصة"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[AR] Web search results will be displayed here",
-      "title": "[AR] Title",
-      "noResults": "[AR] No results found",
-      "noData": "[AR] No search data available",
-      "results": "[AR] results",
-      "confidence": "[AR] Relevance",
-      "relevance": "[AR] Relevance",
-      "source": "[AR] Source",
-      "citations": "[AR] Citations",
-      "cite": "[AR] Cite",
-      "open": "[AR] Open",
-      "openLink": "[AR] Open link in new tab",
-      "filters": "[AR] Filters",
-      "sortBy": "[AR] Sort by",
-      "filterBy": "[AR] Filter by",
-      "all": "[AR] All",
-      "date": "[AR] Date",
-      "query": "[AR] Query",
-      "searchTime": "[AR] Search time",
-      "cached": "[AR] Cached",
+      "placeholder": "ستظهر نتائج البحث على الويب هنا",
+      "title": "نتائج البحث",
+      "noResults": "لم يتم العثور على نتائج",
+      "noData": "لا توجد بيانات بحث متاحة",
+      "results": "النتائج",
+      "confidence": "الصلة",
+      "relevance": "الصلة",
+      "source": "المصدر",
+      "citations": "الاستشهادات",
+      "cite": "استشهد",
+      "open": "فتح",
+      "openLink": "فتح الرابط في علامة تبويب جديدة",
+      "filters": "المرشحات",
+      "sortBy": "ترتيب حسب",
+      "filterBy": "ترشيح حسب",
+      "all": "الكل",
+      "date": "التاريخ",
+      "query": "الاستعلام",
+      "searchTime": "وقت البحث",
+      "cached": "مخزن مؤقتاً",
       "contentTypes": {
-        "webpage": "[AR] Web pages",
-        "news": "[AR] News",
-        "academic": "[AR] Academic",
-        "image": "[AR] Images",
-        "video": "[AR] Videos"
+        "webpage": "صفحات الويب",
+        "news": "الأخبار",
+        "academic": "أكاديمي",
+        "image": "الصور",
+        "video": "الفيديو"
       }
     },
     "configuration": {
-      "resultsCount": "[AR] Number of results",
-      "safeSearch": "[AR] Safe search",
-      "market": "[AR] Search market"
+      "resultsCount": "عدد النتائج",
+      "safeSearch": "بحث آمن",
+      "market": "سوق البحث"
     },
     "status": {
-      "searching": "[AR] Searching the web...",
-      "optimizing": "[AR] Optimizing search query...",
-      "processing": "[AR] Processing search results..."
+      "searching": "جاري البحث على الويب...",
+      "optimizing": "جاري تحسين استعلام البحث...",
+      "processing": "جاري معالجة نتائج البحث..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[AR] Code execution results will be displayed here",
-      "title": "[AR] Execution Results",
-      "noData": "[AR] No code execution data available",
-      "output": "[AR] Output",
-      "errors": "[AR] Errors",
-      "logs": "[AR] Logs",
-      "executionTime": "[AR] Execution time",
-      "memoryUsage": "[AR] Memory usage",
-      "cpuUsage": "[AR] CPU usage",
-      "outputLines": "[AR] Output lines",
-      "executedCode": "[AR] Executed Code",
-      "download": "[AR] Download",
-      "noOutput": "[AR] No output generated",
-      "noFiles": "[AR] No files generated",
-      "outputSize": "[AR] Output size",
-      "unsupportedOutput": "[AR] Unsupported output format",
+      "placeholder": "ستظهر نتائج تنفيذ الكود هنا",
+      "title": "نتائج التنفيذ",
+      "noData": "لا توجد بيانات تنفيذ كود متاحة",
+      "output": "المخرجات",
+      "errors": "الأخطاء",
+      "logs": "السجلات",
+      "executionTime": "وقت التنفيذ",
+      "memoryUsage": "استخدام الذاكرة",
+      "cpuUsage": "استخدام المعالج",
+      "outputLines": "أسطر المخرجات",
+      "executedCode": "الكود المنفذ",
+      "download": "تحميل",
+      "noOutput": "لم يتم إنتاج مخرجات",
+      "noFiles": "لم يتم إنتاج ملفات",
+      "outputSize": "حجم المخرجات",
+      "unsupportedOutput": "تنسيق مخرجات غير مدعوم",
       "status": {
-        "success": "[AR] Success",
-        "error": "[AR] Error",
-        "timeout": "[AR] Timeout",
-        "memory_limit": "[AR] Memory limit exceeded",
-        "security_violation": "[AR] Security violation",
-        "invalid_code": "[AR] Invalid code"
+        "success": "نجاح",
+        "error": "خطأ",
+        "timeout": "انتهاء المهلة",
+        "memory_limit": "تجاوز حد الذاكرة",
+        "security_violation": "انتهاك أمني",
+        "invalid_code": "كود غير صالح"
       },
       "outputTypes": {
-        "stdout": "[AR] Standard output",
-        "stderr": "[AR] Error output",
-        "return_value": "[AR] Return value",
-        "exception": "[AR] Exception"
+        "stdout": "المخرجات القياسية",
+        "stderr": "مخرجات الأخطاء",
+        "return_value": "قيمة الإرجاع",
+        "exception": "استثناء"
       },
       "tabs": {
-        "output": "[AR] Output",
-        "code": "[AR] Code",
-        "files": "[AR] Files"
+        "output": "المخرجات",
+        "code": "الكود",
+        "files": "الملفات"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[AR] URL Analysis Results",
-      "noData": "[AR] No URL analysis data available",
-      "summary": "[AR] Summary",
-      "metadata": "[AR] Document Info",
-      "processingTime": "[AR] Processing time",
-      "preview": "[AR] Preview",
-      "view": "[AR] View"
+      "title": "نتائج تحليل URL",
+      "noData": "لا توجد بيانات تحليل URL متاحة",
+      "summary": "ملخص",
+      "metadata": "معلومات المستند",
+      "processingTime": "وقت المعالجة",
+      "preview": "معاينة",
+      "view": "عرض"
     },
     "configuration": {
-      "timeout": "[AR] Request timeout"
+      "timeout": "مهلة انتهاء الطلب"
     },
     "status": {
-      "pulling": "[AR] Fetching URL content...",
-      "analyzing": "[AR] Analyzing document...",
-      "complete": "[AR] Analysis complete"
+      "pulling": "جاري جلب محتوى URL...",
+      "analyzing": "جاري تحليل المستند...",
+      "complete": "اكتمل التحليل"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[AR] Knowledge Base Results",
-      "noData": "[AR] No knowledge base data available",
-      "documents": "[AR] documents",
-      "insights": "[AR] Key Insights",
-      "relevance": "[AR] Relevance",
-      "suggestions": "[AR] Suggestions"
+      "title": "نتائج قاعدة المعرفة",
+      "noData": "لا توجد بيانات قاعدة المعرفة متاحة",
+      "documents": "مستندات",
+      "insights": "رؤى مهمة",
+      "relevance": "الصلة",
+      "suggestions": "اقتراحات"
     },
     "configuration": {
-      "searchMode": "[AR] Search mode",
-      "threshold": "[AR] Relevance threshold"
+      "searchMode": "وضع البحث",
+      "threshold": "عتبة الصلة"
     },
     "status": {
-      "searching": "[AR] Searching knowledge base...",
-      "analyzing": "[AR] Analyzing results..."
+      "searching": "جاري البحث في قاعدة المعرفة...",
+      "analyzing": "جاري تحليل النتائج..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[AR] Document analysis results will be displayed here",
-      "title": "[AR] Analysis Results",
-      "noData": "[AR] No document analysis data available",
-      "documents": "[AR] documents",
-      "noDocuments": "[AR] No documents found",
-      "summary": "[AR] Summary",
-      "insights": "[AR] Key Insights",
-      "metadata": "[AR] Document Info",
-      "processingTime": "[AR] Processing time",
-      "searchTime": "[AR] Search time",
-      "relevance": "[AR] Relevance",
-      "cached": "[AR] Cached",
-      "preview": "[AR] Preview",
-      "view": "[AR] View",
-      "open": "[AR] Open",
-      "bookmark": "[AR] Bookmark",
-      "suggestions": "[AR] Suggestions",
+      "placeholder": "ستظهر نتائج تحليل المستندات هنا",
+      "title": "نتائج التحليل",
+      "noData": "لا توجد بيانات تحليل مستندات متاحة",
+      "documents": "مستندات",
+      "noDocuments": "لم يتم العثور على مستندات",
+      "summary": "ملخص",
+      "insights": "رؤى مهمة",
+      "metadata": "معلومات المستند",
+      "processingTime": "وقت المعالجة",
+      "searchTime": "وقت البحث",
+      "relevance": "الصلة",
+      "cached": "مخزن مؤقتاً",
+      "preview": "معاينة",
+      "view": "عرض",
+      "open": "فتح",
+      "bookmark": "إشارة مرجعية",
+      "suggestions": "اقتراحات",
       "tabs": {
-        "documents": "[AR] Documents",
-        "insights": "[AR] Insights",
-        "failed": "[AR] Failed"
+        "documents": "مستندات",
+        "insights": "رؤى",
+        "failed": "فشل"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[AR] Loading...",
-      "searching": "[AR] Searching...",
-      "processing": "[AR] Processing...",
-      "analyzing": "[AR] Analyzing..."
+      "default": "جاري التحميل...",
+      "searching": "جاري البحث...",
+      "processing": "جاري المعالجة...",
+      "analyzing": "جاري التحليل..."
     },
     "buttons": {
-      "retry": "[AR] Retry",
-      "cancel": "[AR] Cancel",
-      "expand": "[AR] Expand",
-      "collapse": "[AR] Collapse",
-      "configure": "[AR] Configure",
-      "submit": "[AR] Submit"
+      "retry": "إعادة المحاولة",
+      "cancel": "إلغاء",
+      "expand": "توسيع",
+      "collapse": "طي",
+      "configure": "تهيئة",
+      "submit": "إرسال"
     },
     "labels": {
-      "priority": "[AR] Priority",
-      "estimatedTime": "[AR] Estimated time",
-      "availability": "[AR] Availability",
-      "configuration": "[AR] Configuration"
+      "priority": "الأولوية",
+      "estimatedTime": "الوقت المقدر",
+      "availability": "التوفر",
+      "configuration": "التهيئة"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[AR] An unknown error occurred",
-      "network": "[AR] Network connection error",
-      "timeout": "[AR] Request timed out",
-      "unauthorized": "[AR] Access denied",
-      "rateLimit": "[AR] Rate limit exceeded",
-      "serviceUnavailable": "[AR] Service temporarily unavailable"
+      "unknown": "حدث خطأ غير معروف",
+      "network": "خطأ في اتصال الشبكة",
+      "timeout": "انتهت مهلة الطلب",
+      "unauthorized": "تم رفض الوصول",
+      "rateLimit": "تم تجاوز حد المعدل",
+      "serviceUnavailable": "الخدمة غير متاحة مؤقتاً"
     },
     "webSearch": {
-      "searchFailed": "[AR] Web search failed",
-      "invalidQuery": "[AR] Invalid search query"
+      "searchFailed": "فشل بحث الويب",
+      "invalidQuery": "استعلام بحث غير صالح"
     },
     "codeInterpreter": {
-      "executionFailed": "[AR] Code execution failed",
-      "invalidCode": "[AR] Invalid or unsafe code"
+      "executionFailed": "فشل تنفيذ الكود",
+      "invalidCode": "كود غير صالح أو غير آمن"
     },
     "urlPull": {
-      "fetchFailed": "[AR] Failed to fetch URL content",
-      "invalidUrl": "[AR] Invalid or inaccessible URL"
+      "fetchFailed": "فشل في جلب محتوى URL",
+      "invalidUrl": "رابط غير صالح أو غير متاح"
     },
     "localKnowledge": {
-      "searchFailed": "[AR] Knowledge base search failed",
-      "noAccess": "[AR] No access to knowledge base"
+      "searchFailed": "فشل بحث قاعدة المعرفة",
+      "noAccess": "لا يوجد وصول إلى قاعدة المعرفة"
     }
   },
   "settings": {
-    "autoSubmit": "[AR] Auto-submit after processing",
-    "advancedOptions": "[AR] Advanced options",
+    "autoSubmit": "إرسال تلقائي بعد المعالجة",
+    "advancedOptions": "خيارات متقدمة",
     "priority": {
-      "high": "[AR] High",
-      "medium": "[AR] Medium",
-      "low": "[AR] Low"
+      "high": "عالية",
+      "medium": "متوسطة",
+      "low": "منخفضة"
     },
     "safeSearch": {
-      "off": "[AR] Off",
-      "moderate": "[AR] Moderate",
-      "strict": "[AR] Strict"
+      "off": "مغلق",
+      "moderate": "معتدل",
+      "strict": "صارم"
     },
     "market": {
-      "any": "[AR] Any region",
-      "local": "[AR] Local region"
+      "any": "أي منطقة",
+      "local": "المنطقة المحلية"
     }
   }
 }

@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[ID] Web Search",
-      "code_interpreter": "[ID] Code Interpreter",
-      "url_pull": "[ID] URL Analysis",
-      "local_knowledge": "[ID] Knowledge Base",
-      "standard_chat": "[ID] Standard Chat",
-      "foundry": "[ID] Foundry",
-      "third_party": "[ID] Third Party"
+      "web_search": "Pencarian Web",
+      "code_interpreter": "Penerjemah Kode",
+      "url_pull": "Analisis URL",
+      "local_knowledge": "Basis Pengetahuan",
+      "standard_chat": "Obrolan Standar",
+      "foundry": "Foundry",
+      "third_party": "Pihak Ketiga"
     },
     "error": {
-      "title": "[ID] Agent Error",
-      "unknown": "[ID] An unknown error occurred",
-      "retry": "[ID] Retry",
-      "fallback": "[ID] Use fallback"
+      "title": "Kesalahan Agen",
+      "unknown": "Terjadi kesalahan yang tidak diketahui",
+      "retry": "Coba lagi",
+      "fallback": "Gunakan alternatif"
     },
     "metadata": {
-      "processingTime": "[ID] Processing time",
-      "confidence": "[ID] Confidence",
-      "tokens": "[ID] Tokens used"
+      "processingTime": "Waktu pemrosesan",
+      "confidence": "Kepercayaan",
+      "tokens": "Token yang digunakan"
     },
     "resultsPanel": {
-      "placeholder": "[ID] Agent results will be displayed here"
+      "placeholder": "Hasil agen akan ditampilkan di sini"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[ID] Searches the web for real-time information",
-      "code_interpreter": "[ID] Executes and analyzes code in multiple languages",
-      "url_pull": "[ID] Analyzes and extracts content from web pages",
-      "local_knowledge": "[ID] Searches internal knowledge base and documents",
-      "standard_chat": "[ID] Standard conversational AI without tools",
-      "foundry": "[ID] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[ID] Third-party agent or custom tool integration"
+      "web_search": "Pencarian Web - Mencari di web untuk informasi real-time",
+      "code_interpreter": "Penerjemah Kode - Menjalankan dan menganalisis kode dalam berbagai bahasa",
+      "url_pull": "Analisis URL - Menganalisis dan mengekstrak konten dari halaman web",
+      "local_knowledge": "Basis Pengetahuan - Mencari basis pengetahuan internal dan dokumen",
+      "standard_chat": "Obrolan Standar - AI percakapan standar tanpa alat",
+      "foundry": "Foundry - Menggunakan Azure AI Foundry untuk kemampuan lanjutan",
+      "third_party": "Pihak Ketiga - Agen pihak ketiga atau integrasi alat khusus"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[ID] Web search results will be displayed here",
-      "title": "[ID] Title",
-      "noResults": "[ID] No results found",
-      "noData": "[ID] No search data available",
-      "results": "[ID] results",
-      "confidence": "[ID] Relevance",
-      "relevance": "[ID] Relevance",
-      "source": "[ID] Source",
-      "citations": "[ID] Citations",
-      "cite": "[ID] Cite",
-      "open": "[ID] Open",
-      "openLink": "[ID] Open link in new tab",
-      "filters": "[ID] Filters",
-      "sortBy": "[ID] Sort by",
-      "filterBy": "[ID] Filter by",
-      "all": "[ID] All",
-      "date": "[ID] Date",
-      "query": "[ID] Query",
-      "searchTime": "[ID] Search time",
-      "cached": "[ID] Cached",
+      "placeholder": "Hasil pencarian web akan ditampilkan di sini",
+      "title": "Hasil Pencarian",
+      "noResults": "Tidak ada hasil ditemukan",
+      "noData": "Tidak ada data pencarian tersedia",
+      "results": "hasil",
+      "confidence": "Relevansi",
+      "relevance": "Relevansi",
+      "source": "Sumber",
+      "citations": "Kutipan",
+      "cite": "Kutip",
+      "open": "Buka",
+      "openLink": "Buka tautan di tab baru",
+      "filters": "Filter",
+      "sortBy": "Urutkan berdasarkan",
+      "filterBy": "Filter berdasarkan",
+      "all": "Semua",
+      "date": "Tanggal",
+      "query": "Kueri",
+      "searchTime": "Waktu pencarian",
+      "cached": "Di-cache",
       "contentTypes": {
-        "webpage": "[ID] Web pages",
-        "news": "[ID] News",
-        "academic": "[ID] Academic",
-        "image": "[ID] Images",
-        "video": "[ID] Videos"
+        "webpage": "Halaman web",
+        "news": "Berita",
+        "academic": "Akademik",
+        "image": "Gambar",
+        "video": "Video"
       }
     },
     "configuration": {
-      "resultsCount": "[ID] Number of results",
-      "safeSearch": "[ID] Safe search",
-      "market": "[ID] Search market"
+      "resultsCount": "Jumlah hasil",
+      "safeSearch": "Pencarian aman",
+      "market": "Pasar pencarian"
     },
     "status": {
-      "searching": "[ID] Searching the web...",
-      "optimizing": "[ID] Optimizing search query...",
-      "processing": "[ID] Processing search results..."
+      "searching": "Mencari di web...",
+      "optimizing": "Mengoptimalkan kueri pencarian...",
+      "processing": "Memproses hasil pencarian..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[ID] Code execution results will be displayed here",
-      "title": "[ID] Execution Results",
-      "noData": "[ID] No code execution data available",
-      "output": "[ID] Output",
-      "errors": "[ID] Errors",
-      "logs": "[ID] Logs",
-      "executionTime": "[ID] Execution time",
-      "memoryUsage": "[ID] Memory usage",
-      "cpuUsage": "[ID] CPU usage",
-      "outputLines": "[ID] Output lines",
-      "executedCode": "[ID] Executed Code",
-      "download": "[ID] Download",
-      "noOutput": "[ID] No output generated",
-      "noFiles": "[ID] No files generated",
-      "outputSize": "[ID] Output size",
-      "unsupportedOutput": "[ID] Unsupported output format",
+      "placeholder": "Hasil eksekusi kode akan ditampilkan di sini",
+      "title": "Hasil Eksekusi",
+      "noData": "Tidak ada data eksekusi kode tersedia",
+      "output": "Output",
+      "errors": "Kesalahan",
+      "logs": "Log",
+      "executionTime": "Waktu eksekusi",
+      "memoryUsage": "Penggunaan memori",
+      "cpuUsage": "Penggunaan CPU",
+      "outputLines": "Baris output",
+      "executedCode": "Kode yang Dieksekusi",
+      "download": "Unduh",
+      "noOutput": "Tidak ada output yang dihasilkan",
+      "noFiles": "Tidak ada file yang dihasilkan",
+      "outputSize": "Ukuran output",
+      "unsupportedOutput": "Format output tidak didukung",
       "status": {
-        "success": "[ID] Success",
-        "error": "[ID] Error",
-        "timeout": "[ID] Timeout",
-        "memory_limit": "[ID] Memory limit exceeded",
-        "security_violation": "[ID] Security violation",
-        "invalid_code": "[ID] Invalid code"
+        "success": "Berhasil",
+        "error": "Kesalahan",
+        "timeout": "Timeout",
+        "memory_limit": "Batas memori terlampaui",
+        "security_violation": "Pelanggaran keamanan",
+        "invalid_code": "Kode tidak valid"
       },
       "outputTypes": {
-        "stdout": "[ID] Standard output",
-        "stderr": "[ID] Error output",
-        "return_value": "[ID] Return value",
-        "exception": "[ID] Exception"
+        "stdout": "Output standar",
+        "stderr": "Output kesalahan",
+        "return_value": "Nilai kembali",
+        "exception": "Pengecualian"
       },
       "tabs": {
-        "output": "[ID] Output",
-        "code": "[ID] Code",
-        "files": "[ID] Files"
+        "output": "Output",
+        "code": "Kode",
+        "files": "File"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[ID] URL Analysis Results",
-      "noData": "[ID] No URL analysis data available",
-      "summary": "[ID] Summary",
-      "metadata": "[ID] Document Info",
-      "processingTime": "[ID] Processing time",
-      "preview": "[ID] Preview",
-      "view": "[ID] View"
+      "title": "Hasil Analisis URL",
+      "noData": "Tidak ada data analisis URL tersedia",
+      "summary": "Ringkasan",
+      "metadata": "Info Dokumen",
+      "processingTime": "Waktu pemrosesan",
+      "preview": "Pratinjau",
+      "view": "Lihat"
     },
     "configuration": {
-      "timeout": "[ID] Request timeout"
+      "timeout": "Timeout permintaan"
     },
     "status": {
-      "pulling": "[ID] Fetching URL content...",
-      "analyzing": "[ID] Analyzing document...",
-      "complete": "[ID] Analysis complete"
+      "pulling": "Mengambil konten URL...",
+      "analyzing": "Menganalisis dokumen...",
+      "complete": "Analisis selesai"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[ID] Knowledge Base Results",
-      "noData": "[ID] No knowledge base data available",
-      "documents": "[ID] documents",
-      "insights": "[ID] Key Insights",
-      "relevance": "[ID] Relevance",
-      "suggestions": "[ID] Suggestions"
+      "title": "Hasil Basis Pengetahuan",
+      "noData": "Tidak ada data basis pengetahuan tersedia",
+      "documents": "dokumen",
+      "insights": "Wawasan Kunci",
+      "relevance": "Relevansi",
+      "suggestions": "Saran"
     },
     "configuration": {
-      "searchMode": "[ID] Search mode",
-      "threshold": "[ID] Relevance threshold"
+      "searchMode": "Mode pencarian",
+      "threshold": "Ambang batas relevansi"
     },
     "status": {
-      "searching": "[ID] Searching knowledge base...",
-      "analyzing": "[ID] Analyzing results..."
+      "searching": "Mencari basis pengetahuan...",
+      "analyzing": "Menganalisis hasil..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[ID] Document analysis results will be displayed here",
-      "title": "[ID] Analysis Results",
-      "noData": "[ID] No document analysis data available",
-      "documents": "[ID] documents",
-      "noDocuments": "[ID] No documents found",
-      "summary": "[ID] Summary",
-      "insights": "[ID] Key Insights",
-      "metadata": "[ID] Document Info",
-      "processingTime": "[ID] Processing time",
-      "searchTime": "[ID] Search time",
-      "relevance": "[ID] Relevance",
-      "cached": "[ID] Cached",
-      "preview": "[ID] Preview",
-      "view": "[ID] View",
-      "open": "[ID] Open",
-      "bookmark": "[ID] Bookmark",
-      "suggestions": "[ID] Suggestions",
+      "placeholder": "Hasil analisis dokumen akan ditampilkan di sini",
+      "title": "Hasil Analisis",
+      "noData": "Tidak ada data analisis dokumen tersedia",
+      "documents": "dokumen",
+      "noDocuments": "Tidak ada dokumen ditemukan",
+      "summary": "Ringkasan",
+      "insights": "Wawasan Kunci",
+      "metadata": "Info Dokumen",
+      "processingTime": "Waktu pemrosesan",
+      "searchTime": "Waktu pencarian",
+      "relevance": "Relevansi",
+      "cached": "Di-cache",
+      "preview": "Pratinjau",
+      "view": "Lihat",
+      "open": "Buka",
+      "bookmark": "Bookmark",
+      "suggestions": "Saran",
       "tabs": {
-        "documents": "[ID] Documents",
-        "insights": "[ID] Insights",
-        "failed": "[ID] Failed"
+        "documents": "Dokumen",
+        "insights": "Wawasan",
+        "failed": "Gagal"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[ID] Loading...",
-      "searching": "[ID] Searching...",
-      "processing": "[ID] Processing...",
-      "analyzing": "[ID] Analyzing..."
+      "default": "Memuat...",
+      "searching": "Mencari...",
+      "processing": "Memproses...",
+      "analyzing": "Menganalisis..."
     },
     "buttons": {
-      "retry": "[ID] Retry",
-      "cancel": "[ID] Cancel",
-      "expand": "[ID] Expand",
-      "collapse": "[ID] Collapse",
-      "configure": "[ID] Configure",
-      "submit": "[ID] Submit"
+      "retry": "Coba lagi",
+      "cancel": "Batal",
+      "expand": "Perluas",
+      "collapse": "Tutup",
+      "configure": "Konfigurasi",
+      "submit": "Kirim"
     },
     "labels": {
-      "priority": "[ID] Priority",
-      "estimatedTime": "[ID] Estimated time",
-      "availability": "[ID] Availability",
-      "configuration": "[ID] Configuration"
+      "priority": "Prioritas",
+      "estimatedTime": "Perkiraan waktu",
+      "availability": "Ketersediaan",
+      "configuration": "Konfigurasi"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[ID] An unknown error occurred",
-      "network": "[ID] Network connection error",
-      "timeout": "[ID] Request timed out",
-      "unauthorized": "[ID] Access denied",
-      "rateLimit": "[ID] Rate limit exceeded",
-      "serviceUnavailable": "[ID] Service temporarily unavailable"
+      "unknown": "Terjadi kesalahan yang tidak diketahui",
+      "network": "Kesalahan koneksi jaringan",
+      "timeout": "Permintaan habis waktu",
+      "unauthorized": "Akses ditolak",
+      "rateLimit": "Batas tingkat terlampaui",
+      "serviceUnavailable": "Layanan sementara tidak tersedia"
     },
     "webSearch": {
-      "searchFailed": "[ID] Web search failed",
-      "invalidQuery": "[ID] Invalid search query"
+      "searchFailed": "Pencarian web gagal",
+      "invalidQuery": "Kueri pencarian tidak valid"
     },
     "codeInterpreter": {
-      "executionFailed": "[ID] Code execution failed",
-      "invalidCode": "[ID] Invalid or unsafe code"
+      "executionFailed": "Eksekusi kode gagal",
+      "invalidCode": "Kode tidak valid atau tidak aman"
     },
     "urlPull": {
-      "fetchFailed": "[ID] Failed to fetch URL content",
-      "invalidUrl": "[ID] Invalid or inaccessible URL"
+      "fetchFailed": "Gagal mengambil konten URL",
+      "invalidUrl": "URL tidak valid atau tidak dapat diakses"
     },
     "localKnowledge": {
-      "searchFailed": "[ID] Knowledge base search failed",
-      "noAccess": "[ID] No access to knowledge base"
+      "searchFailed": "Pencarian basis pengetahuan gagal",
+      "noAccess": "Tidak ada akses ke basis pengetahuan"
     }
   },
   "settings": {
-    "autoSubmit": "[ID] Auto-submit after processing",
-    "advancedOptions": "[ID] Advanced options",
+    "autoSubmit": "Kirim otomatis setelah pemrosesan",
+    "advancedOptions": "Opsi lanjutan",
     "priority": {
-      "high": "[ID] High",
-      "medium": "[ID] Medium",
-      "low": "[ID] Low"
+      "high": "Tinggi",
+      "medium": "Sedang",
+      "low": "Rendah"
     },
     "safeSearch": {
-      "off": "[ID] Off",
-      "moderate": "[ID] Moderate",
-      "strict": "[ID] Strict"
+      "off": "Mati",
+      "moderate": "Sedang",
+      "strict": "Ketat"
     },
     "market": {
-      "any": "[ID] Any region",
-      "local": "[ID] Local region"
+      "any": "Wilayah mana pun",
+      "local": "Wilayah lokal"
     }
   }
 }

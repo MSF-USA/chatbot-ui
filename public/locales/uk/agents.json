@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[UK] Web Search",
-      "code_interpreter": "[UK] Code Interpreter",
-      "url_pull": "[UK] URL Analysis",
-      "local_knowledge": "[UK] Knowledge Base",
-      "standard_chat": "[UK] Standard Chat",
-      "foundry": "[UK] Foundry",
-      "third_party": "[UK] Third Party"
+      "web_search": "Веб-пошук",
+      "code_interpreter": "Інтерпретатор коду",
+      "url_pull": "Аналіз URL",
+      "local_knowledge": "База знань",
+      "standard_chat": "Стандартний чат",
+      "foundry": "Foundry",
+      "third_party": "Стороння"
     },
     "error": {
-      "title": "[UK] Agent Error",
-      "unknown": "[UK] An unknown error occurred",
-      "retry": "[UK] Retry",
-      "fallback": "[UK] Use fallback"
+      "title": "Помилка агента",
+      "unknown": "Сталася невідома помилка",
+      "retry": "Спробувати знову",
+      "fallback": "Використати альтернативу"
     },
     "metadata": {
-      "processingTime": "[UK] Processing time",
-      "confidence": "[UK] Confidence",
-      "tokens": "[UK] Tokens used"
+      "processingTime": "Час обробки",
+      "confidence": "Впевненість",
+      "tokens": "Використані токени"
     },
     "resultsPanel": {
-      "placeholder": "[UK] Agent results will be displayed here"
+      "placeholder": "Результати агента будуть відображені тут"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[UK] Searches the web for real-time information",
-      "code_interpreter": "[UK] Executes and analyzes code in multiple languages",
-      "url_pull": "[UK] Analyzes and extracts content from web pages",
-      "local_knowledge": "[UK] Searches internal knowledge base and documents",
-      "standard_chat": "[UK] Standard conversational AI without tools",
-      "foundry": "[UK] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[UK] Third-party agent or custom tool integration"
+      "web_search": "Веб-пошук - Шукає в інтернеті інформацію в реальному часі",
+      "code_interpreter": "Інтерпретатор коду - Виконує та аналізує код на кількох мовах",
+      "url_pull": "Аналіз URL - Аналізує та витягує вміст з веб-сторінок",
+      "local_knowledge": "База знань - Шукає у внутрішній базі знань та документах",
+      "standard_chat": "Стандартний чат - Стандартний розмовний ШІ без інструментів",
+      "foundry": "Foundry - Використовує Azure AI Foundry для розширених можливостей",
+      "third_party": "Стороння - Сторонній агент або інтеграція користувацького інструменту"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[UK] Web search results will be displayed here",
-      "title": "[UK] Title",
-      "noResults": "[UK] No results found",
-      "noData": "[UK] No search data available",
-      "results": "[UK] results",
-      "confidence": "[UK] Relevance",
-      "relevance": "[UK] Relevance",
-      "source": "[UK] Source",
-      "citations": "[UK] Citations",
-      "cite": "[UK] Cite",
-      "open": "[UK] Open",
-      "openLink": "[UK] Open link in new tab",
-      "filters": "[UK] Filters",
-      "sortBy": "[UK] Sort by",
-      "filterBy": "[UK] Filter by",
-      "all": "[UK] All",
-      "date": "[UK] Date",
-      "query": "[UK] Query",
-      "searchTime": "[UK] Search time",
-      "cached": "[UK] Cached",
+      "placeholder": "Результати веб-пошуку будуть відображені тут",
+      "title": "Результати пошуку",
+      "noResults": "Результатів не знайдено",
+      "noData": "Немає даних пошуку",
+      "results": "результати",
+      "confidence": "Релевантність",
+      "relevance": "Релевантність",
+      "source": "Джерело",
+      "citations": "Цитати",
+      "cite": "Цитувати",
+      "open": "Відкрити",
+      "openLink": "Відкрити посилання в новій вкладці",
+      "filters": "Фільтри",
+      "sortBy": "Сортувати за",
+      "filterBy": "Фільтрувати за",
+      "all": "Всі",
+      "date": "Дата",
+      "query": "Запит",
+      "searchTime": "Час пошуку",
+      "cached": "Кешовано",
       "contentTypes": {
-        "webpage": "[UK] Web pages",
-        "news": "[UK] News",
-        "academic": "[UK] Academic",
-        "image": "[UK] Images",
-        "video": "[UK] Videos"
+        "webpage": "Веб-сторінки",
+        "news": "Новини",
+        "academic": "Наукові",
+        "image": "Зображення",
+        "video": "Відео"
       }
     },
     "configuration": {
-      "resultsCount": "[UK] Number of results",
-      "safeSearch": "[UK] Safe search",
-      "market": "[UK] Search market"
+      "resultsCount": "Кількість результатів",
+      "safeSearch": "Безпечний пошук",
+      "market": "Ринок пошуку"
     },
     "status": {
-      "searching": "[UK] Searching the web...",
-      "optimizing": "[UK] Optimizing search query...",
-      "processing": "[UK] Processing search results..."
+      "searching": "Пошук в інтернеті...",
+      "optimizing": "Оптимізація запиту пошуку...",
+      "processing": "Обробка результатів пошуку..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[UK] Code execution results will be displayed here",
-      "title": "[UK] Execution Results",
-      "noData": "[UK] No code execution data available",
-      "output": "[UK] Output",
-      "errors": "[UK] Errors",
-      "logs": "[UK] Logs",
-      "executionTime": "[UK] Execution time",
-      "memoryUsage": "[UK] Memory usage",
-      "cpuUsage": "[UK] CPU usage",
-      "outputLines": "[UK] Output lines",
-      "executedCode": "[UK] Executed Code",
-      "download": "[UK] Download",
-      "noOutput": "[UK] No output generated",
-      "noFiles": "[UK] No files generated",
-      "outputSize": "[UK] Output size",
-      "unsupportedOutput": "[UK] Unsupported output format",
+      "placeholder": "Code execution results will be displayed here",
+      "title": "Execution Results",
+      "noData": "No code execution data available",
+      "output": "Output",
+      "errors": "Errors",
+      "logs": "Logs",
+      "executionTime": "Execution time",
+      "memoryUsage": "Memory usage",
+      "cpuUsage": "CPU usage",
+      "outputLines": "Output lines",
+      "executedCode": "Executed Code",
+      "download": "Download",
+      "noOutput": "No output generated",
+      "noFiles": "No files generated",
+      "outputSize": "Output size",
+      "unsupportedOutput": "Unsupported output format",
       "status": {
-        "success": "[UK] Success",
-        "error": "[UK] Error",
-        "timeout": "[UK] Timeout",
-        "memory_limit": "[UK] Memory limit exceeded",
-        "security_violation": "[UK] Security violation",
-        "invalid_code": "[UK] Invalid code"
+        "success": "Success",
+        "error": "Error",
+        "timeout": "Timeout",
+        "memory_limit": "Memory limit exceeded",
+        "security_violation": "Security violation",
+        "invalid_code": "Invalid code"
       },
       "outputTypes": {
-        "stdout": "[UK] Standard output",
-        "stderr": "[UK] Error output",
-        "return_value": "[UK] Return value",
-        "exception": "[UK] Exception"
+        "stdout": "Standard output",
+        "stderr": "Error output",
+        "return_value": "Return value",
+        "exception": "Exception"
       },
       "tabs": {
-        "output": "[UK] Output",
-        "code": "[UK] Code",
-        "files": "[UK] Files"
+        "output": "Output",
+        "code": "Code",
+        "files": "Files"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[UK] URL Analysis Results",
-      "noData": "[UK] No URL analysis data available",
-      "summary": "[UK] Summary",
-      "metadata": "[UK] Document Info",
-      "processingTime": "[UK] Processing time",
-      "preview": "[UK] Preview",
-      "view": "[UK] View"
+      "title": "URL Analysis Results",
+      "noData": "No URL analysis data available",
+      "summary": "Summary",
+      "metadata": "Document Info",
+      "processingTime": "Processing time",
+      "preview": "Preview",
+      "view": "View"
     },
     "configuration": {
-      "timeout": "[UK] Request timeout"
+      "timeout": "Request timeout"
     },
     "status": {
-      "pulling": "[UK] Fetching URL content...",
-      "analyzing": "[UK] Analyzing document...",
-      "complete": "[UK] Analysis complete"
+      "pulling": "Fetching URL content...",
+      "analyzing": "Analyzing document...",
+      "complete": "Analysis complete"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[UK] Knowledge Base Results",
-      "noData": "[UK] No knowledge base data available",
-      "documents": "[UK] documents",
-      "insights": "[UK] Key Insights",
-      "relevance": "[UK] Relevance",
-      "suggestions": "[UK] Suggestions"
+      "title": "Knowledge Base Results",
+      "noData": "No knowledge base data available",
+      "documents": "documents",
+      "insights": "Key Insights",
+      "relevance": "Relevance",
+      "suggestions": "Suggestions"
     },
     "configuration": {
-      "searchMode": "[UK] Search mode",
-      "threshold": "[UK] Relevance threshold"
+      "searchMode": "Search mode",
+      "threshold": "Relevance threshold"
     },
     "status": {
-      "searching": "[UK] Searching knowledge base...",
-      "analyzing": "[UK] Analyzing results..."
+      "searching": "Searching knowledge base...",
+      "analyzing": "Analyzing results..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[UK] Document analysis results will be displayed here",
-      "title": "[UK] Analysis Results",
-      "noData": "[UK] No document analysis data available",
-      "documents": "[UK] documents",
-      "noDocuments": "[UK] No documents found",
-      "summary": "[UK] Summary",
-      "insights": "[UK] Key Insights",
-      "metadata": "[UK] Document Info",
-      "processingTime": "[UK] Processing time",
-      "searchTime": "[UK] Search time",
-      "relevance": "[UK] Relevance",
-      "cached": "[UK] Cached",
-      "preview": "[UK] Preview",
-      "view": "[UK] View",
-      "open": "[UK] Open",
-      "bookmark": "[UK] Bookmark",
-      "suggestions": "[UK] Suggestions",
+      "placeholder": "Document analysis results will be displayed here",
+      "title": "Analysis Results",
+      "noData": "No document analysis data available",
+      "documents": "documents",
+      "noDocuments": "No documents found",
+      "summary": "Summary",
+      "insights": "Key Insights",
+      "metadata": "Document Info",
+      "processingTime": "Processing time",
+      "searchTime": "Search time",
+      "relevance": "Relevance",
+      "cached": "Cached",
+      "preview": "Preview",
+      "view": "View",
+      "open": "Open",
+      "bookmark": "Bookmark",
+      "suggestions": "Suggestions",
       "tabs": {
-        "documents": "[UK] Documents",
-        "insights": "[UK] Insights",
-        "failed": "[UK] Failed"
+        "documents": "Documents",
+        "insights": "Insights",
+        "failed": "Failed"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[UK] Loading...",
-      "searching": "[UK] Searching...",
-      "processing": "[UK] Processing...",
-      "analyzing": "[UK] Analyzing..."
+      "default": "Завантаження...",
+      "searching": "Пошук...",
+      "processing": "Обробка...",
+      "analyzing": "Аналіз..."
     },
     "buttons": {
-      "retry": "[UK] Retry",
-      "cancel": "[UK] Cancel",
-      "expand": "[UK] Expand",
-      "collapse": "[UK] Collapse",
-      "configure": "[UK] Configure",
-      "submit": "[UK] Submit"
+      "retry": "Повторити",
+      "cancel": "Скасувати",
+      "expand": "Розширити",
+      "collapse": "Згорнути",
+      "configure": "Налаштувати",
+      "submit": "Надіслати"
     },
     "labels": {
-      "priority": "[UK] Priority",
-      "estimatedTime": "[UK] Estimated time",
-      "availability": "[UK] Availability",
-      "configuration": "[UK] Configuration"
+      "priority": "Priority",
+      "estimatedTime": "Estimated time",
+      "availability": "Availability",
+      "configuration": "Configuration"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[UK] An unknown error occurred",
-      "network": "[UK] Network connection error",
-      "timeout": "[UK] Request timed out",
-      "unauthorized": "[UK] Access denied",
-      "rateLimit": "[UK] Rate limit exceeded",
-      "serviceUnavailable": "[UK] Service temporarily unavailable"
+      "unknown": "Сталася невідома помилка",
+      "network": "Помилка мережевого з'єднання",
+      "timeout": "Час запиту сплив",
+      "unauthorized": "Доступ заборонено",
+      "rateLimit": "Перевищено ліміт швидкості",
+      "serviceUnavailable": "Сервіс тимчасово недоступний"
     },
     "webSearch": {
-      "searchFailed": "[UK] Web search failed",
-      "invalidQuery": "[UK] Invalid search query"
+      "searchFailed": "Веб-пошук не вдався",
+      "invalidQuery": "Невірний запит пошуку"
     },
     "codeInterpreter": {
-      "executionFailed": "[UK] Code execution failed",
-      "invalidCode": "[UK] Invalid or unsafe code"
+      "executionFailed": "Code execution failed",
+      "invalidCode": "Invalid or unsafe code"
     },
     "urlPull": {
-      "fetchFailed": "[UK] Failed to fetch URL content",
-      "invalidUrl": "[UK] Invalid or inaccessible URL"
+      "fetchFailed": "Failed to fetch URL content",
+      "invalidUrl": "Invalid or inaccessible URL"
     },
     "localKnowledge": {
-      "searchFailed": "[UK] Knowledge base search failed",
-      "noAccess": "[UK] No access to knowledge base"
+      "searchFailed": "Knowledge base search failed",
+      "noAccess": "No access to knowledge base"
     }
   },
   "settings": {
-    "autoSubmit": "[UK] Auto-submit after processing",
-    "advancedOptions": "[UK] Advanced options",
+    "autoSubmit": "Автоматичне надсилання після обробки",
+    "advancedOptions": "Розширені налаштування",
     "priority": {
-      "high": "[UK] High",
-      "medium": "[UK] Medium",
-      "low": "[UK] Low"
+      "high": "Високий",
+      "medium": "Середній",
+      "low": "Низький"
     },
     "safeSearch": {
-      "off": "[UK] Off",
-      "moderate": "[UK] Moderate",
-      "strict": "[UK] Strict"
+      "off": "Вимкнено",
+      "moderate": "Помірний",
+      "strict": "Суворий"
     },
     "market": {
-      "any": "[UK] Any region",
-      "local": "[UK] Local region"
+      "any": "Any region",
+      "local": "Local region"
     }
   }
 }

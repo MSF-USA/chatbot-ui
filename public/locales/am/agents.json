@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[AM] Web Search",
-      "code_interpreter": "[AM] Code Interpreter",
-      "url_pull": "[AM] URL Analysis",
-      "local_knowledge": "[AM] Knowledge Base",
-      "standard_chat": "[AM] Standard Chat",
-      "foundry": "[AM] Foundry",
-      "third_party": "[AM] Third Party"
+      "web_search": "የድር ፍለጋ",
+      "code_interpreter": "ኮድ ተርጓሚ",
+      "url_pull": "URL ትንተና",
+      "local_knowledge": "የእውቀት መሰረት",
+      "standard_chat": "መደበኛ ውይይት",
+      "foundry": "Foundry",
+      "third_party": "ሶስተኛ ወገን"
     },
     "error": {
-      "title": "[AM] Agent Error",
-      "unknown": "[AM] An unknown error occurred",
-      "retry": "[AM] Retry",
-      "fallback": "[AM] Use fallback"
+      "title": "ወኪል ስህተት",
+      "unknown": "ያልታወቀ ስህተት ተከስቷል",
+      "retry": "እንደገና ይሞክሩ",
+      "fallback": "ተለዋጭ ይጠቀሙ"
     },
     "metadata": {
-      "processingTime": "[AM] Processing time",
-      "confidence": "[AM] Confidence",
-      "tokens": "[AM] Tokens used"
+      "processingTime": "የማቀናበር ጊዜ",
+      "confidence": "እምነት",
+      "tokens": "ጥቅም ላይ የዋሉ ቶከኖች"
     },
     "resultsPanel": {
-      "placeholder": "[AM] Agent results will be displayed here"
+      "placeholder": "የወኪል ውጤቶች እዚህ ይታያሉ"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[AM] Searches the web for real-time information",
-      "code_interpreter": "[AM] Executes and analyzes code in multiple languages",
-      "url_pull": "[AM] Analyzes and extracts content from web pages",
-      "local_knowledge": "[AM] Searches internal knowledge base and documents",
-      "standard_chat": "[AM] Standard conversational AI without tools",
-      "foundry": "[AM] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[AM] Third-party agent or custom tool integration"
+      "web_search": "የድር ፍለጋ - ለእውነተኛ ጊዜ መረጃ ድሩን ይፈልጋል",
+      "code_interpreter": "ኮድ ተርጓሚ - በብዙ ቋንቋዎች ኮድ ያስፈጽማል እና ይተነትናል",
+      "url_pull": "URL ትንተና - ከድር ገጾች ይዘት ይተነትና እና ያወጣል",
+      "local_knowledge": "የእውቀት መሰረት - የውስጥ እውቀት መሰረት እና ሰነዶችን ይፈልጋል",
+      "standard_chat": "መደበኛ ውይይት - ያለ መሳሪያዎች መደበኛ የውይይት AI",
+      "foundry": "Foundry - ለላቁ ችሎታዎች Azure AI Foundry ይጠቀማል",
+      "third_party": "ሶስተኛ ወገን - የሶስተኛ ወገን ወኪል ወይም ብጁ መሳሪያ ውህደት"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[AM] Web search results will be displayed here",
-      "title": "[AM] Title",
-      "noResults": "[AM] No results found",
-      "noData": "[AM] No search data available",
-      "results": "[AM] results",
-      "confidence": "[AM] Relevance",
-      "relevance": "[AM] Relevance",
-      "source": "[AM] Source",
-      "citations": "[AM] Citations",
-      "cite": "[AM] Cite",
-      "open": "[AM] Open",
-      "openLink": "[AM] Open link in new tab",
-      "filters": "[AM] Filters",
-      "sortBy": "[AM] Sort by",
-      "filterBy": "[AM] Filter by",
-      "all": "[AM] All",
-      "date": "[AM] Date",
-      "query": "[AM] Query",
-      "searchTime": "[AM] Search time",
-      "cached": "[AM] Cached",
+      "placeholder": "የድር ፍለጋ ውጤቶች እዚህ ይታያሉ",
+      "title": "ርዕስ",
+      "noResults": "ምንም ውጤት አልተገኘም",
+      "noData": "ምንም የፍለጋ ውሂብ የለም",
+      "results": "ውጤቶች",
+      "confidence": "አግባብነት",
+      "relevance": "አግባብነት",
+      "source": "ምንጭ",
+      "citations": "ጥቅሶች",
+      "cite": "ጥቀስ",
+      "open": "ክፈት",
+      "openLink": "በአዲስ ትብ ውስጥ አገናኝ ክፈት",
+      "filters": "ማጣሪያዎች",
+      "sortBy": "በዚህ ደርድር",
+      "filterBy": "በዚህ አጣራ",
+      "all": "ሁሉም",
+      "date": "ቀን",
+      "query": "ጥያቄ",
+      "searchTime": "የፍለጋ ጊዜ",
+      "cached": "በማስታወሻ የተያዘ",
       "contentTypes": {
-        "webpage": "[AM] Web pages",
-        "news": "[AM] News",
-        "academic": "[AM] Academic",
-        "image": "[AM] Images",
-        "video": "[AM] Videos"
+        "webpage": "የድር ገጾች",
+        "news": "ዜና",
+        "academic": "አካዳሚክ",
+        "image": "ምስሎች",
+        "video": "ቪዲዮዎች"
       }
     },
     "configuration": {
-      "resultsCount": "[AM] Number of results",
-      "safeSearch": "[AM] Safe search",
-      "market": "[AM] Search market"
+      "resultsCount": "የውጤቶች ብዛት",
+      "safeSearch": "ደህንነቱ የተጠበቀ ፍለጋ",
+      "market": "የፍለጋ ገበያ"
     },
     "status": {
-      "searching": "[AM] Searching the web...",
-      "optimizing": "[AM] Optimizing search query...",
-      "processing": "[AM] Processing search results..."
+      "searching": "ድሩን በመፈለግ ላይ...",
+      "optimizing": "የፍለጋ ጥያቄን በማመቻቸት ላይ...",
+      "processing": "የፍለጋ ውጤቶችን በማቀናበር ላይ..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[AM] Code execution results will be displayed here",
-      "title": "[AM] Execution Results",
-      "noData": "[AM] No code execution data available",
-      "output": "[AM] Output",
-      "errors": "[AM] Errors",
-      "logs": "[AM] Logs",
-      "executionTime": "[AM] Execution time",
-      "memoryUsage": "[AM] Memory usage",
-      "cpuUsage": "[AM] CPU usage",
-      "outputLines": "[AM] Output lines",
-      "executedCode": "[AM] Executed Code",
-      "download": "[AM] Download",
-      "noOutput": "[AM] No output generated",
-      "noFiles": "[AM] No files generated",
-      "outputSize": "[AM] Output size",
-      "unsupportedOutput": "[AM] Unsupported output format",
+      "placeholder": "የኮድ ማስፈጸሚያ ውጤቶች እዚህ ይታያሉ",
+      "title": "የመፈጸሚያ ውጤቶች",
+      "noData": "ምንም የኮድ ማስፈጸሚያ ውሂብ የለም",
+      "output": "ውጤት",
+      "errors": "ስህተቶች",
+      "logs": "ሎጎች",
+      "executionTime": "የመፈጸሚያ ጊዜ",
+      "memoryUsage": "የማስታወሻ አጠቃቀም",
+      "cpuUsage": "የCPU አጠቃቀም",
+      "outputLines": "የውጤት መስመሮች",
+      "executedCode": "የተፈጸመ ኮድ",
+      "download": "ውርድ",
+      "noOutput": "ምንም ውጤት አልተፈጠረም",
+      "noFiles": "ምንም ፋይሎች አልተፈጠሩም",
+      "outputSize": "የውጤት መጠን",
+      "unsupportedOutput": "ያልተደገፈ የውጤት አይነት",
       "status": {
-        "success": "[AM] Success",
-        "error": "[AM] Error",
-        "timeout": "[AM] Timeout",
-        "memory_limit": "[AM] Memory limit exceeded",
-        "security_violation": "[AM] Security violation",
-        "invalid_code": "[AM] Invalid code"
+        "success": "መፈልቅት",
+        "error": "ስህተት",
+        "timeout": "ሐአልሰበ ግዜ አይጠቀም",
+        "memory_limit": "የማስታወሻ ስይማው ተየልፈዋል",
+        "security_violation": "የደህንነት ልምድ",
+        "invalid_code": "ያልተቀበለ ኮድ"
       },
       "outputTypes": {
-        "stdout": "[AM] Standard output",
-        "stderr": "[AM] Error output",
-        "return_value": "[AM] Return value",
-        "exception": "[AM] Exception"
+        "stdout": "መተሽ ውጤት",
+        "stderr": "የስህተት ውጤት",
+        "return_value": "የምልስ ውጤት",
+        "exception": "አስተያይ"
       },
       "tabs": {
-        "output": "[AM] Output",
-        "code": "[AM] Code",
-        "files": "[AM] Files"
+        "output": "ውጤት",
+        "code": "ኮድ",
+        "files": "ፋይሎች"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[AM] URL Analysis Results",
-      "noData": "[AM] No URL analysis data available",
-      "summary": "[AM] Summary",
-      "metadata": "[AM] Document Info",
-      "processingTime": "[AM] Processing time",
-      "preview": "[AM] Preview",
-      "view": "[AM] View"
+      "title": "የURL ትንተና ውጤቶች",
+      "noData": "ምንም የURL ትንተና ውሂብ የለም",
+      "summary": "አስማት",
+      "metadata": "የሰነድ መረጃ",
+      "processingTime": "የማቀናበር ጊዜ",
+      "preview": "የቅድም ጥይታ",
+      "view": "መርኤት"
     },
     "configuration": {
-      "timeout": "[AM] Request timeout"
+      "timeout": "የእልይት ጠማች"
     },
     "status": {
-      "pulling": "[AM] Fetching URL content...",
-      "analyzing": "[AM] Analyzing document...",
-      "complete": "[AM] Analysis complete"
+      "pulling": "የURL ይዘት እያመጣ ነው...",
+      "analyzing": "ሰነድ እንተንትናለን...",
+      "complete": "ትንተና ተጠናቅቋል"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[AM] Knowledge Base Results",
-      "noData": "[AM] No knowledge base data available",
-      "documents": "[AM] documents",
-      "insights": "[AM] Key Insights",
-      "relevance": "[AM] Relevance",
-      "suggestions": "[AM] Suggestions"
+      "title": "የእውቀት ሜሰርት ውጤቶች",
+      "noData": "ምንም የእውቀት ሜሰርት ውሂብ የለም",
+      "documents": "ሰነዶች",
+      "insights": "መጨን አድርስ ወች",
+      "relevance": "አግባብነት",
+      "suggestions": "ዛሮች"
     },
     "configuration": {
-      "searchMode": "[AM] Search mode",
-      "threshold": "[AM] Relevance threshold"
+      "searchMode": "የጥራት አክሆን",
+      "threshold": "የአግባብነት ነኩባ"
     },
     "status": {
-      "searching": "[AM] Searching knowledge base...",
-      "analyzing": "[AM] Analyzing results..."
+      "searching": "ከእውቀት ሜሰርት እንጥራለን...",
+      "analyzing": "ውጤቶችን እንተንትናለን..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[AM] Document analysis results will be displayed here",
-      "title": "[AM] Analysis Results",
-      "noData": "[AM] No document analysis data available",
-      "documents": "[AM] documents",
-      "noDocuments": "[AM] No documents found",
-      "summary": "[AM] Summary",
-      "insights": "[AM] Key Insights",
-      "metadata": "[AM] Document Info",
-      "processingTime": "[AM] Processing time",
-      "searchTime": "[AM] Search time",
-      "relevance": "[AM] Relevance",
-      "cached": "[AM] Cached",
-      "preview": "[AM] Preview",
-      "view": "[AM] View",
-      "open": "[AM] Open",
-      "bookmark": "[AM] Bookmark",
-      "suggestions": "[AM] Suggestions",
+      "placeholder": "የሰንድ ትንተና ውጤቶች እዚህ ይታያሉ",
+      "title": "የትንተና ውጤቶች",
+      "noData": "ምንም የሰንድ ትንተና ውሂብ የለም",
+      "documents": "ሰነዶች",
+      "noDocuments": "ምንም ሰነዶች አልተገኖም",
+      "summary": "አስማት",
+      "insights": "መጨን አድርስ ወች",
+      "metadata": "የሰነድ መረጃ",
+      "processingTime": "የማቀናበር ጊዜ",
+      "searchTime": "የስራ ጊዜ",
+      "relevance": "አግባብነት",
+      "cached": "በማስታወሻ የተያዘ",
+      "preview": "የቅድም ጥይታ",
+      "view": "መርኤት",
+      "open": "ክፈት",
+      "bookmark": "የኘት ሳለ኱ን",
+      "suggestions": "ዛሮች",
       "tabs": {
-        "documents": "[AM] Documents",
-        "insights": "[AM] Insights",
-        "failed": "[AM] Failed"
+        "documents": "ሰነዶች",
+        "insights": "አድርስ ወች",
+        "failed": "የተጨገጠ"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[AM] Loading...",
-      "searching": "[AM] Searching...",
-      "processing": "[AM] Processing...",
-      "analyzing": "[AM] Analyzing..."
+      "default": "በመጫን ላይ...",
+      "searching": "በመፈለግ ላይ...",
+      "processing": "በማቀናበር ላይ...",
+      "analyzing": "በመተንተን ላይ..."
     },
     "buttons": {
-      "retry": "[AM] Retry",
-      "cancel": "[AM] Cancel",
-      "expand": "[AM] Expand",
-      "collapse": "[AM] Collapse",
-      "configure": "[AM] Configure",
-      "submit": "[AM] Submit"
+      "retry": "እንደገና ሞክር",
+      "cancel": "ሰርዝ",
+      "expand": "ዘርጋ",
+      "collapse": "ሰብስብ",
+      "configure": "አዋቅር",
+      "submit": "አስገባ"
     },
     "labels": {
-      "priority": "[AM] Priority",
-      "estimatedTime": "[AM] Estimated time",
-      "availability": "[AM] Availability",
-      "configuration": "[AM] Configuration"
+      "priority": "ቅድሚያ",
+      "estimatedTime": "የተገመተ ጊዜ",
+      "availability": "መገኘት",
+      "configuration": "ውቅረት"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[AM] An unknown error occurred",
-      "network": "[AM] Network connection error",
-      "timeout": "[AM] Request timed out",
-      "unauthorized": "[AM] Access denied",
-      "rateLimit": "[AM] Rate limit exceeded",
-      "serviceUnavailable": "[AM] Service temporarily unavailable"
+      "unknown": "ያልተዳሰለ ስህተት ተከስተዋል",
+      "network": "የሠብቤ ዝርልርት ስህተት",
+      "timeout": "የተረኃኝ ንድ ተቋትቧል",
+      "unauthorized": "መዳረሻ ተደ጖ል",
+      "rateLimit": "የፍጠናት ሰይማው ተየልፈዋል",
+      "serviceUnavailable": "የሰራዊች ቀላል የሌ ያምረዳም"
     },
     "webSearch": {
-      "searchFailed": "[AM] Web search failed",
-      "invalidQuery": "[AM] Invalid search query"
+      "searchFailed": "የውብ ጵራ ተተጘጠ",
+      "invalidQuery": "ያልቀበለ የጵራ ጥያቄ"
     },
     "codeInterpreter": {
-      "executionFailed": "[AM] Code execution failed",
-      "invalidCode": "[AM] Invalid or unsafe code"
+      "executionFailed": "የኮድ ማስፈጸሚያ ተተጘጠ",
+      "invalidCode": "ያልቀበለ ወይም አጓጣ ኮድ"
     },
     "urlPull": {
-      "fetchFailed": "[AM] Failed to fetch URL content",
-      "invalidUrl": "[AM] Invalid or inaccessible URL"
+      "fetchFailed": "የURL ይዘት ማበርፃት አተሳካም",
+      "invalidUrl": "ያልቀበለ ወይም የማይታወቃ URL"
     },
     "localKnowledge": {
-      "searchFailed": "[AM] Knowledge base search failed",
-      "noAccess": "[AM] No access to knowledge base"
+      "searchFailed": "የእውቀት ሜሰርት ጵራ ተተጘጠ",
+      "noAccess": "ወደ እውቀት ሜሰርት መዳረሻ የለም"
     }
   },
   "settings": {
-    "autoSubmit": "[AM] Auto-submit after processing",
-    "advancedOptions": "[AM] Advanced options",
+    "autoSubmit": "ከማቀናበር በኋላ በራስ-ሰር አስገባ",
+    "advancedOptions": "የላቁ አማራጮች",
     "priority": {
-      "high": "[AM] High",
-      "medium": "[AM] Medium",
-      "low": "[AM] Low"
+      "high": "ከፍተኛ",
+      "medium": "መካከለኛ",
+      "low": "ዝቅተኛ"
     },
     "safeSearch": {
-      "off": "[AM] Off",
-      "moderate": "[AM] Moderate",
-      "strict": "[AM] Strict"
+      "off": "ጠፍቷል",
+      "moderate": "መካከለኛ",
+      "strict": "ጥብቅ"
     },
     "market": {
-      "any": "[AM] Any region",
-      "local": "[AM] Local region"
+      "any": "ማንኛውም ክልል",
+      "local": "የአካባቢ ክልል"
     }
   }
 }

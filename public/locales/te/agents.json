@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[TE] Web Search",
-      "code_interpreter": "[TE] Code Interpreter",
-      "url_pull": "[TE] URL Analysis",
-      "local_knowledge": "[TE] Knowledge Base",
-      "standard_chat": "[TE] Standard Chat",
-      "foundry": "[TE] Foundry",
-      "third_party": "[TE] Third Party"
+      "web_search": "వెబ్ శోధన",
+      "code_interpreter": "కోడ్ ఇంటర్ప్రెటర్",
+      "url_pull": "URL విశ్లేషణ",
+      "local_knowledge": "జ్ఞాన స్థావరం",
+      "standard_chat": "ప్రామాణిక చాట్",
+      "foundry": "Foundry",
+      "third_party": "మూడవ పక్షం"
     },
     "error": {
-      "title": "[TE] Agent Error",
-      "unknown": "[TE] An unknown error occurred",
-      "retry": "[TE] Retry",
-      "fallback": "[TE] Use fallback"
+      "title": "ఏజెంట్ లోపం",
+      "unknown": "తెలియని లోపం సంభవించింది",
+      "retry": "మళ్లీ ప్రయత్నించండి",
+      "fallback": "ప్రత్యామ్నాయాన్ని ఉపయోగించండి"
     },
     "metadata": {
-      "processingTime": "[TE] Processing time",
-      "confidence": "[TE] Confidence",
-      "tokens": "[TE] Tokens used"
+      "processingTime": "ప్రాసెసింగ్ సమయం",
+      "confidence": "విశ్వాసం",
+      "tokens": "ఉపయోగించిన టోకెన్లు"
     },
     "resultsPanel": {
-      "placeholder": "[TE] Agent results will be displayed here"
+      "placeholder": "ఏజెంట్ ఫలితాలు ఇక్కడ ప్రదర్శించబడతాయి"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[TE] Searches the web for real-time information",
-      "code_interpreter": "[TE] Executes and analyzes code in multiple languages",
-      "url_pull": "[TE] Analyzes and extracts content from web pages",
-      "local_knowledge": "[TE] Searches internal knowledge base and documents",
-      "standard_chat": "[TE] Standard conversational AI without tools",
-      "foundry": "[TE] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[TE] Third-party agent or custom tool integration"
+      "web_search": "వెబ్ శోధన - నిజ-సమయ సమాచారం కోసం వెబ్‌లో శోధిస్తుంది",
+      "code_interpreter": "కోడ్ ఇంటర్ప్రెటర్ - బహుళ భాషలలో కోడ్‌ను అమలు చేసి విశ్లేషిస్తుంది",
+      "url_pull": "URL విశ్లేషణ - వెబ్ పేజీల నుండి కంటెంట్‌ను విశ్లేషించి వెలికితీస్తుంది",
+      "local_knowledge": "జ్ఞాన స్థావరం - అంతర్గత జ్ఞాన స్థావరం మరియు పత్రాలలో శోధిస్తుంది",
+      "standard_chat": "ప్రామాణిక చాట్ - సాధనాలు లేని ప్రామాణిక సంభాషణ AI",
+      "foundry": "Foundry - అధునాతన సామర్థ్యాల కోసం Azure AI Foundryని ఉపయోగిస్తుంది",
+      "third_party": "మూడవ పక్షం - మూడవ పక్ష ఏజెంట్ లేదా అనుకూల సాధన ఏకీకరణ"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[TE] Web search results will be displayed here",
-      "title": "[TE] Title",
-      "noResults": "[TE] No results found",
-      "noData": "[TE] No search data available",
-      "results": "[TE] results",
-      "confidence": "[TE] Relevance",
-      "relevance": "[TE] Relevance",
-      "source": "[TE] Source",
-      "citations": "[TE] Citations",
-      "cite": "[TE] Cite",
-      "open": "[TE] Open",
-      "openLink": "[TE] Open link in new tab",
-      "filters": "[TE] Filters",
-      "sortBy": "[TE] Sort by",
-      "filterBy": "[TE] Filter by",
-      "all": "[TE] All",
-      "date": "[TE] Date",
-      "query": "[TE] Query",
-      "searchTime": "[TE] Search time",
-      "cached": "[TE] Cached",
+      "placeholder": "వెబ్ శోధన ఫలితాలు ఇక్కడ ప్రదర్శించబడతాయి",
+      "title": "శోధన ఫలితాలు",
+      "noResults": "ఫలితాలు కనుగొనబడలేదు",
+      "noData": "శోధన డేటా అందుబాటులో లేదు",
+      "results": "ఫలితాలు",
+      "confidence": "ప్రాసంగికత",
+      "relevance": "ప్రాసంగికత",
+      "source": "మూలం",
+      "citations": "ఉల్లేఖనలు",
+      "cite": "ఉల్లేఖించు",
+      "open": "తెరువు",
+      "openLink": "కొత్త ట్యాబ్లో లింక్ తెరువు",
+      "filters": "ఫిల్టర్లు",
+      "sortBy": "ఇలా వరీకరించు",
+      "filterBy": "ఇలా ఫిల్టర్ చేయి",
+      "all": "అన్నీ",
+      "date": "తేదీ",
+      "query": "ప్రశ్న",
+      "searchTime": "శోధన సమయం",
+      "cached": "క్యాష్ చేయబడింది",
       "contentTypes": {
-        "webpage": "[TE] Web pages",
-        "news": "[TE] News",
-        "academic": "[TE] Academic",
-        "image": "[TE] Images",
-        "video": "[TE] Videos"
+        "webpage": "వెబ్ పేజీలు",
+        "news": "వార్తలు",
+        "academic": "శైక్షణిక",
+        "image": "చిత్రాలు",
+        "video": "వీడియోలు"
       }
     },
     "configuration": {
-      "resultsCount": "[TE] Number of results",
-      "safeSearch": "[TE] Safe search",
-      "market": "[TE] Search market"
+      "resultsCount": "ఫలితాల సంఖ్య",
+      "safeSearch": "సురక్షిత శోధన",
+      "market": "శోధన మార్కెట్"
     },
     "status": {
-      "searching": "[TE] Searching the web...",
-      "optimizing": "[TE] Optimizing search query...",
-      "processing": "[TE] Processing search results..."
+      "searching": "వెబ్లో శోధిస్తోంది...",
+      "optimizing": "శోధన ప్రశ్నను ఆప్టిమైజ్ చేస్తోంది...",
+      "processing": "శోధన ఫలితాలను ప్రాసెస్ చేస్తోంది..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[TE] Code execution results will be displayed here",
-      "title": "[TE] Execution Results",
-      "noData": "[TE] No code execution data available",
-      "output": "[TE] Output",
-      "errors": "[TE] Errors",
-      "logs": "[TE] Logs",
-      "executionTime": "[TE] Execution time",
-      "memoryUsage": "[TE] Memory usage",
-      "cpuUsage": "[TE] CPU usage",
-      "outputLines": "[TE] Output lines",
-      "executedCode": "[TE] Executed Code",
-      "download": "[TE] Download",
-      "noOutput": "[TE] No output generated",
-      "noFiles": "[TE] No files generated",
-      "outputSize": "[TE] Output size",
-      "unsupportedOutput": "[TE] Unsupported output format",
+      "placeholder": "కోడ్ నిర్వహణ ఫలితాలు ఇక్కడ ప్రదర్శించబడతాయి",
+      "title": "నిర్వహణ ఫలితాలు",
+      "noData": "కోడ్ నిర్వహణ డేటా అందుబాటులో లేదు",
+      "output": "అవుట్పుట్",
+      "errors": "లోపాలు",
+      "logs": "లాగ్లు",
+      "executionTime": "నిర్వహణ సమయం",
+      "memoryUsage": "మెమరీ వినియోగం",
+      "cpuUsage": "CPU వినియోగం",
+      "outputLines": "అవుట్పుట్ లైన్లు",
+      "executedCode": "నిర్వహించిన కోడ్",
+      "download": "డౌన్లోడ్",
+      "noOutput": "ఏ అవుట్పుట్ ఉత్పత్తి అవవలేదు",
+      "noFiles": "ఏ ఫైల్లు ఉత్పత్తి అవవలేదు",
+      "outputSize": "అవుట్పుట్ పరిమాణం",
+      "unsupportedOutput": "మద్దతు లేని అవుట్పుట్ ఫార్మాట్",
       "status": {
-        "success": "[TE] Success",
-        "error": "[TE] Error",
-        "timeout": "[TE] Timeout",
-        "memory_limit": "[TE] Memory limit exceeded",
-        "security_violation": "[TE] Security violation",
-        "invalid_code": "[TE] Invalid code"
+        "success": "విజయం",
+        "error": "లోపం",
+        "timeout": "సమయం మీరింది",
+        "memory_limit": "మెమరీ పరిమితి మీరింది",
+        "security_violation": "భద్రతా ఉల్లంఘన",
+        "invalid_code": "చెల్లని కోడ్"
       },
       "outputTypes": {
-        "stdout": "[TE] Standard output",
-        "stderr": "[TE] Error output",
-        "return_value": "[TE] Return value",
-        "exception": "[TE] Exception"
+        "stdout": "ప్రామాణిక అవుట్పుట్",
+        "stderr": "లోప అవుట్పుట్",
+        "return_value": "రిటర్న్ విలువ",
+        "exception": "మినహాయింపు"
       },
       "tabs": {
-        "output": "[TE] Output",
-        "code": "[TE] Code",
-        "files": "[TE] Files"
+        "output": "అవుట్పుట్",
+        "code": "కోడ్",
+        "files": "ఫైల్లు"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[TE] URL Analysis Results",
-      "noData": "[TE] No URL analysis data available",
-      "summary": "[TE] Summary",
-      "metadata": "[TE] Document Info",
-      "processingTime": "[TE] Processing time",
-      "preview": "[TE] Preview",
-      "view": "[TE] View"
+      "title": "URL విశ్లేషణ ఫలితాలు",
+      "noData": "URL విశ్లేషణ డేటా అందుబాటులో లేదు",
+      "summary": "సారాంశం",
+      "metadata": "పత్రం సమాచారం",
+      "processingTime": "ప్రాసెసింగ్ సమయం",
+      "preview": "ప్రివ్యూ",
+      "view": "చూడు"
     },
     "configuration": {
-      "timeout": "[TE] Request timeout"
+      "timeout": "అభ్యర్థన సమయం మీరింది"
     },
     "status": {
-      "pulling": "[TE] Fetching URL content...",
-      "analyzing": "[TE] Analyzing document...",
-      "complete": "[TE] Analysis complete"
+      "pulling": "URL కంటెంట్ తీసుకొస్తోంది...",
+      "analyzing": "పత్రాన్ని విశ్లేషిస్తోంది...",
+      "complete": "విశ్లేషణ పూర్తయింది"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[TE] Knowledge Base Results",
-      "noData": "[TE] No knowledge base data available",
-      "documents": "[TE] documents",
-      "insights": "[TE] Key Insights",
-      "relevance": "[TE] Relevance",
-      "suggestions": "[TE] Suggestions"
+      "title": "జ్ఞాన స్థావరం ఫలితాలు",
+      "noData": "జ్ఞాన స్థావరం డేటా అందుబాటులో లేదు",
+      "documents": "పత్రాలు",
+      "insights": "ముఖ్య అంతర్దృష్టులు",
+      "relevance": "ప్రాసంగికత",
+      "suggestions": "సూచనలు"
     },
     "configuration": {
-      "searchMode": "[TE] Search mode",
-      "threshold": "[TE] Relevance threshold"
+      "searchMode": "శోధన మోడ్",
+      "threshold": "ప్రాసంగికత థ్రెషోల్డ్"
     },
     "status": {
-      "searching": "[TE] Searching knowledge base...",
-      "analyzing": "[TE] Analyzing results..."
+      "searching": "జ్ఞాన స్థావరంలో శోధిస్తోంది...",
+      "analyzing": "ఫలితాలను విశ్లేషిస్తోంది..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[TE] Document analysis results will be displayed here",
-      "title": "[TE] Analysis Results",
-      "noData": "[TE] No document analysis data available",
-      "documents": "[TE] documents",
-      "noDocuments": "[TE] No documents found",
-      "summary": "[TE] Summary",
-      "insights": "[TE] Key Insights",
-      "metadata": "[TE] Document Info",
-      "processingTime": "[TE] Processing time",
-      "searchTime": "[TE] Search time",
-      "relevance": "[TE] Relevance",
-      "cached": "[TE] Cached",
-      "preview": "[TE] Preview",
-      "view": "[TE] View",
-      "open": "[TE] Open",
-      "bookmark": "[TE] Bookmark",
-      "suggestions": "[TE] Suggestions",
+      "placeholder": "పత్రం విశ్లేషణ ఫలితాలు ఇక్కడ ప్రదర్శించబడతాయి",
+      "title": "విశ్లేషణ ఫలితాలు",
+      "noData": "పత్రం విశ్లేషణ డేటా అందుబాటులో లేదు",
+      "documents": "పత్రాలు",
+      "noDocuments": "పత్రాలు కనుగొనబడలేదు",
+      "summary": "సారాంశం",
+      "insights": "ముఖ్య అంతర్దృష్టులు",
+      "metadata": "పత్రం సమాచారం",
+      "processingTime": "ప్రాసెసింగ్ సమయం",
+      "searchTime": "శోధన సమయం",
+      "relevance": "ప్రాసంగికత",
+      "cached": "క్యాష్ చేయబడింది",
+      "preview": "ప్రివ్యూ",
+      "view": "చూడు",
+      "open": "తెరువు",
+      "bookmark": "బుక్మార్క్",
+      "suggestions": "సూచనలు",
       "tabs": {
-        "documents": "[TE] Documents",
-        "insights": "[TE] Insights",
-        "failed": "[TE] Failed"
+        "documents": "పత్రాలు",
+        "insights": "అంతర్దృష్టులు",
+        "failed": "విఫలమైంది"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[TE] Loading...",
-      "searching": "[TE] Searching...",
-      "processing": "[TE] Processing...",
-      "analyzing": "[TE] Analyzing..."
+      "default": "లోడ్ అవుతోంది...",
+      "searching": "శోధిస్తోంది...",
+      "processing": "ప్రాసెస్ చేస్తోంది...",
+      "analyzing": "విశ్లేషిస్తోంది..."
     },
     "buttons": {
-      "retry": "[TE] Retry",
-      "cancel": "[TE] Cancel",
-      "expand": "[TE] Expand",
-      "collapse": "[TE] Collapse",
-      "configure": "[TE] Configure",
-      "submit": "[TE] Submit"
+      "retry": "మళ్లీ ప్రయత్నించు",
+      "cancel": "రద్దుచేయి",
+      "expand": "విస్తరించు",
+      "collapse": "కుదించు",
+      "configure": "కాన్ఫిగర్ చేయి",
+      "submit": "సమర్పించు"
     },
     "labels": {
-      "priority": "[TE] Priority",
-      "estimatedTime": "[TE] Estimated time",
-      "availability": "[TE] Availability",
-      "configuration": "[TE] Configuration"
+      "priority": "ప్రాధాన్యత",
+      "estimatedTime": "అంచనా సమయం",
+      "availability": "అందుబాటు",
+      "configuration": "కాన్ఫిగరేషన్"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[TE] An unknown error occurred",
-      "network": "[TE] Network connection error",
-      "timeout": "[TE] Request timed out",
-      "unauthorized": "[TE] Access denied",
-      "rateLimit": "[TE] Rate limit exceeded",
-      "serviceUnavailable": "[TE] Service temporarily unavailable"
+      "unknown": "తెలియని లోపం సంభవించింది",
+      "network": "నెట్వర్క్ కనెక్షన్ లోపం",
+      "timeout": "అభ్యర్థన సమయం మీరింది",
+      "unauthorized": "ప్రవేశం తిరస్కరించబడింది",
+      "rateLimit": "రేట్ పరిమితి మీరింది",
+      "serviceUnavailable": "సేవ తాత్కాలికంగా అందుబాటులో లేదు"
     },
     "webSearch": {
-      "searchFailed": "[TE] Web search failed",
-      "invalidQuery": "[TE] Invalid search query"
+      "searchFailed": "వెబ్ శోధన విఫలమైంది",
+      "invalidQuery": "చెల్లని శోధన ప్రశ్న"
     },
     "codeInterpreter": {
-      "executionFailed": "[TE] Code execution failed",
-      "invalidCode": "[TE] Invalid or unsafe code"
+      "executionFailed": "కోడ్ నిర్వహణ విఫలమైంది",
+      "invalidCode": "చెల్లని లేదా అసురక్షిత కోడ్"
     },
     "urlPull": {
-      "fetchFailed": "[TE] Failed to fetch URL content",
-      "invalidUrl": "[TE] Invalid or inaccessible URL"
+      "fetchFailed": "URL కంటెంట్ తీసుకోవడంలో విఫలమైంది",
+      "invalidUrl": "చెల్లని లేదా చేరుకోలేని URL"
     },
     "localKnowledge": {
-      "searchFailed": "[TE] Knowledge base search failed",
-      "noAccess": "[TE] No access to knowledge base"
+      "searchFailed": "జ్ఞాన స్థావరం శోధన విఫలమైంది",
+      "noAccess": "జ్ఞాన స్థావరానికి ప్రవేశం లేదు"
     }
   },
   "settings": {
-    "autoSubmit": "[TE] Auto-submit after processing",
-    "advancedOptions": "[TE] Advanced options",
+    "autoSubmit": "ప్రాసెసింగ్ తర్వాత ఆటో-సబ్మిట్",
+    "advancedOptions": "అడ్వాన్స్డ్ ఆప్షన్లు",
     "priority": {
-      "high": "[TE] High",
-      "medium": "[TE] Medium",
-      "low": "[TE] Low"
+      "high": "అధిక",
+      "medium": "మధ్యమ",
+      "low": "తక్కువ"
     },
     "safeSearch": {
-      "off": "[TE] Off",
-      "moderate": "[TE] Moderate",
-      "strict": "[TE] Strict"
+      "off": "ఆఫ్",
+      "moderate": "మధ్యస్థ",
+      "strict": "కఠిన"
     },
     "market": {
-      "any": "[TE] Any region",
-      "local": "[TE] Local region"
+      "any": "ఏ ప్రాంతమైనా",
+      "local": "స్థానిక ప్రాంతం"
     }
   }
 }

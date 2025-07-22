@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[RU] Web Search",
-      "code_interpreter": "[RU] Code Interpreter",
-      "url_pull": "[RU] URL Analysis",
-      "local_knowledge": "[RU] Knowledge Base",
-      "standard_chat": "[RU] Standard Chat",
-      "foundry": "[RU] Foundry",
-      "third_party": "[RU] Third Party"
+      "web_search": "Веб-поиск",
+      "code_interpreter": "Интерпретатор кода",
+      "url_pull": "Анализ URL",
+      "local_knowledge": "База знаний",
+      "standard_chat": "Стандартный чат",
+      "foundry": "Foundry",
+      "third_party": "Сторонний"
     },
     "error": {
-      "title": "[RU] Agent Error",
-      "unknown": "[RU] An unknown error occurred",
-      "retry": "[RU] Retry",
-      "fallback": "[RU] Use fallback"
+      "title": "Ошибка агента",
+      "unknown": "Произошла неизвестная ошибка",
+      "retry": "Повторить",
+      "fallback": "Использовать альтернативу"
     },
     "metadata": {
-      "processingTime": "[RU] Processing time",
-      "confidence": "[RU] Confidence",
-      "tokens": "[RU] Tokens used"
+      "processingTime": "Время обработки",
+      "confidence": "Уверенность",
+      "tokens": "Использованные токены"
     },
     "resultsPanel": {
-      "placeholder": "[RU] Agent results will be displayed here"
+      "placeholder": "Результаты агента будут отображены здесь"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[RU] Searches the web for real-time information",
-      "code_interpreter": "[RU] Executes and analyzes code in multiple languages",
-      "url_pull": "[RU] Analyzes and extracts content from web pages",
-      "local_knowledge": "[RU] Searches internal knowledge base and documents",
-      "standard_chat": "[RU] Standard conversational AI without tools",
-      "foundry": "[RU] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[RU] Third-party agent or custom tool integration"
+      "web_search": "Веб-поиск - Ищет в интернете информацию в реальном времени",
+      "code_interpreter": "Интерпретатор кода - Выполняет и анализирует код на нескольких языках",
+      "url_pull": "Анализ URL - Анализирует и извлекает содержимое веб-страниц",
+      "local_knowledge": "База знаний - Ищет во внутренней базе знаний и документах",
+      "standard_chat": "Стандартный чат - Стандартный разговорный ИИ без инструментов",
+      "foundry": "Foundry - Использует Azure AI Foundry для расширенных возможностей",
+      "third_party": "Сторонний - Сторонний агент или интеграция пользовательского инструмента"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[RU] Web search results will be displayed here",
-      "title": "[RU] Title",
-      "noResults": "[RU] No results found",
-      "noData": "[RU] No search data available",
-      "results": "[RU] results",
-      "confidence": "[RU] Relevance",
-      "relevance": "[RU] Relevance",
-      "source": "[RU] Source",
-      "citations": "[RU] Citations",
-      "cite": "[RU] Cite",
-      "open": "[RU] Open",
-      "openLink": "[RU] Open link in new tab",
-      "filters": "[RU] Filters",
-      "sortBy": "[RU] Sort by",
-      "filterBy": "[RU] Filter by",
-      "all": "[RU] All",
-      "date": "[RU] Date",
-      "query": "[RU] Query",
-      "searchTime": "[RU] Search time",
-      "cached": "[RU] Cached",
+      "placeholder": "Результаты веб-поиска будут отображены здесь",
+      "title": "Результаты поиска",
+      "noResults": "Результаты не найдены",
+      "noData": "Нет данных поиска",
+      "results": "результаты",
+      "confidence": "Релевантность",
+      "relevance": "Релевантность",
+      "source": "Источник",
+      "citations": "Цитаты",
+      "cite": "Цитировать",
+      "open": "Открыть",
+      "openLink": "Открыть ссылку в новой вкладке",
+      "filters": "Фильтры",
+      "sortBy": "Сортировать по",
+      "filterBy": "Фильтровать по",
+      "all": "Все",
+      "date": "Дата",
+      "query": "Запрос",
+      "searchTime": "Время поиска",
+      "cached": "В кеше",
       "contentTypes": {
-        "webpage": "[RU] Web pages",
-        "news": "[RU] News",
-        "academic": "[RU] Academic",
-        "image": "[RU] Images",
-        "video": "[RU] Videos"
+        "webpage": "Веб-страницы",
+        "news": "Новости",
+        "academic": "Научные",
+        "image": "Изображения",
+        "video": "Видео"
       }
     },
     "configuration": {
-      "resultsCount": "[RU] Number of results",
-      "safeSearch": "[RU] Safe search",
-      "market": "[RU] Search market"
+      "resultsCount": "Количество результатов",
+      "safeSearch": "Безопасный поиск",
+      "market": "Поисковый рынок"
     },
     "status": {
-      "searching": "[RU] Searching the web...",
-      "optimizing": "[RU] Optimizing search query...",
-      "processing": "[RU] Processing search results..."
+      "searching": "Поиск в интернете...",
+      "optimizing": "Оптимизация поискового запроса...",
+      "processing": "Обработка результатов поиска..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[RU] Code execution results will be displayed here",
-      "title": "[RU] Execution Results",
-      "noData": "[RU] No code execution data available",
-      "output": "[RU] Output",
-      "errors": "[RU] Errors",
-      "logs": "[RU] Logs",
-      "executionTime": "[RU] Execution time",
-      "memoryUsage": "[RU] Memory usage",
-      "cpuUsage": "[RU] CPU usage",
-      "outputLines": "[RU] Output lines",
-      "executedCode": "[RU] Executed Code",
-      "download": "[RU] Download",
-      "noOutput": "[RU] No output generated",
-      "noFiles": "[RU] No files generated",
-      "outputSize": "[RU] Output size",
-      "unsupportedOutput": "[RU] Unsupported output format",
+      "placeholder": "Результаты выполнения кода будут отображены здесь",
+      "title": "Результаты выполнения",
+      "noData": "Нет данных о выполнении кода",
+      "output": "Вывод",
+      "errors": "Ошибки",
+      "logs": "Логи",
+      "executionTime": "Время выполнения",
+      "memoryUsage": "Использование памяти",
+      "cpuUsage": "Использование CPU",
+      "outputLines": "Строки вывода",
+      "executedCode": "Выполненный код",
+      "download": "Скачать",
+      "noOutput": "Вывод не сгенерирован",
+      "noFiles": "Файлы не сгенерированы",
+      "outputSize": "Размер вывода",
+      "unsupportedOutput": "Неподдерживаемый формат вывода",
       "status": {
-        "success": "[RU] Success",
-        "error": "[RU] Error",
-        "timeout": "[RU] Timeout",
-        "memory_limit": "[RU] Memory limit exceeded",
-        "security_violation": "[RU] Security violation",
-        "invalid_code": "[RU] Invalid code"
+        "success": "Успешно",
+        "error": "Ошибка",
+        "timeout": "Превышение времени",
+        "memory_limit": "Превышен лимит памяти",
+        "security_violation": "Нарушение безопасности",
+        "invalid_code": "Неверный код"
       },
       "outputTypes": {
-        "stdout": "[RU] Standard output",
-        "stderr": "[RU] Error output",
-        "return_value": "[RU] Return value",
-        "exception": "[RU] Exception"
+        "stdout": "Стандартный вывод",
+        "stderr": "Вывод ошибок",
+        "return_value": "Возвращаемое значение",
+        "exception": "Исключение"
       },
       "tabs": {
-        "output": "[RU] Output",
-        "code": "[RU] Code",
-        "files": "[RU] Files"
+        "output": "Вывод",
+        "code": "Код",
+        "files": "Файлы"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[RU] URL Analysis Results",
-      "noData": "[RU] No URL analysis data available",
-      "summary": "[RU] Summary",
-      "metadata": "[RU] Document Info",
-      "processingTime": "[RU] Processing time",
-      "preview": "[RU] Preview",
-      "view": "[RU] View"
+      "title": "Результаты анализа URL",
+      "noData": "Нет данных анализа URL",
+      "summary": "Краткое содержание",
+      "metadata": "Информация о документе",
+      "processingTime": "Время обработки",
+      "preview": "Предварительный просмотр",
+      "view": "Посмотреть"
     },
     "configuration": {
-      "timeout": "[RU] Request timeout"
+      "timeout": "Превышение времени запроса"
     },
     "status": {
-      "pulling": "[RU] Fetching URL content...",
-      "analyzing": "[RU] Analyzing document...",
-      "complete": "[RU] Analysis complete"
+      "pulling": "Загрузка содержимого URL...",
+      "analyzing": "Анализ документа...",
+      "complete": "Анализ завершён"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[RU] Knowledge Base Results",
-      "noData": "[RU] No knowledge base data available",
-      "documents": "[RU] documents",
-      "insights": "[RU] Key Insights",
-      "relevance": "[RU] Relevance",
-      "suggestions": "[RU] Suggestions"
+      "title": "Результаты базы знаний",
+      "noData": "Нет данных базы знаний",
+      "documents": "документы",
+      "insights": "Ключевые сведения",
+      "relevance": "Релевантность",
+      "suggestions": "Предложения"
     },
     "configuration": {
-      "searchMode": "[RU] Search mode",
-      "threshold": "[RU] Relevance threshold"
+      "searchMode": "Режим поиска",
+      "threshold": "Порог релевантности"
     },
     "status": {
-      "searching": "[RU] Searching knowledge base...",
-      "analyzing": "[RU] Analyzing results..."
+      "searching": "Поиск в базе знаний...",
+      "analyzing": "Анализ результатов..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[RU] Document analysis results will be displayed here",
-      "title": "[RU] Analysis Results",
-      "noData": "[RU] No document analysis data available",
-      "documents": "[RU] documents",
-      "noDocuments": "[RU] No documents found",
-      "summary": "[RU] Summary",
-      "insights": "[RU] Key Insights",
-      "metadata": "[RU] Document Info",
-      "processingTime": "[RU] Processing time",
-      "searchTime": "[RU] Search time",
-      "relevance": "[RU] Relevance",
-      "cached": "[RU] Cached",
-      "preview": "[RU] Preview",
-      "view": "[RU] View",
-      "open": "[RU] Open",
-      "bookmark": "[RU] Bookmark",
-      "suggestions": "[RU] Suggestions",
+      "placeholder": "Результаты анализа документов будут отображены здесь",
+      "title": "Результаты анализа",
+      "noData": "Нет данных анализа документов",
+      "documents": "документы",
+      "noDocuments": "Документы не найдены",
+      "summary": "Краткое содержание",
+      "insights": "Ключевые сведения",
+      "metadata": "Информация о документе",
+      "processingTime": "Время обработки",
+      "searchTime": "Время поиска",
+      "relevance": "Релевантность",
+      "cached": "В кеше",
+      "preview": "Предварительный просмотр",
+      "view": "Посмотреть",
+      "open": "Открыть",
+      "bookmark": "Закладка",
+      "suggestions": "Предложения",
       "tabs": {
-        "documents": "[RU] Documents",
-        "insights": "[RU] Insights",
-        "failed": "[RU] Failed"
+        "documents": "Документы",
+        "insights": "Сведения",
+        "failed": "Неудачно"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[RU] Loading...",
-      "searching": "[RU] Searching...",
-      "processing": "[RU] Processing...",
-      "analyzing": "[RU] Analyzing..."
+      "default": "Загрузка...",
+      "searching": "Поиск...",
+      "processing": "Обработка...",
+      "analyzing": "Анализ..."
     },
     "buttons": {
-      "retry": "[RU] Retry",
-      "cancel": "[RU] Cancel",
-      "expand": "[RU] Expand",
-      "collapse": "[RU] Collapse",
-      "configure": "[RU] Configure",
-      "submit": "[RU] Submit"
+      "retry": "Повторить",
+      "cancel": "Отменить",
+      "expand": "Развернуть",
+      "collapse": "Свернуть",
+      "configure": "Конфигурировать",
+      "submit": "Отправить"
     },
     "labels": {
-      "priority": "[RU] Priority",
-      "estimatedTime": "[RU] Estimated time",
-      "availability": "[RU] Availability",
-      "configuration": "[RU] Configuration"
+      "priority": "Приоритет",
+      "estimatedTime": "Ориентировочное время",
+      "availability": "Доступность",
+      "configuration": "Конфигурация"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[RU] An unknown error occurred",
-      "network": "[RU] Network connection error",
-      "timeout": "[RU] Request timed out",
-      "unauthorized": "[RU] Access denied",
-      "rateLimit": "[RU] Rate limit exceeded",
-      "serviceUnavailable": "[RU] Service temporarily unavailable"
+      "unknown": "Произошла неизвестная ошибка",
+      "network": "Ошибка сетевого соединения",
+      "timeout": "Превышено время ожидания запроса",
+      "unauthorized": "Доступ запрещён",
+      "rateLimit": "Превышен лимит скорости",
+      "serviceUnavailable": "Сервис временно недоступен"
     },
     "webSearch": {
-      "searchFailed": "[RU] Web search failed",
-      "invalidQuery": "[RU] Invalid search query"
+      "searchFailed": "Ошибка веб-поиска",
+      "invalidQuery": "Неверный поисковый запрос"
     },
     "codeInterpreter": {
-      "executionFailed": "[RU] Code execution failed",
-      "invalidCode": "[RU] Invalid or unsafe code"
+      "executionFailed": "Ошибка выполнения кода",
+      "invalidCode": "Неверный или небезопасный код"
     },
     "urlPull": {
-      "fetchFailed": "[RU] Failed to fetch URL content",
-      "invalidUrl": "[RU] Invalid or inaccessible URL"
+      "fetchFailed": "Не удалось загрузить содержимое URL",
+      "invalidUrl": "Неверный или недоступный URL"
     },
     "localKnowledge": {
-      "searchFailed": "[RU] Knowledge base search failed",
-      "noAccess": "[RU] No access to knowledge base"
+      "searchFailed": "Ошибка поиска в базе знаний",
+      "noAccess": "Нет доступа к базе знаний"
     }
   },
   "settings": {
-    "autoSubmit": "[RU] Auto-submit after processing",
-    "advancedOptions": "[RU] Advanced options",
+    "autoSubmit": "Автоматическая отправка после обработки",
+    "advancedOptions": "Расширенные настройки",
     "priority": {
-      "high": "[RU] High",
-      "medium": "[RU] Medium",
-      "low": "[RU] Low"
+      "high": "Высокий",
+      "medium": "Средний",
+      "low": "Низкий"
     },
     "safeSearch": {
-      "off": "[RU] Off",
-      "moderate": "[RU] Moderate",
-      "strict": "[RU] Strict"
+      "off": "Отключено",
+      "moderate": "Умеренно",
+      "strict": "Строго"
     },
     "market": {
-      "any": "[RU] Any region",
-      "local": "[RU] Local region"
+      "any": "Любой регион",
+      "local": "Местный регион"
     }
   }
 }

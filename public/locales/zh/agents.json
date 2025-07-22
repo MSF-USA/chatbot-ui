@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[ZH] Web Search",
-      "code_interpreter": "[ZH] Code Interpreter",
-      "url_pull": "[ZH] URL Analysis",
-      "local_knowledge": "[ZH] Knowledge Base",
-      "standard_chat": "[ZH] Standard Chat",
-      "foundry": "[ZH] Foundry",
-      "third_party": "[ZH] Third Party"
+      "web_search": "网络搜索",
+      "code_interpreter": "代码解释器",
+      "url_pull": "URL分析",
+      "local_knowledge": "知识库",
+      "standard_chat": "标准聊天",
+      "foundry": "Foundry",
+      "third_party": "第三方"
     },
     "error": {
-      "title": "[ZH] Agent Error",
-      "unknown": "[ZH] An unknown error occurred",
-      "retry": "[ZH] Retry",
-      "fallback": "[ZH] Use fallback"
+      "title": "代理错误",
+      "unknown": "发生未知错误",
+      "retry": "重试",
+      "fallback": "使用备选方案"
     },
     "metadata": {
-      "processingTime": "[ZH] Processing time",
-      "confidence": "[ZH] Confidence",
-      "tokens": "[ZH] Tokens used"
+      "processingTime": "处理时间",
+      "confidence": "置信度",
+      "tokens": "使用的令牌"
     },
     "resultsPanel": {
-      "placeholder": "[ZH] Agent results will be displayed here"
+      "placeholder": "代理结果将在此处显示"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[ZH] Searches the web for real-time information",
-      "code_interpreter": "[ZH] Executes and analyzes code in multiple languages",
-      "url_pull": "[ZH] Analyzes and extracts content from web pages",
-      "local_knowledge": "[ZH] Searches internal knowledge base and documents",
-      "standard_chat": "[ZH] Standard conversational AI without tools",
-      "foundry": "[ZH] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[ZH] Third-party agent or custom tool integration"
+      "web_search": "网络搜索 - 搜索网络以获取实时信息",
+      "code_interpreter": "代码解释器 - 执行和分析多种语言的代码",
+      "url_pull": "URL分析 - 分析并提取网页内容",
+      "local_knowledge": "知识库 - 搜索内部知识库和文档",
+      "standard_chat": "标准聊天 - 无工具的标准对话式AI",
+      "foundry": "Foundry - 使用Azure AI Foundry实现高级功能",
+      "third_party": "第三方 - 第三方代理或自定义工具集成"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[ZH] Web search results will be displayed here",
-      "title": "[ZH] Title",
-      "noResults": "[ZH] No results found",
-      "noData": "[ZH] No search data available",
-      "results": "[ZH] results",
-      "confidence": "[ZH] Relevance",
-      "relevance": "[ZH] Relevance",
-      "source": "[ZH] Source",
-      "citations": "[ZH] Citations",
-      "cite": "[ZH] Cite",
-      "open": "[ZH] Open",
-      "openLink": "[ZH] Open link in new tab",
-      "filters": "[ZH] Filters",
-      "sortBy": "[ZH] Sort by",
-      "filterBy": "[ZH] Filter by",
-      "all": "[ZH] All",
-      "date": "[ZH] Date",
-      "query": "[ZH] Query",
-      "searchTime": "[ZH] Search time",
-      "cached": "[ZH] Cached",
+      "placeholder": "网络搜索结果将在此处显示",
+      "title": "搜索结果",
+      "noResults": "未找到结果",
+      "noData": "没有可用的搜索数据",
+      "results": "结果",
+      "confidence": "相关性",
+      "relevance": "相关性",
+      "source": "来源",
+      "citations": "引用",
+      "cite": "引用",
+      "open": "打开",
+      "openLink": "在新标签页中打开链接",
+      "filters": "筛选器",
+      "sortBy": "排序方式",
+      "filterBy": "筛选方式",
+      "all": "全部",
+      "date": "日期",
+      "query": "查询",
+      "searchTime": "搜索时间",
+      "cached": "缓存",
       "contentTypes": {
-        "webpage": "[ZH] Web pages",
-        "news": "[ZH] News",
-        "academic": "[ZH] Academic",
-        "image": "[ZH] Images",
-        "video": "[ZH] Videos"
+        "webpage": "网页",
+        "news": "新闻",
+        "academic": "学术",
+        "image": "图片",
+        "video": "视频"
       }
     },
     "configuration": {
-      "resultsCount": "[ZH] Number of results",
-      "safeSearch": "[ZH] Safe search",
-      "market": "[ZH] Search market"
+      "resultsCount": "结果数量",
+      "safeSearch": "安全搜索",
+      "market": "搜索市场"
     },
     "status": {
-      "searching": "[ZH] Searching the web...",
-      "optimizing": "[ZH] Optimizing search query...",
-      "processing": "[ZH] Processing search results..."
+      "searching": "正在搜索网络...",
+      "optimizing": "正在优化搜索查询...",
+      "processing": "正在处理搜索结果..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[ZH] Code execution results will be displayed here",
-      "title": "[ZH] Execution Results",
-      "noData": "[ZH] No code execution data available",
-      "output": "[ZH] Output",
-      "errors": "[ZH] Errors",
-      "logs": "[ZH] Logs",
-      "executionTime": "[ZH] Execution time",
-      "memoryUsage": "[ZH] Memory usage",
-      "cpuUsage": "[ZH] CPU usage",
-      "outputLines": "[ZH] Output lines",
-      "executedCode": "[ZH] Executed Code",
-      "download": "[ZH] Download",
-      "noOutput": "[ZH] No output generated",
-      "noFiles": "[ZH] No files generated",
-      "outputSize": "[ZH] Output size",
-      "unsupportedOutput": "[ZH] Unsupported output format",
+      "placeholder": "代码执行结果将在此处显示",
+      "title": "执行结果",
+      "noData": "没有可用的代码执行数据",
+      "output": "输出",
+      "errors": "错误",
+      "logs": "日志",
+      "executionTime": "执行时间",
+      "memoryUsage": "内存使用量",
+      "cpuUsage": "CPU使用量",
+      "outputLines": "输出行数",
+      "executedCode": "执行的代码",
+      "download": "下载",
+      "noOutput": "未生成输出",
+      "noFiles": "未生成文件",
+      "outputSize": "输出大小",
+      "unsupportedOutput": "不支持的输出格式",
       "status": {
-        "success": "[ZH] Success",
-        "error": "[ZH] Error",
-        "timeout": "[ZH] Timeout",
-        "memory_limit": "[ZH] Memory limit exceeded",
-        "security_violation": "[ZH] Security violation",
-        "invalid_code": "[ZH] Invalid code"
+        "success": "成功",
+        "error": "错误",
+        "timeout": "超时",
+        "memory_limit": "超出内存限制",
+        "security_violation": "安全违规",
+        "invalid_code": "无效代码"
       },
       "outputTypes": {
-        "stdout": "[ZH] Standard output",
-        "stderr": "[ZH] Error output",
-        "return_value": "[ZH] Return value",
-        "exception": "[ZH] Exception"
+        "stdout": "标准输出",
+        "stderr": "错误输出",
+        "return_value": "返回值",
+        "exception": "异常"
       },
       "tabs": {
-        "output": "[ZH] Output",
-        "code": "[ZH] Code",
-        "files": "[ZH] Files"
+        "output": "输出",
+        "code": "代码",
+        "files": "文件"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[ZH] URL Analysis Results",
-      "noData": "[ZH] No URL analysis data available",
-      "summary": "[ZH] Summary",
-      "metadata": "[ZH] Document Info",
-      "processingTime": "[ZH] Processing time",
-      "preview": "[ZH] Preview",
-      "view": "[ZH] View"
+      "title": "URL分析结果",
+      "noData": "没有可用的URL分析数据",
+      "summary": "摘要",
+      "metadata": "文档信息",
+      "processingTime": "处理时间",
+      "preview": "预览",
+      "view": "查看"
     },
     "configuration": {
-      "timeout": "[ZH] Request timeout"
+      "timeout": "请求超时"
     },
     "status": {
-      "pulling": "[ZH] Fetching URL content...",
-      "analyzing": "[ZH] Analyzing document...",
-      "complete": "[ZH] Analysis complete"
+      "pulling": "获取URL内容...",
+      "analyzing": "分析文档...",
+      "complete": "分析完成"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[ZH] Knowledge Base Results",
-      "noData": "[ZH] No knowledge base data available",
-      "documents": "[ZH] documents",
-      "insights": "[ZH] Key Insights",
-      "relevance": "[ZH] Relevance",
-      "suggestions": "[ZH] Suggestions"
+      "title": "知识库结果",
+      "noData": "没有可用的知识库数据",
+      "documents": "文档",
+      "insights": "关键洞察",
+      "relevance": "相关性",
+      "suggestions": "建议"
     },
     "configuration": {
-      "searchMode": "[ZH] Search mode",
-      "threshold": "[ZH] Relevance threshold"
+      "searchMode": "搜索模式",
+      "threshold": "相关性阈值"
     },
     "status": {
-      "searching": "[ZH] Searching knowledge base...",
-      "analyzing": "[ZH] Analyzing results..."
+      "searching": "搜索知识库...",
+      "analyzing": "分析结果..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[ZH] Document analysis results will be displayed here",
-      "title": "[ZH] Analysis Results",
-      "noData": "[ZH] No document analysis data available",
-      "documents": "[ZH] documents",
-      "noDocuments": "[ZH] No documents found",
-      "summary": "[ZH] Summary",
-      "insights": "[ZH] Key Insights",
-      "metadata": "[ZH] Document Info",
-      "processingTime": "[ZH] Processing time",
-      "searchTime": "[ZH] Search time",
-      "relevance": "[ZH] Relevance",
-      "cached": "[ZH] Cached",
-      "preview": "[ZH] Preview",
-      "view": "[ZH] View",
-      "open": "[ZH] Open",
-      "bookmark": "[ZH] Bookmark",
-      "suggestions": "[ZH] Suggestions",
+      "placeholder": "文档分析结果将在此处显示",
+      "title": "分析结果",
+      "noData": "没有可用的文档分析数据",
+      "documents": "文档",
+      "noDocuments": "未找到文档",
+      "summary": "摘要",
+      "insights": "关键洞察",
+      "metadata": "文档信息",
+      "processingTime": "处理时间",
+      "searchTime": "搜索时间",
+      "relevance": "相关性",
+      "cached": "缓存",
+      "preview": "预览",
+      "view": "查看",
+      "open": "打开",
+      "bookmark": "书签",
+      "suggestions": "建议",
       "tabs": {
-        "documents": "[ZH] Documents",
-        "insights": "[ZH] Insights",
-        "failed": "[ZH] Failed"
+        "documents": "文档",
+        "insights": "洞察",
+        "failed": "失败"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[ZH] Loading...",
-      "searching": "[ZH] Searching...",
-      "processing": "[ZH] Processing...",
-      "analyzing": "[ZH] Analyzing..."
+      "default": "加载中...",
+      "searching": "搜索中...",
+      "processing": "处理中...",
+      "analyzing": "分析中..."
     },
     "buttons": {
-      "retry": "[ZH] Retry",
-      "cancel": "[ZH] Cancel",
-      "expand": "[ZH] Expand",
-      "collapse": "[ZH] Collapse",
-      "configure": "[ZH] Configure",
-      "submit": "[ZH] Submit"
+      "retry": "重试",
+      "cancel": "取消",
+      "expand": "展开",
+      "collapse": "折叠",
+      "configure": "配置",
+      "submit": "提交"
     },
     "labels": {
-      "priority": "[ZH] Priority",
-      "estimatedTime": "[ZH] Estimated time",
-      "availability": "[ZH] Availability",
-      "configuration": "[ZH] Configuration"
+      "priority": "优先级",
+      "estimatedTime": "预计时间",
+      "availability": "可用性",
+      "configuration": "配置"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[ZH] An unknown error occurred",
-      "network": "[ZH] Network connection error",
-      "timeout": "[ZH] Request timed out",
-      "unauthorized": "[ZH] Access denied",
-      "rateLimit": "[ZH] Rate limit exceeded",
-      "serviceUnavailable": "[ZH] Service temporarily unavailable"
+      "unknown": "发生未知错误",
+      "network": "网络连接错误",
+      "timeout": "请求超时",
+      "unauthorized": "访问被拒绝",
+      "rateLimit": "超出速率限制",
+      "serviceUnavailable": "服务暂时不可用"
     },
     "webSearch": {
-      "searchFailed": "[ZH] Web search failed",
-      "invalidQuery": "[ZH] Invalid search query"
+      "searchFailed": "网络搜索失败",
+      "invalidQuery": "无效的搜索查询"
     },
     "codeInterpreter": {
-      "executionFailed": "[ZH] Code execution failed",
-      "invalidCode": "[ZH] Invalid or unsafe code"
+      "executionFailed": "代码执行失败",
+      "invalidCode": "无效或不安全的代码"
     },
     "urlPull": {
-      "fetchFailed": "[ZH] Failed to fetch URL content",
-      "invalidUrl": "[ZH] Invalid or inaccessible URL"
+      "fetchFailed": "获取URL内容失败",
+      "invalidUrl": "无效或不可访问的URL"
     },
     "localKnowledge": {
-      "searchFailed": "[ZH] Knowledge base search failed",
-      "noAccess": "[ZH] No access to knowledge base"
+      "searchFailed": "知识库搜索失败",
+      "noAccess": "无法访问知识库"
     }
   },
   "settings": {
-    "autoSubmit": "[ZH] Auto-submit after processing",
-    "advancedOptions": "[ZH] Advanced options",
+    "autoSubmit": "处理后自动提交",
+    "advancedOptions": "高级选项",
     "priority": {
-      "high": "[ZH] High",
-      "medium": "[ZH] Medium",
-      "low": "[ZH] Low"
+      "high": "高",
+      "medium": "中",
+      "low": "低"
     },
     "safeSearch": {
-      "off": "[ZH] Off",
-      "moderate": "[ZH] Moderate",
-      "strict": "[ZH] Strict"
+      "off": "关闭",
+      "moderate": "中等",
+      "strict": "严格"
     },
     "market": {
-      "any": "[ZH] Any region",
-      "local": "[ZH] Local region"
+      "any": "任何地区",
+      "local": "本地地区"
     }
   }
 }

@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[IT] Web Search",
-      "code_interpreter": "[IT] Code Interpreter",
-      "url_pull": "[IT] URL Analysis",
-      "local_knowledge": "[IT] Knowledge Base",
-      "standard_chat": "[IT] Standard Chat",
-      "foundry": "[IT] Foundry",
-      "third_party": "[IT] Third Party"
+      "web_search": "Ricerca Web",
+      "code_interpreter": "Interprete di codice",
+      "url_pull": "Analisi URL",
+      "local_knowledge": "Base di conoscenza",
+      "standard_chat": "Chat standard",
+      "foundry": "Foundry",
+      "third_party": "Terze parti"
     },
     "error": {
-      "title": "[IT] Agent Error",
-      "unknown": "[IT] An unknown error occurred",
-      "retry": "[IT] Retry",
-      "fallback": "[IT] Use fallback"
+      "title": "Errore agente",
+      "unknown": "Si è verificato un errore sconosciuto",
+      "retry": "Riprova",
+      "fallback": "Usa alternativa"
     },
     "metadata": {
-      "processingTime": "[IT] Processing time",
-      "confidence": "[IT] Confidence",
-      "tokens": "[IT] Tokens used"
+      "processingTime": "Tempo di elaborazione",
+      "confidence": "Fiducia",
+      "tokens": "Token utilizzati"
     },
     "resultsPanel": {
-      "placeholder": "[IT] Agent results will be displayed here"
+      "placeholder": "I risultati dell'agente verranno visualizzati qui"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[IT] Searches the web for real-time information",
-      "code_interpreter": "[IT] Executes and analyzes code in multiple languages",
-      "url_pull": "[IT] Analyzes and extracts content from web pages",
-      "local_knowledge": "[IT] Searches internal knowledge base and documents",
-      "standard_chat": "[IT] Standard conversational AI without tools",
-      "foundry": "[IT] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[IT] Third-party agent or custom tool integration"
+      "web_search": "Ricerca Web - Cerca sul web informazioni in tempo reale",
+      "code_interpreter": "Interprete di codice - Esegue e analizza codice in più linguaggi",
+      "url_pull": "Analisi URL - Analizza ed estrae contenuti dalle pagine web",
+      "local_knowledge": "Base di conoscenza - Cerca nella base di conoscenza interna e nei documenti",
+      "standard_chat": "Chat standard - IA conversazionale standard senza strumenti",
+      "foundry": "Foundry - Utilizza Azure AI Foundry per capacità avanzate",
+      "third_party": "Terze parti - Agente di terze parti o integrazione di strumenti personalizzati"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[IT] Web search results will be displayed here",
-      "title": "[IT] Title",
-      "noResults": "[IT] No results found",
-      "noData": "[IT] No search data available",
-      "results": "[IT] results",
-      "confidence": "[IT] Relevance",
-      "relevance": "[IT] Relevance",
-      "source": "[IT] Source",
-      "citations": "[IT] Citations",
-      "cite": "[IT] Cite",
-      "open": "[IT] Open",
-      "openLink": "[IT] Open link in new tab",
-      "filters": "[IT] Filters",
-      "sortBy": "[IT] Sort by",
-      "filterBy": "[IT] Filter by",
-      "all": "[IT] All",
-      "date": "[IT] Date",
-      "query": "[IT] Query",
-      "searchTime": "[IT] Search time",
-      "cached": "[IT] Cached",
+      "placeholder": "I risultati della ricerca web verranno visualizzati qui",
+      "title": "Risultati di ricerca",
+      "noResults": "Nessun risultato trovato",
+      "noData": "Nessun dato di ricerca disponibile",
+      "results": "risultati",
+      "confidence": "Rilevanza",
+      "relevance": "Rilevanza",
+      "source": "Fonte",
+      "citations": "Citazioni",
+      "cite": "Cita",
+      "open": "Apri",
+      "openLink": "Apri link in nuova scheda",
+      "filters": "Filtri",
+      "sortBy": "Ordina per",
+      "filterBy": "Filtra per",
+      "all": "Tutto",
+      "date": "Data",
+      "query": "Query",
+      "searchTime": "Tempo di ricerca",
+      "cached": "In cache",
       "contentTypes": {
-        "webpage": "[IT] Web pages",
-        "news": "[IT] News",
-        "academic": "[IT] Academic",
-        "image": "[IT] Images",
-        "video": "[IT] Videos"
+        "webpage": "Pagine web",
+        "news": "Notizie",
+        "academic": "Accademico",
+        "image": "Immagini",
+        "video": "Video"
       }
     },
     "configuration": {
-      "resultsCount": "[IT] Number of results",
-      "safeSearch": "[IT] Safe search",
-      "market": "[IT] Search market"
+      "resultsCount": "Numero di risultati",
+      "safeSearch": "Ricerca sicura",
+      "market": "Mercato di ricerca"
     },
     "status": {
-      "searching": "[IT] Searching the web...",
-      "optimizing": "[IT] Optimizing search query...",
-      "processing": "[IT] Processing search results..."
+      "searching": "Ricerca nel web...",
+      "optimizing": "Ottimizzazione query di ricerca...",
+      "processing": "Elaborazione risultati di ricerca..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[IT] Code execution results will be displayed here",
-      "title": "[IT] Execution Results",
-      "noData": "[IT] No code execution data available",
-      "output": "[IT] Output",
-      "errors": "[IT] Errors",
-      "logs": "[IT] Logs",
-      "executionTime": "[IT] Execution time",
-      "memoryUsage": "[IT] Memory usage",
-      "cpuUsage": "[IT] CPU usage",
-      "outputLines": "[IT] Output lines",
-      "executedCode": "[IT] Executed Code",
-      "download": "[IT] Download",
-      "noOutput": "[IT] No output generated",
-      "noFiles": "[IT] No files generated",
-      "outputSize": "[IT] Output size",
-      "unsupportedOutput": "[IT] Unsupported output format",
+      "placeholder": "I risultati dell'esecuzione del codice verranno visualizzati qui",
+      "title": "Risultati esecuzione",
+      "noData": "Nessun dato di esecuzione codice disponibile",
+      "output": "Output",
+      "errors": "Errori",
+      "logs": "Log",
+      "executionTime": "Tempo di esecuzione",
+      "memoryUsage": "Uso memoria",
+      "cpuUsage": "Uso CPU",
+      "outputLines": "Righe output",
+      "executedCode": "Codice eseguito",
+      "download": "Scarica",
+      "noOutput": "Nessun output generato",
+      "noFiles": "Nessun file generato",
+      "outputSize": "Dimensione output",
+      "unsupportedOutput": "Formato output non supportato",
       "status": {
-        "success": "[IT] Success",
-        "error": "[IT] Error",
-        "timeout": "[IT] Timeout",
-        "memory_limit": "[IT] Memory limit exceeded",
-        "security_violation": "[IT] Security violation",
-        "invalid_code": "[IT] Invalid code"
+        "success": "Successo",
+        "error": "Errore",
+        "timeout": "Timeout",
+        "memory_limit": "Limite memoria superato",
+        "security_violation": "Violazione sicurezza",
+        "invalid_code": "Codice non valido"
       },
       "outputTypes": {
-        "stdout": "[IT] Standard output",
-        "stderr": "[IT] Error output",
-        "return_value": "[IT] Return value",
-        "exception": "[IT] Exception"
+        "stdout": "Output standard",
+        "stderr": "Output errore",
+        "return_value": "Valore ritorno",
+        "exception": "Eccezione"
       },
       "tabs": {
-        "output": "[IT] Output",
-        "code": "[IT] Code",
-        "files": "[IT] Files"
+        "output": "Output",
+        "code": "Codice",
+        "files": "File"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[IT] URL Analysis Results",
-      "noData": "[IT] No URL analysis data available",
-      "summary": "[IT] Summary",
-      "metadata": "[IT] Document Info",
-      "processingTime": "[IT] Processing time",
-      "preview": "[IT] Preview",
-      "view": "[IT] View"
+      "title": "Risultati analisi URL",
+      "noData": "Nessun dato di analisi URL disponibile",
+      "summary": "Riepilogo",
+      "metadata": "Info documento",
+      "processingTime": "Tempo di elaborazione",
+      "preview": "Anteprima",
+      "view": "Visualizza"
     },
     "configuration": {
-      "timeout": "[IT] Request timeout"
+      "timeout": "Timeout richiesta"
     },
     "status": {
-      "pulling": "[IT] Fetching URL content...",
-      "analyzing": "[IT] Analyzing document...",
-      "complete": "[IT] Analysis complete"
+      "pulling": "Recupero contenuto URL...",
+      "analyzing": "Analisi documento...",
+      "complete": "Analisi completata"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[IT] Knowledge Base Results",
-      "noData": "[IT] No knowledge base data available",
-      "documents": "[IT] documents",
-      "insights": "[IT] Key Insights",
-      "relevance": "[IT] Relevance",
-      "suggestions": "[IT] Suggestions"
+      "title": "Risultati base di conoscenza",
+      "noData": "Nessun dato base di conoscenza disponibile",
+      "documents": "documenti",
+      "insights": "Insight chiave",
+      "relevance": "Rilevanza",
+      "suggestions": "Suggerimenti"
     },
     "configuration": {
-      "searchMode": "[IT] Search mode",
-      "threshold": "[IT] Relevance threshold"
+      "searchMode": "Modalità ricerca",
+      "threshold": "Soglia rilevanza"
     },
     "status": {
-      "searching": "[IT] Searching knowledge base...",
-      "analyzing": "[IT] Analyzing results..."
+      "searching": "Ricerca base di conoscenza...",
+      "analyzing": "Analisi risultati..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[IT] Document analysis results will be displayed here",
-      "title": "[IT] Analysis Results",
-      "noData": "[IT] No document analysis data available",
-      "documents": "[IT] documents",
-      "noDocuments": "[IT] No documents found",
-      "summary": "[IT] Summary",
-      "insights": "[IT] Key Insights",
-      "metadata": "[IT] Document Info",
-      "processingTime": "[IT] Processing time",
-      "searchTime": "[IT] Search time",
-      "relevance": "[IT] Relevance",
-      "cached": "[IT] Cached",
-      "preview": "[IT] Preview",
-      "view": "[IT] View",
-      "open": "[IT] Open",
-      "bookmark": "[IT] Bookmark",
-      "suggestions": "[IT] Suggestions",
+      "placeholder": "I risultati dell'analisi documenti verranno visualizzati qui",
+      "title": "Risultati analisi",
+      "noData": "Nessun dato di analisi documenti disponibile",
+      "documents": "documenti",
+      "noDocuments": "Nessun documento trovato",
+      "summary": "Riepilogo",
+      "insights": "Insight chiave",
+      "metadata": "Info documento",
+      "processingTime": "Tempo di elaborazione",
+      "searchTime": "Tempo di ricerca",
+      "relevance": "Rilevanza",
+      "cached": "In cache",
+      "preview": "Anteprima",
+      "view": "Visualizza",
+      "open": "Apri",
+      "bookmark": "Segnalibro",
+      "suggestions": "Suggerimenti",
       "tabs": {
-        "documents": "[IT] Documents",
-        "insights": "[IT] Insights",
-        "failed": "[IT] Failed"
+        "documents": "Documenti",
+        "insights": "Insight",
+        "failed": "Fallito"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[IT] Loading...",
-      "searching": "[IT] Searching...",
-      "processing": "[IT] Processing...",
-      "analyzing": "[IT] Analyzing..."
+      "default": "Caricamento...",
+      "searching": "Ricerca...",
+      "processing": "Elaborazione...",
+      "analyzing": "Analisi..."
     },
     "buttons": {
-      "retry": "[IT] Retry",
-      "cancel": "[IT] Cancel",
-      "expand": "[IT] Expand",
-      "collapse": "[IT] Collapse",
-      "configure": "[IT] Configure",
-      "submit": "[IT] Submit"
+      "retry": "Riprova",
+      "cancel": "Annulla",
+      "expand": "Espandi",
+      "collapse": "Comprimi",
+      "configure": "Configura",
+      "submit": "Invia"
     },
     "labels": {
-      "priority": "[IT] Priority",
-      "estimatedTime": "[IT] Estimated time",
-      "availability": "[IT] Availability",
-      "configuration": "[IT] Configuration"
+      "priority": "Priorità",
+      "estimatedTime": "Tempo stimato",
+      "availability": "Disponibilità",
+      "configuration": "Configurazione"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[IT] An unknown error occurred",
-      "network": "[IT] Network connection error",
-      "timeout": "[IT] Request timed out",
-      "unauthorized": "[IT] Access denied",
-      "rateLimit": "[IT] Rate limit exceeded",
-      "serviceUnavailable": "[IT] Service temporarily unavailable"
+      "unknown": "Si è verificato un errore sconosciuto",
+      "network": "Errore connessione di rete",
+      "timeout": "Timeout richiesta",
+      "unauthorized": "Accesso negato",
+      "rateLimit": "Limite velocità superato",
+      "serviceUnavailable": "Servizio temporaneamente non disponibile"
     },
     "webSearch": {
-      "searchFailed": "[IT] Web search failed",
-      "invalidQuery": "[IT] Invalid search query"
+      "searchFailed": "Ricerca web fallita",
+      "invalidQuery": "Query di ricerca non valida"
     },
     "codeInterpreter": {
-      "executionFailed": "[IT] Code execution failed",
-      "invalidCode": "[IT] Invalid or unsafe code"
+      "executionFailed": "Esecuzione codice fallita",
+      "invalidCode": "Codice non valido o non sicuro"
     },
     "urlPull": {
-      "fetchFailed": "[IT] Failed to fetch URL content",
-      "invalidUrl": "[IT] Invalid or inaccessible URL"
+      "fetchFailed": "Impossibile recuperare contenuto URL",
+      "invalidUrl": "URL non valido o inaccessibile"
     },
     "localKnowledge": {
-      "searchFailed": "[IT] Knowledge base search failed",
-      "noAccess": "[IT] No access to knowledge base"
+      "searchFailed": "Ricerca base conoscenza fallita",
+      "noAccess": "Nessun accesso alla base di conoscenza"
     }
   },
   "settings": {
-    "autoSubmit": "[IT] Auto-submit after processing",
-    "advancedOptions": "[IT] Advanced options",
+    "autoSubmit": "Invio automatico dopo elaborazione",
+    "advancedOptions": "Opzioni avanzate",
     "priority": {
-      "high": "[IT] High",
-      "medium": "[IT] Medium",
-      "low": "[IT] Low"
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Bassa"
     },
     "safeSearch": {
-      "off": "[IT] Off",
-      "moderate": "[IT] Moderate",
-      "strict": "[IT] Strict"
+      "off": "Disattivato",
+      "moderate": "Moderato",
+      "strict": "Rigoroso"
     },
     "market": {
-      "any": "[IT] Any region",
-      "local": "[IT] Local region"
+      "any": "Qualsiasi regione",
+      "local": "Regione locale"
     }
   }
 }

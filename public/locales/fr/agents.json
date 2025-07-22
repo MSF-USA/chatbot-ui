@@ -2,15 +2,15 @@
   "common": {
     "agentTypes": {
       "web_search": "Recherche Web",
-      "code_interpreter": "Interpréteur de Code",
+      "code_interpreter": "Interpréteur de code",
       "url_pull": "Analyse d'URL",
-      "local_knowledge": "Base de Connaissances",
-      "standard_chat": "Chat Standard",
+      "local_knowledge": "Base de connaissances",
+      "standard_chat": "Chat standard",
       "foundry": "Foundry",
       "third_party": "Tiers"
     },
     "error": {
-      "title": "Erreur d'Agent",
+      "title": "Erreur d'agent",
       "unknown": "Une erreur inconnue s'est produite",
       "retry": "Réessayer",
       "fallback": "Utiliser l'alternative"
@@ -21,24 +21,24 @@
       "tokens": "Jetons utilisés"
     },
     "resultsPanel": {
-      "placeholder": "Les résultats de l'agent s'afficheront ici"
+      "placeholder": "Les résultats de l'agent seront affichés ici"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[FR] Searches the web for real-time information",
-      "code_interpreter": "[FR] Executes and analyzes code in multiple languages",
-      "url_pull": "[FR] Analyzes and extracts content from web pages",
-      "local_knowledge": "[FR] Searches internal knowledge base and documents",
-      "standard_chat": "[FR] Standard conversational AI without tools",
-      "foundry": "[FR] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[FR] Third-party agent or custom tool integration"
+      "web_search": "Recherche Web - Recherche sur le web des informations en temps réel",
+      "code_interpreter": "Interpréteur de code - Exécute et analyse du code dans plusieurs langages",
+      "url_pull": "Analyse d'URL - Analyse et extrait le contenu des pages web",
+      "local_knowledge": "Base de connaissances - Recherche dans la base de connaissances interne et les documents",
+      "standard_chat": "Chat standard - IA conversationnelle standard sans outils",
+      "foundry": "Foundry - Utilise Azure AI Foundry pour des capacités avancées",
+      "third_party": "Tiers - Agent tiers ou intégration d'outil personnalisé"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[FR] Web search results will be displayed here",
-      "title": "Titre",
+      "placeholder": "Les résultats de recherche web seront affichés ici",
+      "title": "Résultats de recherche",
       "noResults": "Aucun résultat trouvé",
       "noData": "Aucune donnée de recherche disponible",
       "results": "résultats",
@@ -52,129 +52,129 @@
       "filters": "Filtres",
       "sortBy": "Trier par",
       "filterBy": "Filtrer par",
-      "all": "Tous",
+      "all": "Tout",
       "date": "Date",
       "query": "Requête",
       "searchTime": "Temps de recherche",
       "cached": "En cache",
       "contentTypes": {
-        "webpage": "[FR] Web pages",
-        "news": "[FR] News",
-        "academic": "[FR] Academic",
-        "image": "[FR] Images",
-        "video": "[FR] Videos"
+        "webpage": "Pages web",
+        "news": "Actualités",
+        "academic": "Académique",
+        "image": "Images",
+        "video": "Vidéos"
       }
     },
     "configuration": {
-      "resultsCount": "[FR] Number of results",
-      "safeSearch": "[FR] Safe search",
-      "market": "[FR] Search market"
+      "resultsCount": "Nombre de résultats",
+      "safeSearch": "Recherche sécurisée",
+      "market": "Marché de recherche"
     },
     "status": {
-      "searching": "[FR] Searching the web...",
-      "optimizing": "[FR] Optimizing search query...",
-      "processing": "[FR] Processing search results..."
+      "searching": "Recherche sur le web...",
+      "optimizing": "Optimisation de la requête de recherche...",
+      "processing": "Traitement des résultats de recherche..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[FR] Code execution results will be displayed here",
-      "title": "[FR] Execution Results",
-      "noData": "[FR] No code execution data available",
-      "output": "[FR] Output",
-      "errors": "[FR] Errors",
-      "logs": "[FR] Logs",
-      "executionTime": "[FR] Execution time",
-      "memoryUsage": "[FR] Memory usage",
-      "cpuUsage": "[FR] CPU usage",
-      "outputLines": "[FR] Output lines",
-      "executedCode": "[FR] Executed Code",
-      "download": "[FR] Download",
-      "noOutput": "[FR] No output generated",
-      "noFiles": "[FR] No files generated",
-      "outputSize": "[FR] Output size",
-      "unsupportedOutput": "[FR] Unsupported output format",
+      "placeholder": "Les résultats d'exécution du code seront affichés ici",
+      "title": "Résultats d'exécution",
+      "noData": "Aucune donnée d'exécution de code disponible",
+      "output": "Sortie",
+      "errors": "Erreurs",
+      "logs": "Journaux",
+      "executionTime": "Temps d'exécution",
+      "memoryUsage": "Utilisation mémoire",
+      "cpuUsage": "Utilisation CPU",
+      "outputLines": "Lignes de sortie",
+      "executedCode": "Code exécuté",
+      "download": "Télécharger",
+      "noOutput": "Aucune sortie générée",
+      "noFiles": "Aucun fichier généré",
+      "outputSize": "Taille de la sortie",
+      "unsupportedOutput": "Format de sortie non supporté",
       "status": {
-        "success": "[FR] Success",
-        "error": "[FR] Error",
-        "timeout": "[FR] Timeout",
-        "memory_limit": "[FR] Memory limit exceeded",
-        "security_violation": "[FR] Security violation",
-        "invalid_code": "[FR] Invalid code"
+        "success": "Succès",
+        "error": "Erreur",
+        "timeout": "Délai dépassé",
+        "memory_limit": "Limite mémoire dépassée",
+        "security_violation": "Violation de sécurité",
+        "invalid_code": "Code invalide"
       },
       "outputTypes": {
-        "stdout": "[FR] Standard output",
-        "stderr": "[FR] Error output",
-        "return_value": "[FR] Return value",
-        "exception": "[FR] Exception"
+        "stdout": "Sortie standard",
+        "stderr": "Sortie d'erreur",
+        "return_value": "Valeur de retour",
+        "exception": "Exception"
       },
       "tabs": {
-        "output": "[FR] Output",
-        "code": "[FR] Code",
-        "files": "[FR] Files"
+        "output": "Sortie",
+        "code": "Code",
+        "files": "Fichiers"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[FR] URL Analysis Results",
-      "noData": "[FR] No URL analysis data available",
-      "summary": "[FR] Summary",
-      "metadata": "[FR] Document Info",
+      "title": "Résultats d'analyse d'URL",
+      "noData": "Aucune donnée d'analyse d'URL disponible",
+      "summary": "Résumé",
+      "metadata": "Informations du document",
       "processingTime": "Temps de traitement",
-      "preview": "[FR] Preview",
-      "view": "[FR] View"
+      "preview": "Aperçu",
+      "view": "Afficher"
     },
     "configuration": {
-      "timeout": "[FR] Request timeout"
+      "timeout": "Délai d'expiration de la requête"
     },
     "status": {
-      "pulling": "[FR] Fetching URL content...",
-      "analyzing": "[FR] Analyzing document...",
-      "complete": "[FR] Analysis complete"
+      "pulling": "Récupération du contenu de l'URL...",
+      "analyzing": "Analyse du document...",
+      "complete": "Analyse terminée"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[FR] Knowledge Base Results",
-      "noData": "[FR] No knowledge base data available",
-      "documents": "[FR] documents",
-      "insights": "[FR] Key Insights",
+      "title": "Résultats de la base de connaissances",
+      "noData": "Aucune donnée de base de connaissances disponible",
+      "documents": "documents",
+      "insights": "Aperçus clés",
       "relevance": "Pertinence",
-      "suggestions": "[FR] Suggestions"
+      "suggestions": "Suggestions"
     },
     "configuration": {
-      "searchMode": "[FR] Search mode",
-      "threshold": "[FR] Relevance threshold"
+      "searchMode": "Mode de recherche",
+      "threshold": "Seuil de pertinence"
     },
     "status": {
-      "searching": "[FR] Searching knowledge base...",
-      "analyzing": "[FR] Analyzing results..."
+      "searching": "Recherche dans la base de connaissances...",
+      "analyzing": "Analyse des résultats..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[FR] Document analysis results will be displayed here",
-      "title": "[FR] Analysis Results",
-      "noData": "[FR] No document analysis data available",
-      "documents": "[FR] documents",
-      "noDocuments": "[FR] No documents found",
-      "summary": "[FR] Summary",
-      "insights": "[FR] Key Insights",
-      "metadata": "[FR] Document Info",
+      "placeholder": "Les résultats d'analyse de documents seront affichés ici",
+      "title": "Résultats d'analyse",
+      "noData": "Aucune donnée d'analyse de documents disponible",
+      "documents": "documents",
+      "noDocuments": "Aucun document trouvé",
+      "summary": "Résumé",
+      "insights": "Aperçus clés",
+      "metadata": "Informations du document",
       "processingTime": "Temps de traitement",
       "searchTime": "Temps de recherche",
       "relevance": "Pertinence",
       "cached": "En cache",
-      "preview": "[FR] Preview",
-      "view": "[FR] View",
+      "preview": "Aperçu",
+      "view": "Afficher",
       "open": "Ouvrir",
-      "bookmark": "[FR] Bookmark",
-      "suggestions": "[FR] Suggestions",
+      "bookmark": "Signet",
+      "suggestions": "Suggestions",
       "tabs": {
-        "documents": "[FR] Documents",
-        "insights": "[FR] Insights",
-        "failed": "[FR] Failed"
+        "documents": "Documents",
+        "insights": "Aperçus",
+        "failed": "Échoué"
       }
     }
   },
@@ -188,8 +188,8 @@
     "buttons": {
       "retry": "Réessayer",
       "cancel": "Annuler",
-      "expand": "[FR] Expand",
-      "collapse": "[FR] Collapse",
+      "expand": "Étendre",
+      "collapse": "Réduire",
       "configure": "Configurer",
       "submit": "Soumettre"
     },
@@ -203,45 +203,45 @@
   "errors": {
     "common": {
       "unknown": "Une erreur inconnue s'est produite",
-      "network": "[FR] Network connection error",
-      "timeout": "[FR] Request timed out",
-      "unauthorized": "[FR] Access denied",
-      "rateLimit": "[FR] Rate limit exceeded",
-      "serviceUnavailable": "[FR] Service temporarily unavailable"
+      "network": "Erreur de connexion réseau",
+      "timeout": "Délai d'expiration de la requête",
+      "unauthorized": "Accès refusé",
+      "rateLimit": "Limite de débit dépassée",
+      "serviceUnavailable": "Service temporairement indisponible"
     },
     "webSearch": {
-      "searchFailed": "[FR] Web search failed",
-      "invalidQuery": "[FR] Invalid search query"
+      "searchFailed": "Recherche web échouée",
+      "invalidQuery": "Requête de recherche invalide"
     },
     "codeInterpreter": {
-      "executionFailed": "[FR] Code execution failed",
-      "invalidCode": "[FR] Invalid or unsafe code"
+      "executionFailed": "Exécution du code échouée",
+      "invalidCode": "Code invalide ou dangereux"
     },
     "urlPull": {
-      "fetchFailed": "[FR] Failed to fetch URL content",
-      "invalidUrl": "[FR] Invalid or inaccessible URL"
+      "fetchFailed": "Échec de la récupération du contenu de l'URL",
+      "invalidUrl": "URL invalide ou inaccessible"
     },
     "localKnowledge": {
-      "searchFailed": "[FR] Knowledge base search failed",
-      "noAccess": "[FR] No access to knowledge base"
+      "searchFailed": "Recherche dans la base de connaissances échouée",
+      "noAccess": "Aucun accès à la base de connaissances"
     }
   },
   "settings": {
-    "autoSubmit": "[FR] Auto-submit after processing",
-    "advancedOptions": "[FR] Advanced options",
+    "autoSubmit": "Soumission automatique après traitement",
+    "advancedOptions": "Options avancées",
     "priority": {
-      "high": "Élevée",
+      "high": "Haute",
       "medium": "Moyenne",
-      "low": "Faible"
+      "low": "Basse"
     },
     "safeSearch": {
-      "off": "[FR] Off",
-      "moderate": "[FR] Moderate",
-      "strict": "[FR] Strict"
+      "off": "Désactivé",
+      "moderate": "Modéré",
+      "strict": "Strict"
     },
     "market": {
-      "any": "[FR] Any region",
-      "local": "[FR] Local region"
+      "any": "N'importe quelle région",
+      "local": "Région locale"
     }
   }
 }

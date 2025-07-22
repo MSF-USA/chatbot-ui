@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[MY] Web Search",
-      "code_interpreter": "[MY] Code Interpreter",
-      "url_pull": "[MY] URL Analysis",
-      "local_knowledge": "[MY] Knowledge Base",
-      "standard_chat": "[MY] Standard Chat",
-      "foundry": "[MY] Foundry",
-      "third_party": "[MY] Third Party"
+      "web_search": "ဝဘ်ရှာဖွေမှု",
+      "code_interpreter": "ကုဒ်စကားပြန်",
+      "url_pull": "URL ခွဲခြမ်းစိတ်ဖြာမှု",
+      "local_knowledge": "ဗဟုသုတအခြေခံ",
+      "standard_chat": "စံညွှန်းချက်ဆက်သွယ်မှု",
+      "foundry": "Foundry",
+      "third_party": "တတိယပါတီ"
     },
     "error": {
-      "title": "[MY] Agent Error",
-      "unknown": "[MY] An unknown error occurred",
-      "retry": "[MY] Retry",
-      "fallback": "[MY] Use fallback"
+      "title": "အေးဂျင့်အမှား",
+      "unknown": "မသိသောအမှားတစ်ခုဖြစ်ပွားခဲ့သည်",
+      "retry": "ထပ်မံကြိုးစားပါ",
+      "fallback": "အခြားနည်းလမ်းသုံးပါ"
     },
     "metadata": {
-      "processingTime": "[MY] Processing time",
-      "confidence": "[MY] Confidence",
-      "tokens": "[MY] Tokens used"
+      "processingTime": "လုပ်ဆောင်ချိန်",
+      "confidence": "ယုံကြည်မှု",
+      "tokens": "အသုံးပြုထားသောတိုကင်များ"
     },
     "resultsPanel": {
-      "placeholder": "[MY] Agent results will be displayed here"
+      "placeholder": "အေးဂျင့်ရလဒ်များကို ဤနေရာတွင်ပြသပါမည်"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[MY] Searches the web for real-time information",
-      "code_interpreter": "[MY] Executes and analyzes code in multiple languages",
-      "url_pull": "[MY] Analyzes and extracts content from web pages",
-      "local_knowledge": "[MY] Searches internal knowledge base and documents",
-      "standard_chat": "[MY] Standard conversational AI without tools",
-      "foundry": "[MY] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[MY] Third-party agent or custom tool integration"
+      "web_search": "ဝဘ်ရှာဖွေမှု - အချိန်နှင့်တပြေးညီ အချက်အလက်များအတွက် ဝဘ်ကို ရှာဖွေသည်",
+      "code_interpreter": "ကုဒ်စကားပြန် - ဘာသာစကားများစွာဖြင့် ကုဒ်ကို လုပ်ဆောင်ပြီး ခွဲခြမ်းစိတ်ဖြာသည်",
+      "url_pull": "URL ခွဲခြမ်းစိတ်ဖြာမှု - ဝဘ်စာမျက်နှာများမှ အကြောင်းအရာကို ခွဲခြမ်းစိတ်ဖြာပြီး ထုတ်ယူသည်",
+      "local_knowledge": "ဗဟုသုတအခြေခံ - အတွင်းပိုင်း ဗဟုသုတအခြေခံနှင့် စာရွက်စာတမ်းများကို ရှာဖွေသည်",
+      "standard_chat": "စံညွှန်းချက်ဆက်သွယ်မှု - ကိရိယာများမပါဘဲ စံညွှန်း စကားပြောဆိုမှု AI",
+      "foundry": "Foundry - အဆင့်မြင့် စွမ်းရည်များအတွက် Azure AI Foundry ကို အသုံးပြုသည်",
+      "third_party": "တတိယပါတီ - တတိယပါတီ အေးဂျင့် သို့မဟုတ် စိတ်ကြိုက်ကိရိယာ ပေါင်းစပ်မှု"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[MY] Web search results will be displayed here",
-      "title": "[MY] Title",
-      "noResults": "[MY] No results found",
-      "noData": "[MY] No search data available",
-      "results": "[MY] results",
-      "confidence": "[MY] Relevance",
-      "relevance": "[MY] Relevance",
-      "source": "[MY] Source",
-      "citations": "[MY] Citations",
-      "cite": "[MY] Cite",
-      "open": "[MY] Open",
-      "openLink": "[MY] Open link in new tab",
-      "filters": "[MY] Filters",
-      "sortBy": "[MY] Sort by",
-      "filterBy": "[MY] Filter by",
-      "all": "[MY] All",
-      "date": "[MY] Date",
-      "query": "[MY] Query",
-      "searchTime": "[MY] Search time",
-      "cached": "[MY] Cached",
+      "placeholder": "ဝဘ်ရှာဖွဲမှူ ရလဒ်မြားကို အနည်ရာတွံ ပြပါပာမီး",
+      "title": "ရှာဖွဲမှူ ရလဒ်မြား",
+      "noResults": "ရလဒ်မြား မသစ်ပဲ",
+      "noData": "ရှာဖွဲမှူ ဒေတာ ပရိမှို့ပဲ",
+      "results": "ရလဒ်မြား",
+      "confidence": "ဗှာသပြို့ကြပ်မှူ",
+      "relevance": "ဗှာသပြို့ကြပ်မှူ",
+      "source": "အကြောင်အရာ",
+      "citations": "အကောင်အြည့ကုံးမြား",
+      "cite": "အကောင်အြည့ကုံး",
+      "open": "ဖွဲ",
+      "openLink": "လင်းကို အတားတ5် တက်ဗ်မှာ ဖွဲပာ",
+      "filters": "ဖဲလ်တာမြား",
+      "sortBy": "အရံု့ လှင်",
+      "filterBy": "အရံု့ ဖဲလ်တာ",
+      "all": "အစ်လုံး",
+      "date": "ရက်နည့",
+      "query": "အမြင့်စူမှူ",
+      "searchTime": "ရှာဖွဲမှူ အကြး",
+      "cached": "ကေသ်ပှဳပဲ",
       "contentTypes": {
-        "webpage": "[MY] Web pages",
-        "news": "[MY] News",
-        "academic": "[MY] Academic",
-        "image": "[MY] Images",
-        "video": "[MY] Videos"
+        "webpage": "ဝဘ်စာမယက်နှာမြား",
+        "news": "ကောင်အစက်",
+        "academic": "ပံန်နြာ",
+        "image": "ရုပ်မြား",
+        "video": "ဗီဒီယို"
       }
     },
     "configuration": {
-      "resultsCount": "[MY] Number of results",
-      "safeSearch": "[MY] Safe search",
-      "market": "[MY] Search market"
+      "resultsCount": "ရလဒ်မြား အတွဲန်",
+      "safeSearch": "အနင်ရာမရှာဖွဲမှူ",
+      "market": "ရှာဖွဲမှူ လံု့အချား"
     },
     "status": {
-      "searching": "[MY] Searching the web...",
-      "optimizing": "[MY] Optimizing search query...",
-      "processing": "[MY] Processing search results..."
+      "searching": "ဝဘ်တွင် ရှာဖွဲနေမှာ...",
+      "optimizing": "ရှာဖွဲမှူ အမြင့်စူမှူကို အခြို့န်းလုပ်နေမှာ...",
+      "processing": "ရှာဖွဲမှူ ရလဒ်မြားကို အစို့ပြုပြည်နေမှာ..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[MY] Code execution results will be displayed here",
-      "title": "[MY] Execution Results",
-      "noData": "[MY] No code execution data available",
-      "output": "[MY] Output",
-      "errors": "[MY] Errors",
-      "logs": "[MY] Logs",
-      "executionTime": "[MY] Execution time",
-      "memoryUsage": "[MY] Memory usage",
-      "cpuUsage": "[MY] CPU usage",
-      "outputLines": "[MY] Output lines",
-      "executedCode": "[MY] Executed Code",
-      "download": "[MY] Download",
-      "noOutput": "[MY] No output generated",
-      "noFiles": "[MY] No files generated",
-      "outputSize": "[MY] Output size",
-      "unsupportedOutput": "[MY] Unsupported output format",
+      "placeholder": "ကုဒ်အဆို့အမြို့ ရလဒ်မြားကို အနည်ရာတွံ ပြပါပာမီး",
+      "title": "အဆို့အမြို့ ရလဒ်မြား",
+      "noData": "ကုဒ်အဆို့အမြို့ ဒေတာ ပရိမှို့ပဲ",
+      "output": "အြက်အကောင်",
+      "errors": "အမှာအစာင်မြား",
+      "logs": "လဒ်မြား",
+      "executionTime": "အဆို့အမြို့ အကြး",
+      "memoryUsage": "မီမ်ရဲ အသုံးပြူမှူ",
+      "cpuUsage": "CPU အသုံးပြူမှူ",
+      "outputLines": "အြက်အကောင် စက်မြား",
+      "executedCode": "အဆို့အမြို့ဇဲခှဲကုဒ်",
+      "download": "ဒောင်င်လိုဒ်လဲ",
+      "noOutput": "အြက်အကောင် မှို့ပဲ",
+      "noFiles": "ဖိုင်မြား မှို့ပဲ",
+      "outputSize": "အြက်အကောင် အရီးအသား",
+      "unsupportedOutput": "အမသောင်ဆိပဲတဲ့ အြက်အကောင် ပုံုန်အမြို့",
       "status": {
-        "success": "[MY] Success",
-        "error": "[MY] Error",
-        "timeout": "[MY] Timeout",
-        "memory_limit": "[MY] Memory limit exceeded",
-        "security_violation": "[MY] Security violation",
-        "invalid_code": "[MY] Invalid code"
+        "success": "အခြီးလုပ်မှူ",
+        "error": "အမှာ",
+        "timeout": "အကြးဟု့သူမှူ",
+        "memory_limit": "မီမ်ရဲ လိမဲသိုုကို ကဆာင်ပဲ",
+        "security_violation": "အနင်ရာမှူ အဍွုဗှိင့်မှူ",
+        "invalid_code": "မဟုတဲ့ကုဒ်"
       },
       "outputTypes": {
-        "stdout": "[MY] Standard output",
-        "stderr": "[MY] Error output",
-        "return_value": "[MY] Return value",
-        "exception": "[MY] Exception"
+        "stdout": "စ္ᄀထ်နွှူင် အြက်အကောင်",
+        "stderr": "အမှာ အြက်အကောင်",
+        "return_value": "အ῾ရာ အရီး",
+        "exception": "အြိုလုူ"
       },
       "tabs": {
-        "output": "[MY] Output",
-        "code": "[MY] Code",
-        "files": "[MY] Files"
+        "output": "အြက်အကောင်",
+        "code": "ကုဒ်",
+        "files": "ဖိုင်မြား"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[MY] URL Analysis Results",
-      "noData": "[MY] No URL analysis data available",
-      "summary": "[MY] Summary",
-      "metadata": "[MY] Document Info",
-      "processingTime": "[MY] Processing time",
-      "preview": "[MY] Preview",
-      "view": "[MY] View"
+      "title": "URL ခွဲခြမ်းစိတ်ဖြါမှူ ရလဒ်မြား",
+      "noData": "URL ခွဲခြမ်းစိတ်ဖြါမှူ ဒေတာ ပရိမှို့ပဲ",
+      "summary": "အနွဲအဖြည့လုပ်",
+      "metadata": "စာရိုက် အစက်အလည်မြား",
+      "processingTime": "အစို့ပြုပြည်မှူ အကြး",
+      "preview": "စက်မနအြစ်ပါ",
+      "view": "အမဲ့လုပ်"
     },
     "configuration": {
-      "timeout": "[MY] Request timeout"
+      "timeout": "အသိုမှူ အကြးဟု့သူမှူ"
     },
     "status": {
-      "pulling": "[MY] Fetching URL content...",
-      "analyzing": "[MY] Analyzing document...",
-      "complete": "[MY] Analysis complete"
+      "pulling": "URL အကောင်အရာကို ပြီးကြဲမဒ်သှဲ...",
+      "analyzing": "စာရိုက်ကို ခွဲခြမ်းစိတ်ဖြါနေမှာ...",
+      "complete": "ခွဲခြမ်းစိတ်ဖြါမှူ အပြီးစံု့ပဲ"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[MY] Knowledge Base Results",
-      "noData": "[MY] No knowledge base data available",
-      "documents": "[MY] documents",
-      "insights": "[MY] Key Insights",
-      "relevance": "[MY] Relevance",
-      "suggestions": "[MY] Suggestions"
+      "title": "ဗှာသုတအခြဲခှဲ ရလဒ်မြား",
+      "noData": "ဗှာသုတအခြဲခှဲ ဒေတာ ပရိမှို့ပဲ",
+      "documents": "စာရိုက်မြား",
+      "insights": "မှိန်ဇှည် အကောင်အလည်မြား",
+      "relevance": "ဗှာသပြို့ကြပ်မှူ",
+      "suggestions": "အဆဲပြူခက်မြား"
     },
     "configuration": {
-      "searchMode": "[MY] Search mode",
-      "threshold": "[MY] Relevance threshold"
+      "searchMode": "ရှာဖွဲမှူ ပုံုန်အမြို့",
+      "threshold": "ဗှာသပြို့ကြပ်မှူ သင္ႁင်ဖြင်"
     },
     "status": {
-      "searching": "[MY] Searching knowledge base...",
-      "analyzing": "[MY] Analyzing results..."
+      "searching": "ဗှာသုတအခြဲခှဲကို ရှာဖွဲနေမှာ...",
+      "analyzing": "ရလဒ်မြားကို ခွဲခြမ်းစိတ်ဖြါနေမှာ..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[MY] Document analysis results will be displayed here",
-      "title": "[MY] Analysis Results",
-      "noData": "[MY] No document analysis data available",
-      "documents": "[MY] documents",
-      "noDocuments": "[MY] No documents found",
-      "summary": "[MY] Summary",
-      "insights": "[MY] Key Insights",
-      "metadata": "[MY] Document Info",
-      "processingTime": "[MY] Processing time",
-      "searchTime": "[MY] Search time",
-      "relevance": "[MY] Relevance",
-      "cached": "[MY] Cached",
-      "preview": "[MY] Preview",
-      "view": "[MY] View",
-      "open": "[MY] Open",
-      "bookmark": "[MY] Bookmark",
-      "suggestions": "[MY] Suggestions",
+      "placeholder": "စာရိုက် ခွဲခြမ်းစိတ်ဖြါမှူ ရလဒ်မြားကို အနည်ရာတွံ ပြပါပာမီး",
+      "title": "ခွဲခြမ်းစိတ်ဖြါမှူ ရလဒ်မြား",
+      "noData": "စာရိုက် ခွဲခြမ်းစိတ်ဖြါမှူ ဒေတာ ပရိမှို့ပဲ",
+      "documents": "စာရိုက်မြား",
+      "noDocuments": "စာရိုက်မြား မသစ်ပဲ",
+      "summary": "အနွဲအဖြည့လုပ်",
+      "insights": "မှိန်ဇှည် အကောင်အလည်မြား",
+      "metadata": "စာရိုက် အစက်အလည်မြား",
+      "processingTime": "အစို့ပြုပြည်မှူ အကြး",
+      "searchTime": "ရှာဖွဲမှူ အကြး",
+      "relevance": "ဗှာသပြို့ကြပ်မှူ",
+      "cached": "ကေသ်ပှဳပဲ",
+      "preview": "စက်မနအြစ်ပါ",
+      "view": "အမဲ့လုပ်",
+      "open": "ဖွဲပါ",
+      "bookmark": "အမဲ့မင့်ကုံး",
+      "suggestions": "အဆဲပြူခက်မြား",
       "tabs": {
-        "documents": "[MY] Documents",
-        "insights": "[MY] Insights",
-        "failed": "[MY] Failed"
+        "documents": "စာရိုက်မြား",
+        "insights": "အကောင်အလည်မြား",
+        "failed": "အခြီးမလုပ်ပဲ"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[MY] Loading...",
-      "searching": "[MY] Searching...",
-      "processing": "[MY] Processing...",
-      "analyzing": "[MY] Analyzing..."
+      "default": "လိုဒ်လဲနေမှာ...",
+      "searching": "ရှာဖွဲနေမှာ...",
+      "processing": "အစို့ပြုပြည်နေမှာ...",
+      "analyzing": "ခွဲခြမ်းစိတ်ဖြါနေမှာ..."
     },
     "buttons": {
-      "retry": "[MY] Retry",
-      "cancel": "[MY] Cancel",
-      "expand": "[MY] Expand",
-      "collapse": "[MY] Collapse",
-      "configure": "[MY] Configure",
-      "submit": "[MY] Submit"
+      "retry": "ထပ်မနကြိုးစားပါ",
+      "cancel": "အဟပ်စားပါ",
+      "expand": "ထွဲခြိန်းပါ",
+      "collapse": "ခုးလုပ်ပါ",
+      "configure": "စန္ဒေတင်းပါ",
+      "submit": "ဆို့ပါ"
     },
     "labels": {
-      "priority": "[MY] Priority",
-      "estimatedTime": "[MY] Estimated time",
-      "availability": "[MY] Availability",
-      "configuration": "[MY] Configuration"
+      "priority": "အသေးသေးကိုး",
+      "estimatedTime": "အကြး အတွဲ့အမတ်ကာန်",
+      "availability": "အသုံးပြူနိုင်မှူ",
+      "configuration": "စန္ဒေတင်းပဲမှူ"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[MY] An unknown error occurred",
-      "network": "[MY] Network connection error",
-      "timeout": "[MY] Request timed out",
-      "unauthorized": "[MY] Access denied",
-      "rateLimit": "[MY] Rate limit exceeded",
-      "serviceUnavailable": "[MY] Service temporarily unavailable"
+      "unknown": "မသစ်တဲ့ အမှာအစာင်တား ဖြည့ပွားခှဲပဲ",
+      "network": "နေတ်ဝစ် ခွက်ဆိံးမှူ အမှာ",
+      "timeout": "အသိုမှူ အကြး မှံ့ပဲ",
+      "unauthorized": "အဗွင့်အခြင် ပြတ်ပဲ",
+      "rateLimit": "အပခ်ခိန် ကိပ်ဆိတ် ကၬာင်ပဲ",
+      "serviceUnavailable": "သိရ်မံစ် အကြန်စန္ရ မရိမှို့ပဲ"
     },
     "webSearch": {
-      "searchFailed": "[MY] Web search failed",
-      "invalidQuery": "[MY] Invalid search query"
+      "searchFailed": "ဝဘ်ရှာဖွဲမှူ အခြီးမလုပ်ပဲ",
+      "invalidQuery": "အမြင့်စူမှူ မဟုတဲ့ပဲ"
     },
     "codeInterpreter": {
-      "executionFailed": "[MY] Code execution failed",
-      "invalidCode": "[MY] Invalid or unsafe code"
+      "executionFailed": "ကုဒ်အဆို့အမြို့ အခြီးမလုပ်ပဲ",
+      "invalidCode": "မဟုတဲ့ သိုးမဟုတဲ့ ကုဒ်"
     },
     "urlPull": {
-      "fetchFailed": "[MY] Failed to fetch URL content",
-      "invalidUrl": "[MY] Invalid or inaccessible URL"
+      "fetchFailed": "URL အကောင်အရာ အဆို့မလုပ်ပဲ",
+      "invalidUrl": "မဟုတဲ့ သိုးမတုံးနိုင်တဲ့ URL"
     },
     "localKnowledge": {
-      "searchFailed": "[MY] Knowledge base search failed",
-      "noAccess": "[MY] No access to knowledge base"
+      "searchFailed": "ဗှာသုတအခြဲခှဲ ရှာဖွဲမှူ အခြီးမလုပ်ပဲ",
+      "noAccess": "ဗှာသုတအခြဲခှဲကို အဗွင့်အခြင် မရိပဲ"
     }
   },
   "settings": {
-    "autoSubmit": "[MY] Auto-submit after processing",
-    "advancedOptions": "[MY] Advanced options",
+    "autoSubmit": "အစို့ပြုပြည်မှူ အပြီးစံု့လှင် အတိမတို့ ဆို့ပါ",
+    "advancedOptions": "အဆင့အတွဲ့ အြောင်မြား",
     "priority": {
-      "high": "[MY] High",
-      "medium": "[MY] Medium",
-      "low": "[MY] Low"
+      "high": "အမြင့့မြင့့",
+      "medium": "အကြား",
+      "low": "အနီး့"
     },
     "safeSearch": {
-      "off": "[MY] Off",
-      "moderate": "[MY] Moderate",
-      "strict": "[MY] Strict"
+      "off": "ဘင့့ပဲ",
+      "moderate": "အကြား",
+      "strict": "အဆင့်သတ်"
     },
     "market": {
-      "any": "[MY] Any region",
-      "local": "[MY] Local region"
+      "any": "တိုင်းမှာ တိုင်း",
+      "local": "တောင်းဖြင့် တိုင်း"
     }
   }
 }

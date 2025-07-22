@@ -1,247 +1,247 @@
 {
   "common": {
     "agentTypes": {
-      "web_search": "[SV] Web Search",
-      "code_interpreter": "[SV] Code Interpreter",
-      "url_pull": "[SV] URL Analysis",
-      "local_knowledge": "[SV] Knowledge Base",
-      "standard_chat": "[SV] Standard Chat",
-      "foundry": "[SV] Foundry",
-      "third_party": "[SV] Third Party"
+      "web_search": "Webbsökning",
+      "code_interpreter": "Kodtolk",
+      "url_pull": "URL-analys",
+      "local_knowledge": "Kunskapsbas",
+      "standard_chat": "Standardchatt",
+      "foundry": "Foundry",
+      "third_party": "Tredje part"
     },
     "error": {
-      "title": "[SV] Agent Error",
-      "unknown": "[SV] An unknown error occurred",
-      "retry": "[SV] Retry",
-      "fallback": "[SV] Use fallback"
+      "title": "Agentfel",
+      "unknown": "Ett okänt fel uppstod",
+      "retry": "Försök igen",
+      "fallback": "Använd alternativ"
     },
     "metadata": {
-      "processingTime": "[SV] Processing time",
-      "confidence": "[SV] Confidence",
-      "tokens": "[SV] Tokens used"
+      "processingTime": "Bearbetningstid",
+      "confidence": "Förtroende",
+      "tokens": "Använda tokens"
     },
     "resultsPanel": {
-      "placeholder": "[SV] Agent results will be displayed here"
+      "placeholder": "Agentresultat kommer att visas här"
     }
   },
   "indicators": {
     "descriptions": {
-      "web_search": "[SV] Searches the web for real-time information",
-      "code_interpreter": "[SV] Executes and analyzes code in multiple languages",
-      "url_pull": "[SV] Analyzes and extracts content from web pages",
-      "local_knowledge": "[SV] Searches internal knowledge base and documents",
-      "standard_chat": "[SV] Standard conversational AI without tools",
-      "foundry": "[SV] Uses Azure AI Foundry for advanced capabilities",
-      "third_party": "[SV] Third-party agent or custom tool integration"
+      "web_search": "Webbsökning - Söker på webben efter realtidsinformation",
+      "code_interpreter": "Kodtolk - Kör och analyserar kod i flera språk",
+      "url_pull": "URL-analys - Analyserar och extraherar innehåll från webbsidor",
+      "local_knowledge": "Kunskapsbas - Söker i intern kunskapsbas och dokument",
+      "standard_chat": "Standardchatt - Standard konversations-AI utan verktyg",
+      "foundry": "Foundry - Använder Azure AI Foundry för avancerade funktioner",
+      "third_party": "Tredje part - Tredjepartsagent eller anpassad verktygsintegration"
     }
   },
   "webSearch": {
     "resultsPanel": {
-      "placeholder": "[SV] Web search results will be displayed here",
-      "title": "[SV] Title",
-      "noResults": "[SV] No results found",
-      "noData": "[SV] No search data available",
-      "results": "[SV] results",
-      "confidence": "[SV] Relevance",
-      "relevance": "[SV] Relevance",
-      "source": "[SV] Source",
-      "citations": "[SV] Citations",
-      "cite": "[SV] Cite",
-      "open": "[SV] Open",
-      "openLink": "[SV] Open link in new tab",
-      "filters": "[SV] Filters",
-      "sortBy": "[SV] Sort by",
-      "filterBy": "[SV] Filter by",
-      "all": "[SV] All",
-      "date": "[SV] Date",
-      "query": "[SV] Query",
-      "searchTime": "[SV] Search time",
-      "cached": "[SV] Cached",
+      "placeholder": "Webbsökresultat kommer att visas här",
+      "title": "Sökresultat",
+      "noResults": "Inga resultat hittades",
+      "noData": "Inga sökdata tillgängliga",
+      "results": "resultat",
+      "confidence": "Relevans",
+      "relevance": "Relevans",
+      "source": "Källa",
+      "citations": "Citeringar",
+      "cite": "Citera",
+      "open": "Öppna",
+      "openLink": "Öppna länk i ny flik",
+      "filters": "Filter",
+      "sortBy": "Sortera efter",
+      "filterBy": "Filtrera efter",
+      "all": "Alla",
+      "date": "Datum",
+      "query": "Förfrågan",
+      "searchTime": "Söktid",
+      "cached": "Cachad",
       "contentTypes": {
-        "webpage": "[SV] Web pages",
-        "news": "[SV] News",
-        "academic": "[SV] Academic",
-        "image": "[SV] Images",
-        "video": "[SV] Videos"
+        "webpage": "Webbsidor",
+        "news": "Nyheter",
+        "academic": "Akademiskt",
+        "image": "Bilder",
+        "video": "Videor"
       }
     },
     "configuration": {
-      "resultsCount": "[SV] Number of results",
-      "safeSearch": "[SV] Safe search",
-      "market": "[SV] Search market"
+      "resultsCount": "Antal resultat",
+      "safeSearch": "Säker sökning",
+      "market": "Sökmarknad"
     },
     "status": {
-      "searching": "[SV] Searching the web...",
-      "optimizing": "[SV] Optimizing search query...",
-      "processing": "[SV] Processing search results..."
+      "searching": "Söker på webben...",
+      "optimizing": "Optimerar sökfråga...",
+      "processing": "Bearbetar sökresultat..."
     }
   },
   "codeInterpreter": {
     "resultsPanel": {
-      "placeholder": "[SV] Code execution results will be displayed here",
-      "title": "[SV] Execution Results",
-      "noData": "[SV] No code execution data available",
-      "output": "[SV] Output",
-      "errors": "[SV] Errors",
-      "logs": "[SV] Logs",
-      "executionTime": "[SV] Execution time",
-      "memoryUsage": "[SV] Memory usage",
-      "cpuUsage": "[SV] CPU usage",
-      "outputLines": "[SV] Output lines",
-      "executedCode": "[SV] Executed Code",
-      "download": "[SV] Download",
-      "noOutput": "[SV] No output generated",
-      "noFiles": "[SV] No files generated",
-      "outputSize": "[SV] Output size",
-      "unsupportedOutput": "[SV] Unsupported output format",
+      "placeholder": "Kodkörningsresultat kommer att visas här",
+      "title": "Körresultat",
+      "noData": "Inga kodkörningsdata tillgängliga",
+      "output": "Utdata",
+      "errors": "Fel",
+      "logs": "Loggar",
+      "executionTime": "Körningstid",
+      "memoryUsage": "Minnesanvändning",
+      "cpuUsage": "CPU-användning",
+      "outputLines": "Utdatarader",
+      "executedCode": "Exekverad kod",
+      "download": "Ladda ner",
+      "noOutput": "Inga utdata genererade",
+      "noFiles": "Inga filer genererade",
+      "outputSize": "Utdatastorlek",
+      "unsupportedOutput": "Ej stödd utdataformat",
       "status": {
-        "success": "[SV] Success",
-        "error": "[SV] Error",
-        "timeout": "[SV] Timeout",
-        "memory_limit": "[SV] Memory limit exceeded",
-        "security_violation": "[SV] Security violation",
-        "invalid_code": "[SV] Invalid code"
+        "success": "Framgång",
+        "error": "Fel",
+        "timeout": "Timeout",
+        "memory_limit": "Minnesgräns överskreds",
+        "security_violation": "Säkerhetsöverträdelse",
+        "invalid_code": "Ogiltig kod"
       },
       "outputTypes": {
-        "stdout": "[SV] Standard output",
-        "stderr": "[SV] Error output",
-        "return_value": "[SV] Return value",
-        "exception": "[SV] Exception"
+        "stdout": "Standardutdata",
+        "stderr": "Felutdata",
+        "return_value": "Returvärde",
+        "exception": "Undantag"
       },
       "tabs": {
-        "output": "[SV] Output",
-        "code": "[SV] Code",
-        "files": "[SV] Files"
+        "output": "Utdata",
+        "code": "Kod",
+        "files": "Filer"
       }
     }
   },
   "urlPull": {
     "resultsPanel": {
-      "title": "[SV] URL Analysis Results",
-      "noData": "[SV] No URL analysis data available",
-      "summary": "[SV] Summary",
-      "metadata": "[SV] Document Info",
-      "processingTime": "[SV] Processing time",
-      "preview": "[SV] Preview",
-      "view": "[SV] View"
+      "title": "URL-analysresultat",
+      "noData": "Inga URL-analysdata tillgängliga",
+      "summary": "Sammanfattning",
+      "metadata": "Dokumentinfo",
+      "processingTime": "Bearbetningstid",
+      "preview": "Förhandsvisning",
+      "view": "Visa"
     },
     "configuration": {
-      "timeout": "[SV] Request timeout"
+      "timeout": "Förfrågan timeout"
     },
     "status": {
-      "pulling": "[SV] Fetching URL content...",
-      "analyzing": "[SV] Analyzing document...",
-      "complete": "[SV] Analysis complete"
+      "pulling": "Hämtar URL-innehåll...",
+      "analyzing": "Analyserar dokument...",
+      "complete": "Analys slutförd"
     }
   },
   "localKnowledge": {
     "resultsPanel": {
-      "title": "[SV] Knowledge Base Results",
-      "noData": "[SV] No knowledge base data available",
-      "documents": "[SV] documents",
-      "insights": "[SV] Key Insights",
-      "relevance": "[SV] Relevance",
-      "suggestions": "[SV] Suggestions"
+      "title": "Kunskapsbasresultat",
+      "noData": "Inga kunskapsbasdata tillgängliga",
+      "documents": "dokument",
+      "insights": "Nyckelinsikter",
+      "relevance": "Relevans",
+      "suggestions": "Förslag"
     },
     "configuration": {
-      "searchMode": "[SV] Search mode",
-      "threshold": "[SV] Relevance threshold"
+      "searchMode": "Sökläge",
+      "threshold": "Relevanströskel"
     },
     "status": {
-      "searching": "[SV] Searching knowledge base...",
-      "analyzing": "[SV] Analyzing results..."
+      "searching": "Söker i kunskapsbas...",
+      "analyzing": "Analyserar resultat..."
     }
   },
   "documentAnalysis": {
     "resultsPanel": {
-      "placeholder": "[SV] Document analysis results will be displayed here",
-      "title": "[SV] Analysis Results",
-      "noData": "[SV] No document analysis data available",
-      "documents": "[SV] documents",
-      "noDocuments": "[SV] No documents found",
-      "summary": "[SV] Summary",
-      "insights": "[SV] Key Insights",
-      "metadata": "[SV] Document Info",
-      "processingTime": "[SV] Processing time",
-      "searchTime": "[SV] Search time",
-      "relevance": "[SV] Relevance",
-      "cached": "[SV] Cached",
-      "preview": "[SV] Preview",
-      "view": "[SV] View",
-      "open": "[SV] Open",
-      "bookmark": "[SV] Bookmark",
-      "suggestions": "[SV] Suggestions",
+      "placeholder": "Dokumentanalysresultat kommer att visas här",
+      "title": "Analysresultat",
+      "noData": "Inga dokumentanalysdata tillgängliga",
+      "documents": "dokument",
+      "noDocuments": "Inga dokument hittades",
+      "summary": "Sammanfattning",
+      "insights": "Nyckelinsikter",
+      "metadata": "Dokumentinfo",
+      "processingTime": "Bearbetningstid",
+      "searchTime": "Söktid",
+      "relevance": "Relevans",
+      "cached": "Cachad",
+      "preview": "Förhandsvisning",
+      "view": "Visa",
+      "open": "Öppna",
+      "bookmark": "Bokmärke",
+      "suggestions": "Förslag",
       "tabs": {
-        "documents": "[SV] Documents",
-        "insights": "[SV] Insights",
-        "failed": "[SV] Failed"
+        "documents": "Dokument",
+        "insights": "Insikter",
+        "failed": "Misslyckades"
       }
     }
   },
   "ui": {
     "loading": {
-      "default": "[SV] Loading...",
-      "searching": "[SV] Searching...",
-      "processing": "[SV] Processing...",
-      "analyzing": "[SV] Analyzing..."
+      "default": "Laddar...",
+      "searching": "Söker...",
+      "processing": "Bearbetar...",
+      "analyzing": "Analyserar..."
     },
     "buttons": {
-      "retry": "[SV] Retry",
-      "cancel": "[SV] Cancel",
-      "expand": "[SV] Expand",
-      "collapse": "[SV] Collapse",
-      "configure": "[SV] Configure",
-      "submit": "[SV] Submit"
+      "retry": "Försök igen",
+      "cancel": "Avbryt",
+      "expand": "Expandera",
+      "collapse": "Kollapsa",
+      "configure": "Konfigurera",
+      "submit": "Skicka"
     },
     "labels": {
-      "priority": "[SV] Priority",
-      "estimatedTime": "[SV] Estimated time",
-      "availability": "[SV] Availability",
-      "configuration": "[SV] Configuration"
+      "priority": "Prioritet",
+      "estimatedTime": "Uppskattad tid",
+      "availability": "Tillgänglighet",
+      "configuration": "Konfiguration"
     }
   },
   "errors": {
     "common": {
-      "unknown": "[SV] An unknown error occurred",
-      "network": "[SV] Network connection error",
-      "timeout": "[SV] Request timed out",
-      "unauthorized": "[SV] Access denied",
-      "rateLimit": "[SV] Rate limit exceeded",
-      "serviceUnavailable": "[SV] Service temporarily unavailable"
+      "unknown": "Ett okänt fel inträffade",
+      "network": "Nätverksanslutningsfel",
+      "timeout": "Förfrågan timeout",
+      "unauthorized": "Åtkomst nekad",
+      "rateLimit": "Hastighetsgräns överskreds",
+      "serviceUnavailable": "Tjänst tillfälligt otillgänglig"
     },
     "webSearch": {
-      "searchFailed": "[SV] Web search failed",
-      "invalidQuery": "[SV] Invalid search query"
+      "searchFailed": "Webbsökning misslyckades",
+      "invalidQuery": "Ogiltig sökfråga"
     },
     "codeInterpreter": {
-      "executionFailed": "[SV] Code execution failed",
-      "invalidCode": "[SV] Invalid or unsafe code"
+      "executionFailed": "Kodkörning misslyckades",
+      "invalidCode": "Ogiltig eller osäker kod"
     },
     "urlPull": {
-      "fetchFailed": "[SV] Failed to fetch URL content",
-      "invalidUrl": "[SV] Invalid or inaccessible URL"
+      "fetchFailed": "Misslyckades att hämta URL-innehåll",
+      "invalidUrl": "Ogiltig eller otillgänglig URL"
     },
     "localKnowledge": {
-      "searchFailed": "[SV] Knowledge base search failed",
-      "noAccess": "[SV] No access to knowledge base"
+      "searchFailed": "Kunskapsbasssökning misslyckades",
+      "noAccess": "Ingen åtkomst till kunskapsbas"
     }
   },
   "settings": {
-    "autoSubmit": "[SV] Auto-submit after processing",
-    "advancedOptions": "[SV] Advanced options",
+    "autoSubmit": "Skicka automatiskt efter bearbetning",
+    "advancedOptions": "Avancerade alternativ",
     "priority": {
-      "high": "[SV] High",
-      "medium": "[SV] Medium",
-      "low": "[SV] Low"
+      "high": "Hög",
+      "medium": "Medel",
+      "low": "Låg"
     },
     "safeSearch": {
-      "off": "[SV] Off",
-      "moderate": "[SV] Moderate",
-      "strict": "[SV] Strict"
+      "off": "Av",
+      "moderate": "Måttlig",
+      "strict": "Strikt"
     },
     "market": {
-      "any": "[SV] Any region",
-      "local": "[SV] Local region"
+      "any": "Vilken region som helst",
+      "local": "Lokal region"
     }
   }
 }
