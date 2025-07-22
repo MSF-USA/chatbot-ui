@@ -1,22 +1,17 @@
 import * as cheerio from 'cheerio';
-import * as dns from 'dns';
-import * as ipaddr from 'ipaddr.js';
 import { AbortController } from 'node-abort-controller';
 import fetch from 'node-fetch';
-import { URL } from 'url';
-import { promisify } from 'util';
 
-const dnsLookup = promisify(dns.lookup);
-
-export class HttpError extends Error {
-  status: number;
-
-  constructor(status: number, message?: string) {
-    super(message);
-    this.status = status;
-    this.name = 'HttpError';
-  }
-}
+import { 
+  HttpError, 
+  validateUrlSecurity,
+  ContentValidation 
+} from '@/utils/app/security';
+import { 
+  executeSecureRequest,
+  streamNodeResponseContent,
+  validateResponseContentType 
+} from '@/utils/app/networkSecurity';
 
 // Define a set of content types that are considered unsafe or executable
 const unsafeContentTypes = new Set([
@@ -41,193 +36,33 @@ const MAX_CONTENT_SIZE = 10 * 1024 * 1024;
 // Request timeout in milliseconds (30 seconds)
 const REQUEST_TIMEOUT = 30000;
 
-// Check if an IP address is private or localhost
-function isPrivateOrLocalhost(ip: string): boolean {
-  try {
-    const addr = ipaddr.parse(ip);
-
-    // Check if it's localhost
-    if (ip === '127.0.0.1' || ip === '::1') {
-      return true;
-    }
-
-    // Check if it's in private ranges
-    if (addr.kind() === 'ipv4') {
-      return (
-        addr.range() === 'private' ||
-        addr.range() === 'loopback' ||
-        addr.range() === 'linkLocal'
-      );
-    } else {
-      return (
-        addr.range() === 'uniqueLocal' ||
-        addr.range() === 'loopback' ||
-        addr.range() === 'linkLocal'
-      );
-    }
-  } catch (error) {
-    // If parsing fails, assume it's not safe
-    return true;
-  }
-}
-
-async function isUrlPointingToPrivateNetwork(url: URL): Promise<boolean> {
-  try {
-    const hostname = url.hostname;
-
-    // Check if hostname is an IP address
-    if (ipaddr.isValid(hostname)) {
-      return isPrivateOrLocalhost(hostname);
-    }
-
-    // If it's a domain name, resolve it to an IP address
-    const { address } = await dnsLookup(hostname);
-    return isPrivateOrLocalhost(address);
-  } catch (error) {
-    // If DNS lookup fails, assume it's not safe
-    return true;
-  }
-}
-
 export async function fetchAndParseWebpage(
   url: string,
   maxRedirects = 5,
 ): Promise<string> {
-  if (!url || typeof url !== 'string') {
-    throw new HttpError(400, 'Invalid URL: URL must be a non-empty string');
-  }
+  // Validate URL format and SSRF protection
+  const validatedUrl = await validateUrlSecurity(url);
 
-  let validatedUrl: URL;
-  try {
-    validatedUrl = new URL(url);
-    if (!['http:', 'https:'].includes(validatedUrl.protocol)) {
-      throw new HttpError(
-        400,
-        'Invalid protocol: Only HTTP and HTTPS protocols are supported',
-      );
-    }
-  } catch {
-    throw new HttpError(400, 'Invalid URL format: The URL could not be parsed');
-  }
+  // Execute secure request with redirect handling
+  const { response, finalUrl } = await executeSecureRequest(validatedUrl, {
+    timeout: REQUEST_TIMEOUT,
+    maxRedirects,
+    userAgent: process.env.USER_AGENT ?? 'MSF Assistant',
+  });
 
-  // SSRF protection - Check if URL points to private network or localhost
-  try {
-    if (await isUrlPointingToPrivateNetwork(validatedUrl)) {
-      throw new HttpError(
-        403,
-        'Access denied: Cannot access internal or private networks',
-      );
-    }
-  } catch (error) {
-    throw new HttpError(403, 'Access denied: Cannot verify network safety');
-  }
+  // Parse final URL for content processing
+  const currentUrlObj = new URL(finalUrl);
 
-  let response: fetch.Response | null = null;
-  let redirectCount = 0;
-  let currentUrl = validatedUrl.toString();
-  let currentUrlObj = validatedUrl;
-
-  // Set up abort controller for timeout
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
-
-  try {
-    while (redirectCount < maxRedirects) {
-      try {
-        response = await fetch(currentUrl, {
-          headers: {
-            'User-Agent': process.env.USER_AGENT ?? 'MSF Assistant',
-          },
-          redirect: 'manual', // We'll handle redirects manually
-          signal: controller.signal as any,
-        });
-
-        if (response.status >= 300 && response.status < 400) {
-          const location = response.headers.get('location');
-          if (!location) {
-            throw new HttpError(
-              response.status,
-              'Redirect error: Location header not provided',
-            );
-          }
-
-          // Create new URL object for the redirect
-          const redirectUrl = new URL(location, currentUrl);
-
-          // SSRF protection for redirects
-          if (await isUrlPointingToPrivateNetwork(redirectUrl)) {
-            throw new HttpError(
-              403,
-              'Access denied: Redirect to internal or private network not allowed',
-            );
-          }
-
-          currentUrl = redirectUrl.toString();
-          currentUrlObj = redirectUrl;
-          redirectCount++;
-        } else {
-          break;
-        }
-      } catch (error) {
-        if (error instanceof HttpError) {
-          throw error;
-        }
-        if ((error as Error).name === 'AbortError') {
-          throw new HttpError(
-            408,
-            'Request timeout: The request took too long to complete',
-          );
-        }
-        throw new HttpError(500, 'Network error: Failed to fetch the URL');
-      }
-    }
-
-    if (redirectCount >= maxRedirects) {
-      throw new HttpError(
-        429,
-        'Too many redirects: Maximum redirect limit reached',
-      );
-    }
-
-    if (!response) {
-      throw new HttpError(
-        500,
-        'No response: Failed to get any response from the server',
-      );
-    }
-
-    if (!response.ok) {
-      throw new HttpError(
-        response.status,
-        `Server error: The server returned status code ${response.status}`,
-      );
-    }
-  } finally {
-    clearTimeout(timeoutId);
-  }
+  // Validate content type and check for unsafe types
+  const contentType = validateResponseContentType(response, {
+    blockedTypes: unsafeContentTypes,
+    contentTypeDescription: 'webpage content'
+  });
 
   // Check content length before processing
   const contentLength = parseInt(response.headers.get('content-length') || '0');
-  if (contentLength > MAX_CONTENT_SIZE) {
-    throw new HttpError(
-      413,
-      `Content too large: Maximum size is ${
-        MAX_CONTENT_SIZE / (1024 * 1024)
-      }MB`,
-    );
-  }
-
-  // Get the Content-Type header
-  const contentType = response.headers.get('content-type')?.toLowerCase() || '';
-
-  // Check for unsafe content types
-  for (const unsafeType of unsafeContentTypes) {
-    if (contentType.includes(unsafeType)) {
-      throw new HttpError(
-        415,
-        `Unsupported media type: ${contentType} is not allowed for security reasons`,
-      );
-    }
+  if (contentLength > 0) {
+    ContentValidation.validateContentLength(contentLength, MAX_CONTENT_SIZE);
   }
 
   let cleanText: string;
@@ -250,14 +85,7 @@ export async function fetchAndParseWebpage(
         const textContent = await response.text();
 
         // Check content size after fetching
-        if (textContent.length > MAX_CONTENT_SIZE) {
-          throw new HttpError(
-            413,
-            `Content too large: Maximum size is ${
-              MAX_CONTENT_SIZE / (1024 * 1024)
-            }MB`,
-          );
-        }
+        ContentValidation.validateContentLength(textContent.length, MAX_CONTENT_SIZE);
 
         cleanText = textContent;
       } else {
@@ -265,35 +93,10 @@ export async function fetchAndParseWebpage(
       }
     } else {
       // Since it's HTML, proceed to parse it with enhanced sanitization
-      let html = '';
-
-      // Handle as a Node.js stream
-      if (!response.body) {
-        throw new HttpError(500, 'Failed to read response body');
-      }
-
-      let receivedLength = 0;
-      const chunks: Buffer[] = [];
-
-      // Process the response body as a Node.js stream
-      for await (const chunk of response.body) {
-        chunks.push(Buffer.from(chunk));
-        receivedLength += chunk.length;
-
-        if (receivedLength > MAX_CONTENT_SIZE) {
-          // For Node streams, we can destroy the stream
-          (response.body as any)?.destroy?.();
-          throw new HttpError(
-            413,
-            `Content too large: Maximum size is ${
-              MAX_CONTENT_SIZE / (1024 * 1024)
-            }MB`,
-          );
-        }
-      }
-
-      // Concatenate chunks into a single Buffer and convert to string
-      html = Buffer.concat(chunks).toString('utf-8');
+      
+      // Stream content with size validation
+      const htmlBuffer = await streamNodeResponseContent(response.body, MAX_CONTENT_SIZE);
+      const html = htmlBuffer.toString('utf-8');
 
       // Load HTML into cheerio for parsing
       const $ = cheerio.load(html);

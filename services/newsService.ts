@@ -1,4 +1,4 @@
-import { HttpError } from '@/services/webpageService';
+import { HttpError } from '@/utils/app/security';
 
 import { XMLParser } from 'fast-xml-parser';
 import fetch from 'node-fetch';
