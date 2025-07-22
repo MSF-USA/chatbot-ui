@@ -4,6 +4,9 @@ import {
   IconChevronUp,
   IconLink,
   IconSearch,
+  IconSettings,
+  IconClock,
+  IconTool,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -21,14 +24,37 @@ import {
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
+  Message,
+  MessageType,
+  TextMessageContent,
 } from '@/types/chat';
+import { AgentType } from '@/types/agent';
+import {
+  AgentExecutionApiRequest,
+  AgentExecutionApiResponse,
+} from '@/types/agentApi';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import BetaBadge from '@/components/Beta/Badge';
 import Modal from '@/components/UI/Modal';
+import { AgentTypeIndicator } from '../AgentTypeIndicator';
 
 import crypto from 'crypto';
+
+interface AgentConfiguration {
+  agentType: AgentType;
+  enabled: boolean;
+  estimatedTime?: number; // in seconds
+  priority?: 'low' | 'medium' | 'high';
+  specificConfig?: {
+    searchCount?: number;
+    searchMarket?: string;
+    safeSearch?: string;
+    urlTimeout?: number;
+    [key: string]: any;
+  };
+}
 
 interface ChatInputSearchProps {
   isOpen: boolean; // Directly controls visibility
@@ -72,7 +98,7 @@ interface ChatInputSearchProps {
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
-  initialMode?: 'search' | 'url';
+  initialMode?: 'search' | 'url' | 'agent';
 }
 
 const ChatInputSearch = ({
@@ -88,12 +114,12 @@ const ChatInputSearch = ({
   handleSend,
   initialMode = 'search',
 }: ChatInputSearchProps) => {
-  const { t } = useTranslation('chat');
+  const { t } = useTranslation(['chat', 'agents']);
   const {
-    state: { user },
+    state: { user, selectedConversation },
   } = useContext(HomeContext);
 
-  const [mode, setMode] = useState<'search' | 'url'>(initialMode);
+  const [mode, setMode] = useState<'search' | 'url' | 'agent'>(initialMode);
 
   // URL Mode States
   const [urlInput, setUrlInput] = useState('');
@@ -117,17 +143,97 @@ const ChatInputSearch = ({
   const [count, setCount] = useState<number | null>(5);
   const [offset, setOffset] = useState<number>(0);
 
+  // Agent Mode States
+  const [selectedAgentType, setSelectedAgentType] = useState<AgentType>(AgentType.WEB_SEARCH);
+  const [agentConfigurations, setAgentConfigurations] = useState<Record<AgentType, AgentConfiguration>>({
+    [AgentType.WEB_SEARCH]: {
+      agentType: AgentType.WEB_SEARCH,
+      enabled: true,
+      estimatedTime: 5,
+      priority: 'high',
+      specificConfig: { searchCount: 5, searchMarket: '', safeSearch: 'Moderate' }
+    },
+    [AgentType.CODE_INTERPRETER]: {
+      agentType: AgentType.CODE_INTERPRETER,
+      enabled: true,
+      estimatedTime: 10,
+      priority: 'medium'
+    },
+    [AgentType.URL_PULL]: {
+      agentType: AgentType.URL_PULL,
+      enabled: true,
+      estimatedTime: 3,
+      priority: 'high',
+      specificConfig: { urlTimeout: 30000 }
+    },
+    [AgentType.LOCAL_KNOWLEDGE]: {
+      agentType: AgentType.LOCAL_KNOWLEDGE,
+      enabled: true,
+      estimatedTime: 2,
+      priority: 'medium'
+    },
+    [AgentType.STANDARD_CHAT]: {
+      agentType: AgentType.STANDARD_CHAT,
+      enabled: true,
+      estimatedTime: 1,
+      priority: 'low'
+    },
+    [AgentType.FOUNDRY]: {
+      agentType: AgentType.FOUNDRY,
+      enabled: false,
+      estimatedTime: 15,
+      priority: 'medium'
+    },
+    [AgentType.THIRD_PARTY]: {
+      agentType: AgentType.THIRD_PARTY,
+      enabled: false,
+      estimatedTime: 8,
+      priority: 'low'
+    }
+  });
+  const [agentInput, setAgentInput] = useState('');
+  const [isAgentConfigOpen, setIsAgentConfigOpen] = useState(false);
+  const [agentAvailability, setAgentAvailability] = useState<Record<AgentType, boolean>>({
+    [AgentType.WEB_SEARCH]: true,
+    [AgentType.CODE_INTERPRETER]: true,
+    [AgentType.URL_PULL]: true,
+    [AgentType.LOCAL_KNOWLEDGE]: true,
+    [AgentType.STANDARD_CHAT]: true,
+    [AgentType.FOUNDRY]: false,
+    [AgentType.THIRD_PARTY]: false
+  });
+
   // Common States
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
 
   const urlInputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const agentInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     // Reset mode if initialMode changes (e.g., modal re-opened with different mode by parent)
     setMode(initialMode);
   }, [initialMode]);
+
+  // Check agent availability on component mount
+  useEffect(() => {
+    const checkAgentAvailability = async () => {
+      try {
+        const response = await fetch('/api/v2/agents/status');
+        if (response.ok) {
+          const data = await response.json();
+          setAgentAvailability(prev => data.availability || prev);
+        }
+      } catch (error) {
+        console.warn('Failed to fetch agent availability:', error);
+      }
+    };
+
+    if (isOpen && mode === 'agent') {
+      checkAgentAvailability();
+    }
+  }, [isOpen, mode]);
 
   useEffect(() => {
     // Auto-populate question input when mode/primary input changes
@@ -156,6 +262,8 @@ const ChatInputSearch = ({
         urlInputRef.current.focus();
       } else if (mode === 'search' && searchInputRef.current) {
         searchInputRef.current.focus();
+      } else if (mode === 'agent' && agentInputRef.current) {
+        agentInputRef.current.focus();
       }
     }
   }, [isOpen, mode]);
@@ -168,6 +276,94 @@ const ChatInputSearch = ({
       onClose(); // Close modal after sending
     }
   }, [isReadyToSend, handleSend, onClose]);
+
+  // Helper functions similar to agenticFrontendService
+  const formatConversationHistory = (maxMessages: number = 5): string[] => {
+    if (!selectedConversation?.messages || selectedConversation.messages.length <= 1) {
+      return [];
+    }
+
+    // Get the last N messages, excluding any current pending message
+    const messagesToInclude = selectedConversation.messages.slice(-maxMessages);
+    const formattedHistory: string[] = [];
+
+    for (const message of messagesToInclude) {
+      let roleLabel: string;
+      switch (message.role) {
+        case 'user':
+          roleLabel = 'User';
+          break;
+        case 'assistant':
+          roleLabel = 'Assistant';
+          break;
+        case 'system':
+          roleLabel = 'System';
+          break;
+        default:
+          roleLabel = 'Unknown';
+      }
+
+      const messageText = extractMessageText(message);
+      
+      // Skip empty messages
+      if (!messageText.trim()) {
+        continue;
+      }
+
+      // Truncate very long messages to avoid token overflow
+      const truncatedText = messageText.length > 500 
+        ? messageText.substring(0, 500) + '...'
+        : messageText;
+
+      formattedHistory.push(`${roleLabel}: ${truncatedText}`);
+    }
+
+    return formattedHistory;
+  };
+
+  const extractMessageText = (message: Message): string => {
+    if (typeof message.content === 'string') {
+      return message.content;
+    }
+
+    if (Array.isArray(message.content)) {
+      const textContent = (message.content as (TextMessageContent | FileMessageContent)[]).find(
+        (content): content is TextMessageContent => content.type === 'text'
+      );
+      return textContent?.text || '';
+    }
+
+    return '';
+  };
+
+  const processAgentResult = (agentData: AgentExecutionApiResponse['data'], originalQuery: string): string => {
+    if (!agentData) {
+      throw new Error('No agent data to process');
+    }
+
+    // Create an enhanced prompt that includes the agent's findings
+    let enhancedPrompt = `Based on the following information retrieved by the ${agentData.agentType} agent, please provide a comprehensive response to the user's question.
+
+User's original question: ${originalQuery}
+
+Agent findings:
+${agentData.content}`;
+
+    // Add structured content if available
+    if (agentData.structuredContent && agentData.structuredContent.items.length > 0) {
+      enhancedPrompt += `\n\nAdditional context:`;
+      agentData.structuredContent.items.forEach((item, index) => {
+        enhancedPrompt += `\n\n[Source ${index + 1}: ${item.source}]\n${item.content}`;
+      });
+    }
+
+    enhancedPrompt += `\n\nPlease synthesize this information and provide a helpful, accurate response to the user's question. Take the full conversation history into account when responding, though allow the user to switch to a different topic if necessary.`;
+
+    // Add web search specific instructions
+    enhancedPrompt += `\n\nAdditionally, when presenting your response, please include proper references and citations to the sources provided in the agent findings. Use numbered, markdown citations and provide a reference list at the end if multiple sources are cited.`;
+
+    return enhancedPrompt;
+  };
 
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -238,11 +434,10 @@ const ChatInputSearch = ({
 
     try {
       let optimizedQuery = searchInput;
-      let optimizedQuestion =
-        searchQuestionInput || t('webSearchModalDefaultQuestion');
+      const originalQuery = searchInput; // Store original for conversation history
 
+      // Step 1: Optimize query if requested (keep existing logic)
       if (shouldOptimizeInput && searchInput) {
-        // ensure searchInput is not empty for optimization
         setSearchStatusMessage(t('webSearchModalOptimizingStatusMessage'));
         try {
           const optimizeResponse = await fetch('/api/v2/web/search/structure', {
@@ -257,9 +452,7 @@ const ChatInputSearch = ({
           if (optimizeResponse.ok) {
             const optimizeData = await optimizeResponse.json();
             optimizedQuery = optimizeData.optimizedQuery;
-            optimizedQuestion = optimizeData.optimizedQuestion;
             setSearchInput(optimizedQuery);
-            setSearchQuestionInput(optimizedQuestion);
           } else {
             console.warn(
               'Failed to optimize query:',
@@ -271,48 +464,55 @@ const ChatInputSearch = ({
         }
       }
 
-      setSearchStatusMessage(t('webSearchModalSearchingStatusMessage'));
-      const queryParams = new URLSearchParams({
-        q: optimizedQuery,
-        mkt,
-        safeSearch,
-        count: adjustedCount.toString(),
-        offset: offset.toString(),
-      }).toString();
+      // Step 2: Prepare agent request
+      setSearchStatusMessage('Processing with web search agent...');
+      const conversationHistory = formatConversationHistory();
 
-      const response = await fetch(`/api/v2/web/search?${queryParams}`);
-      if (!response.ok)
+      const agentRequest: AgentExecutionApiRequest = {
+        agentType: AgentType.WEB_SEARCH,
+        query: optimizedQuery,
+        conversationHistory,
+        model: selectedConversation ? {
+          id: selectedConversation.model.id,
+          tokenLimit: selectedConversation.model.tokenLimit,
+        } : {
+          id: 'gpt-4o-mini',
+          tokenLimit: 128000,
+        },
+        config: {
+          maxResults: adjustedCount,
+          defaultMarket: mkt || 'en-US',
+          defaultSafeSearch: safeSearch,
+        },
+        timeout: 30000,
+      };
+
+      // Step 3: Execute agent request
+      const response = await fetch('/api/v2/agent/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(agentRequest),
+      });
+
+      if (!response.ok) {
         throw new Error(
           t('errorFailedToFetchSearchResults') ||
-            'Failed to fetch search results',
+            'Failed to execute web search agent',
         );
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
+      }
 
-      const content = data.content;
-      setSearchStatusMessage(t('webSearchModalHandlingContentStatusMessage'));
-      const hash = crypto.createHash('sha256').update(content).digest('hex');
-      const blob = new Blob([content], { type: 'text/plain' });
-      const fileName = `search-${optimizedQuery
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')}_${hash}.txt`;
-      const file = new File([blob], fileName, { type: 'text/plain' });
+      const agentResult: AgentExecutionApiResponse = await response.json();
+      if (!agentResult.success || !agentResult.data) {
+        throw new Error(agentResult.error?.message || 'Agent execution failed');
+      }
 
-      await onFileUpload(
-        [file],
-        setSubmitType,
-        setFilePreviews,
-        setFileFieldValue,
-        setImageFieldValue,
-        setUploadProgress,
-      );
-      setTextFieldValue(
-        `${optimizedQuestion}\n\n${t(
-          'webSearchModalPromptUserContext',
-        )}:\n\n\`\`\`user-request\n${optimizedQuery}\n\`\`\`\n\n${t(
-          'webSearchModalPromptCitation',
-        )}`,
-      );
+      // Step 4: Process agent result like agenticFrontendService
+      setSearchStatusMessage('Generating final response...');
+      const enhancedPrompt = processAgentResult(agentResult.data, originalQuery);
+
+      // Step 5: Set the enhanced prompt and prepare to send
+      setTextFieldValue(enhancedPrompt);
+      
       if (autoSubmit) setIsReadyToSend(true);
       else onClose();
       setSearchInput('');
@@ -322,7 +522,7 @@ const ChatInputSearch = ({
       setSearchError(
         error.message ||
           t('errorOccurredFetchingSearchResults') ||
-          'An error occurred while fetching search results',
+          'An error occurred while executing web search',
       );
     } finally {
       setSearchStatusMessage(null);
@@ -330,36 +530,92 @@ const ChatInputSearch = ({
     }
   };
 
+  const handleAgentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!agentInput.trim()) return;
+
+    const selectedConfig = agentConfigurations[selectedAgentType];
+    if (!selectedConfig.enabled || !agentAvailability[selectedAgentType]) {
+      return;
+    }
+
+    try {
+      // Set the text field with agent configuration metadata
+      const agentPrompt = `[Agent: ${selectedAgentType}] ${agentInput}`;
+      setTextFieldValue(agentPrompt);
+      
+      if (autoSubmit) {
+        setIsReadyToSend(true);
+      } else {
+        onClose();
+      }
+      
+      setAgentInput('');
+    } catch (error: any) {
+      console.error('Agent submission error:', error);
+    }
+  };
+
+  const updateAgentConfig = (agentType: AgentType, updates: Partial<AgentConfiguration>) => {
+    setAgentConfigurations(prev => ({
+      ...prev,
+      [agentType]: { ...prev[agentType], ...updates }
+    }));
+  };
+
+  const getEstimatedTime = () => {
+    return agentConfigurations[selectedAgentType]?.estimatedTime || 5;
+  };
+
   const isSubmitting = isUrlSubmitting || isSearchSubmitting;
 
-  const renderTabs = () => (
-    <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
-      <button
-        onClick={() => setMode('search')}
-        disabled={isSubmitting}
-        className={`px-4 py-2 font-medium ${
-          mode === 'search'
-            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-        }`}
-        aria-pressed={mode === 'search'}
-      >
-        {t('webSearchModalTitle')}
-      </button>
-      <button
-        onClick={() => setMode('url')}
-        disabled={isSubmitting}
-        className={`px-4 py-2 font-medium ${
-          mode === 'url'
-            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-        }`}
-        aria-pressed={mode === 'url'}
-      >
-        {t('chatUrlInputTitle')}
-      </button>
-    </div>
-  );
+  const renderTabs = () => {
+    // Agent mode is always enabled in the simplified system
+    const isAgentModeEnabled = true;
+    
+    return (
+      <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
+        <button
+          onClick={() => setMode('search')}
+          disabled={isSubmitting}
+          className={`px-4 py-2 font-medium ${
+            mode === 'search'
+              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          aria-pressed={mode === 'search'}
+        >
+          {t('webSearchModalTitle')}
+        </button>
+        <button
+          onClick={() => setMode('url')}
+          disabled={isSubmitting}
+          className={`px-4 py-2 font-medium ${
+            mode === 'url'
+              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          aria-pressed={mode === 'url'}
+        >
+          {t('chatUrlInputTitle')}
+        </button>
+        {isAgentModeEnabled && (
+          <button
+            onClick={() => setMode('agent')}
+            disabled={isSubmitting}
+            className={`px-4 py-2 font-medium ${
+              mode === 'agent'
+                ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+                : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+            }`}
+            aria-pressed={mode === 'agent'}
+          >
+            Agent Config
+          </button>
+        )}
+      </div>
+    );
+  };
 
   const renderUrlForm = () => (
     <form onSubmit={handleUrlSubmit} className={'mt-1'}>
@@ -670,11 +926,226 @@ const ChatInputSearch = ({
     </form>
   );
 
+  const renderAgentForm = () => (
+    <form onSubmit={handleAgentSubmit} className={'mt-1'}>
+      <div className="space-y-4 py-4">
+        {/* Agent Type Selection */}
+        <div className="flex flex-col">
+          <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
+            Select Agent Type
+          </em>
+          <div className="grid grid-cols-2 gap-2">
+            {Object.values(AgentType).map((agentType) => {
+              const config = agentConfigurations[agentType];
+              const isAvailable = agentAvailability[agentType];
+              const isSelected = selectedAgentType === agentType;
+              
+              return (
+                <button
+                  key={agentType}
+                  type="button"
+                  onClick={() => setSelectedAgentType(agentType)}
+                  disabled={!isAvailable || !config.enabled}
+                  className={`p-3 rounded-lg border transition-colors ${
+                    isSelected
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  } ${
+                    !isAvailable || !config.enabled
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'cursor-pointer'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <AgentTypeIndicator 
+                      agentType={agentType}
+                      size="sm"
+                      showLabel={true}
+                    />
+                    <div className="flex items-center space-x-1 text-xs text-gray-500">
+                      <IconClock size={12} />
+                      <span>{config.estimatedTime}s</span>
+                    </div>
+                  </div>
+                  {!isAvailable && (
+                    <div className="mt-1 text-xs text-red-500">
+                      Unavailable
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Selected Agent Info */}
+        <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="flex items-center justify-between">
+            <AgentTypeIndicator 
+              agentType={selectedAgentType}
+              size="md"
+              showLabel={true}
+            />
+            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+              <div className="flex items-center space-x-1">
+                <IconClock size={14} />
+                <span>~{getEstimatedTime()}s</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <IconTool size={14} />
+                <span className={`font-medium ${
+                  agentConfigurations[selectedAgentType].priority === 'high' ? 'text-red-600' :
+                  agentConfigurations[selectedAgentType].priority === 'medium' ? 'text-yellow-600' :
+                  'text-green-600'
+                }`}>
+                  {agentConfigurations[selectedAgentType].priority}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Agent Input */}
+        <div className="flex flex-col">
+          <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
+            What would you like the agent to help with?
+          </em>
+          <div className="flex items-center">
+            <input
+              ref={agentInputRef}
+              id="agent-input"
+              type="text"
+              value={agentInput}
+              onChange={(e) => setAgentInput(e.target.value)}
+              placeholder="Describe your task or question..."
+              required
+              disabled={isSubmitting}
+              className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+            />
+          </div>
+        </div>
+
+        {/* Agent Configuration Toggle */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <input
+              id="auto-submit-agent"
+              type="checkbox"
+              checked={autoSubmit}
+              onChange={(e) => setAutoSubmit(e.target.checked)}
+              disabled={isSubmitting}
+              className="h-4 w-4 mr-2"
+            />
+            <label
+              htmlFor="auto-submit-agent"
+              className="text-sm text-gray-700 dark:text-gray-200"
+            >
+              {t('autoSubmitButton')}
+            </label>
+          </div>
+          <button
+            type="button"
+            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
+            onClick={() => setIsAgentConfigOpen(!isAgentConfigOpen)}
+            disabled={isSubmitting}
+          >
+            <IconSettings className="mr-1 h-4 w-4" />
+            Advanced
+            {isAgentConfigOpen ? (
+              <IconChevronUp className="ml-1 h-4 w-4" />
+            ) : (
+              <IconChevronDown className="ml-1 h-4 w-4" />
+            )}
+          </button>
+        </div>
+
+        {/* Advanced Agent Configuration */}
+        {isAgentConfigOpen && (
+          <div className="space-y-3 border-t border-gray-200 dark:border-gray-700 pt-4">
+            {selectedAgentType === AgentType.WEB_SEARCH && (
+              <>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Results Count
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    max="15"
+                    value={agentConfigurations[selectedAgentType].specificConfig?.searchCount || 5}
+                    onChange={(e) => updateAgentConfig(selectedAgentType, {
+                      specificConfig: {
+                        ...agentConfigurations[selectedAgentType].specificConfig,
+                        searchCount: parseInt(e.target.value) || 5
+                      }
+                    })}
+                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <label className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Safe Search
+                  </label>
+                  <select
+                    value={agentConfigurations[selectedAgentType].specificConfig?.safeSearch || 'Moderate'}
+                    onChange={(e) => updateAgentConfig(selectedAgentType, {
+                      specificConfig: {
+                        ...agentConfigurations[selectedAgentType].specificConfig,
+                        safeSearch: e.target.value
+                      }
+                    })}
+                    className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  >
+                    <option value="Off">Off</option>
+                    <option value="Moderate">Moderate</option>
+                    <option value="Strict">Strict</option>
+                  </select>
+                </div>
+              </>
+            )}
+            
+            {selectedAgentType === AgentType.URL_PULL && (
+              <div className="grid grid-cols-4 items-center gap-4">
+                <label className="text-right text-sm font-medium text-gray-700 dark:text-gray-200">
+                  Timeout (ms)
+                </label>
+                <input
+                  type="number"
+                  min="5000"
+                  max="60000"
+                  step="1000"
+                  value={agentConfigurations[selectedAgentType].specificConfig?.urlTimeout || 30000}
+                  onChange={(e) => updateAgentConfig(selectedAgentType, {
+                    specificConfig: {
+                      ...agentConfigurations[selectedAgentType].specificConfig,
+                      urlTimeout: parseInt(e.target.value) || 30000
+                    }
+                  })}
+                  className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      
+      <button
+        type="submit"
+        disabled={isSubmitting || !agentAvailability[selectedAgentType] || !agentConfigurations[selectedAgentType].enabled}
+        className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <IconTool className="mr-2 h-4 w-4" />
+        {autoSubmit ? 'Submit with Agent' : 'Configure Agent'}
+      </button>
+    </form>
+  );
+
   const modalContent = (
     <div className="relative">
       {renderTabs()}
       {mode === 'search' && renderSearchForm()}
       {mode === 'url' && renderUrlForm()}
+      {mode === 'agent' && renderAgentForm()}
 
       {isSubmitting && (
         <div
@@ -725,7 +1196,11 @@ const ChatInputSearch = ({
       className="mx-2"
       betaBadge={<BetaBadge />}
       closeWithButton={true}
-      initialFocusRef={mode === 'url' ? urlInputRef : searchInputRef}
+      initialFocusRef={
+        mode === 'url' ? urlInputRef : 
+        mode === 'search' ? searchInputRef : 
+        agentInputRef
+      }
     >
       {modalContent}
     </Modal>
