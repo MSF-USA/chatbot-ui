@@ -6,10 +6,11 @@ import { useSmoothLoadingMessage } from '@/hooks/useSmoothLoadingMessage';
 
 interface Props {
   requestStatusMessage: string | null;
+  requestStatusSecondLine?: string | null; // Optional second line for dynamic details
   progress: number | null; // Progress from 0 to 100
 }
 
-export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
+export const ChatLoader: FC<Props> = ({ requestStatusMessage, requestStatusSecondLine, progress }) => {
   // Get streaming settings from context
   const { settings } = useStreamingSettings();
 
@@ -18,7 +19,15 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
   const smoothRequestStatusMessage = useSmoothLoadingMessage({
     message: requestStatusMessage,
     enabled: settings.smoothStreamingEnabled,
-    skipFirstMessage: true, // Skip first message animation for cleaner loading sequences
+    skipFirstMessage: false, // Skip first message animation for cleaner loading sequences
+  });
+
+  // Second line smooth loading message with slight delay for better UX
+  const smoothRequestStatusSecondLine = useSmoothLoadingMessage({
+    message: requestStatusSecondLine ?? null,
+    enabled: settings.smoothStreamingEnabled,
+    skipFirstMessage: false, // Show second line animations
+    streamInDelay: 60, // Slightly slower for readability
   });
 
   // Determine the loader to display (spinner or progress bar)
@@ -32,7 +41,7 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
     loader = (
       <div
         className={
-          (requestStatusMessage || smoothRequestStatusMessage) ? 'w-24 relative' : 'w-full max-w-xs relative'
+          (requestStatusMessage || smoothRequestStatusMessage || requestStatusSecondLine || smoothRequestStatusSecondLine) ? 'w-24 relative' : 'w-full max-w-xs relative'
         }
       >
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden relative">
@@ -46,7 +55,7 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
   } else {
     // Show determinate progress bar with percentage and animated stripes
     loader = (
-      <div className={(requestStatusMessage || smoothRequestStatusMessage) ? 'w-24' : 'w-full max-w-xs'}>
+      <div className={(requestStatusMessage || smoothRequestStatusMessage || requestStatusSecondLine || smoothRequestStatusSecondLine) ? 'w-24' : 'w-full max-w-xs'}>
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
           <div
             className="
@@ -75,16 +84,30 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, progress }) => {
   }
 
   // Arrange the loader and message based on whether the message exists
+  const hasAnyMessage = (requestStatusMessage || smoothRequestStatusMessage || requestStatusSecondLine || smoothRequestStatusSecondLine);
+  
   const loaderElement = (
-    <div className="flex items-center">
+    <div className="flex items-start">
       {loader}
-      {(requestStatusMessage || smoothRequestStatusMessage) && (
-        <span
-          className="ml-2 text-gray-700 italic dark:text-gray-300 p-2 text-xs"
-          aria-live="polite"
-        >
-          {smoothRequestStatusMessage}
-        </span>
+      {hasAnyMessage && (
+        <div className="ml-2 flex flex-col gap-1">
+          {(requestStatusMessage || smoothRequestStatusMessage) && (
+            <span
+              className="text-gray-700 italic dark:text-gray-300 p-2 text-xs"
+              aria-live="polite"
+            >
+              {smoothRequestStatusMessage}
+            </span>
+          )}
+          {(requestStatusSecondLine || smoothRequestStatusSecondLine) && (
+            <span
+              className="text-gray-600 italic dark:text-gray-400 p-2 text-xs opacity-90"
+              aria-live="polite"
+            >
+              {smoothRequestStatusSecondLine}
+            </span>
+          )}
+        </div>
       )}
     </div>
   );
