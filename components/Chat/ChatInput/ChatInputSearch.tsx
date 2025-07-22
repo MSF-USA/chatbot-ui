@@ -19,6 +19,8 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
+import { makeRequest } from '@/services/frontendChatServices';
+
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
@@ -536,7 +538,7 @@ ${agentData.content}`;
       }
 
       // Step 5: Process agent result internally through makeRequest (hidden from user)
-      if (onSend && selectedConversation && setRequestStatusMessage) {
+      if (selectedConversation && setRequestStatusMessage && apiKey) {
         // Create enhanced prompt that includes agent findings
         const enhancedPrompt = processAgentResult(agentResult.data, originalQuery);
         
@@ -547,8 +549,26 @@ ${agentData.content}`;
           messageType: MessageType.TEXT,
         };
 
-        // Send enhanced message through standard chat flow with forceStandardChat=true
-        onSend(enhancedMessage, null, true);
+        // Create enhanced conversation by replacing the last message (user's original query)
+        const enhancedConversation: Conversation = {
+          ...selectedConversation,
+          messages: [...selectedConversation.messages.slice(0, -1), enhancedMessage],
+        };
+
+        // Call makeRequest directly instead of onSend to avoid adding to conversation history
+        await makeRequest(
+          null, // plugin
+          setRequestStatusMessage,
+          enhancedConversation,
+          apiKey,
+          pluginKeys || [],
+          systemPrompt || '',
+          temperature || 0.7,
+          true, // stream
+          setProgress || (() => {}),
+          stopConversationRef,
+          true // forceStandardChat
+        );
       }
       
       onClose();
