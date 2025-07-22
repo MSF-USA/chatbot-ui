@@ -341,7 +341,7 @@ const Home = ({
 
   useEffect(() => {
     defaultModelId &&
-      dispatch({ field: 'defaultModelId', value: defaultModelId });
+      dispatch({ field: 'defaultModelId', value: OpenAIModels[defaultModelId].isLegacy ? OpenAIModelID.GPT_4o : defaultModelId });
     serverSideApiKeyIsSet &&
       dispatch({
         field: 'serverSideApiKeyIsSet',
