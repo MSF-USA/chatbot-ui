@@ -70,6 +70,14 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const translationDropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  
+  // Extensible action states for future actions
+  // This can be expanded by adding new action types and their corresponding states
+  const [actionStates] = useState<Record<string, { active: boolean; message: string }>>({
+    // Example for future actions:
+    // 'summarize': { active: false, message: 'Summarizing...' },
+    // 'explain': { active: false, message: 'Explaining...' },
+  });
 
   // Get streaming settings from context
   const { settings, updateSettings } = useStreamingSettings();
@@ -408,11 +416,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   }, [showTranslationDropdown]);
 
-  const StreamingIndicator = () => (
-    <span className="animate-pulse cursor-default inline-flex items-center ml-1 text-gray-500">
-      <IconLoader2 size={16} className="animate-spin mr-1" />
-    </span>
-  );
 
   // Custom components for markdown processing
   const customMarkdownComponents = {
@@ -511,10 +514,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 >
                   {contentToDisplay}
                 </CitationMarkdown>
-                {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && contentToDisplay.length > 0 && (
-                  <StreamingIndicator />
-                )}
               </>
             ) : (
               <>
@@ -526,11 +525,19 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 >
                   {contentToDisplay}
                 </MemoizedReactMarkdown>
-                {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && contentToDisplay.length > 0 && (
-                  <StreamingIndicator />
-                )}
               </>
+            )}
+            
+            {/* Extensible action indicator - shows when any action is in progress */}
+            {(isTranslating || isGeneratingAudio || Object.values(actionStates).some(state => state.active)) && (
+              <span className="inline-flex items-center ml-2 text-gray-500 dark:text-gray-400 text-sm">
+                <IconLoader2 size={16} className="animate-spin mr-1" />
+                <span className="animate-pulse">
+                  {isTranslating ? 'Translating...' : 
+                   isGeneratingAudio ? 'Generating audio...' :
+                   Object.entries(actionStates).find(([_, state]) => state.active)?.[1].message || 'Processing...'}
+                </span>
+              </span>
             )}
           </div>
 
