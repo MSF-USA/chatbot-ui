@@ -27,12 +27,14 @@ import {
   Message,
   MessageType,
   TextMessageContent,
+  Conversation,
 } from '@/types/chat';
 import { AgentType } from '@/types/agent';
 import {
   AgentExecutionApiRequest,
   AgentExecutionApiResponse,
 } from '@/types/agentApi';
+import { Plugin, PluginID } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -99,6 +101,15 @@ interface ChatInputSearchProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   initialMode?: 'search' | 'url' | 'agent';
+  // New props for agent-based web search
+  onSend?: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean) => void;
+  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
+  setProgress?: Dispatch<SetStateAction<number | null>>;
+  stopConversationRef?: { current: boolean };
+  apiKey?: string;
+  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
+  systemPrompt?: string;
+  temperature?: number;
 }
 
 const ChatInputSearch = ({
@@ -113,6 +124,14 @@ const ChatInputSearch = ({
   setTextFieldValue,
   handleSend,
   initialMode = 'search',
+  onSend,
+  setRequestStatusMessage,
+  setProgress,
+  stopConversationRef,
+  apiKey,
+  pluginKeys,
+  systemPrompt,
+  temperature,
 }: ChatInputSearchProps) => {
   const { t } = useTranslation(['chat', 'agents']);
   const {
@@ -506,15 +525,33 @@ ${agentData.content}`;
         throw new Error(agentResult.error?.message || 'Agent execution failed');
       }
 
-      // Step 4: Process agent result like agenticFrontendService
-      setSearchStatusMessage('Generating final response...');
-      const enhancedPrompt = processAgentResult(agentResult.data, originalQuery);
+      // Step 4: Add user's original question to conversation history (visible to user)
+      if (onSend) {
+        const userMessage: Message = {
+          role: 'user',
+          content: originalQuery,
+          messageType: MessageType.TEXT,
+        };
+        onSend(userMessage, null, undefined);
+      }
 
-      // Step 5: Set the enhanced prompt and prepare to send
-      setTextFieldValue(enhancedPrompt);
+      // Step 5: Process agent result internally through makeRequest (hidden from user)
+      if (onSend && selectedConversation && setRequestStatusMessage) {
+        // Create enhanced prompt that includes agent findings
+        const enhancedPrompt = processAgentResult(agentResult.data, originalQuery);
+        
+        // Create internal message with enhanced context
+        const enhancedMessage: Message = {
+          role: 'user',
+          content: enhancedPrompt,
+          messageType: MessageType.TEXT,
+        };
+
+        // Send enhanced message through standard chat flow with forceStandardChat=true
+        onSend(enhancedMessage, null, true);
+      }
       
-      if (autoSubmit) setIsReadyToSend(true);
-      else onClose();
+      onClose();
       setSearchInput('');
       setSearchQuestionInput('');
     } catch (error: any) {
