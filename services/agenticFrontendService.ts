@@ -1,5 +1,17 @@
 import {Dispatch, SetStateAction} from 'react';
 
+/**
+ * Enhanced status message callback interface for multi-line messages
+ */
+export interface EnhancedStatusMessageSetter {
+  /** Set the main status message */
+  setMessage: (message: string | null) => void;
+  /** Set the optional second line with additional details */
+  setSecondLine: (message: string | null) => void;
+  /** Set both lines at once */
+  setBoth: (main: string | null, secondLine: string | null) => void;
+}
+
 import {makeRequest} from '@/services/frontendChatServices';
 
 import {
@@ -81,6 +93,7 @@ export class AgenticFrontendService {
     stream: boolean = true,
     setProgress: Dispatch<SetStateAction<number | null>>,
     stopConversationRef?: { current: boolean },
+    setRequestStatusSecondLine?: Dispatch<SetStateAction<string | null>>,
   ): Promise<AgenticChatResult> {
     const startTime = Date.now();
     let usedAgent = false;
@@ -118,7 +131,8 @@ export class AgenticFrontendService {
           stream,
           setProgress,
           stopConversationRef,
-          { usedAgent: false, fellBackToStandardChat: false, startTime }
+          { usedAgent: false, fellBackToStandardChat: false, startTime },
+          undefined,
         );
       }
       
@@ -126,6 +140,9 @@ export class AgenticFrontendService {
 
       // Step 2: Analyze intent
       setRequestStatusMessage('Analyzing your request...');
+      if (setRequestStatusSecondLine) {
+        setRequestStatusSecondLine(null); // Clear any previous second line
+      }
       const intentStartTime = Date.now();
       
       const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
@@ -161,7 +178,8 @@ export class AgenticFrontendService {
           stream,
           setProgress,
           stopConversationRef,
-          { usedAgent: false, fellBackToStandardChat: true, startTime }
+          { usedAgent: false, fellBackToStandardChat: true, startTime },
+          undefined,
         );
       }
 
@@ -174,6 +192,14 @@ export class AgenticFrontendService {
       this.log(`  Confidence: ${agentConfidence}`);
       this.log(`  Recommended Agent: ${agentType}`);
       this.log(`  Full Intent Data:`, intentResult.data);
+
+      // Update second line with reasoning if available
+      if (setRequestStatusSecondLine && intentResult.data.reasoning) {
+        const reasoning = intentResult.data.reasoning.length > 80 
+          ? intentResult.data.reasoning.substring(0, 80) + '...'
+          : intentResult.data.reasoning;
+        setRequestStatusSecondLine(`💭 ${reasoning}`);
+      }
 
       // Step 3: Check if we should use an agent based on confidence and settings
       this.log('=== AGENT SELECTION DECISION ===');
@@ -211,7 +237,7 @@ export class AgenticFrontendService {
           setProgress,
           stopConversationRef,
           { usedAgent: false, fellBackToStandardChat: false, startTime },
-          true // ai has determined this is standard, so do not check again
+          true, // ai has determined this is standard, so do not check again
         );
       }
 
@@ -220,7 +246,10 @@ export class AgenticFrontendService {
       // Step 4: Execute agent workflow
       try {
         this.log('=== AGENT EXECUTION ===');
-        setRequestStatusMessage(`Processing with ${agentType} agent...`);
+        setRequestStatusMessage(`Processing with ${agentType?.toLowerCase().replace('_', ' ')} agent...`);
+        if (setRequestStatusSecondLine) {
+          setRequestStatusSecondLine(intentResult.data.reasoning || null);
+        }
         const agentStartTime = Date.now();
         
         this.log(`Executing ${agentType} agent with query: "${messageText}"`);
@@ -247,6 +276,9 @@ export class AgenticFrontendService {
           if (agentResult.error) {
             this.log('Agent execution error:', agentResult.error);
           }
+          if (setRequestStatusSecondLine) {
+            setRequestStatusSecondLine('⚠️ Agent execution failed, switching to standard chat...');
+          }
           fellBackToStandardChat = true;
           return await this.executeStandardWorkflow(
             plugin,
@@ -265,6 +297,10 @@ export class AgenticFrontendService {
 
         // Step 5: Process agent result through standard chat for final response
         setRequestStatusMessage('Generating final response...');
+        if (setRequestStatusSecondLine && agentResult.data) {
+          const agentContent = agentResult.data.content;
+          setRequestStatusSecondLine(`${agentContent}`);
+        }
         const standardChatStartTime = Date.now();
         
         const processedConversation = await this.processAgentResult(
@@ -285,9 +321,13 @@ export class AgenticFrontendService {
           setProgress,
           stopConversationRef,
           { usedAgent: true, fellBackToStandardChat: false, startTime },
-          true // Force standard chat for final processing
+          true, // Force standard chat for final processing
         );
-        
+        // Clear second line when entering standard chat mode
+        if (setRequestStatusSecondLine) {
+          setRequestStatusSecondLine(null);
+        }
+
         standardChatTime = Date.now() - standardChatStartTime;
 
         // Return enhanced result with agent metadata
@@ -320,7 +360,8 @@ export class AgenticFrontendService {
           stream,
           setProgress,
           stopConversationRef,
-          { usedAgent: false, fellBackToStandardChat: true, startTime }
+          { usedAgent: false, fellBackToStandardChat: true, startTime },
+          undefined,
         );
       }
 
@@ -357,10 +398,10 @@ export class AgenticFrontendService {
     setProgress: Dispatch<SetStateAction<number | null>>,
     stopConversationRef: { current: boolean } | undefined,
     metadata: { usedAgent: boolean; fellBackToStandardChat: boolean; startTime: number },
-    forceStandardChat?: boolean
+    forceStandardChat?: boolean,
   ): Promise<AgenticChatResult> {
     const standardChatStartTime = Date.now();
-    
+
     // If forceStandardChat is true, we need to modify the request to include this flag
     // The simplest approach is to use makeRequest but modify the conversation to include the flag
     const result = await makeRequest(
