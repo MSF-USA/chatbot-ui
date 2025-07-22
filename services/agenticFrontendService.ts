@@ -31,6 +31,8 @@ import {
 } from '@/types/chat';
 import {Plugin, PluginID} from '@/types/plugin';
 import {AgentSettings} from '@/types/settings';
+import { generateOptimizedWebSearchQuery } from '@/utils/server/structuredResponses';
+import { AzureOpenAI } from 'openai';
 
 /**
  * Result of agentic chat processing
@@ -448,9 +450,28 @@ export class AgenticFrontendService {
     // Format conversation history for context
     const conversationHistory = this.formatConversationHistory(conversation);
     
+    // Optimize query for web search agents if needed
+    let optimizedQuery = query;
+    if (agentType === AgentType.WEB_SEARCH && conversation.messages.length > 1) {
+      try {
+        this.log('Optimizing query for web search agent with conversation context');
+        const optimizedResult = await this.optimizeQueryForWebSearch(conversation.messages, query, conversation.model.id);
+        if (optimizedResult) {
+          optimizedQuery = optimizedResult;
+          this.log('Query optimization successful', { 
+            originalQuery: query.substring(0, 100),
+            optimizedQuery: optimizedQuery.substring(0, 100) 
+          });
+        }
+      } catch (error) {
+        this.log('Query optimization failed, using original query', error);
+        // Continue with original query if optimization fails
+      }
+    }
+    
     const request: AgentExecutionApiRequest = {
       agentType,
-      query,
+      query: optimizedQuery,
       conversationHistory,
       model: {
         id: conversation.model.id,
@@ -791,6 +812,44 @@ ${agentData.content}`;
     return formattedHistory;
   }
 
+
+  /**
+   * Optimize query for web search using conversation context
+   * Note: This is a simplified version for frontend use that doesn't require OpenAI access
+   */
+  private async optimizeQueryForWebSearch(
+    messages: Message[],
+    currentQuery: string,
+    modelId: string
+  ): Promise<string | null> {
+    try {
+      // For frontend service, we need to make an API call to get optimization
+      // since we don't have direct OpenAI access like the backend services
+      const request = {
+        messages: messages.slice(-7), // Same logic as structuredResponses.ts
+        currentQuery,
+        modelId
+      };
+
+      const response = await fetch('/api/v2/agent/optimize-query', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Query optimization failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      return result.optimizedQuery || null;
+    } catch (error) {
+      this.log('Query optimization API call failed', error);
+      return null;
+    }
+  }
 
   /**
    * Debug logging
