@@ -98,6 +98,10 @@ export interface ChatBody {
   temperature: number;
   botId: string | undefined;
   stream?: boolean;
+  agentSettings?: {
+    enabled: boolean;
+    enabledAgentTypes: AgentType[];
+  };
 }
 
 export interface Conversation {
