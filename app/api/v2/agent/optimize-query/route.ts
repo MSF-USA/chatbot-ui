@@ -9,6 +9,8 @@ import {
 import { generateOptimizedWebSearchQuery } from '@/utils/server/structuredResponses';
 
 import { Message } from '@/types/chat';
+import {OpenAIModelID, OpenAIModels} from "@/types/openai";
+import {isReasoningModel} from "@/utils/app/chat";
 
 interface OptimizeQueryRequest {
   messages: Message[];
@@ -32,7 +34,7 @@ function getOpenAIInstance(): AzureOpenAI | null {
 
       openaiInstance = new AzureOpenAI({
         azureADTokenProvider,
-        apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+        apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
       });
       
       console.log('[QueryOptimizationAPI] OpenAI instance initialized successfully');
@@ -76,7 +78,7 @@ export async function POST(req: NextRequest) {
       messages,
       currentQuery,
       session.user,
-      modelId
+      (OpenAIModels[modelId as OpenAIModelID].isLegacy || isReasoningModel(modelId)) ? OpenAIModelID.GPT_4o_mini : modelId as OpenAIModelID
     );
 
     return NextResponse.json({
