@@ -82,7 +82,7 @@ export class ImageGenerationService {
    * Creates a new instance of the ImageGenerationService
    */
   constructor() {
-    this.apiVersion = '2024-08-01-preview';
+    this.apiVersion = '2025-03-01-preview';
     this.scope = 'https://cognitiveservices.azure.com/.default';
     this.azureADTokenProvider = getBearerTokenProvider(
       new DefaultAzureCredential(),

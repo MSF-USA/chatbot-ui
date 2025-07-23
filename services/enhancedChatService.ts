@@ -1189,7 +1189,7 @@ export class EnhancedChatService {
 
       return new AzureOpenAI({
         azureADTokenProvider,
-        apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+        apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
       });
     } catch (error) {
       console.error('[ERROR] Failed to create Azure OpenAI instance on-demand:', error);
@@ -1228,7 +1228,7 @@ export class EnhancedChatService {
 
       this.openaiInstance = new AzureOpenAI({
         azureADTokenProvider,
-        apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+        apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
       });
       
       this.modelId = modelId ?? 'gpt-4o-mini';
