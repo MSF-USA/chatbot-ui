@@ -84,7 +84,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   },
   [OpenAIModelID.GPT_o1_mini]: {
     id: OpenAIModelID.GPT_o1_mini,
-    name: 'o1-mini',
+    name: 'gpt-o1-mini',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,
