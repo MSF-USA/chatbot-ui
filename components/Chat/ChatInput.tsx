@@ -12,6 +12,7 @@ import {
 } from 'react';
 
 import { useTranslation } from 'next-i18next';
+import toast from 'react-hot-toast';
 
 import {
   ChatInputSubmitTypes,
@@ -25,6 +26,10 @@ import {
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
+import { OpenAIModel } from '@/types/openai';
+import { AgentType } from '@/types/agent';
+import { CommandParser, CommandDefinition, ParsedCommand, CommandExecutionResult, CommandType } from '@/services/commandParser';
+import { LocalizedCommandParser } from '@/services/localizedCommandParser';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -43,10 +48,11 @@ import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 
 import { PromptList } from './PromptList';
+import { ModelList } from './ModelList';
 import { VariableModal } from './VariableModal';
 
 interface Props {
-  onSend: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean) => void;
+  onSend: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean, forcedAgentType?: AgentType) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -60,6 +66,14 @@ interface Props {
   pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
   systemPrompt?: string;
   temperature?: number;
+  onTemperatureChange?: (temperature: number) => void;
+  onAgentToggleChange?: (enabled: boolean) => void;
+  onSettingsOpen?: () => void;
+  onPrivacyPolicyOpen?: () => void;
+  onModelChange?: (model: any) => void;
+  models?: any[];
+  selectedConversation?: any;
+  onAddChatMessages?: (userMessage: Message, assistantMessage: Message) => void;
 }
 
 export const ChatInput = ({
@@ -77,14 +91,25 @@ export const ChatInput = ({
   pluginKeys,
   systemPrompt,
   temperature,
+  onTemperatureChange,
+  onAgentToggleChange,
+  onSettingsOpen,
+  onPrivacyPolicyOpen,
+  onModelChange,
+  models,
+  selectedConversation,
+  onAddChatMessages,
 }: Props) => {
   const { t } = useTranslation('chat');
 
   const {
-    state: { selectedConversation, messageIsStreaming, prompts },
-
+    state: { selectedConversation: contextSelectedConversation, messageIsStreaming, prompts },
+    handleUpdateConversation: contextHandleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
+  
+  // Use the passed selectedConversation or fall back to context
+  const currentConversation = selectedConversation || contextSelectedConversation;
 
   const [textFieldValue, setTextFieldValue] = useState<string>('');
   const [imageFieldValue, setImageFieldValue] = useState<
@@ -119,13 +144,32 @@ export const ChatInput = ({
     }
     return true;
   });
+  
+  // Command system state
+  const [commandParser] = useState(() => LocalizedCommandParser.getInstance());
+  const [availableCommands, setAvailableCommands] = useState<CommandDefinition[]>([]);
+  const [parsedCommand, setParsedCommand] = useState<ParsedCommand | null>(null);
+  const [forcedAgent, setForcedAgent] = useState<AgentType | null>(null);
+  const [commandMode, setCommandMode] = useState<boolean>(false);
+  
+  // Model selection state
+  const [showModelList, setShowModelList] = useState<boolean>(false);
+  const [activeModelIndex, setActiveModelIndex] = useState<number>(0);
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
+  const modelListRef = useRef<HTMLUListElement | null>(null);
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
   const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
     prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
   );
+  
+  // Filter commands based on current input
+  const filteredCommands: CommandDefinition[] = commandMode 
+    ? availableCommands.filter((command) =>
+        command.command.toLowerCase().includes(promptInputValue.toLowerCase())
+      )
+    : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value: string = e.target.value;
@@ -180,33 +224,146 @@ export const ChatInput = ({
       }
       return;
     }
+    
+    let messageText = textFieldValue;
+    let forceStandardChat = agentToggleEnabled ? undefined : true;
+    let forcedAgentType: AgentType | null = null;
+    
+    // Check if this is a command
+    const commandMatch = /^\/\w+/.exec(textFieldValue.trim());
+    if (commandMatch) {
+      // Prepare context for command execution
+      const commandContext = {
+        models: models || [],
+        selectedConversation: currentConversation,
+        temperature: temperature,
+      };
+      
+      const parsed = commandParser.parseLocalizedInput(textFieldValue, 'en'); // TODO: Use actual locale
+      if (parsed && parsed.valid) {
+        const executionResult = commandParser.executeCommand(parsed, commandContext);
+        
+        if (executionResult.success) {
+          // Handle command execution
+          if (executionResult.agentType) {
+            forcedAgentType = executionResult.agentType;
+            forceStandardChat = executionResult.agentType === AgentType.STANDARD_CHAT;
+            // Remove command from message text, keeping the rest
+            messageText = textFieldValue.replace(/^\/\w+\s*/, '').trim();
+          }
+          
+          // Handle chat responses (commands that should add messages to chat history)
+          if (executionResult.chatResponse && onAddChatMessages) {
+            const userMessage: Message = {
+              role: 'user',
+              content: executionResult.chatResponse.userMessage,
+              messageType: MessageType.TEXT,
+            };
+            
+            const assistantMessage: Message = {
+              role: 'assistant',
+              content: executionResult.chatResponse.assistantMessage,
+              messageType: MessageType.TEXT,
+            };
+            
+            onAddChatMessages(userMessage, assistantMessage);
+          }
+          
+          if (executionResult.settingsChange) {
+            // Handle settings changes
+            console.log('Settings change:', executionResult.settingsChange);
+            
+            // Handle temperature changes
+            if (executionResult.settingsChange.temperature !== undefined && onTemperatureChange) {
+              onTemperatureChange(executionResult.settingsChange.temperature);
+            }
+            
+            // Handle agent toggle changes
+            if (executionResult.settingsChange.agentSettings?.enabled !== undefined && onAgentToggleChange) {
+              onAgentToggleChange(executionResult.settingsChange.agentSettings.enabled);
+              // Also update local state
+              setAgentToggleEnabled(executionResult.settingsChange.agentSettings.enabled);
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('chatAgentsEnabled', JSON.stringify(executionResult.settingsChange.agentSettings.enabled));
+              }
+            }
+            
+            // Handle model changes
+            if (executionResult.settingsChange.model && onModelChange) {
+              onModelChange(executionResult.settingsChange.model);
+            }
+          }
+          
+          if (executionResult.utilityAction) {
+            // Handle utility actions
+            handleUtilityAction(executionResult.utilityAction);
+          }
+          
+          // For commands with chat responses or immediate actions, clear input and return
+          if (executionResult.chatResponse || executionResult.immediateAction) {
+            setTextFieldValue('');
+            setCommandMode(false);
+            setParsedCommand(null);
+            return;
+          }
+          
+          // Show success toast only for commands without chat responses
+          if (executionResult.message && !executionResult.chatResponse) {
+            toast.success(executionResult.message);
+          }
+          
+          // If it's just a settings command without remaining text, don't send a message
+          if (!messageText) {
+            setTextFieldValue('');
+            setCommandMode(false);
+            setParsedCommand(null);
+            return;
+          }
+        } else {
+          // Command execution failed, show error and return
+          toast.error(executionResult.error || 'Command execution failed');
+          return;
+        }
+      } else {
+        // Invalid command, proceed normally (let it be sent as regular text)
+      }
+    }
+    
+    // Apply forced agent if set
+    if (forcedAgent) {
+      forcedAgentType = forcedAgent;
+      forceStandardChat = forcedAgent === AgentType.STANDARD_CHAT;
+      setForcedAgent(null); // Reset after use
+    }
+    
     const content:
       | string
       | TextMessageContent
       | (TextMessageContent | FileMessageContent)[]
       | (TextMessageContent | ImageMessageContent)[] = buildContent();
 
-    if (!textFieldValue) {
+    if (!messageText) {
       alert(t('Please enter a message'));
       return;
     }
 
-    const forceStandardChat = agentToggleEnabled ? undefined : true;
-
     onSend(
       {
         role: 'user',
-        content,
+        content: submitType === 'text' ? messageText : content,
         messageType: submitType ?? 'text',
       },
       plugin,
       forceStandardChat,
+      forcedAgentType || undefined, // Pass the forced agent type
     );
     setTextFieldValue('');
     setImageFieldValue(null);
     setFileFieldValue(null);
     setPlugin(null);
     setSubmitType('text');
+    setCommandMode(false);
+    setParsedCommand(null);
 
     if (filePreviews.length > 0) {
       setFilePreviews([]);
@@ -232,16 +389,25 @@ export const ChatInput = ({
   };
 
   const handleInitModal = () => {
-    const selectedPrompt = filteredPrompts[activePromptIndex];
-    if (selectedPrompt) {
-      setTextFieldValue((prevTextFieldValue) => {
-        const newContent = prevTextFieldValue?.replace(
-          /\/\w*$/,
-          selectedPrompt.content,
-        );
-        return newContent;
-      });
-      handlePromptSelect(selectedPrompt);
+    if (commandMode && filteredCommands.length > 0) {
+      // Handle command selection
+      const selectedCommand = filteredCommands[activePromptIndex];
+      if (selectedCommand) {
+        handleCommandSelect(selectedCommand);
+      }
+    } else {
+      // Handle prompt selection
+      const selectedPrompt = filteredPrompts[activePromptIndex];
+      if (selectedPrompt) {
+        setTextFieldValue((prevTextFieldValue) => {
+          const newContent = prevTextFieldValue?.replace(
+            /\/\w*$/,
+            selectedPrompt.content,
+          );
+          return newContent;
+        });
+        handlePromptSelect(selectedPrompt);
+      }
     }
     setShowPromptList(false);
   };
@@ -274,11 +440,13 @@ export const ChatInput = ({
   const handleKeyDownPromptList = (
     event: KeyboardEvent<HTMLTextAreaElement>,
   ) => {
+    const totalItems = commandMode ? filteredCommands.length + filteredPrompts.length : filteredPrompts.length;
+    
     switch (event.key) {
       case 'ArrowDown':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
+          prevIndex < totalItems - 1 ? prevIndex + 1 : prevIndex,
         );
         break;
       case 'ArrowUp':
@@ -290,7 +458,7 @@ export const ChatInput = ({
       case 'Tab':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
+          prevIndex < totalItems - 1 ? prevIndex + 1 : 0,
         );
         break;
       case 'Enter':
@@ -306,6 +474,7 @@ export const ChatInput = ({
       case 'Escape':
         event.preventDefault();
         setShowPromptList(false);
+        setCommandMode(false);
         break;
       default:
         setActivePromptIndex(0);
@@ -313,8 +482,42 @@ export const ChatInput = ({
     }
   };
 
+  const handleKeyDownModelList = (
+    event: KeyboardEvent<HTMLTextAreaElement>,
+  ) => {
+    const availableModels = models || [];
+    
+    switch (event.key) {
+      case 'ArrowDown':
+        event.preventDefault();
+        setActiveModelIndex((prevIndex) =>
+          prevIndex < availableModels.length - 1 ? prevIndex + 1 : 0,
+        );
+        break;
+      case 'ArrowUp':
+        event.preventDefault();
+        setActiveModelIndex((prevIndex) =>
+          prevIndex > 0 ? prevIndex - 1 : availableModels.length - 1,
+        );
+        break;
+      case 'Enter':
+        event.preventDefault();
+        if (availableModels.length > 0) {
+          handleModelSelect(availableModels[activeModelIndex]);
+        }
+        break;
+      case 'Escape':
+        event.preventDefault();
+        setShowModelList(false);
+        setActiveModelIndex(0);
+        break;
+    }
+  };
+
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (showPromptList) {
+    if (showModelList) {
+      handleKeyDownModelList(e);
+    } else if (showPromptList) {
       handleKeyDownPromptList(e);
     } else {
       // Handle cases when showPromptList is false
@@ -338,13 +541,34 @@ export const ChatInput = ({
     const match = /\/\w*$/.exec(text);
 
     if (match) {
+      const input = match[0];
+      const partialCommand = input.slice(1);
+      
+      // Try to parse as command first with context
+      const commandContext = {
+        models: models || [],
+        selectedConversation: currentConversation,
+        temperature: temperature,
+      };
+      const parsed = commandParser.parseLocalizedInput(input, 'en', commandContext); // TODO: Use actual locale
+      setParsedCommand(parsed);
+      
+      // Show prompt list and set command mode
       setShowPromptList(true);
-      setPromptInputValue(match[0].slice(1));
+      setPromptInputValue(partialCommand);
+      setCommandMode(true);
+      
+      // Get command suggestions
+      const suggestions = commandParser.getLocalizedCommandSuggestions(partialCommand, 'en');
+      setAvailableCommands(suggestions.slice(0, 5)); // Limit to 5 suggestions
     } else {
       setShowPromptList(false);
       setPromptInputValue('');
+      setCommandMode(false);
+      setParsedCommand(null);
+      setAvailableCommands([]);
     }
-  }, []);
+  }, [commandParser, currentConversation, models, temperature]);
 
   const handlePromptSelect = (prompt: Prompt) => {
     const parsedVariables = parseVariables(prompt.content);
@@ -358,6 +582,27 @@ export const ChatInput = ({
         return updatedContent;
       });
       updatePromptListVisibility(prompt.content);
+    }
+  };
+
+  const handleModelSelect = (model: OpenAIModel) => {
+    // Hide the model list
+    setShowModelList(false);
+    setActiveModelIndex(0);
+    
+    // Use the conversation from props or context
+    const conversation = selectedConversation || currentConversation;
+    
+    if (conversation && contextHandleUpdateConversation) {
+      contextHandleUpdateConversation(conversation, {
+        key: 'model',
+        value: model,
+      });
+    }
+    
+    // Also call onModelChange if provided
+    if (onModelChange) {
+      onModelChange(model);
     }
   };
 
@@ -375,6 +620,151 @@ export const ChatInput = ({
 
     if (textareaRef?.current) {
       textareaRef.current.focus();
+    }
+  };
+  
+  /**
+   * Handle command selection from the command list
+   */
+  const handleCommandSelect = (command: CommandDefinition) => {
+    // Check if this command should execute immediately (same logic as PromptList)
+    const shouldExecuteImmediately = ['enableAgents', 'disableAgents', 'settings', 'privacyPolicy'].includes(command.command);
+    
+    // Handle model command specially - show model selection list
+    if (command.command === 'model') {
+      setShowModelList(true);
+      setActiveModelIndex(0);
+      setTextFieldValue('');
+      setShowPromptList(false);
+      return;
+    }
+    
+    if (shouldExecuteImmediately) {
+      // Execute immediately like the mouse click path
+      const commandContext = {
+        models: models || [],
+        selectedConversation: currentConversation,
+        temperature: temperature,
+      };
+      
+      const parsed = commandParser.parseInput(`/${command.command}`, commandContext);
+      if (parsed && parsed.valid) {
+        const executionResult = commandParser.executeCommand(parsed, commandContext);
+        
+        if (executionResult.success) {
+          // Handle chat responses - but skip for pure utility commands that only open dialogs
+          const isPureUtilityCommand = ['settings', 'privacyPolicy'].includes(command.command);
+          if (executionResult.chatResponse && onAddChatMessages && !isPureUtilityCommand) {
+            const userMessage: Message = {
+              role: 'user',
+              content: executionResult.chatResponse.userMessage,
+              messageType: MessageType.TEXT,
+            };
+            
+            const assistantMessage: Message = {
+              role: 'assistant',
+              content: executionResult.chatResponse.assistantMessage,
+              messageType: MessageType.TEXT,
+            };
+            
+            onAddChatMessages(userMessage, assistantMessage);
+          }
+          
+          // Handle settings changes
+          if (executionResult.settingsChange) {
+            if (executionResult.settingsChange.temperature !== undefined && onTemperatureChange) {
+              onTemperatureChange(executionResult.settingsChange.temperature);
+            }
+            
+            if (executionResult.settingsChange.agentSettings?.enabled !== undefined && onAgentToggleChange) {
+              onAgentToggleChange(executionResult.settingsChange.agentSettings.enabled);
+              setAgentToggleEnabled(executionResult.settingsChange.agentSettings.enabled);
+              if (typeof window !== 'undefined') {
+                localStorage.setItem('chatAgentsEnabled', JSON.stringify(executionResult.settingsChange.agentSettings.enabled));
+              }
+            }
+            
+            if (executionResult.settingsChange.model && onModelChange) {
+              onModelChange(executionResult.settingsChange.model);
+            }
+          }
+          
+          // Handle utility actions
+          if (executionResult.utilityAction) {
+            handleUtilityAction(executionResult.utilityAction);
+          }
+        } else {
+          toast.error(executionResult.error || 'Command execution failed');
+        }
+      }
+      
+      // Clear input and close command mode (same as immediate execution)
+      setTextFieldValue('');
+      setCommandMode(false);
+      setParsedCommand(null);
+      setShowPromptList(false);
+    } else {
+      // Regular command selection - replace text and handle normally
+      setTextFieldValue((prevValue) => {
+        const newValue = prevValue?.replace(/\/\w*$/, `/${command.command} `);
+        return newValue;
+      });
+      
+      // If it's an agent command, set the forced agent
+      if (command.type === CommandType.AGENT) {
+        switch (command.command) {
+          case 'search':
+            setForcedAgent(AgentType.WEB_SEARCH);
+            break;
+          case 'code':
+            setForcedAgent(AgentType.CODE_INTERPRETER);
+            break;
+          case 'url':
+            setForcedAgent(AgentType.URL_PULL);
+            break;
+          case 'knowledge':
+            setForcedAgent(AgentType.LOCAL_KNOWLEDGE);
+            break;
+          case 'standard':
+          case 'noAgents':
+            setForcedAgent(AgentType.STANDARD_CHAT);
+            break;
+        }
+      }
+      
+      setShowPromptList(false);
+      setCommandMode(false);
+      
+      if (textareaRef?.current) {
+        textareaRef.current.focus();
+      }
+    }
+  };
+  
+  /**
+   * Handle utility actions from commands
+   */
+  const handleUtilityAction = (action: string) => {
+    switch (action) {
+      case 'open_settings':
+        if (onSettingsOpen) {
+          onSettingsOpen();
+        } else {
+          console.log('Opening settings dialog');
+        }
+        break;
+      case 'open_privacy_policy':
+        if (onPrivacyPolicyOpen) {
+          onPrivacyPolicyOpen();
+        } else {
+          console.log('Opening privacy policy in settings');
+        }
+        break;
+      case 'show_help':
+        // Help is handled via toast message, no additional action needed
+        break;
+      default:
+        console.log('Unknown utility action:', action);
     }
   };
 
@@ -401,6 +791,14 @@ export const ChatInput = ({
         !promptListRef.current.contains(e.target as Node)
       ) {
         setShowPromptList(false);
+      }
+      
+      if (
+        modelListRef.current &&
+        !modelListRef.current.contains(e.target as Node)
+      ) {
+        setShowModelList(false);
+        setActiveModelIndex(0);
       }
     };
 
@@ -648,14 +1046,97 @@ export const ChatInput = ({
               </div>
             )}
 
-            {showPromptList && filteredPrompts.length > 0 && (
+            {showPromptList && (filteredCommands.length > 0 || filteredPrompts.length > 0) && (
               <div className="absolute bottom-12 w-full">
                 <PromptList
                   activePromptIndex={activePromptIndex}
                   prompts={filteredPrompts}
+                  commands={filteredCommands}
+                  showCommands={commandMode}
                   onSelect={handleInitModal}
                   onMouseOver={setActivePromptIndex}
                   promptListRef={promptListRef}
+                  onImmediateCommandExecution={(command) => {
+                    // Execute the command immediately with context
+                    const commandContext = {
+                      models: models || [],
+                      selectedConversation: currentConversation,
+                      temperature: temperature,
+                    };
+                    
+                    const parsed = commandParser.parseInput(`/${command.command}`, commandContext);
+                    if (parsed && parsed.valid) {
+                      const executionResult = commandParser.executeCommand(parsed, commandContext);
+                      
+                      if (executionResult.success) {
+                        // Handle chat responses - but skip for pure utility commands that only open dialogs
+                        const isPureUtilityCommand = ['settings', 'privacyPolicy'].includes(command.command);
+                        if (executionResult.chatResponse && onAddChatMessages && !isPureUtilityCommand) {
+                          const userMessage: Message = {
+                            role: 'user',
+                            content: executionResult.chatResponse.userMessage,
+                            messageType: MessageType.TEXT,
+                          };
+                          
+                          const assistantMessage: Message = {
+                            role: 'assistant',
+                            content: executionResult.chatResponse.assistantMessage,
+                            messageType: MessageType.TEXT,
+                          };
+                          
+                          onAddChatMessages(userMessage, assistantMessage);
+                        }
+                        
+                        // Handle settings changes
+                        if (executionResult.settingsChange) {
+                          if (executionResult.settingsChange.temperature !== undefined && onTemperatureChange) {
+                            onTemperatureChange(executionResult.settingsChange.temperature);
+                          }
+                          
+                          if (executionResult.settingsChange.agentSettings?.enabled !== undefined && onAgentToggleChange) {
+                            onAgentToggleChange(executionResult.settingsChange.agentSettings.enabled);
+                            setAgentToggleEnabled(executionResult.settingsChange.agentSettings.enabled);
+                            if (typeof window !== 'undefined') {
+                              localStorage.setItem('chatAgentsEnabled', JSON.stringify(executionResult.settingsChange.agentSettings.enabled));
+                            }
+                          }
+                          
+                          if (executionResult.settingsChange.model && onModelChange) {
+                            onModelChange(executionResult.settingsChange.model);
+                          }
+                        }
+                        
+                        // Handle utility actions
+                        if (executionResult.utilityAction) {
+                          handleUtilityAction(executionResult.utilityAction);
+                        }
+                      } else {
+                        toast.error(executionResult.error || 'Command execution failed');
+                      }
+                    }
+                    
+                    // Clear input and close command mode
+                    setTextFieldValue('');
+                    setCommandMode(false);
+                    setParsedCommand(null);
+                    setShowPromptList(false);
+                  }}
+                />
+              </div>
+            )}
+
+            {showModelList && models && models.length > 0 && (
+              <div className="absolute bottom-12 w-full">
+                <ModelList
+                  models={models}
+                  activeModelIndex={activeModelIndex}
+                  onSelect={() => {
+                    if (models.length > 0) {
+                      handleModelSelect(models[activeModelIndex]);
+                    }
+                  }}
+                  onMouseOver={setActiveModelIndex}
+                  modelListRef={modelListRef}
                 />
               </div>
             )}
