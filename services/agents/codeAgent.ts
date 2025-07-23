@@ -1,16 +1,21 @@
-import * as fs from 'fs';
-import * as path from 'path';
-import { promisify } from 'util';
+import { AzureMonitorLoggingService } from '@/services/loggingService';
 
 import {
   AgentConfig,
   AgentExecutionContext,
-  AgentResponse,
   AgentExecutionEnvironment,
+  AgentResponse,
 } from '@/types/agent';
 
-import { BaseAgent, AgentCreationError, AgentExecutionError } from './baseAgent';
-import { AzureMonitorLoggingService } from '@/services/loggingService';
+import {
+  AgentCreationError,
+  AgentExecutionError,
+  BaseAgent,
+} from './baseAgent';
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { promisify } from 'util';
 
 const writeFile = promisify(fs.writeFile);
 const readFile = promisify(fs.readFile);
@@ -124,9 +129,12 @@ export class CodeAgent extends BaseAgent {
     super(config);
 
     // Initialize execution configuration
-    this.sandboxBasePath = process.env.CODE_SANDBOX_PATH || '/tmp/code-agent-sandbox';
+    this.sandboxBasePath =
+      process.env.CODE_SANDBOX_PATH || '/tmp/code-agent-sandbox';
     this.executionConfig = {
-      language: (config.parameters?.language as SupportedLanguage) || SupportedLanguage.PYTHON,
+      language:
+        (config.parameters?.language as SupportedLanguage) ||
+        SupportedLanguage.PYTHON,
       timeout: config.parameters?.timeout || 30000, // 30 seconds
       maxMemory: config.parameters?.maxMemory || 128, // 128MB
       allowedModules: config.parameters?.allowedModules || [
@@ -165,7 +173,9 @@ export class CodeAgent extends BaseAgent {
         sandboxPath: this.executionConfig.sandboxPath,
       });
     } catch (error) {
-      const errorMessage = `Failed to initialize CodeAgent: ${(error as Error).message}`;
+      const errorMessage = `Failed to initialize CodeAgent: ${
+        (error as Error).message
+      }`;
       this.logError(errorMessage, error as Error, {
         agentId: this.config.id,
         language: this.executionConfig.language,
@@ -182,7 +192,7 @@ export class CodeAgent extends BaseAgent {
     try {
       // Extract code from the query
       const codeBlocks = this.extractCodeBlocks(context.query);
-      
+
       if (codeBlocks.length === 0) {
         // No code found, return analysis response
         return this.generateAnalysisResponse(context, Date.now() - startTime);
@@ -194,9 +204,12 @@ export class CodeAgent extends BaseAgent {
       // Execute each code block
       for (const codeBlock of codeBlocks) {
         try {
-          const result = await this.executeCode(codeBlock.code, codeBlock.language);
+          const result = await this.executeCode(
+            codeBlock.code,
+            codeBlock.language,
+          );
           totalExecutionTime += result.executionTime;
-          
+
           results.push({
             language: codeBlock.language,
             code: codeBlock.code,
@@ -219,7 +232,7 @@ export class CodeAgent extends BaseAgent {
       }
 
       const processingTime = Date.now() - startTime;
-      
+
       // Generate response content
       const responseContent = this.formatExecutionResults(results);
 
@@ -276,16 +289,24 @@ export class CodeAgent extends BaseAgent {
     if (!this.executionConfig.language) {
       errors.push('Programming language is required');
     } else if (!this.isLanguageSupported(this.executionConfig.language)) {
-      errors.push(`Unsupported programming language: ${this.executionConfig.language}`);
+      errors.push(
+        `Unsupported programming language: ${this.executionConfig.language}`,
+      );
     }
 
     // Validate timeout
-    if (this.executionConfig.timeout < 1000 || this.executionConfig.timeout > 300000) {
+    if (
+      this.executionConfig.timeout < 1000 ||
+      this.executionConfig.timeout > 300000
+    ) {
       errors.push('Timeout must be between 1 second and 5 minutes');
     }
 
     // Validate memory limit
-    if (this.executionConfig.maxMemory < 16 || this.executionConfig.maxMemory > 1024) {
+    if (
+      this.executionConfig.maxMemory < 16 ||
+      this.executionConfig.maxMemory > 1024
+    ) {
       errors.push('Memory limit must be between 16MB and 1GB');
     }
 
@@ -314,15 +335,21 @@ export class CodeAgent extends BaseAgent {
   protected async performHealthCheck(): Promise<boolean> {
     try {
       // Test sandbox access
-      const testFile = path.join(this.executionConfig.sandboxPath, 'health_check.py');
+      const testFile = path.join(
+        this.executionConfig.sandboxPath,
+        'health_check.py',
+      );
       await writeFile(testFile, 'print("health_check_ok")');
-      
+
       // Test code execution
-      const result = await this.executeCode('print("health_check_ok")', SupportedLanguage.PYTHON);
-      
+      const result = await this.executeCode(
+        'print("health_check_ok")',
+        SupportedLanguage.PYTHON,
+      );
+
       // Cleanup test file
       await rm(testFile, { force: true });
-      
+
       return result.exitCode === 0 && result.stdout.includes('health_check_ok');
     } catch (error) {
       this.logWarning('CodeAgent health check failed', {
@@ -336,7 +363,10 @@ export class CodeAgent extends BaseAgent {
   protected async performCleanup(): Promise<void> {
     try {
       // Clean up sandbox directory
-      await rm(this.executionConfig.sandboxPath, { recursive: true, force: true });
+      await rm(this.executionConfig.sandboxPath, {
+        recursive: true,
+        force: true,
+      });
 
       this.logInfo('CodeAgent cleanup completed', {
         agentId: this.config.id,
@@ -358,7 +388,7 @@ export class CodeAgent extends BaseAgent {
   private async createSandbox(): Promise<void> {
     try {
       await mkdir(this.executionConfig.sandboxPath, { recursive: true });
-      
+
       // Set restrictive permissions (Unix systems only)
       if (process.platform !== 'win32') {
         await fs.promises.chmod(this.executionConfig.sandboxPath, 0o755);
@@ -375,7 +405,7 @@ export class CodeAgent extends BaseAgent {
     // This is a placeholder for environment verification
     // In a production system, you would verify that the required interpreters are available
     // and properly configured for sandboxed execution
-    
+
     const supportedLanguages = Object.values(SupportedLanguage);
     this.logInfo('Verified execution environment', {
       agentId: this.config.id,
@@ -384,9 +414,11 @@ export class CodeAgent extends BaseAgent {
     });
   }
 
-  private extractCodeBlocks(query: string): Array<{ code: string; language: SupportedLanguage }> {
+  private extractCodeBlocks(
+    query: string,
+  ): Array<{ code: string; language: SupportedLanguage }> {
     const codeBlocks: Array<{ code: string; language: SupportedLanguage }> = [];
-    
+
     // Regex to match code blocks with language specification
     const codeBlockRegex = /```(\w+)?\n([\s\S]*?)\n```/g;
     let match;
@@ -394,7 +426,7 @@ export class CodeAgent extends BaseAgent {
     while ((match = codeBlockRegex.exec(query)) !== null) {
       const language = this.mapLanguage(match[1] || 'python');
       const code = match[2].trim();
-      
+
       if (code && this.isLanguageSupported(language)) {
         codeBlocks.push({ code, language });
       }
@@ -404,13 +436,14 @@ export class CodeAgent extends BaseAgent {
     if (codeBlocks.length === 0) {
       const inlineCodeRegex = /`([^`]+)`/g;
       let inlineMatch;
-      
+
       while ((inlineMatch = inlineCodeRegex.exec(query)) !== null) {
         const code = inlineMatch[1].trim();
-        if (code.length > 10) { // Only consider substantial code
-          codeBlocks.push({ 
-            code, 
-            language: this.executionConfig.language 
+        if (code.length > 10) {
+          // Only consider substantial code
+          codeBlocks.push({
+            code,
+            language: this.executionConfig.language,
           });
         }
       }
@@ -421,15 +454,15 @@ export class CodeAgent extends BaseAgent {
 
   private mapLanguage(languageString: string): SupportedLanguage {
     const mapping: Record<string, SupportedLanguage> = {
-      'python': SupportedLanguage.PYTHON,
-      'py': SupportedLanguage.PYTHON,
-      'javascript': SupportedLanguage.JAVASCRIPT,
-      'js': SupportedLanguage.JAVASCRIPT,
-      'typescript': SupportedLanguage.TYPESCRIPT,
-      'ts': SupportedLanguage.TYPESCRIPT,
-      'bash': SupportedLanguage.BASH,
-      'shell': SupportedLanguage.BASH,
-      'sh': SupportedLanguage.BASH,
+      python: SupportedLanguage.PYTHON,
+      py: SupportedLanguage.PYTHON,
+      javascript: SupportedLanguage.JAVASCRIPT,
+      js: SupportedLanguage.JAVASCRIPT,
+      typescript: SupportedLanguage.TYPESCRIPT,
+      ts: SupportedLanguage.TYPESCRIPT,
+      bash: SupportedLanguage.BASH,
+      shell: SupportedLanguage.BASH,
+      sh: SupportedLanguage.BASH,
     };
 
     return mapping[languageString.toLowerCase()] || SupportedLanguage.PYTHON;
@@ -444,25 +477,33 @@ export class CodeAgent extends BaseAgent {
     return CodeAgent.isLanguageSupported(language);
   }
 
-  private async executeCode(code: string, language: SupportedLanguage): Promise<CodeExecutionResult> {
+  private async executeCode(
+    code: string,
+    language: SupportedLanguage,
+  ): Promise<CodeExecutionResult> {
     const startTime = Date.now();
-    
+
     // This is a placeholder implementation for security reasons
     // In a production system, you would use proper sandboxing technologies like:
     // - Docker containers
     // - Firejail
     // - Virtual machines
     // - Language-specific sandboxes (e.g., PyPy sandbox, Node.js vm module)
-    
+
     try {
       // Create temporary file for code execution
-      const tempFileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const tempFileName = `${Date.now()}_${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
       const extension = this.getFileExtension(language);
-      const tempFilePath = path.join(this.executionConfig.sandboxPath, `${tempFileName}.${extension}`);
-      
+      const tempFilePath = path.join(
+        this.executionConfig.sandboxPath,
+        `${tempFileName}.${extension}`,
+      );
+
       // Write code to temporary file
       await writeFile(tempFilePath, code);
-      
+
       // Simulate code execution (placeholder)
       const result: CodeExecutionResult = {
         stdout: `[SIMULATED] Code execution for ${language}\nCode:\n${code}\n\nThis is a placeholder output.`,
@@ -471,10 +512,10 @@ export class CodeAgent extends BaseAgent {
         executionTime: Date.now() - startTime,
         memoryUsage: Math.floor(Math.random() * 50) + 10, // Simulated memory usage
       };
-      
+
       // Clean up temporary file
       await rm(tempFilePath, { force: true });
-      
+
       return result;
     } catch (error) {
       return {
@@ -494,48 +535,53 @@ export class CodeAgent extends BaseAgent {
       [SupportedLanguage.TYPESCRIPT]: 'ts',
       [SupportedLanguage.BASH]: 'sh',
     };
-    
+
     return extensions[language] || 'txt';
   }
 
-  private formatExecutionResults(results: CodeExecutionResultWithMetadata[]): string {
+  private formatExecutionResults(
+    results: CodeExecutionResultWithMetadata[],
+  ): string {
     let content = '## Code Execution Results\n\n';
-    
+
     results.forEach((result, index) => {
       content += `### Code Block ${index + 1} (${result.language})\n\n`;
-      
+
       if (result.success) {
         content += '✅ **Execution successful**\n\n';
-        
+
         if (result.stdout) {
           content += '**Output:**\n```\n' + result.stdout + '\n```\n\n';
         }
-        
+
         if (result.stderr) {
           content += '**Warnings:**\n```\n' + result.stderr + '\n```\n\n';
         }
-        
+
         content += `**Execution time:** ${result.executionTime}ms\n`;
         content += `**Memory usage:** ${result.memoryUsage}MB\n\n`;
       } else {
         content += '❌ **Execution failed**\n\n';
-        
+
         if (result.error) {
           content += '**Error:**\n```\n' + result.error + '\n```\n\n';
         }
-        
+
         if (result.stderr) {
           content += '**Error details:**\n```\n' + result.stderr + '\n```\n\n';
         }
       }
-      
+
       content += '---\n\n';
     });
-    
+
     return content;
   }
 
-  private generateAnalysisResponse(context: AgentExecutionContext, processingTime: number): AgentResponse {
+  private generateAnalysisResponse(
+    context: AgentExecutionContext,
+    processingTime: number,
+  ): AgentResponse {
     const content = `## Code Analysis
 
 I can help you with code execution and analysis. I noticed your query doesn't contain any code blocks. 
@@ -554,7 +600,9 @@ print("Hello, World!")
 
 I can execute code, analyze results, help debug issues, and provide explanations.
 
-**Query analyzed:** "${context.query.substring(0, 100)}${context.query.length > 100 ? '...' : ''}"`;
+**Query analyzed:** "${context.query.substring(0, 100)}${
+      context.query.length > 100 ? '...' : ''
+    }"`;
 
     return {
       content,
@@ -572,27 +620,30 @@ I can execute code, analyze results, help debug issues, and provide explanations
     };
   }
 
-  private calculateExecutionConfidence(results: CodeExecutionResultWithMetadata[]): number {
+  private calculateExecutionConfidence(
+    results: CodeExecutionResultWithMetadata[],
+  ): number {
     if (results.length === 0) {
       return 0.6; // Lower confidence for analysis-only responses
     }
-    
-    const successfulExecutions = results.filter(r => r.success).length;
+
+    const successfulExecutions = results.filter((r) => r.success).length;
     const successRate = successfulExecutions / results.length;
-    
+
     // Base confidence on success rate
-    let confidence = 0.5 + (successRate * 0.4);
-    
+    let confidence = 0.5 + successRate * 0.4;
+
     // Adjust based on execution characteristics
-    const avgExecutionTime = results.reduce((sum, r) => sum + (r.executionTime || 0), 0) / results.length;
-    
+    const avgExecutionTime =
+      results.reduce((sum, r) => sum + (r.executionTime || 0), 0) /
+      results.length;
+
     if (avgExecutionTime < 1000) {
       confidence += 0.1; // Quick execution is good
     }
-    
+
     return Math.max(0, Math.min(1, confidence));
   }
-
 
   /**
    * Static factory method for creating CodeAgent instances
@@ -615,11 +666,19 @@ I can execute code, analyze results, help debug issues, and provide explanations
    * @param language The language string or enum value to check
    * @returns True if the language is supported, false otherwise
    */
-  public static isLanguageSupported(language: string | SupportedLanguage): boolean {
+  public static isLanguageSupported(
+    language: string | SupportedLanguage,
+  ): boolean {
     if (typeof language === 'string') {
       // Check if the string matches any enum value
-      return Object.values(SupportedLanguage).includes(language as SupportedLanguage) ||
-             Object.values(SupportedLanguage).some(val => val.toLowerCase() === language.toLowerCase());
+      return (
+        Object.values(SupportedLanguage).includes(
+          language as SupportedLanguage,
+        ) ||
+        Object.values(SupportedLanguage).some(
+          (val) => val.toLowerCase() === language.toLowerCase(),
+        )
+      );
     }
     // If it's already a SupportedLanguage enum value
     return Object.values(SupportedLanguage).includes(language);

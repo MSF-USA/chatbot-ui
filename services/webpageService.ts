@@ -1,16 +1,13 @@
+import {
+  executeSecureRequest,
+  streamNodeResponseContent,
+  validateResponseContentType,
+} from '@/utils/app/networkSecurity';
+import { ContentValidation, HttpError } from '@/utils/app/security';
+
 import * as cheerio from 'cheerio';
 import { AbortController } from 'node-abort-controller';
 import fetch from 'node-fetch';
-
-import { 
-  HttpError, 
-  ContentValidation 
-} from '@/utils/app/security';
-import { 
-  executeSecureRequest,
-  streamNodeResponseContent,
-  validateResponseContentType 
-} from '@/utils/app/networkSecurity';
 
 // Define a set of content types that are considered unsafe or executable
 const unsafeContentTypes = new Set([
@@ -52,7 +49,7 @@ export async function fetchAndParseWebpage(
   // Validate content type and check for unsafe types
   const contentType = validateResponseContentType(response, {
     blockedTypes: unsafeContentTypes,
-    contentTypeDescription: 'webpage content'
+    contentTypeDescription: 'webpage content',
   });
 
   // Check content length before processing
@@ -81,7 +78,10 @@ export async function fetchAndParseWebpage(
         const textContent = await response.text();
 
         // Check content size after fetching
-        ContentValidation.validateContentLength(textContent.length, MAX_CONTENT_SIZE);
+        ContentValidation.validateContentLength(
+          textContent.length,
+          MAX_CONTENT_SIZE,
+        );
 
         cleanText = textContent;
       } else {
@@ -89,9 +89,12 @@ export async function fetchAndParseWebpage(
       }
     } else {
       // Since it's HTML, proceed to parse it with enhanced sanitization
-      
+
       // Stream content with size validation
-      const htmlBuffer = await streamNodeResponseContent(response.body, MAX_CONTENT_SIZE);
+      const htmlBuffer = await streamNodeResponseContent(
+        response.body,
+        MAX_CONTENT_SIZE,
+      );
       const html = htmlBuffer.toString('utf-8');
 
       // Load HTML into cheerio for parsing

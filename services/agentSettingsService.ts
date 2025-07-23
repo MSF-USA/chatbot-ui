@@ -1,6 +1,12 @@
-import { AgentType } from '@/types/agent';
-import { AgentSettings, AgentConfiguration, AgentPreferences, Settings } from '@/types/settings';
 import { getSettings, saveSettings } from '@/utils/app/settings';
+
+import { AgentType } from '@/types/agent';
+import {
+  AgentConfiguration,
+  AgentPreferences,
+  AgentSettings,
+  Settings,
+} from '@/types/settings';
 
 import { getAgentChatIntegration } from './agentChatIntegration';
 
@@ -10,11 +16,10 @@ import { getAgentChatIntegration } from './agentChatIntegration';
  */
 export class AgentSettingsService {
   private static instance: AgentSettingsService | null = null;
-  
+
   private settings: AgentSettings;
 
   private constructor() {
-    
     this.settings = this.loadAgentSettings();
     this.initializeDefaults();
   }
@@ -63,16 +68,25 @@ export class AgentSettingsService {
    * Get configuration for a specific agent type
    */
   public getAgentConfiguration(agentType: AgentType): AgentConfiguration {
-    return this.settings.agentConfigurations[agentType] || this.getDefaultAgentConfiguration(agentType);
+    return (
+      this.settings.agentConfigurations[agentType] ||
+      this.getDefaultAgentConfiguration(agentType)
+    );
   }
 
   /**
    * Update configuration for a specific agent type
    */
-  public updateAgentConfiguration(agentType: AgentType, config: Partial<AgentConfiguration>): void {
+  public updateAgentConfiguration(
+    agentType: AgentType,
+    config: Partial<AgentConfiguration>,
+  ): void {
     try {
       const currentConfig = this.getAgentConfiguration(agentType);
-      this.settings.agentConfigurations[agentType] = { ...currentConfig, ...config };
+      this.settings.agentConfigurations[agentType] = {
+        ...currentConfig,
+        ...config,
+      };
       this.saveAgentSettings();
 
       console.log('Agent configuration updated', {
@@ -102,7 +116,10 @@ export class AgentSettingsService {
    */
   public updateAgentPreferences(preferences: Partial<AgentPreferences>): void {
     try {
-      this.settings.preferences = { ...this.settings.preferences, ...preferences };
+      this.settings.preferences = {
+        ...this.settings.preferences,
+        ...preferences,
+      };
       this.saveAgentSettings();
 
       console.log('Agent preferences updated', {
@@ -131,8 +148,12 @@ export class AgentSettingsService {
       // Update enabled agent types list
       if (enabled && !this.settings.enabledAgentTypes.includes(agentType)) {
         this.settings.enabledAgentTypes.push(agentType);
-      } else if (!enabled && this.settings.enabledAgentTypes.includes(agentType)) {
-        this.settings.enabledAgentTypes = this.settings.enabledAgentTypes.filter(type => type !== agentType);
+      } else if (
+        !enabled &&
+        this.settings.enabledAgentTypes.includes(agentType)
+      ) {
+        this.settings.enabledAgentTypes =
+          this.settings.enabledAgentTypes.filter((type) => type !== agentType);
       }
 
       this.saveAgentSettings();
@@ -185,7 +206,10 @@ export class AgentSettingsService {
 
       console.log('Agent settings reset to defaults');
     } catch (error) {
-      console.error('Failed to reset agent settings to defaults', error as Error);
+      console.error(
+        'Failed to reset agent settings to defaults',
+        error as Error,
+      );
       throw error;
     }
   }
@@ -215,14 +239,14 @@ export class AgentSettingsService {
   public importSettings(exportedData: string): void {
     try {
       const data = JSON.parse(exportedData);
-      
+
       if (!data.agentSettings) {
         throw new Error('Invalid export data: missing agentSettings');
       }
 
       // Validate imported settings structure
       this.validateAgentSettings(data.agentSettings);
-      
+
       this.settings = data.agentSettings;
       this.saveAgentSettings();
       this.applySettingsToIntegration();
@@ -242,7 +266,11 @@ export class AgentSettingsService {
   /**
    * Get settings validation result
    */
-  public validateSettings(): { valid: boolean; errors: string[]; warnings: string[] } {
+  public validateSettings(): {
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+  } {
     const errors: string[] = [];
     const warnings: string[] = [];
 
@@ -252,9 +280,11 @@ export class AgentSettingsService {
         errors.push('Agent enabled setting must be a boolean');
       }
 
-      if (typeof this.settings.confidenceThreshold !== 'number' || 
-          this.settings.confidenceThreshold < 0 || 
-          this.settings.confidenceThreshold > 1) {
+      if (
+        typeof this.settings.confidenceThreshold !== 'number' ||
+        this.settings.confidenceThreshold < 0 ||
+        this.settings.confidenceThreshold > 1
+      ) {
         errors.push('Confidence threshold must be a number between 0 and 1');
       }
 
@@ -263,17 +293,27 @@ export class AgentSettingsService {
       }
 
       // Validate agent configurations
-      for (const [agentType, config] of Object.entries(this.settings.agentConfigurations)) {
+      for (const [agentType, config] of Object.entries(
+        this.settings.agentConfigurations,
+      )) {
         if (!Object.values(AgentType).includes(agentType as AgentType)) {
           warnings.push(`Unknown agent type: ${agentType}`);
         }
 
-        if (typeof config.priority !== 'number' || config.priority < 0 || config.priority > 100) {
-          errors.push(`Invalid priority for ${agentType}: must be between 0 and 100`);
+        if (
+          typeof config.priority !== 'number' ||
+          config.priority < 0 ||
+          config.priority > 100
+        ) {
+          errors.push(
+            `Invalid priority for ${agentType}: must be between 0 and 100`,
+          );
         }
 
         if (typeof config.timeout !== 'number' || config.timeout < 1000) {
-          warnings.push(`Low timeout for ${agentType}: consider increasing for better reliability`);
+          warnings.push(
+            `Low timeout for ${agentType}: consider increasing for better reliability`,
+          );
         }
       }
 
@@ -287,11 +327,16 @@ export class AgentSettingsService {
       }
 
       // Check for conflicts
-      const conflictingAgents = this.settings.preferences.preferredAgents.filter(agent =>
-        this.settings.preferences.disabledAgents.includes(agent)
-      );
+      const conflictingAgents =
+        this.settings.preferences.preferredAgents.filter((agent) =>
+          this.settings.preferences.disabledAgents.includes(agent),
+        );
       if (conflictingAgents.length > 0) {
-        warnings.push(`Agents in both preferred and disabled lists: ${conflictingAgents.join(', ')}`);
+        warnings.push(
+          `Agents in both preferred and disabled lists: ${conflictingAgents.join(
+            ', ',
+          )}`,
+        );
       }
 
       return {
@@ -302,7 +347,11 @@ export class AgentSettingsService {
     } catch (error) {
       return {
         valid: false,
-        errors: [`Validation failed: ${error instanceof Error ? error.message : String(error)}`],
+        errors: [
+          `Validation failed: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        ],
         warnings,
       };
     }
@@ -350,10 +399,13 @@ export class AgentSettingsService {
         AgentType.LOCAL_KNOWLEDGE,
         AgentType.FOUNDRY,
       ],
-      agentConfigurations: Object.values(AgentType).reduce((configs, agentType) => {
-        configs[agentType] = this.getDefaultAgentConfiguration(agentType);
-        return configs;
-      }, {} as Record<AgentType, AgentConfiguration>),
+      agentConfigurations: Object.values(AgentType).reduce(
+        (configs, agentType) => {
+          configs[agentType] = this.getDefaultAgentConfiguration(agentType);
+          return configs;
+        },
+        {} as Record<AgentType, AgentConfiguration>,
+      ),
       preferences: {
         preferredAgents: [],
         disabledAgents: [],
@@ -364,7 +416,9 @@ export class AgentSettingsService {
     };
   }
 
-  private getDefaultAgentConfiguration(agentType: AgentType): AgentConfiguration {
+  private getDefaultAgentConfiguration(
+    agentType: AgentType,
+  ): AgentConfiguration {
     const baseConfig: AgentConfiguration = {
       enabled: true,
       priority: 50,
@@ -457,7 +511,8 @@ export class AgentSettingsService {
 
     for (const agentType of Object.values(AgentType)) {
       if (!this.settings.agentConfigurations[agentType]) {
-        this.settings.agentConfigurations[agentType] = this.getDefaultAgentConfiguration(agentType);
+        this.settings.agentConfigurations[agentType] =
+          this.getDefaultAgentConfiguration(agentType);
         needsSave = true;
       }
     }
@@ -488,7 +543,14 @@ export class AgentSettingsService {
       throw new Error('Invalid settings object');
     }
 
-    const requiredFields = ['enabled', 'confidenceThreshold', 'fallbackEnabled', 'enabledAgentTypes', 'agentConfigurations', 'preferences'];
+    const requiredFields = [
+      'enabled',
+      'confidenceThreshold',
+      'fallbackEnabled',
+      'enabledAgentTypes',
+      'agentConfigurations',
+      'preferences',
+    ];
     for (const field of requiredFields) {
       if (!(field in settings)) {
         throw new Error(`Missing required field: ${field}`);
@@ -523,7 +585,9 @@ export function updateAgentSettings(settings: Partial<AgentSettings>): void {
 /**
  * Convenience function to get agent configuration
  */
-export function getAgentConfiguration(agentType: AgentType): AgentConfiguration {
+export function getAgentConfiguration(
+  agentType: AgentType,
+): AgentConfiguration {
   const service = getAgentSettingsService();
   return service.getAgentConfiguration(agentType);
 }

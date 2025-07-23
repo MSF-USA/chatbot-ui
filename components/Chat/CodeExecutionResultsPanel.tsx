@@ -1,26 +1,28 @@
-import { 
-  IconCode, 
-  IconClock, 
-  IconCpu, 
-  IconFileDownload, 
-  IconTerminal,
+import {
   IconAlertTriangle,
   IconCheck,
-  IconX,
+  IconClock,
+  IconCode,
+  IconCpu,
+  IconFileDownload,
+  IconFileText,
   IconPlayerPlay,
-  IconFileText
+  IconTerminal,
+  IconX,
 } from '@tabler/icons-react';
-import { FC, useState, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
+
 import { useTranslation } from 'next-i18next';
 
 import { AgentResponse } from '@/types/agent';
-import { 
-  CodeExecutionResult, 
-  CodeExecutionOutput, 
-  ExecutionStatus, 
+import {
+  CodeExecutionOutput,
+  CodeExecutionResult,
+  ExecutionFile,
+  ExecutionStatus,
   ProgrammingLanguage,
-  ExecutionFile 
 } from '@/types/codeInterpreter';
+
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 
 interface CodeExecutionResultsPanelProps {
@@ -40,21 +42,41 @@ interface ExecutionFileCardProps {
 /**
  * Individual execution output card
  */
-const ExecutionOutputCard: FC<ExecutionOutputCardProps> = ({ output, index }) => {
+const ExecutionOutputCard: FC<ExecutionOutputCardProps> = ({
+  output,
+  index,
+}) => {
   const { t } = useTranslation('agents');
-  
+
   const getOutputIcon = (type: string) => {
     switch (type) {
       case 'stdout':
-        return <IconTerminal size={14} className="text-green-600 dark:text-green-400" />;
+        return (
+          <IconTerminal
+            size={14}
+            className="text-green-600 dark:text-green-400"
+          />
+        );
       case 'stderr':
-        return <IconAlertTriangle size={14} className="text-red-600 dark:text-red-400" />;
+        return (
+          <IconAlertTriangle
+            size={14}
+            className="text-red-600 dark:text-red-400"
+          />
+        );
       case 'return_value':
-        return <IconCheck size={14} className="text-blue-600 dark:text-blue-400" />;
+        return (
+          <IconCheck size={14} className="text-blue-600 dark:text-blue-400" />
+        );
       case 'exception':
         return <IconX size={14} className="text-red-600 dark:text-red-400" />;
       default:
-        return <IconTerminal size={14} className="text-gray-600 dark:text-gray-400" />;
+        return (
+          <IconTerminal
+            size={14}
+            className="text-gray-600 dark:text-gray-400"
+          />
+        );
     }
   };
 
@@ -89,16 +111,22 @@ const ExecutionOutputCard: FC<ExecutionOutputCardProps> = ({ output, index }) =>
   };
 
   return (
-    <div className={`border rounded-lg ${getOutputBorderColor(output.type)} ${getOutputBgColor(output.type)}`}>
+    <div
+      className={`border rounded-lg ${getOutputBorderColor(
+        output.type,
+      )} ${getOutputBgColor(output.type)}`}
+    >
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">
           {getOutputIcon(output.type)}
           <span className="text-sm font-medium capitalize">
-            {t(`codeInterpreter.resultsPanel.outputTypes.${output.type}`, { defaultValue: output.type.replace('_', ' ') })}
+            {t(`codeInterpreter.resultsPanel.outputTypes.${output.type}`, {
+              defaultValue: output.type.replace('_', ' '),
+            })}
           </span>
         </div>
-        
+
         {output.metadata?.timestamp && (
           <span className="text-xs text-gray-500 dark:text-gray-400">
             {new Date(output.metadata.timestamp).toLocaleTimeString()}
@@ -113,25 +141,27 @@ const ExecutionOutputCard: FC<ExecutionOutputCardProps> = ({ output, index }) =>
             {output.output || output.error}
           </pre>
         ) : output.mimeType === 'text/html' ? (
-          <div 
+          <div
             className="prose dark:prose-invert max-w-none"
             dangerouslySetInnerHTML={{ __html: output.output }}
           />
         ) : output.mimeType?.startsWith('image/') ? (
-          <img 
+          <img
             src={`data:${output.mimeType};base64,${output.data}`}
             alt="Execution output"
             className="max-w-full h-auto rounded border"
           />
         ) : (
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            {t('codeInterpreter.resultsPanel.unsupportedOutput')} ({output.mimeType})
+            {t('codeInterpreter.resultsPanel.unsupportedOutput')} (
+            {output.mimeType})
           </div>
         )}
-        
+
         {output.metadata?.size && (
           <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-            {t('codeInterpreter.resultsPanel.outputSize')}: {(output.metadata.size / 1024).toFixed(2)} KB
+            {t('codeInterpreter.resultsPanel.outputSize')}:{' '}
+            {(output.metadata.size / 1024).toFixed(2)} KB
           </div>
         )}
       </div>
@@ -142,7 +172,10 @@ const ExecutionOutputCard: FC<ExecutionOutputCardProps> = ({ output, index }) =>
 /**
  * Execution file card for downloads
  */
-const ExecutionFileCard: FC<ExecutionFileCardProps> = ({ file, onDownload }) => {
+const ExecutionFileCard: FC<ExecutionFileCardProps> = ({
+  file,
+  onDownload,
+}) => {
   const { t } = useTranslation('agents');
 
   const formatFileSize = (bytes: number) => {
@@ -156,13 +189,15 @@ const ExecutionFileCard: FC<ExecutionFileCardProps> = ({ file, onDownload }) => 
       <div className="flex items-center space-x-3">
         <IconFileText size={16} className="text-gray-600 dark:text-gray-400" />
         <div>
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{file.name}</p>
+          <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            {file.name}
+          </p>
           <p className="text-xs text-gray-500 dark:text-gray-400">
             {formatFileSize(file.size)} • {file.mimeType}
           </p>
         </div>
       </div>
-      
+
       <button
         onClick={() => onDownload(file)}
         className="flex items-center space-x-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300"
@@ -178,21 +213,28 @@ const ExecutionFileCard: FC<ExecutionFileCardProps> = ({ file, onDownload }) => 
  * Code execution results panel component
  * Displays code execution output, errors, logs, and performance metrics
  */
-export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ agentResponse }) => {
+export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({
+  agentResponse,
+}) => {
   const { t } = useTranslation('agents');
-  const [activeTab, setActiveTab] = useState<'output' | 'code' | 'files'>('output');
+  const [activeTab, setActiveTab] = useState<'output' | 'code' | 'files'>(
+    'output',
+  );
 
   // Extract code execution data from agent response
   const codeExecutionData: CodeExecutionResult | null = useMemo(() => {
     try {
       // Check if agent metadata contains code execution results
       if (agentResponse.metadata?.agentMetadata?.codeExecutionResult) {
-        return agentResponse.metadata.agentMetadata.codeExecutionResult as CodeExecutionResult;
+        return agentResponse.metadata.agentMetadata
+          .codeExecutionResult as CodeExecutionResult;
       }
       // Fallback: check if toolResults contains code execution data
       if (agentResponse.metadata?.toolResults) {
         const codeResult = agentResponse.metadata.toolResults.find(
-          (result: any) => result.type === 'code_execution' || result.toolName === 'code_interpreter'
+          (result: any) =>
+            result.type === 'code_execution' ||
+            result.toolName === 'code_interpreter',
         );
         if (codeResult?.data) {
           return codeResult.data as CodeExecutionResult;
@@ -210,7 +252,7 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
       const content = file.isBase64 ? atob(file.content) : file.content;
       const blob = new Blob([content], { type: file.mimeType });
       const url = URL.createObjectURL(blob);
-      
+
       const a = document.createElement('a');
       a.href = url;
       a.download = file.name;
@@ -250,16 +292,28 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
   const getStatusIcon = (status: ExecutionStatus) => {
     switch (status) {
       case ExecutionStatus.SUCCESS:
-        return <IconCheck size={16} className="text-green-600 dark:text-green-400" />;
+        return (
+          <IconCheck size={16} className="text-green-600 dark:text-green-400" />
+        );
       case ExecutionStatus.ERROR:
       case ExecutionStatus.SECURITY_VIOLATION:
       case ExecutionStatus.INVALID_CODE:
         return <IconX size={16} className="text-red-600 dark:text-red-400" />;
       case ExecutionStatus.TIMEOUT:
       case ExecutionStatus.MEMORY_LIMIT:
-        return <IconAlertTriangle size={16} className="text-yellow-600 dark:text-yellow-400" />;
+        return (
+          <IconAlertTriangle
+            size={16}
+            className="text-yellow-600 dark:text-yellow-400"
+          />
+        );
       default:
-        return <IconPlayerPlay size={16} className="text-gray-600 dark:text-gray-400" />;
+        return (
+          <IconPlayerPlay
+            size={16}
+            className="text-gray-600 dark:text-gray-400"
+          />
+        );
     }
   };
 
@@ -274,10 +328,15 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
           </h3>
           <div className="flex items-center space-x-1">
             {getStatusIcon(codeExecutionData.status)}
-            <span className={`text-xs ${getStatusColor(codeExecutionData.status)}`}>
-              {t(`codeInterpreter.resultsPanel.status.${codeExecutionData.status}`, { 
-                defaultValue: codeExecutionData.status 
-              })}
+            <span
+              className={`text-xs ${getStatusColor(codeExecutionData.status)}`}
+            >
+              {t(
+                `codeInterpreter.resultsPanel.status.${codeExecutionData.status}`,
+                {
+                  defaultValue: codeExecutionData.status,
+                },
+              )}
             </span>
           </div>
         </div>
@@ -292,28 +351,35 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
         <div className="flex items-center space-x-2 text-xs">
           <IconClock size={14} className="text-blue-600 dark:text-blue-400" />
           <span className="text-gray-600 dark:text-gray-400">
-            {t('codeInterpreter.resultsPanel.executionTime')}: {codeExecutionData.stats.executionTime}ms
+            {t('codeInterpreter.resultsPanel.executionTime')}:{' '}
+            {codeExecutionData.stats.executionTime}ms
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-2 text-xs">
           <IconCpu size={14} className="text-purple-600 dark:text-purple-400" />
           <span className="text-gray-600 dark:text-gray-400">
-            {t('codeInterpreter.resultsPanel.memoryUsage')}: {codeExecutionData.stats.memoryUsage.toFixed(1)}MB
+            {t('codeInterpreter.resultsPanel.memoryUsage')}:{' '}
+            {codeExecutionData.stats.memoryUsage.toFixed(1)}MB
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-2 text-xs">
           <IconCpu size={14} className="text-orange-600 dark:text-orange-400" />
           <span className="text-gray-600 dark:text-gray-400">
-            {t('codeInterpreter.resultsPanel.cpuUsage')}: {codeExecutionData.stats.cpuUsage.toFixed(1)}%
+            {t('codeInterpreter.resultsPanel.cpuUsage')}:{' '}
+            {codeExecutionData.stats.cpuUsage.toFixed(1)}%
           </span>
         </div>
-        
+
         <div className="flex items-center space-x-2 text-xs">
-          <IconTerminal size={14} className="text-gray-600 dark:text-gray-400" />
+          <IconTerminal
+            size={14}
+            className="text-gray-600 dark:text-gray-400"
+          />
           <span className="text-gray-600 dark:text-gray-400">
-            {t('codeInterpreter.resultsPanel.outputLines')}: {codeExecutionData.stats.outputLines}
+            {t('codeInterpreter.resultsPanel.outputLines')}:{' '}
+            {codeExecutionData.stats.outputLines}
           </span>
         </div>
       </div>
@@ -328,9 +394,10 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
               : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
           }`}
         >
-          {t('codeInterpreter.resultsPanel.tabs.output')} ({codeExecutionData.outputs.length})
+          {t('codeInterpreter.resultsPanel.tabs.output')} (
+          {codeExecutionData.outputs.length})
         </button>
-        
+
         <button
           onClick={() => setActiveTab('code')}
           className={`px-3 py-2 text-sm font-medium rounded-t-lg ${
@@ -341,7 +408,7 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
         >
           {t('codeInterpreter.resultsPanel.tabs.code')}
         </button>
-        
+
         {codeExecutionData.files && codeExecutionData.files.length > 0 && (
           <button
             onClick={() => setActiveTab('files')}
@@ -351,7 +418,8 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
             }`}
           >
-            {t('codeInterpreter.resultsPanel.tabs.files')} ({codeExecutionData.files.length})
+            {t('codeInterpreter.resultsPanel.tabs.files')} (
+            {codeExecutionData.files.length})
           </button>
         )}
       </div>
@@ -362,7 +430,11 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
           <div className="space-y-3">
             {codeExecutionData.outputs.length > 0 ? (
               codeExecutionData.outputs.map((output, index) => (
-                <ExecutionOutputCard key={index} output={output} index={index} />
+                <ExecutionOutputCard
+                  key={index}
+                  output={output}
+                  index={index}
+                />
               ))
             ) : (
               <div className="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -377,7 +449,8 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
           <div className="border border-gray-200 dark:border-gray-700 rounded-lg">
             <div className="p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
               <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('codeInterpreter.resultsPanel.executedCode')} ({codeExecutionData.language})
+                {t('codeInterpreter.resultsPanel.executedCode')} (
+                {codeExecutionData.language})
               </span>
             </div>
             <div className="p-0">
@@ -393,9 +466,9 @@ export const CodeExecutionResultsPanel: FC<CodeExecutionResultsPanelProps> = ({ 
           <div className="space-y-3">
             {codeExecutionData.files.length > 0 ? (
               codeExecutionData.files.map((file, index) => (
-                <ExecutionFileCard 
-                  key={index} 
-                  file={file} 
+                <ExecutionFileCard
+                  key={index}
+                  file={file}
                   onDownload={handleFileDownload}
                 />
               ))

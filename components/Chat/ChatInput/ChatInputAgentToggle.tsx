@@ -1,4 +1,5 @@
 import { IconRobot, IconRobotOff } from '@tabler/icons-react';
+
 import { useTranslation } from 'next-i18next';
 
 interface ChatInputAgentToggleProps {
@@ -19,8 +20,8 @@ export const ChatInputAgentToggle = ({
       className={`pb-2 flex h-[40px] w-[40px] items-center justify-center rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200 ${
         disabled ? 'cursor-not-allowed opacity-30' : ''
       } ${
-        enabled 
-          ? 'bg-transparent text-blue-600 dark:text-blue-400' 
+        enabled
+          ? 'bg-transparent text-blue-600 dark:text-blue-400'
           : 'hover:opacity-100'
       }`}
       onClick={onToggle}

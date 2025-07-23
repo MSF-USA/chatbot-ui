@@ -1,20 +1,18 @@
 import { Session } from 'next-auth';
-import { AzureOpenAI } from 'openai';
 
-import { 
-  AgentType, 
-  AgentExecutionRequest, 
-  AgentExecutionResult, 
-  AgentExecutionContext 
+import {
+  AgentExecutionContext,
+  AgentExecutionRequest,
+  AgentExecutionResult,
+  AgentType,
 } from '@/types/agent';
-import { 
-  IntentAnalysisResult 
-} from '@/types/intentAnalysis';
 import { ChatBody } from '@/types/chat';
+import { IntentAnalysisResult } from '@/types/intentAnalysis';
 
 import { getAgentFactory } from './agentFactory';
 import { getAgentRegistry } from './agentRegistry';
 
+import { AzureOpenAI } from 'openai';
 
 /**
  * Performance metrics for tracking
@@ -110,7 +108,7 @@ export interface BatchExecutionResult {
  */
 export class AgentPerformanceOptimizer {
   private static instance: AgentPerformanceOptimizer | null = null;
-  
+
   private performanceCache: Map<string, any>;
   private requestQueue: Map<AgentType, AgentExecutionRequest[]>;
   private batchTimers: Map<AgentType, NodeJS.Timeout>;
@@ -120,7 +118,6 @@ export class AgentPerformanceOptimizer {
   private resourceMonitor: NodeJS.Timeout | null = null;
 
   private constructor() {
-    
     this.performanceCache = new Map();
     this.requestQueue = new Map();
     this.batchTimers = new Map();
@@ -146,7 +143,7 @@ export class AgentPerformanceOptimizer {
   public async optimizeExecution(
     request: AgentExecutionRequest,
     openai: AzureOpenAI,
-    user: Session['user']
+    user: Session['user'],
   ): Promise<AgentExecutionResult> {
     const startTime = Date.now();
     const requestId = this.generateRequestId(request);
@@ -163,14 +160,21 @@ export class AgentPerformanceOptimizer {
         const cachedResult = await this.checkCache(request);
         if (cachedResult) {
           this.recordCacheHit(request.agentType);
-          return this.createCachedExecutionResult(cachedResult, requestId, startTime);
+          return this.createCachedExecutionResult(
+            cachedResult,
+            requestId,
+            startTime,
+          );
         }
       }
 
       // 2. Check for duplicate in-progress requests
       const duplicateRequest = this.checkDuplicateRequests(request);
       if (duplicateRequest) {
-        console.log('Deduplicating request', { requestId, agentType: request.agentType });
+        console.log('Deduplicating request', {
+          requestId,
+          agentType: request.agentType,
+        });
         return await duplicateRequest;
       }
 
@@ -180,7 +184,12 @@ export class AgentPerformanceOptimizer {
       }
 
       // 4. Execute with optimizations
-      const executionPromise = this.executeWithOptimizations(request, openai, user, requestId);
+      const executionPromise = this.executeWithOptimizations(
+        request,
+        openai,
+        user,
+        requestId,
+      );
       this.requestInProgress.set(this.getRequestKey(request), executionPromise);
 
       const result = await executionPromise;
@@ -191,7 +200,11 @@ export class AgentPerformanceOptimizer {
       }
 
       // 6. Update performance metrics
-      this.updatePerformanceMetrics(request.agentType, Date.now() - startTime, true);
+      this.updatePerformanceMetrics(
+        request.agentType,
+        Date.now() - startTime,
+        true,
+      );
 
       console.log('Performance optimization completed', {
         agentType: request.agentType,
@@ -202,8 +215,12 @@ export class AgentPerformanceOptimizer {
 
       return result;
     } catch (error) {
-      this.updatePerformanceMetrics(request.agentType, Date.now() - startTime, false);
-      
+      this.updatePerformanceMetrics(
+        request.agentType,
+        Date.now() - startTime,
+        false,
+      );
+
       console.error('Performance optimization failed', error as Error, {
         agentType: request.agentType,
         requestId,
@@ -223,7 +240,7 @@ export class AgentPerformanceOptimizer {
     requests: AgentExecutionRequest[],
     openai: AzureOpenAI,
     user: Session['user'],
-    maxConcurrency: number = this.optimizationConfig.maxConcurrentRequests
+    maxConcurrency: number = this.optimizationConfig.maxConcurrentRequests,
   ): Promise<AgentExecutionResult[]> {
     const startTime = Date.now();
 
@@ -238,13 +255,20 @@ export class AgentPerformanceOptimizer {
       const results: AgentExecutionResult[] = [];
 
       // Execute groups in parallel with concurrency limit
-      const groupPromises = Array.from(requestGroups.entries()).map(async ([agentType, groupRequests]) => {
-        const batchResults = await this.executeBatch(groupRequests, openai, user, maxConcurrency);
-        return batchResults.results;
-      });
+      const groupPromises = Array.from(requestGroups.entries()).map(
+        async ([agentType, groupRequests]) => {
+          const batchResults = await this.executeBatch(
+            groupRequests,
+            openai,
+            user,
+            maxConcurrency,
+          );
+          return batchResults.results;
+        },
+      );
 
       const groupResults = await Promise.all(groupPromises);
-      
+
       // Flatten results maintaining original order
       for (const groupResult of groupResults) {
         results.push(...groupResult);
@@ -254,7 +278,7 @@ export class AgentPerformanceOptimizer {
 
       console.log('Parallel execution completed', {
         requestCount: requests.length,
-        successCount: results.filter(r => r.response.success).length,
+        successCount: results.filter((r) => r.response.success).length,
         totalTime,
         averageTime: totalTime / requests.length,
       });
@@ -294,7 +318,9 @@ export class AgentPerformanceOptimizer {
           id: `low-success-${agentType}`,
           type: 'fallback',
           priority: 'high',
-          description: `${agentType} has low success rate (${(metrics.successRate * 100).toFixed(1)}%). Consider fallback optimization.`,
+          description: `${agentType} has low success rate (${(
+            metrics.successRate * 100
+          ).toFixed(1)}%). Consider fallback optimization.`,
           expectedImpact: 25,
           implementation: 'Implement more aggressive fallback strategies',
           riskLevel: 'medium',
@@ -320,9 +346,12 @@ export class AgentPerformanceOptimizer {
           id: `low-cache-hit-${agentType}`,
           type: 'cache',
           priority: 'medium',
-          description: `${agentType} has low cache hit rate (${(metrics.cacheHitRate * 100).toFixed(1)}%). Optimize caching strategy.`,
+          description: `${agentType} has low cache hit rate (${(
+            metrics.cacheHitRate * 100
+          ).toFixed(1)}%). Optimize caching strategy.`,
           expectedImpact: 35,
-          implementation: 'Increase cache size and improve cache key generation',
+          implementation:
+            'Increase cache size and improve cache key generation',
           riskLevel: 'low',
           agentType,
         });
@@ -336,7 +365,8 @@ export class AgentPerformanceOptimizer {
         id: 'system-wide-optimization',
         type: 'batch',
         priority: 'high',
-        description: 'System-wide performance is below optimal. Consider request batching.',
+        description:
+          'System-wide performance is below optimal. Consider request batching.',
         expectedImpact: 50,
         implementation: 'Enable request batching and reduce batch timeouts',
         riskLevel: 'low',
@@ -352,11 +382,16 @@ export class AgentPerformanceOptimizer {
   /**
    * Get current performance metrics
    */
-  public getPerformanceMetrics(agentType?: AgentType): PerformanceMetrics | PerformanceMetrics[] {
+  public getPerformanceMetrics(
+    agentType?: AgentType,
+  ): PerformanceMetrics | PerformanceMetrics[] {
     if (agentType) {
-      return this.performanceMetrics.get(agentType) || this.createEmptyMetrics(agentType);
+      return (
+        this.performanceMetrics.get(agentType) ||
+        this.createEmptyMetrics(agentType)
+      );
     }
-    
+
     return Array.from(this.performanceMetrics.values());
   }
 
@@ -365,7 +400,7 @@ export class AgentPerformanceOptimizer {
    */
   public configure(config: Partial<OptimizationConfig>): void {
     this.optimizationConfig = { ...this.optimizationConfig, ...config };
-    
+
     console.log('Performance optimization configured', {
       config: this.optimizationConfig,
     });
@@ -382,13 +417,14 @@ export class AgentPerformanceOptimizer {
    */
   public clearCache(agentType?: AgentType): void {
     if (agentType) {
-      const keysToDelete = Array.from(this.performanceCache.keys())
-        .filter(key => key.startsWith(`${agentType}:`));
-      
+      const keysToDelete = Array.from(this.performanceCache.keys()).filter(
+        (key) => key.startsWith(`${agentType}:`),
+      );
+
       for (const key of keysToDelete) {
         this.performanceCache.delete(key);
       }
-      
+
       console.log('Agent-specific cache cleared', { agentType });
     } else {
       this.performanceCache.clear();
@@ -406,17 +442,25 @@ export class AgentPerformanceOptimizer {
     memoryUsage: number;
     topKeys: string[];
   } {
-    const totalRequests = Array.from(this.performanceMetrics.values())
-      .reduce((sum, metrics) => sum + (metrics.throughput * 60 || 0), 0);
-    
-    const totalCacheHits = Array.from(this.performanceMetrics.values())
-      .reduce((sum, metrics) => sum + (metrics.cacheHitRate * (metrics.throughput * 60 || 0)), 0);
-    
+    const totalRequests = Array.from(this.performanceMetrics.values()).reduce(
+      (sum, metrics) => sum + (metrics.throughput * 60 || 0),
+      0,
+    );
+
+    const totalCacheHits = Array.from(this.performanceMetrics.values()).reduce(
+      (sum, metrics) =>
+        sum + metrics.cacheHitRate * (metrics.throughput * 60 || 0),
+      0,
+    );
+
     const hitRate = totalRequests > 0 ? totalCacheHits / totalRequests : 0;
-    
+
     // Estimate memory usage (rough calculation)
-    const memoryUsage = Array.from(this.performanceCache.values())
-      .reduce((sum, value) => sum + JSON.stringify(value).length, 0) / 1024; // KB
+    const memoryUsage =
+      Array.from(this.performanceCache.values()).reduce(
+        (sum, value) => sum + JSON.stringify(value).length,
+        0,
+      ) / 1024; // KB
 
     // Get most frequently accessed cache keys
     const topKeys = Array.from(this.performanceCache.keys()).slice(0, 10);
@@ -438,63 +482,74 @@ export class AgentPerformanceOptimizer {
     request: AgentExecutionRequest,
     openai: AzureOpenAI,
     user: Session['user'],
-    requestId: string
+    requestId: string,
   ): Promise<AgentExecutionResult> {
     const factory = getAgentFactory();
-    
+
     // Apply request optimizations
     const optimizedRequest = this.optimizeRequest(request);
-    
+
     // Execute with factory
     const result = await factory.executeRequest(optimizedRequest);
-    
+
     // Apply response optimizations
     const optimizedResult = this.optimizeResponse(result, requestId);
-    
+
     return optimizedResult;
   }
 
-  private optimizeRequest(request: AgentExecutionRequest): AgentExecutionRequest {
+  private optimizeRequest(
+    request: AgentExecutionRequest,
+  ): AgentExecutionRequest {
     // Request-level optimizations
     const optimized = { ...request };
-    
+
     // Optimize timeout based on historical performance
     const metrics = this.performanceMetrics.get(request.agentType);
     if (metrics) {
       const recommendedTimeout = Math.max(
         metrics.averageResponseTime * 2,
-        request.config?.timeout || 30000
+        request.config?.timeout || 30000,
       );
       optimized.config = {
         ...optimized.config,
         timeout: recommendedTimeout,
       };
     }
-    
+
     // Optimize parameters based on agent type
     switch (request.agentType) {
       case AgentType.WEB_SEARCH:
         optimized.context.context = {
           ...optimized.context.context,
-          maxResults: Math.min((optimized.context.context as any)?.maxResults || 10, 5), // Limit for performance
+          maxResults: Math.min(
+            (optimized.context.context as any)?.maxResults || 10,
+            5,
+          ), // Limit for performance
         };
         break;
-        
+
       case AgentType.CODE_INTERPRETER:
         optimized.context.context = {
           ...optimized.context.context,
-          memoryLimit: Math.min((optimized.context.context as any)?.memoryLimit || 512, 256), // Limit memory
+          memoryLimit: Math.min(
+            (optimized.context.context as any)?.memoryLimit || 512,
+            256,
+          ), // Limit memory
         };
         break;
     }
-    
+
     return optimized;
   }
 
-  private optimizeResponse(result: AgentExecutionResult, requestId: string): AgentExecutionResult {
+  private optimizeResponse(
+    result: AgentExecutionResult,
+    requestId: string,
+  ): AgentExecutionResult {
     // Response-level optimizations
     const optimized = { ...result };
-    
+
     // Add performance metadata
     optimized.response.metadata = {
       ...optimized.response.metadata,
@@ -505,36 +560,44 @@ export class AgentPerformanceOptimizer {
         cacheStrategy: this.getCacheStrategy(result.request.agentType),
       },
     };
-    
+
     return optimized;
   }
 
-  private async checkCache(request: AgentExecutionRequest): Promise<AgentExecutionResult | null> {
+  private async checkCache(
+    request: AgentExecutionRequest,
+  ): Promise<AgentExecutionResult | null> {
     const cacheKey = this.generateCacheKey(request);
     const cached = this.performanceCache.get(cacheKey);
-    
-    if (cached && Date.now() - cached.timestamp < this.optimizationConfig.cacheTTL) {
+
+    if (
+      cached &&
+      Date.now() - cached.timestamp < this.optimizationConfig.cacheTTL
+    ) {
       console.log('Cache hit', {
         agentType: request.agentType,
         cacheKey: cacheKey.substring(0, 50),
       });
-      
+
       return cached.result;
     }
-    
+
     return null;
   }
 
-  private async cacheResult(request: AgentExecutionRequest, result: AgentExecutionResult): Promise<void> {
+  private async cacheResult(
+    request: AgentExecutionRequest,
+    result: AgentExecutionResult,
+  ): Promise<void> {
     const cacheKey = this.generateCacheKey(request);
-    
+
     // Only cache successful results
     if (result.response.success) {
       this.performanceCache.set(cacheKey, {
         result,
         timestamp: Date.now(),
       });
-      
+
       // Implement cache size limit
       if (this.performanceCache.size > 1000) {
         const oldestKey = this.performanceCache.keys().next().value;
@@ -543,7 +606,9 @@ export class AgentPerformanceOptimizer {
     }
   }
 
-  private checkDuplicateRequests(request: AgentExecutionRequest): Promise<AgentExecutionResult> | null {
+  private checkDuplicateRequests(
+    request: AgentExecutionRequest,
+  ): Promise<AgentExecutionResult> | null {
     const requestKey = this.getRequestKey(request);
     return this.requestInProgress.get(requestKey) || null;
   }
@@ -557,24 +622,24 @@ export class AgentPerformanceOptimizer {
   private async addToBatch(
     request: AgentExecutionRequest,
     openai: AzureOpenAI,
-    user: Session['user']
+    user: Session['user'],
   ): Promise<AgentExecutionResult> {
     if (!this.requestQueue.has(request.agentType)) {
       this.requestQueue.set(request.agentType, []);
     }
-    
+
     const queue = this.requestQueue.get(request.agentType)!;
     queue.push(request);
-    
+
     // Set up batch timer if not already set
     if (!this.batchTimers.has(request.agentType)) {
       const timer = setTimeout(() => {
         this.processBatch(request.agentType, openai, user);
       }, 100); // 100ms batch window
-      
+
       this.batchTimers.set(request.agentType, timer);
     }
-    
+
     // If batch is full, process immediately
     if (queue.length >= this.optimizationConfig.batchSize) {
       if (this.batchTimers.has(request.agentType)) {
@@ -583,12 +648,12 @@ export class AgentPerformanceOptimizer {
       }
       await this.processBatch(request.agentType, openai, user);
     }
-    
+
     // Return a promise that will be resolved when the batch is processed
     return new Promise((resolve, reject) => {
       const originalResolve = (request.context.context as any)?.resolve;
       const originalReject = (request.context.context as any)?.reject;
-      
+
       (request.context.context as any) = {
         ...(request.context.context as any),
         resolve,
@@ -600,26 +665,26 @@ export class AgentPerformanceOptimizer {
   private async processBatch(
     agentType: AgentType,
     openai: AzureOpenAI,
-    user: Session['user']
+    user: Session['user'],
   ): Promise<void> {
     const queue = this.requestQueue.get(agentType);
     if (!queue || queue.length === 0) return;
-    
+
     console.log('Processing batch', {
       agentType,
       batchSize: queue.length,
     });
-    
+
     // Clear the queue and timer
     this.requestQueue.set(agentType, []);
     if (this.batchTimers.has(agentType)) {
       clearTimeout(this.batchTimers.get(agentType)!);
       this.batchTimers.delete(agentType);
     }
-    
+
     try {
       const batchResult = await this.executeBatch(queue, openai, user);
-      
+
       // Resolve individual request promises
       batchResult.results.forEach((result, index) => {
         const request = queue[index];
@@ -629,7 +694,7 @@ export class AgentPerformanceOptimizer {
       });
     } catch (error) {
       // Reject all individual request promises
-      queue.forEach(request => {
+      queue.forEach((request) => {
         if ((request.context.context as any)?.reject) {
           (request.context.context as any).reject(error);
         }
@@ -641,21 +706,26 @@ export class AgentPerformanceOptimizer {
     requests: AgentExecutionRequest[],
     openai: AzureOpenAI,
     user: Session['user'],
-    maxConcurrency: number = this.optimizationConfig.maxConcurrentRequests
+    maxConcurrency: number = this.optimizationConfig.maxConcurrentRequests,
   ): Promise<BatchExecutionResult> {
     const startTime = Date.now();
-    
+
     // Split into chunks based on concurrency limit
     const chunks = this.chunkArray(requests, maxConcurrency);
     const allResults: AgentExecutionResult[] = [];
-    
+
     for (const chunk of chunks) {
-      const chunkPromises = chunk.map(request => 
-        this.executeWithOptimizations(request, openai, user, this.generateRequestId(request))
+      const chunkPromises = chunk.map((request) =>
+        this.executeWithOptimizations(
+          request,
+          openai,
+          user,
+          this.generateRequestId(request),
+        ),
       );
-      
+
       const chunkResults = await Promise.allSettled(chunkPromises);
-      
+
       // Convert settled results to execution results
       const processedResults = chunkResults.map((settled, index) => {
         if (settled.status === 'fulfilled') {
@@ -679,13 +749,13 @@ export class AgentPerformanceOptimizer {
           } as AgentExecutionResult;
         }
       });
-      
+
       allResults.push(...processedResults);
     }
-    
+
     const totalTime = Date.now() - startTime;
-    const successCount = allResults.filter(r => r.response.success).length;
-    
+    const successCount = allResults.filter((r) => r.response.success).length;
+
     return {
       results: allResults,
       totalTime,
@@ -696,16 +766,18 @@ export class AgentPerformanceOptimizer {
     };
   }
 
-  private groupRequestsByType(requests: AgentExecutionRequest[]): Map<AgentType, AgentExecutionRequest[]> {
+  private groupRequestsByType(
+    requests: AgentExecutionRequest[],
+  ): Map<AgentType, AgentExecutionRequest[]> {
     const groups = new Map<AgentType, AgentExecutionRequest[]>();
-    
+
     for (const request of requests) {
       if (!groups.has(request.agentType)) {
         groups.set(request.agentType, []);
       }
       groups.get(request.agentType)!.push(request);
     }
-    
+
     return groups;
   }
 
@@ -717,34 +789,46 @@ export class AgentPerformanceOptimizer {
     return chunks;
   }
 
-  private updatePerformanceMetrics(agentType: AgentType, responseTime: number, success: boolean): void {
+  private updatePerformanceMetrics(
+    agentType: AgentType,
+    responseTime: number,
+    success: boolean,
+  ): void {
     if (!this.performanceMetrics.has(agentType)) {
-      this.performanceMetrics.set(agentType, this.createEmptyMetrics(agentType));
+      this.performanceMetrics.set(
+        agentType,
+        this.createEmptyMetrics(agentType),
+      );
     }
-    
+
     const metrics = this.performanceMetrics.get(agentType)!;
-    
+
     // Update moving averages (simple approach)
     const alpha = 0.1; // Smoothing factor
-    metrics.averageResponseTime = metrics.averageResponseTime * (1 - alpha) + responseTime * alpha;
-    
+    metrics.averageResponseTime =
+      metrics.averageResponseTime * (1 - alpha) + responseTime * alpha;
+
     // Update success rate
-    const totalRequests = (metrics.throughput * 60) || 1; // Estimate from throughput
-    const successfulRequests = totalRequests * metrics.successRate + (success ? 1 : 0);
+    const totalRequests = metrics.throughput * 60 || 1; // Estimate from throughput
+    const successfulRequests =
+      totalRequests * metrics.successRate + (success ? 1 : 0);
     metrics.successRate = successfulRequests / (totalRequests + 1);
-    
+
     // Update error rate
     metrics.errorRate = 1 - metrics.successRate;
-    
+
     // Update timestamp
     metrics.timestamp = new Date();
   }
 
   private recordCacheHit(agentType: AgentType): void {
     if (!this.performanceMetrics.has(agentType)) {
-      this.performanceMetrics.set(agentType, this.createEmptyMetrics(agentType));
+      this.performanceMetrics.set(
+        agentType,
+        this.createEmptyMetrics(agentType),
+      );
     }
-    
+
     const metrics = this.performanceMetrics.get(agentType)!;
     const alpha = 0.1;
     metrics.cacheHitRate = metrics.cacheHitRate * (1 - alpha) + 1 * alpha;
@@ -774,18 +858,26 @@ export class AgentPerformanceOptimizer {
     if (allMetrics.length === 0) {
       return this.createEmptyMetrics(AgentType.STANDARD_CHAT);
     }
-    
-    const avgResponseTime = allMetrics.reduce((sum, m) => sum + m.averageResponseTime, 0) / allMetrics.length;
-    const avgSuccessRate = allMetrics.reduce((sum, m) => sum + m.successRate, 0) / allMetrics.length;
-    const totalThroughput = allMetrics.reduce((sum, m) => sum + m.throughput, 0);
-    
+
+    const avgResponseTime =
+      allMetrics.reduce((sum, m) => sum + m.averageResponseTime, 0) /
+      allMetrics.length;
+    const avgSuccessRate =
+      allMetrics.reduce((sum, m) => sum + m.successRate, 0) / allMetrics.length;
+    const totalThroughput = allMetrics.reduce(
+      (sum, m) => sum + m.throughput,
+      0,
+    );
+
     return {
       agentType: AgentType.STANDARD_CHAT, // Placeholder
       averageResponseTime: avgResponseTime,
       successRate: avgSuccessRate,
       throughput: totalThroughput,
       errorRate: 1 - avgSuccessRate,
-      cacheHitRate: allMetrics.reduce((sum, m) => sum + m.cacheHitRate, 0) / allMetrics.length,
+      cacheHitRate:
+        allMetrics.reduce((sum, m) => sum + m.cacheHitRate, 0) /
+        allMetrics.length,
       resourceUtilization: {
         cpuUsage: 0,
         memoryUsage: 0,
@@ -800,7 +892,7 @@ export class AgentPerformanceOptimizer {
   private createCachedExecutionResult(
     cachedResult: AgentExecutionResult,
     requestId: string,
-    startTime: number
+    startTime: number,
   ): AgentExecutionResult {
     return {
       ...cachedResult,
@@ -820,7 +912,9 @@ export class AgentPerformanceOptimizer {
   }
 
   private generateRequestId(request: AgentExecutionRequest): string {
-    return `req-${request.agentType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `req-${request.agentType}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
   }
 
   private generateCacheKey(request: AgentExecutionRequest): string {
@@ -830,16 +924,16 @@ export class AgentPerformanceOptimizer {
       model: request.context.model.id,
       context: request.context.context,
     };
-    
+
     // Simple hash function for cache key
     const str = JSON.stringify(keyData, Object.keys(keyData).sort());
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
-    
+
     return `${request.agentType}:${Math.abs(hash).toString(36)}`;
   }
 
@@ -857,19 +951,21 @@ export class AgentPerformanceOptimizer {
       [AgentType.THIRD_PARTY]: 'minimal',
       [AgentType.STANDARD_CHAT]: 'none',
     };
-    
+
     return strategies[agentType] || 'default';
   }
 
   private getEnabledOptimizations(): string[] {
     const optimizations: string[] = [];
-    
+
     if (this.optimizationConfig.enableCaching) optimizations.push('caching');
     if (this.optimizationConfig.enablePooling) optimizations.push('pooling');
     if (this.optimizationConfig.enableBatching) optimizations.push('batching');
-    if (this.optimizationConfig.enableParallelExecution) optimizations.push('parallel');
-    if (this.optimizationConfig.enablePrefetching) optimizations.push('prefetching');
-    
+    if (this.optimizationConfig.enableParallelExecution)
+      optimizations.push('parallel');
+    if (this.optimizationConfig.enablePrefetching)
+      optimizations.push('prefetching');
+
     return optimizations;
   }
 
@@ -892,10 +988,10 @@ export class AgentPerformanceOptimizer {
     console.log('Performance optimizer initialized', {
       config: this.optimizationConfig,
     });
-    
+
     // Start resource monitoring
     this.startResourceMonitoring();
-    
+
     // Set up cache cleanup
     setInterval(() => {
       this.cleanupCache();
@@ -924,14 +1020,14 @@ export class AgentPerformanceOptimizer {
   private cleanupCache(): void {
     const now = Date.now();
     let cleanedCount = 0;
-    
+
     for (const [key, value] of this.performanceCache.entries()) {
       if (now - value.timestamp > this.optimizationConfig.cacheTTL) {
         this.performanceCache.delete(key);
         cleanedCount++;
       }
     }
-    
+
     if (cleanedCount > 0) {
       console.log('Cache cleanup completed', {
         itemsRemoved: cleanedCount,
@@ -954,7 +1050,7 @@ export function getAgentPerformanceOptimizer(): AgentPerformanceOptimizer {
 export async function optimizeAgentExecution(
   request: AgentExecutionRequest,
   openai: AzureOpenAI,
-  user: Session['user']
+  user: Session['user'],
 ): Promise<AgentExecutionResult> {
   const optimizer = getAgentPerformanceOptimizer();
   return await optimizer.optimizeExecution(request, openai, user);
@@ -967,10 +1063,15 @@ export async function executeAgentsInParallel(
   requests: AgentExecutionRequest[],
   openai: AzureOpenAI,
   user: Session['user'],
-  maxConcurrency?: number
+  maxConcurrency?: number,
 ): Promise<AgentExecutionResult[]> {
   const optimizer = getAgentPerformanceOptimizer();
-  return await optimizer.executeParallel(requests, openai, user, maxConcurrency);
+  return await optimizer.executeParallel(
+    requests,
+    openai,
+    user,
+    maxConcurrency,
+  );
 }
 
 /**

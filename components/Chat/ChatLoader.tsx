@@ -1,8 +1,9 @@
 import { IconLoader2, IconRobot } from '@tabler/icons-react';
 import { FC } from 'react';
 
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 import { useSmoothLoadingMessage } from '@/hooks/useSmoothLoadingMessage';
+
+import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 
 interface Props {
   requestStatusMessage: string | null;
@@ -10,7 +11,11 @@ interface Props {
   progress: number | null; // Progress from 0 to 100
 }
 
-export const ChatLoader: FC<Props> = ({ requestStatusMessage, requestStatusSecondLine, progress }) => {
+export const ChatLoader: FC<Props> = ({
+  requestStatusMessage,
+  requestStatusSecondLine,
+  progress,
+}) => {
   // Get streaming settings from context
   const { settings } = useStreamingSettings();
 
@@ -41,7 +46,12 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, requestStatusSecon
     loader = (
       <div
         className={
-          (requestStatusMessage || smoothRequestStatusMessage || requestStatusSecondLine || smoothRequestStatusSecondLine) ? 'w-24 relative' : 'w-full max-w-xs relative'
+          requestStatusMessage ||
+          smoothRequestStatusMessage ||
+          requestStatusSecondLine ||
+          smoothRequestStatusSecondLine
+            ? 'w-24 relative'
+            : 'w-full max-w-xs relative'
         }
       >
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden relative">
@@ -55,7 +65,16 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, requestStatusSecon
   } else {
     // Show determinate progress bar with percentage and animated stripes
     loader = (
-      <div className={(requestStatusMessage || smoothRequestStatusMessage || requestStatusSecondLine || smoothRequestStatusSecondLine) ? 'w-24' : 'w-full max-w-xs'}>
+      <div
+        className={
+          requestStatusMessage ||
+          smoothRequestStatusMessage ||
+          requestStatusSecondLine ||
+          smoothRequestStatusSecondLine
+            ? 'w-24'
+            : 'w-full max-w-xs'
+        }
+      >
         <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2 overflow-hidden">
           <div
             className="
@@ -84,8 +103,12 @@ export const ChatLoader: FC<Props> = ({ requestStatusMessage, requestStatusSecon
   }
 
   // Arrange the loader and message based on whether the message exists
-  const hasAnyMessage = (requestStatusMessage || smoothRequestStatusMessage || requestStatusSecondLine || smoothRequestStatusSecondLine);
-  
+  const hasAnyMessage =
+    requestStatusMessage ||
+    smoothRequestStatusMessage ||
+    requestStatusSecondLine ||
+    smoothRequestStatusSecondLine;
+
   const loaderElement = (
     <div className="flex items-start">
       {loader}

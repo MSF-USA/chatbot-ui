@@ -1,12 +1,12 @@
 import {
-  AgentType,
-  AgentFactoryRegistration,
   AgentDiscoveryQuery,
   AgentDiscoveryResult,
   AgentExecutionEnvironment,
+  AgentFactoryRegistration,
+  AgentType,
 } from '@/types/agent';
 
-import { getAgentFactory, AgentFactory } from './agentFactory';
+import { AgentFactory, getAgentFactory } from './agentFactory';
 import { AzureMonitorLoggingService } from './loggingService';
 
 /**
@@ -79,7 +79,8 @@ interface RegistryStatistics {
  */
 export class AgentRegistry {
   private static instance: AgentRegistry | null = null;
-  private extendedRegistrations: Map<AgentType, ExtendedAgentRegistration> = new Map();
+  private extendedRegistrations: Map<AgentType, ExtendedAgentRegistration> =
+    new Map();
   private factory: AgentFactory;
 
   private constructor() {
@@ -148,13 +149,19 @@ export class AgentRegistry {
   /**
    * Update agent metadata
    */
-  public updateAgentMetadata(type: AgentType, metadata: Partial<AgentMetadata>): boolean {
+  public updateAgentMetadata(
+    type: AgentType,
+    metadata: Partial<AgentMetadata>,
+  ): boolean {
     try {
       const registration = this.extendedRegistrations.get(type);
       if (!registration) {
-        console.warn(`[WARNING] Agent type ${type} not found for metadata update`, {
-          agentType: type,
-        });
+        console.warn(
+          `[WARNING] Agent type ${type} not found for metadata update`,
+          {
+            agentType: type,
+          },
+        );
         return false;
       }
 
@@ -199,10 +206,14 @@ export class AgentRegistry {
 
       return true;
     } catch (error) {
-      console.error(`[ERROR] Failed to set agent enabled state`, error as Error, {
-        agentType: type,
-        enabled,
-      });
+      console.error(
+        `[ERROR] Failed to set agent enabled state`,
+        error as Error,
+        {
+          agentType: type,
+          enabled,
+        },
+      );
       throw error;
     }
   }
@@ -255,8 +266,10 @@ export class AgentRegistry {
       }
 
       // Update average response time
-      registration.usage.averageResponseTime = 
-        (registration.usage.averageResponseTime * (registration.usage.totalExecutions - 1) + responseTime) / 
+      registration.usage.averageResponseTime =
+        (registration.usage.averageResponseTime *
+          (registration.usage.totalExecutions - 1) +
+          responseTime) /
         registration.usage.totalExecutions;
 
       registration.usage.lastUsed = new Date();
@@ -291,20 +304,43 @@ export class AgentRegistry {
         if (!extendedReg) continue;
 
         // Apply filters
-        if (filters.enabled !== undefined && extendedReg.enabled !== filters.enabled) continue;
-        if (filters.minPriority !== undefined && extendedReg.priority < filters.minPriority) continue;
-        if (filters.category && extendedReg.metadata.category !== filters.category) continue;
-        if (filters.author && extendedReg.metadata.author !== filters.author) continue;
-        if (filters.version && extendedReg.metadata.version !== filters.version) continue;
-        if (filters.pricingModel && extendedReg.metadata.pricing?.model !== filters.pricingModel) continue;
+        if (
+          filters.enabled !== undefined &&
+          extendedReg.enabled !== filters.enabled
+        )
+          continue;
+        if (
+          filters.minPriority !== undefined &&
+          extendedReg.priority < filters.minPriority
+        )
+          continue;
+        if (
+          filters.category &&
+          extendedReg.metadata.category !== filters.category
+        )
+          continue;
+        if (filters.author && extendedReg.metadata.author !== filters.author)
+          continue;
+        if (filters.version && extendedReg.metadata.version !== filters.version)
+          continue;
+        if (
+          filters.pricingModel &&
+          extendedReg.metadata.pricing?.model !== filters.pricingModel
+        )
+          continue;
 
         // Tag filtering
-        if (filters.tags && !filters.tags.every(tag => extendedReg.metadata.tags.includes(tag))) continue;
+        if (
+          filters.tags &&
+          !filters.tags.every((tag) => extendedReg.metadata.tags.includes(tag))
+        )
+          continue;
 
         // Text search in name and description
         if (filters.query) {
           const searchText = filters.query.toLowerCase();
-          const agentText = `${agent.registration.type} ${extendedReg.metadata.description}`.toLowerCase();
+          const agentText =
+            `${agent.registration.type} ${extendedReg.metadata.description}`.toLowerCase();
           if (!agentText.includes(searchText)) continue;
         }
 
@@ -343,7 +379,9 @@ export class AgentRegistry {
   /**
    * Get agent usage statistics
    */
-  public getAgentUsage(type: AgentType): ExtendedAgentRegistration['usage'] | undefined {
+  public getAgentUsage(
+    type: AgentType,
+  ): ExtendedAgentRegistration['usage'] | undefined {
     const registration = this.extendedRegistrations.get(type);
     return registration?.usage;
   }
@@ -351,7 +389,10 @@ export class AgentRegistry {
   /**
    * Get all registered agents with metadata
    */
-  public getAllExtendedRegistrations(): Map<AgentType, ExtendedAgentRegistration> {
+  public getAllExtendedRegistrations(): Map<
+    AgentType,
+    ExtendedAgentRegistration
+  > {
     return new Map(this.extendedRegistrations);
   }
 
@@ -361,34 +402,43 @@ export class AgentRegistry {
   public getRegistryStatistics(): RegistryStatistics {
     try {
       const registrations = Array.from(this.extendedRegistrations.values());
-      const enabledAgents = registrations.filter(r => r.enabled);
+      const enabledAgents = registrations.filter((r) => r.enabled);
 
       // Category distribution
       const categories: Record<string, number> = {};
-      registrations.forEach(r => {
-        categories[r.metadata.category] = (categories[r.metadata.category] || 0) + 1;
+      registrations.forEach((r) => {
+        categories[r.metadata.category] =
+          (categories[r.metadata.category] || 0) + 1;
       });
 
       // Author distribution
       const authors: Record<string, number> = {};
-      registrations.forEach(r => {
+      registrations.forEach((r) => {
         authors[r.metadata.author] = (authors[r.metadata.author] || 0) + 1;
       });
 
       // Total executions and average response time
-      const totalExecutions = registrations.reduce((sum, r) => sum + r.usage.totalExecutions, 0);
-      const totalResponseTime = registrations.reduce((sum, r) => 
-        sum + (r.usage.averageResponseTime * r.usage.totalExecutions), 0);
-      const averageResponseTime = totalExecutions > 0 ? totalResponseTime / totalExecutions : 0;
+      const totalExecutions = registrations.reduce(
+        (sum, r) => sum + r.usage.totalExecutions,
+        0,
+      );
+      const totalResponseTime = registrations.reduce(
+        (sum, r) => sum + r.usage.averageResponseTime * r.usage.totalExecutions,
+        0,
+      );
+      const averageResponseTime =
+        totalExecutions > 0 ? totalResponseTime / totalExecutions : 0;
 
       // Popular agents (sorted by executions)
       const popularAgents = registrations
-        .filter(r => r.usage.totalExecutions > 0)
-        .map(r => ({
+        .filter((r) => r.usage.totalExecutions > 0)
+        .map((r) => ({
           type: r.type,
           executions: r.usage.totalExecutions,
-          successRate: r.usage.totalExecutions > 0 ? 
-            r.usage.successfulExecutions / r.usage.totalExecutions : 0,
+          successRate:
+            r.usage.totalExecutions > 0
+              ? r.usage.successfulExecutions / r.usage.totalExecutions
+              : 0,
         }))
         .sort((a, b) => b.executions - a.executions)
         .slice(0, 10);
@@ -411,7 +461,10 @@ export class AgentRegistry {
 
       return statistics;
     } catch (error) {
-      console.error(`[ERROR] Failed to generate registry statistics`, error as Error);
+      console.error(
+        `[ERROR] Failed to generate registry statistics`,
+        error as Error,
+      );
       throw error;
     }
   }
@@ -425,17 +478,19 @@ export class AgentRegistry {
         version: '1.0.0',
         timestamp: new Date().toISOString(),
         agents: Object.fromEntries(
-          Array.from(this.extendedRegistrations.entries()).map(([type, registration]) => [
-            type,
-            {
-              metadata: registration.metadata,
-              enabled: registration.enabled,
-              priority: registration.priority,
-              capabilities: registration.capabilities,
-              supportedModels: registration.supportedModels,
-              usage: registration.usage,
-            },
-          ]),
+          Array.from(this.extendedRegistrations.entries()).map(
+            ([type, registration]) => [
+              type,
+              {
+                metadata: registration.metadata,
+                enabled: registration.enabled,
+                priority: registration.priority,
+                capabilities: registration.capabilities,
+                supportedModels: registration.supportedModels,
+                usage: registration.usage,
+              },
+            ],
+          ),
         ),
       };
 
@@ -466,7 +521,7 @@ export class AgentRegistry {
       // 3. Agent priority
 
       const allAgents = this.factory.discoverAgents({});
-      const scoredAgents = allAgents.map(agent => {
+      const scoredAgents = allAgents.map((agent) => {
         const extendedReg = this.extendedRegistrations.get(agent.type);
         if (!extendedReg || !extendedReg.enabled) {
           return { agent, score: 0 };
@@ -476,37 +531,44 @@ export class AgentRegistry {
 
         // Capability matching
         const queryLower = query.toLowerCase();
-        const capabilityMatches = agent.capabilities.filter(cap => 
-          queryLower.includes(cap.replace('_', ' ')) || 
-          cap.toLowerCase().includes(queryLower)
+        const capabilityMatches = agent.capabilities.filter(
+          (cap) =>
+            queryLower.includes(cap.replace('_', ' ')) ||
+            cap.toLowerCase().includes(queryLower),
         ).length;
         score += capabilityMatches * 10;
 
         // Success rate
-        const successRate = extendedReg.usage.totalExecutions > 0 ? 
-          extendedReg.usage.successfulExecutions / extendedReg.usage.totalExecutions : 0.5;
+        const successRate =
+          extendedReg.usage.totalExecutions > 0
+            ? extendedReg.usage.successfulExecutions /
+              extendedReg.usage.totalExecutions
+            : 0.5;
         score += successRate * 5;
 
         // Popularity (normalized by total executions)
-        const popularityScore = Math.min(extendedReg.usage.totalExecutions / 100, 1) * 3;
+        const popularityScore =
+          Math.min(extendedReg.usage.totalExecutions / 100, 1) * 3;
         score += popularityScore;
 
         // Priority
         score += extendedReg.priority / 100;
 
         // Response time (lower is better)
-        const responseTimeScore = extendedReg.usage.averageResponseTime > 0 ? 
-          Math.max(0, 2 - (extendedReg.usage.averageResponseTime / 5000)) : 1;
+        const responseTimeScore =
+          extendedReg.usage.averageResponseTime > 0
+            ? Math.max(0, 2 - extendedReg.usage.averageResponseTime / 5000)
+            : 1;
         score += responseTimeScore;
 
         return { agent, score };
       });
 
       const recommendations = scoredAgents
-        .filter(item => item.score > 0)
+        .filter((item) => item.score > 0)
         .sort((a, b) => b.score - a.score)
         .slice(0, limit)
-        .map(item => item.agent);
+        .map((item) => item.agent);
 
       console.log(`[INFO] Agent recommendations generated`, {
         query,
@@ -516,10 +578,14 @@ export class AgentRegistry {
 
       return recommendations;
     } catch (error) {
-      console.error(`[ERROR] Failed to generate agent recommendations`, error as Error, {
-        query,
-        limit,
-      });
+      console.error(
+        `[ERROR] Failed to generate agent recommendations`,
+        error as Error,
+        {
+          query,
+          limit,
+        },
+      );
       throw error;
     }
   }
@@ -594,7 +660,10 @@ export class AgentRegistry {
         agentCount: this.extendedRegistrations.size,
       });
     } catch (error) {
-      console.error(`[ERROR] Failed to initialize extended registrations`, error as Error);
+      console.error(
+        `[ERROR] Failed to initialize extended registrations`,
+        error as Error,
+      );
       throw error;
     }
   }
@@ -610,7 +679,9 @@ export function getAgentRegistry(): AgentRegistry {
 /**
  * Convenience function to search agents
  */
-export function searchAgents(filters: RegistrySearchFilters): AgentDiscoveryResult[] {
+export function searchAgents(
+  filters: RegistrySearchFilters,
+): AgentDiscoveryResult[] {
   const registry = getAgentRegistry();
   return registry.searchAgents(filters);
 }

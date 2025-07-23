@@ -1,5 +1,12 @@
-import { Settings, PrivacySettings, SecuritySettings, PerformanceSettings, UICustomizationSettings, RoutingPreferences } from '@/types/settings';
 import { AgentType } from '@/types/agent';
+import {
+  PerformanceSettings,
+  PrivacySettings,
+  RoutingPreferences,
+  SecuritySettings,
+  Settings,
+  UICustomizationSettings,
+} from '@/types/settings';
 
 const STORAGE_KEY = 'settings';
 const SETTINGS_VERSION = '1.1.0'; // Version for migration tracking
@@ -7,7 +14,10 @@ const SETTINGS_VERSION = '1.1.0'; // Version for migration tracking
 /**
  * Settings change event listener type
  */
-export type SettingsChangeListener = (newSettings: Settings, changedKeys: string[]) => void;
+export type SettingsChangeListener = (
+  newSettings: Settings,
+  changedKeys: string[],
+) => void;
 
 /**
  * Settings change events
@@ -26,7 +36,7 @@ class SettingsEventEmitter {
   }
 
   emit(newSettings: Settings, changedKeys: string[]): void {
-    this.listeners.forEach(listener => listener(newSettings, changedKeys));
+    this.listeners.forEach((listener) => listener(newSettings, changedKeys));
   }
 }
 
@@ -202,28 +212,33 @@ const getDefaultSettings = (): Settings => {
         AgentType.LOCAL_KNOWLEDGE,
         AgentType.FOUNDRY,
       ],
-      agentConfigurations: Object.values(AgentType).reduce((configs, agentType) => {
-        configs[agentType] = {
-          enabled: agentType !== AgentType.THIRD_PARTY && agentType !== AgentType.CODE_INTERPRETER, // Disable third-party by default
-          priority: 50,
-          timeout: 30000,
-          maxRetries: 2,
-          parameters: {},
-          securityLevel: 'normal',
-          resourceLimits: {
-            maxMemoryMb: 256,
-            maxExecutionTime: 60000,
-            maxConcurrentOperations: 2,
-          },
-          contentFilters: {
-            allowedDomains: [],
-            blockedDomains: [],
-            contentTypes: ['text', 'html', 'json'],
-            safeSearch: 'moderate',
-          },
-        };
-        return configs;
-      }, {} as any),
+      agentConfigurations: Object.values(AgentType).reduce(
+        (configs, agentType) => {
+          configs[agentType] = {
+            enabled:
+              agentType !== AgentType.THIRD_PARTY &&
+              agentType !== AgentType.CODE_INTERPRETER, // Disable third-party by default
+            priority: 50,
+            timeout: 30000,
+            maxRetries: 2,
+            parameters: {},
+            securityLevel: 'normal',
+            resourceLimits: {
+              maxMemoryMb: 256,
+              maxExecutionTime: 60000,
+              maxConcurrentOperations: 2,
+            },
+            contentFilters: {
+              allowedDomains: [],
+              blockedDomains: [],
+              contentTypes: ['text', 'html', 'json'],
+              safeSearch: 'moderate',
+            },
+          };
+          return configs;
+        },
+        {} as any,
+      ),
       preferences: {
         preferredAgents: [],
         disabledAgents: [],
@@ -254,7 +269,7 @@ let settingsBackup: Settings | null = null;
  */
 const migrateSettings = (settings: any): Settings => {
   const defaultSettings = getDefaultSettings();
-  
+
   // Handle version 1.0.0 -> 1.1.0 migration
   if (!settings.version || settings.version === '1.0.0') {
     // Add new privacy, security, performance, ui, and routing settings
@@ -272,11 +287,11 @@ const migrateSettings = (settings: any): Settings => {
         routing: getDefaultRoutingSettings(),
       },
     };
-    
+
     console.log('[INFO] Migrated settings from v1.0.0 to v1.1.0');
     return migrated;
   }
-  
+
   return { ...defaultSettings, ...settings };
 };
 
@@ -289,7 +304,7 @@ const validateSettings = (settings: any): boolean => {
     if (!settings || typeof settings !== 'object') {
       return false;
     }
-    
+
     // Required fields
     const requiredFields = ['theme', 'temperature', 'systemPrompt'];
     for (const field of requiredFields) {
@@ -297,20 +312,27 @@ const validateSettings = (settings: any): boolean => {
         return false;
       }
     }
-    
+
     // Type validation
-    if (typeof settings.theme !== 'string' || !['light', 'dark'].includes(settings.theme)) {
+    if (
+      typeof settings.theme !== 'string' ||
+      !['light', 'dark'].includes(settings.theme)
+    ) {
       return false;
     }
-    
-    if (typeof settings.temperature !== 'number' || settings.temperature < 0 || settings.temperature > 2) {
+
+    if (
+      typeof settings.temperature !== 'number' ||
+      settings.temperature < 0 ||
+      settings.temperature > 2
+    ) {
       return false;
     }
-    
+
     if (typeof settings.systemPrompt !== 'string') {
       return false;
     }
-    
+
     return true;
   } catch (error) {
     console.error('Settings validation error:', error);
@@ -325,26 +347,26 @@ export const getSettings = (): Settings => {
     typeof localStorage !== 'undefined'
       ? localStorage.getItem(STORAGE_KEY)
       : null;
-      
+
   if (!settingsJson) {
     return defaultSettings;
   }
 
   try {
     const rawSettings = JSON.parse(settingsJson);
-    
+
     // Validate settings structure
     if (!validateSettings(rawSettings)) {
       console.warn('[WARN] Invalid settings found, using defaults');
       return defaultSettings;
     }
-    
+
     // Migrate if necessary
     const migratedSettings = migrateSettings(rawSettings);
-    
+
     // Create backup before returning
     settingsBackup = JSON.parse(JSON.stringify(migratedSettings));
-    
+
     return migratedSettings;
   } catch (error) {
     console.error('Error parsing saved settings:', error);
@@ -357,21 +379,25 @@ export const getSettings = (): Settings => {
  */
 const getChangedKeys = (oldObj: any, newObj: any, prefix = ''): string[] => {
   const changedKeys: string[] = [];
-  
+
   // Check all keys in new object
   for (const key in newObj) {
     const fullKey = prefix ? `${prefix}.${key}` : key;
     const oldValue = oldObj?.[key];
     const newValue = newObj[key];
-    
-    if (typeof newValue === 'object' && newValue !== null && !Array.isArray(newValue)) {
+
+    if (
+      typeof newValue === 'object' &&
+      newValue !== null &&
+      !Array.isArray(newValue)
+    ) {
       // Recursively check nested objects
       changedKeys.push(...getChangedKeys(oldValue, newValue, fullKey));
     } else if (JSON.stringify(oldValue) !== JSON.stringify(newValue)) {
       changedKeys.push(fullKey);
     }
   }
-  
+
   return changedKeys;
 };
 
@@ -382,34 +408,36 @@ export const saveSettings = (settings: Settings) => {
       console.error('[ERROR] Cannot save invalid settings');
       return;
     }
-    
+
     // Get current settings for change detection
     const currentSettings = settingsBackup || getDefaultSettings();
-    
+
     // Add version and timestamp
     const settingsToSave = {
       ...settings,
       version: SETTINGS_VERSION,
       lastModified: Date.now(),
     };
-    
+
     // Detect changed keys
     const changedKeys = getChangedKeys(currentSettings, settingsToSave);
-    
+
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave));
     }
-    
+
     // Update backup
     settingsBackup = JSON.parse(JSON.stringify(settingsToSave));
-    
+
     // Emit change events if there are changes
     if (changedKeys.length > 0) {
       settingsEvents.emit(settingsToSave, changedKeys);
-      
-      console.log(`[INFO] Settings saved with ${changedKeys.length} changes:`, changedKeys);
+
+      console.log(
+        `[INFO] Settings saved with ${changedKeys.length} changes:`,
+        changedKeys,
+      );
     }
-    
   } catch (error) {
     console.error('[ERROR] Failed to save settings:', error);
   }
@@ -434,12 +462,12 @@ export const backupSettings = (): string | null => {
 export const restoreSettings = (backupString: string): boolean => {
   try {
     const settings = JSON.parse(backupString);
-    
+
     if (!validateSettings(settings)) {
       console.error('[ERROR] Invalid backup settings');
       return false;
     }
-    
+
     saveSettings(settings);
     console.log('[INFO] Settings restored from backup');
     return true;
@@ -466,14 +494,14 @@ export const hasSetting = (settingPath: string): boolean => {
     const settings = getSettings();
     const keys = settingPath.split('.');
     let current: any = settings;
-    
+
     for (const key of keys) {
       if (current === null || current === undefined || !(key in current)) {
         return false;
       }
       current = current[key];
     }
-    
+
     return true;
   } catch (error) {
     return false;
@@ -488,14 +516,14 @@ export const getSetting = (settingPath: string, defaultValue?: any): any => {
     const settings = getSettings();
     const keys = settingPath.split('.');
     let current: any = settings;
-    
+
     for (const key of keys) {
       if (current === null || current === undefined || !(key in current)) {
         return defaultValue;
       }
       current = current[key];
     }
-    
+
     return current;
   } catch (error) {
     return defaultValue;
@@ -510,7 +538,7 @@ export const updateSetting = (settingPath: string, value: any): void => {
     const settings = getSettings();
     const keys = settingPath.split('.');
     let current: any = settings;
-    
+
     // Navigate to the parent of the target key
     for (let i = 0; i < keys.length - 1; i++) {
       const key = keys[i];
@@ -519,11 +547,11 @@ export const updateSetting = (settingPath: string, value: any): void => {
       }
       current = current[key];
     }
-    
+
     // Set the value
     const lastKey = keys[keys.length - 1];
     current[lastKey] = value;
-    
+
     saveSettings(settings);
   } catch (error) {
     console.error('[ERROR] Failed to update setting:', error);

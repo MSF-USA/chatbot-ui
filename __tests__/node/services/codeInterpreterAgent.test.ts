@@ -1,19 +1,21 @@
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import { CodeInterpreterAgent } from '../../../services/agents/codeInterpreterAgent';
 import { CodeInterpreterService } from '../../../services/codeInterpreterService';
+
 import {
-  AgentType,
   AgentExecutionContext,
-  CodeInterpreterAgentConfig,
   AgentExecutionEnvironment,
+  AgentType,
+  CodeInterpreterAgentConfig,
 } from '../../../types/agent';
 import {
-  ProgrammingLanguage,
-  ExecutionStatus,
   CodeExecutionResult,
   DEFAULT_CODE_INTERPRETER_CONFIG,
+  ExecutionStatus,
+  ProgrammingLanguage,
 } from '../../../types/codeInterpreter';
 import { OpenAIModel } from '../../../types/openai';
+
+import { Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the CodeInterpreterService
 vi.mock('../../../services/codeInterpreterService', () => ({
@@ -61,7 +63,11 @@ describe('CodeInterpreterAgent', () => {
       query: 'Execute this Python code: ```python\nprint("Hello, World!")\n```',
       messages: [],
       // @ts-expect-error Don't need the full object structure for these tests
-      user: { id: 'test-user', displayName: 'Test User', mail: 'test@example.com' },
+      user: {
+        id: 'test-user',
+        displayName: 'Test User',
+        mail: 'test@example.com',
+      },
       model: { id: 'gpt-4o-mini' } as OpenAIModel,
       locale: 'en',
       correlationId: 'test-correlation-id',
@@ -92,7 +98,7 @@ describe('CodeInterpreterAgent', () => {
     it('should detect missing configuration in validation', () => {
       const invalidConfig = { ...config };
       delete (invalidConfig as any).codeInterpreterConfig;
-      
+
       const agent = new CodeInterpreterAgent(invalidConfig);
       const errors = agent['validateSpecificConfig']();
       expect(errors).toContain('Code interpreter configuration is required');
@@ -103,7 +109,7 @@ describe('CodeInterpreterAgent', () => {
     it('should extract Python code block from query', async () => {
       const pythonCode = 'print("Hello, World!")';
       context.query = `Execute this Python code:\n\`\`\`python\n${pythonCode}\n\`\`\``;
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.PYTHON,
@@ -119,11 +125,13 @@ describe('CodeInterpreterAgent', () => {
         code: pythonCode,
         language: ProgrammingLanguage.PYTHON,
         environment: 'python-3.11',
-        outputs: [{
-          output: 'Hello, World!',
-          type: 'stdout',
-          mimeType: 'text/plain',
-        }],
+        outputs: [
+          {
+            output: 'Hello, World!',
+            type: 'stdout',
+            mimeType: 'text/plain',
+          },
+        ],
         stats: {
           executionTime: 100,
           memoryUsage: 10,
@@ -148,14 +156,14 @@ describe('CodeInterpreterAgent', () => {
         expect.objectContaining({
           code: pythonCode,
           language: ProgrammingLanguage.PYTHON,
-        })
+        }),
       );
     });
 
     it('should extract JavaScript code block from query', async () => {
       const jsCode = 'console.log("Hello, JavaScript!");';
       context.query = `Run this JavaScript:\n\`\`\`javascript\n${jsCode}\n\`\`\``;
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.JAVASCRIPT,
@@ -171,11 +179,13 @@ describe('CodeInterpreterAgent', () => {
         code: jsCode,
         language: ProgrammingLanguage.JAVASCRIPT,
         environment: 'node-18',
-        outputs: [{
-          output: 'Hello, JavaScript!',
-          type: 'stdout',
-          mimeType: 'text/plain',
-        }],
+        outputs: [
+          {
+            output: 'Hello, JavaScript!',
+            type: 'stdout',
+            mimeType: 'text/plain',
+          },
+        ],
         stats: {
           executionTime: 50,
           memoryUsage: 5,
@@ -200,13 +210,13 @@ describe('CodeInterpreterAgent', () => {
         expect.objectContaining({
           code: jsCode,
           language: ProgrammingLanguage.JAVASCRIPT,
-        })
+        }),
       );
     });
 
     it('should extract multiple code blocks from query', async () => {
       context.query = `Execute these:\n\`\`\`python\nprint("Python")\n\`\`\`\n\nAnd this:\n\`\`\`javascript\nconsole.log("JS")\n\`\`\``;
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         complexity: 1,
@@ -222,9 +232,23 @@ describe('CodeInterpreterAgent', () => {
           code: 'print("Python")',
           language: ProgrammingLanguage.PYTHON,
           environment: 'python-3.11',
-          outputs: [{ output: 'Python', type: 'stdout', mimeType: 'text/plain' }],
-          stats: { executionTime: 100, memoryUsage: 10, cpuUsage: 5, outputLines: 1, outputSize: 6, dependenciesUsed: 0, exitCode: 0 },
-          metadata: { executionId: 'test-1', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+          outputs: [
+            { output: 'Python', type: 'stdout', mimeType: 'text/plain' },
+          ],
+          stats: {
+            executionTime: 100,
+            memoryUsage: 10,
+            cpuUsage: 5,
+            outputLines: 1,
+            outputSize: 6,
+            dependenciesUsed: 0,
+            exitCode: 0,
+          },
+          metadata: {
+            executionId: 'test-1',
+            startTime: new Date().toISOString(),
+            endTime: new Date().toISOString(),
+          },
         })
         .mockResolvedValueOnce({
           status: ExecutionStatus.SUCCESS,
@@ -232,8 +256,20 @@ describe('CodeInterpreterAgent', () => {
           language: ProgrammingLanguage.JAVASCRIPT,
           environment: 'node-18',
           outputs: [{ output: 'JS', type: 'stdout', mimeType: 'text/plain' }],
-          stats: { executionTime: 50, memoryUsage: 5, cpuUsage: 2, outputLines: 1, outputSize: 2, dependenciesUsed: 0, exitCode: 0 },
-          metadata: { executionId: 'test-2', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+          stats: {
+            executionTime: 50,
+            memoryUsage: 5,
+            cpuUsage: 2,
+            outputLines: 1,
+            outputSize: 2,
+            dependenciesUsed: 0,
+            exitCode: 0,
+          },
+          metadata: {
+            executionId: 'test-2',
+            startTime: new Date().toISOString(),
+            endTime: new Date().toISOString(),
+          },
         });
 
       const response = await agent.execute(context);
@@ -246,7 +282,7 @@ describe('CodeInterpreterAgent', () => {
 
     it('should handle inline code detection', async () => {
       context.query = 'Calculate: `2 + 2`';
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.PYTHON,
@@ -263,8 +299,20 @@ describe('CodeInterpreterAgent', () => {
         language: ProgrammingLanguage.PYTHON,
         environment: 'python-3.11',
         outputs: [{ output: '4', type: 'stdout', mimeType: 'text/plain' }],
-        stats: { executionTime: 10, memoryUsage: 1, cpuUsage: 1, outputLines: 1, outputSize: 1, dependenciesUsed: 0, exitCode: 0 },
-        metadata: { executionId: 'test-inline', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+        stats: {
+          executionTime: 10,
+          memoryUsage: 1,
+          cpuUsage: 1,
+          outputLines: 1,
+          outputSize: 1,
+          dependenciesUsed: 0,
+          exitCode: 0,
+        },
+        metadata: {
+          executionId: 'test-inline',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+        },
       });
 
       const response = await agent.execute(context);
@@ -274,7 +322,7 @@ describe('CodeInterpreterAgent', () => {
         expect.objectContaining({
           code: '2 + 2',
           language: ProgrammingLanguage.PYTHON,
-        })
+        }),
       );
     });
   });
@@ -283,7 +331,7 @@ describe('CodeInterpreterAgent', () => {
     it('should detect SQL queries', async () => {
       const sqlCode = 'SELECT * FROM users WHERE age > 18';
       context.query = `\`\`\`sql\n${sqlCode}\n\`\`\``;
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.SQL,
@@ -299,9 +347,27 @@ describe('CodeInterpreterAgent', () => {
         code: sqlCode,
         language: ProgrammingLanguage.SQL,
         environment: 'postgresql',
-        outputs: [{ output: 'Query executed successfully', type: 'stdout', mimeType: 'text/plain' }],
-        stats: { executionTime: 200, memoryUsage: 20, cpuUsage: 10, outputLines: 1, outputSize: 25, dependenciesUsed: 0, exitCode: 0 },
-        metadata: { executionId: 'test-sql', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+        outputs: [
+          {
+            output: 'Query executed successfully',
+            type: 'stdout',
+            mimeType: 'text/plain',
+          },
+        ],
+        stats: {
+          executionTime: 200,
+          memoryUsage: 20,
+          cpuUsage: 10,
+          outputLines: 1,
+          outputSize: 25,
+          dependenciesUsed: 0,
+          exitCode: 0,
+        },
+        metadata: {
+          executionId: 'test-sql',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+        },
       });
 
       const response = await agent.execute(context);
@@ -311,13 +377,13 @@ describe('CodeInterpreterAgent', () => {
         expect.objectContaining({
           code: sqlCode,
           language: ProgrammingLanguage.SQL,
-        })
+        }),
       );
     });
 
     it('should auto-detect language from code content', async () => {
       context.query = 'Execute: `function add(a, b) { return a + b; }`';
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.JAVASCRIPT,
@@ -333,9 +399,27 @@ describe('CodeInterpreterAgent', () => {
         code: 'function add(a, b) { return a + b; }',
         language: ProgrammingLanguage.JAVASCRIPT,
         environment: 'node-18',
-        outputs: [{ output: 'Function defined', type: 'stdout', mimeType: 'text/plain' }],
-        stats: { executionTime: 30, memoryUsage: 3, cpuUsage: 1, outputLines: 1, outputSize: 16, dependenciesUsed: 0, exitCode: 0 },
-        metadata: { executionId: 'test-detect', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+        outputs: [
+          {
+            output: 'Function defined',
+            type: 'stdout',
+            mimeType: 'text/plain',
+          },
+        ],
+        stats: {
+          executionTime: 30,
+          memoryUsage: 3,
+          cpuUsage: 1,
+          outputLines: 1,
+          outputSize: 16,
+          dependenciesUsed: 0,
+          exitCode: 0,
+        },
+        metadata: {
+          executionId: 'test-detect',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+        },
       });
 
       const response = await agent.execute(context);
@@ -344,7 +428,7 @@ describe('CodeInterpreterAgent', () => {
       expect(mockService.executeCode).toHaveBeenCalledWith(
         expect.objectContaining({
           language: ProgrammingLanguage.JAVASCRIPT,
-        })
+        }),
       );
     });
   });
@@ -352,7 +436,7 @@ describe('CodeInterpreterAgent', () => {
   describe('Error Handling', () => {
     it('should handle execution errors gracefully', async () => {
       context.query = '```python\nprint(undefined_variable)\n```';
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.PYTHON,
@@ -368,13 +452,27 @@ describe('CodeInterpreterAgent', () => {
         code: 'print(undefined_variable)',
         language: ProgrammingLanguage.PYTHON,
         environment: 'python-3.11',
-        outputs: [{
-          output: '',
-          error: "NameError: name 'undefined_variable' is not defined",
-          type: 'exception',
-        }],
-        stats: { executionTime: 50, memoryUsage: 5, cpuUsage: 2, outputLines: 0, outputSize: 0, dependenciesUsed: 0, exitCode: 1 },
-        metadata: { executionId: 'test-error', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+        outputs: [
+          {
+            output: '',
+            error: "NameError: name 'undefined_variable' is not defined",
+            type: 'exception',
+          },
+        ],
+        stats: {
+          executionTime: 50,
+          memoryUsage: 5,
+          cpuUsage: 2,
+          outputLines: 0,
+          outputSize: 0,
+          dependenciesUsed: 0,
+          exitCode: 1,
+        },
+        metadata: {
+          executionId: 'test-error',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+        },
       });
 
       const response = await agent.execute(context);
@@ -396,8 +494,10 @@ describe('CodeInterpreterAgent', () => {
 
     it('should handle service errors', async () => {
       context.query = '```python\nprint("test")\n```';
-      
-      mockService.analyzeCode.mockRejectedValue(new Error('Analysis service error'));
+
+      mockService.analyzeCode.mockRejectedValue(
+        new Error('Analysis service error'),
+      );
 
       const response = await agent.execute(context);
 
@@ -410,7 +510,7 @@ describe('CodeInterpreterAgent', () => {
     it('should format successful execution response', async () => {
       const pythonCode = 'print("Hello, World!")';
       context.query = `\`\`\`python\n${pythonCode}\n\`\`\``;
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.PYTHON,
@@ -426,11 +526,13 @@ describe('CodeInterpreterAgent', () => {
         code: pythonCode,
         language: ProgrammingLanguage.PYTHON,
         environment: 'python-3.11',
-        outputs: [{
-          output: 'Hello, World!',
-          type: 'stdout',
-          mimeType: 'text/plain',
-        }],
+        outputs: [
+          {
+            output: 'Hello, World!',
+            type: 'stdout',
+            mimeType: 'text/plain',
+          },
+        ],
         stats: {
           executionTime: 100,
           memoryUsage: 10,
@@ -465,7 +567,7 @@ describe('CodeInterpreterAgent', () => {
 
     it('should include metadata in response', async () => {
       context.query = '```python\nprint("test")\n```';
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.PYTHON,
@@ -482,8 +584,20 @@ describe('CodeInterpreterAgent', () => {
         language: ProgrammingLanguage.PYTHON,
         environment: 'python-3.11',
         outputs: [{ output: 'test', type: 'stdout', mimeType: 'text/plain' }],
-        stats: { executionTime: 50, memoryUsage: 5, cpuUsage: 2, outputLines: 1, outputSize: 4, dependenciesUsed: 0, exitCode: 0 },
-        metadata: { executionId: 'test-meta', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+        stats: {
+          executionTime: 50,
+          memoryUsage: 5,
+          cpuUsage: 2,
+          outputLines: 1,
+          outputSize: 4,
+          dependenciesUsed: 0,
+          exitCode: 0,
+        },
+        metadata: {
+          executionId: 'test-meta',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+        },
       });
 
       const response = await agent.execute(context);
@@ -492,14 +606,16 @@ describe('CodeInterpreterAgent', () => {
       expect(response.metadata?.agentMetadata?.totalCodeBlocks).toBe(1);
       expect(response.metadata?.agentMetadata?.successfulExecutions).toBe(1);
       expect(response.metadata?.agentMetadata?.failedExecutions).toBe(0);
-      expect(response.metadata?.agentMetadata?.languagesUsed).toEqual([ProgrammingLanguage.PYTHON]);
+      expect(response.metadata?.agentMetadata?.languagesUsed).toEqual([
+        ProgrammingLanguage.PYTHON,
+      ]);
       expect(response.metadata?.processingTime).toBeGreaterThanOrEqual(0);
       expect(response.metadata?.confidence).toBeGreaterThan(0);
     });
 
     it('should calculate confidence score appropriately', async () => {
       context.query = '```python\nprint("test")\n```';
-      
+
       mockService.analyzeCode.mockResolvedValue({
         isValid: true,
         detectedLanguage: ProgrammingLanguage.PYTHON,
@@ -516,8 +632,20 @@ describe('CodeInterpreterAgent', () => {
         language: ProgrammingLanguage.PYTHON,
         environment: 'python-3.11',
         outputs: [{ output: 'test', type: 'stdout', mimeType: 'text/plain' }],
-        stats: { executionTime: 500, memoryUsage: 5, cpuUsage: 2, outputLines: 1, outputSize: 4, dependenciesUsed: 0, exitCode: 0 },
-        metadata: { executionId: 'test-confidence', startTime: new Date().toISOString(), endTime: new Date().toISOString() },
+        stats: {
+          executionTime: 500,
+          memoryUsage: 5,
+          cpuUsage: 2,
+          outputLines: 1,
+          outputSize: 4,
+          dependenciesUsed: 0,
+          exitCode: 0,
+        },
+        metadata: {
+          executionId: 'test-confidence',
+          startTime: new Date().toISOString(),
+          endTime: new Date().toISOString(),
+        },
       });
 
       const response = await agent.execute(context);
@@ -536,14 +664,14 @@ describe('CodeInterpreterAgent', () => {
     it('should detect invalid execution time', () => {
       const invalidConfig = { ...config, maxExecutionTime: -1 };
       const invalidAgent = new CodeInterpreterAgent(invalidConfig);
-      
+
       const errors = invalidAgent['validateSpecificConfig']();
       expect(errors).toContain('Maximum execution time must be greater than 0');
     });
 
     it('should detect invalid memory limit in validation', () => {
       const invalidConfig = { ...config, maxMemoryMb: 0 };
-      
+
       const agent = new CodeInterpreterAgent(invalidConfig);
       const errors = agent['validateSpecificConfig']();
       expect(errors).toContain('Maximum memory must be greater than 0');

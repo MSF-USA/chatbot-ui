@@ -1,11 +1,11 @@
 /**
  * Network Status Hook
- * 
+ *
  * Real-time network monitoring with request queuing and recovery capabilities.
  * Provides seamless offline/online experience with automatic request replay.
  */
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
 import { useErrorToast } from './useErrorToast';
 
 /**
@@ -86,7 +86,8 @@ const defaultConfig: NetworkConfig = {
  */
 export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
   const finalConfig = { ...defaultConfig, ...config };
-  const { showErrorToast, showSuccessToast, showWarningToast } = useErrorToast();
+  const { showErrorToast, showSuccessToast, showWarningToast } =
+    useErrorToast();
 
   // State
   const [networkStatus, setNetworkStatus] = useState<NetworkStatus>(() => ({
@@ -102,7 +103,7 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
 
   const [isRecovering, setIsRecovering] = useState(false);
   const [queuedRequests, setQueuedRequests] = useState<QueuedRequest[]>([]);
-  
+
   // Refs
   const performanceCheckInterval = useRef<NodeJS.Timeout | null>(null);
   const recoveryTimeout = useRef<NodeJS.Timeout | null>(null);
@@ -116,9 +117,10 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
       return {};
     }
 
-    const connection = (navigator as any).connection || 
-                      (navigator as any).mozConnection || 
-                      (navigator as any).webkitConnection;
+    const connection =
+      (navigator as any).connection ||
+      (navigator as any).mozConnection ||
+      (navigator as any).webkitConnection;
 
     if (!connection) {
       return {};
@@ -177,7 +179,7 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
     const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
     const connectionInfo = getConnectionInfo();
 
-    setNetworkStatus(prev => ({
+    setNetworkStatus((prev) => ({
       ...prev,
       isOnline,
       ...connectionInfo,
@@ -202,12 +204,12 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
         cache: 'no-cache',
         signal: AbortSignal.timeout(5000),
       });
-      
+
       const endTime = Date.now();
       const responseTime = endTime - startTime;
 
       // Update RTT based on actual network test
-      setNetworkStatus(prev => ({
+      setNetworkStatus((prev) => ({
         ...prev,
         rtt: responseTime,
         isOnline: response.ok,
@@ -216,7 +218,7 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
 
       return response.ok;
     } catch (error) {
-      setNetworkStatus(prev => ({
+      setNetworkStatus((prev) => ({
         ...prev,
         isOnline: false,
         lastCheck: Date.now(),
@@ -230,15 +232,15 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
    */
   const handleOnline = useCallback(async () => {
     console.log('[NetworkStatus] Browser reports online');
-    
+
     // Verify actual connectivity
     const isActuallyOnline = await performConnectivityTest();
-    
+
     if (isActuallyOnline) {
       updateNetworkStatus();
-      
+
       if (finalConfig.enableNotifications) {
-        showSuccessToast('Connection restored', 'You\'re back online');
+        showSuccessToast('Connection restored', "You're back online");
       }
 
       // Start recovery process
@@ -249,11 +251,11 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
       }
     }
   }, [
-    performConnectivityTest, 
-    updateNetworkStatus, 
-    finalConfig.enableNotifications, 
-    showSuccessToast, 
-    queuedRequests.length
+    performConnectivityTest,
+    updateNetworkStatus,
+    finalConfig.enableNotifications,
+    showSuccessToast,
+    queuedRequests.length,
   ]);
 
   /**
@@ -262,11 +264,11 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
   const handleOffline = useCallback(() => {
     console.log('[NetworkStatus] Browser reports offline');
     updateNetworkStatus();
-    
+
     if (finalConfig.enableNotifications) {
       showWarningToast(
-        'Connection lost', 
-        'Working offline - requests will be queued'
+        'Connection lost',
+        'Working offline - requests will be queued',
       );
     }
   }, [updateNetworkStatus, finalConfig.enableNotifications, showWarningToast]);
@@ -274,43 +276,51 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
   /**
    * Queue a request for later execution
    */
-  const queueRequest = useCallback((
-    url: string, 
-    options: RequestInit = {},
-    priority: QueuedRequest['priority'] = 'medium'
-  ): Promise<Response> => {
-    return new Promise((resolve, reject) => {
-      if (queuedRequests.length >= finalConfig.maxQueueSize) {
-        reject(new Error('Request queue is full'));
-        return;
-      }
+  const queueRequest = useCallback(
+    (
+      url: string,
+      options: RequestInit = {},
+      priority: QueuedRequest['priority'] = 'medium',
+    ): Promise<Response> => {
+      return new Promise((resolve, reject) => {
+        if (queuedRequests.length >= finalConfig.maxQueueSize) {
+          reject(new Error('Request queue is full'));
+          return;
+        }
 
-      const requestId = `req-${Date.now()}-${++requestCounter.current}`;
-      
-      const queuedRequest: QueuedRequest = {
-        id: requestId,
-        url,
-        options,
-        timestamp: Date.now(),
-        retryCount: 0,
-        priority,
-        resolve,
-        reject,
-      };
+        const requestId = `req-${Date.now()}-${++requestCounter.current}`;
 
-      setQueuedRequests(prev => {
-        const newQueue = [...prev, queuedRequest];
-        // Sort by priority (high > medium > low) and timestamp
-        return newQueue.sort((a, b) => {
-          const priorityOrder = { high: 3, medium: 2, low: 1 };
-          const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
-          return priorityDiff !== 0 ? priorityDiff : a.timestamp - b.timestamp;
+        const queuedRequest: QueuedRequest = {
+          id: requestId,
+          url,
+          options,
+          timestamp: Date.now(),
+          retryCount: 0,
+          priority,
+          resolve,
+          reject,
+        };
+
+        setQueuedRequests((prev) => {
+          const newQueue = [...prev, queuedRequest];
+          // Sort by priority (high > medium > low) and timestamp
+          return newQueue.sort((a, b) => {
+            const priorityOrder = { high: 3, medium: 2, low: 1 };
+            const priorityDiff =
+              priorityOrder[b.priority] - priorityOrder[a.priority];
+            return priorityDiff !== 0
+              ? priorityDiff
+              : a.timestamp - b.timestamp;
+          });
         });
-      });
 
-      console.log(`[NetworkStatus] Queued request: ${url} (priority: ${priority})`);
-    });
-  }, [queuedRequests.length, finalConfig.maxQueueSize]);
+        console.log(
+          `[NetworkStatus] Queued request: ${url} (priority: ${priority})`,
+        );
+      });
+    },
+    [queuedRequests.length, finalConfig.maxQueueSize],
+  );
 
   /**
    * Process queued requests when back online
@@ -320,7 +330,9 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
       return;
     }
 
-    console.log(`[NetworkStatus] Processing ${queuedRequests.length} queued requests`);
+    console.log(
+      `[NetworkStatus] Processing ${queuedRequests.length} queued requests`,
+    );
 
     const requestsToProcess = [...queuedRequests];
     setQueuedRequests([]);
@@ -331,7 +343,7 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
     for (const request of requestsToProcess) {
       try {
         const response = await fetch(request.url, request.options);
-        
+
         if (response.ok) {
           request.resolve(response);
           successCount++;
@@ -340,11 +352,11 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
         }
       } catch (error) {
         request.retryCount++;
-        
+
         if (request.retryCount < finalConfig.maxRetries) {
           // Re-queue for retry
           setTimeout(() => {
-            setQueuedRequests(prev => [...prev, request]);
+            setQueuedRequests((prev) => [...prev, request]);
           }, finalConfig.retryDelay * request.retryCount);
         } else {
           request.reject(error);
@@ -353,17 +365,17 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
       }
 
       // Small delay between requests to avoid overwhelming the server
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     if (finalConfig.enableNotifications) {
       if (successCount > 0) {
         showSuccessToast(
-          'Requests processed', 
-          `${successCount} requests completed successfully`
+          'Requests processed',
+          `${successCount} requests completed successfully`,
         );
       }
-      
+
       if (failureCount > 0) {
         showErrorToast({
           id: 'queue-failures',
@@ -380,61 +392,64 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
       }
     }
   }, [
-    queuedRequests, 
-    finalConfig.maxRetries, 
-    finalConfig.retryDelay, 
+    queuedRequests,
+    finalConfig.maxRetries,
+    finalConfig.retryDelay,
     finalConfig.enableNotifications,
     showSuccessToast,
-    showErrorToast
+    showErrorToast,
   ]);
 
   /**
    * Smart fetch with automatic queuing
    */
-  const smartFetch = useCallback(async (
-    url: string, 
-    options: RequestInit = {},
-    priority: QueuedRequest['priority'] = 'medium'
-  ): Promise<Response> => {
-    // Check network status first
-    const isOnline = await performConnectivityTest();
+  const smartFetch = useCallback(
+    async (
+      url: string,
+      options: RequestInit = {},
+      priority: QueuedRequest['priority'] = 'medium',
+    ): Promise<Response> => {
+      // Check network status first
+      const isOnline = await performConnectivityTest();
 
-    if (!isOnline && finalConfig.enableQueuing) {
-      return queueRequest(url, options, priority);
-    }
-
-    // Proceed with normal fetch
-    try {
-      const response = await fetch(url, options);
-      
-      if (!response.ok && response.status >= 500) {
-        // Server error - queue if enabled
-        if (finalConfig.enableQueuing) {
-          return queueRequest(url, options, priority);
-        }
-      }
-      
-      return response;
-    } catch (error) {
-      // Network error - queue if enabled
-      if (finalConfig.enableQueuing && networkStatus.isOnline) {
+      if (!isOnline && finalConfig.enableQueuing) {
         return queueRequest(url, options, priority);
       }
-      
-      throw error;
-    }
-  }, [
-    performConnectivityTest, 
-    finalConfig.enableQueuing, 
-    queueRequest, 
-    networkStatus.isOnline
-  ]);
+
+      // Proceed with normal fetch
+      try {
+        const response = await fetch(url, options);
+
+        if (!response.ok && response.status >= 500) {
+          // Server error - queue if enabled
+          if (finalConfig.enableQueuing) {
+            return queueRequest(url, options, priority);
+          }
+        }
+
+        return response;
+      } catch (error) {
+        // Network error - queue if enabled
+        if (finalConfig.enableQueuing && networkStatus.isOnline) {
+          return queueRequest(url, options, priority);
+        }
+
+        throw error;
+      }
+    },
+    [
+      performConnectivityTest,
+      finalConfig.enableQueuing,
+      queueRequest,
+      networkStatus.isOnline,
+    ],
+  );
 
   /**
    * Clear request queue
    */
   const clearQueue = useCallback(() => {
-    queuedRequests.forEach(request => {
+    queuedRequests.forEach((request) => {
       request.reject(new Error('Request queue cleared'));
     });
     setQueuedRequests([]);
@@ -476,25 +491,25 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
-      
+
       if (connection) {
         connection.removeEventListener('change', updateNetworkStatus);
       }
-      
+
       if (performanceCheckInterval.current) {
         clearInterval(performanceCheckInterval.current);
       }
-      
+
       if (recoveryTimeout.current) {
         clearTimeout(recoveryTimeout.current);
       }
     };
   }, [
-    handleOnline, 
-    handleOffline, 
-    updateNetworkStatus, 
+    handleOnline,
+    handleOffline,
+    updateNetworkStatus,
     performConnectivityTest,
-    finalConfig.enablePerformanceMonitoring
+    finalConfig.enablePerformanceMonitoring,
   ]);
 
   return {
@@ -502,16 +517,18 @@ export function useNetworkStatus(config: Partial<NetworkConfig> = {}) {
     networkStatus,
     isRecovering,
     queueSize: queuedRequests.length,
-    
+
     // Methods
     smartFetch,
     queueRequest,
     clearQueue,
     refreshNetworkStatus,
-    
+
     // Utilities
     isOnline: networkStatus.isOnline,
     connectionQuality: networkStatus.connectionQuality,
-    shouldReduceData: networkStatus.saveData || networkStatus.connectionQuality === ConnectionQuality.POOR,
+    shouldReduceData:
+      networkStatus.saveData ||
+      networkStatus.connectionQuality === ConnectionQuality.POOR,
   };
 }

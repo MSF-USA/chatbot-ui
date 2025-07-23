@@ -1,11 +1,11 @@
 /**
  * Heading Hierarchy Component
- * 
+ *
  * Ensures proper heading structure for screen readers and WCAG compliance.
  * Provides utilities to maintain semantic heading levels throughout the application.
  */
+import React, { createContext, useCallback, useContext, useState } from 'react';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
 import { useTranslation } from 'next-i18next';
 
 /**
@@ -72,9 +72,7 @@ export const HeadingProvider: React.FC<HeadingProviderProps> = ({
   };
 
   return (
-    <HeadingContext.Provider value={value}>
-      {children}
-    </HeadingContext.Provider>
+    <HeadingContext.Provider value={value}>{children}</HeadingContext.Provider>
   );
 };
 
@@ -123,7 +121,7 @@ export const SmartHeading: React.FC<SmartHeadingProps> = ({
 
   // Determine the heading level to use
   const headingLevel = level || heading.currentLevel;
-  
+
   // Increment level for next heading if requested
   React.useEffect(() => {
     if (increment && !level) {
@@ -140,10 +138,12 @@ export const SmartHeading: React.FC<SmartHeadingProps> = ({
       className: `heading-${headingLevel} ${className}`,
       id,
       tabIndex,
-      'aria-label': ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined,
+      'aria-label': ariaLabel
+        ? t(ariaLabel, { defaultValue: ariaLabel })
+        : undefined,
       'aria-describedby': ariaDescribedBy,
     },
-    children
+    children,
   );
 };
 
@@ -182,7 +182,9 @@ export const Section: React.FC<SectionProps> = ({
       className={className}
       id={id}
       role={role}
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       aria-labelledby={ariaLabelledBy || headingId}
     >
       {heading && (
@@ -194,7 +196,14 @@ export const Section: React.FC<SectionProps> = ({
           {t(heading, { defaultValue: heading })}
         </SmartHeading>
       )}
-      <HeadingProvider initialLevel={Math.min(6, (headingLevel || headingContext.currentLevel) + 1) as HeadingLevel}>
+      <HeadingProvider
+        initialLevel={
+          Math.min(
+            6,
+            (headingLevel || headingContext.currentLevel) + 1,
+          ) as HeadingLevel
+        }
+      >
         {children}
       </HeadingProvider>
     </section>
@@ -233,7 +242,9 @@ export const Article: React.FC<ArticleProps> = ({
     <article
       className={className}
       id={id}
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       aria-labelledby={ariaLabelledBy || headingId}
     >
       {heading && (
@@ -245,7 +256,14 @@ export const Article: React.FC<ArticleProps> = ({
           {t(heading, { defaultValue: heading })}
         </SmartHeading>
       )}
-      <HeadingProvider initialLevel={Math.min(6, (headingLevel || headingContext.currentLevel) + 1) as HeadingLevel}>
+      <HeadingProvider
+        initialLevel={
+          Math.min(
+            6,
+            (headingLevel || headingContext.currentLevel) + 1,
+          ) as HeadingLevel
+        }
+      >
         {children}
       </HeadingProvider>
     </article>
@@ -259,32 +277,40 @@ export function useHeadingValidation() {
   const [issues, setIssues] = useState<string[]>([]);
 
   const validateHeadings = useCallback(() => {
-    const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    const headings = Array.from(
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+    );
     const foundIssues: string[] = [];
-    
+
     let previousLevel = 0;
-    
+
     headings.forEach((heading, index) => {
       const level = parseInt(heading.tagName.charAt(1));
-      
+
       // Check for skipped levels
       if (level > previousLevel + 1 && previousLevel !== 0) {
-        foundIssues.push(`Heading level ${level} follows h${previousLevel}, skipping h${previousLevel + 1} (element ${index + 1})`);
+        foundIssues.push(
+          `Heading level ${level} follows h${previousLevel}, skipping h${
+            previousLevel + 1
+          } (element ${index + 1})`,
+        );
       }
-      
+
       // Check for multiple h1s
       if (level === 1 && previousLevel >= 1) {
         foundIssues.push(`Multiple h1 elements found (element ${index + 1})`);
       }
-      
+
       // Check for empty headings
       if (!heading.textContent?.trim()) {
-        foundIssues.push(`Empty h${level} heading found (element ${index + 1})`);
+        foundIssues.push(
+          `Empty h${level} heading found (element ${index + 1})`,
+        );
       }
-      
+
       previousLevel = level;
     });
-    
+
     setIssues(foundIssues);
     return foundIssues;
   }, []);
@@ -337,7 +363,7 @@ export const HeadingValidator: React.FC = () => {
  */
 export function getHeadingLevel(element: HTMLElement): HeadingLevel | null {
   const match = element.tagName.match(/^H([1-6])$/);
-  return match ? parseInt(match[1]) as HeadingLevel : null;
+  return match ? (parseInt(match[1]) as HeadingLevel) : null;
 }
 
 /**
@@ -349,9 +375,11 @@ export function createHeadingOutline(): Array<{
   id?: string;
   element: HTMLElement;
 }> {
-  const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
-  
-  return headings.map(heading => ({
+  const headings = Array.from(
+    document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+  );
+
+  return headings.map((heading) => ({
     level: parseInt(heading.tagName.charAt(1)) as HeadingLevel,
     text: heading.textContent?.trim() || '',
     id: heading.id || undefined,

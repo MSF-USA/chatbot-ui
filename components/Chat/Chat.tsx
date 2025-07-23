@@ -14,8 +14,11 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
+import {
+  AgenticChatResult,
+  createAgenticFrontendService,
+} from '@/services/agenticFrontendService';
 import { makeRequest } from '@/services/frontendChatServices';
-import { createAgenticFrontendService, AgenticChatResult } from '@/services/agenticFrontendService';
 
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
@@ -27,6 +30,7 @@ import {
 } from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
+import { AgentType } from '@/types/agent';
 import { getBotById } from '@/types/bots';
 import {
   ChatBody,
@@ -39,7 +43,6 @@ import {
 } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
-import { AgentType } from '@/types/agent';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -124,7 +127,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     string | null
   >(null);
   const [progress, setProgress] = useState<number | null>(null);
-  const [currentAgentResult, setCurrentAgentResult] = useState<AgenticChatResult | null>(null);
+  const [currentAgentResult, setCurrentAgentResult] =
+    useState<AgenticChatResult | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -172,29 +176,32 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   /**
    * Determine if we should use agentic routing for this message
    */
-  const shouldUseAgenticRouting = useCallback((message: Message): boolean => {
-    // Check if agentic routing is enabled globally
-    if (!agentRoutingEnabled || !agentSettings.enabled) {
-      return false;
-    }
+  const shouldUseAgenticRouting = useCallback(
+    (message: Message): boolean => {
+      // Check if agentic routing is enabled globally
+      if (!agentRoutingEnabled || !agentSettings.enabled) {
+        return false;
+      }
 
-    // Check if user has any agents enabled
-    if (agentSettings.enabledAgentTypes.length === 0) {
-      return false;
-    }
+      // Check if user has any agents enabled
+      if (agentSettings.enabledAgentTypes.length === 0) {
+        return false;
+      }
 
-    // Skip agentic routing for complex content (files, images)
-    if (Array.isArray(message.content) && message.content.length > 1) {
-      return false;
-    }
+      // Skip agentic routing for complex content (files, images)
+      if (Array.isArray(message.content) && message.content.length > 1) {
+        return false;
+      }
 
-    // Skip if there's already a bot selected (RAG/specialized bots)
-    if (selectedConversation?.bot) {
-      return false;
-    }
+      // Skip if there's already a bot selected (RAG/specialized bots)
+      if (selectedConversation?.bot) {
+        return false;
+      }
 
-    return true;
-  }, [agentRoutingEnabled, agentSettings, selectedConversation]);
+      return true;
+    },
+    [agentRoutingEnabled, agentSettings, selectedConversation],
+  );
 
   useEffect(() => {
     updateBotInfo();
@@ -251,32 +258,42 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
         if (value) {
           const chunkValue = decoder.decode(value);
-          
+
           // Check if this is a complete JSON response from enhanced service
           let isEnhancedResponse = false;
           let enhancedData = null;
-          
+
           // Try to parse the chunk as JSON (enhanced service response)
           try {
             enhancedData = JSON.parse(chunkValue);
-            if (enhancedData && enhancedData.success && enhancedData.data && enhancedData.data.text) {
+            if (
+              enhancedData &&
+              enhancedData.success &&
+              enhancedData.data &&
+              enhancedData.data.text
+            ) {
               isEnhancedResponse = true;
               processedEnhancedResponse = true;
               // Extract the text content from the enhanced response
               text = enhancedData.data.text;
-              
+
               // Handle enhanced sources if available
-              if (enhancedData.data.sources && enhancedData.data.sources.length > 0) {
-                extractedCitations = enhancedData.data.sources.map((source: any, index: number) => ({
-                  id: `enhanced_${index}`,
-                  title: source.title || source.name || `Source ${index + 1}`,
-                  url: source.url || source.link || '',
-                  text: source.snippet || source.content || source.text || '',
-                  page_number: source.page || null,
-                  source_type: source.type || 'web',
-                }));
+              if (
+                enhancedData.data.sources &&
+                enhancedData.data.sources.length > 0
+              ) {
+                extractedCitations = enhancedData.data.sources.map(
+                  (source: any, index: number) => ({
+                    id: `enhanced_${index}`,
+                    title: source.title || source.name || `Source ${index + 1}`,
+                    url: source.url || source.link || '',
+                    text: source.snippet || source.content || source.text || '',
+                    page_number: source.page || null,
+                    source_type: source.type || 'web',
+                  }),
+                );
               }
-              
+
               console.log('Enhanced service response detected:', {
                 processingTime: enhancedData.data.processingTime,
                 usedFallback: enhancedData.data.usedFallback,
@@ -432,7 +449,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
 
   const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null = null, forceStandardChat?: boolean, forcedAgentType?: AgentType) => {
+    async (
+      message: Message,
+      deleteCount = 0,
+      plugin: Plugin | null = null,
+      forceStandardChat?: boolean,
+      forcedAgentType?: AgentType,
+    ) => {
       if (selectedConversation) {
         stopConversationRef.current = false;
 
@@ -467,11 +490,21 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           setTimeout(() => clearInterval(abortCheckInterval), 60000);
 
           // Determine if we should use agentic routing
-          const useAgenticRouting = forceStandardChat ? false : shouldUseAgenticRouting(message);
-          console.log('[Chat] Using agentic routing:', useAgenticRouting, '(forceStandardChat:', forceStandardChat, ', forcedAgentType:', forcedAgentType, ')');
+          const useAgenticRouting = forceStandardChat
+            ? false
+            : shouldUseAgenticRouting(message);
+          console.log(
+            '[Chat] Using agentic routing:',
+            useAgenticRouting,
+            '(forceStandardChat:',
+            forceStandardChat,
+            ', forcedAgentType:',
+            forcedAgentType,
+            ')',
+          );
 
           let requestResult: any;
-          
+
           if (useAgenticRouting) {
             // Use agentic frontend service
             const agenticService = createAgenticFrontendService({
@@ -519,7 +552,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             setCurrentAgentResult(null);
           }
 
-          const { controller, body, response, hasComplexContent, setOnAbort } = requestResult;
+          const { controller, body, response, hasComplexContent, setOnAbort } =
+            requestResult;
 
           clearInterval(abortCheckInterval);
 
@@ -595,14 +629,24 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       return;
                     }
 
-                    reader.read().then(({ done, value }: { done: boolean; value: Uint8Array }) => {
-                      if (done) {
-                        controller.close();
-                        return;
-                      }
-                      controller.enqueue(value);
-                      push();
-                    });
+                    reader
+                      .read()
+                      .then(
+                        ({
+                          done,
+                          value,
+                        }: {
+                          done: boolean;
+                          value: Uint8Array;
+                        }) => {
+                          if (done) {
+                            controller.close();
+                            return;
+                          }
+                          controller.enqueue(value);
+                          push();
+                        },
+                      );
                   }
 
                   push();
@@ -1168,7 +1212,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             textareaRef={textareaRef}
             onSend={(message, plugin, forceStandardChat, forcedAgentType) => {
               setCurrentMessage(message);
-              handleSend(message, 0, plugin, forceStandardChat, forcedAgentType);
+              handleSend(
+                message,
+                0,
+                plugin,
+                forceStandardChat,
+                forcedAgentType,
+              );
             }}
             onTemperatureChange={(newTemperature) => {
               homeDispatch({ field: 'temperature', value: newTemperature });
@@ -1191,7 +1241,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   ...agentSettings,
                   enabled,
                 };
-                homeDispatch({ field: 'agentSettings', value: updatedAgentSettings });
+                homeDispatch({
+                  field: 'agentSettings',
+                  value: updatedAgentSettings,
+                });
               }
             }}
             onSettingsOpen={() => {
@@ -1236,7 +1289,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 // Add both messages to the conversation
                 const updatedConversation = {
                   ...selectedConversation,
-                  messages: [...selectedConversation.messages, userMsg, assistantMsg],
+                  messages: [
+                    ...selectedConversation.messages,
+                    userMsg,
+                    assistantMsg,
+                  ],
                 };
                 handleUpdateConversation(updatedConversation, {
                   key: 'messages',

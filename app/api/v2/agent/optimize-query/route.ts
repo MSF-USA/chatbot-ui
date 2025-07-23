@@ -1,16 +1,17 @@
-import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { AzureOpenAI } from 'openai';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { isReasoningModel } from '@/utils/app/chat';
+import { generateOptimizedWebSearchQuery } from '@/utils/server/structuredResponses';
+
+import { Message } from '@/types/chat';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
 } from '@azure/identity';
-
-import { generateOptimizedWebSearchQuery } from '@/utils/server/structuredResponses';
-
-import { Message } from '@/types/chat';
-import {OpenAIModelID, OpenAIModels} from "@/types/openai";
-import {isReasoningModel} from "@/utils/app/chat";
+import { AzureOpenAI } from 'openai';
 
 interface OptimizeQueryRequest {
   messages: Message[];
@@ -36,10 +37,15 @@ function getOpenAIInstance(): AzureOpenAI | null {
         azureADTokenProvider,
         apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
       });
-      
-      console.log('[QueryOptimizationAPI] OpenAI instance initialized successfully');
+
+      console.log(
+        '[QueryOptimizationAPI] OpenAI instance initialized successfully',
+      );
     } catch (error) {
-      console.warn('[QueryOptimizationAPI] Failed to initialize OpenAI instance:', error);
+      console.warn(
+        '[QueryOptimizationAPI] Failed to initialize OpenAI instance:',
+        error,
+      );
       openaiInstance = null;
     }
   }
@@ -53,13 +59,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { messages, currentQuery, modelId }: OptimizeQueryRequest = await req.json();
+    const { messages, currentQuery, modelId }: OptimizeQueryRequest =
+      await req.json();
 
     // Validate request
     if (!messages || !currentQuery || !modelId) {
       return NextResponse.json(
         { error: 'Missing required fields: messages, currentQuery, modelId' },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -68,33 +75,35 @@ export async function POST(req: NextRequest) {
     if (!openai) {
       return NextResponse.json(
         { error: 'OpenAI client unavailable' },
-        { status: 503 }
+        { status: 503 },
       );
     }
-    
+
     // Generate optimized query using the same function as enhancedChatService
     const optimizedResult = await generateOptimizedWebSearchQuery(
       openai,
       messages,
       currentQuery,
       session.user,
-      (OpenAIModels[modelId as OpenAIModelID].isLegacy || isReasoningModel(modelId)) ? OpenAIModelID.GPT_4o_mini : modelId as OpenAIModelID
+      OpenAIModels[modelId as OpenAIModelID].isLegacy ||
+        isReasoningModel(modelId)
+        ? OpenAIModelID.GPT_4o_mini
+        : (modelId as OpenAIModelID),
     );
 
     return NextResponse.json({
       success: true,
       optimizedQuery: optimizedResult.optimizedQuery,
-      originalQuery: currentQuery
+      originalQuery: currentQuery,
     });
-
   } catch (error) {
     console.error('Query optimization failed:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Query optimization failed',
-        details: error instanceof Error ? error.message : String(error)
+        details: error instanceof Error ? error.message : String(error),
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

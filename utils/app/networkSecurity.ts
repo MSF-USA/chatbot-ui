@@ -1,12 +1,13 @@
-import { URL } from 'url';
-import { 
-  HttpError, 
-  SECURITY_CONSTANTS, 
-  isUrlPointingToPrivateNetwork,
+import {
+  HttpError,
+  SECURITY_CONSTANTS,
   createTimeoutController,
   handleAbortError,
-  validateUrlSecurity
+  isUrlPointingToPrivateNetwork,
+  validateUrlSecurity,
 } from './security';
+
+import { URL } from 'url';
 
 /**
  * Configuration options for secure network requests
@@ -29,10 +30,10 @@ export interface SecureRequestResult {
 
 /**
  * Handle secure network requests with comprehensive SSRF protection
- * 
+ *
  * This function validates both the initial URL and any redirect URLs to prevent
  * Server-Side Request Forgery (SSRF) attacks against internal networks.
- * 
+ *
  * @param initialUrl - The initial URL to fetch
  * @param options - Request configuration options
  * @returns Promise<SecureRequestResult> - The final response and metadata
@@ -40,12 +41,12 @@ export interface SecureRequestResult {
  */
 export async function executeSecureRequest(
   initialUrl: string | URL,
-  options: SecureRequestOptions & { 
+  options: SecureRequestOptions & {
     headers?: Record<string, string>;
     method?: string;
     body?: any;
     signal?: AbortSignal;
-  } = {}
+  } = {},
 ): Promise<SecureRequestResult> {
   const {
     timeout = SECURITY_CONSTANTS.DEFAULT_REQUEST_TIMEOUT,
@@ -55,19 +56,21 @@ export async function executeSecureRequest(
     headers = {},
     method = 'GET',
     body,
-    signal: externalSignal
+    signal: externalSignal,
   } = options;
 
-  const initialUrlString = typeof initialUrl === 'string' ? initialUrl : initialUrl.toString();
+  const initialUrlString =
+    typeof initialUrl === 'string' ? initialUrl : initialUrl.toString();
   const validatedInitialUrl = await validateUrlSecurity(initialUrlString);
-  
+
   let response: Response | null = null;
   let redirectCount = 0;
   let currentUrl = validatedInitialUrl.toString();
 
   // Create timeout controller, but respect external signal if provided
-  const { controller: timeoutController, cleanup } = createTimeoutController(timeout);
-  
+  const { controller: timeoutController, cleanup } =
+    createTimeoutController(timeout);
+
   // Combine external signal with timeout signal
   let effectiveSignal: AbortSignal;
   if (externalSignal && !externalSignal.aborted) {
@@ -79,7 +82,7 @@ export async function executeSecureRequest(
         timeoutController.abort();
       }
     }, timeout);
-    
+
     // Clean up timeout when external signal aborts
     externalSignal.addEventListener('abort', () => {
       clearTimeout(timeoutId);
@@ -113,7 +116,7 @@ export async function executeSecureRequest(
           if (!location) {
             throw new HttpError(
               response.status,
-              'Redirect error: Location header not provided'
+              'Redirect error: Location header not provided',
             );
           }
 
@@ -124,7 +127,7 @@ export async function executeSecureRequest(
           if (await isUrlPointingToPrivateNetwork(redirectUrl)) {
             throw new HttpError(
               403,
-              'Access denied: Redirect to internal or private network not allowed'
+              'Access denied: Redirect to internal or private network not allowed',
             );
           }
 
@@ -141,30 +144,29 @@ export async function executeSecureRequest(
     if (redirectCount >= maxRedirects) {
       throw new HttpError(
         429,
-        'Too many redirects: Maximum redirect limit reached'
+        'Too many redirects: Maximum redirect limit reached',
       );
     }
 
     if (!response) {
       throw new HttpError(
         500,
-        'No response: Failed to get any response from the server'
+        'No response: Failed to get any response from the server',
       );
     }
 
     if (!response.ok) {
       throw new HttpError(
         response.status,
-        `Server error: The server returned status code ${response.status}`
+        `Server error: The server returned status code ${response.status}`,
       );
     }
 
     return {
       response,
       finalUrl: currentUrl,
-      redirectCount
+      redirectCount,
     };
-
   } finally {
     cleanup();
   }
@@ -172,7 +174,7 @@ export async function executeSecureRequest(
 
 /**
  * Stream content from a response with size validation
- * 
+ *
  * @param response - The response to stream
  * @param maxSize - Maximum allowed content size in bytes
  * @returns Promise<Buffer> - The content as a buffer
@@ -180,7 +182,7 @@ export async function executeSecureRequest(
  */
 export async function streamResponseContent(
   response: Response,
-  maxSize: number
+  maxSize: number,
 ): Promise<Buffer> {
   if (!response.body) {
     throw new HttpError(500, 'Failed to read response body');
@@ -194,7 +196,7 @@ export async function streamResponseContent(
   if (contentLength > 0 && contentLength > maxSize) {
     throw new HttpError(
       413,
-      `Content too large: Maximum size is ${maxSize / (1024 * 1024)}MB`
+      `Content too large: Maximum size is ${maxSize / (1024 * 1024)}MB`,
     );
   }
 
@@ -204,7 +206,7 @@ export async function streamResponseContent(
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      
+
       const chunk = Buffer.from(value);
       chunks.push(chunk);
       receivedLength += chunk.length;
@@ -212,7 +214,7 @@ export async function streamResponseContent(
       if (receivedLength > maxSize) {
         throw new HttpError(
           413,
-          `Content too large: Maximum size is ${maxSize / (1024 * 1024)}MB`
+          `Content too large: Maximum size is ${maxSize / (1024 * 1024)}MB`,
         );
       }
     }
@@ -225,7 +227,7 @@ export async function streamResponseContent(
 
 /**
  * Utility for streaming Node.js response bodies (for compatibility with node-fetch)
- * 
+ *
  * @param responseBody - Node.js response body stream
  * @param maxSize - Maximum allowed content size in bytes
  * @returns Promise<Buffer> - The content as a buffer
@@ -233,7 +235,7 @@ export async function streamResponseContent(
  */
 export async function streamNodeResponseContent(
   responseBody: any,
-  maxSize: number
+  maxSize: number,
 ): Promise<Buffer> {
   const chunks: Buffer[] = [];
   let receivedLength = 0;
@@ -249,7 +251,7 @@ export async function streamNodeResponseContent(
       responseBody?.destroy?.();
       throw new HttpError(
         413,
-        `Content too large: Maximum size is ${maxSize / (1024 * 1024)}MB`
+        `Content too large: Maximum size is ${maxSize / (1024 * 1024)}MB`,
       );
     }
   }
@@ -259,7 +261,7 @@ export async function streamNodeResponseContent(
 
 /**
  * Validate response content type against allowed/blocked lists
- * 
+ *
  * @param response - The response to validate
  * @param options - Validation options
  * @throws HttpError if content type is not allowed
@@ -270,18 +272,22 @@ export function validateResponseContentType(
     allowedTypes?: Set<string>;
     blockedTypes?: Set<string>;
     contentTypeDescription?: string;
-  } = {}
+  } = {},
 ): string {
-  const { allowedTypes, blockedTypes, contentTypeDescription = 'content' } = options;
+  const {
+    allowedTypes,
+    blockedTypes,
+    contentTypeDescription = 'content',
+  } = options;
   const contentType = response.headers.get('content-type')?.toLowerCase() || '';
 
   // Check blocked types first
   if (blockedTypes) {
-    blockedTypes.forEach(blockedType => {
+    blockedTypes.forEach((blockedType) => {
       if (contentType.includes(blockedType)) {
         throw new HttpError(
           415,
-          `Unsupported media type: ${contentType} is not allowed for security reasons`
+          `Unsupported media type: ${contentType} is not allowed for security reasons`,
         );
       }
     });
@@ -289,18 +295,19 @@ export function validateResponseContentType(
 
   // Check allowed types
   if (allowedTypes && allowedTypes.size > 0) {
-    const isAllowed = allowedTypes.has(contentType) || 
-                      Array.from(allowedTypes).some(type => {
-                        if (type.endsWith('/*')) {
-                          return contentType.startsWith(type.slice(0, -1));
-                        }
-                        return contentType.includes(type);
-                      });
-    
+    const isAllowed =
+      allowedTypes.has(contentType) ||
+      Array.from(allowedTypes).some((type) => {
+        if (type.endsWith('/*')) {
+          return contentType.startsWith(type.slice(0, -1));
+        }
+        return contentType.includes(type);
+      });
+
     if (!isAllowed) {
       throw new HttpError(
         415,
-        `Unsupported media type: ${contentType} is not a valid ${contentTypeDescription} format`
+        `Unsupported media type: ${contentType} is not a valid ${contentTypeDescription} format`,
       );
     }
   }
@@ -310,22 +317,22 @@ export function validateResponseContentType(
 
 /**
  * Create secure fetch options from RequestInit with security defaults
- * 
+ *
  * @param init - Original RequestInit options
  * @param securityOptions - Additional security options
  * @returns Combined options for secure requests
  */
 export function createSecureRequestOptions(
   init: RequestInit | undefined,
-  securityOptions: SecureRequestOptions = {}
-): SecureRequestOptions & { 
+  securityOptions: SecureRequestOptions = {},
+): SecureRequestOptions & {
   headers?: Record<string, string>;
   method?: string;
   body?: any;
   signal?: AbortSignal;
 } {
   const headers: Record<string, string> = {};
-  
+
   // Extract headers from RequestInit
   if (init?.headers) {
     if (init.headers instanceof Headers) {
@@ -342,9 +349,12 @@ export function createSecureRequestOptions(
   }
 
   return {
-    timeout: securityOptions.timeout || SECURITY_CONSTANTS.DEFAULT_REQUEST_TIMEOUT,
-    maxRedirects: securityOptions.maxRedirects || SECURITY_CONSTANTS.MAX_REDIRECTS,
-    userAgent: securityOptions.userAgent || SECURITY_CONSTANTS.DEFAULT_USER_AGENT,
+    timeout:
+      securityOptions.timeout || SECURITY_CONSTANTS.DEFAULT_REQUEST_TIMEOUT,
+    maxRedirects:
+      securityOptions.maxRedirects || SECURITY_CONSTANTS.MAX_REDIRECTS,
+    userAgent:
+      securityOptions.userAgent || SECURITY_CONSTANTS.DEFAULT_USER_AGENT,
     additionalHeaders: securityOptions.additionalHeaders || {},
     headers,
     method: init?.method || 'GET',

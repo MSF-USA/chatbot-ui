@@ -1,15 +1,15 @@
 /**
  * Health Check API Endpoint
- * 
+ *
  * Provides comprehensive health monitoring for the Azure AI Agent system,
  * including agent pools, feature flags, and standard chat functionality.
  */
-
 import { NextRequest, NextResponse } from 'next/server';
-import { getEnhancedChatService } from '@/services/enhancedChatService';
-import { getFeatureFlagService } from '@/services/simpleFeatureFlags';
+
 import { getAgentPoolingService } from '@/services/agentPoolingService';
+import { getEnhancedChatService } from '@/services/enhancedChatService';
 import { AzureMonitorLoggingService } from '@/services/loggingService';
+import { getFeatureFlagService } from '@/services/simpleFeatureFlags';
 
 /**
  * Health status types
@@ -57,10 +57,10 @@ interface HealthCheckResponse {
 async function checkComponentHealth<T>(
   checkFunction: () => Promise<T>,
   componentName: string,
-  timeout: number = 5000
+  timeout: number = 5000,
 ): Promise<ComponentHealth> {
   const startTime = Date.now();
-  
+
   try {
     // Create timeout promise
     const timeoutPromise = new Promise<never>((_, reject) => {
@@ -68,13 +68,10 @@ async function checkComponentHealth<T>(
     });
 
     // Race the health check against timeout
-    const result = await Promise.race([
-      checkFunction(),
-      timeoutPromise
-    ]);
+    const result = await Promise.race([checkFunction(), timeoutPromise]);
 
     const responseTime = Date.now() - startTime;
-    
+
     return {
       status: 'healthy',
       details: result,
@@ -83,7 +80,7 @@ async function checkComponentHealth<T>(
     };
   } catch (error) {
     const responseTime = Date.now() - startTime;
-    
+
     return {
       status: responseTime > timeout ? 'degraded' : 'unhealthy',
       responseTime,
@@ -96,10 +93,12 @@ async function checkComponentHealth<T>(
 /**
  * GET /api/health - Comprehensive health check
  */
-export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckResponse>> {
+export async function GET(
+  req: NextRequest,
+): Promise<NextResponse<HealthCheckResponse>> {
   const startTime = Date.now();
   const includeDetails = req.nextUrl.searchParams.get('details') === 'true';
-  
+
   try {
     console.log('[INFO] Starting health check');
 
@@ -155,10 +154,10 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
             const healthStatus = service.getHealthStatus();
             return healthStatus;
           } else {
-            return { 
-              status: 'degraded', 
+            return {
+              status: 'degraded',
               isConfigured: false,
-              error: 'Azure Monitor not configured'
+              error: 'Azure Monitor not configured',
             };
           }
         } catch (error) {
@@ -181,7 +180,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
 
     // Process results
     const components: HealthCheckResponse['components'] = {};
-    
+
     if (enhancedChatHealth.status === 'fulfilled') {
       components.enhancedChatService = enhancedChatHealth.value;
     } else {
@@ -208,7 +207,8 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
       components.agentPooling = {
         status: 'degraded', // Agent pooling is optional
         lastChecked: new Date().toISOString(),
-        error: agentPoolingHealth.reason?.message || 'Agent pooling unavailable',
+        error:
+          agentPoolingHealth.reason?.message || 'Agent pooling unavailable',
       };
     }
 
@@ -228,21 +228,23 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
       components.standardChat = {
         status: 'unhealthy',
         lastChecked: new Date().toISOString(),
-        error: standardChatHealth.reason?.message || 'Standard chat unavailable',
+        error:
+          standardChatHealth.reason?.message || 'Standard chat unavailable',
       };
     }
 
     // Determine overall health status
     let overallStatus: HealthStatus = 'healthy';
-    const componentStatuses = Object.values(components).map(c => c.status);
-    
+    const componentStatuses = Object.values(components).map((c) => c.status);
+
     if (componentStatuses.includes('unhealthy')) {
       // Critical components are unhealthy
       const criticalUnhealthy = [
         components.standardChat?.status === 'unhealthy',
-        components.enhancedChatService?.status === 'unhealthy' && components.featureFlags?.status === 'unhealthy'
+        components.enhancedChatService?.status === 'unhealthy' &&
+          components.featureFlags?.status === 'unhealthy',
       ].some(Boolean);
-      
+
       if (criticalUnhealthy) {
         overallStatus = 'unhealthy';
       } else {
@@ -270,13 +272,30 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
       version: process.env.APP_VERSION || '1.0.0',
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
-      components: includeDetails ? components : {
-        enhancedChatService: { status: components.enhancedChatService?.status || 'unknown', lastChecked: new Date().toISOString() },
-        featureFlags: { status: components.featureFlags?.status || 'unknown', lastChecked: new Date().toISOString() },
-        agentPooling: { status: components.agentPooling?.status || 'unknown', lastChecked: new Date().toISOString() },
-        azureMonitor: { status: components.azureMonitor?.status || 'unknown', lastChecked: new Date().toISOString() },
-        standardChat: { status: components.standardChat?.status || 'unknown', lastChecked: new Date().toISOString() },
-      },
+      components: includeDetails
+        ? components
+        : {
+            enhancedChatService: {
+              status: components.enhancedChatService?.status || 'unknown',
+              lastChecked: new Date().toISOString(),
+            },
+            featureFlags: {
+              status: components.featureFlags?.status || 'unknown',
+              lastChecked: new Date().toISOString(),
+            },
+            agentPooling: {
+              status: components.agentPooling?.status || 'unknown',
+              lastChecked: new Date().toISOString(),
+            },
+            azureMonitor: {
+              status: components.azureMonitor?.status || 'unknown',
+              lastChecked: new Date().toISOString(),
+            },
+            standardChat: {
+              status: components.standardChat?.status || 'unknown',
+              lastChecked: new Date().toISOString(),
+            },
+          },
       ...(metrics && { metrics }),
     };
 
@@ -288,10 +307,13 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
       httpStatus = 503; // Service unavailable
     }
 
-    console.log(`[INFO] Health check completed in ${Date.now() - startTime}ms, status: ${overallStatus}`);
+    console.log(
+      `[INFO] Health check completed in ${
+        Date.now() - startTime
+      }ms, status: ${overallStatus}`,
+    );
 
     return NextResponse.json(response, { status: httpStatus });
-
   } catch (error) {
     console.error('[ERROR] Health check failed:', error);
 
@@ -302,10 +324,10 @@ export async function GET(req: NextRequest): Promise<NextResponse<HealthCheckRes
       uptime: process.uptime(),
       environment: process.env.NODE_ENV || 'development',
       components: {
-        enhancedChatService: { 
-          status: 'unhealthy', 
+        enhancedChatService: {
+          status: 'unhealthy',
           lastChecked: new Date().toISOString(),
-          error: 'Health check system failure'
+          error: 'Health check system failure',
         },
       },
     };

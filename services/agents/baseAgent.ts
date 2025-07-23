@@ -1,28 +1,24 @@
 import { Session } from 'next-auth';
 
+import { AzureMonitorLoggingService } from '@/services/loggingService';
+
 import {
   AgentConfig,
   AgentExecutionContext,
+  AgentExecutionStats,
+  AgentHealthResult,
+  AgentPoolStats,
   AgentResponse,
   AgentType,
-  BaseAgentInstance,
-  AgentHealthResult,
-  AgentExecutionStats,
   AgentValidationResult,
-  AgentPoolStats,
+  BaseAgentInstance,
 } from '@/types/agent';
-
-import { AzureMonitorLoggingService } from '@/services/loggingService';
 
 /**
  * Custom error classes for agent operations
  */
 export class BaseAgentError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public details?: any,
-  ) {
+  constructor(message: string, public code: string, public details?: any) {
     super(message);
     this.name = 'BaseAgentError';
   }
@@ -160,21 +156,27 @@ export abstract class BaseAgent implements BaseAgentInstance {
       // Check if agent supports streaming
       if (!this.executeInternalStreaming) {
         // Fallback to non-streaming execution and convert to stream
-        console.log(`[INFO] Agent ${this.config.type} doesn't support streaming, falling back to non-streaming`);
+        console.log(
+          `[INFO] Agent ${this.config.type} doesn't support streaming, falling back to non-streaming`,
+        );
         const response = await this.executeInternal(context);
         return this.convertResponseToStream(response);
       }
 
       // Execute with timeout for streaming
-      const timeoutPromise = new Promise<ReadableStream<string>>((_, reject) => {
-        setTimeout(() => {
-          reject(
-            new AgentTimeoutError(
-              `Agent streaming execution timed out after ${this.config.timeout || 300000}ms`,
-            ),
-          );
-        }, this.config.timeout || 300000);
-      });
+      const timeoutPromise = new Promise<ReadableStream<string>>(
+        (_, reject) => {
+          setTimeout(() => {
+            reject(
+              new AgentTimeoutError(
+                `Agent streaming execution timed out after ${
+                  this.config.timeout || 300000
+                }ms`,
+              ),
+            );
+          }, this.config.timeout || 300000);
+        },
+      );
 
       const executionPromise = this.executeInternalStreaming(context);
       const stream = await Promise.race([executionPromise, timeoutPromise]);
@@ -211,9 +213,7 @@ export abstract class BaseAgent implements BaseAgentInstance {
   /**
    * Main execution method with common functionality
    */
-  public async execute(
-    context: AgentExecutionContext,
-  ): Promise<AgentResponse> {
+  public async execute(context: AgentExecutionContext): Promise<AgentResponse> {
     const startTime = Date.now();
     const correlationId = context.correlationId || this.generateCorrelationId();
 
@@ -240,7 +240,9 @@ export abstract class BaseAgent implements BaseAgentInstance {
         setTimeout(() => {
           reject(
             new AgentTimeoutError(
-              `Agent execution timed out after ${this.config.timeout || 300000}ms`,
+              `Agent execution timed out after ${
+                this.config.timeout || 300000
+              }ms`,
             ),
           );
         }, this.config.timeout || 300000);
@@ -277,7 +279,7 @@ export abstract class BaseAgent implements BaseAgentInstance {
           this.config.modelId || 'unknown',
           context.user,
           undefined,
-          correlationId
+          correlationId,
         );
       }
 
@@ -304,7 +306,7 @@ export abstract class BaseAgent implements BaseAgentInstance {
           this.config.modelId || 'unknown',
           context.user,
           undefined,
-          correlationId
+          correlationId,
         );
       }
 
@@ -535,9 +537,10 @@ export abstract class BaseAgent implements BaseAgentInstance {
     // Default implementation - can be overridden by subclasses
   }
 
-  protected validateContext(
-    context: AgentExecutionContext,
-  ): { valid: boolean; errors: string[] } {
+  protected validateContext(context: AgentExecutionContext): {
+    valid: boolean;
+    errors: string[];
+  } {
     const errors: string[] = [];
 
     if (!context.query || context.query.trim().length === 0) {
@@ -563,7 +566,9 @@ export abstract class BaseAgent implements BaseAgentInstance {
   }
 
   protected generateCorrelationId(): string {
-    return `${this.config.type}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    return `${this.config.type}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
   }
 
   /**
@@ -579,7 +584,7 @@ export abstract class BaseAgent implements BaseAgentInstance {
         this.config.type,
         healthy,
         user,
-        this.config.id // Use agent ID as botId for health checks
+        this.config.id, // Use agent ID as botId for health checks
       );
     }
   }
@@ -592,21 +597,16 @@ export abstract class BaseAgent implements BaseAgentInstance {
   protected logInfo(message: string, metadata?: Record<string, any>): void {
     // Log to console for local debugging
     console.log(`[INFO] ${message}`, metadata);
-    
+
     // Log to Azure Monitor if available
     const logger = AzureMonitorLoggingService.getInstance();
     if (logger) {
-      void logger.logCustomMetric(
-        `${this.config.type}Info`,
-        1,
-        'count',
-        {
-          agentId: this.config.id,
-          agentType: this.config.type,
-          message,
-          ...metadata
-        }
-      );
+      void logger.logCustomMetric(`${this.config.type}Info`, 1, 'count', {
+        agentId: this.config.id,
+        agentType: this.config.type,
+        message,
+        ...metadata,
+      });
     }
   }
 
@@ -616,10 +616,14 @@ export abstract class BaseAgent implements BaseAgentInstance {
    * @param error The error object
    * @param metadata Additional metadata to include in the log
    */
-  protected logError(message: string, error: Error, metadata?: Record<string, any>): void {
+  protected logError(
+    message: string,
+    error: Error,
+    metadata?: Record<string, any>,
+  ): void {
     // Log to console for local debugging
     console.error(`[ERROR] ${message}`, error, metadata);
-    
+
     // Log to Azure Monitor if available
     const logger = AzureMonitorLoggingService.getInstance();
     if (logger) {
@@ -634,10 +638,10 @@ export abstract class BaseAgent implements BaseAgentInstance {
           id: 'system',
           givenName: 'System',
           surname: 'Agent',
-          displayName: 'System Agent'
+          displayName: 'System Agent',
         }, // Default user for system context
         undefined, // botId is not available in this context
-        metadata?.correlationId
+        metadata?.correlationId,
       );
     }
   }
@@ -650,21 +654,16 @@ export abstract class BaseAgent implements BaseAgentInstance {
   protected logWarning(message: string, metadata?: Record<string, any>): void {
     // Log to console for local debugging
     console.warn(`[WARNING] ${message}`, metadata);
-    
+
     // Log to Azure Monitor if available
     const logger = AzureMonitorLoggingService.getInstance();
     if (logger) {
-      void logger.logCustomMetric(
-        `${this.config.type}Warning`,
-        1,
-        'count',
-        {
-          agentId: this.config.id,
-          agentType: this.config.type,
-          message,
-          ...metadata
-        }
-      );
+      void logger.logCustomMetric(`${this.config.type}Warning`, 1, 'count', {
+        agentId: this.config.id,
+        agentType: this.config.type,
+        message,
+        ...metadata,
+      });
     }
   }
 
@@ -706,13 +705,17 @@ export abstract class BaseAgent implements BaseAgentInstance {
   /**
    * Convert a non-streaming response to a ReadableStream
    */
-  private convertResponseToStream(response: AgentResponse): ReadableStream<string> {
+  private convertResponseToStream(
+    response: AgentResponse,
+  ): ReadableStream<string> {
     return new ReadableStream({
       start(controller) {
         if (response.success && response.content) {
           // Split content into chunks for smoother streaming experience
-          const chunks = response.content.match(/.{1,50}/g) || [response.content];
-          
+          const chunks = response.content.match(/.{1,50}/g) || [
+            response.content,
+          ];
+
           let index = 0;
           const sendChunk = () => {
             if (index < chunks.length) {
@@ -724,15 +727,16 @@ export abstract class BaseAgent implements BaseAgentInstance {
               controller.close();
             }
           };
-          
+
           sendChunk();
         } else {
           // Handle error response
-          const errorMessage = response.error?.message || 'Agent execution failed';
+          const errorMessage =
+            response.error?.message || 'Agent execution failed';
           controller.enqueue(`Error: ${errorMessage}`);
           controller.close();
         }
-      }
+      },
     });
   }
 
@@ -745,7 +749,7 @@ export abstract class BaseAgent implements BaseAgentInstance {
         const errorMessage = `Error: ${error.message}`;
         controller.enqueue(errorMessage);
         controller.close();
-      }
+      },
     });
   }
 
@@ -757,11 +761,8 @@ export abstract class BaseAgent implements BaseAgentInstance {
   private static isValidPoolEntry(entry: PoolEntry): boolean {
     const now = Date.now();
     const entryAge = now - entry.lastAccessed.getTime();
-    
-    return (
-      entry.agent.healthy &&
-      entryAge < this.poolConfig.maxAge
-    );
+
+    return entry.agent.healthy && entryAge < this.poolConfig.maxAge;
   }
 
   private static evictFromPool(agentType: AgentType): void {
@@ -838,7 +839,9 @@ export abstract class BaseAgent implements BaseAgentInstance {
         if (!this.isValidPoolEntry(entry)) {
           keysToRemove.push(key);
           (entry.agent as BaseAgent).cleanup().catch((error: Error) => {
-            console.error(`Failed to cleanup invalid pool entry: ${error.message}`);
+            console.error(
+              `Failed to cleanup invalid pool entry: ${error.message}`,
+            );
           });
         }
       }

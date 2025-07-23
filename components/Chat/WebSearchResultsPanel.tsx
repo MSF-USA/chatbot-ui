@@ -1,9 +1,17 @@
-import { IconExternalLink, IconSearch, IconClock, IconBookmark, IconStar, IconFilter } from '@tabler/icons-react';
-import { FC, useState, useMemo } from 'react';
+import {
+  IconBookmark,
+  IconClock,
+  IconExternalLink,
+  IconFilter,
+  IconSearch,
+  IconStar,
+} from '@tabler/icons-react';
+import { FC, useMemo, useState } from 'react';
+
 import { useTranslation } from 'next-i18next';
 
 import { AgentResponse } from '@/types/agent';
-import { WebSearchResult, WebSearchResponse } from '@/types/webSearch';
+import { WebSearchResponse, WebSearchResult } from '@/types/webSearch';
 
 interface WebSearchResultsPanelProps {
   agentResponse: AgentResponse;
@@ -18,9 +26,13 @@ interface SearchResultCardProps {
 /**
  * Individual search result card component
  */
-const SearchResultCard: FC<SearchResultCardProps> = ({ result, index, onCitationClick }) => {
+const SearchResultCard: FC<SearchResultCardProps> = ({
+  result,
+  index,
+  onCitationClick,
+}) => {
   const { t } = useTranslation('agents');
-  
+
   const handleResultClick = () => {
     if (onCitationClick) {
       onCitationClick(result);
@@ -63,7 +75,9 @@ const SearchResultCard: FC<SearchResultCardProps> = ({ result, index, onCitation
       {/* Header with title and relevance */}
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-start space-x-2 flex-1">
-          <span className="text-sm">{getContentTypeIcon(result.contentType)}</span>
+          <span className="text-sm">
+            {getContentTypeIcon(result.contentType)}
+          </span>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 cursor-pointer group-hover:underline line-clamp-2">
               {result.title}
@@ -73,12 +87,17 @@ const SearchResultCard: FC<SearchResultCardProps> = ({ result, index, onCitation
             </p>
           </div>
         </div>
-        
+
         {/* Relevance score */}
         {result.relevanceScore && (
           <div className="flex items-center space-x-1 ml-2">
-            <IconStar size={12} className={getRelevanceColor(result.relevanceScore)} />
-            <span className={`text-xs ${getRelevanceColor(result.relevanceScore)}`}>
+            <IconStar
+              size={12}
+              className={getRelevanceColor(result.relevanceScore)}
+            />
+            <span
+              className={`text-xs ${getRelevanceColor(result.relevanceScore)}`}
+            >
               {Math.round(result.relevanceScore * 100)}%
             </span>
           </div>
@@ -115,7 +134,7 @@ const SearchResultCard: FC<SearchResultCardProps> = ({ result, index, onCitation
             <IconBookmark size={12} />
             <span>{t('webSearch.resultsPanel.cite')}</span>
           </button>
-          
+
           <a
             href={result.url}
             target="_blank"
@@ -136,9 +155,13 @@ const SearchResultCard: FC<SearchResultCardProps> = ({ result, index, onCitation
  * Web search results panel component
  * Displays search results with citations and confidence scores
  */
-export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({ agentResponse }) => {
+export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({
+  agentResponse,
+}) => {
   const { t } = useTranslation('agents');
-  const [sortBy, setSortBy] = useState<'relevance' | 'date' | 'title'>('relevance');
+  const [sortBy, setSortBy] = useState<'relevance' | 'date' | 'title'>(
+    'relevance',
+  );
   const [filterType, setFilterType] = useState<string>('all');
   const [showFilters, setShowFilters] = useState(false);
 
@@ -147,12 +170,14 @@ export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({ agentRes
     try {
       // Check if agent metadata contains web search results
       if (agentResponse.metadata?.agentMetadata?.webSearchResponse) {
-        return agentResponse.metadata.agentMetadata.webSearchResponse as WebSearchResponse;
+        return agentResponse.metadata.agentMetadata
+          .webSearchResponse as WebSearchResponse;
       }
       // Fallback: check if toolResults contains web search data
       if (agentResponse.metadata?.toolResults) {
         const webSearchResult = agentResponse.metadata.toolResults.find(
-          (result: any) => result.type === 'web_search' || result.toolName === 'web_search'
+          (result: any) =>
+            result.type === 'web_search' || result.toolName === 'web_search',
         );
         if (webSearchResult?.data) {
           return webSearchResult.data as WebSearchResponse;
@@ -173,7 +198,7 @@ export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({ agentRes
 
     // Filter by content type
     if (filterType !== 'all') {
-      filtered = filtered.filter(result => result.contentType === filterType);
+      filtered = filtered.filter((result) => result.contentType === filterType);
     }
 
     // Sort results
@@ -182,8 +207,12 @@ export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({ agentRes
         case 'relevance':
           return (b.relevanceScore || 0) - (a.relevanceScore || 0);
         case 'date':
-          const dateA = a.dateLastCrawled ? new Date(a.dateLastCrawled).getTime() : 0;
-          const dateB = b.dateLastCrawled ? new Date(b.dateLastCrawled).getTime() : 0;
+          const dateA = a.dateLastCrawled
+            ? new Date(a.dateLastCrawled).getTime()
+            : 0;
+          const dateB = b.dateLastCrawled
+            ? new Date(b.dateLastCrawled).getTime()
+            : 0;
           return dateB - dateA;
         case 'title':
           return a.title.localeCompare(b.title);
@@ -208,7 +237,9 @@ export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({ agentRes
     );
   }
 
-  const uniqueContentTypes = [...new Set(webSearchData.results.map(r => r.contentType).filter(Boolean))];
+  const uniqueContentTypes = [
+    ...new Set(webSearchData.results.map((r) => r.contentType).filter(Boolean)),
+  ];
 
   return (
     <div className="web-search-results-panel">
@@ -238,29 +269,39 @@ export const WebSearchResultsPanel: FC<WebSearchResultsPanelProps> = ({ agentRes
         <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
           <div className="flex items-center space-x-4 text-sm">
             <div className="flex items-center space-x-2">
-              <label className="text-gray-700 dark:text-gray-300">{t('webSearch.resultsPanel.sortBy')}:</label>
+              <label className="text-gray-700 dark:text-gray-300">
+                {t('webSearch.resultsPanel.sortBy')}:
+              </label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700"
               >
-                <option value="relevance">{t('webSearch.resultsPanel.relevance')}</option>
+                <option value="relevance">
+                  {t('webSearch.resultsPanel.relevance')}
+                </option>
                 <option value="date">{t('webSearch.resultsPanel.date')}</option>
-                <option value="title">{t('webSearch.resultsPanel.title')}</option>
+                <option value="title">
+                  {t('webSearch.resultsPanel.title')}
+                </option>
               </select>
             </div>
 
             <div className="flex items-center space-x-2">
-              <label className="text-gray-700 dark:text-gray-300">{t('webSearch.resultsPanel.filterBy')}:</label>
+              <label className="text-gray-700 dark:text-gray-300">
+                {t('webSearch.resultsPanel.filterBy')}:
+              </label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
                 className="text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-700"
               >
                 <option value="all">{t('webSearch.resultsPanel.all')}</option>
-                {uniqueContentTypes.map(type => (
+                {uniqueContentTypes.map((type) => (
                   <option key={type} value={type}>
-                    {t(`webSearch.resultsPanel.contentTypes.${type}`, { defaultValue: type })}
+                    {t(`webSearch.resultsPanel.contentTypes.${type}`, {
+                      defaultValue: type,
+                    })}
                   </option>
                 ))}
               </select>

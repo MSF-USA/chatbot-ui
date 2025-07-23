@@ -1,11 +1,16 @@
 /**
  * Local Knowledge Agent
- * 
+ *
  * Specialized agent for accessing enterprise knowledge bases, internal documentation,
  * FAQs, and organizational knowledge with advanced semantic search capabilities.
  */
+import {
+  SimpleKnowledgeItem,
+  SimpleKnowledgeLoader,
+  SimpleSearchResult,
+  getKnowledgeLoader,
+} from '../../utils/knowledge/simpleKnowledgeLoader';
 
-import { BaseAgent, AgentExecutionError } from './baseAgent';
 import {
   AgentConfig,
   AgentExecutionContext,
@@ -14,29 +19,24 @@ import {
   LocalKnowledgeAgentConfig,
 } from '../../types/agent';
 import {
-  KnowledgeSearchQuery,
-  KnowledgeSearchResult,
-  LocalKnowledgeResponse,
-  LocalKnowledgeError,
-  LocalKnowledgeErrorType,
-  UserRole,
   AccessLevel,
   DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
   KnowledgeDocument,
   KnowledgeDocumentType,
+  KnowledgeSearchQuery,
+  KnowledgeSearchResult,
   KnowledgeSourceType,
+  LocalKnowledgeError,
+  LocalKnowledgeErrorType,
+  LocalKnowledgeResponse,
+  UserRole,
 } from '../../types/localKnowledge';
 
 import { KnowledgeBaseService } from '../knowledgeBaseService';
-import { SemanticSearchEngine } from '../semanticSearchEngine';
 import { KnowledgeGraphService } from '../knowledgeGraphService';
 import { AzureMonitorLoggingService } from '../loggingService';
-import {
-  SimpleKnowledgeLoader,
-  getKnowledgeLoader,
-  SimpleSearchResult,
-  SimpleKnowledgeItem
-} from '../../utils/knowledge/simpleKnowledgeLoader';
+import { SemanticSearchEngine } from '../semanticSearchEngine';
+import { AgentExecutionError, BaseAgent } from './baseAgent';
 
 /**
  * Local Knowledge Agent Implementation
@@ -46,40 +46,55 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private searchEngine!: SemanticSearchEngine;
   private knowledgeGraphService?: KnowledgeGraphService;
   private logger!: AzureMonitorLoggingService;
-  
+
   // Simple knowledge loader for minimal implementation
   private simpleLoader!: SimpleKnowledgeLoader;
   private useSimpleMode!: boolean;
-  
+
   // Performance tracking
-  private searchCache: Map<string, { results: LocalKnowledgeResponse; timestamp: number }> = new Map();
-  private queryHistory: Array<{ query: string; timestamp: Date; results: number }> = [];
+  private searchCache: Map<
+    string,
+    { results: LocalKnowledgeResponse; timestamp: number }
+  > = new Map();
+  private queryHistory: Array<{
+    query: string;
+    timestamp: Date;
+    results: number;
+  }> = [];
 
   constructor(config: LocalKnowledgeAgentConfig) {
     super(config);
-    
+
     // Check if we should use simple mode (no complex dependencies)
-    this.useSimpleMode = process.env.SIMPLE_KNOWLEDGE_MODE === 'true' || 
-                        !process.env.AZURE_SEARCH_ENDPOINT || 
-                        !process.env.AZURE_SEARCH_API_KEY;
-    
+    this.useSimpleMode =
+      process.env.SIMPLE_KNOWLEDGE_MODE === 'true' ||
+      !process.env.AZURE_SEARCH_ENDPOINT ||
+      !process.env.AZURE_SEARCH_API_KEY;
+
     if (this.useSimpleMode) {
-      console.log('[INFO] LocalKnowledgeAgent: Using simple mode (FAQ + Privacy Policy)');
+      console.log(
+        '[INFO] LocalKnowledgeAgent: Using simple mode (FAQ + Privacy Policy)',
+      );
       this.simpleLoader = getKnowledgeLoader();
     } else {
       console.log('[INFO] LocalKnowledgeAgent: Using full enterprise mode');
       // Initialize services
-      const knowledgeConfig = config.knowledgeBaseConfig || DEFAULT_LOCAL_KNOWLEDGE_CONFIG;
+      const knowledgeConfig =
+        config.knowledgeBaseConfig || DEFAULT_LOCAL_KNOWLEDGE_CONFIG;
       this.knowledgeBaseService = new KnowledgeBaseService(knowledgeConfig);
-      this.searchEngine = new SemanticSearchEngine(knowledgeConfig.searchConfig);
-      
+      this.searchEngine = new SemanticSearchEngine(
+        knowledgeConfig.searchConfig,
+      );
+
       // Initialize knowledge graph service if enabled
       if (config.enableKnowledgeGraph) {
         this.knowledgeGraphService = new KnowledgeGraphService(knowledgeConfig);
       }
     }
-    
-    this.logger = AzureMonitorLoggingService.getInstance() || new AzureMonitorLoggingService();
+
+    this.logger =
+      AzureMonitorLoggingService.getInstance() ||
+      new AzureMonitorLoggingService();
   }
 
   /**
@@ -87,24 +102,36 @@ export class LocalKnowledgeAgent extends BaseAgent {
    */
   protected initializeAgent(): void {
     try {
-      console.log(`[INFO] Initializing Local Knowledge Agent: ${this.config.id}`);
+      console.log(
+        `[INFO] Initializing Local Knowledge Agent: ${this.config.id}`,
+      );
 
       if (this.useSimpleMode) {
         // Simple initialization - just initialize the loader
-        this.simpleLoader.initialize().catch(error => {
-          console.error('[ERROR] Failed to initialize SimpleKnowledgeLoader:', error);
+        this.simpleLoader.initialize().catch((error) => {
+          console.error(
+            '[ERROR] Failed to initialize SimpleKnowledgeLoader:',
+            error,
+          );
         });
-        console.log(`[INFO] Simple Knowledge Agent initialized: ${this.config.id}`);
+        console.log(
+          `[INFO] Simple Knowledge Agent initialized: ${this.config.id}`,
+        );
       } else {
         // Initialize services asynchronously in the background
         this.initializeAsync();
-        console.log(`[INFO] Enterprise Knowledge Agent initialization started: ${this.config.id}`);
+        console.log(
+          `[INFO] Enterprise Knowledge Agent initialization started: ${this.config.id}`,
+        );
       }
     } catch (error) {
-      console.error(`[ERROR] Failed to initialize Local Knowledge Agent: ${this.config.id}`, error);
+      console.error(
+        `[ERROR] Failed to initialize Local Knowledge Agent: ${this.config.id}`,
+        error,
+      );
       throw new AgentExecutionError(
         'Failed to initialize Local Knowledge Agent',
-        error
+        error,
       );
     }
   }
@@ -132,16 +159,23 @@ export class LocalKnowledgeAgent extends BaseAgent {
       // Load initial knowledge if configured
       await this.loadInitialKnowledge();
 
-      console.log(`[INFO] Local Knowledge Agent initialized successfully: ${this.config.id}`);
+      console.log(
+        `[INFO] Local Knowledge Agent initialized successfully: ${this.config.id}`,
+      );
     } catch (error) {
-      console.error(`[ERROR] Failed to async initialize Local Knowledge Agent: ${this.config.id}`, error);
+      console.error(
+        `[ERROR] Failed to async initialize Local Knowledge Agent: ${this.config.id}`,
+        error,
+      );
     }
   }
 
   /**
    * Execute knowledge search and retrieval
    */
-  protected async executeInternal(context: AgentExecutionContext): Promise<AgentResponse> {
+  protected async executeInternal(
+    context: AgentExecutionContext,
+  ): Promise<AgentResponse> {
     const startTime = Date.now();
     const correlationId = context.correlationId || this.generateCorrelationId();
 
@@ -160,8 +194,17 @@ export class LocalKnowledgeAgent extends BaseAgent {
       if (this.getKnowledgeConfig().enableCaching) {
         const cached = this.getCachedResponse(context.query, userRole);
         if (cached) {
-          console.log(`[INFO] Returning cached knowledge result for: ${context.query.substring(0, 50)}`);
-          return this.createSuccessResponse(cached, correlationId, Date.now() - startTime);
+          console.log(
+            `[INFO] Returning cached knowledge result for: ${context.query.substring(
+              0,
+              50,
+            )}`,
+          );
+          return this.createSuccessResponse(
+            cached,
+            correlationId,
+            Date.now() - startTime,
+          );
         }
       }
 
@@ -183,7 +226,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
       const knowledgeResponse = await this.createKnowledgeResponse(
         searchQuery,
         searchResults,
-        Date.now() - startTime
+        Date.now() - startTime,
       );
 
       // Cache result if enabled
@@ -202,7 +245,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
         this.config.modelId,
         context.user,
         undefined, // botId not available in context
-        correlationId
+        correlationId,
       );
 
       console.log(`[INFO] Knowledge search completed successfully`, {
@@ -212,11 +255,14 @@ export class LocalKnowledgeAgent extends BaseAgent {
         correlationId,
       });
 
-      return this.createSuccessResponse(knowledgeResponse, correlationId, Date.now() - startTime);
-
+      return this.createSuccessResponse(
+        knowledgeResponse,
+        correlationId,
+        Date.now() - startTime,
+      );
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      
+
       console.error(`[ERROR] Knowledge search failed`, error, {
         agentId: this.config.id,
         query: context.query.substring(0, 100),
@@ -233,17 +279,14 @@ export class LocalKnowledgeAgent extends BaseAgent {
         this.config.modelId,
         context.user,
         undefined, // botId not available in context
-        correlationId
+        correlationId,
       );
 
-      throw new AgentExecutionError(
-        'Knowledge search operation failed',
-        {
-          originalError: error,
-          query: context.query,
-          processingTime,
-        }
-      );
+      throw new AgentExecutionError('Knowledge search operation failed', {
+        originalError: error,
+        query: context.query,
+        processingTime,
+      });
     }
   }
 
@@ -271,8 +314,10 @@ export class LocalKnowledgeAgent extends BaseAgent {
       errors.push('Maximum results must be greater than 0');
     }
 
-    if (config.similarityThreshold !== undefined && 
-        (config.similarityThreshold < 0 || config.similarityThreshold > 1)) {
+    if (
+      config.similarityThreshold !== undefined &&
+      (config.similarityThreshold < 0 || config.similarityThreshold > 1)
+    ) {
       errors.push('Similarity threshold must be between 0 and 1');
     }
 
@@ -340,8 +385,10 @@ export class LocalKnowledgeAgent extends BaseAgent {
 
         // Perform test search
         const testResults = await this.simpleLoader.search('MSF AI Assistant');
-        console.log(`[INFO] Health check: found ${testResults.length} test results`);
-        
+        console.log(
+          `[INFO] Health check: found ${testResults.length} test results`,
+        );
+
         return stats.initialized && stats.totalItems > 0;
       } else {
         // Enterprise mode health check
@@ -390,7 +437,9 @@ export class LocalKnowledgeAgent extends BaseAgent {
 
       if (this.useSimpleMode) {
         // Simple mode cleanup - minimal resources to clean up
-        console.log(`[INFO] Simple Knowledge Agent cleanup completed: ${this.config.id}`);
+        console.log(
+          `[INFO] Simple Knowledge Agent cleanup completed: ${this.config.id}`,
+        );
       } else {
         // Enterprise mode cleanup
         if (this.knowledgeBaseService) {
@@ -399,15 +448,20 @@ export class LocalKnowledgeAgent extends BaseAgent {
         if (this.searchEngine) {
           this.searchEngine.clearCache();
         }
-        
+
         // Cleanup knowledge graph if enabled
         if (this.knowledgeGraphService) {
           this.knowledgeGraphService.clear();
         }
-        console.log(`[INFO] Enterprise Knowledge Agent cleanup completed: ${this.config.id}`);
+        console.log(
+          `[INFO] Enterprise Knowledge Agent cleanup completed: ${this.config.id}`,
+        );
       }
     } catch (error) {
-      console.error(`[ERROR] Local Knowledge Agent cleanup failed: ${this.config.id}`, error);
+      console.error(
+        `[ERROR] Local Knowledge Agent cleanup failed: ${this.config.id}`,
+        error,
+      );
       throw error;
     }
   }
@@ -419,20 +473,23 @@ export class LocalKnowledgeAgent extends BaseAgent {
     try {
       const documentId = await this.knowledgeBaseService.addDocument(document);
       const fullDocument = { ...document, id: documentId };
-      
+
       await this.searchEngine.indexDocument(fullDocument);
-      
+
       // Process document with knowledge graph if enabled
       if (this.knowledgeGraphService) {
         await this.knowledgeGraphService.processDocument(fullDocument);
       }
-      
+
       // Clear caches since new content is available
       this.searchCache.clear();
-      
+
       return documentId;
     } catch (error) {
-      throw new AgentExecutionError('Failed to add document to knowledge base', error);
+      throw new AgentExecutionError(
+        'Failed to add document to knowledge base',
+        error,
+      );
     }
   }
 
@@ -443,16 +500,19 @@ export class LocalKnowledgeAgent extends BaseAgent {
     try {
       await this.knowledgeBaseService.removeDocument(documentId);
       await this.searchEngine.removeDocument(documentId);
-      
+
       // Remove document from knowledge graph if enabled
       if (this.knowledgeGraphService) {
         await this.knowledgeGraphService.removeDocument(documentId);
       }
-      
+
       // Clear caches since content has been removed
       this.searchCache.clear();
     } catch (error) {
-      throw new AgentExecutionError('Failed to remove document from knowledge base', error);
+      throw new AgentExecutionError(
+        'Failed to remove document from knowledge base',
+        error,
+      );
     }
   }
 
@@ -461,9 +521,11 @@ export class LocalKnowledgeAgent extends BaseAgent {
    */
   async queryKnowledgeGraph(query: any): Promise<any[]> {
     if (!this.knowledgeGraphService) {
-      throw new AgentExecutionError('Knowledge graph is not enabled for this agent');
+      throw new AgentExecutionError(
+        'Knowledge graph is not enabled for this agent',
+      );
     }
-    
+
     try {
       return await this.knowledgeGraphService.queryGraph(query);
     } catch (error) {
@@ -478,11 +540,11 @@ export class LocalKnowledgeAgent extends BaseAgent {
     if (!this.knowledgeGraphService) {
       return [];
     }
-    
+
     if (name) {
       return this.knowledgeGraphService.getEntitiesByName(name);
     }
-    
+
     // If type filtering is needed, would implement here
     return [];
   }
@@ -494,7 +556,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
     if (!this.knowledgeGraphService) {
       return [];
     }
-    
+
     return this.knowledgeGraphService.getEntityRelationships(entityId);
   }
 
@@ -505,7 +567,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
     if (this.useSimpleMode) {
       const simpleStats = this.simpleLoader.getStatistics();
       const agentStats = this.getExecutionStats();
-      
+
       return {
         mode: 'simple',
         knowledgeBase: simpleStats,
@@ -544,7 +606,9 @@ export class LocalKnowledgeAgent extends BaseAgent {
     // In production, this would load from configured sources
     // Make sure services are initialized before loading knowledge
     if (!this.knowledgeBaseService || !this.searchEngine) {
-      console.warn('[WARN] Cannot load initial knowledge: services not initialized');
+      console.warn(
+        '[WARN] Cannot load initial knowledge: services not initialized',
+      );
       return;
     }
     console.log('[INFO] Initial knowledge loading completed (placeholder)');
@@ -554,7 +618,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
     // Extract user role from context or session
     // This would integrate with the application's user management system
     const userEmail = context.user?.mail || '';
-    
+
     // Simple role determination based on email domain or other factors
     if (userEmail.includes('admin')) {
       return UserRole.ADMIN;
@@ -565,7 +629,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
     if (userEmail.includes('it')) {
       return UserRole.IT_ADMIN;
     }
-    
+
     return UserRole.EMPLOYEE; // Default role
   }
 
@@ -587,7 +651,9 @@ export class LocalKnowledgeAgent extends BaseAgent {
     }
   }
 
-  private async performKnowledgeSearch(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult[]> {
+  private async performKnowledgeSearch(
+    query: KnowledgeSearchQuery,
+  ): Promise<KnowledgeSearchResult[]> {
     try {
       if (this.useSimpleMode) {
         return await this.performSimpleSearch(query);
@@ -617,7 +683,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
         'Knowledge search failed',
         LocalKnowledgeErrorType.SEARCH_FAILED,
         error,
-        query.query
+        query.query,
       );
     }
   }
@@ -625,13 +691,18 @@ export class LocalKnowledgeAgent extends BaseAgent {
   /**
    * Perform simple search using the SimpleKnowledgeLoader
    */
-  private async performSimpleSearch(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult[]> {
+  private async performSimpleSearch(
+    query: KnowledgeSearchQuery,
+  ): Promise<KnowledgeSearchResult[]> {
     try {
-      console.log(`[INFO] Performing simple knowledge search for: "${query.query}"`);
+      console.log(
+        `[INFO] Performing simple knowledge search for: "${query.query}"`,
+      );
 
       // Check if we should use the ultra-simple mode (send all content)
-      const useUltraSimple = process.env.ULTRA_SIMPLE_KNOWLEDGE === 'true' || true; // Default to true for now
-      
+      const useUltraSimple =
+        process.env.ULTRA_SIMPLE_KNOWLEDGE === 'true' || true; // Default to true for now
+
       if (useUltraSimple) {
         return await this.performUltraSimpleSearch(query);
       }
@@ -639,7 +710,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
       // Original filtered approach (kept for potential future use)
       // Determine search type based on query content
       let searchType: 'faq' | 'privacy_policy' | undefined;
-      
+
       if (this.simpleLoader.isFaqQuery(query.query)) {
         searchType = 'faq';
         console.log(`[INFO] Detected FAQ query`);
@@ -649,14 +720,20 @@ export class LocalKnowledgeAgent extends BaseAgent {
       }
 
       // Perform the search
-      const simpleResults = await this.simpleLoader.search(query.query, searchType);
-
-      // Convert simple results to KnowledgeSearchResult format
-      const knowledgeResults: KnowledgeSearchResult[] = simpleResults.map((result, index) => 
-        this.convertSimpleResultToKnowledgeResult(result, index)
+      const simpleResults = await this.simpleLoader.search(
+        query.query,
+        searchType,
       );
 
-      console.log(`[INFO] Simple search completed: ${knowledgeResults.length} results`);
+      // Convert simple results to KnowledgeSearchResult format
+      const knowledgeResults: KnowledgeSearchResult[] = simpleResults.map(
+        (result, index) =>
+          this.convertSimpleResultToKnowledgeResult(result, index),
+      );
+
+      console.log(
+        `[INFO] Simple search completed: ${knowledgeResults.length} results`,
+      );
       return knowledgeResults;
     } catch (error) {
       console.error('[ERROR] Simple knowledge search failed:', error);
@@ -664,7 +741,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
         'Simple knowledge search failed',
         LocalKnowledgeErrorType.SEARCH_FAILED,
         error,
-        query.query
+        query.query,
       );
     }
   }
@@ -672,9 +749,13 @@ export class LocalKnowledgeAgent extends BaseAgent {
   /**
    * Ultra-simple search: return ALL FAQ and privacy content for AI processing
    */
-  private async performUltraSimpleSearch(query: KnowledgeSearchQuery): Promise<KnowledgeSearchResult[]> {
+  private async performUltraSimpleSearch(
+    query: KnowledgeSearchQuery,
+  ): Promise<KnowledgeSearchResult[]> {
     try {
-      console.log(`[INFO] Performing ultra-simple knowledge search (sending all content)`);
+      console.log(
+        `[INFO] Performing ultra-simple knowledge search (sending all content)`,
+      );
 
       // Ensure SimpleKnowledgeLoader is properly initialized before accessing items
       await this.simpleLoader.initialize();
@@ -686,72 +767,94 @@ export class LocalKnowledgeAgent extends BaseAgent {
         totalItems: stats.totalItems,
         faqItems: stats.faqItems,
         privacyItems: stats.privacyItems,
-        initialized: stats.initialized
+        initialized: stats.initialized,
       });
 
       if (stats.totalItems === 0) {
-        console.warn(`[WARN] Knowledge loader has no items after initialization`);
+        console.warn(
+          `[WARN] Knowledge loader has no items after initialization`,
+        );
         throw new LocalKnowledgeError(
           'Knowledge loader contains no items',
           LocalKnowledgeErrorType.SEARCH_FAILED,
           new Error('Empty knowledge base'),
-          query.query
+          query.query,
         );
       }
 
       // Determine which content type to include based on query
       let includeTypes: ('faq' | 'privacy_policy')[] = [];
-      
+
       if (this.simpleLoader.isFaqQuery(query.query)) {
         includeTypes = ['faq'];
-        console.log(`[INFO] Detected FAQ query - including all FAQ content (${stats.faqItems} items)`);
+        console.log(
+          `[INFO] Detected FAQ query - including all FAQ content (${stats.faqItems} items)`,
+        );
       } else if (this.simpleLoader.isPrivacyQuery(query.query)) {
         includeTypes = ['privacy_policy'];
-        console.log(`[INFO] Detected privacy query - including all privacy content (${stats.privacyItems} items)`);
+        console.log(
+          `[INFO] Detected privacy query - including all privacy content (${stats.privacyItems} items)`,
+        );
       } else {
         // If unclear, include both
         includeTypes = ['faq', 'privacy_policy'];
-        console.log(`[INFO] Unclear query type - including all FAQ and privacy content (${stats.totalItems} items total)`);
+        console.log(
+          `[INFO] Unclear query type - including all FAQ and privacy content (${stats.totalItems} items total)`,
+        );
       }
 
       // Get all items of the determined types
       const allItems: SimpleKnowledgeItem[] = [];
       for (const type of includeTypes) {
         const typeItems = this.simpleLoader.getItemsByType(type);
-        console.log(`[INFO] Retrieved ${typeItems.length} items of type: ${type}`);
+        console.log(
+          `[INFO] Retrieved ${typeItems.length} items of type: ${type}`,
+        );
         allItems.push(...typeItems);
       }
 
       if (allItems.length === 0) {
-        console.error(`[ERROR] No items found for types: ${includeTypes.join(', ')}`);
+        console.error(
+          `[ERROR] No items found for types: ${includeTypes.join(', ')}`,
+        );
         throw new LocalKnowledgeError(
-          `No knowledge items found for content types: ${includeTypes.join(', ')}`,
+          `No knowledge items found for content types: ${includeTypes.join(
+            ', ',
+          )}`,
           LocalKnowledgeErrorType.SEARCH_FAILED,
           new Error('No matching content types'),
-          query.query
+          query.query,
         );
       }
 
       // Convert all items to KnowledgeSearchResult format with perfect scores
-      const knowledgeResults: KnowledgeSearchResult[] = allItems.map((item, index) => {
-        return this.convertSimpleItemToKnowledgeResult(item, 1.0, `All ${item.type} content included`);
-      });
+      const knowledgeResults: KnowledgeSearchResult[] = allItems.map(
+        (item, index) => {
+          return this.convertSimpleItemToKnowledgeResult(
+            item,
+            1.0,
+            `All ${item.type} content included`,
+          );
+        },
+      );
 
-      console.log(`[INFO] Ultra-simple search completed successfully: ${knowledgeResults.length} items included`);
+      console.log(
+        `[INFO] Ultra-simple search completed successfully: ${knowledgeResults.length} items included`,
+      );
       return knowledgeResults;
     } catch (error) {
       console.error('[ERROR] Ultra-simple knowledge search failed:', error);
-      
+
       // If it's already a LocalKnowledgeError, re-throw it
       if (error instanceof LocalKnowledgeError) {
         throw error;
       }
-      
+
       throw new LocalKnowledgeError(
         'Ultra-simple knowledge search failed',
         LocalKnowledgeErrorType.SEARCH_FAILED,
         error,
-        query.query
+        query.query,
       );
     }
   }
@@ -762,14 +865,19 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private convertSimpleItemToKnowledgeResult(
     item: SimpleKnowledgeItem,
     score: number,
-    explanation: string
+    explanation: string,
   ): KnowledgeSearchResult {
     // Create a KnowledgeDocument from the simple item
     const document: KnowledgeDocument = {
       id: item.id,
-      title: item.question || `${item.type === 'faq' ? 'FAQ' : 'Privacy Policy'}: ${item.category}`,
+      title:
+        item.question ||
+        `${item.type === 'faq' ? 'FAQ' : 'Privacy Policy'}: ${item.category}`,
       content: item.answer,
-      type: item.type === 'faq' ? KnowledgeDocumentType.FAQ : KnowledgeDocumentType.POLICY,
+      type:
+        item.type === 'faq'
+          ? KnowledgeDocumentType.FAQ
+          : KnowledgeDocumentType.POLICY,
       source: KnowledgeSourceType.LOCAL_FILE,
       accessLevel: AccessLevel.INTERNAL,
       allowedRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN],
@@ -787,13 +895,17 @@ export class LocalKnowledgeAgent extends BaseAgent {
       version: '1.0.0',
       tags: [item.category, item.type, ...item.keywords.slice(0, 3)],
       language: 'en',
-      searchableContent: `${item.question || ''} ${item.answer} ${item.keywords.join(' ')}`,
+      searchableContent: `${item.question || ''} ${
+        item.answer
+      } ${item.keywords.join(' ')}`,
     };
 
     return {
       document,
       score,
-      highlights: [item.answer.substring(0, 200) + (item.answer.length > 200 ? '...' : '')],
+      highlights: [
+        item.answer.substring(0, 200) + (item.answer.length > 200 ? '...' : ''),
+      ],
       explanation,
       relatedDocuments: [],
       matchedEntities: [],
@@ -804,17 +916,22 @@ export class LocalKnowledgeAgent extends BaseAgent {
    * Convert SimpleSearchResult to KnowledgeSearchResult (for filtered mode)
    */
   private convertSimpleResultToKnowledgeResult(
-    simpleResult: SimpleSearchResult, 
-    index: number
+    simpleResult: SimpleSearchResult,
+    index: number,
   ): KnowledgeSearchResult {
     const item = simpleResult.item;
-    
+
     // Create a KnowledgeDocument from the simple item
     const document: KnowledgeDocument = {
       id: item.id,
-      title: item.question || `${item.type === 'faq' ? 'FAQ' : 'Privacy Policy'}: ${item.category}`,
+      title:
+        item.question ||
+        `${item.type === 'faq' ? 'FAQ' : 'Privacy Policy'}: ${item.category}`,
       content: item.answer,
-      type: item.type === 'faq' ? KnowledgeDocumentType.FAQ : KnowledgeDocumentType.POLICY,
+      type:
+        item.type === 'faq'
+          ? KnowledgeDocumentType.FAQ
+          : KnowledgeDocumentType.POLICY,
       source: KnowledgeSourceType.LOCAL_FILE,
       accessLevel: AccessLevel.INTERNAL,
       allowedRoles: [UserRole.EMPLOYEE, UserRole.MANAGER, UserRole.ADMIN],
@@ -832,30 +949,42 @@ export class LocalKnowledgeAgent extends BaseAgent {
       version: '1.0.0',
       tags: [item.category, item.type, ...item.keywords.slice(0, 3)],
       language: 'en',
-      searchableContent: `${item.question || ''} ${item.answer} ${item.keywords.join(' ')}`,
+      searchableContent: `${item.question || ''} ${
+        item.answer
+      } ${item.keywords.join(' ')}`,
     };
 
     // Create highlights from matched keywords
     const highlights = simpleResult.matchedKeywords
-      .map(keyword => {
+      .map((keyword) => {
         const regex = new RegExp(`(${keyword})`, 'gi');
         const match = item.answer.match(regex);
         if (match) {
-          const start = item.answer.toLowerCase().indexOf(keyword.toLowerCase());
+          const start = item.answer
+            .toLowerCase()
+            .indexOf(keyword.toLowerCase());
           if (start >= 0) {
             const contextStart = Math.max(0, start - 50);
-            const contextEnd = Math.min(item.answer.length, start + keyword.length + 50);
-            return item.answer.substring(contextStart, contextEnd) + (contextEnd < item.answer.length ? '...' : '');
+            const contextEnd = Math.min(
+              item.answer.length,
+              start + keyword.length + 50,
+            );
+            return (
+              item.answer.substring(contextStart, contextEnd) +
+              (contextEnd < item.answer.length ? '...' : '')
+            );
           }
         }
         return null;
       })
-      .filter(highlight => highlight !== null)
+      .filter((highlight) => highlight !== null)
       .slice(0, 3) as string[];
 
     // Add fallback highlight if no keyword highlights found
     if (highlights.length === 0) {
-      highlights.push(item.answer.substring(0, 150) + (item.answer.length > 150 ? '...' : ''));
+      highlights.push(
+        item.answer.substring(0, 150) + (item.answer.length > 150 ? '...' : ''),
+      );
     }
 
     return {
@@ -871,10 +1000,10 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private async createKnowledgeResponse(
     query: KnowledgeSearchQuery,
     results: KnowledgeSearchResult[],
-    searchTime: number
+    searchTime: number,
   ): Promise<LocalKnowledgeResponse> {
     const config = this.getKnowledgeConfig();
-    
+
     // Generate answer summary if enabled
     let answerSummary: string | undefined;
     if (config.enableAnswerSummary && results.length > 0) {
@@ -900,8 +1029,8 @@ export class LocalKnowledgeAgent extends BaseAgent {
   }
 
   private async generateAnswerSummary(
-    query: KnowledgeSearchQuery, 
-    results: KnowledgeSearchResult[]
+    query: KnowledgeSearchQuery,
+    results: KnowledgeSearchResult[],
   ): Promise<string> {
     // Placeholder for answer summarization
     // In production, this would use AI to generate a summary from the top results
@@ -911,7 +1040,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
 
     const topResult = results[0];
     const maxLength = this.getKnowledgeConfig().maxSummaryLength || 300;
-    
+
     let summary = `Based on the available knowledge: ${topResult.document.content}`;
     if (summary.length > maxLength) {
       summary = summary.substring(0, maxLength - 3) + '...';
@@ -922,11 +1051,11 @@ export class LocalKnowledgeAgent extends BaseAgent {
 
   private generateSuggestedQueries(
     query: KnowledgeSearchQuery,
-    results: KnowledgeSearchResult[]
+    results: KnowledgeSearchResult[],
   ): string[] {
     // Generate related query suggestions based on results and query history
     const suggestions: string[] = [];
-    
+
     // Add suggestions based on document tags
     for (const result of results.slice(0, 3)) {
       for (const tag of result.document.tags.slice(0, 2)) {
@@ -956,29 +1085,36 @@ export class LocalKnowledgeAgent extends BaseAgent {
     // Calculate confidence based on top result score and number of results
     const topScore = results[0].score;
     const resultsBonus = Math.min(results.length / 10, 0.2); // Up to 20% bonus for multiple results
-    
+
     return Math.min(topScore + resultsBonus, 1.0);
   }
 
-  private getCachedResponse(query: string, userRole: UserRole): LocalKnowledgeResponse | null {
+  private getCachedResponse(
+    query: string,
+    userRole: UserRole,
+  ): LocalKnowledgeResponse | null {
     const cacheKey = this.generateCacheKey(query, userRole);
     const cached = this.searchCache.get(cacheKey);
-    
+
     if (cached) {
       const ttl = this.getKnowledgeConfig().cacheTtl || 3600; // Default 1 hour
       const age = (Date.now() - cached.timestamp) / 1000;
-      
+
       if (age < ttl) {
         return cached.results;
       } else {
         this.searchCache.delete(cacheKey);
       }
     }
-    
+
     return null;
   }
 
-  private cacheResponse(query: string, userRole: UserRole, response: LocalKnowledgeResponse): void {
+  private cacheResponse(
+    query: string,
+    userRole: UserRole,
+    response: LocalKnowledgeResponse,
+  ): void {
     const cacheKey = this.generateCacheKey(query, userRole);
     this.searchCache.set(cacheKey, {
       results: response,
@@ -1012,7 +1148,7 @@ export class LocalKnowledgeAgent extends BaseAgent {
   private createSuccessResponse(
     knowledgeResponse: LocalKnowledgeResponse,
     correlationId: string,
-    processingTime: number
+    processingTime: number,
   ): AgentResponse {
     // Format the response content
     let content = this.formatKnowledgeResponse(knowledgeResponse);
@@ -1051,8 +1187,9 @@ export class LocalKnowledgeAgent extends BaseAgent {
     }
 
     // Check if we're in ultra-simple mode (all results have perfect scores)
-    const isUltraSimpleMode = response.results.length > 1 && 
-                             response.results.every(result => result.score === 1.0);
+    const isUltraSimpleMode =
+      response.results.length > 1 &&
+      response.results.every((result) => result.score === 1.0);
 
     if (isUltraSimpleMode) {
       // Ultra-simple mode: format as comprehensive knowledge base content
@@ -1068,16 +1205,18 @@ export class LocalKnowledgeAgent extends BaseAgent {
     }
 
     // Add search results
-    content += `I found ${response.totalResults} relevant document${response.totalResults === 1 ? '' : 's'} in our knowledge base:\n\n`;
+    content += `I found ${response.totalResults} relevant document${
+      response.totalResults === 1 ? '' : 's'
+    } in our knowledge base:\n\n`;
 
     for (let i = 0; i < Math.min(response.results.length, 5); i++) {
       const result = response.results[i];
       content += `**${i + 1}. ${result.document.title}**\n`;
-      
+
       if (result.highlights.length > 0) {
         content += `${result.highlights[0]}\n`;
       }
-      
+
       content += `*Relevance: ${(result.score * 100).toFixed(0)}%*\n\n`;
     }
 
@@ -1099,8 +1238,12 @@ export class LocalKnowledgeAgent extends BaseAgent {
     let content = `Here is the complete knowledge base content relevant to your question:\n\n`;
 
     // Group results by type
-    const faqResults = response.results.filter(r => r.document.type === KnowledgeDocumentType.FAQ);
-    const privacyResults = response.results.filter(r => r.document.type === KnowledgeDocumentType.POLICY);
+    const faqResults = response.results.filter(
+      (r) => r.document.type === KnowledgeDocumentType.FAQ,
+    );
+    const privacyResults = response.results.filter(
+      (r) => r.document.type === KnowledgeDocumentType.POLICY,
+    );
 
     // Add FAQ content if present
     if (faqResults.length > 0) {

@@ -1,18 +1,14 @@
 import { Session } from 'next-auth';
 
-import { 
-  AgentType, 
-  AgentResponse, 
-  AgentExecutionResult, 
-  AgentExecutionContext 
+import {
+  AgentExecutionContext,
+  AgentExecutionResult,
+  AgentResponse,
+  AgentType,
 } from '@/types/agent';
-import { 
-  IntentAnalysisResult 
-} from '@/types/intentAnalysis';
 import { ChatBody, Message, MessageType } from '@/types/chat';
+import { IntentAnalysisResult } from '@/types/intentAnalysis';
 import { OpenAIModelID } from '@/types/openai';
-
-
 
 /**
  * Transformed response for the chat interface
@@ -121,11 +117,10 @@ export interface TransformationContext {
  */
 export class AgentResponseTransformService {
   private static instance: AgentResponseTransformService | null = null;
-  
+
   private transformers: Map<AgentType, AgentResponseTransformer>;
 
   private constructor() {
-    
     this.transformers = new Map();
     this.initializeTransformers();
   }
@@ -135,7 +130,8 @@ export class AgentResponseTransformService {
    */
   public static getInstance(): AgentResponseTransformService {
     if (!AgentResponseTransformService.instance) {
-      AgentResponseTransformService.instance = new AgentResponseTransformService();
+      AgentResponseTransformService.instance =
+        new AgentResponseTransformService();
     }
     return AgentResponseTransformService.instance;
   }
@@ -145,7 +141,7 @@ export class AgentResponseTransformService {
    */
   public async transformResponse(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     const startTime = Date.now();
 
@@ -160,18 +156,22 @@ export class AgentResponseTransformService {
       const transformer = this.getTransformer(agentResult.response.agentType);
 
       // Perform transformation
-      const transformedResponse = await transformer.transform(agentResult, context);
+      const transformedResponse = await transformer.transform(
+        agentResult,
+        context,
+      );
 
       // Add universal metadata
       const enhancedResponse = await this.enhanceWithMetadata(
         transformedResponse,
         agentResult,
         context,
-        startTime
+        startTime,
       );
 
       // Validate transformed response
-      const validationResult = this.validateTransformedResponse(enhancedResponse);
+      const validationResult =
+        this.validateTransformedResponse(enhancedResponse);
       if (!validationResult.valid) {
         console.warn('Response validation failed', {
           agentType: agentResult.response.agentType,
@@ -212,7 +212,10 @@ export class AgentResponseTransformService {
   /**
    * Register a custom transformer for an agent type
    */
-  public registerTransformer(agentType: AgentType, transformer: AgentResponseTransformer): void {
+  public registerTransformer(
+    agentType: AgentType,
+    transformer: AgentResponseTransformer,
+  ): void {
     this.transformers.set(agentType, transformer);
     console.log('Custom transformer registered', { agentType });
   }
@@ -222,9 +225,11 @@ export class AgentResponseTransformService {
    */
   public async transformBatch(
     results: AgentExecutionResult[],
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse[]> {
-    const promises = results.map(result => this.transformResponse(result, context));
+    const promises = results.map((result) =>
+      this.transformResponse(result, context),
+    );
     return await Promise.all(promises);
   }
 
@@ -269,7 +274,10 @@ export class AgentResponseTransformService {
       if (links.length > 0) structured.links = links;
 
       // Extract mentions (if agent-specific)
-      if (response.agentType === AgentType.WEB_SEARCH || response.agentType === AgentType.LOCAL_KNOWLEDGE) {
+      if (
+        response.agentType === AgentType.WEB_SEARCH ||
+        response.agentType === AgentType.LOCAL_KNOWLEDGE
+      ) {
         const mentionRegex = /@(\w+)/g;
         const mentions: any[] = [];
         while ((match = mentionRegex.exec(response.content)) !== null) {
@@ -299,18 +307,29 @@ export class AgentResponseTransformService {
   private initializeTransformers(): void {
     // Initialize default transformers for each agent type
     this.transformers.set(AgentType.WEB_SEARCH, new WebSearchTransformer());
-    this.transformers.set(AgentType.CODE_INTERPRETER, new CodeInterpreterTransformer());
+    this.transformers.set(
+      AgentType.CODE_INTERPRETER,
+      new CodeInterpreterTransformer(),
+    );
     this.transformers.set(AgentType.URL_PULL, new UrlPullTransformer());
-    this.transformers.set(AgentType.LOCAL_KNOWLEDGE, new LocalKnowledgeTransformer());
+    this.transformers.set(
+      AgentType.LOCAL_KNOWLEDGE,
+      new LocalKnowledgeTransformer(),
+    );
     this.transformers.set(AgentType.FOUNDRY, new FoundryTransformer());
     this.transformers.set(AgentType.THIRD_PARTY, new ThirdPartyTransformer());
-    this.transformers.set(AgentType.STANDARD_CHAT, new StandardChatTransformer());
+    this.transformers.set(
+      AgentType.STANDARD_CHAT,
+      new StandardChatTransformer(),
+    );
   }
 
   private getTransformer(agentType: AgentType): AgentResponseTransformer {
     const transformer = this.transformers.get(agentType);
     if (!transformer) {
-      console.warn('No transformer found for agent type, using default', { agentType });
+      console.warn('No transformer found for agent type, using default', {
+        agentType,
+      });
       return new DefaultTransformer();
     }
     return transformer;
@@ -320,7 +339,7 @@ export class AgentResponseTransformService {
     response: TransformedAgentResponse,
     agentResult: AgentExecutionResult,
     context: TransformationContext,
-    startTime: number
+    startTime: number,
   ): Promise<TransformedAgentResponse> {
     const processingTime = Date.now() - startTime;
 
@@ -330,7 +349,7 @@ export class AgentResponseTransformService {
       timestamp: new Date(),
       processingStages: [
         ...context.processingMetadata.stagesExecuted,
-        'response_transformation'
+        'response_transformation',
       ],
       tokenUsage: this.extractTokenUsage(agentResult),
       costEstimate: this.estimateCost(agentResult),
@@ -362,7 +381,11 @@ export class AgentResponseTransformService {
       errors.push('Success flag must be boolean');
     }
 
-    if (typeof response.confidence !== 'number' || response.confidence < 0 || response.confidence > 1) {
+    if (
+      typeof response.confidence !== 'number' ||
+      response.confidence < 0 ||
+      response.confidence > 1
+    ) {
       errors.push('Confidence must be a number between 0 and 1');
     }
 
@@ -381,7 +404,9 @@ export class AgentResponseTransformService {
     };
   }
 
-  private async applyContentFilters(response: TransformedAgentResponse): Promise<TransformedAgentResponse> {
+  private async applyContentFilters(
+    response: TransformedAgentResponse,
+  ): Promise<TransformedAgentResponse> {
     try {
       // Apply basic content safety filters
       let filteredContent = response.content;
@@ -391,15 +416,15 @@ export class AgentResponseTransformService {
 
       // Validate URLs in citations
       if (response.citations) {
-        response.citations = response.citations.filter(citation => 
-          this.isValidCitation(citation)
+        response.citations = response.citations.filter((citation) =>
+          this.isValidCitation(citation),
         );
       }
 
       // Validate attachments
       if (response.attachments) {
-        response.attachments = response.attachments.filter(attachment => 
-          this.isValidAttachment(attachment)
+        response.attachments = response.attachments.filter((attachment) =>
+          this.isValidAttachment(attachment),
         );
       }
 
@@ -418,12 +443,14 @@ export class AgentResponseTransformService {
   private createFallbackResponse(
     agentResult: AgentExecutionResult,
     context: TransformationContext,
-    startTime: number
+    startTime: number,
   ): TransformedAgentResponse {
     const processingTime = Date.now() - startTime;
 
     return {
-      content: agentResult.response.content || 'I encountered an issue processing your request. Please try again.',
+      content:
+        agentResult.response.content ||
+        'I encountered an issue processing your request. Please try again.',
       messageType: MessageType.TEXT,
       agentType: agentResult.response.agentType,
       success: false,
@@ -444,7 +471,9 @@ export class AgentResponseTransformService {
     };
   }
 
-  private extractTokenUsage(agentResult: AgentExecutionResult): TokenUsage | undefined {
+  private extractTokenUsage(
+    agentResult: AgentExecutionResult,
+  ): TokenUsage | undefined {
     const metadata = agentResult.response.metadata;
     if (metadata?.tokenUsage) {
       return {
@@ -471,16 +500,22 @@ export class AgentResponseTransformService {
   private sanitizeContent(content: string): string {
     // Remove potential API keys, tokens, etc.
     let sanitized = content;
-    
+
     // Pattern for potential API keys
     sanitized = sanitized.replace(/\b[A-Za-z0-9]{32,}\b/g, '[REDACTED]');
-    
+
     // Pattern for potential tokens
-    sanitized = sanitized.replace(/bearer\s+[A-Za-z0-9-_.]+/gi, 'bearer [REDACTED]');
-    
+    sanitized = sanitized.replace(
+      /bearer\s+[A-Za-z0-9-_.]+/gi,
+      'bearer [REDACTED]',
+    );
+
     // Pattern for potential passwords in URLs
-    sanitized = sanitized.replace(/:\/\/[^:]+:[^@]+@/g, '://[REDACTED]:[REDACTED]@');
-    
+    sanitized = sanitized.replace(
+      /:\/\/[^:]+:[^@]+@/g,
+      '://[REDACTED]:[REDACTED]@',
+    );
+
     return sanitized;
   }
 
@@ -509,7 +544,12 @@ export class AgentResponseTransformService {
   private isValidAttachment(attachment: Attachment): boolean {
     try {
       // Basic validation for attachments
-      if (!attachment.id || !attachment.name || !attachment.type || !attachment.mimeType) {
+      if (
+        !attachment.id ||
+        !attachment.name ||
+        !attachment.type ||
+        !attachment.mimeType
+      ) {
         return false;
       }
 
@@ -535,7 +575,7 @@ export class AgentResponseTransformService {
 export interface AgentResponseTransformer {
   transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse>;
 }
 
@@ -545,7 +585,7 @@ export interface AgentResponseTransformer {
 export class DefaultTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     return {
       content: agentResult.response.content,
@@ -571,7 +611,7 @@ export class DefaultTransformer implements AgentResponseTransformer {
 export class WebSearchTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     const metadata = agentResult.response.metadata;
     const citations: Citation[] = [];
@@ -620,7 +660,7 @@ export class WebSearchTransformer implements AgentResponseTransformer {
 export class CodeInterpreterTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     const metadata = agentResult.response.metadata;
     const attachments: Attachment[] = [];
@@ -691,7 +731,7 @@ export class CodeInterpreterTransformer implements AgentResponseTransformer {
 export class UrlPullTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     const metadata = agentResult.response.metadata;
     const citations: Citation[] = [];
@@ -741,7 +781,7 @@ export class UrlPullTransformer implements AgentResponseTransformer {
 export class LocalKnowledgeTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     const metadata = agentResult.response.metadata;
     const citations: Citation[] = [];
@@ -790,7 +830,7 @@ export class LocalKnowledgeTransformer implements AgentResponseTransformer {
 export class FoundryTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     return {
       content: agentResult.response.content,
@@ -817,7 +857,7 @@ export class FoundryTransformer implements AgentResponseTransformer {
 export class ThirdPartyTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     const metadata = agentResult.response.metadata;
     const actions: ResponseAction[] = [];
@@ -863,7 +903,7 @@ export class ThirdPartyTransformer implements AgentResponseTransformer {
 export class StandardChatTransformer implements AgentResponseTransformer {
   async transform(
     agentResult: AgentExecutionResult,
-    context: TransformationContext
+    context: TransformationContext,
   ): Promise<TransformedAgentResponse> {
     return {
       content: agentResult.response.content,
@@ -896,7 +936,7 @@ export function getAgentResponseTransformService(): AgentResponseTransformServic
  */
 export async function transformAgentResponse(
   agentResult: AgentExecutionResult,
-  context: TransformationContext
+  context: TransformationContext,
 ): Promise<TransformedAgentResponse> {
   const service = getAgentResponseTransformService();
   return await service.transformResponse(agentResult, context);
@@ -907,7 +947,7 @@ export async function transformAgentResponse(
  */
 export function registerAgentTransformer(
   agentType: AgentType,
-  transformer: AgentResponseTransformer
+  transformer: AgentResponseTransformer,
 ): void {
   const service = getAgentResponseTransformService();
   service.registerTransformer(agentType, transformer);

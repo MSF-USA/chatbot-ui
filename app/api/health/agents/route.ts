@@ -1,15 +1,16 @@
 /**
  * Agent Health Check API Endpoint
- * 
+ *
  * Provides detailed health monitoring specifically for the Azure AI Agent system,
  * including individual agent health, pool statistics, and performance metrics.
  */
-
 import { NextRequest, NextResponse } from 'next/server';
-import { AgentType, AgentHealthResult } from '@/types/agent';
-import { getAgentPoolingService } from '@/services/agentPoolingService';
+
 import { AgentFactory } from '@/services/agentFactory';
+import { getAgentPoolingService } from '@/services/agentPoolingService';
 import { AzureMonitorLoggingService } from '@/services/loggingService';
+
+import { AgentHealthResult, AgentType } from '@/types/agent';
 
 /**
  * Agent-specific health response
@@ -27,12 +28,15 @@ interface AgentHealthResponse {
     poolStats: any;
     lastChecked: string;
   };
-  agentHealth: Record<AgentType, {
-    status: string;
-    details: AgentHealthResult[];
-    lastChecked: string;
-    error?: string;
-  }>;
+  agentHealth: Record<
+    AgentType,
+    {
+      status: string;
+      details: AgentHealthResult[];
+      lastChecked: string;
+      error?: string;
+    }
+  >;
   metrics: {
     totalAgents: number;
     activeAgents: number;
@@ -45,10 +49,12 @@ interface AgentHealthResponse {
 /**
  * GET /api/health/agents - Detailed agent health check
  */
-export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthResponse>> {
+export async function GET(
+  req: NextRequest,
+): Promise<NextResponse<AgentHealthResponse>> {
   const startTime = Date.now();
   const logger = AzureMonitorLoggingService.getInstance();
-  
+
   try {
     console.log('[INFO] Starting agent health check');
 
@@ -74,10 +80,14 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
     // Check Agent Factory
     try {
       const agentFactory = AgentFactory.getInstance();
-      
+
       // Get registered agent types (these are hardcoded for now since we don't have a discovery method)
-      const agentTypes: AgentType[] = [AgentType.WEB_SEARCH, AgentType.CODE_INTERPRETER, AgentType.LOCAL_KNOWLEDGE];
-      
+      const agentTypes: AgentType[] = [
+        AgentType.WEB_SEARCH,
+        AgentType.CODE_INTERPRETER,
+        AgentType.LOCAL_KNOWLEDGE,
+      ];
+
       response.agentFactory = {
         status: 'healthy',
         registeredAgents: agentTypes,
@@ -99,7 +109,7 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
     try {
       const poolingService = getAgentPoolingService();
       const poolStats = poolingService.getPoolStats();
-      
+
       response.agentPooling = {
         status: poolStats.totalAgents > 0 ? 'healthy' : 'degraded',
         poolStats,
@@ -121,12 +131,16 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
     }
 
     // Check Individual Agent Health
-    const agentTypes: AgentType[] = [AgentType.WEB_SEARCH, AgentType.CODE_INTERPRETER, AgentType.LOCAL_KNOWLEDGE];
-    
+    const agentTypes: AgentType[] = [
+      AgentType.WEB_SEARCH,
+      AgentType.CODE_INTERPRETER,
+      AgentType.LOCAL_KNOWLEDGE,
+    ];
+
     for (const agentType of agentTypes) {
       try {
         let agentHealthResults: AgentHealthResult[] = [];
-        
+
         if (response.agentPooling?.status === 'healthy') {
           // Get health from pooling service
           const poolingService = getAgentPoolingService();
@@ -134,18 +148,25 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
           agentHealthResults = healthResults[agentType] || [];
         } else {
           // Agent pooling not available, provide basic status
-          agentHealthResults = [{
-            agentId: `basic-${agentType}`,
-            healthy: false,
-            timestamp: new Date(),
-            responseTime: 0,
-            error: 'Agent pooling service not available - basic health check only',
-          }];
+          agentHealthResults = [
+            {
+              agentId: `basic-${agentType}`,
+              healthy: false,
+              timestamp: new Date(),
+              responseTime: 0,
+              error:
+                'Agent pooling service not available - basic health check only',
+            },
+          ];
         }
 
         // Analyze agent health results
-        const healthyCount = agentHealthResults.filter(r => r.healthy === true).length;
-        const unhealthyCount = agentHealthResults.filter(r => r.healthy === false).length;
+        const healthyCount = agentHealthResults.filter(
+          (r) => r.healthy === true,
+        ).length;
+        const unhealthyCount = agentHealthResults.filter(
+          (r) => r.healthy === false,
+        ).length;
 
         let agentStatus = 'healthy';
         if (unhealthyCount > 0 && healthyCount === 0) {
@@ -165,11 +186,15 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
         response.metrics.degradedAgents += 0; // Simplified - not tracking degraded separately
         response.metrics.unhealthyAgents += unhealthyCount;
 
-        console.log(`[INFO] Agent ${agentType} health check completed: ${agentStatus}`);
-
+        console.log(
+          `[INFO] Agent ${agentType} health check completed: ${agentStatus}`,
+        );
       } catch (error) {
-        console.error(`[ERROR] Failed to check health for agent ${agentType}:`, error);
-        
+        console.error(
+          `[ERROR] Failed to check health for agent ${agentType}:`,
+          error,
+        );
+
         response.agentHealth[agentType] = {
           status: 'unhealthy',
           details: [],
@@ -182,13 +207,20 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
     }
 
     // Determine overall status
-    const agentStatuses = Object.values(response.agentHealth).map(h => h.status);
-    
+    const agentStatuses = Object.values(response.agentHealth).map(
+      (h) => h.status,
+    );
+
     if (response.agentFactory.status === 'unhealthy') {
       response.status = 'unhealthy';
     } else if (agentStatuses.includes('unhealthy')) {
-      response.status = agentStatuses.every(s => s === 'unhealthy') ? 'unhealthy' : 'degraded';
-    } else if (agentStatuses.includes('degraded') || response.agentPooling?.status === 'degraded') {
+      response.status = agentStatuses.every((s) => s === 'unhealthy')
+        ? 'unhealthy'
+        : 'degraded';
+    } else if (
+      agentStatuses.includes('degraded') ||
+      response.agentPooling?.status === 'degraded'
+    ) {
       response.status = 'degraded';
     }
 
@@ -215,10 +247,13 @@ export async function GET(req: NextRequest): Promise<NextResponse<AgentHealthRes
       httpStatus = 503; // Service unavailable
     }
 
-    console.log(`[INFO] Agent health check completed in ${Date.now() - startTime}ms, status: ${response.status}`);
+    console.log(
+      `[INFO] Agent health check completed in ${
+        Date.now() - startTime
+      }ms, status: ${response.status}`,
+    );
 
     return NextResponse.json(response, { status: httpStatus });
-
   } catch (error) {
     console.error('[ERROR] Agent health check failed:', error);
 
@@ -269,13 +304,15 @@ export async function POST(): Promise<NextResponse> {
       timestamp: new Date().toISOString(),
       redirect: '/api/health/agents',
     });
-
   } catch (error) {
-    return NextResponse.json({
-      error: 'Failed to refresh agent health',
-      message: error instanceof Error ? error.message : String(error),
-      timestamp: new Date().toISOString(),
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Failed to refresh agent health',
+        message: error instanceof Error ? error.message : String(error),
+        timestamp: new Date().toISOString(),
+      },
+      { status: 500 },
+    );
   }
 }
 

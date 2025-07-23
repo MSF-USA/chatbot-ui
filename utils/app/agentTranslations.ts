@@ -2,8 +2,8 @@
  * Agent-specific translation utilities
  * Lightweight helpers that work with existing next-i18next infrastructure
  */
-
 import { TFunction } from 'next-i18next';
+
 import { AgentType } from '@/types/agent';
 
 /**
@@ -18,27 +18,27 @@ export const getAgentTranslation = (
   t: TFunction,
   agentType: AgentType,
   key: string,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   // Try agent-specific translation first
   const agentKey = `agents:${getAgentNamespace(agentType)}.${key}`;
   const translation = t(agentKey, params);
-  
+
   // If translation is the same as the key, it wasn't found
   if (translation === agentKey) {
     // Fallback to common agent translation
     const commonKey = `agents:common.${key}`;
     const commonTranslation = t(commonKey, params);
-    
+
     if (commonTranslation === commonKey) {
       // Final fallback to the key itself (for development)
       console.warn(`Missing translation for key: ${agentKey}`);
       return key;
     }
-    
+
     return commonTranslation;
   }
-  
+
   return translation;
 };
 
@@ -52,7 +52,7 @@ export const getAgentTranslation = (
 export const getCommonAgentTranslation = (
   t: TFunction,
   key: string,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   return t(`agents:common.${key}`, params);
 };
@@ -69,24 +69,26 @@ export const getAgentErrorTranslation = (
   t: TFunction,
   agentType: AgentType,
   errorKey: string,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
-  const specificKey = `agents:errors.${getAgentNamespace(agentType)}.${errorKey}`;
+  const specificKey = `agents:errors.${getAgentNamespace(
+    agentType,
+  )}.${errorKey}`;
   const translation = t(specificKey, params);
-  
+
   if (translation === specificKey) {
     // Fallback to common error
     const commonKey = `agents:errors.common.${errorKey}`;
     const commonTranslation = t(commonKey, params);
-    
+
     if (commonTranslation === commonKey) {
       // Final fallback to generic error
       return t('agents:errors.common.unknown', { agentType, ...params });
     }
-    
+
     return commonTranslation;
   }
-  
+
   return translation;
 };
 
@@ -100,7 +102,7 @@ export const getAgentErrorTranslation = (
 export const getAgentUITranslation = (
   t: TFunction,
   key: string,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   return t(`agents:ui.${key}`, params);
 };
@@ -115,7 +117,7 @@ export const getAgentUITranslation = (
 export const getAgentSettingsTranslation = (
   t: TFunction,
   key: string,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   return t(`agents:settings.${key}`, params);
 };
@@ -166,7 +168,7 @@ export const getAgentPluralTranslation = (
   t: TFunction,
   key: string,
   count: number,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   return t(key, { count, ...params });
 };
@@ -185,13 +187,13 @@ export const getAgentTimeTranslation = (
   key: string,
   timeValue: number,
   unit: 'seconds' | 'milliseconds' | 'minutes' = 'seconds',
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   let formattedTime: number;
-  
+
   switch (unit) {
     case 'milliseconds':
-      formattedTime = Math.round(timeValue / 1000 * 10) / 10; // Round to 1 decimal
+      formattedTime = Math.round((timeValue / 1000) * 10) / 10; // Round to 1 decimal
       break;
     case 'minutes':
       formattedTime = Math.round(timeValue * 60);
@@ -199,7 +201,7 @@ export const getAgentTimeTranslation = (
     default:
       formattedTime = timeValue;
   }
-  
+
   return t(key, { time: formattedTime, ...params });
 };
 
@@ -215,7 +217,7 @@ export const getAgentConfidenceTranslation = (
   t: TFunction,
   key: string,
   confidence: number,
-  params?: Record<string, any>
+  params?: Record<string, any>,
 ): string => {
   const percentage = Math.round(confidence * 100);
   return t(key, { confidence: percentage, ...params });
@@ -231,7 +233,7 @@ export const getAgentConfidenceTranslation = (
 export const hasAgentTranslation = (
   t: TFunction,
   agentType: AgentType,
-  key: string
+  key: string,
 ): boolean => {
   const agentKey = `agents:${getAgentNamespace(agentType)}.${key}`;
   const translation = t(agentKey);
@@ -248,9 +250,9 @@ export const hasAgentTranslation = (
 export const getMissingAgentTranslations = (
   t: TFunction,
   agentType: AgentType,
-  requiredKeys: string[]
+  requiredKeys: string[],
 ): string[] => {
-  return requiredKeys.filter(key => !hasAgentTranslation(t, agentType, key));
+  return requiredKeys.filter((key) => !hasAgentTranslation(t, agentType, key));
 };
 
 /**
@@ -261,7 +263,7 @@ export const getMissingAgentTranslations = (
  */
 export const formatAgentTemplate = (
   template: string,
-  params: Record<string, any>
+  params: Record<string, any>,
 ): string => {
   return template.replace(/\{\{(\w+)\}\}/g, (match, key) => {
     return params[key]?.toString() || match;
@@ -288,30 +290,30 @@ export interface AgentTranslationValidationError {
 export const validateAgentTranslations = (
   t: TFunction,
   agentType: AgentType,
-  requiredKeys: string[]
+  requiredKeys: string[],
 ): AgentTranslationValidationError[] => {
   const errors: AgentTranslationValidationError[] = [];
-  
+
   for (const key of requiredKeys) {
     const agentKey = `agents:${getAgentNamespace(agentType)}.${key}`;
     const translation = t(agentKey);
-    
+
     if (translation === agentKey) {
       errors.push({
         agentType,
         key,
         error: 'missing',
-        details: `Translation key not found: ${agentKey}`
+        details: `Translation key not found: ${agentKey}`,
       });
     } else if (!translation || translation.trim() === '') {
       errors.push({
         agentType,
         key,
         error: 'empty_value',
-        details: `Translation exists but is empty: ${agentKey}`
+        details: `Translation exists but is empty: ${agentKey}`,
       });
     }
   }
-  
+
   return errors;
 };

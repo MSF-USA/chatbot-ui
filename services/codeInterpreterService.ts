@@ -1,18 +1,19 @@
 import {
+  CodeAnalysisResult,
+  CodeExecutionOutput,
   CodeExecutionRequest,
   CodeExecutionResult,
-  CodeExecutionOutput,
-  ExecutionStatus,
-  ProgrammingLanguage,
-  ExecutionEnvironment,
   CodeInterpreterError,
   CodeInterpreterErrorType,
-  CodeAnalysisResult,
   CodeValidationResult,
   DEFAULT_CODE_INTERPRETER_CONFIG,
+  ExecutionEnvironment,
+  ExecutionStatus,
+  ProgrammingLanguage,
 } from '../types/codeInterpreter';
 
 import { AgentsClient, ToolUtility } from '@azure/ai-agents';
+
 // import { DefaultAzureCredential } from '@azure/identity';
 
 /**
@@ -21,12 +22,19 @@ import { AgentsClient, ToolUtility } from '@azure/ai-agents';
  */
 export class CodeInterpreterService {
   private projectEndpoint: string;
-  private cache: Map<string, { result: CodeExecutionResult; timestamp: number }> = new Map();
+  private cache: Map<
+    string,
+    { result: CodeExecutionResult; timestamp: number }
+  > = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
   constructor(projectEndpoint?: string) {
-    this.projectEndpoint = process.env.AZURE_AI_FOUNDRY_ENDPOINT || projectEndpoint || process.env.PROJECT_ENDPOINT || '';
-    
+    this.projectEndpoint =
+      process.env.AZURE_AI_FOUNDRY_ENDPOINT ||
+      projectEndpoint ||
+      process.env.PROJECT_ENDPOINT ||
+      '';
+
     if (!this.projectEndpoint) {
       console.warn('CodeInterpreterService: PROJECT_ENDPOINT not configured');
     }
@@ -35,7 +43,9 @@ export class CodeInterpreterService {
   /**
    * Execute code using Azure AI Agents Code Interpreter
    */
-  async executeCode(request: CodeExecutionRequest): Promise<CodeExecutionResult> {
+  async executeCode(
+    request: CodeExecutionRequest,
+  ): Promise<CodeExecutionResult> {
     const executionId = this.generateExecutionId();
     const startTime = Date.now();
 
@@ -49,13 +59,16 @@ export class CodeInterpreterService {
       }
 
       // Validate code before execution
-      const validation = await this.validateCode(request.code, request.language);
+      const validation = await this.validateCode(
+        request.code,
+        request.language,
+      );
       if (!validation.isValid) {
         throw new CodeInterpreterError(
           `Code validation failed: ${validation.errors.join(', ')}`,
           CodeInterpreterErrorType.VALIDATION_ERROR,
           { validation },
-          executionId
+          executionId,
         );
       }
 
@@ -70,18 +83,21 @@ export class CodeInterpreterService {
       return result;
     } catch (error) {
       const endTime = Date.now();
-      
+
       // Create error result
       const errorResult: CodeExecutionResult = {
         status: this.categorizeError(error),
         code: request.code,
         language: request.language,
-        environment: request.environment || this.getDefaultEnvironment(request.language),
-        outputs: [{
-          output: '',
-          error: error instanceof Error ? error.message : 'Unknown error',
-          type: 'exception',
-        }],
+        environment:
+          request.environment || this.getDefaultEnvironment(request.language),
+        outputs: [
+          {
+            output: '',
+            error: error instanceof Error ? error.message : 'Unknown error',
+            type: 'exception',
+          },
+        ],
         stats: {
           executionTime: endTime - startTime,
           memoryUsage: 0,
@@ -107,13 +123,13 @@ export class CodeInterpreterService {
    */
   private async executeWithAzureAgents(
     request: CodeExecutionRequest,
-    executionId: string
+    executionId: string,
   ): Promise<CodeExecutionResult> {
     const startTime = Date.now();
 
     // TODO: Replace with actual Azure AI Agents implementation
     // This is a placeholder implementation until the package is available
-    
+
     try {
       // Simulate Azure AI Agents code execution
       const result = await this.simulateCodeExecution(request);
@@ -123,14 +139,18 @@ export class CodeInterpreterService {
         status: ExecutionStatus.SUCCESS,
         code: request.code,
         language: request.language,
-        environment: request.environment || this.getDefaultEnvironment(request.language),
+        environment:
+          request.environment || this.getDefaultEnvironment(request.language),
         outputs: result.outputs,
         stats: {
           executionTime: endTime - startTime,
           memoryUsage: result.memoryUsage || 0,
           cpuUsage: result.cpuUsage || 0,
           outputLines: result.outputs.length,
-          outputSize: result.outputs.reduce((sum, output) => sum + output.output.length, 0),
+          outputSize: result.outputs.reduce(
+            (sum, output) => sum + output.output.length,
+            0,
+          ),
           dependenciesUsed: request.dependencies?.length || 0,
           exitCode: 0,
         },
@@ -145,10 +165,12 @@ export class CodeInterpreterService {
       return executionResult;
     } catch (error) {
       throw new CodeInterpreterError(
-        `Code execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Code execution failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
         CodeInterpreterErrorType.RUNTIME_ERROR,
         error,
-        executionId
+        executionId,
       );
     }
 
@@ -205,11 +227,11 @@ export class CodeInterpreterService {
   }> {
     // This is a placeholder simulation for development
     // Real implementation will use Azure AI Agents
-    
-    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate execution time
-    
+
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate execution time
+
     const outputs: CodeExecutionOutput[] = [];
-    
+
     switch (request.language) {
       case ProgrammingLanguage.PYTHON:
         outputs.push({
@@ -218,7 +240,7 @@ export class CodeInterpreterService {
           mimeType: 'text/plain',
         });
         break;
-        
+
       case ProgrammingLanguage.JAVASCRIPT:
         outputs.push({
           output: this.simulateJavaScriptExecution(request.code),
@@ -226,7 +248,7 @@ export class CodeInterpreterService {
           mimeType: 'text/plain',
         });
         break;
-        
+
       case ProgrammingLanguage.SQL:
         outputs.push({
           output: this.simulateSQLExecution(request.code),
@@ -234,7 +256,7 @@ export class CodeInterpreterService {
           mimeType: 'text/plain',
         });
         break;
-        
+
       default:
         outputs.push({
           output: `Code executed successfully (${request.language})`,
@@ -242,7 +264,7 @@ export class CodeInterpreterService {
           mimeType: 'text/plain',
         });
     }
-    
+
     return {
       outputs,
       memoryUsage: Math.random() * 100,
@@ -260,15 +282,15 @@ export class CodeInterpreterService {
         return match[1].replace(/['"]/g, '');
       }
     }
-    
+
     if (code.includes('import')) {
       return 'Libraries imported successfully';
     }
-    
+
     if (code.includes('=')) {
       return 'Variable assignment completed';
     }
-    
+
     return 'Python code executed successfully';
   }
 
@@ -282,11 +304,11 @@ export class CodeInterpreterService {
         return match[1].replace(/['"]/g, '');
       }
     }
-    
+
     if (code.includes('function') || code.includes('=>')) {
       return 'Function defined successfully';
     }
-    
+
     return 'JavaScript code executed successfully';
   }
 
@@ -297,14 +319,17 @@ export class CodeInterpreterService {
     if (code.toUpperCase().includes('SELECT')) {
       return 'Query executed successfully\n\nResults:\n| Column1 | Column2 |\n|---------|----------|\n| Value1  | Value2   |';
     }
-    
+
     return 'SQL command executed successfully';
   }
 
   /**
    * Validate code before execution
    */
-  async validateCode(code: string, language: ProgrammingLanguage): Promise<CodeValidationResult> {
+  async validateCode(
+    code: string,
+    language: ProgrammingLanguage,
+  ): Promise<CodeValidationResult> {
     const errors: string[] = [];
     const securityWarnings: string[] = [];
     const dangerousPatterns: string[] = [];
@@ -315,7 +340,8 @@ export class CodeInterpreterService {
     }
 
     // Security checks
-    const blockedFunctions = DEFAULT_CODE_INTERPRETER_CONFIG.blockedFunctions[language] || [];
+    const blockedFunctions =
+      DEFAULT_CODE_INTERPRETER_CONFIG.blockedFunctions[language] || [];
     for (const blocked of blockedFunctions) {
       if (code.includes(blocked)) {
         dangerousPatterns.push(blocked);
@@ -326,21 +352,29 @@ export class CodeInterpreterService {
     // Language-specific validation
     switch (language) {
       case ProgrammingLanguage.PYTHON:
-        if (code.includes('__import__') || code.includes('eval(') || code.includes('exec(')) {
+        if (
+          code.includes('__import__') ||
+          code.includes('eval(') ||
+          code.includes('exec(')
+        ) {
           errors.push('Dynamic code execution not allowed');
         }
         break;
-        
+
       case ProgrammingLanguage.JAVASCRIPT:
         if (code.includes('eval(') || code.includes('Function(')) {
           errors.push('Dynamic code execution not allowed');
         }
         break;
-        
+
       case ProgrammingLanguage.SQL:
         const uppercaseCode = code.toUpperCase();
-        if (uppercaseCode.includes('DROP') || uppercaseCode.includes('DELETE') || 
-            uppercaseCode.includes('UPDATE') || uppercaseCode.includes('INSERT')) {
+        if (
+          uppercaseCode.includes('DROP') ||
+          uppercaseCode.includes('DELETE') ||
+          uppercaseCode.includes('UPDATE') ||
+          uppercaseCode.includes('INSERT')
+        ) {
           errors.push('Data modification operations not allowed');
         }
         break;
@@ -359,7 +393,10 @@ export class CodeInterpreterService {
   /**
    * Analyze code complexity and requirements
    */
-  async analyzeCode(code: string, language?: ProgrammingLanguage): Promise<CodeAnalysisResult> {
+  async analyzeCode(
+    code: string,
+    language?: ProgrammingLanguage,
+  ): Promise<CodeAnalysisResult> {
     const detectedLanguage = language || this.detectLanguage(code);
     const complexity = this.calculateComplexity(code);
     const securityRisk = this.assessSecurityRisk(code, detectedLanguage);
@@ -380,18 +417,30 @@ export class CodeInterpreterService {
    * Detect programming language from code
    */
   private detectLanguage(code: string): ProgrammingLanguage {
-    if (code.includes('print(') || code.includes('import ') || code.includes('def ')) {
+    if (
+      code.includes('print(') ||
+      code.includes('import ') ||
+      code.includes('def ')
+    ) {
       return ProgrammingLanguage.PYTHON;
     }
-    
-    if (code.includes('console.log') || code.includes('function') || code.includes('const ') || code.includes('let ')) {
+
+    if (
+      code.includes('console.log') ||
+      code.includes('function') ||
+      code.includes('const ') ||
+      code.includes('let ')
+    ) {
       return ProgrammingLanguage.JAVASCRIPT;
     }
-    
-    if (code.toUpperCase().includes('SELECT') || code.toUpperCase().includes('FROM')) {
+
+    if (
+      code.toUpperCase().includes('SELECT') ||
+      code.toUpperCase().includes('FROM')
+    ) {
       return ProgrammingLanguage.SQL;
     }
-    
+
     return ProgrammingLanguage.PYTHON; // Default
   }
 
@@ -400,22 +449,26 @@ export class CodeInterpreterService {
    */
   private calculateComplexity(code: string): number {
     let score = 1;
-    
+
     // Add complexity for control structures
     score += (code.match(/if |for |while |try |catch /g) || []).length;
     score += (code.match(/function |def |class /g) || []).length * 2;
     score += Math.floor(code.split('\n').length / 10);
-    
+
     return Math.min(score, 10);
   }
 
   /**
    * Assess security risk level
    */
-  private assessSecurityRisk(code: string, language: ProgrammingLanguage): 'low' | 'medium' | 'high' {
-    const blockedFunctions = DEFAULT_CODE_INTERPRETER_CONFIG.blockedFunctions[language] || [];
-    const violations = blockedFunctions.filter(func => code.includes(func));
-    
+  private assessSecurityRisk(
+    code: string,
+    language: ProgrammingLanguage,
+  ): 'low' | 'medium' | 'high' {
+    const blockedFunctions =
+      DEFAULT_CODE_INTERPRETER_CONFIG.blockedFunctions[language] || [];
+    const violations = blockedFunctions.filter((func) => code.includes(func));
+
     if (violations.length >= 3) return 'high';
     if (violations.length >= 1) return 'medium';
     return 'low';
@@ -424,34 +477,43 @@ export class CodeInterpreterService {
   /**
    * Extract dependencies from code
    */
-  private extractDependencies(code: string, language: ProgrammingLanguage): string[] {
+  private extractDependencies(
+    code: string,
+    language: ProgrammingLanguage,
+  ): string[] {
     const dependencies: string[] = [];
-    
+
     switch (language) {
       case ProgrammingLanguage.PYTHON:
-        const pythonImports = code.match(/import\s+(\w+)|from\s+(\w+)\s+import/g) || [];
-        pythonImports.forEach(imp => {
+        const pythonImports =
+          code.match(/import\s+(\w+)|from\s+(\w+)\s+import/g) || [];
+        pythonImports.forEach((imp) => {
           const match = imp.match(/(?:import|from)\s+(\w+)/);
           if (match) dependencies.push(match[1]);
         });
         break;
-        
+
       case ProgrammingLanguage.JAVASCRIPT:
-        const jsImports = code.match(/require\(['"]([^'"]+)['"]\)|import.*from\s+['"]([^'"]+)['"]/g) || [];
-        jsImports.forEach(imp => {
+        const jsImports =
+          code.match(
+            /require\(['"]([^'"]+)['"]\)|import.*from\s+['"]([^'"]+)['"]/g,
+          ) || [];
+        jsImports.forEach((imp) => {
           const match = imp.match(/['"]([^'"]+)['"]/);
           if (match) dependencies.push(match[1]);
         });
         break;
     }
-    
+
     return [...new Set(dependencies)];
   }
 
   /**
    * Get default execution environment for language
    */
-  private getDefaultEnvironment(language: ProgrammingLanguage): ExecutionEnvironment {
+  private getDefaultEnvironment(
+    language: ProgrammingLanguage,
+  ): ExecutionEnvironment {
     switch (language) {
       case ProgrammingLanguage.PYTHON:
         return ExecutionEnvironment.PYTHON_3_11;
@@ -488,13 +550,14 @@ export class CodeInterpreterService {
           return ExecutionStatus.ERROR;
       }
     }
-    
+
     if (error instanceof Error) {
       if (error.message.includes('timeout')) return ExecutionStatus.TIMEOUT;
       if (error.message.includes('memory')) return ExecutionStatus.MEMORY_LIMIT;
-      if (error.message.includes('security')) return ExecutionStatus.SECURITY_VIOLATION;
+      if (error.message.includes('security'))
+        return ExecutionStatus.SECURITY_VIOLATION;
     }
-    
+
     return ExecutionStatus.ERROR;
   }
 
@@ -508,21 +571,29 @@ export class CodeInterpreterService {
   /**
    * Cache management
    */
-  private getCachedResult(request: CodeExecutionRequest): CodeExecutionResult | null {
+  private getCachedResult(
+    request: CodeExecutionRequest,
+  ): CodeExecutionResult | null {
     const cacheKey = this.generateCacheKey(request);
     const cached = this.cache.get(cacheKey);
-    
+
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
-      return { ...cached.result, metadata: { ...cached.result.metadata, cached: true } };
+      return {
+        ...cached.result,
+        metadata: { ...cached.result.metadata, cached: true },
+      };
     }
-    
+
     return null;
   }
 
-  private setCachedResult(request: CodeExecutionRequest, result: CodeExecutionResult): void {
+  private setCachedResult(
+    request: CodeExecutionRequest,
+    result: CodeExecutionResult,
+  ): void {
     const cacheKey = this.generateCacheKey(request);
     this.cache.set(cacheKey, { result, timestamp: Date.now() });
-    
+
     // Clean up old cache entries
     setTimeout(() => {
       this.cache.delete(cacheKey);
@@ -530,7 +601,9 @@ export class CodeInterpreterService {
   }
 
   private generateCacheKey(request: CodeExecutionRequest): string {
-    const key = `${request.language}_${request.code}_${JSON.stringify(request.inputs || {})}`;
+    const key = `${request.language}_${request.code}_${JSON.stringify(
+      request.inputs || {},
+    )}`;
     return btoa(key).substr(0, 32);
   }
 

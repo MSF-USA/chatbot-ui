@@ -47,7 +47,10 @@ export function getEnvVariable(
   let euUser: boolean = true;
   // Type assertion to access mail property from augmented Session user type
   const userWithMail = user as { mail?: string } | undefined;
-  if (userWithMail?.mail && userWithMail.mail.toLowerCase().endsWith('@newyork.msf.org')) {
+  if (
+    userWithMail?.mail &&
+    userWithMail.mail.toLowerCase().endsWith('@newyork.msf.org')
+  ) {
     euUser = false;
   }
 

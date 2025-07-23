@@ -9,7 +9,7 @@ describe('Settings Manager', () => {
     theme: 'dark',
     temperature: 0.5,
     systemPrompt: '',
-    advancedMode: false
+    advancedMode: false,
   };
 
   beforeEach(() => {
@@ -47,7 +47,7 @@ describe('Settings Manager', () => {
       'settings',
       expect.stringContaining('"theme":"dark"'),
     );
-    
+
     // Verify the saved data includes our original settings plus metadata
     const [[key, value]] = (global as any).localStorage.setItem.mock.calls;
     expect(key).toBe('settings');

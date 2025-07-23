@@ -26,7 +26,8 @@ export class AzureMonitorLoggingService {
     ruleId?: string,
     streamName?: string,
   ) {
-    const endpoint = logsIngestionEndpoint || process.env.LOGS_INJESTION_ENDPOINT;
+    const endpoint =
+      logsIngestionEndpoint || process.env.LOGS_INJESTION_ENDPOINT;
     const dcr = ruleId || process.env.DATA_COLLECTION_RULE_ID;
     const stream = streamName || process.env.STREAM_NAME;
 
@@ -37,16 +38,23 @@ export class AzureMonitorLoggingService {
         this.ruleId = dcr;
         this.streamName = stream;
         this.configurationMode = 'azure';
-        console.log('AzureMonitorLoggingService: Initialized with Azure Monitor configuration');
+        console.log(
+          'AzureMonitorLoggingService: Initialized with Azure Monitor configuration',
+        );
       } catch (error) {
-        console.warn('AzureMonitorLoggingService: Failed to initialize Azure Monitor client, falling back to console logging', error);
+        console.warn(
+          'AzureMonitorLoggingService: Failed to initialize Azure Monitor client, falling back to console logging',
+          error,
+        );
         this.client = null;
         this.ruleId = dcr;
         this.streamName = stream;
         this.configurationMode = 'console';
       }
     } else {
-      console.warn('AzureMonitorLoggingService: Missing Azure Monitor configuration, using console logging mode');
+      console.warn(
+        'AzureMonitorLoggingService: Missing Azure Monitor configuration, using console logging mode',
+      );
       this.client = null;
       this.ruleId = ruleId || 'console-mode';
       this.streamName = streamName || 'console-mode';
@@ -631,7 +639,11 @@ export class AzureMonitorLoggingService {
    * Log user interaction patterns for analytics
    */
   async logUserInteractionPattern(
-    interactionType: 'chat-start' | 'agent-request' | 'fallback-triggered' | 'feature-flag-change',
+    interactionType:
+      | 'chat-start'
+      | 'agent-request'
+      | 'fallback-triggered'
+      | 'feature-flag-change',
     agentType?: string,
     conversationLength?: number,
     sessionId?: string,
@@ -710,12 +722,18 @@ export class AzureMonitorLoggingService {
         }
       } else {
         // Console logging mode
-        console.log('Batch metrics (console mode):', JSON.stringify(batchEntries, null, 2));
+        console.log(
+          'Batch metrics (console mode):',
+          JSON.stringify(batchEntries, null, 2),
+        );
       }
     } catch (error) {
       console.error('Error batch uploading metrics:', error);
       // Fallback to console logging
-      console.log('Fallback batch metrics:', JSON.stringify(batchEntries, null, 2));
+      console.log(
+        'Fallback batch metrics:',
+        JSON.stringify(batchEntries, null, 2),
+      );
     }
   }
 
@@ -731,8 +749,14 @@ export class AzureMonitorLoggingService {
         isConfigured,
         hasClient: !!this.client,
         configurationMode: this.configurationMode,
-        ruleId: this.ruleId && this.ruleId !== 'console-mode' ? this.ruleId.substring(0, 8) + '...' : 'console-mode',
-        streamName: this.streamName && this.streamName !== 'console-mode' ? this.streamName : 'console-mode',
+        ruleId:
+          this.ruleId && this.ruleId !== 'console-mode'
+            ? this.ruleId.substring(0, 8) + '...'
+            : 'console-mode',
+        streamName:
+          this.streamName && this.streamName !== 'console-mode'
+            ? this.streamName
+            : 'console-mode',
         lastChecked: new Date().toISOString(),
       };
     } catch (error) {
@@ -763,12 +787,21 @@ export class AzureMonitorLoggingService {
           await this.client.upload(this.ruleId, this.streamName, [logEntry]);
           console.log('Log entry sent successfully to Azure Monitor');
         } catch (uploadError) {
-          console.error('Error uploading log entry to Azure Monitor, falling back to console:', uploadError);
-          console.log('Log entry (console fallback):', JSON.stringify(logEntry, null, 2));
+          console.error(
+            'Error uploading log entry to Azure Monitor, falling back to console:',
+            uploadError,
+          );
+          console.log(
+            'Log entry (console fallback):',
+            JSON.stringify(logEntry, null, 2),
+          );
         }
       } else {
         // Console logging mode
-        console.log('Log entry (console mode):', JSON.stringify(logEntry, null, 2));
+        console.log(
+          'Log entry (console mode):',
+          JSON.stringify(logEntry, null, 2),
+        );
       }
     } catch (error) {
       console.error('Error in logging service:', error);

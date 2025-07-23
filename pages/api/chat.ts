@@ -3,6 +3,10 @@ import { JWT, Session } from 'next-auth';
 import { getToken } from 'next-auth/jwt';
 import { getServerSession } from 'next-auth/next';
 
+// Enhanced Chat Service with Agent Routing
+import { getEnhancedChatService } from '@/services/enhancedChatService';
+import { UserContext } from '@/services/simpleFeatureFlags';
+
 import {
   checkIsModelValid,
   isFileConversation,
@@ -10,13 +14,13 @@ import {
   isReasoningModel,
 } from '@/utils/app/chat';
 import {
+  AGENT_ROUTING_ENABLED,
   APIM_CHAT_ENDPONT,
   AZURE_DEPLOYMENT_ID,
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_TEMPERATURE,
   OPENAI_API_HOST,
   OPENAI_API_VERSION,
-  AGENT_ROUTING_ENABLED,
 } from '@/utils/app/const';
 import { getMessagesToSend } from '@/utils/server/chat';
 
@@ -29,10 +33,6 @@ import {
 import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-
-// Enhanced Chat Service with Agent Routing
-import { getEnhancedChatService } from '@/services/enhancedChatService';
-import { UserContext } from '@/services/simpleFeatureFlags';
 
 // @ts-expect-error
 import wasm from '../../node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm?module';
@@ -53,47 +53,67 @@ const handler = async (
   res: NextApiResponse,
 ): Promise<void> => {
   const startTime = Date.now();
-  
+
   try {
     // Check if enhanced chat service with agents should be used
-    const useEnhancedService = AGENT_ROUTING_ENABLED || req.headers['x-use-agents'] === 'true';
-    
+    const useEnhancedService =
+      AGENT_ROUTING_ENABLED || req.headers['x-use-agents'] === 'true';
+
     if (useEnhancedService) {
       console.log('[INFO] Using Enhanced Chat Service with agent routing');
-      
+
       try {
         // Get enhanced chat service
         const enhancedChatService = getEnhancedChatService();
-        
+
         // Create NextRequest compatible object for the enhanced service
-        const enhancedRequest = new Request(`${req.headers.host || 'localhost'}/api/chat`, {
-          method: 'POST',
-          headers: {
-            'content-type': 'application/json',
-            'authorization': Array.isArray(req.headers.authorization) ? req.headers.authorization[0] : req.headers.authorization || '',
-            'user-agent': Array.isArray(req.headers['user-agent']) ? req.headers['user-agent'][0] : req.headers['user-agent'] || '',
-            'x-user-id': Array.isArray(req.headers['x-user-id']) ? req.headers['x-user-id'][0] : req.headers['x-user-id'] || `user_${Date.now()}`,
-            'x-user-email': Array.isArray(req.headers['x-user-email']) ? req.headers['x-user-email'][0] : req.headers['x-user-email'] || '',
-            'x-user-role': Array.isArray(req.headers['x-user-role']) ? req.headers['x-user-role'][0] : req.headers['x-user-role'] || 'user',
-            'x-conversation-id': Array.isArray(req.headers['x-conversation-id']) ? req.headers['x-conversation-id'][0] : req.headers['x-conversation-id'] || `conv_${Date.now()}`,
+        const enhancedRequest = new Request(
+          `${req.headers.host || 'localhost'}/api/chat`,
+          {
+            method: 'POST',
+            headers: {
+              'content-type': 'application/json',
+              authorization: Array.isArray(req.headers.authorization)
+                ? req.headers.authorization[0]
+                : req.headers.authorization || '',
+              'user-agent': Array.isArray(req.headers['user-agent'])
+                ? req.headers['user-agent'][0]
+                : req.headers['user-agent'] || '',
+              'x-user-id': Array.isArray(req.headers['x-user-id'])
+                ? req.headers['x-user-id'][0]
+                : req.headers['x-user-id'] || `user_${Date.now()}`,
+              'x-user-email': Array.isArray(req.headers['x-user-email'])
+                ? req.headers['x-user-email'][0]
+                : req.headers['x-user-email'] || '',
+              'x-user-role': Array.isArray(req.headers['x-user-role'])
+                ? req.headers['x-user-role'][0]
+                : req.headers['x-user-role'] || 'user',
+              'x-conversation-id': Array.isArray(
+                req.headers['x-conversation-id'],
+              )
+                ? req.headers['x-conversation-id'][0]
+                : req.headers['x-conversation-id'] || `conv_${Date.now()}`,
+            },
+            body: JSON.stringify(req.body),
           },
-          body: JSON.stringify(req.body),
-        });
+        );
 
         // Handle with enhanced service
-        const response = await enhancedChatService.handleRequest(enhancedRequest as any);
-        
+        const response = await enhancedChatService.handleRequest(
+          enhancedRequest as any,
+        );
+
         // Forward response
         const responseText = await response.text();
         const responseHeaders = Object.fromEntries(response.headers.entries());
-        
+
         // Set response headers
         Object.entries(responseHeaders).forEach(([key, value]) => {
           res.setHeader(key, value);
         });
-        
+
         res.status(response.status);
-        
+
         // Check if it's a streaming response
         if (responseHeaders['content-type']?.includes('text/event-stream')) {
           // Handle streaming response
@@ -108,16 +128,18 @@ const handler = async (
             res.send(responseText);
           }
         }
-        
+
         return;
-        
       } catch (enhancedError) {
-        console.error('[ERROR] Enhanced chat service failed, falling back to standard chat:', enhancedError);
-        
+        console.error(
+          '[ERROR] Enhanced chat service failed, falling back to standard chat:',
+          enhancedError,
+        );
+
         // Continue to standard implementation below
       }
     }
-    
+
     // Standard chat implementation starts here
     console.log('[INFO] Using standard chat service');
     const { model, messages, prompt, temperature } = req.body as ChatBody;
@@ -270,27 +292,28 @@ const handler = async (
       }
     } else {
       const azureOpenai = new OpenAI(openAIArgs);
-      
+
       // Special handling for reasoning models
       if (isReasoningModel(modelToUse)) {
         // Reasoning models: no streaming, fixed temperature, no system messages
         const processedMessages = [...messagesToSend];
-        
+
         // Reasoning models don't support system messages at all - skip system prompt entirely
         // The system prompt will be ignored for reasoning models to avoid content filter violations
-        
+
         const response = await azureOpenai.chat.completions.create({
           model: modelToUse,
-          messages: processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          messages:
+            processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
           temperature: 1, // Fixed temperature for reasoning models
           stream: false, // Never stream reasoning models
         });
-        
+
         const completion = response.choices[0]?.message?.content || '';
         res.status(200).json({ content: completion });
         return;
       }
-      
+
       // Regular models: use streaming as before
       const response = await azureOpenai.chat.completions.create({
         model: modelToUse,

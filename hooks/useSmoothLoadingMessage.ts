@@ -12,15 +12,15 @@ interface SmoothLoadingMessageOptions {
 
 /**
  * Custom hook to provide smooth streaming in effects for loading messages
- * 
+ *
  * Behavior:
  * - First message: May not display (can be skipped with skipFirstMessage=true)
  * - Subsequent messages: Clear instantly, then stream in character by character
  * - Message cleared: Clear instantly
- * 
+ *
  * Note: This hook works best for message sequences where the first message
  * can be skipped and subsequent messages need smooth transitions.
- * 
+ *
  * @returns {string} The text to display with smooth animation effects
  */
 export const useSmoothLoadingMessage = ({
@@ -33,13 +33,13 @@ export const useSmoothLoadingMessage = ({
   skipFirstMessage = false,
 }: SmoothLoadingMessageOptions): string => {
   const [displayedMessage, setDisplayedMessage] = useState<string>('');
-  
-  // Single source of truth for what we're working towards  
+
+  // Single source of truth for what we're working towards
   const workingTowardsRef = useRef<string | null>(null);
-  
+
   // Simple animation state tracking
   const animationStateRef = useRef<'idle' | 'streaming'>('idle');
-  
+
   // Animation control
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number>(0);
@@ -53,31 +53,37 @@ export const useSmoothLoadingMessage = ({
       cancelAnimationFrame(animationFrameRef.current);
       animationFrameRef.current = null;
     }
-    
+
     // Clear display and start fresh
     setDisplayedMessage('');
     animationStateRef.current = 'streaming';
     targetMessageRef.current = targetMessage;
     lastTimestampRef.current = 0;
-    
+
     const animate = (timestamp: number) => {
       if (timestamp - lastTimestampRef.current < streamInDelay) {
         animationFrameRef.current = requestAnimationFrame(animate);
         return;
       }
-      
+
       lastTimestampRef.current = timestamp;
-      
+
       setDisplayedMessage((prev) => {
         if (prev.length >= targetMessageRef.current.length) {
           // Streaming complete
           animationStateRef.current = 'idle';
           return targetMessageRef.current;
         }
-        
-        const nextCharsCount = Math.min(streamInSpeed, targetMessageRef.current.length - prev.length);
-        const newText = targetMessageRef.current.slice(0, prev.length + nextCharsCount);
-        
+
+        const nextCharsCount = Math.min(
+          streamInSpeed,
+          targetMessageRef.current.length - prev.length,
+        );
+        const newText = targetMessageRef.current.slice(
+          0,
+          prev.length + nextCharsCount,
+        );
+
         // Continue animation if not complete
         if (newText.length < targetMessageRef.current.length) {
           animationFrameRef.current = requestAnimationFrame(animate);
@@ -85,11 +91,11 @@ export const useSmoothLoadingMessage = ({
           // Animation will complete with this update
           animationStateRef.current = 'idle';
         }
-        
+
         return newText;
       });
     };
-    
+
     animationFrameRef.current = requestAnimationFrame(animate);
   };
 
@@ -108,10 +114,10 @@ export const useSmoothLoadingMessage = ({
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
       }
-      
+
       // Update our commitment
       workingTowardsRef.current = message;
-      
+
       if (message === null) {
         // Clear immediately
         setDisplayedMessage('');

@@ -1,24 +1,30 @@
-import { 
-  IconFileText, 
-  IconClock, 
-  IconExternalLink, 
+import {
   IconBookmark,
-  IconEye,
-  IconDatabase,
-  IconSearch,
   IconBulb,
+  IconCalendar,
+  IconClock,
+  IconDatabase,
+  IconExternalLink,
+  IconEye,
+  IconFileText,
+  IconLanguage,
+  IconSearch,
   IconShield,
   IconTag,
   IconUser,
-  IconCalendar,
-  IconLanguage
 } from '@tabler/icons-react';
-import { FC, useState, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
+
 import { useTranslation } from 'next-i18next';
 
 import { AgentResponse } from '@/types/agent';
-import { UrlPullResponse, ProcessedUrl, FailedUrl } from '@/types/urlPull';
-import { LocalKnowledgeResponse, KnowledgeSearchResult, KnowledgeDocumentType, AccessLevel } from '@/types/localKnowledge';
+import {
+  AccessLevel,
+  KnowledgeDocumentType,
+  KnowledgeSearchResult,
+  LocalKnowledgeResponse,
+} from '@/types/localKnowledge';
+import { FailedUrl, ProcessedUrl, UrlPullResponse } from '@/types/urlPull';
 
 interface DocumentAnalysisPanelProps {
   agentResponse: AgentResponse;
@@ -44,7 +50,11 @@ interface FailedUrlCardProps {
 /**
  * Individual processed URL card
  */
-const ProcessedUrlCard: FC<ProcessedUrlCardProps> = ({ url, index, onPreview }) => {
+const ProcessedUrlCard: FC<ProcessedUrlCardProps> = ({
+  url,
+  index,
+  onPreview,
+}) => {
   const { t } = useTranslation('agents');
 
   const formatFileSize = (bytes: number) => {
@@ -70,7 +80,7 @@ const ProcessedUrlCard: FC<ProcessedUrlCardProps> = ({ url, index, onPreview }) 
             {url.finalUrl || url.url}
           </p>
         </div>
-        
+
         {url.cached && (
           <span className="ml-2 px-2 py-1 text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded">
             {t('documentAnalysis.resultsPanel.cached')}
@@ -91,7 +101,7 @@ const ProcessedUrlCard: FC<ProcessedUrlCardProps> = ({ url, index, onPreview }) 
           <IconClock size={12} />
           <span>{url.processingTime}ms</span>
         </div>
-        
+
         <div className="flex items-center space-x-1">
           <IconFileText size={12} />
           <span>{formatFileSize(url.contentLength)}</span>
@@ -118,21 +128,28 @@ const ProcessedUrlCard: FC<ProcessedUrlCardProps> = ({ url, index, onPreview }) 
           {url.metadata.publishedDate && (
             <div className="flex items-center space-x-1 text-xs text-gray-500 dark:text-gray-400">
               <IconCalendar size={12} />
-              <span>{new Date(url.metadata.publishedDate).toLocaleDateString()}</span>
+              <span>
+                {new Date(url.metadata.publishedDate).toLocaleDateString()}
+              </span>
             </div>
           )}
-          
+
           {url.metadata.keywords && url.metadata.keywords.length > 0 && (
             <div className="flex items-center space-x-1 text-xs">
               <IconTag size={12} className="text-gray-500 dark:text-gray-400" />
               <div className="flex flex-wrap gap-1">
                 {url.metadata.keywords.slice(0, 3).map((keyword, idx) => (
-                  <span key={idx} className="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs">
+                  <span
+                    key={idx}
+                    className="px-1 py-0.5 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded text-xs"
+                  >
                     {keyword}
                   </span>
                 ))}
                 {url.metadata.keywords.length > 3 && (
-                  <span className="text-gray-500 dark:text-gray-400">+{url.metadata.keywords.length - 3}</span>
+                  <span className="text-gray-500 dark:text-gray-400">
+                    +{url.metadata.keywords.length - 3}
+                  </span>
                 )}
               </div>
             </div>
@@ -171,7 +188,11 @@ const ProcessedUrlCard: FC<ProcessedUrlCardProps> = ({ url, index, onPreview }) 
 /**
  * Knowledge search result card
  */
-const KnowledgeResultCard: FC<KnowledgeResultCardProps> = ({ result, index, onView }) => {
+const KnowledgeResultCard: FC<KnowledgeResultCardProps> = ({
+  result,
+  index,
+  onView,
+}) => {
   const { t } = useTranslation('agents');
 
   const getAccessLevelColor = (accessLevel: AccessLevel) => {
@@ -213,13 +234,19 @@ const KnowledgeResultCard: FC<KnowledgeResultCardProps> = ({ result, index, onVi
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-start space-x-2 flex-1 min-w-0">
-          <span className="text-sm">{getDocumentTypeIcon(result.document.type)}</span>
+          <span className="text-sm">
+            {getDocumentTypeIcon(result.document.type)}
+          </span>
           <div className="flex-1 min-w-0">
             <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-1 line-clamp-2">
               {result.document.title}
             </h4>
             <div className="flex items-center space-x-2 text-xs">
-              <span className={`px-2 py-1 rounded ${getAccessLevelColor(result.document.accessLevel)}`}>
+              <span
+                className={`px-2 py-1 rounded ${getAccessLevelColor(
+                  result.document.accessLevel,
+                )}`}
+              >
                 <IconShield size={10} className="inline mr-1" />
                 {result.document.accessLevel}
               </span>
@@ -260,7 +287,9 @@ const KnowledgeResultCard: FC<KnowledgeResultCardProps> = ({ result, index, onVi
 
         <div className="flex items-center space-x-1">
           <IconCalendar size={12} />
-          <span>{new Date(result.document.updatedAt).toLocaleDateString()}</span>
+          <span>
+            {new Date(result.document.updatedAt).toLocaleDateString()}
+          </span>
         </div>
 
         {result.document.metadata.department && (
@@ -283,12 +312,17 @@ const KnowledgeResultCard: FC<KnowledgeResultCardProps> = ({ result, index, onVi
             <IconTag size={12} className="text-gray-500 dark:text-gray-400" />
             <div className="flex flex-wrap gap-1">
               {result.document.tags.slice(0, 3).map((tag, idx) => (
-                <span key={idx} className="px-1 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-xs">
+                <span
+                  key={idx}
+                  className="px-1 py-0.5 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300 rounded text-xs"
+                >
                   {tag}
                 </span>
               ))}
               {result.document.tags.length > 3 && (
-                <span className="text-gray-500 dark:text-gray-400">+{result.document.tags.length - 3}</span>
+                <span className="text-gray-500 dark:text-gray-400">
+                  +{result.document.tags.length - 3}
+                </span>
               )}
             </div>
           </div>
@@ -307,7 +341,7 @@ const KnowledgeResultCard: FC<KnowledgeResultCardProps> = ({ result, index, onVi
               <span>{t('documentAnalysis.resultsPanel.view')}</span>
             </button>
           )}
-          
+
           <button className="text-xs text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 flex items-center space-x-1">
             <IconBookmark size={12} />
             <span>{t('documentAnalysis.resultsPanel.bookmark')}</span>
@@ -349,11 +383,13 @@ const FailedUrlCard: FC<FailedUrlCardProps> = ({ failedUrl, index }) => {
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
             {failedUrl.url}
           </p>
-          <p className={`text-xs mt-1 ${getErrorTypeColor(failedUrl.errorType)}`}>
+          <p
+            className={`text-xs mt-1 ${getErrorTypeColor(failedUrl.errorType)}`}
+          >
             {failedUrl.error}
           </p>
         </div>
-        
+
         {failedUrl.statusCode && (
           <span className="ml-2 text-xs text-gray-500 dark:text-gray-400">
             {failedUrl.statusCode}
@@ -368,9 +404,13 @@ const FailedUrlCard: FC<FailedUrlCardProps> = ({ failedUrl, index }) => {
  * Document analysis panel component
  * Displays document analysis results for url-pull and local-knowledge agents
  */
-export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentResponse }) => {
+export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({
+  agentResponse,
+}) => {
   const { t } = useTranslation('agents');
-  const [activeTab, setActiveTab] = useState<'documents' | 'insights' | 'failed'>('documents');
+  const [activeTab, setActiveTab] = useState<
+    'documents' | 'insights' | 'failed'
+  >('documents');
 
   // Extract document analysis data from agent response
   const { urlPullData, localKnowledgeData } = useMemo(() => {
@@ -381,24 +421,29 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
       // Check if agent metadata contains analysis results
       if (agentResponse.metadata?.agentMetadata) {
         if (agentResponse.metadata.agentMetadata.urlPullResponse) {
-          urlPullData = agentResponse.metadata.agentMetadata.urlPullResponse as UrlPullResponse;
+          urlPullData = agentResponse.metadata.agentMetadata
+            .urlPullResponse as UrlPullResponse;
         }
         if (agentResponse.metadata.agentMetadata.localKnowledgeResponse) {
-          localKnowledgeData = agentResponse.metadata.agentMetadata.localKnowledgeResponse as LocalKnowledgeResponse;
+          localKnowledgeData = agentResponse.metadata.agentMetadata
+            .localKnowledgeResponse as LocalKnowledgeResponse;
         }
       }
 
       // Fallback: check if toolResults contains analysis data
       if (agentResponse.metadata?.toolResults) {
         const urlResult = agentResponse.metadata.toolResults.find(
-          (result: any) => result.type === 'url_pull' || result.toolName === 'url_pull'
+          (result: any) =>
+            result.type === 'url_pull' || result.toolName === 'url_pull',
         );
         if (urlResult?.data) {
           urlPullData = urlResult.data as UrlPullResponse;
         }
 
         const knowledgeResult = agentResponse.metadata.toolResults.find(
-          (result: any) => result.type === 'local_knowledge' || result.toolName === 'local_knowledge'
+          (result: any) =>
+            result.type === 'local_knowledge' ||
+            result.toolName === 'local_knowledge',
         );
         if (knowledgeResult?.data) {
           localKnowledgeData = knowledgeResult.data as LocalKnowledgeResponse;
@@ -420,16 +465,23 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
     );
   }
 
-  const totalDocuments = (urlPullData?.processedUrls?.length || 0) + (localKnowledgeData?.results?.length || 0);
+  const totalDocuments =
+    (urlPullData?.processedUrls?.length || 0) +
+    (localKnowledgeData?.results?.length || 0);
   const failedUrls = urlPullData?.failedUrls || [];
-  const hasInsights = localKnowledgeData?.entityInsights && localKnowledgeData.entityInsights.length > 0;
+  const hasInsights =
+    localKnowledgeData?.entityInsights &&
+    localKnowledgeData.entityInsights.length > 0;
 
   return (
     <div className="document-analysis-panel">
       {/* Header */}
       <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-2">
-          <IconFileText size={16} className="text-purple-600 dark:text-purple-400" />
+          <IconFileText
+            size={16}
+            className="text-purple-600 dark:text-purple-400"
+          />
           <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
             {t('documentAnalysis.resultsPanel.title')}
           </h3>
@@ -442,12 +494,14 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
         <div className="flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
           {urlPullData && (
             <span>
-              {t('documentAnalysis.resultsPanel.processingTime')}: {urlPullData.processingStats.totalProcessingTime}ms
+              {t('documentAnalysis.resultsPanel.processingTime')}:{' '}
+              {urlPullData.processingStats.totalProcessingTime}ms
             </span>
           )}
           {localKnowledgeData && (
             <span>
-              {t('documentAnalysis.resultsPanel.searchTime')}: {localKnowledgeData.searchTime}ms
+              {t('documentAnalysis.resultsPanel.searchTime')}:{' '}
+              {localKnowledgeData.searchTime}ms
             </span>
           )}
         </div>
@@ -475,7 +529,8 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
             }`}
           >
-            {t('documentAnalysis.resultsPanel.tabs.insights')} ({localKnowledgeData?.entityInsights?.length || 0})
+            {t('documentAnalysis.resultsPanel.tabs.insights')} (
+            {localKnowledgeData?.entityInsights?.length || 0})
           </button>
         )}
 
@@ -488,7 +543,8 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
                 : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
             }`}
           >
-            {t('documentAnalysis.resultsPanel.tabs.failed')} ({failedUrls.length})
+            {t('documentAnalysis.resultsPanel.tabs.failed')} (
+            {failedUrls.length})
           </button>
         )}
       </div>
@@ -504,7 +560,11 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
 
             {/* Local Knowledge Results */}
             {localKnowledgeData?.results?.map((result, index) => (
-              <KnowledgeResultCard key={`knowledge-${index}`} result={result} index={index} />
+              <KnowledgeResultCard
+                key={`knowledge-${index}`}
+                result={result}
+                index={index}
+              />
             ))}
 
             {totalDocuments === 0 && (
@@ -519,19 +579,26 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
         {activeTab === 'insights' && hasInsights && (
           <div className="space-y-3">
             {localKnowledgeData?.entityInsights?.map((insight, index) => (
-              <div key={index} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20">
+              <div
+                key={index}
+                className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 bg-blue-50 dark:bg-blue-900/20"
+              >
                 <div className="flex items-start space-x-2 mb-2">
-                  <IconBulb size={16} className="text-blue-600 dark:text-blue-400 mt-0.5" />
+                  <IconBulb
+                    size={16}
+                    className="text-blue-600 dark:text-blue-400 mt-0.5"
+                  />
                   <div>
                     <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100">
                       {insight.entity.name}
                     </h4>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      {t('documentAnalysis.resultsPanel.relevance')}: {Math.round(insight.relevance * 100)}%
+                      {t('documentAnalysis.resultsPanel.relevance')}:{' '}
+                      {Math.round(insight.relevance * 100)}%
                     </p>
                   </div>
                 </div>
-                
+
                 {insight.suggestions.length > 0 && (
                   <div className="mt-2">
                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">
@@ -540,7 +607,9 @@ export const DocumentAnalysisPanel: FC<DocumentAnalysisPanelProps> = ({ agentRes
                     <ul className="text-sm text-gray-700 dark:text-gray-300 space-y-1">
                       {insight.suggestions.map((suggestion, idx) => (
                         <li key={idx} className="flex items-start space-x-1">
-                          <span className="text-blue-600 dark:text-blue-400">•</span>
+                          <span className="text-blue-600 dark:text-blue-400">
+                            •
+                          </span>
                           <span>{suggestion}</span>
                         </li>
                       ))}

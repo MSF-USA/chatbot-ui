@@ -1,10 +1,11 @@
 import { Session } from 'next-auth';
+
 import { Message } from './chat';
-import { OpenAIModel } from './openai';
-import { WebSearchConfig } from './webSearch';
-import { UrlPullConfig } from './urlPull';
 import { CodeInterpreterConfig } from './codeInterpreter';
 import { KnowledgeBaseConfig } from './localKnowledge';
+import { OpenAIModel } from './openai';
+import { UrlPullConfig } from './urlPull';
+import { WebSearchConfig } from './webSearch';
 
 /**
  * Enumeration of all supported agent types

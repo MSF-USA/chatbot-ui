@@ -1,24 +1,25 @@
-import { BaseAgent } from './baseAgent';
 import {
   AgentExecutionContext,
+  AgentExecutionEnvironment,
   AgentResponse,
   AgentType,
   CodeInterpreterAgentConfig,
-  AgentExecutionEnvironment,
 } from '@/types/agent';
 import {
+  CodeAnalysisResult,
   CodeExecutionRequest,
   CodeExecutionResult,
-  CodeInterpreterResponse,
-  ProgrammingLanguage,
-  ExecutionEnvironment,
-  ExecutionStatus,
-  CodeAnalysisResult,
   CodeInterpreterError,
   CodeInterpreterErrorType,
+  CodeInterpreterResponse,
   DEFAULT_CODE_INTERPRETER_CONFIG,
+  ExecutionEnvironment,
+  ExecutionStatus,
+  ProgrammingLanguage,
 } from '@/types/codeInterpreter';
+
 import { CodeInterpreterService } from '../codeInterpreterService';
+import { BaseAgent } from './baseAgent';
 
 interface CodeBlock {
   code: string;
@@ -30,7 +31,10 @@ interface CodeBlock {
 export class CodeInterpreterAgent extends BaseAgent {
   private codeInterpreterConfig: CodeInterpreterAgentConfig;
   private codeInterpreterService: CodeInterpreterService;
-  private executionCache: Map<string, { result: CodeExecutionResult; timestamp: number }>;
+  private executionCache: Map<
+    string,
+    { result: CodeExecutionResult; timestamp: number }
+  >;
 
   constructor(config: CodeInterpreterAgentConfig) {
     super(config);
@@ -49,22 +53,25 @@ export class CodeInterpreterAgent extends BaseAgent {
 
   protected validateSpecificConfig(): string[] {
     const errors: string[] = [];
-    
+
     // Access config from base class since instance properties aren't set yet during construction
     const config = this.config as CodeInterpreterAgentConfig;
-    
+
     if (!config?.codeInterpreterConfig) {
       errors.push('Code interpreter configuration is required');
     }
-    
-    if (config?.maxExecutionTime !== undefined && config.maxExecutionTime <= 0) {
+
+    if (
+      config?.maxExecutionTime !== undefined &&
+      config.maxExecutionTime <= 0
+    ) {
       errors.push('Maximum execution time must be greater than 0');
     }
-    
+
     if (config?.maxMemoryMb !== undefined && config.maxMemoryMb <= 0) {
       errors.push('Maximum memory must be greater than 0');
     }
-    
+
     return errors;
   }
 
@@ -78,33 +85,35 @@ export class CodeInterpreterAgent extends BaseAgent {
       'file-processing',
       'visualization',
       'debugging',
-      'security-scanning'
+      'security-scanning',
     ];
   }
 
-  protected async executeInternal(context: AgentExecutionContext): Promise<AgentResponse> {
+  protected async executeInternal(
+    context: AgentExecutionContext,
+  ): Promise<AgentResponse> {
     const startTime = Date.now();
-    
+
     try {
       const codeBlocks = this.extractCodeBlocks(context.query);
-      
+
       if (codeBlocks.length === 0) {
         return this.createErrorResponse(
           'No code blocks found in the query. Please provide code within ```language blocks.',
           'NO_CODE_FOUND',
-          Date.now() - startTime
+          Date.now() - startTime,
         );
       }
 
       const results: CodeExecutionResult[] = [];
       const analysisResults: CodeAnalysisResult[] = [];
-      
+
       for (const codeBlock of codeBlocks) {
         try {
           // Analyze code first
           const analysis = await this.codeInterpreterService.analyzeCode(
             codeBlock.code,
-            codeBlock.language
+            codeBlock.language,
           );
           analysisResults.push(analysis);
 
@@ -114,8 +123,12 @@ export class CodeInterpreterAgent extends BaseAgent {
             language: codeBlock.language,
             environment: this.getExecutionEnvironment(codeBlock.language),
             config: {
-              timeout: this.codeInterpreterConfig.maxExecutionTime || DEFAULT_CODE_INTERPRETER_CONFIG.defaultTimeout,
-              memoryLimit: this.codeInterpreterConfig.maxMemoryMb || DEFAULT_CODE_INTERPRETER_CONFIG.maxMemoryMb,
+              timeout:
+                this.codeInterpreterConfig.maxExecutionTime ||
+                DEFAULT_CODE_INTERPRETER_CONFIG.defaultTimeout,
+              memoryLimit:
+                this.codeInterpreterConfig.maxMemoryMb ||
+                DEFAULT_CODE_INTERPRETER_CONFIG.maxMemoryMb,
               enableDebug: false,
               returnSteps: false,
               outputFormat: 'text',
@@ -129,9 +142,10 @@ export class CodeInterpreterAgent extends BaseAgent {
           };
 
           // Execute code
-          const result = await this.codeInterpreterService.executeCode(executionRequest);
+          const result = await this.codeInterpreterService.executeCode(
+            executionRequest,
+          );
           results.push(result);
-
         } catch (error) {
           // Create error result for this code block
           const errorResult: CodeExecutionResult = {
@@ -139,11 +153,13 @@ export class CodeInterpreterAgent extends BaseAgent {
             code: codeBlock.code,
             language: codeBlock.language,
             environment: this.getExecutionEnvironment(codeBlock.language),
-            outputs: [{
-              output: '',
-              error: error instanceof Error ? error.message : 'Unknown error',
-              type: 'exception',
-            }],
+            outputs: [
+              {
+                output: '',
+                error: error instanceof Error ? error.message : 'Unknown error',
+                type: 'exception',
+              },
+            ],
             stats: {
               executionTime: 0,
               memoryUsage: 0,
@@ -164,8 +180,13 @@ export class CodeInterpreterAgent extends BaseAgent {
       }
 
       const processingTime = Date.now() - startTime;
-      const response = this.buildResponse(context.query, results, analysisResults, processingTime);
-      
+      const response = this.buildResponse(
+        context.query,
+        results,
+        analysisResults,
+        processingTime,
+      );
+
       return {
         content: this.formatResponse(response),
         agentId: this.config.id,
@@ -176,19 +197,27 @@ export class CodeInterpreterAgent extends BaseAgent {
           confidence: this.calculateConfidence(response),
           agentMetadata: {
             totalCodeBlocks: codeBlocks.length,
-            successfulExecutions: results.filter(r => r.status === ExecutionStatus.SUCCESS).length,
-            failedExecutions: results.filter(r => r.status === ExecutionStatus.ERROR).length,
-            languagesUsed: [...new Set(codeBlocks.map(cb => cb.language))],
+            successfulExecutions: results.filter(
+              (r) => r.status === ExecutionStatus.SUCCESS,
+            ).length,
+            failedExecutions: results.filter(
+              (r) => r.status === ExecutionStatus.ERROR,
+            ).length,
+            languagesUsed: [...new Set(codeBlocks.map((cb) => cb.language))],
           },
         },
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      
+
       return this.createErrorResponse(
-        `Code interpreter execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        error instanceof CodeInterpreterError ? error.code : CodeInterpreterErrorType.RUNTIME_ERROR,
-        processingTime
+        `Code interpreter execution failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+        error instanceof CodeInterpreterError
+          ? error.code
+          : CodeInterpreterErrorType.RUNTIME_ERROR,
+        processingTime,
       );
     }
   }
@@ -205,7 +234,7 @@ export class CodeInterpreterAgent extends BaseAgent {
       const languageStr = match[1] || 'python';
       const code = match[2].trim();
       const language = this.mapLanguageString(languageStr);
-      
+
       if (code.length > 0) {
         codeBlocks.push({
           code,
@@ -222,7 +251,7 @@ export class CodeInterpreterAgent extends BaseAgent {
       if (inlineCodeMatch) {
         const code = inlineCodeMatch[1].trim();
         const language = this.detectLanguageFromCode(code);
-        
+
         codeBlocks.push({
           code,
           language,
@@ -240,7 +269,7 @@ export class CodeInterpreterAgent extends BaseAgent {
    */
   private mapLanguageString(languageStr: string): ProgrammingLanguage {
     const normalized = languageStr.toLowerCase();
-    
+
     switch (normalized) {
       case 'python':
       case 'py':
@@ -269,30 +298,51 @@ export class CodeInterpreterAgent extends BaseAgent {
    */
   private detectLanguageFromCode(code: string): ProgrammingLanguage {
     // Python indicators
-    if (code.includes('print(') || code.includes('import ') || code.includes('def ') || code.includes('if __name__')) {
+    if (
+      code.includes('print(') ||
+      code.includes('import ') ||
+      code.includes('def ') ||
+      code.includes('if __name__')
+    ) {
       return ProgrammingLanguage.PYTHON;
     }
-    
+
     // JavaScript indicators
-    if (code.includes('console.log') || code.includes('function') || code.includes('const ') || 
-        code.includes('let ') || code.includes('var ') || code.includes('=>')) {
+    if (
+      code.includes('console.log') ||
+      code.includes('function') ||
+      code.includes('const ') ||
+      code.includes('let ') ||
+      code.includes('var ') ||
+      code.includes('=>')
+    ) {
       return ProgrammingLanguage.JAVASCRIPT;
     }
-    
+
     // SQL indicators
     const upperCode = code.toUpperCase();
-    if (upperCode.includes('SELECT') || upperCode.includes('INSERT') || 
-        upperCode.includes('UPDATE') || upperCode.includes('DELETE') || 
-        upperCode.includes('CREATE') || upperCode.includes('FROM')) {
+    if (
+      upperCode.includes('SELECT') ||
+      upperCode.includes('INSERT') ||
+      upperCode.includes('UPDATE') ||
+      upperCode.includes('DELETE') ||
+      upperCode.includes('CREATE') ||
+      upperCode.includes('FROM')
+    ) {
       return ProgrammingLanguage.SQL;
     }
-    
+
     // Bash indicators
-    if (code.includes('#!/bin/bash') || code.includes('echo ') || code.includes('ls ') || 
-        code.includes('cd ') || code.includes('grep ')) {
+    if (
+      code.includes('#!/bin/bash') ||
+      code.includes('echo ') ||
+      code.includes('ls ') ||
+      code.includes('cd ') ||
+      code.includes('grep ')
+    ) {
       return ProgrammingLanguage.BASH;
     }
-    
+
     // Default to Python
     return ProgrammingLanguage.PYTHON;
   }
@@ -300,7 +350,9 @@ export class CodeInterpreterAgent extends BaseAgent {
   /**
    * Get execution environment for language
    */
-  private getExecutionEnvironment(language: ProgrammingLanguage): ExecutionEnvironment {
+  private getExecutionEnvironment(
+    language: ProgrammingLanguage,
+  ): ExecutionEnvironment {
     switch (language) {
       case ProgrammingLanguage.PYTHON:
         return ExecutionEnvironment.PYTHON_3_11;
@@ -325,11 +377,15 @@ export class CodeInterpreterAgent extends BaseAgent {
     query: string,
     results: CodeExecutionResult[],
     analysisResults: CodeAnalysisResult[],
-    processingTime: number
+    processingTime: number,
   ): CodeInterpreterResponse {
-    const successfulExecutions = results.filter(r => r.status === ExecutionStatus.SUCCESS).length;
-    const failedExecutions = results.filter(r => r.status !== ExecutionStatus.SUCCESS).length;
-    
+    const successfulExecutions = results.filter(
+      (r) => r.status === ExecutionStatus.SUCCESS,
+    ).length;
+    const failedExecutions = results.filter(
+      (r) => r.status !== ExecutionStatus.SUCCESS,
+    ).length;
+
     return {
       query,
       results,
@@ -340,13 +396,16 @@ export class CodeInterpreterAgent extends BaseAgent {
         successfulExecutions,
         failedExecutions,
         totalProcessingTime: processingTime,
-        averageExecutionTime: results.length > 0 ? 
-          results.reduce((sum, r) => sum + r.stats.executionTime, 0) / results.length : 0,
-        cacheHits: results.filter(r => r.metadata.cached).length,
+        averageExecutionTime:
+          results.length > 0
+            ? results.reduce((sum, r) => sum + r.stats.executionTime, 0) /
+              results.length
+            : 0,
+        cacheHits: results.filter((r) => r.metadata.cached).length,
       },
       metadata: {
         totalCodeBlocks: results.length,
-        languagesDetected: [...new Set(results.map(r => r.language))],
+        languagesDetected: [...new Set(results.map((r) => r.language))],
         executionMethod: 'sequential', // For now, always sequential
         securityChecksPerformed: true,
       },
@@ -358,33 +417,37 @@ export class CodeInterpreterAgent extends BaseAgent {
    */
   private formatResponse(response: CodeInterpreterResponse): string {
     let result = '# Code Execution Results\n\n';
-    
+
     // Summary
     result += '## Execution Summary\n';
     result += `- **Total Code Blocks**: ${response.processingStats.totalExecutions}\n`;
     result += `- **Successful**: ${response.processingStats.successfulExecutions}\n`;
     result += `- **Failed**: ${response.processingStats.failedExecutions}\n`;
-    result += `- **Languages Used**: ${response.metadata?.languagesDetected.join(', ')}\n`;
-    result += `- **Processing Time**: ${Math.round(response.processingStats.totalProcessingTime)}ms\n\n`;
+    result += `- **Languages Used**: ${response.metadata?.languagesDetected.join(
+      ', ',
+    )}\n`;
+    result += `- **Processing Time**: ${Math.round(
+      response.processingStats.totalProcessingTime,
+    )}ms\n\n`;
 
     // Individual results
     response.results.forEach((execResult, index) => {
       result += `## Code Block ${index + 1} (${execResult.language})\n\n`;
-      
+
       if (execResult.status === 'success') {
         result += '✅ **Status**: Success\n\n';
       } else {
         result += `❌ **Status**: ${execResult.status}\n\n`;
       }
-      
+
       // Show the code that was executed
       result += '**Code:**\n';
       result += `\`\`\`${execResult.language}\n${execResult.code}\n\`\`\`\n\n`;
-      
+
       // Show outputs
       if (execResult.outputs.length > 0) {
         result += '**Output:**\n';
-        execResult.outputs.forEach(output => {
+        execResult.outputs.forEach((output) => {
           if (output.type === 'exception' && output.error) {
             result += `\`\`\`\nError: ${output.error}\n\`\`\`\n\n`;
           } else if (output.output) {
@@ -392,17 +455,17 @@ export class CodeInterpreterAgent extends BaseAgent {
           }
         });
       }
-      
+
       // Show execution stats
       result += '**Execution Stats:**\n';
       result += `- Execution Time: ${execResult.stats.executionTime}ms\n`;
       result += `- Memory Usage: ${execResult.stats.memoryUsage}MB\n`;
       result += `- Output Size: ${execResult.stats.outputSize} characters\n`;
-      
+
       if (execResult.files && execResult.files.length > 0) {
         result += `- Generated Files: ${execResult.files.length}\n`;
       }
-      
+
       result += '\n---\n\n';
     });
 
@@ -416,28 +479,36 @@ export class CodeInterpreterAgent extends BaseAgent {
     if (response.processingStats.totalExecutions === 0) {
       return 0;
     }
-    
-    const successRate = response.processingStats.successfulExecutions / response.processingStats.totalExecutions;
+
+    const successRate =
+      response.processingStats.successfulExecutions /
+      response.processingStats.totalExecutions;
     let confidence = successRate;
-    
+
     // Boost confidence for fast execution
     if (response.processingStats.averageExecutionTime < 1000) {
       confidence += 0.1;
     }
-    
+
     // Reduce confidence for security issues
-    const hasSecurityIssues = response.analysis.some(a => a.securityRisk === 'high');
+    const hasSecurityIssues = response.analysis.some(
+      (a) => a.securityRisk === 'high',
+    );
     if (hasSecurityIssues) {
       confidence -= 0.2;
     }
-    
+
     return Math.max(0, Math.min(1, confidence));
   }
 
   /**
    * Create error response
    */
-  private createErrorResponse(message: string, errorCode: string, processingTime: number): AgentResponse {
+  private createErrorResponse(
+    message: string,
+    errorCode: string,
+    processingTime: number,
+  ): AgentResponse {
     return {
       content: `❌ **Code Execution Error**\n\n${message}`,
       agentId: this.config.id,

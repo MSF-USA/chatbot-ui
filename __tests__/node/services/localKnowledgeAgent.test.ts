@@ -1,30 +1,31 @@
 /**
  * Local Knowledge Agent Tests
- * 
+ *
  * Comprehensive unit tests for the LocalKnowledgeAgent implementation,
  * covering search functionality, access control, and agent behavior.
  */
-
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { LocalKnowledgeAgent } from '../../../services/agents/localKnowledgeAgent';
 import { KnowledgeBaseService } from '../../../services/knowledgeBaseService';
 import { SemanticSearchEngine } from '../../../services/semanticSearchEngine';
+
 import {
-  AgentType,
-  AgentExecutionEnvironment,
   AgentExecutionContext,
+  AgentExecutionEnvironment,
+  AgentType,
   LocalKnowledgeAgentConfig,
 } from '../../../types/agent';
 import {
+  AccessLevel,
+  DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
   KnowledgeDocument,
   KnowledgeDocumentType,
-  KnowledgeSourceType,
-  AccessLevel,
-  UserRole,
   KnowledgeSearchResult,
+  KnowledgeSourceType,
   LocalKnowledgeResponse,
-  DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
+  UserRole,
 } from '../../../types/localKnowledge';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('../../../services/knowledgeBaseService', () => ({
@@ -70,7 +71,8 @@ describe('LocalKnowledgeAgent', () => {
     version: '1.0',
     tags: ['hr', 'vacation', 'policy'],
     language: 'en',
-    searchableContent: 'company vacation policy employees entitled 20 days vacation per year',
+    searchableContent:
+      'company vacation policy employees entitled 20 days vacation per year',
   };
 
   const mockSearchResult: KnowledgeSearchResult = {
@@ -83,7 +85,7 @@ describe('LocalKnowledgeAgent', () => {
   beforeEach(() => {
     // Reset all mocks
     vi.clearAllMocks();
-    
+
     // Set environment variables to force enterprise mode
     process.env.SIMPLE_KNOWLEDGE_MODE = 'false';
     process.env.AZURE_SEARCH_ENDPOINT = 'https://test.search.windows.net';
@@ -174,8 +176,10 @@ describe('LocalKnowledgeAgent', () => {
     // Mock constructors to return the mocked instances
     const MockedKnowledgeBaseService = vi.mocked(KnowledgeBaseService);
     const MockedSemanticSearchEngine = vi.mocked(SemanticSearchEngine);
-    
-    MockedKnowledgeBaseService.mockImplementation(() => mockKnowledgeBaseService);
+
+    MockedKnowledgeBaseService.mockImplementation(
+      () => mockKnowledgeBaseService,
+    );
     MockedSemanticSearchEngine.mockImplementation(() => mockSearchEngine);
 
     // Create agent instance
@@ -184,7 +188,7 @@ describe('LocalKnowledgeAgent', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
-    
+
     // Clean up environment variables
     delete process.env.SIMPLE_KNOWLEDGE_MODE;
     delete process.env.AZURE_SEARCH_ENDPOINT;
@@ -201,14 +205,14 @@ describe('LocalKnowledgeAgent', () => {
     it('should initialize knowledge base service and search engine', async () => {
       // Test that the agent is created successfully in enterprise mode
       expect(agent).toBeInstanceOf(LocalKnowledgeAgent);
-      
+
       // Give time for async initialization to complete
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
       // Agent should be healthy after successful initialization
       expect(agent.config).toBeDefined();
       expect(agent.config.id).toBe('test-local-knowledge-agent');
-      
+
       // Test that enterprise mode is being used (not simple mode)
       // This indirectly tests that services are initialized
       const capabilities = agent.getCapabilities();
@@ -239,7 +243,9 @@ describe('LocalKnowledgeAgent', () => {
 
       // The LocalKnowledgeAgent uses default config when knowledgeBaseConfig is missing
       // Validation error is logged but not thrown (based on BaseAgent implementation)
-      expect(() => new LocalKnowledgeAgent(configWithoutKB as any)).not.toThrow();
+      expect(
+        () => new LocalKnowledgeAgent(configWithoutKB as any),
+      ).not.toThrow();
       const agent = new LocalKnowledgeAgent(configWithoutKB as any);
       expect(agent).toBeDefined();
     });
@@ -295,7 +301,7 @@ describe('LocalKnowledgeAgent', () => {
           searchMode: 'hybrid',
           maxResults: 10,
           userRole: UserRole.EMPLOYEE,
-        })
+        }),
       );
     });
 
@@ -310,7 +316,7 @@ describe('LocalKnowledgeAgent', () => {
       expect(mockSearchEngine.hybridSearch).toHaveBeenCalledWith(
         expect.objectContaining({
           userRole: UserRole.ADMIN,
-        })
+        }),
       );
     });
 
@@ -338,7 +344,7 @@ describe('LocalKnowledgeAgent', () => {
       expect(mockSearchEngine.hybridSearch).toHaveBeenCalledWith(
         expect.objectContaining({
           maxResults: 5,
-        })
+        }),
       );
     });
   });
@@ -357,7 +363,9 @@ describe('LocalKnowledgeAgent', () => {
 
       const response = await agent.execute(testContext);
 
-      expect(response.content).toContain("I couldn't find any relevant information");
+      expect(response.content).toContain(
+        "I couldn't find any relevant information",
+      );
       expect(response.success).toBe(true);
     });
 
@@ -365,7 +373,9 @@ describe('LocalKnowledgeAgent', () => {
       const response = await agent.execute(testContext);
 
       expect(response.metadata?.toolResults?.[0]?.result).toMatchObject({
-        answerSummary: expect.stringContaining('Based on the available knowledge'),
+        answerSummary: expect.stringContaining(
+          'Based on the available knowledge',
+        ),
       });
     });
 
@@ -380,7 +390,7 @@ describe('LocalKnowledgeAgent', () => {
     it('should cache search results when enabled', async () => {
       // First call
       await agent.execute(testContext);
-      
+
       // Second call with same query
       const response = await agent.execute(testContext);
 
@@ -421,7 +431,9 @@ describe('LocalKnowledgeAgent', () => {
       const documentId = await agent.addDocument(documentData);
 
       expect(documentId).toBe('doc_001');
-      expect(mockKnowledgeBaseService.addDocument).toHaveBeenCalledWith(documentData);
+      expect(mockKnowledgeBaseService.addDocument).toHaveBeenCalledWith(
+        documentData,
+      );
       expect(mockSearchEngine.indexDocument).toHaveBeenCalledWith({
         ...documentData,
         id: 'doc_001',
@@ -431,7 +443,9 @@ describe('LocalKnowledgeAgent', () => {
     it('should remove document from knowledge base', async () => {
       await agent.removeDocument('doc_001');
 
-      expect(mockKnowledgeBaseService.removeDocument).toHaveBeenCalledWith('doc_001');
+      expect(mockKnowledgeBaseService.removeDocument).toHaveBeenCalledWith(
+        'doc_001',
+      );
       expect(mockSearchEngine.removeDocument).toHaveBeenCalledWith('doc_001');
     });
   });
@@ -507,7 +521,9 @@ describe('LocalKnowledgeAgent', () => {
 
   describe('Error Handling', () => {
     it('should handle search engine errors gracefully', async () => {
-      mockSearchEngine.hybridSearch.mockRejectedValue(new Error('Search engine error'));
+      mockSearchEngine.hybridSearch.mockRejectedValue(
+        new Error('Search engine error'),
+      );
 
       const response = await agent.execute(testContext);
       // Agent should return an error response rather than throwing
@@ -516,18 +532,24 @@ describe('LocalKnowledgeAgent', () => {
     });
 
     it('should handle knowledge base service errors', async () => {
-      mockKnowledgeBaseService.addDocument.mockRejectedValue(new Error('DB error'));
+      mockKnowledgeBaseService.addDocument.mockRejectedValue(
+        new Error('DB error'),
+      );
 
-      await expect(agent.addDocument({} as any)).rejects.toThrow('Failed to add document to knowledge base');
+      await expect(agent.addDocument({} as any)).rejects.toThrow(
+        'Failed to add document to knowledge base',
+      );
     });
 
     it('should handle initialization errors', async () => {
-      mockKnowledgeBaseService.initialize.mockRejectedValue(new Error('Init error'));
+      mockKnowledgeBaseService.initialize.mockRejectedValue(
+        new Error('Init error'),
+      );
 
       // Since initialization is now async, the agent creation shouldn't throw
       const agent = new LocalKnowledgeAgent(testConfig);
       expect(agent).toBeDefined();
-      
+
       // But execution might fail due to failed initialization
       const response = await agent.execute(testContext);
       expect(response).toBeDefined(); // Should still handle gracefully
@@ -564,7 +586,9 @@ describe('LocalKnowledgeAgent', () => {
     });
 
     it('should handle cleanup errors', async () => {
-      mockKnowledgeBaseService.cleanup.mockRejectedValue(new Error('Cleanup error'));
+      mockKnowledgeBaseService.cleanup.mockRejectedValue(
+        new Error('Cleanup error'),
+      );
 
       await expect(agent.cleanup()).rejects.toThrow('Cleanup error');
     });
@@ -583,7 +607,7 @@ describe('LocalKnowledgeAgent', () => {
       expect(mockSearchEngine.hybridSearch).toHaveBeenCalledWith(
         expect.objectContaining({
           language: 'fr',
-        })
+        }),
       );
       expect(response.success).toBe(true);
     });
@@ -604,7 +628,7 @@ describe('LocalKnowledgeAgent', () => {
       expect(mockSearchEngine.hybridSearch).toHaveBeenCalledWith(
         expect.objectContaining({
           query: 'What is our vacation policy?',
-        })
+        }),
       );
     });
   });

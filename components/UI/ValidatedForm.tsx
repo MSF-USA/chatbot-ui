@@ -1,19 +1,19 @@
 /**
  * Validated Form Component
- * 
+ *
  * Enhanced form wrapper with comprehensive validation, accessibility features,
  * and progressive disclosure of validation rules.
  */
-
-import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
 import {
-  IconCheck,
   IconAlertTriangle,
+  IconCheck,
   IconInfoCircle,
   IconLoader,
   IconX,
 } from '@tabler/icons-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { useTranslation } from 'next-i18next';
 
 import { ValidationResult } from './ValidatedInput';
 
@@ -42,7 +42,10 @@ export interface FormValidation {
  */
 export interface ValidatedFormProps {
   children: React.ReactNode;
-  onSubmit?: (formData: FormData, validation: FormValidation) => void | Promise<void>;
+  onSubmit?: (
+    formData: FormData,
+    validation: FormValidation,
+  ) => void | Promise<void>;
   onValidationChange?: (validation: FormValidation) => void;
   showProgress?: boolean;
   showSummary?: boolean;
@@ -72,7 +75,7 @@ export const ValidatedForm: React.FC<ValidatedFormProps> = ({
   ariaDescribedBy,
 }) => {
   const { t } = useTranslation('validation');
-  
+
   // State
   const [fields, setFields] = useState<Map<string, FormField>>(new Map());
   const [formValidation, setFormValidation] = useState<FormValidation>({
@@ -94,32 +97,38 @@ export const ValidatedForm: React.FC<ValidatedFormProps> = ({
   /**
    * Register a form field
    */
-  const registerField = useCallback((name: string, field: Partial<FormField>) => {
-    setFields(prev => {
-      const newFields = new Map(prev);
-      newFields.set(name, {
-        name,
-        required: false,
-        ...prev.get(name),
-        ...field,
+  const registerField = useCallback(
+    (name: string, field: Partial<FormField>) => {
+      setFields((prev) => {
+        const newFields = new Map(prev);
+        newFields.set(name, {
+          name,
+          required: false,
+          ...prev.get(name),
+          ...field,
+        });
+        return newFields;
       });
-      return newFields;
-    });
-  }, []);
+    },
+    [],
+  );
 
   /**
    * Update field validation
    */
-  const updateFieldValidation = useCallback((name: string, validation: ValidationResult) => {
-    setFields(prev => {
-      const newFields = new Map(prev);
-      const field = newFields.get(name);
-      if (field) {
-        newFields.set(name, { ...field, validation });
-      }
-      return newFields;
-    });
-  }, []);
+  const updateFieldValidation = useCallback(
+    (name: string, validation: ValidationResult) => {
+      setFields((prev) => {
+        const newFields = new Map(prev);
+        const field = newFields.get(name);
+        if (field) {
+          newFields.set(name, { ...field, validation });
+        }
+        return newFields;
+      });
+    },
+    [],
+  );
 
   /**
    * Calculate form validation state
@@ -163,43 +172,55 @@ export const ValidatedForm: React.FC<ValidatedFormProps> = ({
   /**
    * Handle form submission
    */
-  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setHasSubmitted(true);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setHasSubmitted(true);
 
-    const validation = calculateFormValidation();
+      const validation = calculateFormValidation();
 
-    if (preventInvalidSubmit && !validation.isValid) {
-      // Focus first error field
-      if (autoFocusFirstError) {
-        const firstErrorField = Object.keys(validation.errors)[0];
-        if (firstErrorField) {
-          const fieldElement = formRef.current?.querySelector(`[name="${firstErrorField}"]`) as HTMLElement;
-          fieldElement?.focus();
+      if (preventInvalidSubmit && !validation.isValid) {
+        // Focus first error field
+        if (autoFocusFirstError) {
+          const firstErrorField = Object.keys(validation.errors)[0];
+          if (firstErrorField) {
+            const fieldElement = formRef.current?.querySelector(
+              `[name="${firstErrorField}"]`,
+            ) as HTMLElement;
+            fieldElement?.focus();
+          }
         }
+        return;
       }
-      return;
-    }
 
-    if (!onSubmit) return;
+      if (!onSubmit) return;
 
-    setIsSubmitting(true);
-    try {
-      const formData = new FormData(e.currentTarget);
-      await onSubmit(formData, validation);
-    } catch (error) {
-      console.error('Form submission error:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [calculateFormValidation, preventInvalidSubmit, autoFocusFirstError, onSubmit]);
+      setIsSubmitting(true);
+      try {
+        const formData = new FormData(e.currentTarget);
+        await onSubmit(formData, validation);
+      } catch (error) {
+        console.error('Form submission error:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [
+      calculateFormValidation,
+      preventInvalidSubmit,
+      autoFocusFirstError,
+      onSubmit,
+    ],
+  );
 
   /**
    * Get progress percentage
    */
   const getProgressPercentage = () => {
     if (formValidation.fieldCount === 0) return 0;
-    return Math.round((formValidation.validFieldCount / formValidation.fieldCount) * 100);
+    return Math.round(
+      (formValidation.validFieldCount / formValidation.fieldCount) * 100,
+    );
   };
 
   /**
@@ -221,33 +242,41 @@ export const ValidatedForm: React.FC<ValidatedFormProps> = ({
   }, [fields, validateOnChange, calculateFormValidation]);
 
   // Provide context to child components
-  const formContext = React.useMemo(() => ({
-    registerField,
-    updateFieldValidation,
-    formValidation,
-    hasSubmitted,
-  }), [registerField, updateFieldValidation, formValidation, hasSubmitted]);
+  const formContext = React.useMemo(
+    () => ({
+      registerField,
+      updateFieldValidation,
+      formValidation,
+      hasSubmitted,
+    }),
+    [registerField, updateFieldValidation, formValidation, hasSubmitted],
+  );
 
   return (
     <div className={className}>
       {/* Form progress */}
       {showProgress && formValidation.fieldCount > 0 && (
-        <div id={progressId} className="mb-4" role="progressbar" 
-             aria-valuenow={getProgressPercentage()} 
-             aria-valuemin={0} 
-             aria-valuemax={100}
-             aria-label={t('Form completion progress')}>
+        <div
+          id={progressId}
+          className="mb-4"
+          role="progressbar"
+          aria-valuenow={getProgressPercentage()}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-label={t('Form completion progress')}
+        >
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               {t('Progress')}
             </span>
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {formValidation.validFieldCount}/{formValidation.fieldCount} {t('fields completed')}
+              {formValidation.validFieldCount}/{formValidation.fieldCount}{' '}
+              {t('fields completed')}
             </span>
           </div>
-          
+
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-            <div 
+            <div
               className={`h-2 rounded-full transition-all duration-300 ${getProgressColor()}`}
               style={{ width: `${getProgressPercentage()}%` }}
               aria-hidden="true"
@@ -258,8 +287,12 @@ export const ValidatedForm: React.FC<ValidatedFormProps> = ({
 
       {/* Form validation summary */}
       {showSummary && hasSubmitted && !formValidation.isValid && (
-        <div id={summaryId} role="alert" aria-live="polite" 
-             className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
+        <div
+          id={summaryId}
+          role="alert"
+          aria-live="polite"
+          className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800"
+        >
           <div className="flex items-start gap-3">
             <IconAlertTriangle className="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
             <div>
@@ -267,20 +300,24 @@ export const ValidatedForm: React.FC<ValidatedFormProps> = ({
                 {t('Please correct the following errors:')}
               </h3>
               <ul className="text-sm text-red-700 dark:text-red-400 space-y-1">
-                {Object.entries(formValidation.errors).map(([fieldName, fieldErrors]) => (
-                  <li key={fieldName}>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const fieldElement = formRef.current?.querySelector(`[name="${fieldName}"]`) as HTMLElement;
-                        fieldElement?.focus();
-                      }}
-                      className="text-left hover:underline focus:underline focus:outline-none"
-                    >
-                      <strong>{fieldName}:</strong> {fieldErrors.join(', ')}
-                    </button>
-                  </li>
-                ))}
+                {Object.entries(formValidation.errors).map(
+                  ([fieldName, fieldErrors]) => (
+                    <li key={fieldName}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const fieldElement = formRef.current?.querySelector(
+                            `[name="${fieldName}"]`,
+                          ) as HTMLElement;
+                          fieldElement?.focus();
+                        }}
+                        className="text-left hover:underline focus:underline focus:outline-none"
+                      >
+                        <strong>{fieldName}:</strong> {fieldErrors.join(', ')}
+                      </button>
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
           </div>
@@ -341,30 +378,32 @@ export function useFormContext() {
 /**
  * Enhanced ValidatedInput that integrates with form context
  */
-export const FormValidatedInput: React.FC<React.ComponentProps<typeof import('./ValidatedInput').ValidatedInput>> = (props) => {
+export const FormValidatedInput: React.FC<
+  React.ComponentProps<typeof import('./ValidatedInput').ValidatedInput>
+> = (props) => {
   const { ValidatedInput } = require('./ValidatedInput');
   const formContext = React.useContext(FormContext);
 
-  const handleValidationChange = React.useCallback((validation: ValidationResult) => {
-    if (formContext && props.name) {
-      formContext.updateFieldValidation(props.name, validation);
-    }
-    props.onValidationChange?.(validation);
-  }, [formContext, props]);
+  const handleValidationChange = React.useCallback(
+    (validation: ValidationResult) => {
+      if (formContext && props.name) {
+        formContext.updateFieldValidation(props.name, validation);
+      }
+      props.onValidationChange?.(validation);
+    },
+    [formContext, props],
+  );
 
   React.useEffect(() => {
     if (formContext && props.name) {
       formContext.registerField(props.name, {
         name: props.name,
-        required: props.rules?.some(rule => rule.type === 'required'),
+        required: props.rules?.some((rule) => rule.type === 'required'),
       });
     }
   }, [formContext, props.name, props.rules]);
 
   return (
-    <ValidatedInput
-      {...props}
-      onValidationChange={handleValidationChange}
-    />
+    <ValidatedInput {...props} onValidationChange={handleValidationChange} />
   );
 };

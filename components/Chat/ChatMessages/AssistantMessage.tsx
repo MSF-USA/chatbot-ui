@@ -21,13 +21,13 @@ import { getAutonym } from '@/utils/app/locales';
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
+import { AgentResponsePanel } from '@/components/Chat/AgentResponsePanel';
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { AssistantMessageActionButtons } from '@/components/Chat/ChatMessages/AssistantMessageActionButtons';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
-import { AgentResponsePanel } from '@/components/Chat/AgentResponsePanel';
 
 import { useStreamingSettings } from '@/context/StreamingSettingsContext';
 import rehypeMathjax from 'rehype-mathjax';
@@ -70,10 +70,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [selectedIndex, setSelectedIndex] = useState<number>(-1);
   const translationDropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Extensible action states for future actions
   // This can be expanded by adding new action types and their corresponding states
-  const [actionStates] = useState<Record<string, { active: boolean; message: string }>>({
+  const [actionStates] = useState<
+    Record<string, { active: boolean; message: string }>
+  >({
     // Example for future actions:
     // 'summarize': { active: false, message: 'Summarizing...' },
     // 'explain': { active: false, message: 'Explaining...' },
@@ -416,7 +418,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   }, [showTranslationDropdown]);
 
-
   // Custom components for markdown processing
   const customMarkdownComponents = {
     code({
@@ -527,15 +528,21 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 </MemoizedReactMarkdown>
               </>
             )}
-            
+
             {/* Extensible action indicator - shows when any action is in progress */}
-            {(isTranslating || isGeneratingAudio || Object.values(actionStates).some(state => state.active)) && (
+            {(isTranslating ||
+              isGeneratingAudio ||
+              Object.values(actionStates).some((state) => state.active)) && (
               <span className="inline-flex items-center ml-2 text-gray-500 dark:text-gray-400 text-sm">
                 <IconLoader2 size={16} className="animate-spin mr-1" />
                 <span className="animate-pulse">
-                  {isTranslating ? 'Translating...' : 
-                   isGeneratingAudio ? 'Generating audio...' :
-                   Object.entries(actionStates).find(([_, state]) => state.active)?.[1].message || 'Processing...'}
+                  {isTranslating
+                    ? 'Translating...'
+                    : isGeneratingAudio
+                    ? 'Generating audio...'
+                    : Object.entries(actionStates).find(
+                        ([_, state]) => state.active,
+                      )?.[1].message || 'Processing...'}
                 </span>
               </span>
             )}
@@ -784,11 +791,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </div>
 
         {citations.length > 0 && <CitationList citations={citations} />}
-        
+
         {/* Agent Response Panel - Display agent-specific content if available */}
         {message?.agentResponse && (
           <div className="mt-4">
-            <AgentResponsePanel 
+            <AgentResponsePanel
               message={message}
               agentResponse={message.agentResponse}
             />

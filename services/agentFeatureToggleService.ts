@@ -1,15 +1,23 @@
 /**
  * Agent Feature Toggle Service
- * 
+ *
  * Manages feature toggles specific to agent functionality,
  * integrating with LaunchDarkly and local settings to provide
  * fine-grained control over agent features and capabilities.
  */
+import {
+  getSettings,
+  saveSettings,
+  settingsEvents,
+} from '@/utils/app/settings';
 
 import { AgentType } from '@/types/agent';
-import { Settings, AgentSettings } from '@/types/settings';
-import { SimpleFeatureFlagService as FeatureFlagService, UserContext } from './simpleFeatureFlags';
-import { getSettings, saveSettings, settingsEvents } from '@/utils/app/settings';
+import { AgentSettings, Settings } from '@/types/settings';
+
+import {
+  SimpleFeatureFlagService as FeatureFlagService,
+  UserContext,
+} from './simpleFeatureFlags';
 
 /**
  * Agent feature toggle configuration
@@ -60,7 +68,7 @@ export class AgentFeatureToggleService {
     this.initializeFeatureDefinitions();
     this.initializeFeatureGroups();
     this.loadLocalToggles();
-    
+
     // Listen for settings changes
     settingsEvents.addListener(this.handleSettingsChange.bind(this));
   }
@@ -194,7 +202,8 @@ export class AgentFeatureToggleService {
       {
         key: 'agent_auto_routing',
         name: 'Automatic Agent Routing',
-        description: 'Automatically route requests to the most appropriate agent',
+        description:
+          'Automatically route requests to the most appropriate agent',
         defaultValue: false,
         agentTypes: Object.values(AgentType),
         category: 'experimental',
@@ -210,7 +219,8 @@ export class AgentFeatureToggleService {
       {
         key: 'agent_multi_modal_input',
         name: 'Multi-modal Agent Input',
-        description: 'Enable agents to process multiple input types simultaneously',
+        description:
+          'Enable agents to process multiple input types simultaneously',
         defaultValue: false,
         agentTypes: Object.values(AgentType),
         category: 'experimental',
@@ -218,7 +228,7 @@ export class AgentFeatureToggleService {
       },
     ];
 
-    features.forEach(feature => {
+    features.forEach((feature) => {
       this.featureDefinitions.set(feature.key, feature);
     });
   }
@@ -242,7 +252,8 @@ export class AgentFeatureToggleService {
       },
       {
         name: 'Performance Optimizations',
-        description: 'Features that improve agent performance and responsiveness',
+        description:
+          'Features that improve agent performance and responsiveness',
         features: [
           'agent_parallel_processing',
           'agent_result_caching',
@@ -264,7 +275,8 @@ export class AgentFeatureToggleService {
       },
       {
         name: 'User Interface Enhancements',
-        description: 'UI features that enhance the agent interaction experience',
+        description:
+          'UI features that enhance the agent interaction experience',
         features: [
           'agent_response_panels',
           'agent_confidence_scores',
@@ -287,7 +299,7 @@ export class AgentFeatureToggleService {
       },
     ];
 
-    groups.forEach(group => {
+    groups.forEach((group) => {
       this.featureGroups.set(group.name, group);
     });
   }
@@ -299,22 +311,30 @@ export class AgentFeatureToggleService {
     try {
       const settings = getSettings();
       const agentSettings = settings.agentSettings;
-      
+
       if (agentSettings?.preferences) {
         // Load from new preferences structure if available
         this.localToggles.clear();
         // Add logic to extract toggles from preferences when structure is defined
       }
     } catch (error) {
-      console.error('[AgentFeatureToggle] Failed to load local toggles:', error);
+      console.error(
+        '[AgentFeatureToggle] Failed to load local toggles:',
+        error,
+      );
     }
   }
 
   /**
    * Handle settings changes
    */
-  private handleSettingsChange(newSettings: Settings, changedKeys: string[]): void {
-    const agentRelatedKeys = changedKeys.filter(key => key.startsWith('agentSettings.'));
+  private handleSettingsChange(
+    newSettings: Settings,
+    changedKeys: string[],
+  ): void {
+    const agentRelatedKeys = changedKeys.filter((key) =>
+      key.startsWith('agentSettings.'),
+    );
     if (agentRelatedKeys.length > 0) {
       this.loadLocalToggles();
     }
@@ -326,10 +346,10 @@ export class AgentFeatureToggleService {
   async evaluateToggle(
     featureKey: string,
     agentType: AgentType,
-    userContext?: UserContext
+    userContext?: UserContext,
   ): Promise<ToggleEvaluationResult> {
     const feature = this.featureDefinitions.get(featureKey);
-    
+
     if (!feature) {
       return {
         enabled: false,
@@ -363,33 +383,43 @@ export class AgentFeatureToggleService {
         const remoteValue = await this.featureFlagService.evaluateFlag(
           featureKey,
           userContext,
-          feature.defaultValue
+          feature.defaultValue,
         );
-        
+
         return {
           enabled: remoteValue,
           source: 'remote',
           reason: 'Remote feature flag',
         };
       } catch (error) {
-        console.warn(`[AgentFeatureToggle] Remote evaluation failed for ${featureKey}:`, error);
+        console.warn(
+          `[AgentFeatureToggle] Remote evaluation failed for ${featureKey}:`,
+          error,
+        );
       }
     }
 
     // Check dependencies
     if (feature.dependencies && feature.dependencies.length > 0) {
       const dependencyResults = await Promise.all(
-        feature.dependencies.map(dep => this.evaluateToggle(dep, agentType, userContext))
+        feature.dependencies.map((dep) =>
+          this.evaluateToggle(dep, agentType, userContext),
+        ),
       );
-      
-      const allDependenciesEnabled = dependencyResults.every(result => result.enabled);
+
+      const allDependenciesEnabled = dependencyResults.every(
+        (result) => result.enabled,
+      );
       if (!allDependenciesEnabled) {
         return {
           enabled: false,
           source: 'default',
           reason: 'Dependencies not satisfied',
           dependencies: Object.fromEntries(
-            feature.dependencies.map((dep, i) => [dep, dependencyResults[i].enabled])
+            feature.dependencies.map((dep, i) => [
+              dep,
+              dependencyResults[i].enabled,
+            ]),
           ),
         };
       }
@@ -398,10 +428,14 @@ export class AgentFeatureToggleService {
     // Check conflicts
     if (feature.conflicts && feature.conflicts.length > 0) {
       const conflictResults = await Promise.all(
-        feature.conflicts.map(conflict => this.evaluateToggle(conflict, agentType, userContext))
+        feature.conflicts.map((conflict) =>
+          this.evaluateToggle(conflict, agentType, userContext),
+        ),
       );
-      
-      const hasActiveConflicts = conflictResults.some(result => result.enabled);
+
+      const hasActiveConflicts = conflictResults.some(
+        (result) => result.enabled,
+      );
       if (hasActiveConflicts) {
         return {
           enabled: false,
@@ -422,9 +456,18 @@ export class AgentFeatureToggleService {
   /**
    * Check if an agent type is enabled
    */
-  async isAgentEnabled(agentType: AgentType, userContext?: UserContext): Promise<boolean> {
-    const coreFeatureKey = `agent_${agentType.toLowerCase().replace(/-/g, '_')}_enabled`;
-    const result = await this.evaluateToggle(coreFeatureKey, agentType, userContext);
+  async isAgentEnabled(
+    agentType: AgentType,
+    userContext?: UserContext,
+  ): Promise<boolean> {
+    const coreFeatureKey = `agent_${agentType
+      .toLowerCase()
+      .replace(/-/g, '_')}_enabled`;
+    const result = await this.evaluateToggle(
+      coreFeatureKey,
+      agentType,
+      userContext,
+    );
     return result.enabled;
   }
 
@@ -438,15 +481,21 @@ export class AgentFeatureToggleService {
   /**
    * Get features by category
    */
-  getFeaturesByCategory(category: AgentFeatureToggle['category']): AgentFeatureToggle[] {
-    return this.getAllFeatures().filter(feature => feature.category === category);
+  getFeaturesByCategory(
+    category: AgentFeatureToggle['category'],
+  ): AgentFeatureToggle[] {
+    return this.getAllFeatures().filter(
+      (feature) => feature.category === category,
+    );
   }
 
   /**
    * Get features for a specific agent type
    */
   getFeaturesForAgent(agentType: AgentType): AgentFeatureToggle[] {
-    return this.getAllFeatures().filter(feature => feature.agentTypes.includes(agentType));
+    return this.getAllFeatures().filter((feature) =>
+      feature.agentTypes.includes(agentType),
+    );
   }
 
   /**
@@ -481,7 +530,7 @@ export class AgentFeatureToggleService {
       throw new Error(`Feature group '${groupName}' not found`);
     }
 
-    group.features.forEach(featureKey => {
+    group.features.forEach((featureKey) => {
       this.setLocalToggle(featureKey, enabled);
     });
   }
@@ -507,7 +556,7 @@ export class AgentFeatureToggleService {
   private saveLocalToggles(): void {
     try {
       const settings = getSettings();
-      
+
       // Create new agent settings structure if it doesn't exist
       if (!settings.agentSettings) {
         settings.agentSettings = {
@@ -527,11 +576,16 @@ export class AgentFeatureToggleService {
       }
 
       // Add feature toggles to agent settings
-      (settings.agentSettings as any).featureToggles = Object.fromEntries(this.localToggles);
-      
+      (settings.agentSettings as any).featureToggles = Object.fromEntries(
+        this.localToggles,
+      );
+
       saveSettings(settings);
     } catch (error) {
-      console.error('[AgentFeatureToggle] Failed to save local toggles:', error);
+      console.error(
+        '[AgentFeatureToggle] Failed to save local toggles:',
+        error,
+      );
     }
   }
 
@@ -539,11 +593,15 @@ export class AgentFeatureToggleService {
    * Export feature configuration
    */
   exportConfiguration(): string {
-    return JSON.stringify({
-      localToggles: Object.fromEntries(this.localToggles),
-      timestamp: Date.now(),
-      version: '1.0.0',
-    }, null, 2);
+    return JSON.stringify(
+      {
+        localToggles: Object.fromEntries(this.localToggles),
+        timestamp: Date.now(),
+        version: '1.0.0',
+      },
+      null,
+      2,
+    );
   }
 
   /**
@@ -552,7 +610,7 @@ export class AgentFeatureToggleService {
   importConfiguration(configString: string): boolean {
     try {
       const config = JSON.parse(configString);
-      
+
       if (config.localToggles) {
         this.localToggles.clear();
         Object.entries(config.localToggles).forEach(([key, value]) => {
@@ -560,14 +618,17 @@ export class AgentFeatureToggleService {
             this.localToggles.set(key, value);
           }
         });
-        
+
         this.saveLocalToggles();
         return true;
       }
-      
+
       return false;
     } catch (error) {
-      console.error('[AgentFeatureToggle] Failed to import configuration:', error);
+      console.error(
+        '[AgentFeatureToggle] Failed to import configuration:',
+        error,
+      );
       return false;
     }
   }
@@ -583,11 +644,14 @@ export class AgentFeatureToggleService {
   } {
     const totalFeatures = this.featureDefinitions.size;
     const localOverrides = this.localToggles.size;
-    const enabledFeatures = Array.from(this.localToggles.values()).filter(Boolean).length;
-    
+    const enabledFeatures = Array.from(this.localToggles.values()).filter(
+      Boolean,
+    ).length;
+
     const featuresByCategory: Record<string, number> = {};
-    this.getAllFeatures().forEach(feature => {
-      featuresByCategory[feature.category] = (featuresByCategory[feature.category] || 0) + 1;
+    this.getAllFeatures().forEach((feature) => {
+      featuresByCategory[feature.category] =
+        (featuresByCategory[feature.category] || 0) + 1;
     });
 
     return {
@@ -612,8 +676,10 @@ export function getAgentFeatureToggleService(): AgentFeatureToggleService {
     // Import the feature flag service
     const { getFeatureFlagService } = require('./simpleFeatureFlags');
     const featureFlagService = getFeatureFlagService();
-    
-    agentFeatureToggleServiceInstance = new AgentFeatureToggleService(featureFlagService);
+
+    agentFeatureToggleServiceInstance = new AgentFeatureToggleService(
+      featureFlagService,
+    );
   }
 
   return agentFeatureToggleServiceInstance;
@@ -625,10 +691,14 @@ export function getAgentFeatureToggleService(): AgentFeatureToggleService {
 export async function isFeatureEnabled(
   featureKey: string,
   agentType: AgentType,
-  userContext?: UserContext
+  userContext?: UserContext,
 ): Promise<boolean> {
   const service = getAgentFeatureToggleService();
-  const result = await service.evaluateToggle(featureKey, agentType, userContext);
+  const result = await service.evaluateToggle(
+    featureKey,
+    agentType,
+    userContext,
+  );
   return result.enabled;
 }
 
@@ -637,7 +707,7 @@ export async function isFeatureEnabled(
  */
 export async function isAgentTypeEnabled(
   agentType: AgentType,
-  userContext?: UserContext
+  userContext?: UserContext,
 ): Promise<boolean> {
   const service = getAgentFeatureToggleService();
   return await service.isAgentEnabled(agentType, userContext);

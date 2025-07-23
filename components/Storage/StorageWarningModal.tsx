@@ -57,7 +57,7 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
         currentUsage: 0,
         maxUsage: 5 * 1024 * 1024, // Default 5MB
         percentUsed: 0,
-        isNearingLimit: false
+        isNearingLimit: false,
       });
       setSpaceFreedInfo({
         spaceFreed: 0,

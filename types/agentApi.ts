@@ -1,4 +1,4 @@
-import { AgentType, AgentResponse } from './agent';
+import { AgentResponse, AgentType } from './agent';
 import { OpenAIModel } from './openai';
 
 /**
@@ -140,7 +140,9 @@ export const SUPPORTED_AGENT_TYPES: AgentType[] = [
 /**
  * Validation helper for agent types
  */
-export function isSupportedAgentType(agentType: string): agentType is AgentType {
+export function isSupportedAgentType(
+  agentType: string,
+): agentType is AgentType {
   return SUPPORTED_AGENT_TYPES.includes(agentType as AgentType);
 }
 

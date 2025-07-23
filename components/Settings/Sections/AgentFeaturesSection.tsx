@@ -1,25 +1,26 @@
 /**
  * Agent Features Section Component
- * 
+ *
  * Provides UI for enabling/disabling AI agents
  */
-
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { useTranslation } from 'next-i18next';
-import { 
+import {
+  IconCheck,
+  IconDatabase,
   IconRobot,
   IconRobotOff,
   IconSearch,
-  IconDatabase,
-  IconWorldWww,
-  IconToggleLeft, 
+  IconToggleLeft,
   IconToggleRight,
-  IconCheck,
+  IconWorldWww,
 } from '@tabler/icons-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { useTranslation } from 'next-i18next';
+
+import { useAdvancedSettings } from '@/hooks/useAdvancedSettings';
 
 import { AgentType } from '@/types/agent';
-import { Settings, AgentSettings } from '@/types/settings';
-import { useAdvancedSettings } from '@/hooks/useAdvancedSettings';
+import { AgentSettings, Settings } from '@/types/settings';
 
 /**
  * Component props
@@ -87,14 +88,26 @@ const AgentToggle: React.FC<AgentToggleProps> = ({
   return (
     <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg dark:border-gray-600 hover:shadow-md transition-shadow">
       <div className="flex items-center gap-4">
-        <div className={`text-blue-500 dark:text-blue-400 ${disabled ? 'opacity-50' : ''}`}>
+        <div
+          className={`text-blue-500 dark:text-blue-400 ${
+            disabled ? 'opacity-50' : ''
+          }`}
+        >
           {agent.icon}
         </div>
         <div className="flex-1">
-          <h4 className={`text-sm font-medium text-gray-900 dark:text-gray-100 ${disabled ? 'opacity-50' : ''}`}>
+          <h4
+            className={`text-sm font-medium text-gray-900 dark:text-gray-100 ${
+              disabled ? 'opacity-50' : ''
+            }`}
+          >
             {agent.name}
           </h4>
-          <p className={`text-sm text-gray-600 dark:text-gray-400 ${disabled ? 'opacity-50' : ''}`}>
+          <p
+            className={`text-sm text-gray-600 dark:text-gray-400 ${
+              disabled ? 'opacity-50' : ''
+            }`}
+          >
             {agent.description}
           </p>
         </div>
@@ -103,8 +116,8 @@ const AgentToggle: React.FC<AgentToggleProps> = ({
         onClick={handleToggle}
         disabled={disabled}
         className={`flex items-center p-1 rounded transition-colors ${
-          disabled 
-            ? 'opacity-50 cursor-not-allowed' 
+          disabled
+            ? 'opacity-50 cursor-not-allowed'
             : 'hover:bg-gray-100 dark:hover:bg-gray-700'
         }`}
         title={enabled ? `Disable ${agent.name}` : `Enable ${agent.name}`}
@@ -122,82 +135,89 @@ const AgentToggle: React.FC<AgentToggleProps> = ({
 /**
  * Main Agent Features Section Component
  */
-export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onClose }) => {
+export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({
+  onClose,
+}) => {
   const { t } = useTranslation(['settings', 'agents']);
-  const {
-    settings,
-    updateSettings,
-    loading,
-    error,
-  } = useAdvancedSettings({ enableAdvancedFeatures: true });
+  const { settings, updateSettings, loading, error } = useAdvancedSettings({
+    enableAdvancedFeatures: true,
+  });
 
   const createDefaultAgentSettings = (): AgentSettings => ({
     enabled: true,
     confidenceThreshold: 0.7,
     fallbackEnabled: true,
-    enabledAgentTypes: [AgentType.WEB_SEARCH, AgentType.LOCAL_KNOWLEDGE, AgentType.URL_PULL],
+    enabledAgentTypes: [
+      AgentType.WEB_SEARCH,
+      AgentType.LOCAL_KNOWLEDGE,
+      AgentType.URL_PULL,
+    ],
     agentConfigurations: {
       [AgentType.WEB_SEARCH]: {
         enabled: true,
         priority: 1,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
+        parameters: {},
       },
       [AgentType.LOCAL_KNOWLEDGE]: {
         enabled: true,
         priority: 2,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
+        parameters: {},
       },
       [AgentType.URL_PULL]: {
         enabled: true,
         priority: 3,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
+        parameters: {},
       },
       [AgentType.CODE_INTERPRETER]: {
         enabled: false,
         priority: 4,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
+        parameters: {},
       },
       [AgentType.STANDARD_CHAT]: {
         enabled: false,
         priority: 5,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
+        parameters: {},
       },
       [AgentType.FOUNDRY]: {
         enabled: false,
         priority: 6,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
+        parameters: {},
       },
       [AgentType.THIRD_PARTY]: {
         enabled: false,
         priority: 7,
         timeout: 30000,
         maxRetries: 2,
-        parameters: {}
-      }
+        parameters: {},
+      },
     },
     preferences: {
-      preferredAgents: [AgentType.WEB_SEARCH, AgentType.LOCAL_KNOWLEDGE, AgentType.URL_PULL],
+      preferredAgents: [
+        AgentType.WEB_SEARCH,
+        AgentType.LOCAL_KNOWLEDGE,
+        AgentType.URL_PULL,
+      ],
       disabledAgents: [],
       autoRouting: true,
       showAgentAttribution: true,
-      confirmBeforeAgentUse: false
-    }
+      confirmBeforeAgentUse: false,
+    },
   });
 
-  const [agentSettings, setAgentSettings] = useState<AgentSettings>(() => 
-    settings.agentSettings || createDefaultAgentSettings()
+  const [agentSettings, setAgentSettings] = useState<AgentSettings>(
+    () => settings.agentSettings || createDefaultAgentSettings(),
   );
 
   // Use ref to track the latest agentSettings for saving
@@ -210,17 +230,20 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
   // Check if current agentSettings differ from saved settings
   const hasUnsavedChanges = useCallback((): boolean => {
     if (!settings.agentSettings) return true; // If no saved settings, we have changes
-    
+
     // Deep comparison of the key properties we care about
     const current = agentSettingsRef.current;
     const saved = settings.agentSettings;
-    
+
     return (
       current.enabled !== saved.enabled ||
       current.enabledAgentTypes.length !== saved.enabledAgentTypes.length ||
-      current.enabledAgentTypes.some(type => !saved.enabledAgentTypes.includes(type)) ||
+      current.enabledAgentTypes.some(
+        (type) => !saved.enabledAgentTypes.includes(type),
+      ) ||
       current.preferences.autoRouting !== saved.preferences.autoRouting ||
-      current.preferences.showAgentAttribution !== saved.preferences.showAgentAttribution
+      current.preferences.showAgentAttribution !==
+        saved.preferences.showAgentAttribution
     );
   }, [settings.agentSettings]);
 
@@ -230,7 +253,6 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
       setAgentSettings(settings.agentSettings);
     }
   }, [settings]);
-
 
   // Auto-save when settings change (only if there are unsaved changes)
   useEffect(() => {
@@ -257,7 +279,7 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
           setIsSaving(false);
         }
       };
-      
+
       performSave();
     }, 1000); // Debounce saves
 
@@ -266,49 +288,52 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
 
   // Toggle all agents
   const handleToggleAll = useCallback(() => {
-    setAgentSettings(prev => ({
+    setAgentSettings((prev) => ({
       ...prev,
       enabled: !prev.enabled,
     }));
   }, []);
 
   // Toggle individual agent
-  const handleToggleAgent = useCallback((agentType: AgentType, enabled: boolean) => {
-    setAgentSettings(prev => {
-      const enabledTypes = new Set(prev.enabledAgentTypes);
-      
-      if (enabled) {
-        enabledTypes.add(agentType);
-      } else {
-        enabledTypes.delete(agentType);
-      }
+  const handleToggleAgent = useCallback(
+    (agentType: AgentType, enabled: boolean) => {
+      setAgentSettings((prev) => {
+        const enabledTypes = new Set(prev.enabledAgentTypes);
 
-      return {
-        ...prev,
-        enabledAgentTypes: Array.from(enabledTypes),
-      };
-    });
-  }, []);
+        if (enabled) {
+          enabledTypes.add(agentType);
+        } else {
+          enabledTypes.delete(agentType);
+        }
+
+        return {
+          ...prev,
+          enabledAgentTypes: Array.from(enabledTypes),
+        };
+      });
+    },
+    [],
+  );
 
   // Toggle auto-routing
   const handleToggleAutoRouting = useCallback(() => {
-    setAgentSettings(prev => ({
+    setAgentSettings((prev) => ({
       ...prev,
       preferences: {
         ...prev.preferences,
         autoRouting: !prev.preferences.autoRouting,
-      }
+      },
     }));
   }, []);
 
   // Toggle agent attribution
   const handleToggleAttribution = useCallback(() => {
-    setAgentSettings(prev => ({
+    setAgentSettings((prev) => ({
       ...prev,
       preferences: {
         ...prev.preferences,
         showAgentAttribution: !prev.preferences.showAgentAttribution,
-      }
+      },
     }));
   }, []);
 
@@ -330,7 +355,8 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
           AI Agent Settings
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Configure which AI agents are available to assist you. Changes are saved automatically.
+          Configure which AI agents are available to assist you. Changes are
+          saved automatically.
         </p>
       </div>
 
@@ -354,8 +380,10 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
                 AI Agents
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                {allAgentsEnabled 
-                  ? `${agentSettings.enabledAgentTypes.length} agent${agentSettings.enabledAgentTypes.length !== 1 ? 's' : ''} enabled`
+                {allAgentsEnabled
+                  ? `${agentSettings.enabledAgentTypes.length} agent${
+                      agentSettings.enabledAgentTypes.length !== 1 ? 's' : ''
+                    } enabled`
                   : 'All agents disabled'}
               </p>
             </div>
@@ -363,7 +391,9 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
           <button
             onClick={handleToggleAll}
             className="flex items-center p-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-700"
-            title={allAgentsEnabled ? 'Disable all agents' : 'Enable all agents'}
+            title={
+              allAgentsEnabled ? 'Disable all agents' : 'Enable all agents'
+            }
           >
             {allAgentsEnabled ? (
               <IconToggleRight className="h-8 w-8 text-green-500" />
@@ -376,7 +406,7 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
 
       {/* Individual Agent Toggles */}
       <div className="space-y-3 mb-6">
-        {AVAILABLE_AGENTS.map(agent => (
+        {AVAILABLE_AGENTS.map((agent) => (
           <AgentToggle
             key={agent.type}
             agent={agent}
@@ -392,7 +422,7 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
           Agent Behavior
         </h3>
-        
+
         {/* Auto-routing Toggle */}
         <div className="flex items-center justify-between py-2">
           <div>
@@ -408,7 +438,7 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
             disabled={!allAgentsEnabled || !someAgentsEnabled}
             className={`flex items-center p-1 rounded transition-colors ${
               !allAgentsEnabled || !someAgentsEnabled
-                ? 'opacity-50 cursor-not-allowed' 
+                ? 'opacity-50 cursor-not-allowed'
                 : 'hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >
@@ -435,7 +465,7 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({ onCl
             disabled={!allAgentsEnabled || !someAgentsEnabled}
             className={`flex items-center p-1 rounded transition-colors ${
               !allAgentsEnabled || !someAgentsEnabled
-                ? 'opacity-50 cursor-not-allowed' 
+                ? 'opacity-50 cursor-not-allowed'
                 : 'hover:bg-gray-200 dark:hover:bg-gray-700'
             }`}
           >

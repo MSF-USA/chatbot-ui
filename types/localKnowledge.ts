@@ -1,6 +1,6 @@
 /**
  * Local Knowledge Agent Types and Interfaces
- * 
+ *
  * This file defines comprehensive types for enterprise knowledge management,
  * semantic search, access control, and knowledge graph operations.
  */
@@ -18,7 +18,7 @@ export enum KnowledgeDocumentType {
   HANDBOOK = 'handbook',
   TRAINING = 'training',
   API_DOC = 'api_doc',
-  TROUBLESHOOTING = 'troubleshooting'
+  TROUBLESHOOTING = 'troubleshooting',
 }
 
 /**
@@ -26,13 +26,13 @@ export enum KnowledgeDocumentType {
  */
 export enum KnowledgeSourceType {
   LOCAL_FILE = 'local_file',
-  DATABASE = 'database', 
+  DATABASE = 'database',
   SHAREPOINT = 'sharepoint',
   CONFLUENCE = 'confluence',
   NOTION = 'notion',
   INTERNAL_WIKI = 'internal_wiki',
   CMS = 'cms',
-  API_ENDPOINT = 'api_endpoint'
+  API_ENDPOINT = 'api_endpoint',
 }
 
 /**
@@ -43,7 +43,7 @@ export enum AccessLevel {
   INTERNAL = 'internal',
   CONFIDENTIAL = 'confidential',
   RESTRICTED = 'restricted',
-  SECRET = 'secret'
+  SECRET = 'secret',
 }
 
 /**
@@ -55,7 +55,7 @@ export enum UserRole {
   MANAGER = 'manager',
   ADMIN = 'admin',
   EXECUTIVE = 'executive',
-  IT_ADMIN = 'it_admin'
+  IT_ADMIN = 'it_admin',
 }
 
 /**
@@ -223,7 +223,7 @@ export enum EntityType {
   PROCESS = 'process',
   LOCATION = 'location',
   CONCEPT = 'concept',
-  ORGANIZATION = 'organization'
+  ORGANIZATION = 'organization',
 }
 
 /**
@@ -251,7 +251,7 @@ export enum RelationshipType {
   DEPENDS_ON = 'depends_on',
   SIMILAR_TO = 'similar_to',
   REPLACES = 'replaces',
-  CONTAINS = 'contains'
+  CONTAINS = 'contains',
 }
 
 /**
@@ -428,7 +428,7 @@ export class LocalKnowledgeError extends Error {
     message: string,
     public code: LocalKnowledgeErrorType,
     public details?: any,
-    public context?: string
+    public context?: string,
   ) {
     super(message);
     this.name = 'LocalKnowledgeError';
@@ -449,7 +449,7 @@ export const DEFAULT_LOCAL_KNOWLEDGE_CONFIG: Required<KnowledgeBaseConfig> = {
     batchSize: 100,
     updateFrequency: 24, // hours
     extractEntities: true,
-    supportedLanguages: ['en', 'es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'zh']
+    supportedLanguages: ['en', 'es', 'fr', 'de', 'it', 'pt', 'ja', 'ko', 'zh'],
   },
   searchConfig: {
     embeddingModel: 'text-embedding-3-small',
@@ -459,7 +459,7 @@ export const DEFAULT_LOCAL_KNOWLEDGE_CONFIG: Required<KnowledgeBaseConfig> = {
     enableHybridSearch: true,
     keywordWeight: 0.3,
     semanticWeight: 0.7,
-    enableReRanking: true
+    enableReRanking: true,
   },
   accessControl: {
     enableRBAC: true,
@@ -468,19 +468,22 @@ export const DEFAULT_LOCAL_KNOWLEDGE_CONFIG: Required<KnowledgeBaseConfig> = {
     adminRoles: [UserRole.ADMIN, UserRole.IT_ADMIN],
     guestLimitations: {
       maxResults: 5,
-      allowedTypes: [KnowledgeDocumentType.FAQ, KnowledgeDocumentType.DOCUMENTATION]
-    }
+      allowedTypes: [
+        KnowledgeDocumentType.FAQ,
+        KnowledgeDocumentType.DOCUMENTATION,
+      ],
+    },
   },
   caching: {
     enableSearchCache: true,
     cacheTTL: 3600, // 1 hour
     maxCacheSize: 1000,
     enableDocumentCache: true,
-    enableVectorCache: true
+    enableVectorCache: true,
   },
   autoUpdate: {
     enabled: true,
     interval: 60, // minutes
-    sources: [KnowledgeSourceType.LOCAL_FILE, KnowledgeSourceType.DATABASE]
-  }
+    sources: [KnowledgeSourceType.LOCAL_FILE, KnowledgeSourceType.DATABASE],
+  },
 };

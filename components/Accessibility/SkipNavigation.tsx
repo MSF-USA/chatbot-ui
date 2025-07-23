@@ -1,11 +1,11 @@
 /**
  * Skip Navigation Component
- * 
+ *
  * Provides skip links for keyboard users to navigate efficiently through the page.
  * Essential for WCAG 2.1 AA compliance and improved keyboard navigation experience.
  */
-
 import React from 'react';
+
 import { useTranslation } from 'next-i18next';
 
 /**
@@ -65,7 +65,7 @@ export const SkipNavigation: React.FC<SkipNavigationProps> = ({
   }
 
   return (
-    <nav 
+    <nav
       className={`skip-navigation ${className}`}
       aria-label={t('Skip navigation')}
       role="navigation"
@@ -94,11 +94,13 @@ export const SkipNavigation: React.FC<SkipNavigationProps> = ({
                   }, 100);
                 }
               }}
-              aria-describedby={link.description ? `skip-desc-${index}` : undefined}
+              aria-describedby={
+                link.description ? `skip-desc-${index}` : undefined
+              }
             >
               {t(link.label, { defaultValue: link.label })}
               {link.description && (
-                <span 
+                <span
                   id={`skip-desc-${index}`}
                   className="skip-link-description sr-only"
                 >
@@ -169,7 +171,7 @@ export const SkipNavigation: React.FC<SkipNavigationProps> = ({
             background: #1f2937;
             border-color: #374151;
           }
-          
+
           .skip-link:hover:focus {
             background: #111827;
           }
@@ -182,7 +184,7 @@ export const SkipNavigation: React.FC<SkipNavigationProps> = ({
             color: #fff;
             border: 3px solid #fff;
           }
-          
+
           .skip-link:focus {
             outline: 3px solid #ffff00;
             outline-offset: 0;
@@ -204,21 +206,28 @@ export const SkipNavigation: React.FC<SkipNavigationProps> = ({
  * Hook to manage skip navigation dynamically
  */
 export function useSkipNavigation(customLinks?: SkipLink[]) {
-  const [skipLinks, setSkipLinks] = React.useState<SkipLink[]>(customLinks || defaultSkipLinks);
+  const [skipLinks, setSkipLinks] = React.useState<SkipLink[]>(
+    customLinks || defaultSkipLinks,
+  );
 
   const addSkipLink = React.useCallback((link: SkipLink) => {
-    setSkipLinks(prev => [...prev, link]);
+    setSkipLinks((prev) => [...prev, link]);
   }, []);
 
   const removeSkipLink = React.useCallback((href: string) => {
-    setSkipLinks(prev => prev.filter(link => link.href !== href));
+    setSkipLinks((prev) => prev.filter((link) => link.href !== href));
   }, []);
 
-  const updateSkipLink = React.useCallback((href: string, updates: Partial<SkipLink>) => {
-    setSkipLinks(prev => prev.map(link => 
-      link.href === href ? { ...link, ...updates } : link
-    ));
-  }, []);
+  const updateSkipLink = React.useCallback(
+    (href: string, updates: Partial<SkipLink>) => {
+      setSkipLinks((prev) =>
+        prev.map((link) =>
+          link.href === href ? { ...link, ...updates } : link,
+        ),
+      );
+    },
+    [],
+  );
 
   return {
     skipLinks,
@@ -258,11 +267,13 @@ export const Landmark: React.FC<LandmarkProps> = ({
     {
       id,
       role,
-      'aria-label': ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined,
+      'aria-label': ariaLabel
+        ? t(ariaLabel, { defaultValue: ariaLabel })
+        : undefined,
       'aria-labelledby': ariaLabelledBy,
       className,
     },
-    children
+    children,
   );
 };
 
@@ -275,12 +286,7 @@ export const MainContent: React.FC<{
   id?: string;
 }> = ({ children, className = '', id = 'main-content' }) => {
   return (
-    <Landmark
-      as="main"
-      id={id}
-      ariaLabel="Main content"
-      className={className}
-    >
+    <Landmark as="main" id={id} ariaLabel="Main content" className={className}>
       {children}
     </Landmark>
   );
@@ -294,14 +300,14 @@ export const NavigationLandmark: React.FC<{
   ariaLabel?: string;
   className?: string;
   id?: string;
-}> = ({ children, ariaLabel = 'Main navigation', className = '', id = 'navigation' }) => {
+}> = ({
+  children,
+  ariaLabel = 'Main navigation',
+  className = '',
+  id = 'navigation',
+}) => {
   return (
-    <Landmark
-      as="nav"
-      id={id}
-      ariaLabel={ariaLabel}
-      className={className}
-    >
+    <Landmark as="nav" id={id} ariaLabel={ariaLabel} className={className}>
       {children}
     </Landmark>
   );
@@ -317,12 +323,7 @@ export const ComplementaryContent: React.FC<{
   id?: string;
 }> = ({ children, ariaLabel = 'Sidebar', className = '', id }) => {
   return (
-    <Landmark
-      as="aside"
-      id={id}
-      ariaLabel={ariaLabel}
-      className={className}
-    >
+    <Landmark as="aside" id={id} ariaLabel={ariaLabel} className={className}>
       {children}
     </Landmark>
   );
@@ -359,12 +360,7 @@ export const SearchLandmark: React.FC<{
   id?: string;
 }> = ({ children, ariaLabel = 'Search', className = '', id }) => {
   return (
-    <Landmark
-      id={id}
-      role="search"
-      ariaLabel={ariaLabel}
-      className={className}
-    >
+    <Landmark id={id} role="search" ariaLabel={ariaLabel} className={className}>
       {children}
     </Landmark>
   );

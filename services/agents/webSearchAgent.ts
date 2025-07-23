@@ -1,30 +1,39 @@
+import { BingGroundingService } from '@/services/bingGroundingService';
+import { AzureMonitorLoggingService } from '@/services/loggingService';
+
+import { CitationExtractor } from '@/utils/citationExtractor';
+
 import {
   AgentConfig,
   AgentExecutionContext,
+  AgentExecutionEnvironment,
   AgentResponse,
   AgentType,
-  AgentExecutionEnvironment,
   WebSearchAgentConfig,
 } from '@/types/agent';
 import {
+  Citation,
+  WebSearchConfig,
   WebSearchRequest,
   WebSearchResponse,
   WebSearchResult,
-  Citation,
-  WebSearchConfig,
 } from '@/types/webSearch';
 
-import { BaseAgent, AgentCreationError, AgentExecutionError } from './baseAgent';
-import { BingGroundingService } from '@/services/bingGroundingService';
-import { CitationExtractor } from '@/utils/citationExtractor';
-import { AzureMonitorLoggingService } from '@/services/loggingService';
+import {
+  AgentCreationError,
+  AgentExecutionError,
+  BaseAgent,
+} from './baseAgent';
 
 /**
  * WebSearchAgent - Implementation for Azure Bing Grounding
  * Replaces direct Bing API calls with Azure AI Agents
  */
 export class WebSearchAgent extends BaseAgent {
-  private searchCache: Map<string, { response: WebSearchResponse; timestamp: number }> = new Map();
+  private searchCache: Map<
+    string,
+    { response: WebSearchResponse; timestamp: number }
+  > = new Map();
   private readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
   private webSearchConfig: WebSearchConfig;
   private bingGroundingService: BingGroundingService;
@@ -44,14 +53,18 @@ export class WebSearchAgent extends BaseAgent {
     super(config);
 
     // Initialize web search specific configuration
-    this.webSearchConfig = config.webSearchConfig ?? this.getDefaultWebSearchConfig();
-    
+    this.webSearchConfig =
+      config.webSearchConfig ?? this.getDefaultWebSearchConfig();
+
     // Validate that we have a valid configuration
     if (!this.webSearchConfig.endpoint) {
-      console.warn('[WARN] WebSearchAgent: No endpoint configured, using default placeholder');
-      this.webSearchConfig.endpoint = 'https://placeholder.cognitiveservices.azure.com';
+      console.warn(
+        '[WARN] WebSearchAgent: No endpoint configured, using default placeholder',
+      );
+      this.webSearchConfig.endpoint =
+        'https://placeholder.cognitiveservices.azure.com';
     }
-    
+
     // Initialize BingGroundingService
     this.bingGroundingService = new BingGroundingService();
   }
@@ -60,9 +73,12 @@ export class WebSearchAgent extends BaseAgent {
     try {
       // Validate Azure Bing Grounding configuration
       if (!process.env.AZURE_GROUNDING_CONNECTION_ID) {
-        throw new Error('AZURE_GROUNDING_CONNECTION_ID environment variable is not set');
+        throw new Error(
+          'AZURE_GROUNDING_CONNECTION_ID environment variable is not set',
+        );
       }
-      const webSearchConfig = this.webSearchConfig ?? this.getDefaultWebSearchConfig();
+      const webSearchConfig =
+        this.webSearchConfig ?? this.getDefaultWebSearchConfig();
 
       // Additional initialization if needed
       this.logInfo('WebSearchAgent initialized successfully', {
@@ -71,7 +87,9 @@ export class WebSearchAgent extends BaseAgent {
         defaultMarket: webSearchConfig.defaultMarket,
       });
     } catch (error) {
-      const errorMessage = `Failed to initialize WebSearchAgent: ${error instanceof Error ? error.message : String(error)}`;
+      const errorMessage = `Failed to initialize WebSearchAgent: ${
+        error instanceof Error ? error.message : String(error)
+      }`;
       this.logError(errorMessage, error as Error, {
         agentId: this.config.id,
       });
@@ -83,7 +101,7 @@ export class WebSearchAgent extends BaseAgent {
     context: AgentExecutionContext,
   ): Promise<ReadableStream<string>> {
     const self = this; // Preserve 'this' context for use inside the stream
-    
+
     try {
       // Create a streaming response for web search
       return new ReadableStream({
@@ -91,54 +109,70 @@ export class WebSearchAgent extends BaseAgent {
           try {
             // First, show search status
             controller.enqueue('🔍 Searching the web...\n\n');
-            
+
             // Perform the actual search
             const searchRequest = self.buildSearchRequest(context);
             const cacheKey = self.generateCacheKey(searchRequest);
             const cachedResponse = self.getCachedResponse(cacheKey);
-            
+
             let searchResponse: WebSearchResponse;
             if (cachedResponse) {
               controller.enqueue('📋 Found cached results...\n\n');
               searchResponse = cachedResponse;
             } else {
               controller.enqueue('🌐 Performing new search...\n\n');
-              searchResponse = await self.performWebSearch(searchRequest, context);
-              
+              searchResponse = await self.performWebSearch(
+                searchRequest,
+                context,
+              );
+
               if (self.webSearchConfig.enableCaching) {
                 self.cacheResponse(cacheKey, searchResponse);
               }
             }
-            
+
             // Stream the formatted response
-            const agentResponse = self.convertToAgentResponse(searchResponse, context);
+            const agentResponse = self.convertToAgentResponse(
+              searchResponse,
+              context,
+            );
             if (agentResponse.success && agentResponse.content) {
               // Split content into chunks for smoother streaming
-              const chunks = agentResponse.content.match(/.{1,100}/g) || [agentResponse.content];
-              
+              const chunks = agentResponse.content.match(/.{1,100}/g) || [
+                agentResponse.content,
+              ];
+
               for (const chunk of chunks) {
                 controller.enqueue(chunk);
                 // Small delay for natural streaming feel
-                await new Promise(resolve => setTimeout(resolve, 30));
+                await new Promise((resolve) => setTimeout(resolve, 30));
               }
             } else {
               controller.enqueue('❌ Search failed. Please try again.');
             }
-            
+
             controller.close();
           } catch (error) {
-            controller.enqueue(`❌ Search error: ${error instanceof Error ? error.message : String(error)}`);
+            controller.enqueue(
+              `❌ Search error: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            );
             controller.close();
           }
-        }
+        },
       });
     } catch (error) {
       // Return error stream
       return new ReadableStream({
         start(controller) {
-          controller.enqueue(`❌ Web search failed: ${error instanceof Error ? error.message : String(error)}`);
+          controller.enqueue(
+            `❌ Web search failed: ${
+              error instanceof Error ? error.message : String(error)
+            }`,
+          );
           controller.close();
-        }
+        },
       });
     }
   }
@@ -160,7 +194,10 @@ export class WebSearchAgent extends BaseAgent {
       }
 
       // Perform web search using Azure AI Agents
-      const searchResponse = await this.performWebSearch(searchRequest, context);
+      const searchResponse = await this.performWebSearch(
+        searchRequest,
+        context,
+      );
 
       // Cache the response if enabled
       if (this.webSearchConfig.enableCaching) {
@@ -171,7 +208,9 @@ export class WebSearchAgent extends BaseAgent {
     } catch (error) {
       const executionTime = Date.now() - startTime;
       throw new AgentExecutionError(
-        `Web search execution failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Web search execution failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
         {
           agentId: this.config.id,
           query: context.query,
@@ -192,8 +231,13 @@ export class WebSearchAgent extends BaseAgent {
       if (!wsConfig.webSearchConfig.endpoint) {
         errors.push('webSearchConfig.endpoint is required');
       }
-      if (!wsConfig.webSearchConfig.apiKey && !process.env.AZURE_GROUNDING_CONNECTION_ID) {
-        errors.push('webSearchConfig.apiKey or AZURE_GROUNDING_CONNECTION_ID is required');
+      if (
+        !wsConfig.webSearchConfig.apiKey &&
+        !process.env.AZURE_GROUNDING_CONNECTION_ID
+      ) {
+        errors.push(
+          'webSearchConfig.apiKey or AZURE_GROUNDING_CONNECTION_ID is required',
+        );
       }
     }
 
@@ -216,12 +260,16 @@ export class WebSearchAgent extends BaseAgent {
    */
   private buildSearchRequest(context: AgentExecutionContext): WebSearchRequest {
     const config = this.config as WebSearchAgentConfig;
-    
+
     return {
       query: context.query,
       count: config.maxResults || this.webSearchConfig.maxResults,
-      market: context.locale || config.defaultMarket || this.webSearchConfig.defaultMarket,
-      safeSearch: config.defaultSafeSearch || this.webSearchConfig.defaultSafeSearch,
+      market:
+        context.locale ||
+        config.defaultMarket ||
+        this.webSearchConfig.defaultMarket,
+      safeSearch:
+        config.defaultSafeSearch || this.webSearchConfig.defaultSafeSearch,
       freshness: this.extractFreshness(context),
       contentType: 'webpage',
       parameters: context.context,
@@ -249,9 +297,15 @@ export class WebSearchAgent extends BaseAgent {
 
       // Extract and process citations using CitationExtractor
       const citationStartTime = Date.now();
-      const extractedCitations = CitationExtractor.extractCitations(searchResponse.results);
-      const deduplicatedCitations = CitationExtractor.deduplicateCitations(extractedCitations);
-      const sortedCitations = CitationExtractor.sortCitations(deduplicatedCitations, 'relevance');
+      const extractedCitations = CitationExtractor.extractCitations(
+        searchResponse.results,
+      );
+      const deduplicatedCitations =
+        CitationExtractor.deduplicateCitations(extractedCitations);
+      const sortedCitations = CitationExtractor.sortCitations(
+        deduplicatedCitations,
+        'relevance',
+      );
       const citationExtractionTime = Date.now() - citationStartTime;
 
       // Update response with processed citations
@@ -266,9 +320,11 @@ export class WebSearchAgent extends BaseAgent {
             totalTime: Date.now() - startTime,
           },
           quality: {
-            relevanceScore: this.calculateAverageRelevance(searchResponse.results),
+            relevanceScore: this.calculateAverageRelevance(
+              searchResponse.results,
+            ),
             citationCount: sortedCitations.length,
-            uniqueSourcesCount: new Set(sortedCitations.map(c => c.url)).size,
+            uniqueSourcesCount: new Set(sortedCitations.map((c) => c.url)).size,
           },
         },
       };
@@ -286,7 +342,11 @@ export class WebSearchAgent extends BaseAgent {
         query: request.query,
         market: request.market,
       });
-      throw new Error(`Azure Bing Grounding search failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Azure Bing Grounding search failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
     }
   }
 
@@ -325,25 +385,30 @@ export class WebSearchAgent extends BaseAgent {
     // If we have assistant content (from Azure AI Agents), use it as the primary response
     if (response.assistantContent) {
       let content = response.assistantContent;
-      
+
       // Add formatted citations section if not already included
       if (response.citations.length > 0) {
-        const citationsSection = CitationExtractor.formatCitationsForDisplay(response.citations);
+        const citationsSection = CitationExtractor.formatCitationsForDisplay(
+          response.citations,
+        );
         // Only add citations if they're not already in the content
         if (!content.includes('References:') && !content.includes('Sources:')) {
           content += '\n\n' + citationsSection;
         }
       }
-      
+
       // Add Bing query URL (required by terms of use)
-      const bingQueryUrl = this.generateBingQueryUrl(response.query, response.market);
+      const bingQueryUrl = this.generateBingQueryUrl(
+        response.query,
+        response.market,
+      );
       if (!content.includes(bingQueryUrl)) {
         content += `\n\nBing search: ${bingQueryUrl}`;
       }
-      
+
       return content;
     }
-    
+
     // Fallback to generating content from individual results
     if (response.results.length === 0) {
       return "I couldn't find any relevant information for your query. Please try rephrasing or using different keywords.";
@@ -354,7 +419,7 @@ export class WebSearchAgent extends BaseAgent {
     // Add summarized content from results with inline citations
     response.results.forEach((result, index) => {
       content += `${result.snippet}`;
-      
+
       // Add inline citation reference
       if (response.citations.length > index) {
         content += ` ${CitationExtractor.formatInlineCitation(index + 1)}`;
@@ -363,11 +428,16 @@ export class WebSearchAgent extends BaseAgent {
     });
 
     // Add formatted citations section using CitationExtractor
-    const citationsSection = CitationExtractor.formatCitationsForDisplay(response.citations);
+    const citationsSection = CitationExtractor.formatCitationsForDisplay(
+      response.citations,
+    );
     content += citationsSection;
 
     // Add Bing query URL (required by terms of use)
-    const bingQueryUrl = this.generateBingQueryUrl(response.query, response.market);
+    const bingQueryUrl = this.generateBingQueryUrl(
+      response.query,
+      response.market,
+    );
     content += `\n\nBing search: ${bingQueryUrl}`;
 
     return content;
@@ -388,10 +458,16 @@ export class WebSearchAgent extends BaseAgent {
   /**
    * Extract freshness parameter from context
    */
-  private extractFreshness(context: AgentExecutionContext): 'Day' | 'Week' | 'Month' | undefined {
+  private extractFreshness(
+    context: AgentExecutionContext,
+  ): 'Day' | 'Week' | 'Month' | undefined {
     const query = context.query.toLowerCase();
-    
-    if (query.includes('today') || query.includes('latest') || query.includes('breaking')) {
+
+    if (
+      query.includes('today') ||
+      query.includes('latest') ||
+      query.includes('breaking')
+    ) {
       return 'Day';
     }
     if (query.includes('this week') || query.includes('recent')) {
@@ -400,7 +476,7 @@ export class WebSearchAgent extends BaseAgent {
     if (query.includes('this month')) {
       return 'Month';
     }
-    
+
     return undefined;
   }
 
@@ -409,16 +485,18 @@ export class WebSearchAgent extends BaseAgent {
    */
   private getDefaultWebSearchConfig(): WebSearchConfig {
     // For Azure AI Foundry, we use PROJECT_ENDPOINT as the main endpoint
-    const endpoint = process.env.AZURE_AI_FOUNDRY_ENDPOINT ??
-        process.env.AZURE_AI_FOUNDRY_ENDPOINT_ID ??
-        process.env.PROJECT_ENDPOINT ??
-        process.env.AZURE_GROUNDING_ENDPOINT ??
-        'https://placeholder.cognitiveservices.azure.com';
-    
+    const endpoint =
+      process.env.AZURE_AI_FOUNDRY_ENDPOINT ??
+      process.env.AZURE_AI_FOUNDRY_ENDPOINT_ID ??
+      process.env.PROJECT_ENDPOINT ??
+      process.env.AZURE_GROUNDING_ENDPOINT ??
+      'https://placeholder.cognitiveservices.azure.com';
+
     // API key comes from either AZURE_GROUNDING_CONNECTION_ID or fallback
-    const apiKey = process.env.AZURE_GROUNDING_CONNECTION_ID || 
-                  process.env.AZURE_GROUNDING_API_KEY || 
-                  '';
+    const apiKey =
+      process.env.AZURE_GROUNDING_CONNECTION_ID ||
+      process.env.AZURE_GROUNDING_API_KEY ||
+      '';
 
     return {
       endpoint,
@@ -441,7 +519,9 @@ export class WebSearchAgent extends BaseAgent {
    * Cache management methods
    */
   private generateCacheKey(request: WebSearchRequest): string {
-    return `${request.query}|${request.market}|${request.freshness || 'none'}|${request.safeSearch}`;
+    return `${request.query}|${request.market}|${request.freshness || 'none'}|${
+      request.safeSearch
+    }`;
   }
 
   private getCachedResponse(cacheKey: string): WebSearchResponse | null {
@@ -483,14 +563,16 @@ export class WebSearchAgent extends BaseAgent {
     }
 
     const relevanceScores = results
-      .map(result => result.relevanceScore || 0)
-      .filter(score => score > 0);
+      .map((result) => result.relevanceScore || 0)
+      .filter((score) => score > 0);
 
     if (relevanceScores.length === 0) {
       return 0.5; // Default relevance if no scores available
     }
 
-    return relevanceScores.reduce((sum, score) => sum + score, 0) / relevanceScores.length;
+    return (
+      relevanceScores.reduce((sum, score) => sum + score, 0) /
+      relevanceScores.length
+    );
   }
-
 }

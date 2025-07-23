@@ -1,25 +1,26 @@
 import { Session } from 'next-auth';
-import { AzureOpenAI } from 'openai';
-import * as crypto from 'crypto';
 
-import { 
-  AgentType, 
-  AgentExecutionRequest, 
-  AgentExecutionResult,
+import {
   AgentExecutionContext,
-  AgentResponse 
+  AgentExecutionRequest,
+  AgentExecutionResult,
+  AgentResponse,
+  AgentType,
 } from '@/types/agent';
 import { ChatBody } from '@/types/chat';
-import { 
-  IntentAnalysisContext, 
-  IntentAnalysisResult 
+import {
+  IntentAnalysisContext,
+  IntentAnalysisResult,
 } from '@/types/intentAnalysis';
 import { AgentSettings } from '@/types/settings';
 
-import { analyzeUserIntent } from './intentAnalysis';
 import { executeAgentRequest } from './agentFactory';
 import { getAgentSettingsService } from './agentSettingsService';
+import { analyzeUserIntent } from './intentAnalysis';
 import { recordIntentAnalysisPerformance } from './intentAnalysis';
+
+import * as crypto from 'crypto';
+import { AzureOpenAI } from 'openai';
 
 /**
  * Pipeline stage execution result
@@ -91,7 +92,8 @@ export class AgentRequestPipeline {
   private static instance: AgentRequestPipeline | null = null;
   private config: PipelineConfig;
   private requestCache: Map<string, any> = new Map();
-  private activeRequests: Map<string, Promise<PipelineExecutionResult>> = new Map();
+  private activeRequests: Map<string, Promise<PipelineExecutionResult>> =
+    new Map();
 
   private constructor(config?: Partial<PipelineConfig>) {
     this.config = {
@@ -109,7 +111,9 @@ export class AgentRequestPipeline {
   /**
    * Singleton pattern - get or create pipeline instance
    */
-  public static getInstance(config?: Partial<PipelineConfig>): AgentRequestPipeline {
+  public static getInstance(
+    config?: Partial<PipelineConfig>,
+  ): AgentRequestPipeline {
     if (!AgentRequestPipeline.instance) {
       AgentRequestPipeline.instance = new AgentRequestPipeline(config);
     }
@@ -123,7 +127,7 @@ export class AgentRequestPipeline {
     chatBody: ChatBody,
     openai: AzureOpenAI,
     user: Session['user'],
-    modelId: string
+    modelId: string,
   ): Promise<PipelineExecutionResult> {
     const pipelineId = this.generatePipelineId();
     const startTime = Date.now();
@@ -138,25 +142,33 @@ export class AgentRequestPipeline {
       });
 
       // Stage 1: Request Validation
-      const validationResult = await this.executeStage(
-        'validation',
-        () => this.validateRequest(chatBody, user, modelId)
+      const validationResult = await this.executeStage('validation', () =>
+        this.validateRequest(chatBody, user, modelId),
       );
       stages.push(validationResult);
 
       if (!validationResult.success) {
-        throw new Error(`Validation failed: ${validationResult.error?.message}`);
+        throw new Error(
+          `Validation failed: ${validationResult.error?.message}`,
+        );
       }
 
       // Stage 2: Deduplication Check
-      const deduplicationResult = await this.executeStage(
-        'deduplication',
-        () => this.checkRequestDeduplication(chatBody, user)
+      const deduplicationResult = await this.executeStage('deduplication', () =>
+        this.checkRequestDeduplication(chatBody, user),
       );
       stages.push(deduplicationResult);
 
-      if (deduplicationResult.success && deduplicationResult.data?.isDuplicate) {
-        return this.createCachedResult(deduplicationResult.data.cachedResult, stages, pipelineId, startTime);
+      if (
+        deduplicationResult.success &&
+        deduplicationResult.data?.isDuplicate
+      ) {
+        return this.createCachedResult(
+          deduplicationResult.data.cachedResult,
+          stages,
+          pipelineId,
+          startTime,
+        );
       }
 
       // Stage 3: Intent Analysis
@@ -164,7 +176,7 @@ export class AgentRequestPipeline {
       if (this.config.enableIntentAnalysis) {
         const intentAnalysisResult = await this.executeStage(
           'intent_analysis',
-          () => this.performIntentAnalysis(chatBody, openai, user, modelId)
+          () => this.performIntentAnalysis(chatBody, openai, user, modelId),
         );
         stages.push(intentAnalysisResult);
 
@@ -176,20 +188,22 @@ export class AgentRequestPipeline {
       // Stage 4: Agent Selection and Configuration
       const agentSelectionResult = await this.executeStage(
         'agent_selection',
-        () => this.selectAndConfigureAgent(intentResult, chatBody, user)
+        () => this.selectAndConfigureAgent(intentResult, chatBody, user),
       );
       stages.push(agentSelectionResult);
 
       if (!agentSelectionResult.success) {
-        throw new Error(`Agent selection failed: ${agentSelectionResult.error?.message}`);
+        throw new Error(
+          `Agent selection failed: ${agentSelectionResult.error?.message}`,
+        );
       }
 
-      const agentExecutionRequest = agentSelectionResult.data as AgentExecutionRequest;
+      const agentExecutionRequest =
+        agentSelectionResult.data as AgentExecutionRequest;
 
       // Stage 5: Agent Execution
-      const executionResult = await this.executeStage(
-        'agent_execution',
-        () => this.executeAgent(agentExecutionRequest)
+      const executionResult = await this.executeStage('agent_execution', () =>
+        this.executeAgent(agentExecutionRequest),
       );
       stages.push(executionResult);
 
@@ -198,7 +212,7 @@ export class AgentRequestPipeline {
         if (this.config.enableFallback) {
           const fallbackResult = await this.executeStage(
             'fallback_execution',
-            () => this.executeFallbackAgent(agentExecutionRequest)
+            () => this.executeFallbackAgent(agentExecutionRequest),
           );
           stages.push(fallbackResult);
 
@@ -209,7 +223,9 @@ export class AgentRequestPipeline {
         }
 
         if (!executionResult.success) {
-          throw new Error(`Agent execution failed: ${executionResult.error?.message}`);
+          throw new Error(
+            `Agent execution failed: ${executionResult.error?.message}`,
+          );
         }
       }
 
@@ -218,24 +234,22 @@ export class AgentRequestPipeline {
       // Stage 6: Response Processing
       const responseProcessingResult = await this.executeStage(
         'response_processing',
-        () => this.processResponse(agentResult, intentResult, chatBody)
+        () => this.processResponse(agentResult, intentResult, chatBody),
       );
       stages.push(responseProcessingResult);
 
       // Stage 7: Caching
       if (this.config.enableCaching) {
-        const cachingResult = await this.executeStage(
-          'caching',
-          () => this.cacheResult(chatBody, user, agentResult.response)
+        const cachingResult = await this.executeStage('caching', () =>
+          this.cacheResult(chatBody, user, agentResult.response),
         );
         stages.push(cachingResult);
       }
 
       // Stage 8: Metrics and Feedback
       if (this.config.enableMetrics) {
-        const metricsResult = await this.executeStage(
-          'metrics',
-          () => this.recordMetrics(intentResult, agentResult, startTime)
+        const metricsResult = await this.executeStage('metrics', () =>
+          this.recordMetrics(intentResult, agentResult, startTime),
         );
         stages.push(metricsResult);
       }
@@ -248,7 +262,14 @@ export class AgentRequestPipeline {
         intentResult,
         processingTime,
         stages,
-        metadata: this.buildMetadata(pipelineId, user, modelId, intentResult?.recommendedAgent, stages, startTime),
+        metadata: this.buildMetadata(
+          pipelineId,
+          user,
+          modelId,
+          intentResult?.recommendedAgent,
+          stages,
+          startTime,
+        ),
       };
 
       console.log('Pipeline execution completed successfully', {
@@ -274,7 +295,15 @@ export class AgentRequestPipeline {
         success: false,
         processingTime,
         stages,
-        metadata: this.buildMetadata(pipelineId, user, modelId, undefined, stages, startTime, error as Error),
+        metadata: this.buildMetadata(
+          pipelineId,
+          user,
+          modelId,
+          undefined,
+          stages,
+          startTime,
+          error as Error,
+        ),
       };
     } finally {
       this.activeRequests.delete(pipelineId);
@@ -323,7 +352,7 @@ export class AgentRequestPipeline {
 
   private async executeStage<T>(
     stageName: string,
-    stageFunction: () => Promise<T> | T
+    stageFunction: () => Promise<T> | T,
   ): Promise<PipelineStageResult> {
     const startTime = Date.now();
 
@@ -357,7 +386,7 @@ export class AgentRequestPipeline {
   private async validateRequest(
     chatBody: ChatBody,
     user: Session['user'],
-    modelId: string
+    modelId: string,
   ): Promise<RequestValidation> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -387,9 +416,12 @@ export class AgentRequestPipeline {
         return total + msg.content.length;
       }
       if (Array.isArray(msg.content)) {
-        return total + (msg.content as any[]).reduce((sum: number, item: any) => {
-          return sum + (item.type === 'text' ? (item.text?.length || 0) : 0);
-        }, 0);
+        return (
+          total +
+          (msg.content as any[]).reduce((sum: number, item: any) => {
+            return sum + (item.type === 'text' ? item.text?.length || 0 : 0);
+          }, 0)
+        );
       }
       return total;
     }, 0);
@@ -408,7 +440,7 @@ export class AgentRequestPipeline {
 
   private async checkRequestDeduplication(
     chatBody: ChatBody,
-    user: Session['user']
+    user: Session['user'],
   ): Promise<{ isDuplicate: boolean; cachedResult?: any }> {
     if (!this.config.enableCaching) {
       return { isDuplicate: false };
@@ -417,7 +449,8 @@ export class AgentRequestPipeline {
     const requestHash = this.generateRequestHash(chatBody, user);
     const cached = this.requestCache.get(requestHash);
 
-    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) { // 5 minute cache
+    if (cached && Date.now() - cached.timestamp < 5 * 60 * 1000) {
+      // 5 minute cache
       console.log('Request deduplication cache hit', {
         requestHash,
         cacheAge: Date.now() - cached.timestamp,
@@ -436,7 +469,7 @@ export class AgentRequestPipeline {
     chatBody: ChatBody,
     openai: AzureOpenAI,
     user: Session['user'],
-    modelId: string
+    modelId: string,
   ): Promise<IntentAnalysisResult> {
     const context = this.buildIntentAnalysisContext(chatBody, user);
     return await analyzeUserIntent(context, openai, modelId, user);
@@ -445,14 +478,17 @@ export class AgentRequestPipeline {
   private async selectAndConfigureAgent(
     intentResult: IntentAnalysisResult | undefined,
     chatBody: ChatBody,
-    user: Session['user']
+    user: Session['user'],
   ): Promise<AgentExecutionRequest> {
     const settingsService = getAgentSettingsService();
     const agentSettings = settingsService.getAgentSettings();
 
     // Determine agent type
     let agentType: AgentType;
-    if (intentResult && agentSettings.enabledAgentTypes.includes(intentResult.recommendedAgent)) {
+    if (
+      intentResult &&
+      agentSettings.enabledAgentTypes.includes(intentResult.recommendedAgent)
+    ) {
       agentType = intentResult.recommendedAgent;
     } else {
       agentType = this.selectFallbackAgent(agentSettings);
@@ -466,11 +502,11 @@ export class AgentRequestPipeline {
       agentType,
       context: {
         query: this.extractQueryFromChatBody(chatBody),
-        model: { 
-          id: chatBody.model.id, 
+        model: {
+          id: chatBody.model.id,
           name: chatBody.model.name,
           maxLength: chatBody.model.maxLength || 4000,
-          tokenLimit: chatBody.model.tokenLimit || 4000
+          tokenLimit: chatBody.model.tokenLimit || 4000,
         },
         messages: chatBody.messages || [],
         user: user,
@@ -479,7 +515,7 @@ export class AgentRequestPipeline {
           sessionId: this.generateSessionId(user),
           parameters: intentResult?.parameters || {},
           conversationHistory: this.extractConversationHistory(chatBody),
-        }
+        },
       },
       config: {
         timeout: agentConfig.timeout,
@@ -489,12 +525,14 @@ export class AgentRequestPipeline {
     return executionRequest;
   }
 
-  private async executeAgent(request: AgentExecutionRequest): Promise<AgentExecutionResult> {
+  private async executeAgent(
+    request: AgentExecutionRequest,
+  ): Promise<AgentExecutionResult> {
     return await executeAgentRequest(request);
   }
 
   private async executeFallbackAgent(
-    originalRequest: AgentExecutionRequest
+    originalRequest: AgentExecutionRequest,
   ): Promise<AgentExecutionResult> {
     const fallbackRequest: AgentExecutionRequest = {
       ...originalRequest,
@@ -518,7 +556,7 @@ export class AgentRequestPipeline {
   private async processResponse(
     agentResult: AgentExecutionResult,
     intentResult: IntentAnalysisResult | undefined,
-    chatBody: ChatBody
+    chatBody: ChatBody,
   ): Promise<AgentResponse> {
     // Add any response post-processing here
     // For now, just return the agent response
@@ -528,7 +566,7 @@ export class AgentRequestPipeline {
   private async cacheResult(
     chatBody: ChatBody,
     user: Session['user'],
-    response: AgentResponse
+    response: AgentResponse,
   ): Promise<void> {
     const requestHash = this.generateRequestHash(chatBody, user);
     this.requestCache.set(requestHash, {
@@ -546,21 +584,21 @@ export class AgentRequestPipeline {
   private async recordMetrics(
     intentResult: IntentAnalysisResult | undefined,
     agentResult: AgentExecutionResult,
-    startTime: number
+    startTime: number,
   ): Promise<void> {
     if (intentResult) {
       const responseTime = Date.now() - startTime;
       recordIntentAnalysisPerformance(
         intentResult.recommendedAgent,
         agentResult.response.success,
-        responseTime
+        responseTime,
       );
     }
   }
 
   private buildIntentAnalysisContext(
     chatBody: ChatBody,
-    user: Session['user']
+    user: Session['user'],
   ): IntentAnalysisContext {
     return {
       query: this.extractQueryFromChatBody(chatBody),
@@ -580,14 +618,14 @@ export class AgentRequestPipeline {
 
   private extractQueryFromChatBody(chatBody: ChatBody): string {
     const lastMessage = chatBody.messages[chatBody.messages.length - 1];
-    
+
     if (typeof lastMessage.content === 'string') {
       return lastMessage.content;
     }
 
     if (Array.isArray(lastMessage.content)) {
       const contentArray = lastMessage.content as any[];
-      const textContent = contentArray.find(item => item.type === 'text');
+      const textContent = contentArray.find((item) => item.type === 'text');
       return textContent ? textContent.text : '';
     }
 
@@ -595,19 +633,19 @@ export class AgentRequestPipeline {
   }
 
   private extractConversationHistory(chatBody: ChatBody): string[] {
-    return chatBody.messages
-      .slice(-5)
-      .map(msg => {
-        if (typeof msg.content === 'string') {
-          return `${msg.role}: ${msg.content}`;
-        }
-        if (Array.isArray(msg.content)) {
-          const contentArray = msg.content as any[];
-          const textContent = contentArray.find(item => item.type === 'text');
-          return textContent ? `${msg.role}: ${textContent.text}` : `${msg.role}: [non-text content]`;
-        }
-        return `${msg.role}: [complex content]`;
-      });
+    return chatBody.messages.slice(-5).map((msg) => {
+      if (typeof msg.content === 'string') {
+        return `${msg.role}: ${msg.content}`;
+      }
+      if (Array.isArray(msg.content)) {
+        const contentArray = msg.content as any[];
+        const textContent = contentArray.find((item) => item.type === 'text');
+        return textContent
+          ? `${msg.role}: ${textContent.text}`
+          : `${msg.role}: [non-text content]`;
+      }
+      return `${msg.role}: [complex content]`;
+    });
   }
 
   private selectFallbackAgent(agentSettings: AgentSettings): AgentType {
@@ -630,7 +668,10 @@ export class AgentRequestPipeline {
     return `${user.id || 'anonymous'}-${Date.now()}-${randomPart}`;
   }
 
-  private generateRequestHash(chatBody: ChatBody, user: Session['user']): string {
+  private generateRequestHash(
+    chatBody: ChatBody,
+    user: Session['user'],
+  ): string {
     const query = this.extractQueryFromChatBody(chatBody);
     const hashData = {
       query: query.toLowerCase().trim(),
@@ -638,12 +679,12 @@ export class AgentRequestPipeline {
       userId: user.id || 'anonymous',
       messageCount: chatBody.messages.length,
     };
-    
+
     const str = JSON.stringify(hashData, Object.keys(hashData).sort());
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
       const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return Math.abs(hash).toString(36);
@@ -653,7 +694,7 @@ export class AgentRequestPipeline {
     cachedResult: any,
     stages: PipelineStageResult[],
     pipelineId: string,
-    startTime: number
+    startTime: number,
   ): PipelineExecutionResult {
     return {
       success: true,
@@ -665,7 +706,7 @@ export class AgentRequestPipeline {
         timestamp: new Date(),
         user: {} as Session['user'],
         modelId: '',
-        stagesExecuted: stages.map(s => s.stage),
+        stagesExecuted: stages.map((s) => s.stage),
         fallbackUsed: false,
         cacheHit: true,
       },
@@ -679,7 +720,7 @@ export class AgentRequestPipeline {
     agentType: AgentType | undefined,
     stages: PipelineStageResult[],
     startTime: number,
-    error?: Error
+    error?: Error,
   ): PipelineMetadata {
     return {
       pipelineId,
@@ -687,9 +728,11 @@ export class AgentRequestPipeline {
       user,
       modelId,
       agentType,
-      stagesExecuted: stages.map(s => s.stage),
-      fallbackUsed: stages.some(s => s.stage === 'fallback_execution'),
-      cacheHit: stages.some(s => s.stage === 'deduplication' && s.data?.isDuplicate),
+      stagesExecuted: stages.map((s) => s.stage),
+      fallbackUsed: stages.some((s) => s.stage === 'fallback_execution'),
+      cacheHit: stages.some(
+        (s) => s.stage === 'deduplication' && s.data?.isDuplicate,
+      ),
     };
   }
 }
@@ -697,7 +740,9 @@ export class AgentRequestPipeline {
 /**
  * Convenience function to get the singleton pipeline instance
  */
-export function getAgentRequestPipeline(config?: Partial<PipelineConfig>): AgentRequestPipeline {
+export function getAgentRequestPipeline(
+  config?: Partial<PipelineConfig>,
+): AgentRequestPipeline {
   return AgentRequestPipeline.getInstance(config);
 }
 
@@ -708,7 +753,7 @@ export async function processAgentRequest(
   chatBody: ChatBody,
   openai: AzureOpenAI,
   user: Session['user'],
-  modelId: string
+  modelId: string,
 ): Promise<PipelineExecutionResult> {
   const pipeline = getAgentRequestPipeline();
   return await pipeline.processRequest(chatBody, openai, user, modelId);

@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { getEndpoint } from '@/utils/app/api';
 
+import { AgentType } from '@/types/agent';
 import {
   ChatBody,
   ChatRequestResult,
@@ -13,7 +14,6 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
-import { AgentType } from '@/types/agent';
 
 const isComplexContent = (
   content: (TextMessageContent | ImageMessageContent | FileMessageContent)[],

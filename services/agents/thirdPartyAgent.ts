@@ -1,13 +1,17 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
-
 import {
   AgentConfig,
   AgentExecutionContext,
-  AgentResponse,
   AgentExecutionEnvironment,
+  AgentResponse,
 } from '@/types/agent';
 
-import { BaseAgent, AgentCreationError, AgentExecutionError } from './baseAgent';
+import {
+  AgentCreationError,
+  AgentExecutionError,
+  BaseAgent,
+} from './baseAgent';
+
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 /**
  * Supported authentication methods for third-party services
@@ -75,20 +79,20 @@ class RateLimiter {
     const oneMinuteAgo = now - 60000;
 
     // Clean old requests
-    this.requests = this.requests.filter(time => time > oneMinuteAgo);
+    this.requests = this.requests.filter((time) => time > oneMinuteAgo);
 
     // Check rate limits
-    const recentRequests = this.requests.filter(time => time > oneSecondAgo);
+    const recentRequests = this.requests.filter((time) => time > oneSecondAgo);
     const requestsInLastMinute = this.requests.length;
 
     if (recentRequests.length >= this.requestsPerSecond) {
       const waitTime = 1000 - (now - recentRequests[0]);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
     }
 
     if (requestsInLastMinute >= this.requestsPerMinute) {
       const waitTime = 60000 - (now - this.requests[0]);
-      await new Promise(resolve => setTimeout(resolve, waitTime));
+      await new Promise((resolve) => setTimeout(resolve, waitTime));
     }
 
     this.requests.push(now);
@@ -117,7 +121,7 @@ export class ThirdPartyAgent extends BaseAgent {
 
     // Initialize service configuration from agent parameters
     this.serviceConfig = this.parseServiceConfig(config.parameters || {});
-    
+
     // Create HTTP client
     this.httpClient = this.createHttpClient();
 
@@ -145,7 +149,9 @@ export class ThirdPartyAgent extends BaseAgent {
         timeout: this.serviceConfig.timeout,
       });
     } catch (error) {
-      const errorMessage = `Failed to initialize ThirdPartyAgent: ${error instanceof Error ? error.message : String(error)}`;
+      const errorMessage = `Failed to initialize ThirdPartyAgent: ${
+        error instanceof Error ? error.message : String(error)
+      }`;
       this.logError(errorMessage, error as Error, {
         agentId: this.config?.id,
         baseUrl: this.serviceConfig?.baseUrl,
@@ -162,7 +168,7 @@ export class ThirdPartyAgent extends BaseAgent {
     try {
       // Parse request from context
       const apiRequest = this.parseRequestFromContext(context);
-      
+
       // Apply rate limiting if configured
       if (this.rateLimiter) {
         await this.rateLimiter.waitForRateLimit();
@@ -170,7 +176,7 @@ export class ThirdPartyAgent extends BaseAgent {
 
       // Execute API request with retry logic
       const response = await this.executeRequestWithRetry(apiRequest);
-      
+
       const processingTime = Date.now() - startTime;
 
       // Process and format response
@@ -184,13 +190,15 @@ export class ThirdPartyAgent extends BaseAgent {
         metadata: {
           processingTime,
           confidence: this.calculateResponseConfidence(response),
-          toolResults: [{
-            requestUrl: `${this.serviceConfig.baseUrl}${apiRequest.endpoint}`,
-            method: apiRequest.method,
-            statusCode: response.status,
-            responseTime: processingTime,
-            success: response.status >= 200 && response.status < 300,
-          }],
+          toolResults: [
+            {
+              requestUrl: `${this.serviceConfig.baseUrl}${apiRequest.endpoint}`,
+              method: apiRequest.method,
+              statusCode: response.status,
+              responseTime: processingTime,
+              success: response.status >= 200 && response.status < 300,
+            },
+          ],
           agentMetadata: {
             serviceUrl: this.serviceConfig.baseUrl,
             authMethod: this.serviceConfig.authMethod,
@@ -218,7 +226,9 @@ export class ThirdPartyAgent extends BaseAgent {
       });
 
       throw new AgentExecutionError(
-        `Third-party service request failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Third-party service request failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
         {
           agentId: this.config.id,
           processingTime,
@@ -245,7 +255,9 @@ export class ThirdPartyAgent extends BaseAgent {
     // Validate authentication configuration
     if (this.serviceConfig.authMethod !== AuthenticationMethod.NONE) {
       if (!this.serviceConfig.credentials) {
-        errors.push('Credentials are required for the selected authentication method');
+        errors.push(
+          'Credentials are required for the selected authentication method',
+        );
       } else {
         switch (this.serviceConfig.authMethod) {
           case AuthenticationMethod.API_KEY:
@@ -255,12 +267,19 @@ export class ThirdPartyAgent extends BaseAgent {
             break;
           case AuthenticationMethod.BEARER_TOKEN:
             if (!this.serviceConfig.credentials.bearerToken) {
-              errors.push('Bearer token is required for bearer token authentication');
+              errors.push(
+                'Bearer token is required for bearer token authentication',
+              );
             }
             break;
           case AuthenticationMethod.BASIC_AUTH:
-            if (!this.serviceConfig.credentials.username || !this.serviceConfig.credentials.password) {
-              errors.push('Username and password are required for basic authentication');
+            if (
+              !this.serviceConfig.credentials.username ||
+              !this.serviceConfig.credentials.password
+            ) {
+              errors.push(
+                'Username and password are required for basic authentication',
+              );
             }
             break;
         }
@@ -268,12 +287,18 @@ export class ThirdPartyAgent extends BaseAgent {
     }
 
     // Validate timeout
-    if (this.serviceConfig.timeout < 1000 || this.serviceConfig.timeout > 300000) {
+    if (
+      this.serviceConfig.timeout < 1000 ||
+      this.serviceConfig.timeout > 300000
+    ) {
       errors.push('Timeout must be between 1 second and 5 minutes');
     }
 
     // Validate retry configuration
-    if (this.serviceConfig.retryAttempts < 0 || this.serviceConfig.retryAttempts > 10) {
+    if (
+      this.serviceConfig.retryAttempts < 0 ||
+      this.serviceConfig.retryAttempts > 10
+    ) {
       errors.push('Retry attempts must be between 0 and 10');
     }
 
@@ -330,14 +355,16 @@ export class ThirdPartyAgent extends BaseAgent {
    * Private helper methods
    */
 
-  private parseServiceConfig(parameters: Record<string, any>): ThirdPartyServiceConfig {
+  private parseServiceConfig(
+    parameters: Record<string, any>,
+  ): ThirdPartyServiceConfig {
     return {
       baseUrl: parameters.baseUrl || '',
       authMethod: parameters.authMethod || AuthenticationMethod.NONE,
       credentials: parameters.credentials || {},
       defaultHeaders: parameters.defaultHeaders || {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       timeout: parameters.timeout || 30000,
       retryAttempts: parameters.retryAttempts || 3,
@@ -419,17 +446,19 @@ export class ThirdPartyAgent extends BaseAgent {
         if (credentials.bearerToken) {
           config.headers = {
             ...config.headers,
-            'Authorization': `Bearer ${credentials.bearerToken}`,
+            Authorization: `Bearer ${credentials.bearerToken}`,
           };
         }
         break;
 
       case AuthenticationMethod.BASIC_AUTH:
         if (credentials.username && credentials.password) {
-          const auth = Buffer.from(`${credentials.username}:${credentials.password}`).toString('base64');
+          const auth = Buffer.from(
+            `${credentials.username}:${credentials.password}`,
+          ).toString('base64');
           config.headers = {
             ...config.headers,
-            'Authorization': `Basic ${auth}`,
+            Authorization: `Basic ${auth}`,
           };
         }
         break;
@@ -466,14 +495,22 @@ export class ThirdPartyAgent extends BaseAgent {
       });
     } catch (error) {
       // Network errors are more concerning than HTTP errors
-      if (error instanceof Error && ('code' in error) && (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND')) {
-        throw new AgentCreationError(`Cannot connect to service: ${error.message}`);
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        (error.code === 'ECONNREFUSED' || error.code === 'ENOTFOUND')
+      ) {
+        throw new AgentCreationError(
+          `Cannot connect to service: ${error.message}`,
+        );
       }
       // Other errors might be expected (e.g., 404, authentication required)
     }
   }
 
-  private parseRequestFromContext(context: AgentExecutionContext): ApiRequestConfig {
+  private parseRequestFromContext(
+    context: AgentExecutionContext,
+  ): ApiRequestConfig {
     // This is a simplified implementation
     // In practice, you might parse the query to extract endpoint, method, etc.
     // or use predefined request templates
@@ -488,10 +525,16 @@ export class ThirdPartyAgent extends BaseAgent {
     };
   }
 
-  private async executeRequestWithRetry(request: ApiRequestConfig): Promise<AxiosResponse> {
+  private async executeRequestWithRetry(
+    request: ApiRequestConfig,
+  ): Promise<AxiosResponse> {
     let lastError: any;
 
-    for (let attempt = 0; attempt <= this.serviceConfig.retryAttempts; attempt++) {
+    for (
+      let attempt = 0;
+      attempt <= this.serviceConfig.retryAttempts;
+      attempt++
+    ) {
       try {
         const response = await this.httpClient.request({
           url: request.endpoint,
@@ -507,10 +550,18 @@ export class ThirdPartyAgent extends BaseAgent {
         lastError = error;
 
         // Don't retry on client errors (4xx) except for specific cases
-        if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'status' in error.response) {
+        if (
+          error &&
+          typeof error === 'object' &&
+          'response' in error &&
+          error.response &&
+          typeof error.response === 'object' &&
+          'status' in error.response
+        ) {
           const status = (error.response as any).status;
           if (status >= 400 && status < 500) {
-            if (status !== 429) { // Retry on rate limiting
+            if (status !== 429) {
+              // Retry on rate limiting
               break;
             }
           }
@@ -519,7 +570,7 @@ export class ThirdPartyAgent extends BaseAgent {
         // Wait before retry
         if (attempt < this.serviceConfig.retryAttempts) {
           const delay = this.serviceConfig.retryDelay * Math.pow(2, attempt); // Exponential backoff
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
         }
       }
     }
@@ -527,20 +578,24 @@ export class ThirdPartyAgent extends BaseAgent {
     throw lastError;
   }
 
-  private formatApiResponse(response: AxiosResponse, request: ApiRequestConfig): string {
+  private formatApiResponse(
+    response: AxiosResponse,
+    request: ApiRequestConfig,
+  ): string {
     let content = `## Third-Party Service Response\n\n`;
-    
+
     content += `**Service:** ${this.serviceConfig.baseUrl}\n`;
     content += `**Endpoint:** ${request.method} ${request.endpoint}\n`;
     content += `**Status:** ${response.status} ${response.statusText}\n\n`;
 
     if (response.data) {
       content += `**Response Data:**\n`;
-      
+
       if (typeof response.data === 'string') {
         content += '```\n' + response.data + '\n```\n\n';
       } else {
-        content += '```json\n' + JSON.stringify(response.data, null, 2) + '\n```\n\n';
+        content +=
+          '```json\n' + JSON.stringify(response.data, null, 2) + '\n```\n\n';
       }
     }
 

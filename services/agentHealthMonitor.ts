@@ -1,18 +1,18 @@
 import { Session } from 'next-auth';
-import { AzureOpenAI } from 'openai';
 
-import { 
-  AgentType, 
-  AgentExecutionRequest, 
-  AgentExecutionResult, 
-  BaseAgentInstance 
+import {
+  AgentExecutionRequest,
+  AgentExecutionResult,
+  AgentType,
+  BaseAgentInstance,
 } from '@/types/agent';
 
-import { getAgentFactory } from './agentFactory';
-import { getAgentRegistry } from './agentRegistry';
-import { getAgentPerformanceOptimizer } from './agentPerformanceOptimizer';
 import { getAgentErrorHandlingService } from './agentErrorHandling';
+import { getAgentFactory } from './agentFactory';
+import { getAgentPerformanceOptimizer } from './agentPerformanceOptimizer';
+import { getAgentRegistry } from './agentRegistry';
 
+import { AzureOpenAI } from 'openai';
 
 /**
  * Health status levels
@@ -21,7 +21,7 @@ export enum HealthStatus {
   HEALTHY = 'healthy',
   DEGRADED = 'degraded',
   UNHEALTHY = 'unhealthy',
-  UNKNOWN = 'unknown'
+  UNKNOWN = 'unknown',
 }
 
 /**
@@ -125,7 +125,9 @@ interface HealthCheckTest {
   description: string;
   timeout: number;
   critical: boolean;
-  execute: (agentType: AgentType) => Promise<{ success: boolean; message?: string; metadata?: any }>;
+  execute: (
+    agentType: AgentType,
+  ) => Promise<{ success: boolean; message?: string; metadata?: any }>;
 }
 
 /**
@@ -134,7 +136,7 @@ interface HealthCheckTest {
  */
 export class AgentHealthMonitorService {
   private static instance: AgentHealthMonitorService | null = null;
-  
+
   private config: HealthMonitorConfig;
   private healthResults: Map<AgentType, AgentHealthResult>;
   private monitoringInterval: NodeJS.Timeout | null = null;
@@ -143,7 +145,6 @@ export class AgentHealthMonitorService {
   private recommendations: HealthRecommendation[];
 
   private constructor() {
-    
     this.config = this.getDefaultConfig();
     this.healthResults = new Map();
     this.alerts = [];
@@ -209,8 +210,8 @@ export class AgentHealthMonitorService {
       const availableAgents = factory.getRegisteredAgentTypes();
 
       // Perform health checks for each agent type
-      const healthCheckPromises = availableAgents.map(agentType =>
-        this.performAgentHealthCheck(agentType)
+      const healthCheckPromises = availableAgents.map((agentType) =>
+        this.performAgentHealthCheck(agentType),
       );
 
       const agentHealthResults = await Promise.allSettled(healthCheckPromises);
@@ -223,7 +224,7 @@ export class AgentHealthMonitorService {
 
       agentHealthResults.forEach((result, index) => {
         const agentType = availableAgents[index];
-        
+
         if (result.status === 'fulfilled') {
           agentStatuses.set(agentType, result.value);
           this.healthResults.set(agentType, result.value);
@@ -269,7 +270,11 @@ export class AgentHealthMonitorService {
       });
 
       // Determine overall system status
-      const overallStatus = this.calculateOverallStatus(healthyCount, degradedCount, unhealthyCount);
+      const overallStatus = this.calculateOverallStatus(
+        healthyCount,
+        degradedCount,
+        unhealthyCount,
+      );
 
       // Generate system metrics
       const systemMetrics = await this.collectSystemMetrics();
@@ -290,7 +295,7 @@ export class AgentHealthMonitorService {
           unhealthyAgents: unhealthyCount,
         },
         recommendations: this.recommendations.slice(0, 10), // Top 10 recommendations
-        alerts: this.alerts.filter(alert => !alert.acknowledged).slice(0, 20), // Recent unacknowledged alerts
+        alerts: this.alerts.filter((alert) => !alert.acknowledged).slice(0, 20), // Recent unacknowledged alerts
       };
 
       console.log('System health check completed', {
@@ -315,7 +320,9 @@ export class AgentHealthMonitorService {
   /**
    * Perform health check for a specific agent type
    */
-  public async performAgentHealthCheck(agentType: AgentType): Promise<AgentHealthResult> {
+  public async performAgentHealthCheck(
+    agentType: AgentType,
+  ): Promise<AgentHealthResult> {
     const startTime = Date.now();
 
     try {
@@ -345,26 +352,36 @@ export class AgentHealthMonitorService {
 
       // Run health check tests
       const testResults = await this.runHealthCheckTests(agentType);
-      
+
       // Aggregate test results
       const totalTests = testResults.length;
-      const passedTests = testResults.filter(test => test.success).length;
-      const failedCriticalTests = testResults.filter(test => !test.success && test.critical).length;
+      const passedTests = testResults.filter((test) => test.success).length;
+      const failedCriticalTests = testResults.filter(
+        (test) => !test.success && test.critical,
+      ).length;
 
       result.successRate = totalTests > 0 ? passedTests / totalTests : 0;
       result.errorCount = totalTests - passedTests;
 
       // Set specific check results
-      result.details.connectivity = testResults.find(t => t.name === 'connectivity')?.success || false;
-      result.details.authentication = testResults.find(t => t.name === 'authentication')?.success || false;
-      result.details.resourceAvailability = testResults.find(t => t.name === 'resource_availability')?.success || false;
+      result.details.connectivity =
+        testResults.find((t) => t.name === 'connectivity')?.success || false;
+      result.details.authentication =
+        testResults.find((t) => t.name === 'authentication')?.success || false;
+      result.details.resourceAvailability =
+        testResults.find((t) => t.name === 'resource_availability')?.success ||
+        false;
 
       // Get performance metrics from optimizer
       if (this.config.enablePerformanceMonitoring) {
         const optimizer = getAgentPerformanceOptimizer();
         const perfMetrics = optimizer.getPerformanceMetrics(agentType);
-        
-        if (perfMetrics && typeof perfMetrics === 'object' && 'averageResponseTime' in perfMetrics) {
+
+        if (
+          perfMetrics &&
+          typeof perfMetrics === 'object' &&
+          'averageResponseTime' in perfMetrics
+        ) {
           result.details.performanceMetrics = {
             averageResponseTime: perfMetrics.averageResponseTime,
             throughput: perfMetrics.throughput,
@@ -378,20 +395,26 @@ export class AgentHealthMonitorService {
         result.status = HealthStatus.UNHEALTHY;
       } else if (result.successRate < this.config.successRateThreshold) {
         result.status = HealthStatus.DEGRADED;
-      } else if (result.details.performanceMetrics.averageResponseTime > this.config.timeoutThreshold) {
+      } else if (
+        result.details.performanceMetrics.averageResponseTime >
+        this.config.timeoutThreshold
+      ) {
         result.status = HealthStatus.DEGRADED;
       } else {
         result.status = HealthStatus.HEALTHY;
       }
 
       // Record failed tests
-      const failedTests = testResults.filter(test => !test.success);
+      const failedTests = testResults.filter((test) => !test.success);
       if (failedTests.length > 0) {
-        result.details.lastError = failedTests.map(test => test.message || test.name).join('; ');
+        result.details.lastError = failedTests
+          .map((test) => test.message || test.name)
+          .join('; ');
       }
 
       // Generate agent-specific recommendations
-      result.details.recommendations = this.generateAgentRecommendations(result);
+      result.details.recommendations =
+        this.generateAgentRecommendations(result);
 
       result.responseTime = Date.now() - startTime;
 
@@ -459,7 +482,11 @@ export class AgentHealthMonitorService {
       }
     }
 
-    const overallStatus = this.calculateOverallStatus(healthyCount, degradedCount, unhealthyCount);
+    const overallStatus = this.calculateOverallStatus(
+      healthyCount,
+      degradedCount,
+      unhealthyCount,
+    );
 
     return {
       overallStatus,
@@ -472,10 +499,11 @@ export class AgentHealthMonitorService {
         unhealthyAgents: unhealthyCount,
         systemLoad: 0, // Would be calculated from actual metrics
         memoryUsage: 0,
-        errorRate: totalAgents > 0 ? (degradedCount + unhealthyCount) / totalAgents : 0,
+        errorRate:
+          totalAgents > 0 ? (degradedCount + unhealthyCount) / totalAgents : 0,
       },
       recommendations: this.recommendations.slice(0, 10),
-      alerts: this.alerts.filter(alert => !alert.acknowledged).slice(0, 20),
+      alerts: this.alerts.filter((alert) => !alert.acknowledged).slice(0, 20),
     };
   }
 
@@ -492,7 +520,7 @@ export class AgentHealthMonitorService {
    */
   public configure(config: Partial<HealthMonitorConfig>): void {
     this.config = { ...this.config, ...config };
-    
+
     console.log('Health monitor configured', {
       config: this.config,
     });
@@ -508,7 +536,7 @@ export class AgentHealthMonitorService {
    * Acknowledge an alert
    */
   public acknowledgeAlert(alertId: string): void {
-    const alert = this.alerts.find(a => a.id === alertId);
+    const alert = this.alerts.find((a) => a.id === alertId);
     if (alert) {
       alert.acknowledged = true;
       console.log('Alert acknowledged', { alertId, alert: alert.title });
@@ -526,7 +554,7 @@ export class AgentHealthMonitorService {
    * Get active alerts
    */
   public getActiveAlerts(): HealthAlert[] {
-    return this.alerts.filter(alert => !alert.acknowledged);
+    return this.alerts.filter((alert) => !alert.acknowledged);
   }
 
   /**
@@ -537,18 +565,18 @@ export class AgentHealthMonitorService {
       console.log('Attempting agent recovery', { agentType });
 
       const factory = getAgentFactory();
-      
+
       // Try to restart/reinitialize the agent
       const poolStats = factory.getAllPoolStats().get(agentType);
       if (poolStats && poolStats.totalAgents > 0) {
         // Clean up existing instances
         await factory.cleanup();
-        
+
         // Force health check after cleanup
         const healthResult = await this.performAgentHealthCheck(agentType);
-        
+
         const recovered = healthResult.status === HealthStatus.HEALTHY;
-        
+
         console.log('Agent recovery attempt completed', {
           agentType,
           recovered,
@@ -556,7 +584,12 @@ export class AgentHealthMonitorService {
         });
 
         if (recovered) {
-          this.createAlert('info', 'Agent Recovery Successful', `${agentType} has been successfully recovered and is now healthy.`, agentType);
+          this.createAlert(
+            'info',
+            'Agent Recovery Successful',
+            `${agentType} has been successfully recovered and is now healthy.`,
+            agentType,
+          );
         }
 
         return recovered;
@@ -573,15 +606,29 @@ export class AgentHealthMonitorService {
    * Private helper methods
    */
 
-  private async runHealthCheckTests(agentType: AgentType): Promise<Array<{ name: string; success: boolean; message?: string; critical: boolean }>> {
-    const results: Array<{ name: string; success: boolean; message?: string; critical: boolean }> = [];
+  private async runHealthCheckTests(
+    agentType: AgentType,
+  ): Promise<
+    Array<{
+      name: string;
+      success: boolean;
+      message?: string;
+      critical: boolean;
+    }>
+  > {
+    const results: Array<{
+      name: string;
+      success: boolean;
+      message?: string;
+      critical: boolean;
+    }> = [];
 
     for (const test of this.healthCheckTests) {
       try {
         const testResult = await Promise.race([
           test.execute(agentType),
           new Promise<{ success: boolean; message: string }>((_, reject) =>
-            setTimeout(() => reject(new Error('Test timeout')), test.timeout)
+            setTimeout(() => reject(new Error('Test timeout')), test.timeout),
           ),
         ]);
 
@@ -617,7 +664,9 @@ export class AgentHealthMonitorService {
             const poolStats = factory.getAllPoolStats().get(agentType);
             return {
               success: poolStats !== undefined && poolStats.totalAgents > 0,
-              message: poolStats ? `${poolStats.totalAgents} agents available` : 'No agents available',
+              message: poolStats
+                ? `${poolStats.totalAgents} agents available`
+                : 'No agents available',
             };
           } catch (error) {
             return {
@@ -640,7 +689,9 @@ export class AgentHealthMonitorService {
             const agentMetadata = registry.getAgentMetadata(agentType);
             return {
               success: agentMetadata !== undefined,
-              message: agentMetadata ? 'Agent registered and accessible' : 'Agent not registered',
+              message: agentMetadata
+                ? 'Agent registered and accessible'
+                : 'Agent not registered',
             };
           } catch (error) {
             return {
@@ -660,10 +711,12 @@ export class AgentHealthMonitorService {
             const factory = getAgentFactory();
             const poolStatsData = factory.getAllPoolStats().get(agentType);
             const hasCapacity = poolStatsData && poolStatsData.totalAgents < 10; // Assuming max 10 agents per pool
-            
+
             return {
               success: hasCapacity !== false,
-              message: hasCapacity ? 'Resources available' : 'Resource capacity reached',
+              message: hasCapacity
+                ? 'Resources available'
+                : 'Resource capacity reached',
             };
           } catch (error) {
             return {
@@ -682,16 +735,22 @@ export class AgentHealthMonitorService {
           try {
             const optimizer = getAgentPerformanceOptimizer();
             const metrics = optimizer.getPerformanceMetrics(agentType);
-            
-            if (metrics && typeof metrics === 'object' && 'averageResponseTime' in metrics) {
-              const performanceGood = metrics.averageResponseTime < this.config.alertThresholds.responseTime;
+
+            if (
+              metrics &&
+              typeof metrics === 'object' &&
+              'averageResponseTime' in metrics
+            ) {
+              const performanceGood =
+                metrics.averageResponseTime <
+                this.config.alertThresholds.responseTime;
               return {
                 success: performanceGood,
                 message: `Average response time: ${metrics.averageResponseTime}ms`,
                 metadata: metrics,
               };
             }
-            
+
             return {
               success: true,
               message: 'No performance data available',
@@ -714,8 +773,9 @@ export class AgentHealthMonitorService {
             const errorHandler = getAgentErrorHandlingService();
             const stats = errorHandler.getErrorStatistics();
             const agentErrorCount = stats.errorsByAgent[agentType] || 0;
-            const errorRateAcceptable = agentErrorCount < this.config.errorThreshold;
-            
+            const errorRateAcceptable =
+              agentErrorCount < this.config.errorThreshold;
+
             return {
               success: errorRateAcceptable,
               message: `Error count: ${agentErrorCount}`,
@@ -731,14 +791,18 @@ export class AgentHealthMonitorService {
     ];
   }
 
-  private calculateOverallStatus(healthy: number, degraded: number, unhealthy: number): HealthStatus {
+  private calculateOverallStatus(
+    healthy: number,
+    degraded: number,
+    unhealthy: number,
+  ): HealthStatus {
     const total = healthy + degraded + unhealthy;
-    
+
     if (total === 0) return HealthStatus.UNKNOWN;
-    
+
     const healthyPercentage = healthy / total;
     const unhealthyPercentage = unhealthy / total;
-    
+
     if (unhealthyPercentage > 0.3) {
       return HealthStatus.UNHEALTHY;
     } else if (healthyPercentage < 0.7) {
@@ -756,10 +820,10 @@ export class AgentHealthMonitorService {
     try {
       // In a real implementation, these would collect actual system metrics
       // For now, we'll use placeholder values or derive from available data
-      
+
       const optimizer = getAgentPerformanceOptimizer();
       const cacheStats = optimizer.getCacheStatistics();
-      
+
       return {
         systemLoad: Math.random() * 100, // Placeholder
         memoryUsage: cacheStats.memoryUsage,
@@ -775,7 +839,9 @@ export class AgentHealthMonitorService {
     }
   }
 
-  private async generateHealthRecommendations(agentStatuses: Map<AgentType, AgentHealthResult>): Promise<void> {
+  private async generateHealthRecommendations(
+    agentStatuses: Map<AgentType, AgentHealthResult>,
+  ): Promise<void> {
     this.recommendations = [];
 
     for (const [agentType, health] of agentStatuses.entries()) {
@@ -804,7 +870,10 @@ export class AgentHealthMonitorService {
       }
 
       // Performance-based recommendations
-      if (health.details.performanceMetrics.averageResponseTime > this.config.alertThresholds.responseTime) {
+      if (
+        health.details.performanceMetrics.averageResponseTime >
+        this.config.alertThresholds.responseTime
+      ) {
         this.recommendations.push({
           id: `perf-${agentType}`,
           severity: 'warning',
@@ -821,7 +890,7 @@ export class AgentHealthMonitorService {
     // System-wide recommendations
     const optimizer = getAgentPerformanceOptimizer();
     const perfRecommendations = optimizer.getOptimizationRecommendations();
-    
+
     for (const perfRec of perfRecommendations.slice(0, 3)) {
       this.recommendations.push({
         id: `perf-opt-${perfRec.id}`,
@@ -838,7 +907,11 @@ export class AgentHealthMonitorService {
 
   private async checkAlertConditions(
     agentStatuses: Map<AgentType, AgentHealthResult>,
-    systemMetrics: { systemLoad: number; memoryUsage: number; errorRate: number }
+    systemMetrics: {
+      systemLoad: number;
+      memoryUsage: number;
+      errorRate: number;
+    },
   ): Promise<void> {
     // Check for new alert conditions
     const newAlerts: HealthAlert[] = [];
@@ -847,9 +920,12 @@ export class AgentHealthMonitorService {
     for (const [agentType, health] of agentStatuses.entries()) {
       if (health.status === HealthStatus.UNHEALTHY) {
         const existingAlert = this.alerts.find(
-          a => a.agentType === agentType && a.level === 'critical' && !a.acknowledged
+          (a) =>
+            a.agentType === agentType &&
+            a.level === 'critical' &&
+            !a.acknowledged,
         );
-        
+
         if (!existingAlert) {
           newAlerts.push({
             id: `critical-${agentType}-${Date.now()}`,
@@ -860,27 +936,40 @@ export class AgentHealthMonitorService {
             timestamp: new Date(),
             acknowledged: false,
             actionRequired: true,
-            metadata: { healthStatus: health.status, errorCount: health.errorCount },
+            metadata: {
+              healthStatus: health.status,
+              errorCount: health.errorCount,
+            },
           });
         }
       }
 
-      if (health.details.performanceMetrics.errorRate > this.config.alertThresholds.errorRate) {
+      if (
+        health.details.performanceMetrics.errorRate >
+        this.config.alertThresholds.errorRate
+      ) {
         const existingAlert = this.alerts.find(
-          a => a.agentType === agentType && a.level === 'warning' && a.message.includes('error rate')
+          (a) =>
+            a.agentType === agentType &&
+            a.level === 'warning' &&
+            a.message.includes('error rate'),
         );
-        
+
         if (!existingAlert) {
           newAlerts.push({
             id: `error-rate-${agentType}-${Date.now()}`,
             level: 'warning',
             title: `High error rate for ${agentType}`,
-            message: `Warning: Agent ${agentType} has error rate of ${(health.details.performanceMetrics.errorRate * 100).toFixed(1)}%`,
+            message: `Warning: Agent ${agentType} has error rate of ${(
+              health.details.performanceMetrics.errorRate * 100
+            ).toFixed(1)}%`,
             agentType,
             timestamp: new Date(),
             acknowledged: false,
             actionRequired: false,
-            metadata: { errorRate: health.details.performanceMetrics.errorRate },
+            metadata: {
+              errorRate: health.details.performanceMetrics.errorRate,
+            },
           });
         }
       }
@@ -889,15 +978,17 @@ export class AgentHealthMonitorService {
     // System-wide alerts
     if (systemMetrics.systemLoad > this.config.alertThresholds.systemLoad) {
       const existingAlert = this.alerts.find(
-        a => a.level === 'warning' && a.message.includes('system load')
+        (a) => a.level === 'warning' && a.message.includes('system load'),
       );
-      
+
       if (!existingAlert) {
         newAlerts.push({
           id: `system-load-${Date.now()}`,
           level: 'warning',
           title: 'High system load',
-          message: `Warning: System load is at ${systemMetrics.systemLoad.toFixed(1)}%`,
+          message: `Warning: System load is at ${systemMetrics.systemLoad.toFixed(
+            1,
+          )}%`,
           timestamp: new Date(),
           acknowledged: false,
           actionRequired: false,
@@ -938,12 +1029,19 @@ export class AgentHealthMonitorService {
       recommendations.push('Check resource allocation and limits');
     }
 
-    if (health.details.performanceMetrics.averageResponseTime > this.config.timeoutThreshold) {
-      recommendations.push('Consider enabling caching or increasing timeout limits');
+    if (
+      health.details.performanceMetrics.averageResponseTime >
+      this.config.timeoutThreshold
+    ) {
+      recommendations.push(
+        'Consider enabling caching or increasing timeout limits',
+      );
     }
 
     if (health.details.performanceMetrics.errorRate > 0.1) {
-      recommendations.push('Review error logs and implement better error handling');
+      recommendations.push(
+        'Review error logs and implement better error handling',
+      );
     }
 
     if (health.successRate < 0.8) {
@@ -953,7 +1051,12 @@ export class AgentHealthMonitorService {
     return recommendations;
   }
 
-  private createAlert(level: HealthAlert['level'], title: string, message: string, agentType?: AgentType): void {
+  private createAlert(
+    level: HealthAlert['level'],
+    title: string,
+    message: string,
+    agentType?: AgentType,
+  ): void {
     const alert: HealthAlert = {
       id: `${level}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       level,
@@ -966,7 +1069,7 @@ export class AgentHealthMonitorService {
     };
 
     this.alerts.push(alert);
-    
+
     console.log('Health alert created', {
       alertId: alert.id,
       level,
@@ -1030,9 +1133,11 @@ export function getSystemHealthStatus(): SystemHealthStatus {
 /**
  * Convenience function to perform a manual health check
  */
-export async function performHealthCheck(agentType?: AgentType): Promise<SystemHealthStatus | AgentHealthResult> {
+export async function performHealthCheck(
+  agentType?: AgentType,
+): Promise<SystemHealthStatus | AgentHealthResult> {
   const monitor = getAgentHealthMonitor();
-  
+
   if (agentType) {
     return await monitor.performAgentHealthCheck(agentType);
   } else {

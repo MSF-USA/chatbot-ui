@@ -1,12 +1,12 @@
 /**
  * ARIA Labels and Roles Components
- * 
+ *
  * Comprehensive ARIA implementation for enhanced screen reader support
  * and semantic web accessibility. Provides utilities for proper labeling
  * and role assignments throughout the application.
  */
+import React, { useEffect, useRef, useState } from 'react';
 
-import React, { useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 
 /**
@@ -35,17 +35,26 @@ export const ARIAProvider: React.FC<ARIAProviderProps> = ({ children }) => {
   const [labels] = useState<Map<string, string>>(new Map());
   const idCounterRef = useRef(0);
 
-  const registerLabel = React.useCallback((id: string, label: string) => {
-    labels.set(id, label);
-  }, [labels]);
+  const registerLabel = React.useCallback(
+    (id: string, label: string) => {
+      labels.set(id, label);
+    },
+    [labels],
+  );
 
-  const unregisterLabel = React.useCallback((id: string) => {
-    labels.delete(id);
-  }, [labels]);
+  const unregisterLabel = React.useCallback(
+    (id: string) => {
+      labels.delete(id);
+    },
+    [labels],
+  );
 
-  const getLabel = React.useCallback((id: string) => {
-    return labels.get(id);
-  }, [labels]);
+  const getLabel = React.useCallback(
+    (id: string) => {
+      return labels.get(id);
+    },
+    [labels],
+  );
 
   const generateId = React.useCallback((prefix: string = 'aria') => {
     idCounterRef.current += 1;
@@ -59,11 +68,7 @@ export const ARIAProvider: React.FC<ARIAProviderProps> = ({ children }) => {
     generateId,
   };
 
-  return (
-    <ARIAContext.Provider value={value}>
-      {children}
-    </ARIAContext.Provider>
-  );
+  return <ARIAContext.Provider value={value}>{children}</ARIAContext.Provider>;
 };
 
 /**
@@ -103,13 +108,15 @@ export const LabeledElement: React.FC<LabeledElementProps> = ({
   const { generateId } = useARIA();
 
   const finalLabelId = labelId || generateId('label');
-  const finalDescriptionId = description ? (descriptionId || generateId('desc')) : undefined;
+  const finalDescriptionId = description
+    ? descriptionId || generateId('desc')
+    : undefined;
 
   // Build aria-describedby
-  const ariaDescribedBy = [
-    finalDescriptionId,
-    children.props['aria-describedby'],
-  ].filter(Boolean).join(' ') || undefined;
+  const ariaDescribedBy =
+    [finalDescriptionId, children.props['aria-describedby']]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   const enhancedChild = React.cloneElement(children, {
     'aria-labelledby': children.props['aria-labelledby'] || finalLabelId,
@@ -122,17 +129,15 @@ export const LabeledElement: React.FC<LabeledElementProps> = ({
     <>
       <label id={finalLabelId} className="sr-only">
         {t(label, { defaultValue: label })}
-        {required && (
-          <span aria-label={t('required')}> *</span>
-        )}
+        {required && <span aria-label={t('required')}> *</span>}
       </label>
-      
+
       {description && (
         <div id={finalDescriptionId} className="sr-only">
           {t(description, { defaultValue: description })}
         </div>
       )}
-      
+
       {enhancedChild}
     </>
   );
@@ -141,7 +146,8 @@ export const LabeledElement: React.FC<LabeledElementProps> = ({
 /**
  * Button with proper ARIA attributes
  */
-interface AccessibleButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface AccessibleButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
   ariaLabel?: string;
   ariaDescription?: string;
@@ -166,7 +172,7 @@ export const AccessibleButton: React.FC<AccessibleButtonProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const { generateId } = useARIA();
-  
+
   const descriptionId = ariaDescription ? generateId('btn-desc') : undefined;
 
   return (
@@ -174,8 +180,12 @@ export const AccessibleButton: React.FC<AccessibleButtonProps> = ({
       <button
         {...props}
         className={`accessible-button ${className}`}
-        aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
-        aria-describedby={[describedBy, descriptionId].filter(Boolean).join(' ') || undefined}
+        aria-label={
+          ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+        }
+        aria-describedby={
+          [describedBy, descriptionId].filter(Boolean).join(' ') || undefined
+        }
         aria-pressed={pressed}
         aria-expanded={expanded}
         aria-controls={controls}
@@ -183,7 +193,7 @@ export const AccessibleButton: React.FC<AccessibleButtonProps> = ({
       >
         {children}
       </button>
-      
+
       {ariaDescription && (
         <div id={descriptionId} className="sr-only">
           {t(ariaDescription, { defaultValue: ariaDescription })}
@@ -196,7 +206,8 @@ export const AccessibleButton: React.FC<AccessibleButtonProps> = ({
 /**
  * Link with proper ARIA attributes
  */
-interface AccessibleLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface AccessibleLinkProps
+  extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   children: React.ReactNode;
   ariaLabel?: string;
   ariaDescription?: string;
@@ -219,25 +230,25 @@ export const AccessibleLink: React.FC<AccessibleLinkProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const { generateId } = useARIA();
-  
+
   const descriptionId = ariaDescription ? generateId('link-desc') : undefined;
   const externalDescId = external ? generateId('external-desc') : undefined;
 
   // Auto-detect external links
-  const isExternal = external || (props.href && (
-    props.href.startsWith('http') || 
-    props.href.startsWith('mailto:') || 
-    props.href.startsWith('tel:')
-  ));
+  const isExternal =
+    external ||
+    (props.href &&
+      (props.href.startsWith('http') ||
+        props.href.startsWith('mailto:') ||
+        props.href.startsWith('tel:')));
 
   const finalTarget = target || (isExternal ? '_blank' : undefined);
   const finalRel = rel || (isExternal ? 'noopener noreferrer' : undefined);
 
-  const allDescribedBy = [
-    describedBy,
-    descriptionId,
-    isExternal ? externalDescId : undefined,
-  ].filter(Boolean).join(' ') || undefined;
+  const allDescribedBy =
+    [describedBy, descriptionId, isExternal ? externalDescId : undefined]
+      .filter(Boolean)
+      .join(' ') || undefined;
 
   return (
     <>
@@ -246,19 +257,21 @@ export const AccessibleLink: React.FC<AccessibleLinkProps> = ({
         className={`accessible-link ${className}`}
         target={finalTarget}
         rel={finalRel}
-        aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+        aria-label={
+          ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+        }
         aria-describedby={allDescribedBy}
         aria-current={current}
       >
         {children}
       </a>
-      
+
       {ariaDescription && (
         <div id={descriptionId} className="sr-only">
           {t(ariaDescription, { defaultValue: ariaDescription })}
         </div>
       )}
-      
+
       {isExternal && (
         <div id={externalDescId} className="sr-only">
           {t('Opens in new window')}
@@ -290,7 +303,7 @@ export const AccessibleList: React.FC<AccessibleListProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const { generateId } = useARIA();
-  
+
   const descriptionId = ariaDescription ? generateId('list-desc') : undefined;
   const ListTag = ordered ? 'ol' : 'ul';
 
@@ -299,12 +312,14 @@ export const AccessibleList: React.FC<AccessibleListProps> = ({
       <ListTag
         className={`accessible-list ${className}`}
         role={role}
-        aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+        aria-label={
+          ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+        }
         aria-describedby={descriptionId}
       >
         {children}
       </ListTag>
-      
+
       {ariaDescription && (
         <div id={descriptionId} className="sr-only">
           {t(ariaDescription, { defaultValue: ariaDescription })}
@@ -350,7 +365,11 @@ export const AccessibleListItem: React.FC<AccessibleListItemProps> = ({
       aria-level={level}
       aria-setsize={setSize}
       aria-posinset={posInSet}
-      tabIndex={role === 'menuitem' || role === 'tab' || role === 'option' ? -1 : undefined}
+      tabIndex={
+        role === 'menuitem' || role === 'tab' || role === 'option'
+          ? -1
+          : undefined
+      }
     >
       {children}
     </li>
@@ -379,7 +398,7 @@ export const AccessibleFormGroup: React.FC<AccessibleFormGroupProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const { generateId } = useARIA();
-  
+
   const descriptionId = description ? generateId('group-desc') : undefined;
 
   return (
@@ -391,17 +410,15 @@ export const AccessibleFormGroup: React.FC<AccessibleFormGroupProps> = ({
     >
       <legend className="accessible-legend">
         {t(legend, { defaultValue: legend })}
-        {required && (
-          <span aria-label={t('required')}> *</span>
-        )}
+        {required && <span aria-label={t('required')}> *</span>}
       </legend>
-      
+
       {description && (
         <div id={descriptionId} className="accessible-description">
           {t(description, { defaultValue: description })}
         </div>
       )}
-      
+
       {children}
     </fieldset>
   );
@@ -435,11 +452,14 @@ export const AccessibleDialog: React.FC<AccessibleDialogProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const { generateId } = useARIA();
-  
-  const titleId = labelledBy || generateId('dialog-title');
-  const descriptionId = description ? (describedBy || generateId('dialog-desc')) : undefined;
 
-  const finalDescribedBy = [describedBy, descriptionId].filter(Boolean).join(' ') || undefined;
+  const titleId = labelledBy || generateId('dialog-title');
+  const descriptionId = description
+    ? describedBy || generateId('dialog-desc')
+    : undefined;
+
+  const finalDescribedBy =
+    [describedBy, descriptionId].filter(Boolean).join(' ') || undefined;
 
   if (!open) return null;
 
@@ -457,13 +477,13 @@ export const AccessibleDialog: React.FC<AccessibleDialogProps> = ({
           {t(title, { defaultValue: title })}
         </h2>
       )}
-      
+
       {description && !describedBy && (
         <div id={descriptionId} className="accessible-dialog-description">
           {t(description, { defaultValue: description })}
         </div>
       )}
-      
+
       {children}
     </div>
   );
@@ -519,7 +539,7 @@ export const AccessibleProgress: React.FC<AccessibleProgressProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const { generateId } = useARIA();
-  
+
   const labelId = label ? generateId('progress-label') : undefined;
   const descriptionId = description ? generateId('progress-desc') : undefined;
 
@@ -532,13 +552,13 @@ export const AccessibleProgress: React.FC<AccessibleProgressProps> = ({
           {t(label, { defaultValue: label })}
         </div>
       )}
-      
+
       {description && (
         <div id={descriptionId} className="accessible-progress-description">
           {t(description, { defaultValue: description })}
         </div>
       )}
-      
+
       <div
         className={`accessible-progress ${className}`}
         role="progressbar"
@@ -564,7 +584,7 @@ export const AccessibleProgress: React.FC<AccessibleProgressProps> = ({
  */
 export function useARIAAttributes(
   elementRef: React.RefObject<HTMLElement>,
-  attributes: Record<string, any>
+  attributes: Record<string, any>,
 ) {
   useEffect(() => {
     const element = elementRef.current;
@@ -581,7 +601,7 @@ export function useARIAAttributes(
 
     // Cleanup
     return () => {
-      Object.keys(attributes).forEach(key => {
+      Object.keys(attributes).forEach((key) => {
         element.removeAttribute(key);
       });
     };
@@ -593,14 +613,16 @@ export function useARIAAttributes(
  */
 export function withARIA<P extends Record<string, any>>(
   Component: React.ComponentType<P>,
-  ariaProps: Record<string, any>
+  ariaProps: Record<string, any>,
 ) {
   const WithARIAComponent = React.forwardRef<any, P>((props, ref) => {
     const mergedProps = { ...props, ...ariaProps };
     return <Component {...mergedProps} ref={ref} />;
   });
-  
-  WithARIAComponent.displayName = `withARIA(${Component.displayName || Component.name || 'Component'})`;
-  
+
+  WithARIAComponent.displayName = `withARIA(${
+    Component.displayName || Component.name || 'Component'
+  })`;
+
   return WithARIAComponent;
 }

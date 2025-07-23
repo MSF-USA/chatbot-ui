@@ -1,6 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { BingGroundingService } from '@/services/bingGroundingService';
-import { WebSearchRequest, WebSearchResponse, WebSearchError } from '@/types/webSearch';
+
+import {
+  WebSearchError,
+  WebSearchRequest,
+  WebSearchResponse,
+} from '@/types/webSearch';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('BingGroundingService', () => {
   let bingGroundingService: BingGroundingService;
@@ -9,9 +15,9 @@ describe('BingGroundingService', () => {
   beforeEach(() => {
     // Set up environment variable for testing
     process.env.AZURE_GROUNDING_CONNECTION_ID = 'test-connection-id';
-    
+
     bingGroundingService = new BingGroundingService();
-    
+
     mockRequest = {
       query: 'latest news about artificial intelligence',
       count: 5,
@@ -34,8 +40,10 @@ describe('BingGroundingService', () => {
     });
 
     it('should initialize with provided connection ID', () => {
-      // @ts-ignore
-      expect(() => new BingGroundingService('custom-connection-id')).not.toThrow();
+      expect(
+          // @ts-ignore
+        () => new BingGroundingService('custom-connection-id'),
+      ).not.toThrow();
     });
 
     it('should initialize without throwing when no connection ID is available', () => {
@@ -49,7 +57,7 @@ describe('BingGroundingService', () => {
     it('should validate search request successfully', async () => {
       // This test uses the placeholder implementation
       const response = await bingGroundingService.search(mockRequest);
-      
+
       expect(response).toBeDefined();
       expect(response.query).toBe(mockRequest.query);
       expect(response.market).toBe(mockRequest.market);
@@ -57,25 +65,29 @@ describe('BingGroundingService', () => {
 
     it('should throw error for empty query', async () => {
       const invalidRequest = { ...mockRequest, query: '' };
-      
-      await expect(bingGroundingService.search(invalidRequest)).rejects.toThrow('Search query is required');
+
+      await expect(bingGroundingService.search(invalidRequest)).rejects.toThrow(
+        'Search query is required',
+      );
     });
 
     it('should handle count parameter in placeholder implementation', async () => {
       const requestWithZeroCount = { ...mockRequest, count: 0 };
-      
+
       // In placeholder implementation, validation is basic
       // This test ensures the service handles edge cases gracefully
       const response = await bingGroundingService.search(requestWithZeroCount);
       expect(response).toBeDefined();
-      
+
       // When real Azure AI Agents implementation is added, this should validate count properly
     });
 
     it('should throw error for negative offset', async () => {
       const invalidRequest = { ...mockRequest, offset: -1 };
-      
-      await expect(bingGroundingService.search(invalidRequest)).rejects.toThrow('Search offset must be non-negative');
+
+      await expect(bingGroundingService.search(invalidRequest)).rejects.toThrow(
+        'Search offset must be non-negative',
+      );
     });
   });
 
@@ -106,7 +118,9 @@ describe('BingGroundingService', () => {
     it('should include quality metrics', async () => {
       const response = await bingGroundingService.search(mockRequest);
 
-      expect(response.metadata?.quality?.relevanceScore).toBeGreaterThanOrEqual(0);
+      expect(response.metadata?.quality?.relevanceScore).toBeGreaterThanOrEqual(
+        0,
+      );
       expect(response.metadata?.quality?.relevanceScore).toBeLessThanOrEqual(1);
       expect(response.metadata?.quality?.citationCount).toBeDefined();
       expect(response.metadata?.quality?.uniqueSourcesCount).toBeDefined();
@@ -129,7 +143,7 @@ describe('BingGroundingService', () => {
       // Mock a service error by providing invalid connection ID
       // @ts-ignore
       const invalidService = new BingGroundingService('invalid-id');
-      
+
       try {
         await invalidService.search(mockRequest);
       } catch (error) {
@@ -159,7 +173,9 @@ describe('BingGroundingService', () => {
       const response = await bingGroundingService.search(mockRequest);
 
       // Check that quality metrics are calculated
-      expect(response.metadata?.quality?.relevanceScore).toBeGreaterThanOrEqual(0);
+      expect(response.metadata?.quality?.relevanceScore).toBeGreaterThanOrEqual(
+        0,
+      );
       expect(response.metadata?.quality?.relevanceScore).toBeLessThanOrEqual(1);
     });
 
@@ -217,8 +233,10 @@ describe('BingGroundingService', () => {
       const response = await bingGroundingService.search(mockRequest);
 
       expect(response.metadata?.timing?.searchTime).toBeGreaterThanOrEqual(0);
-      // @ts-ignore
-      expect(response.metadata?.timing?.totalTime).toBeGreaterThanOrEqual(response.metadata?.timing?.searchTime);
+      expect(response.metadata?.timing?.totalTime).toBeGreaterThanOrEqual(
+          // @ts-ignore
+        response.metadata?.timing?.searchTime,
+      );
     });
   });
 
@@ -241,7 +259,7 @@ describe('BingGroundingService', () => {
 
     it('should handle all supported markets', async () => {
       const markets = ['en-US', 'en-GB', 'de-DE', 'fr-FR', 'es-ES'];
-      
+
       for (const market of markets) {
         const marketRequest = { ...mockRequest, market };
         const response = await bingGroundingService.search(marketRequest);
@@ -251,7 +269,7 @@ describe('BingGroundingService', () => {
 
     it('should handle all safe search levels', async () => {
       const safeSearchLevels = ['Off', 'Moderate', 'Strict'] as const;
-      
+
       for (const safeSearch of safeSearchLevels) {
         const safeSearchRequest = { ...mockRequest, safeSearch };
         const response = await bingGroundingService.search(safeSearchRequest);
@@ -261,7 +279,7 @@ describe('BingGroundingService', () => {
 
     it('should handle all freshness options', async () => {
       const freshnessOptions = ['Day', 'Week', 'Month'] as const;
-      
+
       for (const freshness of freshnessOptions) {
         const freshnessRequest = { ...mockRequest, freshness };
         const response = await bingGroundingService.search(freshnessRequest);

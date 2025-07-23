@@ -1,12 +1,13 @@
 /**
  * Keyboard Navigation Components
- * 
+ *
  * Enhanced keyboard navigation support with arrow keys, shortcuts,
  * and comprehensive WCAG compliance for all interactive elements.
  */
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'next-i18next';
+
 import { useFocusManagement } from '@/hooks/useFocusManagement';
 
 /**
@@ -40,7 +41,7 @@ export interface NavigationConfig {
  */
 export function useKeyboardNavigation(
   containerRef: React.RefObject<HTMLElement>,
-  config: NavigationConfig = {}
+  config: NavigationConfig = {},
 ) {
   const {
     wrap = true,
@@ -59,12 +60,12 @@ export function useKeyboardNavigation(
    */
   const getNavigableElements = useCallback(() => {
     if (!containerRef.current) return [];
-    
+
     const elements = Array.from(
-      containerRef.current.querySelectorAll(selector)
+      containerRef.current.querySelectorAll(selector),
     ) as HTMLElement[];
-    
-    return elements.filter(element => {
+
+    return elements.filter((element) => {
       const style = window.getComputedStyle(element);
       return style.display !== 'none' && style.visibility !== 'hidden';
     });
@@ -73,111 +74,124 @@ export function useKeyboardNavigation(
   /**
    * Navigate to specific index
    */
-  const navigateToIndex = useCallback((index: number) => {
-    const elements = getNavigableElements();
-    if (elements.length === 0) return false;
+  const navigateToIndex = useCallback(
+    (index: number) => {
+      const elements = getNavigableElements();
+      if (elements.length === 0) return false;
 
-    let targetIndex = index;
-    
-    if (wrap) {
-      targetIndex = ((index % elements.length) + elements.length) % elements.length;
-    } else {
-      targetIndex = Math.max(0, Math.min(index, elements.length - 1));
-    }
+      let targetIndex = index;
 
-    const targetElement = elements[targetIndex];
-    if (targetElement) {
-      setActiveIndex(targetIndex);
-      focusElement(targetElement);
-      onNavigate?.(targetElement, NavigationDirection.DOWN); // Generic direction
-      return true;
-    }
+      if (wrap) {
+        targetIndex =
+          ((index % elements.length) + elements.length) % elements.length;
+      } else {
+        targetIndex = Math.max(0, Math.min(index, elements.length - 1));
+      }
 
-    return false;
-  }, [getNavigableElements, wrap, focusElement, onNavigate]);
+      const targetElement = elements[targetIndex];
+      if (targetElement) {
+        setActiveIndex(targetIndex);
+        focusElement(targetElement);
+        onNavigate?.(targetElement, NavigationDirection.DOWN); // Generic direction
+        return true;
+      }
+
+      return false;
+    },
+    [getNavigableElements, wrap, focusElement, onNavigate],
+  );
 
   /**
    * Navigate by direction
    */
-  const navigate = useCallback((direction: NavigationDirection) => {
-    const elements = getNavigableElements();
-    if (elements.length === 0) return false;
+  const navigate = useCallback(
+    (direction: NavigationDirection) => {
+      const elements = getNavigableElements();
+      if (elements.length === 0) return false;
 
-    const currentElement = document.activeElement as HTMLElement;
-    const currentIndex = elements.indexOf(currentElement);
-    
-    let newIndex = currentIndex;
+      const currentElement = document.activeElement as HTMLElement;
+      const currentIndex = elements.indexOf(currentElement);
 
-    switch (direction) {
-      case NavigationDirection.UP:
-        if (orientation === 'vertical' || orientation === 'both') {
-          newIndex = currentIndex - 1;
-        }
-        break;
-      
-      case NavigationDirection.DOWN:
-        if (orientation === 'vertical' || orientation === 'both') {
-          newIndex = currentIndex + 1;
-        }
-        break;
-      
-      case NavigationDirection.LEFT:
-        if (orientation === 'horizontal' || orientation === 'both') {
-          newIndex = currentIndex - 1;
-        }
-        break;
-      
-      case NavigationDirection.RIGHT:
-        if (orientation === 'horizontal' || orientation === 'both') {
-          newIndex = currentIndex + 1;
-        }
-        break;
-      
-      case NavigationDirection.HOME:
-        newIndex = 0;
-        break;
-      
-      case NavigationDirection.END:
-        newIndex = elements.length - 1;
-        break;
-      
-      case NavigationDirection.PAGE_UP:
-        newIndex = Math.max(0, currentIndex - 10);
-        break;
-      
-      case NavigationDirection.PAGE_DOWN:
-        newIndex = Math.min(elements.length - 1, currentIndex + 10);
-        break;
-    }
+      let newIndex = currentIndex;
 
-    return navigateToIndex(newIndex);
-  }, [getNavigableElements, orientation, navigateToIndex]);
+      switch (direction) {
+        case NavigationDirection.UP:
+          if (orientation === 'vertical' || orientation === 'both') {
+            newIndex = currentIndex - 1;
+          }
+          break;
+
+        case NavigationDirection.DOWN:
+          if (orientation === 'vertical' || orientation === 'both') {
+            newIndex = currentIndex + 1;
+          }
+          break;
+
+        case NavigationDirection.LEFT:
+          if (orientation === 'horizontal' || orientation === 'both') {
+            newIndex = currentIndex - 1;
+          }
+          break;
+
+        case NavigationDirection.RIGHT:
+          if (orientation === 'horizontal' || orientation === 'both') {
+            newIndex = currentIndex + 1;
+          }
+          break;
+
+        case NavigationDirection.HOME:
+          newIndex = 0;
+          break;
+
+        case NavigationDirection.END:
+          newIndex = elements.length - 1;
+          break;
+
+        case NavigationDirection.PAGE_UP:
+          newIndex = Math.max(0, currentIndex - 10);
+          break;
+
+        case NavigationDirection.PAGE_DOWN:
+          newIndex = Math.min(elements.length - 1, currentIndex + 10);
+          break;
+      }
+
+      return navigateToIndex(newIndex);
+    },
+    [getNavigableElements, orientation, navigateToIndex],
+  );
 
   /**
    * Handle keyboard events
    */
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const direction = event.key as NavigationDirection;
-    
-    if (Object.values(NavigationDirection).includes(direction)) {
-      if (preventDefaultScroll) {
-        event.preventDefault();
-      }
-      
-      navigate(direction);
-    } else if (event.key === 'Enter' || event.key === ' ') {
-      const activeElement = document.activeElement as HTMLElement;
-      if (activeElement) {
-        event.preventDefault();
-        onActivate?.(activeElement);
-        
-        // Trigger click for buttons and links
-        if (activeElement.tagName === 'BUTTON' || activeElement.tagName === 'A') {
-          activeElement.click();
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const direction = event.key as NavigationDirection;
+
+      if (Object.values(NavigationDirection).includes(direction)) {
+        if (preventDefaultScroll) {
+          event.preventDefault();
+        }
+
+        navigate(direction);
+      } else if (event.key === 'Enter' || event.key === ' ') {
+        const activeElement = document.activeElement as HTMLElement;
+        if (activeElement) {
+          event.preventDefault();
+          onActivate?.(activeElement);
+
+          // Trigger click for buttons and links
+          if (
+            activeElement.tagName === 'BUTTON' ||
+            activeElement.tagName === 'A'
+          ) {
+            activeElement.click();
+          }
         }
       }
-    }
-  }, [navigate, preventDefaultScroll, onActivate]);
+    },
+    [navigate, preventDefaultScroll, onActivate],
+  );
 
   /**
    * Set up keyboard event listeners
@@ -187,7 +201,7 @@ export function useKeyboardNavigation(
     if (!container) return;
 
     container.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       container.removeEventListener('keydown', handleKeyDown);
     };
@@ -229,7 +243,8 @@ export const MenuNavigation: React.FC<MenuNavigationProps> = ({
   const { navigate } = useKeyboardNavigation(containerRef, {
     orientation,
     wrap,
-    selector: '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]',
+    selector:
+      '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]',
     onActivate: onItemSelect,
   });
 
@@ -238,7 +253,9 @@ export const MenuNavigation: React.FC<MenuNavigationProps> = ({
       ref={containerRef}
       className={`menu-navigation ${className}`}
       role={role}
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       aria-orientation={orientation}
       tabIndex={-1}
     >
@@ -269,7 +286,8 @@ export const ToolbarNavigation: React.FC<ToolbarNavigationProps> = ({
   useKeyboardNavigation(containerRef, {
     orientation,
     wrap: true,
-    selector: 'button:not([disabled]), [role="button"]:not([aria-disabled="true"])',
+    selector:
+      'button:not([disabled]), [role="button"]:not([aria-disabled="true"])',
   });
 
   return (
@@ -277,7 +295,9 @@ export const ToolbarNavigation: React.FC<ToolbarNavigationProps> = ({
       ref={containerRef}
       className={`toolbar-navigation ${className}`}
       role="toolbar"
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       aria-orientation={orientation}
       tabIndex={-1}
     >
@@ -307,84 +327,93 @@ export const GridNavigation: React.FC<GridNavigationProps> = ({
   const { t } = useTranslation('accessibility');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const cells = Array.from(
-      containerRef.current?.querySelectorAll('[role="gridcell"]') || []
-    ) as HTMLElement[];
-    
-    const activeElement = document.activeElement as HTMLElement;
-    const currentIndex = cells.indexOf(activeElement);
-    
-    if (currentIndex === -1) return;
-    
-    const currentRow = Math.floor(currentIndex / columns);
-    const currentCol = currentIndex % columns;
-    const totalRows = Math.ceil(cells.length / columns);
-    
-    let newIndex = currentIndex;
-    
-    switch (event.key) {
-      case 'ArrowUp':
-        if (currentRow > 0) {
-          newIndex = (currentRow - 1) * columns + currentCol;
-        }
-        break;
-      
-      case 'ArrowDown':
-        if (currentRow < totalRows - 1) {
-          newIndex = Math.min((currentRow + 1) * columns + currentCol, cells.length - 1);
-        }
-        break;
-      
-      case 'ArrowLeft':
-        if (currentCol > 0) {
-          newIndex = currentIndex - 1;
-        }
-        break;
-      
-      case 'ArrowRight':
-        if (currentCol < columns - 1 && currentIndex < cells.length - 1) {
-          newIndex = currentIndex + 1;
-        }
-        break;
-      
-      case 'Home':
-        newIndex = currentRow * columns;
-        break;
-      
-      case 'End':
-        newIndex = Math.min((currentRow + 1) * columns - 1, cells.length - 1);
-        break;
-      
-      case 'PageUp':
-        newIndex = currentCol;
-        break;
-      
-      case 'PageDown':
-        newIndex = Math.min((totalRows - 1) * columns + currentCol, cells.length - 1);
-        break;
-      
-      case 'Enter':
-      case ' ':
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const cells = Array.from(
+        containerRef.current?.querySelectorAll('[role="gridcell"]') || [],
+      ) as HTMLElement[];
+
+      const activeElement = document.activeElement as HTMLElement;
+      const currentIndex = cells.indexOf(activeElement);
+
+      if (currentIndex === -1) return;
+
+      const currentRow = Math.floor(currentIndex / columns);
+      const currentCol = currentIndex % columns;
+      const totalRows = Math.ceil(cells.length / columns);
+
+      let newIndex = currentIndex;
+
+      switch (event.key) {
+        case 'ArrowUp':
+          if (currentRow > 0) {
+            newIndex = (currentRow - 1) * columns + currentCol;
+          }
+          break;
+
+        case 'ArrowDown':
+          if (currentRow < totalRows - 1) {
+            newIndex = Math.min(
+              (currentRow + 1) * columns + currentCol,
+              cells.length - 1,
+            );
+          }
+          break;
+
+        case 'ArrowLeft':
+          if (currentCol > 0) {
+            newIndex = currentIndex - 1;
+          }
+          break;
+
+        case 'ArrowRight':
+          if (currentCol < columns - 1 && currentIndex < cells.length - 1) {
+            newIndex = currentIndex + 1;
+          }
+          break;
+
+        case 'Home':
+          newIndex = currentRow * columns;
+          break;
+
+        case 'End':
+          newIndex = Math.min((currentRow + 1) * columns - 1, cells.length - 1);
+          break;
+
+        case 'PageUp':
+          newIndex = currentCol;
+          break;
+
+        case 'PageDown':
+          newIndex = Math.min(
+            (totalRows - 1) * columns + currentCol,
+            cells.length - 1,
+          );
+          break;
+
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          const row = Math.floor(currentIndex / columns);
+          const col = currentIndex % columns;
+          onCellActivate?.(activeElement, row, col);
+          return;
+      }
+
+      if (newIndex !== currentIndex && cells[newIndex]) {
         event.preventDefault();
-        const row = Math.floor(currentIndex / columns);
-        const col = currentIndex % columns;
-        onCellActivate?.(activeElement, row, col);
-        return;
-    }
-    
-    if (newIndex !== currentIndex && cells[newIndex]) {
-      event.preventDefault();
-      cells[newIndex].focus();
-    }
-  }, [columns, onCellActivate]);
+        cells[newIndex].focus();
+      }
+    },
+    [columns, onCellActivate],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     container.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       container.removeEventListener('keydown', handleKeyDown);
     };
@@ -395,7 +424,9 @@ export const GridNavigation: React.FC<GridNavigationProps> = ({
       ref={containerRef}
       className={`grid-navigation ${className}`}
       role="grid"
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       tabIndex={-1}
     >
       {children}
@@ -426,58 +457,61 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
   const { t } = useTranslation('accessibility');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const tabs = Array.from(
-      containerRef.current?.querySelectorAll('[role="tab"]') || []
-    ) as HTMLElement[];
-    
-    const activeElement = document.activeElement as HTMLElement;
-    const currentIndex = tabs.indexOf(activeElement);
-    
-    if (currentIndex === -1) return;
-    
-    let newIndex = currentIndex;
-    
-    switch (event.key) {
-      case orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp':
-        newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
-        break;
-      
-      case orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown':
-        newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
-        break;
-      
-      case 'Home':
-        newIndex = 0;
-        break;
-      
-      case 'End':
-        newIndex = tabs.length - 1;
-        break;
-      
-      case 'Enter':
-      case ' ':
-        event.preventDefault();
-        onTabChange?.(activeElement, currentIndex);
-        return;
-    }
-    
-    if (newIndex !== currentIndex && tabs[newIndex]) {
-      event.preventDefault();
-      tabs[newIndex].focus();
-      
-      if (automaticActivation) {
-        onTabChange?.(tabs[newIndex], newIndex);
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const tabs = Array.from(
+        containerRef.current?.querySelectorAll('[role="tab"]') || [],
+      ) as HTMLElement[];
+
+      const activeElement = document.activeElement as HTMLElement;
+      const currentIndex = tabs.indexOf(activeElement);
+
+      if (currentIndex === -1) return;
+
+      let newIndex = currentIndex;
+
+      switch (event.key) {
+        case orientation === 'horizontal' ? 'ArrowLeft' : 'ArrowUp':
+          newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+          break;
+
+        case orientation === 'horizontal' ? 'ArrowRight' : 'ArrowDown':
+          newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+          break;
+
+        case 'Home':
+          newIndex = 0;
+          break;
+
+        case 'End':
+          newIndex = tabs.length - 1;
+          break;
+
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          onTabChange?.(activeElement, currentIndex);
+          return;
       }
-    }
-  }, [orientation, automaticActivation, onTabChange]);
+
+      if (newIndex !== currentIndex && tabs[newIndex]) {
+        event.preventDefault();
+        tabs[newIndex].focus();
+
+        if (automaticActivation) {
+          onTabChange?.(tabs[newIndex], newIndex);
+        }
+      }
+    },
+    [orientation, automaticActivation, onTabChange],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     container.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       container.removeEventListener('keydown', handleKeyDown);
     };
@@ -488,7 +522,9 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
       ref={containerRef}
       className={`tab-navigation ${className}`}
       role="tablist"
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       aria-orientation={orientation}
       tabIndex={-1}
     >
@@ -517,74 +553,81 @@ export const ListboxNavigation: React.FC<ListboxNavigationProps> = ({
 }) => {
   const { t } = useTranslation('accessibility');
   const containerRef = useRef<HTMLDivElement>(null);
-  const [selectedItems, setSelectedItems] = useState<Set<HTMLElement>>(new Set());
+  const [selectedItems, setSelectedItems] = useState<Set<HTMLElement>>(
+    new Set(),
+  );
 
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    const options = Array.from(
-      containerRef.current?.querySelectorAll('[role="option"]') || []
-    ) as HTMLElement[];
-    
-    const activeElement = document.activeElement as HTMLElement;
-    const currentIndex = options.indexOf(activeElement);
-    
-    if (currentIndex === -1) return;
-    
-    let newIndex = currentIndex;
-    
-    switch (event.key) {
-      case 'ArrowUp':
-        newIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
-        break;
-      
-      case 'ArrowDown':
-        newIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
-        break;
-      
-      case 'Home':
-        newIndex = 0;
-        break;
-      
-      case 'End':
-        newIndex = options.length - 1;
-        break;
-      
-      case 'Enter':
-      case ' ':
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      const options = Array.from(
+        containerRef.current?.querySelectorAll('[role="option"]') || [],
+      ) as HTMLElement[];
+
+      const activeElement = document.activeElement as HTMLElement;
+      const currentIndex = options.indexOf(activeElement);
+
+      if (currentIndex === -1) return;
+
+      let newIndex = currentIndex;
+
+      switch (event.key) {
+        case 'ArrowUp':
+          newIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
+          break;
+
+        case 'ArrowDown':
+          newIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
+          break;
+
+        case 'Home':
+          newIndex = 0;
+          break;
+
+        case 'End':
+          newIndex = options.length - 1;
+          break;
+
+        case 'Enter':
+        case ' ':
+          event.preventDefault();
+          if (multiselectable) {
+            setSelectedItems((prev) => {
+              const newSet = new Set(prev);
+              if (newSet.has(activeElement)) {
+                newSet.delete(activeElement);
+                activeElement.setAttribute('aria-selected', 'false');
+              } else {
+                newSet.add(activeElement);
+                activeElement.setAttribute('aria-selected', 'true');
+              }
+              onSelectionChange?.(Array.from(newSet));
+              return newSet;
+            });
+          } else {
+            selectedItems.forEach((item) =>
+              item.setAttribute('aria-selected', 'false'),
+            );
+            activeElement.setAttribute('aria-selected', 'true');
+            setSelectedItems(new Set([activeElement]));
+            onSelectionChange?.([activeElement]);
+          }
+          return;
+      }
+
+      if (newIndex !== currentIndex && options[newIndex]) {
         event.preventDefault();
-        if (multiselectable) {
-          setSelectedItems(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(activeElement)) {
-              newSet.delete(activeElement);
-              activeElement.setAttribute('aria-selected', 'false');
-            } else {
-              newSet.add(activeElement);
-              activeElement.setAttribute('aria-selected', 'true');
-            }
-            onSelectionChange?.(Array.from(newSet));
-            return newSet;
-          });
-        } else {
-          selectedItems.forEach(item => item.setAttribute('aria-selected', 'false'));
-          activeElement.setAttribute('aria-selected', 'true');
-          setSelectedItems(new Set([activeElement]));
-          onSelectionChange?.([activeElement]);
-        }
-        return;
-    }
-    
-    if (newIndex !== currentIndex && options[newIndex]) {
-      event.preventDefault();
-      options[newIndex].focus();
-    }
-  }, [multiselectable, selectedItems, onSelectionChange]);
+        options[newIndex].focus();
+      }
+    },
+    [multiselectable, selectedItems, onSelectionChange],
+  );
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     container.addEventListener('keydown', handleKeyDown);
-    
+
     return () => {
       container.removeEventListener('keydown', handleKeyDown);
     };
@@ -595,7 +638,9 @@ export const ListboxNavigation: React.FC<ListboxNavigationProps> = ({
       ref={containerRef}
       className={`listbox-navigation ${className}`}
       role="listbox"
-      aria-label={ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined}
+      aria-label={
+        ariaLabel ? t(ariaLabel, { defaultValue: ariaLabel }) : undefined
+      }
       aria-multiselectable={multiselectable}
       tabIndex={-1}
     >

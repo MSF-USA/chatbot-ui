@@ -2,8 +2,8 @@
  * Translation validation utilities for agent localization
  * Ensures completeness and quality of translations across all locales
  */
-
 import { AgentType } from '@/types/agent';
+
 import { getAgentNamespace } from './agentTranslations';
 
 /**
@@ -68,7 +68,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'metadata.processingTime',
     'metadata.confidence',
     'metadata.tokens',
-    'resultsPanel.placeholder'
+    'resultsPanel.placeholder',
   ],
   webSearch: [
     'resultsPanel.title',
@@ -86,7 +86,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'configuration.market',
     'status.searching',
     'status.optimizing',
-    'status.processing'
+    'status.processing',
   ],
   codeInterpreter: [
     'resultsPanel.title',
@@ -104,7 +104,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'status.timeout',
     'tabs.output',
     'tabs.code',
-    'tabs.files'
+    'tabs.files',
   ],
   urlPull: [
     'resultsPanel.title',
@@ -117,7 +117,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'configuration.timeout',
     'status.pulling',
     'status.analyzing',
-    'status.complete'
+    'status.complete',
   ],
   localKnowledge: [
     'resultsPanel.title',
@@ -129,7 +129,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'configuration.searchMode',
     'configuration.threshold',
     'status.searching',
-    'status.analyzing'
+    'status.analyzing',
   ],
   ui: [
     'loading.default',
@@ -145,7 +145,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'labels.priority',
     'labels.estimatedTime',
     'labels.availability',
-    'labels.configuration'
+    'labels.configuration',
   ],
   errors: [
     'common.unknown',
@@ -161,7 +161,7 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'urlPull.fetchFailed',
     'urlPull.invalidUrl',
     'localKnowledge.searchFailed',
-    'localKnowledge.noAccess'
+    'localKnowledge.noAccess',
   ],
   settings: [
     'autoSubmit',
@@ -173,8 +173,8 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
     'safeSearch.moderate',
     'safeSearch.strict',
     'market.any',
-    'market.local'
-  ]
+    'market.local',
+  ],
 };
 
 /**
@@ -187,64 +187,69 @@ export const REQUIRED_AGENT_KEYS: Record<string, string[]> = {
 export const validateTranslations = (
   translations: Record<string, any>,
   namespace: string,
-  locale: string
+  locale: string,
 ): TranslationValidationResult => {
   const errors: TranslationError[] = [];
   const warnings: TranslationWarning[] = [];
-  
+
   // Get required keys for this namespace
   const requiredKeys = getRequiredKeysForNamespace(namespace);
-  
+
   // Check for missing keys and empty values
   let translatedCount = 0;
   let missingCount = 0;
   let emptyCount = 0;
-  
+
   for (const key of requiredKeys) {
     const value = getNestedValue(translations, key);
-    
+
     if (value === undefined) {
       missingCount++;
       errors.push({
         type: 'missing_key',
         key,
         message: `Missing translation key: ${key}`,
-        severity: 'error'
+        severity: 'error',
       });
-    } else if (value === '' || (typeof value === 'string' && value.trim() === '')) {
+    } else if (
+      value === '' ||
+      (typeof value === 'string' && value.trim() === '')
+    ) {
       emptyCount++;
       errors.push({
         type: 'empty_value',
         key,
         message: `Empty translation value for key: ${key}`,
-        severity: 'error'
+        severity: 'error',
       });
     } else {
       translatedCount++;
-      
+
       // Check for parameter consistency
       validateParameterUsage(key, value, errors);
-      
+
       // Check for length concerns (too long/short)
       validateTranslationLength(key, value, warnings, locale);
     }
   }
-  
+
   const stats: TranslationStats = {
     totalKeys: requiredKeys.length,
     translatedKeys: translatedCount,
     missingKeys: missingCount,
     emptyValues: emptyCount,
-    completionPercentage: Math.round((translatedCount / requiredKeys.length) * 100)
+    completionPercentage: Math.round(
+      (translatedCount / requiredKeys.length) * 100,
+    ),
   };
-  
+
   return {
     locale,
     namespace,
     valid: errors.length === 0,
     errors,
     warnings,
-    stats
+    stats,
   };
 };
 
@@ -256,17 +261,21 @@ export const validateTranslations = (
  */
 export const validateAllAgentTranslations = (
   agentTranslations: Record<string, any>,
-  locale: string
+  locale: string,
 ): TranslationValidationResult[] => {
   const results: TranslationValidationResult[] = [];
-  
+
   // Validate each namespace
   for (const namespace of Object.keys(REQUIRED_AGENT_KEYS)) {
     const namespaceTranslations = agentTranslations[namespace] || {};
-    const result = validateTranslations(namespaceTranslations, namespace, locale);
+    const result = validateTranslations(
+      namespaceTranslations,
+      namespace,
+      locale,
+    );
     results.push(result);
   }
-  
+
   return results;
 };
 
@@ -296,23 +305,23 @@ export const getAllRequiredKeys = (): Record<string, string[]> => {
 const validateParameterUsage = (
   key: string,
   value: string,
-  errors: TranslationError[]
+  errors: TranslationError[],
 ): void => {
   if (typeof value !== 'string') return;
-  
+
   // Check for unmatched interpolation brackets
   const openBrackets = (value.match(/\{\{/g) || []).length;
   const closeBrackets = (value.match(/\}\}/g) || []).length;
-  
+
   if (openBrackets !== closeBrackets) {
     errors.push({
       type: 'invalid_params',
       key,
       message: `Mismatched interpolation brackets in: ${value}`,
-      severity: 'error'
+      severity: 'error',
     });
   }
-  
+
   // Check for common parameter naming issues
   const invalidParams = value.match(/\{\{[^}]*[^a-zA-Z0-9_][^}]*\}\}/g);
   if (invalidParams) {
@@ -320,7 +329,7 @@ const validateParameterUsage = (
       type: 'invalid_params',
       key,
       message: `Invalid parameter names found: ${invalidParams.join(', ')}`,
-      severity: 'warning'
+      severity: 'warning',
     });
   }
 };
@@ -336,37 +345,37 @@ const validateTranslationLength = (
   key: string,
   value: string,
   warnings: TranslationWarning[],
-  locale: string
+  locale: string,
 ): void => {
   if (typeof value !== 'string') return;
-  
+
   // UI element translations should be reasonably short
   if (key.includes('buttons.') && value.length > 30) {
     warnings.push({
       type: 'length_mismatch',
       key,
       message: `Button text may be too long (${value.length} chars): ${value}`,
-      suggestion: 'Consider shortening for better UI fit'
+      suggestion: 'Consider shortening for better UI fit',
     });
   }
-  
+
   // Labels should be concise
   if (key.includes('labels.') && value.length > 50) {
     warnings.push({
       type: 'length_mismatch',
       key,
       message: `Label text may be too long (${value.length} chars): ${value}`,
-      suggestion: 'Consider using shorter terminology'
+      suggestion: 'Consider using shorter terminology',
     });
   }
-  
+
   // Very short translations might be incomplete
   if (value.trim().length < 2 && !key.includes('abbreviation')) {
     warnings.push({
       type: 'length_mismatch',
       key,
       message: `Translation appears too short: "${value}"`,
-      suggestion: 'Verify this is a complete translation'
+      suggestion: 'Verify this is a complete translation',
     });
   }
 };
@@ -391,10 +400,10 @@ const getNestedValue = (obj: Record<string, any>, path: string): any => {
  */
 export const isLocaleComplete = (
   agentTranslations: Record<string, any>,
-  locale: string
+  locale: string,
 ): boolean => {
   const results = validateAllAgentTranslations(agentTranslations, locale);
-  return results.every(result => result.valid);
+  return results.every((result) => result.valid);
 };
 
 /**
@@ -405,12 +414,18 @@ export const isLocaleComplete = (
  */
 export const getLocaleCompletionPercentage = (
   agentTranslations: Record<string, any>,
-  locale: string
+  locale: string,
 ): number => {
   const results = validateAllAgentTranslations(agentTranslations, locale);
-  const totalKeys = results.reduce((sum, result) => sum + result.stats.totalKeys, 0);
-  const translatedKeys = results.reduce((sum, result) => sum + result.stats.translatedKeys, 0);
-  
+  const totalKeys = results.reduce(
+    (sum, result) => sum + result.stats.totalKeys,
+    0,
+  );
+  const translatedKeys = results.reduce(
+    (sum, result) => sum + result.stats.translatedKeys,
+    0,
+  );
+
   return totalKeys > 0 ? Math.round((translatedKeys / totalKeys) * 100) : 0;
 };
 
@@ -422,35 +437,36 @@ export const getLocaleCompletionPercentage = (
  */
 export const generateValidationReport = (
   agentTranslations: Record<string, any>,
-  locale: string
+  locale: string,
 ): string => {
   const results = validateAllAgentTranslations(agentTranslations, locale);
   const completion = getLocaleCompletionPercentage(agentTranslations, locale);
-  
+
   let report = `\n=== Translation Validation Report for ${locale.toUpperCase()} ===\n`;
   report += `Overall Completion: ${completion}%\n\n`;
-  
+
   for (const result of results) {
     report += `${result.namespace.toUpperCase()}:\n`;
     report += `  Completion: ${result.stats.completionPercentage}%\n`;
     report += `  Translated: ${result.stats.translatedKeys}/${result.stats.totalKeys}\n`;
-    
+
     if (result.errors.length > 0) {
       report += `  Errors: ${result.errors.length}\n`;
-      for (const error of result.errors.slice(0, 5)) { // Show first 5 errors
+      for (const error of result.errors.slice(0, 5)) {
+        // Show first 5 errors
         report += `    - ${error.key}: ${error.message}\n`;
       }
       if (result.errors.length > 5) {
         report += `    ... and ${result.errors.length - 5} more errors\n`;
       }
     }
-    
+
     if (result.warnings.length > 0) {
       report += `  Warnings: ${result.warnings.length}\n`;
     }
-    
+
     report += '\n';
   }
-  
+
   return report;
 };

@@ -1,6 +1,6 @@
 /**
  * Simple Feature Flags Service
- * 
+ *
  * Lightweight feature flag system that works both client and server-side
  * without complex SDKs. Uses environment variables and local storage.
  */
@@ -39,7 +39,7 @@ interface FeatureFlagConfig {
   'fallback-on-error'?: boolean;
   'enable-streaming'?: boolean;
   'rate-limit-multiplier'?: number;
-  
+
   // Additional feature flags can be added here
   [key: string]: boolean | string | number | undefined;
 }
@@ -136,9 +136,9 @@ export class SimpleFeatureFlagService {
    * Evaluate a boolean feature flag
    */
   async evaluateFlag(
-    flagKey: string, 
-    userContext: UserContext, 
-    defaultValue: boolean = false
+    flagKey: string,
+    userContext: UserContext,
+    defaultValue: boolean = false,
   ): Promise<boolean> {
     const cached = this.cache.get(flagKey);
     if (cached !== undefined) {
@@ -147,7 +147,7 @@ export class SimpleFeatureFlagService {
 
     const value = this.getRawValue(flagKey);
     const result = value !== undefined ? Boolean(value) : defaultValue;
-    
+
     this.cache.set(flagKey, result);
     return result;
   }
@@ -158,7 +158,7 @@ export class SimpleFeatureFlagService {
   async evaluateFlagWithDetails<T>(
     flagKey: string,
     userContext: UserContext,
-    defaultValue: T
+    defaultValue: T,
   ): Promise<T> {
     const cached = this.cache.get(flagKey);
     if (cached !== undefined) {
@@ -167,7 +167,7 @@ export class SimpleFeatureFlagService {
 
     const value = this.getRawValue(flagKey);
     const result = value !== undefined ? value : defaultValue;
-    
+
     this.cache.set(flagKey, result);
     return result;
   }
@@ -178,7 +178,7 @@ export class SimpleFeatureFlagService {
   async getFlagVariation(
     flagKey: string,
     userContext: UserContext,
-    defaultValue: string = 'control'
+    defaultValue: string = 'control',
   ): Promise<string> {
     return this.evaluateFlagWithDetails(flagKey, userContext, defaultValue);
   }
@@ -186,7 +186,9 @@ export class SimpleFeatureFlagService {
   /**
    * Get all agent routing flags for a user
    */
-  async getAgentRoutingFlags(userContext: UserContext): Promise<AgentRoutingFlags> {
+  async getAgentRoutingFlags(
+    userContext: UserContext,
+  ): Promise<AgentRoutingFlags> {
     try {
       const [
         agentRoutingEnabled,
@@ -212,10 +214,9 @@ export class SimpleFeatureFlagService {
         enableStreaming,
         rateLimitMultiplier: Number(rateLimitMultiplier),
       };
-
     } catch (error) {
       console.error('Failed to get agent routing flags:', error);
-      
+
       // Return safe defaults
       return {
         agentRoutingEnabled: false,
@@ -234,7 +235,7 @@ export class SimpleFeatureFlagService {
   async shouldRouteToAgents(userContext: UserContext): Promise<boolean> {
     try {
       const flags = await this.getAgentRoutingFlags(userContext);
-      
+
       // Primary flag check
       if (!flags.agentRoutingEnabled) {
         return false;
@@ -244,14 +245,13 @@ export class SimpleFeatureFlagService {
       if (flags.rolloutPercentage < 100) {
         const userHash = this.getUserHash(userContext.userId);
         const userPercentile = userHash % 100;
-        
+
         if (userPercentile >= flags.rolloutPercentage) {
           return false;
         }
       }
 
       return true;
-
     } catch (error) {
       console.error('Failed to determine agent routing:', error);
       return false; // Safe default
@@ -265,7 +265,7 @@ export class SimpleFeatureFlagService {
     let hash = 0;
     for (let i = 0; i < userId.length; i++) {
       const char = userId.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash);

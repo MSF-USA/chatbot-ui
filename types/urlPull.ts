@@ -65,7 +65,14 @@ export interface FailedUrl {
   url: string;
   originalUrl?: string;
   error: string;
-  errorType: 'network' | 'timeout' | 'invalid_url' | 'content_error' | 'forbidden' | 'not_found' | 'server_error';
+  errorType:
+    | 'network'
+    | 'timeout'
+    | 'invalid_url'
+    | 'content_error'
+    | 'forbidden'
+    | 'not_found'
+    | 'server_error';
   statusCode?: number;
   redirectedTo?: string;
   retryAttempts?: number;
@@ -382,7 +389,7 @@ export const DEFAULT_URL_PULL_CONFIG: Required<UrlPullConfig> = {
   concurrencyLimit: 5,
   userAgent: 'MSF-AI-Assistant/1.0',
   headers: {
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.5',
     'Accept-Encoding': 'gzip, deflate',
     'Cache-Control': 'max-age=0',

@@ -396,67 +396,135 @@ export interface CodeInterpreterMetrics {
 /**
  * Default configuration values
  */
-export const DEFAULT_CODE_INTERPRETER_CONFIG: Required<CodeInterpreterConfig> = {
-  foundryEndpoint: '',
-  projectId: '',
-  defaultTimeout: 30000, // 30 seconds
-  maxMemoryMb: 512,
-  enableValidation: true,
-  enableCaching: true,
-  cacheTtl: 3600, // 1 hour
-  allowedLibraries: {
-    [ProgrammingLanguage.PYTHON]: [
-      'numpy', 'pandas', 'matplotlib', 'seaborn', 'scikit-learn',
-      'requests', 'json', 'csv', 'datetime', 'math', 'statistics',
-      'plotly', 'scipy', 'sympy', 'pillow'
-    ],
-    [ProgrammingLanguage.JAVASCRIPT]: [
-      'lodash', 'axios', 'moment', 'uuid', 'crypto-js',
-      'chart.js', 'd3', 'express', 'fs', 'path'
-    ],
-    [ProgrammingLanguage.TYPESCRIPT]: [
-      'lodash', 'axios', 'moment', 'uuid', 'crypto-js',
-      'chart.js', 'd3', 'express', 'fs', 'path'
-    ],
-    [ProgrammingLanguage.SQL]: [],
-    [ProgrammingLanguage.BASH]: [],
-    [ProgrammingLanguage.R]: [
-      'ggplot2', 'dplyr', 'tidyr', 'readr', 'lubridate',
-      'stringr', 'forcats', 'purrr', 'tibble'
-    ],
-  },
-  blockedFunctions: {
-    [ProgrammingLanguage.PYTHON]: [
-      'exec', 'eval', 'compile', '__import__', 'open',
-      'input', 'raw_input', 'file', 'execfile'
-    ],
-    [ProgrammingLanguage.JAVASCRIPT]: [
-      'eval', 'Function', 'setTimeout', 'setInterval',
-      'require', 'import', 'process', 'global'
-    ],
-    [ProgrammingLanguage.TYPESCRIPT]: [
-      'eval', 'Function', 'setTimeout', 'setInterval',
-      'require', 'import', 'process', 'global'
-    ],
-    [ProgrammingLanguage.SQL]: [
-      'DROP', 'DELETE', 'UPDATE', 'INSERT', 'CREATE',
-      'ALTER', 'TRUNCATE', 'GRANT', 'REVOKE'
-    ],
-    [ProgrammingLanguage.BASH]: [
-      'rm', 'mv', 'cp', 'chmod', 'chown', 'sudo',
-      'su', 'passwd', 'useradd', 'userdel'
-    ],
-    [ProgrammingLanguage.R]: [
-      'system', 'system2', 'shell', 'Sys.setenv'
-    ],
-  },
-  resourceLimits: {
-    maxExecutionTime: 30000,
-    maxMemoryUsage: 512,
-    maxFileSize: 10,
-    maxOutputLength: 100000,
-  },
-};
+export const DEFAULT_CODE_INTERPRETER_CONFIG: Required<CodeInterpreterConfig> =
+  {
+    foundryEndpoint: '',
+    projectId: '',
+    defaultTimeout: 30000, // 30 seconds
+    maxMemoryMb: 512,
+    enableValidation: true,
+    enableCaching: true,
+    cacheTtl: 3600, // 1 hour
+    allowedLibraries: {
+      [ProgrammingLanguage.PYTHON]: [
+        'numpy',
+        'pandas',
+        'matplotlib',
+        'seaborn',
+        'scikit-learn',
+        'requests',
+        'json',
+        'csv',
+        'datetime',
+        'math',
+        'statistics',
+        'plotly',
+        'scipy',
+        'sympy',
+        'pillow',
+      ],
+      [ProgrammingLanguage.JAVASCRIPT]: [
+        'lodash',
+        'axios',
+        'moment',
+        'uuid',
+        'crypto-js',
+        'chart.js',
+        'd3',
+        'express',
+        'fs',
+        'path',
+      ],
+      [ProgrammingLanguage.TYPESCRIPT]: [
+        'lodash',
+        'axios',
+        'moment',
+        'uuid',
+        'crypto-js',
+        'chart.js',
+        'd3',
+        'express',
+        'fs',
+        'path',
+      ],
+      [ProgrammingLanguage.SQL]: [],
+      [ProgrammingLanguage.BASH]: [],
+      [ProgrammingLanguage.R]: [
+        'ggplot2',
+        'dplyr',
+        'tidyr',
+        'readr',
+        'lubridate',
+        'stringr',
+        'forcats',
+        'purrr',
+        'tibble',
+      ],
+    },
+    blockedFunctions: {
+      [ProgrammingLanguage.PYTHON]: [
+        'exec',
+        'eval',
+        'compile',
+        '__import__',
+        'open',
+        'input',
+        'raw_input',
+        'file',
+        'execfile',
+      ],
+      [ProgrammingLanguage.JAVASCRIPT]: [
+        'eval',
+        'Function',
+        'setTimeout',
+        'setInterval',
+        'require',
+        'import',
+        'process',
+        'global',
+      ],
+      [ProgrammingLanguage.TYPESCRIPT]: [
+        'eval',
+        'Function',
+        'setTimeout',
+        'setInterval',
+        'require',
+        'import',
+        'process',
+        'global',
+      ],
+      [ProgrammingLanguage.SQL]: [
+        'DROP',
+        'DELETE',
+        'UPDATE',
+        'INSERT',
+        'CREATE',
+        'ALTER',
+        'TRUNCATE',
+        'GRANT',
+        'REVOKE',
+      ],
+      [ProgrammingLanguage.BASH]: [
+        'rm',
+        'mv',
+        'cp',
+        'chmod',
+        'chown',
+        'sudo',
+        'su',
+        'passwd',
+        'useradd',
+        'userdel',
+      ],
+      [ProgrammingLanguage.R]: ['system', 'system2', 'shell', 'Sys.setenv'],
+    },
+    resourceLimits: {
+      maxExecutionTime: 30000,
+      maxMemoryUsage: 512,
+      maxFileSize: 10,
+      maxOutputLength: 100000,
+    },
+  };
 
 /**
  * Custom error class for code interpreter operations

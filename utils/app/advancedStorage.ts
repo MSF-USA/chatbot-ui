@@ -1,6 +1,6 @@
 /**
  * Advanced Settings Storage Service
- * 
+ *
  * Provides enhanced storage capabilities including:
  * - Encryption for sensitive data
  * - Compression for large settings
@@ -8,7 +8,6 @@
  * - Offline support with conflict resolution
  * - Settings versioning and rollback
  */
-
 import { Settings } from '@/types/settings';
 
 /**
@@ -81,7 +80,10 @@ export class AdvancedSettingsStorage {
   /**
    * Save settings with advanced features
    */
-  async saveSettings(settings: Settings, userId?: string): Promise<StorageResult> {
+  async saveSettings(
+    settings: Settings,
+    userId?: string,
+  ): Promise<StorageResult> {
     try {
       // Create storage entry
       const entry: StorageEntry = {
@@ -130,7 +132,6 @@ export class AdvancedSettingsStorage {
       }
 
       return { success: true, data: entry };
-
     } catch (error) {
       console.error('[ERROR] Failed to save settings:', error);
       return {
@@ -160,7 +161,10 @@ export class AdvancedSettingsStorage {
       }
 
       const entry: StorageEntry = JSON.parse(stored);
-      let processedData = typeof entry.data === 'string' ? entry.data : JSON.stringify(entry.data);
+      let processedData =
+        typeof entry.data === 'string'
+          ? entry.data
+          : JSON.stringify(entry.data);
 
       // Decrypt if needed
       if (entry.encrypted && this.config.enableEncryption) {
@@ -173,18 +177,20 @@ export class AdvancedSettingsStorage {
       }
 
       // Parse final data
-      const settings: Settings = typeof processedData === 'string' 
-        ? JSON.parse(processedData) 
-        : processedData;
+      const settings: Settings =
+        typeof processedData === 'string'
+          ? JSON.parse(processedData)
+          : processedData;
 
       // Verify checksum
       const expectedChecksum = await this.generateChecksum(settings);
       if (entry.checksum !== expectedChecksum) {
-        console.warn('[WARN] Settings checksum mismatch, data may be corrupted');
+        console.warn(
+          '[WARN] Settings checksum mismatch, data may be corrupted',
+        );
       }
 
       return { success: true, data: settings };
-
     } catch (error) {
       console.error('[ERROR] Failed to load settings:', error);
       return {
@@ -206,7 +212,6 @@ export class AdvancedSettingsStorage {
 
       const versions: StorageEntry[] = JSON.parse(stored);
       return versions.sort((a, b) => b.timestamp - a.timestamp);
-
     } catch (error) {
       console.error('[ERROR] Failed to get version history:', error);
       return [];
@@ -219,7 +224,7 @@ export class AdvancedSettingsStorage {
   async rollbackToVersion(version: string): Promise<StorageResult<Settings>> {
     try {
       const versions = await this.getVersionHistory();
-      const targetVersion = versions.find(v => v.version === version);
+      const targetVersion = versions.find((v) => v.version === version);
 
       if (!targetVersion) {
         return { success: false, error: 'Version not found' };
@@ -233,7 +238,6 @@ export class AdvancedSettingsStorage {
 
       // Restore target version
       return await this.saveSettings(targetVersion.data);
-
     } catch (error) {
       console.error('[ERROR] Failed to rollback settings:', error);
       return {
@@ -263,7 +267,7 @@ export class AdvancedSettingsStorage {
   } {
     const current = localStorage.getItem(this.storageKey);
     const versions = localStorage.getItem(this.versionsKey);
-    
+
     let lastModified = 0;
     if (current) {
       try {
@@ -289,7 +293,9 @@ export class AdvancedSettingsStorage {
   private getOrCreateDeviceId(): string {
     let deviceId = localStorage.getItem('device-id');
     if (!deviceId) {
-      deviceId = `device-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      deviceId = `device-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
       localStorage.setItem('device-id', deviceId);
     }
     return deviceId;
@@ -305,7 +311,7 @@ export class AdvancedSettingsStorage {
     const dataBuffer = encoder.encode(str);
     const hashBuffer = await crypto.subtle.digest('SHA-256', dataBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
   }
 
   private async compress(data: string): Promise<string> {
@@ -315,16 +321,16 @@ export class AdvancedSettingsStorage {
         const stream = new (window as any).CompressionStream('gzip');
         const encoder = new TextEncoder();
         const decoder = new TextDecoder();
-        
+
         const writer = stream.writable.getWriter();
         const reader = stream.readable.getReader();
-        
+
         writer.write(encoder.encode(data));
         writer.close();
-        
+
         const chunks: Uint8Array[] = [];
         let done = false;
-        
+
         while (!done) {
           const { value, done: readerDone } = await reader.read();
           done = readerDone;
@@ -332,15 +338,17 @@ export class AdvancedSettingsStorage {
             chunks.push(value);
           }
         }
-        
+
         // Convert to base64 for storage
-        const compressed = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+        const compressed = new Uint8Array(
+          chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+        );
         let offset = 0;
         for (const chunk of chunks) {
           compressed.set(chunk, offset);
           offset += chunk.length;
         }
-        
+
         return btoa(String.fromCharCode(...compressed));
       } catch (error) {
         console.warn('[WARN] Compression failed, storing uncompressed:', error);
@@ -354,19 +362,19 @@ export class AdvancedSettingsStorage {
     // Simple decompression
     if (typeof window !== 'undefined' && 'DecompressionStream' in window) {
       try {
-        const compressed = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+        const compressed = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
         const stream = new (window as any).DecompressionStream('gzip');
         const decoder = new TextDecoder();
-        
+
         const writer = stream.writable.getWriter();
         const reader = stream.readable.getReader();
-        
+
         writer.write(compressed);
         writer.close();
-        
+
         const chunks: Uint8Array[] = [];
         let done = false;
-        
+
         while (!done) {
           const { value, done: readerDone } = await reader.read();
           done = readerDone;
@@ -374,14 +382,16 @@ export class AdvancedSettingsStorage {
             chunks.push(value);
           }
         }
-        
-        const decompressed = new Uint8Array(chunks.reduce((acc, chunk) => acc + chunk.length, 0));
+
+        const decompressed = new Uint8Array(
+          chunks.reduce((acc, chunk) => acc + chunk.length, 0),
+        );
         let offset = 0;
         for (const chunk of chunks) {
           decompressed.set(chunk, offset);
           offset += chunk.length;
         }
-        
+
         return decoder.decode(decompressed);
       } catch (error) {
         console.warn('[WARN] Decompression failed, returning as-is:', error);
@@ -396,27 +406,27 @@ export class AdvancedSettingsStorage {
     try {
       const encoder = new TextEncoder();
       const keyData = encoder.encode(ENCRYPTION_KEY);
-      
+
       const key = await crypto.subtle.importKey(
         'raw',
         keyData,
         { name: 'AES-GCM' },
         false,
-        ['encrypt']
+        ['encrypt'],
       );
-      
+
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const encrypted = await crypto.subtle.encrypt(
         { name: 'AES-GCM', iv },
         key,
-        encoder.encode(data)
+        encoder.encode(data),
       );
-      
+
       // Combine IV and encrypted data
       const combined = new Uint8Array(iv.length + encrypted.byteLength);
       combined.set(iv);
       combined.set(new Uint8Array(encrypted), iv.length);
-      
+
       return btoa(String.fromCharCode(...combined));
     } catch (error) {
       console.warn('[WARN] Encryption failed, storing unencrypted:', error);
@@ -427,28 +437,28 @@ export class AdvancedSettingsStorage {
   private async decrypt(data: string): Promise<string> {
     // Simple decryption using Web Crypto API
     try {
-      const combined = Uint8Array.from(atob(data), c => c.charCodeAt(0));
+      const combined = Uint8Array.from(atob(data), (c) => c.charCodeAt(0));
       const iv = combined.slice(0, 12);
       const encrypted = combined.slice(12);
-      
+
       const encoder = new TextEncoder();
       const decoder = new TextDecoder();
       const keyData = encoder.encode(ENCRYPTION_KEY);
-      
+
       const key = await crypto.subtle.importKey(
         'raw',
         keyData,
         { name: 'AES-GCM' },
         false,
-        ['decrypt']
+        ['decrypt'],
       );
-      
+
       const decrypted = await crypto.subtle.decrypt(
         { name: 'AES-GCM', iv },
         key,
-        encrypted
+        encrypted,
       );
-      
+
       return decoder.decode(decrypted);
     } catch (error) {
       console.warn('[WARN] Decryption failed, returning as-is:', error);
@@ -460,12 +470,12 @@ export class AdvancedSettingsStorage {
     try {
       const versions = await this.getVersionHistory();
       versions.unshift(entry);
-      
+
       // Keep only max versions
       if (versions.length > this.config.maxVersions) {
         versions.splice(this.config.maxVersions);
       }
-      
+
       localStorage.setItem(this.versionsKey, JSON.stringify(versions));
     } catch (error) {
       console.error('[ERROR] Failed to save version:', error);
@@ -494,7 +504,6 @@ export class AdvancedSettingsStorage {
 
       const result = await response.json();
       return { success: true, data: result };
-
     } catch (error) {
       console.error('[ERROR] Remote sync failed:', error);
       return {
@@ -504,14 +513,18 @@ export class AdvancedSettingsStorage {
     }
   }
 
-  private async syncFromRemote(userId: string): Promise<StorageResult<StorageEntry>> {
+  private async syncFromRemote(
+    userId: string,
+  ): Promise<StorageResult<StorageEntry>> {
     // Placeholder for remote sync implementation
     if (!this.config.syncEndpoint) {
       return { success: false, error: 'No sync endpoint configured' };
     }
 
     try {
-      const response = await fetch(`${this.config.syncEndpoint}/settings/${userId}`);
+      const response = await fetch(
+        `${this.config.syncEndpoint}/settings/${userId}`,
+      );
 
       if (!response.ok) {
         if (response.status === 404) {
@@ -521,12 +534,14 @@ export class AdvancedSettingsStorage {
       }
 
       const remoteEntry: StorageEntry = await response.json();
-      
+
       // Check for conflicts with local data
       const localResult = await this.loadSettings();
       if (localResult.success && localResult.data) {
-        const localEntry = JSON.parse(localStorage.getItem(this.storageKey) || '{}');
-        
+        const localEntry = JSON.parse(
+          localStorage.getItem(this.storageKey) || '{}',
+        );
+
         if (localEntry.timestamp > remoteEntry.timestamp) {
           // Local is newer, potential conflict
           const conflict: SyncConflict = {
@@ -534,13 +549,12 @@ export class AdvancedSettingsStorage {
             remoteEntry,
             conflictType: 'timestamp',
           };
-          
+
           return { success: false, conflict };
         }
       }
 
       return { success: true, data: remoteEntry };
-
     } catch (error) {
       console.error('[ERROR] Remote sync failed:', error);
       return {
@@ -565,7 +579,9 @@ export const defaultStorageConfig: StorageConfig = {
 /**
  * Create an advanced storage instance with default config
  */
-export const createAdvancedStorage = (config?: Partial<StorageConfig>): AdvancedSettingsStorage => {
+export const createAdvancedStorage = (
+  config?: Partial<StorageConfig>,
+): AdvancedSettingsStorage => {
   const finalConfig = { ...defaultStorageConfig, ...config };
   return new AdvancedSettingsStorage(finalConfig);
 };

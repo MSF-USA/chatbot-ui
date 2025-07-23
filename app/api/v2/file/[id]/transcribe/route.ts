@@ -36,13 +36,16 @@ export async function GET(
   const { id } = await params;
 
   const { searchParams } = new URL(request.url);
-  let transcriptionServiceName: 'whisper' | 'azureCognitiveSpeechService' = 'azureCognitiveSpeechService';
+  let transcriptionServiceName: 'whisper' | 'azureCognitiveSpeechService' =
+    'azureCognitiveSpeechService';
   const serviceParam = searchParams.get('service');
   if (
     serviceParam &&
     ['whisper', 'azureCognitiveSpeechService'].includes(serviceParam)
   ) {
-    transcriptionServiceName = serviceParam as 'whisper' | 'azureCognitiveSpeechService';
+    transcriptionServiceName = serviceParam as
+      | 'whisper'
+      | 'azureCognitiveSpeechService';
   }
 
   let transcript: string | undefined;

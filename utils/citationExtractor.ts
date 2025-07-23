@@ -23,7 +23,7 @@ export class CitationExtractor {
     }
 
     let formatted = '\n\nSources:\n';
-    
+
     citations.forEach((citation, index) => {
       formatted += this.formatSingleCitation(citation, index + 1);
     });
@@ -44,7 +44,7 @@ export class CitationExtractor {
   static insertCitationReferences(
     content: string,
     results: WebSearchResult[],
-    citations: Citation[]
+    citations: Citation[],
   ): string {
     let citedContent = content;
 
@@ -53,15 +53,18 @@ export class CitationExtractor {
       if (result.snippet) {
         // Find sentences or phrases from the snippet in the content
         const snippetSentences = this.extractSentences(result.snippet);
-        
-        snippetSentences.forEach(sentence => {
+
+        snippetSentences.forEach((sentence) => {
           const cleanSentence = this.cleanTextForMatching(sentence);
-          if (cleanSentence.length > 20 && citedContent.includes(cleanSentence)) {
+          if (
+            cleanSentence.length > 20 &&
+            citedContent.includes(cleanSentence)
+          ) {
             // Add citation after the sentence
             const citationRef = this.formatInlineCitation(index + 1);
             citedContent = citedContent.replace(
               cleanSentence,
-              `${cleanSentence} ${citationRef}`
+              `${cleanSentence} ${citationRef}`,
             );
           }
         });
@@ -76,8 +79,8 @@ export class CitationExtractor {
    */
   static deduplicateCitations(citations: Citation[]): Citation[] {
     const uniqueUrls = new Map<string, Citation>();
-    
-    citations.forEach(citation => {
+
+    citations.forEach((citation) => {
       const normalizedUrl = this.normalizeUrl(citation.url);
       if (!uniqueUrls.has(normalizedUrl)) {
         uniqueUrls.set(normalizedUrl, citation);
@@ -96,7 +99,7 @@ export class CitationExtractor {
    */
   static sortCitations(
     citations: Citation[],
-    criteria: 'relevance' | 'date' | 'type' = 'relevance'
+    criteria: 'relevance' | 'date' | 'type' = 'relevance',
   ): Citation[] {
     const sorted = [...citations];
 
@@ -110,8 +113,12 @@ export class CitationExtractor {
 
       case 'date':
         return sorted.sort((a, b) => {
-          const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
-          const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
+          const dateA = a.publishedDate
+            ? new Date(a.publishedDate).getTime()
+            : 0;
+          const dateB = b.publishedDate
+            ? new Date(b.publishedDate).getTime()
+            : 0;
           return dateB - dateA;
         });
 
@@ -132,7 +139,10 @@ export class CitationExtractor {
    * Private helper methods
    */
 
-  private static createCitationFromResult(result: WebSearchResult, index: number): Citation {
+  private static createCitationFromResult(
+    result: WebSearchResult,
+    index: number,
+  ): Citation {
     return {
       id: `cite_${index}`,
       title: result.title || 'Untitled',
@@ -163,15 +173,20 @@ export class CitationExtractor {
 
     // Clean authors array
     if (citation.authors) {
-      citation.authors = citation.authors.filter(author => author && author.trim());
+      citation.authors = citation.authors.filter(
+        (author) => author && author.trim(),
+      );
     }
 
     return citation;
   }
 
-  private static formatSingleCitation(citation: Citation, index: number): string {
+  private static formatSingleCitation(
+    citation: Citation,
+    index: number,
+  ): string {
     let formatted = `[${index}] `;
-    
+
     // Add title
     formatted += citation.title;
 
@@ -204,8 +219,8 @@ export class CitationExtractor {
     // Simple sentence extraction - could be improved with NLP
     return text
       .split(/[.!?]+/)
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
   }
 
   private static cleanTextForMatching(text: string): string {
@@ -220,15 +235,16 @@ export class CitationExtractor {
     try {
       const urlObj = new URL(url);
       // Remove trailing slashes and www
-      return urlObj.href
-        .replace(/\/$/, '')
-        .replace('://www.', '://');
+      return urlObj.href.replace(/\/$/, '').replace('://www.', '://');
     } catch {
       return url;
     }
   }
 
-  private static mergeCitations(existing: Citation, newCitation: Citation): Citation {
+  private static mergeCitations(
+    existing: Citation,
+    newCitation: Citation,
+  ): Citation {
     return {
       ...existing,
       // Prefer non-empty values from new citation
@@ -260,7 +276,9 @@ export class CitationExtractor {
     return authors;
   }
 
-  private static extractPublishedDate(result: WebSearchResult): string | undefined {
+  private static extractPublishedDate(
+    result: WebSearchResult,
+  ): string | undefined {
     // Try multiple date sources
     if (result.metadata?.publishedDate) {
       return result.metadata.publishedDate;
@@ -293,7 +311,9 @@ export class CitationExtractor {
     }
   }
 
-  private static determineCitationType(result: WebSearchResult): Citation['type'] {
+  private static determineCitationType(
+    result: WebSearchResult,
+  ): Citation['type'] {
     // Use content type if available
     if (result.contentType) {
       switch (result.contentType) {
@@ -302,7 +322,7 @@ export class CitationExtractor {
         case 'academic':
           return 'academic';
         default:
-          // Continue to other checks
+        // Continue to other checks
       }
     }
 
@@ -310,23 +330,26 @@ export class CitationExtractor {
     const title = result.title?.toLowerCase() || '';
 
     // Check for academic sources
-    if (url.includes('.edu') || 
-        url.includes('scholar') || 
-        url.includes('journal') ||
-        url.includes('pubmed')) {
+    if (
+      url.includes('.edu') ||
+      url.includes('scholar') ||
+      url.includes('journal') ||
+      url.includes('pubmed')
+    ) {
       return 'academic';
     }
 
     // Check for news sources
-    if (url.includes('news') || 
-        url.includes('article') ||
-        title.includes('news')) {
+    if (
+      url.includes('news') ||
+      url.includes('article') ||
+      title.includes('news')
+    ) {
       return 'news';
     }
 
     // Check for blog posts
-    if (url.includes('blog') || 
-        title.includes('blog')) {
+    if (url.includes('blog') || title.includes('blog')) {
       return 'blog';
     }
 
@@ -359,7 +382,8 @@ export class CitationExtractor {
 
       // Format as "Month Day, Year" or just "Year" if it's old
       const now = new Date();
-      const monthsAgo = (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30);
+      const monthsAgo =
+        (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24 * 30);
 
       if (monthsAgo > 12) {
         return date.getFullYear().toString();

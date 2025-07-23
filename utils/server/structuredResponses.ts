@@ -1,8 +1,9 @@
 import { Session } from 'next-auth';
 
+import { ImageMessageContent, Message, TextMessageContent } from '@/types/chat';
+
 import { AzureOpenAI, OpenAI } from 'openai';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions/completions';
-import {ImageMessageContent, Message, TextMessageContent} from '@/types/chat';
 
 type OptimizedQueryResponse = {
   optimizedQuery: string;
@@ -134,9 +135,9 @@ Output format:
 
 /**
  * Generates an optimized search query from conversation history and current query.
- * Analyzes the conversation context to create a search query that includes necessary 
+ * Analyzes the conversation context to create a search query that includes necessary
  * context from previous messages while emphasizing the most recent user question.
- * 
+ *
  * @param openai - Instance of AzureOpenAI.
  * @param messages - Full conversation history.
  * @param currentQuery - The most recent user query.
@@ -153,32 +154,42 @@ export async function generateOptimizedWebSearchQuery(
 ): Promise<OptimizedWebSearchQueryResponse> {
   // Extract conversation context from the last 5-7 messages for relevance
   const relevantMessages = messages.slice(-7);
-  
+
   // Build conversation context string
   let conversationContext = '';
   if (relevantMessages.length > 1) {
     const contextMessages = relevantMessages.slice(0, -1); // All except the last message
-    conversationContext = contextMessages.map((msg, index) => {
-      let content = '';
-      if (typeof msg.content === 'string') {
-        content = msg.content;
-      } else if (Array.isArray(msg.content)) {
-        // Extract text content from complex message content
-        const textContent = (msg.content as (TextMessageContent | ImageMessageContent)[]).find(item => item?.type === 'text');
-        content = textContent ? (textContent as any).text : '[Non-text content]';
-      }
-      return `${msg.role === 'user' ? 'User' : 'Assistant'}: ${content}`;
-    }).join('\n');
+    conversationContext = contextMessages
+      .map((msg, index) => {
+        let content = '';
+        if (typeof msg.content === 'string') {
+          content = msg.content;
+        } else if (Array.isArray(msg.content)) {
+          // Extract text content from complex message content
+          const textContent = (
+            msg.content as (TextMessageContent | ImageMessageContent)[]
+          ).find((item) => item?.type === 'text');
+          content = textContent
+            ? (textContent as any).text
+            : '[Non-text content]';
+        }
+        return `${msg.role === 'user' ? 'User' : 'Assistant'}: ${content}`;
+      })
+      .join('\n');
   }
 
   const prompt = `You are helping to optimize a web search query by analyzing conversation context. Your task is to create a search query that combines the user's current question with relevant context from their previous messages.
 
-${conversationContext ? `Previous conversation context:
+${
+  conversationContext
+    ? `Previous conversation context:
 \`\`\`conversation-history
 ${conversationContext}
 \`\`\`
 
-` : ''}Current user question:
+`
+    : ''
+}Current user question:
 \`\`\`current-question
 ${currentQuery}
 \`\`\`
@@ -195,7 +206,9 @@ Guidelines:
 - If the current question is completely unrelated to previous messages, focus primarily on the current question  
 - Keep the query natural and searchable (avoid overly complex phrasing)
 - Maintain the user's original language preference
-- If dates are mentioned relatively (e.g., "recent", "latest"), the current date is ${new Date().toISOString().split('T')[0]}
+- If dates are mentioned relatively (e.g., "recent", "latest"), the current date is ${
+    new Date().toISOString().split('T')[0]
+  }
 
 Provide the output in JSON format with the key "optimizedQuery".
 
@@ -207,7 +220,8 @@ Output format:
   const structuredMessages: ChatCompletionMessageParam[] = [
     {
       role: 'system',
-      content: 'You are an AI assistant that optimizes search queries by analyzing conversation context. You create contextually-aware search queries that improve search relevance for follow-up questions.',
+      content:
+        'You are an AI assistant that optimizes search queries by analyzing conversation context. You create contextually-aware search queries that improve search relevance for follow-up questions.',
     },
     {
       role: 'user',

@@ -1,21 +1,19 @@
 import { Session } from 'next-auth';
-import { AzureOpenAI } from 'openai';
 
-import { 
-  AgentType, 
-  AgentExecutionRequest, 
-  AgentExecutionResult, 
+import {
   AgentExecutionContext,
-  AgentResponse 
+  AgentExecutionRequest,
+  AgentExecutionResult,
+  AgentResponse,
+  AgentType,
 } from '@/types/agent';
 import { ChatBody } from '@/types/chat';
-import { 
-  IntentAnalysisResult 
-} from '@/types/intentAnalysis';
+import { IntentAnalysisResult } from '@/types/intentAnalysis';
 
 import { executeAgentRequest } from './agentFactory';
 import { getAgentSettingsService } from './agentSettingsService';
 
+import { AzureOpenAI } from 'openai';
 
 /**
  * Error severity levels
@@ -24,7 +22,7 @@ export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
-  CRITICAL = 'critical'
+  CRITICAL = 'critical',
 }
 
 /**
@@ -43,7 +41,7 @@ export enum ErrorCategory {
   RESOURCE_EXHAUSTED = 'resource_exhausted',
   CONFIGURATION_ERROR = 'configuration_error',
   VALIDATION_ERROR = 'validation_error',
-  UNKNOWN = 'unknown'
+  UNKNOWN = 'unknown',
 }
 
 /**
@@ -97,7 +95,7 @@ export interface RecoveryResult {
 export enum CircuitBreakerState {
   CLOSED = 'closed',
   OPEN = 'open',
-  HALF_OPEN = 'half_open'
+  HALF_OPEN = 'half_open',
 }
 
 /**
@@ -116,19 +114,21 @@ export interface CircuitBreakerConfig {
  */
 export class AgentErrorHandlingService {
   private static instance: AgentErrorHandlingService | null = null;
-  
+
   private circuitBreakers: Map<AgentType, CircuitBreakerState>;
-  private circuitBreakerStats: Map<AgentType, {
-    failures: number;
-    requests: number;
-    lastFailureTime: number;
-    windowStart: number;
-  }>;
+  private circuitBreakerStats: Map<
+    AgentType,
+    {
+      failures: number;
+      requests: number;
+      lastFailureTime: number;
+      windowStart: number;
+    }
+  >;
   private fallbackStrategies: Map<AgentType, FallbackStrategy>;
   private errorHistory: Map<string, AgentError[]>;
 
   private constructor() {
-    
     this.circuitBreakers = new Map();
     this.circuitBreakerStats = new Map();
     this.fallbackStrategies = new Map();
@@ -152,7 +152,7 @@ export class AgentErrorHandlingService {
   public async executeWithFallback(
     request: AgentExecutionRequest,
     openai: AzureOpenAI,
-    user: Session['user']
+    user: Session['user'],
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
     const errors: AgentError[] = [];
@@ -172,7 +172,7 @@ export class AgentErrorHandlingService {
           `Circuit breaker is open for agent type ${request.agentType}`,
           ErrorCategory.AGENT_UNAVAILABLE,
           ErrorSeverity.MEDIUM,
-          request.agentType
+          request.agentType,
         );
         errors.push(error);
         return this.attemptFallback(request, openai, user, errors, startTime);
@@ -194,11 +194,20 @@ export class AgentErrorHandlingService {
       }
 
       // Primary execution failed, record error and try fallback
-      const primaryError = this.classifyError((primaryResult.error as Error), request.agentType);
+      const primaryError = this.classifyError(
+        primaryResult.error as Error,
+        request.agentType,
+      );
       errors.push(primaryError);
       this.recordFailure(request.agentType, primaryError);
 
-      return await this.attemptFallback(request, openai, user, errors, startTime);
+      return await this.attemptFallback(
+        request,
+        openai,
+        user,
+        errors,
+        startTime,
+      );
     } catch (error) {
       const agentError = this.classifyError(error as Error, request.agentType);
       errors.push(agentError);
@@ -206,12 +215,16 @@ export class AgentErrorHandlingService {
 
       const totalRecoveryTime = Date.now() - startTime;
 
-      console.error('Agent execution with fallback failed completely', error as Error, {
-        agentType: request.agentType,
-        attemptsUsed,
-        totalRecoveryTime,
-        errorCount: errors.length,
-      });
+      console.error(
+        'Agent execution with fallback failed completely',
+        error as Error,
+        {
+          agentType: request.agentType,
+          attemptsUsed,
+          totalRecoveryTime,
+          errorCount: errors.length,
+        },
+      );
 
       return {
         success: false,
@@ -234,14 +247,18 @@ export class AgentErrorHandlingService {
       openai: AzureOpenAI;
       user: Session['user'];
       intentResult?: IntentAnalysisResult;
-    }
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
 
     try {
       switch (error.category) {
         case ErrorCategory.RATE_LIMITED:
-          return await this.handleRateLimitError(error, originalRequest, context);
+          return await this.handleRateLimitError(
+            error,
+            originalRequest,
+            context,
+          );
 
         case ErrorCategory.TIMEOUT:
           return await this.handleTimeoutError(error, originalRequest, context);
@@ -251,10 +268,18 @@ export class AgentErrorHandlingService {
           return await this.handleAuthError(error, originalRequest, context);
 
         case ErrorCategory.RESOURCE_EXHAUSTED:
-          return await this.handleResourceExhaustedError(error, originalRequest, context);
+          return await this.handleResourceExhaustedError(
+            error,
+            originalRequest,
+            context,
+          );
 
         case ErrorCategory.INVALID_REQUEST:
-          return await this.handleInvalidRequestError(error, originalRequest, context);
+          return await this.handleInvalidRequestError(
+            error,
+            originalRequest,
+            context,
+          );
 
         default:
           return await this.handleGenericError(error, originalRequest, context);
@@ -271,7 +296,10 @@ export class AgentErrorHandlingService {
         recoveryStrategy: 'recovery_failed',
         attemptsUsed: 1,
         totalRecoveryTime: Date.now() - startTime,
-        errors: [error, this.classifyError(recoveryError as Error, originalRequest.agentType)],
+        errors: [
+          error,
+          this.classifyError(recoveryError as Error, originalRequest.agentType),
+        ],
       };
     }
   }
@@ -279,12 +307,17 @@ export class AgentErrorHandlingService {
   /**
    * Configure fallback strategy for an agent type
    */
-  public configureFallbackStrategy(agentType: AgentType, strategy: Partial<FallbackStrategy>): void {
-    const currentStrategy = this.fallbackStrategies.get(agentType) || this.getDefaultFallbackStrategy();
+  public configureFallbackStrategy(
+    agentType: AgentType,
+    strategy: Partial<FallbackStrategy>,
+  ): void {
+    const currentStrategy =
+      this.fallbackStrategies.get(agentType) ||
+      this.getDefaultFallbackStrategy();
     const updatedStrategy = { ...currentStrategy, ...strategy };
-    
+
     this.fallbackStrategies.set(agentType, updatedStrategy);
-    
+
     console.log('Fallback strategy configured', {
       agentType,
       strategy: updatedStrategy,
@@ -300,7 +333,8 @@ export class AgentErrorHandlingService {
     requests: number;
     lastFailureTime?: Date;
   } {
-    const state = this.circuitBreakers.get(agentType) || CircuitBreakerState.CLOSED;
+    const state =
+      this.circuitBreakers.get(agentType) || CircuitBreakerState.CLOSED;
     const stats = this.circuitBreakerStats.get(agentType) || {
       failures: 0,
       requests: 0,
@@ -312,7 +346,8 @@ export class AgentErrorHandlingService {
       state,
       failures: stats.failures,
       requests: stats.requests,
-      lastFailureTime: stats.lastFailureTime > 0 ? new Date(stats.lastFailureTime) : undefined,
+      lastFailureTime:
+        stats.lastFailureTime > 0 ? new Date(stats.lastFailureTime) : undefined,
     };
   }
 
@@ -332,7 +367,9 @@ export class AgentErrorHandlingService {
 
     // Collect all errors within time window
     for (const errors of this.errorHistory.values()) {
-      allErrors.push(...errors.filter(error => error.timestamp.getTime() > cutoff));
+      allErrors.push(
+        ...errors.filter((error) => error.timestamp.getTime() > cutoff),
+      );
     }
 
     // Calculate statistics
@@ -341,11 +378,14 @@ export class AgentErrorHandlingService {
     const errorsBySeverity: Record<ErrorSeverity, number> = {} as any;
 
     for (const error of allErrors) {
-      errorsByCategory[error.category] = (errorsByCategory[error.category] || 0) + 1;
+      errorsByCategory[error.category] =
+        (errorsByCategory[error.category] || 0) + 1;
       if (error.agentType) {
-        errorsByAgent[error.agentType] = (errorsByAgent[error.agentType] || 0) + 1;
+        errorsByAgent[error.agentType] =
+          (errorsByAgent[error.agentType] || 0) + 1;
       }
-      errorsBySeverity[error.severity] = (errorsBySeverity[error.severity] || 0) + 1;
+      errorsBySeverity[error.severity] =
+        (errorsBySeverity[error.severity] || 0) + 1;
     }
 
     // Get top 10 most frequent errors
@@ -359,8 +399,8 @@ export class AgentErrorHandlingService {
       .slice(0, 10)
       .map(([code]) => code);
 
-    const topErrors = topErrorCodes.map(code => 
-      allErrors.find(error => error.code === code)!
+    const topErrors = topErrorCodes.map(
+      (code) => allErrors.find((error) => error.code === code)!,
     );
 
     return {
@@ -382,23 +422,23 @@ export class AgentErrorHandlingService {
 
     switch (error.category) {
       case ErrorCategory.RATE_LIMITED:
-        return 'I\'m currently experiencing high demand. Please try again in a few moments.';
+        return "I'm currently experiencing high demand. Please try again in a few moments.";
 
       case ErrorCategory.TIMEOUT:
         return 'Your request is taking longer than expected. Let me try a different approach.';
 
       case ErrorCategory.AUTHENTICATION:
       case ErrorCategory.AUTHORIZATION:
-        return 'I\'m having trouble accessing the required service. Please contact support if this persists.';
+        return "I'm having trouble accessing the required service. Please contact support if this persists.";
 
       case ErrorCategory.AGENT_UNAVAILABLE:
-        return 'The requested service is temporarily unavailable. I\'ll use an alternative approach.';
+        return "The requested service is temporarily unavailable. I'll use an alternative approach.";
 
       case ErrorCategory.INVALID_REQUEST:
         return 'There seems to be an issue with your request. Could you please rephrase or provide more details?';
 
       case ErrorCategory.NETWORK_ERROR:
-        return 'I\'m experiencing connectivity issues. Please try again in a moment.';
+        return "I'm experiencing connectivity issues. Please try again in a moment.";
 
       default:
         return 'I encountered an unexpected issue. Let me try to help you in a different way.';
@@ -411,20 +451,28 @@ export class AgentErrorHandlingService {
 
   private async executeWithRetry(
     request: AgentExecutionRequest,
-    maxRetries: number
-  ): Promise<{ success: boolean; agentResponse?: AgentResponse; error?: Error }> {
-    const strategy = this.fallbackStrategies.get(request.agentType) || this.getDefaultFallbackStrategy();
+    maxRetries: number,
+  ): Promise<{
+    success: boolean;
+    agentResponse?: AgentResponse;
+    error?: Error;
+  }> {
+    const strategy =
+      this.fallbackStrategies.get(request.agentType) ||
+      this.getDefaultFallbackStrategy();
     let lastError: Error | undefined;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         if (attempt > 1) {
-          const delay = strategy.retryDelay * Math.pow(strategy.backoffMultiplier, attempt - 2);
+          const delay =
+            strategy.retryDelay *
+            Math.pow(strategy.backoffMultiplier, attempt - 2);
           await this.sleep(delay);
         }
 
         const result = await executeAgentRequest(request);
-        
+
         if (result.response.success) {
           return { success: true, agentResponse: result.response };
         } else {
@@ -432,7 +480,7 @@ export class AgentErrorHandlingService {
         }
       } catch (error) {
         lastError = error as Error;
-        
+
         if (attempt === maxRetries) {
           break;
         }
@@ -453,10 +501,12 @@ export class AgentErrorHandlingService {
     openai: AzureOpenAI,
     user: Session['user'],
     errors: AgentError[],
-    startTime: number
+    startTime: number,
   ): Promise<RecoveryResult> {
-    const strategy = this.fallbackStrategies.get(originalRequest.agentType) || this.getDefaultFallbackStrategy();
-    
+    const strategy =
+      this.fallbackStrategies.get(originalRequest.agentType) ||
+      this.getDefaultFallbackStrategy();
+
     if (!strategy.enabled) {
       return {
         success: false,
@@ -492,8 +542,11 @@ export class AgentErrorHandlingService {
           },
         };
 
-        const fallbackResult = await this.executeWithRetry(fallbackRequest, strategy.maxRetries);
-        
+        const fallbackResult = await this.executeWithRetry(
+          fallbackRequest,
+          strategy.maxRetries,
+        );
+
         if (fallbackResult.success) {
           this.recordSuccess(fallbackAgentType);
           return {
@@ -506,12 +559,18 @@ export class AgentErrorHandlingService {
             errors,
           };
         } else {
-          const fallbackError = this.classifyError(fallbackResult.error!, fallbackAgentType);
+          const fallbackError = this.classifyError(
+            fallbackResult.error!,
+            fallbackAgentType,
+          );
           errors.push(fallbackError);
           this.recordFailure(fallbackAgentType, fallbackError);
         }
       } catch (error) {
-        const fallbackError = this.classifyError(error as Error, fallbackAgentType);
+        const fallbackError = this.classifyError(
+          error as Error,
+          fallbackAgentType,
+        );
         errors.push(fallbackError);
         this.recordFailure(fallbackAgentType, fallbackError);
       }
@@ -519,7 +578,11 @@ export class AgentErrorHandlingService {
 
     // All fallbacks failed, try graceful degradation
     if (strategy.gracefulDegradation) {
-      return this.createGracefulDegradationResponse(originalRequest, errors, startTime);
+      return this.createGracefulDegradationResponse(
+        originalRequest,
+        errors,
+        startTime,
+      );
     }
 
     return {
@@ -535,7 +598,11 @@ export class AgentErrorHandlingService {
   private async handleRateLimitError(
     error: AgentError,
     request: AgentExecutionRequest,
-    context: { openai: AzureOpenAI; user: Session['user']; intentResult?: IntentAnalysisResult }
+    context: {
+      openai: AzureOpenAI;
+      user: Session['user'];
+      intentResult?: IntentAnalysisResult;
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
     const retryAfter = error.retryAfter || 60; // Default to 60 seconds
@@ -550,7 +617,7 @@ export class AgentErrorHandlingService {
 
     // Retry the original request
     const retryResult = await this.executeWithRetry(request, 1);
-    
+
     if (retryResult.success) {
       return {
         success: true,
@@ -564,13 +631,23 @@ export class AgentErrorHandlingService {
     }
 
     // If retry failed, try fallback
-    return await this.attemptFallback(request, context.openai, context.user, [error], startTime);
+    return await this.attemptFallback(
+      request,
+      context.openai,
+      context.user,
+      [error],
+      startTime,
+    );
   }
 
   private async handleTimeoutError(
     error: AgentError,
     request: AgentExecutionRequest,
-    context: { openai: AzureOpenAI; user: Session['user']; intentResult?: IntentAnalysisResult }
+    context: {
+      openai: AzureOpenAI;
+      user: Session['user'];
+      intentResult?: IntentAnalysisResult;
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
 
@@ -584,7 +661,7 @@ export class AgentErrorHandlingService {
     };
 
     const retryResult = await this.executeWithRetry(extendedRequest, 1);
-    
+
     if (retryResult.success) {
       return {
         success: true,
@@ -598,24 +675,44 @@ export class AgentErrorHandlingService {
     }
 
     // If retry failed, try fallback
-    return await this.attemptFallback(request, context.openai, context.user, [error], startTime);
+    return await this.attemptFallback(
+      request,
+      context.openai,
+      context.user,
+      [error],
+      startTime,
+    );
   }
 
   private async handleAuthError(
     error: AgentError,
     request: AgentExecutionRequest,
-    context: { openai: AzureOpenAI; user: Session['user']; intentResult?: IntentAnalysisResult }
+    context: {
+      openai: AzureOpenAI;
+      user: Session['user'];
+      intentResult?: IntentAnalysisResult;
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
 
     // Authentication errors are typically not retryable, go directly to fallback
-    return await this.attemptFallback(request, context.openai, context.user, [error], startTime);
+    return await this.attemptFallback(
+      request,
+      context.openai,
+      context.user,
+      [error],
+      startTime,
+    );
   }
 
   private async handleResourceExhaustedError(
     error: AgentError,
     request: AgentExecutionRequest,
-    context: { openai: AzureOpenAI; user: Session['user']; intentResult?: IntentAnalysisResult }
+    context: {
+      openai: AzureOpenAI;
+      user: Session['user'];
+      intentResult?: IntentAnalysisResult;
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
 
@@ -623,7 +720,7 @@ export class AgentErrorHandlingService {
     await this.sleep(5000); // 5 second delay
 
     const retryResult = await this.executeWithRetry(request, 1);
-    
+
     if (retryResult.success) {
       return {
         success: true,
@@ -637,22 +734,32 @@ export class AgentErrorHandlingService {
     }
 
     // If retry failed, try fallback
-    return await this.attemptFallback(request, context.openai, context.user, [error], startTime);
+    return await this.attemptFallback(
+      request,
+      context.openai,
+      context.user,
+      [error],
+      startTime,
+    );
   }
 
   private async handleInvalidRequestError(
     error: AgentError,
     request: AgentExecutionRequest,
-    context: { openai: AzureOpenAI; user: Session['user']; intentResult?: IntentAnalysisResult }
+    context: {
+      openai: AzureOpenAI;
+      user: Session['user'];
+      intentResult?: IntentAnalysisResult;
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
 
     // Try to fix common request issues
     const fixedRequest = this.attemptRequestFix(request, error);
-    
+
     if (fixedRequest) {
       const retryResult = await this.executeWithRetry(fixedRequest, 1);
-      
+
       if (retryResult.success) {
         return {
           success: true,
@@ -667,21 +774,40 @@ export class AgentErrorHandlingService {
     }
 
     // If fix failed or wasn't possible, try fallback
-    return await this.attemptFallback(request, context.openai, context.user, [error], startTime);
+    return await this.attemptFallback(
+      request,
+      context.openai,
+      context.user,
+      [error],
+      startTime,
+    );
   }
 
   private async handleGenericError(
     error: AgentError,
     request: AgentExecutionRequest,
-    context: { openai: AzureOpenAI; user: Session['user']; intentResult?: IntentAnalysisResult }
+    context: {
+      openai: AzureOpenAI;
+      user: Session['user'];
+      intentResult?: IntentAnalysisResult;
+    },
   ): Promise<RecoveryResult> {
     const startTime = Date.now();
 
     // For generic errors, go directly to fallback
-    return await this.attemptFallback(request, context.openai, context.user, [error], startTime);
+    return await this.attemptFallback(
+      request,
+      context.openai,
+      context.user,
+      [error],
+      startTime,
+    );
   }
 
-  private attemptRequestFix(request: AgentExecutionRequest, error: AgentError): AgentExecutionRequest | null {
+  private attemptRequestFix(
+    request: AgentExecutionRequest,
+    error: AgentError,
+  ): AgentExecutionRequest | null {
     try {
       // Try to fix common issues based on error message
       if (error.message.includes('parameter')) {
@@ -695,7 +821,10 @@ export class AgentErrorHandlingService {
         return fixedRequest;
       }
 
-      if (error.message.includes('query') || error.message.includes('content')) {
+      if (
+        error.message.includes('query') ||
+        error.message.includes('content')
+      ) {
         // Simplify the query
         const fixedRequest: AgentExecutionRequest = {
           ...request,
@@ -716,7 +845,7 @@ export class AgentErrorHandlingService {
   private createGracefulDegradationResponse(
     request: AgentExecutionRequest,
     errors: AgentError[],
-    startTime: number
+    startTime: number,
   ): RecoveryResult {
     const degradedResponse: AgentResponse = {
       agentId: `error-handler-${Date.now()}`,
@@ -744,18 +873,30 @@ export class AgentErrorHandlingService {
     };
   }
 
-  private createDegradedResponseContent(request: AgentExecutionRequest, errors: AgentError[]): string {
-    const userFriendlyErrors = errors.map(error => this.createUserFriendlyMessage(error));
-    
-    return `I apologize, but I'm currently experiencing some technical difficulties with the ${request.agentType} service. ${userFriendlyErrors[0]} 
+  private createDegradedResponseContent(
+    request: AgentExecutionRequest,
+    errors: AgentError[],
+  ): string {
+    const userFriendlyErrors = errors.map((error) =>
+      this.createUserFriendlyMessage(error),
+    );
 
-I understand you were asking about: "${request.context.query.substring(0, 100)}${request.context.query.length > 100 ? '...' : ''}"
+    return `I apologize, but I'm currently experiencing some technical difficulties with the ${
+      request.agentType
+    } service. ${userFriendlyErrors[0]} 
+
+I understand you were asking about: "${request.context.query.substring(
+      0,
+      100,
+    )}${request.context.query.length > 100 ? '...' : ''}"
 
 While I can't provide the specialized service you requested right now, I can offer some general assistance or suggestions. Please let me know if you'd like me to help in a different way, or you can try your request again later.`;
   }
 
   private classifyError(error: Error, agentType?: AgentType): AgentError {
-    const errorId = `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    const errorId = `error-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`;
     const message = error.message.toLowerCase();
 
     let category = ErrorCategory.UNKNOWN;
@@ -764,22 +905,34 @@ While I can't provide the specialized service you requested right now, I can off
     let retryAfter: number | undefined;
 
     // Classify based on error message patterns
-    if (message.includes('rate limit') || message.includes('too many requests')) {
+    if (
+      message.includes('rate limit') ||
+      message.includes('too many requests')
+    ) {
       category = ErrorCategory.RATE_LIMITED;
       severity = ErrorSeverity.LOW;
       retryAfter = 60;
     } else if (message.includes('timeout') || message.includes('timed out')) {
       category = ErrorCategory.TIMEOUT;
       severity = ErrorSeverity.MEDIUM;
-    } else if (message.includes('unauthorized') || message.includes('authentication')) {
+    } else if (
+      message.includes('unauthorized') ||
+      message.includes('authentication')
+    ) {
       category = ErrorCategory.AUTHENTICATION;
       severity = ErrorSeverity.HIGH;
       retryable = false;
-    } else if (message.includes('forbidden') || message.includes('permission')) {
+    } else if (
+      message.includes('forbidden') ||
+      message.includes('permission')
+    ) {
       category = ErrorCategory.AUTHORIZATION;
       severity = ErrorSeverity.HIGH;
       retryable = false;
-    } else if (message.includes('not found') || message.includes('unavailable')) {
+    } else if (
+      message.includes('not found') ||
+      message.includes('unavailable')
+    ) {
       category = ErrorCategory.AGENT_UNAVAILABLE;
       severity = ErrorSeverity.MEDIUM;
     } else if (message.includes('network') || message.includes('connection')) {
@@ -789,7 +942,10 @@ While I can't provide the specialized service you requested right now, I can off
       category = ErrorCategory.INVALID_REQUEST;
       severity = ErrorSeverity.MEDIUM;
       retryable = false;
-    } else if (message.includes('quota') || message.includes('limit exceeded')) {
+    } else if (
+      message.includes('quota') ||
+      message.includes('limit exceeded')
+    ) {
       category = ErrorCategory.RESOURCE_EXHAUSTED;
       severity = ErrorSeverity.HIGH;
     }
@@ -818,28 +974,62 @@ While I can't provide the specialized service you requested right now, I can off
     return agentError;
   }
 
-  private generateErrorCode(category: ErrorCategory, agentType?: AgentType): string {
+  private generateErrorCode(
+    category: ErrorCategory,
+    agentType?: AgentType,
+  ): string {
     const timestamp = Date.now().toString(36);
-    const agentPrefix = agentType ? agentType.toUpperCase().replace('_', '') : 'UNKNOWN';
+    const agentPrefix = agentType
+      ? agentType.toUpperCase().replace('_', '')
+      : 'UNKNOWN';
     const categoryPrefix = category.toUpperCase().replace('_', '');
     return `${agentPrefix}_${categoryPrefix}_${timestamp}`;
   }
 
   private getSuggestedActions(category: ErrorCategory): string[] {
     const actions: Record<ErrorCategory, string[]> = {
-      [ErrorCategory.RATE_LIMITED]: ['Wait a few minutes before retrying', 'Try a different approach to your question'],
-      [ErrorCategory.TIMEOUT]: ['Try breaking your request into smaller parts', 'Check your internet connection'],
-      [ErrorCategory.AUTHENTICATION]: ['Contact support for authentication issues'],
+      [ErrorCategory.RATE_LIMITED]: [
+        'Wait a few minutes before retrying',
+        'Try a different approach to your question',
+      ],
+      [ErrorCategory.TIMEOUT]: [
+        'Try breaking your request into smaller parts',
+        'Check your internet connection',
+      ],
+      [ErrorCategory.AUTHENTICATION]: [
+        'Contact support for authentication issues',
+      ],
       [ErrorCategory.AUTHORIZATION]: ['Contact support for permission issues'],
-      [ErrorCategory.AGENT_UNAVAILABLE]: ['Try again later', 'Use a different tool or approach'],
-      [ErrorCategory.NETWORK_ERROR]: ['Check your internet connection', 'Try again in a few moments'],
-      [ErrorCategory.INVALID_REQUEST]: ['Rephrase your question', 'Provide more specific details'],
-      [ErrorCategory.INVALID_RESPONSE]: ['Try rephrasing your request', 'Contact support if the issue persists'],
-      [ErrorCategory.RESOURCE_EXHAUSTED]: ['Try again later when demand is lower'],
+      [ErrorCategory.AGENT_UNAVAILABLE]: [
+        'Try again later',
+        'Use a different tool or approach',
+      ],
+      [ErrorCategory.NETWORK_ERROR]: [
+        'Check your internet connection',
+        'Try again in a few moments',
+      ],
+      [ErrorCategory.INVALID_REQUEST]: [
+        'Rephrase your question',
+        'Provide more specific details',
+      ],
+      [ErrorCategory.INVALID_RESPONSE]: [
+        'Try rephrasing your request',
+        'Contact support if the issue persists',
+      ],
+      [ErrorCategory.RESOURCE_EXHAUSTED]: [
+        'Try again later when demand is lower',
+      ],
       [ErrorCategory.SERVICE_ERROR]: ['Try again in a few minutes'],
-      [ErrorCategory.CONFIGURATION_ERROR]: ['Contact support for configuration issues'],
-      [ErrorCategory.VALIDATION_ERROR]: ['Check your input format and try again'],
-      [ErrorCategory.UNKNOWN]: ['Try rephrasing your request', 'Contact support if the issue persists'],
+      [ErrorCategory.CONFIGURATION_ERROR]: [
+        'Contact support for configuration issues',
+      ],
+      [ErrorCategory.VALIDATION_ERROR]: [
+        'Check your input format and try again',
+      ],
+      [ErrorCategory.UNKNOWN]: [
+        'Try rephrasing your request',
+        'Contact support if the issue persists',
+      ],
     };
 
     return actions[category] || actions[ErrorCategory.UNKNOWN];
@@ -866,7 +1056,10 @@ While I can't provide the specialized service you requested right now, I can off
 
     if (state === CircuitBreakerState.OPEN) {
       const stats = this.circuitBreakerStats.get(agentType);
-      if (stats && Date.now() - stats.lastFailureTime > config.recoveryTimeout) {
+      if (
+        stats &&
+        Date.now() - stats.lastFailureTime > config.recoveryTimeout
+      ) {
         // Transition to half-open
         this.circuitBreakers.set(agentType, CircuitBreakerState.HALF_OPEN);
         return true;
@@ -879,7 +1072,7 @@ While I can't provide the specialized service you requested right now, I can off
 
   private recordSuccess(agentType: AgentType): void {
     const state = this.circuitBreakers.get(agentType);
-    
+
     if (state === CircuitBreakerState.HALF_OPEN) {
       // Transition back to closed
       this.circuitBreakers.set(agentType, CircuitBreakerState.CLOSED);
@@ -901,7 +1094,7 @@ While I can't provide the specialized service you requested right now, I can off
 
   private recordFailure(agentType: AgentType, error: AgentError): void {
     const config = this.getCircuitBreakerConfig(agentType);
-    
+
     if (!this.circuitBreakerStats.has(agentType)) {
       this.circuitBreakerStats.set(agentType, {
         failures: 0,
@@ -926,10 +1119,12 @@ While I can't provide the specialized service you requested right now, I can off
     stats.lastFailureTime = now;
 
     // Check if we should open circuit breaker
-    if (stats.requests >= config.minimumRequests && 
-        stats.failures >= config.failureThreshold) {
+    if (
+      stats.requests >= config.minimumRequests &&
+      stats.failures >= config.failureThreshold
+    ) {
       this.circuitBreakers.set(agentType, CircuitBreakerState.OPEN);
-      
+
       console.warn('Circuit breaker opened', {
         agentType,
         failures: stats.failures,
@@ -995,7 +1190,7 @@ While I can't provide the specialized service you requested right now, I can off
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   private createError(
@@ -1003,7 +1198,7 @@ While I can't provide the specialized service you requested right now, I can off
     message: string,
     category: ErrorCategory,
     severity: ErrorSeverity,
-    agentType?: AgentType
+    agentType?: AgentType,
   ): AgentError {
     return {
       id: `error-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -1013,7 +1208,9 @@ While I can't provide the specialized service you requested right now, I can off
       severity,
       agentType,
       timestamp: new Date(),
-      retryable: category !== ErrorCategory.AUTHENTICATION && category !== ErrorCategory.AUTHORIZATION,
+      retryable:
+        category !== ErrorCategory.AUTHENTICATION &&
+        category !== ErrorCategory.AUTHORIZATION,
       context: {
         generated: true,
         timestamp: new Date().toISOString(),
@@ -1036,7 +1233,7 @@ export function getAgentErrorHandlingService(): AgentErrorHandlingService {
 export async function executeAgentWithFallback(
   request: AgentExecutionRequest,
   openai: AzureOpenAI,
-  user: Session['user']
+  user: Session['user'],
 ): Promise<RecoveryResult> {
   const errorHandler = getAgentErrorHandlingService();
   return await errorHandler.executeWithFallback(request, openai, user);
@@ -1052,7 +1249,7 @@ export async function handleAgentError(
     openai: AzureOpenAI;
     user: Session['user'];
     intentResult?: IntentAnalysisResult;
-  }
+  },
 ): Promise<RecoveryResult> {
   const errorHandler = getAgentErrorHandlingService();
   return await errorHandler.handleSpecificError(error, request, context);
@@ -1061,7 +1258,10 @@ export async function handleAgentError(
 /**
  * Convenience function to configure fallback strategy
  */
-export function configureAgentFallback(agentType: AgentType, strategy: Partial<FallbackStrategy>): void {
+export function configureAgentFallback(
+  agentType: AgentType,
+  strategy: Partial<FallbackStrategy>,
+): void {
   const errorHandler = getAgentErrorHandlingService();
   errorHandler.configureFallbackStrategy(agentType, strategy);
 }

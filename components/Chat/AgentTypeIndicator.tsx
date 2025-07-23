@@ -1,5 +1,13 @@
-import { IconSearch, IconCode, IconFileText, IconDatabase, IconTool, IconRobot } from '@tabler/icons-react';
+import {
+  IconCode,
+  IconDatabase,
+  IconFileText,
+  IconRobot,
+  IconSearch,
+  IconTool,
+} from '@tabler/icons-react';
 import { FC } from 'react';
+
 import { useTranslation } from 'next-i18next';
 
 import { AgentType } from '@/types/agent';
@@ -19,7 +27,7 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
   agentType,
   size = 'md',
   showLabel = false,
-  className = ''
+  className = '',
 }) => {
   const { t } = useTranslation('agents');
 
@@ -32,9 +40,9 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-blue-100 dark:bg-blue-900/30',
           borderColor: 'border-blue-200 dark:border-blue-800',
           name: t('common.agentTypes.web_search'),
-          description: t('indicators.descriptions.web_search')
+          description: t('indicators.descriptions.web_search'),
         };
-      
+
       case AgentType.CODE_INTERPRETER:
         return {
           icon: IconCode,
@@ -42,9 +50,9 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-green-100 dark:bg-green-900/30',
           borderColor: 'border-green-200 dark:border-green-800',
           name: t('common.agentTypes.code_interpreter'),
-          description: t('indicators.descriptions.code_interpreter')
+          description: t('indicators.descriptions.code_interpreter'),
         };
-      
+
       case AgentType.URL_PULL:
         return {
           icon: IconFileText,
@@ -52,9 +60,9 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-purple-100 dark:bg-purple-900/30',
           borderColor: 'border-purple-200 dark:border-purple-800',
           name: t('common.agentTypes.url_pull'),
-          description: t('indicators.descriptions.url_pull')
+          description: t('indicators.descriptions.url_pull'),
         };
-      
+
       case AgentType.LOCAL_KNOWLEDGE:
         return {
           icon: IconDatabase,
@@ -62,9 +70,9 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-orange-100 dark:bg-orange-900/30',
           borderColor: 'border-orange-200 dark:border-orange-800',
           name: t('common.agentTypes.local_knowledge'),
-          description: t('indicators.descriptions.local_knowledge')
+          description: t('indicators.descriptions.local_knowledge'),
         };
-      
+
       case AgentType.STANDARD_CHAT:
         return {
           icon: IconRobot,
@@ -72,9 +80,9 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-gray-100 dark:bg-gray-900/30',
           borderColor: 'border-gray-200 dark:border-gray-700',
           name: t('common.agentTypes.standard_chat'),
-          description: t('indicators.descriptions.standard_chat')
+          description: t('indicators.descriptions.standard_chat'),
         };
-      
+
       case AgentType.FOUNDRY:
         return {
           icon: IconTool,
@@ -82,9 +90,9 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-indigo-100 dark:bg-indigo-900/30',
           borderColor: 'border-indigo-200 dark:border-indigo-800',
           name: t('common.agentTypes.foundry'),
-          description: t('indicators.descriptions.foundry')
+          description: t('indicators.descriptions.foundry'),
         };
-      
+
       case AgentType.THIRD_PARTY:
       default:
         return {
@@ -93,7 +101,7 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           bgColor: 'bg-gray-100 dark:bg-gray-900/30',
           borderColor: 'border-gray-200 dark:border-gray-700',
           name: t('common.agentTypes.third_party'),
-          description: t('indicators.descriptions.third_party')
+          description: t('indicators.descriptions.third_party'),
         };
     }
   };
@@ -105,14 +113,14 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           iconSize: 14,
           padding: 'p-1.5',
           textSize: 'text-xs',
-          spacing: 'space-x-1'
+          spacing: 'space-x-1',
         };
       case 'lg':
         return {
           iconSize: 20,
           padding: 'p-3',
           textSize: 'text-sm',
-          spacing: 'space-x-2'
+          spacing: 'space-x-2',
         };
       case 'md':
       default:
@@ -120,7 +128,7 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
           iconSize: 16,
           padding: 'p-2',
           textSize: 'text-xs',
-          spacing: 'space-x-1.5'
+          spacing: 'space-x-1.5',
         };
     }
   };
@@ -135,11 +143,13 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
         className={`inline-flex items-center ${sizeConfig.spacing} ${sizeConfig.padding} rounded-lg border ${agentConfig.bgColor} ${agentConfig.borderColor} ${className}`}
         title={agentConfig.description}
       >
-        <IconComponent 
-          size={sizeConfig.iconSize} 
+        <IconComponent
+          size={sizeConfig.iconSize}
           className={agentConfig.color}
         />
-        <span className={`font-medium ${agentConfig.color} ${sizeConfig.textSize}`}>
+        <span
+          className={`font-medium ${agentConfig.color} ${sizeConfig.textSize}`}
+        >
           {agentConfig.name}
         </span>
       </div>
@@ -151,10 +161,7 @@ export const AgentTypeIndicator: FC<AgentTypeIndicatorProps> = ({
       className={`inline-flex items-center justify-center ${sizeConfig.padding} rounded-lg border ${agentConfig.bgColor} ${agentConfig.borderColor} ${className}`}
       title={`${agentConfig.name} - ${agentConfig.description}`}
     >
-      <IconComponent 
-        size={sizeConfig.iconSize} 
-        className={agentConfig.color}
-      />
+      <IconComponent size={sizeConfig.iconSize} className={agentConfig.color} />
     </div>
   );
 };

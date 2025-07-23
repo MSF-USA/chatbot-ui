@@ -1,15 +1,15 @@
 import { FC, useState } from 'react';
+
 import { useTranslation } from 'next-i18next';
 
-import { AgentType, AgentResponse } from '@/types/agent';
+import { AgentResponse, AgentType } from '@/types/agent';
 import { Message } from '@/types/chat';
 
-
-// Agent-specific panel imports
-import { WebSearchResultsPanel } from './WebSearchResultsPanel';
+import { AgentTypeIndicator } from './AgentTypeIndicator';
 import { CodeExecutionResultsPanel } from './CodeExecutionResultsPanel';
 import { DocumentAnalysisPanel } from './DocumentAnalysisPanel';
-import { AgentTypeIndicator } from './AgentTypeIndicator';
+// Agent-specific panel imports
+import { WebSearchResultsPanel } from './WebSearchResultsPanel';
 
 interface AgentResponsePanelProps {
   message: Message;
@@ -37,14 +37,13 @@ export const AgentResponsePanel: FC<AgentResponsePanelProps> = ({
   const handleToggleExpand = () => {
     const newExpanded = !isExpanded;
     setIsExpanded(newExpanded);
-    
+
     if (newExpanded && onExpand) {
       onExpand();
     } else if (!newExpanded && onCollapse) {
       onCollapse();
     }
   };
-
 
   const renderAgentSpecificContent = () => {
     if (!agentResponse.success && agentResponse.error) {
@@ -66,14 +65,14 @@ export const AgentResponsePanel: FC<AgentResponsePanelProps> = ({
     switch (agentResponse.agentType) {
       case AgentType.WEB_SEARCH:
         return <WebSearchResultsPanel agentResponse={agentResponse} />;
-      
+
       case AgentType.CODE_INTERPRETER:
         return <CodeExecutionResultsPanel agentResponse={agentResponse} />;
-      
+
       case AgentType.URL_PULL:
       case AgentType.LOCAL_KNOWLEDGE:
         return <DocumentAnalysisPanel agentResponse={agentResponse} />;
-      
+
       default:
         return (
           <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-800 rounded-lg">
@@ -92,17 +91,20 @@ export const AgentResponsePanel: FC<AgentResponsePanelProps> = ({
       <div className="mt-2 flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400">
         {agentResponse.metadata.processingTime && (
           <span>
-            {t('agents:common.metadata.processingTime')}: {agentResponse.metadata.processingTime}ms
+            {t('agents:common.metadata.processingTime')}:{' '}
+            {agentResponse.metadata.processingTime}ms
           </span>
         )}
         {agentResponse.metadata.confidence && (
           <span>
-            {t('agents:common.metadata.confidence')}: {Math.round(agentResponse.metadata.confidence * 100)}%
+            {t('agents:common.metadata.confidence')}:{' '}
+            {Math.round(agentResponse.metadata.confidence * 100)}%
           </span>
         )}
         {agentResponse.metadata.tokenUsage && (
           <span>
-            {t('agents:common.metadata.tokens')}: {agentResponse.metadata.tokenUsage.total}
+            {t('agents:common.metadata.tokens')}:{' '}
+            {agentResponse.metadata.tokenUsage.total}
           </span>
         )}
       </div>
@@ -114,7 +116,7 @@ export const AgentResponsePanel: FC<AgentResponsePanelProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center space-x-3">
-          <AgentTypeIndicator 
+          <AgentTypeIndicator
             agentType={agentResponse.agentType}
             size="md"
             showLabel={true}
@@ -125,28 +127,35 @@ export const AgentResponsePanel: FC<AgentResponsePanelProps> = ({
             </p>
           </div>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           {/* Status indicator */}
-          <div className={`w-2 h-2 rounded-full ${
-            agentResponse.success 
-              ? 'bg-green-500' 
-              : 'bg-red-500'
-          }`}></div>
-          
+          <div
+            className={`w-2 h-2 rounded-full ${
+              agentResponse.success ? 'bg-green-500' : 'bg-red-500'
+            }`}
+          ></div>
+
           {/* Expand/Collapse button */}
           <button
             onClick={handleToggleExpand}
             className="p-1 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             aria-label={isExpanded ? t('common.collapse') : t('common.expand')}
           >
-            <svg 
-              className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className={`w-4 h-4 transition-transform ${
+                isExpanded ? 'rotate-180' : ''
+              }`}
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
             </svg>
           </button>
         </div>
@@ -157,7 +166,7 @@ export const AgentResponsePanel: FC<AgentResponsePanelProps> = ({
         <div className="p-3">
           {/* Agent-specific content */}
           {renderAgentSpecificContent()}
-          
+
           {/* Metadata */}
           {renderMetadata()}
         </div>

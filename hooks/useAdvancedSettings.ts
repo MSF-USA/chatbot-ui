@@ -1,21 +1,25 @@
 /**
  * Advanced Settings Hook
- * 
+ *
  * React hook for managing settings with advanced storage features
  * including encryption, versioning, and sync capabilities.
  */
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
-import { Settings } from '@/types/settings';
-import { 
-  AdvancedSettingsStorage, 
-  StorageConfig, 
-  StorageResult, 
+import {
+  AdvancedSettingsStorage,
+  StorageConfig,
+  StorageResult,
   SyncConflict,
+  createAdvancedStorage,
   defaultStorageConfig,
-  createAdvancedStorage 
 } from '@/utils/app/advancedStorage';
-import { getSettings as getFallbackSettings, saveSettings as saveFallbackSettings } from '@/utils/app/settings';
+import {
+  getSettings as getFallbackSettings,
+  saveSettings as saveFallbackSettings,
+} from '@/utils/app/settings';
+
+import { Settings } from '@/types/settings';
 
 /**
  * Hook options
@@ -36,27 +40,29 @@ export interface UseAdvancedSettingsReturn {
   loading: boolean;
   error: string | null;
   conflict: SyncConflict | null;
-  
+
   // Core operations
   updateSettings: (newSettings: Settings) => Promise<boolean>;
   resetSettings: () => Promise<boolean>;
-  
+
   // Advanced operations
   saveSettingsAdvanced: (settings: Settings) => Promise<boolean>;
   loadSettingsAdvanced: () => Promise<boolean>;
-  
+
   // Version management
   getVersionHistory: () => Promise<any[]>;
   rollbackToVersion: (version: string) => Promise<boolean>;
-  
+
   // Sync operations
   syncSettings: () => Promise<boolean>;
-  resolveConflict: (resolution: 'local' | 'remote' | 'merge') => Promise<boolean>;
-  
+  resolveConflict: (
+    resolution: 'local' | 'remote' | 'merge',
+  ) => Promise<boolean>;
+
   // Storage management
   clearStorage: () => void;
   getStorageStats: () => any;
-  
+
   // Backup/restore
   exportSettings: () => string | null;
   importSettings: (data: string) => Promise<boolean>;
@@ -65,7 +71,9 @@ export interface UseAdvancedSettingsReturn {
 /**
  * Advanced Settings Hook
  */
-export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): UseAdvancedSettingsReturn => {
+export const useAdvancedSettings = (
+  options: UseAdvancedSettingsOptions = {},
+): UseAdvancedSettingsReturn => {
   const {
     storageConfig = {},
     enableAdvancedFeatures = true,
@@ -75,7 +83,9 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
   } = options;
 
   // State
-  const [settings, setSettings] = useState<Settings>(() => getFallbackSettings());
+  const [settings, setSettings] = useState<Settings>(() =>
+    getFallbackSettings(),
+  );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conflict, setConflict] = useState<SyncConflict | null>(null);
@@ -97,11 +107,14 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
   }, []);
 
   // Helper to handle errors
-  const handleError = useCallback((errorMessage: string) => {
-    setError(errorMessage);
-    onError?.(errorMessage);
-    console.error('[AdvancedSettings]', errorMessage);
-  }, [onError]);
+  const handleError = useCallback(
+    (errorMessage: string) => {
+      setError(errorMessage);
+      onError?.(errorMessage);
+      console.error('[AdvancedSettings]', errorMessage);
+    },
+    [onError],
+  );
 
   // Load settings with advanced features
   const loadSettingsAdvanced = useCallback(async (): Promise<boolean> => {
@@ -123,30 +136,31 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
         return true;
       } else if (result.conflict) {
         setConflict(result.conflict);
-        
+
         // Auto-resolve if handler provided
         if (onSyncConflict) {
           const resolution = onSyncConflict(result.conflict);
           return await resolveConflict(resolution);
         }
-        
+
         handleError('Sync conflict detected. Please resolve manually.');
         return false;
       } else {
         // Try fallback settings if advanced loading fails
         const fallbackSettings = getFallbackSettings();
         setSettings(fallbackSettings);
-        
+
         if (result.error) {
           handleError(`Failed to load advanced settings: ${result.error}`);
         }
-        
+
         return false;
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error loading settings';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Unknown error loading settings';
       handleError(errorMessage);
-      
+
       // Always fallback to basic settings
       const fallbackSettings = getFallbackSettings();
       setSettings(fallbackSettings);
@@ -157,51 +171,63 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
   }, [enableAdvancedFeatures, userId, onSyncConflict, handleError]);
 
   // Save settings with advanced features
-  const saveSettingsAdvanced = useCallback(async (newSettings: Settings): Promise<boolean> => {
-    setLoading(true);
-    setError(null);
+  const saveSettingsAdvanced = useCallback(
+    async (newSettings: Settings): Promise<boolean> => {
+      setLoading(true);
+      setError(null);
 
-    try {
-      if (!enableAdvancedFeatures || !storageRef.current) {
-        // Fallback to basic settings
-        saveFallbackSettings(newSettings);
-        setSettings(newSettings);
-        return true;
-      }
-
-      const result = await storageRef.current.saveSettings(newSettings, userId);
-
-      if (result.success) {
-        setSettings(newSettings);
-        return true;
-      } else if (result.conflict) {
-        setConflict(result.conflict);
-        
-        // Auto-resolve if handler provided
-        if (onSyncConflict) {
-          const resolution = onSyncConflict(result.conflict);
-          return await resolveConflict(resolution);
+      try {
+        if (!enableAdvancedFeatures || !storageRef.current) {
+          // Fallback to basic settings
+          saveFallbackSettings(newSettings);
+          setSettings(newSettings);
+          return true;
         }
-        
-        handleError('Sync conflict detected. Please resolve manually.');
+
+        const result = await storageRef.current.saveSettings(
+          newSettings,
+          userId,
+        );
+
+        if (result.success) {
+          setSettings(newSettings);
+          return true;
+        } else if (result.conflict) {
+          setConflict(result.conflict);
+
+          // Auto-resolve if handler provided
+          if (onSyncConflict) {
+            const resolution = onSyncConflict(result.conflict);
+            return await resolveConflict(resolution);
+          }
+
+          handleError('Sync conflict detected. Please resolve manually.');
+          return false;
+        } else {
+          handleError(
+            `Failed to save settings: ${result.error || 'Unknown error'}`,
+          );
+          return false;
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Unknown error saving settings';
+        handleError(errorMessage);
         return false;
-      } else {
-        handleError(`Failed to save settings: ${result.error || 'Unknown error'}`);
-        return false;
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error saving settings';
-      handleError(errorMessage);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, [enableAdvancedFeatures, userId, onSyncConflict, handleError]);
+    },
+    [enableAdvancedFeatures, userId, onSyncConflict, handleError],
+  );
 
   // Update settings (unified interface)
-  const updateSettings = useCallback(async (newSettings: Settings): Promise<boolean> => {
-    return await saveSettingsAdvanced(newSettings);
-  }, [saveSettingsAdvanced]);
+  const updateSettings = useCallback(
+    async (newSettings: Settings): Promise<boolean> => {
+      return await saveSettingsAdvanced(newSettings);
+    },
+    [saveSettingsAdvanced],
+  );
 
   // Reset settings to defaults
   const resetSettings = useCallback(async (): Promise<boolean> => {
@@ -218,38 +244,43 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
     try {
       return await storageRef.current.getVersionHistory();
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to get version history';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to get version history';
       handleError(errorMessage);
       return [];
     }
   }, [enableAdvancedFeatures, handleError]);
 
   // Rollback to specific version
-  const rollbackToVersion = useCallback(async (version: string): Promise<boolean> => {
-    if (!enableAdvancedFeatures || !storageRef.current) {
-      handleError('Advanced features not enabled');
-      return false;
-    }
-
-    setLoading(true);
-    try {
-      const result = await storageRef.current.rollbackToVersion(version);
-      
-      if (result.success && result.data) {
-        setSettings(result.data);
-        return true;
-      } else {
-        handleError(`Failed to rollback: ${result.error || 'Unknown error'}`);
+  const rollbackToVersion = useCallback(
+    async (version: string): Promise<boolean> => {
+      if (!enableAdvancedFeatures || !storageRef.current) {
+        handleError('Advanced features not enabled');
         return false;
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Rollback failed';
-      handleError(errorMessage);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, [enableAdvancedFeatures, handleError]);
+
+      setLoading(true);
+      try {
+        const result = await storageRef.current.rollbackToVersion(version);
+
+        if (result.success && result.data) {
+          setSettings(result.data);
+          return true;
+        } else {
+          handleError(`Failed to rollback: ${result.error || 'Unknown error'}`);
+          return false;
+        }
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Rollback failed';
+        handleError(errorMessage);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [enableAdvancedFeatures, handleError],
+  );
 
   // Sync settings manually
   const syncSettings = useCallback(async (): Promise<boolean> => {
@@ -262,47 +293,50 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
   }, [enableAdvancedFeatures, userId, loadSettingsAdvanced, handleError]);
 
   // Resolve sync conflict
-  const resolveConflict = useCallback(async (resolution: 'local' | 'remote' | 'merge'): Promise<boolean> => {
-    if (!conflict) {
-      return true;
-    }
-
-    setLoading(true);
-    try {
-      let resolvedSettings: Settings;
-
-      switch (resolution) {
-        case 'local':
-          resolvedSettings = conflict.localEntry.data;
-          break;
-        case 'remote':
-          resolvedSettings = conflict.remoteEntry.data;
-          break;
-        case 'merge':
-          // Simple merge strategy - prefer local but take remote for missing keys
-          resolvedSettings = {
-            ...conflict.remoteEntry.data,
-            ...conflict.localEntry.data,
-          };
-          break;
-        default:
-          throw new Error('Invalid resolution strategy');
+  const resolveConflict = useCallback(
+    async (resolution: 'local' | 'remote' | 'merge'): Promise<boolean> => {
+      if (!conflict) {
+        return true;
       }
 
-      const success = await saveSettingsAdvanced(resolvedSettings);
-      if (success) {
-        setConflict(null);
-      }
-      return success;
+      setLoading(true);
+      try {
+        let resolvedSettings: Settings;
 
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Conflict resolution failed';
-      handleError(errorMessage);
-      return false;
-    } finally {
-      setLoading(false);
-    }
-  }, [conflict, saveSettingsAdvanced, handleError]);
+        switch (resolution) {
+          case 'local':
+            resolvedSettings = conflict.localEntry.data;
+            break;
+          case 'remote':
+            resolvedSettings = conflict.remoteEntry.data;
+            break;
+          case 'merge':
+            // Simple merge strategy - prefer local but take remote for missing keys
+            resolvedSettings = {
+              ...conflict.remoteEntry.data,
+              ...conflict.localEntry.data,
+            };
+            break;
+          default:
+            throw new Error('Invalid resolution strategy');
+        }
+
+        const success = await saveSettingsAdvanced(resolvedSettings);
+        if (success) {
+          setConflict(null);
+        }
+        return success;
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Conflict resolution failed';
+        handleError(errorMessage);
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [conflict, saveSettingsAdvanced, handleError],
+  );
 
   // Clear storage
   const clearStorage = useCallback(() => {
@@ -327,11 +361,15 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
   // Export settings
   const exportSettings = useCallback((): string | null => {
     try {
-      return JSON.stringify({
-        settings,
-        timestamp: Date.now(),
-        version: '1.1.0',
-      }, null, 2);
+      return JSON.stringify(
+        {
+          settings,
+          timestamp: Date.now(),
+          version: '1.1.0',
+        },
+        null,
+        2,
+      );
     } catch (err) {
       handleError('Failed to export settings');
       return null;
@@ -339,49 +377,53 @@ export const useAdvancedSettings = (options: UseAdvancedSettingsOptions = {}): U
   }, [settings, handleError]);
 
   // Import settings
-  const importSettings = useCallback(async (data: string): Promise<boolean> => {
-    try {
-      const imported = JSON.parse(data);
-      
-      if (!imported.settings) {
-        handleError('Invalid settings file format');
+  const importSettings = useCallback(
+    async (data: string): Promise<boolean> => {
+      try {
+        const imported = JSON.parse(data);
+
+        if (!imported.settings) {
+          handleError('Invalid settings file format');
+          return false;
+        }
+
+        return await updateSettings(imported.settings);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : 'Import failed';
+        handleError(errorMessage);
         return false;
       }
-
-      return await updateSettings(imported.settings);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Import failed';
-      handleError(errorMessage);
-      return false;
-    }
-  }, [updateSettings, handleError]);
+    },
+    [updateSettings, handleError],
+  );
 
   return {
     settings,
     loading,
     error,
     conflict,
-    
+
     // Core operations
     updateSettings,
     resetSettings,
-    
+
     // Advanced operations
     saveSettingsAdvanced,
     loadSettingsAdvanced,
-    
+
     // Version management
     getVersionHistory,
     rollbackToVersion,
-    
+
     // Sync operations
     syncSettings,
     resolveConflict,
-    
+
     // Storage management
     clearStorage,
     getStorageStats,
-    
+
     // Backup/restore
     exportSettings,
     importSettings,

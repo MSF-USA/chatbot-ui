@@ -1,5 +1,6 @@
 import { Session } from 'next-auth';
 
+import { AgentType } from '@/types/agent';
 import { Conversation, Message } from '@/types/chat';
 import { ErrorMessage } from '@/types/error';
 import { FolderInterface } from '@/types/folder';
@@ -7,7 +8,7 @@ import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 import { AgentSettings } from '@/types/settings';
-import { AgentType } from '@/types/agent';
+
 import { SettingsSection } from '@/components/Settings/types';
 
 export interface HomeInitialState {

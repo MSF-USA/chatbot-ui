@@ -92,7 +92,12 @@ export interface HeuristicAnalysisResult {
   /** Matched patterns or keywords */
   matchedPatterns: string[];
   /** Analysis method used */
-  method: 'url_detection' | 'code_detection' | 'time_detection' | 'keyword_detection' | 'default';
+  method:
+    | 'url_detection'
+    | 'code_detection'
+    | 'time_detection'
+    | 'keyword_detection'
+    | 'default';
   /** Extracted parameters */
   parameters: Record<string, any>;
 }

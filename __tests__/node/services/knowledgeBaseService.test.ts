@@ -1,24 +1,25 @@
 /**
  * Knowledge Base Service Tests
- * 
+ *
  * Unit tests for the KnowledgeBaseService implementation,
  * covering document management, search operations, and access control.
  */
-
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { KnowledgeBaseService } from '../../../services/knowledgeBaseService';
+
 import {
+  AccessLevel,
+  DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
+  KnowledgeBaseConfig,
   KnowledgeDocument,
   KnowledgeDocumentType,
-  KnowledgeSourceType,
-  AccessLevel,
-  UserRole,
   KnowledgeSearchQuery,
-  KnowledgeBaseConfig,
+  KnowledgeSourceType,
   LocalKnowledgeError,
   LocalKnowledgeErrorType,
-  DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
+  UserRole,
 } from '../../../types/localKnowledge';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('../../../services/loggingService', () => ({
@@ -38,7 +39,8 @@ describe('KnowledgeBaseService', () => {
   // Test data
   const mockDocument = {
     title: 'Employee Handbook',
-    content: 'This handbook contains important information for all employees including policies, procedures, and guidelines.',
+    content:
+      'This handbook contains important information for all employees including policies, procedures, and guidelines.',
     type: KnowledgeDocumentType.HANDBOOK,
     source: KnowledgeSourceType.LOCAL_FILE,
     accessLevel: AccessLevel.INTERNAL,
@@ -123,7 +125,10 @@ describe('KnowledgeBaseService', () => {
 
     it('should retrieve document by ID', async () => {
       const documentId = await service.addDocument(mockDocument);
-      const retrievedDoc = await service.getDocument(documentId, UserRole.EMPLOYEE);
+      const retrievedDoc = await service.getDocument(
+        documentId,
+        UserRole.EMPLOYEE,
+      );
 
       expect(retrievedDoc).toBeDefined();
       expect(retrievedDoc?.id).toBe(documentId);
@@ -133,7 +138,7 @@ describe('KnowledgeBaseService', () => {
 
     it('should update document successfully', async () => {
       const documentId = await service.addDocument(mockDocument);
-      
+
       const updates = {
         title: 'Updated Employee Handbook',
         content: 'Updated content for the employee handbook.',
@@ -141,7 +146,10 @@ describe('KnowledgeBaseService', () => {
 
       await service.updateDocument(documentId, updates);
 
-      const updatedDoc = await service.getDocument(documentId, UserRole.EMPLOYEE);
+      const updatedDoc = await service.getDocument(
+        documentId,
+        UserRole.EMPLOYEE,
+      );
       expect(updatedDoc?.title).toBe(updates.title);
       expect(updatedDoc?.content).toBe(updates.content);
       expect(updatedDoc?.updatedAt).toBeInstanceOf(Date);
@@ -149,32 +157,40 @@ describe('KnowledgeBaseService', () => {
 
     it('should remove document successfully', async () => {
       const documentId = await service.addDocument(mockDocument);
-      
+
       await service.removeDocument(documentId);
-      
-      const retrievedDoc = await service.getDocument(documentId, UserRole.EMPLOYEE);
+
+      const retrievedDoc = await service.getDocument(
+        documentId,
+        UserRole.EMPLOYEE,
+      );
       expect(retrievedDoc).toBeNull();
     });
 
     it('should handle document not found error', async () => {
       const nonExistentId = 'doc_nonexistent';
-      
-      const retrievedDoc = await service.getDocument(nonExistentId, UserRole.EMPLOYEE);
+
+      const retrievedDoc = await service.getDocument(
+        nonExistentId,
+        UserRole.EMPLOYEE,
+      );
       expect(retrievedDoc).toBeNull();
     });
 
     it('should handle update of non-existent document', async () => {
       const nonExistentId = 'doc_nonexistent';
-      
-      await expect(service.updateDocument(nonExistentId, { title: 'New Title' }))
-        .rejects.toThrow('Document not found');
+
+      await expect(
+        service.updateDocument(nonExistentId, { title: 'New Title' }),
+      ).rejects.toThrow('Document not found');
     });
 
     it('should handle removal of non-existent document', async () => {
       const nonExistentId = 'doc_nonexistent';
-      
-      await expect(service.removeDocument(nonExistentId))
-        .rejects.toThrow('Document not found');
+
+      await expect(service.removeDocument(nonExistentId)).rejects.toThrow(
+        'Document not found',
+      );
     });
   });
 
@@ -185,29 +201,32 @@ describe('KnowledgeBaseService', () => {
 
     it('should reject document without title', async () => {
       const invalidDoc = { ...mockDocument, title: '' };
-      
-      await expect(service.addDocument(invalidDoc))
-        .rejects.toThrow('Document title is required');
+
+      await expect(service.addDocument(invalidDoc)).rejects.toThrow(
+        'Document title is required',
+      );
     });
 
     it('should reject document without content', async () => {
       const invalidDoc = { ...mockDocument, content: '' };
-      
-      await expect(service.addDocument(invalidDoc))
-        .rejects.toThrow('Document content is required');
+
+      await expect(service.addDocument(invalidDoc)).rejects.toThrow(
+        'Document content is required',
+      );
     });
 
     it('should reject document with content too large', async () => {
       const largeContent = 'a'.repeat(1500000); // 1.5MB content
       const invalidDoc = { ...mockDocument, content: largeContent };
-      
-      await expect(service.addDocument(invalidDoc))
-        .rejects.toThrow('Document content too large');
+
+      await expect(service.addDocument(invalidDoc)).rejects.toThrow(
+        'Document content too large',
+      );
     });
 
     it('should accept document with valid content size', async () => {
       const validDoc = { ...mockDocument, content: 'Valid content size' };
-      
+
       const documentId = await service.addDocument(validDoc);
       expect(documentId).toBeDefined();
     });
@@ -219,13 +238,14 @@ describe('KnowledgeBaseService', () => {
 
     beforeEach(async () => {
       await service.initialize();
-      
+
       // Add test documents
       document1Id = await service.addDocument(mockDocument);
       document2Id = await service.addDocument({
         ...restrictedDocument,
         title: 'IT Security Policy',
-        content: 'Security policies and procedures for IT systems and data protection.',
+        content:
+          'Security policies and procedures for IT systems and data protection.',
         accessLevel: AccessLevel.INTERNAL,
         allowedRoles: [UserRole.EMPLOYEE, UserRole.IT_ADMIN],
         tags: ['it', 'security', 'policies'],
@@ -287,7 +307,7 @@ describe('KnowledgeBaseService', () => {
       const results = await service.search(query);
 
       expect(results).toBeDefined();
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.document.type).toBe(KnowledgeDocumentType.POLICY);
       });
     });
@@ -304,7 +324,7 @@ describe('KnowledgeBaseService', () => {
       const results = await service.search(query);
 
       expect(results).toBeDefined();
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.document.tags).toContain('hr');
       });
     });
@@ -321,7 +341,7 @@ describe('KnowledgeBaseService', () => {
       const results = await service.search(query);
 
       expect(results).toBeDefined();
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.document.language).toBe('en');
       });
     });
@@ -346,7 +366,7 @@ describe('KnowledgeBaseService', () => {
 
     beforeEach(async () => {
       await service.initialize();
-      
+
       // Add documents with different access levels
       restrictedDocId = await service.addDocument(restrictedDocument);
       publicDocId = await service.addDocument({
@@ -363,8 +383,9 @@ describe('KnowledgeBaseService', () => {
     });
 
     it('should deny employee access to restricted documents', async () => {
-      await expect(service.getDocument(restrictedDocId, UserRole.EMPLOYEE))
-        .rejects.toThrow('Access denied to document');
+      await expect(
+        service.getDocument(restrictedDocId, UserRole.EMPLOYEE),
+      ).rejects.toThrow('Access denied to document');
     });
 
     it('should allow admin to access restricted documents', async () => {
@@ -385,8 +406,14 @@ describe('KnowledgeBaseService', () => {
       const results = await service.search(query);
 
       // Should not return restricted documents
-      results.forEach(result => {
-        const accessLevels = [AccessLevel.PUBLIC, AccessLevel.INTERNAL, AccessLevel.CONFIDENTIAL, AccessLevel.RESTRICTED, AccessLevel.SECRET];
+      results.forEach((result) => {
+        const accessLevels = [
+          AccessLevel.PUBLIC,
+          AccessLevel.INTERNAL,
+          AccessLevel.CONFIDENTIAL,
+          AccessLevel.RESTRICTED,
+          AccessLevel.SECRET,
+        ];
         const userMaxLevel = accessLevels.indexOf(AccessLevel.INTERNAL);
         const docLevel = accessLevels.indexOf(result.document.accessLevel);
         expect(docLevel).toBeLessThanOrEqual(userMaxLevel);
@@ -404,7 +431,7 @@ describe('KnowledgeBaseService', () => {
       const results = await service.search(query);
 
       // Should not return documents the user doesn't have access to
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.document.allowedRoles).toContain(UserRole.EMPLOYEE);
       });
     });
@@ -422,8 +449,9 @@ describe('KnowledgeBaseService', () => {
         searchMode: 'keyword',
       };
 
-      await expect(service.search(invalidQuery))
-        .rejects.toThrow('Search query cannot be empty');
+      await expect(service.search(invalidQuery)).rejects.toThrow(
+        'Search query cannot be empty',
+      );
     });
 
     it('should reject very long search query', async () => {
@@ -434,8 +462,9 @@ describe('KnowledgeBaseService', () => {
         searchMode: 'keyword',
       };
 
-      await expect(service.search(invalidQuery))
-        .rejects.toThrow('Search query too long');
+      await expect(service.search(invalidQuery)).rejects.toThrow(
+        'Search query too long',
+      );
     });
 
     it('should accept valid search query', async () => {
@@ -465,7 +494,7 @@ describe('KnowledgeBaseService', () => {
 
       // First search
       const results1 = await service.search(query);
-      
+
       // Second search (should use cache)
       const results2 = await service.search(query);
 
@@ -518,9 +547,12 @@ describe('KnowledgeBaseService', () => {
   describe('Error Handling', () => {
     it('should handle LocalKnowledgeError correctly', async () => {
       await service.initialize();
-      
+
       // Try to get a non-existent document
-      const result = await service.getDocument('nonexistent', UserRole.EMPLOYEE);
+      const result = await service.getDocument(
+        'nonexistent',
+        UserRole.EMPLOYEE,
+      );
       expect(result).toBeNull();
     });
 
@@ -528,14 +560,17 @@ describe('KnowledgeBaseService', () => {
       await service.initialize();
       const docId = await service.addDocument(restrictedDocument);
 
-      await expect(service.getDocument(docId, UserRole.EMPLOYEE))
-        .rejects.toThrow(LocalKnowledgeError);
-      
+      await expect(
+        service.getDocument(docId, UserRole.EMPLOYEE),
+      ).rejects.toThrow(LocalKnowledgeError);
+
       try {
         await service.getDocument(docId, UserRole.EMPLOYEE);
       } catch (error) {
         expect(error).toBeInstanceOf(LocalKnowledgeError);
-        expect((error as LocalKnowledgeError).code).toBe(LocalKnowledgeErrorType.ACCESS_DENIED);
+        expect((error as LocalKnowledgeError).code).toBe(
+          LocalKnowledgeErrorType.ACCESS_DENIED,
+        );
       }
     });
   });
@@ -561,11 +596,13 @@ describe('KnowledgeBaseService', () => {
       // Add multiple documents
       const addPromises = [];
       for (let i = 0; i < 10; i++) {
-        addPromises.push(service.addDocument({
-          ...mockDocument,
-          title: `Document ${i}`,
-          content: `Content for document ${i}`,
-        }));
+        addPromises.push(
+          service.addDocument({
+            ...mockDocument,
+            title: `Document ${i}`,
+            content: `Content for document ${i}`,
+          }),
+        );
       }
 
       const documentIds = await Promise.all(addPromises);

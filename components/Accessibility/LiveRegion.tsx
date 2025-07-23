@@ -1,11 +1,11 @@
 /**
  * Live Region Component
- * 
+ *
  * ARIA live regions for announcing dynamic content changes to screen readers.
  * Essential for real-time chat applications and dynamic UI updates.
  */
+import React, { useCallback, useEffect, useRef } from 'react';
 
-import React, { useRef, useCallback, useEffect } from 'react';
 import { useTranslation } from 'next-i18next';
 
 /**
@@ -35,7 +35,17 @@ export interface Announcement {
 interface LiveRegionProps {
   priority?: LivePriority;
   atomic?: boolean;
-  relevant?: 'additions' | 'removals' | 'text' | 'all' | 'additions text' | 'additions removals' | 'removals additions' | 'removals text' | 'text additions' | 'text removals';
+  relevant?:
+    | 'additions'
+    | 'removals'
+    | 'text'
+    | 'all'
+    | 'additions text'
+    | 'additions removals'
+    | 'removals additions'
+    | 'removals text'
+    | 'text additions'
+    | 'text removals';
   busy?: boolean;
   className?: string;
   id?: string;
@@ -89,7 +99,11 @@ export const LiveRegion: React.FC<LiveRegionProps> = ({
  * Announcer Context
  */
 interface AnnouncerContextValue {
-  announce: (message: string, priority?: LivePriority, persistent?: boolean) => void;
+  announce: (
+    message: string,
+    priority?: LivePriority,
+    persistent?: boolean,
+  ) => void;
   announceError: (message: string) => void;
   announceSuccess: (message: string) => void;
   announceInfo: (message: string) => void;
@@ -97,7 +111,9 @@ interface AnnouncerContextValue {
   announcements: Announcement[];
 }
 
-const AnnouncerContext = React.createContext<AnnouncerContextValue | null>(null);
+const AnnouncerContext = React.createContext<AnnouncerContextValue | null>(
+  null,
+);
 
 /**
  * Announcer Provider Props
@@ -123,75 +139,92 @@ export const AnnouncerProvider: React.FC<AnnouncerProviderProps> = ({
   /**
    * Add announcement
    */
-  const announce = useCallback((
-    message: string, 
-    priority: LivePriority = 'polite',
-    persistent: boolean = false
-  ) => {
-    const id = `announcement-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const announcement: Announcement = {
-      id,
-      message,
-      priority,
-      timestamp: Date.now(),
-      persistent,
-    };
+  const announce = useCallback(
+    (
+      message: string,
+      priority: LivePriority = 'polite',
+      persistent: boolean = false,
+    ) => {
+      const id = `announcement-${Date.now()}-${Math.random()
+        .toString(36)
+        .substr(2, 9)}`;
+      const announcement: Announcement = {
+        id,
+        message,
+        priority,
+        timestamp: Date.now(),
+        persistent,
+      };
 
-    setAnnouncements(prev => {
-      const newAnnouncements = [...prev, announcement];
-      
-      // Limit number of announcements
-      if (newAnnouncements.length > maxAnnouncements) {
-        const removed = newAnnouncements.splice(0, newAnnouncements.length - maxAnnouncements);
-        removed.forEach(removed => {
-          const timeout = timeoutsRef.current.get(removed.id);
-          if (timeout) {
-            clearTimeout(timeout);
-            timeoutsRef.current.delete(removed.id);
-          }
-        });
+      setAnnouncements((prev) => {
+        const newAnnouncements = [...prev, announcement];
+
+        // Limit number of announcements
+        if (newAnnouncements.length > maxAnnouncements) {
+          const removed = newAnnouncements.splice(
+            0,
+            newAnnouncements.length - maxAnnouncements,
+          );
+          removed.forEach((removed) => {
+            const timeout = timeoutsRef.current.get(removed.id);
+            if (timeout) {
+              clearTimeout(timeout);
+              timeoutsRef.current.delete(removed.id);
+            }
+          });
+        }
+
+        return newAnnouncements;
+      });
+
+      // Auto-clear non-persistent announcements
+      if (!persistent && clearDelay > 0) {
+        const timeout = setTimeout(() => {
+          setAnnouncements((prev) => prev.filter((a) => a.id !== id));
+          timeoutsRef.current.delete(id);
+        }, clearDelay);
+
+        timeoutsRef.current.set(id, timeout);
       }
-      
-      return newAnnouncements;
-    });
-
-    // Auto-clear non-persistent announcements
-    if (!persistent && clearDelay > 0) {
-      const timeout = setTimeout(() => {
-        setAnnouncements(prev => prev.filter(a => a.id !== id));
-        timeoutsRef.current.delete(id);
-      }, clearDelay);
-      
-      timeoutsRef.current.set(id, timeout);
-    }
-  }, [maxAnnouncements, clearDelay]);
+    },
+    [maxAnnouncements, clearDelay],
+  );
 
   /**
    * Announce error message
    */
-  const announceError = useCallback((message: string) => {
-    announce(t('Error: {{message}}', { message }), 'assertive');
-  }, [announce, t]);
+  const announceError = useCallback(
+    (message: string) => {
+      announce(t('Error: {{message}}', { message }), 'assertive');
+    },
+    [announce, t],
+  );
 
   /**
    * Announce success message
    */
-  const announceSuccess = useCallback((message: string) => {
-    announce(t('Success: {{message}}', { message }), 'polite');
-  }, [announce, t]);
+  const announceSuccess = useCallback(
+    (message: string) => {
+      announce(t('Success: {{message}}', { message }), 'polite');
+    },
+    [announce, t],
+  );
 
   /**
    * Announce info message
    */
-  const announceInfo = useCallback((message: string) => {
-    announce(message, 'polite');
-  }, [announce]);
+  const announceInfo = useCallback(
+    (message: string) => {
+      announce(message, 'polite');
+    },
+    [announce],
+  );
 
   /**
    * Clear all announcements
    */
   const clearAnnouncements = useCallback(() => {
-    timeoutsRef.current.forEach(timeout => clearTimeout(timeout));
+    timeoutsRef.current.forEach((timeout) => clearTimeout(timeout));
     timeoutsRef.current.clear();
     setAnnouncements([]);
   }, []);
@@ -200,7 +233,7 @@ export const AnnouncerProvider: React.FC<AnnouncerProviderProps> = ({
   useEffect(() => {
     return () => {
       const timeouts = timeoutsRef.current;
-      timeouts.forEach(timeout => clearTimeout(timeout));
+      timeouts.forEach((timeout) => clearTimeout(timeout));
     };
   }, []);
 
@@ -216,28 +249,22 @@ export const AnnouncerProvider: React.FC<AnnouncerProviderProps> = ({
   return (
     <AnnouncerContext.Provider value={value}>
       {children}
-      
+
       {/* Live regions for different priorities */}
       <LiveRegion priority="polite" id="announcements-polite">
         {announcements
-          .filter(a => a.priority === 'polite')
-          .map(announcement => (
-            <div key={announcement.id}>
-              {announcement.message}
-            </div>
-          ))
-        }
+          .filter((a) => a.priority === 'polite')
+          .map((announcement) => (
+            <div key={announcement.id}>{announcement.message}</div>
+          ))}
       </LiveRegion>
-      
+
       <LiveRegion priority="assertive" id="announcements-assertive">
         {announcements
-          .filter(a => a.priority === 'assertive')
-          .map(announcement => (
-            <div key={announcement.id}>
-              {announcement.message}
-            </div>
-          ))
-        }
+          .filter((a) => a.priority === 'assertive')
+          .map((announcement) => (
+            <div key={announcement.id}>{announcement.message}</div>
+          ))}
       </LiveRegion>
     </AnnouncerContext.Provider>
   );
@@ -280,18 +307,20 @@ export const ChatMessageAnnouncer: React.FC<ChatMessageAnnouncerProps> = ({
     if (!message) return;
 
     let announcementText = message;
-    
+
     if (includeContext) {
       const context = [];
-      
+
       if (sender) {
         context.push(t('From {{sender}}', { sender }));
       }
-      
+
       if (timestamp) {
-        context.push(t('at {{time}}', { time: timestamp.toLocaleTimeString() }));
+        context.push(
+          t('at {{time}}', { time: timestamp.toLocaleTimeString() }),
+        );
       }
-      
+
       if (context.length > 0) {
         announcementText = `${context.join(' ')}: ${message}`;
       }
@@ -331,7 +360,11 @@ export const StatusAnnouncer: React.FC<StatusAnnouncerProps> = ({
         announceSuccess(status);
         break;
       default:
-        announce(status, type === 'warning' ? 'assertive' : 'polite', persistent);
+        announce(
+          status,
+          type === 'warning' ? 'assertive' : 'polite',
+          persistent,
+        );
     }
   }, [status, type, persistent, announce, announceError, announceSuccess]);
 
@@ -346,10 +379,9 @@ interface FormValidationAnnouncerProps {
   fieldName?: string;
 }
 
-export const FormValidationAnnouncer: React.FC<FormValidationAnnouncerProps> = ({
-  errors,
-  fieldName,
-}) => {
+export const FormValidationAnnouncer: React.FC<
+  FormValidationAnnouncerProps
+> = ({ errors, fieldName }) => {
   const { t } = useTranslation('validation');
   const { announceError } = useAnnouncer();
 

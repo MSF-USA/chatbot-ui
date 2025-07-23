@@ -48,8 +48,8 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion } from 'openai/resources';
+import { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions/completions';
 import path from 'path';
-import {ChatCompletionCreateParamsBase} from "openai/resources/chat/completions/completions";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -336,17 +336,21 @@ export default class ChatService {
 
           const requestBody: ChatCompletionCreateParamsBase = {
             model: modelId,
-            messages: processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            messages:
+              processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
             temperature: 1, // Fixed temperature for reasoning models
             stream: false, // Never stream reasoning models
             user: JSON.stringify(user),
             // Note: Don't include max_tokens for reasoning models as they manage token usage internally
-          }
+          };
 
           // Use standard chat completions endpoint for reasoning models
-          const response = await this.openAIClient.chat.completions.create(requestBody);
+          const response = await this.openAIClient.chat.completions.create(
+            requestBody,
+          );
 
-          const completion = (response as ChatCompletion).choices[0]?.message?.content || '';
+          const completion =
+            (response as ChatCompletion).choices[0]?.message?.content || '';
 
           // Log reasoning model chat completion
           void this.loggingService.logChatCompletion(
@@ -444,7 +448,11 @@ export default class ChatService {
     }
   }
 
-  public async handleRequest(req: NextRequest, providedSession?: Session | null, providedToken?: JWT | null): Promise<Response> {
+  public async handleRequest(
+    req: NextRequest,
+    providedSession?: Session | null,
+    providedToken?: JWT | null,
+  ): Promise<Response> {
     const {
       model,
       messages,
@@ -483,9 +491,10 @@ export default class ChatService {
     }
 
     // Use provided session/token or extract them if not provided
-    const token = providedToken ?? (await getToken({ req })) as JWT | null;
+    const token = providedToken ?? ((await getToken({ req })) as JWT | null);
     if (!token) throw new Error('Could not pull token!');
-    const session: Session | null = providedSession ?? await getServerSession(authOptions as any);
+    const session: Session | null =
+      providedSession ?? (await getServerSession(authOptions as any));
     if (!session) throw new Error('Could not pull session!');
 
     const user = session['user'];
@@ -522,5 +531,4 @@ export default class ChatService {
       );
     }
   }
-
 }

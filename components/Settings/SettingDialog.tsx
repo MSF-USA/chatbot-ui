@@ -48,7 +48,12 @@ interface Props {
  * SettingDialog component
  * Renders a modal dialog with settings for the application
  */
-export const SettingDialog: FC<Props> = ({ open, onClose, user, initialSection }) => {
+export const SettingDialog: FC<Props> = ({
+  open,
+  onClose,
+  user,
+  initialSection,
+}) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({

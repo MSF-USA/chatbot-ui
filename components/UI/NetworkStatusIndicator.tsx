@@ -1,22 +1,26 @@
 /**
  * Network Status Indicator Component
- * 
+ *
  * Visual indicator for network connectivity status with user-friendly messaging
  * and recovery options. Provides real-time feedback on connection quality.
  */
-
-import React, { useState, useCallback } from 'react';
-import { useTranslation } from 'next-i18next';
 import {
-  IconWifi,
-  IconWifiOff,
-  IconRefresh,
-  IconClock,
   IconAlertTriangle,
   IconCheck,
+  IconClock,
+  IconRefresh,
+  IconWifi,
+  IconWifiOff,
 } from '@tabler/icons-react';
+import React, { useCallback, useState } from 'react';
 
-import { useNetworkStatus, ConnectionQuality, ConnectionType } from '@/hooks/useNetworkStatus';
+import { useTranslation } from 'next-i18next';
+
+import {
+  ConnectionQuality,
+  ConnectionType,
+  useNetworkStatus,
+} from '@/hooks/useNetworkStatus';
 
 /**
  * Component props
@@ -101,7 +105,9 @@ const getQualityStyles = (quality: ConnectionQuality, isOnline: boolean) => {
 /**
  * Get position classes
  */
-const getPositionClasses = (position: NetworkStatusIndicatorProps['position']) => {
+const getPositionClasses = (
+  position: NetworkStatusIndicatorProps['position'],
+) => {
   switch (position) {
     case 'top-left':
       return 'top-4 left-4';
@@ -173,11 +179,18 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
       [ConnectionType.UNKNOWN]: t('Unknown'),
     };
 
-    return `${qualityText[connectionQuality]} (${typeText[networkStatus.connectionType]})`;
+    return `${qualityText[connectionQuality]} (${
+      typeText[networkStatus.connectionType]
+    })`;
   };
 
   // Don't show if online and excellent quality in compact mode
-  if (compact && isOnline && connectionQuality === ConnectionQuality.EXCELLENT && queueSize === 0) {
+  if (
+    compact &&
+    isOnline &&
+    connectionQuality === ConnectionQuality.EXCELLENT &&
+    queueSize === 0
+  ) {
     return null;
   }
 
@@ -192,17 +205,23 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
         onClick={compact ? () => setIsExpanded(!isExpanded) : undefined}
         role={compact ? 'button' : undefined}
         tabIndex={compact ? 0 : undefined}
-        onKeyDown={compact ? (e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            setIsExpanded(!isExpanded);
-          }
-        } : undefined}
+        onKeyDown={
+          compact
+            ? (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setIsExpanded(!isExpanded);
+                }
+              }
+            : undefined
+        }
         aria-label={compact ? getConnectionDescription() : undefined}
       >
         {/* Compact indicator */}
         {compact && !isExpanded && (
-          <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-md border ${styles.bg}`}>
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-2 rounded-md border ${styles.bg}`}
+          >
             <QualityIcon className={`h-4 w-4 ${styles.icon}`} />
             {!isOnline && (
               <span className={`text-sm font-medium ${styles.text}`}>
@@ -236,14 +255,16 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                   {t('Network Status')}
                 </h3>
               </div>
-              
+
               <button
                 onClick={handleRefresh}
                 disabled={isRefreshing}
                 className={`p-1 rounded hover:bg-black/10 dark:hover:bg-white/10 transition-colors ${styles.text}`}
                 aria-label={t('Refresh network status')}
               >
-                <IconRefresh className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                <IconRefresh
+                  className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`}
+                />
               </button>
             </div>
 
@@ -255,14 +276,14 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                   {isOnline ? t('Online') : t('Offline')}
                 </span>
               </div>
-              
+
               <div className="flex justify-between">
                 <span className={styles.text}>{t('Quality')}:</span>
                 <span className={`font-medium ${styles.text}`}>
                   {t(connectionQuality)}
                 </span>
               </div>
-              
+
               {networkStatus.connectionType !== ConnectionType.UNKNOWN && (
                 <div className="flex justify-between">
                   <span className={styles.text}>{t('Type')}:</span>
@@ -271,7 +292,7 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                   </span>
                 </div>
               )}
-              
+
               {networkStatus.rtt > 0 && (
                 <div className="flex justify-between">
                   <span className={styles.text}>{t('Latency')}:</span>
@@ -280,7 +301,7 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                   </span>
                 </div>
               )}
-              
+
               {networkStatus.downlink > 0 && (
                 <div className="flex justify-between">
                   <span className={styles.text}>{t('Speed')}:</span>
@@ -298,13 +319,12 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                   <div className="flex items-center gap-2">
                     <IconClock className="h-4 w-4 text-amber-500" />
                     <span className={`text-sm ${styles.text}`}>
-                      {isRecovering 
-                        ? t('Processing queued requests...') 
-                        : t('{{count}} requests queued', { count: queueSize })
-                      }
+                      {isRecovering
+                        ? t('Processing queued requests...')
+                        : t('{{count}} requests queued', { count: queueSize })}
                     </span>
                   </div>
-                  
+
                   {queueSize > 0 && !isRecovering && (
                     <button
                       onClick={clearQueue}
@@ -315,11 +335,14 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                     </button>
                   )}
                 </div>
-                
+
                 {isRecovering && (
                   <div className="mt-2">
                     <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                      <div className="h-1 bg-blue-500 rounded-full animate-pulse" style={{ width: '60%' }} />
+                      <div
+                        className="h-1 bg-blue-500 rounded-full animate-pulse"
+                        style={{ width: '60%' }}
+                      />
                     </div>
                   </div>
                 )}
@@ -333,7 +356,11 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                   <IconAlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
                   <div className={`text-xs ${styles.text}`}>
                     <p className="font-medium mb-1">{t('Working offline')}</p>
-                    <p>{t('Your requests will be processed when connection is restored.')}</p>
+                    <p>
+                      {t(
+                        'Your requests will be processed when connection is restored.',
+                      )}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -344,7 +371,9 @@ export const NetworkStatusIndicator: React.FC<NetworkStatusIndicatorProps> = ({
                 <div className="flex items-start gap-2">
                   <IconAlertTriangle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
                   <div className={`text-xs ${styles.text}`}>
-                    <p className="font-medium mb-1">{t('Poor connection detected')}</p>
+                    <p className="font-medium mb-1">
+                      {t('Poor connection detected')}
+                    </p>
                     <p>{t('Some features may be limited to save data.')}</p>
                   </div>
                 </div>
@@ -377,8 +406,9 @@ export function useNetworkStatusIndicator() {
 
   return {
     ...networkData,
-    shouldShowIndicator: !networkData.isOnline || 
-                         networkData.connectionQuality === ConnectionQuality.POOR ||
-                         networkData.queueSize > 0,
+    shouldShowIndicator:
+      !networkData.isOnline ||
+      networkData.connectionQuality === ConnectionQuality.POOR ||
+      networkData.queueSize > 0,
   };
 }

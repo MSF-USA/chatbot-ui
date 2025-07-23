@@ -1,6 +1,6 @@
+import { AgentResponse, AgentType } from './agent';
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
-import { AgentType, AgentResponse } from './agent';
 
 export enum MessageType {
   TEXT = 'text',

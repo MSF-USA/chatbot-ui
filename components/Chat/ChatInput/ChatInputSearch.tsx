@@ -18,21 +18,21 @@ import { useTranslation } from 'next-i18next';
 
 import { makeRequest } from '@/services/frontendChatServices';
 
+import { AgentType } from '@/types/agent';
+import {
+  AgentExecutionApiRequest,
+  AgentExecutionApiResponse,
+} from '@/types/agentApi';
 import {
   ChatInputSubmitTypes,
+  Conversation,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
   Message,
   MessageType,
   TextMessageContent,
-  Conversation,
 } from '@/types/chat';
-import { AgentType } from '@/types/agent';
-import {
-  AgentExecutionApiRequest,
-  AgentExecutionApiResponse,
-} from '@/types/agentApi';
 import { Plugin, PluginID } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
@@ -41,7 +41,6 @@ import BetaBadge from '@/components/Beta/Badge';
 import Modal from '@/components/UI/Modal';
 
 import crypto from 'crypto';
-
 
 interface ChatInputSearchProps {
   isOpen: boolean; // Directly controls visibility
@@ -87,7 +86,11 @@ interface ChatInputSearchProps {
   handleSend: () => void;
   initialMode?: 'search' | 'url';
   // New props for agent-based web search
-  onSend?: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean) => void;
+  onSend?: (
+    message: Message,
+    plugin: Plugin | null,
+    forceStandardChat?: boolean,
+  ) => void;
   setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
   setProgress?: Dispatch<SetStateAction<number | null>>;
   stopConversationRef?: { current: boolean };
@@ -159,7 +162,6 @@ const ChatInputSearch = ({
     setMode(initialMode);
   }, [initialMode]);
 
-
   useEffect(() => {
     // Auto-populate question input when mode/primary input changes
     if (isOpen) {
@@ -202,7 +204,10 @@ const ChatInputSearch = ({
 
   // Helper functions similar to agenticFrontendService
   const formatConversationHistory = (maxMessages: number = 5): string[] => {
-    if (!selectedConversation?.messages || selectedConversation.messages.length <= 1) {
+    if (
+      !selectedConversation?.messages ||
+      selectedConversation.messages.length <= 1
+    ) {
       return [];
     }
 
@@ -227,16 +232,17 @@ const ChatInputSearch = ({
       }
 
       const messageText = extractMessageText(message);
-      
+
       // Skip empty messages
       if (!messageText.trim()) {
         continue;
       }
 
       // Truncate very long messages to avoid token overflow
-      const truncatedText = messageText.length > 500 
-        ? messageText.substring(0, 500) + '...'
-        : messageText;
+      const truncatedText =
+        messageText.length > 500
+          ? messageText.substring(0, 500) + '...'
+          : messageText;
 
       formattedHistory.push(`${roleLabel}: ${truncatedText}`);
     }
@@ -250,8 +256,10 @@ const ChatInputSearch = ({
     }
 
     if (Array.isArray(message.content)) {
-      const textContent = (message.content as (TextMessageContent | FileMessageContent)[]).find(
-        (content): content is TextMessageContent => content.type === 'text'
+      const textContent = (
+        message.content as (TextMessageContent | FileMessageContent)[]
+      ).find(
+        (content): content is TextMessageContent => content.type === 'text',
       );
       return textContent?.text || '';
     }
@@ -259,7 +267,10 @@ const ChatInputSearch = ({
     return '';
   };
 
-  const processAgentResult = (agentData: AgentExecutionApiResponse['data'], originalQuery: string): string => {
+  const processAgentResult = (
+    agentData: AgentExecutionApiResponse['data'],
+    originalQuery: string,
+  ): string => {
     if (!agentData) {
       throw new Error('No agent data to process');
     }
@@ -273,10 +284,15 @@ Agent findings:
 ${agentData.content}`;
 
     // Add structured content if available
-    if (agentData.structuredContent && agentData.structuredContent.items.length > 0) {
+    if (
+      agentData.structuredContent &&
+      agentData.structuredContent.items.length > 0
+    ) {
       enhancedPrompt += `\n\nAdditional context:`;
       agentData.structuredContent.items.forEach((item, index) => {
-        enhancedPrompt += `\n\n[Source ${index + 1}: ${item.source}]\n${item.content}`;
+        enhancedPrompt += `\n\n[Source ${index + 1}: ${item.source}]\n${
+          item.content
+        }`;
       });
     }
 
@@ -395,13 +411,15 @@ ${agentData.content}`;
         agentType: AgentType.WEB_SEARCH,
         query: optimizedQuery,
         conversationHistory,
-        model: selectedConversation ? {
-          id: selectedConversation.model.id,
-          tokenLimit: selectedConversation.model.tokenLimit,
-        } : {
-          id: 'gpt-4o-mini',
-          tokenLimit: 128000,
-        },
+        model: selectedConversation
+          ? {
+              id: selectedConversation.model.id,
+              tokenLimit: selectedConversation.model.tokenLimit,
+            }
+          : {
+              id: 'gpt-4o-mini',
+              tokenLimit: 128000,
+            },
         config: {
           maxResults: adjustedCount,
           defaultMarket: mkt || 'en-US',
@@ -442,8 +460,11 @@ ${agentData.content}`;
       // Step 5: Process agent result internally through makeRequest (hidden from user)
       if (selectedConversation && setRequestStatusMessage && apiKey) {
         // Create enhanced prompt that includes agent findings
-        const enhancedPrompt = processAgentResult(agentResult.data, originalQuery);
-        
+        const enhancedPrompt = processAgentResult(
+          agentResult.data,
+          originalQuery,
+        );
+
         // Create internal message with enhanced context
         const enhancedMessage: Message = {
           role: 'user',
@@ -454,7 +475,10 @@ ${agentData.content}`;
         // Create enhanced conversation by replacing the last message (user's original query)
         const enhancedConversation: Conversation = {
           ...selectedConversation,
-          messages: [...selectedConversation.messages.slice(0, -1), enhancedMessage],
+          messages: [
+            ...selectedConversation.messages.slice(0, -1),
+            enhancedMessage,
+          ],
         };
 
         // Call makeRequest directly instead of onSend to avoid adding to conversation history
@@ -469,10 +493,10 @@ ${agentData.content}`;
           true, // stream
           setProgress || (() => {}),
           stopConversationRef,
-          true // forceStandardChat
+          true, // forceStandardChat
         );
       }
-      
+
       onClose();
       setSearchInput('');
       setSearchQuestionInput('');
@@ -488,7 +512,6 @@ ${agentData.content}`;
       setIsSearchSubmitting(false);
     }
   };
-
 
   const isSubmitting = isUrlSubmitting || isSearchSubmitting;
 
@@ -832,7 +855,6 @@ ${agentData.content}`;
     </form>
   );
 
-
   const modalContent = (
     <div className="relative">
       {renderTabs()}
@@ -888,9 +910,7 @@ ${agentData.content}`;
       className="mx-2"
       betaBadge={<BetaBadge />}
       closeWithButton={true}
-      initialFocusRef={
-        mode === 'url' ? urlInputRef : searchInputRef
-      }
+      initialFocusRef={mode === 'url' ? urlInputRef : searchInputRef}
     >
       {modalContent}
     </Modal>

@@ -1,24 +1,25 @@
 /**
  * Knowledge Graph Service Tests
- * 
+ *
  * Unit tests for the KnowledgeGraphService implementation,
  * covering entity extraction, relationship mapping, and graph operations.
  */
-
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { KnowledgeGraphService } from '../../../services/knowledgeGraphService';
+
 import {
+  AccessLevel,
+  DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
+  EntityType,
   KnowledgeDocument,
   KnowledgeDocumentType,
-  KnowledgeSourceType,
-  AccessLevel,
-  UserRole,
-  EntityType,
-  RelationshipType,
   KnowledgeGraphConfig,
   KnowledgeGraphQuery,
-  DEFAULT_LOCAL_KNOWLEDGE_CONFIG,
+  KnowledgeSourceType,
+  RelationshipType,
+  UserRole,
 } from '../../../types/localKnowledge';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock dependencies
 vi.mock('../../../services/loggingService', () => ({
@@ -39,7 +40,8 @@ describe('KnowledgeGraphService', () => {
   const mockDocument: KnowledgeDocument = {
     id: 'doc_001',
     title: 'Employee Handbook - John Smith HR Manager',
-    content: 'John Smith is the HR Manager at TechCorp Inc. He works in the San Francisco office and manages employee policies and procedures.',
+    content:
+      'John Smith is the HR Manager at TechCorp Inc. He works in the San Francisco office and manages employee policies and procedures.',
     type: KnowledgeDocumentType.HANDBOOK,
     source: KnowledgeSourceType.LOCAL_FILE,
     accessLevel: AccessLevel.INTERNAL,
@@ -54,13 +56,15 @@ describe('KnowledgeGraphService', () => {
     version: '1.0',
     tags: ['hr', 'employees', 'management'],
     language: 'en',
-    searchableContent: 'john smith hr manager techcorp inc san francisco office employee policies procedures',
+    searchableContent:
+      'john smith hr manager techcorp inc san francisco office employee policies procedures',
   };
 
   const mockDocument2: KnowledgeDocument = {
     id: 'doc_002',
     title: 'IT Security Policy - Alice Johnson IT Admin',
-    content: 'Alice Johnson is the IT Administrator at TechCorp Inc. She is responsible for cybersecurity and data protection protocols.',
+    content:
+      'Alice Johnson is the IT Administrator at TechCorp Inc. She is responsible for cybersecurity and data protection protocols.',
     type: KnowledgeDocumentType.POLICY,
     source: KnowledgeSourceType.LOCAL_FILE,
     accessLevel: AccessLevel.INTERNAL,
@@ -75,7 +79,8 @@ describe('KnowledgeGraphService', () => {
     version: '1.0',
     tags: ['it', 'security', 'admin'],
     language: 'en',
-    searchableContent: 'alice johnson it administrator techcorp inc cybersecurity data protection protocols',
+    searchableContent:
+      'alice johnson it administrator techcorp inc cybersecurity data protection protocols',
   };
 
   beforeEach(async () => {
@@ -119,11 +124,11 @@ describe('KnowledgeGraphService', () => {
       expect(stats.totalEntities).toBe(0);
       expect(stats.totalDocuments).toBe(0);
       expect(stats.documentsProcessed).toBe(1);
-      
+
       // Placeholder implementation returns empty arrays
       const johnSmithEntities = service.getEntitiesByName('John Smith', false);
       expect(johnSmithEntities).toHaveLength(0);
-      
+
       const techCorpEntities = service.getEntitiesByName('TechCorp Inc', false);
       expect(techCorpEntities).toHaveLength(0);
     });
@@ -134,11 +139,11 @@ describe('KnowledgeGraphService', () => {
       const stats = service.getStatistics();
       // Placeholder implementation - no actual relationship extraction
       expect(stats.totalRelationships).toBe(0);
-      
+
       // Placeholder implementation returns empty arrays
       const johnSmithEntities = service.getEntitiesByName('John Smith', false);
       expect(johnSmithEntities).toHaveLength(0);
-      
+
       // Check relationships with mock entity ID
       const relationships = service.getEntityRelationships('mock-entity-id');
       expect(relationships.length).toBe(0);
@@ -153,27 +158,27 @@ describe('KnowledgeGraphService', () => {
       expect(stats.totalDocuments).toBe(0);
       expect(stats.documentsProcessed).toBe(2);
       expect(stats.totalEntities).toBe(0);
-      
+
       // Placeholder implementation returns empty arrays
       const johnEntities = service.getEntitiesByName('John Smith', false);
       const aliceEntities = service.getEntitiesByName('Alice Johnson', false);
       expect(johnEntities).toHaveLength(0);
       expect(aliceEntities).toHaveLength(0);
-      
+
       const techCorpEntities = service.getEntitiesByName('TechCorp Inc', false);
       expect(techCorpEntities).toHaveLength(0);
     });
 
     it('should handle document removal', async () => {
       await service.processDocument(mockDocument);
-      
+
       const statsAfterAdd = service.getStatistics();
       // Placeholder implementation - doesn't track actual documents
       expect(statsAfterAdd.totalDocuments).toBe(0);
       expect(statsAfterAdd.documentsProcessed).toBe(1);
-      
+
       await service.removeDocument(mockDocument.id);
-      
+
       const statsAfterRemove = service.getStatistics();
       expect(statsAfterRemove.totalDocuments).toBe(0);
       expect(statsAfterRemove.documentsProcessed).toBe(1); // Processing count doesn't decrease
@@ -181,15 +186,15 @@ describe('KnowledgeGraphService', () => {
 
     it('should update entity frequency on multiple mentions', async () => {
       await service.processDocument(mockDocument);
-      
+
       // Process same document again (simulating update)
       const updatedDoc = { ...mockDocument, id: 'doc_001_updated' };
       await service.processDocument(updatedDoc);
-      
+
       // Placeholder implementation returns empty arrays
       const techCorpEntities = service.getEntitiesByName('TechCorp Inc', false);
       expect(techCorpEntities).toHaveLength(0);
-      
+
       // Check processing stats instead
       const stats = service.getStatistics();
       expect(stats.documentsProcessed).toBe(2);
@@ -223,7 +228,7 @@ describe('KnowledgeGraphService', () => {
       // Placeholder implementation returns empty arrays
       const johnEntities = service.getEntitiesByName('John Smith', false);
       expect(johnEntities).toHaveLength(0);
-      
+
       // Test with mock entity ID
       const entity = service.getEntity('mock-entity-id');
       expect(entity).toBeNull();
@@ -245,7 +250,7 @@ describe('KnowledgeGraphService', () => {
       // Placeholder implementation returns empty arrays
       const johnEntities = service.getEntitiesByName('John Smith', false);
       expect(johnEntities).toHaveLength(0);
-      
+
       const relationships = service.getEntityRelationships('mock-entity-id');
       expect(relationships.length).toBe(0);
     });
@@ -254,14 +259,16 @@ describe('KnowledgeGraphService', () => {
       // Placeholder implementation returns empty arrays
       const techCorpEntities = service.getEntitiesByName('TechCorp Inc', false);
       expect(techCorpEntities).toHaveLength(0);
-      
+
       const relationships = service.getEntityRelationships('mock-entity-id');
       expect(relationships.length).toBe(0);
     });
 
     it('should return empty array for entity with no relationships', () => {
       // Create a standalone entity (this would require manual creation in a real scenario)
-      const relationships = service.getEntityRelationships('non_existent_entity');
+      const relationships = service.getEntityRelationships(
+        'non_existent_entity',
+      );
       expect(relationships).toHaveLength(0);
     });
   });
@@ -306,7 +313,7 @@ describe('KnowledgeGraphService', () => {
       // Placeholder implementation returns empty arrays
       const johnEntities = service.getEntitiesByName('John Smith', false);
       expect(johnEntities).toHaveLength(0);
-      
+
       const query: KnowledgeGraphQuery = {
         type: 'neighborhood',
         parameters: {
@@ -337,7 +344,7 @@ describe('KnowledgeGraphService', () => {
   describe('Statistics and Analytics', () => {
     it('should return empty statistics initially', () => {
       const stats = service.getStatistics();
-      
+
       expect(stats.totalEntities).toBe(0);
       expect(stats.totalRelationships).toBe(0);
       expect(stats.totalDocuments).toBe(0);
@@ -351,9 +358,9 @@ describe('KnowledgeGraphService', () => {
       // Process fresh service to ensure clean statistics
       const freshService = new KnowledgeGraphService(testConfig);
       await freshService.initialize();
-      
+
       await freshService.processDocument(mockDocument);
-      
+
       const stats = freshService.getStatistics();
       // Placeholder implementation - just tracks documents processed
       expect(stats.documentsProcessed).toBe(1);
@@ -364,7 +371,7 @@ describe('KnowledgeGraphService', () => {
 
     it('should calculate entity type distribution', async () => {
       await service.processDocument(mockDocument);
-      
+
       const stats = service.getStatistics();
       // Placeholder implementation - returns basic stats without entity types
       expect(stats).toBeDefined();
@@ -373,7 +380,7 @@ describe('KnowledgeGraphService', () => {
 
     it('should calculate relationship type distribution', async () => {
       await service.processDocument(mockDocument);
-      
+
       const stats = service.getStatistics();
       // Placeholder implementation - returns basic stats without relationship types
       expect(stats).toBeDefined();
@@ -383,7 +390,7 @@ describe('KnowledgeGraphService', () => {
     it('should calculate average entities per document', async () => {
       await service.processDocument(mockDocument);
       await service.processDocument(mockDocument2);
-      
+
       const stats = service.getStatistics();
       // Placeholder implementation - no actual calculation
       expect(stats.averageExtractionTime).toBe(0);
@@ -402,14 +409,14 @@ describe('KnowledgeGraphService', () => {
       // Create fresh service to avoid accumulation from beforeEach
       const freshService = new KnowledgeGraphService(testConfig);
       await freshService.initialize();
-      
+
       // Process document first to have some stats
       await freshService.processDocument(mockDocument);
       const statsBeforeClear = freshService.getStatistics();
       expect(statsBeforeClear.documentsProcessed).toBe(1);
-      
+
       await freshService.clear();
-      
+
       const statsAfterClear = freshService.getStatistics();
       expect(statsAfterClear.totalEntities).toBe(0);
       expect(statsAfterClear.totalRelationships).toBe(0);
@@ -421,31 +428,37 @@ describe('KnowledgeGraphService', () => {
       // Create fresh service to avoid accumulation from beforeEach
       const freshService = new KnowledgeGraphService(testConfig);
       await freshService.initialize();
-      
+
       // Process initial documents
       await freshService.processDocument(mockDocument);
       await freshService.processDocument(mockDocument2);
-      
+
       const initialStats = freshService.getStatistics();
       expect(initialStats.documentsProcessed).toBe(2);
-      
+
       // Add a document mentioning existing entities
       const newDoc = {
         ...mockDocument,
         id: 'doc_003',
         content: 'John Smith and Alice Johnson both work at TechCorp Inc.',
       };
-      
+
       await freshService.processDocument(newDoc);
-      
+
       const finalStats = freshService.getStatistics();
       expect(finalStats.documentsProcessed).toBe(3);
-      
+
       // Placeholder implementation returns empty arrays
       const johnEntities = freshService.getEntitiesByName('John Smith', false);
-      const aliceEntities = freshService.getEntitiesByName('Alice Johnson', false);
-      const techCorpEntities = freshService.getEntitiesByName('TechCorp Inc', false);
-      
+      const aliceEntities = freshService.getEntitiesByName(
+        'Alice Johnson',
+        false,
+      );
+      const techCorpEntities = freshService.getEntitiesByName(
+        'TechCorp Inc',
+        false,
+      );
+
       expect(johnEntities).toHaveLength(0);
       expect(aliceEntities).toHaveLength(0);
       expect(techCorpEntities).toHaveLength(0);
@@ -464,7 +477,9 @@ describe('KnowledgeGraphService', () => {
     });
 
     it('should handle removal of non-existent document', async () => {
-      await expect(service.removeDocument('non_existent_doc')).resolves.not.toThrow();
+      await expect(
+        service.removeDocument('non_existent_doc'),
+      ).resolves.not.toThrow();
     });
 
     it('should handle query with missing parameters', async () => {
@@ -485,13 +500,13 @@ describe('KnowledgeGraphService', () => {
       const startTime = Date.now();
       await service.processDocument(mockDocument);
       const endTime = Date.now();
-      
+
       expect(endTime - startTime).toBeLessThan(5000); // Should complete within 5 seconds
     });
 
     it('should handle multiple documents efficiently', async () => {
       const startTime = Date.now();
-      
+
       // Process multiple documents
       for (let i = 0; i < 10; i++) {
         const doc = {
@@ -502,10 +517,10 @@ describe('KnowledgeGraphService', () => {
         };
         await service.processDocument(doc);
       }
-      
+
       const endTime = Date.now();
       expect(endTime - startTime).toBeLessThan(15000); // Should complete within 15 seconds
-      
+
       const stats = service.getStatistics();
       // Placeholder implementation doesn't track document entities
       expect(stats.documentsProcessed).toBe(10);
@@ -522,7 +537,7 @@ describe('KnowledgeGraphService', () => {
         };
         await service.processDocument(doc);
       }
-      
+
       // Query should still be fast
       const startTime = Date.now();
       const results = await service.queryGraph({
@@ -530,7 +545,7 @@ describe('KnowledgeGraphService', () => {
         parameters: { searchTerm: 'Person' },
       });
       const endTime = Date.now();
-      
+
       expect(endTime - startTime).toBeLessThan(1000); // Should complete within 1 second
       // Placeholder implementation returns empty object structure
       expect(results).toBeDefined();

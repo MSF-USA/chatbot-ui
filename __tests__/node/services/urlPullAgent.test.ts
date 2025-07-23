@@ -1,19 +1,24 @@
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import { UrlPullAgent } from '../../../services/agents/urlPullAgent';
-import { fetchAndParseWebpage, HttpError } from '../../../services/webpageService';
 import {
-  AgentType,
+  HttpError,
+  fetchAndParseWebpage,
+} from '../../../services/webpageService';
+
+import {
   AgentExecutionContext,
-  UrlPullAgentConfig,
   AgentExecutionEnvironment,
+  AgentType,
+  UrlPullAgentConfig,
 } from '../../../types/agent';
-import {
-  UrlPullErrorType,
-  DEFAULT_URL_PULL_CONFIG,
-  ProcessedUrl,
-  FailedUrl,
-} from '../../../types/urlPull';
 import { OpenAIModel } from '../../../types/openai';
+import {
+  DEFAULT_URL_PULL_CONFIG,
+  FailedUrl,
+  ProcessedUrl,
+  UrlPullErrorType,
+} from '../../../types/urlPull';
+
+import { Mock, afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the webpageService
 vi.mock('../../../services/webpageService', () => ({
@@ -66,7 +71,11 @@ describe('UrlPullAgent', () => {
       query: 'Analyze this website: https://example.com',
       messages: [],
       // @ts-ignore
-      user: { id: 'test-user', displayName: 'Test User', mail: 'test@example.com' },
+      user: {
+        id: 'test-user',
+        displayName: 'Test User',
+        mail: 'test@example.com',
+      },
       model: { id: 'gpt-4o-mini' } as OpenAIModel,
       locale: 'en',
       correlationId: 'test-correlation-id',
@@ -89,34 +98,52 @@ describe('UrlPullAgent', () => {
 
   describe('URL Extraction', () => {
     it('should extract single URL from query', async () => {
-      mockFetchAndParseWebpage.mockResolvedValue('# Test Page\n## URL: example.com\n\n## Content\n\nTest content');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test Page\n## URL: example.com\n\n## Content\n\nTest content',
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
       expect(response.agentType).toBe(AgentType.URL_PULL);
-      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith('https://example.com/', 5);
+      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith(
+        'https://example.com/',
+        5,
+      );
     });
 
     it('should extract multiple URLs from query', async () => {
-      context.query = 'Compare these sites: https://example1.com and https://example2.com';
-      
+      context.query =
+        'Compare these sites: https://example1.com and https://example2.com';
+
       mockFetchAndParseWebpage
-        .mockResolvedValueOnce('# Example 1\n## URL: example1.com\n\n## Content\n\nContent 1')
-        .mockResolvedValueOnce('# Example 2\n## URL: example2.com\n\n## Content\n\nContent 2');
+        .mockResolvedValueOnce(
+          '# Example 1\n## URL: example1.com\n\n## Content\n\nContent 1',
+        )
+        .mockResolvedValueOnce(
+          '# Example 2\n## URL: example2.com\n\n## Content\n\nContent 2',
+        );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
       expect(mockFetchAndParseWebpage).toHaveBeenCalledTimes(2);
-      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith('https://example1.com/', 5);
-      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith('https://example2.com/', 5);
+      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith(
+        'https://example1.com/',
+        5,
+      );
+      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith(
+        'https://example2.com/',
+        5,
+      );
     });
 
     it('should handle www URLs correctly', async () => {
       context.query = 'Analyze www.example.com';
-      
-      mockFetchAndParseWebpage.mockResolvedValue('# Test Page\n## URL: example.com\n\n## Content\n\nTest content');
+
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test Page\n## URL: example.com\n\n## Content\n\nTest content',
+      );
 
       const response = await agent.execute(context);
 
@@ -148,7 +175,8 @@ describe('UrlPullAgent', () => {
 
   describe('URL Processing', () => {
     it('should process URL successfully', async () => {
-      const mockContent = '# Example Page\n## URL: example.com\n\n## Content\n\nThis is a test page with sample content.';
+      const mockContent =
+        '# Example Page\n## URL: example.com\n\n## Content\n\nThis is a test page with sample content.';
       mockFetchAndParseWebpage.mockResolvedValue(mockContent);
 
       const response = await agent.execute(context);
@@ -165,39 +193,56 @@ describe('UrlPullAgent', () => {
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true); // Agent succeeds but URL processing fails
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
       // Metadata structure varies - test for presence rather than exact values
       expect(response.metadata).toBeDefined();
     });
 
     it('should handle HTTP errors appropriately', async () => {
-      mockFetchAndParseWebpage.mockRejectedValue(new HttpError(404, 'Not Found'));
+      mockFetchAndParseWebpage.mockRejectedValue(
+        new HttpError(404, 'Not Found'),
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
       // Error message details would be in structured data, not summary
     });
 
     it('should handle timeout errors', async () => {
-      mockFetchAndParseWebpage.mockRejectedValue(new HttpError(408, 'Request timeout'));
+      mockFetchAndParseWebpage.mockRejectedValue(
+        new HttpError(408, 'Request timeout'),
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
     });
   });
 
   describe('Parallel Processing', () => {
     it('should process multiple URLs in parallel when enabled', async () => {
-      context.query = 'Process these URLs: https://example1.com, https://example2.com, https://example3.com';
-      
+      context.query =
+        'Process these URLs: https://example1.com, https://example2.com, https://example3.com';
+
       mockFetchAndParseWebpage
-        .mockResolvedValueOnce('# Page 1\n## URL: example1.com\n\n## Content\n\nContent 1')
-        .mockResolvedValueOnce('# Page 2\n## URL: example2.com\n\n## Content\n\nContent 2')
-        .mockResolvedValueOnce('# Page 3\n## URL: example3.com\n\n## Content\n\nContent 3');
+        .mockResolvedValueOnce(
+          '# Page 1\n## URL: example1.com\n\n## Content\n\nContent 1',
+        )
+        .mockResolvedValueOnce(
+          '# Page 2\n## URL: example2.com\n\n## Content\n\nContent 2',
+        )
+        .mockResolvedValueOnce(
+          '# Page 3\n## URL: example3.com\n\n## Content\n\nContent 3',
+        );
 
       const startTime = Date.now();
       const response = await agent.execute(context);
@@ -206,7 +251,7 @@ describe('UrlPullAgent', () => {
       expect(response.success).toBe(true);
       // Metadata structure varies - processing method may not be set
       expect(response.metadata).toBeDefined();
-      
+
       // Parallel processing should be faster than sequential
       expect(endTime - startTime).toBeLessThan(1000); // Should complete quickly with mocked responses
     });
@@ -214,12 +259,16 @@ describe('UrlPullAgent', () => {
     it('should respect concurrency limits', async () => {
       config.concurrencyLimit = 2;
       agent = new UrlPullAgent(config);
-      
-      context.query = 'Process these URLs: https://example1.com, https://example2.com, https://example3.com, https://example4.com';
-      
+
+      context.query =
+        'Process these URLs: https://example1.com, https://example2.com, https://example3.com, https://example4.com';
+
       mockFetchAndParseWebpage.mockImplementation((url) => {
-        return new Promise(resolve => {
-          setTimeout(() => resolve(`# Page\n## URL: ${url}\n\n## Content\n\nContent`), 100);
+        return new Promise((resolve) => {
+          setTimeout(
+            () => resolve(`# Page\n## URL: ${url}\n\n## Content\n\nContent`),
+            100,
+          );
         });
       });
 
@@ -240,7 +289,8 @@ describe('UrlPullAgent', () => {
 
   describe('Caching', () => {
     it('should cache successful results when enabled', async () => {
-      const mockContent = '# Cached Page\n## URL: example.com\n\n## Content\n\nCached content';
+      const mockContent =
+        '# Cached Page\n## URL: example.com\n\n## Content\n\nCached content';
       mockFetchAndParseWebpage.mockResolvedValue(mockContent);
 
       // First request
@@ -258,8 +308,9 @@ describe('UrlPullAgent', () => {
     it('should not use cache when disabled', async () => {
       config.enableCaching = false;
       agent = new UrlPullAgent(config);
-      
-      const mockContent = '# Non-cached Page\n## URL: example.com\n\n## Content\n\nNon-cached content';
+
+      const mockContent =
+        '# Non-cached Page\n## URL: example.com\n\n## Content\n\nNon-cached content';
       mockFetchAndParseWebpage.mockResolvedValue(mockContent);
 
       // First request
@@ -277,7 +328,9 @@ describe('UrlPullAgent', () => {
       mockFetchAndParseWebpage
         .mockRejectedValueOnce(new Error('Temporary failure'))
         .mockRejectedValueOnce(new Error('Another failure'))
-        .mockResolvedValue('# Success\n## URL: example.com\n\n## Content\n\nFinally worked');
+        .mockResolvedValue(
+          '# Success\n## URL: example.com\n\n## Content\n\nFinally worked',
+        );
 
       const response = await agent.execute(context);
 
@@ -290,8 +343,10 @@ describe('UrlPullAgent', () => {
     it('should respect max retry attempts', async () => {
       config.maxRetryAttempts = 2;
       agent = new UrlPullAgent(config);
-      
-      mockFetchAndParseWebpage.mockRejectedValue(new Error('Persistent failure'));
+
+      mockFetchAndParseWebpage.mockRejectedValue(
+        new Error('Persistent failure'),
+      );
 
       const response = await agent.execute(context);
 
@@ -304,7 +359,8 @@ describe('UrlPullAgent', () => {
 
   describe('Content Extraction', () => {
     it('should extract title from content', async () => {
-      const mockContent = '# Amazing Article Title\n## URL: example.com\n\n## Content\n\nArticle content here';
+      const mockContent =
+        '# Amazing Article Title\n## URL: example.com\n\n## Content\n\nArticle content here';
       mockFetchAndParseWebpage.mockResolvedValue(mockContent);
 
       const response = await agent.execute(context);
@@ -315,7 +371,8 @@ describe('UrlPullAgent', () => {
     });
 
     it('should handle content without title', async () => {
-      const mockContent = '## URL: example.com\n\n## Content\n\nContent without title';
+      const mockContent =
+        '## URL: example.com\n\n## Content\n\nContent without title';
       mockFetchAndParseWebpage.mockResolvedValue(mockContent);
 
       const response = await agent.execute(context);
@@ -340,21 +397,31 @@ describe('UrlPullAgent', () => {
   describe('URL Validation', () => {
     it('should validate HTTP URLs', async () => {
       context.query = 'Analyze http://example.com';
-      mockFetchAndParseWebpage.mockResolvedValue('# Test\n## URL: example.com\n\n## Content\n\nTest');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test\n## URL: example.com\n\n## Content\n\nTest',
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith('http://example.com/', 5);
+      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith(
+        'http://example.com/',
+        5,
+      );
     });
 
     it('should validate HTTPS URLs', async () => {
-      mockFetchAndParseWebpage.mockResolvedValue('# Test\n## URL: example.com\n\n## Content\n\nTest');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test\n## URL: example.com\n\n## Content\n\nTest',
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith('https://example.com/', 5);
+      expect(mockFetchAndParseWebpage).toHaveBeenCalledWith(
+        'https://example.com/',
+        5,
+      );
     });
 
     it('should reject invalid protocols', async () => {
@@ -380,8 +447,9 @@ describe('UrlPullAgent', () => {
     it('should respect maximum URL limits', async () => {
       config.maxUrls = 2;
       agent = new UrlPullAgent(config);
-      
-      context.query = 'Process: https://example1.com, https://example2.com, https://example3.com';
+
+      context.query =
+        'Process: https://example1.com, https://example2.com, https://example3.com';
 
       const response = await agent.execute(context);
 
@@ -402,7 +470,9 @@ describe('UrlPullAgent', () => {
       };
 
       const minimalAgent = new UrlPullAgent(minimalConfig);
-      mockFetchAndParseWebpage.mockResolvedValue('# Test\n## URL: example.com\n\n## Content\n\nTest');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test\n## URL: example.com\n\n## Content\n\nTest',
+      );
 
       const response = await minimalAgent.execute(context);
 
@@ -412,32 +482,44 @@ describe('UrlPullAgent', () => {
 
   describe('Error Categorization', () => {
     it('should categorize 403 errors as forbidden', async () => {
-      mockFetchAndParseWebpage.mockRejectedValue(new HttpError(403, 'Forbidden'));
+      mockFetchAndParseWebpage.mockRejectedValue(
+        new HttpError(403, 'Forbidden'),
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
       // Error message details would be in structured data, not summary
     });
 
     it('should categorize 404 errors as not_found', async () => {
-      mockFetchAndParseWebpage.mockRejectedValue(new HttpError(404, 'Not Found'));
+      mockFetchAndParseWebpage.mockRejectedValue(
+        new HttpError(404, 'Not Found'),
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
       // Error message details would be in structured data, not summary
     });
 
     it('should categorize 500+ errors as server_error', async () => {
-      mockFetchAndParseWebpage.mockRejectedValue(new HttpError(500, 'Internal Server Error'));
+      mockFetchAndParseWebpage.mockRejectedValue(
+        new HttpError(500, 'Internal Server Error'),
+      );
 
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
       // Error message details would be in structured data, not summary
     });
 
@@ -447,13 +529,17 @@ describe('UrlPullAgent', () => {
       const response = await agent.execute(context);
 
       expect(response.success).toBe(true);
-      expect(response.content).toContain('Processed 0 of 1 URLs successfully (1 failed)');
+      expect(response.content).toContain(
+        'Processed 0 of 1 URLs successfully (1 failed)',
+      );
     });
   });
 
   describe('Response Formatting', () => {
     it('should format successful response with processing stats', async () => {
-      mockFetchAndParseWebpage.mockResolvedValue('# Test Page\n## URL: example.com\n\n## Content\n\nTest content');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test Page\n## URL: example.com\n\n## Content\n\nTest content',
+      );
 
       const response = await agent.execute(context);
 
@@ -465,7 +551,9 @@ describe('UrlPullAgent', () => {
     });
 
     it('should include processing metadata', async () => {
-      mockFetchAndParseWebpage.mockResolvedValue('# Test Page\n## URL: example.com\n\n## Content\n\nTest content');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test Page\n## URL: example.com\n\n## Content\n\nTest content',
+      );
 
       const response = await agent.execute(context);
 
@@ -478,7 +566,9 @@ describe('UrlPullAgent', () => {
     });
 
     it('should calculate confidence score appropriately', async () => {
-      mockFetchAndParseWebpage.mockResolvedValue('# Test Page\n## URL: example.com\n\n## Content\n\nTest content');
+      mockFetchAndParseWebpage.mockResolvedValue(
+        '# Test Page\n## URL: example.com\n\n## Content\n\nTest content',
+      );
 
       const response = await agent.execute(context);
 
@@ -490,9 +580,11 @@ describe('UrlPullAgent', () => {
   describe('Mixed Success/Failure Scenarios', () => {
     it('should handle mix of successful and failed URLs', async () => {
       context.query = 'Process: https://example1.com, https://example2.com';
-      
+
       mockFetchAndParseWebpage
-        .mockResolvedValueOnce('# Success Page\n## URL: example1.com\n\n## Content\n\nWorked fine')
+        .mockResolvedValueOnce(
+          '# Success Page\n## URL: example1.com\n\n## Content\n\nWorked fine',
+        )
         .mockRejectedValueOnce(new Error('Failed to fetch'));
 
       const response = await agent.execute(context);
@@ -504,7 +596,7 @@ describe('UrlPullAgent', () => {
 
     it('should handle all URLs failing', async () => {
       context.query = 'Process: https://example1.com, https://example2.com';
-      
+
       mockFetchAndParseWebpage
         .mockRejectedValueOnce(new Error('Failed 1'))
         .mockRejectedValueOnce(new Error('Failed 2'));

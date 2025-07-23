@@ -2,7 +2,7 @@
   "common": {
     "agentTypes": {
       "web_search": "Web Search",
-      "code_interpreter": "Code Interpreter", 
+      "code_interpreter": "Code Interpreter",
       "url_pull": "URL Analysis",
       "local_knowledge": "Knowledge Base",
       "standard_chat": "Standard Chat",
@@ -31,7 +31,7 @@
       "url_pull": "Analyzes and extracts content from web pages",
       "local_knowledge": "Searches internal knowledge base and documents",
       "standard_chat": "Standard conversational AI without tools",
-      "foundry": "Uses Azure AI Foundry for advanced capabilities", 
+      "foundry": "Uses Azure AI Foundry for advanced capabilities",
       "third_party": "Third-party agent or custom tool integration"
     }
   },
@@ -97,7 +97,7 @@
       "unsupportedOutput": "Unsupported output format",
       "status": {
         "success": "Success",
-        "error": "Error", 
+        "error": "Error",
         "timeout": "Timeout",
         "memory_limit": "Memory limit exceeded",
         "security_violation": "Security violation",
@@ -232,7 +232,7 @@
     "advancedOptions": "Advanced options",
     "priority": {
       "high": "High",
-      "medium": "Medium", 
+      "medium": "Medium",
       "low": "Low"
     },
     "safeSearch": {

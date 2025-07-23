@@ -330,7 +330,7 @@ const Home = ({
 
     dispatch({ field: 'selectedConversation', value: single });
     dispatch({ field: 'conversations', value: all });
-    
+
     // Save to localStorage
     saveConversation(single);
     saveConversations(all);
@@ -351,7 +351,10 @@ const Home = ({
    */
   const handleCloseSettings = () => {
     dispatch({ field: 'settingsDialogOpen', value: false });
-    dispatch({ field: 'settingsDialogSection', value: SettingsSection.GENERAL });
+    dispatch({
+      field: 'settingsDialogSection',
+      value: SettingsSection.GENERAL,
+    });
   };
 
   // EFFECTS  --------------------------------------------
@@ -364,7 +367,12 @@ const Home = ({
 
   useEffect(() => {
     defaultModelId &&
-      dispatch({ field: 'defaultModelId', value: OpenAIModels[defaultModelId].isLegacy ? OpenAIModelID.GPT_4o : defaultModelId });
+      dispatch({
+        field: 'defaultModelId',
+        value: OpenAIModels[defaultModelId].isLegacy
+          ? OpenAIModelID.GPT_4o
+          : defaultModelId,
+      });
     serverSideApiKeyIsSet &&
       dispatch({
         field: 'serverSideApiKeyIsSet',

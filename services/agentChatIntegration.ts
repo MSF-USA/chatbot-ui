@@ -1,19 +1,25 @@
 import { Session } from 'next-auth';
-import { AzureOpenAI } from 'openai';
-import * as crypto from 'crypto';
 
-import { AgentType, AgentExecutionRequest, AgentExecutionResult, AgentExecutionEnvironment } from '@/types/agent';
+import {
+  AgentExecutionEnvironment,
+  AgentExecutionRequest,
+  AgentExecutionResult,
+  AgentType,
+} from '@/types/agent';
+import { ChatBody, Message, MessageType } from '@/types/chat';
 import {
   IntentAnalysisContext,
   IntentAnalysisResult,
 } from '@/types/intentAnalysis';
-import { ChatBody, Message, MessageType } from '@/types/chat';
 import { OpenAIModelID } from '@/types/openai';
 
-import { getIntentAnalysisService, analyzeUserIntent } from './intentAnalysis';
-import { getAgentFactory, executeAgentRequest } from './agentFactory';
+import { executeAgentRequest, getAgentFactory } from './agentFactory';
 import { getAgentRegistry } from './agentRegistry';
 import ChatService from './chatService';
+import { analyzeUserIntent, getIntentAnalysisService } from './intentAnalysis';
+
+import * as crypto from 'crypto';
+import { AzureOpenAI } from 'openai';
 
 /**
  * Agent execution response for chat integration
@@ -81,13 +87,18 @@ export class AgentChatIntegrationService {
     chatBody: ChatBody,
     openai: AzureOpenAI,
     user: Session['user'],
-    modelId: string
+    modelId: string,
   ): Promise<AgentChatResponse | null> {
     const startTime = Date.now();
 
     try {
       // Analyze the request to determine if agent routing is appropriate
-      const routingDecision = await this.analyzeAndRoute(chatBody, openai, user, modelId);
+      const routingDecision = await this.analyzeAndRoute(
+        chatBody,
+        openai,
+        user,
+        modelId,
+      );
 
       if (!routingDecision.useAgent || routingDecision.fallbackToChatService) {
         console.log('[INFO] Routing to standard chat service', {
@@ -104,7 +115,7 @@ export class AgentChatIntegrationService {
         chatBody,
         openai,
         user,
-        modelId
+        modelId,
       );
 
       const processingTime = Date.now() - startTime;
@@ -135,7 +146,9 @@ export class AgentChatIntegrationService {
 
       // Fallback to standard chat service if enabled
       if (this.fallbackEnabled) {
-        console.log('[INFO] Falling back to standard chat service due to agent failure');
+        console.log(
+          '[INFO] Falling back to standard chat service due to agent failure',
+        );
         return {
           content: `I encountered an issue processing your request. Let me handle this differently.`,
           agentType: AgentType.STANDARD_CHAT,
@@ -188,9 +201,12 @@ export class AgentChatIntegrationService {
       const healthResults = await factory.performHealthChecks();
       const agentHealth = healthResults.get(agentType);
 
-      return agentHealth?.some(result => result.healthy) || false;
+      return agentHealth?.some((result) => result.healthy) || false;
     } catch (error) {
-      console.error(`[ERROR] Health check failed for agent type ${agentType}`, error as Error);
+      console.error(
+        `[ERROR] Health check failed for agent type ${agentType}`,
+        error as Error,
+      );
       return false;
     }
   }
@@ -200,21 +216,27 @@ export class AgentChatIntegrationService {
    */
   public async getAgentRecommendations(
     query: string,
-    limit: number = 3
-  ): Promise<Array<{ agentType: AgentType; confidence: number; reasoning: string }>> {
+    limit: number = 3,
+  ): Promise<
+    Array<{ agentType: AgentType; confidence: number; reasoning: string }>
+  > {
     try {
       const registry = getAgentRegistry();
       const recommendations = registry.getRecommendedAgents(query, {}, limit);
 
-      return recommendations.map(rec => ({
+      return recommendations.map((rec) => ({
         agentType: rec.type,
         confidence: this.calculateRecommendationConfidence(rec),
         reasoning: this.generateRecommendationReasoning(rec),
       }));
     } catch (error) {
-      console.error('[ERROR] Failed to get agent recommendations', error as Error, {
-        query: query.substring(0, 100),
-      });
+      console.error(
+        '[ERROR] Failed to get agent recommendations',
+        error as Error,
+        {
+          query: query.substring(0, 100),
+        },
+      );
       return [];
     }
   }
@@ -227,14 +249,19 @@ export class AgentChatIntegrationService {
     chatBody: ChatBody,
     openai: AzureOpenAI,
     user: Session['user'],
-    modelId: string
+    modelId: string,
   ): Promise<ChatRoutingDecision> {
     try {
       // Extract context from chat body
       const context = this.buildAnalysisContext(chatBody, user);
 
       // Perform intent analysis
-      const intentResult = await analyzeUserIntent(context, openai, modelId, user);
+      const intentResult = await analyzeUserIntent(
+        context,
+        openai,
+        modelId,
+        user,
+      );
 
       // Determine if we should use an agent
       const shouldUseAgent = this.shouldUseAgent(intentResult);
@@ -244,7 +271,8 @@ export class AgentChatIntegrationService {
         agentType: shouldUseAgent ? intentResult.recommendedAgent : undefined,
         confidence: intentResult.confidence,
         reasoning: intentResult.reasoning,
-        fallbackToChatService: !shouldUseAgent || intentResult.confidence < this.confidenceThreshold,
+        fallbackToChatService:
+          !shouldUseAgent || intentResult.confidence < this.confidenceThreshold,
         parameters: intentResult.parameters,
       };
     } catch (error) {
@@ -266,7 +294,7 @@ export class AgentChatIntegrationService {
     chatBody: ChatBody,
     openai: AzureOpenAI,
     user: Session['user'],
-    modelId: string
+    modelId: string,
   ): Promise<{ content: string; success: boolean; metadata?: any }> {
     const agentRequest: AgentExecutionRequest = {
       agentType: routing.agentType!,
@@ -274,7 +302,12 @@ export class AgentChatIntegrationService {
         query: this.extractQueryFromChatBody(chatBody),
         messages: chatBody.messages || [],
         user: user,
-        model: { id: modelId, name: modelId, maxLength: 4000, tokenLimit: 4000 },
+        model: {
+          id: modelId,
+          name: modelId,
+          maxLength: 4000,
+          tokenLimit: 4000,
+        },
         locale: (user as any).language || 'en',
       },
       config: {
@@ -305,7 +338,10 @@ export class AgentChatIntegrationService {
       });
 
       // Try fallback agent if available
-      if (routing.agentType !== AgentType.STANDARD_CHAT && this.fallbackEnabled) {
+      if (
+        routing.agentType !== AgentType.STANDARD_CHAT &&
+        this.fallbackEnabled
+      ) {
         return this.executeFallbackAgent(agentRequest, error as Error);
       }
 
@@ -315,7 +351,7 @@ export class AgentChatIntegrationService {
 
   private async executeFallbackAgent(
     originalRequest: AgentExecutionRequest,
-    originalError: Error
+    originalError: Error,
   ): Promise<{ content: string; success: boolean; metadata?: any }> {
     try {
       console.log('[INFO] Attempting fallback agent execution', {
@@ -343,14 +379,19 @@ export class AgentChatIntegrationService {
         },
       };
     } catch (fallbackError) {
-      console.error('[ERROR] Fallback agent execution also failed', fallbackError as Error, {
-        originalAgentType: originalRequest.agentType,
-        fallbackAgentType: AgentType.FOUNDRY,
-      });
+      console.error(
+        '[ERROR] Fallback agent execution also failed',
+        fallbackError as Error,
+        {
+          originalAgentType: originalRequest.agentType,
+          fallbackAgentType: AgentType.FOUNDRY,
+        },
+      );
 
       // Return a graceful error message
       return {
-        content: 'I apologize, but I encountered difficulties processing your request. Please try rephrasing your question or contact support if the issue persists.',
+        content:
+          'I apologize, but I encountered difficulties processing your request. Please try rephrasing your question or contact support if the issue persists.',
         success: false,
         metadata: {
           originalError: originalError.message,
@@ -360,7 +401,10 @@ export class AgentChatIntegrationService {
     }
   }
 
-  private buildAnalysisContext(chatBody: ChatBody, user: Session['user']): IntentAnalysisContext {
+  private buildAnalysisContext(
+    chatBody: ChatBody,
+    user: Session['user'],
+  ): IntentAnalysisContext {
     const query = this.extractQueryFromChatBody(chatBody);
     const conversationHistory = this.extractConversationHistory(chatBody);
 
@@ -389,14 +433,16 @@ export class AgentChatIntegrationService {
 
   private extractQueryFromChatBody(chatBody: ChatBody): string {
     const lastMessage = chatBody.messages[chatBody.messages.length - 1];
-    
+
     if (typeof lastMessage.content === 'string') {
       return lastMessage.content;
     }
 
     // Handle array content (multimodal)
     if (Array.isArray(lastMessage.content)) {
-      const textContent = (lastMessage.content as any[]).find((item: any) => item.type === 'text');
+      const textContent = (lastMessage.content as any[]).find(
+        (item: any) => item.type === 'text',
+      );
       return textContent ? textContent.text : '';
     }
 
@@ -406,13 +452,17 @@ export class AgentChatIntegrationService {
   private extractConversationHistory(chatBody: ChatBody): string[] {
     return chatBody.messages
       .slice(-5) // Last 5 messages for context
-      .map(msg => {
+      .map((msg) => {
         if (typeof msg.content === 'string') {
           return `${msg.role}: ${msg.content}`;
         }
         if (Array.isArray(msg.content)) {
-          const textContent = (msg.content as any[]).find((item: any) => item.type === 'text');
-          return textContent ? `${msg.role}: ${textContent.text}` : `${msg.role}: [non-text content]`;
+          const textContent = (msg.content as any[]).find(
+            (item: any) => item.type === 'text',
+          );
+          return textContent
+            ? `${msg.role}: ${textContent.text}`
+            : `${msg.role}: [non-text content]`;
         }
         return `${msg.role}: [complex content]`;
       });
@@ -439,15 +489,20 @@ export class AgentChatIntegrationService {
       case AgentType.URL_PULL:
         // Only use URL agent if URLs are actually present
         return Boolean(intentResult.parameters.urls?.length);
-      
+
       case AgentType.CODE_INTERPRETER:
         // Only use code agent if code is detected or explicitly requested
-        return Boolean(intentResult.parameters.language || intentResult.confidence > 0.7);
-      
+        return Boolean(
+          intentResult.parameters.language || intentResult.confidence > 0.7,
+        );
+
       case AgentType.LOCAL_KNOWLEDGE:
         // Only use local knowledge if company-specific terms are detected
-        return Boolean(intentResult.parameters.topics?.length || intentResult.parameters.keywords?.length);
-      
+        return Boolean(
+          intentResult.parameters.topics?.length ||
+            intentResult.parameters.keywords?.length,
+        );
+
       default:
         return true;
     }
@@ -471,14 +526,20 @@ export class AgentChatIntegrationService {
 
   private calculateRecommendationConfidence(recommendation: any): number {
     // Simple confidence calculation based on recommendation metadata
-    return Math.min(0.9, Math.max(0.1, 
-      (recommendation.poolStats?.totalAgents || 0) > 0 ? 0.7 : 0.4
-    ));
+    return Math.min(
+      0.9,
+      Math.max(
+        0.1,
+        (recommendation.poolStats?.totalAgents || 0) > 0 ? 0.7 : 0.4,
+      ),
+    );
   }
 
   private generateRecommendationReasoning(recommendation: any): string {
     const capabilities = recommendation.capabilities.slice(0, 3).join(', ');
-    return `Best suited for: ${capabilities}. Available: ${recommendation.available ? 'Yes' : 'No'}.`;
+    return `Best suited for: ${capabilities}. Available: ${
+      recommendation.available ? 'Yes' : 'No'
+    }.`;
   }
 }
 
@@ -496,7 +557,7 @@ export async function processAgentChatRequest(
   chatBody: ChatBody,
   openai: AzureOpenAI,
   user: Session['user'],
-  modelId: string
+  modelId: string,
 ): Promise<AgentChatResponse | null> {
   const integration = getAgentChatIntegration();
   return await integration.processChatRequest(chatBody, openai, user, modelId);
@@ -517,7 +578,9 @@ export function configureAgentIntegration(options: {
 /**
  * Function to check agent availability
  */
-export async function checkAgentAvailability(agentType: AgentType): Promise<boolean> {
+export async function checkAgentAvailability(
+  agentType: AgentType,
+): Promise<boolean> {
   const integration = getAgentChatIntegration();
   return await integration.isAgentAvailable(agentType);
 }

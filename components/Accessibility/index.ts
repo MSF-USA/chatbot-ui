@@ -1,6 +1,6 @@
 /**
  * Accessibility Components Index
- * 
+ *
  * Centralized export for all accessibility components and utilities.
  * Provides comprehensive WCAG 2.1 AA compliance tools.
  */
@@ -46,11 +46,7 @@ export {
   NavigationAnnouncer,
 } from './LiveRegion';
 
-export type { 
-  LivePriority, 
-  LiveRegionType, 
-  Announcement 
-} from './LiveRegion';
+export type { LivePriority, LiveRegionType, Announcement } from './LiveRegion';
 
 // Keyboard Navigation
 export {
@@ -83,10 +79,13 @@ export {
 } from './ARIALabels';
 
 // Re-export focus management from hooks
-export { useFocusManagement, useRovingTabindex } from '@/hooks/useFocusManagement';
-export type { 
-  FocusTrapConfig, 
-  UseFocusManagementReturn 
+export {
+  useFocusManagement,
+  useRovingTabindex,
+} from '@/hooks/useFocusManagement';
+export type {
+  FocusTrapConfig,
+  UseFocusManagementReturn,
 } from '@/hooks/useFocusManagement';
 
 /**
@@ -95,21 +94,9 @@ export type {
  */
 export function useAccessibilitySetup() {
   return {
-    providers: [
-      'ARIAProvider',
-      'AnnouncerProvider', 
-      'HeadingProvider',
-    ],
-    components: [
-      'SkipNavigation',
-      'HeadingValidator',
-    ],
-    hooks: [
-      'useFocusManagement',
-      'useAnnouncer',
-      'useHeading',
-      'useARIA',
-    ],
+    providers: ['ARIAProvider', 'AnnouncerProvider', 'HeadingProvider'],
+    components: ['SkipNavigation', 'HeadingValidator'],
+    hooks: ['useFocusManagement', 'useAnnouncer', 'useHeading', 'useARIA'],
   };
 }
 
@@ -130,8 +117,8 @@ export const A11yUtils = {
       '[tabindex]:not([tabindex="-1"])',
       '[contenteditable="true"]',
     ];
-    
-    return focusableSelectors.some(selector => element.matches(selector));
+
+    return focusableSelectors.some((selector) => element.matches(selector));
   },
 
   /**
@@ -139,23 +126,27 @@ export const A11yUtils = {
    */
   isVisibleToScreenReaders: (element: HTMLElement): boolean => {
     const style = window.getComputedStyle(element);
-    
+
     // Check CSS visibility
     if (style.display === 'none' || style.visibility === 'hidden') {
       return false;
     }
-    
+
     // Check ARIA hidden
     if (element.getAttribute('aria-hidden') === 'true') {
       return false;
     }
-    
+
     // Check if element has zero dimensions and is not absolutely positioned
     const rect = element.getBoundingClientRect();
-    if (rect.width === 0 && rect.height === 0 && style.position !== 'absolute') {
+    if (
+      rect.width === 0 &&
+      rect.height === 0 &&
+      style.position !== 'absolute'
+    ) {
       return false;
     }
-    
+
     return true;
   },
 
@@ -166,29 +157,33 @@ export const A11yUtils = {
     // Check aria-label
     const ariaLabel = element.getAttribute('aria-label');
     if (ariaLabel) return ariaLabel;
-    
+
     // Check aria-labelledby
     const labelledBy = element.getAttribute('aria-labelledby');
     if (labelledBy) {
       const labelElement = document.getElementById(labelledBy);
       if (labelElement) return labelElement.textContent?.trim() || '';
     }
-    
+
     // Check associated label
     if (element.id) {
       const label = document.querySelector(`label[for="${element.id}"]`);
       if (label) return label.textContent?.trim() || '';
     }
-    
+
     // Check title attribute
     const title = element.getAttribute('title');
     if (title) return title;
-    
+
     // Fallback to text content for certain elements
-    if (['button', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(element.tagName.toLowerCase())) {
+    if (
+      ['button', 'a', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(
+        element.tagName.toLowerCase(),
+      )
+    ) {
       return element.textContent?.trim() || '';
     }
-    
+
     return '';
   },
 
@@ -200,9 +195,10 @@ export const A11yUtils = {
     // you'd use a proper color contrast calculation library
     const fgLum = getRelativeLuminance(foreground);
     const bgLum = getRelativeLuminance(background);
-    
-    const ratio = (Math.max(fgLum, bgLum) + 0.05) / (Math.min(fgLum, bgLum) + 0.05);
-    
+
+    const ratio =
+      (Math.max(fgLum, bgLum) + 0.05) / (Math.min(fgLum, bgLum) + 0.05);
+
     // WCAG AA requires 4.5:1 for normal text, 3:1 for large text
     return ratio >= 4.5;
   },
@@ -211,32 +207,36 @@ export const A11yUtils = {
    * Validate heading hierarchy
    */
   validateHeadingHierarchy: (): string[] => {
-    const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'));
+    const headings = Array.from(
+      document.querySelectorAll('h1, h2, h3, h4, h5, h6'),
+    );
     const issues: string[] = [];
-    
+
     let previousLevel = 0;
-    
+
     headings.forEach((heading, index) => {
       const level = parseInt(heading.tagName.charAt(1));
-      
+
       // Check for skipped levels
       if (level > previousLevel + 1 && previousLevel !== 0) {
-        issues.push(`Heading level ${level} follows h${previousLevel}, skipping levels`);
+        issues.push(
+          `Heading level ${level} follows h${previousLevel}, skipping levels`,
+        );
       }
-      
+
       // Check for multiple h1s
       if (level === 1 && previousLevel >= 1) {
         issues.push('Multiple h1 elements found');
       }
-      
+
       // Check for empty headings
       if (!heading.textContent?.trim()) {
         issues.push(`Empty h${level} heading found`);
       }
-      
+
       previousLevel = level;
     });
-    
+
     return issues;
   },
 };

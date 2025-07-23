@@ -1028,7 +1028,8 @@ export const ENHANCED_CLASSIFICATION_SCHEMA = {
       type: 'number' as const,
       minimum: 0,
       maximum: 1,
-      description: 'Confidence score for the primary recommendation (0.00-1.00)',
+      description:
+        'Confidence score for the primary recommendation (0.00-1.00)',
     },
     reasoning: {
       type: 'string' as const,
@@ -1050,7 +1051,7 @@ export const ENHANCED_CLASSIFICATION_SCHEMA = {
   },
   required: [
     'agent_type',
-    'confidence', 
+    'confidence',
     'reasoning',
     'query',
     'complexity',
@@ -1065,12 +1066,39 @@ export const ENHANCED_CLASSIFICATION_SCHEMA = {
 export const AGENT_SPECIFIC_GUIDANCE = {
   [AgentType.WEB_SEARCH]: {
     keywords: [
-      'latest', 'recent', 'current', 'today', 'now', 'breaking', 'news',
-      'search', 'find', 'look up', 'google', 'what is happening',
-      'price', 'stock', 'weather', 'score', 'update', 'live',
-      'trending', 'market', 'real-time', 'immediate', 'fresh',
-      'this week', 'this month', 'this year', 'compare', 'reviews',
-      'who won', 'results', 'election', 'poll', 'statistics'
+      'latest',
+      'recent',
+      'current',
+      'today',
+      'now',
+      'breaking',
+      'news',
+      'search',
+      'find',
+      'look up',
+      'google',
+      'what is happening',
+      'price',
+      'stock',
+      'weather',
+      'score',
+      'update',
+      'live',
+      'trending',
+      'market',
+      'real-time',
+      'immediate',
+      'fresh',
+      'this week',
+      'this month',
+      'this year',
+      'compare',
+      'reviews',
+      'who won',
+      'results',
+      'election',
+      'poll',
+      'statistics',
     ],
     patterns: [
       /\b(latest|recent|current|today|now|breaking|trending|immediate)\b/i,
@@ -1093,19 +1121,56 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'real-time weather in New York',
       'what does MSF do in Sudan?',
       'tell me about the latest news',
-    ]
+    ],
   },
 
   [AgentType.CODE_INTERPRETER]: {
     keywords: [
-      'code', 'program', 'script', 'function', 'debug', 'error', 'execute', 'run',
-      'python', 'javascript', 'sql', 'bash', 'typescript', 'r',
-      'data', 'analysis', 'calculate', 'compute', 'process',
-      'algorithm', 'parse', 'csv', 'json', 'file', 'dataset',
-      'visualization', 'chart', 'graph', 'plot', 'matplotlib',
-      'pandas', 'numpy', 'dataframe', 'statistics', 'math',
-      'database', 'query', 'select', 'insert', 'update',
-      'machine learning', 'ml', 'model', 'predict', 'train'
+      'code',
+      'program',
+      'script',
+      'function',
+      'debug',
+      'error',
+      'execute',
+      'run',
+      'python',
+      'javascript',
+      'sql',
+      'bash',
+      'typescript',
+      'r',
+      'data',
+      'analysis',
+      'calculate',
+      'compute',
+      'process',
+      'algorithm',
+      'parse',
+      'csv',
+      'json',
+      'file',
+      'dataset',
+      'visualization',
+      'chart',
+      'graph',
+      'plot',
+      'matplotlib',
+      'pandas',
+      'numpy',
+      'dataframe',
+      'statistics',
+      'math',
+      'database',
+      'query',
+      'select',
+      'insert',
+      'update',
+      'machine learning',
+      'ml',
+      'model',
+      'predict',
+      'train',
     ],
     patterns: [
       /```[\w]*\n[\s\S]*?\n```/g,
@@ -1125,17 +1190,38 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'create a visualization of this data',
       'run this Python script for data analysis',
       'help me debug this code error',
-      'process this dataset and show statistics'
-    ]
+      'process this dataset and show statistics',
+    ],
   },
 
   [AgentType.URL_PULL]: {
     keywords: [
-      'website', 'url', 'link', 'page', 'site', 'analyze', 'webpage',
-      'extract', 'scrape', 'content', 'article', 'read', 'parse',
-      'fetch', 'pull', 'crawl', 'download', 'metadata', 'html',
-      'compare websites', 'website comparison', 'seo analysis',
-      'multiple urls', 'several links', 'batch process', 'parallel'
+      'website',
+      'url',
+      'link',
+      'page',
+      'site',
+      'analyze',
+      'webpage',
+      'extract',
+      'scrape',
+      'content',
+      'article',
+      'read',
+      'parse',
+      'fetch',
+      'pull',
+      'crawl',
+      'download',
+      'metadata',
+      'html',
+      'compare websites',
+      'website comparison',
+      'seo analysis',
+      'multiple urls',
+      'several links',
+      'batch process',
+      'parallel',
     ],
     patterns: [
       /https?:\/\/[^\s<>"{}|\\^`[\]]+/g,
@@ -1154,23 +1240,74 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       // 'fetch content from multiple links',
       'analyze SEO for this site: https://business.com',
       // 'scrape data from these pages'
-    ]
+    ],
   },
 
   [AgentType.LOCAL_KNOWLEDGE]: {
     keywords: [
       // MSF AI Assistant specific (from actual FAQ content)
-      'msf ai assistant', 'msf ai', 'ai assistant', 'chatbot', 'ai tool', 'chat tool', 'assistant',
-      'médecins sans frontières', 'doctors without borders', 'msf', 'humanitarian',
-      'what is', 'what can', 'how can', 'how do', 'capabilities', 'features', 'assist', 'help',
-      'prompt', 'reusable prompt', 'create prompt', 'automate', 'slash command', 'prompts tab',
-      'conversation', 'custom bot', 'stored', 'local storage', 'browser', 'device',
-      'trust', 'reliable', 'accurate', 'fact-check', '100% trusted', 'verify', 'confirm',
+      'msf ai assistant',
+      'msf ai',
+      'ai assistant',
+      'chatbot',
+      'ai tool',
+      'chat tool',
+      'assistant',
+      'médecins sans frontières',
+      'doctors without borders',
+      'msf',
+      'humanitarian',
+      'what is',
+      'what can',
+      'how can',
+      'how do',
+      'capabilities',
+      'features',
+      'assist',
+      'help',
+      'prompt',
+      'reusable prompt',
+      'create prompt',
+      'automate',
+      'slash command',
+      'prompts tab',
+      'conversation',
+      'custom bot',
+      'stored',
+      'local storage',
+      'browser',
+      'device',
+      'trust',
+      'reliable',
+      'accurate',
+      'fact-check',
+      '100% trusted',
+      'verify',
+      'confirm',
       // Privacy and data protection (from actual privacy policy)
-      'privacy', 'data protection', 'data storage', 'where stored', 'privacy policy', 'terms of use',
-      'prohibited data', 'personal data', 'sensitive data', 'what not to put', 'responsible use',
-      'prohibited uses', 'accuracy', 'bias', 'check outputs', 'privacy concerns', 'incidents',
-      'faq', 'feedback', 'support', 'bug report', 'ai@newyork.msf.org', 'ai.team@amsterdam.msf.org',
+      'privacy',
+      'data protection',
+      'data storage',
+      'where stored',
+      'privacy policy',
+      'terms of use',
+      'prohibited data',
+      'personal data',
+      'sensitive data',
+      'what not to put',
+      'responsible use',
+      'prohibited uses',
+      'accuracy',
+      'bias',
+      'check outputs',
+      'privacy concerns',
+      'incidents',
+      'faq',
+      'feedback',
+      'support',
+      'bug report',
+      'ai@newyork.msf.org',
+      'ai.team@amsterdam.msf.org',
       // Company/organizational
       // 'company', 'internal', 'org chart', 'organization', 'corporate', 'enterprise',
       // 'contact', 'documentation', 'docs', 'guide', 'handbook', 'manual', 'knowledge base', 'wiki',
@@ -1222,13 +1359,22 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       // 'frequently asked questions about benefits',
       // 'our company\'s security protocols',
       // 'internal wiki about product specifications'
-    ]
+    ],
   },
 
   [AgentType.THIRD_PARTY]: {
     keywords: [
-      'github', 'slack', 'jira', 'salesforce', 'calendar', 'email',
-      'api', 'webhook', 'integration', 'create issue', 'send message'
+      'github',
+      'slack',
+      'jira',
+      'salesforce',
+      'calendar',
+      'email',
+      'api',
+      'webhook',
+      'integration',
+      'create issue',
+      'send message',
     ],
     patterns: [
       /\b(github|slack|jira|salesforce|calendar|email)\b/i,
@@ -1237,15 +1383,31 @@ export const AGENT_SPECIFIC_GUIDANCE = {
     examples: [
       'create a GitHub issue',
       'send a Slack message',
-      'update my calendar'
-    ]
+      'update my calendar',
+    ],
   },
 
   [AgentType.STANDARD_CHAT]: {
     keywords: [
-      'tell', 'explain', 'what', 'how', 'why', 'chat', 'talk', 'discuss',
-      'opinion', 'think', 'help', 'advice', 'suggestion', 'recommend',
-      'general', 'conversation', 'casual', 'personal', 'brainstorm'
+      'tell',
+      'explain',
+      'what',
+      'how',
+      'why',
+      'chat',
+      'talk',
+      'discuss',
+      'opinion',
+      'think',
+      'help',
+      'advice',
+      'suggestion',
+      'recommend',
+      'general',
+      'conversation',
+      'casual',
+      'personal',
+      'brainstorm',
     ],
     patterns: [
       /\b(tell me|explain|what do you think|how do you|opinion|advice|help me)\b/i,
@@ -1259,14 +1421,27 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'explain this concept',
       'give me your opinion on...',
       'what is the sphere handbook',
-    ]
+    ],
   },
 
   [AgentType.FOUNDRY]: {
     keywords: [
-      'complex', 'advanced', 'sophisticated', 'deep', 'thorough', 'comprehensive',
-      'analysis', 'reasoning', 'logic', 'philosophy', 'research', 'academic',
-      'multi-step', 'strategy', 'detailed', 'in-depth'
+      'complex',
+      'advanced',
+      'sophisticated',
+      'deep',
+      'thorough',
+      'comprehensive',
+      'analysis',
+      'reasoning',
+      'logic',
+      'philosophy',
+      'research',
+      'academic',
+      'multi-step',
+      'strategy',
+      'detailed',
+      'in-depth',
     ],
     patterns: [
       /\b(complex|advanced|sophisticated|deep|thorough|comprehensive)\b/i,
@@ -1277,8 +1452,8 @@ export const AGENT_SPECIFIC_GUIDANCE = {
       'analyze the philosophical implications of...',
       'create a complex business strategy',
       'provide in-depth analysis of...',
-      'solve this multi-step problem'
-    ]
+      'solve this multi-step problem',
+    ],
   },
 };
 
@@ -1289,28 +1464,44 @@ export const CONFIDENCE_GUIDELINES = {
   very_high: {
     range: [0.9, 1.0],
     description: 'Very clear indicators present',
-    examples: ['URLs in query', 'Code blocks present', 'Explicit service mentions']
+    examples: [
+      'URLs in query',
+      'Code blocks present',
+      'Explicit service mentions',
+    ],
   },
   high: {
     range: [0.75, 0.89],
     description: 'Strong contextual clues',
-    examples: ['Multiple relevant keywords', 'Clear intent patterns', 'Time-sensitive language']
+    examples: [
+      'Multiple relevant keywords',
+      'Clear intent patterns',
+      'Time-sensitive language',
+    ],
   },
   medium: {
     range: [0.5, 0.74],
     description: 'Moderate confidence based on context',
-    examples: ['Some relevant keywords', 'Partial pattern matches', 'Contextual inference']
+    examples: [
+      'Some relevant keywords',
+      'Partial pattern matches',
+      'Contextual inference',
+    ],
   },
   low: {
     range: [0.3, 0.49],
     description: 'Weak signals, uncertain classification',
-    examples: ['Ambiguous intent', 'Minimal context', 'Generic language']
+    examples: ['Ambiguous intent', 'Minimal context', 'Generic language'],
   },
   very_low: {
     range: [0.1, 0.29],
     description: 'Very uncertain, fallback scenario',
-    examples: ['No clear indicators', 'Contradictory signals', 'Insufficient information']
-  }
+    examples: [
+      'No clear indicators',
+      'Contradictory signals',
+      'Insufficient information',
+    ],
+  },
 };
 
 /**
@@ -1320,20 +1511,25 @@ export function buildContextualPrompt(
   query: string,
   locale: string,
   conversationHistory?: string[],
-  additionalContext?: Record<string, any>
+  additionalContext?: Record<string, any>,
 ): string {
-  const template = USER_PROMPT_TEMPLATES[locale as keyof typeof USER_PROMPT_TEMPLATES] || USER_PROMPT_TEMPLATES.en;
-  
+  const template =
+    USER_PROMPT_TEMPLATES[locale as keyof typeof USER_PROMPT_TEMPLATES] ||
+    USER_PROMPT_TEMPLATES.en;
+
   const currentDateTime = new Date().toISOString();
-  const historySection = conversationHistory?.length 
-    ? `**Recent Conversation:**\n${conversationHistory.slice(-3).map((msg, i) => `${i + 1}. ${msg}`).join('\n')}\n`
+  const historySection = conversationHistory?.length
+    ? `**Recent Conversation:**\n${conversationHistory
+        .slice(-3)
+        .map((msg, i) => `${i + 1}. ${msg}`)
+        .join('\n')}\n`
     : '';
-  
-  const contextSection = additionalContext 
+
+  const contextSection = additionalContext
     ? `**Additional Context:**\n${JSON.stringify(additionalContext, null, 2)}\n`
     : '';
-  
-  const sessionContext = additionalContext?.sessionInfo 
+
+  const sessionContext = additionalContext?.sessionInfo
     ? `Session ID: ${additionalContext.sessionInfo.sessionId}, User: ${additionalContext.sessionInfo.userId}`
     : 'No session context';
 
@@ -1350,11 +1546,13 @@ export function buildContextualPrompt(
  * Helper function to get agent-specific guidance
  */
 export function getAgentGuidance(agentType: AgentType) {
-  return AGENT_SPECIFIC_GUIDANCE[agentType] || {
-    keywords: [],
-    patterns: [],
-    examples: []
-  };
+  return (
+    AGENT_SPECIFIC_GUIDANCE[agentType] || {
+      keywords: [],
+      patterns: [],
+      examples: [],
+    }
+  );
 }
 
 /**
@@ -1370,39 +1568,43 @@ export function validateConfidenceScore(confidence: number): boolean {
 export const AGENT_EXCLUSION_PATTERNS = {
   [AgentType.WEB_SEARCH]: {
     avoidancePatterns: [
-      'don\'t search the web',
+      "don't search the web",
       'without searching',
       'no web search',
       'avoid search',
-      'don\'t look online',
+      "don't look online",
       'offline only',
       'without internet',
       'no online search',
-      'don\'t browse',
+      "don't browse",
       'without browsing',
       'no external search',
       'local only',
-      'don\'t fetch online',
-      'avoid web lookup'
+      "don't fetch online",
+      'avoid web lookup',
     ],
     negativePatterns: [
       /don't\s+(search|look|browse|fetch|find)\s+(the\s+)?(web|online|internet)/i,
       /without\s+(searching|browsing|looking)\s+(the\s+)?(web|online|internet)/i,
       /no\s+(web\s+)?(search|browsing|online\s+search)/i,
       /avoid\s+(web\s+)?(search|browsing)/i,
-      /not?\s+(search|look|browse)\s+(online|web)/i
+      /not?\s+(search|look|browse)\s+(online|web)/i,
     ],
     exclusionKeywords: [
-      'offline', 'local only', 'no internet', 'internal only', 'cached only'
-    ]
+      'offline',
+      'local only',
+      'no internet',
+      'internal only',
+      'cached only',
+    ],
   },
   [AgentType.CODE_INTERPRETER]: {
     avoidancePatterns: [
-      'don\'t run code',
+      "don't run code",
       'no code execution',
       'without running',
       'avoid execution',
-      'don\'t execute',
+      "don't execute",
       'no script',
       'text only',
       'explanation only',
@@ -1410,8 +1612,8 @@ export const AGENT_EXCLUSION_PATTERNS = {
       'conceptual only',
       'without coding',
       'no programming',
-      'don\'t compile',
-      'static only'
+      "don't compile",
+      'static only',
     ],
     negativePatterns: [
       /don't\s+(run|execute|compile)\s+(code|script|program)/i,
@@ -1419,58 +1621,69 @@ export const AGENT_EXCLUSION_PATTERNS = {
       /without\s+(running|executing|coding)/i,
       /avoid\s+(code\s+)?(execution|running)/i,
       /(explanation|theory|concept)\s+only/i,
-      /text\s+only/i
+      /text\s+only/i,
     ],
     exclusionKeywords: [
-      'theory only', 'explanation only', 'conceptual', 'static analysis', 'no execution'
-    ]
+      'theory only',
+      'explanation only',
+      'conceptual',
+      'static analysis',
+      'no execution',
+    ],
   },
   [AgentType.URL_PULL]: {
     avoidancePatterns: [
-      'don\'t access urls',
+      "don't access urls",
       'no url fetching',
       'without pulling',
       'avoid external links',
-      'don\'t fetch',
+      "don't fetch",
       'no website access',
       'offline content',
       'local content only',
-      'don\'t visit',
+      "don't visit",
       'no external access',
       'without accessing',
-      'don\'t pull from'
+      "don't pull from",
     ],
     negativePatterns: [
       /don't\s+(access|fetch|pull|visit)\s+(url|link|website|site)/i,
       /no\s+(url|link|website)\s+(access|fetching|pulling)/i,
       /without\s+(accessing|pulling|fetching)\s+(url|link|website)/i,
       /avoid\s+(external\s+)?(link|url|website)/i,
-      /local\s+(content\s+)?only/i
+      /local\s+(content\s+)?only/i,
     ],
     exclusionKeywords: [
-      'local only', 'offline content', 'no external', 'internal only'
-    ]
+      'local only',
+      'offline content',
+      'no external',
+      'internal only',
+    ],
   },
   [AgentType.LOCAL_KNOWLEDGE]: {
     avoidancePatterns: [
-      'don\'t use internal',
+      "don't use internal",
       'no local knowledge',
       'external only',
       'fresh information',
       'current data only',
       'no cached',
       'live data only',
-      'real-time only'
+      'real-time only',
     ],
     negativePatterns: [
       /don't\s+use\s+(internal|local|cached)/i,
       /no\s+(local|internal|cached)\s+(knowledge|data|info)/i,
       /(fresh|current|live|real-time)\s+(data|info|information)\s+only/i,
-      /external\s+(sources\s+)?only/i
+      /external\s+(sources\s+)?only/i,
     ],
     exclusionKeywords: [
-      'external only', 'fresh only', 'current only', 'live data', 'real-time'
-    ]
+      'external only',
+      'fresh only',
+      'current only',
+      'live data',
+      'real-time',
+    ],
   },
   [AgentType.STANDARD_CHAT]: {
     avoidancePatterns: [
@@ -1486,6 +1699,6 @@ export const AGENT_EXCLUSION_PATTERNS = {
     ],
     exclusionKeywords: [
       // 'enhanced', 'advanced tools', 'special features'
-    ]
-  }
+    ],
+  },
 } as const;

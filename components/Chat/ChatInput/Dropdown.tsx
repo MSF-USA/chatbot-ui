@@ -78,7 +78,11 @@ interface DropdownProps {
   textFieldValue: string;
   onCameraClick: () => void;
   // New props for agent-based web search
-  onSend?: (message: Message, plugin: Plugin | null, forceStandardChat?: boolean) => void;
+  onSend?: (
+    message: Message,
+    plugin: Plugin | null,
+    forceStandardChat?: boolean,
+  ) => void;
   setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
   setProgress?: Dispatch<SetStateAction<number | null>>;
   stopConversationRef?: { current: boolean };

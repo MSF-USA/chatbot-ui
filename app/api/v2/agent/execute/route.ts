@@ -1,28 +1,30 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken } from 'next-auth/jwt';
-import { getServerSession } from 'next-auth/next';
 import { Session } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
 import { JWT } from 'next-auth/jwt';
+import { getServerSession } from 'next-auth/next';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { executeAgentRequest } from '@/services/agentFactory';
 
 import {
-  AgentExecutionApiRequest,
-  AgentExecutionApiResponse,
-  isSupportedAgentType,
-  DEFAULT_AGENT_CONFIGS,
-} from '@/types/agentApi';
-import {
-  AgentType,
   AgentConfig,
   AgentExecutionContext,
   AgentExecutionEnvironment,
-  WebSearchAgentConfig,
-  UrlPullAgentConfig,
+  AgentType,
   CodeInterpreterAgentConfig,
   LocalKnowledgeAgentConfig,
+  UrlPullAgentConfig,
+  WebSearchAgentConfig,
 } from '@/types/agent';
+import {
+  AgentExecutionApiRequest,
+  AgentExecutionApiResponse,
+  DEFAULT_AGENT_CONFIGS,
+  isSupportedAgentType,
+} from '@/types/agentApi';
 import { AccessLevel, UserRole } from '@/types/localKnowledge';
 import { OpenAIModel } from '@/types/openai';
-import { executeAgentRequest } from '@/services/agentFactory';
+
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 /**
@@ -39,7 +41,9 @@ function validateRequest(body: any): {
   if (!body.agentType) {
     errors.push('agentType is required');
   } else if (!isSupportedAgentType(body.agentType)) {
-    errors.push(`agentType must be one of: ${Object.values(AgentType).join(', ')}`);
+    errors.push(
+      `agentType must be one of: ${Object.values(AgentType).join(', ')}`,
+    );
   }
 
   if (!body.query || typeof body.query !== 'string') {
@@ -59,7 +63,10 @@ function validateRequest(body: any): {
     errors.push('conversationHistory is too long (max 10 messages)');
   }
 
-  if (body.conversationHistory && body.conversationHistory.some((msg: any) => typeof msg !== 'string')) {
+  if (
+    body.conversationHistory &&
+    body.conversationHistory.some((msg: any) => typeof msg !== 'string')
+  ) {
     errors.push('conversationHistory items must be strings');
   }
 
@@ -83,7 +90,7 @@ function validateRequest(body: any): {
   return {
     isValid: errors.length === 0,
     errors,
-    data: errors.length === 0 ? body as AgentExecutionApiRequest : undefined,
+    data: errors.length === 0 ? (body as AgentExecutionApiRequest) : undefined,
   };
 }
 
@@ -93,12 +100,19 @@ function validateRequest(body: any): {
 function createAgentConfig(
   request: AgentExecutionApiRequest,
   session: Session,
-): AgentConfig | WebSearchAgentConfig | UrlPullAgentConfig | CodeInterpreterAgentConfig | LocalKnowledgeAgentConfig {
+):
+  | AgentConfig
+  | WebSearchAgentConfig
+  | UrlPullAgentConfig
+  | CodeInterpreterAgentConfig
+  | LocalKnowledgeAgentConfig {
   const defaultConfig = DEFAULT_AGENT_CONFIGS[request.agentType] || {};
   const userConfig = request.config || {};
 
   const config: AgentConfig = {
-    id: `api-${request.agentType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `api-${request.agentType}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substr(2, 9)}`,
     name: `API ${request.agentType} Agent`,
     type: request.agentType,
     environment: getAgentEnvironment(request.agentType),
@@ -125,11 +139,14 @@ function createAgentConfig(
         webSearchConfig: {
           endpoint: process.env.AZURE_AI_FOUNDRY_ENDPOINT || '',
           apiKey: process.env.AZURE_GROUNDING_CONNECTION_ID || '',
-          defaultMarket: userConfig.defaultMarket || defaultConfig.defaultMarket,
-          defaultSafeSearch: userConfig.defaultSafeSearch || defaultConfig.defaultSafeSearch,
+          defaultMarket:
+            userConfig.defaultMarket || defaultConfig.defaultMarket,
+          defaultSafeSearch:
+            userConfig.defaultSafeSearch || defaultConfig.defaultSafeSearch,
           maxResults: userConfig.maxResults || defaultConfig.maxResults,
           timeout: request.timeout || 30000,
-          enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching,
+          enableCaching:
+            userConfig.enableCaching ?? defaultConfig.enableCaching,
           cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl,
           retry: {
             maxAttempts: 3,
@@ -145,15 +162,22 @@ function createAgentConfig(
         urlPullConfig: {
           maxUrls: userConfig.maxUrls || defaultConfig.maxUrls,
           timeout: request.timeout || defaultConfig.processingTimeout,
-          concurrencyLimit: userConfig.concurrencyLimit || defaultConfig.concurrencyLimit,
-          enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching,
+          concurrencyLimit:
+            userConfig.concurrencyLimit || defaultConfig.concurrencyLimit,
+          enableCaching:
+            userConfig.enableCaching ?? defaultConfig.enableCaching,
           cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl,
         },
         maxUrls: userConfig.maxUrls || defaultConfig.maxUrls,
         processingTimeout: request.timeout || defaultConfig.processingTimeout,
-        enableParallelProcessing: userConfig.enableParallelProcessing ?? defaultConfig.enableParallelProcessing,
-        concurrencyLimit: userConfig.concurrencyLimit || defaultConfig.concurrencyLimit,
-        enableContentExtraction: userConfig.enableContentExtraction ?? defaultConfig.enableContentExtraction,
+        enableParallelProcessing:
+          userConfig.enableParallelProcessing ??
+          defaultConfig.enableParallelProcessing,
+        concurrencyLimit:
+          userConfig.concurrencyLimit || defaultConfig.concurrencyLimit,
+        enableContentExtraction:
+          userConfig.enableContentExtraction ??
+          defaultConfig.enableContentExtraction,
         enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching,
         cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl,
       };
@@ -177,9 +201,15 @@ function createAgentConfig(
           searchConfig: {
             embeddingModel: 'text-embedding-ada-002',
             vectorDimension: 1536,
-            similarityThreshold: userConfig.confidenceThreshold || defaultConfig.confidenceThreshold || 0.7,
+            similarityThreshold:
+              userConfig.confidenceThreshold ||
+              defaultConfig.confidenceThreshold ||
+              0.7,
             maxResults: userConfig.maxResults || defaultConfig.maxResults || 10,
-            enableHybridSearch: userConfig.enableHybridSearch ?? defaultConfig.enableHybridSearch ?? true,
+            enableHybridSearch:
+              userConfig.enableHybridSearch ??
+              defaultConfig.enableHybridSearch ??
+              true,
             keywordWeight: 0.3,
             semanticWeight: 0.7,
             enableReRanking: true,
@@ -195,7 +225,8 @@ function createAgentConfig(
             },
           },
           caching: {
-            enableSearchCache: userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+            enableSearchCache:
+              userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
             cacheTTL: userConfig.cacheTtl || defaultConfig.cacheTtl || 300,
             maxCacheSize: 1000,
             enableDocumentCache: true,
@@ -218,7 +249,8 @@ function createAgentConfig(
           defaultTimeout: request.timeout || 30000,
           maxMemoryMb: 512,
           enableValidation: true,
-          enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+          enableCaching:
+            userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
           cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 3600,
         },
       };
@@ -272,7 +304,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             agentType: 'unknown' as any,
           },
         } as AgentExecutionApiResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -294,7 +326,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             agentType: body.agentType || ('unknown' as any),
           },
         } as AgentExecutionApiResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -317,11 +349,13 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             agentType: request.agentType,
           },
         } as AgentExecutionApiResponse,
-        { status: 401 }
+        { status: 401 },
       );
     }
 
-    const session = (await getServerSession(authOptions as any)) as Session | null;
+    const session = (await getServerSession(
+      authOptions as any,
+    )) as Session | null;
     if (!session) {
       return NextResponse.json(
         {
@@ -337,7 +371,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             agentType: request.agentType,
           },
         } as AgentExecutionApiResponse,
-        { status: 401 }
+        { status: 401 },
       );
     }
 
@@ -362,14 +396,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         requestId: agentConfig.id,
         timestamp: startTime.toISOString(),
         userAgent: req.headers.get('user-agent') || '',
-        ip: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || '',
+        ip:
+          req.headers.get('x-forwarded-for') ||
+          req.headers.get('x-real-ip') ||
+          '',
       },
       correlationId: agentConfig.id,
     };
 
     // Execute agent request
-    console.log(`[AgentAPI] Executing ${request.agentType} agent for query: ${request.query.substring(0, 100)}...`);
-    
+    console.log(
+      `[AgentAPI] Executing ${
+        request.agentType
+      } agent for query: ${request.query.substring(0, 100)}...`,
+    );
+
     const result = await executeAgentRequest({
       agentType: request.agentType,
       context,
@@ -402,10 +443,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       },
     };
 
-    console.log(`[AgentAPI] ${request.agentType} agent execution completed successfully in ${executionTime}ms`);
+    console.log(
+      `[AgentAPI] ${request.agentType} agent execution completed successfully in ${executionTime}ms`,
+    );
 
     return NextResponse.json(response, { status: 200 });
-
   } catch (error) {
     const endTime = new Date();
     const executionTime = endTime.getTime() - startTime.getTime();
@@ -415,8 +457,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const response: AgentExecutionApiResponse = {
       success: false,
       error: {
-        code: error instanceof Error && error.name ? error.name : 'EXECUTION_ERROR',
-        message: error instanceof Error ? error.message : 'Unknown error occurred',
+        code:
+          error instanceof Error && error.name ? error.name : 'EXECUTION_ERROR',
+        message:
+          error instanceof Error ? error.message : 'Unknown error occurred',
         details: error,
       },
       execution: {
@@ -437,8 +481,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
  */
 export async function GET(): Promise<NextResponse> {
   try {
-    const supportedAgents = Object.values(AgentType).filter(isSupportedAgentType);
-    
+    const supportedAgents =
+      Object.values(AgentType).filter(isSupportedAgentType);
+
     return NextResponse.json({
       success: true,
       data: {
@@ -457,7 +502,7 @@ export async function GET(): Promise<NextResponse> {
           details: error,
         },
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

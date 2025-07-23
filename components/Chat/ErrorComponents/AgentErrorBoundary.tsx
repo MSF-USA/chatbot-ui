@@ -1,19 +1,21 @@
 /**
  * Agent Error Boundary Component
- * 
+ *
  * React error boundary specifically designed for agent operations,
  * with fallback UI and error recovery mechanisms.
  */
-
 import React, { Component, ErrorInfo, ReactNode } from 'react';
-import { AgentType } from '@/types/agent';
-import { 
-  AgentError, 
-  AgentErrorCategory, 
-  ErrorSeverity, 
+
+import {
+  AgentError,
+  AgentErrorCategory,
+  ErrorSeverity,
   RecoveryStrategy,
-  getAgentErrorHandlingService 
+  getAgentErrorHandlingService,
 } from '@/services/agentErrorHandlingService';
+
+import { AgentType } from '@/types/agent';
+
 import { AgentErrorMessage } from './AgentErrorMessage';
 
 /**
@@ -49,7 +51,7 @@ export class AgentErrorBoundary extends Component<
 
   constructor(props: AgentErrorBoundaryProps) {
     super(props);
-    
+
     this.state = {
       hasError: false,
       error: null,
@@ -61,7 +63,9 @@ export class AgentErrorBoundary extends Component<
   /**
    * Static method to derive state from error
    */
-  static getDerivedStateFromError(error: Error): Partial<AgentErrorBoundaryState> {
+  static getDerivedStateFromError(
+    error: Error,
+  ): Partial<AgentErrorBoundaryState> {
     return {
       hasError: true,
     };
@@ -105,11 +109,9 @@ export class AgentErrorBoundary extends Component<
     this.props.onError?.(agentError, errorInfo);
 
     // Handle error through service
-    this.errorHandlingService.handleError(
-      agentError,
-      this.props.agentType,
-      agentError.context
-    ).catch(console.error);
+    this.errorHandlingService
+      .handleError(agentError, this.props.agentType, agentError.context)
+      .catch(console.error);
   }
 
   /**
@@ -117,7 +119,7 @@ export class AgentErrorBoundary extends Component<
    */
   private handleRetry = () => {
     const { retryCount } = this.state;
-    
+
     if (retryCount < this.maxRetries) {
       this.setState({
         hasError: false,
@@ -176,11 +178,12 @@ export class AgentErrorBoundary extends Component<
             onDismiss={this.handleReset}
             showDetails={true}
           />
-          
+
           {retryCount >= this.maxRetries && (
             <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
               <p className="text-sm text-red-700 dark:text-red-300">
-                Maximum retry attempts reached. Please refresh the page or contact support.
+                Maximum retry attempts reached. Please refresh the page or
+                contact support.
               </p>
               <button
                 onClick={() => window.location.reload()}
@@ -208,7 +211,7 @@ export function withAgentErrorBoundary<P extends object>(
     fallbackComponent?: ReactNode;
     enableRecovery?: boolean;
     onError?: (error: AgentError, errorInfo: ErrorInfo) => void;
-  } = {}
+  } = {},
 ) {
   const WrappedComponent = React.forwardRef<any, P>((props, ref) => (
     <AgentErrorBoundary
@@ -221,8 +224,10 @@ export function withAgentErrorBoundary<P extends object>(
     </AgentErrorBoundary>
   ));
 
-  WrappedComponent.displayName = `withAgentErrorBoundary(${Component.displayName || Component.name})`;
-  
+  WrappedComponent.displayName = `withAgentErrorBoundary(${
+    Component.displayName || Component.name
+  })`;
+
   return WrappedComponent;
 }
 

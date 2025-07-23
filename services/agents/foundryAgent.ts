@@ -1,16 +1,21 @@
-import { DefaultAzureCredential } from '@azure/identity';
-import { AzureOpenAI } from 'openai';
+import { AzureMonitorLoggingService } from '@/services/loggingService';
 
 import {
   AgentConfig,
   AgentExecutionContext,
+  AgentExecutionEnvironment,
   AgentResponse,
   AgentType,
-  AgentExecutionEnvironment,
 } from '@/types/agent';
 
-import { BaseAgent, AgentCreationError, AgentExecutionError } from './baseAgent';
-import { AzureMonitorLoggingService } from '@/services/loggingService';
+import {
+  AgentCreationError,
+  AgentExecutionError,
+  BaseAgent,
+} from './baseAgent';
+
+import { DefaultAzureCredential } from '@azure/identity';
+import { AzureOpenAI } from 'openai';
 
 /**
  * FoundryAgent - Implementation for Azure AI Foundry agents
@@ -73,7 +78,9 @@ export class FoundryAgent extends BaseAgent {
         modelId: this.config.modelId,
       });
     } catch (error) {
-      const errorMessage = `Failed to initialize FoundryAgent: ${error instanceof Error ? error.message : String(error)}`;
+      const errorMessage = `Failed to initialize FoundryAgent: ${
+        error instanceof Error ? error.message : String(error)
+      }`;
       this.logError(errorMessage, error as Error, {
         agentId: this.config.id,
         endpoint: this.foundryEndpoint,
@@ -87,10 +94,9 @@ export class FoundryAgent extends BaseAgent {
     context: AgentExecutionContext,
   ): Promise<ReadableStream<string>> {
     if (!this.azureOpenAI) {
-      throw new AgentExecutionError(
-        'Azure OpenAI client not initialized',
-        { agentId: this.config.id },
-      );
+      throw new AgentExecutionError('Azure OpenAI client not initialized', {
+        agentId: this.config.id,
+      });
     }
 
     try {
@@ -98,15 +104,16 @@ export class FoundryAgent extends BaseAgent {
       const messages = this.prepareMessages(context);
 
       // Create streaming chat completion with Azure OpenAI
-      const streamingCompletion = await this.azureOpenAI.chat.completions.create({
-        model: this.config.modelId,
-        messages,
-        temperature: this.config.temperature || 0.7,
-        max_tokens: this.config.maxTokens || 4000,
-        tools: this.config.tools || [],
-        user: context.user?.id || 'anonymous',
-        stream: true, // Enable streaming
-      });
+      const streamingCompletion =
+        await this.azureOpenAI.chat.completions.create({
+          model: this.config.modelId,
+          messages,
+          temperature: this.config.temperature || 0.7,
+          max_tokens: this.config.maxTokens || 4000,
+          tools: this.config.tools || [],
+          user: context.user?.id || 'anonymous',
+          stream: true, // Enable streaming
+        });
 
       // Create ReadableStream from the streaming response
       return new ReadableStream({
@@ -117,7 +124,7 @@ export class FoundryAgent extends BaseAgent {
               if (content) {
                 controller.enqueue(content);
               }
-              
+
               // Check if stream is finished
               if (chunk.choices[0]?.finish_reason) {
                 break;
@@ -127,12 +134,13 @@ export class FoundryAgent extends BaseAgent {
           } catch (error) {
             controller.error(error);
           }
-        }
+        },
       });
-
     } catch (error) {
       throw new AgentExecutionError(
-        `Foundry streaming execution failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Foundry streaming execution failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
         {
           agentId: this.config.id,
           originalError: error,
@@ -145,10 +153,9 @@ export class FoundryAgent extends BaseAgent {
     context: AgentExecutionContext,
   ): Promise<AgentResponse> {
     if (!this.azureOpenAI) {
-      throw new AgentExecutionError(
-        'Azure OpenAI client not initialized',
-        { agentId: this.config.id },
-      );
+      throw new AgentExecutionError('Azure OpenAI client not initialized', {
+        agentId: this.config.id,
+      });
     }
 
     const startTime = Date.now();
@@ -222,7 +229,9 @@ export class FoundryAgent extends BaseAgent {
       });
 
       throw new AgentExecutionError(
-        `Agent execution failed: ${error instanceof Error ? error.message : String(error)}`,
+        `Agent execution failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
         {
           agentId: this.config.id,
           processingTime,
@@ -344,7 +353,10 @@ export class FoundryAgent extends BaseAgent {
       .slice(-maxHistoryMessages)
       .map((msg) => ({
         role: msg.role,
-        content: typeof msg.content === 'string' ? msg.content : JSON.stringify(msg.content),
+        content:
+          typeof msg.content === 'string'
+            ? msg.content
+            : JSON.stringify(msg.content),
       }));
 
     messages.push(...recentMessages);
@@ -482,5 +494,4 @@ export class FoundryAgent extends BaseAgent {
       modelId.toLowerCase().includes(supported.toLowerCase()),
     );
   }
-
 }

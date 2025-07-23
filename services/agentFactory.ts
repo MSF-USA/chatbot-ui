@@ -1,40 +1,35 @@
 import {
   AgentConfig,
-  AgentType,
-  AgentExecutionRequest,
-  AgentExecutionResult,
-  AgentFactoryRegistration,
   AgentDiscoveryQuery,
   AgentDiscoveryResult,
+  AgentExecutionEnvironment,
+  AgentExecutionRequest,
+  AgentExecutionResult,
   AgentFactoryConfig,
+  AgentFactoryRegistration,
   AgentHealthResult,
   AgentPoolStats,
+  AgentType,
   BaseAgentInstance,
-  AgentExecutionEnvironment,
   WebSearchAgentConfig,
 } from '@/types/agent';
 import { WebSearchConfig } from '@/types/webSearch';
 
 import { BaseAgent } from './agents/baseAgent';
-import { FoundryAgent } from './agents/foundryAgent';
 import { CodeAgent } from './agents/codeAgent';
-import { ThirdPartyAgent } from './agents/thirdPartyAgent';
-import { WebSearchAgent } from './agents/webSearchAgent';
-import { UrlPullAgent } from './agents/urlPullAgent';
 import { CodeInterpreterAgent } from './agents/codeInterpreterAgent';
+import { FoundryAgent } from './agents/foundryAgent';
 import { LocalKnowledgeAgent } from './agents/localKnowledgeAgent';
-
+import { ThirdPartyAgent } from './agents/thirdPartyAgent';
+import { UrlPullAgent } from './agents/urlPullAgent';
+import { WebSearchAgent } from './agents/webSearchAgent';
 import { AzureMonitorLoggingService } from './loggingService';
 
 /**
  * Custom error classes for agent factory operations
  */
 export class AgentFactoryError extends Error {
-  constructor(
-    message: string,
-    public code: string,
-    public details?: any,
-  ) {
+  constructor(message: string, public code: string, public details?: any) {
     super(message);
     this.name = 'AgentFactoryError';
   }
@@ -98,7 +93,9 @@ export class AgentFactory {
   /**
    * Singleton pattern - get or create factory instance
    */
-  public static getInstance(config?: Partial<AgentFactoryConfig>): AgentFactory {
+  public static getInstance(
+    config?: Partial<AgentFactoryConfig>,
+  ): AgentFactory {
     if (!AgentFactory.instance) {
       AgentFactory.instance = new AgentFactory(config);
     }
@@ -117,9 +114,12 @@ export class AgentFactory {
   ): void {
     try {
       if (this.registrations.has(type)) {
-        this.logWarning(`Agent type ${type} is already registered. Overriding...`, {
-          agentType: type,
-        });
+        this.logWarning(
+          `Agent type ${type} is already registered. Overriding...`,
+          {
+            agentType: type,
+          },
+        );
       }
 
       const registration: AgentFactoryRegistration = {
@@ -155,7 +155,7 @@ export class AgentFactory {
   public unregisterAgent(type: AgentType): boolean {
     try {
       const removed = this.registrations.delete(type);
-      
+
       if (removed) {
         this.logInfo(`Agent type ${type} unregistered successfully`, {
           agentType: type,
@@ -185,32 +185,43 @@ export class AgentFactory {
     this.logInfo(`Creating agent`, {
       agentType: config.type,
       agentId: config.id,
-      environment: config.environment
+      environment: config.environment,
     });
 
     try {
       const registration = this.registrations.get(config.type);
-      
+
       if (!registration) {
-        this.logError(`Agent type ${config.type} is not registered`, new Error('Agent type not registered'), {
-          agentType: config.type,
-          availableTypes: Array.from(this.registrations.keys())
-        });
+        this.logError(
+          `Agent type ${config.type} is not registered`,
+          new Error('Agent type not registered'),
+          {
+            agentType: config.type,
+            availableTypes: Array.from(this.registrations.keys()),
+          },
+        );
         throw new AgentFactoryError(
           `Agent type ${config.type} is not registered`,
           'AGENT_TYPE_NOT_REGISTERED',
-          { agentType: config.type, availableTypes: Array.from(this.registrations.keys()) },
+          {
+            agentType: config.type,
+            availableTypes: Array.from(this.registrations.keys()),
+          },
         );
       }
 
-      this.logInfo(`Found registration for ${config.type}, using factory function`);
+      this.logInfo(
+        `Found registration for ${config.type}, using factory function`,
+      );
 
       // Validate configuration
       this.validateAgentConfig(config, registration);
 
       // Use the registered factory function to create the agent
       // This ensures proper configuration for each agent type
-      this.logInfo(`Creating agent using registered factory function for ${config.type}`);
+      this.logInfo(
+        `Creating agent using registered factory function for ${config.type}`,
+      );
       const agent = await registration.factory(config);
 
       this.logInfo(`Agent created successfully`, {
@@ -241,18 +252,23 @@ export class AgentFactory {
   /**
    * Execute a request using the appropriate agent
    */
-  public async executeRequest(request: AgentExecutionRequest): Promise<AgentExecutionResult> {
+  public async executeRequest(
+    request: AgentExecutionRequest,
+  ): Promise<AgentExecutionResult> {
     const startTime = new Date();
 
     try {
       // Create agent configuration from request
       const agentConfig: AgentConfig = {
-        id: `${request.agentType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `${request.agentType}-${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 9)}`,
         name: `${request.agentType} Agent`,
         type: request.agentType,
         environment: this.getDefaultEnvironment(request.agentType),
         modelId: request.context.model.id,
-        instructions: 'Process the user request according to agent capabilities',
+        instructions:
+          'Process the user request according to agent capabilities',
         tools: [],
         timeout: request.timeout || this.config.defaultTimeout,
         ...request.config,
@@ -313,14 +329,33 @@ export class AgentFactory {
       for (const [type, registration] of this.registrations) {
         // Apply filters
         if (query.type && query.type !== type) continue;
-        if (query.environment && query.environment !== this.getDefaultEnvironment(type)) continue;
-        if (query.capabilities && !query.capabilities.every(cap => registration.capabilities.includes(cap))) continue;
-        if (query.model && !registration.supportedModels.some(model => model.includes(query.model!))) continue;
+        if (
+          query.environment &&
+          query.environment !== this.getDefaultEnvironment(type)
+        )
+          continue;
+        if (
+          query.capabilities &&
+          !query.capabilities.every((cap) =>
+            registration.capabilities.includes(cap),
+          )
+        )
+          continue;
+        if (
+          query.model &&
+          !registration.supportedModels.some((model) =>
+            model.includes(query.model!),
+          )
+        )
+          continue;
 
         const poolStats = BaseAgent.getPoolStats(type);
-        const available = query.available === undefined || (poolStats ? poolStats.totalAgents > 0 : true);
+        const available =
+          query.available === undefined ||
+          (poolStats ? poolStats.totalAgents > 0 : true);
 
-        if (query.available !== undefined && query.available !== available) continue;
+        if (query.available !== undefined && query.available !== available)
+          continue;
 
         results.push({
           type,
@@ -361,7 +396,9 @@ export class AgentFactory {
   /**
    * Get registration information for a specific agent type
    */
-  public getAgentRegistration(type: AgentType): AgentFactoryRegistration | undefined {
+  public getAgentRegistration(
+    type: AgentType,
+  ): AgentFactoryRegistration | undefined {
     return this.registrations.get(type);
   }
 
@@ -370,7 +407,7 @@ export class AgentFactory {
    */
   public getAllPoolStats(): Map<AgentType, AgentPoolStats | undefined> {
     const stats = new Map<AgentType, AgentPoolStats | undefined>();
-    
+
     for (const type of this.registrations.keys()) {
       stats.set(type, BaseAgent.getPoolStats(type));
     }
@@ -381,7 +418,9 @@ export class AgentFactory {
   /**
    * Perform health checks on all registered agent types
    */
-  public async performHealthChecks(): Promise<Map<AgentType, AgentHealthResult[]>> {
+  public async performHealthChecks(): Promise<
+    Map<AgentType, AgentHealthResult[]>
+  > {
     const healthResults = new Map<AgentType, AgentHealthResult[]>();
 
     for (const type of this.registrations.keys()) {
@@ -399,23 +438,29 @@ export class AgentFactory {
 
         const agent = await this.createAgent(testConfig);
         const healthResult = await agent.checkHealth();
-        
+
         healthResults.set(type, [healthResult]);
 
         // Cleanup test agent
         await agent.cleanup();
       } catch (error) {
-        this.logError(`Health check failed for agent type ${type}`, error as Error, {
-          agentType: type,
-        });
+        this.logError(
+          `Health check failed for agent type ${type}`,
+          error as Error,
+          {
+            agentType: type,
+          },
+        );
 
-        healthResults.set(type, [{
-          agentId: `health-check-${type}`,
-          healthy: false,
-          timestamp: new Date(),
-          responseTime: 0,
-          error: (error as Error).message,
-        }]);
+        healthResults.set(type, [
+          {
+            agentId: `health-check-${type}`,
+            healthy: false,
+            timestamp: new Date(),
+            responseTime: 0,
+            error: (error as Error).message,
+          },
+        ]);
       }
     }
 
@@ -473,7 +518,12 @@ export class AgentFactory {
       this.registerAgent(
         AgentType.FOUNDRY,
         async (config: AgentConfig) => await FoundryAgent.create(config),
-        ['text_generation', 'conversation', 'tool_calling', 'azure_integration'],
+        [
+          'text_generation',
+          'conversation',
+          'tool_calling',
+          'azure_integration',
+        ],
         FoundryAgent.getSupportedModels(),
       );
 
@@ -481,7 +531,12 @@ export class AgentFactory {
       this.registerAgent(
         AgentType.CODE_INTERPRETER,
         async (config: AgentConfig) => await CodeAgent.create(config),
-        ['code_execution', 'python_support', 'javascript_support', 'data_analysis'],
+        [
+          'code_execution',
+          'python_support',
+          'javascript_support',
+          'data_analysis',
+        ],
         ['gpt-4', 'gpt-4o', 'gpt-35-turbo'], // Code agents work with most models
       );
 
@@ -497,12 +552,21 @@ export class AgentFactory {
       this.registerAgent(
         AgentType.WEB_SEARCH,
         async (config: AgentConfig) => {
-          this.logInfo('WebSearchAgent factory function called', { agentId: config.id });
+          this.logInfo('WebSearchAgent factory function called', {
+            agentId: config.id,
+          });
           const webSearchConfig = this.createWebSearchAgentConfig(config);
           this.logInfo('About to create WebSearchAgent instance');
           return new WebSearchAgent(webSearchConfig);
         },
-        ['web-search', 'citation-extraction', 'multi-market-search', 'safe-search', 'freshness-filtering', 'result-caching'],
+        [
+          'web-search',
+          'citation-extraction',
+          'multi-market-search',
+          'safe-search',
+          'freshness-filtering',
+          'result-caching',
+        ],
         ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Web search agents work with most models
       );
 
@@ -510,7 +574,14 @@ export class AgentFactory {
       this.registerAgent(
         AgentType.URL_PULL,
         async (config: AgentConfig) => new UrlPullAgent(config as any),
-        ['url-processing', 'parallel-fetching', 'content-extraction', 'metadata-extraction', 'caching', 'validation'],
+        [
+          'url-processing',
+          'parallel-fetching',
+          'content-extraction',
+          'metadata-extraction',
+          'caching',
+          'validation',
+        ],
         ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // URL pull agents work with most models
       );
 
@@ -518,7 +589,16 @@ export class AgentFactory {
       this.registerAgent(
         AgentType.CODE_INTERPRETER,
         async (config: AgentConfig) => new CodeInterpreterAgent(config as any),
-        ['code-execution', 'python-support', 'javascript-support', 'sql-support', 'data-analysis', 'file-processing', 'visualization', 'debugging'],
+        [
+          'code-execution',
+          'python-support',
+          'javascript-support',
+          'sql-support',
+          'data-analysis',
+          'file-processing',
+          'visualization',
+          'debugging',
+        ],
         ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Code interpreter agents work with most models
       );
 
@@ -526,7 +606,18 @@ export class AgentFactory {
       this.registerAgent(
         AgentType.LOCAL_KNOWLEDGE,
         async (config: AgentConfig) => new LocalKnowledgeAgent(config as any),
-        ['knowledge-search', 'semantic-search', 'keyword-search', 'hybrid-search', 'document-retrieval', 'content-filtering', 'access-control', 'knowledge-graph', 'entity-linking', 'answer-summarization'],
+        [
+          'knowledge-search',
+          'semantic-search',
+          'keyword-search',
+          'hybrid-search',
+          'document-retrieval',
+          'content-filtering',
+          'access-control',
+          'knowledge-graph',
+          'entity-linking',
+          'answer-summarization',
+        ],
         ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Local knowledge agents work with most models
       );
 
@@ -543,7 +634,10 @@ export class AgentFactory {
     }
   }
 
-  private validateAgentConfig(config: AgentConfig, registration: AgentFactoryRegistration): void {
+  private validateAgentConfig(
+    config: AgentConfig,
+    registration: AgentFactoryRegistration,
+  ): void {
     const errors: string[] = [];
 
     // Basic validation
@@ -552,10 +646,14 @@ export class AgentFactory {
     if (!config.modelId) errors.push('Model ID is required');
 
     // Check if model is supported
-    if (!registration.supportedModels.some(model => 
-      config.modelId.toLowerCase().includes(model.toLowerCase())
-    )) {
-      errors.push(`Model ${config.modelId} is not supported by agent type ${config.type}`);
+    if (
+      !registration.supportedModels.some((model) =>
+        config.modelId.toLowerCase().includes(model.toLowerCase()),
+      )
+    ) {
+      errors.push(
+        `Model ${config.modelId} is not supported by agent type ${config.type}`,
+      );
     }
 
     // Validate against schema if provided
@@ -658,21 +756,25 @@ export class AgentFactory {
   /**
    * Create WebSearchAgentConfig from base AgentConfig
    */
-  private createWebSearchAgentConfig(config: AgentConfig): WebSearchAgentConfig {
+  private createWebSearchAgentConfig(
+    config: AgentConfig,
+  ): WebSearchAgentConfig {
     this.logInfo('Creating WebSearchAgentConfig', {
       agentId: config.id,
-      baseConfigType: config.type
+      baseConfigType: config.type,
     });
 
     // Create default web search configuration
     const webSearchConfig: WebSearchConfig = {
-      endpoint: process.env.AZURE_AI_FOUNDRY_ENDPOINT ||
-          process.env.PROJECT_ENDPOINT ||
-          process.env.AZURE_GROUNDING_ENDPOINT ||
-          'https://placeholder.cognitiveservices.azure.com',
-      apiKey: process.env.AZURE_GROUNDING_CONNECTION_ID || 
-          process.env.AZURE_GROUNDING_API_KEY ||
-          '',
+      endpoint:
+        process.env.AZURE_AI_FOUNDRY_ENDPOINT ||
+        process.env.PROJECT_ENDPOINT ||
+        process.env.AZURE_GROUNDING_ENDPOINT ||
+        'https://placeholder.cognitiveservices.azure.com',
+      apiKey:
+        process.env.AZURE_GROUNDING_CONNECTION_ID ||
+        process.env.AZURE_GROUNDING_API_KEY ||
+        '',
       defaultMarket: 'en-US',
       defaultSafeSearch: 'Moderate',
       maxResults: 5,
@@ -689,7 +791,7 @@ export class AgentFactory {
     this.logInfo('WebSearchConfig created', {
       endpoint: webSearchConfig.endpoint,
       hasApiKey: !!webSearchConfig.apiKey,
-      defaultMarket: webSearchConfig.defaultMarket
+      defaultMarket: webSearchConfig.defaultMarket,
     });
 
     // Create WebSearchAgentConfig by extending the base config
@@ -709,7 +811,7 @@ export class AgentFactory {
     this.logInfo('WebSearchAgentConfig created successfully', {
       agentId: webSearchAgentConfig.id,
       hasWebSearchConfig: !!webSearchAgentConfig.webSearchConfig,
-      environment: webSearchAgentConfig.environment
+      environment: webSearchAgentConfig.environment,
     });
 
     return webSearchAgentConfig;
@@ -719,14 +821,18 @@ export class AgentFactory {
 /**
  * Convenience function to get the singleton factory instance
  */
-export function getAgentFactory(config?: Partial<AgentFactoryConfig>): AgentFactory {
+export function getAgentFactory(
+  config?: Partial<AgentFactoryConfig>,
+): AgentFactory {
   return AgentFactory.getInstance(config);
 }
 
 /**
  * Convenience function to create an agent
  */
-export async function createAgent(config: AgentConfig): Promise<BaseAgentInstance> {
+export async function createAgent(
+  config: AgentConfig,
+): Promise<BaseAgentInstance> {
   const factory = getAgentFactory();
   return await factory.createAgent(config);
 }
@@ -744,7 +850,9 @@ export async function executeAgentRequest(
 /**
  * Convenience function to discover agents
  */
-export function discoverAgents(query: AgentDiscoveryQuery = {}): AgentDiscoveryResult[] {
+export function discoverAgents(
+  query: AgentDiscoveryQuery = {},
+): AgentDiscoveryResult[] {
   const factory = getAgentFactory();
   return factory.discoverAgents(query);
 }

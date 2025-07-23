@@ -1,6 +1,7 @@
 import { Session } from 'next-auth';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { isReasoningModel } from '@/utils/app/chat';
 import { getStructuredResponse } from '@/utils/server/structuredResponses';
 
 import {
@@ -9,14 +10,13 @@ import {
   Message,
   TextMessageContent,
 } from '@/types/chat';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
 } from '@azure/identity';
 import { AzureOpenAI } from 'openai';
-import {OpenAIModelID, OpenAIModels} from "@/types/openai";
-import {isReasoningModel} from "@/utils/app/chat";
 
 // Define the response type for the title generation
 type ChatTitleResponse = {
@@ -50,7 +50,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Initialize OpenAI API client
     const openai = new AzureOpenAI({
       azureADTokenProvider,
-      deployment: (OpenAIModels[modelId as OpenAIModelID].isLegacy || isReasoningModel(modelId)) ? OpenAIModelID.GPT_4o_mini : modelId as OpenAIModelID,
+      deployment:
+        OpenAIModels[modelId as OpenAIModelID].isLegacy ||
+        isReasoningModel(modelId)
+          ? OpenAIModelID.GPT_4o_mini
+          : (modelId as OpenAIModelID),
       apiVersion,
     });
 

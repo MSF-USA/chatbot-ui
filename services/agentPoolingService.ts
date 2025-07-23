@@ -1,23 +1,24 @@
 /**
  * Agent Pooling Service
- * 
+ *
  * Manages a pool of agent instances for efficient resource utilization,
  * conversation memory management, and agent health monitoring.
  */
+import { AGENT_POOL_SIZE, DEFAULT_AGENT_TIMEOUT } from '@/utils/app/const';
 
-import { 
-  AgentType, 
-  BaseAgentInstance, 
+import {
+  AgentConfig,
+  AgentExecutionEnvironment,
   AgentExecutionRequest,
   AgentExecutionResult,
   AgentHealthResult,
   AgentPoolStats,
-  AgentExecutionEnvironment,
-  AgentConfig
+  AgentType,
+  BaseAgentInstance,
 } from '@/types/agent';
+
 import { AgentFactory } from './agentFactory';
 import { AzureMonitorLoggingService } from './loggingService';
-import { AGENT_POOL_SIZE, DEFAULT_AGENT_TIMEOUT } from '@/utils/app/const';
 
 /**
  * Agent pool configuration
@@ -82,7 +83,7 @@ export class AgentPoolingService {
 
   constructor(
     agentFactory: AgentFactory,
-    config: Partial<AgentPoolConfig> = {}
+    config: Partial<AgentPoolConfig> = {},
   ) {
     this.agentFactory = agentFactory;
     const loggerInstance = AzureMonitorLoggingService.getInstance();
@@ -90,7 +91,7 @@ export class AgentPoolingService {
       throw new Error('Failed to initialize AzureMonitorLoggingService');
     }
     this.logger = loggerInstance;
-    
+
     this.config = {
       maxPoolSize: AGENT_POOL_SIZE,
       minPoolSize: Math.max(1, Math.floor(AGENT_POOL_SIZE / 2)),
@@ -110,11 +111,15 @@ export class AgentPoolingService {
       console.log('[INFO] Initializing Agent Pooling Service');
 
       // Initialize pools for each agent type
-      const agentTypes: AgentType[] = [AgentType.WEB_SEARCH, AgentType.CODE_INTERPRETER, AgentType.LOCAL_KNOWLEDGE];
-      
+      const agentTypes: AgentType[] = [
+        AgentType.WEB_SEARCH,
+        AgentType.CODE_INTERPRETER,
+        AgentType.LOCAL_KNOWLEDGE,
+      ];
+
       for (const agentType of agentTypes) {
         this.pools.set(agentType, []);
-        
+
         // Pre-warm the pool with minimum instances
         await this.warmPool(agentType, this.config.minPoolSize);
       }
@@ -137,11 +142,13 @@ export class AgentPoolingService {
           maxRetries: this.config.maxRetries,
           enableMemoryManagement: this.config.enableMemoryManagement ? 1 : 0,
           agentTypesCount: agentTypes.length,
-        }
+        },
       );
-
     } catch (error) {
-      console.error('[ERROR] Failed to initialize Agent Pooling Service:', error);
+      console.error(
+        '[ERROR] Failed to initialize Agent Pooling Service:',
+        error,
+      );
       throw error;
     }
   }
@@ -151,10 +158,10 @@ export class AgentPoolingService {
    */
   async getAgent(
     agentType: AgentType,
-    conversationId?: string
+    conversationId?: string,
   ): Promise<PooledAgent> {
     const startTime = Date.now();
-    
+
     try {
       this.metrics.totalRequests++;
 
@@ -174,19 +181,19 @@ export class AgentPoolingService {
 
       // Get an available agent from the pool
       const pool = this.pools.get(agentType) || [];
-      let agent = pool.find(a => !a.isActive && a.healthStatus === 'healthy');
+      let agent = pool.find((a) => !a.isActive && a.healthStatus === 'healthy');
 
       if (agent) {
         // Found available agent in pool
         this.metrics.poolHits++;
         agent.isActive = true;
         agent.lastUsed = new Date();
-        
+
         // Associate with conversation if provided
         if (conversationId) {
           this.setConversationMemory(conversationId, agent.id);
         }
-        
+
         return agent;
       }
 
@@ -196,30 +203,29 @@ export class AgentPoolingService {
       if (pool.length >= this.config.maxPoolSize) {
         // Pool is full, try to evict idle agents
         await this.evictIdleAgents(agentType);
-        
+
         // Try again to find available agent
-        agent = pool.find(a => !a.isActive && a.healthStatus === 'healthy');
+        agent = pool.find((a) => !a.isActive && a.healthStatus === 'healthy');
         if (agent) {
           agent.isActive = true;
           agent.lastUsed = new Date();
-          
+
           if (conversationId) {
             this.setConversationMemory(conversationId, agent.id);
           }
-          
+
           return agent;
         }
       }
 
       // Create new agent
       agent = await this.createNewAgent(agentType);
-      
+
       if (conversationId) {
         this.setConversationMemory(conversationId, agent.id);
       }
 
       return agent;
-
     } catch (error) {
       console.error(`[ERROR] Failed to get agent of type ${agentType}:`, error);
       throw error;
@@ -234,7 +240,7 @@ export class AgentPoolingService {
    */
   async returnAgent(
     agentId: string,
-    result?: AgentExecutionResult
+    result?: AgentExecutionResult,
   ): Promise<void> {
     try {
       const agent = this.findAgentById(agentId);
@@ -264,7 +270,6 @@ export class AgentPoolingService {
       }
 
       console.log(`[INFO] Agent ${agentId} returned to pool`);
-
     } catch (error) {
       console.error(`[ERROR] Failed to return agent ${agentId}:`, error);
     }
@@ -275,17 +280,17 @@ export class AgentPoolingService {
    */
   async executeWithAgent(
     agentType: AgentType,
-    request: AgentExecutionRequest
+    request: AgentExecutionRequest,
   ): Promise<AgentExecutionResult> {
     let agent: PooledAgent | null = null;
-    
+
     try {
       // Get agent from pool
       agent = await this.getAgent(agentType, 'default-conversation');
-      
+
       // Execute the request
       const response = await agent.instance.execute(request.context);
-      
+
       // Create execution result
       const result: AgentExecutionResult = {
         request: request,
@@ -295,15 +300,14 @@ export class AgentPoolingService {
         executionTime: 0,
         agentInstance: agent.instance,
       };
-      
+
       // Return agent to pool
       await this.returnAgent(agent.id, result);
-      
-      return result;
 
+      return result;
     } catch (error) {
       console.error(`[ERROR] Failed to execute with agent:`, error);
-      
+
       if (agent) {
         const errorResult: AgentExecutionResult = {
           request: request,
@@ -312,10 +316,10 @@ export class AgentPoolingService {
             agentType: agentType,
             content: error instanceof Error ? error.message : String(error),
             success: false,
-            metadata: { 
-              agentMetadata: { 
-                error: true 
-              } 
+            metadata: {
+              agentMetadata: {
+                error: true,
+              },
             },
           },
           startTime: new Date(),
@@ -325,7 +329,7 @@ export class AgentPoolingService {
         };
         await this.returnAgent(agent.id, errorResult);
       }
-      
+
       throw error;
     }
   }
@@ -349,24 +353,39 @@ export class AgentPoolingService {
    */
   getPoolStats(): AgentPoolStats {
     const poolStats: Record<AgentType, any> = {} as any;
-    
+
     for (const [agentType, pool] of this.pools.entries()) {
       poolStats[agentType] = {
         total: pool.length,
-        active: pool.filter(a => a.isActive).length,
-        healthy: pool.filter(a => a.healthStatus === 'healthy').length,
-        degraded: pool.filter(a => a.healthStatus === 'degraded').length,
-        unhealthy: pool.filter(a => a.healthStatus === 'unhealthy').length,
+        active: pool.filter((a) => a.isActive).length,
+        healthy: pool.filter((a) => a.healthStatus === 'healthy').length,
+        degraded: pool.filter((a) => a.healthStatus === 'degraded').length,
+        unhealthy: pool.filter((a) => a.healthStatus === 'unhealthy').length,
       };
     }
 
     return {
       agentType: AgentType.WEB_SEARCH, // Default agent type for aggregated stats
-      totalAgents: Array.from(this.pools.values()).reduce((sum, pool) => sum + pool.length, 0),
-      activeAgents: Array.from(this.pools.values()).reduce((sum, pool) => sum + pool.filter(a => a.isActive).length, 0),
-      idleAgents: Array.from(this.pools.values()).reduce((sum, pool) => sum + pool.filter(a => !a.isActive).length, 0),
-      hitRate: this.metrics.totalRequests > 0 ? this.metrics.poolHits / this.metrics.totalRequests : 0,
-      missRate: this.metrics.totalRequests > 0 ? this.metrics.poolMisses / this.metrics.totalRequests : 0,
+      totalAgents: Array.from(this.pools.values()).reduce(
+        (sum, pool) => sum + pool.length,
+        0,
+      ),
+      activeAgents: Array.from(this.pools.values()).reduce(
+        (sum, pool) => sum + pool.filter((a) => a.isActive).length,
+        0,
+      ),
+      idleAgents: Array.from(this.pools.values()).reduce(
+        (sum, pool) => sum + pool.filter((a) => !a.isActive).length,
+        0,
+      ),
+      hitRate:
+        this.metrics.totalRequests > 0
+          ? this.metrics.poolHits / this.metrics.totalRequests
+          : 0,
+      missRate:
+        this.metrics.totalRequests > 0
+          ? this.metrics.poolMisses / this.metrics.totalRequests
+          : 0,
       avgCreationTime: 100, // Placeholder value
       avgExecutionTime: this.metrics.averageResponseTime,
       memoryUsage: this.metrics.memoryUsage,
@@ -379,15 +398,15 @@ export class AgentPoolingService {
    */
   async performHealthCheck(): Promise<Record<AgentType, AgentHealthResult[]>> {
     const results: Record<AgentType, AgentHealthResult[]> = {} as any;
-    
+
     for (const [agentType, pool] of this.pools.entries()) {
       results[agentType] = [];
-      
+
       for (const agent of pool) {
         try {
           const health = await agent.instance.checkHealth();
           results[agentType].push(health);
-          
+
           // Update agent health status
           if (health.healthy) {
             agent.healthStatus = 'healthy';
@@ -396,7 +415,6 @@ export class AgentPoolingService {
           } else {
             agent.healthStatus = 'unhealthy';
           }
-          
         } catch (error) {
           agent.healthStatus = 'unhealthy';
           results[agentType].push({
@@ -409,7 +427,7 @@ export class AgentPoolingService {
         }
       }
     }
-    
+
     return results;
   }
 
@@ -419,13 +437,13 @@ export class AgentPoolingService {
   async shutdown(): Promise<void> {
     try {
       console.log('[INFO] Shutting down Agent Pooling Service');
-      
+
       // Stop health checking
       if (this.healthCheckInterval) {
         clearInterval(this.healthCheckInterval);
         this.healthCheckInterval = null;
       }
-      
+
       // Destroy all agents
       for (const pool of this.pools.values()) {
         for (const agent of pool) {
@@ -434,20 +452,25 @@ export class AgentPoolingService {
               await agent.instance.cleanup();
             }
           } catch (error) {
-            console.error(`[ERROR] Failed to destroy agent ${agent.id}:`, error);
+            console.error(
+              `[ERROR] Failed to destroy agent ${agent.id}:`,
+              error,
+            );
           }
         }
       }
-      
+
       // Clear pools and memory
       this.pools.clear();
       this.conversationMemory.clear();
       this.isInitialized = false;
-      
+
       console.log('[INFO] Agent Pooling Service shutdown complete');
-      
     } catch (error) {
-      console.error('[ERROR] Error during Agent Pooling Service shutdown:', error);
+      console.error(
+        '[ERROR] Error during Agent Pooling Service shutdown:',
+        error,
+      );
     }
   }
 
@@ -457,7 +480,7 @@ export class AgentPoolingService {
 
   private async warmPool(agentType: AgentType, count: number): Promise<void> {
     const pool = this.pools.get(agentType) || [];
-    
+
     for (let i = 0; i < count; i++) {
       try {
         const agent = await this.createNewAgent(agentType);
@@ -471,7 +494,9 @@ export class AgentPoolingService {
   private async createNewAgent(agentType: AgentType): Promise<PooledAgent> {
     try {
       const agentConfig = {
-        id: `pooled-${agentType}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+        id: `pooled-${agentType}-${Date.now()}-${Math.random()
+          .toString(36)
+          .substr(2, 9)}`,
         name: `Pooled ${agentType} Agent`,
         type: agentType,
         environment: AgentExecutionEnvironment.FOUNDRY,
@@ -481,10 +506,12 @@ export class AgentPoolingService {
         timeout: DEFAULT_AGENT_TIMEOUT,
       };
       const instance = await this.agentFactory.createAgent(agentConfig);
-      
+
       const agent: PooledAgent = {
         instance,
-        id: `${agentType}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `${agentType}_${Date.now()}_${Math.random()
+          .toString(36)
+          .substr(2, 9)}`,
         type: agentType,
         isActive: true,
         lastUsed: new Date(),
@@ -493,25 +520,27 @@ export class AgentPoolingService {
         healthStatus: 'healthy',
         createdAt: new Date(),
       };
-      
+
       const pool = this.pools.get(agentType) || [];
       pool.push(agent);
       this.pools.set(agentType, pool);
-      
+
       this.metrics.agentsCreated++;
-      
+
       console.log(`[INFO] Created new agent: ${agent.id}`);
       return agent;
-      
     } catch (error) {
-      console.error(`[ERROR] Failed to create agent of type ${agentType}:`, error);
+      console.error(
+        `[ERROR] Failed to create agent of type ${agentType}:`,
+        error,
+      );
       throw error;
     }
   }
 
   private findAgentById(agentId: string): PooledAgent | null {
     for (const pool of this.pools.values()) {
-      const agent = pool.find(a => a.id === agentId);
+      const agent = pool.find((a) => a.id === agentId);
       if (agent) return agent;
     }
     return null;
@@ -530,26 +559,26 @@ export class AgentPoolingService {
   private async evictIdleAgents(agentType: AgentType): Promise<void> {
     const pool = this.pools.get(agentType) || [];
     const now = Date.now();
-    
+
     const idleAgents = pool.filter(
-      agent => !agent.isActive && 
-      (now - agent.lastUsed.getTime()) > this.config.idleTimeout
+      (agent) =>
+        !agent.isActive &&
+        now - agent.lastUsed.getTime() > this.config.idleTimeout,
     );
-    
+
     for (const agent of idleAgents) {
       try {
         if (typeof agent.instance.cleanup === 'function') {
           await agent.instance.cleanup();
         }
-        
+
         const index = pool.indexOf(agent);
         if (index > -1) {
           pool.splice(index, 1);
           this.metrics.agentsDestroyed++;
         }
-        
+
         console.log(`[INFO] Evicted idle agent: ${agent.id}`);
-        
       } catch (error) {
         console.error(`[ERROR] Failed to evict agent ${agent.id}:`, error);
       }
@@ -563,16 +592,19 @@ export class AgentPoolingService {
       agent.memoryUsage = process.memoryUsage().heapUsed;
       this.metrics.memoryUsage = process.memoryUsage().heapUsed;
     } catch (error) {
-      console.error(`[ERROR] Failed to update memory usage for agent ${agent.id}:`, error);
+      console.error(
+        `[ERROR] Failed to update memory usage for agent ${agent.id}:`,
+        error,
+      );
     }
   }
 
   private updateAverageResponseTime(duration: number): void {
     const currentAvg = this.metrics.averageResponseTime;
     const totalRequests = this.metrics.totalRequests;
-    
-    this.metrics.averageResponseTime = 
-      ((currentAvg * (totalRequests - 1)) + duration) / totalRequests;
+
+    this.metrics.averageResponseTime =
+      (currentAvg * (totalRequests - 1) + duration) / totalRequests;
   }
 
   private startHealthChecking(): void {
@@ -597,7 +629,9 @@ let agentPoolingServiceInstance: AgentPoolingService | null = null;
 export function getAgentPoolingService(): AgentPoolingService {
   if (!agentPoolingServiceInstance) {
     // This will be properly initialized when the AgentFactory is available
-    throw new Error('Agent Pooling Service not initialized. Call initializeAgentPoolingService first.');
+    throw new Error(
+      'Agent Pooling Service not initialized. Call initializeAgentPoolingService first.',
+    );
   }
   return agentPoolingServiceInstance;
 }
@@ -605,7 +639,9 @@ export function getAgentPoolingService(): AgentPoolingService {
 /**
  * Initialize the agent pooling service
  */
-export async function initializeAgentPoolingService(agentFactory: AgentFactory): Promise<void> {
+export async function initializeAgentPoolingService(
+  agentFactory: AgentFactory,
+): Promise<void> {
   if (!agentPoolingServiceInstance) {
     agentPoolingServiceInstance = new AgentPoolingService(agentFactory);
     await agentPoolingServiceInstance.initialize();

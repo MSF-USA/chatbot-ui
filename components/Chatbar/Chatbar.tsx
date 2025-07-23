@@ -13,7 +13,7 @@ import { savePrompts } from '@/utils/app/prompts';
 
 import { Conversation } from '@/types/chat';
 import { LatestExportFormat, SupportedExportFormats } from '@/types/export';
-import {OpenAIModelID, OpenAIModels} from '@/types/openai';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
@@ -188,7 +188,9 @@ export const Chatbar = () => {
           id: uuidv4(),
           name: t('New Conversation'),
           messages: [],
-          model: OpenAIModels[defaultModelId].isLegacy ? OpenAIModels[OpenAIModelID.GPT_4o] : OpenAIModels[defaultModelId],
+          model: OpenAIModels[defaultModelId].isLegacy
+            ? OpenAIModels[OpenAIModelID.GPT_4o]
+            : OpenAIModels[defaultModelId],
           prompt: systemPrompt || DEFAULT_SYSTEM_PROMPT,
           temperature: temperature || DEFAULT_TEMPERATURE,
           folderId: null,

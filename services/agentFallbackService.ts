@@ -1,17 +1,17 @@
 /**
  * Agent Fallback Service
- * 
+ *
  * Provides intelligent fallback mechanisms for agent failures,
  * including agent switching, feature degradation, and alternative workflows.
  */
-
 import { AgentType } from '@/types/agent';
-import { 
-  AgentError, 
-  AgentErrorCategory, 
+
+import {
+  AgentError,
+  AgentErrorCategory,
   ErrorSeverity,
   RecoveryStrategy,
-  getAgentErrorHandlingService 
+  getAgentErrorHandlingService,
 } from './agentErrorHandlingService';
 import { AzureMonitorLoggingService } from './loggingService';
 
@@ -167,7 +167,8 @@ export class AgentFallbackService {
               required: false,
             },
           ],
-          userMessage: 'I can help you search manually. Let me suggest some keywords.',
+          userMessage:
+            'I can help you search manually. Let me suggest some keywords.',
         },
       },
       cacheConfig: {
@@ -189,7 +190,8 @@ export class AgentFallbackService {
       degradationOptions: {
         features: ['code_execution', 'file_operations', 'package_installation'],
         retainCore: false,
-        userNotification: 'Code execution unavailable, providing code review instead',
+        userNotification:
+          'Code execution unavailable, providing code review instead',
       },
       alternativeWorkflows: {
         code_execution: {
@@ -216,7 +218,8 @@ export class AgentFallbackService {
               required: false,
             },
           ],
-          userMessage: 'I can review your code and provide guidance for manual execution.',
+          userMessage:
+            'I can review your code and provide guidance for manual execution.',
         },
       },
       cacheConfig: {
@@ -265,7 +268,8 @@ export class AgentFallbackService {
               required: true,
             },
           ],
-          userMessage: 'Please copy the content from the webpage and I\'ll analyze it.',
+          userMessage:
+            "Please copy the content from the webpage and I'll analyze it.",
         },
       },
       cacheConfig: {
@@ -287,7 +291,8 @@ export class AgentFallbackService {
       degradationOptions: {
         features: ['semantic_search', 'document_ranking', 'content_extraction'],
         retainCore: false,
-        userNotification: 'Local knowledge unavailable, using web search instead',
+        userNotification:
+          'Local knowledge unavailable, using web search instead',
       },
       alternativeWorkflows: {},
       cacheConfig: {
@@ -326,37 +331,48 @@ export class AgentFallbackService {
       userInput: string;
       conversationHistory?: any[];
       preferredStrategy?: FallbackStrategy;
-    }
+    },
   ): Promise<FallbackResult> {
     const startTime = Date.now();
-    const config = error.agentType !== 'unknown' ? this.fallbackConfigs.get(error.agentType) : undefined;
+    const config =
+      error.agentType !== 'unknown'
+        ? this.fallbackConfigs.get(error.agentType)
+        : undefined;
 
     if (!config) {
-      return this.createGracefulFailureResult(error, 'No fallback configuration available');
+      return this.createGracefulFailureResult(
+        error,
+        'No fallback configuration available',
+      );
     }
 
     // Log fallback attempt
-    await this.logger.logCustomMetric(
-      'AgentFallbackInitiated',
-      1,
-      'count',
-      {
-        originalAgent: error.agentType,
-        errorCategory: error.category,
-        errorCode: error.code,
-        availableStrategies: config.allowedStrategies.join(','),
-      }
-    );
+    await this.logger.logCustomMetric('AgentFallbackInitiated', 1, 'count', {
+      originalAgent: error.agentType,
+      errorCategory: error.category,
+      errorCode: error.code,
+      availableStrategies: config.allowedStrategies.join(','),
+    });
 
     // Try strategies in order of preference
-    const strategies = context.preferredStrategy 
-      ? [context.preferredStrategy, ...config.allowedStrategies.filter(s => s !== context.preferredStrategy)]
+    const strategies = context.preferredStrategy
+      ? [
+          context.preferredStrategy,
+          ...config.allowedStrategies.filter(
+            (s) => s !== context.preferredStrategy,
+          ),
+        ]
       : config.allowedStrategies;
 
     for (const strategy of strategies) {
       try {
-        const result = await this.executeStrategy(strategy, error, config, context);
-        
+        const result = await this.executeStrategy(
+          strategy,
+          error,
+          config,
+          context,
+        );
+
         if (result.success) {
           result.metadata = {
             originalAgent: error.agentType as AgentType,
@@ -379,7 +395,7 @@ export class AgentFallbackService {
               fallbackAgent: result.fallbackAgent || '',
               latency: result.metadata?.fallbackLatency || 0,
               confidence: result.metadata?.confidence || 0,
-            }
+            },
           );
 
           return result;
@@ -391,7 +407,10 @@ export class AgentFallbackService {
     }
 
     // All strategies failed
-    const gracefulResult = this.createGracefulFailureResult(error, 'All fallback strategies failed');
+    const gracefulResult = this.createGracefulFailureResult(
+      error,
+      'All fallback strategies failed',
+    );
     gracefulResult.metadata = {
       originalAgent: error.agentType as AgentType,
       errorCategory: error.category,
@@ -399,17 +418,12 @@ export class AgentFallbackService {
       confidence: 0,
     };
 
-    await this.logger.logCustomMetric(
-      'AgentFallbackFailure',
-      1,
-      'count',
-      {
-        originalAgent: error.agentType,
-        errorCategory: error.category,
-        attemptedStrategies: strategies.join(','),
-        latency: gracefulResult.metadata?.fallbackLatency || 0,
-      }
-    );
+    await this.logger.logCustomMetric('AgentFallbackFailure', 1, 'count', {
+      originalAgent: error.agentType,
+      errorCategory: error.category,
+      attemptedStrategies: strategies.join(','),
+      latency: gracefulResult.metadata?.fallbackLatency || 0,
+    });
 
     return gracefulResult;
   }
@@ -421,24 +435,27 @@ export class AgentFallbackService {
     strategy: FallbackStrategy,
     error: AgentError,
     config: AgentFallbackConfig,
-    context: any
+    context: any,
   ): Promise<FallbackResult> {
     switch (strategy) {
       case FallbackStrategy.AGENT_SWITCH:
         return this.executeAgentSwitch(config, context);
-      
+
       case FallbackStrategy.CACHED_RESPONSE:
         return this.executeCachedResponse(config, context);
-      
+
       case FallbackStrategy.FEATURE_DEGRADATION:
         return this.executeFeatureDegradation(config, context);
-      
+
       case FallbackStrategy.ALTERNATIVE_WORKFLOW:
         return this.executeAlternativeWorkflow(config, context);
-      
+
       case FallbackStrategy.GRACEFUL_FAILURE:
-        return this.createGracefulFailureResult(error, 'Agent operation failed');
-      
+        return this.createGracefulFailureResult(
+          error,
+          'Agent operation failed',
+        );
+
       default:
         throw new Error(`Unknown fallback strategy: ${strategy}`);
     }
@@ -449,7 +466,7 @@ export class AgentFallbackService {
    */
   private async executeAgentSwitch(
     config: AgentFallbackConfig,
-    context: any
+    context: any,
   ): Promise<FallbackResult> {
     if (config.fallbackChain.length === 0) {
       return {
@@ -476,7 +493,7 @@ export class AgentFallbackService {
    */
   private async executeCachedResponse(
     config: AgentFallbackConfig,
-    context: any
+    context: any,
   ): Promise<FallbackResult> {
     if (!config.cacheConfig.enabled) {
       return {
@@ -513,7 +530,7 @@ export class AgentFallbackService {
    */
   private async executeFeatureDegradation(
     config: AgentFallbackConfig,
-    context: any
+    context: any,
   ): Promise<FallbackResult> {
     const degradedFeatures = config.degradationOptions.features;
 
@@ -540,11 +557,11 @@ export class AgentFallbackService {
    */
   private async executeAlternativeWorkflow(
     config: AgentFallbackConfig,
-    context: any
+    context: any,
   ): Promise<FallbackResult> {
     // Find the most appropriate alternative workflow
     const workflows = Object.values(config.alternativeWorkflows);
-    
+
     if (workflows.length === 0) {
       return {
         success: false,
@@ -569,13 +586,17 @@ export class AgentFallbackService {
   /**
    * Create graceful failure result
    */
-  private createGracefulFailureResult(error: AgentError, message: string): FallbackResult {
+  private createGracefulFailureResult(
+    error: AgentError,
+    message: string,
+  ): FallbackResult {
     return {
       success: false,
       strategy: FallbackStrategy.GRACEFUL_FAILURE,
       userMessage: `${message}. Please try rephrasing your request or contact support.`,
       requiresUserAction: true,
-      actionInstructions: 'Try rephrasing your request or use a different approach',
+      actionInstructions:
+        'Try rephrasing your request or use a different approach',
     };
   }
 
@@ -591,13 +612,16 @@ export class AgentFallbackService {
    * Check if cached response is expired
    */
   private isCacheExpired(cached: CachedResponse): boolean {
-    return Date.now() > cached.timestamp + (cached.ttl * 1000);
+    return Date.now() > cached.timestamp + cached.ttl * 1000;
   }
 
   /**
    * Calculate confidence score for fallback strategy
    */
-  private calculateConfidence(strategy: FallbackStrategy, error: AgentError): number {
+  private calculateConfidence(
+    strategy: FallbackStrategy,
+    error: AgentError,
+  ): number {
     const baseConfidence = {
       [FallbackStrategy.AGENT_SWITCH]: 0.8,
       [FallbackStrategy.CACHED_RESPONSE]: 0.7,
@@ -624,7 +648,7 @@ export class AgentFallbackService {
    */
   private generateWorkflowInstructions(workflow: AlternativeWorkflow): string {
     const steps = workflow.steps
-      .filter(step => step.required)
+      .filter((step) => step.required)
       .map((step, index) => `${index + 1}. ${step.description}`)
       .join('\n');
 
@@ -634,17 +658,20 @@ export class AgentFallbackService {
   /**
    * Store fallback history for analysis
    */
-  private storeFallbackHistory(agentType: AgentType, result: FallbackResult): void {
+  private storeFallbackHistory(
+    agentType: AgentType,
+    result: FallbackResult,
+  ): void {
     const key = agentType;
     const history = this.fallbackHistory.get(key) || [];
-    
+
     history.push(result);
-    
+
     // Keep only last 50 entries per agent
     if (history.length > 50) {
       history.shift();
     }
-    
+
     this.fallbackHistory.set(key, history);
   }
 
@@ -653,7 +680,7 @@ export class AgentFallbackService {
    */
   cacheResponse(agentType: AgentType, input: string, response: any): void {
     const config = this.fallbackConfigs.get(agentType);
-    
+
     if (!config?.cacheConfig.enabled) {
       return;
     }
@@ -690,7 +717,7 @@ export class AgentFallbackService {
         }
       }
 
-      expiredKeys.forEach(key => this.responseCache.delete(key));
+      expiredKeys.forEach((key) => this.responseCache.delete(key));
     }, 60000); // Cleanup every minute
   }
 
@@ -718,12 +745,13 @@ export class AgentFallbackService {
       totalFallbacks += history.length;
 
       for (const result of history) {
-        fallbacksByStrategy[result.strategy] = (fallbacksByStrategy[result.strategy] || 0) + 1;
-        
+        fallbacksByStrategy[result.strategy] =
+          (fallbacksByStrategy[result.strategy] || 0) + 1;
+
         if (result.success) {
           successfulFallbacks++;
         }
-        
+
         if (result.metadata?.fallbackLatency) {
           totalLatency += result.metadata.fallbackLatency;
         }
@@ -732,8 +760,12 @@ export class AgentFallbackService {
 
     return {
       fallbacksByAgent: fallbacksByAgent as Record<AgentType, number>,
-      fallbacksByStrategy: fallbacksByStrategy as Record<FallbackStrategy, number>,
-      successRate: totalFallbacks > 0 ? successfulFallbacks / totalFallbacks : 0,
+      fallbacksByStrategy: fallbacksByStrategy as Record<
+        FallbackStrategy,
+        number
+      >,
+      successRate:
+        totalFallbacks > 0 ? successfulFallbacks / totalFallbacks : 0,
       averageLatency: totalFallbacks > 0 ? totalLatency / totalFallbacks : 0,
       cacheStats: {
         size: this.responseCache.size,
@@ -776,7 +808,7 @@ export async function executeAgentFallback(
     userInput: string;
     conversationHistory?: any[];
     preferredStrategy?: FallbackStrategy;
-  }
+  },
 ): Promise<FallbackResult> {
   const service = getAgentFallbackService();
   return await service.executeFallback(error, context);
