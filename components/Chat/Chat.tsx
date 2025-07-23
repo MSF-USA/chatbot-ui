@@ -39,12 +39,14 @@ import {
 } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
+import { AgentType } from '@/types/agent';
 
 import HomeContext from '@/pages/api/home/home.context';
 
 import lightTextLogo from '../../public/international_logo_black.png';
 import darkTextLogo from '../../public/international_logo_white.png';
 import { TemperatureSlider } from '../Settings/Temperature';
+import { SettingsSection } from '../Settings/types';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
@@ -91,6 +93,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       agentRoutingEnabled,
     },
     handleUpdateConversation,
+    handleOpenSettings,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
   let {
@@ -429,7 +432,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
 
   const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null = null, forceStandardChat?: boolean) => {
+    async (message: Message, deleteCount = 0, plugin: Plugin | null = null, forceStandardChat?: boolean, forcedAgentType?: AgentType) => {
       if (selectedConversation) {
         stopConversationRef.current = false;
 
@@ -465,7 +468,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
           // Determine if we should use agentic routing
           const useAgenticRouting = forceStandardChat ? false : shouldUseAgenticRouting(message);
-          console.log('[Chat] Using agentic routing:', useAgenticRouting, '(forceStandardChat:', forceStandardChat, ')');
+          console.log('[Chat] Using agentic routing:', useAgenticRouting, '(forceStandardChat:', forceStandardChat, ', forcedAgentType:', forcedAgentType, ')');
 
           let requestResult: any;
           
@@ -490,6 +493,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               setProgress,
               stopConversationRef,
               setRequestStatusSecondLine,
+              forcedAgentType, // Pass forced agent type
             );
 
             // Store agent result for potential UI indicators
@@ -1162,9 +1166,41 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           <ChatInput
             stopConversationRef={stopConversationRef}
             textareaRef={textareaRef}
-            onSend={(message, plugin, forceStandardChat) => {
+            onSend={(message, plugin, forceStandardChat, forcedAgentType) => {
               setCurrentMessage(message);
-              handleSend(message, 0, plugin, forceStandardChat);
+              handleSend(message, 0, plugin, forceStandardChat, forcedAgentType);
+            }}
+            onTemperatureChange={(newTemperature) => {
+              homeDispatch({ field: 'temperature', value: newTemperature });
+              // Update conversation temperature if there's a selected conversation
+              if (selectedConversation) {
+                const updatedConversation = {
+                  ...selectedConversation,
+                  temperature: newTemperature,
+                };
+                handleUpdateConversation(updatedConversation, {
+                  key: 'temperature',
+                  value: newTemperature,
+                });
+              }
+            }}
+            onAgentToggleChange={(enabled) => {
+              // Update agent settings in global state if needed
+              if (agentSettings) {
+                const updatedAgentSettings = {
+                  ...agentSettings,
+                  enabled,
+                };
+                homeDispatch({ field: 'agentSettings', value: updatedAgentSettings });
+              }
+            }}
+            onSettingsOpen={() => {
+              // Open settings dialog using the global handler
+              handleOpenSettings();
+            }}
+            onPrivacyPolicyOpen={() => {
+              // Open privacy policy section in settings dialog
+              handleOpenSettings(SettingsSection.PRIVACY_CONTROL);
             }}
             onScrollDownClick={handleScrollDown}
             onRegenerate={() => {
@@ -1181,6 +1217,33 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             pluginKeys={pluginKeys}
             systemPrompt={systemPrompt}
             temperature={temperature}
+            onModelChange={(newModel) => {
+              if (selectedConversation) {
+                const updatedConversation = {
+                  ...selectedConversation,
+                  model: newModel,
+                };
+                handleUpdateConversation(updatedConversation, {
+                  key: 'model',
+                  value: newModel,
+                });
+              }
+            }}
+            models={models}
+            selectedConversation={selectedConversation}
+            onAddChatMessages={(userMsg, assistantMsg) => {
+              if (selectedConversation) {
+                // Add both messages to the conversation
+                const updatedConversation = {
+                  ...selectedConversation,
+                  messages: [...selectedConversation.messages, userMsg, assistantMsg],
+                };
+                handleUpdateConversation(updatedConversation, {
+                  key: 'messages',
+                  value: updatedConversation.messages,
+                });
+              }
+            }}
           />
         </>
       )}
