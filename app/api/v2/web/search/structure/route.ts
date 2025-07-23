@@ -9,7 +9,7 @@ import {
 import { AzureOpenAI } from 'openai';
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const apiVersion = '2024-08-01-preview';
+  const apiVersion = '2025-03-01-preview';
   try {
     const body = await req.json();
     const { question, user, modelId } = body;
