@@ -48,7 +48,7 @@ export default class DallEAPIClient {
     deploymentName = 'dall-e',
   }: DallEGenerationOptions) => {
     try {
-      const url: string = `${this.endpoint}/openai/deployments/${deploymentName}/images/generations?api-version=2024-02-01`;
+      const url: string = `${this.endpoint}/openai/deployments/${deploymentName}/images/generations?api-version=2025-03-01-preview`;
       const headers = {
         'api-key': this.apiKey,
         'Content-Type': 'application/json',
