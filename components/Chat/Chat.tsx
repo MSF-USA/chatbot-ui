@@ -942,7 +942,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             className="fixed inset-0 z-50 flex items-center justify-center"
                             onClick={handleClickOutside}
                           >
-                            <div className="fixed inset-0 bg-black opacity-50" />
+                            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
                             <div
                               ref={modalRef}
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
@@ -1097,7 +1097,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       className="fixed inset-0 z-50 flex items-center justify-center"
                       onClick={handleClickOutside}
                     >
-                      <div className="fixed inset-0 bg-black opacity-50" />
+                      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
                       <div
                         ref={modalRef}
                         className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
