@@ -368,28 +368,33 @@ export const Chatbar = () => {
         className="fixed inset-0 flex z-30 md:relative md:flex-row md:w-auto"
         {...swipeHandlers}
       >
-        <div className="flex flex-col h-full w-64 bg-gray-200 dark:bg-[#171717] z-30 md:relative md:w-auto">
-          <div className="flex border-b border-gray-200 dark:border-gray-700 mb-5 text-black dark:text-white">
-            <button
-              className={`flex-1 p-2 text-sm font-bold ${
-                activeTab === Tab.CONVERSATIONS
-                  ? 'border-b-2 border-black dark:border-white'
-                  : 'border-b-2 border-transparent'
-              }`}
-              onClick={() => setActiveTab(Tab.CONVERSATIONS)}
-            >
-              {t('Conversations')}
-            </button>
-            <button
-              className={`flex-1 p-2 text-sm font-bold ${
-                activeTab === Tab.PROMPTS
-                  ? 'border-b-2 border-black dark:border-white'
-                  : 'border-b-2 border-transparent'
-              }`}
-              onClick={() => setActiveTab(Tab.PROMPTS)}
-            >
-              {t('Prompts')}
-            </button>
+        <div className="relative flex flex-col h-full w-64 bg-gray-200 dark:bg-[#171717] z-30">
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 text-black dark:text-white">
+            <div className="flex">
+              <button
+                className={`px-4 py-3 text-sm font-medium ${
+                  activeTab === Tab.CONVERSATIONS
+                    ? 'border-b-2 border-black dark:border-white'
+                    : 'border-b-2 border-transparent'
+                }`}
+                onClick={() => setActiveTab(Tab.CONVERSATIONS)}
+              >
+                {t('Conversations')}
+              </button>
+              <button
+                className={`px-4 py-3 text-sm font-medium ${
+                  activeTab === Tab.PROMPTS
+                    ? 'border-b-2 border-black dark:border-white'
+                    : 'border-b-2 border-transparent'
+                }`}
+                onClick={() => setActiveTab(Tab.PROMPTS)}
+              >
+                {t('Prompts')}
+              </button>
+            </div>
+            <div className="pr-2">
+              <CloseSidebarButton onClick={handleToggleChatbar} side={'left'} />
+            </div>
           </div>
           <div className="flex-1 overflow-auto">
             {activeTab === Tab.CONVERSATIONS && (
@@ -444,7 +449,6 @@ export const Chatbar = () => {
           onClick={handleToggleChatbar}
         />
       </div>
-      <CloseSidebarButton onClick={handleToggleChatbar} side={'left'} />
     </ChatbarContext.Provider>
   ) : (
     <div className="md:w-auto" {...swipeHandlers}>
