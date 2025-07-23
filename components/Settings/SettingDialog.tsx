@@ -41,13 +41,14 @@ interface Props {
   open: boolean;
   onClose: () => void;
   user?: Session['user'];
+  initialSection?: SettingsSection;
 }
 
 /**
  * SettingDialog component
  * Renders a modal dialog with settings for the application
  */
-export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
+export const SettingDialog: FC<Props> = ({ open, onClose, user, initialSection }) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
   const { state, dispatch } = useCreateReducer<Settings>({
@@ -65,7 +66,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
   const [storageData, setStorageData] = useState(() => getStorageUsage());
   const modalRef = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection] = useState<SettingsSection>(
-    SettingsSection.GENERAL,
+    initialSection || SettingsSection.GENERAL,
   );
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
@@ -113,6 +114,32 @@ export const SettingDialog: FC<Props> = ({ open, onClose, user }) => {
       window.removeEventListener('resize', checkMobileView);
     };
   }, []);
+
+  // Update active section when initialSection changes
+  useEffect(() => {
+    if (initialSection) {
+      setActiveSection(initialSection);
+    }
+  }, [initialSection]);
+
+  // Handle ESC key to close dialog
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+
+    // Only add listener when dialog is open
+    if (open) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+
+    // Clean up event listener
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open, onClose]);
 
   // Configure swipe handlers for mobile navigation
   const swipeHandlers = useSwipeable({
