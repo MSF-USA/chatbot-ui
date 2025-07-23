@@ -73,16 +73,16 @@ const handler = async (req: NextRequest): Promise<Response> => {
         },
         // Reasoning models (o1, o3-mini) give the following error.
         // ErrorMessage: '400 Model {modelName} is enabled only for api versions 2024-12-01-preview and later',
-        {
-          id: 'o3-mini',
-        },
-
-        {
-          id: 'gpt-o1',
-        },
-        {
-          id: 'gpt-o1-mini',
-        },
+        // {
+        //   id: 'o3-mini',
+        // },
+        //
+        // {
+        //   id: 'gpt-o1',
+        // },
+        // {
+        //   id: 'gpt-o1-mini',
+        // },
       ],
     };
 
