@@ -47,6 +47,7 @@ import { Settings } from '@/types/settings';
 import { Chat } from '@/components/Chat/Chat';
 import { Chatbar } from '@/components/Chatbar/Chatbar';
 import { Navbar } from '@/components/Mobile/Navbar';
+import { SettingsSection } from '@/components/Settings/types';
 import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
 
 import { authOptions } from '../auth/[...nextauth]';
@@ -329,6 +330,28 @@ const Home = ({
 
     dispatch({ field: 'selectedConversation', value: single });
     dispatch({ field: 'conversations', value: all });
+    
+    // Save to localStorage
+    saveConversation(single);
+    saveConversations(all);
+  };
+
+  /**
+   * Open the settings dialog, optionally navigating to a specific section
+   */
+  const handleOpenSettings = (section?: SettingsSection) => {
+    dispatch({ field: 'settingsDialogOpen', value: true });
+    if (section) {
+      dispatch({ field: 'settingsDialogSection', value: section });
+    }
+  };
+
+  /**
+   * Close the settings dialog
+   */
+  const handleCloseSettings = () => {
+    dispatch({ field: 'settingsDialogOpen', value: false });
+    dispatch({ field: 'settingsDialogSection', value: SettingsSection.GENERAL });
   };
 
   // EFFECTS  --------------------------------------------
@@ -534,6 +557,8 @@ const Home = ({
           handleUpdateFolder,
           handleSelectConversation,
           handleUpdateConversation,
+          handleOpenSettings,
+          handleCloseSettings,
           user,
           showChatbar,
         }}
