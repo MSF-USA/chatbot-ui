@@ -92,3 +92,22 @@ export const checkIsModelValid = (
 
   return Object.values(validModelIDs).toString().split(',').includes(modelId);
 };
+
+/**
+ * Checks if the given model ID is a reasoning model (o1, o1-mini, o3-mini).
+ * Reasoning models have special requirements:
+ * - No system messages (prepend to first user message instead)
+ * - Fixed temperature of 1
+ * - No streaming
+ * - Use standard chat.completions.create endpoint
+ *
+ * @param {OpenAIModelID | string} id - The model ID to check
+ * @returns {boolean} - Returns true if the model is a reasoning model, false otherwise
+ */
+export const isReasoningModel = (id: OpenAIModelID | string): boolean => {
+  return [
+    OpenAIModelID.GPT_o1,
+    OpenAIModelID.GPT_o1_mini,
+    OpenAIModelID.GPT_o3_mini,
+  ].includes(id as OpenAIModelID);
+};
