@@ -1,6 +1,14 @@
 import { useTranslation } from 'next-i18next';
-import { CommandParser, CommandDefinition, ParsedCommand, CommandExecutionResult, CommandType } from './commandParser';
+
 import { AgentType } from '@/types/agent';
+
+import {
+  CommandDefinition,
+  CommandExecutionResult,
+  CommandParser,
+  CommandType,
+  ParsedCommand,
+} from './commandParser';
 
 /**
  * Localized command mapping structure
@@ -64,13 +72,22 @@ export class LocalizedCommandParser extends CommandParser {
         noAgents: ['sinAgentes', 'sin_agentes', 'noAgents'],
         temperature: ['temperatura', 'creatividad', 'temperature'],
         model: ['modelo', 'model'],
-        disableAgents: ['desactivarAgentes', 'desactivar_agentes', 'disableAgents'],
+        disableAgents: [
+          'desactivarAgentes',
+          'desactivar_agentes',
+          'disableAgents',
+        ],
         enableAgents: ['activarAgentes', 'activar_agentes', 'enableAgents'],
         help: ['ayuda', 'help'],
         settings: ['configuración', 'configuracion', 'ajustes', 'settings'],
-        privacyPolicy: ['políticaPrivacidad', 'politica_privacidad', 'privacidad', 'privacyPolicy'],
+        privacyPolicy: [
+          'políticaPrivacidad',
+          'politica_privacidad',
+          'privacidad',
+          'privacyPolicy',
+        ],
       },
-      
+
       // French (fr)
       fr: {
         search: ['recherche', 'chercher', 'search'],
@@ -81,13 +98,22 @@ export class LocalizedCommandParser extends CommandParser {
         noAgents: ['sansAgents', 'sans_agents', 'noAgents'],
         temperature: ['température', 'temperature', 'créativité'],
         model: ['modèle', 'model'],
-        disableAgents: ['désactiverAgents', 'desactiver_agents', 'disableAgents'],
+        disableAgents: [
+          'désactiverAgents',
+          'desactiver_agents',
+          'disableAgents',
+        ],
         enableAgents: ['activerAgents', 'activer_agents', 'enableAgents'],
         help: ['aide', 'help'],
         settings: ['paramètres', 'parametres', 'configuration', 'settings'],
-        privacyPolicy: ['politiqueConfidentialité', 'politique_confidentialite', 'confidentialité', 'privacyPolicy'],
+        privacyPolicy: [
+          'politiqueConfidentialité',
+          'politique_confidentialite',
+          'confidentialité',
+          'privacyPolicy',
+        ],
       },
-      
+
       // German (de)
       de: {
         search: ['suchen', 'suche', 'search'],
@@ -98,13 +124,25 @@ export class LocalizedCommandParser extends CommandParser {
         noAgents: ['keineAgenten', 'keine_agenten', 'noAgents'],
         temperature: ['temperatur', 'temperature', 'kreativität'],
         model: ['modell', 'model'],
-        disableAgents: ['agentenDeaktivieren', 'agenten_deaktivieren', 'disableAgents'],
-        enableAgents: ['agentenAktivieren', 'agenten_aktivieren', 'enableAgents'],
+        disableAgents: [
+          'agentenDeaktivieren',
+          'agenten_deaktivieren',
+          'disableAgents',
+        ],
+        enableAgents: [
+          'agentenAktivieren',
+          'agenten_aktivieren',
+          'enableAgents',
+        ],
         help: ['hilfe', 'help'],
         settings: ['einstellungen', 'konfiguration', 'settings'],
-        privacyPolicy: ['datenschutz', 'datenschutzrichtlinie', 'privacyPolicy'],
+        privacyPolicy: [
+          'datenschutz',
+          'datenschutzrichtlinie',
+          'privacyPolicy',
+        ],
       },
-      
+
       // Chinese Simplified (zh)
       zh: {
         search: ['搜索', '查找', 'search'],
@@ -121,7 +159,7 @@ export class LocalizedCommandParser extends CommandParser {
         settings: ['设置', '配置', 'settings'],
         privacyPolicy: ['隐私政策', '隐私', 'privacyPolicy'],
       },
-      
+
       // Japanese (ja)
       ja: {
         search: ['検索', '探す', 'search'],
@@ -132,11 +170,19 @@ export class LocalizedCommandParser extends CommandParser {
         noAgents: ['エージェント無し', 'エージェント禁止', 'noAgents'],
         temperature: ['温度', '創造性', 'temperature'],
         model: ['モデル', 'model'],
-        disableAgents: ['エージェント無効', 'エージェント停止', 'disableAgents'],
+        disableAgents: [
+          'エージェント無効',
+          'エージェント停止',
+          'disableAgents',
+        ],
         enableAgents: ['エージェント有効', 'エージェント開始', 'enableAgents'],
         help: ['ヘルプ', '助け', 'help'],
         settings: ['設定', '構成', 'settings'],
-        privacyPolicy: ['プライバシーポリシー', 'プライバシー', 'privacyPolicy'],
+        privacyPolicy: [
+          'プライバシーポリシー',
+          'プライバシー',
+          'privacyPolicy',
+        ],
       },
     };
 
@@ -149,24 +195,30 @@ export class LocalizedCommandParser extends CommandParser {
    */
   private buildReverseCommandMap(): void {
     this.reverseCommandMap.clear();
-    
+
     Object.entries(this.commandMap).forEach(([locale, commands]) => {
-      Object.entries(commands).forEach(([englishCommand, localizedCommands]) => {
-        localizedCommands.forEach(localizedCommand => {
-          const key = `${locale}:${localizedCommand.toLowerCase()}`;
-          this.reverseCommandMap.set(key, englishCommand);
-        });
-      });
+      Object.entries(commands).forEach(
+        ([englishCommand, localizedCommands]) => {
+          localizedCommands.forEach((localizedCommand) => {
+            const key = `${locale}:${localizedCommand.toLowerCase()}`;
+            this.reverseCommandMap.set(key, englishCommand);
+          });
+        },
+      );
     });
   }
 
   /**
    * Parse input with localization support
    */
-  public parseLocalizedInput(input: string, locale?: string, context?: any): ParsedCommand | null {
+  public parseLocalizedInput(
+    input: string,
+    locale?: string,
+    context?: any,
+  ): ParsedCommand | null {
     const activeLocale = locale || this.currentLocale;
     const trimmedInput = input.trim();
-    
+
     // Check if input starts with a slash
     if (!trimmedInput.startsWith('/')) {
       return null;
@@ -179,7 +231,7 @@ export class LocalizedCommandParser extends CommandParser {
 
     // First try to resolve as English command
     let englishCommand = localizedCommand;
-    
+
     // If not English, try to resolve through localized mapping
     if (activeLocale !== 'en') {
       const key = `${activeLocale}:${localizedCommand}`;
@@ -192,7 +244,7 @@ export class LocalizedCommandParser extends CommandParser {
     // Parse using the resolved English command
     const mockEnglishInput = `/${englishCommand} ${args.join(' ')}`.trim();
     const parsedCommand = super.parseInput(mockEnglishInput, context);
-    
+
     if (parsedCommand) {
       // Update the original input to maintain user's original command
       parsedCommand.originalInput = input;
@@ -205,44 +257,59 @@ export class LocalizedCommandParser extends CommandParser {
   /**
    * Get localized command suggestions
    */
-  public getLocalizedCommandSuggestions(partialCommand: string, locale?: string): LocalizedCommandDefinition[] {
+  public getLocalizedCommandSuggestions(
+    partialCommand: string,
+    locale?: string,
+  ): LocalizedCommandDefinition[] {
     const activeLocale = locale || this.currentLocale;
     const partial = partialCommand.toLowerCase();
-    
+
     // Get base suggestions
     const baseSuggestions = super.getCommandSuggestions(partialCommand);
-    
+
     // If English locale, return base suggestions
     if (activeLocale === 'en') {
-      return baseSuggestions.map(cmd => this.localizeCommandDefinition(cmd, activeLocale));
+      return baseSuggestions.map((cmd) =>
+        this.localizeCommandDefinition(cmd, activeLocale),
+      );
     }
 
     // For other locales, also include localized command names
     const localizedSuggestions: LocalizedCommandDefinition[] = [];
     const localeCommands = this.commandMap[activeLocale];
-    
+
     if (localeCommands) {
-      Object.entries(localeCommands).forEach(([englishCommand, localizedCommands]) => {
-        const matchingLocalized = localizedCommands.filter(cmd => 
-          cmd.toLowerCase().startsWith(partial)
-        );
-        
-        if (matchingLocalized.length > 0) {
-          const baseCommand = super.getAvailableCommands().find(cmd => 
-            cmd.command === englishCommand
+      Object.entries(localeCommands).forEach(
+        ([englishCommand, localizedCommands]) => {
+          const matchingLocalized = localizedCommands.filter((cmd) =>
+            cmd.toLowerCase().startsWith(partial),
           );
-          
-          if (baseCommand) {
-            localizedSuggestions.push(this.localizeCommandDefinition(baseCommand, activeLocale));
+
+          if (matchingLocalized.length > 0) {
+            const baseCommand = super
+              .getAvailableCommands()
+              .find((cmd) => cmd.command === englishCommand);
+
+            if (baseCommand) {
+              localizedSuggestions.push(
+                this.localizeCommandDefinition(baseCommand, activeLocale),
+              );
+            }
           }
-        }
-      });
+        },
+      );
     }
 
     // Combine and deduplicate
-    const allSuggestions = [...baseSuggestions.map(cmd => this.localizeCommandDefinition(cmd, activeLocale)), ...localizedSuggestions];
-    const uniqueSuggestions = allSuggestions.filter((cmd, index, array) => 
-      array.findIndex(c => c.command === cmd.command) === index
+    const allSuggestions = [
+      ...baseSuggestions.map((cmd) =>
+        this.localizeCommandDefinition(cmd, activeLocale),
+      ),
+      ...localizedSuggestions,
+    ];
+    const uniqueSuggestions = allSuggestions.filter(
+      (cmd, index, array) =>
+        array.findIndex((c) => c.command === cmd.command) === index,
     );
 
     return uniqueSuggestions;
@@ -254,18 +321,29 @@ export class LocalizedCommandParser extends CommandParser {
   public getLocalizedCommands(locale?: string): LocalizedCommandDefinition[] {
     const activeLocale = locale || this.currentLocale;
     const baseCommands = super.getAvailableCommands();
-    
-    return baseCommands.map(cmd => this.localizeCommandDefinition(cmd, activeLocale));
+
+    return baseCommands.map((cmd) =>
+      this.localizeCommandDefinition(cmd, activeLocale),
+    );
   }
 
   /**
    * Localize a command definition
    */
-  private localizeCommandDefinition(command: CommandDefinition, locale: string): LocalizedCommandDefinition {
-    const localizedNames: { [locale: string]: string } = { en: command.command };
-    const localizedDescription: { [locale: string]: string } = { en: command.description };
+  private localizeCommandDefinition(
+    command: CommandDefinition,
+    locale: string,
+  ): LocalizedCommandDefinition {
+    const localizedNames: { [locale: string]: string } = {
+      en: command.command,
+    };
+    const localizedDescription: { [locale: string]: string } = {
+      en: command.description,
+    };
     const localizedUsage: { [locale: string]: string } = { en: command.usage };
-    const localizedExamples: { [locale: string]: string[] } = { en: command.examples };
+    const localizedExamples: { [locale: string]: string[] } = {
+      en: command.examples,
+    };
 
     // Add localized versions if available
     if (this.commandMap[locale] && this.commandMap[locale][command.command]) {
@@ -274,9 +352,15 @@ export class LocalizedCommandParser extends CommandParser {
 
     // Add localized descriptions, usage, and examples
     // These would typically come from translation files
-    localizedDescription[locale] = this.getLocalizedDescription(command.command, locale);
+    localizedDescription[locale] = this.getLocalizedDescription(
+      command.command,
+      locale,
+    );
     localizedUsage[locale] = this.getLocalizedUsage(command.command, locale);
-    localizedExamples[locale] = this.getLocalizedExamples(command.command, locale);
+    localizedExamples[locale] = this.getLocalizedExamples(
+      command.command,
+      locale,
+    );
 
     return {
       ...command,
@@ -296,46 +380,56 @@ export class LocalizedCommandParser extends CommandParser {
         search: 'Forzar el agente de búsqueda web para el mensaje actual',
         code: 'Forzar el agente intérprete de código para el mensaje actual',
         url: 'Forzar el agente de extracción de URL para el mensaje actual',
-        knowledge: 'Forzar el agente de conocimiento local para el mensaje actual',
+        knowledge:
+          'Forzar el agente de conocimiento local para el mensaje actual',
         standard: 'Forzar chat estándar (sin agentes) para el mensaje actual',
         noAgents: 'Desactivar todos los agentes para el mensaje actual',
-        temperature: 'Establecer la creatividad/temperatura para las respuestas (0.0 a 1.0)',
+        temperature:
+          'Establecer la creatividad/temperatura para las respuestas (0.0 a 1.0)',
         model: 'Cambiar el modelo de IA que se está utilizando',
         disableAgents: 'Desactivar todos los agentes para mensajes futuros',
         enableAgents: 'Activar agentes para mensajes futuros',
         help: 'Mostrar comandos disponibles e información de uso',
         settings: 'Abrir el diálogo de configuración',
-        privacyPolicy: 'Abrir diálogo de configuración y navegar a la política de privacidad',
+        privacyPolicy:
+          'Abrir diálogo de configuración y navegar a la política de privacidad',
       },
       fr: {
-        search: 'Forcer l\'agent de recherche web pour le message actuel',
-        code: 'Forcer l\'agent interpréteur de code pour le message actuel',
-        url: 'Forcer l\'agent d\'extraction d\'URL pour le message actuel',
-        knowledge: 'Forcer l\'agent de connaissance locale pour le message actuel',
-        standard: 'Forcer le chat standard (sans agents) pour le message actuel',
+        search: "Forcer l'agent de recherche web pour le message actuel",
+        code: "Forcer l'agent interpréteur de code pour le message actuel",
+        url: "Forcer l'agent d'extraction d'URL pour le message actuel",
+        knowledge:
+          "Forcer l'agent de connaissance locale pour le message actuel",
+        standard:
+          'Forcer le chat standard (sans agents) pour le message actuel',
         noAgents: 'Désactiver tous les agents pour le message actuel',
-        temperature: 'Définir la créativité/température pour les réponses (0.0 à 1.0)',
+        temperature:
+          'Définir la créativité/température pour les réponses (0.0 à 1.0)',
         model: 'Changer le modèle IA utilisé',
         disableAgents: 'Désactiver tous les agents pour les messages futurs',
         enableAgents: 'Activer les agents pour les messages futurs',
-        help: 'Afficher les commandes disponibles et les informations d\'utilisation',
+        help: "Afficher les commandes disponibles et les informations d'utilisation",
         settings: 'Ouvrir le dialogue des paramètres',
-        privacyPolicy: 'Ouvrir le dialogue des paramètres et naviguer vers la politique de confidentialité',
+        privacyPolicy:
+          'Ouvrir le dialogue des paramètres et naviguer vers la politique de confidentialité',
       },
       de: {
         search: 'Web-Such-Agent für die aktuelle Nachricht erzwingen',
         code: 'Code-Interpreter-Agent für die aktuelle Nachricht erzwingen',
         url: 'URL-Extraktions-Agent für die aktuelle Nachricht erzwingen',
         knowledge: 'Lokalen Wissens-Agent für die aktuelle Nachricht erzwingen',
-        standard: 'Standard-Chat (ohne Agenten) für die aktuelle Nachricht erzwingen',
+        standard:
+          'Standard-Chat (ohne Agenten) für die aktuelle Nachricht erzwingen',
         noAgents: 'Alle Agenten für die aktuelle Nachricht deaktivieren',
-        temperature: 'Kreativität/Temperatur für Antworten einstellen (0.0 bis 1.0)',
+        temperature:
+          'Kreativität/Temperatur für Antworten einstellen (0.0 bis 1.0)',
         model: 'Das verwendete KI-Modell wechseln',
         disableAgents: 'Alle Agenten für zukünftige Nachrichten deaktivieren',
         enableAgents: 'Agenten für zukünftige Nachrichten aktivieren',
         help: 'Verfügbare Befehle und Nutzungsinformationen anzeigen',
         settings: 'Einstellungsdialog öffnen',
-        privacyPolicy: 'Einstellungsdialog öffnen und zur Datenschutzrichtlinie navigieren',
+        privacyPolicy:
+          'Einstellungsdialog öffnen und zur Datenschutzrichtlinie navigieren',
       },
       zh: {
         search: '强制使用网络搜索代理处理当前消息',
@@ -357,7 +451,8 @@ export class LocalizedCommandParser extends CommandParser {
         code: '現在のメッセージにコードインタープリターエージェントを強制使用',
         url: '現在のメッセージにURL抽出エージェントを強制使用',
         knowledge: '現在のメッセージにローカル知識エージェントを強制使用',
-        standard: '現在のメッセージに標準チャット（エージェントなし）を強制使用',
+        standard:
+          '現在のメッセージに標準チャット（エージェントなし）を強制使用',
         noAgents: '現在のメッセージのすべてのエージェントを無効化',
         temperature: 'レスポンスの創造性/温度を設定（0.0から1.0）',
         model: '使用中のAIモデルを切り替え',
@@ -369,7 +464,11 @@ export class LocalizedCommandParser extends CommandParser {
       },
     };
 
-    return descriptions[locale]?.[command] || descriptions.en?.[command] || 'Command description not available';
+    return (
+      descriptions[locale]?.[command] ||
+      descriptions.en?.[command] ||
+      'Command description not available'
+    );
   }
 
   /**
@@ -474,12 +573,31 @@ export class LocalizedCommandParser extends CommandParser {
     const examples: { [locale: string]: { [command: string]: string[] } } = {
       es: {
         search: ['/buscar últimos desarrollos de IA', '/buscar clima hoy'],
-        code: ['/codigo analizar esta función', '/codigo escribir un script de Python'],
-        url: ['/url resumir https://ejemplo.com', '/url extraer contenido de esta página'],
-        knowledge: ['/conocimiento encontrar documentos sobre', '/conocimiento buscar docs internos'],
-        standard: ['/estándar solo charlar normalmente', '/estándar conversación básica'],
-        noAgents: ['/sinAgentes pregunta simple', '/sinAgentes respuesta básica necesaria'],
-        temperature: ['/temperatura 0.7', '/temperatura conservador', '/temperatura creativo'],
+        code: [
+          '/codigo analizar esta función',
+          '/codigo escribir un script de Python',
+        ],
+        url: [
+          '/url resumir https://ejemplo.com',
+          '/url extraer contenido de esta página',
+        ],
+        knowledge: [
+          '/conocimiento encontrar documentos sobre',
+          '/conocimiento buscar docs internos',
+        ],
+        standard: [
+          '/estándar solo charlar normalmente',
+          '/estándar conversación básica',
+        ],
+        noAgents: [
+          '/sinAgentes pregunta simple',
+          '/sinAgentes respuesta básica necesaria',
+        ],
+        temperature: [
+          '/temperatura 0.7',
+          '/temperatura conservador',
+          '/temperatura creativo',
+        ],
         model: ['/modelo gpt-4', '/modelo gpt-3.5-turbo', '/modelo claude-3'],
         disableAgents: ['/desactivarAgentes'],
         enableAgents: ['/activarAgentes'],
@@ -496,9 +614,12 @@ export class LocalizedCommandParser extends CommandParser {
   /**
    * Get user's preferred command names for the current locale
    */
-  public getPreferredCommandName(englishCommand: string, locale?: string): string {
+  public getPreferredCommandName(
+    englishCommand: string,
+    locale?: string,
+  ): string {
     const activeLocale = locale || this.currentLocale;
-    
+
     if (activeLocale === 'en' || !this.commandMap[activeLocale]) {
       return englishCommand;
     }
