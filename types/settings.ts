@@ -1,4 +1,5 @@
 import { AgentType } from './agent';
+import { OpenAIModel } from './openai';
 
 export interface Settings {
   theme: 'light' | 'dark';
@@ -6,6 +7,7 @@ export interface Settings {
   systemPrompt: string;
   advancedMode: boolean;
   agentSettings?: AgentSettings;
+  model?: OpenAIModel;
 }
 
 export interface AgentSettings {
