@@ -85,7 +85,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     try {
       const reqUrl: string = `${this.endpoint!.trim()}/openai/deployments/${
         this.deployment
-      }/audio/transcriptions?api-version=2024-06-01`;
+      }/audio/transcriptions?api-version=2025-03-01-preview`;
       const headers = formHeaders;
       if (this.apiKey) {
         headers['api-key'] = this.apiKey;

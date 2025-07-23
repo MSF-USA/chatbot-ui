@@ -54,7 +54,7 @@ export class FoundryAgent extends BaseAgent {
       // Initialize Azure OpenAI client for Foundry
       this.azureOpenAI = new AzureOpenAI({
         endpoint: this.foundryEndpoint,
-        apiVersion: '2024-08-01-preview',
+        apiVersion: '2025-03-01-preview',
         azureADTokenProvider: async () => {
           const tokenResponse = await this.credential.getToken([
             'https://cognitiveservices.azure.com/.default',
