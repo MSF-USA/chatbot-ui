@@ -151,7 +151,10 @@ export class CommandParser {
       type: CommandType.AGENT,
       description: 'Force URL pull agent for the current message',
       usage: '/url <query>',
-      examples: ['/url summarize https://example.com', '/url extract content from this page'],
+      examples: [
+        '/url summarize https://example.com',
+        '/url extract content from this page',
+      ],
       execute: (args: string[]) => ({
         success: true,
         agentType: AgentType.URL_PULL,
@@ -164,7 +167,10 @@ export class CommandParser {
       type: CommandType.AGENT,
       description: 'Force local knowledge agent for the current message',
       usage: '/knowledge <query>',
-      examples: ['/knowledge find documents about', '/knowledge search internal docs'],
+      examples: [
+        '/knowledge find documents about',
+        '/knowledge search internal docs',
+      ],
       execute: (args: string[]) => ({
         success: true,
         agentType: AgentType.LOCAL_KNOWLEDGE,
@@ -177,7 +183,10 @@ export class CommandParser {
       type: CommandType.AGENT,
       description: 'Force standard chat (no agents) for the current message',
       usage: '/standard <query>',
-      examples: ['/standard just chat normally', '/standard basic conversation'],
+      examples: [
+        '/standard just chat normally',
+        '/standard basic conversation',
+      ],
       execute: (args: string[]) => ({
         success: true,
         agentType: AgentType.STANDARD_CHAT,
@@ -190,7 +199,10 @@ export class CommandParser {
       type: CommandType.AGENT,
       description: 'Disable all agents for the current message',
       usage: '/noAgents <query>',
-      examples: ['/noAgents simple question', '/noAgents basic response needed'],
+      examples: [
+        '/noAgents simple question',
+        '/noAgents basic response needed',
+      ],
       execute: (args: string[]) => ({
         success: true,
         agentType: AgentType.STANDARD_CHAT,
@@ -204,7 +216,11 @@ export class CommandParser {
       type: CommandType.SETTINGS,
       description: 'Set the creativity/temperature for responses (0.0 to 1.0)',
       usage: '/temperature <value>',
-      examples: ['/temperature 0.7', '/temperature conservative', '/temperature creative'],
+      examples: [
+        '/temperature 0.7',
+        '/temperature conservative',
+        '/temperature creative',
+      ],
       validation: (args: string[]) => this.validateTemperature(args),
       execute: (args: string[]) => this.executeTemperatureChange(args),
     });
@@ -215,8 +231,10 @@ export class CommandParser {
       description: 'Switch the AI model being used',
       usage: '/model <model_name>',
       examples: ['/model gpt-4o', '/model gpt-4o-mini'],
-      validation: (args: string[], context?: any) => this.validateModel(args, context),
-      execute: (args: string[], context?: any) => this.executeModelChange(args, context),
+      validation: (args: string[], context?: any) =>
+        this.validateModel(args, context),
+      execute: (args: string[], context?: any) =>
+        this.executeModelChange(args, context),
     });
 
     this.registerCommand({
@@ -227,11 +245,14 @@ export class CommandParser {
       examples: ['/disableAgents'],
       execute: (args: string[]) => ({
         success: true,
-        settingsChange: { agentSettings: { enabled: false } } as Partial<Settings>,
+        settingsChange: {
+          agentSettings: { enabled: false },
+        } as Partial<Settings>,
         immediateAction: true,
         chatResponse: {
           userMessage: '/disableAgents',
-          assistantMessage: '🚫 **Agents Disabled**\n\nAll AI agents have been disabled for future messages. The chat will use standard processing only.',
+          assistantMessage:
+            '🚫 **Agents Disabled**\n\nAll AI agents have been disabled for future messages. The chat will use standard processing only.',
         },
       }),
     });
@@ -244,11 +265,14 @@ export class CommandParser {
       examples: ['/enableAgents'],
       execute: (args: string[]) => ({
         success: true,
-        settingsChange: { agentSettings: { enabled: true } } as Partial<Settings>,
+        settingsChange: {
+          agentSettings: { enabled: true },
+        } as Partial<Settings>,
         immediateAction: true,
         chatResponse: {
           userMessage: '/enableAgents',
-          assistantMessage: '✅ **Agents Enabled**\n\nAll AI agents are now enabled and will automatically assist with your queries based on context.',
+          assistantMessage:
+            '✅ **Agents Enabled**\n\nAll AI agents are now enabled and will automatically assist with your queries based on context.',
         },
       }),
     });
@@ -276,7 +300,8 @@ export class CommandParser {
         // Chat response is shown when typed manually, but skipped when selected from autocomplete
         chatResponse: {
           userMessage: '/settings',
-          assistantMessage: '⚙️ **Settings Dialog**\n\nOpening the settings dialog where you can customize your chat experience...',
+          assistantMessage:
+            '⚙️ **Settings Dialog**\n\nOpening the settings dialog where you can customize your chat experience...',
         },
       }),
     });
@@ -294,7 +319,8 @@ export class CommandParser {
         // Chat response is shown when typed manually, but skipped when selected from autocomplete
         chatResponse: {
           userMessage: '/privacyPolicy',
-          assistantMessage: '📋 **Privacy Policy**\n\nOpening the privacy policy section in settings...',
+          assistantMessage:
+            '📋 **Privacy Policy**\n\nOpening the privacy policy section in settings...',
         },
       }),
     });
@@ -312,7 +338,7 @@ export class CommandParser {
    */
   public parseInput(input: string, context?: any): ParsedCommand | null {
     const trimmedInput = input.trim();
-    
+
     // Check if input starts with a slash
     if (!trimmedInput.startsWith('/')) {
       return null;
@@ -359,7 +385,10 @@ export class CommandParser {
   /**
    * Execute a parsed command
    */
-  public executeCommand(parsedCommand: ParsedCommand, context?: any): CommandExecutionResult {
+  public executeCommand(
+    parsedCommand: ParsedCommand,
+    context?: any,
+  ): CommandExecutionResult {
     if (!parsedCommand.valid) {
       return {
         success: false,
@@ -380,7 +409,9 @@ export class CommandParser {
     } catch (error) {
       return {
         success: false,
-        error: `Command execution failed: ${error instanceof Error ? error.message : String(error)}`,
+        error: `Command execution failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       };
     }
   }
@@ -396,7 +427,9 @@ export class CommandParser {
    * Get commands by type
    */
   public getCommandsByType(type: CommandType): CommandDefinition[] {
-    return Array.from(this.commands.values()).filter(cmd => cmd.type === type);
+    return Array.from(this.commands.values()).filter(
+      (cmd) => cmd.type === type,
+    );
   }
 
   /**
@@ -404,8 +437,8 @@ export class CommandParser {
    */
   public getCommandSuggestions(partialCommand: string): CommandDefinition[] {
     const partial = partialCommand.toLowerCase();
-    return Array.from(this.commands.values()).filter(cmd =>
-      cmd.command.toLowerCase().startsWith(partial)
+    return Array.from(this.commands.values()).filter((cmd) =>
+      cmd.command.toLowerCase().startsWith(partial),
     );
   }
 
@@ -417,12 +450,14 @@ export class CommandParser {
       return {
         valid: false,
         errors: ['Temperature value is required'],
-        suggestions: ['Use values between 0.0 and 1.0, or presets: conservative, balanced, creative'],
+        suggestions: [
+          'Use values between 0.0 and 1.0, or presets: conservative, balanced, creative',
+        ],
       };
     }
 
     const value = args[0].toLowerCase();
-    
+
     // Check for preset values
     if (['conservative', 'balanced', 'creative'].includes(value)) {
       return { valid: true, errors: [] };
@@ -433,7 +468,9 @@ export class CommandParser {
     if (isNaN(numValue)) {
       return {
         valid: false,
-        errors: ['Temperature must be a number between 0.0 and 1.0 or a preset (conservative, balanced, creative)'],
+        errors: [
+          'Temperature must be a number between 0.0 and 1.0 or a preset (conservative, balanced, creative)',
+        ],
       };
     }
 
@@ -471,11 +508,18 @@ export class CommandParser {
         break;
       default:
         temperature = parseFloat(value);
-        presetName = temperature <= 0.4 ? 'Conservative' : temperature <= 0.8 ? 'Balanced' : 'Creative';
+        presetName =
+          temperature <= 0.4
+            ? 'Conservative'
+            : temperature <= 0.8
+            ? 'Balanced'
+            : 'Creative';
     }
 
     const userCommand = `/temperature ${args[0]}`;
-    const assistantMessage = `✅ **Temperature Updated**\n\nTemperature set to **${temperature}** (${presetName} mode)\n\n${this.getTemperatureDescription(temperature)}`;
+    const assistantMessage = `✅ **Temperature Updated**\n\nTemperature set to **${temperature}** (${presetName} mode)\n\n${this.getTemperatureDescription(
+      temperature,
+    )}`;
 
     return {
       success: true,
@@ -503,92 +547,124 @@ export class CommandParser {
   /**
    * Validate model command
    */
-  private validateModel(args: string[], context?: any): CommandValidationResult {
+  private validateModel(
+    args: string[],
+    context?: any,
+  ): CommandValidationResult {
     if (args.length === 0) {
-      const availableModelNames = context?.models?.map((m: any) => m.id) || ['gpt-4', 'gpt-3.5-turbo'];
+      const availableModelNames = context?.models?.map((m: any) => m.id) || [
+        'gpt-4',
+        'gpt-3.5-turbo',
+      ];
       return {
         valid: false,
         errors: ['Model name is required'],
-        suggestions: [`Available models: ${availableModelNames.slice(0, 5).join(', ')}`],
+        suggestions: [
+          `Available models: ${availableModelNames.slice(0, 5).join(', ')}`,
+        ],
       };
     }
 
     // Get available models from context, fallback to hardcoded list
     const availableModels = context?.models || [];
-    const availableModelIds = availableModels.map((m: any) => m.id.toLowerCase());
+    const availableModelIds = availableModels.map((m: any) =>
+      m.id.toLowerCase(),
+    );
 
     const inputModel = args[0].toLowerCase();
-    
+
     // Check for exact ID match
     if (availableModelIds.includes(inputModel)) {
       return { valid: true, errors: [] };
     }
-    
+
     // Check for partial name match
-    const partialMatches = availableModels.filter((m: any) => 
-      m.id.toLowerCase().includes(inputModel) || 
-      (m.name && m.name.toLowerCase().includes(inputModel))
+    const partialMatches = availableModels.filter(
+      (m: any) =>
+        m.id.toLowerCase().includes(inputModel) ||
+        (m.name && m.name.toLowerCase().includes(inputModel)),
     );
-    
+
     if (partialMatches.length === 1) {
       return { valid: true, errors: [] };
     } else if (partialMatches.length > 1) {
       return {
         valid: false,
         errors: [`Multiple models match "${inputModel}"`],
-        suggestions: [`Did you mean: ${partialMatches.slice(0, 3).map((m: any) => m.id).join(', ')}?`],
+        suggestions: [
+          `Did you mean: ${partialMatches
+            .slice(0, 3)
+            .map((m: any) => m.id)
+            .join(', ')}?`,
+        ],
       };
     }
 
     // No matches found
-    const availableList = availableModelIds.length > 0 ? availableModelIds : ['gpt-4', 'gpt-4o', 'gpt-3.5-turbo'];
+    const availableList =
+      availableModelIds.length > 0
+        ? availableModelIds
+        : ['gpt-4', 'gpt-4o', 'gpt-3.5-turbo'];
     return {
       valid: false,
       errors: [`Unknown model: ${inputModel}`],
-      suggestions: [`Available models: ${availableList.slice(0, 5).join(', ')}`],
+      suggestions: [
+        `Available models: ${availableList.slice(0, 5).join(', ')}`,
+      ],
     };
   }
 
   /**
    * Execute model change
    */
-  private executeModelChange(args: string[], context?: any): CommandExecutionResult {
+  private executeModelChange(
+    args: string[],
+    context?: any,
+  ): CommandExecutionResult {
     const inputModel = args[0].toLowerCase();
     const availableModels = context?.models || [];
-    
+
     // Find the exact model
-    let selectedModel = availableModels.find((m: any) => m.id.toLowerCase() === inputModel);
-    
+    let selectedModel = availableModels.find(
+      (m: any) => m.id.toLowerCase() === inputModel,
+    );
+
     // If not found, try partial match
     if (!selectedModel) {
-      const partialMatches = availableModels.filter((m: any) => 
-        m.id.toLowerCase().includes(inputModel) || 
-        (m.name && m.name.toLowerCase().includes(inputModel))
+      const partialMatches = availableModels.filter(
+        (m: any) =>
+          m.id.toLowerCase().includes(inputModel) ||
+          (m.name && m.name.toLowerCase().includes(inputModel)),
       );
-      
+
       if (partialMatches.length === 1) {
         selectedModel = partialMatches[0];
       } else {
         return {
           success: false,
-          error: partialMatches.length > 1 
-            ? `Multiple models match "${inputModel}". Be more specific.`
-            : `Model "${inputModel}" not found.`,
+          error:
+            partialMatches.length > 1
+              ? `Multiple models match "${inputModel}". Be more specific.`
+              : `Model "${inputModel}" not found.`,
         };
       }
     }
 
     const userCommand = `/model ${args[0]}`;
     const modelName = selectedModel.name || selectedModel.id;
-    const modelType = selectedModel.modelType ? ` (${selectedModel.modelType})` : '';
-    const assistantMessage = `🤖 **Model Updated**\n\nSwitched to **${modelName}**${modelType}\n\n*Token limit: ${selectedModel.tokenLimit?.toLocaleString() || 'Unknown'}*`;
-    
+    const modelType = selectedModel.modelType
+      ? ` (${selectedModel.modelType})`
+      : '';
+    const assistantMessage = `🤖 **Model Updated**\n\nSwitched to **${modelName}**${modelType}\n\n*Token limit: ${
+      selectedModel.tokenLimit?.toLocaleString() || 'Unknown'
+    }*`;
+
     return {
       success: true,
-      settingsChange: { 
+      settingsChange: {
         model: selectedModel,
         // Include the model update for conversation
-        selectedModel: selectedModel
+        selectedModel: selectedModel,
       } as Partial<Settings>,
       chatResponse: {
         userMessage: userCommand,
@@ -606,26 +682,32 @@ export class CommandParser {
       const agentCommands = this.getCommandsByType(CommandType.AGENT);
       const settingsCommands = this.getCommandsByType(CommandType.SETTINGS);
       const utilityCommands = this.getCommandsByType(CommandType.UTILITY);
-      
+
       const helpMarkdown = [
         '# Available Commands',
         '',
         '## 🤖 Agent Commands',
         'Force specific agents for your queries:',
-        ...agentCommands.map(cmd => `- **/${cmd.command}** - ${cmd.description}`),
+        ...agentCommands.map(
+          (cmd) => `- **/${cmd.command}** - ${cmd.description}`,
+        ),
         '',
-        '## ⚙️ Settings Commands', 
+        '## ⚙️ Settings Commands',
         'Modify chat settings and preferences:',
-        ...settingsCommands.map(cmd => `- **/${cmd.command}** - ${cmd.description}`),
+        ...settingsCommands.map(
+          (cmd) => `- **/${cmd.command}** - ${cmd.description}`,
+        ),
         '',
         '## 🔧 Utility Commands',
         'Access help and application features:',
-        ...utilityCommands.map(cmd => `- **/${cmd.command}** - ${cmd.description}`),
+        ...utilityCommands.map(
+          (cmd) => `- **/${cmd.command}** - ${cmd.description}`,
+        ),
         '',
         '---',
         '*Use `/help <command>` for detailed information about any command.*',
       ].join('\n');
-      
+
       return {
         success: true,
         chatResponse: {
@@ -637,7 +719,7 @@ export class CommandParser {
       // Specific command help
       const commandName = args[0].toLowerCase();
       const commandDef = this.commands.get(commandName);
-      
+
       if (!commandDef) {
         return {
           success: false,
@@ -653,7 +735,7 @@ export class CommandParser {
         `**Usage:** \`${commandDef.usage}\``,
         '',
         '**Examples:**',
-        ...commandDef.examples.map(ex => `- \`${ex}\``),
+        ...commandDef.examples.map((ex) => `- \`${ex}\``),
       ].join('\n');
 
       return {
@@ -672,12 +754,12 @@ export class CommandParser {
   private getSimilarCommands(input: string): string[] {
     const commands = Array.from(this.commands.keys());
     return commands
-      .filter(cmd => 
-        cmd.includes(input) || 
-        this.levenshteinDistance(cmd, input) <= 2
+      .filter(
+        (cmd) =>
+          cmd.includes(input) || this.levenshteinDistance(cmd, input) <= 2,
       )
       .slice(0, 3)
-      .map(cmd => `/${cmd}`);
+      .map((cmd) => `/${cmd}`);
   }
 
   /**
@@ -702,7 +784,7 @@ export class CommandParser {
           matrix[i][j] = Math.min(
             matrix[i - 1][j - 1] + 1,
             matrix[i][j - 1] + 1,
-            matrix[i - 1][j] + 1
+            matrix[i - 1][j] + 1,
           );
         }
       }
