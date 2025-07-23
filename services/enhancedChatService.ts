@@ -389,13 +389,14 @@ export class EnhancedChatService {
         };
       }
 
-      // Forced agent type override
+      // Forced agent type override - bypass all other logic
       if (chatRequest.forceAgentType) {
+        console.log(`[EnhancedChatService] Force agent type detected: ${chatRequest.forceAgentType}`);
         return {
           shouldUseAgents: true,
           agentType: chatRequest.forceAgentType,
           confidence: 1.0,
-          reason: 'Force agent type specified',
+          reason: 'Force agent type specified by command',
           flags,
         };
       }
