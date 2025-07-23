@@ -13,6 +13,7 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
+import { AgentType } from '@/types/agent';
 
 const isComplexContent = (
   content: (TextMessageContent | ImageMessageContent | FileMessageContent)[],
@@ -36,6 +37,7 @@ const createChatBody = (
   stream: boolean,
   forceStandardChat?: boolean,
   agentSettings?: { enabled: boolean; enabledAgentTypes: any[] },
+  forcedAgentType?: AgentType,
 ): ChatBody => ({
   model: conversation.model,
   messages,
@@ -46,6 +48,7 @@ const createChatBody = (
   stream,
   ...(forceStandardChat && { forceStandardChat }),
   ...(agentSettings && { agentSettings }),
+  ...(forcedAgentType && { forceAgentType: forcedAgentType }),
 });
 
 const appendPluginKeys = (
@@ -143,6 +146,7 @@ export const makeRequest = async (
   stopConversationRef?: { current: boolean },
   forceStandardChat?: boolean,
   agentSettings?: { enabled: boolean; enabledAgentTypes: any[] },
+  forcedAgentType?: AgentType,
 ): Promise<ChatRequestResult> => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
@@ -208,6 +212,7 @@ Document metadata: ${filename}
         false, // Don't stream intermediate steps
         forceStandardChat,
         agentSettings,
+        forcedAgentType,
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
@@ -272,6 +277,7 @@ Provide a detailed comparison.
       stream, // Stream the final comparison response
       forceStandardChat,
       agentSettings,
+      forcedAgentType,
     );
 
     const endpoint = getEndpoint(plugin);
@@ -323,6 +329,7 @@ Provide a detailed comparison.
       stream,
       forceStandardChat,
       agentSettings,
+      forcedAgentType,
     );
     const endpoint = getEndpoint(plugin);
 
