@@ -8,6 +8,7 @@ import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 import { AgentSettings } from '@/types/settings';
 import { AgentType } from '@/types/agent';
+import { SettingsSection } from '@/components/Settings/types';
 
 export interface HomeInitialState {
   user?: Session['user'];
@@ -36,6 +37,9 @@ export interface HomeInitialState {
   // Agent settings for agentic chat functionality
   agentSettings: AgentSettings;
   agentRoutingEnabled: boolean;
+  // Settings dialog state
+  settingsDialogOpen: boolean;
+  settingsDialogSection: SettingsSection;
 }
 
 /**
@@ -170,4 +174,7 @@ export const initialState: HomeInitialState = {
   // Agent settings for intelligent chat routing
   agentSettings: createDefaultAgentSettings(),
   agentRoutingEnabled: true,
+  // Settings dialog state
+  settingsDialogOpen: false,
+  settingsDialogSection: SettingsSection.GENERAL,
 };
