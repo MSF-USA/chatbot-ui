@@ -16,6 +16,7 @@ import {
 import { getIntentAnalysisService } from '@/services/intentAnalysis';
 import { IntentAnalysisContext } from '@/types/intentAnalysis';
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
+import {OpenAIModelID} from "@/types/openai";
 
 // OpenAI instance for AI-powered intent analysis
 let openaiInstance: AzureOpenAI | null = null;
@@ -33,7 +34,7 @@ function getOpenAIInstance(): AzureOpenAI | null {
 
       openaiInstance = new AzureOpenAI({
         azureADTokenProvider,
-        apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+        apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
       });
       
       console.log('[IntentAnalysisAPI] OpenAI instance initialized successfully');
@@ -203,7 +204,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     
     // Get OpenAI instance for AI classification (if available)
     const openai = getOpenAIInstance();
-    const modelId = 'gpt-4o-mini'; // Default model for intent analysis
+    const modelId = OpenAIModelID.GPT_4o_mini; // Default model for intent analysis
     
     console.log('[IntentAnalysisAPI] Starting intent analysis with context:', {
       queryLength: context.query.length,
