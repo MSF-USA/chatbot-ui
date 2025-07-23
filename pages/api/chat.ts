@@ -7,6 +7,7 @@ import {
   checkIsModelValid,
   isFileConversation,
   isImageConversation,
+  isReasoningModel,
 } from '@/utils/app/chat';
 import {
   APIM_CHAT_ENDPONT,
@@ -269,6 +270,28 @@ const handler = async (
       }
     } else {
       const azureOpenai = new OpenAI(openAIArgs);
+      
+      // Special handling for reasoning models
+      if (isReasoningModel(modelToUse)) {
+        // Reasoning models: no streaming, fixed temperature, no system messages
+        const processedMessages = [...messagesToSend];
+        
+        // Reasoning models don't support system messages at all - skip system prompt entirely
+        // The system prompt will be ignored for reasoning models to avoid content filter violations
+        
+        const response = await azureOpenai.chat.completions.create({
+          model: modelToUse,
+          messages: processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+          temperature: 1, // Fixed temperature for reasoning models
+          stream: false, // Never stream reasoning models
+        });
+        
+        const completion = response.choices[0]?.message?.content || '';
+        res.status(200).json({ content: completion });
+        return;
+      }
+      
+      // Regular models: use streaming as before
       const response = await azureOpenai.chat.completions.create({
         model: modelToUse,
         messages:
