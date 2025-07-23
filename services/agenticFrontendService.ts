@@ -96,6 +96,7 @@ export class AgenticFrontendService {
     setProgress: Dispatch<SetStateAction<number | null>>,
     stopConversationRef?: { current: boolean },
     setRequestStatusSecondLine?: Dispatch<SetStateAction<string | null>>,
+    forcedAgentType?: AgentType,
   ): Promise<AgenticChatResult> {
     const startTime = Date.now();
     let usedAgent = false;
@@ -110,7 +111,125 @@ export class AgenticFrontendService {
     try {
       this.log('Starting agentic chat processing');
 
-      // Step 1: Check if agents are enabled
+      // Step 0: Check for forced agent type (bypass all other checks)
+      if (forcedAgentType) {
+        this.log(`Using forced agent type: ${forcedAgentType}`);
+        
+        // Skip all intent analysis and directly execute the specified agent
+        setRequestStatusMessage(`Processing with ${forcedAgentType.toLowerCase().replace('_', ' ')} agent...`);
+        if (setRequestStatusSecondLine) {
+          setRequestStatusSecondLine('Agent forced by command');
+        }
+        
+        try {
+          const agentStartTime = Date.now();
+          const lastMessage = updatedConversation.messages[updatedConversation.messages.length - 1];
+          const messageText = this.extractMessageText(lastMessage);
+          const conversationHistory = this.formatConversationHistory(updatedConversation);
+          
+          this.log(`Executing forced ${forcedAgentType} agent with query: "${messageText}"`);
+          const agentResult = await this.executeAgentWorkflow(
+            forcedAgentType,
+            messageText,
+            updatedConversation,
+            setProgress,
+            stopConversationRef
+          );
+          
+          const agentExecutionTime = Date.now() - agentStartTime;
+          
+          if (!agentResult.success || !agentResult.data) {
+            this.log('❌ Forced agent execution failed, falling back to standard chat');
+            if (setRequestStatusSecondLine) {
+              setRequestStatusSecondLine('⚠️ Agent execution failed, switching to standard chat...');
+            }
+            return await this.executeStandardWorkflow(
+              plugin,
+              setRequestStatusMessage,
+              updatedConversation,
+              apiKey,
+              pluginKeys,
+              systemPrompt,
+              temperature,
+              stream,
+              setProgress,
+              stopConversationRef,
+              { usedAgent: false, fellBackToStandardChat: true, startTime }
+            );
+          }
+          
+          // Process agent result through standard chat for final response
+          setRequestStatusMessage('Generating final response...');
+          if (setRequestStatusSecondLine && agentResult.data) {
+            const agentContent = agentResult.data.content;
+            setRequestStatusSecondLine(`${agentContent}`);
+          }
+          
+          const standardChatStartTime = Date.now();
+          const processedConversation = await this.processAgentResult(
+            agentResult.data,
+            updatedConversation,
+            messageText
+          );
+          
+          const finalResult = await this.executeStandardWorkflow(
+            plugin,
+            setRequestStatusMessage,
+            processedConversation,
+            apiKey,
+            pluginKeys,
+            systemPrompt,
+            temperature,
+            stream,
+            setProgress,
+            stopConversationRef,
+            { usedAgent: true, fellBackToStandardChat: false, startTime },
+            true, // Force standard chat for final processing
+          );
+          
+          const standardChatTime = Date.now() - standardChatStartTime;
+          
+          // Clear second line when entering standard chat mode
+          if (setRequestStatusSecondLine) {
+            setRequestStatusSecondLine(null);
+          }
+          
+          // Return enhanced result with agent metadata
+          return {
+            ...finalResult,
+            usedAgent: true,
+            agentType: forcedAgentType,
+            agentConfidence: 1.0, // Forced commands have 100% confidence
+            intent: 'forced_command',
+            fellBackToStandardChat: false,
+            processingMetadata: {
+              intentAnalysisTime: 0, // No intent analysis for forced commands
+              agentExecutionTime,
+              standardChatTime,
+              totalProcessingTime: Date.now() - startTime,
+            },
+          };
+          
+        } catch (agentError) {
+          this.log('Forced agent workflow failed, falling back to standard chat', agentError);
+          return await this.executeStandardWorkflow(
+            plugin,
+            setRequestStatusMessage,
+            updatedConversation,
+            apiKey,
+            pluginKeys,
+            systemPrompt,
+            temperature,
+            stream,
+            setProgress,
+            stopConversationRef,
+            { usedAgent: false, fellBackToStandardChat: true, startTime },
+            undefined,
+          );
+        }
+      }
+      
+      // Step 1: Check if agents are enabled (only if not forced)
       const shouldUseAgentsResult = this.shouldUseAgents(updatedConversation);
       this.log('=== AGENT ROUTING DECISION ===');
       this.log(`shouldUseAgents result: ${shouldUseAgentsResult}`);
@@ -419,6 +538,7 @@ export class AgenticFrontendService {
       stopConversationRef,
       forceStandardChat, // Pass the force flag to makeRequest
       this.config.agentSettings, // Pass agent settings
+      undefined, // forcedAgentType - not used in standard workflow
     );
 
     const standardChatTime = Date.now() - standardChatStartTime;
