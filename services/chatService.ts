@@ -7,6 +7,7 @@ import {
   checkIsModelValid,
   isFileConversation,
   isImageConversation,
+  isReasoningModel,
 } from '@/utils/app/chat';
 import {
   APIM_CHAT_ENDPONT,
@@ -47,11 +48,8 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion } from 'openai/resources';
-import {
-  ResponseCreateParamsBase,
-  ResponseInput,
-} from 'openai/resources/responses/responses';
 import path from 'path';
+import {ChatCompletionCreateParamsBase} from "openai/resources/chat/completions/completions";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -69,7 +67,7 @@ export default class ChatService {
 
     this.openAIClient = new AzureOpenAI({
       azureADTokenProvider,
-      apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+      apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
     });
 
     this.loggingService = new AzureMonitorLoggingService(
@@ -323,51 +321,34 @@ export default class ChatService {
           });
         }
       } else {
-        // TODO: Fix special handling for reasoning models
-        if (this.isReasoningModel(modelId)) {
+        // Special handling for reasoning models (o1, o1-mini, o3-mini)
+        if (isReasoningModel(modelId)) {
           // For reasoning models:
-          // 1. Skip system messages
-          // 2. Force temperature to 1 or leave out
+          // 1. Don't use system messages - prepend system prompt to first user message
+          // 2. Use temperature of 1 (fixed)
           // 3. Don't stream responses
-          // 4. Don't specify max tokens (I think this is no longer required)
-          if (
-            promptToSend &&
-            messages.length > 0 &&
-            messages[0].role === 'user'
-          ) {
-            const firstUserMessage = messages[0];
-            const content = firstUserMessage.content;
+          // 4. Use standard chat.completions.create endpoint (not responses.create)
 
-            // If content is a string, prepend the system prompt
-            if (typeof content === 'string') {
-              firstUserMessage.content = `${promptToSend}\n\n${content}`;
-            } else if (Array.isArray(content)) {
-              // If content is an array, add system prompt to the first text element
-              const textContent = (content as any[]).find(
-                (item) => item.type === 'text',
-              );
-              if (textContent && 'text' in textContent) {
-                textContent.text = `${promptToSend}\n\n${textContent.text}`;
-              }
-            }
+          const processedMessages = [...messages];
+
+          // Reasoning models don't support system messages at all - skip system prompt entirely
+          // The system prompt will be ignored for reasoning models to avoid content filter violations
+
+          const requestBody: ChatCompletionCreateParamsBase = {
+            model: modelId,
+            messages: processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            temperature: 1, // Fixed temperature for reasoning models
+            stream: false, // Never stream reasoning models
+            user: JSON.stringify(user),
+            // Note: Don't include max_tokens for reasoning models as they manage token usage internally
           }
 
-          const chatCompletionParams: ResponseCreateParamsBase = {
-            model: modelId,
-            input: messages as ResponseInput,
-            user: JSON.stringify(user),
-            stream: false,
-          };
-          console.log('chatCompletionParams', chatCompletionParams);
+          // Use standard chat completions endpoint for reasoning models
+          const response = await this.openAIClient.chat.completions.create(requestBody);
 
-          const responseData = await this.openAIClient.responses.create(
-            chatCompletionParams,
-          );
-          const response = responseData as OpenAI.Responses.Response;
+          const completion = (response as ChatCompletion).choices[0]?.message?.content || '';
 
-          const completion = response.output_text;
-
-          // Log regular chat completion
+          // Log reasoning model chat completion
           void this.loggingService.logChatCompletion(
             startTime,
             modelId,
@@ -477,12 +458,12 @@ export default class ChatService {
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
 
     // Use fixed temperature of 1 for reasoning models, otherwise use provided temperature or default
-    const temperatureToUse = this.isReasoningModel(model.id)
+    const temperatureToUse = isReasoningModel(model.id)
       ? 1
       : temperature ?? DEFAULT_TEMPERATURE;
 
     // Never stream for reasoning models, otherwise use provided stream value
-    const shouldStream = this.isReasoningModel(model.id) ? false : stream;
+    const shouldStream = isReasoningModel(model.id) ? false : stream;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
     const needsToHandleFiles: boolean =
@@ -542,11 +523,4 @@ export default class ChatService {
     }
   }
 
-  private isReasoningModel(id: OpenAIModelID | string) {
-    return [
-      OpenAIModelID.GPT_o1,
-      OpenAIModelID.GPT_o1_mini,
-      OpenAIModelID.GPT_o3_mini,
-    ].includes(id as OpenAIModelID);
-  }
 }
