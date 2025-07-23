@@ -1,6 +1,7 @@
+import { IconAlertCircle, IconRobot } from '@tabler/icons-react';
 import { FC, MutableRefObject } from 'react';
+
 import { useTranslation } from 'next-i18next';
-import { IconRobot, IconAlertCircle } from '@tabler/icons-react';
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -19,15 +20,18 @@ interface ModelItemProps {
   onMouseEnter: () => void;
 }
 
-const ModelItem: FC<ModelItemProps> = ({ model, isActive, onClick, onMouseEnter }) => {
+const ModelItem: FC<ModelItemProps> = ({
+  model,
+  isActive,
+  onClick,
+  onMouseEnter,
+}) => {
   const isLegacy = OpenAIModels[model.id as OpenAIModelID]?.isLegacy;
-  
+
   return (
     <li
       className={`${
-        isActive
-          ? 'bg-gray-200 dark:bg-[#171717]'
-          : ''
+        isActive ? 'bg-gray-200 dark:bg-[#171717]' : ''
       } cursor-pointer px-3 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors`}
       onClick={(e) => {
         e.preventDefault();
@@ -42,7 +46,13 @@ const ModelItem: FC<ModelItemProps> = ({ model, isActive, onClick, onMouseEnter 
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center space-x-2">
-            <span className={`font-medium ${isLegacy ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-blue-400'}`}>
+            <span
+              className={`font-medium ${
+                isLegacy
+                  ? 'text-amber-600 dark:text-amber-400'
+                  : 'text-blue-600 dark:text-blue-400'
+              }`}
+            >
               {isLegacy ? `⚠️ ${model.name}` : model.name}
             </span>
             {isLegacy && (
