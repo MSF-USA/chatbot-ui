@@ -15,6 +15,8 @@ import {
   getBearerTokenProvider,
 } from '@azure/identity';
 import { AzureOpenAI } from 'openai';
+import {OpenAIModelID, OpenAIModels} from "@/types/openai";
+import {isReasoningModel} from "@/utils/app/chat";
 
 // Define the response type for the title generation
 type ChatTitleResponse = {
@@ -22,7 +24,7 @@ type ChatTitleResponse = {
 };
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
-  const apiVersion = '2024-08-01-preview';
+  const apiVersion = '2025-03-01-preview';
 
   try {
     const body = await req.json();
@@ -48,7 +50,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     // Initialize OpenAI API client
     const openai = new AzureOpenAI({
       azureADTokenProvider,
-      deployment: modelId,
+      deployment: (OpenAIModels[modelId as OpenAIModelID].isLegacy || isReasoningModel(modelId)) ? OpenAIModelID.GPT_4o_mini : modelId as OpenAIModelID,
       apiVersion,
     });
 
