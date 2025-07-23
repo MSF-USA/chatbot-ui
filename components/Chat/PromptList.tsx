@@ -1,9 +1,16 @@
+import {
+  IconCommand,
+  IconHelp,
+  IconRobot,
+  IconSettings,
+} from '@tabler/icons-react';
 import { FC, MutableRefObject, useState } from 'react';
+
 import { useTranslation } from 'next-i18next';
-import { IconCommand, IconRobot, IconSettings, IconHelp } from '@tabler/icons-react';
+
+import { CommandDefinition, CommandType } from '@/services/commandParser';
 
 import { Prompt } from '@/types/prompt';
-import { CommandDefinition, CommandType } from '@/services/commandParser';
 
 interface Props {
   prompts: Prompt[];
@@ -24,7 +31,13 @@ interface CommandItemProps {
   onImmediateExecution?: (command: CommandDefinition) => void;
 }
 
-const CommandItem: FC<CommandItemProps> = ({ command, isActive, onClick, onMouseEnter, onImmediateExecution }) => {
+const CommandItem: FC<CommandItemProps> = ({
+  command,
+  isActive,
+  onClick,
+  onMouseEnter,
+  onImmediateExecution,
+}) => {
   const [isExecuting, setIsExecuting] = useState(false);
   const getCommandIcon = (type: CommandType) => {
     switch (type) {
@@ -53,15 +66,16 @@ const CommandItem: FC<CommandItemProps> = ({ command, isActive, onClick, onMouse
   };
 
   // Check if this command should execute immediately
-  const shouldExecuteImmediately = ['enableAgents', 'disableAgents', 'settings', 'privacyPolicy'].includes(command.command);
+  const shouldExecuteImmediately = [
+    'enableAgents',
+    'disableAgents',
+    'settings',
+    'privacyPolicy',
+  ].includes(command.command);
 
   return (
     <li
-      className={`${
-        isActive
-          ? 'bg-gray-200 dark:bg-[#171717]'
-          : ''
-      } ${
+      className={`${isActive ? 'bg-gray-200 dark:bg-[#171717]' : ''} ${
         isExecuting
           ? 'bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-700'
           : ''
@@ -69,7 +83,7 @@ const CommandItem: FC<CommandItemProps> = ({ command, isActive, onClick, onMouse
       onClick={async (e) => {
         e.preventDefault();
         e.stopPropagation();
-        
+
         if (shouldExecuteImmediately && onImmediateExecution) {
           setIsExecuting(true);
           onImmediateExecution(command);
@@ -127,13 +141,16 @@ interface PromptItemProps {
   onMouseEnter: () => void;
 }
 
-const PromptItem: FC<PromptItemProps> = ({ prompt, isActive, onClick, onMouseEnter }) => {
+const PromptItem: FC<PromptItemProps> = ({
+  prompt,
+  isActive,
+  onClick,
+  onMouseEnter,
+}) => {
   return (
     <li
       className={`${
-        isActive
-          ? 'bg-gray-200 dark:bg-[#171717]'
-          : ''
+        isActive ? 'bg-gray-200 dark:bg-[#171717]' : ''
       } cursor-pointer px-3 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors`}
       onClick={(e) => {
         e.preventDefault();
@@ -163,7 +180,9 @@ export const PromptList: FC<Props> = ({
   const { t } = useTranslation('chat');
 
   // Combine commands and prompts for display
-  const totalItems = showCommands ? commands.length + prompts.length : prompts.length;
+  const totalItems = showCommands
+    ? commands.length + prompts.length
+    : prompts.length;
   const commandsCount = showCommands ? commands.length : 0;
 
   const handleItemClick = (index: number) => {
@@ -203,7 +222,7 @@ export const PromptList: FC<Props> = ({
           )}
         </>
       )}
-      
+
       {prompts.map((prompt, index) => {
         const adjustedIndex = showCommands ? commandsCount + index : index;
         return (
@@ -216,7 +235,7 @@ export const PromptList: FC<Props> = ({
           />
         );
       })}
-      
+
       {totalItems === 0 && (
         <li className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">
           {t('No commands or prompts found')}
