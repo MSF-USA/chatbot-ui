@@ -1,6 +1,6 @@
 import { Transition } from '@headlessui/react';
 import { IconFileExport, IconSettings } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
@@ -20,7 +20,6 @@ import { Session } from 'inspector';
 
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
-  const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
 
   const {
     state: {
@@ -30,7 +29,11 @@ export const ChatbarSettings = () => {
       serverSideApiKeyIsSet,
       serverSidePluginKeysSet,
       conversations,
+      settingsDialogOpen,
+      settingsDialogSection,
     },
+    handleOpenSettings,
+    handleCloseSettings,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
@@ -65,7 +68,7 @@ export const ChatbarSettings = () => {
             <IconSettings size={18} />
           )
         }
-        onClick={() => setIsSettingDialog(true)}
+        onClick={() => handleOpenSettings()}
       />
 
       {!serverSideApiKeyIsSet && OPENAI_API_HOST_TYPE !== 'apim' ? (
@@ -75,7 +78,7 @@ export const ChatbarSettings = () => {
       {/* {!serverSidePluginKeysSet ? <PluginKeys /> : null} */}
 
       <Transition
-        show={isSettingDialogOpen}
+        show={settingsDialogOpen}
         as="div"
         className="absolute inset-0 overflow-hidden z-10"
         enter="transition-opacity ease-out duration-400"
@@ -86,11 +89,10 @@ export const ChatbarSettings = () => {
         leaveTo="opacity-0"
       >
         <SettingDialog
-          open={isSettingDialogOpen}
-          onClose={() => {
-            setIsSettingDialog(false);
-          }}
+          open={settingsDialogOpen}
+          onClose={handleCloseSettings}
           user={user}
+          initialSection={settingsDialogSection}
         />
       </Transition>
     </div>
