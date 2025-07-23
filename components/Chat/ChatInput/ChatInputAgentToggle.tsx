@@ -16,11 +16,11 @@ export const ChatInputAgentToggle = ({
 
   return (
     <button
-      className={`flex h-[40px] w-[40px] items-center justify-center rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200 ${
+      className={`pb-2 flex h-[40px] w-[40px] items-center justify-center rounded-sm p-1 text-neutral-800 opacity-60 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-opacity-50 dark:text-neutral-100 dark:hover:text-neutral-200 ${
         disabled ? 'cursor-not-allowed opacity-30' : ''
       } ${
         enabled 
-          ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' 
+          ? 'bg-transparent text-blue-600 dark:text-blue-400' 
           : 'hover:opacity-100'
       }`}
       onClick={onToggle}
