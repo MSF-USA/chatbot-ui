@@ -15,7 +15,7 @@ describe('Test Environment Variables', () => {
   let prompt =
     process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
     "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.";
-  let apiVersion = process.env.OPENAI_API_VERSION || '2024-03-01-preview';
+  let apiVersion = process.env.OPENAI_API_VERSION || '2025-03-01-preview';
   let org = process.env.OPENAI_ORGANIZATION || '';
   let deploymentId = process.env.AZURE_DEPLOYMENT_ID || 'gpt-35-turbo';
   beforeEach(() => {
