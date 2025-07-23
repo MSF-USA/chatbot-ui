@@ -7,6 +7,7 @@ import { ActionType } from '@/hooks/useCreateReducer';
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { FolderType } from '@/types/folder';
+import { SettingsSection } from '@/components/Settings/types';
 
 import { HomeInitialState } from './home.state';
 
@@ -23,6 +24,8 @@ export interface HomeContextProps {
     conversation: Conversation,
     data: KeyValuePair,
   ) => void;
+  handleOpenSettings: (section?: SettingsSection) => void;
+  handleCloseSettings: () => void;
   showChatbar: boolean;
 }
 
