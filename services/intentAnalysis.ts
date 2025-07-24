@@ -79,6 +79,7 @@ export class IntentAnalysisService {
         [AgentType.STANDARD_CHAT]: 0,
         [AgentType.FOUNDRY]: 0,
         [AgentType.THIRD_PARTY]: 0,
+        [AgentType.TRANSLATION]: 0,
       },
       cacheHitRate: 0,
       errorRate: 0,
