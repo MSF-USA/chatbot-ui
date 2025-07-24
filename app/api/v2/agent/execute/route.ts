@@ -13,6 +13,7 @@ import {
   AgentType,
   CodeInterpreterAgentConfig,
   LocalKnowledgeAgentConfig,
+  TranslationAgentConfig,
   UrlPullAgentConfig,
   WebSearchAgentConfig,
 } from '@/types/agent';
@@ -105,7 +106,8 @@ function createAgentConfig(
   | WebSearchAgentConfig
   | UrlPullAgentConfig
   | CodeInterpreterAgentConfig
-  | LocalKnowledgeAgentConfig {
+  | LocalKnowledgeAgentConfig
+  | TranslationAgentConfig {
   const defaultConfig = DEFAULT_AGENT_CONFIGS[request.agentType] || {};
   const userConfig = request.config || {};
 
@@ -255,6 +257,23 @@ function createAgentConfig(
         },
       };
 
+    case AgentType.TRANSLATION:
+      return {
+        ...config,
+        defaultSourceLanguage:
+          userConfig.defaultSourceLanguage || defaultConfig.defaultSourceLanguage || '',
+        defaultTargetLanguage:
+          userConfig.defaultTargetLanguage || defaultConfig.defaultTargetLanguage || 'en',
+        enableLanguageDetection:
+          userConfig.enableLanguageDetection ?? defaultConfig.enableLanguageDetection ?? true,
+        enableCaching:
+          userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+        cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 3600,
+        maxTextLength:
+          userConfig.maxTextLength || defaultConfig.maxTextLength || 10000,
+        temperature: userConfig.temperature || defaultConfig.temperature || 0.3,
+      };
+
     default:
       return config;
   }
@@ -271,6 +290,8 @@ function getAgentEnvironment(agentType: AgentType): AgentExecutionEnvironment {
       return AgentExecutionEnvironment.LOCAL;
     case AgentType.THIRD_PARTY:
       return AgentExecutionEnvironment.THIRD_PARTY;
+    case AgentType.TRANSLATION:
+      return AgentExecutionEnvironment.FOUNDRY;
     default:
       return AgentExecutionEnvironment.FOUNDRY;
   }
