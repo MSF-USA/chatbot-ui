@@ -310,7 +310,7 @@ ${!sourceLanguage ? 'First detect the source language, then provide the translat
           },
           notes: {
             type: 'string',
-            description: 'Any optional translation notes capturing difficulties or lost subtleties.',
+            description: 'Any optional translation notes capturing difficulties or lost subtleties. Assume the user is only interested in unique aspects of the translation, not stating obvious facts about how the text was translated.',
           },
           detectedSourceLanguage: {
             type: 'string',
