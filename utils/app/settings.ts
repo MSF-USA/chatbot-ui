@@ -160,6 +160,7 @@ const getDefaultUISettings = (): UICustomizationSettings => ({
       [AgentType.STANDARD_CHAT]: '#6b7280',
       [AgentType.FOUNDRY]: '#6366f1',
       [AgentType.THIRD_PARTY]: '#6b7280',
+      [AgentType.TRANSLATION]: '#ec4899',
     },
     enableDarkMode: false,
     highContrast: false,
