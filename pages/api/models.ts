@@ -61,6 +61,9 @@ const handler = async (req: NextRequest): Promise<Response> => {
           id: 'gpt-4'
         },
         {
+          id: 'gpt-4.1'
+        },
+        {
           id: 'gpt-45'
         },
         {
