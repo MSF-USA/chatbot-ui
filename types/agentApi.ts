@@ -43,6 +43,8 @@ export interface AgentExecutionApiResponse {
       processingTime: number;
       confidence: number;
       agentMetadata?: Record<string, any>;
+      /** Whether this agent skips standard chat processing */
+      skipStandardChatProcessing?: boolean;
     };
   };
   /** Error information if unsuccessful */
@@ -191,5 +193,6 @@ export const DEFAULT_AGENT_CONFIGS: Record<string, Record<string, any>> = {
     maxTextLength: 10000,
     modelId: 'gpt-4o-mini',
     temperature: 0.3,
+    skipStandardChatProcessing: true,
   },
 };

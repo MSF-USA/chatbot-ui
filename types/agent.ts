@@ -55,6 +55,8 @@ export interface AgentConfig {
   maxTokens?: number;
   /** Timeout for agent execution in milliseconds */
   timeout?: number;
+  /** Skip standard chat processing and return agent output directly */
+  skipStandardChatProcessing?: boolean;
   /** Additional metadata for the agent */
   metadata?: Record<string, any>;
   /** Agent-specific configuration parameters */
