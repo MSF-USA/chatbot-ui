@@ -668,6 +668,9 @@ export const ChatInput = ({
   );
 
   const handlePromptSelect = (prompt: Prompt) => {
+    // Track prompt usage for sorting
+    incrementPromptUsage(prompt.id);
+    
     const parsedVariables = parseVariables(prompt.content);
     setVariables(parsedVariables);
 
@@ -1329,7 +1332,7 @@ export const ChatInput = ({
 
           {isModalVisible && (
             <VariableModal
-              prompt={filteredPrompts[activePromptIndex]}
+              prompt={sortedFilteredPrompts[activePromptIndex]}
               variables={variables}
               onSubmit={handleSubmit}
               onClose={() => setIsModalVisible(false)}
