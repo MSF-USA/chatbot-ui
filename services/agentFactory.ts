@@ -21,6 +21,7 @@ import { CodeInterpreterAgent } from './agents/codeInterpreterAgent';
 import { FoundryAgent } from './agents/foundryAgent';
 import { LocalKnowledgeAgent } from './agents/localKnowledgeAgent';
 import { ThirdPartyAgent } from './agents/thirdPartyAgent';
+import { TranslationAgent } from './agents/translationAgent';
 import { UrlPullAgent } from './agents/urlPullAgent';
 import { WebSearchAgent } from './agents/webSearchAgent';
 import { AzureMonitorLoggingService } from './loggingService';
@@ -528,18 +529,18 @@ export class AgentFactory {
         FoundryAgent.getSupportedModels(),
       );
 
-      // Register CodeAgent
-      this.registerAgent(
-        AgentType.CODE_INTERPRETER,
-        async (config: AgentConfig) => await CodeAgent.create(config),
-        [
-          'code_execution',
-          'python_support',
-          'javascript_support',
-          'data_analysis',
-        ],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo'], // Code agents work with most models
-      );
+      // // Register CodeAgent
+      // this.registerAgent(
+      //   AgentType.CODE_INTERPRETER,
+      //   async (config: AgentConfig) => await CodeAgent.create(config),
+      //   [
+      //     'code_execution',
+      //     'python_support',
+      //     'javascript_support',
+      //     'data_analysis',
+      //   ],
+      //   ['gpt-4', 'gpt-4o', 'gpt-35-turbo'], // Code agents work with most models
+      // );
 
       // Register ThirdPartyAgent
       this.registerAgent(
@@ -622,6 +623,22 @@ export class AgentFactory {
         ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Local knowledge agents work with most models
       );
 
+      // Register TranslationAgent
+      this.registerAgent(
+        AgentType.TRANSLATION,
+        async (config: AgentConfig) => new TranslationAgent(config as any),
+        [
+          'text-translation',
+          'language-detection',
+          'multi-language-support',
+          'automatic-language-inference',
+          'translation-caching',
+          'context-preservation',
+          'quality-analysis',
+        ],
+        ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Translation agents work with most models
+      );
+
       this.logInfo('Default agents registered successfully', {
         registeredTypes: Array.from(this.registrations.keys()),
       });
@@ -680,6 +697,7 @@ export class AgentFactory {
       [AgentType.WEB_SEARCH]: WebSearchAgent,
       [AgentType.URL_PULL]: UrlPullAgent,
       [AgentType.LOCAL_KNOWLEDGE]: LocalKnowledgeAgent,
+      [AgentType.TRANSLATION]: TranslationAgent,
       [AgentType.STANDARD_CHAT]: FoundryAgent, // Default to Foundry for now
     };
 
@@ -694,6 +712,7 @@ export class AgentFactory {
       [AgentType.WEB_SEARCH]: AgentExecutionEnvironment.FOUNDRY,
       [AgentType.URL_PULL]: AgentExecutionEnvironment.FOUNDRY,
       [AgentType.LOCAL_KNOWLEDGE]: AgentExecutionEnvironment.LOCAL,
+      [AgentType.TRANSLATION]: AgentExecutionEnvironment.FOUNDRY,
       [AgentType.STANDARD_CHAT]: AgentExecutionEnvironment.FOUNDRY,
     };
 
