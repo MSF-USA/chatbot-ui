@@ -649,6 +649,19 @@ export class ConfidenceScoringSystem {
       ],
       [AgentType.STANDARD_CHAT]: ['hello', 'how', 'what', 'tell', 'explain'],
       [AgentType.FOUNDRY]: ['complex', 'analyze', 'reasoning', 'sophisticated'],
+      [AgentType.TRANSLATION]: [
+        'translate',
+        'translation', 
+        'language',
+        'convert',
+        'interpret',
+        'translate to',
+        'from english',
+        'to spanish',
+        'in french',
+        'mean in',
+        'say in',
+      ],
     };
 
     return keywords[agentType] || [];
