@@ -7,6 +7,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -24,6 +25,8 @@ import {
 import { LocalizedCommandParser } from '@/services/localizedCommandParser';
 
 import { AgentType } from '@/types/agent';
+import { incrementModelUsage } from '@/utils/app/modelUsage';
+import { incrementPromptUsage } from '@/utils/app/promptUsage';
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
@@ -177,6 +180,10 @@ export const ChatInput = ({
   const [showModelList, setShowModelList] = useState<boolean>(false);
   const [activeModelIndex, setActiveModelIndex] = useState<number>(0);
   const [modelInputValue, setModelInputValue] = useState<string>('');
+  const [sortedFilteredModels, setSortedFilteredModels] = useState<OpenAIModel[]>([]);
+  
+  // Prompt selection state
+  const [sortedFilteredPrompts, setSortedFilteredPrompts] = useState<Prompt[]>([]);
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
   const modelListRef = useRef<HTMLUListElement | null>(null);
@@ -198,15 +205,27 @@ export const ChatInput = ({
     : [];
 
   // Filter models based on current input
-  const filteredModels: OpenAIModel[] = models
-    ? models.filter((model) => {
-        const searchTerm = modelInputValue.toLowerCase();
-        return (
-          model.id.toLowerCase().includes(searchTerm) ||
-          model.name.toLowerCase().includes(searchTerm)
-        );
-      })
-    : [];
+  const filteredModels: OpenAIModel[] = useMemo(() => {
+    return models
+      ? models.filter((model) => {
+          const searchTerm = modelInputValue.toLowerCase();
+          return (
+            model.id.toLowerCase().includes(searchTerm) ||
+            model.name.toLowerCase().includes(searchTerm)
+          );
+        })
+      : [];
+  }, [models, modelInputValue]);
+
+  // Initialize sortedFilteredModels when filteredModels changes
+  useEffect(() => {
+    setSortedFilteredModels(filteredModels);
+  }, [filteredModels]);
+
+  // Initialize sortedFilteredPrompts when filteredPrompts changes
+  useEffect(() => {
+    setSortedFilteredPrompts(filteredPrompts);
+  }, [filteredPrompts]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value: string = e.target.value;
@@ -551,7 +570,7 @@ export const ChatInput = ({
   const handleKeyDownModelList = (
     event: KeyboardEvent<HTMLTextAreaElement>,
   ) => {
-    const availableModels = filteredModels || [];
+    const availableModels = sortedFilteredModels || [];
 
     switch (event.key) {
       case 'ArrowDown':
@@ -664,6 +683,9 @@ export const ChatInput = ({
   };
 
   const handleModelSelect = (model: OpenAIModel) => {
+    // Track model usage for sorting
+    incrementModelUsage(model.id);
+    
     // Hide the model list
     setShowModelList(false);
     setActiveModelIndex(0);
@@ -1292,12 +1314,13 @@ export const ChatInput = ({
                   models={filteredModels}
                   activeModelIndex={activeModelIndex}
                   onSelect={() => {
-                    if (filteredModels.length > 0) {
-                      handleModelSelect(filteredModels[activeModelIndex]);
+                    if (sortedFilteredModels.length > 0) {
+                      handleModelSelect(sortedFilteredModels[activeModelIndex]);
                     }
                   }}
                   onMouseOver={setActiveModelIndex}
                   modelListRef={modelListRef}
+                  onModelsSort={setSortedFilteredModels}
                 />
               </div>
             )}
