@@ -260,6 +260,7 @@ function createAgentConfig(
     case AgentType.TRANSLATION:
       return {
         ...config,
+        skipStandardChatProcessing: true, // Translation agent returns direct output
         defaultSourceLanguage:
           userConfig.defaultSourceLanguage || defaultConfig.defaultSourceLanguage || '',
         defaultTargetLanguage:
@@ -454,6 +455,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           processingTime: executionTime,
           confidence: result.response.metadata?.confidence || 0,
           agentMetadata: result.response.metadata?.agentMetadata,
+          skipStandardChatProcessing: agentConfig.skipStandardChatProcessing,
         },
       },
       execution: {
