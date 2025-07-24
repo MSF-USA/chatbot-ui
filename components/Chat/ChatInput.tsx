@@ -473,14 +473,14 @@ export const ChatInput = ({
 
   const handleInitModal = () => {
     if (commandMode && filteredCommands.length > 0) {
-      // Handle command selection
+      // Handle command selection - use original filteredCommands for commands
       const selectedCommand = filteredCommands[activePromptIndex];
       if (selectedCommand) {
         handleCommandSelect(selectedCommand);
       }
     } else {
-      // Handle prompt selection
-      const selectedPrompt = filteredPrompts[activePromptIndex];
+      // Handle prompt selection - use sorted prompts
+      const selectedPrompt = sortedFilteredPrompts[activePromptIndex];
       if (selectedPrompt) {
         setTextFieldValue((prevTextFieldValue) => {
           const newContent = prevTextFieldValue?.replace(
@@ -524,8 +524,8 @@ export const ChatInput = ({
     event: KeyboardEvent<HTMLTextAreaElement>,
   ) => {
     const totalItems = commandMode
-      ? filteredCommands.length + filteredPrompts.length
-      : filteredPrompts.length;
+      ? filteredCommands.length + sortedFilteredPrompts.length
+      : sortedFilteredPrompts.length;
 
     switch (event.key) {
       case 'ArrowDown':
@@ -1196,6 +1196,7 @@ export const ChatInput = ({
                     onSelect={handleInitModal}
                     onMouseOver={setActivePromptIndex}
                     promptListRef={promptListRef}
+                    onPromptsSort={setSortedFilteredPrompts}
                     onImmediateCommandExecution={(command) => {
                       // Execute the command immediately with context
                       const commandContext = {
