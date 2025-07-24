@@ -313,8 +313,9 @@ export const ChatInput = ({
           // Handle command execution
           if (executionResult.agentType) {
             forcedAgentType = executionResult.agentType;
+            // Allow agent commands to override disabled agents setting
             forceStandardChat =
-              executionResult.agentType === AgentType.STANDARD_CHAT;
+              executionResult.agentType === AgentType.STANDARD_CHAT ? true : false;
             // Remove command from message text, keeping the rest
             messageText = textFieldValue.replace(/^\/\w+\s*/, '').trim();
           }
@@ -415,7 +416,8 @@ export const ChatInput = ({
     // Apply forced agent if set
     if (forcedAgent) {
       forcedAgentType = forcedAgent;
-      forceStandardChat = forcedAgent === AgentType.STANDARD_CHAT;
+      // Allow agent commands to override disabled agents setting
+      forceStandardChat = forcedAgent === AgentType.STANDARD_CHAT ? true : false;
       setForcedAgent(null); // Reset after use
     }
 
