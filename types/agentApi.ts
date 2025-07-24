@@ -135,6 +135,7 @@ export const SUPPORTED_AGENT_TYPES: AgentType[] = [
   AgentType.URL_PULL,
   AgentType.LOCAL_KNOWLEDGE,
   AgentType.CODE_INTERPRETER,
+  AgentType.TRANSLATION,
 ];
 
 /**
@@ -180,5 +181,15 @@ export const DEFAULT_AGENT_CONFIGS: Record<string, Record<string, any>> = {
     enableJavaScriptSupport: true,
     enableDebugging: true,
     timeout: 60000,
+  },
+  [AgentType.TRANSLATION]: {
+    defaultSourceLanguage: '',
+    defaultTargetLanguage: 'en',
+    enableLanguageDetection: true,
+    enableCaching: true,
+    cacheTtl: 3600,
+    maxTextLength: 10000,
+    modelId: 'gpt-4o-mini',
+    temperature: 0.3,
   },
 };
