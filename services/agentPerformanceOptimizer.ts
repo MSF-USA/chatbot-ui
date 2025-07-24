@@ -949,6 +949,7 @@ export class AgentPerformanceOptimizer {
       [AgentType.LOCAL_KNOWLEDGE]: 'query-based',
       [AgentType.FOUNDRY]: 'adaptive',
       [AgentType.THIRD_PARTY]: 'minimal',
+      [AgentType.TRANSLATION]: 'content-based',
       [AgentType.STANDARD_CHAT]: 'none',
     };
 
