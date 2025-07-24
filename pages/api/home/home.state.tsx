@@ -55,6 +55,7 @@ const createDefaultAgentSettings = (): AgentSettings => ({
     AgentType.URL_PULL,
     AgentType.LOCAL_KNOWLEDGE,
     AgentType.CODE_INTERPRETER,
+    AgentType.TRANSLATION,
   ],
   agentConfigurations: {
     [AgentType.WEB_SEARCH]: {
@@ -135,9 +136,23 @@ const createDefaultAgentSettings = (): AgentSettings => ({
       maxRetries: 3,
       parameters: {},
     },
+    [AgentType.TRANSLATION]: {
+      enabled: true,
+      priority: 5,
+      timeout: 30000,
+      maxRetries: 2,
+      confidenceThreshold: 0.6,
+      parameters: {
+        enableLanguageDetection: true,
+        enableCaching: true,
+        cacheTtl: 300,
+        maxTextLength: 10000,
+        enableTranslationNotes: true,
+      },
+    },
   },
   preferences: {
-    preferredAgents: [AgentType.WEB_SEARCH, AgentType.LOCAL_KNOWLEDGE],
+    preferredAgents: [AgentType.WEB_SEARCH, AgentType.LOCAL_KNOWLEDGE, AgentType.TRANSLATION],
     disabledAgents: [],
     autoRouting: true,
     showAgentAttribution: true,
