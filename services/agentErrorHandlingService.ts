@@ -579,6 +579,7 @@ export class AgentErrorHandlingService {
       ],
       [AgentType.FOUNDRY]: [AgentType.STANDARD_CHAT],
       [AgentType.THIRD_PARTY]: [AgentType.STANDARD_CHAT],
+      [AgentType.TRANSLATION]: [AgentType.STANDARD_CHAT],
       [AgentType.STANDARD_CHAT]: [],
     };
 

@@ -1182,6 +1182,9 @@ While I can't provide the specialized service you requested right now, I can off
         fallbackAgents: [], // No fallback for standard chat
         gracefulDegradation: false,
       },
+      [AgentType.TRANSLATION]: {
+        fallbackAgents: [AgentType.FOUNDRY, AgentType.STANDARD_CHAT],
+      },
     };
 
     for (const [agentType, strategy] of Object.entries(strategies)) {
