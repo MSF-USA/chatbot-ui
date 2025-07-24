@@ -210,6 +210,23 @@ export class CommandParser {
       }),
     });
 
+    this.registerCommand({
+      command: 'translate',
+      type: CommandType.AGENT,
+      description: 'Force translation agent for the current message',
+      usage: '/translate [from_language] [to_language] <text>',
+      examples: [
+        '/translate en es Hello world',
+        '/translate es Hello world',
+        '/translate Hola mundo',
+      ],
+      execute: (args: string[]) => ({
+        success: true,
+        agentType: AgentType.TRANSLATION,
+        message: 'Switched to translation agent',
+      }),
+    });
+
     // Settings Commands
     this.registerCommand({
       command: 'temperature',
