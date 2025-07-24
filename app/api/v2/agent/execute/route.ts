@@ -20,9 +20,11 @@ import {
 import {
   AgentExecutionApiRequest,
   AgentExecutionApiResponse,
-  DEFAULT_AGENT_CONFIGS,
   isSupportedAgentType,
 } from '@/types/agentApi';
+
+// Import centralized agent configuration
+import { getAgentAPIDefaults, getAgentEnvironments, getSupportedAgentTypes } from '@/config/agents';
 import { AccessLevel, UserRole } from '@/types/localKnowledge';
 import { OpenAIModel } from '@/types/openai';
 
@@ -108,7 +110,10 @@ function createAgentConfig(
   | CodeInterpreterAgentConfig
   | LocalKnowledgeAgentConfig
   | TranslationAgentConfig {
-  const defaultConfig = DEFAULT_AGENT_CONFIGS[request.agentType] || {};
+  // Get centralized configuration defaults
+  const apiDefaults = getAgentAPIDefaults();
+  const environments = getAgentEnvironments();
+  const defaultConfig = apiDefaults[request.agentType] || {};
   const userConfig = request.config || {};
 
   const config: AgentConfig = {
@@ -117,11 +122,11 @@ function createAgentConfig(
       .substr(2, 9)}`,
     name: `API ${request.agentType} Agent`,
     type: request.agentType,
-    environment: getAgentEnvironment(request.agentType),
+    environment: environments[request.agentType] || AgentExecutionEnvironment.FOUNDRY,
     modelId: request.model?.id || 'gpt-4o-mini',
     instructions: `Process the user query using ${request.agentType} agent capabilities`,
     tools: [],
-    timeout: request.timeout || 300000, // 5 minutes default
+    timeout: request.timeout || defaultConfig.timeout || 300000,
     metadata: {
       apiRequest: true,
       userId: session.user?.id,
@@ -131,9 +136,12 @@ function createAgentConfig(
       ...defaultConfig,
       ...userConfig,
     },
+    // Apply centralized configuration settings
+    skipStandardChatProcessing: defaultConfig.skipStandardChatProcessing,
+    temperature: defaultConfig.temperature,
   };
 
-  // Add agent-specific configuration
+  // Add agent-specific configuration based on type
   switch (request.agentType) {
     case AgentType.WEB_SEARCH:
       return {
@@ -142,47 +150,53 @@ function createAgentConfig(
           endpoint: process.env.AZURE_AI_FOUNDRY_ENDPOINT || '',
           apiKey: process.env.AZURE_GROUNDING_CONNECTION_ID || '',
           defaultMarket:
-            userConfig.defaultMarket || defaultConfig.defaultMarket,
+            userConfig.defaultMarket || defaultConfig.defaultMarket || 'en-US',
           defaultSafeSearch:
-            userConfig.defaultSafeSearch || defaultConfig.defaultSafeSearch,
-          maxResults: userConfig.maxResults || defaultConfig.maxResults,
-          timeout: request.timeout || 30000,
+            userConfig.defaultSafeSearch || defaultConfig.defaultSafeSearch || 'Moderate',
+          maxResults: userConfig.maxResults || defaultConfig.maxResults || 5,
+          timeout: request.timeout || defaultConfig.timeout || 30000,
           enableCaching:
-            userConfig.enableCaching ?? defaultConfig.enableCaching,
-          cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl,
+            userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+          cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 300,
           retry: {
             maxAttempts: 3,
             baseDelay: 1000,
             maxDelay: 10000,
           },
         },
-      };
+        maxResults: userConfig.maxResults || defaultConfig.maxResults || 5,
+        defaultMarket: userConfig.defaultMarket || defaultConfig.defaultMarket || 'en-US',
+        defaultSafeSearch: userConfig.defaultSafeSearch || defaultConfig.defaultSafeSearch || 'Moderate',
+        enableCitations: userConfig.enableCitations ?? defaultConfig.enableCitations ?? true,
+        enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+        cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 300,
+      } as WebSearchAgentConfig;
 
     case AgentType.URL_PULL:
       return {
         ...config,
         urlPullConfig: {
-          maxUrls: userConfig.maxUrls || defaultConfig.maxUrls,
-          timeout: request.timeout || defaultConfig.processingTimeout,
+          maxUrls: userConfig.maxUrls || defaultConfig.maxUrls || 3,
+          timeout: request.timeout || defaultConfig.processingTimeout || 30000,
           concurrencyLimit:
-            userConfig.concurrencyLimit || defaultConfig.concurrencyLimit,
+            userConfig.concurrencyLimit || defaultConfig.concurrencyLimit || 3,
           enableCaching:
-            userConfig.enableCaching ?? defaultConfig.enableCaching,
-          cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl,
+            userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+          cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 300,
         },
-        maxUrls: userConfig.maxUrls || defaultConfig.maxUrls,
-        processingTimeout: request.timeout || defaultConfig.processingTimeout,
+        maxUrls: userConfig.maxUrls || defaultConfig.maxUrls || 3,
+        processingTimeout: request.timeout || defaultConfig.processingTimeout || 30000,
         enableParallelProcessing:
           userConfig.enableParallelProcessing ??
-          defaultConfig.enableParallelProcessing,
+          defaultConfig.enableParallelProcessing ?? true,
         concurrencyLimit:
-          userConfig.concurrencyLimit || defaultConfig.concurrencyLimit,
+          userConfig.concurrencyLimit || defaultConfig.concurrencyLimit || 3,
         enableContentExtraction:
           userConfig.enableContentExtraction ??
-          defaultConfig.enableContentExtraction,
-        enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching,
-        cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl,
-      };
+          defaultConfig.enableContentExtraction ?? true,
+        enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+        cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 300,
+      } as UrlPullAgentConfig;
 
     case AgentType.LOCAL_KNOWLEDGE:
       return {
@@ -205,13 +219,11 @@ function createAgentConfig(
             vectorDimension: 1536,
             similarityThreshold:
               userConfig.confidenceThreshold ||
-              defaultConfig.confidenceThreshold ||
-              0.7,
+              defaultConfig.confidenceThreshold || 0.7,
             maxResults: userConfig.maxResults || defaultConfig.maxResults || 10,
             enableHybridSearch:
               userConfig.enableHybridSearch ??
-              defaultConfig.enableHybridSearch ??
-              true,
+              defaultConfig.enableHybridSearch ?? true,
             keywordWeight: 0.3,
             semanticWeight: 0.7,
             enableReRanking: true,
@@ -229,7 +241,7 @@ function createAgentConfig(
           caching: {
             enableSearchCache:
               userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
-            cacheTTL: userConfig.cacheTtl || defaultConfig.cacheTtl || 300,
+            cacheTTL: userConfig.cacheTtl || defaultConfig.cacheTtl || 600,
             maxCacheSize: 1000,
             enableDocumentCache: true,
             enableVectorCache: true,
@@ -240,7 +252,14 @@ function createAgentConfig(
             sources: [],
           },
         },
-      };
+        maxResults: userConfig.maxResults || defaultConfig.maxResults || 10,
+        enableSemanticSearch: userConfig.enableSemanticSearch ?? defaultConfig.enableSemanticSearch ?? true,
+        enableKeywordSearch: userConfig.enableKeywordSearch ?? defaultConfig.enableKeywordSearch ?? true,
+        enableHybridSearch: userConfig.enableHybridSearch ?? defaultConfig.enableHybridSearch ?? true,
+        confidenceThreshold: userConfig.confidenceThreshold || defaultConfig.confidenceThreshold || 0.7,
+        enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+        cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 600,
+      } as LocalKnowledgeAgentConfig;
 
     case AgentType.CODE_INTERPRETER:
       return {
@@ -248,19 +267,26 @@ function createAgentConfig(
         codeInterpreterConfig: {
           foundryEndpoint: process.env.AZURE_AI_FOUNDRY_ENDPOINT || '',
           projectId: process.env.AZURE_AI_PROJECT_ID || '',
-          defaultTimeout: request.timeout || 30000,
-          maxMemoryMb: 512,
+          defaultTimeout: request.timeout || defaultConfig.timeout || 60000,
+          maxMemoryMb: defaultConfig.maxMemoryMb || 512,
           enableValidation: true,
           enableCaching:
             userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
           cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 3600,
         },
-      };
+        enableCodeExecution: userConfig.enableCodeExecution ?? defaultConfig.enableCodeExecution ?? true,
+        enablePythonSupport: userConfig.enablePythonSupport ?? defaultConfig.enablePythonSupport ?? true,
+        enableJavaScriptSupport: userConfig.enableJavaScriptSupport ?? defaultConfig.enableJavaScriptSupport ?? true,
+        enableDebugging: userConfig.enableDebugging ?? defaultConfig.enableDebugging ?? true,
+        maxMemoryMb: userConfig.maxMemoryMb || defaultConfig.maxMemoryMb || 512,
+        enableCaching: userConfig.enableCaching ?? defaultConfig.enableCaching ?? true,
+        cacheTtl: userConfig.cacheTtl || defaultConfig.cacheTtl || 3600,
+      } as CodeInterpreterAgentConfig;
 
     case AgentType.TRANSLATION:
       return {
         ...config,
-        skipStandardChatProcessing: true, // Translation agent returns direct output
+        skipStandardChatProcessing: defaultConfig.skipStandardChatProcessing ?? true,
         defaultSourceLanguage:
           userConfig.defaultSourceLanguage || defaultConfig.defaultSourceLanguage || '',
         defaultTargetLanguage:
@@ -273,30 +299,13 @@ function createAgentConfig(
         maxTextLength:
           userConfig.maxTextLength || defaultConfig.maxTextLength || 10000,
         temperature: userConfig.temperature || defaultConfig.temperature || 0.3,
-      };
+      } as TranslationAgentConfig;
 
     default:
       return config;
   }
 }
 
-/**
- * Get appropriate execution environment for agent type
- */
-function getAgentEnvironment(agentType: AgentType): AgentExecutionEnvironment {
-  switch (agentType) {
-    case AgentType.CODE_INTERPRETER:
-      return AgentExecutionEnvironment.CODE;
-    case AgentType.LOCAL_KNOWLEDGE:
-      return AgentExecutionEnvironment.LOCAL;
-    case AgentType.THIRD_PARTY:
-      return AgentExecutionEnvironment.THIRD_PARTY;
-    case AgentType.TRANSLATION:
-      return AgentExecutionEnvironment.FOUNDRY;
-    default:
-      return AgentExecutionEnvironment.FOUNDRY;
-  }
-}
 
 /**
  * POST /api/v2/agent/execute
@@ -504,24 +513,27 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
  */
 export async function GET(): Promise<NextResponse> {
   try {
-    const supportedAgents =
-      Object.values(AgentType).filter(isSupportedAgentType);
+    const supportedAgents = getSupportedAgentTypes().filter(isSupportedAgentType);
+    const apiDefaults = getAgentAPIDefaults();
+    const environments = getAgentEnvironments();
 
     return NextResponse.json({
       success: true,
       data: {
         supportedAgentTypes: supportedAgents,
-        defaultConfigs: DEFAULT_AGENT_CONFIGS,
-        environments: Object.values(AgentExecutionEnvironment),
+        defaultConfigs: apiDefaults,
+        environments: environments,
+        availableEnvironments: Object.values(AgentExecutionEnvironment),
       },
     });
   } catch (error) {
+    console.error('[AgentAPI] Failed to get agent configuration from centralized system:', error);
     return NextResponse.json(
       {
         success: false,
         error: {
           code: 'CONFIG_ERROR',
-          message: 'Failed to get agent configuration',
+          message: 'Failed to get agent configuration from centralized system',
           details: error,
         },
       },
