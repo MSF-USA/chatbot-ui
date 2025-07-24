@@ -1,6 +1,9 @@
 import { AgentType } from '@/types/agent';
 import { Settings } from '@/types/settings';
 
+// Import centralized agent configuration
+import { getAgentCommandConfigs, getAgentsWithCommands } from '@/config/agents';
+
 /**
  * Command types supported by the chat input system
  */
@@ -93,6 +96,7 @@ export interface CommandDefinition {
   description: string;
   usage: string;
   examples: string[];
+  hidden?: boolean;
   validation?: (args: string[], context?: any) => CommandValidationResult;
   execute: (args: string[], context?: any) => CommandExecutionResult;
 }
@@ -117,116 +121,146 @@ export class CommandParser {
 
   /**
    * Initialize all supported commands
+   * Agent commands are now auto-generated from centralized configuration
    */
   private initializeCommands(): void {
-    // Agent Commands
-    this.registerCommand({
-      command: 'search',
-      type: CommandType.AGENT,
-      description: 'Force web search agent for the current message',
-      usage: '/search <query>',
-      examples: ['/search latest AI developments', '/search weather today'],
-      execute: (args: string[]) => ({
-        success: true,
-        agentType: AgentType.WEB_SEARCH,
-        message: 'Switched to web search agent',
-      }),
-    });
+    // Auto-generate agent commands from centralized configuration
+    this.initializeAgentCommands();
 
-    // this.registerCommand({
-    //   command: 'code',
-    //   type: CommandType.AGENT,
-    //   description: 'Force code interpreter agent for the current message',
-    //   usage: '/code <query>',
-    //   examples: ['/code analyze this function', '/code write a Python script'],
-    //   execute: (args: string[]) => ({
-    //     success: true,
-    //     agentType: AgentType.CODE_INTERPRETER,
-    //     message: 'Switched to code interpreter agent',
-    //   }),
-    // });
+    // Manually initialize settings and utility commands (these remain static)
+    this.initializeStaticCommands();
+  }
 
-    this.registerCommand({
-      command: 'url',
-      type: CommandType.AGENT,
-      description: 'Force URL pull agent for the current message',
-      usage: '/url <query>',
-      examples: [
-        '/url summarize https://example.com',
-        '/url extract content from this page',
-      ],
-      execute: (args: string[]) => ({
-        success: true,
-        agentType: AgentType.URL_PULL,
-        message: 'Switched to URL pull agent',
-      }),
-    });
+  /**
+   * Auto-generate agent commands from centralized configuration
+   * This replaces manual command registrations with automatic processing
+   */
+  private initializeAgentCommands(): void {
+    try {
+      // Get agents that have commands defined
+      const agentsWithCommands = getAgentsWithCommands();
+      let registeredCount = 0;
 
-    this.registerCommand({
-      command: 'knowledge',
-      type: CommandType.AGENT,
-      description: 'Force local knowledge agent for the current message',
-      usage: '/knowledge <query>',
-      examples: [
-        '/knowledge find documents about',
-        '/knowledge search internal docs',
-      ],
-      execute: (args: string[]) => ({
-        success: true,
-        agentType: AgentType.LOCAL_KNOWLEDGE,
-        message: 'Switched to local knowledge agent',
-      }),
-    });
+      for (const agentDef of agentsWithCommands) {
+        if (!agentDef.commands) continue;
 
-    this.registerCommand({
-      command: 'standard',
-      type: CommandType.AGENT,
-      description: 'Force standard chat (no agents) for the current message',
-      usage: '/standard <query>',
-      examples: [
-        '/standard just chat normally',
-        '/standard basic conversation',
-      ],
-      execute: (args: string[]) => ({
-        success: true,
-        agentType: AgentType.STANDARD_CHAT,
-        message: 'Using standard chat mode',
-      }),
-    });
+        const commands = agentDef.commands;
+        
+        // Register primary command
+        this.registerCommand({
+          command: commands.primary,
+          type: CommandType.AGENT,
+          description: agentDef.metadata.description,
+          usage: commands.usage,
+          examples: commands.examples,
+          hidden: commands.hidden || false,
+          execute: (args: string[]) => ({
+            success: true,
+            agentType: agentDef.metadata.type,
+            message: `Switched to ${agentDef.metadata.name.toLowerCase()}`,
+          }),
+        });
+        registeredCount++;
 
-    this.registerCommand({
-      command: 'noAgents',
-      type: CommandType.AGENT,
-      description: 'Disable all agents for the current message',
-      usage: '/noAgents <query>',
-      examples: [
-        '/noAgents simple question',
-        '/noAgents basic response needed',
-      ],
-      execute: (args: string[]) => ({
-        success: true,
-        agentType: AgentType.STANDARD_CHAT,
-        message: 'Agents disabled for this message',
-      }),
-    });
+        // Register alias commands
+        if (commands.aliases) {
+          for (const alias of commands.aliases) {
+            this.registerCommand({
+              command: alias,
+              type: CommandType.AGENT,
+              description: `Alias for ${commands.primary} - ${agentDef.metadata.description}`,
+              usage: commands.usage.replace(`/${commands.primary}`, `/${alias}`),
+              examples: commands.examples.map(ex => 
+                ex.replace(`/${commands.primary}`, `/${alias}`)
+              ),
+              hidden: commands.hidden || false,
+              execute: (args: string[]) => ({
+                success: true,
+                agentType: agentDef.metadata.type,
+                message: `Switched to ${agentDef.metadata.name.toLowerCase()} (via ${alias})`,
+              }),
+            });
+            registeredCount++;
+          }
+        }
+      }
 
-    this.registerCommand({
-      command: 'translate',
-      type: CommandType.AGENT,
-      description: 'Force translation agent for the current message',
-      usage: '/translate [from_language] [to_language] <text>',
-      examples: [
-        '/translate en es Hello world',
-        '/translate es Hello world',
-        '/translate Hola mundo',
-      ],
-      execute: (args: string[]) => ({
-        success: true,
-        agentType: AgentType.TRANSLATION,
-        message: 'Switched to translation agent',
-      }),
-    });
+      // Add special utility agent commands that aren't in the main registry
+      this.registerCommand({
+        command: 'standard',
+        type: CommandType.AGENT,
+        description: 'Force standard chat (no agents) for the current message',
+        usage: '/standard <query>',
+        examples: [
+          '/standard just chat normally',
+          '/standard basic conversation',
+        ],
+        execute: (args: string[]) => ({
+          success: true,
+          agentType: AgentType.STANDARD_CHAT,
+          message: 'Using standard chat mode',
+        }),
+      });
 
+      this.registerCommand({
+        command: 'noAgents',
+        type: CommandType.AGENT,
+        description: 'Disable all agents for the current message',
+        usage: '/noAgents <query>',
+        examples: [
+          '/noAgents simple question',
+          '/noAgents basic response needed',
+        ],
+        execute: (args: string[]) => ({
+          success: true,
+          agentType: AgentType.STANDARD_CHAT,
+          message: 'Agents disabled for this message',
+        }),
+      });
+
+      console.log(`[CommandParser] Auto-generated ${registeredCount} agent commands from centralized configuration`);
+    } catch (error) {
+      console.error('[CommandParser] Failed to initialize agent commands from centralized configuration:', error);
+      // Fallback to manual registration to prevent complete failure
+      this.initializeFallbackAgentCommands();
+    }
+  }
+
+  /**
+   * Fallback agent command registration in case centralized config fails
+   */
+  private initializeFallbackAgentCommands(): void {
+    console.warn('[CommandParser] Using fallback agent command registration');
+    
+    // Basic fallback commands for critical agents
+    const fallbackCommands = [
+      { command: 'search', agentType: AgentType.WEB_SEARCH, name: 'web search agent' },
+      { command: 'translate', agentType: AgentType.TRANSLATION, name: 'translation agent' },
+      { command: 'url', agentType: AgentType.URL_PULL, name: 'URL pull agent' },
+      { command: 'knowledge', agentType: AgentType.LOCAL_KNOWLEDGE, name: 'local knowledge agent' },
+      { command: 'code', agentType: AgentType.CODE_INTERPRETER, name: 'code interpreter agent' },
+    ];
+
+    for (const cmd of fallbackCommands) {
+      this.registerCommand({
+        command: cmd.command,
+        type: CommandType.AGENT,
+        description: `Force ${cmd.name} for the current message`,
+        usage: `/${cmd.command} <query>`,
+        examples: [`/${cmd.command} example query`],
+        execute: (args: string[]) => ({
+          success: true,
+          agentType: cmd.agentType,
+          message: `Switched to ${cmd.name}`,
+        }),
+      });
+    }
+  }
+
+  /**
+   * Initialize static (non-agent) commands
+   */
+  private initializeStaticCommands(): void {
     // Settings Commands
     this.registerCommand({
       command: 'temperature',
