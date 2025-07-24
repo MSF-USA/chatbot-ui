@@ -452,6 +452,13 @@ export class ParameterExtractionEngine {
       },
       [AgentType.STANDARD_CHAT]: {},
       [AgentType.FOUNDRY]: {},
+      [AgentType.TRANSLATION]: {
+        sourceLanguage: '',
+        targetLanguage: query?.includes(' to ') ? query.split(' to ')[1]?.split(' ')[0] || '' : '',
+        text: query || '',
+        enableLanguageDetection: true,
+        enableCaching: true,
+      },
     };
 
     return defaults[agentType] || {};
