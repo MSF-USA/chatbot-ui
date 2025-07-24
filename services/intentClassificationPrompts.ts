@@ -1502,6 +1502,40 @@ export const CONFIDENCE_GUIDELINES = {
       'Insufficient information',
     ],
   },
+  [AgentType.TRANSLATION]: {
+    keywords: [
+      'translate',
+      'translation',
+      'language',
+      'convert',
+      'interpret',
+      'translate to',
+      'from english',
+      'to spanish',
+      'in french',
+      'mean in',
+      'say in',
+      'how do you say',
+      'what does',
+      'meaning',
+    ],
+    patterns: [
+      /translate\s+.+\s+to\s+\w+/i,
+      /translate\s+from\s+\w+\s+to\s+\w+/i,
+      /how\s+do\s+you\s+say\s+.+\s+in\s+\w+/i,
+      /what\s+does\s+.+\s+mean\s+in\s+\w+/i,
+      /convert\s+.+\s+to\s+\w+/i,
+      /interpret\s+.+\s+from\s+\w+/i,
+    ],
+    examples: [
+      'translate hello to spanish',
+      'translate from english to french: hello world',
+      'what does hola mean in english',
+      'how do you say goodbye in german',
+      'convert this text to mandarin',
+      'interpret this from japanese',
+    ],
+  },
 };
 
 /**
@@ -1547,7 +1581,7 @@ export function buildContextualPrompt(
  */
 export function getAgentGuidance(agentType: AgentType) {
   return (
-    AGENT_SPECIFIC_GUIDANCE[agentType] || {
+    (AGENT_SPECIFIC_GUIDANCE as any)[agentType] || {
       keywords: [],
       patterns: [],
       examples: [],
