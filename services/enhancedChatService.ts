@@ -23,6 +23,7 @@ import {
 import { generateOptimizedWebSearchQuery } from '@/utils/server/structuredResponses';
 
 import {
+  AgentConfig,
   AgentExecutionContext,
   AgentExecutionEnvironment,
   AgentExecutionRequest,
@@ -674,6 +675,7 @@ export class EnhancedChatService {
           chatRequest,
           providedSession,
           providedToken,
+          executionResult.agentInstance?.config,
         );
       }
     } catch (error) {
@@ -779,6 +781,7 @@ export class EnhancedChatService {
           chatRequest,
           providedSession,
           providedToken,
+          (agent as BaseAgent).config,
         );
       }
     } finally {
@@ -860,9 +863,48 @@ export class EnhancedChatService {
     chatRequest: EnhancedChatRequest,
     providedSession?: Session | null,
     providedToken?: JWT | null,
+    agentConfig?: AgentConfig,
   ): Promise<Response> {
     if (!result.success) {
       throw new Error('Agent execution failed');
+    }
+
+    // Check if agent is configured to skip standard chat processing
+    if (agentConfig?.skipStandardChatProcessing) {
+      console.log(
+        `[INFO] Agent ${result.agentType} configured to skip standard chat processing, returning direct response`,
+        {
+          agentId: result.agentId,
+          contentLength: result.content?.length || 0,
+        },
+      );
+      
+      const response = {
+        success: true,
+        data: {
+          text: result.content,
+          sources: result.metadata?.agentMetadata?.sources || [],
+          processingTime: result.metadata?.processingTime || 0,
+          usedFallback: false,
+          skipStandardChatProcessing: true,
+        },
+        metadata: {
+          version: '2.0',
+          timestamp: new Date().toISOString(),
+          requestId: `req_${Date.now()}_${Math.random()
+            .toString(36)
+            .substr(2, 9)}`,
+          agentType: routingDecision.agentType,
+          confidence: routingDecision.confidence,
+          agentId: result.agentId,
+          flagsUsed: routingDecision.flags,
+          directResponse: true,
+        },
+      };
+
+      return new Response(JSON.stringify(response), {
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
 
     // Check if we have structured content that needs to be processed

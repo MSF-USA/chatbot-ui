@@ -174,6 +174,68 @@ export class AgenticFrontendService {
             );
           }
 
+          // Check if agent is configured to skip standard chat processing
+          if (agentResult.data.metadata?.skipStandardChatProcessing) {
+            this.log(
+              `✅ Agent ${forcedAgentType} configured to skip standard chat processing, returning direct response`,
+              {
+                agentId: agentResult.data.agentId,
+                contentLength: agentResult.data.content?.length || 0,
+              },
+            );
+
+            // Clear status messages
+            setRequestStatusMessage(null);
+            if (setRequestStatusSecondLine) {
+              setRequestStatusSecondLine(null);
+            }
+
+            // Create a Response object with the agent content
+            const responseData = {
+              success: true,
+              data: {
+                text: agentResult.data.content,
+                sources: agentResult.data.metadata?.agentMetadata?.sources || [],
+                processingTime: agentResult.data.metadata?.processingTime || 0,
+                usedFallback: false,
+                skipStandardChatProcessing: true,
+              },
+              metadata: {
+                version: '2.0',
+                timestamp: new Date().toISOString(),
+                requestId: `req_${Date.now()}_${Math.random()
+                  .toString(36)
+                  .substr(2, 9)}`,
+                agentType: forcedAgentType,
+                confidence: 1.0,
+                agentId: agentResult.data.agentId,
+                directResponse: true,
+              },
+            };
+
+            const response = new Response(JSON.stringify(responseData), {
+              headers: { 'Content-Type': 'application/json' },
+            });
+            
+            // Return AgenticChatResult with proper structure
+            return {
+              controller: new AbortController(),
+              body: JSON.stringify(responseData),
+              response,
+              hasComplexContent: false,
+              usedAgent: true,
+              agentType: forcedAgentType,
+              agentConfidence: 1.0,
+              intent: 'forced_command', 
+              fellBackToStandardChat: false,
+              processingMetadata: {
+                intentAnalysisTime: 0,
+                agentExecutionTime,
+                totalProcessingTime: Date.now() - startTime,
+              },
+            };
+          }
+
           // Process agent result through standard chat for final response
           setRequestStatusMessage('Generating final response...');
           if (setRequestStatusSecondLine && agentResult.data) {
@@ -455,6 +517,68 @@ export class AgenticFrontendService {
             stopConversationRef,
             { usedAgent: false, fellBackToStandardChat: true, startTime },
           );
+        }
+
+        // Check if agent is configured to skip standard chat processing
+        if (agentResult.data.metadata?.skipStandardChatProcessing) {
+          this.log(
+            `✅ Agent ${agentType} configured to skip standard chat processing, returning direct response`,
+            {
+              agentId: agentResult.data.agentId,
+              contentLength: agentResult.data.content?.length || 0,
+            },
+          );
+
+          // Clear status messages
+          setRequestStatusMessage(null);
+          if (setRequestStatusSecondLine) {
+            setRequestStatusSecondLine(null);
+          }
+
+          // Create a Response object with the agent content
+          const responseData = {
+            success: true,
+            data: {
+              text: agentResult.data.content,
+              sources: agentResult.data.metadata?.agentMetadata?.sources || [],
+              processingTime: agentResult.data.metadata?.processingTime || 0,
+              usedFallback: false,
+              skipStandardChatProcessing: true,
+            },
+            metadata: {
+              version: '2.0',
+              timestamp: new Date().toISOString(),
+              requestId: `req_${Date.now()}_${Math.random()
+                .toString(36)
+                .substr(2, 9)}`,
+              agentType,
+              confidence: agentConfidence,
+              agentId: agentResult.data.agentId,
+              directResponse: true,
+            },
+          };
+
+          const response = new Response(JSON.stringify(responseData), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+          
+          // Return AgenticChatResult with proper structure
+          return {
+            controller: new AbortController(),
+            body: JSON.stringify(responseData),
+            response,
+            hasComplexContent: false,
+            usedAgent: true,
+            agentType,
+            agentConfidence,
+            intent,
+            fellBackToStandardChat: false,
+            processingMetadata: {
+              intentAnalysisTime,
+              agentExecutionTime,
+              totalProcessingTime: Date.now() - startTime,
+            },
+          };
         }
 
         // Step 5: Process agent result through standard chat for final response
