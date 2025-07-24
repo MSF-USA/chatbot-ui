@@ -151,6 +151,7 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({
       AgentType.WEB_SEARCH,
       AgentType.LOCAL_KNOWLEDGE,
       AgentType.URL_PULL,
+      AgentType.TRANSLATION,
     ],
     agentConfigurations: {
       [AgentType.WEB_SEARCH]: {
@@ -202,12 +203,20 @@ export const AgentFeaturesSection: React.FC<AgentFeaturesSectionProps> = ({
         maxRetries: 2,
         parameters: {},
       },
+      [AgentType.TRANSLATION]: {
+        enabled: true,
+        priority: 4,
+        timeout: 30000,
+        maxRetries: 2,
+        parameters: {},
+      },
     },
     preferences: {
       preferredAgents: [
         AgentType.WEB_SEARCH,
         AgentType.LOCAL_KNOWLEDGE,
         AgentType.URL_PULL,
+        AgentType.TRANSLATION,
       ],
       disabledAgents: [],
       autoRouting: true,
