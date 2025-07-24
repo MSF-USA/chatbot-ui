@@ -1,83 +1,136 @@
 # Agent Development Guide
 
-This guide explains how to add new agents to the chatbot system and create corresponding slash commands.
-
-## Overview
-
-The agent system consists of several key components:
-- **Agent Classes**: Implement the business logic for each agent type
-- **Agent Factory**: Registers and creates agent instances
-- **Command Parser**: Handles slash commands that trigger specific agents
-- **Type Definitions**: TypeScript interfaces for type safety
-- **API Integration**: REST endpoints for agent execution
+This guide explains how to add new agents to the chatbot system using the **centralized agent configuration system**. The process has been dramatically simplified from the previous 25+ file modification requirement to just **2 simple steps**.
 
 ## Adding a New Agent
 
-### Step 1: Define Agent Types
+### Overview of the System
 
-Add your new agent type to the `AgentType` enum in `/types/agent.ts`:
+The agent system now uses a **centralized configuration approach** with a single source of truth:
+
+- **Centralized Registry**: All agent configurations in `/config/agents/registry.ts`
+- **Automatic Processing**: Configurations automatically distributed throughout the application
+- **Type Safety**: Comprehensive TypeScript schemas for all configuration options
+- **Zero Duplication**: No more scattered configuration files to maintain
+
+---
+
+## Step 1: Add Agent Definition to Centralized Registry
+
+Add your agent definition to `/config/agents/registry.ts` in the `AGENT_DEFINITIONS` object:
 
 ```typescript
-export enum AgentType {
-  // ... existing types
-  YOUR_AGENT = 'your_agent',
-}
+[AgentType.YOUR_AGENT]: {
+  metadata: {
+    type: AgentType.YOUR_AGENT,
+    name: 'Your Agent Name',
+    description: 'Brief description of what your agent does',
+    version: '1.0.0',
+    enabled: true,
+  },
+  commands: {
+    primary: 'youragent',
+    aliases: ['ya', 'your'],
+    usage: '/youragent <parameters>',
+    examples: [
+      '/youragent process this data',
+      '/ya analyze content',
+      '/your help me with task'
+    ],
+  },
+  execution: {
+    environment: AgentExecutionEnvironment.FOUNDRY, // or FOUNDRY, CODE, LOCAL, THIRD_PARTY
+    timeout: 30000,
+    skipStandardChatProcessing: false, // true for direct responses
+    supportedModels: ['gpt-4o', 'gpt-4o-mini'],
+    capabilities: [
+      'data-processing',
+      'content-analysis',
+      'custom-capability',
+    ],
+    temperature: 0.7,
+  },
+  ui: {
+    color: '#6366F1', // Tailwind color or hex
+    icon: 'cog', // Icon identifier
+    displayOrder: 6,
+    showInSelector: true,
+  },
+  api: {
+    defaultConfig: {
+      maxResults: 10,
+      enableFeature: true,
+      timeout: 30000,
+      customSetting: 'default-value',
+    },
+    caching: {
+      enabled: true,
+      ttl: 300, // 5 minutes
+      keyPrefix: 'your_agent_',
+    },
+  },
+  error: {
+    maxRetries: 2,
+    retryDelay: 1000,
+    fallbackAgent: AgentType.STANDARD_CHAT,
+    strategies: {
+      timeout: 'retry',
+      validation: 'fail',
+      network: 'retry',
+    },
+  },
+  features: {
+    intentAnalysis: {
+      keywords: ['process', 'analyze', 'help'],
+      confidenceThreshold: 0.7,
+    },
+    parameterExtraction: {
+      patterns: {
+        dataType: /type:(\w+)/i,
+      },
+      defaults: {
+        format: 'json',
+      },
+    },
+  },
+  implementation: {
+    agentClass: '@/services/agents/yourAgent',
+    serviceClass: '@/services/yourAgentService', // optional
+  },
+},
 ```
 
-### Step 2: Create Agent Configuration Interface
+## Step 2: Create Agent Implementation Class
 
-Define a configuration interface for your agent in `/types/agent.ts`:
-
-```typescript
-export interface YourAgentConfig extends AgentConfig {
-  // Agent-specific configuration options
-  customSetting?: string;
-  enableFeature?: boolean;
-  maxResults?: number;
-  timeout?: number;
-}
-```
-
-### Step 3: Create Service Class (Optional)
-
-If your agent needs complex business logic, create a service class in `/services/`:
+Create your agent class in `/services/agents/yourAgent.ts`:
 
 ```typescript
-// /services/yourAgentService.ts
-export class YourAgentService {
-  public async processRequest(params: YourParams): Promise<YourResponse> {
-    // Implementation here
-  }
-}
-```
-
-### Step 4: Implement Agent Class
-
-Create your agent class in `/services/agents/`:
-
-```typescript
-// /services/agents/yourAgent.ts
 import { BaseAgent } from './baseAgent';
-import { YourAgentConfig } from '@/types/agent';
-import { YourAgentService } from '@/services/yourAgentService';
+import { AgentConfig, AgentExecutionContext, AgentResponse } from '@/types/agent';
+import { YourAgentService } from '@/services/yourAgentService'; // if using separate service
 
-export class YourAgent extends BaseAgent<YourAgentConfig> {
-  private service: YourAgentService;
+export class YourAgent extends BaseAgent<AgentConfig> {
+  private service?: YourAgentService;
 
-  constructor(config: YourAgentConfig) {
+  constructor(config: AgentConfig) {
     super(config);
+    // Initialize service if needed
     this.service = new YourAgentService();
   }
 
   async execute(context: AgentExecutionContext): Promise<AgentResponse> {
+    const startTime = Date.now();
+    
     try {
       // Parse parameters from the query
       const params = this.parseParameters(context.query);
       
-      // Process the request
-      const result = await this.service.processRequest(params);
+      // Process the request (either directly or via service)
+      const result = this.service 
+        ? await this.service.processRequest(params)
+        : await this.directProcess(params);
       
-      // Format response
+      // Return formatted response
       return {
         content: result.content,
         agentType: this.config.type,
@@ -86,192 +139,337 @@ export class YourAgent extends BaseAgent<YourAgentConfig> {
         metadata: {
           confidence: result.confidence || 0.8,
           processingTime: Date.now() - startTime,
+          parameters: params,
         },
       };
     } catch (error) {
-      throw new Error(`Agent execution failed: ${error.message}`);
+      this.logError('Agent execution failed', error as Error);
+      throw new Error(`${this.config.type} agent execution failed: ${(error as Error).message}`);
     }
   }
 
-  private parseParameters(query: string): YourParams {
-    // Parse query-specific parameters
+  private parseParameters(query: string): any {
+    // Extract parameters from query
+    // This will automatically use centralized parameter extraction rules
+    // if defined in the agent configuration
     return {
-      // extracted parameters
+      rawQuery: query,
+      // ... parsed parameters
+    };
+  }
+
+  private async directProcess(params: any): Promise<any> {
+    // Direct processing logic if not using separate service
+    return {
+      content: `Processed: ${params.rawQuery}`,
+      confidence: 0.9,
+    };
+  }
+}
+
+// Export for dynamic loading
+export default YourAgent;
+```
+
+## Step 3: Create Service Class (Optional)
+
+If your agent needs complex business logic, create a separate service class:
+
+```typescript
+// /services/yourAgentService.ts
+export class YourAgentService {
+  constructor() {
+    // Initialize any required clients, configurations, etc.
+  }
+
+  async processRequest(params: any): Promise<any> {
+    // Complex business logic
+    // API calls, data processing, etc.
+    
+    return {
+      content: 'Processed result',
+      structuredContent: {
+        data: [],
+        metadata: {},
+      },
+      confidence: 0.9,
     };
   }
 }
 ```
 
-### Step 5: Register Agent in Factory
+---
 
-Add your agent to the `AgentFactory` in `/services/agentFactory.ts`:
+At this point, your agent is now fully integrated and automatically available throughout the application:
 
-```typescript
-// In initializeDefaultAgents() method
-this.registerAgent(
-  AgentType.YOUR_AGENT,
-  async (config: AgentConfig) => new YourAgent(config as YourAgentConfig),
-  [
-    'capability-1',
-    'capability-2',
-    // List of capabilities
-  ],
-  [
-    'gpt-4',
-    'gpt-4o',
-    'gpt-4o-mini',
-    // Supported models
-  ]
-);
-```
+- **Command Parser**: Slash commands should be automatically registered
+- **Agent Factory**: Factory registration automatic
+- **API Routes**: Endpoint configuration automatic
+- **UI Integration**: Colors, icons, settings automatic
+- **Error Handling**: Retry logic and fallbacks automatic
 
-### Step 6: Add Command to Parser
+---
 
-Register a slash command in `/services/commandParser.ts`:
+## Configuration Schema Reference
+
+### Agent Definition Structure
 
 ```typescript
-// In initializeCommands() method
-this.registerCommand({
-  command: 'youragent',
-  type: CommandType.AGENT,
-  description: 'Description of what your agent does',
-  usage: '/youragent <parameters>',
-  examples: [
-    '/youragent example usage',
-    '/youragent another example',
-  ],
-  execute: (args: string[]) => ({
-    success: true,
-    agentType: AgentType.YOUR_AGENT,
-    message: 'Switched to your agent',
-  }),
-});
-```
-
-### Step 7: Update Configuration Files
-
-Add your agent to various configuration files:
-
-#### Default Settings (`/utils/app/settings.ts`)
-```typescript
-// Add to UI themes customColors
-[AgentType.YOUR_AGENT]: '#your-color',
-```
-
-#### API Configuration (`/types/agentApi.ts`)
-```typescript
-// Add to SUPPORTED_AGENT_TYPES
-export const SUPPORTED_AGENT_TYPES: AgentType[] = [
-  // ... existing types
-  AgentType.YOUR_AGENT,
-];
-
-// Add to DEFAULT_AGENT_CONFIGS
-export const DEFAULT_AGENT_CONFIGS: Record<string, Record<string, any>> = {
-  // ... existing configs
-  [AgentType.YOUR_AGENT]: {
-    customSetting: 'default-value',
-    enableFeature: true,
-    maxResults: 10,
-    timeout: 30000,
-  },
-};
-```
-
-#### API Route Handler (`/app/api/v2/agent/execute/route.ts`)
-```typescript
-// Add import for your config type
-import { YourAgentConfig } from '@/types/agent';
-
-// Add to createAgentConfig return type union
-function createAgentConfig(): 
-  | AgentConfig
-  | YourAgentConfig  // Add this line
-  | ... // other types
-
-// Add case in createAgentConfig switch statement
-case AgentType.YOUR_AGENT:
-  return {
-    ...config,
-    customSetting: userConfig.customSetting || defaultConfig.customSetting,
-    enableFeature: userConfig.enableFeature ?? defaultConfig.enableFeature,
-    // ... other config properties
-  };
-
-// Add case in getAgentEnvironment if needed
-case AgentType.YOUR_AGENT:
-  return AgentExecutionEnvironment.FOUNDRY; // or appropriate environment
-```
-
-### Step 8: Add Parameter Extraction (Optional)
-
-If your agent needs complex parameter extraction, add it to `/services/parameterExtraction.ts`:
-
-```typescript
-// Add to DEFAULT_PARAMETER_CONFIG
-[AgentType.YOUR_AGENT]: {
-  keywords: ['keyword1', 'keyword2'],
-  patterns: [/regex-pattern/g],
-  // ... other extraction rules
-},
-
-// Add case in extractRuleBasedParameters
-case AgentType.YOUR_AGENT:
-  return this.extractYourAgentParams(query, context);
-
-// Add case in getDefaultParameters
-[AgentType.YOUR_AGENT]: {
-  param1: 'default-value',
-  param2: true,
-},
-```
-
-### Step 9: Update Error Handling
-
-Add your agent to error handling configurations:
-
-#### Agent Error Handling (`/services/agentErrorHandling.ts`)
-```typescript
-export const AGENT_ERROR_STRATEGIES: Record<AgentType, ErrorStrategy> = {
-  // ... existing strategies
-  [AgentType.YOUR_AGENT]: {
-    maxRetries: 2,
-    retryDelay: 1000,
-    fallbackAgent: AgentType.STANDARD_CHAT,
-    errorCategories: {
-      timeout: 'retry',
-      validation: 'fail',
-      network: 'retry',
-    },
-  },
-};
-```
-
-#### Alternative Agents (`/services/agentErrorHandlingService.ts`)
-```typescript
-private getAlternativeAgent(failedAgent: AgentType): AgentType | null {
-  const alternatives: Record<AgentType, AgentType[]> = {
-    // ... existing alternatives
-    [AgentType.YOUR_AGENT]: [AgentType.STANDARD_CHAT],
-  };
-  // ...
+interface AgentDefinition {
+  metadata: AgentMetadata;        // Required: Basic agent info
+  commands?: AgentCommandConfig;  // Optional: Slash command setup
+  execution: AgentExecutionConfig; // Required: Runtime settings
+  ui?: AgentUIConfig;            // Optional: UI appearance
+  api: AgentAPIConfig;           // Required: API and defaults
+  error?: AgentErrorConfig;      // Optional: Error handling
+  features?: AgentFeatureConfig; // Optional: Advanced features
+  implementation: AgentImplementationConfig; // Required: Class paths
 }
 ```
 
-### Step 10: Add UI Components (Optional)
+### Metadata Configuration
 
-If your agent needs special UI components, add them to the appropriate locations:
-
-#### Agent Features Section (`/components/Settings/AgentFeaturesSection.tsx`)
 ```typescript
-// Add case in renderAgentSpecificSettings
-case AgentType.YOUR_AGENT:
-  return (
-    <div>
-      {/* Your agent-specific settings UI */}
-    </div>
-  );
+metadata: {
+  type: AgentType.YOUR_AGENT,     // Required: Unique agent identifier
+  name: 'Display Name',           // Required: Human-readable name
+  description: 'What it does',    // Required: Brief description
+  version: '1.0.0',              // Optional: Version string
+  enabled: true,                  // Required: Whether agent is active
+  developmentOnly: false,         // Optional: Dev environment only
+}
 ```
+
+### Commands Configuration
+
+```typescript
+commands: {
+  primary: 'youragent',          // Required: Main command name
+  aliases: ['ya', 'your'],       // Optional: Alternative commands
+  usage: '/youragent <params>',  // Required: Usage description
+  examples: [                    // Required: Example usage
+    '/youragent example one',
+    '/ya short example',
+  ],
+  hidden: false,                 // Optional: Hide from help
+}
+```
+
+### Execution Configuration
+
+```typescript
+execution: {
+  environment: AgentExecutionEnvironment.FOUNDRY, // Required: Runtime env
+  timeout: 30000,                          // Optional: Max execution time
+  skipStandardChatProcessing: false,       // Optional: Direct response mode
+  supportedModels: ['gpt-4o', 'gpt-4o-mini'], // Optional: Compatible models
+  capabilities: ['cap1', 'cap2'],          // Required: Agent capabilities
+  maxConcurrency: 5,                       // Optional: Concurrent limit
+  temperature: 0.7,                        // Optional: AI temperature
+}
+```
+
+### UI Configuration
+
+```typescript
+ui: {
+  color: '#6366F1',              // Optional: Primary color
+  icon: 'cog',                   // Optional: Icon identifier
+  displayOrder: 6,               // Optional: Sort order
+  showInSelector: true,          // Optional: Show in UI selectors
+  cssClasses: ['custom-class'],  // Optional: Custom CSS classes
+}
+```
+
+### API Configuration
+
+```typescript
+api: {
+  defaultConfig: {               // Required: Default settings
+    setting1: 'value1',
+    setting2: true,
+    timeout: 30000,
+  },
+  configSchema: {                // Optional: Validation schema
+    // JSON schema for validation
+  },
+  caching: {                     // Optional: Cache configuration
+    enabled: true,
+    ttl: 300,
+    keyPrefix: 'your_agent_',
+  },
+  rateLimit: {                   // Optional: Rate limiting
+    maxRequests: 100,
+    windowMs: 60000,
+  },
+}
+```
+
+### Error Configuration
+
+```typescript
+error: {
+  maxRetries: 2,                 // Optional: Retry attempts
+  retryDelay: 1000,             // Optional: Delay between retries
+  fallbackAgent: AgentType.STANDARD_CHAT, // Optional: Fallback agent
+  strategies: {                  // Optional: Error handling strategies
+    timeout: 'retry',
+    validation: 'fail',
+    network: 'retry',
+  },
+  errorMessages: {               // Optional: Custom error messages
+    timeout: 'Request timed out',
+    validation: 'Invalid input',
+  },
+}
+```
+
+### Features Configuration
+
+```typescript
+features: {
+  intentAnalysis: {              // Optional: Auto-detection rules
+    keywords: ['keyword1', 'keyword2'],
+    patterns: [/regex-pattern/gi],
+    confidenceThreshold: 0.7,
+  },
+  parameterExtraction: {         // Optional: Parameter parsing
+    patterns: {
+      paramName: /pattern/gi,
+    },
+    defaults: {
+      defaultParam: 'value',
+    },
+    validators: {
+      paramName: (value) => typeof value === 'string',
+    },
+  },
+}
+```
+
+### Implementation Configuration
+
+```typescript
+implementation: {
+  agentClass: '@/services/agents/yourAgent',    // Required: Agent class path
+  serviceClass: '@/services/yourAgentService',  // Optional: Service class path
+  dependencies: ['dep1', 'dep2'],               // Optional: External deps
+  lazyLoad: true,                               // Optional: Lazy loading
+}
+```
+
+---
+
+## Real Examples
+
+### Simple Agent (Direct Processing)
+
+```typescript
+[AgentType.ECHO]: {
+  metadata: {
+    type: AgentType.ECHO,
+    name: 'Echo Agent',
+    description: 'Repeats user input with formatting',
+    enabled: true,
+  },
+  commands: {
+    primary: 'echo',
+    usage: '/echo <text>',
+    examples: ['/echo Hello World!'],
+  },
+  execution: {
+    environment: AgentExecutionEnvironment.FOUNDRY,
+    capabilities: ['text-processing'],
+  },
+  api: {
+    defaultConfig: {
+      prefix: 'Echo: ',
+      uppercase: false,
+    },
+  },
+  implementation: {
+    agentClass: '@/services/agents/echoAgent',
+  },
+}
+```
+
+### Complex Agent (Service-Based)
+
+```typescript
+[AgentType.TRANSLATION]: {
+  metadata: {
+    type: AgentType.TRANSLATION,
+    name: 'Translation Agent',
+    description: 'Translate text between languages with automatic language detection',
+    enabled: true,
+  },
+  commands: {
+    primary: 'translate',
+    aliases: ['tr', 'trans'],
+    usage: '/translate [source_lang] <target_lang> <text>',
+    examples: [
+      '/translate es Hello world',
+      '/tr en zh 你好世界',
+    ],
+  },
+  execution: {
+    environment: AgentExecutionEnvironment.FOUNDRY,
+    timeout: 15000,
+    skipStandardChatProcessing: true, // Direct response
+    capabilities: [
+      'text-translation',
+      'language-detection',
+      'multi-language-support',
+    ],
+    temperature: 0.3,
+  },
+  ui: {
+    color: '#EA580C',
+    icon: 'translate',
+    displayOrder: 5,
+  },
+  api: {
+    defaultConfig: {
+      defaultTargetLanguage: 'en',
+      enableLanguageDetection: true,
+      maxTextLength: 10000,
+    },
+    caching: {
+      enabled: true,
+      ttl: 3600,
+      keyPrefix: 'translation_',
+    },
+  },
+  error: {
+    maxRetries: 2,
+    strategies: {
+      language_detection_failed: 'retry',
+      translation_failed: 'retry',
+      invalid_language: 'fail',
+    },
+  },
+  features: {
+    intentAnalysis: {
+      keywords: ['translate', 'translation', 'language'],
+      confidenceThreshold: 0.9,
+    },
+    parameterExtraction: {
+      patterns: {
+        languageCode: /^[a-zA-Z]{2,5}([_-][a-zA-Z]{2,5})?$/,
+      },
+      defaults: {
+        targetLanguage: 'en',
+      },
+    },
+  },
+  implementation: {
+    agentClass: '@/services/agents/translationAgent',
+    serviceClass: '@/services/translationService',
+  },
+}
+```
+
+---
 
 ## Testing Your Agent
 
@@ -286,13 +484,12 @@ npm run lint
 ```
 
 ### 3. Manual Testing
-- Start the development server: `npm run dev`
-- Use the `/youragent` command in chat
-- Verify the agent responds correctly
+- Start development server: `npm run dev`
+- Use your slash command in chat: `/youragent test query`
+- Verify agent responds correctly
 - Test error scenarios
 
 ### 4. API Testing
-Test the agent via API endpoint:
 ```bash
 curl -X POST /api/v2/agent/execute \
   -H "Content-Type: application/json" \
@@ -303,79 +500,75 @@ curl -X POST /api/v2/agent/execute \
   }'
 ```
 
+---
+
 ## Best Practices
 
-### Error Handling
-- Always wrap agent execution in try-catch blocks
-- Provide meaningful error messages
-- Implement proper fallback mechanisms
+### Configuration
+- **Use descriptive names**: Make agent purpose clear
+- **Provide good examples**: Include realistic command usage
+- **Set appropriate timeouts**: Consider operation complexity
+- **Enable caching**: For expensive operations
+- **Configure error handling**: Provide graceful degradation
+
+### Implementation
+- **Extend BaseAgent**: Use the provided base class
+- **Handle errors gracefully**: Wrap operations in try-catch
+- **Log important events**: Use built-in logging methods
+- **Validate inputs**: Check parameters before processing
+- **Return structured responses**: Include metadata and confidence
 
 ### Performance
-- Use caching for expensive operations
-- Implement timeout handling
-- Consider memory usage for large responses
+- **Use caching**: Enable for repeated operations
+- **Set reasonable timeouts**: Balance UX and reliability
+- **Consider memory usage**: For large data processing
+- **Implement proper cleanup**: Release resources appropriately
 
-### Type Safety
-- Define comprehensive TypeScript interfaces
-- Use strict typing throughout
-- Validate input parameters
-
-### Logging
-- Use the built-in logging service
-- Log important events and errors
-- Include context information in logs
-
-### Configuration
-- Provide sensible defaults
-- Make settings configurable
-- Document configuration options
-
-## Example: Translation Agent
-
-The translation agent implementation serves as a complete example:
-
-- **Service**: `/services/translationService.ts` - Azure OpenAI integration
-- **Agent**: `/services/agents/translationAgent.ts` - Parameter parsing and execution
-- **Command**: `/translate` with flexible parameter formats
-- **Types**: `TranslationAgentConfig` interface
-- **Integration**: Full API and UI integration
-
-Key features demonstrated:
-- Flexible parameter parsing (3 different command formats)
-- Language detection and validation
-- Caching support
-- Error handling with fallbacks
-- Structured response formatting
+---
 
 ## Troubleshooting
 
-### Common Issues
+### Agent Not Available
+- Check `enabled: true` in registry
+- Verify agent type is in enum
+- Ensure implementation class exists
+- Check for build errors
 
-1. **TypeScript errors**: Ensure all types are properly imported and configured
-2. **Agent not found**: Verify registration in `AgentFactory`
-3. **Command not working**: Check `CommandParser` registration
-4. **API validation fails**: Update `SUPPORTED_AGENT_TYPES` array
-5. **Build failures**: Check all configuration files are updated
+### Command Not Working
+- Verify command configuration in registry
+- Check for command name conflicts
+- Ensure examples are correct
+- Test command parsing
 
-### Debug Tips
+### API Errors
+- Check agent configuration schema
+- Verify supported models list
+- Test with default configuration
+- Check error handling setup
 
-- Enable verbose logging in development
-- Use browser developer tools to inspect API calls
-- Check the console for agent execution logs
-- Verify environment variables are set correctly
+### Build Failures
+- Run `npm run lint` and/or `npm run typecheck` for type errors
+- Check import paths are correct
+- Verify all required fields present
+- Validate configuration schema
+
+---
 
 ## Architecture Overview
 
 ```
-User Input → CommandParser → AgentFactory → YourAgent → YourService → Response
-     ↓              ↓              ↓           ↓           ↓
-/youragent → AgentType.YOUR_AGENT → config → execute() → API call → formatted response
+User Input → Centralized Registry → Auto-Generated Configs → Agent Execution
+     ↓               ↓                      ↓                    ↓
+/youragent → AgentDefinition → CommandParser/Factory/API → YourAgent.execute()
 ```
 
-The system follows a layered architecture with clear separation of concerns:
-- **Presentation Layer**: UI components and command parsing
-- **Business Layer**: Agent classes and service logic
-- **Data Layer**: API calls and data transformation
-- **Configuration Layer**: Type definitions and settings
+The centralized system automatically:
+- **Registers commands** in CommandParser
+- **Creates factory entries** in AgentFactory  
+- **Configures API endpoints** in route handlers
+- **Sets up UI elements** with colors and icons
+- **Handles errors** with retry logic and fallbacks
+- **Processes parameters** using extraction rules
+- **Manages caching** and rate limiting
 
-This guide should help you successfully add new agents to the system. For more specific examples, refer to the existing agent implementations in the codebase.
+This guide reflects the new simplified architecture. For questions or issues, refer to existing agent implementations in `/services/agents/` or the centralized configuration examples in `/config/agents/registry.ts`.
