@@ -30,7 +30,7 @@ import {
   Message,
   TextMessageContent,
 } from '@/types/chat';
-import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
+import { OpenAIModelID, OpenAIVisionModelID, OpenAIModels } from '@/types/openai';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
@@ -484,6 +484,14 @@ export default class ChatService {
     );
 
     let modelToUse = model.id;
+    
+    // Check if the model is legacy and migrate to gpt-4o
+    const modelConfig = Object.values(OpenAIModels).find(m => m.id === model.id);
+    if (modelConfig?.isLegacy) {
+      console.log(`Migrating legacy model ${model.id} to ${OpenAIModelID.GPT_4o}`);
+      modelToUse = OpenAIModelID.GPT_4o;
+    }
+    
     if (isValidModel && needsToHandleImages && !isImageModel) {
       modelToUse = 'gpt-4o';
     } else if (modelToUse == null || !isValidModel) {
