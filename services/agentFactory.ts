@@ -15,6 +15,9 @@ import {
 } from '@/types/agent';
 import { WebSearchConfig } from '@/types/webSearch';
 
+// Import centralized agent configuration
+import { getAgentConfigs, getAvailableAgents, getAgentByType } from '@/config/agents';
+
 import { BaseAgent } from './agents/baseAgent';
 import { CodeAgent } from './agents/codeAgent';
 import { CodeInterpreterAgent } from './agents/codeInterpreterAgent';
@@ -514,141 +517,117 @@ export class AgentFactory {
    * Private helper methods
    */
 
+  /**
+   * Initialize agents from centralized configuration
+   * This replaces manual agent registrations with automatic processing
+   * from the centralized agent registry.
+   */
   private initializeDefaultAgents(): void {
     try {
-      // Register FoundryAgent
-      this.registerAgent(
-        AgentType.FOUNDRY,
-        async (config: AgentConfig) => await FoundryAgent.create(config),
-        [
-          'text_generation',
-          'conversation',
-          'tool_calling',
-          'azure_integration',
-        ],
-        FoundryAgent.getSupportedModels(),
+      this.logInfo('Initializing agents from centralized configuration...');
+
+      const availableAgents = getAvailableAgents();
+      let registeredCount = 0;
+
+      for (const agentDef of availableAgents) {
+        try {
+          // Create factory function based on agent type
+          const factoryFunction = this.createAgentFactoryFunction(agentDef.metadata.type);
+          
+          if (factoryFunction) {
+            this.registerAgent(
+              agentDef.metadata.type,
+              factoryFunction,
+              agentDef.execution.capabilities,
+              agentDef.execution.supportedModels || [],
+              agentDef.api.configSchema,
+            );
+            registeredCount++;
+
+            this.logInfo(`Registered agent from centralized config`, {
+              agentType: agentDef.metadata.type,
+              name: agentDef.metadata.name,
+              capabilities: agentDef.execution.capabilities,
+            });
+          } else {
+            this.logWarning(`No factory function available for agent type: ${agentDef.metadata.type}`);
+          }
+        } catch (error) {
+          this.logError(
+            `Failed to register agent ${agentDef.metadata.type}`,
+            error as Error,
+            { agentType: agentDef.metadata.type }
+          );
+          // Continue with other agents instead of failing completely
+        }
+      }
+
+      this.logInfo('Centralized agent initialization completed', {
+        totalAvailable: availableAgents.length,
+        registered: registeredCount,
+        registeredTypes: Array.from(this.registrations.keys()),
+      });
+
+      if (registeredCount === 0) {
+        throw new AgentFactoryError(
+          'No agents were successfully registered',
+          'NO_AGENTS_REGISTERED',
+          { availableAgents: availableAgents.length }
+        );
+      }
+    } catch (error) {
+      this.logError('Failed to initialize agents from centralized configuration', error as Error);
+      throw new AgentFactoryError(
+        'Failed to initialize agents from centralized configuration',
+        'CENTRALIZED_AGENT_INITIALIZATION_FAILED',
+        { originalError: error },
       );
+    }
+  }
 
-      // // Register CodeAgent
-      // this.registerAgent(
-      //   AgentType.CODE_INTERPRETER,
-      //   async (config: AgentConfig) => await CodeAgent.create(config),
-      //   [
-      //     'code_execution',
-      //     'python_support',
-      //     'javascript_support',
-      //     'data_analysis',
-      //   ],
-      //   ['gpt-4', 'gpt-4o', 'gpt-35-turbo'], // Code agents work with most models
-      // );
+  /**
+   * Create factory function for a specific agent type
+   * This maps agent types to their concrete implementations
+   */
+  private createAgentFactoryFunction(
+    agentType: AgentType
+  ): ((config: AgentConfig) => Promise<BaseAgentInstance>) | null {
+    switch (agentType) {
+      case AgentType.FOUNDRY:
+        return async (config: AgentConfig) => await FoundryAgent.create(config);
 
-      // Register ThirdPartyAgent
-      this.registerAgent(
-        AgentType.THIRD_PARTY,
-        async (config: AgentConfig) => await ThirdPartyAgent.create(config),
-        ['api_integration', 'http_requests', 'rest_apis', 'authentication'],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo'], // Third-party agents work with most models
-      );
+      case AgentType.THIRD_PARTY:
+        return async (config: AgentConfig) => await ThirdPartyAgent.create(config);
 
-      // Register WebSearchAgent
-      this.registerAgent(
-        AgentType.WEB_SEARCH,
-        async (config: AgentConfig) => {
+      case AgentType.WEB_SEARCH:
+        return async (config: AgentConfig) => {
           this.logInfo('WebSearchAgent factory function called', {
             agentId: config.id,
           });
           const webSearchConfig = this.createWebSearchAgentConfig(config);
           this.logInfo('About to create WebSearchAgent instance');
           return new WebSearchAgent(webSearchConfig);
-        },
-        [
-          'web-search',
-          'citation-extraction',
-          'multi-market-search',
-          'safe-search',
-          'freshness-filtering',
-          'result-caching',
-        ],
-        [OpenAIModelID.GPT_4o, OpenAIModelID.GPT_4o_mini, OpenAIModelID.GPT_o1_mini, OpenAIModelID.GPT_o3_mini], // Web search agents work with most models
-      );
+        };
 
-      // Register UrlPullAgent
-      this.registerAgent(
-        AgentType.URL_PULL,
-        async (config: AgentConfig) => new UrlPullAgent(config as any),
-        [
-          'url-processing',
-          'parallel-fetching',
-          'content-extraction',
-          'metadata-extraction',
-          'caching',
-          'validation',
-        ],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // URL pull agents work with most models
-      );
+      case AgentType.URL_PULL:
+        return async (config: AgentConfig) => new UrlPullAgent(config as any);
 
-      // Register CodeInterpreterAgent
-      this.registerAgent(
-        AgentType.CODE_INTERPRETER,
-        async (config: AgentConfig) => new CodeInterpreterAgent(config as any),
-        [
-          'code-execution',
-          'python-support',
-          'javascript-support',
-          'sql-support',
-          'data-analysis',
-          'file-processing',
-          'visualization',
-          'debugging',
-        ],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Code interpreter agents work with most models
-      );
+      case AgentType.CODE_INTERPRETER:
+        return async (config: AgentConfig) => new CodeInterpreterAgent(config as any);
 
-      // Register LocalKnowledgeAgent
-      this.registerAgent(
-        AgentType.LOCAL_KNOWLEDGE,
-        async (config: AgentConfig) => new LocalKnowledgeAgent(config as any),
-        [
-          'knowledge-search',
-          'semantic-search',
-          'keyword-search',
-          'hybrid-search',
-          'document-retrieval',
-          'content-filtering',
-          'access-control',
-          'knowledge-graph',
-          'entity-linking',
-          'answer-summarization',
-        ],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Local knowledge agents work with most models
-      );
+      case AgentType.LOCAL_KNOWLEDGE:
+        return async (config: AgentConfig) => new LocalKnowledgeAgent(config as any);
 
-      // Register TranslationAgent
-      this.registerAgent(
-        AgentType.TRANSLATION,
-        async (config: AgentConfig) => new TranslationAgent(config as any),
-        [
-          'text-translation',
-          'language-detection',
-          'multi-language-support',
-          'automatic-language-inference',
-          'translation-caching',
-          'context-preservation',
-          'quality-analysis',
-        ],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Translation agents work with most models
-      );
+      case AgentType.TRANSLATION:
+        return async (config: AgentConfig) => new TranslationAgent(config as any);
 
-      this.logInfo('Default agents registered successfully', {
-        registeredTypes: Array.from(this.registrations.keys()),
-      });
-    } catch (error) {
-      this.logError('Failed to register default agents', error as Error);
-      throw new AgentFactoryError(
-        'Failed to initialize default agents',
-        'DEFAULT_AGENT_REGISTRATION_FAILED',
-        { originalError: error },
-      );
+      case AgentType.STANDARD_CHAT:
+        // Standard chat doesn't need a specific agent class - handled elsewhere
+        return null;
+
+      default:
+        this.logWarning(`Unknown agent type: ${agentType}`);
+        return null;
     }
   }
 
