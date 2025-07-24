@@ -18,6 +18,7 @@ export enum AgentType {
   STANDARD_CHAT = 'standard_chat',
   FOUNDRY = 'foundry',
   THIRD_PARTY = 'third_party',
+  TRANSLATION = 'translation',
 }
 
 /**
@@ -162,6 +163,28 @@ export interface LocalKnowledgeAgentConfig extends AgentConfig {
   enableRelatedSuggestions?: boolean;
   /** Enable analytics and metrics */
   enableAnalytics?: boolean;
+}
+
+/**
+ * Translation Agent Configuration
+ */
+export interface TranslationAgentConfig extends AgentConfig {
+  /** Default source language (if not specified, will be auto-detected) */
+  defaultSourceLanguage?: string;
+  /** Default target language (if not specified, will use user locale) */
+  defaultTargetLanguage?: string;
+  /** Enable automatic language detection */
+  enableLanguageDetection?: boolean;
+  /** Enable translation quality analysis */
+  enableQualityAnalysis?: boolean;
+  /** Enable result caching */
+  enableCaching?: boolean;
+  /** Cache TTL in seconds */
+  cacheTtl?: number;
+  /** Maximum text length for translation */
+  maxTextLength?: number;
+  /** Enable translation notes and context preservation */
+  enableTranslationNotes?: boolean;
 }
 
 /**
