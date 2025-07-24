@@ -73,11 +73,11 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   },
   [OpenAIModelID.GPT_45]: {
     id: OpenAIModelID.GPT_45,
-    name: 'gpt-4.5',
+    name: 'gpt-4.5-preview',
     maxLength: 80000,
     tokenLimit: 8000,
     modelType: 'foundational',
-    isLegacy: false,
+    isLegacy: true,
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
