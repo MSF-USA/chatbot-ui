@@ -4,13 +4,14 @@ import {
   IconRobot,
   IconSettings,
 } from '@tabler/icons-react';
-import { FC, MutableRefObject, useState } from 'react';
+import { FC, MutableRefObject, useEffect, useMemo, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
 import { CommandDefinition, CommandType } from '@/services/commandParser';
 
 import { Prompt } from '@/types/prompt';
+import { getPromptUsageCount } from '@/utils/app/promptUsage';
 
 interface Props {
   prompts: Prompt[];
@@ -21,6 +22,7 @@ interface Props {
   commands?: CommandDefinition[];
   showCommands?: boolean;
   onImmediateCommandExecution?: (command: CommandDefinition) => void;
+  onPromptsSort?: (sortedPrompts: Prompt[]) => void;
 }
 
 interface CommandItemProps {
@@ -176,13 +178,32 @@ export const PromptList: FC<Props> = ({
   commands = [],
   showCommands = false,
   onImmediateCommandExecution,
+  onPromptsSort,
 }) => {
   const { t } = useTranslation('chat');
 
+  // Sort prompts by usage count (higher usage first)
+  const sortedPrompts = useMemo(() => {
+    return [...prompts].sort((a, b) => {
+      const aUsage = getPromptUsageCount(a.id);
+      const bUsage = getPromptUsageCount(b.id);
+      // Higher usage first, preserve original order for equal usage
+      if (aUsage !== bUsage) return bUsage - aUsage;
+      return 0;
+    });
+  }, [prompts]);
+
+  // Notify parent component when prompts are sorted
+  useEffect(() => {
+    if (onPromptsSort) {
+      onPromptsSort(sortedPrompts);
+    }
+  }, [sortedPrompts, onPromptsSort]);
+
   // Combine commands and prompts for display
   const totalItems = showCommands
-    ? commands.length + prompts.length
-    : prompts.length;
+    ? commands.length + sortedPrompts.length
+    : sortedPrompts.length;
   const commandsCount = showCommands ? commands.length : 0;
 
   const handleItemClick = (index: number) => {
@@ -217,13 +238,13 @@ export const PromptList: FC<Props> = ({
               onImmediateExecution={onImmediateCommandExecution}
             />
           ))}
-          {prompts.length > 0 && (
+          {sortedPrompts.length > 0 && (
             <li className="border-t border-gray-200 dark:border-gray-700 my-1" />
           )}
         </>
       )}
 
-      {prompts.map((prompt, index) => {
+      {sortedPrompts.map((prompt, index) => {
         const adjustedIndex = showCommands ? commandsCount + index : index;
         return (
           <PromptItem
