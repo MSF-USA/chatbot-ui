@@ -1,11 +1,8 @@
 import {
-  IconCheck,
-  IconCopy,
   IconLoader2,
-  IconRobot,
-  IconSettings,
-  IconVolume,
-  IconVolumeOff,
+  IconRobot, IconSettings,
+  IconLanguage,
+  IconSearch,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -13,6 +10,7 @@ import {
   useEffect,
   useRef,
   useState,
+  KeyboardEvent,
 } from 'react';
 
 import { Conversation } from '@/types/chat';
@@ -20,12 +18,14 @@ import { Citation } from '@/types/rag';
 
 import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
 import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { getAutonym } from '@/utils/app/locales';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+import { AssistantMessageActionButtons } from '@/components/Chat/ChatMessages/AssistantMessageActionButtons';
 
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
@@ -33,7 +33,7 @@ import remarkMath from 'remark-math';
 
 interface AssistantMessageProps {
   content: string;
-  copyOnClick: (event: MouseEvent<any>) => void;
+  copyOnClick: (content: string) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
   selectedConversation: Conversation;
@@ -55,6 +55,14 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
   const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [translations, setTranslations] = useState<Record<string, string>>({});
+  const [currentLanguage, setCurrentLanguage] = useState<string | null>(null);
+  const [showTranslationDropdown, setShowTranslationDropdown] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const translationDropdownRef = useRef<HTMLDivElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Get streaming settings from context
   const { settings, updateSettings } = useStreamingSettings();
@@ -198,9 +206,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
-  const contentToDisplay = settings.smoothStreamingEnabled && messageIsStreaming
-    ? smoothContent
-    : displayContentWithoutCitations;
+  // If translated content is available, use that instead of the original content
+  const contentToDisplay = currentLanguage && translations[currentLanguage]
+    ? translations[currentLanguage]
+    : (settings.smoothStreamingEnabled && messageIsStreaming
+        ? smoothContent
+        : displayContentWithoutCitations);
 
   const handleTTS = async () => {
     try {
@@ -212,7 +223,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: displayContentWithoutCitations }),
+        body: JSON.stringify({ text: contentToDisplay }),
       });
 
       if (!response.ok) {
@@ -240,6 +251,145 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setAudioUrl(null);
     }
   };
+
+  const handleTranslate = async (targetLocale: string) => {
+    try {
+      // If we already have this translation, just switch to it
+      if (translations[targetLocale]) {
+        setCurrentLanguage(targetLocale);
+        return;
+      }
+
+      setIsTranslating(true);
+      setLoadingMessage('Translating...');
+
+      const response = await fetch('/api/v2/translation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sourceText: displayContentWithoutCitations,
+          targetLocale,
+          modelId: selectedConversation.model?.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Translation failed');
+      }
+
+      const data = await response.json();
+
+      // Store the translation and set it as current
+      setTranslations(prev => ({
+        ...prev,
+        [targetLocale]: data.translatedText
+      }));
+      setCurrentLanguage(targetLocale);
+
+      setIsTranslating(false);
+      setLoadingMessage(null);
+    } catch (error) {
+      console.error('Error in translation:', error);
+      setIsTranslating(false);
+      setLoadingMessage('Error translating text. Please try again.');
+      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
+    }
+  };
+
+  // Function to switch back to original text
+  const handleResetTranslation = () => {
+    setCurrentLanguage(null);
+    setShowTranslationDropdown(false);
+  };
+
+  // Filter available translations based on search query
+  const getFilteredTranslations = () => {
+    const availableOptions = Object.keys(translations);
+
+    // Add original text option
+    const allOptions = ['original', ...availableOptions];
+
+    return allOptions.filter(option => {
+      if (option === 'original') {
+        return 'original text'.toLowerCase().includes(searchQuery.toLowerCase());
+      }
+
+      const autonym = getAutonym(option);
+      return option.toLowerCase().includes(searchQuery.toLowerCase()) ||
+             autonym.toLowerCase().includes(searchQuery.toLowerCase());
+    });
+  };
+
+  // Handle keyboard events for translation dropdown navigation
+  const handleTranslationKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!showTranslationDropdown) return;
+
+    const filteredOptions = getFilteredTranslations();
+
+    switch (e.key) {
+      case 'Escape':
+        e.preventDefault();
+        if (searchQuery?.length > 0) {
+          setSearchQuery('');
+        } else {
+          setShowTranslationDropdown(false);
+        }
+        break;
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev < filteredOptions.length - 1 ? prev + 1 : prev));
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedIndex(prev => (prev > 0 ? prev - 1 : 0));
+        break;
+      case 'Enter':
+        if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) {
+          const selected = filteredOptions[selectedIndex];
+          if (selected === 'original') {
+            handleResetTranslation();
+          } else {
+            setCurrentLanguage(selected);
+            setShowTranslationDropdown(false);
+          }
+        }
+        break;
+    }
+  };
+
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (showTranslationDropdown && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showTranslationDropdown]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (translationDropdownRef.current && !translationDropdownRef.current.contains(event.target as Node)) {
+        setShowTranslationDropdown(false);
+      }
+    };
+
+    if (showTranslationDropdown) {
+      document.addEventListener('mousedown', handleClickOutside as any);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside as any);
+    };
+  }, [showTranslationDropdown]);
+
+  // Reset search and selection when dropdown closes
+  useEffect(() => {
+    if (!showTranslationDropdown) {
+      setSearchQuery('');
+      setSelectedIndex(-1);
+    }
+  }, [showTranslationDropdown]);
 
   const StreamingIndicator = () => (
     <span className="animate-pulse cursor-default inline-flex items-center ml-1 text-gray-500">
@@ -327,6 +477,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         )}
 
         <div className="flex flex-col">
+
+
           <div className="flex-1 overflow-hidden">
             {selectedConversation?.bot ? (
               <>
@@ -363,77 +515,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
 
-          {/* Fixed action buttons at the bottom of the message */}
-          <div className="flex justify-end items-center mt-3 sm:mt-4">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              {/* Copy button */}
-              <div className="relative group">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    messageCopied 
-                      ? 'bg-green-500 text-white dark:bg-green-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={copyOnClick}
-                  aria-label={messageCopied ? "Copied" : "Copy message"}
-                >
-                  {messageCopied ? (
-                    <IconCheck size={18} />
-                  ) : (
-                    <IconCopy size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {messageCopied ? "Copied!" : "Copy message"}
-                </span>
-              </div>
-
-              {/* Streaming Settings button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    showStreamingSettings
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={() => setShowStreamingSettings(!showStreamingSettings)}
-                  aria-label="Text streaming settings"
-                >
-                  <IconSettings size={18} className={showStreamingSettings ? 'animate-spin-slow' : ''} />
-                </button>
-                <span className="sr-only">
-                  Streaming settings
-                </span>
-              </div>
-
-              {/* Listen button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    audioUrl
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : isGeneratingAudio
-                        ? 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={audioUrl ? handleCloseAudio : handleTTS}
-                  disabled={isGeneratingAudio || messageIsStreaming}
-                  aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                >
-                  {isGeneratingAudio ? (
-                    <IconLoader2 size={18} className="animate-spin" />
-                  ) : audioUrl ? (
-                    <IconVolumeOff size={18} className="animate-pulse" />
-                  ) : (
-                    <IconVolume size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                </span>
-              </div>
-            </div>
-          </div>
+          {/* Action buttons at the bottom of the message */}
+          <AssistantMessageActionButtons
+            messageCopied={messageCopied}
+            copyOnClick={() => copyOnClick(currentLanguage ? translations[currentLanguage] : displayContent)}
+            isGeneratingAudio={isGeneratingAudio}
+            audioUrl={audioUrl}
+            handleTTS={handleTTS}
+            handleCloseAudio={handleCloseAudio}
+            messageIsStreaming={messageIsStreaming}
+            showStreamingSettings={showStreamingSettings}
+            setShowStreamingSettings={setShowStreamingSettings}
+            onTranslate={handleTranslate}
+            isTranslating={isTranslating}
+          />
 
           {/* Streaming Settings Modal */}
           {showStreamingSettings && (
@@ -535,6 +630,115 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   audioUrl={audioUrl}
                   onClose={handleCloseAudio}
               />
+          )}
+
+          {/* Translation indicator */}
+          {(currentLanguage || Object.keys(translations).length > 0) && (
+              <div className="mb-2 flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <IconLanguage size={16} className="mr-1" />
+                <span className="mr-2">
+                {currentLanguage
+                    ? `${getAutonym(currentLanguage)}`
+                    : "Original text"}
+              </span>
+
+                {/* Translation selector dropdown */}
+                <div className="relative inline-block">
+                  <button
+                      className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 underline text-xs"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setShowTranslationDropdown(!showTranslationDropdown);
+                      }}
+                  >
+                    Change
+                  </button>
+
+                  {showTranslationDropdown && (
+                    <div
+                      ref={translationDropdownRef}
+                      className="absolute left-0 bottom-full mb-2 w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 max-h-80 overflow-hidden flex flex-col"
+                      onKeyDown={handleTranslationKeyDown}
+                    >
+                      {/* Search input */}
+                      <div className="p-2 border-b border-gray-200 dark:border-gray-700 sticky top-0 bg-white dark:bg-gray-800">
+                        <div className="relative">
+                          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <IconSearch size={16} className="text-gray-400" />
+                          </div>
+                          <input
+                            ref={searchInputRef}
+                            type="text"
+                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md leading-5 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                            placeholder="Search languages..."
+                            value={searchQuery}
+                            onChange={(e) => {
+                              setSearchQuery(e.target.value);
+                              setSelectedIndex(-1);
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Language list */}
+                      <div className="overflow-y-auto">
+                        {getFilteredTranslations().length > 0 ? (
+                          <div className="py-1">
+                            {getFilteredTranslations().map((option, index) => {
+                              if (option === 'original') {
+                                return (
+                                  <button
+                                    key="original"
+                                    className={`w-full text-left px-4 py-2 text-sm ${
+                                      index === selectedIndex
+                                        ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                        : currentLanguage === null
+                                          ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => {
+                                      handleResetTranslation();
+                                    }}
+                                    onMouseEnter={() => setSelectedIndex(index)}
+                                  >
+                                    Original text
+                                  </button>
+                                );
+                              } else {
+                                return (
+                                  <button
+                                    key={option}
+                                    className={`w-full text-left px-4 py-2 text-sm ${
+                                      index === selectedIndex
+                                        ? 'bg-blue-500 text-white dark:bg-blue-600'
+                                        : currentLanguage === option
+                                          ? 'bg-gray-100 dark:bg-gray-700 font-medium'
+                                          : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                                    }`}
+                                    onClick={() => {
+                                      setCurrentLanguage(option);
+                                      setShowTranslationDropdown(false);
+                                    }}
+                                    onMouseEnter={() => setSelectedIndex(index)}
+                                  >
+                                    <span className="font-medium">{getAutonym(option)}</span>
+                                    <span className="ml-2 text-xs opacity-70">{option}</span>
+                                  </button>
+                                );
+                              }
+                            })}
+                          </div>
+                        ) : (
+                          <div className="py-3 px-4 text-sm text-gray-500 dark:text-gray-400 text-center">
+                            No languages found
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
           )}
         </div>
 
