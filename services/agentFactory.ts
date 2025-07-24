@@ -24,6 +24,7 @@ import { ThirdPartyAgent } from './agents/thirdPartyAgent';
 import { UrlPullAgent } from './agents/urlPullAgent';
 import { WebSearchAgent } from './agents/webSearchAgent';
 import { AzureMonitorLoggingService } from './loggingService';
+import {OpenAIModelID} from "@/types/openai";
 
 /**
  * Custom error classes for agent factory operations
@@ -567,7 +568,7 @@ export class AgentFactory {
           'freshness-filtering',
           'result-caching',
         ],
-        ['gpt-4', 'gpt-4o', 'gpt-35-turbo', 'gpt-4o-mini'], // Web search agents work with most models
+        [OpenAIModelID.GPT_4o, OpenAIModelID.GPT_4o_mini, OpenAIModelID.GPT_o1_mini, OpenAIModelID.GPT_o3_mini], // Web search agents work with most models
       );
 
       // Register UrlPullAgent
