@@ -130,12 +130,59 @@ export interface AgentFeatureConfig {
     keywords?: string[];
     patterns?: RegExp[];
     confidenceThreshold?: number;
+    /** Primary intent type this agent handles */
+    primaryIntent?: string;
+    /** Scoring weight for this agent */
+    scoringWeight?: number;
   };
   /** Parameter extraction rules */
   parameterExtraction?: {
     patterns?: Record<string, RegExp>;
     defaults?: Record<string, any>;
     validators?: Record<string, (value: any) => boolean>;
+  };
+  /** Intent classification configuration for auto-routing */
+  intentClassification?: {
+    /** Keywords that indicate this agent should be used */
+    keywords: string[];
+    /** Additional patterns for matching */
+    patterns?: string[];
+    /** RegExp patterns for advanced matching */
+    regexPatterns?: RegExp[];
+    /** Minimum confidence threshold */
+    threshold: number;
+    /** Intent category this agent handles */
+    intentCategory: string;
+    /** Multi-language prompts for intent detection */
+    prompts?: {
+      [language: string]: string;
+    };
+    /** Question patterns that match this agent */
+    questionPatterns?: string[];
+    /** Urgency indicators for this agent type */
+    urgencyIndicators?: string[];
+    /** Example queries for this agent */
+    examples?: string[];
+  };
+  /** Confidence scoring guidelines */
+  confidenceGuidelines?: {
+    /** Confidence ranges and descriptions */
+    ranges: {
+      [level: string]: {
+        range: [number, number];
+        description: string;
+        examples: string[];
+      };
+    };
+  };
+  /** Agent exclusion patterns for user avoidance detection */
+  exclusionPatterns?: {
+    /** Phrases that indicate users want to avoid this agent */
+    avoidancePatterns: string[];
+    /** Regex patterns for detecting avoidance */
+    negativePatterns: RegExp[];
+    /** Keywords that exclude this agent */
+    exclusionKeywords: string[];
   };
 }
 
