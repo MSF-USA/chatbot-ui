@@ -42,6 +42,8 @@ export enum UtilityCommand {
   HELP = 'help',
   SETTINGS = 'settings',
   PRIVACY_POLICY = 'privacyPolicy',
+  NEW_CHAT = 'newChat',
+  REGENERATE = 'regenerate',
 }
 
 /**
@@ -374,6 +376,52 @@ export class CommandParser {
             '📋 **Privacy Policy**\n\nOpening the privacy policy section in settings...',
         },
       }),
+    });
+
+    this.registerCommand({
+      command: 'newChat',
+      type: CommandType.UTILITY,
+      description: 'Start a new conversation',
+      usage: '/newChat',
+      examples: ['/newChat'],
+      execute: (args: string[]) => ({
+        success: true,
+        utilityAction: 'new_chat',
+        immediateAction: true,
+        chatResponse: {
+          userMessage: '/newChat',
+          assistantMessage:
+            '💬 **New Chat**\n\nStarting a new conversation...',
+        },
+      }),
+    });
+
+    this.registerCommand({
+      command: 'regenerate',
+      type: CommandType.UTILITY,
+      description: 'Regenerate the last AI response',
+      usage: '/regenerate',
+      examples: ['/regenerate'],
+      execute: (args: string[], context?: any) => {
+        // Check if there's a current message to regenerate
+        if (!context?.currentMessage) {
+          return {
+            success: false,
+            error: 'No message to regenerate. Send a message first.',
+          };
+        }
+        
+        return {
+          success: true,
+          utilityAction: 'regenerate_response',
+          immediateAction: true,
+          chatResponse: {
+            userMessage: '/regenerate',
+            assistantMessage:
+              '🔄 **Regenerate Response**\n\nRegenerating the last AI response...',
+          },
+        };
+      },
     });
   }
 
