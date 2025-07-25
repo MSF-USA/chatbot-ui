@@ -20,14 +20,7 @@ import {
 } from '@/types/intentAnalysis';
 
 import { getConfidenceScoringSystem } from './confidenceScoring';
-import {
-  AGENT_SPECIFIC_GUIDANCE,
-  ENHANCED_CLASSIFICATION_SCHEMA,
-  SYSTEM_PROMPTS,
-  buildContextualPrompt,
-  getAgentGuidance,
-  validateConfidenceScore,
-} from './intentClassificationPrompts';
+import { getCentralizedIntentService } from './centralizedIntentService';
 import { AzureMonitorLoggingService } from './loggingService';
 import { getParameterExtractionEngine } from './parameterExtraction';
 
@@ -467,9 +460,11 @@ export class IntentAnalysisService {
 
     // Check each agent type using enhanced guidance
     console.log('[IntentAnalysis] Checking each agent type against query');
-    for (const [agentType, guidance] of Object.entries(
-      AGENT_SPECIFIC_GUIDANCE,
-    )) {
+    const centralizedService = getCentralizedIntentService();
+    const agentTypes = Object.values(AgentType);
+    
+    for (const agentType of agentTypes) {
+      const guidance = centralizedService.getAgentGuidance(agentType);
       console.log(
         '[IntentAnalysis] Analyzing match for agent type:',
         agentType,
@@ -477,7 +472,7 @@ export class IntentAnalysisService {
       const result = this.analyzeAgentMatch(
         query,
         queryLower,
-        agentType as AgentType,
+        agentType,
         guidance,
       );
       console.log('[IntentAnalysis] Agent', agentType, 'analysis result:', {
@@ -1136,7 +1131,8 @@ export class IntentAnalysisService {
     context: IntentAnalysisContext,
     locale: string,
   ): string {
-    return buildContextualPrompt(
+    const centralizedService = getCentralizedIntentService();
+    return centralizedService.buildContextualPrompt(
       context.query,
       locale,
       context.conversationHistory,
@@ -1145,15 +1141,14 @@ export class IntentAnalysisService {
   }
 
   private getSystemPrompt(locale: string): string {
-    return (
-      SYSTEM_PROMPTS[locale as keyof typeof SYSTEM_PROMPTS] ||
-      SYSTEM_PROMPTS['en']
-    );
+    const centralizedService = getCentralizedIntentService();
+    return centralizedService.getSystemPrompt(locale);
   }
 
   private getClassificationSchema(): IntentClassificationSchema {
+    const centralizedService = getCentralizedIntentService();
     // TODO: Fix this risky casting
-    return ENHANCED_CLASSIFICATION_SCHEMA as unknown as IntentClassificationSchema;
+    return centralizedService.getClassificationSchema() as unknown as IntentClassificationSchema;
   }
 
   private mapStringToAgentType(agentTypeString: string): AgentType {
