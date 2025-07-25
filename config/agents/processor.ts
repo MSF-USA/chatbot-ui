@@ -182,6 +182,187 @@ export class AgentConfigurationProcessor {
   }
 
   /**
+   * Generate intent classification keyword maps for each agent type
+   */
+  generateIntentKeywordMaps(): Record<string, AgentType[]> {
+    const keywordMap: Record<string, AgentType[]> = {};
+    
+    for (const agent of getEnabledAgents()) {
+      if (agent.features?.intentClassification?.keywords) {
+        for (const keyword of agent.features.intentClassification.keywords) {
+          if (!keywordMap[keyword]) {
+            keywordMap[keyword] = [];
+          }
+          keywordMap[keyword].push(agent.metadata.type);
+        }
+      }
+    }
+
+    return keywordMap;
+  }
+
+  /**
+   * Generate intent classification configurations for intentAnalysisService
+   */
+  generateIntentClassificationConfigs(): Record<string, any> {
+    const intentConfigs: Record<string, any> = {};
+    
+    for (const agent of getEnabledAgents()) {
+      const intentConfig = agent.features?.intentClassification;
+      if (intentConfig) {
+        intentConfigs[agent.metadata.type] = {
+          keywords: intentConfig.keywords || [],
+          patterns: intentConfig.patterns || [],
+          threshold: intentConfig.threshold || 0.5,
+          intentCategory: intentConfig.intentCategory || 'general',
+          prompts: intentConfig.prompts || {},
+          questionPatterns: intentConfig.questionPatterns || [],
+          urgencyIndicators: intentConfig.urgencyIndicators || [],
+        };
+      }
+    }
+
+    return intentConfigs;
+  }
+
+  /**
+   * Generate keyword arrays by intent category for intentAnalysisService
+   */
+  generateKeywordsByCategory(): Record<string, string[]> {
+    const categories: Record<string, string[]> = {};
+    
+    for (const agent of getEnabledAgents()) {
+      const intentConfig = agent.features?.intentClassification;
+      if (intentConfig && intentConfig.intentCategory) {
+        const category = intentConfig.intentCategory;
+        if (!categories[category]) {
+          categories[category] = [];
+        }
+        categories[category].push(...(intentConfig.keywords || []));
+      }
+    }
+
+    // Remove duplicates in each category
+    for (const category in categories) {
+      categories[category] = [...new Set(categories[category])];
+    }
+
+    return categories;
+  }
+
+  /**
+   * Generate agent scoring configurations for intent analysis
+   */
+  generateAgentScoringConfigs(): Record<AgentType, any> {
+    const scoringConfigs: Record<AgentType, any> = {} as any;
+    
+    for (const agent of getEnabledAgents()) {
+      const intentConfig = agent.features?.intentClassification;
+      if (intentConfig) {
+        scoringConfigs[agent.metadata.type] = {
+          threshold: intentConfig.threshold,
+          keywords: intentConfig.keywords || [],
+          patterns: intentConfig.patterns || [],
+          regexPatterns: intentConfig.regexPatterns || [],
+          category: intentConfig.intentCategory,
+          weight: agent.features?.intentAnalysis?.scoringWeight || 1.0,
+          examples: intentConfig.examples || [],
+        };
+      }
+    }
+
+    return scoringConfigs;
+  }
+
+  /**
+   * Generate confidence guidelines configurations
+   */
+  generateConfidenceGuidelines(): Record<AgentType, any> {
+    const confidenceConfigs: Record<AgentType, any> = {} as any;
+    
+    for (const agent of getEnabledAgents()) {
+      const confidenceConfig = agent.features?.confidenceGuidelines;
+      if (confidenceConfig) {
+        confidenceConfigs[agent.metadata.type] = {
+          ranges: confidenceConfig.ranges || {},
+        };
+      }
+    }
+
+    return confidenceConfigs;
+  }
+
+  /**
+   * Generate agent exclusion patterns for user avoidance detection
+   */
+  generateExclusionPatterns(): Record<AgentType, any> {
+    const exclusionConfigs: Record<AgentType, any> = {} as any;
+    
+    for (const agent of getEnabledAgents()) {
+      const exclusionConfig = agent.features?.exclusionPatterns;
+      if (exclusionConfig) {
+        exclusionConfigs[agent.metadata.type] = {
+          avoidancePatterns: exclusionConfig.avoidancePatterns || [],
+          negativePatterns: exclusionConfig.negativePatterns || [],
+          exclusionKeywords: exclusionConfig.exclusionKeywords || [],
+        };
+      }
+    }
+
+    return exclusionConfigs;
+  }
+
+  /**
+   * Generate enhanced classification schema for OpenAI structured responses
+   */
+  generateClassificationSchema(): any {
+    const supportedAgentTypes = this.generateSupportedTypes();
+    
+    return {
+      type: 'object' as const,
+      properties: {
+        agent_type: {
+          type: 'string' as const,
+          enum: supportedAgentTypes,
+          description: 'The primary recommended agent type for handling this query',
+        },
+        confidence: {
+          type: 'number' as const,
+          minimum: 0,
+          maximum: 1,
+          description: 'Confidence score for the primary recommendation (0.00-1.00)',
+        },
+        reasoning: {
+          type: 'string' as const,
+          description: 'Detailed explanation for why this agent was recommended',
+        },
+        query: {
+          type: 'string' as const,
+          description: 'Optimized search query if applicable',
+        },
+        complexity: {
+          type: 'string' as const,
+          enum: ['simple', 'moderate', 'complex'],
+          description: 'Assessment of query complexity',
+        },
+        time_sensitive: {
+          type: 'boolean' as const,
+          description: 'Whether the query is time-sensitive',
+        },
+      },
+      required: [
+        'agent_type',
+        'confidence',
+        'reasoning',
+        'query',
+        'complexity',
+        'time_sensitive',
+      ],
+      additionalProperties: false,
+    };
+  }
+
+  /**
    * Generate agent environment mappings
    */
   generateEnvironmentMappings(): Record<AgentType, AgentExecutionEnvironment> {
@@ -215,6 +396,15 @@ export class AgentConfigurationProcessor {
       parameters: this.generateParameterConfigs(),
       environments: this.generateEnvironmentMappings(),
       supportedTypes: this.generateSupportedTypes(),
+      // Intent classification configurations
+      intentClassification: this.generateIntentClassificationConfigs(),
+      keywordMaps: this.generateIntentKeywordMaps(),
+      keywordsByCategory: this.generateKeywordsByCategory(),
+      agentScoring: this.generateAgentScoringConfigs(),
+      // Advanced features
+      confidenceGuidelines: this.generateConfidenceGuidelines(),
+      exclusionPatterns: this.generateExclusionPatterns(),
+      classificationSchema: this.generateClassificationSchema(),
       metadata: {
         generatedAt: new Date().toISOString(),
         environment: this.config.environment || 'development',
@@ -319,6 +509,15 @@ export interface AgentConfigBundle {
   parameters: Record<AgentType, any>;
   environments: Record<AgentType, AgentExecutionEnvironment>;
   supportedTypes: AgentType[];
+  // Intent classification configurations
+  intentClassification: Record<string, any>;
+  keywordMaps: Record<string, AgentType[]>;
+  keywordsByCategory: Record<string, string[]>;
+  agentScoring: Record<AgentType, any>;
+  // Advanced features
+  confidenceGuidelines: Record<AgentType, any>;
+  exclusionPatterns: Record<AgentType, any>;
+  classificationSchema: any;
   metadata: {
     generatedAt: string;
     environment: string;
