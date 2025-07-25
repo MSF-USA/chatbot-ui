@@ -69,6 +69,7 @@ interface Props {
     forcedAgentType?: AgentType,
   ) => void;
   onRegenerate: () => void;
+  onNewConversation?: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
   textareaRef: MutableRefObject<HTMLTextAreaElement | null>;
@@ -88,12 +89,14 @@ interface Props {
   onModelChange?: (model: any) => void;
   models?: any[];
   selectedConversation?: any;
+  currentMessage?: Message;
   onAddChatMessages?: (userMessage: Message, assistantMessage: Message) => void;
 }
 
 export const ChatInput = ({
   onSend,
   onRegenerate,
+  onNewConversation,
   onScrollDownClick,
   stopConversationRef,
   textareaRef,
@@ -113,6 +116,7 @@ export const ChatInput = ({
   onModelChange,
   models,
   selectedConversation,
+  currentMessage,
   onAddChatMessages,
 }: Props) => {
   const { t } = useTranslation('chat');
@@ -300,6 +304,7 @@ export const ChatInput = ({
         models: models || [],
         selectedConversation: currentConversation,
         temperature: temperature,
+        currentMessage: currentMessage,
       };
 
       const parsed = commandParser.parseLocalizedInput(textFieldValue, 'en'); // TODO: Use actual locale
@@ -639,6 +644,7 @@ export const ChatInput = ({
           models: models || [],
           selectedConversation: currentConversation,
           temperature: temperature,
+          currentMessage: currentMessage,
         };
         const parsed = commandParser.parseLocalizedInput(
           input,
@@ -758,6 +764,7 @@ export const ChatInput = ({
         models: models || [],
         selectedConversation: currentConversation,
         temperature: temperature,
+        currentMessage: currentMessage,
       };
 
       const parsed = commandParser.parseInput(
@@ -899,6 +906,20 @@ export const ChatInput = ({
           onPrivacyPolicyOpen();
         } else {
           console.log('Opening privacy policy in settings');
+        }
+        break;
+      case 'new_chat':
+        if (onNewConversation) {
+          onNewConversation();
+        } else {
+          console.log('Starting new conversation');
+        }
+        break;
+      case 'regenerate_response':
+        if (onRegenerate) {
+          onRegenerate();
+        } else {
+          console.log('Regenerating response');
         }
         break;
       case 'show_help':
@@ -1208,6 +1229,7 @@ export const ChatInput = ({
                         models: models || [],
                         selectedConversation: currentConversation,
                         temperature: temperature,
+                        currentMessage: currentMessage,
                       };
 
                       const parsed = commandParser.parseInput(

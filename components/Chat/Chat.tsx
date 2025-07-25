@@ -97,6 +97,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     },
     handleUpdateConversation,
     handleOpenSettings,
+    handleNewConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
   let {
@@ -1284,6 +1285,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             }}
             models={models}
             selectedConversation={selectedConversation}
+            currentMessage={currentMessage}
+            onNewConversation={handleNewConversation}
             onAddChatMessages={(userMsg, assistantMsg) => {
               if (selectedConversation) {
                 // Add both messages to the conversation
