@@ -332,6 +332,8 @@ features: {
     keywords: ['keyword1', 'keyword2'],
     patterns: [/regex-pattern/gi],
     confidenceThreshold: 0.7,
+    primaryIntent: 'agent-category',
+    scoringWeight: 1.0,
   },
   parameterExtraction: {         // Optional: Parameter parsing
     patterns: {
@@ -343,6 +345,19 @@ features: {
     validators: {
       paramName: (value) => typeof value === 'string',
     },
+  },
+  intentClassification: {        // NEW: Intent classification for auto-routing
+    keywords: ['primary', 'keywords', 'for', 'agent'],
+    patterns: ['regex-patterns-as-strings'],
+    threshold: 0.7,
+    intentCategory: 'web-search', // Category this agent handles
+    prompts: {                   // Multi-language prompts
+      en: 'English prompt template: {query}',
+      es: 'Spanish prompt template: {query}',
+      fr: 'French prompt template: {query}',
+    },
+    questionPatterns: ['what is', 'how do', 'can you'],
+    urgencyIndicators: ['urgent', 'asap', 'quickly'],
   },
 }
 ```
@@ -570,5 +585,45 @@ The centralized system automatically:
 - **Handles errors** with retry logic and fallbacks
 - **Processes parameters** using extraction rules
 - **Manages caching** and rate limiting
+
+## Intent Classification
+
+The system now includes **centralized intent classification** that replaces the previous 1700+ line `intentClassificationPrompts.ts` file. All intent classification keywords, prompts, and routing logic are now configured through the centralized agent definitions.
+
+### Key Features
+
+- **Centralized Keywords**: All agent-specific keywords are defined in the agent configuration
+- **Multi-language Support**: Prompts can be defined in multiple languages per agent
+- **Dynamic Routing**: Intent analysis automatically routes to the best agent based on centralized configuration
+- **Reduced Maintenance**: No more scattered keyword arrays across multiple files
+
+### Usage
+
+```typescript
+// Get intent classification configurations
+import { 
+  getIntentClassificationConfigs,
+  getIntentKeywordsByCategory,
+  getAgentScoringConfigs 
+} from '@/config/agents';
+
+// Use centralized intent service
+import { getCentralizedIntentService } from '@/services/centralizedIntentService';
+
+const intentService = getCentralizedIntentService();
+const systemPrompt = intentService.getSystemPrompt('en');
+const agentGuidance = intentService.getAgentGuidance(AgentType.TRANSLATION);
+```
+
+### Migration from Old System
+
+The old `intentClassificationPrompts.ts` (1700+ lines) has been replaced with:
+- **Agent-specific keyword configuration** in `/config/agents/registry.ts`
+- **Centralized intent service** in `/services/centralizedIntentService.ts`
+- **Dynamic configuration processing** in `/config/agents/processor.ts`
+
+This reduces complexity by 95% and makes intent classification completely configurable through the centralized agent system.
+
+---
 
 This guide reflects the new simplified architecture. For questions or issues, refer to existing agent implementations in `/services/agents/` or the centralized configuration examples in `/config/agents/registry.ts`.
