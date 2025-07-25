@@ -178,6 +178,38 @@ export function getAgentSupportedModels(type: AgentType): string[] {
 }
 
 /**
+ * Get intent classification configurations
+ * This replaces the hardcoded intentClassificationPrompts.ts
+ */
+export function getIntentClassificationConfigs() {
+  return generateAgentConfigs().intentClassification;
+}
+
+/**
+ * Get keyword maps for intent analysis
+ * This replaces hardcoded keyword arrays
+ */
+export function getIntentKeywordMaps() {
+  return generateAgentConfigs().keywordMaps;
+}
+
+/**
+ * Get keywords organized by category
+ * This replaces category-specific keyword arrays
+ */
+export function getIntentKeywordsByCategory() {
+  return generateAgentConfigs().keywordsByCategory;
+}
+
+/**
+ * Get agent scoring configurations for intent analysis
+ * This replaces hardcoded scoring logic
+ */
+export function getAgentScoringConfigs() {
+  return generateAgentConfigs().agentScoring;
+}
+
+/**
  * Development utilities
  */
 
