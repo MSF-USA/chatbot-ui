@@ -157,6 +157,19 @@ export interface AgentFeatureConfig {
     prompts?: {
       [language: string]: string;
     };
+    /** Rich system prompts for AI classification */
+    systemPrompts?: {
+      [language: string]: {
+        /** Detailed use cases for this agent */
+        useCases: string[];
+        /** Optional examples specific to this language */
+        examples?: string[];
+        /** Agent-specific guidelines */
+        guidelines?: string;
+      };
+    };
+    /** Language-agnostic usage criteria */
+    usageCriteria?: string[];
     /** Question patterns that match this agent */
     questionPatterns?: string[];
     /** Urgency indicators for this agent type */
