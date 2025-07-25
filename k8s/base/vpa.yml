@@ -5,8 +5,8 @@ metadata:
   namespace: chat
 spec:
   targetRef:
-    apiVersion: "apps/v1"
+    apiVersion: 'apps/v1'
     kind: Deployment
     name: chat
   updatePolicy:
-    updateMode: "Off"
+    updateMode: 'Off'

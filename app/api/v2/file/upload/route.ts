@@ -1,11 +1,13 @@
+import { JWT, Session } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
+import { getServerSession } from 'next-auth/next';
 import { NextRequest, NextResponse } from 'next/server';
-import { AzureBlobStorage, BlobStorage } from '@/utils/server/blob';
+
 import { getEnvVariable } from '@/utils/app/env';
 import Hasher from '@/utils/app/hash';
-import { getToken } from 'next-auth/jwt';
-import {JWT, Session} from 'next-auth';
-import {getServerSession} from 'next-auth/next';
-import {authOptions} from '@/pages/api/auth/[...nextauth]';
+import { AzureBlobStorage, BlobStorage } from '@/utils/server/blob';
+
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -15,10 +17,22 @@ export async function POST(request: NextRequest) {
 
   if (filetype) {
     const extension = filename.split('.').pop()?.toLowerCase();
-    const executableExtensions = ['exe', 'bat', 'cmd', 'sh', 'dll', 'msi', 'jar', 'app'];
+    const executableExtensions = [
+      'exe',
+      'bat',
+      'cmd',
+      'sh',
+      'dll',
+      'msi',
+      'jar',
+      'app',
+    ];
 
     if (extension && executableExtensions.includes(extension)) {
-      return NextResponse.json({error: 'Executable files are not allowed'}, {status: 400});
+      return NextResponse.json(
+        { error: 'Executable files are not allowed' },
+        { status: 400 },
+      );
     }
 
     if (mimeType) {
@@ -32,7 +46,10 @@ export async function POST(request: NextRequest) {
       ];
 
       if (executableMimeTypes.includes(mimeType)) {
-        return NextResponse.json({error: 'Invalid file type submitted'}, {status: 400});
+        return NextResponse.json(
+          { error: 'Invalid file type submitted' },
+          { status: 400 },
+        );
       }
     }
   }
@@ -58,31 +75,29 @@ export async function POST(request: NextRequest) {
       throw new Error(`Token could not be pulled from request: ${request}`);
 
     const session: Session | null = await getServerSession(authOptions as any);
-    if (!session) throw new Error("Failed to pull session!");
+    if (!session) throw new Error('Failed to pull session!');
 
     // @ts-ignore
     const userId: string = session?.user?.id ?? token.userId ?? 'anonymous';
 
     let blobStorageClient: BlobStorage = new AzureBlobStorage(
-      getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
-      getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
-      getEnvVariable(
-        {
-          name: 'AZURE_BLOB_STORAGE_CONTAINER',
-          throwErrorOnFail: false,
-          defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
-          user: session.user
-        }
-      ),
-      session.user
+      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user: session.user }),
+      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user: session.user }),
+      getEnvVariable({
+        name: 'AZURE_BLOB_STORAGE_CONTAINER',
+        throwErrorOnFail: false,
+        defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+        user: session.user,
+      }),
+      session.user,
     );
 
     const hashedFileContents = Hasher.sha256(data).slice(0, 200);
     const extension: string | undefined = filename.split('.').pop();
 
     let contentType;
-    if(mimeType) {
-      contentType = mimeType
+    if (mimeType) {
+      contentType = mimeType;
     } else if (extension) {
       contentType = getContentType(extension);
     } else {
@@ -92,10 +107,9 @@ export async function POST(request: NextRequest) {
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
 
     let decodedData;
-    if (mimeType && mimeType.indexOf('image') > -1 || filetype === 'image')
-      decodedData = data
-    else
-      decodedData = Buffer.from(data, 'base64')
+    if ((mimeType && mimeType.indexOf('image') > -1) || filetype === 'image')
+      decodedData = data;
+    else decodedData = Buffer.from(data, 'base64');
 
     return await blobStorageClient.upload(
       `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,
@@ -104,12 +118,14 @@ export async function POST(request: NextRequest) {
         blobHTTPHeaders: {
           blobContentType: contentType,
         },
-      }
+      },
     );
   };
 
   const fileData = await request.text();
   const fileURI: string = await uploadFileToBlobStorage(fileData);
-  const fileHash: string = fileURI.split('/').pop() ?? fileURI.split('/')[fileURI.split('/').length-1];
+  const fileHash: string =
+    fileURI.split('/').pop() ??
+    fileURI.split('/')[fileURI.split('/').length - 1];
   return NextResponse.json({ message: 'File uploaded', uri: fileURI });
 }

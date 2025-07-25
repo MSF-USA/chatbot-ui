@@ -1,6 +1,7 @@
-import { describe, it, expect, vi } from 'vitest';
-import { GET } from '@/app/api/v2/terms/route';
 import { NextRequest } from 'next/server';
+
+import { GET } from '@/app/api/v2/terms/route';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('Terms API Route', () => {
   it('should return terms data with 200 status code', async () => {
@@ -36,7 +37,9 @@ describe('Terms API Route', () => {
   });
 
   it('should handle errors gracefully', async () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => {});
 
     const request = new NextRequest('http://localhost:3000/api/v2/terms');
 

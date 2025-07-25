@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Cerca web",
+      "code_interpreter": "Intèrpret de codi",
+      "url_pull": "Anàlisi d'URL",
+      "local_knowledge": "Base de coneixement",
+      "standard_chat": "Xat estàndard",
+      "foundry": "Foneria",
+      "third_party": "Tercer"
+    },
+    "error": {
+      "title": "Error d'agent",
+      "unknown": "S'ha produït un error desconegut",
+      "retry": "Torna-ho a provar",
+      "fallback": "Utilitza l'alternativa"
+    },
+    "metadata": {
+      "processingTime": "Temps de processament",
+      "confidence": "Confiança",
+      "tokens": "Fitxes utilitzades"
+    },
+    "resultsPanel": {
+      "placeholder": "Els resultats de l'agent es mostraran aquí"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Cerca web - Cerca al web informació en temps real",
+      "code_interpreter": "Intèrpret de codi - Executa i analitza codi en diversos idiomes",
+      "url_pull": "Anàlisi d'URL - Analitza i extreu contingut de pàgines web",
+      "local_knowledge": "Base de coneixement - Cerca a la base de coneixement intern i documents",
+      "standard_chat": "Xat estàndard - IA conversacional estàndard sense eines",
+      "foundry": "Foneria - Utilitza Azure AI Foundry per a capacitats avançades",
+      "third_party": "Tercer - Agent de tercers o integració d'eines personalitzades"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Els resultats de la cerca web es mostraran aquí",
+      "title": "Resultats de cerca",
+      "noResults": "No s'han trobat resultats",
+      "noData": "No hi ha dades de cerca disponibles",
+      "results": "resultats",
+      "confidence": "Relevància",
+      "relevance": "Relevància",
+      "source": "Font",
+      "citations": "Citacions",
+      "cite": "Citar",
+      "open": "Obrir",
+      "openLink": "Obrir enllaç en nova pestanya",
+      "filters": "Filtres",
+      "sortBy": "Ordenar per",
+      "filterBy": "Filtrar per",
+      "all": "Tot",
+      "date": "Data",
+      "query": "Consulta",
+      "searchTime": "Temps de cerca",
+      "cached": "En memòria cau",
+      "contentTypes": {
+        "webpage": "Pàgines web",
+        "news": "Notícies",
+        "academic": "Acadèmic",
+        "image": "Imatges",
+        "video": "Vídeos"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Nombre de resultats",
+      "safeSearch": "Cerca segura",
+      "market": "Mercat de cerca"
+    },
+    "status": {
+      "searching": "Cercant al web...",
+      "optimizing": "Optimitzant la consulta de cerca...",
+      "processing": "Processant els resultats de cerca..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Els resultats d'execució del codi es mostraran aquí",
+      "title": "Resultats d'execució",
+      "noData": "No hi ha dades d'execució de codi disponibles",
+      "output": "Sortida",
+      "errors": "Errors",
+      "logs": "Registres",
+      "executionTime": "Temps d'execució",
+      "memoryUsage": "Ús de memòria",
+      "cpuUsage": "Ús de CPU",
+      "outputLines": "Línies de sortida",
+      "executedCode": "Codi executat",
+      "download": "Descarregar",
+      "noOutput": "No s'ha generat cap sortida",
+      "noFiles": "No s'ha generat cap fitxer",
+      "outputSize": "Mida de la sortida",
+      "unsupportedOutput": "Format de sortida no compatible",
+      "status": {
+        "success": "Èxit",
+        "error": "Error",
+        "timeout": "Temps d'espera esgotat",
+        "memory_limit": "Límit de memòria superat",
+        "security_violation": "Violació de seguretat",
+        "invalid_code": "Codi invàlid"
+      },
+      "outputTypes": {
+        "stdout": "Sortida estàndard",
+        "stderr": "Sortida d'error",
+        "return_value": "Valor de retorn",
+        "exception": "Excepció"
+      },
+      "tabs": {
+        "output": "Sortida",
+        "code": "Codi",
+        "files": "Fitxers"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "Resultats d'anàlisi d'URL",
+      "noData": "No hi ha dades d'anàlisi d'URL disponibles",
+      "summary": "Resum",
+      "metadata": "Informació del document",
+      "processingTime": "Temps de processament",
+      "preview": "Vista prèvia",
+      "view": "Veure"
+    },
+    "configuration": {
+      "timeout": "Temps d'espera de la sol·licitud"
+    },
+    "status": {
+      "pulling": "Obtenint contingut de l'URL...",
+      "analyzing": "Analitzant document...",
+      "complete": "Anàlisi complet"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Resultats de la base de coneixement",
+      "noData": "No hi ha dades de la base de coneixement disponibles",
+      "documents": "documents",
+      "insights": "Coneixements clau",
+      "relevance": "Relevància",
+      "suggestions": "Suggeriments"
+    },
+    "configuration": {
+      "searchMode": "Mode de cerca",
+      "threshold": "Llindar de relevància"
+    },
+    "status": {
+      "searching": "Cercant a la base de coneixement...",
+      "analyzing": "Analitzant resultats..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Els resultats d'anàlisi de documents es mostraran aquí",
+      "title": "Resultats d'anàlisi",
+      "noData": "No hi ha dades d'anàlisi de documents disponibles",
+      "documents": "documents",
+      "noDocuments": "No s'han trobat documents",
+      "summary": "Resum",
+      "insights": "Coneixements clau",
+      "metadata": "Informació del document",
+      "processingTime": "Temps de processament",
+      "searchTime": "Temps de cerca",
+      "relevance": "Relevància",
+      "cached": "En memòria cau",
+      "preview": "Vista prèvia",
+      "view": "Veure",
+      "open": "Obrir",
+      "bookmark": "Marcador",
+      "suggestions": "Suggeriments",
+      "tabs": {
+        "documents": "Documents",
+        "insights": "Coneixements",
+        "failed": "Fallit"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Carregant...",
+      "searching": "Cercant...",
+      "processing": "Processant...",
+      "analyzing": "Analitzant..."
+    },
+    "buttons": {
+      "retry": "Tornar a provar",
+      "cancel": "Cancel·lar",
+      "expand": "Expandir",
+      "collapse": "Contraure",
+      "configure": "Configurar",
+      "submit": "Enviar"
+    },
+    "labels": {
+      "priority": "Prioritat",
+      "estimatedTime": "Temps estimat",
+      "availability": "Disponibilitat",
+      "configuration": "Configuració"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "S'ha produït un error desconegut",
+      "network": "Error de connexió de xarxa",
+      "timeout": "La sol·licitud ha superat el temps d'espera",
+      "unauthorized": "Accés denegat",
+      "rateLimit": "Límit de velocitat superat",
+      "serviceUnavailable": "Servei temporalment no disponible"
+    },
+    "webSearch": {
+      "searchFailed": "La cerca web ha fallat",
+      "invalidQuery": "Consulta de cerca invàlida"
+    },
+    "codeInterpreter": {
+      "executionFailed": "L'execució del codi ha fallat",
+      "invalidCode": "Codi invàlid o insegur"
+    },
+    "urlPull": {
+      "fetchFailed": "Error en obtenir el contingut de l'URL",
+      "invalidUrl": "URL invàlid o inaccessible"
+    },
+    "localKnowledge": {
+      "searchFailed": "La cerca a la base de coneixement ha fallat",
+      "noAccess": "Sense accés a la base de coneixement"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Enviament automàtic després del processament",
+    "advancedOptions": "Opcions avançades",
+    "priority": {
+      "high": "Alta",
+      "medium": "Mitjana",
+      "low": "Baixa"
+    },
+    "safeSearch": {
+      "off": "Desactivat",
+      "moderate": "Moderat",
+      "strict": "Estricte"
+    },
+    "market": {
+      "any": "Qualsevol regió",
+      "local": "Regió local"
+    }
+  }
+}

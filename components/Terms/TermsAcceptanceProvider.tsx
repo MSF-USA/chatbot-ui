@@ -1,8 +1,10 @@
-import React, { FC, ReactNode, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import React, { FC, ReactNode, useEffect, useState } from 'react';
+
 import { checkUserTermsAcceptance } from '@/utils/app/termsAcceptance';
+import { isUSBased } from '@/utils/app/userAuth';
+
 import TermsAcceptanceModal from './TermsAcceptanceModal';
-import {isUSBased} from "@/utils/app/userAuth";
 
 /**
  * Props interface for the TermsAcceptanceProvider component.
@@ -22,7 +24,7 @@ interface TermsAcceptanceProviderProps {
  * @returns {ReactElement} The wrapped children with terms acceptance handling
  */
 export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
-  children
+  children,
 }) => {
   const { data: session, status } = useSession();
   const [showTermsModal, setShowTermsModal] = useState<boolean>(false);
@@ -33,7 +35,9 @@ export const TermsAcceptanceProvider: FC<TermsAcceptanceProviderProps> = ({
       if (status === 'loading') return;
 
       if (
-          status === 'authenticated' && session?.user && !isUSBased(session?.user?.mail ?? '')
+        status === 'authenticated' &&
+        session?.user &&
+        !isUSBased(session?.user?.mail ?? '')
       ) {
         setCheckingTerms(true);
         try {

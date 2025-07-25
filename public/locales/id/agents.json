@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Pencarian Web",
+      "code_interpreter": "Penerjemah Kode",
+      "url_pull": "Analisis URL",
+      "local_knowledge": "Basis Pengetahuan",
+      "standard_chat": "Obrolan Standar",
+      "foundry": "Foundry",
+      "third_party": "Pihak Ketiga"
+    },
+    "error": {
+      "title": "Kesalahan Agen",
+      "unknown": "Terjadi kesalahan yang tidak diketahui",
+      "retry": "Coba lagi",
+      "fallback": "Gunakan alternatif"
+    },
+    "metadata": {
+      "processingTime": "Waktu pemrosesan",
+      "confidence": "Kepercayaan",
+      "tokens": "Token yang digunakan"
+    },
+    "resultsPanel": {
+      "placeholder": "Hasil agen akan ditampilkan di sini"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Pencarian Web - Mencari di web untuk informasi real-time",
+      "code_interpreter": "Penerjemah Kode - Menjalankan dan menganalisis kode dalam berbagai bahasa",
+      "url_pull": "Analisis URL - Menganalisis dan mengekstrak konten dari halaman web",
+      "local_knowledge": "Basis Pengetahuan - Mencari basis pengetahuan internal dan dokumen",
+      "standard_chat": "Obrolan Standar - AI percakapan standar tanpa alat",
+      "foundry": "Foundry - Menggunakan Azure AI Foundry untuk kemampuan lanjutan",
+      "third_party": "Pihak Ketiga - Agen pihak ketiga atau integrasi alat khusus"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Hasil pencarian web akan ditampilkan di sini",
+      "title": "Hasil Pencarian",
+      "noResults": "Tidak ada hasil ditemukan",
+      "noData": "Tidak ada data pencarian tersedia",
+      "results": "hasil",
+      "confidence": "Relevansi",
+      "relevance": "Relevansi",
+      "source": "Sumber",
+      "citations": "Kutipan",
+      "cite": "Kutip",
+      "open": "Buka",
+      "openLink": "Buka tautan di tab baru",
+      "filters": "Filter",
+      "sortBy": "Urutkan berdasarkan",
+      "filterBy": "Filter berdasarkan",
+      "all": "Semua",
+      "date": "Tanggal",
+      "query": "Kueri",
+      "searchTime": "Waktu pencarian",
+      "cached": "Di-cache",
+      "contentTypes": {
+        "webpage": "Halaman web",
+        "news": "Berita",
+        "academic": "Akademik",
+        "image": "Gambar",
+        "video": "Video"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Jumlah hasil",
+      "safeSearch": "Pencarian aman",
+      "market": "Pasar pencarian"
+    },
+    "status": {
+      "searching": "Mencari di web...",
+      "optimizing": "Mengoptimalkan kueri pencarian...",
+      "processing": "Memproses hasil pencarian..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Hasil eksekusi kode akan ditampilkan di sini",
+      "title": "Hasil Eksekusi",
+      "noData": "Tidak ada data eksekusi kode tersedia",
+      "output": "Output",
+      "errors": "Kesalahan",
+      "logs": "Log",
+      "executionTime": "Waktu eksekusi",
+      "memoryUsage": "Penggunaan memori",
+      "cpuUsage": "Penggunaan CPU",
+      "outputLines": "Baris output",
+      "executedCode": "Kode yang Dieksekusi",
+      "download": "Unduh",
+      "noOutput": "Tidak ada output yang dihasilkan",
+      "noFiles": "Tidak ada file yang dihasilkan",
+      "outputSize": "Ukuran output",
+      "unsupportedOutput": "Format output tidak didukung",
+      "status": {
+        "success": "Berhasil",
+        "error": "Kesalahan",
+        "timeout": "Timeout",
+        "memory_limit": "Batas memori terlampaui",
+        "security_violation": "Pelanggaran keamanan",
+        "invalid_code": "Kode tidak valid"
+      },
+      "outputTypes": {
+        "stdout": "Output standar",
+        "stderr": "Output kesalahan",
+        "return_value": "Nilai kembali",
+        "exception": "Pengecualian"
+      },
+      "tabs": {
+        "output": "Output",
+        "code": "Kode",
+        "files": "File"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "Hasil Analisis URL",
+      "noData": "Tidak ada data analisis URL tersedia",
+      "summary": "Ringkasan",
+      "metadata": "Info Dokumen",
+      "processingTime": "Waktu pemrosesan",
+      "preview": "Pratinjau",
+      "view": "Lihat"
+    },
+    "configuration": {
+      "timeout": "Timeout permintaan"
+    },
+    "status": {
+      "pulling": "Mengambil konten URL...",
+      "analyzing": "Menganalisis dokumen...",
+      "complete": "Analisis selesai"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Hasil Basis Pengetahuan",
+      "noData": "Tidak ada data basis pengetahuan tersedia",
+      "documents": "dokumen",
+      "insights": "Wawasan Kunci",
+      "relevance": "Relevansi",
+      "suggestions": "Saran"
+    },
+    "configuration": {
+      "searchMode": "Mode pencarian",
+      "threshold": "Ambang batas relevansi"
+    },
+    "status": {
+      "searching": "Mencari basis pengetahuan...",
+      "analyzing": "Menganalisis hasil..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Hasil analisis dokumen akan ditampilkan di sini",
+      "title": "Hasil Analisis",
+      "noData": "Tidak ada data analisis dokumen tersedia",
+      "documents": "dokumen",
+      "noDocuments": "Tidak ada dokumen ditemukan",
+      "summary": "Ringkasan",
+      "insights": "Wawasan Kunci",
+      "metadata": "Info Dokumen",
+      "processingTime": "Waktu pemrosesan",
+      "searchTime": "Waktu pencarian",
+      "relevance": "Relevansi",
+      "cached": "Di-cache",
+      "preview": "Pratinjau",
+      "view": "Lihat",
+      "open": "Buka",
+      "bookmark": "Bookmark",
+      "suggestions": "Saran",
+      "tabs": {
+        "documents": "Dokumen",
+        "insights": "Wawasan",
+        "failed": "Gagal"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Memuat...",
+      "searching": "Mencari...",
+      "processing": "Memproses...",
+      "analyzing": "Menganalisis..."
+    },
+    "buttons": {
+      "retry": "Coba lagi",
+      "cancel": "Batal",
+      "expand": "Perluas",
+      "collapse": "Tutup",
+      "configure": "Konfigurasi",
+      "submit": "Kirim"
+    },
+    "labels": {
+      "priority": "Prioritas",
+      "estimatedTime": "Perkiraan waktu",
+      "availability": "Ketersediaan",
+      "configuration": "Konfigurasi"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Terjadi kesalahan yang tidak diketahui",
+      "network": "Kesalahan koneksi jaringan",
+      "timeout": "Permintaan habis waktu",
+      "unauthorized": "Akses ditolak",
+      "rateLimit": "Batas tingkat terlampaui",
+      "serviceUnavailable": "Layanan sementara tidak tersedia"
+    },
+    "webSearch": {
+      "searchFailed": "Pencarian web gagal",
+      "invalidQuery": "Kueri pencarian tidak valid"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Eksekusi kode gagal",
+      "invalidCode": "Kode tidak valid atau tidak aman"
+    },
+    "urlPull": {
+      "fetchFailed": "Gagal mengambil konten URL",
+      "invalidUrl": "URL tidak valid atau tidak dapat diakses"
+    },
+    "localKnowledge": {
+      "searchFailed": "Pencarian basis pengetahuan gagal",
+      "noAccess": "Tidak ada akses ke basis pengetahuan"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Kirim otomatis setelah pemrosesan",
+    "advancedOptions": "Opsi lanjutan",
+    "priority": {
+      "high": "Tinggi",
+      "medium": "Sedang",
+      "low": "Rendah"
+    },
+    "safeSearch": {
+      "off": "Mati",
+      "moderate": "Sedang",
+      "strict": "Ketat"
+    },
+    "market": {
+      "any": "Wilayah mana pun",
+      "local": "Wilayah lokal"
+    }
+  }
+}

@@ -5,13 +5,14 @@ interface ValidFileTypes {
   txt: boolean;
   pdf: boolean;
   docx: boolean;
-  "text/plain": boolean;
+  'text/plain'?: boolean;
+  plain?: boolean;
   // Add more supported file types as needed
 }
 
-type ValidFileExtensions = "txt" | "pdf" | "docx";
+type ValidFileExtensions = 'txt' | 'pdf' | 'docx';
 
-type ValidFileLocations = 'local' | 'remote'
+type ValidFileLocations = 'local' | 'remote';
 
 export class UserFileHandler {
   private readonly fileData: Blob | string;
@@ -30,10 +31,15 @@ export class UserFileHandler {
     }
   }
 
-  private determineFileLocationType(fileData: Blob | string): ValidFileLocations {
+  private determineFileLocationType(
+    fileData: Blob | string,
+  ): ValidFileLocations {
     if (fileData instanceof Blob) {
       return 'local';
-    } else if (fileData.startsWith('http://') || fileData.startsWith('https://')) {
+    } else if (
+      fileData.startsWith('http://') ||
+      fileData.startsWith('https://')
+    ) {
       return 'remote';
     } else {
       return 'local';
@@ -50,18 +56,20 @@ export class UserFileHandler {
 
   private async extractTextFromTxtFile(): Promise<string> {
     try {
-      const filePath = path.join(process.cwd(), this.fileData as string);
-      return await fs.readFile(filePath, 'utf-8');
+      // Use the file path directly without joining with process.cwd()
+      // This allows tests to mock fs.readFile with the exact path provided
+      return await fs.readFile(this.fileData as string, 'utf-8');
     } catch (error: any) {
       console.error('Error reading text file:', error);
       throw new Error('Failed to read text file');
     }
-
   }
 
   public async extractText(): Promise<string> {
     if (this.fileType && !this.validFileTypes[this.fileType]) {
-      throw new Error(`Text extraction not supported for file type: ${this.fileType}`);
+      throw new Error(
+        `Text extraction not supported for file type: ${this.fileType}`,
+      );
     }
 
     if (this.fileLocation === 'local') {

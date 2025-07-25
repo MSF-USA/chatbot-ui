@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Web Araması",
+      "code_interpreter": "Kod Yorumlayıcı",
+      "url_pull": "URL Analizi",
+      "local_knowledge": "Bilgi Tabanı",
+      "standard_chat": "Standart Sohbet",
+      "foundry": "Foundry",
+      "third_party": "Üçüncü Taraf"
+    },
+    "error": {
+      "title": "Ajan Hatası",
+      "unknown": "Bilinmeyen bir hata oluştu",
+      "retry": "Tekrar dene",
+      "fallback": "Alternatifi kullan"
+    },
+    "metadata": {
+      "processingTime": "İşleme süresi",
+      "confidence": "Güven",
+      "tokens": "Kullanılan jetonlar"
+    },
+    "resultsPanel": {
+      "placeholder": "Ajan sonuçları burada gösterilecek"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Web Araması - Gerçek zamanlı bilgi için web'de arama yapar",
+      "code_interpreter": "Kod Yorumlayıcı - Birden fazla dilde kod çalıştırır ve analiz eder",
+      "url_pull": "URL Analizi - Web sayfalarından içerik analiz eder ve çıkarır",
+      "local_knowledge": "Bilgi Tabanı - Dahili bilgi tabanı ve belgelerde arama yapar",
+      "standard_chat": "Standart Sohbet - Araçsız standart sohbet AI'sı",
+      "foundry": "Foundry - Gelişmiş yetenekler için Azure AI Foundry kullanır",
+      "third_party": "Üçüncü Taraf - Üçüncü taraf ajanı veya özel araç entegrasyonu"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Web arama sonuçları burada gösterilecek",
+      "title": "Arama Sonuçları",
+      "noResults": "Sonuç bulunamadı",
+      "noData": "Arama verisi mevcut değil",
+      "results": "sonuç",
+      "confidence": "Alıntı",
+      "relevance": "Alıntı",
+      "source": "Kaynak",
+      "citations": "Alıntılar",
+      "cite": "Alıntıla",
+      "open": "Aç",
+      "openLink": "Linki yeni sekmede aç",
+      "filters": "Filtreler",
+      "sortBy": "Sırala",
+      "filterBy": "Filtrele",
+      "all": "Tümü",
+      "date": "Tarih",
+      "query": "Sorgu",
+      "searchTime": "Arama süresi",
+      "cached": "Önbellekte",
+      "contentTypes": {
+        "webpage": "Web sayfaları",
+        "news": "Haberler",
+        "academic": "Akademik",
+        "image": "Resimler",
+        "video": "Videolar"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Sonuç sayısı",
+      "safeSearch": "Güvenli arama",
+      "market": "Arama pazarı"
+    },
+    "status": {
+      "searching": "Web'de arama yapılıyor...",
+      "optimizing": "Arama sorgusu optimize ediliyor...",
+      "processing": "Arama sonuçları işleniyor..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Kod yürütme sonuçları burada gösterilecek",
+      "title": "Yürütme Sonuçları",
+      "noData": "Kod yürütme verisi mevcut değil",
+      "output": "Çıktı",
+      "errors": "Hatalar",
+      "logs": "Loglar",
+      "executionTime": "Yürütme süresi",
+      "memoryUsage": "Bellek kullanımı",
+      "cpuUsage": "CPU kullanımı",
+      "outputLines": "Çıktı satırları",
+      "executedCode": "Yürütülen Kod",
+      "download": "İndir",
+      "noOutput": "Çıktı üretilmedi",
+      "noFiles": "Dosya üretilmedi",
+      "outputSize": "Çıktı boyutu",
+      "unsupportedOutput": "Desteklenmeyen çıktı formatı",
+      "status": {
+        "success": "Başarılı",
+        "error": "Hata",
+        "timeout": "Zaman aşımı",
+        "memory_limit": "Bellek sınırı aşıldı",
+        "security_violation": "Güvenlik ihlali",
+        "invalid_code": "Geçersiz kod"
+      },
+      "outputTypes": {
+        "stdout": "Standart çıktı",
+        "stderr": "Hata çıktısı",
+        "return_value": "Dönüş değeri",
+        "exception": "İstisna"
+      },
+      "tabs": {
+        "output": "Çıktı",
+        "code": "Kod",
+        "files": "Dosyalar"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL Analiz Sonuçları",
+      "noData": "URL analiz verisi mevcut değil",
+      "summary": "Özet",
+      "metadata": "Belge Bilgisi",
+      "processingTime": "İşleme süresi",
+      "preview": "Önizleme",
+      "view": "Görüntüle"
+    },
+    "configuration": {
+      "timeout": "İstek zaman aşımı"
+    },
+    "status": {
+      "pulling": "URL içeriği getiriliyor...",
+      "analyzing": "Belge analiz ediliyor...",
+      "complete": "Analiz tamamlandı"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Bilgi Tabanı Sonuçları",
+      "noData": "Bilgi tabanı verisi mevcut değil",
+      "documents": "belge",
+      "insights": "Anahtar Görüşler",
+      "relevance": "Alıntı",
+      "suggestions": "Öneriler"
+    },
+    "configuration": {
+      "searchMode": "Search mode",
+      "threshold": "Relevance threshold"
+    },
+    "status": {
+      "searching": "Searching knowledge base...",
+      "analyzing": "Analyzing results..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Document analysis results will be displayed here",
+      "title": "Analysis Results",
+      "noData": "No document analysis data available",
+      "documents": "documents",
+      "noDocuments": "No documents found",
+      "summary": "Summary",
+      "insights": "Key Insights",
+      "metadata": "Document Info",
+      "processingTime": "Processing time",
+      "searchTime": "Search time",
+      "relevance": "Relevance",
+      "cached": "Cached",
+      "preview": "Preview",
+      "view": "View",
+      "open": "Open",
+      "bookmark": "Bookmark",
+      "suggestions": "Suggestions",
+      "tabs": {
+        "documents": "Documents",
+        "insights": "Insights",
+        "failed": "Failed"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Yükleniyor...",
+      "searching": "Aranıyor...",
+      "processing": "İşleniyor...",
+      "analyzing": "Analiz ediliyor..."
+    },
+    "buttons": {
+      "retry": "Tekrar dene",
+      "cancel": "İptal",
+      "expand": "Genişlet",
+      "collapse": "Daralt",
+      "configure": "Yapılandır",
+      "submit": "Gönder"
+    },
+    "labels": {
+      "priority": "Priority",
+      "estimatedTime": "Estimated time",
+      "availability": "Availability",
+      "configuration": "Configuration"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Bilinmeyen bir hata oluştu",
+      "network": "Ağ bağlantısı hatası",
+      "timeout": "İstek zaman aşımına uğradı",
+      "unauthorized": "Erişim reddedildi",
+      "rateLimit": "Hız sınırı aşıldı",
+      "serviceUnavailable": "Hizmet geçici olarak kullanılamıyor"
+    },
+    "webSearch": {
+      "searchFailed": "Web araması başarısız",
+      "invalidQuery": "Geçersiz arama sorgusu"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Kod yürütme başarısız",
+      "invalidCode": "Geçersiz veya güvenli olmayan kod"
+    },
+    "urlPull": {
+      "fetchFailed": "Failed to fetch URL content",
+      "invalidUrl": "Invalid or inaccessible URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "Knowledge base search failed",
+      "noAccess": "No access to knowledge base"
+    }
+  },
+  "settings": {
+    "autoSubmit": "İşlemden sonra otomatik gönderim",
+    "advancedOptions": "Gelişmiş seçenekler",
+    "priority": {
+      "high": "Yüksek",
+      "medium": "Orta",
+      "low": "Düşük"
+    },
+    "safeSearch": {
+      "off": "Kapalı",
+      "moderate": "Orta",
+      "strict": "Sert"
+    },
+    "market": {
+      "any": "Any region",
+      "local": "Local region"
+    }
+  }
+}

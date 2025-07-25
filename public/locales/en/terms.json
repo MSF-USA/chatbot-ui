@@ -1,0 +1,35 @@
+{
+  "title": "Terms of Service",
+  "description": "Please review and accept our Terms of Service to continue.",
+  "accept": "Accept",
+  "decline": "Decline",
+  "privacyPolicy": "Privacy Policy",
+  "termsOfService": "Terms of Service",
+  "and": "and",
+  "byAccepting": "By accepting, you agree to our",
+  "content": {
+    "title": "Terms of Service Agreement",
+    "introduction": "Welcome to our application. By accessing or using our service, you agree to be bound by these Terms of Service.",
+    "section1": {
+      "title": "1. User Responsibilities",
+      "content": "Users are responsible for maintaining the confidentiality of their account information and for all activities that occur under their account."
+    },
+    "section2": {
+      "title": "2. Acceptable Use",
+      "content": "You agree not to use the service for any illegal or unauthorized purpose. You must not violate any laws in your jurisdiction."
+    },
+    "section3": {
+      "title": "3. Intellectual Property",
+      "content": "All content included on this service, such as text, graphics, logos, and software, is the property of our company or its content suppliers and is protected by copyright laws."
+    },
+    "section4": {
+      "title": "4. Limitation of Liability",
+      "content": "Our company shall not be liable for any indirect, incidental, special, or consequential damages resulting from the use or inability to use the service."
+    },
+    "section5": {
+      "title": "5. Changes to Terms",
+      "content": "We reserve the right to modify these terms at any time. Your continued use of the service following the posting of changes constitutes your acceptance of those changes."
+    },
+    "conclusion": "Thank you for using our service. If you have any questions about these terms, please contact us."
+  }
+}

@@ -13,14 +13,20 @@ export default function Document(props: Props) {
     <Html lang={currentLocale}>
       <Head>
         <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="robots" content="noindex, nofollow"/>
+        <meta name="robots" content="noindex, nofollow" />
         <meta name="apple-mobile-web-app-title" content="MSF AI Assistant" />
-        <meta name="description" content="Chat GPT AI Assistant for MSF Staff - Internal Use Only" />
+        <meta
+          name="description"
+          content="Chat GPT AI Assistant for MSF Staff - Internal Use Only"
+        />
         <meta
           name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"
         />
-        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta
+          name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent"
+        />
         <link rel="manifest" href="/manifest.json" />
         <link
           href="/icons/favicon-16x16.png"

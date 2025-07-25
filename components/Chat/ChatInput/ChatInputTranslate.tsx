@@ -1,10 +1,18 @@
-import { FC } from "preact/compat";
-import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
-import { IconLanguage } from "@tabler/icons-react";
-import toast from "react-hot-toast";
-import BetaBadge from "@/components/Beta/Badge";
-import {useTranslation} from "next-i18next";
-import Modal from "@/components/UI/Modal";
+import { IconLanguage } from '@tabler/icons-react';
+import { FC } from 'preact/compat';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import toast from 'react-hot-toast';
+
+import { useTranslation } from 'next-i18next';
+
+import BetaBadge from '@/components/Beta/Badge';
+import Modal from '@/components/UI/Modal';
 
 interface ChatInputTranslateProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -14,28 +22,29 @@ interface ChatInputTranslateProps {
   defaultText?: string | null | undefined;
 }
 
-const ChatInputTranslate: FC<ChatInputTranslateProps> = (
-  {
-    setTextFieldValue,
-    handleSend,
-    simulateClick,
-    setParentModalIsOpen,
-    defaultText
-  }) => {
+const ChatInputTranslate: FC<ChatInputTranslateProps> = ({
+  setTextFieldValue,
+  handleSend,
+  simulateClick,
+  setParentModalIsOpen,
+  defaultText,
+}) => {
   const { t } = useTranslation('chat');
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [inputText, setInputText] = useState(defaultText ?? "");
-  const [sourceLanguage, setSourceLanguage] = useState("");
-  const [targetLanguage, setTargetLanguage] = useState("");
-  const [translationType, setTranslationType] = useState("balanced");
-  const [domainSpecific, setDomainSpecific] = useState("general");
+  const [inputText, setInputText] = useState(defaultText ?? '');
+  const [sourceLanguage, setSourceLanguage] = useState('');
+  const [targetLanguage, setTargetLanguage] = useState('');
+  const [translationType, setTranslationType] = useState('balanced');
+  const [domainSpecific, setDomainSpecific] = useState('general');
   const [useFormalLanguage, setUseFormalLanguage] = useState(false);
-  const [useGenderNeutralLanguage, setUseGenderNeutralLanguage] = useState(false);
+  const [useGenderNeutralLanguage, setUseGenderNeutralLanguage] =
+    useState(false);
   const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
   const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
-  const [useTargetLanguageDropdown, setUseTargetLanguageDropdown] = useState<boolean>(true);
+  const [useTargetLanguageDropdown, setUseTargetLanguageDropdown] =
+    useState<boolean>(true);
   const openModalButtonRef = useRef<HTMLButtonElement>(null);
   const inputTextRef = useRef<HTMLTextAreaElement>(null);
 
@@ -43,7 +52,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     if (isReadyToSend) {
       setIsReadyToSend(false); // Reset the flag
       handleSend();
-      setParentModalIsOpen(false)
+      setParentModalIsOpen(false);
     }
   }, [isReadyToSend, handleSend, setParentModalIsOpen]);
 
@@ -59,19 +68,19 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   };
 
   const languages = [
-    { value: "en", label: t("languageEnglish"), autonym: "English" },
-    { value: "es", label: t("languageSpanish"), autonym: "Español" },
-    { value: "fr", label: t("languageFrench"), autonym: "Français" },
-    { value: "de", label: t("languageGerman"), autonym: "Deutsch" },
-    { value: "nl", label: t("languageDutch"), autonym: "Nederlands" },
-    { value: "it", label: t("languageItalian"), autonym: "Italiano" },
-    { value: "pt", label: t("languagePortuguese"), autonym: "Português" },
-    { value: "ru", label: t("languageRussian"), autonym: "Русский" },
-    { value: "zh", label: t("languageChinese"), autonym: "中文" },
-    { value: "ja", label: t("languageJapanese"), autonym: "日本語" },
-    { value: "ko", label: t("languageKorean"), autonym: "한국어" },
-    { value: "ar", label: t("languageArabic"), autonym: "العربية" },
-    { value: "hi", label: t("languageHindi"), autonym: "हिन्दी" },
+    { value: 'en', label: t('languageEnglish'), autonym: 'English' },
+    { value: 'es', label: t('languageSpanish'), autonym: 'Español' },
+    { value: 'fr', label: t('languageFrench'), autonym: 'Français' },
+    { value: 'de', label: t('languageGerman'), autonym: 'Deutsch' },
+    { value: 'nl', label: t('languageDutch'), autonym: 'Nederlands' },
+    { value: 'it', label: t('languageItalian'), autonym: 'Italiano' },
+    { value: 'pt', label: t('languagePortuguese'), autonym: 'Português' },
+    { value: 'ru', label: t('languageRussian'), autonym: 'Русский' },
+    { value: 'zh', label: t('languageChinese'), autonym: '中文' },
+    { value: 'ja', label: t('languageJapanese'), autonym: '日本語' },
+    { value: 'ko', label: t('languageKorean'), autonym: '한국어' },
+    { value: 'ar', label: t('languageArabic'), autonym: 'العربية' },
+    { value: 'hi', label: t('languageHindi'), autonym: 'हिन्दी' },
   ].sort((a, b) => a.label.localeCompare(b.label));
 
   const handleTranslate = () => {
@@ -87,25 +96,28 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     let prompt;
     if (!sourceLanguage) {
       prompt = `Translate the following text into the language with iso code \`${
-        languages.find((l) => l.value === targetLanguage)?.value || "unknown"
+        languages.find((l) => l.value === targetLanguage)?.value || 'unknown'
       }\`:\n\n\`\`\`\n${inputText}\n\`\`\``;
     } else {
       prompt = `Translate the following text from the language with the iso code \`${
-        languages.find((l) => l.value === sourceLanguage)?.value || "the original language"
+        languages.find((l) => l.value === sourceLanguage)?.value ||
+        'the original language'
       }\` to \`${
-        languages.find((l) => l.value === targetLanguage)?.value || "unknown"
+        languages.find((l) => l.value === targetLanguage)?.value || 'unknown'
       }\`:\n\n\`\`\`${sourceLanguage}\n${inputText}\n\`\`\``;
     }
 
-    prompt += '\n\nRespond with directly markdown formatted text (not in a code block) matching the original as closely as possible, making only language-appropriate adjustments.';
+    prompt +=
+      '\n\nRespond with directly markdown formatted text (not in a code block) matching the original as closely as possible, making only language-appropriate adjustments.';
 
     // Include advanced options in the prompt if selected
-    if (translationType !== "balanced") {
+    if (translationType !== 'balanced') {
       prompt += `\n\nTranslation type: ${translationType}`;
     } else {
-      prompt += '\n\nMake sure your translation balances between literal, figurative, and cultural translations in a way that intuitively captures the original meaning.'
+      prompt +=
+        '\n\nMake sure your translation balances between literal, figurative, and cultural translations in a way that intuitively captures the original meaning.';
     }
-    if (domainSpecific !== "general") {
+    if (domainSpecific !== 'general') {
       prompt += `\nDomain-specific terminology: ${domainSpecific}`;
     }
     if (useFormalLanguage) {
@@ -118,7 +130,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     setTextFieldValue(prompt);
     setIsModalOpen(false);
     setIsReadyToSend(autoSubmit);
-    setInputText("");
+    setInputText('');
   };
 
   const modalContent = (
@@ -138,7 +150,9 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
             value={sourceLanguage}
             onChange={(e) => setSourceLanguage(e.target.value)}
           >
-            <option value="" className={'text-gray-400 dark:text-gray-400'}>{t('translatorEmptyFromLanguage')}</option>
+            <option value="" className={'text-gray-400 dark:text-gray-400'}>
+              {t('translatorEmptyFromLanguage')}
+            </option>
             {languages.map((language) => (
               <option key={language.value} value={language.value}>
                 {language.label} ({language.autonym})
@@ -185,7 +199,9 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
               value={targetLanguage}
               onChange={(e) => setTargetLanguage(e.target.value)}
             >
-              <option value="" className={'text-gray-400 dark:text-gray-400'}>{t('translatorEmptyToLanguage')}</option>
+              <option value="" className={'text-gray-400 dark:text-gray-400'}>
+                {t('translatorEmptyToLanguage')}
+              </option>
               {languages.map((language) => (
                 <option key={language.value} value={language.value}>
                   {language.label} ({language.autonym})
@@ -230,12 +246,19 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
           {t('advancedOptionsButton')}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ml-1 transform ${showAdvanced ? "rotate-180" : ""}`}
+            className={`h-5 w-5 ml-1 transform ${
+              showAdvanced ? 'rotate-180' : ''
+            }`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"/>
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
           </svg>
         </button>
         {showAdvanced && (
@@ -255,10 +278,18 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                   value={translationType}
                   onChange={(e) => setTranslationType(e.target.value)}
                 >
-                  <option value="literal">{t('translatorTranslationTypeLiteral')}</option>
-                  <option value="balanced">{t('translatorTranslationTypeBalanced')}</option>
-                  <option value="figurative">{t('translatorTranslationTypeFigurative')}</option>
-                  <option value="cultural">{t('translatorTranslationTypeCultural')}</option>
+                  <option value="literal">
+                    {t('translatorTranslationTypeLiteral')}
+                  </option>
+                  <option value="balanced">
+                    {t('translatorTranslationTypeBalanced')}
+                  </option>
+                  <option value="figurative">
+                    {t('translatorTranslationTypeFigurative')}
+                  </option>
+                  <option value="cultural">
+                    {t('translatorTranslationTypeCultural')}
+                  </option>
                 </select>
               </div>
               <div>
@@ -274,16 +305,25 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                   value={domainSpecific}
                   onChange={(e) => setDomainSpecific(e.target.value)}
                 >
-                  <option value="general">{t('translatorTranslationDomainGeneral')}</option>
-                  <option value="medical">{t('translatorTranslationDomainMedical')}</option>
-                  <option value="legal">{t('translatorTranslationDomainLegal')}</option>
-                  <option value="technical">{t('translatorTranslationDomainTechnical')}</option>
-                  <option value="business">{t('translatorTranslationDomainBusiness')}</option>
+                  <option value="general">
+                    {t('translatorTranslationDomainGeneral')}
+                  </option>
+                  <option value="medical">
+                    {t('translatorTranslationDomainMedical')}
+                  </option>
+                  <option value="legal">
+                    {t('translatorTranslationDomainLegal')}
+                  </option>
+                  <option value="technical">
+                    {t('translatorTranslationDomainTechnical')}
+                  </option>
+                  <option value="business">
+                    {t('translatorTranslationDomainBusiness')}
+                  </option>
                 </select>
               </div>
             </div>
-            <div
-              className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0 mt-4">
+            <div className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0 mt-4">
               <div className="flex items-center">
                 <input
                   id="use-formal-language"
@@ -304,7 +344,9 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                   id="use-gender-neutral-language"
                   type="checkbox"
                   checked={useGenderNeutralLanguage}
-                  onChange={(e) => setUseGenderNeutralLanguage(e.target.checked)}
+                  onChange={(e) =>
+                    setUseGenderNeutralLanguage(e.target.checked)
+                  }
                   className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
                 />
                 <label
@@ -349,15 +391,14 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   return (
     <>
       <button
-        style={{display: 'none'}}
+        style={{ display: 'none' }}
         onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
           event.preventDefault();
           setIsModalOpen(true);
         }}
         ref={openModalButtonRef}
       >
-        <IconLanguage
-          className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700"/>
+        <IconLanguage className="text-black dark:text-white rounded h-5 w-5 hover:bg-gray-200 dark:hover:bg-gray-700" />
         <span className="sr-only">Translate text</span>
       </button>
 

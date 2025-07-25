@@ -1,6 +1,7 @@
-import {ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
-import {Tiktoken} from "@dqbd/tiktoken/lite/init";
-import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
+import { ImageMessageContent, Message, TextMessageContent } from '@/types/chat';
+import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
+
+import { Tiktoken } from '@dqbd/tiktoken/lite/init';
 
 /**
  * Checks if a collection of messages is of a specific conversation type by checking the type of the last message in the conversation.
@@ -10,12 +11,13 @@ import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
  * @returns {boolean} - Returns true if the last message in the conversation has content of the specified type, false otherwise.
  */
 const isConversationType = (messages: Message[], type: string): boolean => {
-    const lastMessage = messages.length === 1 ? messages[0] : messages[messages.length-1];
-    if(Array.isArray(lastMessage.content)) {
-        return lastMessage.content.some(contentItem => contentItem.type === type);
-    }
-    return false;
-}
+  const lastMessage =
+    messages.length === 1 ? messages[0] : messages[messages.length - 1];
+  if (Array.isArray(lastMessage.content)) {
+    return lastMessage.content.some((contentItem) => contentItem.type === type);
+  }
+  return false;
+};
 
 /**
  * Checks whether a collection of messages is an image conversation by checking the type of the last message in the conversation.
@@ -31,8 +33,8 @@ const isConversationType = (messages: Message[], type: string): boolean => {
  * console.log(isImageConvo); // Output: true
  */
 export const isImageConversation = (messages: Message[]): boolean => {
-    return isConversationType(messages, 'image_url');
-}
+  return isConversationType(messages, 'image_url');
+};
 
 /**
  * Checks whether a collection of messages is a file conversation by checking the type of the last message in the conversation.
@@ -48,9 +50,8 @@ export const isImageConversation = (messages: Message[]): boolean => {
  * console.log(isFileConvo); // Output: true
  */
 export const isFileConversation = (messages: Message[]): boolean => {
-    return isConversationType(messages, 'file_url');
-}
-
+  return isConversationType(messages, 'file_url');
+};
 
 /**
  * Checks if a given model ID is valid based on a set of valid model IDs.
@@ -79,15 +80,34 @@ export const isFileConversation = (messages: Message[]): boolean => {
  * Otherwise, it returns false, indicating that the model ID is not valid.
  */
 export const checkIsModelValid = (
-    modelId: string,
-    validModelIDs: object
+  modelId: string,
+  validModelIDs: object,
 ): boolean => {
-    if (
-        validModelIDs !== OpenAIModelID &&
-        validModelIDs !== OpenAIVisionModelID
-    ) {
-        throw new Error('Invalid enum provided for validModelIDs');
-    }
+  if (
+    validModelIDs !== OpenAIModelID &&
+    validModelIDs !== OpenAIVisionModelID
+  ) {
+    throw new Error('Invalid enum provided for validModelIDs');
+  }
 
-    return Object.values(validModelIDs).toString().split(',').includes(modelId);
-}
+  return Object.values(validModelIDs).toString().split(',').includes(modelId);
+};
+
+/**
+ * Checks if the given model ID is a reasoning model (o1, o1-mini, o3-mini).
+ * Reasoning models have special requirements:
+ * - No system messages (prepend to first user message instead)
+ * - Fixed temperature of 1
+ * - No streaming
+ * - Use standard chat.completions.create endpoint
+ *
+ * @param {OpenAIModelID | string} id - The model ID to check
+ * @returns {boolean} - Returns true if the model is a reasoning model, false otherwise
+ */
+export const isReasoningModel = (id: OpenAIModelID | string): boolean => {
+  return [
+    OpenAIModelID.GPT_o1,
+    OpenAIModelID.GPT_o1_mini,
+    OpenAIModelID.GPT_o3_mini,
+  ].includes(id as OpenAIModelID);
+};

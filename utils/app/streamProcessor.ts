@@ -13,7 +13,7 @@ import { TextEncoder } from 'util';
 export function createAzureOpenAIStreamProcessor(
   response: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
   ragService?: RAGService,
-  stopConversationRef?: { current: boolean }
+  stopConversationRef?: { current: boolean },
 ): ReadableStream {
   return new ReadableStream({
     start: (controller) => {
@@ -31,9 +31,9 @@ export function createAzureOpenAIStreamProcessor(
                 controllerClosed = true;
                 controller.close();
               }
-              return; 
+              return;
             }
-            
+
             if (chunk?.choices?.[0]?.delta?.content) {
               const contentChunk = chunk.choices[0].delta.content;
               allContent += contentChunk;
@@ -72,15 +72,17 @@ export function createAzureOpenAIStreamProcessor(
           }
         } catch (error: any) {
           console.error('Stream processing error:', error);
-          
-          if (error.name === 'AbortError' || 
-              error.message === 'Abort error: Fetch is already aborted' ||
-              error.message?.includes('abort') || 
-              error.message?.includes('Abort')) {
+
+          if (
+            error.name === 'AbortError' ||
+            error.message === 'Abort error: Fetch is already aborted' ||
+            error.message?.includes('abort') ||
+            error.message?.includes('Abort')
+          ) {
             console.log('Stream aborted by user, closing cleanly');
             if (!controllerClosed) {
               controllerClosed = true;
-              controller.close(); 
+              controller.close();
             }
           } else {
             if (!controllerClosed) {

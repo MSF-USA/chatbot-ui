@@ -1,8 +1,4 @@
-import {
-  IconEdit,
-  IconTrash,
-  IconUser,
-} from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconUser } from '@tabler/icons-react';
 import {
   Dispatch,
   FC,

@@ -16,12 +16,24 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
+import { makeRequest } from '@/services/frontendChatServices';
+
+import { AgentType } from '@/types/agent';
+import {
+  AgentExecutionApiRequest,
+  AgentExecutionApiResponse,
+} from '@/types/agentApi';
 import {
   ChatInputSubmitTypes,
+  Conversation,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
+  Message,
+  MessageType,
+  TextMessageContent,
 } from '@/types/chat';
+import { Plugin, PluginID } from '@/types/plugin';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -73,6 +85,19 @@ interface ChatInputSearchProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   initialMode?: 'search' | 'url';
+  // New props for agent-based web search
+  onSend?: (
+    message: Message,
+    plugin: Plugin | null,
+    forceStandardChat?: boolean,
+  ) => void;
+  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
+  setProgress?: Dispatch<SetStateAction<number | null>>;
+  stopConversationRef?: { current: boolean };
+  apiKey?: string;
+  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
+  systemPrompt?: string;
+  temperature?: number;
 }
 
 const ChatInputSearch = ({
@@ -87,10 +112,18 @@ const ChatInputSearch = ({
   setTextFieldValue,
   handleSend,
   initialMode = 'search',
+  onSend,
+  setRequestStatusMessage,
+  setProgress,
+  stopConversationRef,
+  apiKey,
+  pluginKeys,
+  systemPrompt,
+  temperature,
 }: ChatInputSearchProps) => {
-  const { t } = useTranslation('chat');
+  const { t } = useTranslation(['chat', 'agents']);
   const {
-    state: { user },
+    state: { user, selectedConversation },
   } = useContext(HomeContext);
 
   const [mode, setMode] = useState<'search' | 'url'>(initialMode);
@@ -169,6 +202,108 @@ const ChatInputSearch = ({
     }
   }, [isReadyToSend, handleSend, onClose]);
 
+  // Helper functions similar to agenticFrontendService
+  const formatConversationHistory = (maxMessages: number = 5): string[] => {
+    if (
+      !selectedConversation?.messages ||
+      selectedConversation.messages.length <= 1
+    ) {
+      return [];
+    }
+
+    // Get the last N messages, excluding any current pending message
+    const messagesToInclude = selectedConversation.messages.slice(-maxMessages);
+    const formattedHistory: string[] = [];
+
+    for (const message of messagesToInclude) {
+      let roleLabel: string;
+      switch (message.role) {
+        case 'user':
+          roleLabel = 'User';
+          break;
+        case 'assistant':
+          roleLabel = 'Assistant';
+          break;
+        case 'system':
+          roleLabel = 'System';
+          break;
+        default:
+          roleLabel = 'Unknown';
+      }
+
+      const messageText = extractMessageText(message);
+
+      // Skip empty messages
+      if (!messageText.trim()) {
+        continue;
+      }
+
+      // Truncate very long messages to avoid token overflow
+      const truncatedText =
+        messageText.length > 500
+          ? messageText.substring(0, 500) + '...'
+          : messageText;
+
+      formattedHistory.push(`${roleLabel}: ${truncatedText}`);
+    }
+
+    return formattedHistory;
+  };
+
+  const extractMessageText = (message: Message): string => {
+    if (typeof message.content === 'string') {
+      return message.content;
+    }
+
+    if (Array.isArray(message.content)) {
+      const textContent = (
+        message.content as (TextMessageContent | FileMessageContent)[]
+      ).find(
+        (content): content is TextMessageContent => content.type === 'text',
+      );
+      return textContent?.text || '';
+    }
+
+    return '';
+  };
+
+  const processAgentResult = (
+    agentData: AgentExecutionApiResponse['data'],
+    originalQuery: string,
+  ): string => {
+    if (!agentData) {
+      throw new Error('No agent data to process');
+    }
+
+    // Create an enhanced prompt that includes the agent's findings
+    let enhancedPrompt = `Based on the following information retrieved by the ${agentData.agentType} agent, please provide a comprehensive response to the user's question.
+
+User's original question: ${originalQuery}
+
+Agent findings:
+${agentData.content}`;
+
+    // Add structured content if available
+    if (
+      agentData.structuredContent &&
+      agentData.structuredContent.items.length > 0
+    ) {
+      enhancedPrompt += `\n\nAdditional context:`;
+      agentData.structuredContent.items.forEach((item, index) => {
+        enhancedPrompt += `\n\n[Source ${index + 1}: ${item.source}]\n${
+          item.content
+        }`;
+      });
+    }
+
+    enhancedPrompt += `\n\nPlease synthesize this information and provide a helpful, accurate response to the user's question. Take the full conversation history into account when responding, though allow the user to switch to a different topic if necessary.`;
+
+    // Add web search specific instructions
+    enhancedPrompt += `\n\nAdditionally, when presenting your response, please include proper references and citations to the sources provided in the agent findings. Use numbered, markdown citations and provide a reference list at the end if multiple sources are cited.`;
+
+    return enhancedPrompt;
+  };
+
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setUrlError(null);
@@ -238,11 +373,10 @@ const ChatInputSearch = ({
 
     try {
       let optimizedQuery = searchInput;
-      let optimizedQuestion =
-        searchQuestionInput || t('webSearchModalDefaultQuestion');
+      const originalQuery = searchInput; // Store original for conversation history
 
+      // Step 1: Optimize query if requested (keep existing logic)
       if (shouldOptimizeInput && searchInput) {
-        // ensure searchInput is not empty for optimization
         setSearchStatusMessage(t('webSearchModalOptimizingStatusMessage'));
         try {
           const optimizeResponse = await fetch('/api/v2/web/search/structure', {
@@ -257,9 +391,7 @@ const ChatInputSearch = ({
           if (optimizeResponse.ok) {
             const optimizeData = await optimizeResponse.json();
             optimizedQuery = optimizeData.optimizedQuery;
-            optimizedQuestion = optimizeData.optimizedQuestion;
             setSearchInput(optimizedQuery);
-            setSearchQuestionInput(optimizedQuestion);
           } else {
             console.warn(
               'Failed to optimize query:',
@@ -271,50 +403,101 @@ const ChatInputSearch = ({
         }
       }
 
-      setSearchStatusMessage(t('webSearchModalSearchingStatusMessage'));
-      const queryParams = new URLSearchParams({
-        q: optimizedQuery,
-        mkt,
-        safeSearch,
-        count: adjustedCount.toString(),
-        offset: offset.toString(),
-      }).toString();
+      // Step 2: Prepare agent request
+      setSearchStatusMessage('Processing with web search agent...');
+      const conversationHistory = formatConversationHistory();
 
-      const response = await fetch(`/api/v2/web/search?${queryParams}`);
-      if (!response.ok)
+      const agentRequest: AgentExecutionApiRequest = {
+        agentType: AgentType.WEB_SEARCH,
+        query: optimizedQuery,
+        conversationHistory,
+        model: selectedConversation
+          ? {
+              id: selectedConversation.model.id,
+              tokenLimit: selectedConversation.model.tokenLimit,
+            }
+          : {
+              id: 'gpt-4o-mini',
+              tokenLimit: 128000,
+            },
+        config: {
+          maxResults: adjustedCount,
+          defaultMarket: mkt || 'en-US',
+          defaultSafeSearch: safeSearch,
+        },
+        timeout: 30000,
+      };
+
+      // Step 3: Execute agent request
+      const response = await fetch('/api/v2/agent/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(agentRequest),
+      });
+
+      if (!response.ok) {
         throw new Error(
           t('errorFailedToFetchSearchResults') ||
-            'Failed to fetch search results',
+            'Failed to execute web search agent',
         );
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
+      }
 
-      const content = data.content;
-      setSearchStatusMessage(t('webSearchModalHandlingContentStatusMessage'));
-      const hash = crypto.createHash('sha256').update(content).digest('hex');
-      const blob = new Blob([content], { type: 'text/plain' });
-      const fileName = `search-${optimizedQuery
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')}_${hash}.txt`;
-      const file = new File([blob], fileName, { type: 'text/plain' });
+      const agentResult: AgentExecutionApiResponse = await response.json();
+      if (!agentResult.success || !agentResult.data) {
+        throw new Error(agentResult.error?.message || 'Agent execution failed');
+      }
 
-      await onFileUpload(
-        [file],
-        setSubmitType,
-        setFilePreviews,
-        setFileFieldValue,
-        setImageFieldValue,
-        setUploadProgress,
-      );
-      setTextFieldValue(
-        `${optimizedQuestion}\n\n${t(
-          'webSearchModalPromptUserContext',
-        )}:\n\n\`\`\`user-request\n${optimizedQuery}\n\`\`\`\n\n${t(
-          'webSearchModalPromptCitation',
-        )}`,
-      );
-      if (autoSubmit) setIsReadyToSend(true);
-      else onClose();
+      // Step 4: Add user's original question to conversation history (visible to user)
+      if (onSend) {
+        const userMessage: Message = {
+          role: 'user',
+          content: originalQuery,
+          messageType: MessageType.TEXT,
+        };
+        onSend(userMessage, null, undefined);
+      }
+
+      // Step 5: Process agent result internally through makeRequest (hidden from user)
+      if (selectedConversation && setRequestStatusMessage && apiKey) {
+        // Create enhanced prompt that includes agent findings
+        const enhancedPrompt = processAgentResult(
+          agentResult.data,
+          originalQuery,
+        );
+
+        // Create internal message with enhanced context
+        const enhancedMessage: Message = {
+          role: 'user',
+          content: enhancedPrompt,
+          messageType: MessageType.TEXT,
+        };
+
+        // Create enhanced conversation by replacing the last message (user's original query)
+        const enhancedConversation: Conversation = {
+          ...selectedConversation,
+          messages: [
+            ...selectedConversation.messages.slice(0, -1),
+            enhancedMessage,
+          ],
+        };
+
+        // Call makeRequest directly instead of onSend to avoid adding to conversation history
+        await makeRequest(
+          null, // plugin
+          setRequestStatusMessage,
+          enhancedConversation,
+          apiKey,
+          pluginKeys || [],
+          systemPrompt || '',
+          temperature || 0.7,
+          true, // stream
+          setProgress || (() => {}),
+          stopConversationRef,
+          true, // forceStandardChat
+        );
+      }
+
+      onClose();
       setSearchInput('');
       setSearchQuestionInput('');
     } catch (error: any) {
@@ -322,7 +505,7 @@ const ChatInputSearch = ({
       setSearchError(
         error.message ||
           t('errorOccurredFetchingSearchResults') ||
-          'An error occurred while fetching search results',
+          'An error occurred while executing web search',
       );
     } finally {
       setSearchStatusMessage(null);
@@ -332,34 +515,36 @@ const ChatInputSearch = ({
 
   const isSubmitting = isUrlSubmitting || isSearchSubmitting;
 
-  const renderTabs = () => (
-    <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
-      <button
-        onClick={() => setMode('search')}
-        disabled={isSubmitting}
-        className={`px-4 py-2 font-medium ${
-          mode === 'search'
-            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-        }`}
-        aria-pressed={mode === 'search'}
-      >
-        {t('webSearchModalTitle')}
-      </button>
-      <button
-        onClick={() => setMode('url')}
-        disabled={isSubmitting}
-        className={`px-4 py-2 font-medium ${
-          mode === 'url'
-            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-        }`}
-        aria-pressed={mode === 'url'}
-      >
-        {t('chatUrlInputTitle')}
-      </button>
-    </div>
-  );
+  const renderTabs = () => {
+    return (
+      <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
+        <button
+          onClick={() => setMode('search')}
+          disabled={isSubmitting}
+          className={`px-4 py-2 font-medium ${
+            mode === 'search'
+              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          aria-pressed={mode === 'search'}
+        >
+          {t('webSearchModalTitle')}
+        </button>
+        <button
+          onClick={() => setMode('url')}
+          disabled={isSubmitting}
+          className={`px-4 py-2 font-medium ${
+            mode === 'url'
+              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          aria-pressed={mode === 'url'}
+        >
+          {t('chatUrlInputTitle')}
+        </button>
+      </div>
+    );
+  };
 
   const renderUrlForm = () => (
     <form onSubmit={handleUrlSubmit} className={'mt-1'}>
@@ -515,9 +700,7 @@ const ChatInputSearch = ({
                 id="optimize-input"
                 type="checkbox"
                 checked={shouldOptimizeInput}
-                onChange={(e) =>
-                  setShouldOptimizeInput(e.target.checked)
-                }
+                onChange={(e) => setShouldOptimizeInput(e.target.checked)}
                 disabled={isSubmitting}
                 title={
                   t('optimizeQueryTooltip') ||
@@ -562,9 +745,7 @@ const ChatInputSearch = ({
                 title={t('selectMarketTooltip') || 'Select the market'}
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
-                <option value="">
-                  {t('marketOptionAny') || 'Any'}
-                </option>
+                <option value="">{t('marketOptionAny') || 'Any'}</option>
                 <option value="ar">
                   {t('marketOptionAr') || 'Arabic (General)'}
                 </option>
@@ -604,8 +785,7 @@ const ChatInputSearch = ({
                 onChange={(e) => setSafeSearch(e.target.value)}
                 disabled={isSubmitting}
                 title={
-                  t('selectSafeSearchTooltip') ||
-                  'Select the safe search level'
+                  t('selectSafeSearchTooltip') || 'Select the safe search level'
                 }
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
@@ -613,9 +793,7 @@ const ChatInputSearch = ({
                 <option value="Moderate">
                   {t('safeSearchOptionModerate')}
                 </option>
-                <option value="Strict">
-                  {t('safeSearchOptionStrict')}
-                </option>
+                <option value="Strict">{t('safeSearchOptionStrict')}</option>
               </select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
@@ -645,8 +823,7 @@ const ChatInputSearch = ({
                 }}
                 disabled={isSubmitting}
                 title={
-                  t('numResultsTooltip') ||
-                  'Enter the number of results (1-15)'
+                  t('numResultsTooltip') || 'Enter the number of results (1-15)'
                 }
                 className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
               />
@@ -654,10 +831,7 @@ const ChatInputSearch = ({
           </div>
         )}
         {searchError && (
-          <p
-            className="text-red-500 text-sm mt-2 text-center"
-            role="alert"
-          >
+          <p className="text-red-500 text-sm mt-2 text-center" role="alert">
             {searchError}
           </p>
         )}

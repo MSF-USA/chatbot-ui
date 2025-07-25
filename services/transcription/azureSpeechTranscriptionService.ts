@@ -1,8 +1,16 @@
-import {isBase64, saveBase64AsFile, splitAudioFile, cleanUpFiles, convertToWav} from '@/services/transcription/common';
+import {
+  cleanUpFiles,
+  convertToWav,
+  isBase64,
+  saveBase64AsFile,
+  splitAudioFile,
+} from '@/services/transcription/common';
+
+import { ITranscriptionService } from '@/types/transcription';
+
 import fs from 'fs';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
-import {ITranscriptionService} from "@/types/transcription";
-import path from "path";
+import path from 'path';
 
 export class ACSTranscriptionService implements ITranscriptionService {
   private apiKey: string;
@@ -59,7 +67,11 @@ export class ACSTranscriptionService implements ITranscriptionService {
       isConverted = true;
 
       // Clean up the original segment file
-      fs.promises.unlink(segmentPath).catch(err => console.error(`Failed to delete segment file: ${segmentPath}`, err));
+      fs.promises
+        .unlink(segmentPath)
+        .catch((err) =>
+          console.error(`Failed to delete segment file: ${segmentPath}`, err),
+        );
     }
 
     const pushStream = sdk.AudioInputStream.createPushStream();
@@ -79,27 +91,41 @@ export class ACSTranscriptionService implements ITranscriptionService {
         });
     });
 
-    const audioConfig = sdk.AudioConfig.fromWavFileInput(fs.readFileSync(wavSegmentPath));
-    const speechConfig = sdk.SpeechConfig.fromSubscription(this.apiKey, this.region);
+    const audioConfig = sdk.AudioConfig.fromWavFileInput(
+      fs.readFileSync(wavSegmentPath),
+    );
+    const speechConfig = sdk.SpeechConfig.fromSubscription(
+      this.apiKey,
+      this.region,
+    );
 
     const recognizer = new sdk.SpeechRecognizer(speechConfig, audioConfig);
 
-    const result = await new Promise<sdk.SpeechRecognitionResult>((resolve, reject) => {
-      recognizer.recognizeOnceAsync(
-        (result: sdk.SpeechRecognitionResult) => {
-          resolve(result);
-          recognizer.close();
-        },
-        (error: string) => {
-          console.error('Recognition error:', error);
-          reject(new Error(error));
-          recognizer.close();
-        }
-      );
-    });
+    const result = await new Promise<sdk.SpeechRecognitionResult>(
+      (resolve, reject) => {
+        recognizer.recognizeOnceAsync(
+          (result: sdk.SpeechRecognitionResult) => {
+            resolve(result);
+            recognizer.close();
+          },
+          (error: string) => {
+            console.error('Recognition error:', error);
+            reject(new Error(error));
+            recognizer.close();
+          },
+        );
+      },
+    );
 
     // Clean up the WAV segment file
-    await fs.promises.unlink(wavSegmentPath).catch(err => console.error(`Failed to delete WAV segment file: ${wavSegmentPath}`, err));
+    await fs.promises
+      .unlink(wavSegmentPath)
+      .catch((err) =>
+        console.error(
+          `Failed to delete WAV segment file: ${wavSegmentPath}`,
+          err,
+        ),
+      );
 
     if (result.reason === sdk.ResultReason.RecognizedSpeech) {
       return result.text;
@@ -109,7 +135,7 @@ export class ACSTranscriptionService implements ITranscriptionService {
     } else {
       const cancellationDetails = sdk.CancellationDetails.fromResult(result);
       throw new Error(
-        `Speech recognition canceled, Reason: ${cancellationDetails.reason}, Error Details: ${cancellationDetails.errorDetails}`
+        `Speech recognition canceled, Reason: ${cancellationDetails.reason}, Error Details: ${cancellationDetails.errorDetails}`,
       );
     }
   }

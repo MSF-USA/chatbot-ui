@@ -1,4 +1,10 @@
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 
 interface StreamingSettings {
   smoothStreamingEnabled: boolean;
@@ -14,8 +20,8 @@ interface StreamingSettingsContextType {
 // Default settings
 const defaultSettings: StreamingSettings = {
   smoothStreamingEnabled: true, // Default to enabled
-  charsPerFrame: 3,             // Characters per frame for animation
-  frameDelay: 10,               // Milliseconds between frames
+  charsPerFrame: 3, // Characters per frame for animation
+  frameDelay: 10, // Milliseconds between frames
 };
 
 const LOCAL_STORAGE_KEY = 'chatbot-ui-streaming-settings';
@@ -27,7 +33,11 @@ const StreamingSettingsContext = createContext<StreamingSettingsContextType>({
 
 export const useStreamingSettings = () => useContext(StreamingSettingsContext);
 
-export const StreamingSettingsProvider = ({ children }: { children: ReactNode }) => {
+export const StreamingSettingsProvider = ({
+  children,
+}: {
+  children: ReactNode;
+}) => {
   const [settings, setSettings] = useState<StreamingSettings>(defaultSettings);
 
   // Load settings from localStorage on mount
@@ -35,8 +45,10 @@ export const StreamingSettingsProvider = ({ children }: { children: ReactNode })
     try {
       const savedSettings = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (savedSettings) {
-        const parsedSettings = JSON.parse(savedSettings) as Partial<StreamingSettings>;
-        setSettings(prev => ({ ...prev, ...parsedSettings }));
+        const parsedSettings = JSON.parse(
+          savedSettings,
+        ) as Partial<StreamingSettings>;
+        setSettings((prev) => ({ ...prev, ...parsedSettings }));
       }
     } catch (error) {
       console.error('Error loading streaming settings:', error);
@@ -45,7 +57,7 @@ export const StreamingSettingsProvider = ({ children }: { children: ReactNode })
 
   // Update settings and save to localStorage
   const updateSettings = (updatedSettings: Partial<StreamingSettings>) => {
-    setSettings(prev => {
+    setSettings((prev) => {
       const newSettings = { ...prev, ...updatedSettings };
       try {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newSettings));

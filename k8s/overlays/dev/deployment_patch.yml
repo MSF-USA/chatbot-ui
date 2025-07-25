@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: chat
-    namespace: chat
+  name: chat
+  namespace: chat
 spec:
-    template:
-        spec:
-            containers:
-                - name: chat
-                  env:
-                      - name: ENVIRONMENT
-                        value: dev
+  template:
+    spec:
+      containers:
+        - name: chat
+          env:
+            - name: ENVIRONMENT
+              value: dev

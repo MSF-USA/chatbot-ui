@@ -1,8 +1,5 @@
 import { Transition } from '@headlessui/react';
-import {
-  IconInfoCircle,
-  IconSettings,
-} from '@tabler/icons-react';
+import { IconInfoCircle, IconSettings } from '@tabler/icons-react';
 import {
   MutableRefObject,
   memo,
@@ -17,13 +14,23 @@ import toast from 'react-hot-toast';
 import { useTranslation } from 'next-i18next';
 import Image from 'next/image';
 
+import {
+  AgenticChatResult,
+  createAgenticFrontendService,
+} from '@/services/agenticFrontendService';
 import { makeRequest } from '@/services/frontendChatServices';
 
 import { extractCitationsFromContent } from '@/utils/app/citation';
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
-import { saveConversation, saveConversations } from '@/utils/app/conversation';
+import {
+  generateTitleFromAPI,
+  saveConversation,
+  saveConversations,
+  setConversationTitle,
+} from '@/utils/app/conversation';
 import { throttle } from '@/utils/data/throttle';
 
+import { AgentType } from '@/types/agent';
 import { getBotById } from '@/types/bots';
 import {
   ChatBody,
@@ -42,13 +49,14 @@ import HomeContext from '@/pages/api/home/home.context';
 import lightTextLogo from '../../public/international_logo_black.png';
 import darkTextLogo from '../../public/international_logo_white.png';
 import { TemperatureSlider } from '../Settings/Temperature';
+import { SettingsSection } from '../Settings/types';
 import Spinner from '../Spinner';
 import { ChatInput } from './ChatInput';
 import { ChatLoader } from './ChatLoader';
+import { ChatTopbar } from './ChatTopbar';
 import { ErrorMessageDiv } from './ErrorMessageDiv';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
-import { ChatTopbar } from './ChatTopbar';
 import { suggestedPrompts } from './prompts';
 
 import { debounce } from '@tanstack/virtual-core';
@@ -84,8 +92,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       systemPrompt,
       user,
       lightMode,
+      agentSettings,
+      agentRoutingEnabled,
     },
     handleUpdateConversation,
+    handleOpenSettings,
+    handleNewConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
   let {
@@ -112,7 +124,12 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   const [requestStatusMessage, setRequestStatusMessage] = useState<
     string | null
   >(null);
+  const [requestStatusSecondLine, setRequestStatusSecondLine] = useState<
+    string | null
+  >(null);
   const [progress, setProgress] = useState<number | null>(null);
+  const [currentAgentResult, setCurrentAgentResult] =
+    useState<AgenticChatResult | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -157,55 +174,39 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     }
   }, [selectedConversation]);
 
+  /**
+   * Determine if we should use agentic routing for this message
+   */
+  const shouldUseAgenticRouting = useCallback(
+    (message: Message): boolean => {
+      // Check if agentic routing is enabled globally
+      if (!agentRoutingEnabled || !agentSettings.enabled) {
+        return false;
+      }
+
+      // Check if user has any agents enabled
+      if (agentSettings.enabledAgentTypes.length === 0) {
+        return false;
+      }
+
+      // Skip agentic routing for complex content (files, images)
+      if (Array.isArray(message.content) && message.content.length > 1) {
+        return false;
+      }
+
+      // Skip if there's already a bot selected (RAG/specialized bots)
+      if (selectedConversation?.bot) {
+        return false;
+      }
+
+      return true;
+    },
+    [agentRoutingEnabled, agentSettings, selectedConversation],
+  );
+
   useEffect(() => {
     updateBotInfo();
   }, [selectedConversation, updateBotInfo]);
-
-  const setConversationTitle = (
-    updatedConversation: Conversation,
-    message: Message,
-  ): Conversation => {
-    // TODO: Add generated title option with these as fallback, similar to how other LLM frontends work
-    let title = '';
-    if (typeof message.content === 'string') {
-      title = message.content.substring(0, 30);
-    } else if (Array.isArray(message.content)) {
-      const contentTypes = message.content.map((section) => section.type);
-      if (contentTypes.includes('image_url')) {
-        title = 'Image Chat';
-      } else if (contentTypes.includes('file_url')) {
-        const fileSection = (
-          message.content as (FileMessageContent | TextMessageContent)[]
-        ).find(
-          (section) => (section as FileMessageContent).originalFilename,
-        ) as FileMessageContent;
-        title = fileSection?.originalFilename
-          ? `File: ${fileSection.originalFilename.substring(0, 20)}`
-          : 'File Chat';
-      } else {
-        const textSection = (
-          message.content as (TextMessageContent | any)[]
-        ).find(
-          (section) => (section as TextMessageContent).type === 'text',
-        ) as TextMessageContent;
-        title = textSection?.text
-          ? textSection.text.substring(0, 30)
-          : 'New Chat';
-      }
-    } else if ((message.content as TextMessageContent)?.type === 'text') {
-      title = (message.content as TextMessageContent).text.substring(0, 30);
-    } else {
-      title = 'New Chat';
-    }
-
-    title = title.trim().length > 0 ? title : 'New Chat';
-    title = title.length > 30 ? title.substring(0, 30) + '...' : title;
-
-    return {
-      ...updatedConversation,
-      name: title,
-    };
-  };
 
   const debouncedUpdateConversation = useCallback(
     debounce(
@@ -231,6 +232,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
     let extractedCitations: Citation[] = [];
+    let processedEnhancedResponse = false;
 
     const checkStopInterval = setInterval(() => {
       if (stopConversationRef.current) {
@@ -246,100 +248,153 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         console.log('Stop detected in streaming loop - breaking');
         break;
       }
-      
+
       try {
         const { value, done: doneReading } = await reader.read();
         done = doneReading;
-        
+
         if (stopConversationRef.current) {
           break;
         }
 
-      if (value) {
-        const chunkValue = decoder.decode(value);
-        text += chunkValue;
+        if (value) {
+          const chunkValue = decoder.decode(value);
 
-      if (stopConversationRef.current) {
-          break;
-        }
+          // Check if this is a complete JSON response from enhanced service
+          let isEnhancedResponse = false;
+          let enhancedData = null;
 
-        // Extract citations
-        const {
-          text: cleanedText,
-          citations,
-          extractionMethod,
-        } = extractCitationsFromContent(text);
+          // Try to parse the chunk as JSON (enhanced service response)
+          try {
+            enhancedData = JSON.parse(chunkValue);
+            if (
+              enhancedData &&
+              enhancedData.success &&
+              enhancedData.data &&
+              enhancedData.data.text
+            ) {
+              isEnhancedResponse = true;
+              processedEnhancedResponse = true;
+              // Extract the text content from the enhanced response
+              text = enhancedData.data.text;
 
-        if (citations.length > 0) {
-          // Use the clean text and extracted citations
-          text = cleanedText;
-          extractedCitations = citations;
-          console.log(
-            `Extracted ${citations.length} citations using ${extractionMethod} format`,
-          );
-        }
+              // Handle enhanced sources if available
+              if (
+                enhancedData.data.sources &&
+                enhancedData.data.sources.length > 0
+              ) {
+                extractedCitations = enhancedData.data.sources.map(
+                  (source: any, index: number) => ({
+                    id: `enhanced_${index}`,
+                    title: source.title || source.name || `Source ${index + 1}`,
+                    url: source.url || source.link || '',
+                    text: source.snippet || source.content || source.text || '',
+                    page_number: source.page || null,
+                    source_type: source.type || 'web',
+                  }),
+                );
+              }
 
-        if (
-          updatedConversationCopy.messages.length === 0 ||
-          updatedConversationCopy.messages[
-            updatedConversationCopy.messages.length - 1
-          ].role !== 'assistant'
-        ) {
-          // If there's no assistant message, create a new one
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: [
-              ...updatedConversationCopy.messages,
-              {
-                role: 'assistant',
-                content: text,
-                messageType: MessageType.TEXT,
-                citations:
-                  extractedCitations.length > 0 ? [...extractedCitations] : [],
-              },
-            ],
-          };
-        } else {
-          // Update the existing assistant message
-          const updatedMessages = [
-            ...updatedConversationCopy.messages.slice(0, -1),
-            {
-              ...updatedConversationCopy.messages[
-                updatedConversationCopy.messages.length - 1
+              console.log('Enhanced service response detected:', {
+                processingTime: enhancedData.data.processingTime,
+                usedFallback: enhancedData.data.usedFallback,
+                sourcesCount: enhancedData.data.sources?.length || 0,
+              });
+            }
+          } catch (e) {
+            // Not JSON, continue with standard streaming
+            isEnhancedResponse = false;
+          }
+
+          if (!isEnhancedResponse) {
+            // Standard streaming behavior - accumulate chunks
+            text += chunkValue;
+          }
+
+          if (stopConversationRef.current) {
+            break;
+          }
+
+          // Extract citations (skip if enhanced response already processed them)
+          if (!isEnhancedResponse) {
+            const {
+              text: cleanedText,
+              citations,
+              extractionMethod,
+            } = extractCitationsFromContent(text);
+
+            if (citations.length > 0) {
+              // Use the clean text and extracted citations
+              text = cleanedText;
+              extractedCitations = citations;
+              console.log(
+                `Extracted ${citations.length} citations using ${extractionMethod} format`,
+              );
+            }
+          }
+
+          if (
+            updatedConversationCopy.messages.length === 0 ||
+            updatedConversationCopy.messages[
+              updatedConversationCopy.messages.length - 1
+            ].role !== 'assistant'
+          ) {
+            // If there's no assistant message, create a new one
+            updatedConversationCopy = {
+              ...updatedConversationCopy,
+              messages: [
+                ...updatedConversationCopy.messages,
+                {
+                  role: 'assistant',
+                  content: text,
+                  messageType: MessageType.TEXT,
+                  citations:
+                    extractedCitations.length > 0
+                      ? [...extractedCitations]
+                      : [],
+                },
               ],
-              content: text,
-              citations:
-                extractedCitations.length > 0
-                  ? [...extractedCitations]
-                  : updatedConversationCopy.messages[
-                      updatedConversationCopy.messages.length - 1
-                    ].citations || [],
-            },
-          ];
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: updatedMessages,
-          };
-        }
+            };
+          } else {
+            // Update the existing assistant message
+            const updatedMessages = [
+              ...updatedConversationCopy.messages.slice(0, -1),
+              {
+                ...updatedConversationCopy.messages[
+                  updatedConversationCopy.messages.length - 1
+                ],
+                content: text,
+                citations:
+                  extractedCitations.length > 0
+                    ? [...extractedCitations]
+                    : updatedConversationCopy.messages[
+                        updatedConversationCopy.messages.length - 1
+                      ].citations || [],
+              },
+            ];
+            updatedConversationCopy = {
+              ...updatedConversationCopy,
+              messages: updatedMessages,
+            };
+          }
 
-        // Update the state to trigger a re-render
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
+          // Update the state to trigger a re-render
+          homeDispatch({
+            field: 'selectedConversation',
+            value: updatedConversationCopy,
+          });
+        }
+      } catch (error) {
+        console.error('Error in stream processing:', error);
+        clearInterval(checkStopInterval);
+        break;
       }
-    } catch (error) {
-      console.error('Error in stream processing:', error);
-      clearInterval(checkStopInterval);
-      break;
-     }
     }
-    
+
     clearInterval(checkStopInterval);
 
-
-    // Final check for citations after stream completes
-    if (extractedCitations.length === 0) {
+    // Final check for citations after stream completes (skip for enhanced responses)
+    if (extractedCitations.length === 0 && !processedEnhancedResponse) {
       const {
         text: cleanedText,
         citations,
@@ -395,9 +450,14 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
 
   const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
+    async (
+      message: Message,
+      deleteCount = 0,
+      plugin: Plugin | null = null,
+      forceStandardChat?: boolean,
+      forcedAgentType?: AgentType,
+    ) => {
       if (selectedConversation) {
-        
         stopConversationRef.current = false;
 
         let updatedConversation: Conversation = updateConversationFromUserInput(
@@ -414,23 +474,48 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         homeDispatch({ field: 'messageIsStreaming', value: true });
 
         try {
-
-         // Sets up a manual check for the stop button being pressed
+          // Sets up a manual check for the stop button being pressed
           const abortCheckInterval = setInterval(() => {
             if (stopConversationRef.current) {
               console.log('Stop requested - updating UI state');
               homeDispatch({ field: 'loading', value: false });
               homeDispatch({ field: 'messageIsStreaming', value: false });
+              setRequestStatusMessage(null);
+              setRequestStatusSecondLine(null);
               stopConversationRef.current = false;
               clearInterval(abortCheckInterval);
             }
           }, 100);
-          
+
           // Clean up interval after 60 seconds as a safety measure
           setTimeout(() => clearInterval(abortCheckInterval), 60000);
 
-          const { controller, body, response, hasComplexContent, setOnAbort } =
-            await makeRequest(
+          // Determine if we should use agentic routing
+          const useAgenticRouting = forceStandardChat
+            ? false
+            : shouldUseAgenticRouting(message);
+          console.log(
+            '[Chat] Using agentic routing:',
+            useAgenticRouting,
+            '(forceStandardChat:',
+            forceStandardChat,
+            ', forcedAgentType:',
+            forcedAgentType,
+            ')',
+          );
+
+          let requestResult: any;
+
+          if (useAgenticRouting) {
+            // Use agentic frontend service
+            const agenticService = createAgenticFrontendService({
+              agentSettings,
+              enableDebugLogging: true,
+              intentAnalysisTimeout: 5000,
+              agentExecutionTimeout: 30000,
+            });
+
+            requestResult = await agenticService.handleRequest(
               plugin,
               setRequestStatusMessage,
               updatedConversation,
@@ -441,14 +526,44 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               true,
               setProgress,
               stopConversationRef,
+              setRequestStatusSecondLine,
+              forcedAgentType, // Pass forced agent type
             );
 
+            // Store agent result for potential UI indicators
+            setCurrentAgentResult(requestResult);
+          } else {
+            // Use standard makeRequest
+            requestResult = await makeRequest(
+              plugin,
+              setRequestStatusMessage,
+              updatedConversation,
+              apiKey,
+              pluginKeys,
+              systemPrompt,
+              temperature,
+              true,
+              setProgress,
+              stopConversationRef,
+              forceStandardChat,
+              agentSettings,
+            );
+
+            // Clear any previous agent results
+            setCurrentAgentResult(null);
+          }
+
+          const { controller, body, response, hasComplexContent, setOnAbort } =
+            requestResult;
+
           clearInterval(abortCheckInterval);
-          
+
           // Set up the abort handler to reset UI state when the conversation is stopped
           setOnAbort?.(() => {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
             stopConversationRef.current = false;
           });
 
@@ -461,6 +576,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           if (!response.ok) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
             let errorResp: any;
             try {
               errorResp = await response.json();
@@ -477,16 +594,23 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           if (!data) {
             homeDispatch({ field: 'loading', value: false });
             homeDispatch({ field: 'messageIsStreaming', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
             return;
           }
           if (!plugin) {
+            // Set initial title based on first message
             if (updatedConversation.messages.length === 1) {
-              updatedConversation = setConversationTitle(
+              // Use the utility function to set the initial title
+              updatedConversation = await setConversationTitle(
                 updatedConversation,
                 message,
+                user,
               );
             }
             homeDispatch({ field: 'loading', value: false });
+            setRequestStatusMessage(null);
+            setRequestStatusSecondLine(null);
 
             // TODO: Either force everything through streaming or implement a
             //    non-streaming version of this as well
@@ -497,35 +621,80 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   const reader = data.getReader();
 
                   function push() {
-
-                  // Check if stop was requested before reading more data
+                    // Check if stop was requested before reading more data
                     if (stopConversationRef.current) {
-                      console.log('Stopping stream in ReadableStream - user requested stop');
+                      console.log(
+                        'Stopping stream in ReadableStream - user requested stop',
+                      );
                       controller.close();
                       return;
                     }
 
-                    reader.read().then(({ done, value }) => {
-                      if (done) {
-                        controller.close();
-                        return;
-                      }
-                      controller.enqueue(value);
-                      push();
-                    });
+                    reader
+                      .read()
+                      .then(
+                        ({
+                          done,
+                          value,
+                        }: {
+                          done: boolean;
+                          value: Uint8Array;
+                        }) => {
+                          if (done) {
+                            controller.close();
+                            return;
+                          }
+                          controller.enqueue(value);
+                          push();
+                        },
+                      );
                   }
 
                   push();
                 },
               });
-              const updatedConversations =
-                await handleNormalChatBackendStreaming(
-                  stream,
-                  controller,
-                  updatedConversation,
-                  selectedConversation,
-                  conversations,
+              let updatedConversations = await handleNormalChatBackendStreaming(
+                stream,
+                controller,
+                updatedConversation,
+                selectedConversation,
+                conversations,
+              );
+
+              // Try to update the title using the API after we have a response
+              const currentConversation = updatedConversations.find(
+                (conv) => conv.id === selectedConversation.id,
+              );
+
+              if (currentConversation) {
+                // Check if there's at least one response message
+                const hasResponseMessage = currentConversation.messages.some(
+                  (msg) => msg.role === 'assistant',
                 );
+
+                if (hasResponseMessage) {
+                  // Try to generate a better title using the API
+                  const generatedTitle = await generateTitleFromAPI(
+                    currentConversation,
+                    user,
+                  );
+
+                  if (generatedTitle) {
+                    // Update the title in the conversation
+                    const updatedWithTitle = {
+                      ...currentConversation,
+                      name: generatedTitle,
+                    };
+
+                    // Update the conversation in the list
+                    updatedConversations = updatedConversations.map((conv) =>
+                      conv.id === selectedConversation.id
+                        ? updatedWithTitle
+                        : conv,
+                    );
+                  }
+                }
+              }
 
               homeDispatch({
                 field: 'conversations',
@@ -535,14 +704,48 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               homeDispatch({ field: 'messageIsStreaming', value: false });
             } else {
               const reader = data.getReader();
-              const updatedConversations =
-                await handleNormalChatBackendStreaming(
-                  data,
-                  controller,
-                  updatedConversation,
-                  selectedConversation,
-                  conversations,
+              let updatedConversations = await handleNormalChatBackendStreaming(
+                data,
+                controller,
+                updatedConversation,
+                selectedConversation,
+                conversations,
+              );
+
+              // Try to update the title using the API after we have a response
+              const currentConversation = updatedConversations.find(
+                (conv) => conv.id === selectedConversation.id,
+              );
+
+              if (currentConversation) {
+                // Check if there's at least one response message
+                const hasResponseMessage = currentConversation.messages.some(
+                  (msg) => msg.role === 'assistant',
                 );
+
+                if (hasResponseMessage) {
+                  // Try to generate a better title using the API
+                  const generatedTitle = await generateTitleFromAPI(
+                    currentConversation,
+                    user,
+                  );
+
+                  if (generatedTitle) {
+                    // Update the title in the conversation
+                    const updatedWithTitle = {
+                      ...currentConversation,
+                      name: generatedTitle,
+                    };
+
+                    // Update the conversation in the list
+                    updatedConversations = updatedConversations.map((conv) =>
+                      conv.id === selectedConversation.id
+                        ? updatedWithTitle
+                        : conv,
+                    );
+                  }
+                }
+              }
 
               homeDispatch({
                 field: 'conversations',
@@ -550,6 +753,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               });
               saveConversations(updatedConversations);
               homeDispatch({ field: 'messageIsStreaming', value: false });
+              setRequestStatusMessage(null);
+              setRequestStatusSecondLine(null);
             }
           } else {
             throw new Error('Plugins not currently supported.');
@@ -557,6 +762,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         } catch (error: unknown) {
           homeDispatch({ field: 'loading', value: false });
           homeDispatch({ field: 'messageIsStreaming', value: false });
+          setRequestStatusMessage(null);
+          setRequestStatusSecondLine(null);
 
           if (error instanceof Error) {
             if (error.message === 'Request timed out') {
@@ -575,12 +782,17 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     [
       apiKey,
       conversations,
+      generateTitleFromAPI,
+      setConversationTitle,
       handleNormalChatBackendStreaming,
       homeDispatch,
       pluginKeys,
       selectedConversation,
       systemPrompt,
       temperature,
+      user,
+      shouldUseAgenticRouting,
+      agentSettings,
     ],
   );
 
@@ -756,7 +968,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   >
                     <div>
                       {/* Topbar w/o content */}
-                      <ChatTopbar 
+                      <ChatTopbar
                         botInfo={botInfo}
                         selectedModelName={selectedConversation?.model?.name}
                         showSettings={showSettings}
@@ -779,7 +991,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             className="fixed inset-0 z-50 flex items-center justify-center"
                             onClick={handleClickOutside}
                           >
-                            <div className="fixed inset-0 bg-black opacity-50" />
+                            <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
                             <div
                               ref={modalRef}
                               className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
@@ -910,7 +1122,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               </>
             ) : (
               <>
-                <ChatTopbar 
+                <ChatTopbar
                   botInfo={botInfo}
                   selectedModelName={selectedConversation?.model?.name}
                   showSettings={showSettings}
@@ -934,7 +1146,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       className="fixed inset-0 z-50 flex items-center justify-center"
                       onClick={handleClickOutside}
                     >
-                      <div className="fixed inset-0 bg-black opacity-50" />
+                      <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
                       <div
                         ref={modalRef}
                         className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
@@ -983,6 +1195,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                 {loading && (
                   <ChatLoader
                     requestStatusMessage={requestStatusMessage}
+                    requestStatusSecondLine={requestStatusSecondLine}
                     progress={progress}
                   />
                 )}
@@ -998,9 +1211,50 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           <ChatInput
             stopConversationRef={stopConversationRef}
             textareaRef={textareaRef}
-            onSend={(message, plugin) => {
+            onSend={(message, plugin, forceStandardChat, forcedAgentType) => {
               setCurrentMessage(message);
-              handleSend(message, 0, plugin);
+              handleSend(
+                message,
+                0,
+                plugin,
+                forceStandardChat,
+                forcedAgentType,
+              );
+            }}
+            onTemperatureChange={(newTemperature) => {
+              homeDispatch({ field: 'temperature', value: newTemperature });
+              // Update conversation temperature if there's a selected conversation
+              if (selectedConversation) {
+                const updatedConversation = {
+                  ...selectedConversation,
+                  temperature: newTemperature,
+                };
+                handleUpdateConversation(updatedConversation, {
+                  key: 'temperature',
+                  value: newTemperature,
+                });
+              }
+            }}
+            onAgentToggleChange={(enabled) => {
+              // Update agent settings in global state if needed
+              if (agentSettings) {
+                const updatedAgentSettings = {
+                  ...agentSettings,
+                  enabled,
+                };
+                homeDispatch({
+                  field: 'agentSettings',
+                  value: updatedAgentSettings,
+                });
+              }
+            }}
+            onSettingsOpen={() => {
+              // Open settings dialog using the global handler
+              handleOpenSettings();
+            }}
+            onPrivacyPolicyOpen={() => {
+              // Open privacy policy section in settings dialog
+              handleOpenSettings(SettingsSection.PRIVACY_CONTROL);
             }}
             onScrollDownClick={handleScrollDown}
             onRegenerate={() => {
@@ -1011,6 +1265,45 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             showScrollDownButton={showScrollDownButton}
             setFilePreviews={setFilePreviews}
             filePreviews={filePreviews}
+            setRequestStatusMessage={setRequestStatusMessage}
+            setProgress={setProgress}
+            apiKey={apiKey}
+            pluginKeys={pluginKeys}
+            systemPrompt={systemPrompt}
+            temperature={temperature}
+            onModelChange={(newModel) => {
+              if (selectedConversation) {
+                const updatedConversation = {
+                  ...selectedConversation,
+                  model: newModel,
+                };
+                handleUpdateConversation(updatedConversation, {
+                  key: 'model',
+                  value: newModel,
+                });
+              }
+            }}
+            models={models}
+            selectedConversation={selectedConversation}
+            currentMessage={currentMessage}
+            onNewConversation={handleNewConversation}
+            onAddChatMessages={(userMsg, assistantMsg) => {
+              if (selectedConversation) {
+                // Add both messages to the conversation
+                const updatedConversation = {
+                  ...selectedConversation,
+                  messages: [
+                    ...selectedConversation.messages,
+                    userMsg,
+                    assistantMsg,
+                  ],
+                };
+                handleUpdateConversation(updatedConversation, {
+                  key: 'messages',
+                  value: updatedConversation.messages,
+                });
+              }
+            }}
           />
         </>
       )}

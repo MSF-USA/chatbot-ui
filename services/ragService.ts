@@ -132,7 +132,7 @@ export class RAGService {
         );
 
         // Log after stream is created but before returning
-        await this.loggingService.logChatCompletion(
+        void this.loggingService.logChatCompletion(
           startTime,
           modelId,
           messages.length,
@@ -171,7 +171,7 @@ export class RAGService {
         completion.choices[0].message.content = content + metadataSection;
 
         // Log after processing is complete
-        await this.loggingService.logChatCompletion(
+        void this.loggingService.logChatCompletion(
           startTime,
           modelId,
           messages.length,
@@ -349,7 +349,7 @@ export class RAGService {
       };
 
       // Log successful search
-      await this.loggingService.logSearch(
+      void this.loggingService.logSearch(
         startTime,
         botId,
         searchDocs.length,
@@ -364,7 +364,7 @@ export class RAGService {
       };
     } catch (error) {
       // Log search error
-      await this.loggingService.logSearchError(startTime, error, botId, user);
+      void this.loggingService.logSearchError(startTime, error, botId, user);
       throw error;
     }
   }

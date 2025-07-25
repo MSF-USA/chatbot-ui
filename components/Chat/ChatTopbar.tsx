@@ -1,11 +1,14 @@
 import {
+  IconChevronDown,
   IconClearAll,
   IconExternalLink,
   IconSettings,
-  IconChevronDown,
 } from '@tabler/icons-react';
+
 import { useTranslation } from 'next-i18next';
+
 import { isUSBased } from '@/utils/app/userAuth';
+
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 interface Props {
@@ -57,10 +60,16 @@ export const ChatTopbar = ({
               aria-label="Model Settings"
               title="Model Settings"
             >
-              <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
+              <span
+                className="truncate font-bold dark:text-blue-50 text-gray-800"
+                title={selectedModelName}
+              >
                 {selectedModelName}
               </span>
-              <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
+              <IconChevronDown
+                size={14}
+                className="ml-1.5 opacity-60 text-black dark:text-white"
+              />
             </button>
           </div>
         </div>
@@ -78,9 +87,7 @@ export const ChatTopbar = ({
               <IconSettings
                 size={18}
                 className={`${
-                  showSettings
-                    ? 'text-[#D7211E]'
-                    : 'text-black dark:text-white'
+                  showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
                 }`}
               />
             </button>
@@ -93,19 +100,14 @@ export const ChatTopbar = ({
               aria-label="Clear Conversation"
               title="Clear Conversation"
             >
-              <IconClearAll
-                size={18}
-                className="text-black dark:text-white"
-              />
+              <IconClearAll size={18} className="text-black dark:text-white" />
             </button>
           )}
 
           {/* Feedback Link */}
           <a
             href={`mailto:${
-              isUSBased(userEmail ?? '')
-                ? US_FEEDBACK_EMAIL
-                : FEEDBACK_EMAIL
+              isUSBased(userEmail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
             }`}
             className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
             title={t('sendFeedback')}

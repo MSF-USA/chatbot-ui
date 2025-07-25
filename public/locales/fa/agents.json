@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "جستجوی وب",
+      "code_interpreter": "مفسر کد",
+      "url_pull": "تحلیل URL",
+      "local_knowledge": "پایگاه دانش",
+      "standard_chat": "گفتگوی استاندارد",
+      "foundry": "Foundry",
+      "third_party": "شخص ثالث"
+    },
+    "error": {
+      "title": "خطای عامل",
+      "unknown": "خطای ناشناخته رخ داد",
+      "retry": "تلاش مجدد",
+      "fallback": "استفاده از جایگزین"
+    },
+    "metadata": {
+      "processingTime": "زمان پردازش",
+      "confidence": "اطمینان",
+      "tokens": "توکن‌های استفاده شده"
+    },
+    "resultsPanel": {
+      "placeholder": "نتایج عامل در اینجا نمایش داده می‌شود"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "جستجوی وب - برای اطلاعات بلادرنگ وب را جستجو می‌کند",
+      "code_interpreter": "مفسر کد - کد را در چندین زبان اجرا و تحلیل می‌کند",
+      "url_pull": "تحلیل URL - محتوا را از صفحات وب تحلیل و استخراج می‌کند",
+      "local_knowledge": "پایگاه دانش - پایگاه دانش داخلی و اسناد را جستجو می‌کند",
+      "standard_chat": "گفتگوی استاندارد - هوش مصنوعی مکالمه‌ای استاندارد بدون ابزار",
+      "foundry": "Foundry - از Azure AI Foundry برای قابلیت‌های پیشرفته استفاده می‌کند",
+      "third_party": "شخص ثالث - عامل شخص ثالث یا ادغام ابزار سفارشی"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "نتایج جستجوی وب در اینجا نمایش داده می‌شود",
+      "title": "نتایج جستجو",
+      "noResults": "هیچ نتیجه‌ای یافت نشد",
+      "noData": "هیچ داده جستجویی در دسترس نیست",
+      "results": "نتایج",
+      "confidence": "ربط",
+      "relevance": "ربط",
+      "source": "منبع",
+      "citations": "استنادها",
+      "cite": "استناد",
+      "open": "باز کردن",
+      "openLink": "باز کردن لینک در تب جدید",
+      "filters": "فیلترها",
+      "sortBy": "مرتب‌سازی بر اساس",
+      "filterBy": "فیلتر بر اساس",
+      "all": "همه",
+      "date": "تاریخ",
+      "query": "پرس‌وجو",
+      "searchTime": "زمان جستجو",
+      "cached": "ذخیره‌شده",
+      "contentTypes": {
+        "webpage": "صفحات وب",
+        "news": "اخبار",
+        "academic": "آکادمیک",
+        "image": "تصاویر",
+        "video": "ویدیوها"
+      }
+    },
+    "configuration": {
+      "resultsCount": "تعداد نتایج",
+      "safeSearch": "جستجوی امن",
+      "market": "بازار جستجو"
+    },
+    "status": {
+      "searching": "جستجو در وب...",
+      "optimizing": "بهینه‌سازی پرس‌وجوی جستجو...",
+      "processing": "پردازش نتایج جستجو..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "نتایج اجرای کد در اینجا نمایش داده می‌شود",
+      "title": "نتایج اجرا",
+      "noData": "هیچ داده اجرای کدی در دسترس نیست",
+      "output": "خروجی",
+      "errors": "خطاها",
+      "logs": "گزارشها",
+      "executionTime": "زمان اجرا",
+      "memoryUsage": "استفاده از حافظه",
+      "cpuUsage": "استفاده از CPU",
+      "outputLines": "خطوط خروجی",
+      "executedCode": "کد اجرا شده",
+      "download": "دانلود",
+      "noOutput": "هیچ خروجی تولید نشد",
+      "noFiles": "هیچ فایلی تولید نشد",
+      "outputSize": "اندازه خروجی",
+      "unsupportedOutput": "فرمت خروجی پشتیبانی نشده",
+      "status": {
+        "success": "موفق",
+        "error": "خطا",
+        "timeout": "زمان تمام شده",
+        "memory_limit": "حد حافظه فراتر رفته",
+        "security_violation": "نقض امنیت",
+        "invalid_code": "کد نامعتبر"
+      },
+      "outputTypes": {
+        "stdout": "خروجی استاندارد",
+        "stderr": "خروجی خطا",
+        "return_value": "مقدار برگشتی",
+        "exception": "استثناء"
+      },
+      "tabs": {
+        "output": "خروجی",
+        "code": "کد",
+        "files": "فایلها"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "نتایج تحلیل URL",
+      "noData": "هیچ داده تحلیل URL در دسترس نیست",
+      "summary": "خلاصه",
+      "metadata": "اطلاعات سند",
+      "processingTime": "زمان پردازش",
+      "preview": "پیش‌نمایش",
+      "view": "مشاهده"
+    },
+    "configuration": {
+      "timeout": "زمان انقضای درخواست"
+    },
+    "status": {
+      "pulling": "دریافت محتوای URL...",
+      "analyzing": "تحلیل سند...",
+      "complete": "تحلیل کامل"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "نتایج پایگاه دانش",
+      "noData": "هیچ داده پایگاه دانشی در دسترس نیست",
+      "documents": "اسناد",
+      "insights": "بینشهای کلیدی",
+      "relevance": "ربط",
+      "suggestions": "پیشنهادها"
+    },
+    "configuration": {
+      "searchMode": "حالت جستجو",
+      "threshold": "آستانه ربط"
+    },
+    "status": {
+      "searching": "جستجو در پایگاه دانش...",
+      "analyzing": "تحلیل نتایج..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "نتایج تحلیل اسناد در اینجا نمایش داده می‌شود",
+      "title": "نتایج تحلیل",
+      "noData": "هیچ داده تحلیل اسنادی در دسترس نیست",
+      "documents": "اسناد",
+      "noDocuments": "هیچ سندی یافت نشد",
+      "summary": "خلاصه",
+      "insights": "بینشهای کلیدی",
+      "metadata": "اطلاعات سند",
+      "processingTime": "زمان پردازش",
+      "searchTime": "زمان جستجو",
+      "relevance": "ربط",
+      "cached": "ذخیره‌شده",
+      "preview": "پیش‌نمایش",
+      "view": "مشاهده",
+      "open": "باز کردن",
+      "bookmark": "نشانک",
+      "suggestions": "پیشنهادها",
+      "tabs": {
+        "documents": "اسناد",
+        "insights": "بینشها",
+        "failed": "ناموفق"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "در حال بارگیری...",
+      "searching": "در حال جستجو...",
+      "processing": "در حال پردازش...",
+      "analyzing": "در حال تحلیل..."
+    },
+    "buttons": {
+      "retry": "تلاش مجدد",
+      "cancel": "لغو",
+      "expand": "گسترش",
+      "collapse": "جمع",
+      "configure": "پیکربندی",
+      "submit": "ارسال"
+    },
+    "labels": {
+      "priority": "اولویت",
+      "estimatedTime": "زمان تخمینی",
+      "availability": "در دسترس بودن",
+      "configuration": "پیکربندی"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "خطای ناشناخته رخ داد",
+      "network": "خطای اتصال شبکه",
+      "timeout": "زمان درخواست تمام شد",
+      "unauthorized": "دسترسی رد شد",
+      "rateLimit": "حد نرخ فراتر رفته",
+      "serviceUnavailable": "سرویس موقتاً در دسترس نیست"
+    },
+    "webSearch": {
+      "searchFailed": "جستجوی وب ناموفق",
+      "invalidQuery": "پرس‌وجوی جستجوی نامعتبر"
+    },
+    "codeInterpreter": {
+      "executionFailed": "اجرای کد ناموفق",
+      "invalidCode": "کد نامعتبر یا ناامن"
+    },
+    "urlPull": {
+      "fetchFailed": "دریافت محتوای URL ناموفق",
+      "invalidUrl": "URL نامعتبر یا غیرقابل دسترس"
+    },
+    "localKnowledge": {
+      "searchFailed": "جستجو در پایگاه دانش ناموفق",
+      "noAccess": "دسترسی به پایگاه دانش نیست"
+    }
+  },
+  "settings": {
+    "autoSubmit": "ارسال خودکار پس از پردازش",
+    "advancedOptions": "گزینه‌های پیشرفته",
+    "priority": {
+      "high": "بالا",
+      "medium": "متوسط",
+      "low": "پایین"
+    },
+    "safeSearch": {
+      "off": "خاموش",
+      "moderate": "متعادل",
+      "strict": "سخت"
+    },
+    "market": {
+      "any": "هر منطقه‌ای",
+      "local": "منطقه محلی"
+    }
+  }
+}

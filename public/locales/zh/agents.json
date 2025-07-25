@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "网络搜索",
+      "code_interpreter": "代码解释器",
+      "url_pull": "URL分析",
+      "local_knowledge": "知识库",
+      "standard_chat": "标准聊天",
+      "foundry": "Foundry",
+      "third_party": "第三方"
+    },
+    "error": {
+      "title": "代理错误",
+      "unknown": "发生未知错误",
+      "retry": "重试",
+      "fallback": "使用备选方案"
+    },
+    "metadata": {
+      "processingTime": "处理时间",
+      "confidence": "置信度",
+      "tokens": "使用的令牌"
+    },
+    "resultsPanel": {
+      "placeholder": "代理结果将在此处显示"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "网络搜索 - 搜索网络以获取实时信息",
+      "code_interpreter": "代码解释器 - 执行和分析多种语言的代码",
+      "url_pull": "URL分析 - 分析并提取网页内容",
+      "local_knowledge": "知识库 - 搜索内部知识库和文档",
+      "standard_chat": "标准聊天 - 无工具的标准对话式AI",
+      "foundry": "Foundry - 使用Azure AI Foundry实现高级功能",
+      "third_party": "第三方 - 第三方代理或自定义工具集成"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "网络搜索结果将在此处显示",
+      "title": "搜索结果",
+      "noResults": "未找到结果",
+      "noData": "没有可用的搜索数据",
+      "results": "结果",
+      "confidence": "相关性",
+      "relevance": "相关性",
+      "source": "来源",
+      "citations": "引用",
+      "cite": "引用",
+      "open": "打开",
+      "openLink": "在新标签页中打开链接",
+      "filters": "筛选器",
+      "sortBy": "排序方式",
+      "filterBy": "筛选方式",
+      "all": "全部",
+      "date": "日期",
+      "query": "查询",
+      "searchTime": "搜索时间",
+      "cached": "缓存",
+      "contentTypes": {
+        "webpage": "网页",
+        "news": "新闻",
+        "academic": "学术",
+        "image": "图片",
+        "video": "视频"
+      }
+    },
+    "configuration": {
+      "resultsCount": "结果数量",
+      "safeSearch": "安全搜索",
+      "market": "搜索市场"
+    },
+    "status": {
+      "searching": "正在搜索网络...",
+      "optimizing": "正在优化搜索查询...",
+      "processing": "正在处理搜索结果..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "代码执行结果将在此处显示",
+      "title": "执行结果",
+      "noData": "没有可用的代码执行数据",
+      "output": "输出",
+      "errors": "错误",
+      "logs": "日志",
+      "executionTime": "执行时间",
+      "memoryUsage": "内存使用量",
+      "cpuUsage": "CPU使用量",
+      "outputLines": "输出行数",
+      "executedCode": "执行的代码",
+      "download": "下载",
+      "noOutput": "未生成输出",
+      "noFiles": "未生成文件",
+      "outputSize": "输出大小",
+      "unsupportedOutput": "不支持的输出格式",
+      "status": {
+        "success": "成功",
+        "error": "错误",
+        "timeout": "超时",
+        "memory_limit": "超出内存限制",
+        "security_violation": "安全违规",
+        "invalid_code": "无效代码"
+      },
+      "outputTypes": {
+        "stdout": "标准输出",
+        "stderr": "错误输出",
+        "return_value": "返回值",
+        "exception": "异常"
+      },
+      "tabs": {
+        "output": "输出",
+        "code": "代码",
+        "files": "文件"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL分析结果",
+      "noData": "没有可用的URL分析数据",
+      "summary": "摘要",
+      "metadata": "文档信息",
+      "processingTime": "处理时间",
+      "preview": "预览",
+      "view": "查看"
+    },
+    "configuration": {
+      "timeout": "请求超时"
+    },
+    "status": {
+      "pulling": "获取URL内容...",
+      "analyzing": "分析文档...",
+      "complete": "分析完成"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "知识库结果",
+      "noData": "没有可用的知识库数据",
+      "documents": "文档",
+      "insights": "关键洞察",
+      "relevance": "相关性",
+      "suggestions": "建议"
+    },
+    "configuration": {
+      "searchMode": "搜索模式",
+      "threshold": "相关性阈值"
+    },
+    "status": {
+      "searching": "搜索知识库...",
+      "analyzing": "分析结果..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "文档分析结果将在此处显示",
+      "title": "分析结果",
+      "noData": "没有可用的文档分析数据",
+      "documents": "文档",
+      "noDocuments": "未找到文档",
+      "summary": "摘要",
+      "insights": "关键洞察",
+      "metadata": "文档信息",
+      "processingTime": "处理时间",
+      "searchTime": "搜索时间",
+      "relevance": "相关性",
+      "cached": "缓存",
+      "preview": "预览",
+      "view": "查看",
+      "open": "打开",
+      "bookmark": "书签",
+      "suggestions": "建议",
+      "tabs": {
+        "documents": "文档",
+        "insights": "洞察",
+        "failed": "失败"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "加载中...",
+      "searching": "搜索中...",
+      "processing": "处理中...",
+      "analyzing": "分析中..."
+    },
+    "buttons": {
+      "retry": "重试",
+      "cancel": "取消",
+      "expand": "展开",
+      "collapse": "折叠",
+      "configure": "配置",
+      "submit": "提交"
+    },
+    "labels": {
+      "priority": "优先级",
+      "estimatedTime": "预计时间",
+      "availability": "可用性",
+      "configuration": "配置"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "发生未知错误",
+      "network": "网络连接错误",
+      "timeout": "请求超时",
+      "unauthorized": "访问被拒绝",
+      "rateLimit": "超出速率限制",
+      "serviceUnavailable": "服务暂时不可用"
+    },
+    "webSearch": {
+      "searchFailed": "网络搜索失败",
+      "invalidQuery": "无效的搜索查询"
+    },
+    "codeInterpreter": {
+      "executionFailed": "代码执行失败",
+      "invalidCode": "无效或不安全的代码"
+    },
+    "urlPull": {
+      "fetchFailed": "获取URL内容失败",
+      "invalidUrl": "无效或不可访问的URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "知识库搜索失败",
+      "noAccess": "无法访问知识库"
+    }
+  },
+  "settings": {
+    "autoSubmit": "处理后自动提交",
+    "advancedOptions": "高级选项",
+    "priority": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "safeSearch": {
+      "off": "关闭",
+      "moderate": "中等",
+      "strict": "严格"
+    },
+    "market": {
+      "any": "任何地区",
+      "local": "本地地区"
+    }
+  }
+}

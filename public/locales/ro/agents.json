@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Căutare web",
+      "code_interpreter": "Interpretor de cod",
+      "url_pull": "Analiză URL",
+      "local_knowledge": "Bază de cunoștințe",
+      "standard_chat": "Chat standard",
+      "foundry": "Foundry",
+      "third_party": "Terță parte"
+    },
+    "error": {
+      "title": "Eroare agent",
+      "unknown": "A apărut o eroare necunoscută",
+      "retry": "Reîncearcă",
+      "fallback": "Folosește alternativa"
+    },
+    "metadata": {
+      "processingTime": "Timp de procesare",
+      "confidence": "Încredere",
+      "tokens": "Jetoane utilizate"
+    },
+    "resultsPanel": {
+      "placeholder": "Rezultatele agentului vor fi afișate aici"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Căutare web - Caută pe web informații în timp real",
+      "code_interpreter": "Interpretor de cod - Execută și analizează cod în mai multe limbaje",
+      "url_pull": "Analiză URL - Analizează și extrage conținut din paginile web",
+      "local_knowledge": "Bază de cunoștințe - Caută în baza de cunoștințe internă și documente",
+      "standard_chat": "Chat standard - AI conversațional standard fără instrumente",
+      "foundry": "Foundry - Folosește Azure AI Foundry pentru capabilități avansate",
+      "third_party": "Terță parte - Agent terță parte sau integrare instrument personalizat"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Rezultatele căutării web vor fi afișate aici",
+      "title": "Rezultate de căutare",
+      "noResults": "Nu s-au găsit rezultate",
+      "noData": "Nu sunt disponibile date de căutare",
+      "results": "rezultate",
+      "confidence": "Relevanță",
+      "relevance": "Relevanță",
+      "source": "Sursă",
+      "citations": "Citări",
+      "cite": "Citează",
+      "open": "Deschide",
+      "openLink": "Deschide link în tab nou",
+      "filters": "Filtre",
+      "sortBy": "Sortează după",
+      "filterBy": "Filtrează după",
+      "all": "Toate",
+      "date": "Data",
+      "query": "Interogare",
+      "searchTime": "Timp de căutare",
+      "cached": "În cache",
+      "contentTypes": {
+        "webpage": "Pagini web",
+        "news": "Știri",
+        "academic": "Academic",
+        "image": "Imagini",
+        "video": "Videoclipuri"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Numărul de rezultate",
+      "safeSearch": "Căutare sigură",
+      "market": "Piață de căutare"
+    },
+    "status": {
+      "searching": "Căutare pe web...",
+      "optimizing": "Optimizarea interogării de căutare...",
+      "processing": "Procesarea rezultatelor de căutare..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Rezultatele execuției codului vor fi afișate aici",
+      "title": "Rezultate de execuție",
+      "noData": "Nu sunt disponibile date de execuție a codului",
+      "output": "Ieșire",
+      "errors": "Erori",
+      "logs": "Loguri",
+      "executionTime": "Timp de execuție",
+      "memoryUsage": "Utilizarea memoriei",
+      "cpuUsage": "Utilizarea CPU",
+      "outputLines": "Linii de ieșire",
+      "executedCode": "Cod executat",
+      "download": "Descarcă",
+      "noOutput": "Nicio ieșire generată",
+      "noFiles": "Niciun fișier generat",
+      "outputSize": "Dimensiunea ieșirii",
+      "unsupportedOutput": "Format de ieșire nesuportat",
+      "status": {
+        "success": "Succes",
+        "error": "Eroare",
+        "timeout": "Timeout",
+        "memory_limit": "Limită de memorie depășită",
+        "security_violation": "Violare de securitate",
+        "invalid_code": "Cod invalid"
+      },
+      "outputTypes": {
+        "stdout": "Ieșire standard",
+        "stderr": "Ieșire de eroare",
+        "return_value": "Valoarea de returnare",
+        "exception": "Excepție"
+      },
+      "tabs": {
+        "output": "Ieșire",
+        "code": "Cod",
+        "files": "Fișiere"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "Rezultate analiză URL",
+      "noData": "Nu sunt disponibile date de analiză URL",
+      "summary": "Rezumat",
+      "metadata": "Informații document",
+      "processingTime": "Timp de procesare",
+      "preview": "Previzualizare",
+      "view": "Vizualizează"
+    },
+    "configuration": {
+      "timeout": "Timeout cerere"
+    },
+    "status": {
+      "pulling": "Preluarea conținutului URL...",
+      "analyzing": "Analizarea documentului...",
+      "complete": "Analiza completă"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Rezultate bază de cunoștințe",
+      "noData": "Nu sunt disponibile date din baza de cunoștințe",
+      "documents": "documente",
+      "insights": "Informații cheie",
+      "relevance": "Relevanță",
+      "suggestions": "Sugestii"
+    },
+    "configuration": {
+      "searchMode": "Modul de căutare",
+      "threshold": "Prag de relevanță"
+    },
+    "status": {
+      "searching": "Căutare în baza de cunoștințe...",
+      "analyzing": "Analizarea rezultatelor..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Rezultatele analizei documentelor vor fi afișate aici",
+      "title": "Rezultate analiză",
+      "noData": "Nu sunt disponibile date de analiză a documentelor",
+      "documents": "documente",
+      "noDocuments": "Nu s-au găsit documente",
+      "summary": "Rezumat",
+      "insights": "Informații cheie",
+      "metadata": "Informații document",
+      "processingTime": "Timp de procesare",
+      "searchTime": "Timp de căutare",
+      "relevance": "Relevanță",
+      "cached": "În cache",
+      "preview": "Previzualizare",
+      "view": "Vizualizează",
+      "open": "Deschide",
+      "bookmark": "Marcaj",
+      "suggestions": "Sugestii",
+      "tabs": {
+        "documents": "Documente",
+        "insights": "Informații",
+        "failed": "Eșuat"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Se încarcă...",
+      "searching": "Căutare...",
+      "processing": "Procesare...",
+      "analyzing": "Analizare..."
+    },
+    "buttons": {
+      "retry": "Încearca din nou",
+      "cancel": "Anulează",
+      "expand": "Extinde",
+      "collapse": "Restrânge",
+      "configure": "Configurează",
+      "submit": "Trimite"
+    },
+    "labels": {
+      "priority": "Prioritate",
+      "estimatedTime": "Timp estimat",
+      "availability": "Disponibilitate",
+      "configuration": "Configurare"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "A apărut o eroare necunoscuută",
+      "network": "Eroare de conexiune la rețea",
+      "timeout": "Cererea a expirat",
+      "unauthorized": "Acces refuzat",
+      "rateLimit": "Limită de rată depășită",
+      "serviceUnavailable": "Serviciu temporar indisponibil"
+    },
+    "webSearch": {
+      "searchFailed": "Căutarea web a eșuat",
+      "invalidQuery": "Interogare de căutare invalidă"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Execuția codului a eșuat",
+      "invalidCode": "Cod invalid sau nesigur"
+    },
+    "urlPull": {
+      "fetchFailed": "Eșec în preluarea conținutului URL",
+      "invalidUrl": "URL invalid sau inaccesibil"
+    },
+    "localKnowledge": {
+      "searchFailed": "Căutarea în baza de cunoștințe a eșuat",
+      "noAccess": "Fără acces la baza de cunoștințe"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Trimitere automată după procesare",
+    "advancedOptions": "Opțiuni avansate",
+    "priority": {
+      "high": "Ridicată",
+      "medium": "Medie",
+      "low": "Scăzută"
+    },
+    "safeSearch": {
+      "off": "Dezactivat",
+      "moderate": "Moderat",
+      "strict": "Strict"
+    },
+    "market": {
+      "any": "Orice regiune",
+      "local": "Regiunea locală"
+    }
+  }
+}

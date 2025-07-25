@@ -1,0 +1,35 @@
+{
+  "title": "Conditions d'utilisation",
+  "description": "Veuillez examiner et accepter nos Conditions d'utilisation pour continuer.",
+  "accept": "Accepter",
+  "decline": "Refuser",
+  "privacyPolicy": "Politique de confidentialité",
+  "termsOfService": "Conditions d'utilisation",
+  "and": "et",
+  "byAccepting": "En acceptant, vous acceptez nos",
+  "content": {
+    "title": "Contrat de conditions d'utilisation",
+    "introduction": "Bienvenue sur notre application. En accédant à notre service ou en l'utilisant, vous acceptez d'être lié par ces Conditions d'utilisation.",
+    "section1": {
+      "title": "1. Responsabilités de l'utilisateur",
+      "content": "Les utilisateurs sont responsables de maintenir la confidentialité des informations de leur compte et de toutes les activités qui se déroulent sous leur compte."
+    },
+    "section2": {
+      "title": "2. Utilisation acceptable",
+      "content": "Vous vous engagez à ne pas utiliser le service à des fins illégales ou non autorisées. Vous ne devez pas violer les lois de votre juridiction."
+    },
+    "section3": {
+      "title": "3. Propriété intellectuelle",
+      "content": "Tout le contenu inclus dans ce service, tel que texte, graphiques, logos et logiciels, est la propriété de notre société ou de ses fournisseurs de contenu et est protégé par les lois sur les droits d'auteur."
+    },
+    "section4": {
+      "title": "4. Limitation de responsabilité",
+      "content": "Notre société ne sera pas responsable des dommages indirects, accessoires, spéciaux ou consécutifs résultant de l'utilisation ou de l'impossibilité d'utiliser le service."
+    },
+    "section5": {
+      "title": "5. Modifications des conditions",
+      "content": "Nous nous réservons le droit de modifier ces conditions à tout moment. Votre utilisation continue du service après la publication des modifications constitue votre acceptation de ces modifications."
+    },
+    "conclusion": "Merci d'utiliser notre service. Si vous avez des questions concernant ces conditions, veuillez nous contacter."
+  }
+}

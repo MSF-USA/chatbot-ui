@@ -10,9 +10,14 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
-import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
+import {
+  ChatInputSubmitTypes,
+  FileMessageContent,
+  FilePreview,
+  ImageMessageContent,
+} from '@/types/chat';
 
-import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
+import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import Modal from '@/components/UI/Modal';
 
 const onTakePhotoButtonClick = (
@@ -23,7 +28,13 @@ const onTakePhotoButtonClick = (
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setImageFieldValue: Dispatch<
-    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
+    SetStateAction<
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+    >
   >,
   closeModal: () => void,
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>,
@@ -44,13 +55,13 @@ const onTakePhotoButtonClick = (
         const newEvent = new Event('change');
         fileInputRef.current!.dispatchEvent(newEvent);
         onFileUpload(
-            // @ts-ignore
-            newEvent,
-            setSubmitType,
-            setFilePreviews,
-            setImageFieldValue,
-            setImageFieldValue,
-            setUploadProgress,
+          // @ts-ignore
+          newEvent,
+          setSubmitType,
+          setFilePreviews,
+          setImageFieldValue,
+          setImageFieldValue,
+          setUploadProgress,
         );
       }
     }, 'image/png');
@@ -78,7 +89,13 @@ interface CameraModalProps {
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setImageFieldValue: Dispatch<
-    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
+    SetStateAction<
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+    >
   >;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
@@ -120,7 +137,7 @@ export const CameraModal: FC<CameraModalProps> = ({
     };
 
     getDevices();
-    
+
     // Cleanup function to stop media stream when component unmounts or modal closes
     return () => {
       if (isOpen === false) {
@@ -140,7 +157,9 @@ export const CameraModal: FC<CameraModalProps> = ({
     } catch (error) {
       console.error('Error starting camera:', error);
       // Show an error message to the user
-      alert('Could not access camera. Please check your camera permissions and try again.');
+      alert(
+        'Could not access camera. Please check your camera permissions and try again.',
+      );
       closeModal();
     }
   };
@@ -188,7 +207,7 @@ export const CameraModal: FC<CameraModalProps> = ({
       </div>
     </>
   );
-  
+
   const modalFooter = (
     <button
       onClick={() => {
@@ -201,7 +220,7 @@ export const CameraModal: FC<CameraModalProps> = ({
           setSubmitType,
           setImageFieldValue,
           closeModal,
-          setUploadProgress
+          setUploadProgress,
         );
       }}
       className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center justify-center"

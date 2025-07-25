@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "የድር ፍለጋ",
+      "code_interpreter": "ኮድ ተርጓሚ",
+      "url_pull": "URL ትንተና",
+      "local_knowledge": "የእውቀት መሰረት",
+      "standard_chat": "መደበኛ ውይይት",
+      "foundry": "Foundry",
+      "third_party": "ሶስተኛ ወገን"
+    },
+    "error": {
+      "title": "ወኪል ስህተት",
+      "unknown": "ያልታወቀ ስህተት ተከስቷል",
+      "retry": "እንደገና ይሞክሩ",
+      "fallback": "ተለዋጭ ይጠቀሙ"
+    },
+    "metadata": {
+      "processingTime": "የማቀናበር ጊዜ",
+      "confidence": "እምነት",
+      "tokens": "ጥቅም ላይ የዋሉ ቶከኖች"
+    },
+    "resultsPanel": {
+      "placeholder": "የወኪል ውጤቶች እዚህ ይታያሉ"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "የድር ፍለጋ - ለእውነተኛ ጊዜ መረጃ ድሩን ይፈልጋል",
+      "code_interpreter": "ኮድ ተርጓሚ - በብዙ ቋንቋዎች ኮድ ያስፈጽማል እና ይተነትናል",
+      "url_pull": "URL ትንተና - ከድር ገጾች ይዘት ይተነትና እና ያወጣል",
+      "local_knowledge": "የእውቀት መሰረት - የውስጥ እውቀት መሰረት እና ሰነዶችን ይፈልጋል",
+      "standard_chat": "መደበኛ ውይይት - ያለ መሳሪያዎች መደበኛ የውይይት AI",
+      "foundry": "Foundry - ለላቁ ችሎታዎች Azure AI Foundry ይጠቀማል",
+      "third_party": "ሶስተኛ ወገን - የሶስተኛ ወገን ወኪል ወይም ብጁ መሳሪያ ውህደት"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "የድር ፍለጋ ውጤቶች እዚህ ይታያሉ",
+      "title": "ርዕስ",
+      "noResults": "ምንም ውጤት አልተገኘም",
+      "noData": "ምንም የፍለጋ ውሂብ የለም",
+      "results": "ውጤቶች",
+      "confidence": "አግባብነት",
+      "relevance": "አግባብነት",
+      "source": "ምንጭ",
+      "citations": "ጥቅሶች",
+      "cite": "ጥቀስ",
+      "open": "ክፈት",
+      "openLink": "በአዲስ ትብ ውስጥ አገናኝ ክፈት",
+      "filters": "ማጣሪያዎች",
+      "sortBy": "በዚህ ደርድር",
+      "filterBy": "በዚህ አጣራ",
+      "all": "ሁሉም",
+      "date": "ቀን",
+      "query": "ጥያቄ",
+      "searchTime": "የፍለጋ ጊዜ",
+      "cached": "በማስታወሻ የተያዘ",
+      "contentTypes": {
+        "webpage": "የድር ገጾች",
+        "news": "ዜና",
+        "academic": "አካዳሚክ",
+        "image": "ምስሎች",
+        "video": "ቪዲዮዎች"
+      }
+    },
+    "configuration": {
+      "resultsCount": "የውጤቶች ብዛት",
+      "safeSearch": "ደህንነቱ የተጠበቀ ፍለጋ",
+      "market": "የፍለጋ ገበያ"
+    },
+    "status": {
+      "searching": "ድሩን በመፈለግ ላይ...",
+      "optimizing": "የፍለጋ ጥያቄን በማመቻቸት ላይ...",
+      "processing": "የፍለጋ ውጤቶችን በማቀናበር ላይ..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "የኮድ ማስፈጸሚያ ውጤቶች እዚህ ይታያሉ",
+      "title": "የመፈጸሚያ ውጤቶች",
+      "noData": "ምንም የኮድ ማስፈጸሚያ ውሂብ የለም",
+      "output": "ውጤት",
+      "errors": "ስህተቶች",
+      "logs": "ሎጎች",
+      "executionTime": "የመፈጸሚያ ጊዜ",
+      "memoryUsage": "የማስታወሻ አጠቃቀም",
+      "cpuUsage": "የCPU አጠቃቀም",
+      "outputLines": "የውጤት መስመሮች",
+      "executedCode": "የተፈጸመ ኮድ",
+      "download": "ውርድ",
+      "noOutput": "ምንም ውጤት አልተፈጠረም",
+      "noFiles": "ምንም ፋይሎች አልተፈጠሩም",
+      "outputSize": "የውጤት መጠን",
+      "unsupportedOutput": "ያልተደገፈ የውጤት አይነት",
+      "status": {
+        "success": "መፈልቅት",
+        "error": "ስህተት",
+        "timeout": "ሐአልሰበ ግዜ አይጠቀም",
+        "memory_limit": "የማስታወሻ ስይማው ተየልፈዋል",
+        "security_violation": "የደህንነት ልምድ",
+        "invalid_code": "ያልተቀበለ ኮድ"
+      },
+      "outputTypes": {
+        "stdout": "መተሽ ውጤት",
+        "stderr": "የስህተት ውጤት",
+        "return_value": "የምልስ ውጤት",
+        "exception": "አስተያይ"
+      },
+      "tabs": {
+        "output": "ውጤት",
+        "code": "ኮድ",
+        "files": "ፋይሎች"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "የURL ትንተና ውጤቶች",
+      "noData": "ምንም የURL ትንተና ውሂብ የለም",
+      "summary": "አስማት",
+      "metadata": "የሰነድ መረጃ",
+      "processingTime": "የማቀናበር ጊዜ",
+      "preview": "የቅድም ጥይታ",
+      "view": "መርኤት"
+    },
+    "configuration": {
+      "timeout": "የእልይት ጠማች"
+    },
+    "status": {
+      "pulling": "የURL ይዘት እያመጣ ነው...",
+      "analyzing": "ሰነድ እንተንትናለን...",
+      "complete": "ትንተና ተጠናቅቋል"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "የእውቀት ሜሰርት ውጤቶች",
+      "noData": "ምንም የእውቀት ሜሰርት ውሂብ የለም",
+      "documents": "ሰነዶች",
+      "insights": "መጨን አድርስ ወች",
+      "relevance": "አግባብነት",
+      "suggestions": "ዛሮች"
+    },
+    "configuration": {
+      "searchMode": "የጥራት አክሆን",
+      "threshold": "የአግባብነት ነኩባ"
+    },
+    "status": {
+      "searching": "ከእውቀት ሜሰርት እንጥራለን...",
+      "analyzing": "ውጤቶችን እንተንትናለን..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "የሰንድ ትንተና ውጤቶች እዚህ ይታያሉ",
+      "title": "የትንተና ውጤቶች",
+      "noData": "ምንም የሰንድ ትንተና ውሂብ የለም",
+      "documents": "ሰነዶች",
+      "noDocuments": "ምንም ሰነዶች አልተገኖም",
+      "summary": "አስማት",
+      "insights": "መጨን አድርስ ወች",
+      "metadata": "የሰነድ መረጃ",
+      "processingTime": "የማቀናበር ጊዜ",
+      "searchTime": "የስራ ጊዜ",
+      "relevance": "አግባብነት",
+      "cached": "በማስታወሻ የተያዘ",
+      "preview": "የቅድም ጥይታ",
+      "view": "መርኤት",
+      "open": "ክፈት",
+      "bookmark": "የኘት ሳለ኱ን",
+      "suggestions": "ዛሮች",
+      "tabs": {
+        "documents": "ሰነዶች",
+        "insights": "አድርስ ወች",
+        "failed": "የተጨገጠ"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "በመጫን ላይ...",
+      "searching": "በመፈለግ ላይ...",
+      "processing": "በማቀናበር ላይ...",
+      "analyzing": "በመተንተን ላይ..."
+    },
+    "buttons": {
+      "retry": "እንደገና ሞክር",
+      "cancel": "ሰርዝ",
+      "expand": "ዘርጋ",
+      "collapse": "ሰብስብ",
+      "configure": "አዋቅር",
+      "submit": "አስገባ"
+    },
+    "labels": {
+      "priority": "ቅድሚያ",
+      "estimatedTime": "የተገመተ ጊዜ",
+      "availability": "መገኘት",
+      "configuration": "ውቅረት"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "ያልተዳሰለ ስህተት ተከስተዋል",
+      "network": "የሠብቤ ዝርልርት ስህተት",
+      "timeout": "የተረኃኝ ንድ ተቋትቧል",
+      "unauthorized": "መዳረሻ ተደ጖ል",
+      "rateLimit": "የፍጠናት ሰይማው ተየልፈዋል",
+      "serviceUnavailable": "የሰራዊች ቀላል የሌ ያምረዳም"
+    },
+    "webSearch": {
+      "searchFailed": "የውብ ጵራ ተተጘጠ",
+      "invalidQuery": "ያልቀበለ የጵራ ጥያቄ"
+    },
+    "codeInterpreter": {
+      "executionFailed": "የኮድ ማስፈጸሚያ ተተጘጠ",
+      "invalidCode": "ያልቀበለ ወይም አጓጣ ኮድ"
+    },
+    "urlPull": {
+      "fetchFailed": "የURL ይዘት ማበርፃት አተሳካም",
+      "invalidUrl": "ያልቀበለ ወይም የማይታወቃ URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "የእውቀት ሜሰርት ጵራ ተተጘጠ",
+      "noAccess": "ወደ እውቀት ሜሰርት መዳረሻ የለም"
+    }
+  },
+  "settings": {
+    "autoSubmit": "ከማቀናበር በኋላ በራስ-ሰር አስገባ",
+    "advancedOptions": "የላቁ አማራጮች",
+    "priority": {
+      "high": "ከፍተኛ",
+      "medium": "መካከለኛ",
+      "low": "ዝቅተኛ"
+    },
+    "safeSearch": {
+      "off": "ጠፍቷል",
+      "moderate": "መካከለኛ",
+      "strict": "ጥብቅ"
+    },
+    "market": {
+      "any": "ማንኛውም ክልል",
+      "local": "የአካባቢ ክልል"
+    }
+  }
+}

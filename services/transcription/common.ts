@@ -1,8 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import os from 'os';
-import { promisify } from 'util';
 import { execFile } from 'child_process';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { promisify } from 'util';
 
 const unlinkAsync = promisify(fs.unlink);
 const execFileAsync = promisify(execFile);
@@ -10,7 +10,10 @@ const execFileAsync = promisify(execFile);
 export function isBase64(str: string): boolean {
   console.time('isBase64');
   try {
-    const result = Buffer.from(Buffer.from(str, 'base64').toString('utf8')).toString('base64') === str;
+    const result =
+      Buffer.from(Buffer.from(str, 'base64').toString('utf8')).toString(
+        'base64',
+      ) === str;
     console.timeEnd('isBase64');
     return result;
   } catch (err) {
@@ -32,7 +35,7 @@ export async function saveBase64AsFile(base64String: string): Promise<string> {
 
 export async function splitAudioFile(
   filePath: string,
-  maxSize: number
+  maxSize: number,
 ): Promise<string[]> {
   console.time('splitAudioFile');
   console.log(`Splitting audio file: ${filePath}`);
@@ -46,12 +49,19 @@ export async function splitAudioFile(
     wavFilePath = filePath;
   } else {
     // Convert to WAV
-    wavFilePath = path.join(os.tmpdir(), `${path.basename(filePath, path.extname(filePath))}_converted.wav`);
+    wavFilePath = path.join(
+      os.tmpdir(),
+      `${path.basename(filePath, path.extname(filePath))}_converted.wav`,
+    );
     await convertToWav(filePath, wavFilePath);
     isConverted = true;
 
     // Clean up the original file after converting
-    fs.promises.unlink(filePath).catch(err => console.error(`Failed to delete original file: ${filePath}`, err));
+    fs.promises
+      .unlink(filePath)
+      .catch((err) =>
+        console.error(`Failed to delete original file: ${filePath}`, err),
+      );
   }
 
   const fileSize = fs.statSync(wavFilePath).size;
@@ -73,9 +83,17 @@ export async function splitAudioFile(
     const startTime = i * segmentDuration;
     const segmentPath = path.join(
       os.tmpdir(),
-      `${path.basename(wavFilePath, path.extname(wavFilePath))}_segment_${i}_${Date.now()}.wav`
+      `${path.basename(
+        wavFilePath,
+        path.extname(wavFilePath),
+      )}_segment_${i}_${Date.now()}.wav`,
     );
-    await extractAudioSegment(wavFilePath, segmentPath, startTime, segmentDuration);
+    await extractAudioSegment(
+      wavFilePath,
+      segmentPath,
+      startTime,
+      segmentDuration,
+    );
 
     // Check if the file was created
     if (fs.existsSync(segmentPath)) {
@@ -91,7 +109,11 @@ export async function splitAudioFile(
 
   // Clean up the WAV file after splitting
   if (isConverted && fs.existsSync(filePath)) {
-    fs.promises.unlink(filePath).catch(err => console.error(`Failed to delete WAV file: ${filePath}`, err));
+    fs.promises
+      .unlink(filePath)
+      .catch((err) =>
+        console.error(`Failed to delete WAV file: ${filePath}`, err),
+      );
   }
 
   return segmentPaths;
@@ -101,7 +123,15 @@ export function getAudioDuration(filePath: string): Promise<number> {
   console.time('getAudioDuration');
   console.log(`Getting audio duration for: ${filePath}`);
   return new Promise<number>((resolve, reject) => {
-    const args = ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', filePath];
+    const args = [
+      '-v',
+      'error',
+      '-show_entries',
+      'format=duration',
+      '-of',
+      'default=noprint_wrappers=1:nokey=1',
+      filePath,
+    ];
     execFile('ffprobe', args, (error: any, stdout: any, stderr: any) => {
       if (error) {
         console.error(`Error getting audio duration: ${stderr}`);
@@ -127,7 +157,7 @@ export function extractAudioSegment(
   inputPath: string,
   outputPath: string,
   startTime: number,
-  duration: number
+  duration: number,
 ): Promise<void> {
   console.time('extractAudioSegment');
   console.log(`Extracting audio segment: ${inputPath} -> ${outputPath}`);
@@ -172,7 +202,10 @@ export function cleanUpFiles(filePaths: string[]): Promise<void[]> {
   return Promise.all(unlinkPromises);
 }
 
-export async function convertToWav(inputPath: string, outputPath: string): Promise<void> {
+export async function convertToWav(
+  inputPath: string,
+  outputPath: string,
+): Promise<void> {
   console.time('convertToWav');
   console.log(`Converting to WAV: ${inputPath} -> ${outputPath}`);
   const args = [

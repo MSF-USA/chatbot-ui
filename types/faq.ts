@@ -1,8 +1,8 @@
 export interface FAQItem {
-    question: string;
-    answer: string;
-  };
+  question: string;
+  answer: string;
+}
 
-  export interface FAQData {
-    faq: FAQItem[];
-  };
+export interface FAQData {
+  faq: FAQItem[];
+}

@@ -1,8 +1,10 @@
-import { IconFileExport, IconSettings } from '@tabler/icons-react';
-import { useContext, useState } from 'react';
 import { Transition } from '@headlessui/react';
+import { IconFileExport, IconSettings } from '@tabler/icons-react';
+import { useContext } from 'react';
 
 import { useTranslation } from 'next-i18next';
+
+import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -13,12 +15,11 @@ import { Key } from '../../Settings/Key';
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 import ChatbarContext from '../Chatbar.context';
 import { PluginKeys } from './PluginKeys';
-import {OPENAI_API_HOST_TYPE} from "@/utils/app/const";
+
 import { Session } from 'inspector';
 
 export const ChatbarSettings = () => {
   const { t } = useTranslation('sidebar');
-  const [isSettingDialogOpen, setIsSettingDialog] = useState<boolean>(false);
 
   const {
     state: {
@@ -28,19 +29,26 @@ export const ChatbarSettings = () => {
       serverSideApiKeyIsSet,
       serverSidePluginKeysSet,
       conversations,
+      settingsDialogOpen,
+      settingsDialogSection,
     },
+    handleOpenSettings,
+    handleCloseSettings,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
-  const {
-    handleApiKeyChange,
-  } = useContext(ChatbarContext);
+  const { handleApiKeyChange } = useContext(ChatbarContext);
 
   const getInitials = (name: string) => {
-    const cleanName = name.replace(/\(.*?\)/g, '').replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ').trim();
+    const cleanName = name
+      .replace(/\(.*?\)/g, '')
+      .replace(/[^a-zA-Z\s]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
     const names = cleanName.split(' ');
     const firstInitial = names[0] ? names[0][0].toUpperCase() : '';
-    const lastInitial = names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
+    const lastInitial =
+      names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
     return firstInitial + lastInitial;
   };
 
@@ -48,14 +56,19 @@ export const ChatbarSettings = () => {
     <div className="flex flex-col items-center space-y-1 border-t border-black dark:border-white/20 pt-1 text-sm">
       <SidebarButton
         text={t('Settings')}
-        icon={user?.displayName != undefined ?
+        icon={
+          user?.displayName != undefined ? (
             <div
               className="rounded-full bg-[#D7211E] h-10 w-10 flex items-center justify-center dark:text-white text-black"
               style={{ fontSize: '16px' }}
             >
               {getInitials(user.displayName)}
-            </div> : <IconSettings size={18} />}
-        onClick={() => setIsSettingDialog(true)}
+            </div>
+          ) : (
+            <IconSettings size={18} />
+          )
+        }
+        onClick={() => handleOpenSettings()}
       />
 
       {!serverSideApiKeyIsSet && OPENAI_API_HOST_TYPE !== 'apim' ? (
@@ -65,7 +78,7 @@ export const ChatbarSettings = () => {
       {/* {!serverSidePluginKeysSet ? <PluginKeys /> : null} */}
 
       <Transition
-        show={isSettingDialogOpen}
+        show={settingsDialogOpen}
         as="div"
         className="absolute inset-0 overflow-hidden z-10"
         enter="transition-opacity ease-out duration-400"
@@ -76,11 +89,10 @@ export const ChatbarSettings = () => {
         leaveTo="opacity-0"
       >
         <SettingDialog
-          open={isSettingDialogOpen}
-          onClose={() => {
-            setIsSettingDialog(false);
-          }}
+          open={settingsDialogOpen}
+          onClose={handleCloseSettings}
           user={user}
+          initialSection={settingsDialogSection}
         />
       </Transition>
     </div>

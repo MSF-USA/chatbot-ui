@@ -1,31 +1,33 @@
+import { act, render, screen, waitFor } from '@testing-library/react';
+import { useSession } from 'next-auth/react';
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, waitFor, act } from '@testing-library/react';
-import { TermsAcceptanceProvider } from '@/components/Terms/TermsAcceptanceProvider';
+
 import * as termsAcceptance from '@/utils/app/termsAcceptance';
+
+import { TermsAcceptanceProvider } from '@/components/Terms/TermsAcceptanceProvider';
+
 import '@testing-library/jest-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the termsAcceptance utility functions
 vi.mock('@/utils/app/termsAcceptance', () => ({
-  checkUserTermsAcceptance: vi.fn()
+  checkUserTermsAcceptance: vi.fn(),
 }));
 
 // Mock the TermsAcceptanceModal component
 vi.mock('@/components/Terms/TermsAcceptanceModal', () => ({
   default: vi.fn(({ user, onAcceptance }) => (
-      <div data-testid="terms-modal">
-        <span>Terms Modal for {user?.id || 'unknown'}</span>
-        <button onClick={onAcceptance}>Accept Terms</button>
-      </div>
-  ))
+    <div data-testid="terms-modal">
+      <span>Terms Modal for {user?.id || 'unknown'}</span>
+      <button onClick={onAcceptance}>Accept Terms</button>
+    </div>
+  )),
 }));
 
 // Mock next-auth/react
 vi.mock('next-auth/react', () => ({
-  useSession: vi.fn()
+  useSession: vi.fn(),
 }));
-
-import { useSession } from 'next-auth/react';
 
 describe('TermsAcceptanceProvider', () => {
   const mockChildren = <div data-testid="children">Child Component</div>;
@@ -38,7 +40,7 @@ describe('TermsAcceptanceProvider', () => {
     vi.mocked(useSession).mockReturnValue({
       data: null,
       status: 'loading',
-      update: vi.fn()
+      update: vi.fn(),
     });
 
     await act(async () => {
@@ -55,7 +57,7 @@ describe('TermsAcceptanceProvider', () => {
     vi.mocked(useSession).mockReturnValue({
       data: null,
       status: 'unauthenticated',
-      update: vi.fn()
+      update: vi.fn(),
     });
 
     await act(async () => {

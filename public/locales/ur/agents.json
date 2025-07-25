@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "ویب تلاش",
+      "code_interpreter": "کوڈ مترجم",
+      "url_pull": "URL تجزیہ",
+      "local_knowledge": "علم کی بنیاد",
+      "standard_chat": "معیاری چیٹ",
+      "foundry": "Foundry",
+      "third_party": "تیسری پارٹی"
+    },
+    "error": {
+      "title": "ایجنٹ کی خرابی",
+      "unknown": "ایک نامعلوم خرابی پیش آئی",
+      "retry": "دوبارہ کوشش کریں",
+      "fallback": "متبادل استعمال کریں"
+    },
+    "metadata": {
+      "processingTime": "پروسیسنگ وقت",
+      "confidence": "اعتماد",
+      "tokens": "استعمال شدہ ٹوکنز"
+    },
+    "resultsPanel": {
+      "placeholder": "ایجنٹ کے نتائج یہاں دکھائے جائیں گے"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "ویب تلاش - حقیقی وقت کی معلومات کے لیے ویب تلاش کرتا ہے",
+      "code_interpreter": "کوڈ مترجم - متعدد زبانوں میں کوڈ چلاتا اور تجزیہ کرتا ہے",
+      "url_pull": "URL تجزیہ - ویب صفحات سے مواد کا تجزیہ اور اخذ کرتا ہے",
+      "local_knowledge": "علم کی بنیاد - اندرونی علم کی بنیاد اور دستاویزات میں تلاش کرتا ہے",
+      "standard_chat": "معیاری چیٹ - آلات کے بغیر معیاری بات چیت AI",
+      "foundry": "Foundry - جدید صلاحیتوں کے لیے Azure AI Foundry استعمال کرتا ہے",
+      "third_party": "تیسری پارٹی - تیسری پارٹی ایجنٹ یا اپنی مرضی کے آلے کا انضمام"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "ویب تلاش کے نتائج یہاں دکھائے جائیں گے",
+      "title": "تلاش کے نتائج",
+      "noResults": "کوئی نتائج نہیں ملے",
+      "noData": "تلاش کا ڈیٹا دستیاب نہیں",
+      "results": "نتائج",
+      "confidence": "مطابقت",
+      "relevance": "مطابقت",
+      "source": "ذریعہ",
+      "citations": "حوالہ جات",
+      "cite": "حوالہ دیں",
+      "open": "کھولیں",
+      "openLink": "نئے ٹیب میں لنک کھولیں",
+      "filters": "فلٹرز",
+      "sortBy": "ترتیب دیں",
+      "filterBy": "فلٹر کریں",
+      "all": "تمام",
+      "date": "تاریخ",
+      "query": "سوال",
+      "searchTime": "تلاش کا وقت",
+      "cached": "محفوظ شدہ",
+      "contentTypes": {
+        "webpage": "ویب صفحات",
+        "news": "خبریں",
+        "academic": "تعلیمی",
+        "image": "تصاویر",
+        "video": "ویڈیوز"
+      }
+    },
+    "configuration": {
+      "resultsCount": "نتائج کی تعداد",
+      "safeSearch": "محفوظ تلاش",
+      "market": "تلاش مارکیٹ"
+    },
+    "status": {
+      "searching": "ویب میں تلاش کر رہا ہے...",
+      "optimizing": "تلاش کی درخواست کو بہتر بنا رہا ہے...",
+      "processing": "تلاش کے نتائج پروسیس کر رہا ہے..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "کوڈ کے نفاذ کے نتائج یہاں دکھائے جائیں گے",
+      "title": "نفاذ کے نتائج",
+      "noData": "کوڈ کے نفاذ کا ڈیٹا دستیاب نہیں",
+      "output": "آؤٹ پٹ",
+      "errors": "خرابیاں",
+      "logs": "لاگز",
+      "executionTime": "نفاذ کا وقت",
+      "memoryUsage": "میموری کا استعمال",
+      "cpuUsage": "CPU کا استعمال",
+      "outputLines": "آؤٹ پٹ لائنیں",
+      "executedCode": "نافذ شدہ کوڈ",
+      "download": "ڈاؤن لوڈ",
+      "noOutput": "کوئی آؤٹ پٹ تیار نہیں ہوا",
+      "noFiles": "کوئی فائلیں تیار نہیں ہوئیں",
+      "outputSize": "آؤٹ پٹ کا سائز",
+      "unsupportedOutput": "غیر مدد شدہ آؤٹ پٹ فارمیٹ",
+      "status": {
+        "success": "کامیابی",
+        "error": "خرابی",
+        "timeout": "وقت ختم",
+        "memory_limit": "میموری کی حد سے زیادہ",
+        "security_violation": "سیکیورٹی کی خلاف ورزی",
+        "invalid_code": "غلط کوڈ"
+      },
+      "outputTypes": {
+        "stdout": "معیاری آؤٹ پٹ",
+        "stderr": "خرابی کا آؤٹ پٹ",
+        "return_value": "واپسی کی قیمت",
+        "exception": "استثناء"
+      },
+      "tabs": {
+        "output": "آؤٹ پٹ",
+        "code": "کوڈ",
+        "files": "فائلیں"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL تجزیہ کے نتائج",
+      "noData": "URL تجزیہ کا ڈیٹا دستیاب نہیں",
+      "summary": "خلاصہ",
+      "metadata": "دستاویز کی معلومات",
+      "processingTime": "پروسیسنگ کا وقت",
+      "preview": "پیش نظارہ",
+      "view": "دیکھیں"
+    },
+    "configuration": {
+      "timeout": "درخواست کا وقت ختم"
+    },
+    "status": {
+      "pulling": "URL کا مواد حاصل کر رہا ہے...",
+      "analyzing": "دستاویز کا تجزیہ کر رہا ہے...",
+      "complete": "تجزیہ مکمل"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "علم کی بنیاد کے نتائج",
+      "noData": "علم کی بنیاد کا ڈیٹا دستیاب نہیں",
+      "documents": "دستاویزات",
+      "insights": "اہم بصیرت",
+      "relevance": "مطابقت",
+      "suggestions": "تجاویز"
+    },
+    "configuration": {
+      "searchMode": "تلاش کا طریقہ",
+      "threshold": "مطابقت کی حد"
+    },
+    "status": {
+      "searching": "علم کی بنیاد میں تلاش کر رہا ہے...",
+      "analyzing": "نتائج کا تجزیہ کر رہا ہے..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "دستاویز کے تجزیہ کے نتائج یہاں دکھائے جائیں گے",
+      "title": "تجزیہ کے نتائج",
+      "noData": "دستاویز کے تجزیہ کا ڈیٹا دستیاب نہیں",
+      "documents": "دستاویزات",
+      "noDocuments": "کوئی دستاویزات نہیں ملے",
+      "summary": "خلاصہ",
+      "insights": "اہم بصیرت",
+      "metadata": "دستاویز کی معلومات",
+      "processingTime": "پروسیسنگ کا وقت",
+      "searchTime": "تلاش کا وقت",
+      "relevance": "مطابقت",
+      "cached": "محفوظ شدہ",
+      "preview": "پیش نظارہ",
+      "view": "دیکھیں",
+      "open": "کھولیں",
+      "bookmark": "بک مارک",
+      "suggestions": "تجاویز",
+      "tabs": {
+        "documents": "دستاویزات",
+        "insights": "بصیرت",
+        "failed": "ناکام"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "لوڈ ہو رہا ہے...",
+      "searching": "تلاش کر رہا ہے...",
+      "processing": "پروسیس کر رہا ہے...",
+      "analyzing": "تجزیہ کر رہا ہے..."
+    },
+    "buttons": {
+      "retry": "دوبارہ کوشش کریں",
+      "cancel": "منسوخ کریں",
+      "expand": "پھیلائیں",
+      "collapse": "سکیڑیں",
+      "configure": "ترتیب دیں",
+      "submit": "جمع کریں"
+    },
+    "labels": {
+      "priority": "ترجیح",
+      "estimatedTime": "تخمینی وقت",
+      "availability": "دستیابی",
+      "configuration": "ترتیبات"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "ایک نامعلوم خرابی پیش آئی",
+      "network": "نیٹ ورک کنکشن کی خرابی",
+      "timeout": "درخواست کا وقت ختم ہو گیا",
+      "unauthorized": "رسائی مسترد",
+      "rateLimit": "حد سے زیادہ درخواستیں",
+      "serviceUnavailable": "سروس عارضی طور پر دستیاب نہیں"
+    },
+    "webSearch": {
+      "searchFailed": "ویب تلاش ناکام",
+      "invalidQuery": "غلط تلاش کی درخواست"
+    },
+    "codeInterpreter": {
+      "executionFailed": "کوڈ کا نفاذ ناکام",
+      "invalidCode": "غلط یا غیر محفوظ کوڈ"
+    },
+    "urlPull": {
+      "fetchFailed": "URL کا مواد حاصل کرنے میں ناکامی",
+      "invalidUrl": "غلط یا ناقابل رسائی URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "علم کی بنیاد میں تلاش ناکام",
+      "noAccess": "علم کی بنیاد تک رسائی نہیں"
+    }
+  },
+  "settings": {
+    "autoSubmit": "پروسیسنگ کے بعد خودکار جمع کریں",
+    "advancedOptions": "اعلیٰ درجے کے اختیارات",
+    "priority": {
+      "high": "زیادہ",
+      "medium": "درمیانہ",
+      "low": "کم"
+    },
+    "safeSearch": {
+      "off": "بند",
+      "moderate": "درمیانہ",
+      "strict": "سخت"
+    },
+    "market": {
+      "any": "کوئی بھی علاقہ",
+      "local": "مقامی علاقہ"
+    }
+  }
+}

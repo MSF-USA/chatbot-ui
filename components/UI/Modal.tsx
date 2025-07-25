@@ -1,5 +1,6 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
 import { IconX } from '@tabler/icons-react';
+import React, { ReactNode, useEffect, useMemo } from 'react';
+
 import useModal from '@/hooks/useModal';
 
 interface ModalProps {
@@ -52,7 +53,12 @@ const Modal: React.FC<ModalProps> = ({
   betaBadge,
   closeWithButton = true,
 }) => {
-  const modalContentRef = useModal(isOpen, onClose, preventOutsideClick, preventEscapeKey);
+  const modalContentRef = useModal(
+    isOpen,
+    onClose,
+    preventOutsideClick,
+    preventEscapeKey,
+  );
 
   // Set focus on the specified element when the modal opens
   useEffect(() => {
@@ -62,13 +68,17 @@ const Modal: React.FC<ModalProps> = ({
   }, [isOpen, initialFocusRef]);
 
   // Calculate size classes
-  const sizeClasses = useMemo(() => ({
-    sm: 'max-w-sm',
-    md: 'max-w-lg',
-    lg: 'max-w-2xl',
-    xl: 'max-w-4xl',
-    full: 'max-w-full mx-4',
-  })[size], [size]);
+  const sizeClasses = useMemo(
+    () =>
+      ({
+        sm: 'max-w-sm',
+        md: 'max-w-lg',
+        lg: 'max-w-2xl',
+        xl: 'max-w-4xl',
+        full: 'max-w-full mx-4',
+      }[size]),
+    [size],
+  );
 
   if (!isOpen) return null;
 
@@ -92,56 +102,75 @@ const Modal: React.FC<ModalProps> = ({
         className={`${sizeClasses} w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative z-10 ${className}`}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={title ? "modal-title" : undefined}
+        aria-labelledby={title ? 'modal-title' : undefined}
       >
         {/* Beta badge positioning */}
         {betaBadge && (
-          <div className="absolute -top-4 -left-4">
-            {betaBadge}
-          </div>
+          <div className="absolute -top-4 -left-4">{betaBadge}</div>
         )}
 
         {/* Close button - standalone if not in header */}
         {showCloseButton && !showHeader && (
           <button
-              onClick={onClose}
-              className={`text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors ${
-                  closeWithButton ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full' : 'absolute top-4 right-4'
-              }`}
-              aria-label="Close modal"
+            onClick={onClose}
+            className={`text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors ${
+              closeWithButton
+                ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full'
+                : 'absolute top-4 right-4'
+            }`}
+            aria-label="Close modal"
           >
-          {closeWithButton ? (
+            {closeWithButton ? (
               <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
-          ) : (
+            ) : (
               <IconX size={24} />
-          )}
+            )}
           </button>
         )}
 
         {/* Header with title and close button - only if title or icon exists */}
         {showHeader && (
-          <div className={`flex justify-between items-center ${showDivider ? 'border-b dark:border-gray-700 pb-3 mb-4' : 'mb-4'} ${headerClassName}`}>
+          <div
+            className={`flex justify-between items-center ${
+              showDivider ? 'border-b dark:border-gray-700 pb-3 mb-4' : 'mb-4'
+            } ${headerClassName}`}
+          >
             <div className="flex items-center">
               {icon && <div className="mr-2">{icon}</div>}
-              {title && (
-                  typeof title === 'string'
-                      ? <h3 id="modal-title" className="text-xl font-semibold text-gray-800 dark:text-white">{title}</h3>
-                      : <div id="modal-title">{title}</div>
-              )}
+              {title &&
+                (typeof title === 'string' ? (
+                  <h3
+                    id="modal-title"
+                    className="text-xl font-semibold text-gray-800 dark:text-white"
+                  >
+                    {title}
+                  </h3>
+                ) : (
+                  <div id="modal-title">{title}</div>
+                ))}
             </div>
 
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className={`text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors ${closeWithButton ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full' : ''}`}
+                className={`text-gray-600 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white transition-colors ${
+                  closeWithButton
+                    ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-gray-700 rounded-full'
+                    : ''
+                }`}
                 aria-label="Close modal"
               >
                 {closeWithButton ? (
@@ -152,7 +181,12 @@ const Modal: React.FC<ModalProps> = ({
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 ) : (
                   <IconX size={24} />
@@ -163,9 +197,7 @@ const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Modal content */}
-        <div className={`modal-content ${contentClassName}`}>
-          {children}
-        </div>
+        <div className={`modal-content ${contentClassName}`}>{children}</div>
 
         {/* Footer if provided */}
         {footer && (

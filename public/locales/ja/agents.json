@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "ウェブ検索",
+      "code_interpreter": "コードインタープリター",
+      "url_pull": "URL分析",
+      "local_knowledge": "知識ベース",
+      "standard_chat": "標準チャット",
+      "foundry": "Foundry",
+      "third_party": "サードパーティ"
+    },
+    "error": {
+      "title": "エージェントエラー",
+      "unknown": "不明なエラーが発生しました",
+      "retry": "再試行",
+      "fallback": "代替を使用"
+    },
+    "metadata": {
+      "processingTime": "処理時間",
+      "confidence": "信頼度",
+      "tokens": "使用されたトークン"
+    },
+    "resultsPanel": {
+      "placeholder": "エージェントの結果がここに表示されます"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "ウェブ検索 - リアルタイム情報のためにウェブを検索",
+      "code_interpreter": "コードインタープリター - 複数の言語でコードを実行および分析",
+      "url_pull": "URL分析 - ウェブページからコンテンツを分析および抽出",
+      "local_knowledge": "知識ベース - 内部知識ベースとドキュメントを検索",
+      "standard_chat": "標準チャット - ツールなしの標準的な会話型AI",
+      "foundry": "Foundry - 高度な機能のためにAzure AI Foundryを使用",
+      "third_party": "サードパーティ - サードパーティエージェントまたはカスタムツール統合"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "ウェブ検索結果がここに表示されます",
+      "title": "検索結果",
+      "noResults": "結果が見つかりません",
+      "noData": "検索データがありません",
+      "results": "結果",
+      "confidence": "関連性",
+      "relevance": "関連性",
+      "source": "ソース",
+      "citations": "引用",
+      "cite": "引用する",
+      "open": "開く",
+      "openLink": "新しいタブでリンクを開く",
+      "filters": "フィルター",
+      "sortBy": "並び替え",
+      "filterBy": "フィルター条件",
+      "all": "すべて",
+      "date": "日付",
+      "query": "クエリ",
+      "searchTime": "検索時間",
+      "cached": "キャッシュ済み",
+      "contentTypes": {
+        "webpage": "ウェブページ",
+        "news": "ニュース",
+        "academic": "学術",
+        "image": "画像",
+        "video": "動画"
+      }
+    },
+    "configuration": {
+      "resultsCount": "結果数",
+      "safeSearch": "セーフサーチ",
+      "market": "検索市場"
+    },
+    "status": {
+      "searching": "ウェブを検索中...",
+      "optimizing": "検索クエリを最適化中...",
+      "processing": "検索結果を処理中..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "コード実行結果がここに表示されます",
+      "title": "実行結果",
+      "noData": "コード実行データがありません",
+      "output": "出力",
+      "errors": "エラー",
+      "logs": "ログ",
+      "executionTime": "実行時間",
+      "memoryUsage": "メモリ使用量",
+      "cpuUsage": "CPU使用量",
+      "outputLines": "出力行数",
+      "executedCode": "実行されたコード",
+      "download": "ダウンロード",
+      "noOutput": "出力が生成されませんでした",
+      "noFiles": "ファイルが生成されませんでした",
+      "outputSize": "出力サイズ",
+      "unsupportedOutput": "サポートされていない出力形式",
+      "status": {
+        "success": "成功",
+        "error": "エラー",
+        "timeout": "タイムアウト",
+        "memory_limit": "メモリ制限超過",
+        "security_violation": "セキュリティ違反",
+        "invalid_code": "無効なコード"
+      },
+      "outputTypes": {
+        "stdout": "標準出力",
+        "stderr": "エラー出力",
+        "return_value": "戻り値",
+        "exception": "例外"
+      },
+      "tabs": {
+        "output": "出力",
+        "code": "コード",
+        "files": "ファイル"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL分析結果",
+      "noData": "URL分析データがありません",
+      "summary": "概要",
+      "metadata": "ドキュメント情報",
+      "processingTime": "処理時間",
+      "preview": "プレビュー",
+      "view": "表示"
+    },
+    "configuration": {
+      "timeout": "リクエストタイムアウト"
+    },
+    "status": {
+      "pulling": "URLコンテンツを取得中...",
+      "analyzing": "ドキュメントを分析中...",
+      "complete": "分析完了"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "知識ベース結果",
+      "noData": "知識ベースデータがありません",
+      "documents": "ドキュメント",
+      "insights": "主要な洞察",
+      "relevance": "関連性",
+      "suggestions": "提案"
+    },
+    "configuration": {
+      "searchMode": "検索モード",
+      "threshold": "関連性闾値"
+    },
+    "status": {
+      "searching": "知識ベースを検索中...",
+      "analyzing": "結果を分析中..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "ドキュメント分析結果がここに表示されます",
+      "title": "分析結果",
+      "noData": "ドキュメント分析データがありません",
+      "documents": "ドキュメント",
+      "noDocuments": "ドキュメントが見つかりません",
+      "summary": "概要",
+      "insights": "主要な洞察",
+      "metadata": "ドキュメント情報",
+      "processingTime": "処理時間",
+      "searchTime": "検索時間",
+      "relevance": "関連性",
+      "cached": "キャッシュ済み",
+      "preview": "プレビュー",
+      "view": "表示",
+      "open": "開く",
+      "bookmark": "ブックマーク",
+      "suggestions": "提案",
+      "tabs": {
+        "documents": "ドキュメント",
+        "insights": "洞察",
+        "failed": "失敗"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "読み込み中...",
+      "searching": "検索中...",
+      "processing": "処理中...",
+      "analyzing": "分析中..."
+    },
+    "buttons": {
+      "retry": "再試行",
+      "cancel": "キャンセル",
+      "expand": "展開",
+      "collapse": "折りたたみ",
+      "configure": "設定",
+      "submit": "送信"
+    },
+    "labels": {
+      "priority": "優先度",
+      "estimatedTime": "予想時間",
+      "availability": "利用可能性",
+      "configuration": "設定"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "不明なエラーが発生しました",
+      "network": "ネットワーク接続エラー",
+      "timeout": "リクエストがタイムアウトしました",
+      "unauthorized": "アクセスが拒否されました",
+      "rateLimit": "レート制限を超過しました",
+      "serviceUnavailable": "サービスが一時的に利用不可です"
+    },
+    "webSearch": {
+      "searchFailed": "ウェブ検索が失敗しました",
+      "invalidQuery": "無効な検索クエリです"
+    },
+    "codeInterpreter": {
+      "executionFailed": "コード実行が失敗しました",
+      "invalidCode": "無効または安全でないコードです"
+    },
+    "urlPull": {
+      "fetchFailed": "URLコンテンツの取得に失敗しました",
+      "invalidUrl": "無効またはアクセス不可なURLです"
+    },
+    "localKnowledge": {
+      "searchFailed": "知識ベース検索が失敗しました",
+      "noAccess": "知識ベースへのアクセスがありません"
+    }
+  },
+  "settings": {
+    "autoSubmit": "処理後の自動送信",
+    "advancedOptions": "高度なオプション",
+    "priority": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "safeSearch": {
+      "off": "オフ",
+      "moderate": "中程度",
+      "strict": "厳格"
+    },
+    "market": {
+      "any": "すべての地域",
+      "local": "ローカル地域"
+    }
+  }
+}

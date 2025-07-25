@@ -5,9 +5,9 @@ import { FolderInterface } from '@/types/folder';
 import HomeContext from '@/pages/api/home/home.context';
 
 import Folder from '@/components/Folder';
-import { PromptComponent } from './Prompt';
 
 import ChatbarContext from '../Chatbar.context';
+import { PromptComponent } from './Prompt';
 
 export const PromptFolders = () => {
   const {
