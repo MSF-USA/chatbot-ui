@@ -216,8 +216,12 @@ export class AgentConfigurationProcessor {
           threshold: intentConfig.threshold || 0.5,
           intentCategory: intentConfig.intentCategory || 'general',
           prompts: intentConfig.prompts || {},
+          systemPrompts: intentConfig.systemPrompts || {},
+          usageCriteria: intentConfig.usageCriteria || [],
           questionPatterns: intentConfig.questionPatterns || [],
           urgencyIndicators: intentConfig.urgencyIndicators || [],
+          examples: intentConfig.examples || [],
+          regexPatterns: intentConfig.regexPatterns || [],
         };
       }
     }
