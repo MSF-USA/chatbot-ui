@@ -96,6 +96,7 @@ export interface ChatBody {
   temperature: number;
   botId: string | undefined;
   stream?: boolean;
+  threadId?: string; // Azure AI Agent thread ID
 }
 
 export interface Conversation {
@@ -109,6 +110,7 @@ export interface Conversation {
   bot?: string;
   createdAt?: string;
   updatedAt?: string;
+  threadId?: string; // Azure AI Agent thread ID
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';

@@ -16,6 +16,7 @@
     "search:config-downtime": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts --allow-downtime"
   },
   "dependencies": {
+    "@azure/ai-agents": "^1.1.0",
     "@azure/identity": "^4.4.1",
     "@azure/monitor-ingestion": "^1.1.0",
     "@azure/openai": "^2.0.0-beta.2",

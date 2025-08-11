@@ -40,6 +40,7 @@ export const ChatMessageText: FC<any> = ({
       {role === 'assistant' ? (
         <AssistantMessage
           content={content}
+          message={message}
           copyOnClick={copyOnClick}
           messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}

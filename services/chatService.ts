@@ -297,6 +297,8 @@ export default class ChatService {
     botId?: string,
     streamResponse: boolean = true,
     promptToSend?: string,
+    modelConfig?: any,
+    threadId?: string,
   ): Promise<Response> {
     const startTime = Date.now();
     try {
@@ -320,8 +322,182 @@ export default class ChatService {
           });
         }
       } else {
+        // Check if this is an agent-enabled model
+        if (modelConfig?.agentEnabled && modelConfig?.agentId) {
+          
+          // Use Azure AI Agents directly
+          const aiAgents = await import('@azure/ai-agents');
+          const { DefaultAzureCredential } = await import('@azure/identity');
+          
+          const endpoint = process.env.AZURE_AI_FOUNDRY_ENDPOINT;
+          const agentId = modelConfig.agentId;
+          
+          if (!endpoint || !agentId) {
+            throw new Error('Azure AI Foundry endpoint or Agent ID not configured');
+          }
+          
+          const client = new aiAgents.AgentsClient(endpoint, new DefaultAzureCredential());
+          
+          // Stream the response directly without importing specific event types
+          // The events are string constants in the eventMessage.event field
+          
+          // Create a thread and run for this conversation with streaming
+          const lastMessage = messages[messages.length - 1];
+          
+          let thread;
+          let isNewThread = false;
+          
+          try {
+            if (threadId) {
+              // For existing thread, we need to add all messages that aren't already in the thread
+              thread = { id: threadId };
+              
+              // Add all previous messages to the thread (Azure AI Agents needs full context)
+              for (let i = 0; i < messages.length - 1; i++) {
+                const msg = messages[i];
+                if (msg.role === 'user' || msg.role === 'assistant') {
+                  await client.messages.create(
+                    thread.id,
+                    msg.role as 'user' | 'assistant',
+                    String(msg.content)
+                  );
+                }
+              }
+            } else {
+              thread = await client.threads.create();
+              isNewThread = true;
+            }
+          } catch (threadError) {
+            console.error('Error with thread:', threadError);
+            throw threadError;
+          }
+          
+          try {
+            
+            // The SDK expects parameters to be passed separately: (threadId, role, content)
+            await client.messages.create(
+              thread.id, 
+              'user', 
+              String(lastMessage.content)
+            );
+          } catch (messageError) {
+            console.error('Error creating message:', messageError);
+            console.error('Full error object:', JSON.stringify(messageError, null, 2));
+            throw messageError;
+          }
+          
+          // Create a run and get the stream
+          let streamEventMessages;
+          try {
+            
+            // Check if client.runs exists
+            if (!client.runs) {
+              console.error('client.runs is undefined. Client structure:', Object.keys(client));
+              throw new Error('AgentsClient does not have runs property - check SDK version');
+            }
+            
+            // The Azure AI Agents SDK expects the agentId as the second parameter
+            // and returns an object with a stream() method
+            const run = client.runs.create(thread.id, agentId);
+            
+            
+            // Call stream() on the run object
+            streamEventMessages = await run.stream();
+            
+          } catch (streamError) {
+            console.error('Error creating stream:', streamError);
+            console.error('Error stack:', streamError.stack);
+            throw streamError;
+          }
+          
+          // Create a readable stream for the response
+          const stream = new ReadableStream({
+            async start(controller) {
+              const encoder = new TextEncoder();
+              let citations = [];
+              let citationIndex = 1;
+              const citationMap = new Map();
+              let hasCompletedMessage = false;
+              
+              try {
+                for await (const eventMessage of streamEventMessages) {
+                  // Handle different event types
+                  if (eventMessage.event === 'thread.message.delta') {
+                    if (eventMessage.data?.delta?.content && Array.isArray(eventMessage.data.delta.content)) {
+                      eventMessage.data.delta.content.forEach((contentPart: any) => {
+                        if (contentPart.type === 'text' && contentPart.text?.value) {
+                          let textChunk = contentPart.text.value;
+                          
+                          // Convert citation format on the fly
+                          textChunk = textChunk.replace(/【(\d+):(\d+)†source】/g, (match: string) => {
+                            if (!citationMap.has(match)) {
+                              citationMap.set(match, citationIndex);
+                              citationIndex++;
+                            }
+                            return `[${citationMap.get(match)}]`;
+                          });
+                          
+                          controller.enqueue(encoder.encode(textChunk));
+                        }
+                      });
+                    }
+                  } else if (eventMessage.event === 'thread.message.completed') {
+                    hasCompletedMessage = true;
+                    // Extract citations from annotations
+                    if (eventMessage.data?.content?.[0]?.text?.annotations) {
+                      const annotations = eventMessage.data.content[0].text.annotations;
+                      citations = [];
+                      citationIndex = 1;
+                      
+                      annotations.forEach((annotation: any) => {
+                        if (annotation.type === 'url_citation' && annotation.urlCitation) {
+                          citations.push({
+                            number: citationIndex++,
+                            title: annotation.urlCitation.title || `Source ${citationIndex}`,
+                            url: annotation.urlCitation.url || '',
+                            date: new Date().toISOString()
+                          });
+                        }
+                      });
+                    }
+                  } else if (eventMessage.event === 'thread.run.completed') {
+                    // Only append metadata at the very end, after we have everything
+                    if (citations.length > 0 || isNewThread) {
+                      // Use a unique separator that won't appear in normal content
+                      const separator = '\n\n<<<METADATA_START>>>';
+                      const metadata = {
+                        citations: citations.length > 0 ? citations : undefined,
+                        threadId: isNewThread ? thread.id : undefined
+                      };
+                      const metadataStr = `${separator}${JSON.stringify(metadata)}<<<METADATA_END>>>`;
+                      controller.enqueue(encoder.encode(metadataStr));
+                    }
+                  } else if (eventMessage.event === 'error') {
+                    controller.error(new Error(`Agent error: ${JSON.stringify(eventMessage.data)}`));
+                  } else if (eventMessage.event === 'done') {
+                    controller.close();
+                  }
+                }
+              } catch (error) {
+                controller.error(error);
+              }
+            }
+          });
+          
+          // Log the completion
+          await this.loggingService.logChatCompletion(
+            startTime,
+            modelId,
+            messages.length,
+            temperature,
+            user,
+            botId,
+          );
+          
+          return new StreamingTextResponse(stream);
+        }
         // TODO: Fix special handling for reasoning models
-        if (this.isReasoningModel(modelId)) {
+        else if (this.isReasoningModel(modelId)) {
         // For reasoning models:
         // 1. Skip system messages
         // 2. Force temperature to 1 or leave out
@@ -349,7 +525,6 @@ export default class ChatService {
           user: JSON.stringify(user),
           stream: false
         }
-        console.log("chatCompletionParams", chatCompletionParams)
 
         const responseData = await this.openAIClient.responses.create(chatCompletionParams);
         const response = responseData as OpenAI.Responses.Response;
@@ -461,6 +636,7 @@ export default class ChatService {
       temperature,
       botId,
       stream = true,
+      threadId,
     } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -533,6 +709,8 @@ export default class ChatService {
         botId,
         shouldStream,
         promptToSend,
+        model,
+        threadId,
       );
     }
   }
