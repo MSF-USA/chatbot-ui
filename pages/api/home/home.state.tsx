@@ -47,7 +47,7 @@ export interface HomeInitialState {
  * Create default agent settings
  */
 const createDefaultAgentSettings = (): AgentSettings => ({
-  enabled: false,
+  enabled: true,
   confidenceThreshold: 0.5, // Lowered to capture web search queries (0.6-0.7 range)
   fallbackEnabled: true, // Always fallback to standard chat if agents fail
   enabledAgentTypes: [
