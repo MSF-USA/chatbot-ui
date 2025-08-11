@@ -15,7 +15,7 @@ import {
   useState,
 } from 'react';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
 import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
@@ -33,6 +33,7 @@ import remarkMath from 'remark-math';
 
 interface AssistantMessageProps {
   content: string;
+  message?: Message;
   copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
@@ -42,6 +43,7 @@ interface AssistantMessageProps {
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
+  message,
   copyOnClick,
   messageIsStreaming,
   messageIndex,
@@ -86,39 +88,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       let citationsData: Citation[] = [];
       let extractionMethod = 'none';
 
-      // First check for the newer citation marker format
-      const citationMarker = content.indexOf('\n\n---CITATIONS_DATA---\n');
-      if (citationMarker !== -1) {
-        extractionMethod = 'marker';
-        mainContent = content.slice(0, citationMarker);
-        const jsonStr = content.slice(citationMarker + 22); // Length of marker
-
-        try {
-          const parsedData = JSON.parse(jsonStr);
-          if (parsedData.citations) {
-            // Deduplicate citations by URL or title
-            const uniqueCitationsMap = new Map();
-            parsedData.citations.forEach((citation: Citation) => {
-              const key = citation.url || citation.title;
-              if (key && !uniqueCitationsMap.has(key)) {
-                uniqueCitationsMap.set(key, citation);
-              }
-            });
-            citationsData = Array.from(uniqueCitationsMap.values());
-          }
-        } catch (error) {
-          console.error('Error parsing citations JSON with marker:', error);
-        }
+      // First check if citations are in the message object
+      if (message?.citations && message.citations.length > 0) {
+        extractionMethod = 'message';
+        citationsData = message.citations;
       }
-      // Next try the legacy JSON detection at the end
+      // Then check for the newer metadata format
       else {
-        const jsonMatch = content.match(/(\{[\s\S]*\})$/);
-        if (jsonMatch) {
-          extractionMethod = 'regex';
-          const jsonStr = jsonMatch[1];
-          mainContent = content.slice(0, -jsonStr.length).trim();
+        const metadataMatch = content.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
+        if (metadataMatch) {
+          extractionMethod = 'metadata';
+          mainContent = content.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
+          
           try {
-            const parsedData = JSON.parse(jsonStr);
+            const parsedData = JSON.parse(metadataMatch[1]);
             if (parsedData.citations) {
               // Deduplicate citations by URL or title
               const uniqueCitationsMap = new Map();
@@ -131,10 +114,44 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               citationsData = Array.from(uniqueCitationsMap.values());
             }
           } catch (error) {
-            console.error('Error parsing citations JSON:', error);
+            // Silently ignore parsing errors
+          }
+        }
+      // Next try the legacy JSON detection at the end
+      else if (!messageIsStreaming) {
+        // Only try legacy JSON parsing when not streaming to avoid partial JSON
+        const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+        if (jsonMatch) {
+          const jsonStr = jsonMatch[1].trim();
+          // Validate JSON structure before parsing
+          if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
+            const openBraces = (jsonStr.match(/{/g) || []).length;
+            const closeBraces = (jsonStr.match(/}/g) || []).length;
+            
+            if (openBraces === closeBraces) {
+              extractionMethod = 'regex';
+              mainContent = content.slice(0, -jsonMatch[1].length).trim();
+              try {
+                const parsedData = JSON.parse(jsonStr);
+                if (parsedData.citations) {
+                  // Deduplicate citations by URL or title
+                  const uniqueCitationsMap = new Map();
+                  parsedData.citations.forEach((citation: Citation) => {
+                    const key = citation.url || citation.title;
+                    if (key && !uniqueCitationsMap.has(key)) {
+                      uniqueCitationsMap.set(key, citation);
+                    }
+                  });
+                  citationsData = Array.from(uniqueCitationsMap.values());
+                }
+              } catch (error) {
+                // Silently ignore parsing errors
+              }
+            }
           }
         }
       }
+      } // Close the outer else block
 
       // Check for message-stored citations in the conversation
       if (
@@ -157,15 +174,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         citationsData = Array.from(uniqueCitationsMap.values());
       }
 
-      // Debug logging
-      console.debug(`[Message ${messageIndex}] Citation extraction:`, {
-        method: extractionMethod,
-        count: citationsData.length,
-        contentLength: content.length,
-        displayContentLength: mainContent.length,
-        processingAttempts: processingAttempts.current,
-        streamingActive: messageIsStreaming,
-      });
 
       processingAttempts.current++;
 
@@ -186,15 +194,16 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   }, [
     content,
+    message,
     messageIsStreaming,
     messageIndex,
     selectedConversation?.messages,
   ]);
 
-  // Determine what to display - when streaming, use the raw content with citations stripped
+  // Determine what to display - when streaming, use the raw content with metadata stripped
   // When not streaming, use the processed content
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
+    ? content.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '').split(/(\{[\s\S]*\})$/)[0]
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
@@ -328,38 +337,19 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
         <div className="flex flex-col">
           <div className="flex-1 overflow-hidden">
-            {selectedConversation?.bot ? (
-              <>
-                <CitationMarkdown
-                  className="prose dark:prose-invert flex-1"
-                  conversation={selectedConversation}
-                  citations={citations}
-                  remarkPlugins={remarkPlugins}
-                  rehypePlugins={[rehypeMathjax]}
-                  components={customMarkdownComponents}
-                >
-                  {contentToDisplay}
-                </CitationMarkdown>
-                {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && contentToDisplay.length > 0 && (
-                  <StreamingIndicator />
-                )}
-              </>
-            ) : (
-              <>
-                <MemoizedReactMarkdown
-                  className="prose dark:prose-invert flex-1"
-                  remarkPlugins={remarkPlugins}
-                  rehypePlugins={[rehypeMathjax]}
-                  components={customMarkdownComponents}
-                >
-                  {contentToDisplay}
-                </MemoizedReactMarkdown>
-                {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && contentToDisplay.length > 0 && (
-                  <StreamingIndicator />
-                )}
-              </>
+            <CitationMarkdown
+              className="prose dark:prose-invert flex-1"
+              conversation={selectedConversation}
+              citations={citations}
+              remarkPlugins={remarkPlugins}
+              rehypePlugins={[rehypeMathjax]}
+              components={customMarkdownComponents}
+            >
+              {contentToDisplay}
+            </CitationMarkdown>
+            {/* Add streaming indicator at the end if content is streaming */}
+            {messageIsStreaming && contentToDisplay.length > 0 && (
+              <StreamingIndicator />
             )}
           </div>
 

@@ -42,6 +42,7 @@ const createChatBody = (
   temperature: conversation.temperature || temperature,
   botId,
   stream,
+  threadId: conversation.threadId,
 });
 
 const appendPluginKeys = (

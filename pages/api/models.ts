@@ -67,7 +67,13 @@ const handler = async (req: NextRequest): Promise<Response> => {
           id: 'gpt-45'
         },
         {
+          id: 'gpt-5'
+        },
+        {
           id: 'gpt-4o-mini'
+        },
+        {
+          id: 'agent-default'
         },
         // Reasoning models (o1, o3-mini) give the following error.
         // ErrorMessage: '400 Model {modelName} is enabled only for api versions 2024-12-01-preview and later',
@@ -85,8 +91,14 @@ const handler = async (req: NextRequest): Promise<Response> => {
     };
 
     const models: OpenAIModel[] = getModels(json, configData);
+    
+    // Filter out legacy models from UI
+    const nonLegacyModels = models.filter(model => {
+      const modelConfig = Object.values(OpenAIModels).find(m => m.id === model.id);
+      return !modelConfig?.isLegacy;
+    });
 
-    return new Response(JSON.stringify(models), { status: 200 });
+    return new Response(JSON.stringify(nonLegacyModels), { status: 200 });
   } catch (error) {
     console.error(error);
     return new Response('Error', { status: 500 });
