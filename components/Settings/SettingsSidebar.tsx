@@ -86,13 +86,13 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
             onClick={setActiveSection}
           />
 
-          <NavigationItem
+          {/* <NavigationItem
             section={SettingsSection.AGENT_FEATURES}
             activeSection={activeSection}
             label={t('Agent Features')}
             icon={<IconRobot size={18} />}
             onClick={setActiveSection}
-          />
+          /> */}
 
           <NavigationItem
             section={SettingsSection.PRIVACY_CONTROL}

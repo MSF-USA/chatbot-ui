@@ -25,6 +25,10 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
         return t('General');
       case SettingsSection.CHAT_SETTINGS:
         return t('Chat Settings');
+      case SettingsSection.AGENT_FEATURES:
+        return t('Agent Features');
+      case SettingsSection.PRIVACY_CONTROL:
+        return t('Privacy & Security');
       case SettingsSection.DATA_MANAGEMENT:
         return t('Data Management');
       case SettingsSection.ACCOUNT:
