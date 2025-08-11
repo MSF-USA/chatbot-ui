@@ -1,8 +1,8 @@
 import {
   IconClearAll,
   IconExternalLink,
-  IconSettings,
   IconChevronDown,
+  IconTool,
 } from '@tabler/icons-react';
 import { useTranslation } from 'next-i18next';
 import { isUSBased } from '@/utils/app/userAuth';
@@ -20,6 +20,7 @@ interface Props {
   onClearAll?: () => void;
   userEmail?: string;
   hasMessages?: boolean;
+  agentEnabled?: boolean;
 }
 
 export const ChatTopbar = ({
@@ -30,6 +31,7 @@ export const ChatTopbar = ({
   onClearAll,
   userEmail,
   hasMessages = false,
+  agentEnabled = false,
 }: Props) => {
   const { t } = useTranslation('chat');
 
@@ -60,6 +62,9 @@ export const ChatTopbar = ({
               <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
                 {selectedModelName}
               </span>
+              {agentEnabled && (
+                <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" title="Agent Tools Enabled" />
+              )}
               <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
             </button>
           </div>
@@ -67,25 +72,6 @@ export const ChatTopbar = ({
 
         {/* Controls */}
         <div className="flex items-center justify-center space-x-3">
-          {/* Settings Button */}
-          <div className="relative">
-            <button
-              className="flex items-center justify-center p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              onClick={onSettingsClick}
-              aria-label="Model Settings"
-              title="Model Settings"
-            >
-              <IconSettings
-                size={18}
-                className={`${
-                  showSettings
-                    ? 'text-[#D7211E]'
-                    : 'text-black dark:text-white'
-                }`}
-              />
-            </button>
-          </div>
-
           {hasMessages && (
             <button
               className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"

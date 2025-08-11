@@ -1,67 +1,313 @@
-import { IconExternalLink, IconAlertCircle } from '@tabler/icons-react';
-import { FC, useContext } from 'react';
+import { 
+  IconSparkles, 
+  IconWorld, 
+  IconCode, 
+  IconInfoCircle,
+  IconBolt,
+  IconTool,
+  IconBrain,
+  IconAdjustments,
+  IconCheck,
+  IconTemperature,
+  IconAlertTriangle,
+  IconX
+} from '@tabler/icons-react';
+import { FC, useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import HomeContext from '@/pages/api/home/home.context';
+import { TemperatureSlider } from '../Settings/Temperature';
 
-export const ModelSelect = () => {
+interface ModelCardProps {
+  model: OpenAIModel;
+  isSelected: boolean;
+  onSelect: () => void;
+  useAgent?: boolean;
+  onToggleAgent?: () => void;
+  temperature?: number;
+  onChangeTemperature?: (temperature: number) => void;
+}
+
+const ModelCard: FC<ModelCardProps> = ({ 
+  model, 
+  isSelected, 
+  onSelect, 
+  useAgent = false,
+  onToggleAgent,
+  temperature,
+  onChangeTemperature 
+}) => {
+  const modelConfig = OpenAIModels[model.id as OpenAIModelID];
+  const isGpt5 = model.id === OpenAIModelID.GPT_5;
+  const agentAvailable = !isGpt5; // Agents not available for GPT-5 yet
+  
+  return (
+    <div
+      className={`
+        relative w-full rounded-lg border transition-all duration-200
+        ${isSelected 
+          ? 'border-gray-400 dark:border-gray-500 bg-gray-50 dark:bg-gray-800/50 shadow-md' 
+          : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-[#212121]'
+        }
+      `}
+    >
+      <button
+        onClick={onSelect}
+        className="w-full p-4 text-left"
+      >
+        {/* Selected indicator */}
+        {isSelected && (
+          <div className="absolute top-3 right-3 w-6 h-6 rounded-full flex items-center justify-center bg-gray-600 dark:bg-gray-400">
+            <IconCheck size={14} className="text-white dark:text-gray-900" />
+          </div>
+        )}
+        
+        {/* Model info */}
+        <div>
+          <div className="flex items-center mb-2">
+            <IconBrain size={20} className="mr-2 text-gray-600 dark:text-gray-400" />
+            <h3 className="font-semibold text-gray-900 dark:text-white">
+              {model.name}
+            </h3>
+          </div>
+          
+          {/* Model type badge and agent availability */}
+          <div className="flex items-center gap-2 mb-3">
+            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+              modelConfig?.modelType === 'reasoning' 
+                ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300'
+                : modelConfig?.modelType === 'omni'
+                ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                : 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-300'
+            }`}>
+              {modelConfig?.modelType || 'foundational'}
+            </span>
+            
+            {agentAvailable && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                <IconTool size={12} className="mr-1" />
+                Agent Ready
+              </span>
+            )}
+          </div>
+          
+          {/* GPT-5 Agent Notice */}
+          {isGpt5 && (
+            <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-md">
+              <div className="flex items-start text-xs text-amber-700 dark:text-amber-300">
+                <IconAlertTriangle size={14} className="mr-1.5 mt-0.5 flex-shrink-0" />
+                <span>Agent services (web search, code interpreter) are not yet available for GPT-5</span>
+              </div>
+            </div>
+          )}
+          
+          {/* Optional: Model description if available */}
+          {modelConfig?.description && (
+            <div className="text-xs text-gray-600 dark:text-gray-400">
+              {modelConfig.description}
+            </div>
+          )}
+        </div>
+      </button>
+      
+      {/* Agent toggle section */}
+      {isSelected && agentAvailable && (
+        <div className="px-4 pb-2 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between py-3">
+            <div className="flex items-center">
+              <IconTool size={16} className="mr-2 text-gray-600 dark:text-gray-400" />
+              <div>
+                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                  Enable AI Agent
+                </div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">
+                  Web search & code interpreter
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleAgent?.();
+              }}
+              className="flex items-center"
+            >
+              <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                useAgent ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
+              }`}>
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  useAgent ? 'translate-x-6' : 'translate-x-1'
+                }`} />
+              </div>
+            </button>
+          </div>
+          
+          {/* Show agent capabilities when enabled */}
+          {useAgent && (
+            <div className="pb-3 space-y-1.5">
+              <div className="flex items-center text-xs text-gray-600 dark:text-gray-400">
+                <IconWorld size={14} className="mr-1.5 text-gray-600 dark:text-gray-400" />
+                <span>Real-time web search</span>
+              </div>
+              <div className="flex items-center text-xs text-gray-600 dark:text-gray-400">
+                <IconCode size={14} className="mr-1.5 text-gray-600 dark:text-gray-400" />
+                <span>Code interpreter & file analysis</span>
+              </div>
+              <div className="flex items-center text-xs text-gray-500 dark:text-gray-500">
+                <IconInfoCircle size={14} className="mr-1.5" />
+                <span>Fixed configuration, no temperature control</span>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {/* Temperature control for non-agent mode */}
+      {isSelected && !useAgent && temperature !== undefined && onChangeTemperature && (
+        <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 mt-3">
+            <IconTemperature size={14} className="mr-1.5" />
+            Temperature Control
+          </div>
+          <TemperatureSlider
+            temperature={temperature}
+            onChangeTemperature={onChangeTemperature}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface ModelSelectProps {
+  onClose?: () => void;
+}
+
+export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const { t } = useTranslation('chat');
+  // Initialize with agent mode enabled by default for all models (except GPT-5)
+  const [modelAgentState, setModelAgentState] = useState<{[key: string]: boolean}>(() => {
+    const initialState: {[key: string]: boolean} = {};
+    // Enable agent mode by default for all models except GPT-5
+    Object.keys(OpenAIModels).forEach(modelId => {
+      if (modelId !== OpenAIModelID.GPT_5 && !OpenAIModels[modelId as OpenAIModelID]?.isLegacy && !OpenAIModels[modelId as OpenAIModelID]?.isAgent) {
+        initialState[modelId] = true;
+      }
+    });
+    return initialState;
+  });
   const {
     state: { selectedConversation, models, defaultModelId },
     handleUpdateConversation,
     dispatch: homeDispatch,
   } = useContext(HomeContext);
 
-  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleModelSelect = (model: OpenAIModel) => {
+    // When selecting a model, use agent mode by default (except GPT-5)
+    const shouldUseAgent = model.id !== OpenAIModelID.GPT_5 && OpenAIModels[model.id as OpenAIModelID]?.agentId;
+    const modelToUse = shouldUseAgent ? {
+      ...model,
+      agentEnabled: true,
+      agentId: OpenAIModels[model.id as OpenAIModelID]?.agentId
+    } : model;
+    
     selectedConversation &&
     handleUpdateConversation(selectedConversation, {
       key: 'model',
-      value: models.find(
-          (model) => model.id === e.target.value,
-      ) as OpenAIModel,
+      value: modelToUse,
     });
   };
 
+  const handleToggleAgent = (modelId: string) => {
+    // Find the current model
+    const model = models.find(m => m.id === modelId);
+    if (!model || !selectedConversation) return;
+    
+    // Toggle agent mode
+    const currentlyHasAgent = selectedConversation.model?.agentEnabled;
+    const modelConfig = OpenAIModels[model.id as OpenAIModelID];
+    const modelToUse = !currentlyHasAgent && modelConfig?.agentId ? {
+      ...model,
+      agentEnabled: true,
+      agentId: modelConfig.agentId
+    } : model;
+    
+    handleUpdateConversation(selectedConversation, {
+      key: 'model',
+      value: modelToUse,
+    });
+  };
+
+  // Filter out legacy models and the standalone agent model
+  const availableModels = models.filter(m => 
+    !OpenAIModels[m.id as OpenAIModelID]?.isLegacy && 
+    !OpenAIModels[m.id as OpenAIModelID]?.isAgent
+  );
+  
+  const selectedModelId = selectedConversation?.model?.id || defaultModelId;
+  const isAgentSelected = selectedConversation?.model && OpenAIModels[selectedConversation.model.id as OpenAIModelID]?.isAgent;
+
   return (
-      <div className='flex flex-row items-center'>
-        <div className="flex flex-col my-5 ml-7">
-          <div className="max-w-[210px] rounded-lg bg-[#F4F4F4] dark:bg-[#2F2F2F] pr-2 text-neutral-900 dark:text-white dark:hover:bg-[#171717] hover:bg-gray-300">
-            <select
-                className="cursor-pointer w-full bg-transparent p-2 text-neutral-900 dark:text-white border-none text-center"
-                placeholder={t('Select a model') || ''}
-                value={selectedConversation?.model?.id || defaultModelId}
-                onChange={handleChange}
-            >
-              {models.map((model: OpenAIModel) => {
-                const isLegacy = OpenAIModels[model.id as OpenAIModelID]?.isLegacy;
-                return (
-                    <option
-                        key={model.id}
-                        value={model.id}
-                        className={`dark:bg-[#212121] dark:text-white ${
-                            isLegacy
-                                ? 'italic font-light text-amber-700 dark:text-amber-500'
-                                : 'text-neutral-900'
-                        }`}
-                    >
-                      {isLegacy ? (
-                          `⚠️ ${model.name} (Legacy)`
-                      ) : (
-                          model.name
-                      )}
-                    </option>
-                );
-              })}
-            </select>
+    <div className="w-full">
+      {/* Header with close button */}
+      <div className="flex justify-between items-start mb-6">
+        <div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            Select AI Model
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Choose your AI model and optionally enable agent capabilities for enhanced functionality
+          </p>
+        </div>
+        {onClose && (
+          <button
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+            onClick={onClose}
+          >
+            <IconX size={24} />
+          </button>
+        )}
+      </div>
+      
+      {/* Model Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {availableModels.map((model) => {
+          const isCurrentlySelected = selectedModelId === model.id || 
+            (selectedConversation?.model?.name === model.name);
+          const useAgent = isCurrentlySelected && selectedConversation?.model?.agentEnabled;
+          
+          return (
+            <ModelCard
+              key={model.id}
+              model={model}
+              isSelected={isCurrentlySelected}
+              onSelect={() => handleModelSelect(model)}
+              useAgent={useAgent}
+              onToggleAgent={() => handleToggleAgent(model.id)}
+              temperature={selectedConversation?.temperature}
+              onChangeTemperature={(temperature) => 
+                selectedConversation && handleUpdateConversation(selectedConversation, {
+                  key: 'temperature',
+                  value: temperature,
+                })
+              }
+            />
+          );
+        })}
+      </div>
+      
+      {/* Info footer */}
+      <div className="mt-6 text-xs text-gray-600 dark:text-gray-400">
+        <div className="flex items-start">
+          <IconInfoCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
+          <div>
+            <p>
+              <strong>Agent Mode:</strong> Automatically uses tools like web search and code interpreter when needed. 
+              Temperature and other settings remain fixed for optimal tool performance.
+            </p>
           </div>
-          {selectedConversation?.model &&
-              OpenAIModels[selectedConversation.model.id as OpenAIModelID]?.isLegacy && (
-                  <div className="text-xs flex items-center mt-1 text-amber-700 dark:text-amber-500">
-                    <IconAlertCircle size={14} className="mr-1" />
-                    Legacy models may have limitations or reliability issues
-                  </div>
-              )}
         </div>
       </div>
+    </div>
   );
 };
