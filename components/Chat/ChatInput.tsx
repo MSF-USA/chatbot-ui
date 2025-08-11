@@ -25,8 +25,8 @@ import {
 import { LocalizedCommandParser } from '@/services/localizedCommandParser';
 
 import { AgentType } from '@/types/agent';
-import { incrementModelUsage } from '@/utils/app/modelUsage';
-import { incrementPromptUsage } from '@/utils/app/promptUsage';
+import { incrementModelUsage, getModelUsageCount } from '@/utils/app/modelUsage';
+import { incrementPromptUsage, getPromptUsageCount } from '@/utils/app/promptUsage';
 import {
   ChatInputSubmitTypes,
   FileMessageContent,
@@ -184,10 +184,6 @@ export const ChatInput = ({
   const [showModelList, setShowModelList] = useState<boolean>(false);
   const [activeModelIndex, setActiveModelIndex] = useState<number>(0);
   const [modelInputValue, setModelInputValue] = useState<string>('');
-  const [sortedFilteredModels, setSortedFilteredModels] = useState<OpenAIModel[]>([]);
-  
-  // Prompt selection state
-  const [sortedFilteredPrompts, setSortedFilteredPrompts] = useState<Prompt[]>([]);
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
   const modelListRef = useRef<HTMLUListElement | null>(null);
@@ -221,14 +217,34 @@ export const ChatInput = ({
       : [];
   }, [models, modelInputValue]);
 
-  // Initialize sortedFilteredModels when filteredModels changes
-  useEffect(() => {
-    setSortedFilteredModels(filteredModels);
+  // Sort filtered models by usage count and legacy status
+  const sortedFilteredModels: OpenAIModel[] = useMemo(() => {
+    return [...filteredModels].sort((a, b) => {
+      // Primary sort: Non-legacy models first
+      const aIsLegacy = (a as any).isLegacy || false;
+      const bIsLegacy = (b as any).isLegacy || false;
+      if (aIsLegacy && !bIsLegacy) return 1;
+      if (!aIsLegacy && bIsLegacy) return -1;
+      
+      // Secondary sort: Higher usage count first (within same legacy status)
+      const aUsage = getModelUsageCount(a.id);
+      const bUsage = getModelUsageCount(b.id);
+      if (aUsage !== bUsage) return bUsage - aUsage;
+      
+      // Tertiary sort: Preserve original order for equal usage
+      return 0;
+    });
   }, [filteredModels]);
 
-  // Initialize sortedFilteredPrompts when filteredPrompts changes
-  useEffect(() => {
-    setSortedFilteredPrompts(filteredPrompts);
+  // Sort filtered prompts by usage count
+  const sortedFilteredPrompts: Prompt[] = useMemo(() => {
+    return [...filteredPrompts].sort((a, b) => {
+      const aUsage = getPromptUsageCount(a.id);
+      const bUsage = getPromptUsageCount(b.id);
+      // Higher usage first, preserve original order for equal usage
+      if (aUsage !== bUsage) return bUsage - aUsage;
+      return 0;
+    });
   }, [filteredPrompts]);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -1217,13 +1233,12 @@ export const ChatInput = ({
                 <div className="absolute bottom-12 w-full">
                   <PromptList
                     activePromptIndex={activePromptIndex}
-                    prompts={filteredPrompts}
+                    prompts={sortedFilteredPrompts}
                     commands={filteredCommands}
                     showCommands={commandMode}
                     onSelect={handleInitModal}
                     onMouseOver={setActivePromptIndex}
                     promptListRef={promptListRef}
-                    onPromptsSort={setSortedFilteredPrompts}
                     onImmediateCommandExecution={(command) => {
                       // Execute the command immediately with context
                       const commandContext = {
@@ -1340,7 +1355,7 @@ export const ChatInput = ({
             {showModelList && models && models.length > 0 && (
               <div className="absolute bottom-12 w-full">
                 <ModelList
-                  models={filteredModels}
+                  models={sortedFilteredModels}
                   activeModelIndex={activeModelIndex}
                   onSelect={() => {
                     if (sortedFilteredModels.length > 0) {
@@ -1349,7 +1364,6 @@ export const ChatInput = ({
                   }}
                   onMouseOver={setActiveModelIndex}
                   modelListRef={modelListRef}
-                  onModelsSort={setSortedFilteredModels}
                 />
               </div>
             )}
