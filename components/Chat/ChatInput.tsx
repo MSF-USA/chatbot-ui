@@ -318,9 +318,9 @@ export const ChatInput = ({
           // Handle command execution
           if (executionResult.agentType) {
             forcedAgentType = executionResult.agentType;
-            // Allow agent commands to override disabled agents setting
-            forceStandardChat =
-              executionResult.agentType === AgentType.STANDARD_CHAT ? true : false;
+            // Commands always override the agent toggle - they are explicit user instructions
+            // Set to undefined to allow the command's agent to work regardless of toggle state
+            forceStandardChat = undefined;
             // Remove command from message text, keeping the rest
             messageText = textFieldValue.replace(/^\/\w+\s*/, '').trim();
           }
@@ -409,8 +409,8 @@ export const ChatInput = ({
             return;
           }
         } else {
-          // Command execution failed, show error and return
-          toast.error(executionResult.error || 'Command execution failed');
+          // Command execution failed, return silently
+          // Commands should execute without toast notifications
           return;
         }
       } else {
@@ -421,8 +421,8 @@ export const ChatInput = ({
     // Apply forced agent if set
     if (forcedAgent) {
       forcedAgentType = forcedAgent;
-      // Allow agent commands to override disabled agents setting
-      forceStandardChat = forcedAgent === AgentType.STANDARD_CHAT ? true : false;
+      // Commands always override the agent toggle - they are explicit user instructions
+      forceStandardChat = undefined;
       setForcedAgent(null); // Reset after use
     }
 
@@ -842,7 +842,8 @@ export const ChatInput = ({
             handleUtilityAction(executionResult.utilityAction);
           }
         } else {
-          toast.error(executionResult.error || 'Command execution failed');
+          // Command execution failed, handle silently
+          // Commands should execute without toast notifications
         }
       }
 
