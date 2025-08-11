@@ -163,9 +163,13 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
                 {citation.title}
               </div>
             </div>
-            {citation.date && (
+            {citation.date && citation.date.trim() !== '' && (
               <div className="text-[11px] text-gray-600 dark:text-gray-400 mb-6">
-                {citation.date}
+                {new Date(citation.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
               </div>
             )}
             <div

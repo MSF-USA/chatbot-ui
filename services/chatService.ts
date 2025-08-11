@@ -455,7 +455,7 @@ export default class ChatService {
                             number: citationIndex++,
                             title: annotation.urlCitation.title || `Source ${citationIndex}`,
                             url: annotation.urlCitation.url || '',
-                            date: new Date().toISOString()
+                            date: '' // Agent citations don't have publication dates
                           });
                         }
                       });
