@@ -17,7 +17,7 @@ import ChatbarContext from '../Chatbar/Chatbar.context';
 import { MobileHeader } from './MobileHeader';
 import { MobileNavigation } from './MobileNavigation';
 import { AccountSection } from './Sections/AccountSection';
-import { AgentFeaturesSection } from './Sections/AgentFeaturesSection';
+// import { AgentFeaturesSection } from './Sections/AgentFeaturesSection';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
 import { GeneralSection } from './Sections/GeneralSection';
@@ -267,9 +267,9 @@ export const SettingDialog: FC<Props> = ({
                   />
                 )}
 
-                {activeSection === SettingsSection.AGENT_FEATURES && (
+                {/* activeSection === SettingsSection.AGENT_FEATURES && (
                   <AgentFeaturesSection onClose={onClose} />
-                )}
+                ) */}
 
                 {activeSection === SettingsSection.PRIVACY_CONTROL && (
                   <PrivacyControlSection onClose={onClose} />
