@@ -182,7 +182,6 @@ describe('ChatInputSearch Component', () => {
       setImageFieldValue: vi.fn(),
       setUploadProgress: vi.fn(),
       setTextFieldValue: vi.fn(),
-      handleSend: vi.fn(),
       // New props for agent-based search
       onSend: vi.fn(),
       setRequestStatusMessage: vi.fn(),
@@ -249,7 +248,7 @@ describe('ChatInputSearch Component', () => {
       });
     });
 
-    it('should handle successful URL submission with autoSubmit true', async () => {
+    it('should handle successful URL submission', async () => {
       (fetch as Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ content: 'Fetched URL content' }),
@@ -286,22 +285,21 @@ describe('ChatInputSearch Component', () => {
       expect(props.setTextFieldValue).toHaveBeenCalledWith(
         `Custom question about URL\n\nwebPullerCitationPrompt: http://test.com\n\nwebPullerReferencePrompt`,
       );
-      expect(props.handleSend).toHaveBeenCalledTimes(1);
+      // URL mode doesn't call onSend directly
       expect(props.onClose).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle successful URL submission with autoSubmit false', async () => {
+    it('should handle URL submission with default question', async () => {
       (fetch as Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({ content: 'Fetched URL content' }),
       });
 
       render(<ChatInputSearch {...props} />);
-      const autoSubmitCheckbox = screen.getByLabelText('autoSubmitButton');
-      await user.click(autoSubmitCheckbox);
-
+      await user.click(screen.getByRole('button', { name: 'chatUrlInputTitle' }));
+      
       const submitButton = screen.getByRole('button', {
-        name: 'generatePromptButton',
+        name: 'submitButton',
       });
       await user.type(
         screen.getByPlaceholderText('https://example.com'),
@@ -317,7 +315,6 @@ describe('ChatInputSearch Component', () => {
       expect(props.setTextFieldValue).toHaveBeenCalledWith(
         `defaultWebPullerQuestion\n\nwebPullerCitationPrompt: http://anothertest.com\n\nwebPullerReferencePrompt`,
       );
-      expect(props.handleSend).not.toHaveBeenCalled();
       expect(props.onClose).toHaveBeenCalledTimes(1);
     });
 
@@ -363,75 +360,16 @@ describe('ChatInputSearch Component', () => {
         screen.getByPlaceholderText('searchQueryPlaceholder'),
       ).toHaveFocus();
     });
-    it('should toggle advanced options', async () => {
+    // Removed test for toggling advanced options as that UI has been removed
+    it('should handle successful search submission', async () => {
       render(<ChatInputSearch {...props} />);
-      const advancedButton = screen.getByRole('button', {
-        name: /advancedOptionsButton/i,
-      });
-      expect(
-        screen.queryByLabelText('webSearchModalOptimizeLabel'),
-      ).not.toBeInTheDocument();
-      await user.click(advancedButton);
-      expect(
-        screen.getByLabelText('webSearchModalOptimizeLabel'),
-      ).toBeInTheDocument();
-      await user.click(advancedButton);
-      expect(
-        screen.queryByLabelText('webSearchModalOptimizeLabel'),
-      ).not.toBeInTheDocument();
-    });
-    it('should handle successful search submission without optimization', async () => {
-      (fetch as Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          success: true,
-          data: {
-            agentType: 'web_search',
-            content: 'Search results content',
-            structuredContent: {
-              items: [
-                {
-                  source: 'example.com',
-                  content: 'Test content from search',
-                },
-              ],
-            },
-          },
-        }),
-      });
-      render(<ChatInputSearch {...props} />);
-      await user.click(
-        screen.getByRole('button', { name: /advancedOptionsButton/i }),
-      );
-      const optimizeCheckbox = screen.getByLabelText(
-        'webSearchModalOptimizeLabel',
-      );
-      if ((optimizeCheckbox as HTMLInputElement).checked) {
-        await user.click(optimizeCheckbox);
-      }
       const searchInputEl = screen.getByPlaceholderText(
         'searchQueryPlaceholder',
       );
       await user.type(searchInputEl, 'test query');
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      await waitFor(() => expect(fetch).toHaveBeenCalledTimes(1));
-      expect(fetch).toHaveBeenCalledWith('/api/v2/agent/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          agentType: 'web_search',
-          query: 'test query',
-          conversationHistory: [],
-          model: { id: 'gpt-4o-mini', tokenLimit: 128000 },
-          config: {
-            maxResults: 5,
-            defaultMarket: 'en-US',
-            defaultSafeSearch: 'Moderate',
-          },
-          timeout: 30000,
-        }),
-      });
-      // Expect onSend to be called with user's original message
+      
+      // Expect onSend to be called with user's message and forced agent type
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(
         {
@@ -441,68 +379,20 @@ describe('ChatInputSearch Component', () => {
         },
         null,
         undefined,
+        'web_search', // AgentType.WEB_SEARCH
       );
-      // Expect makeRequest to be called for internal processing
-      await waitFor(() => expect(mockMakeRequest).toHaveBeenCalledTimes(1));
+      // No API calls should be made directly by the component
+      expect(fetch).not.toHaveBeenCalled();
+      expect(mockMakeRequest).not.toHaveBeenCalled();
       expect(props.onClose).toHaveBeenCalledTimes(1);
     });
-    it('should handle successful search submission WITH optimization', async () => {
-      (fetch as Mock)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({
-            optimizedQuery: 'optimized test query',
-            optimizedQuestion: 'optimized search question',
-          }),
-        })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({
-            success: true,
-            data: {
-              agentType: 'web_search',
-              content: 'Optimized search results content',
-              structuredContent: {
-                items: [
-                  {
-                    source: 'example.com',
-                    content: 'Optimized test content from search',
-                  },
-                ],
-              },
-            },
-          }),
-        });
+    it('should handle search submission with simple workflow', async () => {
       render(<ChatInputSearch {...props} />);
       const searchInput = screen.getByPlaceholderText('searchQueryPlaceholder');
       await user.type(searchInput, 'test query');
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
-      expect(fetch).toHaveBeenNthCalledWith(
-        1,
-        '/api/v2/web/search/structure',
-        expect.objectContaining({
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        }),
-      );
-      expect(fetch).toHaveBeenNthCalledWith(2, '/api/v2/agent/execute', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          agentType: 'web_search',
-          query: 'optimized test query',
-          conversationHistory: [],
-          model: { id: 'gpt-4o-mini', tokenLimit: 128000 },
-          config: {
-            maxResults: 5,
-            defaultMarket: 'en-US',
-            defaultSafeSearch: 'Moderate',
-          },
-          timeout: 30000,
-        }),
-      });
-      // Expect onSend to be called with user's original message
+      
+      // Expect onSend to be called with user's message and forced agent type
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(
         {
@@ -512,64 +402,22 @@ describe('ChatInputSearch Component', () => {
         },
         null,
         undefined,
+        'web_search', // AgentType.WEB_SEARCH
       );
-      // Expect makeRequest to be called for internal processing
-      await waitFor(() => expect(mockMakeRequest).toHaveBeenCalledTimes(1));
+      // No direct API calls or makeRequest should happen
+      expect(fetch).not.toHaveBeenCalled();
+      expect(mockMakeRequest).not.toHaveBeenCalled();
       expect(props.onClose).toHaveBeenCalledTimes(1);
     });
-    it('should handle failed optimization but proceed with original query', async () => {
-      (fetch as Mock)
-        .mockResolvedValueOnce({ ok: false, statusText: 'Optimization Failed' })
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({
-            success: true,
-            data: {
-              agentType: 'web_search',
-              content: 'Search results (no opt)',
-              structuredContent: {
-                items: [
-                  {
-                    source: 'example.com',
-                    content: 'Test content without optimization',
-                  },
-                ],
-              },
-            },
-          }),
-        });
-      const consoleWarnSpy = vi
-        .spyOn(console, 'warn')
-        .mockImplementation(() => {});
+    it('should handle search query submission', async () => {
       render(<ChatInputSearch {...props} />);
       await user.type(
         screen.getByPlaceholderText('searchQueryPlaceholder'),
         'original query',
       );
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      await waitFor(() => expect(fetch).toHaveBeenCalledTimes(2));
-      expect((fetch as Mock).mock.calls[1][0]).toBe('/api/v2/agent/execute');
-      expect((fetch as Mock).mock.calls[1][1]).toEqual({
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          agentType: 'web_search',
-          query: 'original query',
-          conversationHistory: [],
-          model: { id: 'gpt-4o-mini', tokenLimit: 128000 },
-          config: {
-            maxResults: 5,
-            defaultMarket: 'en-US',
-            defaultSafeSearch: 'Moderate',
-          },
-          timeout: 30000,
-        }),
-      });
-      expect(consoleWarnSpy).toHaveBeenCalledWith(
-        'Failed to optimize query:',
-        'Optimization Failed',
-      );
-      // Expect onSend to be called with user's original message
+      
+      // Expect onSend to be called with user's message and forced agent type
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(
         {
@@ -579,52 +427,37 @@ describe('ChatInputSearch Component', () => {
         },
         null,
         undefined,
+        'web_search', // AgentType.WEB_SEARCH
       );
-      // Expect makeRequest to be called for internal processing
-      await waitFor(() => expect(mockMakeRequest).toHaveBeenCalledTimes(1));
-      consoleWarnSpy.mockRestore();
+      // No API calls should be made
+      expect(fetch).not.toHaveBeenCalled();
+      expect(mockMakeRequest).not.toHaveBeenCalled();
     });
-    it('should adjust "Number of Results" input (min 1, max 15, default 5 on blur)', async () => {
-      render(<ChatInputSearch {...props} />);
-      await user.click(
-        screen.getByRole('button', { name: /advancedOptionsButton/i }),
-      );
-      const countInput = screen.getByLabelText(
-        'webSearchModalResultsLabel',
-      ) as HTMLInputElement;
-      await user.clear(countInput);
-      await user.type(countInput, '0');
-      fireEvent.blur(countInput);
-      await waitFor(() => expect(countInput.value).toBe('1'));
-      await user.clear(countInput);
-      await user.type(countInput, '20');
-      fireEvent.blur(countInput);
-      await waitFor(() => expect(countInput.value).toBe('15'));
-      await user.clear(countInput);
-      fireEvent.blur(countInput);
-      await waitFor(() => expect(countInput.value).toBe('5'));
-    });
-    it('should display error message on failed search fetch', async () => {
-      (fetch as Mock)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({
-            optimizedQuery: 'failing search',
-            optimizedQuestion: 'q',
-          }),
-        })
-        .mockResolvedValueOnce({ ok: false });
+    // Removed test for 'Number of Results' input as advanced options have been removed;
+    it('should not display error for normal search submission', async () => {
       render(<ChatInputSearch {...props} />);
       await user.type(
         screen.getByPlaceholderText('searchQueryPlaceholder'),
         'failing search',
       );
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      await waitFor(() => {
-        expect(
-          screen.getByText('errorFailedToFetchSearchResults'),
-        ).toBeInTheDocument();
-      });
+      
+      // Should just call onSend and close
+      await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
+      expect(props.onSend).toHaveBeenCalledWith(
+        {
+          role: 'user',
+          content: 'failing search',
+          messageType: 'text',
+        },
+        null,
+        undefined,
+        'web_search',
+      );
+      // No error should be displayed since we're just passing to parent
+      expect(
+        screen.queryByText('errorFailedToFetchSearchResults'),
+      ).not.toBeInTheDocument();
     });
   });
 });
