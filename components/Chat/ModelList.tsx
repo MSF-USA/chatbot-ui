@@ -1,10 +1,9 @@
 import { IconAlertCircle, IconRobot } from '@tabler/icons-react';
-import { FC, MutableRefObject, useEffect, useMemo } from 'react';
+import { FC, MutableRefObject } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
-import { getModelUsageCount } from '@/utils/app/modelUsage';
 
 interface Props {
   models: OpenAIModel[];
@@ -12,7 +11,6 @@ interface Props {
   onSelect: () => void;
   onMouseOver: (index: number) => void;
   modelListRef: MutableRefObject<HTMLUListElement | null>;
-  onModelsSort?: (sortedModels: OpenAIModel[]) => void;
 }
 
 interface ModelItemProps {
@@ -89,7 +87,6 @@ export const ModelList: FC<Props> = ({
   onSelect,
   onMouseOver,
   modelListRef,
-  onModelsSort,
 }) => {
   const { t } = useTranslation('chat');
 
@@ -101,39 +98,13 @@ export const ModelList: FC<Props> = ({
     onMouseOver(index);
   };
 
-  const sortedModels = useMemo(() => {
-    return [...models].sort((a, b) => {
-      const aIsLegacy = OpenAIModels[a.id as OpenAIModelID]?.isLegacy || false;
-      const bIsLegacy = OpenAIModels[b.id as OpenAIModelID]?.isLegacy || false;
-      
-      // Primary sort: Non-legacy models first
-      if (aIsLegacy && !bIsLegacy) return 1;
-      if (!aIsLegacy && bIsLegacy) return -1;
-      
-      // Secondary sort: Higher usage count first (within same legacy status)
-      const aUsage = getModelUsageCount(a.id);
-      const bUsage = getModelUsageCount(b.id);
-      if (aUsage !== bUsage) return bUsage - aUsage;
-      
-      // Tertiary sort: Preserve original order for equal usage
-      return 0;
-    });
-  }, [models]);
-
-  // Notify parent component when models are sorted
-  useEffect(() => {
-    if (onModelsSort) {
-      onModelsSort(sortedModels);
-    }
-  }, [sortedModels, onModelsSort]);
-
   return (
     <ul
       ref={modelListRef}
       className="z-10 max-h-80 w-full overflow-y-auto rounded border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-neutral-500 dark:bg-[#212121] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]"
     >
-      {sortedModels.length > 0 ? (
-        sortedModels.map((model, index) => (
+      {models.length > 0 ? (
+        models.map((model, index) => (
           <ModelItem
             key={model.id}
             model={model}
