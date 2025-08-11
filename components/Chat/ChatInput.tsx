@@ -164,9 +164,9 @@ export const ChatInput = ({
   const [agentToggleEnabled, setAgentToggleEnabled] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('chatAgentsEnabled');
-      return saved !== null ? JSON.parse(saved) : true;
+      return saved !== null ? JSON.parse(saved) : false;
     }
-    return true;
+    return false;
   });
 
   // Command system state
