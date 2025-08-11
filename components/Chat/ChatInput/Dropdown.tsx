@@ -455,7 +455,6 @@ const Dropdown: React.FC<DropdownProps> = ({
         setImageFieldValue={setImageFieldValue}
         setUploadProgress={setUploadProgress}
         setTextFieldValue={setTextFieldValue}
-        handleSend={handleSend}
         onSend={onSend}
         setRequestStatusMessage={setRequestStatusMessage}
         setProgress={setProgress}
