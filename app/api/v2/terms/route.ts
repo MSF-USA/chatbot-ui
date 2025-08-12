@@ -1,5 +1,5 @@
-
 import { NextRequest, NextResponse } from 'next/server';
+
 import crypto from 'crypto';
 
 // English terms
@@ -131,16 +131,16 @@ const termsData: TermsData = {
     localized: {
       en: {
         content: termsTextEn,
-        hash: calculateHash(termsTextEn)
+        hash: calculateHash(termsTextEn),
       },
       fr: {
         content: termsTextFr,
-        hash: calculateHash(termsTextFr)
-      }
+        hash: calculateHash(termsTextFr),
+      },
     },
     version: '1.0.1',
-    required: true
-  }
+    required: true,
+  },
 };
 
 export async function GET(request: NextRequest) {
@@ -148,6 +148,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(termsData);
   } catch (error) {
     console.error('Error fetching terms:', error);
-    return NextResponse.json({ error: 'Failed to fetch terms' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch terms' },
+      { status: 500 },
+    );
   }
 }

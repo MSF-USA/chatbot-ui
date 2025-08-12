@@ -4,7 +4,6 @@ const { i18n } = require('./next-i18next.config');
 const nextConfig = {
   i18n,
   reactStrictMode: true,
-  swcMinify: true,
   images: {
     domains: ['www.google.com'],
   },
@@ -23,6 +22,16 @@ const nextConfig = {
       asyncWebAssembly: true,
       layers: true,
     };
+
+    // Exclude Node.js server modules from client bundle
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        net: false,
+        tls: false,
+        fs: false,
+      };
+    }
 
     return config;
   },

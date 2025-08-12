@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Веб-пошук",
+      "code_interpreter": "Інтерпретатор коду",
+      "url_pull": "Аналіз URL",
+      "local_knowledge": "База знань",
+      "standard_chat": "Стандартний чат",
+      "foundry": "Foundry",
+      "third_party": "Стороння"
+    },
+    "error": {
+      "title": "Помилка агента",
+      "unknown": "Сталася невідома помилка",
+      "retry": "Спробувати знову",
+      "fallback": "Використати альтернативу"
+    },
+    "metadata": {
+      "processingTime": "Час обробки",
+      "confidence": "Впевненість",
+      "tokens": "Використані токени"
+    },
+    "resultsPanel": {
+      "placeholder": "Результати агента будуть відображені тут"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Веб-пошук - Шукає в інтернеті інформацію в реальному часі",
+      "code_interpreter": "Інтерпретатор коду - Виконує та аналізує код на кількох мовах",
+      "url_pull": "Аналіз URL - Аналізує та витягує вміст з веб-сторінок",
+      "local_knowledge": "База знань - Шукає у внутрішній базі знань та документах",
+      "standard_chat": "Стандартний чат - Стандартний розмовний ШІ без інструментів",
+      "foundry": "Foundry - Використовує Azure AI Foundry для розширених можливостей",
+      "third_party": "Стороння - Сторонній агент або інтеграція користувацького інструменту"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Результати веб-пошуку будуть відображені тут",
+      "title": "Результати пошуку",
+      "noResults": "Результатів не знайдено",
+      "noData": "Немає даних пошуку",
+      "results": "результати",
+      "confidence": "Релевантність",
+      "relevance": "Релевантність",
+      "source": "Джерело",
+      "citations": "Цитати",
+      "cite": "Цитувати",
+      "open": "Відкрити",
+      "openLink": "Відкрити посилання в новій вкладці",
+      "filters": "Фільтри",
+      "sortBy": "Сортувати за",
+      "filterBy": "Фільтрувати за",
+      "all": "Всі",
+      "date": "Дата",
+      "query": "Запит",
+      "searchTime": "Час пошуку",
+      "cached": "Кешовано",
+      "contentTypes": {
+        "webpage": "Веб-сторінки",
+        "news": "Новини",
+        "academic": "Наукові",
+        "image": "Зображення",
+        "video": "Відео"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Кількість результатів",
+      "safeSearch": "Безпечний пошук",
+      "market": "Ринок пошуку"
+    },
+    "status": {
+      "searching": "Пошук в інтернеті...",
+      "optimizing": "Оптимізація запиту пошуку...",
+      "processing": "Обробка результатів пошуку..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Code execution results will be displayed here",
+      "title": "Execution Results",
+      "noData": "No code execution data available",
+      "output": "Output",
+      "errors": "Errors",
+      "logs": "Logs",
+      "executionTime": "Execution time",
+      "memoryUsage": "Memory usage",
+      "cpuUsage": "CPU usage",
+      "outputLines": "Output lines",
+      "executedCode": "Executed Code",
+      "download": "Download",
+      "noOutput": "No output generated",
+      "noFiles": "No files generated",
+      "outputSize": "Output size",
+      "unsupportedOutput": "Unsupported output format",
+      "status": {
+        "success": "Success",
+        "error": "Error",
+        "timeout": "Timeout",
+        "memory_limit": "Memory limit exceeded",
+        "security_violation": "Security violation",
+        "invalid_code": "Invalid code"
+      },
+      "outputTypes": {
+        "stdout": "Standard output",
+        "stderr": "Error output",
+        "return_value": "Return value",
+        "exception": "Exception"
+      },
+      "tabs": {
+        "output": "Output",
+        "code": "Code",
+        "files": "Files"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL Analysis Results",
+      "noData": "No URL analysis data available",
+      "summary": "Summary",
+      "metadata": "Document Info",
+      "processingTime": "Processing time",
+      "preview": "Preview",
+      "view": "View"
+    },
+    "configuration": {
+      "timeout": "Request timeout"
+    },
+    "status": {
+      "pulling": "Fetching URL content...",
+      "analyzing": "Analyzing document...",
+      "complete": "Analysis complete"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Knowledge Base Results",
+      "noData": "No knowledge base data available",
+      "documents": "documents",
+      "insights": "Key Insights",
+      "relevance": "Relevance",
+      "suggestions": "Suggestions"
+    },
+    "configuration": {
+      "searchMode": "Search mode",
+      "threshold": "Relevance threshold"
+    },
+    "status": {
+      "searching": "Searching knowledge base...",
+      "analyzing": "Analyzing results..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Document analysis results will be displayed here",
+      "title": "Analysis Results",
+      "noData": "No document analysis data available",
+      "documents": "documents",
+      "noDocuments": "No documents found",
+      "summary": "Summary",
+      "insights": "Key Insights",
+      "metadata": "Document Info",
+      "processingTime": "Processing time",
+      "searchTime": "Search time",
+      "relevance": "Relevance",
+      "cached": "Cached",
+      "preview": "Preview",
+      "view": "View",
+      "open": "Open",
+      "bookmark": "Bookmark",
+      "suggestions": "Suggestions",
+      "tabs": {
+        "documents": "Documents",
+        "insights": "Insights",
+        "failed": "Failed"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Завантаження...",
+      "searching": "Пошук...",
+      "processing": "Обробка...",
+      "analyzing": "Аналіз..."
+    },
+    "buttons": {
+      "retry": "Повторити",
+      "cancel": "Скасувати",
+      "expand": "Розширити",
+      "collapse": "Згорнути",
+      "configure": "Налаштувати",
+      "submit": "Надіслати"
+    },
+    "labels": {
+      "priority": "Priority",
+      "estimatedTime": "Estimated time",
+      "availability": "Availability",
+      "configuration": "Configuration"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Сталася невідома помилка",
+      "network": "Помилка мережевого з'єднання",
+      "timeout": "Час запиту сплив",
+      "unauthorized": "Доступ заборонено",
+      "rateLimit": "Перевищено ліміт швидкості",
+      "serviceUnavailable": "Сервіс тимчасово недоступний"
+    },
+    "webSearch": {
+      "searchFailed": "Веб-пошук не вдався",
+      "invalidQuery": "Невірний запит пошуку"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Code execution failed",
+      "invalidCode": "Invalid or unsafe code"
+    },
+    "urlPull": {
+      "fetchFailed": "Failed to fetch URL content",
+      "invalidUrl": "Invalid or inaccessible URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "Knowledge base search failed",
+      "noAccess": "No access to knowledge base"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Автоматичне надсилання після обробки",
+    "advancedOptions": "Розширені налаштування",
+    "priority": {
+      "high": "Високий",
+      "medium": "Середній",
+      "low": "Низький"
+    },
+    "safeSearch": {
+      "off": "Вимкнено",
+      "moderate": "Помірний",
+      "strict": "Суворий"
+    },
+    "market": {
+      "any": "Any region",
+      "local": "Local region"
+    }
+  }
+}

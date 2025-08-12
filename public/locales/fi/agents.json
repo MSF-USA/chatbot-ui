@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Verkkohaku",
+      "code_interpreter": "Kooditulkki",
+      "url_pull": "URL-analyysi",
+      "local_knowledge": "Tietokanta",
+      "standard_chat": "Vakiokeskustelu",
+      "foundry": "Foundry",
+      "third_party": "Kolmas osapuoli"
+    },
+    "error": {
+      "title": "Agenttivirhe",
+      "unknown": "Tuntematon virhe tapahtui",
+      "retry": "Yritä uudelleen",
+      "fallback": "Käytä vaihtoehtoa"
+    },
+    "metadata": {
+      "processingTime": "Käsittelyaika",
+      "confidence": "Luottamus",
+      "tokens": "Käytetyt merkit"
+    },
+    "resultsPanel": {
+      "placeholder": "Agentin tulokset näytetään täällä"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Verkkohaku - Hakee verkosta reaaliaikaista tietoa",
+      "code_interpreter": "Kooditulkki - Suorittaa ja analysoi koodia useilla kielillä",
+      "url_pull": "URL-analyysi - Analysoi ja poimii sisältöä verkkosivuilta",
+      "local_knowledge": "Tietokanta - Hakee sisäisestä tietokannasta ja dokumenteista",
+      "standard_chat": "Vakiokeskustelu - Vakio keskustelu-AI ilman työkaluja",
+      "foundry": "Foundry - Käyttää Azure AI Foundryä edistyneisiin ominaisuuksiin",
+      "third_party": "Kolmas osapuoli - Kolmannen osapuolen agentti tai mukautettu työkaluintegraatio"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Verkkohakutulokset näytetään täällä",
+      "title": "Hakutulokset",
+      "noResults": "Tuloksia ei löytynyt",
+      "noData": "Hakudataa ei ole saatavilla",
+      "results": "tulosta",
+      "confidence": "Relevanssi",
+      "relevance": "Relevanssi",
+      "source": "Lähde",
+      "citations": "Viittaukset",
+      "cite": "Viittaa",
+      "open": "Avaa",
+      "openLink": "Avaa linkki uudessa välilehdessä",
+      "filters": "Suodattimet",
+      "sortBy": "Lajittele",
+      "filterBy": "Suodata",
+      "all": "Kaikki",
+      "date": "Päivämäärä",
+      "query": "Kysely",
+      "searchTime": "Hakuaika",
+      "cached": "Välimuistissa",
+      "contentTypes": {
+        "webpage": "Verkkosivut",
+        "news": "Uutiset",
+        "academic": "Akateeminen",
+        "image": "Kuvat",
+        "video": "Videot"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Tulosten määrä",
+      "safeSearch": "Turvallinen haku",
+      "market": "Hakumarkkina"
+    },
+    "status": {
+      "searching": "Haetaan verkosta...",
+      "optimizing": "Optimoidaan hakukyselyä...",
+      "processing": "Käsitellään hakutuloksia..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Koodin suoritustulokset näytetään täällä",
+      "title": "Suoritustulokset",
+      "noData": "Koodin suoritusdataa ei ole saatavilla",
+      "output": "Tuloste",
+      "errors": "Virheet",
+      "logs": "Lokit",
+      "executionTime": "Suoritusaika",
+      "memoryUsage": "Muistin käyttö",
+      "cpuUsage": "CPU:n käyttö",
+      "outputLines": "Tulosterivejä",
+      "executedCode": "Suoritettu koodi",
+      "download": "Lataa",
+      "noOutput": "Tulostetta ei generoitu",
+      "noFiles": "Tiedostoja ei generoitu",
+      "outputSize": "Tulosteen koko",
+      "unsupportedOutput": "Ei-tuettu tulosteformaatti",
+      "status": {
+        "success": "Onnistui",
+        "error": "Virhe",
+        "timeout": "Aikakatkaisu",
+        "memory_limit": "Muistiraja ylitetty",
+        "security_violation": "Tietoturvaloukka",
+        "invalid_code": "Virheellinen koodi"
+      },
+      "outputTypes": {
+        "stdout": "Vakiotuloste",
+        "stderr": "Virhetuloste",
+        "return_value": "Palautusarvo",
+        "exception": "Poikkeus"
+      },
+      "tabs": {
+        "output": "Tuloste",
+        "code": "Koodi",
+        "files": "Tiedostot"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL-analyysin tulokset",
+      "noData": "URL-analyysidataa ei ole saatavilla",
+      "summary": "Yhteenveto",
+      "metadata": "Asiakirjan tiedot",
+      "processingTime": "Käsittelyaika",
+      "preview": "Esikatselu",
+      "view": "Näytä"
+    },
+    "configuration": {
+      "timeout": "Pyynnön aikakatkaisu"
+    },
+    "status": {
+      "pulling": "Haetaan URL-sisältöä...",
+      "analyzing": "Analysoidaan asiakirjaa...",
+      "complete": "Analyysi valmis"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Tietokannan tulokset",
+      "noData": "Tietokantadataa ei ole saatavilla",
+      "documents": "asiakirjaa",
+      "insights": "Keskeiset oivallukset",
+      "relevance": "Relevanssi",
+      "suggestions": "Ehdotukset"
+    },
+    "configuration": {
+      "searchMode": "Hakutila",
+      "threshold": "Relevanssikynnys"
+    },
+    "status": {
+      "searching": "Haetaan tietokannasta...",
+      "analyzing": "Analysoidaan tuloksia..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Asiakirja-analyysin tulokset näytetään täällä",
+      "title": "Analyysin tulokset",
+      "noData": "Asiakirja-analyysidataa ei ole saatavilla",
+      "documents": "asiakirjaa",
+      "noDocuments": "Asiakirjoja ei löytynyt",
+      "summary": "Yhteenveto",
+      "insights": "Keskeiset oivallukset",
+      "metadata": "Asiakirjan tiedot",
+      "processingTime": "Käsittelyaika",
+      "searchTime": "Hakuaika",
+      "relevance": "Relevanssi",
+      "cached": "Välimuistissa",
+      "preview": "Esikatselu",
+      "view": "Näytä",
+      "open": "Avaa",
+      "bookmark": "Kirjanmerkki",
+      "suggestions": "Ehdotukset",
+      "tabs": {
+        "documents": "Asiakirjat",
+        "insights": "Oivallukset",
+        "failed": "Epäonnistui"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Ladataan...",
+      "searching": "Haetaan...",
+      "processing": "Käsitellään...",
+      "analyzing": "Analysoidaan..."
+    },
+    "buttons": {
+      "retry": "Yritä uudelleen",
+      "cancel": "Peruuta",
+      "expand": "Laajenna",
+      "collapse": "Pienennä",
+      "configure": "Määritä",
+      "submit": "Lähetä"
+    },
+    "labels": {
+      "priority": "Prioriteetti",
+      "estimatedTime": "Arvioitu aika",
+      "availability": "Saatavuus",
+      "configuration": "Määritykset"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Tuntematon virhe tapahtui",
+      "network": "Verkkoyhteyden virhe",
+      "timeout": "Pyynnön aikakatkaisu",
+      "unauthorized": "Pääsy kielletty",
+      "rateLimit": "Nopeusraja ylitetty",
+      "serviceUnavailable": "Palvelu väliaikaisesti poissa käytöstä"
+    },
+    "webSearch": {
+      "searchFailed": "Verkkohaku epäonnistui",
+      "invalidQuery": "Virheellinen hakukysely"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Koodin suoritus epäonnistui",
+      "invalidCode": "Virheellinen tai turvaton koodi"
+    },
+    "urlPull": {
+      "fetchFailed": "URL-sisällön haku epäonnistui",
+      "invalidUrl": "Virheellinen tai saavuttamaton URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "Tietokannan haku epäonnistui",
+      "noAccess": "Ei pääsyä tietokantaan"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Automaattinen lähetys käsittelyn jälkeen",
+    "advancedOptions": "Lisäasetukset",
+    "priority": {
+      "high": "Korkea",
+      "medium": "Keskitaso",
+      "low": "Matala"
+    },
+    "safeSearch": {
+      "off": "Pois päältä",
+      "moderate": "Kohtalainen",
+      "strict": "Tarkka"
+    },
+    "market": {
+      "any": "Mikä tahansa alue",
+      "local": "Paikallinen alue"
+    }
+  }
+}

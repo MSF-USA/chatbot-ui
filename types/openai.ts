@@ -8,6 +8,7 @@ export interface OpenAIModel {
   modelType?: 'foundational' | 'omni' | 'reasoning';
   description?: string;
   isLegacy?: boolean;
+  deployment?: string;
 }
 
 export enum OpenAIModelID {
@@ -17,7 +18,7 @@ export enum OpenAIModelID {
   GPT_4 = 'gpt-4',
   GPT_41 = 'gpt-4.1',
   GPT_45 = 'gpt-45',
-  GPT_o1 = 'gpt-o1',
+  GPT_o1 = 'o1',
   GPT_o1_mini = 'gpt-o1-mini',
   GPT_o3_mini = 'o3-mini',
 }
@@ -81,17 +82,18 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
-    name: 'o1',
+    name: 'gpt-o1',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
     isLegacy: false,
+    deployment: 'gpt-o1',
   },
   [OpenAIModelID.GPT_o1_mini]: {
     id: OpenAIModelID.GPT_o1_mini,
-    name: 'o1-mini',
+    name: 'gpt-o1-mini',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,

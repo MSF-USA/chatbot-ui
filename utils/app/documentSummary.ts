@@ -94,7 +94,7 @@ export async function parseAndQueryFileOpenAI({
     scope,
   );
 
-  const apiVersion = '2024-07-01-preview';
+  const apiVersion = '2025-03-01-preview';
   const client = new AzureOpenAI({
     azureADTokenProvider,
     deployment: modelId,
