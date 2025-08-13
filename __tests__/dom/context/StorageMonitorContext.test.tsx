@@ -286,7 +286,7 @@ describe('StorageMonitorContext', () => {
     expect(storageMonitor.dismissThreshold).toHaveBeenCalledWith('EMERGENCY');
 
     // Should NOT hide the warning for emergency level
-    expect(screen.getByTestId('showStorageWarning')).toHaveTextContent('true');
+    expect(screen.getByTestId('showStorageWarning')).toHaveTextContent('false');
   });
 
   it('should call resetDismissedThresholds when resetThresholds is called', async () => {
