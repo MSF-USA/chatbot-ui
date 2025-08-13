@@ -83,7 +83,11 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
     if (success) {
       setStorageData(getStorageUsage());
       onClear();
+      // Always close the modal after successful clear, even if storage is still high
       onClose();
+    } else {
+      // If clearing failed, show an error toast or message
+      console.error('Failed to clear conversations');
     }
   };
 
@@ -264,43 +268,30 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
         </div>
 
         <div className="flex justify-end mt-4 space-x-2">
-          {/* For emergency level, show a disabled close button */}
-          {isEmergencyLevel ? (
-            <button
-              className="bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 py-2 px-4 rounded opacity-50 cursor-not-allowed"
-              disabled={true}
-              title={t('You must free up space before dismissing this warning')}
-            >
-              {t('Close')}
-            </button>
-          ) : (
-            <>
-              {/* For warning and critical levels, show a dismiss button */}
-              <button
-                className={`
-                  ${
-                    isCriticalLevel
-                      ? 'bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700'
-                      : 'bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-                  } 
-                  text-white py-2 px-4 rounded
-                `}
-                onClick={handleCloseOrDismiss}
-              >
-                {t('Dismiss Warning')}
-              </button>
-            </>
-          )}
+          {/* Show dismiss button for all levels */}
+          <button
+            className={`
+              ${
+                isEmergencyLevel
+                  ? 'bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800'
+                  : isCriticalLevel
+                  ? 'bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700'
+                  : 'bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
+              } 
+              text-white py-2 px-4 rounded
+            `}
+            onClick={handleCloseOrDismiss}
+          >
+            {t('Dismiss Warning')}
+          </button>
 
-          {/* Always show the close button for non-emergency levels */}
-          {!isEmergencyLevel && (
-            <button
-              className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-black dark:text-white py-2 px-4 rounded"
-              onClick={onClose}
-            >
-              {t('Close')}
-            </button>
-          )}
+          {/* Show close button as secondary option */}
+          <button
+            className="bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 text-black dark:text-white py-2 px-4 rounded"
+            onClick={onClose}
+          >
+            {t('Close')}
+          </button>
         </div>
       </div>
     </div>
