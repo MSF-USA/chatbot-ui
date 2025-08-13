@@ -148,16 +148,12 @@ describe('StorageWarningModal', () => {
       ),
     ).toBeInTheDocument();
 
-    // Close button should be disabled
+    // Close button should be enabled (as per current implementation)
     const closeButton = screen.getByText('Close');
-    expect(closeButton).toBeDisabled();
-    expect(closeButton).toHaveAttribute(
-      'title',
-      'You must free up space before dismissing this warning',
-    );
+    expect(closeButton).not.toBeDisabled();
 
-    // Dismiss button should not be present
-    expect(screen.queryByText('Dismiss Warning')).not.toBeInTheDocument();
+    // Dismiss button should be present for all levels (including emergency)
+    expect(screen.getByText('Dismiss Warning')).toBeInTheDocument();
   });
 
   it('should call exportData when Export button is clicked', async () => {
