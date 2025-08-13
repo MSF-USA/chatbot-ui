@@ -83,7 +83,11 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
     if (success) {
       setStorageData(getStorageUsage());
       onClear();
+      // Always close the modal after successful clear, even if storage is still high
       onClose();
+    } else {
+      // If clearing failed, show an error toast or message
+      console.error('Failed to clear conversations');
     }
   };
 
