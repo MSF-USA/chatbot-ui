@@ -26,6 +26,7 @@ interface StorageMonitorContextProps {
   resetDismissedThresholds: () => void;
   isEmergencyLevel: boolean;
   isCriticalLevel: boolean;
+  setUserActionCooldown: (cooldown: boolean) => void;
 }
 
 const StorageMonitorContext = createContext<StorageMonitorContextProps>({
@@ -39,6 +40,7 @@ const StorageMonitorContext = createContext<StorageMonitorContextProps>({
   resetDismissedThresholds: () => {},
   isEmergencyLevel: false,
   isCriticalLevel: false,
+  setUserActionCooldown: () => {},
 });
 
 interface StorageMonitorProviderProps {
@@ -52,15 +54,14 @@ export const StorageMonitorProvider: FC<StorageMonitorProviderProps> = ({
   const [storagePercentage, setStoragePercentage] = useState<number>(0);
   const [showStorageWarning, setShowStorageWarning] = useState<boolean>(false);
   const [currentThreshold, setCurrentThreshold] = useState<string | null>(null);
+  const [userActionCooldown, setUserActionCooldown] = useState<boolean>(false);
 
   // Function to dismiss the current threshold
   const dismissCurrentThreshold = () => {
     if (currentThreshold) {
       dismissThreshold(currentThreshold);
-      // Only hide the warning if not at emergency level
-      if (currentThreshold !== 'EMERGENCY') {
-        setShowStorageWarning(false);
-      }
+      // Always allow hiding the modal - user can dismiss at any level
+      setShowStorageWarning(false);
     }
   };
 
@@ -78,7 +79,8 @@ export const StorageMonitorProvider: FC<StorageMonitorProviderProps> = ({
     setCurrentThreshold(newThreshold);
 
     // Update warning visibility based on threshold and dismissal status
-    if (shouldShowWarning && !showStorageWarning) {
+    // Don't show warning if user recently took action (cooldown period)
+    if (shouldShowWarning && !showStorageWarning && !userActionCooldown) {
       setShowStorageWarning(true);
     }
   };
@@ -92,6 +94,17 @@ export const StorageMonitorProvider: FC<StorageMonitorProviderProps> = ({
 
     return () => clearInterval(intervalId);
   }, []);
+
+  // Clear cooldown after a delay
+  useEffect(() => {
+    if (userActionCooldown) {
+      // Clear cooldown after 30 seconds
+      const timeoutId = setTimeout(() => {
+        setUserActionCooldown(false);
+      }, 30000);
+      return () => clearTimeout(timeoutId);
+    }
+  }, [userActionCooldown]);
 
   // Compute derived state
   const isEmergencyLevel = currentThreshold === 'EMERGENCY';
@@ -110,6 +123,7 @@ export const StorageMonitorProvider: FC<StorageMonitorProviderProps> = ({
         resetDismissedThresholds,
         isEmergencyLevel,
         isCriticalLevel,
+        setUserActionCooldown,
       }}
     >
       {children}
