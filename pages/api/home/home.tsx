@@ -79,12 +79,15 @@ const StorageWarningManager = () => {
     isCriticalLevel,
     dismissCurrentThreshold,
     resetDismissedThresholds,
+    setUserActionCooldown,
   } = useStorageMonitor();
   const { t } = useTranslation('storage');
 
   const handleClear = () => {
     // Reset dismissed thresholds when user takes action to clear space
     resetDismissedThresholds();
+    // Set cooldown to prevent immediate re-showing of modal
+    setUserActionCooldown(true);
     // Update storage stats after clearing
     checkStorage();
   };
