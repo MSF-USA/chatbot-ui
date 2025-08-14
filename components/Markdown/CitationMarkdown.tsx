@@ -29,6 +29,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
     );
     const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
     const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
+    const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
 
     const hoverTimeoutRef = useRef<number | null>(null);
     const activeElementRef = useRef<HTMLElement | null>(null);
@@ -163,13 +164,9 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
                 {citation.title}
               </div>
             </div>
-            {citation.date && citation.date.trim() !== '' && (
+            {citation.date && (
               <div className="text-[11px] text-gray-600 dark:text-gray-400 mb-6">
-                {new Date(citation.date).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric'
-                })}
+                {citation.date}
               </div>
             )}
             <div

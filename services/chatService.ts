@@ -299,6 +299,8 @@ export default class ChatService {
     promptToSend?: string,
     modelConfig?: any,
     threadId?: string,
+    modelConfig?: any,
+    threadId?: string,
   ): Promise<Response> {
     const startTime = Date.now();
     try {
@@ -455,7 +457,7 @@ export default class ChatService {
                             number: citationIndex++,
                             title: annotation.urlCitation.title || `Source ${citationIndex}`,
                             url: annotation.urlCitation.url || '',
-                            date: '' // Agent citations don't have publication dates
+                            date: new Date().toISOString()
                           });
                         }
                       });
