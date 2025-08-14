@@ -181,7 +181,7 @@
   }
 
   // Generate a conversation with realistic data
-  function generateConversation(index, messageCount = 10, daysAgo = 30) {
+  function generateConversation(index, messageCount = 10, daysAgo = 30, includeDates = true) {
     const conversationId = generateId() + '_' + index;
     const messages = [];
     
@@ -192,13 +192,10 @@
       messages.push(generateMessage(role, i, includeComplex));
     }
 
-    const createdAt = generateDate(daysAgo);
-    const updatedAt = generateDate(Math.floor(daysAgo / 2)); // Updated more recently
-
     const modelIndex = Math.floor(Math.random() * MODELS.length);
     const model = MODELS[modelIndex];
 
-    return {
+    const conversation = {
       id: conversationId,
       name: generateConversationName(index),
       messages: messages,
@@ -211,10 +208,16 @@
       },
       prompt: 'You are a helpful AI assistant.',
       temperature: 0.7 + (Math.random() * 0.3), // Random between 0.7 and 1.0
-      folderId: Math.random() > 0.7 ? 'folder_' + Math.floor(Math.random() * 5) : null,
-      createdAt: createdAt,
-      updatedAt: updatedAt
+      folderId: Math.random() > 0.7 ? 'folder_' + Math.floor(Math.random() * 5) : null
     };
+
+    // Only add dates if requested (to simulate legacy conversations)
+    if (includeDates) {
+      conversation.createdAt = generateDate(daysAgo);
+      conversation.updatedAt = generateDate(Math.floor(daysAgo / 2)); // Updated more recently
+    }
+
+    return conversation;
   }
 
   // Calculate current storage usage
@@ -251,8 +254,8 @@
     return mb.toFixed(2) + ' MB';
   }
 
-  // Fill storage to a specific percentage
-  function fillStorageToPercentage(targetPercent) {
+  // Fill storage to a specific percentage (can exceed 100% for overfill testing)
+  function fillStorageToPercentage(targetPercent, includeLegacy = false) {
     console.log(`Starting to fill storage to ${targetPercent}%...`);
     
     // Clear existing conversations first
@@ -267,10 +270,15 @@
     while (currentSize < targetSize) {
       const messageCount = Math.floor(Math.random() * 20) + 5; // 5-25 messages
       const daysAgo = Math.floor(Math.random() * 90) + 1; // 1-90 days ago
-      const conversation = generateConversation(conversationIndex, messageCount, daysAgo);
+      
+      // If includeLegacy, make 40% of conversations legacy (without dates)
+      const includeDates = includeLegacy ? Math.random() > 0.4 : true;
+      const conversation = generateConversation(conversationIndex, messageCount, daysAgo, includeDates);
       
       const conversationSize = JSON.stringify(conversation).length;
-      if (currentSize + conversationSize > targetSize && conversations.length > 5) {
+      
+      // For overfill scenarios (>100%), don't stop early
+      if (targetPercent <= 100 && currentSize + conversationSize > targetSize && conversations.length > 5) {
         // Stop if adding this conversation would exceed target (unless we have very few conversations)
         break;
       }
@@ -280,8 +288,8 @@
       conversationIndex++;
       
       // Safety check to prevent infinite loop
-      if (conversationIndex > 1000) {
-        console.warn('Safety limit reached: stopping at 1000 conversations');
+      if (conversationIndex > 1500) {
+        console.warn('Safety limit reached: stopping at 1500 conversations');
         break;
       }
     }
@@ -363,12 +371,50 @@
     },
     
     fillToCustom: function(percent) {
-      if (percent < 0 || percent > 100) {
-        console.error('Percentage must be between 0 and 100');
+      if (percent < 0) {
+        console.error('Percentage must be positive');
         return false;
       }
       console.log(`Filling storage to ${percent}%...`);
       return fillStorageToPercentage(percent);
+    },
+    
+    // Overfill storage (exceed 100%)
+    overfillStorage: function(percent) {
+      if (!percent) percent = 105; // Default to 105%
+      if (percent <= 100) {
+        console.error('Use fillToCustom for percentages <= 100%. This function is for overfilling.');
+        return false;
+      }
+      console.log(`⚠️ OVERFILLING storage to ${percent}% (exceeding capacity)...`);
+      return fillStorageToPercentage(percent);
+    },
+    
+    // Fill with mixed legacy and modern data
+    fillWithLegacyData: function(percent) {
+      if (!percent) percent = 85; // Default to 85%
+      console.log(`Filling storage to ${percent}% with mixed legacy/modern conversations...`);
+      return fillStorageToPercentage(percent, true);
+    },
+    
+    // Add specific number of legacy conversations
+    addLegacyConversations: function(count) {
+      if (!count || count < 1) count = 5;
+      const conversationsData = localStorage.getItem('conversations');
+      const conversations = conversationsData ? JSON.parse(conversationsData) : [];
+      
+      console.log(`Adding ${count} legacy conversations (without dates)...`);
+      
+      for (let i = 0; i < count; i++) {
+        const messageCount = Math.floor(Math.random() * 10) + 2; // 2-12 messages
+        const legacyConv = generateConversation(conversations.length + i, messageCount, 60, false);
+        conversations.push(legacyConv); // Add to end (will be sorted later)
+      }
+      
+      localStorage.setItem('conversations', JSON.stringify(conversations));
+      const info = getStorageInfo();
+      console.log(`Added ${count} legacy conversations. Storage now at ${info.percentUsed.toFixed(1)}%`);
+      return info;
     },
     
     // Utility functions
@@ -384,25 +430,41 @@
       if (conversationsData) {
         try {
           const conversations = JSON.parse(conversationsData);
-          console.log(`   - Conversations: ${conversations.length}`);
+          console.log(`   - Total Conversations: ${conversations.length}`);
+          
+          // Count legacy vs modern conversations
+          let legacyCount = 0;
+          let modernCount = 0;
           
           // Show distribution of conversation ages
           const now = new Date();
           const ageGroups = { recent: 0, week: 0, month: 0, older: 0 };
           conversations.forEach(conv => {
-            if (conv.updatedAt) {
-              const age = (now - new Date(conv.updatedAt)) / (1000 * 60 * 60 * 24);
+            // Check if conversation has dates
+            if (conv.updatedAt || conv.createdAt) {
+              modernCount++;
+              const dateStr = conv.updatedAt || conv.createdAt;
+              const age = (now - new Date(dateStr)) / (1000 * 60 * 60 * 24);
               if (age < 1) ageGroups.recent++;
               else if (age < 7) ageGroups.week++;
               else if (age < 30) ageGroups.month++;
               else ageGroups.older++;
+            } else {
+              legacyCount++;
             }
           });
-          console.log(`   - Age distribution:`);
-          console.log(`     • Last 24h: ${ageGroups.recent}`);
-          console.log(`     • Last week: ${ageGroups.week}`);
-          console.log(`     • Last month: ${ageGroups.month}`);
-          console.log(`     • Older: ${ageGroups.older}`);
+          
+          console.log(`   - Type distribution:`);
+          console.log(`     • Modern (with dates): ${modernCount}`);
+          console.log(`     • Legacy (no dates): ${legacyCount}`);
+          
+          if (modernCount > 0) {
+            console.log(`   - Age distribution (modern only):`);
+            console.log(`     • Last 24h: ${ageGroups.recent}`);
+            console.log(`     • Last week: ${ageGroups.week}`);
+            console.log(`     • Last month: ${ageGroups.month}`);
+            console.log(`     • Older: ${ageGroups.older}`);
+          }
         } catch (e) {
           console.error('Could not parse conversations data');
         }
@@ -410,7 +472,9 @@
       
       // Check which threshold level we're at
       const percent = info.percentUsed;
-      if (percent >= 95) {
+      if (percent > 100) {
+        console.log(`   - 🔴 Status: OVERFILLED! (${(percent - 100).toFixed(1)}% over capacity)`);
+      } else if (percent >= 95) {
         console.log('   - ⚠️ Status: EMERGENCY LEVEL');
       } else if (percent >= 85) {
         console.log('   - ⚠️ Status: CRITICAL LEVEL');
@@ -439,14 +503,23 @@
     },
     
     // Simulate realistic growth over time
-    simulateGrowth: function(daysToSimulate = 30) {
-      console.log(`Simulating ${daysToSimulate} days of conversation growth...`);
+    simulateGrowth: function(daysToSimulate = 30, includeLegacy = false) {
+      console.log(`Simulating ${daysToSimulate} days of conversation growth${includeLegacy ? ' (with legacy data)' : ''}...`);
       clearTestData();
       
       const conversations = [];
-      let totalDays = daysToSimulate;
       
-      for (let day = totalDays; day > 0; day--) {
+      // If including legacy, add some old conversations without dates first
+      if (includeLegacy) {
+        const legacyCount = Math.floor(Math.random() * 10) + 5; // 5-15 legacy conversations
+        for (let i = 0; i < legacyCount; i++) {
+          const messageCount = Math.floor(Math.random() * 8) + 1; // 1-8 messages
+          const conv = generateConversation(conversations.length, messageCount, 100, false);
+          conversations.push(conv);
+        }
+      }
+      
+      for (let day = daysToSimulate; day > 0; day--) {
         // Random number of conversations per day (0-3)
         const conversationsToday = Math.floor(Math.random() * 4);
         
@@ -470,14 +543,21 @@
   // Print usage instructions
   console.log('%c📦 Storage Test Utility Loaded!', 'color: #4CAF50; font-size: 16px; font-weight: bold');
   console.log('%cAvailable commands:', 'color: #2196F3; font-weight: bold');
+  console.log('%c=== Standard Fill Commands ===%c', 'color: #4CAF50; font-weight: bold', 'color: inherit');
   console.log('  %cstorageTest.fillToWarning()%c    - Fill to 70% (WARNING level)', 'color: #FF9800', 'color: inherit');
   console.log('  %cstorageTest.fillToCritical()%c   - Fill to 85% (CRITICAL level)', 'color: #FF9800', 'color: inherit');
   console.log('  %cstorageTest.fillToEmergency()%c  - Fill to 95% (EMERGENCY level)', 'color: #FF9800', 'color: inherit');
   console.log('  %cstorageTest.fillToCustom(50)%c   - Fill to custom percentage', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.info()%c             - Show current storage status', 'color: #FF9800', 'color: inherit');
+  console.log('%c=== Special Test Commands ===%c', 'color: #4CAF50; font-weight: bold', 'color: inherit');
+  console.log('  %cstorageTest.overfillStorage(105)%c - OVERFILL storage beyond 100%', 'color: #E91E63', 'color: inherit');
+  console.log('  %cstorageTest.fillWithLegacyData()%c - Fill with mixed legacy/modern data', 'color: #E91E63', 'color: inherit');
+  console.log('  %cstorageTest.addLegacyConversations(5)%c - Add N legacy conversations', 'color: #E91E63', 'color: inherit');
+  console.log('%c=== Utility Commands ===%c', 'color: #4CAF50; font-weight: bold', 'color: inherit');
+  console.log('  %cstorageTest.info()%c             - Show detailed storage status', 'color: #FF9800', 'color: inherit');
   console.log('  %cstorageTest.clear()%c            - Clear all test data', 'color: #FF9800', 'color: inherit');
   console.log('  %cstorageTest.addLargeConversation()%c - Add a single large conversation', 'color: #FF9800', 'color: inherit');
-  console.log('  %cstorageTest.simulateGrowth(30)%c - Simulate realistic growth over N days', 'color: #FF9800', 'color: inherit');
+  console.log('  %cstorageTest.simulateGrowth(30, true)%c - Simulate growth (2nd param for legacy)', 'color: #FF9800', 'color: inherit');
   console.log('\n%cTip: After filling storage, reload the page to trigger the storage warning modal!', 'color: #9C27B0; font-style: italic');
+  console.log('%cNote: Legacy conversations (without dates) will be deleted first when clearing old data.', 'color: #9C27B0; font-style: italic');
 
 })();

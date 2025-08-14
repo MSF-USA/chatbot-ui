@@ -4,7 +4,7 @@ import {
   IconRobot,
   IconSettings,
 } from '@tabler/icons-react';
-import { FC, MutableRefObject, useState } from 'react';
+import React, { FC, MutableRefObject, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
@@ -15,7 +15,7 @@ import { Prompt } from '@/types/prompt';
 interface Props {
   prompts: Prompt[];
   activePromptIndex: number;
-  onSelect: () => void;
+  onSelect: (index: number) => void;
   onMouseOver: (index: number) => void;
   promptListRef: MutableRefObject<HTMLUListElement | null>;
   commands?: CommandDefinition[];
@@ -186,14 +186,8 @@ export const PromptList: FC<Props> = ({
   const commandsCount = showCommands ? commands.length : 0;
 
   const handleItemClick = (index: number) => {
-    if (showCommands && index < commandsCount) {
-      // This is a command - handle command selection
-      // For now, we'll just call onSelect, but this could be extended
-      onSelect();
-    } else {
-      // This is a prompt
-      onSelect();
-    }
+    // Pass the index directly to the parent handler
+    onSelect(index);
   };
 
   const handleItemMouseEnter = (index: number) => {

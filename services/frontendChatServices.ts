@@ -15,7 +15,7 @@ import {
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
 
-const isComplexContent = (
+export const isComplexContent = (
   content: (TextMessageContent | ImageMessageContent | FileMessageContent)[],
 ): boolean => {
   const contentTypes = content.map((section) => section.type);
@@ -27,7 +27,7 @@ const isComplexContent = (
   );
 };
 
-const createChatBody = (
+export const createChatBody = (
   conversation: Conversation,
   messages: Message[],
   apiKey: string,
@@ -51,7 +51,7 @@ const createChatBody = (
   ...(forcedAgentType && { forceAgentType: forcedAgentType }),
 });
 
-const appendPluginKeys = (
+export const appendPluginKeys = (
   chatBody: ChatBody,
   pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
 ) => ({
@@ -227,12 +227,12 @@ Document metadata: ${filename}
       if (content.type === 'file_url') {
         fileSummaries.push({
           filename: content.originalFilename,
-          summary: responseData.text ?? '',
+          summary: responseData.data?.text ?? responseData.text ?? '',
         });
       } else {
         fileSummaries.push({
           filename: `Image: ${content.image_url.url.split('/').pop()}`,
-          summary: responseData.text ?? '',
+          summary: responseData.data?.text ?? responseData.text ?? '',
         });
       }
 

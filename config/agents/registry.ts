@@ -759,7 +759,7 @@ const AGENT_DEFINITIONS: Record<AgentType, AgentDefinition> = {
       name: 'Code Interpreter Agent',
       description: 'Execute and analyze code in secure sandboxed environment',
       version: '1.0.0',
-      enabled: true,
+      enabled: false, // Disabled - not ready for production yet
     },
     commands: {
       primary: 'code',

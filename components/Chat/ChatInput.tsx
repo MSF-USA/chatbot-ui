@@ -1,5 +1,5 @@
 import { IconArrowDown, IconRepeat } from '@tabler/icons-react';
-import {
+import React, {
   Dispatch,
   KeyboardEvent,
   MutableRefObject,
@@ -14,6 +14,7 @@ import {
 import toast from 'react-hot-toast';
 
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 import {
   CommandDefinition,
@@ -120,6 +121,8 @@ export const ChatInput = ({
   onAddChatMessages,
 }: Props) => {
   const { t } = useTranslation('chat');
+  const router = useRouter();
+  const currentLocale = router.locale || 'en';
 
   const {
     state: {
@@ -152,6 +155,7 @@ export const ChatInput = ({
   const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [promptForVariableModal, setPromptForVariableModal] = useState<Prompt | null>(null);
   const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
@@ -323,7 +327,7 @@ export const ChatInput = ({
         currentMessage: currentMessage,
       };
 
-      const parsed = commandParser.parseLocalizedInput(textFieldValue, 'en'); // TODO: Use actual locale
+      const parsed = commandParser.parseLocalizedInput(textFieldValue, currentLocale);
       if (parsed && parsed.valid) {
         const executionResult = commandParser.executeCommand(
           parsed,
@@ -494,27 +498,35 @@ export const ChatInput = ({
     return mobileRegex.test(userAgent);
   };
 
-  const handleInitModal = () => {
-    if (commandMode && filteredCommands.length > 0) {
-      // Handle command selection - use original filteredCommands for commands
-      const selectedCommand = filteredCommands[activePromptIndex];
-      if (selectedCommand) {
-        handleCommandSelect(selectedCommand);
+  /**
+   * Unified handler for selecting items from the dropdown (commands or prompts)
+   * @param index - The index of the selected item in the combined list
+   */
+  const handleDropdownItemSelection = (index: number) => {
+    const commandsCount = commandMode ? filteredCommands.length : 0;
+    
+    if (index < commandsCount) {
+      // It's a command
+      const command = filteredCommands[index];
+      if (command) {
+        handleCommandSelect(command);
       }
     } else {
-      // Handle prompt selection - use sorted prompts
-      const selectedPrompt = sortedFilteredPrompts[activePromptIndex];
-      if (selectedPrompt) {
+      // It's a prompt
+      const promptIndex = index - commandsCount;
+      const prompt = sortedFilteredPrompts[promptIndex];
+      if (prompt) {
         setTextFieldValue((prevTextFieldValue) => {
           const newContent = prevTextFieldValue?.replace(
             /\/\w*$/,
-            selectedPrompt.content,
+            prompt.content,
           );
           return newContent;
         });
-        handlePromptSelect(selectedPrompt);
+        handlePromptSelect(prompt);
       }
     }
+    
     setShowPromptList(false);
   };
 
@@ -571,7 +583,7 @@ export const ChatInput = ({
         break;
       case 'Enter':
         event.preventDefault();
-        handleInitModal();
+        handleDropdownItemSelection(activePromptIndex);
         if (submitType !== 'text') {
           setSubmitType('text');
         }
@@ -664,9 +676,9 @@ export const ChatInput = ({
         };
         const parsed = commandParser.parseLocalizedInput(
           input,
-          'en',
+          currentLocale,
           commandContext,
-        ); // TODO: Use actual locale
+        );
         setParsedCommand(parsed);
 
         // Show prompt list and set command mode
@@ -699,6 +711,7 @@ export const ChatInput = ({
     setVariables(parsedVariables);
 
     if (parsedVariables.length > 0) {
+      setPromptForVariableModal(prompt);  // Store the selected prompt for the variable modal
       setIsModalVisible(true);
     } else {
       setTextFieldValue((prevContent) => {
@@ -1236,7 +1249,7 @@ export const ChatInput = ({
                     prompts={sortedFilteredPrompts}
                     commands={filteredCommands}
                     showCommands={commandMode}
-                    onSelect={handleInitModal}
+                    onSelect={handleDropdownItemSelection}
                     onMouseOver={setActivePromptIndex}
                     promptListRef={promptListRef}
                     onImmediateCommandExecution={(command) => {
@@ -1369,12 +1382,15 @@ export const ChatInput = ({
             )}
           </div>
 
-          {isModalVisible && (
+          {isModalVisible && promptForVariableModal && (
             <VariableModal
-              prompt={sortedFilteredPrompts[activePromptIndex]}
+              prompt={promptForVariableModal}
               variables={variables}
               onSubmit={handleSubmit}
-              onClose={() => setIsModalVisible(false)}
+              onClose={() => {
+                setIsModalVisible(false);
+                setPromptForVariableModal(null);  // Clear prompt for variable modal when closing
+              }}
             />
           )}
         </div>

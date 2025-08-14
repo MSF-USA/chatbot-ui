@@ -240,7 +240,7 @@ export class CommandParser {
       { command: 'translate', agentType: AgentType.TRANSLATION, name: 'translation agent' },
       { command: 'url', agentType: AgentType.URL_PULL, name: 'URL pull agent' },
       { command: 'knowledge', agentType: AgentType.LOCAL_KNOWLEDGE, name: 'local knowledge agent' },
-      { command: 'code', agentType: AgentType.CODE_INTERPRETER, name: 'code interpreter agent' },
+      // { command: 'code', agentType: AgentType.CODE_INTERPRETER, name: 'code interpreter agent' }, // Disabled - not ready for production
     ];
 
     for (const cmd of fallbackCommands) {

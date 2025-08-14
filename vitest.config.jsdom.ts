@@ -13,4 +13,11 @@ export default defineConfig({
       '@': path.resolve(__dirname, './'),
     },
   },
+  esbuild: {
+    tsconfigRaw: {
+      compilerOptions: {
+        strict: false,
+      },
+    },
+  },
 });
