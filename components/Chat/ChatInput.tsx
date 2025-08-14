@@ -494,27 +494,35 @@ export const ChatInput = ({
     return mobileRegex.test(userAgent);
   };
 
-  const handleInitModal = () => {
-    if (commandMode && filteredCommands.length > 0) {
-      // Handle command selection - use original filteredCommands for commands
-      const selectedCommand = filteredCommands[activePromptIndex];
-      if (selectedCommand) {
-        handleCommandSelect(selectedCommand);
+  /**
+   * Unified handler for selecting items from the dropdown (commands or prompts)
+   * @param index - The index of the selected item in the combined list
+   */
+  const handleItemSelection = (index: number) => {
+    const commandsCount = commandMode ? filteredCommands.length : 0;
+    
+    if (index < commandsCount) {
+      // It's a command
+      const command = filteredCommands[index];
+      if (command) {
+        handleCommandSelect(command);
       }
     } else {
-      // Handle prompt selection - use sorted prompts
-      const selectedPrompt = sortedFilteredPrompts[activePromptIndex];
-      if (selectedPrompt) {
+      // It's a prompt
+      const promptIndex = index - commandsCount;
+      const prompt = sortedFilteredPrompts[promptIndex];
+      if (prompt) {
         setTextFieldValue((prevTextFieldValue) => {
           const newContent = prevTextFieldValue?.replace(
             /\/\w*$/,
-            selectedPrompt.content,
+            prompt.content,
           );
           return newContent;
         });
-        handlePromptSelect(selectedPrompt);
+        handlePromptSelect(prompt);
       }
     }
+    
     setShowPromptList(false);
   };
 
@@ -571,7 +579,7 @@ export const ChatInput = ({
         break;
       case 'Enter':
         event.preventDefault();
-        handleInitModal();
+        handleItemSelection(activePromptIndex);
         if (submitType !== 'text') {
           setSubmitType('text');
         }
@@ -1236,7 +1244,7 @@ export const ChatInput = ({
                     prompts={sortedFilteredPrompts}
                     commands={filteredCommands}
                     showCommands={commandMode}
-                    onSelect={handleInitModal}
+                    onSelect={handleItemSelection}
                     onMouseOver={setActivePromptIndex}
                     promptListRef={promptListRef}
                     onImmediateCommandExecution={(command) => {
