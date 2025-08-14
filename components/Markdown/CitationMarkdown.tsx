@@ -29,7 +29,6 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
     );
     const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
     const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
-    const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
 
     const hoverTimeoutRef = useRef<number | null>(null);
     const activeElementRef = useRef<HTMLElement | null>(null);

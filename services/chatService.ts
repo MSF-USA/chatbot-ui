@@ -299,8 +299,6 @@ export default class ChatService {
     promptToSend?: string,
     modelConfig?: any,
     threadId?: string,
-    modelConfig?: any,
-    threadId?: string,
   ): Promise<Response> {
     const startTime = Date.now();
     try {
