@@ -16,6 +16,7 @@ describe('frontendChatServices', () => {
   let mockFetch: ReturnType<typeof vi.fn>;
   let mockSetRequestStatusMessage: ReturnType<typeof vi.fn>;
   let mockSetProgress: ReturnType<typeof vi.fn>;
+  let consoleLogSpy: ReturnType<typeof vi.spyOn>;
 
   const createMockConversation = (messages: Message[]): Conversation => ({
     id: 'test-conversation',
@@ -38,10 +39,12 @@ describe('frontendChatServices', () => {
     mockSetProgress = vi.fn();
     mockFetch = vi.fn();
     global.fetch = mockFetch;
+    consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    consoleLogSpy.mockRestore();
   });
 
   describe('Multi-file upload processing', () => {
@@ -588,6 +591,697 @@ describe('frontendChatServices', () => {
       expect(mockSetRequestStatusMessage).not.toHaveBeenCalledWith('Handling multi-file processing. Please wait...');
       // Should make only one request (no intermediate summaries)
       expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Helper functions', () => {
+    it('should correctly identify complex content', async () => {
+      // Import the helper function directly
+      const module = await vi.importActual('@/services/frontendChatServices') as any;
+      const isComplexContent = module.isComplexContent;
+      
+      // More than 2 content items
+      expect(isComplexContent([
+        { type: 'text', text: 'test' },
+        { type: 'file_url', url: 'file1' },
+        { type: 'file_url', url: 'file2' },
+      ])).toBe(true);
+      
+      // Multiple files
+      expect(isComplexContent([
+        { type: 'text', text: 'test' },
+        { type: 'file_url', url: 'file1' },
+        { type: 'file_url', url: 'file2' },
+      ])).toBe(true);
+      
+      // Multiple images
+      expect(isComplexContent([
+        { type: 'text', text: 'test' },
+        { type: 'image_url', image_url: { url: 'img1' } },
+        { type: 'image_url', image_url: { url: 'img2' } },
+      ])).toBe(true);
+      
+      // Mixed file and image
+      expect(isComplexContent([
+        { type: 'text', text: 'test' },
+        { type: 'file_url', url: 'file' },
+        { type: 'image_url', image_url: { url: 'img' } },
+      ])).toBe(true);
+      
+      // Not complex - single file
+      expect(isComplexContent([
+        { type: 'text', text: 'test' },
+        { type: 'file_url', url: 'file' },
+      ])).toBe(false);
+      
+      // Not complex - single image
+      expect(isComplexContent([
+        { type: 'text', text: 'test' },
+        { type: 'image_url', image_url: { url: 'img' } },
+      ])).toBe(false);
+    });
+
+    it('should create chat body with correct parameters', async () => {
+      const module = await vi.importActual('@/services/frontendChatServices') as any;
+      const createChatBody = module.createChatBody;
+      
+      const conversation = createMockConversation([]);
+      const messages: Message[] = [{ role: 'user', content: 'test' }];
+      
+      // Basic chat body
+      const chatBody = createChatBody(
+        conversation,
+        messages,
+        'api-key',
+        'system-prompt',
+        0.7,
+        'bot-123',
+        true,
+      );
+      
+      expect(chatBody.model).toEqual(conversation.model);
+      expect(chatBody.messages).toEqual(messages);
+      expect(chatBody.key).toBe('api-key');
+      expect(chatBody.prompt).toBe('Test prompt'); // Uses conversation prompt
+      expect(chatBody.temperature).toBe(0.5); // Uses conversation temperature
+      expect(chatBody.botId).toBe('bot-123');
+      expect(chatBody.stream).toBe(true);
+      
+      // With force standard chat
+      const chatBodyForced = createChatBody(
+        { ...conversation, prompt: null, temperature: null },
+        messages,
+        'api-key',
+        'system-prompt',
+        0.7,
+        undefined,
+        false,
+        true,
+      );
+      
+      expect(chatBodyForced.prompt).toBe('system-prompt');
+      expect(chatBodyForced.temperature).toBe(0.7);
+      expect(chatBodyForced.forceStandardChat).toBe(true);
+      
+      // With agent settings
+      const agentSettings = { enabled: true, enabledAgentTypes: ['web_search'] };
+      const chatBodyWithAgent = createChatBody(
+        conversation,
+        messages,
+        'api-key',
+        'system-prompt',
+        0.7,
+        undefined,
+        true,
+        false,
+        agentSettings,
+        'web_search' as AgentType,
+      );
+      
+      expect(chatBodyWithAgent.agentSettings).toEqual(agentSettings);
+      expect(chatBodyWithAgent.forceAgentType).toBe('web_search');
+    });
+
+    it('should append plugin keys correctly', async () => {
+      const module = await vi.importActual('@/services/frontendChatServices') as any;
+      const appendPluginKeys = module.appendPluginKeys;
+      
+      const chatBody: ChatBody = {
+        model: {} as any,
+        messages: [],
+        key: 'test',
+        prompt: 'test',
+        temperature: 0.5,
+      };
+      
+      const pluginKeys = [
+        {
+          pluginId: PluginID.GOOGLE_SEARCH,
+          requiredKeys: [
+            { key: 'GOOGLE_API_KEY', value: 'test-api-key' },
+            { key: 'GOOGLE_CSE_ID', value: 'test-cse-id' },
+          ],
+        },
+      ];
+      
+      const result = appendPluginKeys(chatBody, pluginKeys);
+      
+      expect(result.googleAPIKey).toBe('test-api-key');
+      expect(result.googleCSEId).toBe('test-cse-id');
+      expect(result.model).toEqual(chatBody.model);
+      
+      // Test with empty plugin keys
+      const resultEmpty = appendPluginKeys(chatBody, []);
+      expect(resultEmpty.googleAPIKey).toBeUndefined();
+      expect(resultEmpty.googleCSEId).toBeUndefined();
+    });
+  });
+
+  describe('Simple conversations (non-complex content)', () => {
+    it('should handle text-only messages', async () => {
+      const textMessage: Message = {
+        role: 'user',
+        content: 'What is the weather today?',
+      };
+      
+      const conversation = createMockConversation([textMessage]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream({
+          start(controller) {
+            controller.enqueue(new TextEncoder().encode('data: {"text": "The weather is sunny"}\n\n'));
+            controller.close();
+          },
+        }),
+      });
+      
+      const result = await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      expect(result.hasComplexContent).toBe(false);
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      expect(mockSetRequestStatusMessage).not.toHaveBeenCalledWith('Handling multi-file processing. Please wait...');
+      
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(requestBody.messages).toHaveLength(1);
+      expect(requestBody.stream).toBe(true);
+    });
+
+    it('should handle single image messages', async () => {
+      const imageMessage: Message = {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'What is in this image?' },
+          { type: 'image_url', image_url: { url: 'https://example.com/image.jpg' } },
+        ],
+        messageType: 'text',
+      };
+      
+      const conversation = createMockConversation([imageMessage]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      const result = await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      expect(result.hasComplexContent).toBe(false);
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should include bot ID when provided', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'Hello bot',
+      };
+      
+      const conversation = {
+        ...createMockConversation([message]),
+        bot: 'bot-123',
+      };
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(requestBody.botId).toBe('bot-123');
+    });
+
+    it('should handle conversation history correctly', async () => {
+      const messages: Message[] = [
+        { role: 'user', content: 'Message 1' },
+        { role: 'assistant', content: 'Response 1' },
+        { role: 'user', content: 'Message 2' },
+        { role: 'assistant', content: 'Response 2' },
+        { role: 'user', content: 'Message 3' },
+        { role: 'assistant', content: 'Response 3' },
+        { role: 'user', content: 'Message 4' },
+        { role: 'assistant', content: 'Response 4' },
+        { role: 'user', content: 'Current message' },
+      ];
+      
+      const conversation = createMockConversation(messages);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      // Should include last 6 messages (slice(-6))
+      expect(requestBody.messages).toHaveLength(6);
+      expect(requestBody.messages[0].content).toBe('Response 2');
+      expect(requestBody.messages[5].content).toBe('Current message');
+    });
+  });
+
+  describe('Plugin support', () => {
+    it('should handle Google Search plugin', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'Search for latest news',
+      };
+      
+      const conversation = createMockConversation([message]);
+      
+      const plugin: Plugin = {
+        id: PluginID.GOOGLE_SEARCH,
+        name: 'Google Search',
+        requiredKeys: [],
+      };
+      
+      const pluginKeys = [
+        {
+          pluginId: PluginID.GOOGLE_SEARCH,
+          requiredKeys: [
+            { key: 'GOOGLE_API_KEY', value: 'google-key' },
+            { key: 'GOOGLE_CSE_ID', value: 'cse-id' },
+          ],
+        },
+      ];
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      // Mock getEndpoint to throw for Google plugin
+      const getEndpointMock = vi.mocked(getEndpoint);
+      getEndpointMock.mockImplementation((plugin) => {
+        if (plugin?.id === PluginID.GOOGLE_SEARCH) {
+          throw new Error('Google Plugin no longer supported.');
+        }
+        return 'api/v2/chat';
+      });
+      
+      await expect(
+        makeRequest(
+          plugin,
+          mockSetRequestStatusMessage,
+          conversation,
+          'api-key',
+          pluginKeys,
+          'System prompt',
+          0.5,
+          true,
+          mockSetProgress,
+        )
+      ).rejects.toThrow('Google Plugin no longer supported.');
+    });
+  });
+
+  describe('Stop conversation handling', () => {
+    it('should abort request when stop is triggered', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'Long running query',
+      };
+      
+      const conversation = createMockConversation([message]);
+      const stopConversationRef = { current: false };
+      
+      let fetchResolve: any;
+      const fetchPromise = new Promise((resolve) => {
+        fetchResolve = resolve;
+      });
+      
+      mockFetch.mockImplementation(() => {
+        // Simulate stop being triggered during request
+        setTimeout(() => {
+          stopConversationRef.current = true;
+        }, 50);
+        
+        return fetchPromise;
+      });
+      
+      const requestPromise = makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+        stopConversationRef,
+      );
+      
+      // Wait for abort to be triggered
+      await new Promise(resolve => setTimeout(resolve, 150));
+      
+      // Resolve the fetch to complete the test
+      fetchResolve({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      await requestPromise;
+      
+      // Verify abort was logged
+      expect(console.log).toHaveBeenCalledWith('Aborting due to stop request');
+    });
+
+    it('should handle abort error gracefully', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'Query',
+      };
+      
+      const conversation = createMockConversation([message]);
+      const stopConversationRef = { current: false };
+      
+      mockFetch.mockRejectedValue(new DOMException('Aborted', 'AbortError'));
+      
+      const result = await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+        stopConversationRef,
+      );
+      
+      expect(result.response).toBeDefined();
+      expect(result.response.status).toBe(200);
+      expect(console.log).toHaveBeenCalledWith('Request was aborted by user');
+    });
+  });
+
+  describe('Agent settings', () => {
+    it('should pass agent settings correctly', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'Query with agents',
+      };
+      
+      const conversation = createMockConversation([message]);
+      
+      const agentSettings = {
+        enabled: true,
+        enabledAgentTypes: ['web_search', 'local_knowledge'],
+      };
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+        undefined,
+        false,
+        agentSettings,
+        'web_search' as AgentType,
+      );
+      
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(requestBody.agentSettings).toEqual(agentSettings);
+      expect(requestBody.forceAgentType).toBe('web_search');
+    });
+  });
+
+  describe('Non-streaming responses', () => {
+    it('should handle non-streaming mode for simple content', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'Non-streaming query',
+      };
+      
+      const conversation = createMockConversation([message]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      const result = await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        false, // Non-streaming
+        mockSetProgress,
+      );
+      
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(requestBody.stream).toBe(false);
+      expect(result.response).toBeDefined();
+    });
+
+    it('should handle non-streaming mode for complex content', async () => {
+      const multiFileMessage: Message = {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Compare files' },
+          { type: 'file_url', url: 'file1.pdf', originalFilename: 'file1.pdf' },
+          { type: 'file_url', url: 'file2.pdf', originalFilename: 'file2.pdf' },
+        ],
+        messageType: 'text',
+      };
+      
+      const conversation = createMockConversation([multiFileMessage]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: { text: 'Summary' } }),
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        false, // Non-streaming
+        mockSetProgress,
+      );
+      
+      // First two requests are non-streaming (for summaries)
+      const firstRequestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(firstRequestBody.stream).toBe(false);
+      
+      // Final request should also be non-streaming
+      const finalRequestBody = JSON.parse(mockFetch.mock.calls[2][1].body);
+      expect(finalRequestBody.stream).toBe(false);
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle very long filenames', async () => {
+      const longFilename = 'a'.repeat(255) + '.pdf';
+      const multiFileMessage: Message = {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Analyze' },
+          { type: 'file_url', url: 'file1.pdf', originalFilename: longFilename },
+          { type: 'file_url', url: 'file2.pdf', originalFilename: 'normal.pdf' },
+        ],
+        messageType: 'text',
+      };
+      
+      const conversation = createMockConversation([multiFileMessage]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: { text: 'Summary' } }),
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      expect(mockSetRequestStatusMessage).toHaveBeenCalledWith(`Processing ${longFilename}...`);
+    });
+
+    it('should handle special characters in filenames', async () => {
+      const specialFilename = 'file with spaces & special!@#$%^&*()chars.pdf';
+      const multiFileMessage: Message = {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Analyze' },
+          { type: 'file_url', url: 'file1.pdf', originalFilename: specialFilename },
+          { type: 'file_url', url: 'file2.pdf', originalFilename: 'normal.pdf' },
+        ],
+        messageType: 'text',
+      };
+      
+      const conversation = createMockConversation([multiFileMessage]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: { text: 'Summary' } }),
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      const finalRequestCall = mockFetch.mock.calls[2];
+      const finalRequestBody = JSON.parse(finalRequestCall[1].body);
+      const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
+      
+      // Should properly escape special characters in the prompt
+      expect(finalMessage.content[0].text).toContain(specialFilename);
+    });
+
+    it('should handle maximum number of files (10+)', async () => {
+      const files = Array.from({ length: 10 }, (_, i) => ({
+        type: 'file_url' as const,
+        url: `file${i}.pdf`,
+        originalFilename: `file${i}.pdf`,
+      }));
+      
+      const multiFileMessage: Message = {
+        role: 'user',
+        content: [
+          { type: 'text', text: 'Analyze all' },
+          ...files,
+        ],
+        messageType: 'text',
+      };
+      
+      const conversation = createMockConversation([multiFileMessage]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ data: { text: 'Summary' } }),
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      // Should make 10 summary requests + 1 final request
+      expect(mockFetch).toHaveBeenCalledTimes(11);
+      
+      // Progress should be updated correctly
+      const expectedProgress = [0, 9.09, 18.18, 27.27, 36.36, 45.45, 54.55, 63.64, 72.73, 81.82, 90.91];
+      expectedProgress.forEach(progress => {
+        expect(mockSetProgress).toHaveBeenCalledWith(expect.closeTo(progress, 0.1));
+      });
+    });
+
+    it('should handle empty message history', async () => {
+      const message: Message = {
+        role: 'user',
+        content: 'First message',
+      };
+      
+      const conversation = createMockConversation([message]);
+      
+      mockFetch.mockResolvedValue({
+        ok: true,
+        body: new ReadableStream(),
+      });
+      
+      await makeRequest(
+        null,
+        mockSetRequestStatusMessage,
+        conversation,
+        'api-key',
+        [],
+        'System prompt',
+        0.5,
+        true,
+        mockSetProgress,
+      );
+      
+      const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
+      expect(requestBody.messages).toHaveLength(1);
+      expect(requestBody.messages[0].content).toBe('First message');
     });
   });
 
