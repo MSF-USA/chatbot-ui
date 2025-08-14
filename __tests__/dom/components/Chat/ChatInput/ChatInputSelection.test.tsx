@@ -39,6 +39,15 @@ vi.mock('next-i18next', () => ({
   }),
 }));
 
+vi.mock('next/router', () => ({
+  useRouter: () => ({
+    locale: 'en',
+    locales: ['en', 'fr'],
+    push: vi.fn(),
+    asPath: '/',
+  }),
+}));
+
 // Mock command parser
 vi.mock('@/services/localizedCommandParser', () => ({
   LocalizedCommandParser: {
