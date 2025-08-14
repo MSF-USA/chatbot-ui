@@ -152,6 +152,7 @@ export const ChatInput = ({
   const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
   const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
@@ -707,6 +708,7 @@ export const ChatInput = ({
     setVariables(parsedVariables);
 
     if (parsedVariables.length > 0) {
+      setSelectedPrompt(prompt);  // Store the selected prompt
       setIsModalVisible(true);
     } else {
       setTextFieldValue((prevContent) => {
@@ -1377,12 +1379,15 @@ export const ChatInput = ({
             )}
           </div>
 
-          {isModalVisible && (
+          {isModalVisible && selectedPrompt && (
             <VariableModal
-              prompt={sortedFilteredPrompts[activePromptIndex]}
+              prompt={selectedPrompt}
               variables={variables}
               onSubmit={handleSubmit}
-              onClose={() => setIsModalVisible(false)}
+              onClose={() => {
+                setIsModalVisible(false);
+                setSelectedPrompt(null);  // Clear selected prompt when closing
+              }}
             />
           )}
         </div>
