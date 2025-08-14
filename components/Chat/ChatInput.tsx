@@ -152,7 +152,7 @@ export const ChatInput = ({
   const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
+  const [promptForVariableModal, setPromptForVariableModal] = useState<Prompt | null>(null);
   const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
   const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
@@ -499,7 +499,7 @@ export const ChatInput = ({
    * Unified handler for selecting items from the dropdown (commands or prompts)
    * @param index - The index of the selected item in the combined list
    */
-  const handleItemSelection = (index: number) => {
+  const handleDropdownItemSelection = (index: number) => {
     const commandsCount = commandMode ? filteredCommands.length : 0;
     
     if (index < commandsCount) {
@@ -580,7 +580,7 @@ export const ChatInput = ({
         break;
       case 'Enter':
         event.preventDefault();
-        handleItemSelection(activePromptIndex);
+        handleDropdownItemSelection(activePromptIndex);
         if (submitType !== 'text') {
           setSubmitType('text');
         }
@@ -708,7 +708,7 @@ export const ChatInput = ({
     setVariables(parsedVariables);
 
     if (parsedVariables.length > 0) {
-      setSelectedPrompt(prompt);  // Store the selected prompt
+      setPromptForVariableModal(prompt);  // Store the selected prompt for the variable modal
       setIsModalVisible(true);
     } else {
       setTextFieldValue((prevContent) => {
@@ -1246,7 +1246,7 @@ export const ChatInput = ({
                     prompts={sortedFilteredPrompts}
                     commands={filteredCommands}
                     showCommands={commandMode}
-                    onSelect={handleItemSelection}
+                    onSelect={handleDropdownItemSelection}
                     onMouseOver={setActivePromptIndex}
                     promptListRef={promptListRef}
                     onImmediateCommandExecution={(command) => {
@@ -1379,14 +1379,14 @@ export const ChatInput = ({
             )}
           </div>
 
-          {isModalVisible && selectedPrompt && (
+          {isModalVisible && promptForVariableModal && (
             <VariableModal
-              prompt={selectedPrompt}
+              prompt={promptForVariableModal}
               variables={variables}
               onSubmit={handleSubmit}
               onClose={() => {
                 setIsModalVisible(false);
-                setSelectedPrompt(null);  // Clear selected prompt when closing
+                setPromptForVariableModal(null);  // Clear prompt for variable modal when closing
               }}
             />
           )}
