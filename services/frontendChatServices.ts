@@ -227,12 +227,12 @@ Document metadata: ${filename}
       if (content.type === 'file_url') {
         fileSummaries.push({
           filename: content.originalFilename,
-          summary: responseData.text ?? '',
+          summary: responseData.data?.text ?? responseData.text ?? '',
         });
       } else {
         fileSummaries.push({
           filename: `Image: ${content.image_url.url.split('/').pop()}`,
-          summary: responseData.text ?? '',
+          summary: responseData.data?.text ?? responseData.text ?? '',
         });
       }
 
