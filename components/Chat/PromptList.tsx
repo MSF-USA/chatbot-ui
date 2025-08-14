@@ -4,7 +4,7 @@ import {
   IconRobot,
   IconSettings,
 } from '@tabler/icons-react';
-import { FC, MutableRefObject, useState } from 'react';
+import React, { FC, MutableRefObject, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
