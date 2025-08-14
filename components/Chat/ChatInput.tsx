@@ -14,6 +14,7 @@ import React, {
 import toast from 'react-hot-toast';
 
 import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
 
 import {
   CommandDefinition,
@@ -120,6 +121,8 @@ export const ChatInput = ({
   onAddChatMessages,
 }: Props) => {
   const { t } = useTranslation('chat');
+  const router = useRouter();
+  const currentLocale = router.locale || 'en';
 
   const {
     state: {
@@ -324,7 +327,7 @@ export const ChatInput = ({
         currentMessage: currentMessage,
       };
 
-      const parsed = commandParser.parseLocalizedInput(textFieldValue, 'en'); // TODO: Use actual locale
+      const parsed = commandParser.parseLocalizedInput(textFieldValue, currentLocale);
       if (parsed && parsed.valid) {
         const executionResult = commandParser.executeCommand(
           parsed,
@@ -673,9 +676,9 @@ export const ChatInput = ({
         };
         const parsed = commandParser.parseLocalizedInput(
           input,
-          'en',
+          currentLocale,
           commandContext,
-        ); // TODO: Use actual locale
+        );
         setParsedCommand(parsed);
 
         // Show prompt list and set command mode
