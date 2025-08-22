@@ -7,6 +7,8 @@ import {
   OPENAI_API_VERSION,
   OPENAI_ORGANIZATION,
   findWorkingConfiguration,
+  parseApiVersionDate,
+  determineApiVersion,
 } from '@/utils/app/const';
 
 import { beforeEach, describe, expect, it, vi, afterEach } from 'vitest';
@@ -111,43 +113,41 @@ describe('OPENAI_API_VERSION determination logic', () => {
   const originalEnv = process.env;
   let consoleWarnSpy: any;
 
-  function parseApiVersionDate(version: string | undefined): Date | null {
-    if (!version) return null;
+  // Helper function to test determineApiVersion with mocked env variables
+  function testDetermineApiVersion(envVersion: string | undefined, forceEnvVersion: string | undefined): string {
+    const originalApiVersion = process.env.OPENAI_API_VERSION;
+    const originalForceFlag = process.env.FORCE_OPENAI_API_VERSION;
     
-    const dateMatch = version.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (!dateMatch) return null;
-    
-    const [, year, month, day] = dateMatch;
-    const date = new Date(`${year}-${month}-${day}`);
-    
-    if (isNaN(date.getTime())) return null;
-    
-    return date;
-  }
-
-  function determineApiVersion(envVersion: string | undefined, forceEnvVersion: string | undefined): string {
-    const fallbackVersion = '2025-03-01-preview';
-    
-    if (forceEnvVersion === 'true') {
-      return envVersion || fallbackVersion;
+    // Set test environment variables
+    if (envVersion !== undefined) {
+      process.env.OPENAI_API_VERSION = envVersion;
+    } else {
+      delete process.env.OPENAI_API_VERSION;
     }
     
-    try {
-      const envDate = parseApiVersionDate(envVersion);
-      const fallbackDate = parseApiVersionDate(fallbackVersion);
-      
-      if (envDate && fallbackDate) {
-        return envDate >= fallbackDate ? envVersion! : fallbackVersion;
-      }
-      
-      if (envDate && !fallbackDate) return envVersion!;
-      if (!envDate && fallbackDate) return fallbackVersion;
-      
-      return envVersion || fallbackVersion;
-    } catch (error) {
-      console.warn('Error parsing API version dates, using fallback logic:', error);
-      return envVersion || fallbackVersion;
+    if (forceEnvVersion !== undefined) {
+      process.env.FORCE_OPENAI_API_VERSION = forceEnvVersion;
+    } else {
+      delete process.env.FORCE_OPENAI_API_VERSION;
     }
+    
+    // Call the actual production function
+    const result = determineApiVersion();
+    
+    // Restore original environment
+    if (originalApiVersion !== undefined) {
+      process.env.OPENAI_API_VERSION = originalApiVersion;
+    } else {
+      delete process.env.OPENAI_API_VERSION;
+    }
+    
+    if (originalForceFlag !== undefined) {
+      process.env.FORCE_OPENAI_API_VERSION = originalForceFlag;
+    } else {
+      delete process.env.FORCE_OPENAI_API_VERSION;
+    }
+    
+    return result;
   }
 
   beforeEach(() => {
@@ -201,168 +201,168 @@ describe('OPENAI_API_VERSION determination logic', () => {
 
   describe('Version comparison logic', () => {
     it('selects environment version when newer than fallback', () => {
-      const result = determineApiVersion('2025-04-01-preview', undefined);
+      const result = testDetermineApiVersion('2025-04-01-preview', undefined);
       expect(result).toBe('2025-04-01-preview');
     });
 
     it('selects fallback when newer than environment version', () => {
-      const result = determineApiVersion('2025-02-01-preview', undefined);
+      const result = testDetermineApiVersion('2025-02-01-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles equal dates (returns environment version)', () => {
-      const result = determineApiVersion('2025-03-01-preview', undefined);
+      const result = testDetermineApiVersion('2025-03-01-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles previous year in environment version', () => {
-      const result = determineApiVersion('2024-12-31-preview', undefined);
+      const result = testDetermineApiVersion('2024-12-31-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles future year in environment version', () => {
-      const result = determineApiVersion('2026-01-01-preview', undefined);
+      const result = testDetermineApiVersion('2026-01-01-preview', undefined);
       expect(result).toBe('2026-01-01-preview');
     });
 
     it('handles dates at month boundaries', () => {
-      const result = determineApiVersion('2025-01-31-preview', undefined);
+      const result = testDetermineApiVersion('2025-01-31-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles dates at year boundaries', () => {
-      const result = determineApiVersion('2024-12-31', undefined);
+      const result = testDetermineApiVersion('2024-12-31', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
   });
 
   describe('FORCE_OPENAI_API_VERSION flag', () => {
     it('uses environment version when force flag is true and env is older', () => {
-      const result = determineApiVersion('2025-02-01-preview', 'true');
+      const result = testDetermineApiVersion('2025-02-01-preview', 'true');
       expect(result).toBe('2025-02-01-preview');
     });
 
     it('uses environment version when force flag is true and env is newer', () => {
-      const result = determineApiVersion('2025-04-01-preview', 'true');
+      const result = testDetermineApiVersion('2025-04-01-preview', 'true');
       expect(result).toBe('2025-04-01-preview');
     });
 
     it('uses fallback when force flag is true but no env variable', () => {
-      const result = determineApiVersion(undefined, 'true');
+      const result = testDetermineApiVersion(undefined, 'true');
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('ignores force flag when not set to "true"', () => {
-      const result = determineApiVersion('2025-02-01-preview', 'false');
+      const result = testDetermineApiVersion('2025-02-01-preview', 'false');
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('ignores force flag when undefined', () => {
-      const result = determineApiVersion('2025-02-01-preview', undefined);
+      const result = testDetermineApiVersion('2025-02-01-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
   });
 
   describe('Edge cases and error handling', () => {
     it('handles empty string environment variable', () => {
-      const result = determineApiVersion('', undefined);
+      const result = testDetermineApiVersion('', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles whitespace-only environment variable', () => {
-      const result = determineApiVersion('   ', undefined);
+      const result = testDetermineApiVersion('   ', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles partial date format', () => {
-      const result = determineApiVersion('2025-04', undefined);
+      const result = testDetermineApiVersion('2025-04', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles date with extra text after preview', () => {
-      const result = determineApiVersion('2025-04-01-preview-extra', undefined);
+      const result = testDetermineApiVersion('2025-04-01-preview-extra', undefined);
       expect(result).toBe('2025-04-01-preview-extra');
     });
 
     it('handles date with different separator', () => {
-      const result = determineApiVersion('2025/04/01', undefined);
+      const result = testDetermineApiVersion('2025/04/01', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles leap year date (Feb 29)', () => {
-      const result = determineApiVersion('2024-02-29-preview', undefined);
+      const result = testDetermineApiVersion('2024-02-29-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles invalid leap year date (Feb 29 in non-leap year)', () => {
       // JavaScript Date constructor adjusts Feb 29 in non-leap year to March 1
       // The date will be valid but different, so it won't be newer than fallback
-      const result = determineApiVersion('2025-02-29-preview', undefined);
+      const result = testDetermineApiVersion('2025-02-29-preview', undefined);
       // The date parser will create a valid date (March 1, 2025)
       // which equals the fallback date, so environment version is returned
       expect(result).toBe('2025-02-29-preview');
     });
 
     it('handles date at start of year', () => {
-      const result = determineApiVersion('2025-01-01-preview', undefined);
+      const result = testDetermineApiVersion('2025-01-01-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles date at end of year', () => {
-      const result = determineApiVersion('2025-12-31-preview', undefined);
+      const result = testDetermineApiVersion('2025-12-31-preview', undefined);
       expect(result).toBe('2025-12-31-preview');
     });
 
     it('handles numeric-only version', () => {
-      const result = determineApiVersion('20250401', undefined);
+      const result = testDetermineApiVersion('20250401', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles version with letters', () => {
-      const result = determineApiVersion('v2025-04-01', undefined);
+      const result = testDetermineApiVersion('v2025-04-01', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('handles zero-padded dates correctly', () => {
-      const result = determineApiVersion('2025-04-01-preview', undefined);
+      const result = testDetermineApiVersion('2025-04-01-preview', undefined);
       expect(result).toBe('2025-04-01-preview');
     });
 
     it('handles dates without zero-padding', () => {
-      const result = determineApiVersion('2025-4-1-preview', undefined);
+      const result = testDetermineApiVersion('2025-4-1-preview', undefined);
       expect(result).toBe('2025-03-01-preview');
     });
   });
 
   describe('Multiple scenario combinations', () => {
     it('handles force flag with invalid date', () => {
-      const result = determineApiVersion('invalid-date', 'true');
+      const result = testDetermineApiVersion('invalid-date', 'true');
       expect(result).toBe('invalid-date');
     });
 
     it('handles force flag with empty env variable', () => {
-      const result = determineApiVersion('', 'true');
+      const result = testDetermineApiVersion('', 'true');
       expect(result).toBe('2025-03-01-preview');
     });
 
     it('compares dates correctly when both are valid but different formats', () => {
-      const result = determineApiVersion('2025-04-01', undefined);
+      const result = testDetermineApiVersion('2025-04-01', undefined);
       expect(result).toBe('2025-04-01');
     });
 
     it('handles same date different format suffix', () => {
-      const result = determineApiVersion('2025-03-01', undefined);
+      const result = testDetermineApiVersion('2025-03-01', undefined);
       expect(result).toBe('2025-03-01');
     });
 
     it('verifies console warning on error', () => {
       // Mock a scenario that would cause an error in try-catch
       const originalDate = global.Date;
-      global.Date = vi.fn().mockImplementation(() => {
+      (global as any).Date = vi.fn().mockImplementation(() => {
         throw new Error('Date constructor error');
       });
       
-      const result = determineApiVersion('2025-04-01', undefined);
+      const result = testDetermineApiVersion('2025-04-01', undefined);
       expect(result).toBe('2025-04-01');
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         'Error parsing API version dates, using fallback logic:',
