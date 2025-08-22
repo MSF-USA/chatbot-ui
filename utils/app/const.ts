@@ -24,8 +24,66 @@ export const DEFAULT_USE_KNOWLEDGE_BASE =
 
 export const OPENAI_API_TYPE = process.env.OPENAI_API_TYPE || 'azure';
 
-export const OPENAI_API_VERSION =
-  process.env.OPENAI_API_VERSION || '2025-03-01-preview';
+/**
+ * Helper function to parse Azure API version dates
+ * Expected format: YYYY-MM-DD or YYYY-MM-DD-preview
+ */
+function parseApiVersionDate(version: string | undefined): Date | null {
+  if (!version) return null;
+  
+  // Extract date part from version string (handles both YYYY-MM-DD and YYYY-MM-DD-preview)
+  const dateMatch = version.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!dateMatch) return null;
+  
+  const [, year, month, day] = dateMatch;
+  const date = new Date(`${year}-${month}-${day}`);
+  
+  // Check if the date is valid
+  if (isNaN(date.getTime())) return null;
+  
+  return date;
+}
+
+/**
+ * Determines the OPENAI_API_VERSION to use based on:
+ * 1. If FORCE_OPENAI_API_VERSION is 'true', uses env var with fallback (original logic)
+ * 2. Otherwise, compares dates and uses the more recent one
+ * 3. Falls back to original logic if date parsing fails
+ */
+function determineApiVersion(): string {
+  const envVersion = process.env.OPENAI_API_VERSION;
+  const fallbackVersion = '2025-03-01-preview';
+  const forceEnvVersion = process.env.FORCE_OPENAI_API_VERSION === 'true';
+  
+  // If forced, use original logic
+  if (forceEnvVersion) {
+    return envVersion || fallbackVersion;
+  }
+  
+  // Try to parse and compare dates
+  try {
+    const envDate = parseApiVersionDate(envVersion);
+    const fallbackDate = parseApiVersionDate(fallbackVersion);
+    
+    // If both dates parsed successfully, use the more recent one
+    if (envDate && fallbackDate) {
+      return envDate >= fallbackDate ? envVersion! : fallbackVersion;
+    }
+    
+    // If only one date parsed, use the one with valid date
+    if (envDate && !fallbackDate) return envVersion!;
+    if (!envDate && fallbackDate) return fallbackVersion;
+    
+    // If neither parsed, fall back to original logic
+    return envVersion || fallbackVersion;
+  } catch (error) {
+    // On any error, fall back to original logic
+    console.warn('Error parsing API version dates, using fallback logic:', error);
+    return envVersion || fallbackVersion;
+  }
+}
+
+export const OPENAI_API_VERSION = determineApiVersion();
 
 export const OPENAI_ORGANIZATION = process.env.OPENAI_ORGANIZATION || '';
 
