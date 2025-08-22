@@ -28,7 +28,7 @@ export const OPENAI_API_TYPE = process.env.OPENAI_API_TYPE || 'azure';
  * Helper function to parse Azure API version dates
  * Expected format: YYYY-MM-DD or YYYY-MM-DD-preview
  */
-function parseApiVersionDate(version: string | undefined): Date | null {
+export function parseApiVersionDate(version: string | undefined): Date | null {
   if (!version) return null;
   
   // Extract date part from version string (handles both YYYY-MM-DD and YYYY-MM-DD-preview)
@@ -50,7 +50,7 @@ function parseApiVersionDate(version: string | undefined): Date | null {
  * 2. Otherwise, compares dates and uses the more recent one
  * 3. Falls back to original logic if date parsing fails
  */
-function determineApiVersion(): string {
+export function determineApiVersion(): string {
   const envVersion = process.env.OPENAI_API_VERSION;
   const fallbackVersion = '2025-03-01-preview';
   const forceEnvVersion = process.env.FORCE_OPENAI_API_VERSION === 'true';
@@ -66,12 +66,12 @@ function determineApiVersion(): string {
     const fallbackDate = parseApiVersionDate(fallbackVersion);
     
     // If both dates parsed successfully, use the more recent one
-    if (envDate && fallbackDate) {
-      return envDate >= fallbackDate ? envVersion! : fallbackVersion;
+    if (envDate && fallbackDate && envVersion) {
+      return envDate >= fallbackDate ? envVersion : fallbackVersion;
     }
     
     // If only one date parsed, use the one with valid date
-    if (envDate && !fallbackDate) return envVersion!;
+    if (envDate && !fallbackDate && envVersion) return envVersion;
     if (!envDate && fallbackDate) return fallbackVersion;
     
     // If neither parsed, fall back to original logic
