@@ -18,6 +18,7 @@ export enum OpenAIModelID {
   GPT_4 = 'gpt-4',
   GPT_41 = 'gpt-4.1',
   GPT_45 = 'gpt-45',
+  GPT_5 = 'gpt-5',
   GPT_o1 = 'o1',
   GPT_o1_mini = 'gpt-o1-mini',
   GPT_o3_mini = 'o3-mini',
@@ -79,6 +80,14 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     modelType: 'foundational',
     isLegacy: true,
+  },
+  [OpenAIModelID.GPT_5]: {
+    id: OpenAIModelID.GPT_5,
+    name: 'gpt-5',
+    maxLength: 80000,
+    tokenLimit: 8000,
+    modelType: 'reasoning',
+    isLegacy: false
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
