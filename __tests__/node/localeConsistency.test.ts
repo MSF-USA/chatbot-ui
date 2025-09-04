@@ -233,8 +233,8 @@ describe('Locale Consistency', () => {
       errorMessage += `- Locales checked: ${locales.length}\n`;
       errorMessage += `- Translation files checked: ${sourceFiles.length}\n`;
       
+      console.error(errorMessage);
       expect(Object.keys(allMissingKeys).length + Object.keys(extraKeys).length).toBe(0);
-      throw new Error(errorMessage);
     }
   });
 
@@ -258,8 +258,8 @@ describe('Locale Consistency', () => {
 
     if (invalidFiles.length > 0) {
       const errorMessage = `\nInvalid JSON files detected:\n\n${invalidFiles.join('\n')}`;
+      console.error(errorMessage);
       expect(invalidFiles.length).toBe(0);
-      throw new Error(errorMessage);
     }
   });
 });
