@@ -20,5 +20,10 @@
   "uploadingFile": "Téléchargement du fichier...",
   "removeFile": "Supprimer et sélectionner un autre fichier",
   "transcriptionErrorAttempt": "Erreur lors de la transcription (Tentative {{attempt}} sur 3). Nouvelle tentative...",
-  "rateLimitExceededWaiting": "Limite de débit dépassée. Attente de {{seconds}} secondes avant de réessayer..."
+  "rateLimitExceededWaiting": "Limite de débit dépassée. Attente de {{seconds}} secondes avant de réessayer...",
+  "cancel": "Annuler",
+  "confirm": "Confirmer",
+  "confirmCancelTranscription": "Êtes-vous sûr de vouloir annuler la transcription en cours ?",
+  "confirmDiscardTranscript": "Êtes-vous sûr de vouloir jeter la transcription sans l'utiliser ?",
+  "confirmTitle": "Confirmer l'action"
 }
