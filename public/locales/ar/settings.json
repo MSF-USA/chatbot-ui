@@ -26,5 +26,16 @@
   "Storage almost full": "التخزين ممتلئ تقريبًا! فكر في مسح المحادثات القديمة.",
   "Local storage info": "يتم تخزين جميع البيانات محليًا في مخزن المتصفح المحلي وتبقى بالكامل على جهازك.",
   "Data Actions": "إجراءات البيانات",
-  "Export data": "تصدير البيانات"
+  "Export data": "تصدير البيانات",
+  "A description for your prompt.": "وصف لمطالبتك.",
+  "A name for your prompt.": "اسم لمطالبتك.",
+  "Description": "الوصف",
+  "Name": "الاسم",
+  "New folder": "مجلد جديد",
+  "New prompt": "مطلب جديد",
+  "No prompts.": "لا توجد مطالب.",
+  "Prompt": "المطالبة",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "محتوى المطالبة. استخدم {{}} للدلالة على متغير. مثال: {{name}} هو {{adjective}} {{noun}}.",
+  "Search prompts...": "ابحث عن المطالب...",
+  "Run Typewriter Intro": "تشغيل مقدمة آلة الكتابة"
 }

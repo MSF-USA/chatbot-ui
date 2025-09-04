@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "تحذير التخزين",
+  "Your browser storage is almost full!": "تخزين المتصفح الخاص بك ممتلئ تقريبًا!",
+  "Current usage": "الاستخدام الحالي",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "إذا امتلأ التخزين الخاص بك تمامًا، قد يتوقف التطبيق عن العمل بشكل صحيح وقد تفقد الوصول إلى محادثاتك.",
+  "Options to free up space": "خيارات لتحرير المساحة",
+  "1. Export your conversations": "1. تصدير محادثاتك",
+  "Save your conversations to your computer before clearing them.": "احفظ محادثاتك على جهاز الكمبيوتر الخاص بك قبل مسحها.",
+  "Export All Data": "تصدير جميع البيانات",
+  "2. Clear older conversations": "2. مسح المحادثات القديمة",
+  "Keep recent conversations": "احتفظ بالمحادثات الحديثة",
+  "This will remove": "هذا سيزيل",
+  "older conversations": "المحادثات القديمة",
+  "Space freed": "تم تحرير المساحة",
+  "Clear Older Conversations": "مسح المحادثات القديمة",
+  "Close": "إغلاق",
+  "Storage Usage": "استخدام التخزين",
+  "Used": "المستخدم",
+  "Local storage is used to save your conversations, settings, and preferences.": "يتم استخدام التخزين المحلي لحفظ محادثاتك وإعداداتك وتفضيلاتك."
+}
