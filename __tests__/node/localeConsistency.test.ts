@@ -262,4 +262,174 @@ describe('Locale Consistency', () => {
       expect(invalidFiles.length).toBe(0);
     }
   });
+
+  it('should not have empty translation files', () => {
+    const locales = getAvailableLocales();
+    const emptyFiles: string[] = [];
+
+    locales.forEach(locale => {
+      const files = getTranslationFiles(locale);
+      
+      files.forEach(file => {
+        const filePath = path.join(LOCALES_PATH, locale, file);
+        const content = readJsonFile(filePath);
+        
+        if (content && Object.keys(content).length === 0) {
+          emptyFiles.push(`${locale}/${file}`);
+        }
+      });
+    });
+
+    if (emptyFiles.length > 0) {
+      const errorMessage = `\nEmpty translation files detected (no keys):\n\n${emptyFiles.join('\n')}`;
+      console.error(errorMessage);
+      expect(emptyFiles.length).toBe(0);
+    }
+  });
+
+  it('should have consistent placeholders in translations', () => {
+    const locales = getAvailableLocales();
+    const sourceFiles = getTranslationFiles(SOURCE_LOCALE);
+    const placeholderMismatches: string[] = [];
+
+    // Helper to extract placeholders from a string
+    function extractPlaceholders(str: string): string[] {
+      const matches = str.match(/\{\{[^}]+\}\}/g);
+      return matches ? matches.sort() : [];
+    }
+
+    sourceFiles.forEach(file => {
+      const sourceFilePath = path.join(LOCALES_PATH, SOURCE_LOCALE, file);
+      const sourceContent = readJsonFile(sourceFilePath);
+      
+      if (!sourceContent) return;
+
+      // Check each key that has placeholders
+      Object.entries(sourceContent).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          const sourcePlaceholders = extractPlaceholders(value);
+          
+          if (sourcePlaceholders.length > 0) {
+            locales.forEach(locale => {
+              if (locale === SOURCE_LOCALE) return;
+              
+              const localeFilePath = path.join(LOCALES_PATH, locale, file);
+              const localeContent = readJsonFile(localeFilePath);
+              
+              if (localeContent && localeContent[key]) {
+                const localePlaceholders = extractPlaceholders(localeContent[key]);
+                
+                if (JSON.stringify(sourcePlaceholders) !== JSON.stringify(localePlaceholders)) {
+                  placeholderMismatches.push(
+                    `${locale}/${file} - Key "${key}": Expected ${sourcePlaceholders.join(', ')} but found ${localePlaceholders.join(', ') || 'none'}`
+                  );
+                }
+              }
+            });
+          }
+        }
+      });
+    });
+
+    if (placeholderMismatches.length > 0) {
+      const errorMessage = `\nPlaceholder mismatches detected:\n\n${placeholderMismatches.join('\n')}`;
+      console.error(errorMessage);
+      expect(placeholderMismatches.length).toBe(0);
+    }
+  });
+
+  it('should not have empty translation values', () => {
+    const locales = getAvailableLocales();
+    const emptyValues: string[] = [];
+
+    locales.forEach(locale => {
+      const files = getTranslationFiles(locale);
+      
+      files.forEach(file => {
+        const filePath = path.join(LOCALES_PATH, locale, file);
+        const content = readJsonFile(filePath);
+        
+        if (content) {
+          Object.entries(content).forEach(([key, value]) => {
+            if (value === '') {
+              emptyValues.push(`${locale}/${file} - Key "${key}" has empty value`);
+            }
+          });
+        }
+      });
+    });
+
+    if (emptyValues.length > 0) {
+      const errorMessage = `\nEmpty translation values detected:\n\n${emptyValues.join('\n')}`;
+      console.error(errorMessage);
+      expect(emptyValues.length).toBe(0);
+    }
+  });
+
+  it('should warn about potentially untranslated content', () => {
+    const sourceFiles = getTranslationFiles(SOURCE_LOCALE);
+    const suspiciousTranslations: string[] = [];
+    
+    // Common terms that might legitimately remain in English
+    const commonEnglishTerms = ['API', 'URL', 'ID', 'JSON', 'HTML', 'CSS', 'HTTP', 'HTTPS', 'OK'];
+    
+    sourceFiles.forEach(file => {
+      const sourceFilePath = path.join(LOCALES_PATH, SOURCE_LOCALE, file);
+      const sourceContent = readJsonFile(sourceFilePath);
+      
+      if (!sourceContent) return;
+
+      Object.entries(sourceContent).forEach(([key, value]) => {
+        if (typeof value === 'string' && value.length > 2 && !commonEnglishTerms.includes(value)) {
+          const locales = getAvailableLocales();
+          
+          locales.forEach(locale => {
+            if (locale === SOURCE_LOCALE) return;
+            
+            const localeFilePath = path.join(LOCALES_PATH, locale, file);
+            const localeContent = readJsonFile(localeFilePath);
+            
+            // Check if translation is identical to English (potentially untranslated)
+            if (localeContent && localeContent[key] === value) {
+              suspiciousTranslations.push(`${locale}/${file} - Key "${key}" appears untranslated (identical to English)`);
+            }
+          });
+        }
+      });
+    });
+
+    if (suspiciousTranslations.length > 0) {
+      // This is a warning, not an error
+      console.warn(`\n⚠️  Potentially untranslated content detected:\n\n${suspiciousTranslations.slice(0, 20).join('\n')}${suspiciousTranslations.length > 20 ? `\n... and ${suspiciousTranslations.length - 20} more` : ''}`);
+    }
+  });
+
+  it('should detect file size anomalies', () => {
+    const locales = getAvailableLocales();
+    const anomalies: string[] = [];
+    const MIN_FILE_SIZE = 100; // bytes
+    
+    locales.forEach(locale => {
+      const files = getTranslationFiles(locale);
+      
+      files.forEach(file => {
+        const filePath = path.join(LOCALES_PATH, locale, file);
+        try {
+          const stats = fs.statSync(filePath);
+          
+          if (stats.size < MIN_FILE_SIZE) {
+            anomalies.push(`${locale}/${file} is suspiciously small (${stats.size} bytes)`);
+          }
+        } catch (error) {
+          // File doesn't exist, handled by other tests
+        }
+      });
+    });
+
+    if (anomalies.length > 0) {
+      const errorMessage = `\nFile size anomalies detected:\n\n${anomalies.join('\n')}`;
+      console.error(errorMessage);
+      expect(anomalies.length).toBe(0);
+    }
+  });
 });
