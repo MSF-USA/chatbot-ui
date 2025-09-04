@@ -35,5 +35,7 @@
   "A description for your prompt.": "ለጥያቄዎ መግለጫ ይስጡ።",
   "Prompt": "ጥያቄ",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "የጥያቄው ይዘት። ተለዋዋጭን ለመጠቀም {{}} ይጠቀሙ። ለምሳሌ፦ {{name}} እንደ {{adjective}} {{noun}} ነው።",
-  "A name for your prompt.": "ለጥያቄዎ ስም ይስጡ።"
+  "A name for your prompt.": "ለጥያቄዎ ስም ይስጡ።",
+  "Run Typewriter Intro": "የታይፕዋይትር መግቢያ እንደ እንቅስቃሴ አስተካክል",
+  "Language": "ቋንቋ"
 }

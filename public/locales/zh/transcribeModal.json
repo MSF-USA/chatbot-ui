@@ -20,5 +20,10 @@
   "uploadingFile": "正在上传文件...",
   "removeFile": "移除并选择不同的文件",
   "transcriptionErrorAttempt": "转录期间出错（第 {{attempt}} 次尝试，共 3 次）。正在重试...",
-  "rateLimitExceededWaiting": "超出速率限制。等待 {{seconds}} 秒后重试..."
+  "rateLimitExceededWaiting": "超出速率限制。等待 {{seconds}} 秒后重试...",
+  "cancel": "取消",
+  "confirm": "确认",
+  "confirmCancelTranscription": "您确定要取消正在进行的转录吗？",
+  "confirmDiscardTranscript": "您确定要放弃未使用的转录文本吗？",
+  "confirmTitle": "确认操作"
 }

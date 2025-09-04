@@ -6,5 +6,21 @@
   "Search conversations...": "جستجوی مکالمات...",
   "New prompt": "فرمان جدید",
   "Dark mode": "حالت تاریک",
-  "Light mode": "حالت روشن"
+  "Light mode": "حالت روشن",
+  "A description for your prompt.": "توضیحی برای پیشنهاد شما.",
+  "A name for your prompt.": "نامی برای پیشنهاد شما.",
+  "Are you sure?": "آیا مطمئن هستید؟",
+  "Clear conversations": "پاک کردن مکالمات",
+  "Description": "توضیحات",
+  "Export data": "پشتیبان‌گیری از تاریخچه چت",
+  "Import data": "بازیابی تاریخچه چت",
+  "Name": "نام",
+  "New folder": "پوشه جدید",
+  "No conversations.": "مکالمه‌ای وجود ندارد.",
+  "No prompts.": "پیشنهادی وجود ندارد.",
+  "OpenAI API Key": "کلید API اوپن‌ای‌آی",
+  "Plugin Keys": "کلیدهای پلاگین",
+  "Prompt": "پیشنهاد",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "محتوای پیشنهاد. از {{}} برای نشان دادن یک متغیر استفاده کنید. مثال: {{name}} یک {{adjective}} {{noun}} است.",
+  "Search prompts...": "جستجوی پیشنهادات..."
 }

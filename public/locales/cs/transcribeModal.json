@@ -20,5 +20,10 @@
   "uploadingFile": "Nahrávání souboru...",
   "removeFile": "Odeberte a vyberte jiný soubor",
   "transcriptionErrorAttempt": "Chyba při přepisu (Pokus {{attempt}} ze 3). Opakování...",
-  "rateLimitExceededWaiting": "Překročen limit rychlosti. Čekám {{seconds}} sekund před opětovným pokusem..."
+  "rateLimitExceededWaiting": "Překročen limit rychlosti. Čekám {{seconds}} sekund před opětovným pokusem...",
+  "cancel": "Zrušit",
+  "confirm": "Potvrdit",
+  "confirmCancelTranscription": "Opravdu chcete zrušit probíhající přepis?",
+  "confirmDiscardTranscript": "Opravdu chcete zahodit přepis, aniž byste ho použili?",
+  "confirmTitle": "Potvrďte akci"
 }

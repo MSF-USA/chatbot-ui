@@ -6,5 +6,21 @@
   "Search conversations...": "Gesprekken doorzoeken...",
   "New prompt": "Nieuwe prompt",
   "Dark mode": "donkere modus",
-  "Light mode": "lichte modus"
+  "Light mode": "lichte modus",
+  "A description for your prompt.": "Een beschrijving voor je prompt.",
+  "A name for your prompt.": "Een naam voor je prompt.",
+  "Are you sure?": "Weet je het zeker?",
+  "Clear conversations": "Wis gesprekken",
+  "Description": "Beschrijving",
+  "Export data": "Maak een back-up van de chatgeschiedenis",
+  "Import data": "Herstel chatgeschiedenis",
+  "Name": "Naam",
+  "New folder": "Nieuwe map",
+  "No conversations.": "Geen gesprekken.",
+  "No prompts.": "Geen prompts.",
+  "OpenAI API Key": "OpenAI API-sleutel",
+  "Plugin Keys": "Plugin-sleutels",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Promptinhoud. Gebruik {{}} om een variabele aan te duiden. Bijv: {{name}} is een {{adjective}} {{noun}}",
+  "Search prompts...": "Zoek prompts..."
 }

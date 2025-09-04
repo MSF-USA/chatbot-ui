@@ -20,5 +20,10 @@
   "uploadingFile": "Tiedostoa ladataan...",
   "removeFile": "Poista ja valitse toinen tiedosto",
   "transcriptionErrorAttempt": "Virhe transkription aikana (Yritys {{attempt}} 3:sta). Yritetään uudelleen...",
-  "rateLimitExceededWaiting": "Nopeusrajoitus ylitetty. Odotetaan {{seconds}} sekuntia ennen uudelleenyrittämistä..."
+  "rateLimitExceededWaiting": "Nopeusrajoitus ylitetty. Odotetaan {{seconds}} sekuntia ennen uudelleenyrittämistä...",
+  "cancel": "Peruuta",
+  "confirm": "Vahvista",
+  "confirmCancelTranscription": "Oletko varma, että haluat peruuttaa käynnissä olevan litteroinnin?",
+  "confirmDiscardTranscript": "Oletko varma, että haluat hylätä litteroinnin käyttämättä sitä?",
+  "confirmTitle": "Vahvista toiminto"
 }

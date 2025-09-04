@@ -20,5 +20,10 @@
   "uploadingFile": "Încărcare fișier...",
   "removeFile": "Eliminați și selectați un alt fișier",
   "transcriptionErrorAttempt": "Eroare în timpul transcrierii (Încercare {{attempt}} din 3). Reîncercare...",
-  "rateLimitExceededWaiting": "Limită de rată depășită. Așteptând {{seconds}} secunde înainte de a reîncerca..."
+  "rateLimitExceededWaiting": "Limită de rată depășită. Așteptând {{seconds}} secunde înainte de a reîncerca...",
+  "cancel": "Anulează",
+  "confirm": "Confirmă",
+  "confirmCancelTranscription": "Ești sigur că vrei să anulezi transcrierea în curs?",
+  "confirmDiscardTranscript": "Ești sigur că vrei să renunți la transcriere fără a o folosi?",
+  "confirmTitle": "Confirmă Acțiunea"
 }

@@ -20,5 +20,10 @@
   "uploadingFile": "מעלה קובץ...",
   "removeFile": "הסר ובחר קובץ אחר",
   "transcriptionErrorAttempt": "שגיאה במהלך התמלול (ניסיון {{attempt}} מתוך 3). מנסה שוב...",
-  "rateLimitExceededWaiting": "חריגה ממגבלת הקצב. ממתין {{seconds}} שניות לפני ניסיון חוזר..."
+  "rateLimitExceededWaiting": "חריגה ממגבלת הקצב. ממתין {{seconds}} שניות לפני ניסיון חוזר...",
+  "cancel": "ביטול",
+  "confirm": "אישור",
+  "confirmCancelTranscription": "האם אתה בטוח שברצונך לבטל את ההקלטה המתקדמת?",
+  "confirmDiscardTranscript": "האם אתה בטוח שברצונך לזרוק את ההקלטה מבלי להשתמש בה?",
+  "confirmTitle": "אשר פעולה"
 }

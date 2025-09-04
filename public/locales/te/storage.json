@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "స్టోరేజ్ హెచ్చరిక",
+  "Your browser storage is almost full!": "మీ బ్రౌజర్ స్టోరేజ్ почти నిండింది!",
+  "Current usage": "ప్రస్తుత వినియోగం",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "మీ స్టోరేజ్ పూర్తిగా నిండితే, యాప్ సరిగ్గా పనిచేయడం ఆపవచ్చు మరియు మీరు మీ సంభాషణలకు యాక్సెస్ కోల్పోవచ్చు.",
+  "Options to free up space": "స్థలం ఖాళీ చేయడానికి ఎంపికలు",
+  "1. Export your conversations": "1. మీ సంభాషణలను ఎగుమతి చేయండి",
+  "Save your conversations to your computer before clearing them.": "అవి తొలగించే ముందు మీ కంప్యూటర్‌కు మీ సంభాషణలను సేవ్ చేయండి.",
+  "Export All Data": "అన్ని డేటాను ఎగుమతి చేయండి",
+  "2. Clear older conversations": "2. పాత సంభాషణలను తొలగించండి",
+  "Keep recent conversations": "తాజా సంభాషణలను ఉంచండి",
+  "This will remove": "ఇది తొలగిస్తుంది",
+  "older conversations": "పాత సంభాషణలు",
+  "Space freed": "స్థలం ఖాళీ చేయబడింది",
+  "Clear Older Conversations": "పాత సంభాషణలను తొలగించండి",
+  "Close": "మూసివేయి",
+  "Storage Usage": "స్టోరేజ్ వినియోగం",
+  "Used": "వినియోగించబడింది",
+  "Local storage is used to save your conversations, settings, and preferences.": "స్థానిక స్టోరేజ్ మీ సంభాషణలు, సెట్టింగులు మరియు ప్రాధాన్యతలను సేవ్ చేయడానికి ఉపయోగించబడుతుంది."
+}

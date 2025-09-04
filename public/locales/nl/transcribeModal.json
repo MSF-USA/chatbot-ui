@@ -20,5 +20,10 @@
   "uploadingFile": "Bestand wordt geüpload...",
   "removeFile": "Verwijderen en een ander bestand selecteren",
   "transcriptionErrorAttempt": "Fout tijdens transcriptie (Poging {{attempt}} van 3). Opnieuw proberen...",
-  "rateLimitExceededWaiting": "Limiet overschreden. Wachten {{seconds}} seconden voordat opnieuw geprobeerd wordt..."
+  "rateLimitExceededWaiting": "Limiet overschreden. Wachten {{seconds}} seconden voordat opnieuw geprobeerd wordt...",
+  "cancel": "Annuleren",
+  "confirm": "Bevestigen",
+  "confirmCancelTranscription": "Weet je zeker dat je de lopende transcriptie wilt annuleren?",
+  "confirmDiscardTranscript": "Weet je zeker dat je het transcript wilt weggooien zonder het te gebruiken?",
+  "confirmTitle": "Bevestig Actie"
 }

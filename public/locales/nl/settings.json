@@ -26,5 +26,16 @@
   "Storage almost full": "Opslag bijna vol! Overweeg oude gesprekken te wissen.",
   "Local storage info": "Alle gegevens worden lokaal opgeslagen in de localStorage van uw browser en blijven volledig op uw apparaat.",
   "Data Actions": "Gegevensacties",
-  "Export data": "Gegevens exporteren"
+  "Export data": "Gegevens exporteren",
+  "A description for your prompt.": "Een beschrijving voor je prompt.",
+  "A name for your prompt.": "Een naam voor je prompt.",
+  "Description": "Beschrijving",
+  "Name": "Naam",
+  "New folder": "Nieuwe map",
+  "New prompt": "Nieuwe prompt",
+  "No prompts.": "Geen prompts.",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Promptinhoud. Gebruik {{}} om een variabele aan te duiden. Bijv: {{name}} is een {{adjective}} {{noun}}.",
+  "Search prompts...": "Zoek prompts...",
+  "Run Typewriter Intro": "Voer Typewriter Intro uit"
 }

@@ -25,5 +25,17 @@
   "Storage almost full": "ගබඩාව ප්‍රායෝගිකව පිරී ඇත! පැරණි සංවාද මකන්න යෝජනා කරන්න.",
   "Local storage info": "සියලුම දත්ත ඔබේ බ්‍රවුසරයේ localStorage හි ප්‍රදේශීයව සුරකින අතර, ඔබේ උපකරණය මත සම්පූර්ණයෙන්ම රැඳී ඇත.",
   "Data Actions": "දත්ත ක්‍රියා",
-  "Export data": "දත්ත අපනයනය කරන්න"
+  "Export data": "දත්ත අපනයනය කරන්න",
+  "A description for your prompt.": "ඔබගේ ප්‍රේරණය සඳහා විස්තරයක්.",
+  "A name for your prompt.": "ඔබගේ ප්‍රේරණය සඳහා නමක්.",
+  "Description": "විස්තරය",
+  "Name": "නම",
+  "New folder": "නව ෆෝල්ඩරය",
+  "New prompt": "නව ප්‍රේරණය",
+  "No prompts.": "ප්‍රේරණ කිසිවක් නැත.",
+  "Prompt": "ප්‍රේරණය",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "ප්‍රේරණ අන්තර්ගතය. විචල්‍යයක් සලකුණු කිරීමට {{}} භාවිතා කරන්න. උදා: {{name}} යනු {{adjective}} {{noun}} වේ.",
+  "Search prompts...": "ප්‍රේරණ සොයන්න...",
+  "Run Typewriter Intro": "Typewriter හැඳින්වීම ක්‍රියාත්මක කරන්න",
+  "Language": "භාෂාව"
 }

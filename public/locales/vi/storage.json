@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Cảnh báo dung lượng",
+  "Your browser storage is almost full!": "Dung lượng trình duyệt của bạn gần đầy!",
+  "Current usage": "Sử dụng hiện tại",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Nếu dung lượng của bạn đầy hoàn toàn, ứng dụng có thể ngừng hoạt động đúng cách và bạn có thể mất quyền truy cập vào các cuộc trò chuyện của mình.",
+  "Options to free up space": "Tùy chọn để giải phóng không gian",
+  "1. Export your conversations": "1. Xuất các cuộc trò chuyện của bạn",
+  "Save your conversations to your computer before clearing them.": "Lưu các cuộc trò chuyện của bạn vào máy tính trước khi xóa chúng.",
+  "Export All Data": "Xuất tất cả dữ liệu",
+  "2. Clear older conversations": "2. Xóa các cuộc trò chuyện cũ",
+  "Keep recent conversations": "Giữ lại các cuộc trò chuyện gần đây",
+  "This will remove": "Điều này sẽ xóa",
+  "older conversations": "các cuộc trò chuyện cũ",
+  "Space freed": "Không gian đã được giải phóng",
+  "Clear Older Conversations": "Xóa các cuộc trò chuyện cũ",
+  "Close": "Đóng",
+  "Storage Usage": "Sử dụng dung lượng",
+  "Used": "Đã sử dụng",
+  "Local storage is used to save your conversations, settings, and preferences.": "Dung lượng lưu trữ cục bộ được sử dụng để lưu các cuộc trò chuyện, cài đặt và sở thích của bạn."
+}

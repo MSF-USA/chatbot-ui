@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Advertència d'emmagatzematge",
+  "Your browser storage is almost full!": "L'emmagatzematge del teu navegador està gairebé ple!",
+  "Current usage": "Ús actual",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Si el teu emmagatzematge es completa, l'aplicació pot deixar de funcionar correctament i podries perdre l'accés a les teves converses.",
+  "Options to free up space": "Opcions per alliberar espai",
+  "1. Export your conversations": "1. Exporta les teves converses",
+  "Save your conversations to your computer before clearing them.": "Desa les teves converses al teu ordinador abans de netejar-les.",
+  "Export All Data": "Exportar totes les dades",
+  "2. Clear older conversations": "2. Neteja les converses més antigues",
+  "Keep recent conversations": "Mantingues les converses recents",
+  "This will remove": "Això eliminarà",
+  "older conversations": "converses més antigues",
+  "Space freed": "Espai alliberat",
+  "Clear Older Conversations": "Netejar converses més antigues",
+  "Close": "Tancar",
+  "Storage Usage": "Ús d'emmagatzematge",
+  "Used": "Usat",
+  "Local storage is used to save your conversations, settings, and preferences.": "L'emmagatzematge local s'utilitza per desar les teves converses, configuracions i preferències."
+}

@@ -20,5 +20,10 @@
   "uploadingFile": "กำลังอัปโหลดไฟล์...",
   "removeFile": "นำออกและเลือกไฟล์อื่น",
   "transcriptionErrorAttempt": "เกิดข้อผิดพลาดระหว่างการถอดเสียง (ความพยายามครั้งที่ {{attempt}} จาก 3). กำลังลองใหม่...",
-  "rateLimitExceededWaiting": "เกินขีดจำกัดอัตรา กำลังรอ {{seconds}} วินาทีก่อนลองใหม่..."
+  "rateLimitExceededWaiting": "เกินขีดจำกัดอัตรา กำลังรอ {{seconds}} วินาทีก่อนลองใหม่...",
+  "cancel": "ยกเลิก",
+  "confirm": "ยืนยัน",
+  "confirmCancelTranscription": "คุณแน่ใจหรือว่าต้องการยกเลิกการถอดเสียงที่กำลังดำเนินการอยู่?",
+  "confirmDiscardTranscript": "คุณแน่ใจหรือว่าต้องการทิ้งเอกสารถอดเสียงโดยไม่ใช้มัน?",
+  "confirmTitle": "ยืนยันการดำเนินการ"
 }

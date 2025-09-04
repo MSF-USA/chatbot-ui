@@ -20,5 +20,10 @@
   "uploadingFile": "Đang tải tệp...",
   "removeFile": "Xóa và chọn một tệp khác",
   "transcriptionErrorAttempt": "Lỗi trong quá trình phiên âm (Lần thử {{attempt}} trong 3). Đang thử lại...",
-  "rateLimitExceededWaiting": "Đã vượt quá giới hạn tốc độ. Chờ {{seconds}} giây trước khi thử lại..."
+  "rateLimitExceededWaiting": "Đã vượt quá giới hạn tốc độ. Chờ {{seconds}} giây trước khi thử lại...",
+  "cancel": "Hủy",
+  "confirm": "Xác nhận",
+  "confirmCancelTranscription": "Bạn có chắc chắn muốn hủy bỏ việc phiên âm đang diễn ra không?",
+  "confirmDiscardTranscript": "Bạn có chắc chắn muốn bỏ qua bản phiên âm mà không sử dụng không?",
+  "confirmTitle": "Xác nhận hành động"
 }

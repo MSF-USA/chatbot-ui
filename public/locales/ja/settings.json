@@ -26,5 +26,16 @@
   "Storage almost full": "ストレージがほぼいっぱいです！古い会話を削除することを検討してください。",
   "Local storage info": "すべてのデータはブラウザのローカルストレージに保存され、デバイス上にのみ保持されます。",
   "Data Actions": "データアクション",
-  "Export data": "データのエクスポート"
+  "Export data": "データのエクスポート",
+  "A description for your prompt.": "プロンプトの説明。",
+  "A name for your prompt.": "プロンプトの名前。",
+  "Description": "説明",
+  "Name": "名前",
+  "New folder": "新しいフォルダー",
+  "New prompt": "新しいプロンプト",
+  "No prompts.": "プロンプトはありません。",
+  "Prompt": "プロンプト",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "プロンプトの内容。変数を示すには{{}}を使用します。例: {{name}}は{{adjective}}な{{noun}}です。",
+  "Search prompts...": "プロンプトを検索...",
+  "Run Typewriter Intro": "タイプライターイントロを実行"
 }

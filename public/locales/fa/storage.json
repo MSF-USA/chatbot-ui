@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "هشدار فضای ذخیره‌سازی",
+  "Your browser storage is almost full!": "فضای ذخیره‌سازی مرورگر شما تقریباً پر است!",
+  "Current usage": "استفاده کنونی",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "اگر فضای ذخیره‌سازی شما به طور کامل پر شود، ممکن است برنامه به درستی کار نکند و شما دسترسی به مکالمات خود را از دست بدهید.",
+  "Options to free up space": "گزینه‌هایی برای آزاد کردن فضا",
+  "1. Export your conversations": "1. مکالمات خود را صادر کنید",
+  "Save your conversations to your computer before clearing them.": "قبل از پاک کردن، مکالمات خود را به کامپیوترتان ذخیره کنید.",
+  "Export All Data": "صادر کردن تمام داده‌ها",
+  "2. Clear older conversations": "2. پاک کردن مکالمات قدیمی‌تر",
+  "Keep recent conversations": "مکالمات اخیر را نگه‌دارید",
+  "This will remove": "این موارد را حذف خواهد کرد",
+  "older conversations": "مکالمات قدیمی‌تر",
+  "Space freed": "فضا آزاد شد",
+  "Clear Older Conversations": "پاک کردن مکالمات قدیمی‌تر",
+  "Close": "بستن",
+  "Storage Usage": "استفاده از فضای ذخیره‌سازی",
+  "Used": "استفاده شده",
+  "Local storage is used to save your conversations, settings, and preferences.": "فضای ذخیره‌سازی محلی برای ذخیره‌سازی مکالمات، تنظیمات و ترجیحات شما استفاده می‌شود."
+}

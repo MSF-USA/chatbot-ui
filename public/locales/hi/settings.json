@@ -26,5 +26,16 @@
   "Storage almost full": "स्टोरेज लगभग भर गया है! पुरानी बातचीत को साफ़ करने पर विचार करें।",
   "Local storage info": "सभी डेटा आपके ब्राउज़र के localStorage में स्थानीय रूप से संग्रहीत किया जाता है और पूरी तरह से आपके डिवाइस पर रहता है।",
   "Data Actions": "डेटा क्रियाएँ",
-  "Export data": "डेटा निर्यात करें"
+  "Export data": "डेटा निर्यात करें",
+  "A description for your prompt.": "अपने प्रॉम्प्ट के लिए एक विवरण।",
+  "A name for your prompt.": "अपने प्रॉम्प्ट के लिए एक नाम।",
+  "Description": "विवरण",
+  "Name": "नाम",
+  "New folder": "नया फ़ोल्डर",
+  "New prompt": "नया प्रॉम्प्ट",
+  "No prompts.": "कोई प्रॉम्प्ट नहीं।",
+  "Prompt": "प्रॉम्प्ट",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "प्रॉम्प्ट सामग्री। एक वेरिएबल को दर्शाने के लिए {{}} का उपयोग करें। उदाहरण: {{name}} एक {{adjective}} {{noun}} है।",
+  "Search prompts...": "प्रॉम्प्ट खोजें...",
+  "Language": "भाषा"
 }

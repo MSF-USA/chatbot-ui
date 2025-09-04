@@ -35,5 +35,7 @@
   "A description for your prompt.": "İsteminiz için bir açıklama.",
   "Prompt": "İstem",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "İstem içeriği. Bir değişkeni belirtmek için {{}} kullanın. Örn: {{name}} bir {{adjective}} {{noun}}.",
-  "A name for your prompt.": "İsteminiz için bir isim."
+  "A name for your prompt.": "İsteminiz için bir isim.",
+  "Run Typewriter Intro": "Yazı Makinesi Girişi Çalıştır",
+  "Language": "Dil"
 }

@@ -20,5 +20,10 @@
   "uploadingFile": "Inapakia faili...",
   "removeFile": "Ondoa na uchague faili tofauti",
   "transcriptionErrorAttempt": "Hitilafu wakati wa uandikishaji (Jaribio la {{attempt}} kati ya 3). Kujaribu tena...",
-  "rateLimitExceededWaiting": "Kiwango cha mipaka kimezidi. Kusubiri {{seconds}} sekunde kabla ya kujaribu tena..."
+  "rateLimitExceededWaiting": "Kiwango cha mipaka kimezidi. Kusubiri {{seconds}} sekunde kabla ya kujaribu tena...",
+  "cancel": "Futa",
+  "confirm": "Thibitisha",
+  "confirmCancelTranscription": "Je, uko tayari kufuta uandishi unaoendelea?",
+  "confirmDiscardTranscript": "Je, uko tayari kutupilia mbali hati bila kuitumia?",
+  "confirmTitle": "Thibitisha Kitendo"
 }

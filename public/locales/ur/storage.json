@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "ذخیرہ انتباہ",
+  "Your browser storage is almost full!": "آپ کا براؤزر کا ذخیرہ تقریباً بھر چکا ہے!",
+  "Current usage": "موجودہ استعمال",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "اگر آپ کا ذخیرہ مکمل طور پر بھر جائے تو ایپلیکیشن صحیح طریقے سے کام کرنا بند کر سکتی ہے اور آپ اپنی گفتگو تک رسائی کھو سکتے ہیں۔",
+  "Options to free up space": "جگہ خالی کرنے کے اختیارات",
+  "1. Export your conversations": "1. اپنی گفتگو برآمد کریں",
+  "Save your conversations to your computer before clearing them.": "انہیں صاف کرنے سے پہلے اپنی گفتگو کو اپنے کمپیوٹر پر محفوظ کریں۔",
+  "Export All Data": "تمام ڈیٹا برآمد کریں",
+  "2. Clear older conversations": "2. پرانی گفتگوئیں صاف کریں",
+  "Keep recent conversations": "حال کی گفتگوئیں رکھیں",
+  "This will remove": "یہ ہٹا دے گا",
+  "older conversations": "پرانی گفتگوئیں",
+  "Space freed": "جگہ خالی کی گئی",
+  "Clear Older Conversations": "پرانی گفتگوئیں صاف کریں",
+  "Close": "بند کریں",
+  "Storage Usage": "ذخیرہ استعمال",
+  "Used": "استعمال شدہ",
+  "Local storage is used to save your conversations, settings, and preferences.": "مقامی ذخیرہ آپ کی گفتگوئیں، سیٹنگز، اور ترجیحات کو محفوظ کرنے کے لیے استعمال ہوتا ہے۔"
+}

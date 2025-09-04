@@ -20,5 +20,10 @@
   "uploadingFile": "Mengunggah file...",
   "removeFile": "Hapus dan pilih file yang berbeda",
   "transcriptionErrorAttempt": "Kesalahan selama transkripsi (Percobaan {{attempt}} dari 3). Mencoba lagi...",
-  "rateLimitExceededWaiting": "Batas kecepatan terlampaui. Menunggu {{seconds}} detik sebelum mencoba ulang..."
+  "rateLimitExceededWaiting": "Batas kecepatan terlampaui. Menunggu {{seconds}} detik sebelum mencoba ulang...",
+  "cancel": "Batal",
+  "confirm": "Konfirmasi",
+  "confirmCancelTranscription": "Apakah Anda yakin ingin membatalkan transkripsi yang sedang berlangsung?",
+  "confirmDiscardTranscript": "Apakah Anda yakin ingin membuang transkrip tanpa menggunakannya?",
+  "confirmTitle": "Konfirmasi Tindakan"
 }

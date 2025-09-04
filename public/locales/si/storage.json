@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "ගබඩා අනතුරු ඇඟවීම",
+  "Your browser storage is almost full!": "ඔබේ බ්‍රවුසරයේ ගබඩාව Almost පිරී ගියා!",
+  "Current usage": "වත්මන් භාවිතය",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "ඔබේ ගබඩාව සම්පූර්ණයෙන් පිරී ගියහොත්, යෙදුම නිවැරදිව ක්‍රියා කිරීමට නවත්වනු ඇත සහ ඔබේ සංවාද වලට ප්‍රවේශය අහිමි විය හැක.",
+  "Options to free up space": "ස්ථානය නිදහස් කිරීමට විකල්ප",
+  "1. Export your conversations": "1. ඔබේ සංවාද අපනයනය කරන්න",
+  "Save your conversations to your computer before clearing them.": "ඔබේ සංවාද මකා දැමීමට පෙර, ඒවා ඔබේ පරිගණකයට සුරකින්න.",
+  "Export All Data": "සියලුම දත්ත අපනයනය කරන්න",
+  "2. Clear older conversations": "2. පැරණි සංවාද මකා දැමීම",
+  "Keep recent conversations": "නවතම සංවාද රැඳවන්න",
+  "This will remove": "මෙය ඉවත් කරනු ඇත",
+  "older conversations": "පැරණි සංවාද",
+  "Space freed": "ස්ථානය නිදහස් කරන ලදි",
+  "Clear Older Conversations": "පැරණි සංවාද මකා දැමීම",
+  "Close": "අවසානය කරන්න",
+  "Storage Usage": "ගබඩා භාවිතය",
+  "Used": "භාවිතා කරන ලදි",
+  "Local storage is used to save your conversations, settings, and preferences.": "ස්ථානික ගබඩාව ඔබේ සංවාද, සැකසුම් සහ කැමැත්තන් සුරක්ෂිත කිරීමට භාවිතා වේ."
+}

@@ -25,5 +25,17 @@
   "Storage almost full": "Penyimpanan hampir penuh! Pertimbangkan untuk membersihkan percakapan lama.",
   "Local storage info": "Semua data disimpan secara lokal di localStorage browser Anda dan tetap sepenuhnya ada di perangkat Anda.",
   "Data Actions": "Tindakan Data",
-  "Export data": "Ekspor data"
+  "Export data": "Ekspor data",
+  "A description for your prompt.": "Deskripsi untuk permintaan Anda.",
+  "A name for your prompt.": "Nama untuk permintaan Anda.",
+  "Description": "Deskripsi",
+  "Name": "Nama",
+  "New folder": "Folder baru",
+  "New prompt": "Permintaan baru",
+  "No prompts.": "Tidak ada permintaan.",
+  "Prompt": "Permintaan",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Konten permintaan. Gunakan {{}} untuk menunjukkan variabel. Contoh: {{name}} adalah {{adjective}} {{noun}}.",
+  "Search prompts...": "Cari permintaan...",
+  "Run Typewriter Intro": "Jalankan Intro Mesin Ketik",
+  "Language": "Bahasa"
 }

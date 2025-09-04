@@ -6,5 +6,21 @@
   "Search conversations...": "Пошук розмов...",
   "New prompt": "Нова підказка",
   "Dark mode": "темний режим",
-  "Light mode": "світлий режим"
+  "Light mode": "світлий режим",
+  "A description for your prompt.": "Опис для вашого запиту.",
+  "A name for your prompt.": "Ім'я для вашого запиту.",
+  "Are you sure?": "Ви впевнені?",
+  "Clear conversations": "Очистити розмови",
+  "Description": "Опис",
+  "Export data": "Резервне копіювання історії чату",
+  "Import data": "Відновити історію чату",
+  "Name": "Ім'я",
+  "New folder": "Нова папка",
+  "No conversations.": "Немає розмов.",
+  "No prompts.": "Немає запитів.",
+  "OpenAI API Key": "OpenAI API Key",
+  "Plugin Keys": "Ключі плагінів",
+  "Prompt": "Запит",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Вміст запиту. Використовуйте {{}} для позначення змінної. Наприклад: {{name}} є {{adjective}} {{noun}}",
+  "Search prompts...": "Шукати запити..."
 }

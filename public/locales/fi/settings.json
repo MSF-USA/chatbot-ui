@@ -25,5 +25,17 @@
   "Storage almost full": "Tallennustila melkein täynnä! Harkitse vanhojen keskustelujen poistamista.",
   "Local storage info": "Kaikki tiedot tallennetaan paikallisesti selaimesi localStorageen ja pysyvät kokonaan laitteellasi.",
   "Data Actions": "Tietotoiminnot",
-  "Export data": "Vie tiedot"
+  "Export data": "Vie tiedot",
+  "A description for your prompt.": "Kuvaus kehotteellesi.",
+  "A name for your prompt.": "Nimi kehotteellesi.",
+  "Description": "Kuvaus",
+  "Name": "Nimi",
+  "New folder": "Uusi kansio",
+  "New prompt": "Uusi kehotus",
+  "No prompts.": "Ei kehotteita.",
+  "Prompt": "Kehotus",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Kehotuksen sisältö. Käytä {{}} merkitäksesi muuttuja. Esim: {{name}} on {{adjective}} {{noun}}.",
+  "Search prompts...": "Etsi kehotteita...",
+  "Run Typewriter Intro": "Suorita kirjoituskoneen esittely",
+  "Language": "Kieli"
 }

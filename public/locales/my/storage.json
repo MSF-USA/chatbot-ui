@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "သိုလှောင်မှု သတိပေးချက်",
+  "Your browser storage is almost full!": "သင်၏ ဘရောက်ဆာ သိုလှောင်မှု အပြည့်အဝ ဖြစ်နေပါပြီ!",
+  "Current usage": "လက်ရှိ အသုံးပြုမှု",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "သင်၏ သိုလှောင်မှု အပြည့်အဝ ဖြစ်ပါက၊ အက်ပ်သည် မှန်ကန်စွာ အလုပ်လုပ်မှု ရပ်ဆိုင်းနိုင်ပြီး သင်၏ ဆွေးနွေးမှုများကို ဝင်ရောက်ကြည့်ရှုနိုင်မှုကို ဆုံးရှုံးနိုင်ပါသည်။",
+  "Options to free up space": "နေရာလွတ်ရန် ရွေးချယ်စရာများ",
+  "1. Export your conversations": "1. သင်၏ ဆွေးနွေးမှုများကို ထုတ်ယူပါ",
+  "Save your conversations to your computer before clearing them.": "သင်၏ ဆွေးနွေးမှုများကို ဖျက်မီ သင့်ကွန်ပျူတာသို့ သိမ်းဆည်းပါ။",
+  "Export All Data": "ဒေတာအားလုံးကို ထုတ်ယူပါ",
+  "2. Clear older conversations": "2. အဟောင်း ဆွေးနွေးမှုများကို ဖျက်ပါ",
+  "Keep recent conversations": "နောက်ဆုံး ဆွေးနွေးမှုများကို ထိန်းသိမ်းပါ",
+  "This will remove": "ဤသည် သင့်ကို ဖယ်ရှားပါမည်",
+  "older conversations": "အဟောင်း ဆွေးနွေးမှုများ",
+  "Space freed": "နေရာလွတ်ခဲ့သည်",
+  "Clear Older Conversations": "အဟောင်း ဆွေးနွေးမှုများကို ဖျက်ပါ",
+  "Close": "ပိတ်ပါ",
+  "Storage Usage": "သိုလှောင်မှု အသုံးပြုမှု",
+  "Used": "အသုံးပြုခဲ့သည်",
+  "Local storage is used to save your conversations, settings, and preferences.": "ဒေသခံ သိုလှောင်မှုသည် သင်၏ ဆွေးနွေးမှုများ၊ ဆက်တင်များနှင့် သဘောထားများကို သိမ်းဆည်းရန် အသုံးပြုသည်။"
+}

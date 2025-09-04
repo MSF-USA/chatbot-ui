@@ -26,5 +26,16 @@
   "Storage almost full": "저장소가 거의 가득 찼습니다! 이전 대화를 지우는 것을 고려하세요.",
   "Local storage info": "모든 데이터는 브라우저의 localStorage에 로컬로 저장되며 전적으로 사용자의 기기에 남아 있습니다.",
   "Data Actions": "데이터 작업",
-  "Export data": "데이터 내보내기"
+  "Export data": "데이터 내보내기",
+  "A description for your prompt.": "프롬프트에 대한 설명입니다.",
+  "A name for your prompt.": "프롬프트의 이름입니다.",
+  "Description": "설명",
+  "Name": "이름",
+  "New folder": "새 폴더",
+  "New prompt": "새 프롬프트",
+  "No prompts.": "프롬프트가 없습니다.",
+  "Prompt": "프롬프트",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "프롬프트 내용. 변수를 나타내기 위해 {{}}를 사용하세요. 예: {{name}}은(는) {{adjective}} {{noun}}입니다.",
+  "Search prompts...": "프롬프트 검색...",
+  "Run Typewriter Intro": "타자기 소개 실행"
 }

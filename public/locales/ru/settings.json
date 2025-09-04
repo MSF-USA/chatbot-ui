@@ -26,5 +26,16 @@
   "Storage almost full": "Хранилище почти заполнено! Рассмотрите возможность удаления старых разговоров.",
   "Local storage info": "Все данные хранятся локально в localStorage вашего браузера и полностью остаются на вашем устройстве.",
   "Data Actions": "Действия с данными",
-  "Export data": "Экспорт данных"
+  "Export data": "Экспорт данных",
+  "A description for your prompt.": "Описание для вашего запроса.",
+  "A name for your prompt.": "Имя для вашего запроса.",
+  "Description": "Описание",
+  "Name": "Имя",
+  "New folder": "Новая папка",
+  "New prompt": "Новый запрос",
+  "No prompts.": "Нет запросов.",
+  "Prompt": "Запрос",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Содержимое запроса. Используйте {{}} для обозначения переменной. Пример: {{name}} — это {{adjective}} {{noun}}.",
+  "Search prompts...": "Поиск запросов...",
+  "Run Typewriter Intro": "Запустить ввод с машинки"
 }

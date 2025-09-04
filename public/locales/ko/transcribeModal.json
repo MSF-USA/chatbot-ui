@@ -20,5 +20,10 @@
   "uploadingFile": "파일 업로드 중...",
   "removeFile": "제거하고 다른 파일 선택",
   "transcriptionErrorAttempt": "전사 중 오류 (3번 중 {{attempt}}번째 시도). 다시 시도 중...",
-  "rateLimitExceededWaiting": "속도 제한 초과. {{seconds}}초 대기한 후 다시 시도..."
+  "rateLimitExceededWaiting": "속도 제한 초과. {{seconds}}초 대기한 후 다시 시도...",
+  "cancel": "취소",
+  "confirm": "확인",
+  "confirmCancelTranscription": "진행 중인 전사를 취소하시겠습니까?",
+  "confirmDiscardTranscript": "전사를 사용하지 않고 폐기하시겠습니까?",
+  "confirmTitle": "작업 확인"
 }

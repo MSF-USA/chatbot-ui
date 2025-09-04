@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Opslagwaarschuwing",
+  "Your browser storage is almost full!": "De opslag van uw browser is bijna vol!",
+  "Current usage": "Huidig gebruik",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Als uw opslag volledig vol raakt, kan de applicatie stoppen met correct functioneren en kunt u de toegang tot uw gesprekken verliezen.",
+  "Options to free up space": "Opties om ruimte vrij te maken",
+  "1. Export your conversations": "1. Exporteer uw gesprekken",
+  "Save your conversations to your computer before clearing them.": "Sla uw gesprekken op uw computer op voordat u ze verwijdert.",
+  "Export All Data": "Exporteer alle gegevens",
+  "2. Clear older conversations": "2. Verwijder oudere gesprekken",
+  "Keep recent conversations": "Houd recente gesprekken",
+  "This will remove": "Dit zal verwijderen",
+  "older conversations": "oudere gesprekken",
+  "Space freed": "Ruimte vrijgemaakt",
+  "Clear Older Conversations": "Verwijder oudere gesprekken",
+  "Close": "Sluiten",
+  "Storage Usage": "Opslaggebruik",
+  "Used": "Gebruikt",
+  "Local storage is used to save your conversations, settings, and preferences.": "Lokale opslag wordt gebruikt om uw gesprekken, instellingen en voorkeuren op te slaan."
+}

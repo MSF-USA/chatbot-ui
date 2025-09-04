@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Speicherwarnung",
+  "Your browser storage is almost full!": "Der Speicher Ihres Browsers ist fast voll!",
+  "Current usage": "Aktuelle Nutzung",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Wenn Ihr Speicher vollständig gefüllt ist, kann die Anwendung möglicherweise nicht mehr korrekt funktionieren und Sie könnten den Zugriff auf Ihre Gespräche verlieren.",
+  "Options to free up space": "Optionen zur Freigabe von Speicherplatz",
+  "1. Export your conversations": "1. Exportieren Sie Ihre Gespräche",
+  "Save your conversations to your computer before clearing them.": "Speichern Sie Ihre Gespräche auf Ihrem Computer, bevor Sie sie löschen.",
+  "Export All Data": "Alle Daten exportieren",
+  "2. Clear older conversations": "2. Ältere Gespräche löschen",
+  "Keep recent conversations": "Aktuelle Gespräche behalten",
+  "This will remove": "Dies wird entfernen",
+  "older conversations": "ältere Gespräche",
+  "Space freed": "Freigewordener Speicherplatz",
+  "Clear Older Conversations": "Ältere Gespräche löschen",
+  "Close": "Schließen",
+  "Storage Usage": "Speichernutzung",
+  "Used": "Verwendet",
+  "Local storage is used to save your conversations, settings, and preferences.": "Der lokale Speicher wird verwendet, um Ihre Gespräche, Einstellungen und Präferenzen zu speichern."
+}

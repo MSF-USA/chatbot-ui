@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Avertizare de stocare",
+  "Your browser storage is almost full!": "Stocarea browser-ului tău este aproape plină!",
+  "Current usage": "Utilizare curentă",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Dacă stocarea ta se umple complet, aplicația poate înceta să funcționeze corect și ai putea pierde accesul la conversațiile tale.",
+  "Options to free up space": "Opțiuni pentru a elibera spațiu",
+  "1. Export your conversations": "1. Exportă conversațiile tale",
+  "Save your conversations to your computer before clearing them.": "Salvează conversațiile tale pe computer înainte de a le șterge.",
+  "Export All Data": "Exportă toate datele",
+  "2. Clear older conversations": "2. Șterge conversațiile mai vechi",
+  "Keep recent conversations": "Păstrează conversațiile recente",
+  "This will remove": "Aceasta va elimina",
+  "older conversations": "conversațiile mai vechi",
+  "Space freed": "Spațiu eliberat",
+  "Clear Older Conversations": "Șterge conversațiile mai vechi",
+  "Close": "Închide",
+  "Storage Usage": "Utilizarea stocării",
+  "Used": "Folositor",
+  "Local storage is used to save your conversations, settings, and preferences.": "Stocarea locală este folosită pentru a salva conversațiile tale, setările și preferințele."
+}

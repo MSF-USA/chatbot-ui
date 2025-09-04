@@ -20,5 +20,10 @@
   "uploadingFile": "Caricamento file in corso...",
   "removeFile": "Rimuovi e seleziona un file diverso",
   "transcriptionErrorAttempt": "Errore durante la trascrizione (Tentativo {{attempt}} di 3). Ritentando...",
-  "rateLimitExceededWaiting": "Limite di velocità superato. Aspettando {{seconds}} secondi prima di riprovare..."
+  "rateLimitExceededWaiting": "Limite di velocità superato. Aspettando {{seconds}} secondi prima di riprovare...",
+  "cancel": "Annulla",
+  "confirm": "Conferma",
+  "confirmCancelTranscription": "Sei sicuro di voler annullare la trascrizione in corso?",
+  "confirmDiscardTranscript": "Sei sicuro di voler scartare la trascrizione senza utilizzarla?",
+  "confirmTitle": "Conferma Azione"
 }

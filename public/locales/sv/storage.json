@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Lagringsvarning",
+  "Your browser storage is almost full!": "Din webbläsares lagring är nästan full!",
+  "Current usage": "Aktuell användning",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Om din lagring fylls helt kan applikationen sluta fungera korrekt och du kan förlora tillgången till dina konversationer.",
+  "Options to free up space": "Alternativ för att frigöra utrymme",
+  "1. Export your conversations": "1. Exportera dina konversationer",
+  "Save your conversations to your computer before clearing them.": "Spara dina konversationer på din dator innan du rensar dem.",
+  "Export All Data": "Exportera all data",
+  "2. Clear older conversations": "2. Rensa äldre konversationer",
+  "Keep recent conversations": "Behåll senaste konversationer",
+  "This will remove": "Detta kommer att ta bort",
+  "older conversations": "äldre konversationer",
+  "Space freed": "Utrymme frigjort",
+  "Clear Older Conversations": "Rensa äldre konversationer",
+  "Close": "Stäng",
+  "Storage Usage": "Lagringsanvändning",
+  "Used": "Använt",
+  "Local storage is used to save your conversations, settings, and preferences.": "Lokal lagring används för att spara dina konversationer, inställningar och preferenser."
+}

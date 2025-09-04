@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "स्टोरेज चेतावनी",
+  "Your browser storage is almost full!": "आपका ब्राउज़र स्टोरेज लगभग भर चुका है!",
+  "Current usage": "वर्तमान उपयोग",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "यदि आपका स्टोरेज पूरी तरह से भर जाता है, तो एप्लिकेशन सही तरीके से काम करना बंद कर सकता है और आप अपनी बातचीत तक पहुँच खो सकते हैं।",
+  "Options to free up space": "स्थान खाली करने के विकल्प",
+  "1. Export your conversations": "1. अपनी बातचीत का निर्यात करें",
+  "Save your conversations to your computer before clearing them.": "उन्हें साफ़ करने से पहले अपनी बातचीत को अपने कंप्यूटर पर सहेजें।",
+  "Export All Data": "सभी डेटा का निर्यात करें",
+  "2. Clear older conversations": "2. पुरानी बातचीत साफ़ करें",
+  "Keep recent conversations": "हाल की बातचीत रखें",
+  "This will remove": "यह हटा देगा",
+  "older conversations": "पुरानी बातचीत",
+  "Space freed": "स्थान मुक्त किया गया",
+  "Clear Older Conversations": "पुरानी बातचीत साफ़ करें",
+  "Close": "बंद करें",
+  "Storage Usage": "स्टोरेज उपयोग",
+  "Used": "उपयोग किया गया",
+  "Local storage is used to save your conversations, settings, and preferences.": "स्थानीय स्टोरेज का उपयोग आपकी बातचीत, सेटिंग्स और प्राथमिकताओं को सहेजने के लिए किया जाता है।"
+}

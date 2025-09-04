@@ -25,5 +25,17 @@
   "Storage almost full": "האחסון כמעט מלא! שקול לנקות שיחות ישנות.",
   "Local storage info": "כל הנתונים מאוחסנים באופן מקומי באחסון המקומי של הדפדפן שלך ונשארים לחלוטין במכשיר שלך.",
   "Data Actions": "פעולות נתונים",
-  "Export data": "ייצוא נתונים"
+  "Export data": "ייצוא נתונים",
+  "A description for your prompt.": "תיאור עבור הבקשה שלך.",
+  "A name for your prompt.": "שם עבור הבקשה שלך.",
+  "Description": "תיאור",
+  "Name": "שם",
+  "New folder": "תיקייה חדשה",
+  "New prompt": "בקשה חדשה",
+  "No prompts.": "אין בקשות.",
+  "Prompt": "בקשה",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "תוכן הבקשה. השתמש ב-{{}} כדי לציין משתנה. לדוגמה: {{name}} הוא {{adjective}} {{noun}}.",
+  "Search prompts...": "חפש בקשות...",
+  "Run Typewriter Intro": "הרץ מבוא מכונת כתיבה",
+  "Language": "שפה"
 }

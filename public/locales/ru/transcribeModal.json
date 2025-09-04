@@ -20,5 +20,10 @@
   "uploadingFile": "Загрузка файла...",
   "removeFile": "Удалите и выберите другой файл",
   "transcriptionErrorAttempt": "Ошибка во время транскрипции (Попытка {{attempt}} из 3). Повторная попытка...",
-  "rateLimitExceededWaiting": "Превышен лимит скорости. Ожидание {{seconds}} секунд перед повторной попыткой..."
+  "rateLimitExceededWaiting": "Превышен лимит скорости. Ожидание {{seconds}} секунд перед повторной попыткой...",
+  "cancel": "Отмена",
+  "confirm": "Подтвердить",
+  "confirmCancelTranscription": "Вы уверены, что хотите отменить текущую транскрипцию?",
+  "confirmDiscardTranscript": "Вы уверены, что хотитеDiscard транскрипт, не используя его?",
+  "confirmTitle": "Подтвердите действие"
 }

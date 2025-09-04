@@ -20,5 +20,10 @@
   "uploadingFile": "Przesyłanie pliku...",
   "removeFile": "Usuń i wybierz inny plik",
   "transcriptionErrorAttempt": "Błąd podczas transkrypcji (Próba {{attempt}} z 3). Ponowna próba...",
-  "rateLimitExceededWaiting": "Przekroczono limit szybkości. Oczekiwanie {{seconds}} sekund przed ponowną próbą..."
+  "rateLimitExceededWaiting": "Przekroczono limit szybkości. Oczekiwanie {{seconds}} sekund przed ponowną próbą...",
+  "cancel": "Anuluj",
+  "confirm": "Potwierdź",
+  "confirmCancelTranscription": "Czy na pewno chcesz anulować trwającą transkrypcję?",
+  "confirmDiscardTranscript": "Czy na pewno chcesz odrzucić transkrypt bez jego użycia?",
+  "confirmTitle": "Potwierdź działanie"
 }

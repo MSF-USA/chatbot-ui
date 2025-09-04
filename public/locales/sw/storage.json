@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Onyo la Hifadhi",
+  "Your browser storage is almost full!": "Hifadhi ya kivinjari chako imekaribia kujaza!",
+  "Current usage": "Matumizi ya sasa",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Ikiwa hifadhi yako itajaza kabisa, programu inaweza kuacha kufanya kazi ipasavyo na unaweza kupoteza ufikiaji wa mazungumzo yako.",
+  "Options to free up space": "Chaguzi za kuachilia nafasi",
+  "1. Export your conversations": "1. Hamasisha mazungumzo yako",
+  "Save your conversations to your computer before clearing them.": "Hifadhi mazungumzo yako kwenye kompyuta yako kabla ya kuyafuta.",
+  "Export All Data": "Hamasisha Takwimu Zote",
+  "2. Clear older conversations": "2. Futa mazungumzo ya zamani",
+  "Keep recent conversations": "Hifadhi mazungumzo ya hivi karibuni",
+  "This will remove": "Hii itafuta",
+  "older conversations": "mazungumzo ya zamani",
+  "Space freed": "Nafasi imeachiliwa",
+  "Clear Older Conversations": "Futa Mazungumzo ya Zamani",
+  "Close": "Funga",
+  "Storage Usage": "Matumizi ya Hifadhi",
+  "Used": "Imetumika",
+  "Local storage is used to save your conversations, settings, and preferences.": "Hifadhi ya ndani inatumika kuhifadhi mazungumzo yako, mipangilio, na mapendeleo."
+}

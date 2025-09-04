@@ -25,5 +25,17 @@
   "Confirm Reset": "ပြန်လည်သတ်မှတ်မှု အတည်ပြုပါ",
   "Reset Confirmation Message": "ဆက်တင်အားလုံးကို မူရင်းတန်ဖိုးများသို့ ပြန်လည်သတ်မှတ်လိုပါသလား? ဤလုပ်ဆောင်ချက်ကို ပြန်မလုပ်နိုင်ပါ။",
   "Cancel": "ပယ်ဖျက်ပါ",
-  "Reset": "ပြန်လည်သတ်မှတ်ပါ"
+  "Reset": "ပြန်လည်သတ်မှတ်ပါ",
+  "A description for your prompt.": "သင့်ရဲ့ prompt အတွက် ဖေါ်ပြချက်။",
+  "A name for your prompt.": "သင့်ရဲ့ prompt အတွက် အမည်။",
+  "Description": "ဖေါ်ပြချက်",
+  "Name": "အမည်",
+  "New folder": "အသစ်သော ဖိုလ်ဒါ",
+  "New prompt": "အသစ်သော prompt",
+  "No prompts.": "prompt မရှိပါ။",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Prompt အကြောင်းအရာ။ အပြောင်းအလဲကို ဖော်ပြရန် {{}} ကို အသုံးပြုပါ။ ဥပမာ: {{name}} သည် {{adjective}} {{noun}} ဖြစ်သည်။",
+  "Search prompts...": "prompt များကို ရှာဖွေပါ...",
+  "Run Typewriter Intro": "Typewriter Intro ကို လည်ပတ်ပါ",
+  "Language": "ဘာသာစကား"
 }

@@ -25,5 +25,17 @@
   "Storage almost full": "Storage almost full! Consider clearing old conversations.",
   "Local storage info": "All data is stored locally in your browser's localStorage and remains entirely on your device.",
   "Data Actions": "Data Actions",
-  "Export data": "Export data"
+  "Export data": "Export data",
+  "A description for your prompt.": "En beskrivning för din uppmaning.",
+  "A name for your prompt.": "Ett namn för din uppmaning.",
+  "Description": "Beskrivning",
+  "Name": "Namn",
+  "New folder": "Ny mapp",
+  "New prompt": "Ny uppmaning",
+  "No prompts.": "Inga uppmaningar.",
+  "Prompt": "Uppmaning",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Innehåll för uppmaning. Använd {{}} för att ange en variabel. Ex: {{name}} är en {{adjective}} {{noun}}.",
+  "Search prompts...": "Sök uppmaningar...",
+  "Run Typewriter Intro": "Kör skrivmaskinsintroduktion",
+  "Language": "Språk"
 }
