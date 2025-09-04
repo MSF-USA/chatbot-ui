@@ -35,5 +35,7 @@
   "A description for your prompt.": "আপনার প্রম্পটের জন্য একটি বর্ণনা লিখুন।",
   "Prompt": "প্রম্পট",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "প্রম্পটের বিষয়বস্তু। ভেরিয়েবল নির্দেশ করতে {{}} ব্যবহার করুন। উদাহরণ: {{name}} একটি {{adjective}} {{noun}}।",
-  "A name for your prompt.": "আপনার প্রম্পটের জন্য একটি নাম লিখুন।"
+  "A name for your prompt.": "আপনার প্রম্পটের জন্য একটি নাম লিখুন।",
+  "Run Typewriter Intro": "টাইপরাইটার পরিচিতি চালান",
+  "Language": "ভাষা"
 }
