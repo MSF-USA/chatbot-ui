@@ -16,7 +16,7 @@ import { CommandDefinition, CommandType } from '@/services/commandParser';
 import { Prompt } from '@/types/prompt';
 import { Message } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 // Mock dependencies
 vi.mock('@tabler/icons-react', () => ({
