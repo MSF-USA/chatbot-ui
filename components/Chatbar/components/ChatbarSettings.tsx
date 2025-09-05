@@ -6,7 +6,7 @@ import { useTranslation } from 'next-i18next';
 
 import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 import { SettingDialog } from '@/components/Settings/SettingDialog';
 

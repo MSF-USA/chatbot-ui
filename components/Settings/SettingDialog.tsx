@@ -11,7 +11,7 @@ import { getStorageUsage } from '@/utils/app/storageMonitor';
 
 import { Settings } from '@/types/settings';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 import ChatbarContext from '../Chatbar/Chatbar.context';
 import { MobileHeader } from './MobileHeader';

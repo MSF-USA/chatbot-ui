@@ -42,7 +42,7 @@ import { OpenAIModel } from '@/types/openai';
 import { Plugin, PluginID } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import { ChatInputAgentToggle } from '@/components/Chat/ChatInput/ChatInputAgentToggle';
