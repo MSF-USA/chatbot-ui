@@ -50,9 +50,9 @@ import { Navbar } from '@/components/Mobile/Navbar';
 import { SettingsSection } from '@/components/Settings/types';
 import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
 
-import { authOptions } from '../auth/[...nextauth]';
-import HomeContext from './home.context';
-import { HomeInitialState, initialState } from './home.state';
+import { authOptions } from '../api/auth/[...nextauth]';
+import HomeContext from '@/contexts/home.context';
+import { HomeInitialState, initialState } from '@/contexts/home.state';
 
 import {
   StorageMonitorProvider,

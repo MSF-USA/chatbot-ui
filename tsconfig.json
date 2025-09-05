@@ -34,6 +34,7 @@
     "**/*.spec.ts",
     "**/*.spec.tsx",
     "vitest.*.ts",
-    "test-*.js"
+    "test-*.js",
+    "playwright.config.ts"
   ]
 }
