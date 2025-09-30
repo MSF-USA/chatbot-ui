@@ -57,33 +57,36 @@ const handler = async (req: NextRequest): Promise<Response> => {
     const json = {
       data: [
         {
-          id: 'gpt-35-turbo',
+          id: OpenAIModelID.GPT_3_5,
         },
         {
-          id: 'gpt-4o',
+          id: OpenAIModelID.GPT_4o,
         },
         {
-          id: 'gpt-4',
+          id: OpenAIModelID.GPT_4,
         },
         {
-          id: 'gpt-4.1'
+          id: OpenAIModelID.GPT_41
+        },
+        // {
+        //   id: 'gpt-45',
+        // },
+        {
+          id: OpenAIModelID.GPT_5
         },
         {
-          id: 'gpt-45',
-        },
-        {
-          id: 'gpt-4o-mini',
+          id: OpenAIModelID.GPT_4o_mini,
         },
         // Reasoning models (o1, o3-mini) give the following error.
         // ErrorMessage: '400 Model {modelName} is enabled only for api versions 2024-12-01-preview and later',
         {
-          id: 'o3-mini',
+          id: OpenAIModelID.GPT_o3_mini,
         },
         {
-          id: 'gpt-o1',
+          id: OpenAIModelID.GPT_o1,
         },
         {
-          id: 'gpt-o1-mini',
+          id: OpenAIModelID.GPT_o1_mini,
         },
       ],
     };
