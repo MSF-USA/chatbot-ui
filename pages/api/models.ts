@@ -56,15 +56,15 @@ const handler = async (req: NextRequest): Promise<Response> => {
     // Hardcoded JSON data until the logic for retrieving deployments is fixed
     const json = {
       data: [
-        {
-          id: OpenAIModelID.GPT_3_5,
-        },
+        // {
+        //   id: OpenAIModelID.GPT_3_5,
+        // },
         {
           id: OpenAIModelID.GPT_4o,
         },
-        {
-          id: OpenAIModelID.GPT_4,
-        },
+        // {
+        //   id: OpenAIModelID.GPT_4,
+        // },
         {
           id: OpenAIModelID.GPT_41
         },
