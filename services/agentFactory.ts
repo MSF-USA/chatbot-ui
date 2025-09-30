@@ -308,10 +308,29 @@ export class AgentFactory {
       const endTime = new Date();
       const executionTime = endTime.getTime() - startTime.getTime();
 
-      this.logError(`Request execution failed`, error as Error, {
+      // Enhanced error logging with more context
+      const errorDetails = {
         agentType: request.agentType,
         executionTime,
-      });
+        modelId: request.context.model.id,
+        errorType: error instanceof Error ? error.name : 'Unknown',
+      };
+
+      this.logError(`Request execution failed`, error as Error, errorDetails);
+
+      // Preserve the original error if it's already an AgentFactoryError
+      if (error instanceof AgentFactoryError) {
+        throw new AgentExecutionRequestError(
+          `Request execution failed: ${error.message}`,
+          {
+            code: error.code,
+            agentType: request.agentType,
+            executionTime,
+            originalError: error,
+            ...error.details,
+          },
+        );
+      }
 
       throw new AgentExecutionRequestError(
         `Request execution failed: ${(error as Error).message}`,
@@ -643,14 +662,33 @@ export class AgentFactory {
     if (!config.modelId) errors.push('Model ID is required');
 
     // Check if model is supported
-    if (
-      !registration.supportedModels.some((model) =>
-        config.modelId.toLowerCase().includes(model.toLowerCase()),
-      )
-    ) {
-      errors.push(
-        `Model ${config.modelId} is not supported by agent type ${config.type}`,
+    const isModelSupported = registration.supportedModels.some((model) =>
+      config.modelId.toLowerCase().includes(model.toLowerCase()),
+    );
+
+    if (!isModelSupported) {
+      // Try to fall back to default model
+      const fallbackModel = OpenAIModelID.GPT_4o;
+      const isFallbackSupported = registration.supportedModels.some((model) =>
+        fallbackModel.toLowerCase().includes(model.toLowerCase()),
       );
+
+      if (isFallbackSupported) {
+        this.logWarning(
+          `Model ${config.modelId} is not supported by agent type ${config.type}. Falling back to ${fallbackModel}.`,
+          {
+            agentType: config.type,
+            requestedModel: config.modelId,
+            fallbackModel,
+          },
+        );
+        // Update the config to use the fallback model
+        config.modelId = fallbackModel;
+      } else {
+        errors.push(
+          `Model ${config.modelId} is not supported by agent type ${config.type}. Supported models: ${registration.supportedModels.join(', ')}`,
+        );
+      }
     }
 
     // Validate against schema if provided
@@ -663,7 +701,7 @@ export class AgentFactory {
       throw new AgentFactoryError(
         `Configuration validation failed: ${errors.join(', ')}`,
         'AGENT_CONFIG_VALIDATION_FAILED',
-        { errors, agentType: config.type },
+        { errors, agentType: config.type, supportedModels: registration.supportedModels },
       );
     }
   }
