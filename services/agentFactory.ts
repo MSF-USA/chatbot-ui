@@ -28,7 +28,7 @@ import { TranslationAgent } from './agents/translationAgent';
 import { UrlPullAgent } from './agents/urlPullAgent';
 import { WebSearchAgent } from './agents/webSearchAgent';
 import { AzureMonitorLoggingService } from './loggingService';
-import {OpenAIModelID} from "@/types/openai";
+import { getModelFallbackChain, isModelAvailable } from '@/utils/app/models';
 
 /**
  * Custom error classes for agent factory operations
@@ -661,32 +661,46 @@ export class AgentFactory {
     if (!config.name) errors.push('Agent name is required');
     if (!config.modelId) errors.push('Model ID is required');
 
-    // Check if model is supported
+    // Check if model is supported by this agent
     const isModelSupported = registration.supportedModels.some((model) =>
       config.modelId.toLowerCase().includes(model.toLowerCase()),
     );
 
     if (!isModelSupported) {
-      // Try to fall back to default model
-      const fallbackModel = OpenAIModelID.GPT_4o;
-      const isFallbackSupported = registration.supportedModels.some((model) =>
-        fallbackModel.toLowerCase().includes(model.toLowerCase()),
-      );
+      // Try fallback chain: defaultModelID → fallbackModelID → gpt-4o
+      const fallbackChain = getModelFallbackChain();
+      let selectedFallback: string | null = null;
 
-      if (isFallbackSupported) {
+      for (const fallbackModel of fallbackChain) {
+        // Check if this fallback model is supported by the agent
+        const isSupportedByAgent = registration.supportedModels.some((model) =>
+          fallbackModel.toLowerCase().includes(model.toLowerCase()),
+        );
+
+        // Check if this fallback model is available in the application
+        const isAvailable = isModelAvailable(fallbackModel);
+
+        if (isSupportedByAgent && isAvailable) {
+          selectedFallback = fallbackModel;
+          break;
+        }
+      }
+
+      if (selectedFallback) {
         this.logWarning(
-          `Model ${config.modelId} is not supported by agent type ${config.type}. Falling back to ${fallbackModel}.`,
+          `Model ${config.modelId} is not supported by agent type ${config.type}. Falling back to ${selectedFallback}.`,
           {
             agentType: config.type,
             requestedModel: config.modelId,
-            fallbackModel,
+            fallbackModel: selectedFallback,
+            fallbackChain,
           },
         );
         // Update the config to use the fallback model
-        config.modelId = fallbackModel;
+        config.modelId = selectedFallback;
       } else {
         errors.push(
-          `Model ${config.modelId} is not supported by agent type ${config.type}. Supported models: ${registration.supportedModels.join(', ')}`,
+          `Model ${config.modelId} is not supported by agent type ${config.type}. None of the fallback models are available. Supported models: ${registration.supportedModels.join(', ')}`,
         );
       }
     }
