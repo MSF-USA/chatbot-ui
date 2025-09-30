@@ -486,14 +486,32 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     console.error('[AgentAPI] Agent execution failed:', error);
 
+    // Extract error details for better user feedback
+    const errorCode =
+      error instanceof Error && error.name ? error.name : 'EXECUTION_ERROR';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error occurred';
+
+    // Extract additional details from AgentFactoryError or AgentExecutionRequestError
+    let errorDetails: any = error;
+    if (error && typeof error === 'object' && 'details' in error) {
+      errorDetails = (error as any).details;
+
+      // If it's a validation error with supported models, add helpful info
+      if ((error as any).code === 'AGENT_CONFIG_VALIDATION_FAILED' && errorDetails?.supportedModels) {
+        errorDetails = {
+          ...errorDetails,
+          suggestion: `Try using one of the supported models: ${errorDetails.supportedModels.join(', ')}`,
+        };
+      }
+    }
+
     const response: AgentExecutionApiResponse = {
       success: false,
       error: {
-        code:
-          error instanceof Error && error.name ? error.name : 'EXECUTION_ERROR',
-        message:
-          error instanceof Error ? error.message : 'Unknown error occurred',
-        details: error,
+        code: errorCode,
+        message: errorMessage,
+        details: errorDetails,
       },
       execution: {
         startTime: startTime.toISOString(),
