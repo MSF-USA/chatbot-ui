@@ -35,6 +35,8 @@ const AGENT_DEFINITIONS: Record<AgentType, AgentDefinition> = {
       environment: AgentExecutionEnvironment.FOUNDRY,
       timeout: 30000,
       skipStandardChatProcessing: false,
+      // Supported models should align with AVAILABLE_MODELS in types/openai.ts
+      // Models listed here indicate which models this agent can work with
       supportedModels: ['gpt-4o', 'gpt-4o-mini', 'gpt-4', 'gpt-4.1', 'gpt-5', 'o1', 'gpt-o1-mini', 'o3-mini'],
       capabilities: [
         'web-search',
