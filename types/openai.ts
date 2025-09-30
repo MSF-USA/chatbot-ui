@@ -40,6 +40,21 @@ export const fallbackModelID = OpenAIModelID.GPT_4o;
 // default model for new conversations
 export const defaultModelID = OpenAIModelID.GPT_41;
 
+/**
+ * Centralized list of available models in the application.
+ * This is the single source of truth for which models are enabled.
+ * Used by both frontend (model selector) and backend (API validation).
+ */
+export const AVAILABLE_MODELS: OpenAIModelID[] = [
+  OpenAIModelID.GPT_4o,
+  OpenAIModelID.GPT_41,
+  OpenAIModelID.GPT_5,
+  OpenAIModelID.GPT_4o_mini,
+  OpenAIModelID.GPT_o3_mini,
+  OpenAIModelID.GPT_o1,
+  OpenAIModelID.GPT_o1_mini,
+];
+
 export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   [OpenAIModelID.GPT_3_5]: {
     id: OpenAIModelID.GPT_3_5,
