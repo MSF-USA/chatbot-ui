@@ -9,8 +9,8 @@ import { Inter } from 'next/font/google';
 
 import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
 
-import { StorageMonitorProvider } from '@/context/StorageMonitorContext';
-import { StreamingSettingsProvider } from '@/context/StreamingSettingsContext';
+import { StorageMonitorProvider } from '@/contexts/StorageMonitorContext';
+import { StreamingSettingsProvider } from '@/contexts/StreamingSettingsContext';
 import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'] });

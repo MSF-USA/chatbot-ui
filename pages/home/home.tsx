@@ -57,7 +57,7 @@ import { HomeInitialState, initialState } from '@/contexts/home.state';
 import {
   StorageMonitorProvider,
   useStorageMonitor,
-} from '@/context/StorageMonitorContext';
+} from '@/contexts/StorageMonitorContext';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
