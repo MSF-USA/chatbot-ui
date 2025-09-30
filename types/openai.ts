@@ -27,13 +27,18 @@ export enum OpenAIModelID {
 export enum OpenAIVisionModelID {
   GPT_4o = 'gpt-4o',
   GPT_4_VISION = 'gpt-4-vision-preview',
+  GPT_41 = 'gpt-4.1',
+  GPT_5 = 'gpt-5',
+  GPT_o1 = 'o1',
+  GPT_o1_mini = 'gpt-o1-mini',
+  GPT_o3_mini = 'o3-mini',
 }
 
 // in case the `DEFAULT_MODEL` environment variable is not set or set to an unsupported model
-export const fallbackModelID = OpenAIModelID.GPT_4o_mini;
+export const fallbackModelID = OpenAIModelID.GPT_4o;
 
 // default model for new conversations
-export const defaultModelID = OpenAIModelID.GPT_4o;
+export const defaultModelID = OpenAIModelID.GPT_41;
 
 export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   [OpenAIModelID.GPT_3_5]: {
