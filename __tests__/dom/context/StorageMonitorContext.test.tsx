@@ -6,7 +6,7 @@ import * as storageMonitor from '@/utils/app/storageMonitor';
 import {
   StorageMonitorProvider,
   useStorageMonitor,
-} from '@/context/StorageMonitorContext';
+} from '@/contexts/StorageMonitorContext';
 import '@testing-library/jest-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
