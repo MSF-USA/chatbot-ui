@@ -29,7 +29,7 @@ import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { useStreamingSettings } from '@/contexts/StreamingSettingsContext';
 import rehypeMathjax from 'rehype-mathjax';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';

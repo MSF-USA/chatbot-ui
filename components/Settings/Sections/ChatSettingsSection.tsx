@@ -9,7 +9,7 @@ import { Settings } from '@/types/settings';
 import { SystemPrompt } from '../SystemPrompt';
 import { TemperatureSlider } from '../Temperature';
 
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { useStreamingSettings } from '@/contexts/StreamingSettingsContext';
 
 interface ChatSettingsSectionProps {
   state: Settings;

@@ -28,7 +28,7 @@ import { SettingsSidebar } from './SettingsSidebar';
 import faqData from './faq.json';
 import { SettingsSection } from './types';
 
-import { useStorageMonitor } from '@/context/StorageMonitorContext';
+import { useStorageMonitor } from '@/contexts/StorageMonitorContext';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
