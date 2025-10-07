@@ -29,12 +29,12 @@ interface UserMessageProps {
   messageContent: string;
   setMessageContent: Dispatch<SetStateAction<string>>;
   isEditing: boolean;
-  textareaRef: any;
-  handleInputChange: (event: any) => void;
+  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
   setIsTyping: Dispatch<SetStateAction<boolean>>;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
-  toggleEditing: (event: any) => void;
+  toggleEditing: (event: React.MouseEvent) => void;
   handleDeleteMessage: MouseEventHandler<HTMLButtonElement>;
   onEdit: (message: Message) => void;
   selectedConversation: Conversation;

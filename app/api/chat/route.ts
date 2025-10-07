@@ -8,11 +8,14 @@ export async function POST(req: NextRequest): Promise<Response> {
   try {
     const chatService = new ChatService();
     return await chatService.handleRequest(req);
-  } catch (error: any) {
-    const errorMessage = error.error?.message || 'An unexpected error occurred';
-    const errorCode = error.status || 500;
+  } catch (error) {
+    console.error('Chat API error:', error);
 
-    console.error(error);
+    const errorMessage = error instanceof Error
+      ? error.message
+      : 'An unexpected error occurred';
+    const errorCode = (error as { status?: number })?.status || 500;
+
     return new Response(JSON.stringify({ message: errorMessage }), {
       status: errorCode,
       headers: { 'Content-Type': 'application/json' },

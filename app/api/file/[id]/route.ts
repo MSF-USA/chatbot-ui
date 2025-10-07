@@ -3,7 +3,7 @@ import { AzureBlobStorage, BlobProperty, getBlobBase64String } from '@/lib/utils
 import { getToken } from 'next-auth/jwt';
 import {Session} from "next-auth";
 import {auth} from "@/auth";
-import {getEnvVariable} from "@/utils/app/env";
+import {getEnvVariable} from "@/lib/utils/app/env";
 
 const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   if (typeof id !== 'string' || id.length < 1) {

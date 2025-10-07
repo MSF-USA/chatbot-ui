@@ -47,7 +47,7 @@ const createChatBody = (
 
 const appendPluginKeys = (
   chatBody: ChatBody,
-  pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
+  pluginKeys: PluginKey[],
 ) => ({
   ...chatBody,
   googleAPIKey: pluginKeys
@@ -66,7 +66,6 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
     if (stopConversationRef) {
       checkStopInterval = setInterval(() => {
         if (stopConversationRef.current && !controller.signal.aborted) {
-          console.log('Aborting due to stop request');
           controller.abort();
           clearInterval(checkStopInterval!);
           checkStopInterval = null;
@@ -98,13 +97,12 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
     }
     
     return { controller, body, response };
-  } catch (error: any) {
+  } catch (error) {
     if (checkStopInterval) {
       clearInterval(checkStopInterval);
     }
-    
-    if (error.name === 'AbortError') {
-      console.log('Request was aborted by user');
+
+    if (error instanceof Error && error.name === 'AbortError') {
       const emptyResponse = new Response(new ReadableStream({
         start(controller) {
           controller.close();
@@ -125,7 +123,7 @@ export const makeRequest = async (
   setRequestStatusMessage: Dispatch<SetStateAction<string | null>>,
   updatedConversation: Conversation,
   apiKey: string,
-  pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
+  pluginKeys: PluginKey[],
   systemPrompt: string,
   temperature: number,
   stream: boolean = true,
@@ -162,7 +160,7 @@ export const makeRequest = async (
 
     const allMessagesExceptFinal = updatedConversation.messages.slice(0, -1);
 
-    const fileSummaries: any[] = [];
+    const fileSummaries: { filename: string; summary: string }[] = [];
     for (const content of nonTextContents) {
       const filename =
         content.type === 'file_url'
@@ -325,7 +323,6 @@ Provide a detailed comparison.
     if (stopConversationRef) {
       const handleStopRequest = () => {
         if (stopConversationRef.current && !controller.signal.aborted) {
-          console.log('Stop requested');
           
           if (onAbort) {
             onAbort();

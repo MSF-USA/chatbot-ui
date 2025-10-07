@@ -11,7 +11,7 @@ import {ChainValues} from "@langchain/core/dist/utils/types";
 import {EPubLoader} from "@langchain/community/dist/document_loaders/fs/epub";
 // import {JSONLoader} from "langchain/dist/document_loaders/fs/json";
 // import {CSVLoader} from "langchain/dist/document_loaders/fs/csv";
-import {APIM_CHAT_ENDPONT, OPENAI_API_HOST} from "@/utils/app/const";
+import {APIM_CHAT_ENDPONT, OPENAI_API_HOST} from "@/lib/utils/app/const";
 
 const openaiConfig: AzureOpenAIInput = {
     azureOpenAIApiDeploymentName: APIM_CHAT_ENDPONT,

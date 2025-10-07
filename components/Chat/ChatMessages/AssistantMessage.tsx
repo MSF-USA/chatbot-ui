@@ -216,7 +216,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setIsGeneratingAudio(true);
       setLoadingMessage('Generating audio...');
 
-      const response = await fetch('/api/v2/tts', {
+      const response = await fetch('/api/tts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -258,12 +258,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   // Custom components for markdown processing
   const customMarkdownComponents = {
-    code({ node, inline, className, children, ...props }: {
-      node: any;
+    code({ inline, className, children, ...props }: {
       inline?: boolean;
       className?: string;
       children: React.ReactNode[];
-      [key: string]: any;
     }) {
       if (children.length) {
         if (children[0] == '▍') {
@@ -313,9 +311,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </td>
       );
     },
-    p({ children, ...props }: { children: React.ReactNode; [key: string]: any }) {
+    p({ children }: { children: React.ReactNode }) {
       return (
-        <p {...props}>
+        <p>
           {children}
         </p>
       );

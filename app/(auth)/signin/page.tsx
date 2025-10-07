@@ -2,6 +2,9 @@
 
 import { signIn } from 'next-auth/react';
 import Image from 'next/image';
+import logo from '@/public/logo_light.png';
+import loginBackground from '@/public/loginBackground.jpg';
+import microsoftLogo from '@/public/microsoft-logo.svg';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
@@ -19,14 +22,17 @@ export default function SignInPage() {
           <div
             className="flex w-screen p-10"
             style={{
-              backgroundImage: 'url(/loginBackground.jpg)',
+              backgroundImage: `url(${loginBackground.src})`,
               width: '100%',
               height: '100%',
               backgroundSize: 'cover',
             }}
           >
             <div>
-              <Image src="/logo_light.png" alt="MSF Logo" width={200} height={60} />
+              <Image
+                src={logo}
+                alt="MSF Logo"
+              />
             </div>
             <h1 className="text-4xl font-thin text-white px-5 mt-3">
               MSF AI Assistant
@@ -35,15 +41,13 @@ export default function SignInPage() {
         </div>
 
         <div className="flex items-center justify-center h-full md:w-3/4">
-          <div className="flex flex-row mb-80 md:mb-0 sm:mb-40 bg-zinc-950 hover:bg-zinc-800 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-            <Image src="/azure.png" alt="Active Directory Logo" width={25} height={25} />
-            <button
-              className="px-3"
-              onClick={() => signIn('azure-ad', { callbackUrl: '/' })}
-            >
-              Sign in with Azure AD
-            </button>
-          </div>
+          <button
+            className="flex flex-row items-center gap-3 mb-80 md:mb-0 sm:mb-40 bg-zinc-950 hover:bg-zinc-800 text-white py-4 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+            onClick={() => signIn('azure-ad', { callbackUrl: '/' })}
+          >
+            <Image src={microsoftLogo} alt="Microsoft" width={24} height={24} />
+            <span>Sign in with Microsoft</span>
+          </button>
         </div>
       </div>
       <div className="fixed bottom-0 right-0 w-full py-1">
@@ -52,8 +56,8 @@ export default function SignInPage() {
             <div className="ml-2 group relative flex flex-row text-white">
               How Do I Get Access?
               <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full right-0 transform translate-x-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                Currently MSF AI Assistant is only available to USA and Amsterdam HQ
-                staff.
+                Currently MSF AI Assistant is only available to USA and
+                Amsterdam HQ staff.
                 <br />
                 <br />
                 We hope to expand soon!

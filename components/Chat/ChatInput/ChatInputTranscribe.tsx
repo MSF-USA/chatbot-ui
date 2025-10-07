@@ -15,7 +15,7 @@ async function retryOperation<T>(
   operation: () => Promise<T>,
   maxRetries: number,
   waitTime: number,
-  onRetry?: (attempt: number, error: any) => void,
+  onRetry?: (attempt: number, error: Error) => void,
 ): Promise<T> {
   let attempt = 0;
   while (attempt < maxRetries) {
@@ -141,7 +141,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       return response.json();
     };
 
-    const onRetry = (attempt: number, error: any) => {
+    const onRetry = (attempt: number, error: Error) => {
       console.log(
         `Attempt ${attempt} failed: ${error.message}. Retrying in ${
           waitTime / 1000
@@ -186,7 +186,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       });
 
       const uploadResponse = await fetch(
-        `/api/v2/file/upload?filename=${filename}&filetype=file&mime=${mimeType}`,
+        `/api/file/upload?filename=${filename}&filetype=file&mime=${mimeType}`,
         {
           method: 'POST',
           body: base64Data,
@@ -207,7 +207,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       setStatusMessage(t('transcribingStatus'));
 
       const transcribeResult = await fetchDataWithRetry(
-        `/api/v2/file/${fileID}/transcribe?service=whisper`,
+        `/api/file/${fileID}/transcribe?service=whisper`,
         {
           method: 'GET',
         },

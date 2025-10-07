@@ -1,4 +1,4 @@
-export default function MicIcon(props: any) {
+export default function MicIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}

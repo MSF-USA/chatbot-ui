@@ -6,7 +6,7 @@ import {
     StorageSharedKeyCredential
 } from "@azure/storage-blob";
 import {Readable} from "stream";
-import {getEnvVariable} from "@/utils/app/env";
+import {getEnvVariable} from "@/lib/utils/app/env";
 import {lookup} from "mime-types";
 import {Session} from "next-auth";
 import {

@@ -11,7 +11,7 @@ export type RequestWithBodyModel = RequestModel & {
 export const useFetch = () => {
   const handleFetch = async (
     url: string,
-    request: any,
+    request: RequestWithBodyModel & { method?: string },
     signal?: AbortSignal,
   ) => {
     const requestUrl = request?.params ? `${url}${request.params}` : url;

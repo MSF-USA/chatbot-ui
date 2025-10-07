@@ -169,7 +169,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
 
             // Upload the audioBlob to the server
             const uploadResponse = await fetch(
-              `/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
+              `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
               {
                   method: 'POST',
                   body: base64Data,
@@ -188,7 +188,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
             const fileID = encodeURIComponent(fileURI.split('/').pop());
 
             // Call the transcribe endpoint
-            const transcribeResponse = await fetch(`/api/v2/file/${fileID}/transcribe`, {
+            const transcribeResponse = await fetch(`/api/file/${fileID}/transcribe`, {
                 method: 'GET',
             });
 

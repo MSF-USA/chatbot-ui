@@ -7,7 +7,7 @@ import { auth } from '@/auth';
 import {tmpdir} from 'os';
 import {join} from 'path';
 import fs from "fs";
-import {TranscriptionServiceFactory} from "@/services/transcriptionService";
+import {TranscriptionServiceFactory} from "@/lib/services/transcriptionService";
 import {promisify} from "util";
 
 const unlinkAsync = promisify(fs.unlink);

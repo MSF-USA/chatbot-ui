@@ -157,7 +157,7 @@ export const hasUserAcceptedAllRequiredDocuments = (
 // Function to fetch the latest terms data from the API
 export const fetchTermsData = async (): Promise<TermsData> => {
   try {
-    const response = await fetch('/api/v2/terms');
+    const response = await fetch('/api/terms');
     if (!response.ok) {
       throw new Error('Failed to fetch terms data');
     }

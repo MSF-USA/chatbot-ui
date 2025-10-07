@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AzureOpenAI } from "openai";
 import {DefaultAzureCredential, getBearerTokenProvider} from "@azure/identity";
-import {generateOptimizedQueryAndQuestion} from "@/utils/server/structuredResponses";
+import {generateOptimizedQueryAndQuestion} from "@/lib/utils/server/structuredResponses";
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   const apiVersion = '2024-08-01-preview'

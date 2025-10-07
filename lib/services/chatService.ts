@@ -296,7 +296,7 @@ export default class ChatService {
     botId?: string,
     streamResponse: boolean = true,
     promptToSend?: string,
-    modelConfig?: any,
+    modelConfig?: Record<string, unknown>,
     threadId?: string,
   ): Promise<Response> {
     const startTime = Date.now();
@@ -423,7 +423,7 @@ export default class ChatService {
                   // Handle different event types
                   if (eventMessage.event === 'thread.message.delta') {
                     if (eventMessage.data?.delta?.content && Array.isArray(eventMessage.data.delta.content)) {
-                      eventMessage.data.delta.content.forEach((contentPart: any) => {
+                      eventMessage.data.delta.content.forEach((contentPart: { type: string; text?: { value: string } }) => {
                         if (contentPart.type === 'text' && contentPart.text?.value) {
                           let textChunk = contentPart.text.value;
                           
@@ -448,7 +448,7 @@ export default class ChatService {
                       citations = [];
                       citationIndex = 1;
                       
-                      annotations.forEach((annotation: any) => {
+                      annotations.forEach((annotation: { type: string; urlCitation?: { title?: string; url?: string } }) => {
                         if (annotation.type === 'url_citation' && annotation.urlCitation) {
                           citations.push({
                             number: citationIndex++,

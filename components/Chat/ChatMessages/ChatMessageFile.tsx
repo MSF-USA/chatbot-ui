@@ -26,7 +26,7 @@ import {
     ImageMessageContent,
 } from "@/types/chat";
 import ImageIcon from "@/components/Icons/image";
-import {fetchImageBase64FromMessageContent} from "@/services/imageService";
+import {fetchImageBase64FromMessageContent} from "@/lib/services/imageService";
 
 /**
  * Component to display image files in chat messages
@@ -131,11 +131,11 @@ export interface ChatMessageFileProps {
     isEditing: boolean;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsTyping: Dispatch<SetStateAction<boolean>>;
-    handleInputChange: (event: any) => void;
-    textareaRef: any;
+    handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    textareaRef: React.RefObject<HTMLTextAreaElement>;
     handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
     handleEditMessage: () => void;
-    toggleEditing: (event: any) => void;
+    toggleEditing: (event: React.MouseEvent) => void;
     handleDeleteMessage: () => void;
     onEdit: (message: Message) => void | undefined;
 }
@@ -199,11 +199,11 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
         }
     }, [text]);
 
-    const downloadFile = (event: any, fileUrl: string) => {
+    const downloadFile = (event: React.MouseEvent, fileUrl: string) => {
         event.preventDefault();
         if (fileUrl) {
             const filename = fileUrl.split("/").pop();
-            const downloadUrl = `/api/v2/file/${filename}`;
+            const downloadUrl = `/api/file/${filename}`;
             window.open(downloadUrl, "_blank");
         }
     };

@@ -4,7 +4,7 @@ export const fetchImageBase64FromMessageContent = async (image: ImageMessageCont
   try {
     if (image?.image_url?.url) {
       const filename = image.image_url.url.split("/")[image.image_url.url.split("/").length - 1];
-      const page: Response = await fetch(`/api/v2/file/${filename}?filetype=image`);
+      const page: Response = await fetch(`/api/file/${filename}?filetype=image`);
       const resp = await page.json();
       return resp.base64Url;
     } else {

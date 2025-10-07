@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
-import { cleanMarkdown } from "@/utils/app/clean";
+import { cleanMarkdown } from "@/lib/utils/app/clean";
 import {Session} from "next-auth";
 import {auth} from "@/auth";
 

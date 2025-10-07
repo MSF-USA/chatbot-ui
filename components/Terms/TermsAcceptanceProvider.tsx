@@ -2,7 +2,7 @@ import React, { FC, ReactNode, useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { checkUserTermsAcceptance } from '@/lib/utils/app/termsAcceptance';
 import TermsAcceptanceModal from './TermsAcceptanceModal';
-import {isUSBased} from "@/utils/app/userAuth";
+import {isUSBased} from "@/lib/utils/app/userAuth";
 
 /**
  * Props interface for the TermsAcceptanceProvider component.

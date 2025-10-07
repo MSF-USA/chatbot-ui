@@ -1,4 +1,4 @@
-import { fetchAndParseWebpage } from "@/services/webpageService";
+import { fetchAndParseWebpage } from "@/lib/services/webpageService";
 import { NextRequest, NextResponse } from 'next/server';
 import {Session} from "next-auth";
 import {auth} from "@/auth";

@@ -53,9 +53,9 @@
     "pica": "^9.0.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "zustand": "^5.0.2",
     "react-hot-toast": "^2.4.1",
     "react-i18next": "^14.1.2",
+    "react-icons": "^5.5.0",
     "react-markdown": "^8.0.5",
     "react-query": "^3.39.3",
     "react-swipeable": "^7.0.2",
@@ -65,7 +65,8 @@
     "remark-math": "^5.1.1",
     "sharp": "^0.32.6",
     "typewriter-effect": "^2.21.0",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@mozilla/readability": "0.6.0",

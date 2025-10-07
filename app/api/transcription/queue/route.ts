@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { AzureBlobStorage } from "@/utils/server/blob";
+import { AzureBlobStorage } from "@/lib/utils/server/blob";
 import { v4 as uuidv4 } from 'uuid';
 import { auth } from "@/auth";
 import { DequeuedMessageItem } from '@azure/storage-queue';

@@ -1,6 +1,6 @@
 import {ITranscriptionService} from "@/types/transcription";
-import {WhisperTranscriptionService} from "@/services/transcription/whisperTranscriptionService";
-import {ACSTranscriptionService} from "@/services/transcription/azureSpeechTranscriptionService";
+import {WhisperTranscriptionService} from "@/lib/services/transcription/whisperTranscriptionService";
+import {ACSTranscriptionService} from "@/lib/services/transcription/azureSpeechTranscriptionService";
 
 
 export class TranscriptionServiceFactory {

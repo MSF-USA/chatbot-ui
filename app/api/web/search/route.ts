@@ -1,10 +1,10 @@
 export const runtime = 'nodejs';
 
 import { NextRequest, NextResponse } from 'next/server';
-import { fetchAndParseWebpage, HttpError } from "@/services/webpageService";
+import { fetchAndParseWebpage, HttpError } from "@/lib/services/webpageService";
 import { Session } from "next-auth";
 import { auth } from "@/auth";
-import { fetchAndParseBingSearch } from "@/services/bingService";
+import { fetchAndParseBingSearch } from "@/lib/services/bingService";
 import { SearchResult } from "@/types/bing";
 
 const formatArticle = (index: number, article: SearchResult, content: string): string => {

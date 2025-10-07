@@ -1,13 +1,13 @@
 import {Dispatch, FC, KeyboardEventHandler, SetStateAction, useEffect, useState} from "react";
 import {IconEdit, IconRobot, IconTrash, IconUser} from "@tabler/icons-react";
 import {ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
-import {getBase64FromImageURL} from "@/utils/app/image";
+import {getBase64FromImageURL} from "@/lib/utils/app/image";
 import { MemoizedReactMarkdown } from "@/components/Markdown/MemoizedReactMarkdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import rehypeMathjax from "rehype-mathjax";
 import {CodeBlock} from "@/components/Markdown/CodeBlock";
-import {fetchImageBase64FromMessageContent} from "@/services/imageService";
+import {fetchImageBase64FromMessageContent} from "@/lib/services/imageService";
 
 /**
  * Properties for styling images in chat messages
@@ -25,11 +25,11 @@ interface ChatMessageImageProps {
     isEditing: boolean;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsTyping: Dispatch<SetStateAction<boolean>>;
-    handleInputChange: (event: any) => void;
-    textareaRef: any;
+    handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    textareaRef: React.RefObject<HTMLTextAreaElement>;
     handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
     handleEditMessage: () => void;
-    toggleEditing: (event: any) => void;
+    toggleEditing: (event: React.MouseEvent) => void;
     handleDeleteMessage: () => void;
     onEdit: (message: Message) => void;
 }

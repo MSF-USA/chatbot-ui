@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 
 import { ErrorMessage } from '@/types/error';
 import {signOut} from "next-auth/react";
-import {FORCE_LOGOUT_ON_REFRESH_FAILURE, OPENAI_API_TYPE} from "@/utils/app/const";
+import {FORCE_LOGOUT_ON_REFRESH_FAILURE, OPENAI_API_TYPE} from "@/lib/utils/app/const";
 
 const useErrorService = () => {
   const { t } = useTranslation('chat');

@@ -1,7 +1,7 @@
 'use client';
 
 import { Message } from '@/types/chat';
-import { MemoizedChatMessage } from './MemoizedChatMessage';
+import { MemoizedChatMessage } from '../MemoizedChatMessage';
 
 interface MessageItemProps {
   message: Message;

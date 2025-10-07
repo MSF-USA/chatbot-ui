@@ -1,4 +1,4 @@
-export default function FileIcon(props: any) {
+export default function FileIcon(props: React.SVGProps<SVGSVGElement>) {
     return (
         <svg
             {...props}
