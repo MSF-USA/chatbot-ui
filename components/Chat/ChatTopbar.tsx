@@ -63,7 +63,9 @@ export const ChatTopbar = ({
                 {selectedModelName}
               </span>
               {agentEnabled && (
-                <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" title="Agent Tools Enabled" />
+                <span title="Agent Tools Enabled">
+                  <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" />
+                </span>
               )}
               <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
             </button>
