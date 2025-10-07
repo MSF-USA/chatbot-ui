@@ -44,12 +44,12 @@ export function getModelFallbackChain(): OpenAIModelID[] {
   }
 
   // Add fallback model if it's different from default
-  if (fallbackModelID && fallbackModelID !== defaultModelID) {
+  if (fallbackModelID && (fallbackModelID as string) !== defaultModelID) {
     chain.push(fallbackModelID);
   }
 
   // Add hardcoded gpt-4o as ultimate fallback if not already in chain
-  if (defaultModelID !== OpenAIModelID.GPT_4o && fallbackModelID !== OpenAIModelID.GPT_4o) {
+  if ((defaultModelID as string) !== OpenAIModelID.GPT_4o && fallbackModelID !== OpenAIModelID.GPT_4o) {
     chain.push(OpenAIModelID.GPT_4o);
   }
 
