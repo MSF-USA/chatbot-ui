@@ -20,5 +20,10 @@
   "uploadingFile": "جارٍ تحميل الملف...",
   "removeFile": "قم بإزالة وتحديد ملف مختلف",
   "transcriptionErrorAttempt": "خطأ أثناء النسخ (المحاولة {{attempt}} من 3). إعادة المحاولة...",
-  "rateLimitExceededWaiting": "تم تجاوز الحد الأقصى. انتظار {{seconds}} ثانية قبل المحاولة مرة أخرى..."
+  "rateLimitExceededWaiting": "تم تجاوز الحد الأقصى. انتظار {{seconds}} ثانية قبل المحاولة مرة أخرى...",
+  "cancel": "إلغاء",
+  "confirm": "تأكيد",
+  "confirmCancelTranscription": "هل أنت متأكد أنك تريد إلغاء النسخ الجاري؟",
+  "confirmDiscardTranscript": "هل أنت متأكد أنك تريد التخلص من النص المكتوب دون استخدامه؟",
+  "confirmTitle": "تأكيد الإجراء"
 }

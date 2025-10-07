@@ -20,5 +20,10 @@
   "uploadingFile": "Carregando arquivo...",
   "removeFile": "Remova e selecione um arquivo diferente",
   "transcriptionErrorAttempt": "Erro durante a transcrição (Tentativa {{attempt}} de 3). Tentando novamente...",
-  "rateLimitExceededWaiting": "Limite de taxa excedido. Aguardando {{seconds}} segundos antes de tentar novamente..."
+  "rateLimitExceededWaiting": "Limite de taxa excedido. Aguardando {{seconds}} segundos antes de tentar novamente...",
+  "cancel": "Cancelar",
+  "confirm": "Confirmar",
+  "confirmCancelTranscription": "Você tem certeza de que deseja cancelar a transcrição em andamento?",
+  "confirmDiscardTranscript": "Você tem certeza de que deseja descartar a transcrição sem usá-la?",
+  "confirmTitle": "Confirmar Ação"
 }

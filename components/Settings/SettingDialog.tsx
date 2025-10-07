@@ -11,7 +11,7 @@ import { getStorageUsage } from '@/utils/app/storageMonitor';
 
 import { Settings } from '@/types/settings';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 import ChatbarContext from '../Chatbar/Chatbar.context';
 import { MobileHeader } from './MobileHeader';
@@ -28,7 +28,7 @@ import { SettingsSidebar } from './SettingsSidebar';
 import faqData from './faq.json';
 import { SettingsSection } from './types';
 
-import { useStorageMonitor } from '@/context/StorageMonitorContext';
+import { useStorageMonitor } from '@/contexts/StorageMonitorContext';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;

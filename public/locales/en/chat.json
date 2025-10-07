@@ -139,5 +139,6 @@
   "commandEnableAgents": "enableAgents",
   "commandHelp": "help",
   "commandSettings": "settings",
-  "commandPrivacyPolicy": "privacyPolicy"
+  "commandPrivacyPolicy": "privacyPolicy",
+  "Run Typewriter Intro": "Run Typewriter Intro"
 }

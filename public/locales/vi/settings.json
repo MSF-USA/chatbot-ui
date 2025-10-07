@@ -35,5 +35,7 @@
   "A description for your prompt.": "Mô tả cho lời nhắc của bạn.",
   "Prompt": "Lời nhắc",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Nội dung lời nhắc. Sử dụng {{}} để biểu thị biến. Ví dụ: {{name}} là một {{noun}} {{adjective}}.",
-  "A name for your prompt.": "Tên cho lời nhắc của bạn."
+  "A name for your prompt.": "Tên cho lời nhắc của bạn.",
+  "Run Typewriter Intro": "Chạy giới thiệu kiểu đánh máy",
+  "Language": "Ngôn ngữ"
 }

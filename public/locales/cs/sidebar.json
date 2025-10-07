@@ -6,5 +6,21 @@
   "Search conversations...": "Vyhledat konverzace...",
   "New prompt": "Nová výzva",
   "Dark mode": "tmavý režim",
-  "Light mode": "světlý režim"
+  "Light mode": "světlý režim",
+  "A description for your prompt.": "Popis pro vaši výzvu.",
+  "A name for your prompt.": "Název pro vaši výzvu.",
+  "Are you sure?": "Opravdu si to přejete?",
+  "Clear conversations": "Vymazat konverzace",
+  "Description": "Popis",
+  "Export data": "Zálohovat historii chatu",
+  "Import data": "Obnovit historii chatu",
+  "Name": "Název",
+  "New folder": "Nová složka",
+  "No conversations.": "Žádné konverzace.",
+  "No prompts.": "Žádné výzvy.",
+  "OpenAI API Key": "OpenAI API klíč",
+  "Plugin Keys": "Klíče pluginů",
+  "Prompt": "Výzva",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte {{}} k označení proměnné. Např: {{name}} je {{adjective}} {{noun}}",
+  "Search prompts...": "Hledat výzvy..."
 }

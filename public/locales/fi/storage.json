@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Tallennusvaroitus",
+  "Your browser storage is almost full!": "Selaimesi tallennustila on lähes täynnä!",
+  "Current usage": "Nykyinen käyttö",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Jos tallennustilasi täyttyy kokonaan, sovellus saattaa lakata toimimasta oikein ja voit menettää pääsyn keskusteluihisi.",
+  "Options to free up space": "Vaihtoehdot tilan vapauttamiseksi",
+  "1. Export your conversations": "1. Vie keskustelusi",
+  "Save your conversations to your computer before clearing them.": "Tallenna keskustelusi tietokoneellesi ennen niiden poistamista.",
+  "Export All Data": "Vie kaikki tiedot",
+  "2. Clear older conversations": "2. Poista vanhemmat keskustelut",
+  "Keep recent conversations": "Pidä tuoreet keskustelut",
+  "This will remove": "Tämä poistaa",
+  "older conversations": "vanhemmat keskustelut",
+  "Space freed": "Vapautettu tila",
+  "Clear Older Conversations": "Poista vanhemmat keskustelut",
+  "Close": "Sulje",
+  "Storage Usage": "Tallennustilan käyttö",
+  "Used": "Käytetty",
+  "Local storage is used to save your conversations, settings, and preferences.": "Paikallista tallennustilaa käytetään keskustelujesi, asetustesi ja mieltymystesi tallentamiseen."
+}

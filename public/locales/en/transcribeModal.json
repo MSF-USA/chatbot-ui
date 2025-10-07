@@ -20,5 +20,10 @@
   "copyToClipboard": "Copy to Clipboard",
   "downloadAsTXT": "Download as TXT",
   "injectIntoChat": "Inject into Chat",
-  "removeFile": "Remove and select a different file"
+  "removeFile": "Remove and select a different file",
+  "confirmCancelTranscription": "Are you sure you want to cancel the transcription in progress?",
+  "confirmDiscardTranscript": "Are you sure you want to discard the transcript without using it?",
+  "confirmTitle": "Confirm Action",
+  "cancel": "Cancel",
+  "confirm": "Confirm"
 }

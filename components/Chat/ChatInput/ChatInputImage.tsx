@@ -19,7 +19,7 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import ImageIcon from '@/components/Icons/image';

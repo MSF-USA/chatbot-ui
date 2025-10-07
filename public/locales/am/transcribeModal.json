@@ -20,5 +20,10 @@
   "uploadingFile": "ፋይል ማስገባት በሂደት ላይ...",
   "removeFile": "አስወግድ እና ሌላ ፋይል ይምረጡ",
   "transcriptionErrorAttempt": "ስህተት በቃላው ሰዋሰው ላይ (ሙከራ {{attempt}} ከ3). እንደገና ይሞክሩ...",
-  "rateLimitExceededWaiting": "የግምት ክፍተት ተሳልፏል። {{seconds}} ሰከንዶችን ማረፍ እየተጠበቀ..."
+  "rateLimitExceededWaiting": "የግምት ክፍተት ተሳልፏል። {{seconds}} ሰከንዶችን ማረፍ እየተጠበቀ...",
+  "cancel": "ይቅርታ",
+  "confirm": "እረጋግጥ",
+  "confirmCancelTranscription": "እቅፍ ይቅርታ የሚያስቀርብ የተሰራ የትርጉም ሂደት ማቋረጥ ይፈልጋሉ?",
+  "confirmDiscardTranscript": "እቅፍ ይቅርታ የተጠቀምን የትርጉም ማውጣት ይፈልጋሉ?",
+  "confirmTitle": "ድርጊት እረጋግጥ"
 }

@@ -35,5 +35,7 @@
   "A description for your prompt.": "คำอธิบายสำหรับพรอมต์ของคุณ",
   "Prompt": "พรอมต์",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "เนื้อหาพรอมต์ ใช้ {{}} เพื่อแทนตัวแปร ตัวอย่าง: {{name}} คือ {{adjective}} {{noun}}",
-  "A name for your prompt.": "ชื่อสำหรับพรอมต์ของคุณ"
+  "A name for your prompt.": "ชื่อสำหรับพรอมต์ของคุณ",
+  "Run Typewriter Intro": "รันการแนะนำแบบพิมพ์ดีด",
+  "Language": "ภาษา"
 }

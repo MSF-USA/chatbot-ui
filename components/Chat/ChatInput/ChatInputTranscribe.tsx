@@ -87,6 +87,9 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   const [transcriptModalOpen, setTranscriptModalOpen] =
     useState<boolean>(false);
   const [transcript, setTranscript] = useState<string>('');
+  const [hasUsedTranscript, setHasUsedTranscript] = useState<boolean>(false);
+  const [showConfirmDialog, setShowConfirmDialog] = useState<boolean>(false);
+  const [confirmDialogAction, setConfirmDialogAction] = useState<(() => void) | null>(null);
   const openModalButtonRef = useRef<HTMLButtonElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,15 +106,39 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   };
 
   const closeModal = () => {
-    setIsModalOpen(false);
-    setParentModalIsOpen(false);
-    setFile(null);
-    setError(null);
+    if (isTranscribing) {
+      // Show confirmation if transcription is in progress
+      setShowConfirmDialog(true);
+      setConfirmDialogAction(() => () => {
+        setIsModalOpen(false);
+        setParentModalIsOpen(false);
+        setFile(null);
+        setError(null);
+        setIsTranscribing(false);
+        setStatusMessage(null);
+      });
+    } else {
+      setIsModalOpen(false);
+      setParentModalIsOpen(false);
+      setFile(null);
+      setError(null);
+    }
   };
 
   const closeTranscriptModal = () => {
-    setTranscriptModalOpen(false);
-    setTranscript('');
+    if (!hasUsedTranscript) {
+      // Show confirmation if transcript hasn't been used
+      setShowConfirmDialog(true);
+      setConfirmDialogAction(() => () => {
+        setTranscriptModalOpen(false);
+        setTranscript('');
+        setHasUsedTranscript(false);
+      });
+    } else {
+      setTranscriptModalOpen(false);
+      setTranscript('');
+      setHasUsedTranscript(false);
+    }
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -230,7 +257,9 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       const transcript = transcribeResult.transcript;
 
       setTranscript(transcript);
-      // closeModal();
+      setHasUsedTranscript(false); // Reset usage flag for new transcript
+      // Close the transcription modal and open transcript modal
+      setIsModalOpen(false);
       setTranscriptModalOpen(true);
     } catch (error) {
       console.error('Error during transcription:', error);
@@ -245,7 +274,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     navigator.clipboard
       .writeText(transcript)
       .then(() => {
-        // Optionally, provide feedback to user
+        // Mark that user has used the transcript
+        setHasUsedTranscript(true);
         toast.success(t('copiedToClipboard'));
       })
       .catch((error) => {
@@ -263,6 +293,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+    // Mark that user has used the transcript
+    setHasUsedTranscript(true);
   };
 
   const handleInjectToChat = async () => {
@@ -384,6 +416,39 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     </div>
   );
 
+  const confirmDialogContent = (
+    <div className="text-center">
+      <p className="text-gray-700 dark:text-gray-200">
+        {isTranscribing
+          ? t('confirmCancelTranscription') || 'Are you sure you want to cancel the transcription in progress?'
+          : t('confirmDiscardTranscript') || 'Are you sure you want to discard the transcript without using it?'}
+      </p>
+    </div>
+  );
+
+  const confirmDialogFooter = (
+    <div className="flex justify-end space-x-2">
+      <button
+        onClick={() => setShowConfirmDialog(false)}
+        className="px-4 py-2 rounded bg-gray-300 hover:bg-gray-400 dark:bg-gray-600 dark:hover:bg-gray-500 text-black dark:text-white"
+      >
+        {t('cancel') || 'Cancel'}
+      </button>
+      <button
+        onClick={() => {
+          if (confirmDialogAction) {
+            confirmDialogAction();
+          }
+          setShowConfirmDialog(false);
+          setConfirmDialogAction(null);
+        }}
+        className="px-4 py-2 rounded bg-red-500 hover:bg-red-600 text-white"
+      >
+        {t('confirm') || 'Confirm'}
+      </button>
+    </div>
+  );
+
   return (
     <div className="inline-block">
       <button
@@ -406,6 +471,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         }
         footer={transcribeModalFooter}
         icon={<IconFileMusic size={24} />}
+        preventOutsideClick={isTranscribing}
+        preventEscapeKey={isTranscribing}
       >
         {transcribeModalContent}
         {isTranscribing && (
@@ -448,6 +515,20 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         footer={transcriptModalFooter}
       >
         {transcriptModalContent}
+      </Modal>
+
+      <Modal
+        isOpen={showConfirmDialog}
+        onClose={() => setShowConfirmDialog(false)}
+        title={
+          <h2 className="text-xl font-bold text-black dark:text-white">
+            {t('confirmTitle') || 'Confirm Action'}
+          </h2>
+        }
+        footer={confirmDialogFooter}
+        size="sm"
+      >
+        {confirmDialogContent}
       </Modal>
     </div>
   );

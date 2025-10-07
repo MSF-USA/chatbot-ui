@@ -3,7 +3,7 @@ import { FC } from 'react';
 
 import { useSmoothLoadingMessage } from '@/hooks/useSmoothLoadingMessage';
 
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { useStreamingSettings } from '@/contexts/StreamingSettingsContext';
 
 interface Props {
   requestStatusMessage: string | null;

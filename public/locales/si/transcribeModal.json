@@ -20,5 +20,10 @@
   "uploadingFile": "ගොනුව උඩුගත වෙමින්...",
   "removeFile": "ඉවත් කර වෙනත් ගොනුවක් තෝරන්න",
   "transcriptionErrorAttempt": "පිටපත් කිරීමේ දෝෂයකි (අත්හදා බැලීම {{attempt}} 3 න්). නැවත උත්සාහ කරන්න...",
-  "rateLimitExceededWaiting": "අනුපාත සීමාව ඉක්මවා ඇත. නැවත උත්සාහ කිරීමට පෙර {{seconds}} තත්පරක් රැඳී සිටිමින්..."
+  "rateLimitExceededWaiting": "අනුපාත සීමාව ඉක්මවා ඇත. නැවත උත්සාහ කිරීමට පෙර {{seconds}} තත්පරක් රැඳී සිටිමින්...",
+  "cancel": "අවලංගු කරන්න",
+  "confirm": "සහතික කරන්න",
+  "confirmCancelTranscription": "ඔබට සිදු වන ලේඛනය අවසන් කිරීමට සහතිකද?",
+  "confirmDiscardTranscript": "ඔබට එය භාවිතා නොකර ලේඛනය අහෝසි කිරීමට සහතිකද?",
+  "confirmTitle": "ක්‍රියාව සහතික කරන්න"
 }

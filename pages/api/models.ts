@@ -9,7 +9,7 @@ import {
   OPENAI_ORGANIZATION,
 } from '@/utils/app/const';
 
-import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { OpenAIModel, OpenAIModelID, OpenAIModels, AVAILABLE_MODELS } from '@/types/openai';
 
 export const config = {
   runtime: 'edge',
@@ -53,39 +53,10 @@ const handler = async (req: NextRequest): Promise<Response> => {
       OPENAI_ORGANIZATION: OPENAI_ORGANIZATION,
     };
 
-    // Hardcoded JSON data until the logic for retrieving deployments is fixed
+    // Use centralized AVAILABLE_MODELS list from types/openai.ts
+    // This ensures frontend and backend use the same model configuration
     const json = {
-      data: [
-        {
-          id: 'gpt-35-turbo',
-        },
-        {
-          id: 'gpt-4o',
-        },
-        {
-          id: 'gpt-4',
-        },
-        {
-          id: 'gpt-4.1'
-        },
-        {
-          id: 'gpt-45',
-        },
-        {
-          id: 'gpt-4o-mini',
-        },
-        // Reasoning models (o1, o3-mini) give the following error.
-        // ErrorMessage: '400 Model {modelName} is enabled only for api versions 2024-12-01-preview and later',
-        {
-          id: 'o3-mini',
-        },
-        {
-          id: 'gpt-o1',
-        },
-        {
-          id: 'gpt-o1-mini',
-        },
-      ],
+      data: AVAILABLE_MODELS.map((modelId) => ({ id: modelId })),
     };
 
     const models: OpenAIModel[] = getModels(json, configData);

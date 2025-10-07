@@ -26,5 +26,16 @@
   "Storage almost full": "¡Almacenamiento casi lleno! Considere borrar conversaciones antiguas.",
   "Local storage info": "Todos los datos se almacenan localmente en el localStorage de su navegador y permanecen completamente en su dispositivo.",
   "Data Actions": "Acciones de datos",
-  "Export data": "Exportar datos"
+  "Export data": "Exportar datos",
+  "A description for your prompt.": "Una descripción para tu aviso.",
+  "A name for your prompt.": "Un nombre para tu aviso.",
+  "Description": "Descripción",
+  "Name": "Nombre",
+  "New folder": "Nueva carpeta",
+  "New prompt": "Nuevo aviso",
+  "No prompts.": "Sin avisos.",
+  "Prompt": "Aviso",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contenido del aviso. Usa {{}} para denotar una variable. Ej: {{name}} es un {{adjective}} {{noun}}.",
+  "Search prompts...": "Buscar avisos...",
+  "Run Typewriter Intro": "Ejecutar introducción de máquina de escribir"
 }

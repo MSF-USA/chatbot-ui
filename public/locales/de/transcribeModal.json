@@ -20,5 +20,10 @@
   "uploadingFile": "Datei wird hochgeladen...",
   "removeFile": "Entfernen und eine andere Datei auswählen",
   "transcriptionErrorAttempt": "Fehler bei der Transkription (Versuch {{attempt}} von 3). Erneuter Versuch...",
-  "rateLimitExceededWaiting": "Ratenlimit überschritten. Warte {{seconds}} Sekunden, bevor erneut versucht wird..."
+  "rateLimitExceededWaiting": "Ratenlimit überschritten. Warte {{seconds}} Sekunden, bevor erneut versucht wird...",
+  "cancel": "Abbrechen",
+  "confirm": "Bestätigen",
+  "confirmCancelTranscription": "Sind Sie sicher, dass Sie die laufende Transkription abbrechen möchten?",
+  "confirmDiscardTranscript": "Sind Sie sicher, dass Sie das Transkript ohne Verwendung verwerfen möchten?",
+  "confirmTitle": "Aktion Bestätigen"
 }

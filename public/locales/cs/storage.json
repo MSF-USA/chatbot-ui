@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Upozornění na úložiště",
+  "Your browser storage is almost full!": "Úložiště vašeho prohlížeče je téměř plné!",
+  "Current usage": "Aktuální využití",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Pokud se vaše úložiště zcela zaplní, aplikace může přestat správně fungovat a můžete ztratit přístup ke svým konverzacím.",
+  "Options to free up space": "Možnosti, jak uvolnit místo",
+  "1. Export your conversations": "1. Exportujte své konverzace",
+  "Save your conversations to your computer before clearing them.": "Uložte si své konverzace do počítače před jejich vymazáním.",
+  "Export All Data": "Exportovat všechna data",
+  "2. Clear older conversations": "2. Vymazat starší konverzace",
+  "Keep recent conversations": "Udržet nedávné konverzace",
+  "This will remove": "Toto odstraní",
+  "older conversations": "starší konverzace",
+  "Space freed": "Uvolněné místo",
+  "Clear Older Conversations": "Vymazat starší konverzace",
+  "Close": "Zavřít",
+  "Storage Usage": "Využití úložiště",
+  "Used": "Použito",
+  "Local storage is used to save your conversations, settings, and preferences.": "Místní úložiště se používá k ukládání vašich konverzací, nastavení a preferencí."
+}

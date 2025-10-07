@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "저장소 경고",
+  "Your browser storage is almost full!": "브라우저 저장소가 거의 가득 찼습니다!",
+  "Current usage": "현재 사용량",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "저장소가 완전히 가득 차면 애플리케이션이 제대로 작동하지 않을 수 있으며, 대화에 접근할 수 없게 될 수 있습니다.",
+  "Options to free up space": "공간을 확보할 수 있는 옵션",
+  "1. Export your conversations": "1. 대화 내보내기",
+  "Save your conversations to your computer before clearing them.": "대화를 삭제하기 전에 컴퓨터에 저장하세요.",
+  "Export All Data": "모든 데이터 내보내기",
+  "2. Clear older conversations": "2. 오래된 대화 삭제",
+  "Keep recent conversations": "최근 대화 유지",
+  "This will remove": "이 작업은 다음을 제거합니다.",
+  "older conversations": "오래된 대화",
+  "Space freed": "공간 확보됨",
+  "Clear Older Conversations": "오래된 대화 삭제",
+  "Close": "닫기",
+  "Storage Usage": "저장소 사용량",
+  "Used": "사용됨",
+  "Local storage is used to save your conversations, settings, and preferences.": "로컬 저장소는 대화, 설정 및 환경 설정을 저장하는 데 사용됩니다."
+}

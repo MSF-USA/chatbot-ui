@@ -20,5 +20,10 @@
   "uploadingFile": "Dosya yükleniyor...",
   "removeFile": "Kaldır ve farklı bir dosya seç",
   "transcriptionErrorAttempt": "Yazıya dökme sırasında hata (3 denemeden {{attempt}}). Yeniden deneniyor...",
-  "rateLimitExceededWaiting": "Hız limiti aşıldı. Tekrar denemeden önce {{seconds}} saniye bekleniyor..."
+  "rateLimitExceededWaiting": "Hız limiti aşıldı. Tekrar denemeden önce {{seconds}} saniye bekleniyor...",
+  "cancel": "İptal",
+  "confirm": "Onayla",
+  "confirmCancelTranscription": "Devam eden transkripti iptal etmek istediğinize emin misiniz?",
+  "confirmDiscardTranscript": "Transkripti kullanmadan silmek istediğinize emin misiniz?",
+  "confirmTitle": "İşlemi Onayla"
 }

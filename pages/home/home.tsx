@@ -40,7 +40,7 @@ import { getSettings } from '@/utils/app/settings';
 import { Conversation } from '@/types/chat';
 import { KeyValuePair } from '@/types/data';
 import { FolderInterface, FolderType } from '@/types/folder';
-import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
+import { OpenAIModelID, OpenAIModels, defaultModelID, fallbackModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { Settings } from '@/types/settings';
 
@@ -50,14 +50,14 @@ import { Navbar } from '@/components/Mobile/Navbar';
 import { SettingsSection } from '@/components/Settings/types';
 import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
 
-import { authOptions } from '../auth/[...nextauth]';
-import HomeContext from './home.context';
-import { HomeInitialState, initialState } from './home.state';
+import { authOptions } from '../api/auth/[...nextauth]';
+import HomeContext from '@/contexts/home.context';
+import { HomeInitialState, initialState } from '@/contexts/home.state';
 
 import {
   StorageMonitorProvider,
   useStorageMonitor,
-} from '@/context/StorageMonitorContext';
+} from '@/contexts/StorageMonitorContext';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
@@ -285,11 +285,9 @@ const Home = ({
       lastConversation?.model?.id &&
       OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
 
-    // TODO: Replace with an actual default value given by environment variables, not hardcoded
-    // to always use GPT-4o as default, forcing code changes on model deployment changes.
     const modelToUse =
       !lastConversation?.model || lastModelIsLegacy
-        ? OpenAIModels[OpenAIModelID.GPT_4o]
+        ? OpenAIModels[defaultModelID]
         : lastConversation.model;
 
     const newConversation: Conversation = {
@@ -373,7 +371,7 @@ const Home = ({
       dispatch({
         field: 'defaultModelId',
         value: OpenAIModels[defaultModelId].isLegacy
-          ? OpenAIModelID.GPT_4o
+          ? defaultModelID
           : defaultModelId,
       });
     serverSideApiKeyIsSet &&
@@ -488,11 +486,9 @@ const Home = ({
       lastConversation?.model?.id &&
       OpenAIModels[lastConversation.model.id as OpenAIModelID]?.isLegacy;
 
-    // TODO: same as above, use environment variable for defaults rather than
-    // always using GPT-4o as default if last model was legacy
     const modelToUse =
       !lastConversation?.model || lastModelIsLegacy
-        ? OpenAIModels[OpenAIModelID.GPT_4o]
+        ? OpenAIModels[defaultModelID]
         : lastConversation.model;
     const newConversation: Conversation = {
       id: uuidv4(),
@@ -667,6 +663,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         'promptbar',
         'settings',
         'transcribeModal',
+        'commands',
       ])),
     },
   };

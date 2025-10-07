@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "存储警告",
+  "Your browser storage is almost full!": "您的浏览器存储快满了！",
+  "Current usage": "当前使用情况",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "如果您的存储完全满了，应用程序可能无法正常工作，您可能会失去对对话的访问权限。",
+  "Options to free up space": "释放空间的选项",
+  "1. Export your conversations": "1. 导出您的对话",
+  "Save your conversations to your computer before clearing them.": "在清除之前将您的对话保存到计算机上。",
+  "Export All Data": "导出所有数据",
+  "2. Clear older conversations": "2. 清除旧对话",
+  "Keep recent conversations": "保留最近的对话",
+  "This will remove": "这将删除",
+  "older conversations": "旧对话",
+  "Space freed": "已释放空间",
+  "Clear Older Conversations": "清除旧对话",
+  "Close": "关闭",
+  "Storage Usage": "存储使用情况",
+  "Used": "已使用",
+  "Local storage is used to save your conversations, settings, and preferences.": "本地存储用于保存您的对话、设置和偏好。"
+}

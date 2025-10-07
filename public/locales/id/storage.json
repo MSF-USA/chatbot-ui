@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Peringatan Penyimpanan",
+  "Your browser storage is almost full!": "Penyimpanan browser Anda hampir penuh!",
+  "Current usage": "Penggunaan saat ini",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Jika penyimpanan Anda terisi sepenuhnya, aplikasi mungkin tidak berfungsi dengan baik dan Anda bisa kehilangan akses ke percakapan Anda.",
+  "Options to free up space": "Opsi untuk mengosongkan ruang",
+  "1. Export your conversations": "1. Ekspor percakapan Anda",
+  "Save your conversations to your computer before clearing them.": "Simpan percakapan Anda ke komputer sebelum menghapusnya.",
+  "Export All Data": "Ekspor Semua Data",
+  "2. Clear older conversations": "2. Hapus percakapan yang lebih lama",
+  "Keep recent conversations": "Simpan percakapan terbaru",
+  "This will remove": "Ini akan menghapus",
+  "older conversations": "percakapan yang lebih lama",
+  "Space freed": "Ruang yang dibebaskan",
+  "Clear Older Conversations": "Hapus Percakapan yang Lebih Lama",
+  "Close": "Tutup",
+  "Storage Usage": "Penggunaan Penyimpanan",
+  "Used": "Digunakan",
+  "Local storage is used to save your conversations, settings, and preferences.": "Penyimpanan lokal digunakan untuk menyimpan percakapan, pengaturan, dan preferensi Anda."
+}

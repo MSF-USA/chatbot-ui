@@ -22,7 +22,7 @@ import {
   ImageMessageContent,
 } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/contexts/home.context';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';

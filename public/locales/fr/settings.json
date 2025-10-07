@@ -26,5 +26,16 @@
   "Storage almost full": "Stockage presque plein ! Envisagez de supprimer d'anciennes conversations.",
   "Local storage info": "Toutes les données sont stockées localement dans le localStorage de votre navigateur et restent entièrement sur votre appareil.",
   "Data Actions": "Actions de données",
-  "Export data": "Exporter les données"
+  "Export data": "Exporter les données",
+  "A description for your prompt.": "Une description pour votre invite.",
+  "A name for your prompt.": "Un nom pour votre invite.",
+  "Description": "Description",
+  "Name": "Nom",
+  "New folder": "Nouveau dossier",
+  "New prompt": "Nouvelle invite",
+  "No prompts.": "Aucune invite.",
+  "Prompt": "Invite",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contenu de l'invite. Utilisez {{}} pour désigner une variable. Ex : {{name}} est un {{adjective}} {{noun}}.",
+  "Search prompts...": "Rechercher des invites...",
+  "Run Typewriter Intro": "Exécuter l'introduction de la machine à écrire"
 }

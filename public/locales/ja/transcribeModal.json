@@ -20,5 +20,10 @@
   "uploadingFile": "ファイルをアップロード中...",
   "removeFile": "削除して別のファイルを選択",
   "transcriptionErrorAttempt": "転写中のエラー (3 回中 {{attempt}} 回目の試行)。再試行中...",
-  "rateLimitExceededWaiting": "レート制限を超えました。再試行する前に{{seconds}}秒待機しています..."
+  "rateLimitExceededWaiting": "レート制限を超えました。再試行する前に{{seconds}}秒待機しています...",
+  "cancel": "キャンセル",
+  "confirm": "確認",
+  "confirmCancelTranscription": "進行中のトランスクリプションをキャンセルしてもよろしいですか？",
+  "confirmDiscardTranscript": "トランスクリプトを使用せずに破棄してもよろしいですか？",
+  "confirmTitle": "アクションの確認"
 }

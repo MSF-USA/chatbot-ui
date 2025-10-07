@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "คำเตือนพื้นที่เก็บข้อมูล",
+  "Your browser storage is almost full!": "พื้นที่เก็บข้อมูลของเบราว์เซอร์คุณเกือบเต็มแล้ว!",
+  "Current usage": "การใช้งานปัจจุบัน",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "หากพื้นที่เก็บข้อมูลของคุณเต็มอย่างสมบูรณ์ แอปพลิเคชันอาจหยุดทำงานอย่างถูกต้องและคุณอาจสูญเสียการเข้าถึงการสนทนาของคุณ.",
+  "Options to free up space": "ตัวเลือกในการเพิ่มพื้นที่ว่าง",
+  "1. Export your conversations": "1. ส่งออกการสนทนาของคุณ",
+  "Save your conversations to your computer before clearing them.": "บันทึกการสนทนาของคุณลงในคอมพิวเตอร์ก่อนที่จะลบออก.",
+  "Export All Data": "ส่งออกข้อมูลทั้งหมด",
+  "2. Clear older conversations": "2. ลบการสนทนาที่เก่าออก",
+  "Keep recent conversations": "เก็บการสนทนาล่าสุด",
+  "This will remove": "สิ่งนี้จะลบ",
+  "older conversations": "การสนทนาที่เก่าออก",
+  "Space freed": "พื้นที่ว่างถูกปล่อยออก",
+  "Clear Older Conversations": "ลบการสนทนาที่เก่าออก",
+  "Close": "ปิด",
+  "Storage Usage": "การใช้งานพื้นที่เก็บข้อมูล",
+  "Used": "ที่ใช้ไป",
+  "Local storage is used to save your conversations, settings, and preferences.": "พื้นที่เก็บข้อมูลในเครื่องใช้เพื่อบันทึกการสนทนา การตั้งค่า และความชอบของคุณ."
+}

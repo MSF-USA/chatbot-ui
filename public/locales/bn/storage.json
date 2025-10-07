@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "স্টোরেজ সতর্কতা",
+  "Your browser storage is almost full!": "আপনার ব্রাউজারের স্টোরেজ প্রায় পূর্ণ!",
+  "Current usage": "বর্তমান ব্যবহার",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "যদি আপনার স্টোরেজ সম্পূর্ণরূপে পূর্ণ হয়ে যায়, তবে অ্যাপ্লিকেশনটি সঠিকভাবে কাজ করা বন্ধ করতে পারে এবং আপনি আপনার কথোপকথনে প্রবেশাধিকার হারাতে পারেন।",
+  "Options to free up space": "স্থান খালি করার বিকল্প",
+  "1. Export your conversations": "১. আপনার কথোপকথন রপ্তানি করুন",
+  "Save your conversations to your computer before clearing them.": "তাদের মুছে ফেলার আগে আপনার কথোপকথনগুলি আপনার কম্পিউটারে সংরক্ষণ করুন।",
+  "Export All Data": "সমস্ত ডেটা রপ্তানি করুন",
+  "2. Clear older conversations": "২. পুরনো কথোপকথন মুছে ফেলুন",
+  "Keep recent conversations": "সাম্প্রতিক কথোপকথনগুলি রাখুন",
+  "This will remove": "এটি মুছে ফেলবে",
+  "older conversations": "পুরনো কথোপকথন",
+  "Space freed": "স্থান খালি হয়েছে",
+  "Clear Older Conversations": "পুরনো কথোপকথন মুছে ফেলুন",
+  "Close": "বন্ধ করুন",
+  "Storage Usage": "স্টোরেজ ব্যবহার",
+  "Used": "ব্যবহৃত",
+  "Local storage is used to save your conversations, settings, and preferences.": "স্থানীয় স্টোরেজ আপনার কথোপকথন, সেটিংস এবং পছন্দগুলি সংরক্ষণের জন্য ব্যবহৃত হয়।"
+}

@@ -1,3 +1,5 @@
+import { defaultModelID } from '@/types/openai';
+
 export interface BackendConfiguration {
   OPENAI_API_HOST: string | undefined;
   OPENAI_API_VERSION: string | undefined;
@@ -21,6 +23,9 @@ export const DEFAULT_TEMPERATURE = parseFloat(
 
 export const DEFAULT_USE_KNOWLEDGE_BASE =
   process.env.DEFAULT_USE_KNOWLEDGE_BASE === 'true' || false;
+
+export const DEFAULT_MODEL_ID =
+  process.env.NEXT_PUBLIC_DEFAULT_MODEL_ID || defaultModelID;
 
 export const OPENAI_API_TYPE = process.env.OPENAI_API_TYPE || 'azure';
 

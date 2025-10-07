@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Ostrzeżenie o pamięci",
+  "Your browser storage is almost full!": "Pamięć przeglądarki jest prawie pełna!",
+  "Current usage": "Aktualne użycie",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Jeśli pamięć się całkowicie zapełni, aplikacja może przestać działać poprawnie i możesz stracić dostęp do swoich rozmów.",
+  "Options to free up space": "Opcje zwolnienia miejsca",
+  "1. Export your conversations": "1. Eksportuj swoje rozmowy",
+  "Save your conversations to your computer before clearing them.": "Zapisz swoje rozmowy na komputerze przed ich usunięciem.",
+  "Export All Data": "Eksportuj wszystkie dane",
+  "2. Clear older conversations": "2. Wyczyść starsze rozmowy",
+  "Keep recent conversations": "Zachowaj ostatnie rozmowy",
+  "This will remove": "To usunie",
+  "older conversations": "starsze rozmowy",
+  "Space freed": "Zwolnione miejsce",
+  "Clear Older Conversations": "Wyczyść starsze rozmowy",
+  "Close": "Zamknij",
+  "Storage Usage": "Użycie pamięci",
+  "Used": "Używane",
+  "Local storage is used to save your conversations, settings, and preferences.": "Lokalna pamięć jest używana do zapisywania twoich rozmów, ustawień i preferencji."
+}

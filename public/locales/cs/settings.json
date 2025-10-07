@@ -25,5 +25,17 @@
   "Storage almost full": "Úložiště je téměř plné! Zvažte vymazání starých konverzací.",
   "Local storage info": "Všechna data jsou uložena lokálně v localStorage vašeho prohlížeče a zůstávají zcela na vašem zařízení.",
   "Data Actions": "Akce s daty",
-  "Export data": "Exportovat data"
+  "Export data": "Exportovat data",
+  "A description for your prompt.": "Popis pro váš výzvu.",
+  "A name for your prompt.": "Název pro váš výzvu.",
+  "Description": "Popis",
+  "Name": "Název",
+  "New folder": "Nová složka",
+  "New prompt": "Nová výzva",
+  "No prompts.": "Žádné výzvy.",
+  "Prompt": "Výzva",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte {{}} k označení proměnné. Např.: {{name}} je {{adjective}} {{noun}}.",
+  "Search prompts...": "Hledat výzvy...",
+  "Run Typewriter Intro": "Spustit úvod typu psacího stroje",
+  "Language": "Jazyk"
 }

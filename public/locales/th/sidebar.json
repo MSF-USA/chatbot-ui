@@ -6,5 +6,21 @@
   "Search conversations...": "ค้นหาการสนทนา...",
   "New prompt": "พรอมต์ใหม่",
   "Dark mode": "โหมดมืด",
-  "Light mode": "โหมดแสง"
+  "Light mode": "โหมดแสง",
+  "A description for your prompt.": "คำอธิบายสำหรับคำชี้แนะของคุณ.",
+  "A name for your prompt.": "ชื่อสำหรับคำชี้แนะของคุณ.",
+  "Are you sure?": "คุณแน่ใจหรือ?",
+  "Clear conversations": "ลบการสนทนา",
+  "Description": "คำอธิบาย",
+  "Export data": "สำรองข้อมูล",
+  "Import data": "นำเข้าข้อมูล",
+  "Name": "ชื่อ",
+  "New folder": "โฟลเดอร์ใหม่",
+  "No conversations.": "ไม่มีการสนทนา.",
+  "No prompts.": "ไม่มีคำชี้แนะ.",
+  "OpenAI API Key": "OpenAI API Key",
+  "Plugin Keys": "Plugin Keys",
+  "Prompt": "คำชี้แนะ",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "เนื้อหาคำชี้แนะ ใช้ {{}} เพื่อระบุตัวแปร เช่น: {{name}} เป็น {{adjective}} {{noun}}",
+  "Search prompts...": "ค้นหาคำชี้แนะ..."
 }

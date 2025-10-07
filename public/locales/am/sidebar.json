@@ -6,5 +6,21 @@
   "Search conversations...": "ውይይቶችን ፈልግ...",
   "New prompt": "አዲስ ጥያቄ",
   "Dark mode": "ጨለማ ሁነታ",
-  "Light mode": "ብርሃን ሁነታ"
+  "Light mode": "ብርሃን ሁነታ",
+  "A description for your prompt.": "ለአመልካችዎ መግለጫ.",
+  "A name for your prompt.": "ለአመልካችዎ ስም.",
+  "Are you sure?": "እርግጠኛ ነህ/ነሽ?",
+  "Clear conversations": "ውይይቶችን አጽዳ",
+  "Description": "መግለጫ",
+  "Export data": "ውስጥ ውሂብ ወደ ውጭ አስቀምጥ",
+  "Import data": "ውስጥ ውሂብ አስቀምጥ",
+  "Name": "ስም",
+  "New folder": "አዲስ ፎልደር",
+  "No conversations.": "ውይይቶች የለም.",
+  "No prompts.": "አመልካቶች የለም.",
+  "OpenAI API Key": "OpenAI API Key",
+  "Plugin Keys": "Plugin Keys",
+  "Prompt": "አመልካች",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "አመልካች ይዘት። ለተለዋዋጭ ማስታወቂያ {{}} ይጠቀሙ። ምሳሌ: {{name}} እንደ {{adjective}} {{noun}} ነው",
+  "Search prompts...": "አመልካች ፈልግ..."
 }

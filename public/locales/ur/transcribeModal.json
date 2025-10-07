@@ -20,5 +20,10 @@
   "transcriptionError": "نقل کے دوران ایک خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔",
   "close": "بند کریں",
   "orDragAndDrop": "یا کھینچیں اور چھوڑیں",
-  "transcribingButton": "نقل ہو رہی ہے..."
+  "transcribingButton": "نقل ہو رہی ہے...",
+  "cancel": "منسوخ کریں",
+  "confirm": "تصدیق کریں",
+  "confirmCancelTranscription": "کیا آپ کو یقین ہے کہ آپ جاری ٹرانسکرپشن کو منسوخ کرنا چاہتے ہیں؟",
+  "confirmDiscardTranscript": "کیا آپ کو یقین ہے کہ آپ بغیر استعمال کیے ٹرانسکرپٹ کو خارج کرنا چاہتے ہیں؟",
+  "confirmTitle": "عمل کی تصدیق کریں"
 }

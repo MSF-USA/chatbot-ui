@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "ストレージ警告",
+  "Your browser storage is almost full!": "ブラウザのストレージがほぼ満杯です！",
+  "Current usage": "現在の使用量",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "ストレージが完全に満杯になると、アプリケーションが正しく動作しなくなり、会話にアクセスできなくなる可能性があります。",
+  "Options to free up space": "スペースを空けるためのオプション",
+  "1. Export your conversations": "1. 会話をエクスポートする",
+  "Save your conversations to your computer before clearing them.": "会話を削除する前に、コンピュータに保存してください。",
+  "Export All Data": "すべてのデータをエクスポート",
+  "2. Clear older conversations": "2. 古い会話を削除する",
+  "Keep recent conversations": "最近の会話を保持する",
+  "This will remove": "これにより削除されます",
+  "older conversations": "古い会話",
+  "Space freed": "空き容量",
+  "Clear Older Conversations": "古い会話を削除",
+  "Close": "閉じる",
+  "Storage Usage": "ストレージ使用量",
+  "Used": "使用済み",
+  "Local storage is used to save your conversations, settings, and preferences.": "ローカルストレージは、会話、設定、および好みを保存するために使用されます。"
+}

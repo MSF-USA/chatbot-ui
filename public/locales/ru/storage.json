@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Предупреждение о хранилище",
+  "Your browser storage is almost full!": "Ваше хранилище браузера почти заполнено!",
+  "Current usage": "Текущая загрузка",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Если ваше хранилище полностью заполнится, приложение может перестать работать корректно, и вы можете потерять доступ к вашим разговорам.",
+  "Options to free up space": "Варианты освобождения места",
+  "1. Export your conversations": "1. Экспортируйте ваши разговоры",
+  "Save your conversations to your computer before clearing them.": "Сохраните ваши разговоры на компьютер перед их удалением.",
+  "Export All Data": "Экспортировать все данные",
+  "2. Clear older conversations": "2. Очистите старые разговоры",
+  "Keep recent conversations": "Сохраните недавние разговоры",
+  "This will remove": "Это удалит",
+  "older conversations": "старые разговоры",
+  "Space freed": "Освобожденное место",
+  "Clear Older Conversations": "Очистить старые разговоры",
+  "Close": "Закрыть",
+  "Storage Usage": "Использование хранилища",
+  "Used": "Использовано",
+  "Local storage is used to save your conversations, settings, and preferences.": "Локальное хранилище используется для сохранения ваших разговоров, настроек и предпочтений."
+}

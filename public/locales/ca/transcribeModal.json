@@ -20,5 +20,10 @@
   "uploadingFile": "Carregant fitxer...",
   "removeFile": "Elimina i selecciona un fitxer diferent",
   "transcriptionErrorAttempt": "Error durant la transcripció (Intent {{attempt}} de 3). Reintentant...",
-  "rateLimitExceededWaiting": "Límit de taxa superat. Esperant {{seconds}} segons abans de tornar-ho a intentar..."
+  "rateLimitExceededWaiting": "Límit de taxa superat. Esperant {{seconds}} segons abans de tornar-ho a intentar...",
+  "cancel": "Cancel·lar",
+  "confirm": "Confirmar",
+  "confirmCancelTranscription": "Estàs segur que vols cancel·lar la transcripció en curs?",
+  "confirmDiscardTranscript": "Estàs segur que vols descartar la transcripció sense fer-ne ús?",
+  "confirmTitle": "Confirmar Acció"
 }

@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Попередження про зберігання",
+  "Your browser storage is almost full!": "Ваше сховище браузера майже заповнене!",
+  "Current usage": "Поточне використання",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "Якщо ваше сховище повністю заповниться, програма може перестати працювати належним чином, і ви можете втратити доступ до своїх розмов.",
+  "Options to free up space": "Опції для звільнення місця",
+  "1. Export your conversations": "1. Експортуйте свої розмови",
+  "Save your conversations to your computer before clearing them.": "Збережіть свої розмови на комп'ютері перед їх очищенням.",
+  "Export All Data": "Експортувати всі дані",
+  "2. Clear older conversations": "2. Очистити старі розмови",
+  "Keep recent conversations": "Залишити недавні розмови",
+  "This will remove": "Це видалить",
+  "older conversations": "старі розмови",
+  "Space freed": "Місце звільнено",
+  "Clear Older Conversations": "Очистити старі розмови",
+  "Close": "Закрити",
+  "Storage Usage": "Використання сховища",
+  "Used": "Використано",
+  "Local storage is used to save your conversations, settings, and preferences.": "Локальне сховище використовується для збереження ваших розмов, налаштувань та переваг."
+}

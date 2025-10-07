@@ -25,5 +25,17 @@
   "Storage almost full": "Stocarea este aproape plină! Considerați ștergerea conversațiilor vechi.",
   "Local storage info": "Toate datele sunt stocate local în localStorage-ul browserului dvs. și rămân complet pe dispozitivul dvs.",
   "Data Actions": "Acțiuni de date",
-  "Export data": "Exportă datele"
+  "Export data": "Exportă datele",
+  "A description for your prompt.": "O descriere pentru solicitarea ta.",
+  "A name for your prompt.": "Un nume pentru solicitarea ta.",
+  "Description": "Descriere",
+  "Name": "Nume",
+  "New folder": "Dosar nou",
+  "New prompt": "Solicitare nouă",
+  "No prompts.": "Nici o solicitare.",
+  "Prompt": "Solicitare",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Conținutul solicitării. Folosește {{}} pentru a denota o variabilă. Ex: {{name}} este un {{adjective}} {{noun}}.",
+  "Search prompts...": "Caută solicitări...",
+  "Run Typewriter Intro": "Rulează introducerea tiparului",
+  "Language": "Limba"
 }

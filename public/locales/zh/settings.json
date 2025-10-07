@@ -26,5 +26,16 @@
   "Storage almost full": "存储空间几乎已满！请考虑清除旧对话。",
   "Local storage info": "所有数据都存储在您浏览器的localStorage中，完全保留在您的设备上。",
   "Data Actions": "数据操作",
-  "Export data": "导出数据"
+  "Export data": "导出数据",
+  "A description for your prompt.": "您提示的描述。",
+  "A name for your prompt.": "您提示的名称。",
+  "Description": "描述",
+  "Name": "名称",
+  "New folder": "新文件夹",
+  "New prompt": "新提示",
+  "No prompts.": "没有提示。",
+  "Prompt": "提示",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "提示内容。使用{{}}表示变量。例如：{{name}}是一个{{adjective}}的{{noun}}",
+  "Search prompts...": "搜索提示...",
+  "Run Typewriter Intro": "运行打字机介绍"
 }

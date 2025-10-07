@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "የእንቅስቃሴ ማስጠንቀቂያ",
+  "Your browser storage is almost full!": "የእንቅስቃሴዎ የታቀደ ቦታ ወደ ሙሉ እንቅስቃሴ እንደሚደርስ ነው!",
+  "Current usage": "ወቅታዊ እንቅስቃሴ",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "የእንቅስቃሴዎ ቦታ በሙሉ እንደሚሞላ እንዲህ ይሆን ይችላል፣ መተግበሪያው በትክክል ሥራ ማቋረጥ ይችላል እና ወደ ውይይቶችዎ መዳረሻ ማጣት ይችላል።",
+  "Options to free up space": "ቦታ ለመውጣት አማራጮች",
+  "1. Export your conversations": "1. የውይይቶችዎን ወደ ውስጥ ይወጣሉ",
+  "Save your conversations to your computer before clearing them.": "ውይይቶችዎን ከማጥፋት በፊት ወደ ኮምፒውተርዎ ይቀመጡ።",
+  "Export All Data": "ሁሉንም ውሂብ ወደ ውስጥ ይወጣሉ",
+  "2. Clear older conversations": "2. የወቅታዊ ውይይቶችን ይማጥፉ",
+  "Keep recent conversations": "ወቅታዊ ውይይቶችን ይይዙ",
+  "This will remove": "ይህ ይሰርዝ",
+  "older conversations": "የወቅታዊ ውይይቶች",
+  "Space freed": "ቦታ ወደ ውስጥ ማስተካከል",
+  "Clear Older Conversations": "የወቅታዊ ውይይቶችን ይማጥፉ",
+  "Close": "ዝጋ",
+  "Storage Usage": "የታቀደ ቦታ እንቅስቃሴ",
+  "Used": "ተጠቃሚ",
+  "Local storage is used to save your conversations, settings, and preferences.": "የአካባቢ ቦታ ውይይቶችዎን፣ ቅንብሮችን እና የምርጫዎችን ለማስቀመጥ ይጠቀማል።"
+}

@@ -35,5 +35,7 @@
   "A description for your prompt.": "Опис вашого запиту.",
   "Prompt": "Запит",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Вміст запиту. Використовуйте {{}} для позначення змінної. Наприклад: {{name}} це {{adjective}} {{noun}}.",
-  "A name for your prompt.": "Назва вашого запиту."
+  "A name for your prompt.": "Назва вашого запиту.",
+  "Run Typewriter Intro": "Запустити введення типографа",
+  "Language": "Мова"
 }

@@ -6,5 +6,21 @@
   "Search conversations...": "Tafuta mazungumzo...",
   "New prompt": "Maelekezo mapya",
   "Dark mode": "hali ya giza",
-  "Light mode": "hali ya mwanga"
+  "Light mode": "hali ya mwanga",
+  "A description for your prompt.": "Maelezo ya kichocheo chako.",
+  "A name for your prompt.": "Jina la kichocheo chako.",
+  "Are you sure?": "Je, una uhakika?",
+  "Clear conversations": "Futa mazungumzo",
+  "Description": "Maelezo",
+  "Export data": "Hifadhi historia ya mazungumzo",
+  "Import data": "Rejesha historia ya mazungumzo",
+  "Name": "Jina",
+  "New folder": "Folda mpya",
+  "No conversations.": "Hakuna mazungumzo.",
+  "No prompts.": "Hakuna vichocheo.",
+  "OpenAI API Key": "OpenAI API Key",
+  "Plugin Keys": "Funguo za Plugin",
+  "Prompt": "Kichocheo",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kichocheo. Tumia {{}} kuashiria variable. Mfano: {{name}} ni {{adjective}} {{noun}}",
+  "Search prompts...": "Tafuta vichocheo..."
 }

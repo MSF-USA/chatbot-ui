@@ -25,5 +25,17 @@
   "Confirm Reset": "రీసెట్‌ను నిర్ధారించండి",
   "Reset Confirmation Message": "మీరు ఖచ్చితంగా అన్ని సెట్టింగ్స్‌ను డిఫాల్ట్ విలువలకు రీసెట్ చేయాలనుకుంటున్నారా? ఈ చర్యను రద్దు చేయలేరు.",
   "Cancel": "రద్దు చేయండి",
-  "Reset": "రీసెట్ చేయండి"
+  "Reset": "రీసెట్ చేయండి",
+  "A description for your prompt.": "మీ ప్రాంప్ట్ కోసం వివరణ.",
+  "A name for your prompt.": "మీ ప్రాంప్ట్ కోసం పేరు.",
+  "Description": "వివరణ",
+  "Name": "పేరు",
+  "New folder": "కొత్త ఫోల్డర్",
+  "New prompt": "కొత్త ప్రాంప్ట్",
+  "No prompts.": "ప్రాంప్ట్‌లు లేవు.",
+  "Prompt": "ప్రాంప్ట్",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "ప్రాంప్ట్ కంటెంట్. ఒక చలనాన్ని సూచించడానికి {{}}ని ఉపయోగించండి. ఉదా: {{name}} ఒక {{adjective}} {{noun}}.",
+  "Search prompts...": "ప్రాంప్ట్‌లను శోధించండి...",
+  "Run Typewriter Intro": "టైప్‌రైటర్ పరిచయాన్ని నడపండి",
+  "Language": "భాష"
 }

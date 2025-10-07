@@ -20,5 +20,10 @@
   "uploadingFile": "در حال بارگذاری فایل...",
   "removeFile": "حذف کنید و یک فایل متفاوت را انتخاب کنید",
   "transcriptionErrorAttempt": "خطا در حین رونویسی (تلاش {{attempt}} از 3). تلاش دوباره...",
-  "rateLimitExceededWaiting": "محدودیت نرخ عبور کرد. در حال انتظار برای {{seconds}} ثانیه قبل از تلاش مجدد..."
+  "rateLimitExceededWaiting": "محدودیت نرخ عبور کرد. در حال انتظار برای {{seconds}} ثانیه قبل از تلاش مجدد...",
+  "cancel": "لغو",
+  "confirm": "تأیید",
+  "confirmCancelTranscription": "آیا مطمئن هستید که می‌خواهید رونویسی در حال انجام را لغو کنید؟",
+  "confirmDiscardTranscript": "آیا مطمئن هستید که می‌خواهید رونویسی را بدون استفاده از آن کنار بگذارید؟",
+  "confirmTitle": "تأیید عمل"
 }

@@ -25,5 +25,17 @@
   "Storage almost full": "Emmagatzematge gairebé ple! Considera eliminar converses antigues.",
   "Local storage info": "Totes les dades s'emmagatzemen localment en el localStorage del teu navegador i romanen totalment en el teu dispositiu.",
   "Data Actions": "Accions de dades",
-  "Export data": "Exporta dades"
+  "Export data": "Exporta dades",
+  "A description for your prompt.": "Una descripció per al teu prompt.",
+  "A name for your prompt.": "Un nom per al teu prompt.",
+  "Description": "Descripció",
+  "Name": "Nom",
+  "New folder": "Nova carpeta",
+  "New prompt": "Nou prompt",
+  "No prompts.": "Sense prompts.",
+  "Prompt": "Prompt",
+  "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "Contingut del prompt. Utilitza {{}} per denotar una variable. Ex: {{name}} és un {{adjective}} {{noun}}",
+  "Search prompts...": "Cerca prompts...",
+  "Run Typewriter Intro": "Executar introducció de màquina d'escriure",
+  "Language": "Idioma"
 }

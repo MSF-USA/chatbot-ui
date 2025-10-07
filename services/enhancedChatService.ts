@@ -33,12 +33,10 @@ import {
 } from '@/types/agent';
 import {
   ChatBody,
-  FileMessageContent,
   Message,
   TextMessageContent,
 } from '@/types/chat';
 import { IntentAnalysisContext } from '@/types/intentAnalysis';
-import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
 
 import { AgentFactory } from './agentFactory';
 import {
@@ -878,7 +876,7 @@ export class EnhancedChatService {
           contentLength: result.content?.length || 0,
         },
       );
-      
+
       const response = {
         success: true,
         data: {

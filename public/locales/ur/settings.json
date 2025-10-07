@@ -36,5 +36,6 @@
   "A description for your prompt.": "اپنے پرامپٹ کے لیے تفصیل لکھیں۔",
   "Prompt": "پرامپٹ",
   "Prompt content. Use {{}} to denote a variable. Ex: {{name}} is a {{adjective}} {{noun}}": "پرامپٹ کا متن۔ متغیر ظاہر کرنے کے لیے {{}} استعمال کریں۔ مثال: {{name}} ایک {{adjective}} {{noun}} ہے۔",
-  "A name for your prompt.": "اپنے پرامپٹ کا نام لکھیں۔"
+  "A name for your prompt.": "اپنے پرامپٹ کا نام لکھیں۔",
+  "Language": "زبان"
 }
