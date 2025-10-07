@@ -66,11 +66,12 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
   // Conversation actions
   setConversations: (conversations) => set({ conversations }),
 
-  addConversation: (conversation) =>
+  addConversation: (conversation) => {
     set((state) => ({
       conversations: [...state.conversations, conversation],
       selectedConversationId: conversation.id,
-    })),
+    }));
+  },
 
   updateConversation: (id, updates) =>
     set((state) => ({

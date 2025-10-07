@@ -8,6 +8,7 @@ import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { ChatTopbar } from './ChatTopbar';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ChatInput } from './ChatInput';
+import { ModelSelect } from './ModelSelect';
 import { Message } from '@/types/chat';
 import { EmptyState } from './EmptyState/EmptyState';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +24,18 @@ export function Chat() {
 
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
   const [filePreviews, setFilePreviews] = useState<any[]>([]);
+  const [isModelSelectOpen, setIsModelSelectOpen] = useState(false);
+
+  // Close modal on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModelSelectOpen) {
+        setIsModelSelectOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModelSelectOpen]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -151,12 +164,17 @@ export function Chat() {
       {/* Header */}
       <ChatTopbar
         botInfo={null}
-        selectedModelName={selectedConversation?.model?.name}
+        selectedModelName={
+          selectedConversation?.model?.name ||
+          models.find(m => m.id === defaultModelId)?.name ||
+          'GPT-4o'
+        }
         showSettings={isSettingsOpen}
         onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
+        onModelClick={() => setIsModelSelectOpen(true)}
         onClearAll={handleClearAll}
         hasMessages={hasMessages}
-        agentEnabled={false}
+        agentEnabled={selectedConversation?.model?.agentEnabled || false}
       />
 
       {/* Messages */}
@@ -214,6 +232,18 @@ export function Chat() {
         filePreviews={filePreviews}
         setFilePreviews={setFilePreviews}
       />
+
+      {/* Model Selection Modal */}
+      {isModelSelectOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsModelSelectOpen(false)}>
+          <div
+            className="max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4 rounded-lg bg-white dark:bg-[#212121] p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ModelSelect onClose={() => setIsModelSelectOpen(false)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

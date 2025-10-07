@@ -25,8 +25,13 @@ export function useConversations() {
 
     store.setConversations(conversations);
     store.setFolders(folders);
-    if (selectedId) {
+
+    // Validate that selectedId exists in conversations
+    if (selectedId && conversations.find(c => c.id === selectedId)) {
       store.selectConversation(selectedId);
+    } else if (conversations.length > 0) {
+      // If no valid selection, select the first conversation
+      store.selectConversation(conversations[0].id);
     }
   }, []);
 

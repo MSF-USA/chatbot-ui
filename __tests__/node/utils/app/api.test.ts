@@ -12,7 +12,7 @@ describe('getEndpoint', () => {
     it('should return default endpoint if no plugin is provided', () => {
         plugin = null
         let result = getEndpoint(plugin)
-        expect(result).toEqual('api/v2/chat')
+        expect(result).toEqual('/api/chat')
     })
 
     it('should return default endpoint if plugin id is not Google Search', () => {
@@ -24,7 +24,7 @@ describe('getEndpoint', () => {
         } as Plugin
         // @ts-ignore
         let result = getEndpoint(plugin)
-        expect(result).toEqual('api/v2/chat')
+        expect(result).toEqual('/api/chat')
     })
 
     it('should throw an error if plugin id is Google Search', () => {

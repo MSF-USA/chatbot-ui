@@ -1,7 +1,7 @@
 'use client';
 
 import { Chat } from '@/components/Chat/Chat';
-import { Sidebar } from '@/components/Sidebar/Sidebar';
+import { Sidebar } from '@/components/sidebar/Sidebar';
 import { SettingDialog } from '@/components/settings/SettingDialog';
 import { MigrationBanner } from '@/components/migration/MigrationBanner';
 import { ModelLoader } from '@/components/providers/ModelLoader';

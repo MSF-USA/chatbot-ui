@@ -12,12 +12,14 @@ import {
   IconAlertTriangle,
   IconX
 } from '@tabler/icons-react';
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { TemperatureSlider } from '../Settings/Temperature';
+import { TemperatureSlider } from '../settings/Temperature';
+import { Conversation } from '@/types/chat';
+import { v4 as uuidv4 } from 'uuid';
 
 interface ModelCardProps {
   model: OpenAIModel;
@@ -53,7 +55,11 @@ const ModelCard: FC<ModelCardProps> = ({
       `}
     >
       <button
-        onClick={onSelect}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Model card clicked:', model.name);
+          onSelect();
+        }}
         className="w-full p-4 text-left"
       >
         {/* Selected indicator */}
@@ -71,6 +77,13 @@ const ModelCard: FC<ModelCardProps> = ({
               {model.name}
             </h3>
           </div>
+
+          {/* Model description */}
+          {modelConfig?.description && (
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              {modelConfig.description}
+            </p>
+          )}
 
           {/* Model type badge and agent availability */}
           <div className="flex items-center gap-2 mb-3">
@@ -157,16 +170,22 @@ const ModelCard: FC<ModelCardProps> = ({
       )}
 
       {/* Temperature control for non-agent mode */}
-      {isSelected && !useAgent && temperature !== undefined && onChangeTemperature && (
+      {isSelected && !useAgent && (
         <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 mt-3">
             <IconTemperature size={14} className="mr-1.5" />
             Temperature Control
           </div>
-          <TemperatureSlider
-            temperature={temperature}
-            onChangeTemperature={onChangeTemperature}
-          />
+          {temperature !== undefined && onChangeTemperature ? (
+            <TemperatureSlider
+              temperature={temperature}
+              onChangeTemperature={onChangeTemperature}
+            />
+          ) : (
+            <div className="text-xs text-gray-500 dark:text-gray-400">
+              Select a conversation to adjust temperature
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -179,11 +198,39 @@ interface ModelSelectProps {
 
 export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const t = useTranslations();
-  const { selectedConversation, updateConversation } = useConversations();
-  const { models, defaultModelId } = useSettings();
+  const { selectedConversation, updateConversation, conversations, addConversation } = useConversations();
+  const { models, defaultModelId, systemPrompt, temperature: defaultTemp } = useSettings();
+
+  console.log('ModelSelect rendered:', {
+    selectedConversation: selectedConversation?.id,
+    conversationCount: conversations.length,
+    modelCount: models.length,
+    defaultModelId
+  });
+
+  // If no conversation exists, create one
+  useEffect(() => {
+    if (!selectedConversation && conversations.length === 0 && models.length > 0) {
+      const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
+      const newConversation: Conversation = {
+        id: uuidv4(),
+        name: 'New Conversation',
+        messages: [],
+        model: defaultModel,
+        prompt: systemPrompt || '',
+        temperature: defaultTemp || 0.5,
+        folderId: null,
+      };
+      console.log('ModelSelect creating initial conversation:', newConversation.id);
+      addConversation(newConversation);
+    }
+  }, [selectedConversation, conversations, models, defaultModelId, systemPrompt, defaultTemp, addConversation]);
 
   const handleModelSelect = (model: OpenAIModel) => {
-    if (!selectedConversation) return;
+    if (!selectedConversation) {
+      console.warn('No conversation selected, cannot update model');
+      return;
+    }
 
     // When selecting a model, use agent mode by default (except GPT-5)
     const shouldUseAgent = model.id !== OpenAIModelID.GPT_5 && OpenAIModels[model.id as OpenAIModelID]?.agentId;
@@ -197,10 +244,18 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       ...selectedConversation,
       model: modelToUse,
     });
+
+    // Close modal after selection
+    if (onClose) {
+      onClose();
+    }
   };
 
   const handleToggleAgent = (modelId: string) => {
-    if (!selectedConversation) return;
+    if (!selectedConversation) {
+      console.warn('No conversation selected, cannot toggle agent');
+      return;
+    }
 
     // Find the current model
     const model = models.find(m => m.id === modelId);
@@ -209,11 +264,17 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     // Toggle agent mode
     const currentlyHasAgent = selectedConversation.model?.agentEnabled;
     const modelConfig = OpenAIModels[model.id as OpenAIModelID];
-    const modelToUse = !currentlyHasAgent && modelConfig?.agentId ? {
-      ...model,
-      agentEnabled: true,
-      agentId: modelConfig.agentId
-    } : model;
+
+    // If currently has agent, turn it off. If not, turn it on (if available)
+    const modelToUse = currentlyHasAgent ?
+      { ...model, agentEnabled: false } :
+      (modelConfig?.agentId ? {
+        ...model,
+        agentEnabled: true,
+        agentId: modelConfig.agentId
+      } : model);
+
+    console.log('Toggling agent:', { currentlyHasAgent, newAgentState: modelToUse.agentEnabled });
 
     updateConversation(selectedConversation.id, {
       ...selectedConversation,

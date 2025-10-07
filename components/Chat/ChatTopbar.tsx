@@ -18,6 +18,7 @@ interface Props {
   selectedModelName: string | undefined;
   showSettings: boolean;
   onSettingsClick: () => void;
+  onModelClick?: () => void;
   onClearAll?: () => void;
   userEmail?: string;
   hasMessages?: boolean;
@@ -29,6 +30,7 @@ export const ChatTopbar = ({
   selectedModelName,
   showSettings,
   onSettingsClick,
+  onModelClick,
   onClearAll,
   userEmail,
   hasMessages = false,
@@ -56,9 +58,9 @@ export const ChatTopbar = ({
           <div className="truncate min-w-0">
             <button
               className="flex items-center justify-center rounded-md transition-colors px-2 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600"
-              onClick={onSettingsClick}
-              aria-label="Model Settings"
-              title="Model Settings"
+              onClick={onModelClick || onSettingsClick}
+              aria-label="Select Model"
+              title="Select Model"
             >
               <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
                 {selectedModelName || 'Select Model'}

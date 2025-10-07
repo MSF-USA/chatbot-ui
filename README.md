@@ -150,8 +150,20 @@ Key configurations:
 - **NEXTAUTH_SECRET** - Secret for session encryption
 - **AZURE_OPENAI_API_KEY** - Your Azure OpenAI API key
 - **AZURE_OPENAI_ENDPOINT** - Your Azure OpenAI endpoint
-- **DEFAULT_MODEL** - Default GPT model to use
-- **DEFAULT_SYSTEM_PROMPT** - Default system instructions
+- **NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT** - Default system instructions
+
+### Model Configuration
+
+Model settings and environment-specific configurations are managed in two files:
+
+**`types/openai.ts`** - Single source of truth for all model metadata:
+- Model names, descriptions, token limits
+- Agent IDs for Azure AI Foundry integration
+- Model capabilities (streaming, temperature, etc.)
+
+**`config/models.ts`** - Environment-specific overrides (localhost, dev, prod):
+- Default model per environment
+- Disabled models per environment
 
 ### Feature Flags
 

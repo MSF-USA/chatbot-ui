@@ -45,7 +45,7 @@ export function AppProviders({
   userContext,
 }: AppProvidersProps) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider session={session} refetchInterval={5 * 60} refetchOnWindowFocus={true}>
       <QueryClientProvider client={queryClient}>
         {launchDarklyClientId ? (
           <LDProvider

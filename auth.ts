@@ -119,6 +119,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   pages: {
     signIn: '/signin',
+    error: '/auth-error',
   },
   callbacks: {
     async jwt({ token, account }): Promise<JWT> {

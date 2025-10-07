@@ -32,8 +32,8 @@ export enum OpenAIVisionModelID {
   GPT_5 = 'gpt-5',
 }
 
-// in case the `DEFAULT_MODEL` environment variable is not set or set to an unsupported model
-export const fallbackModelID = OpenAIModelID.GPT_3_5;
+// Fallback model ID
+export const fallbackModelID = OpenAIModelID.GPT_4o;
 
 export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
   [OpenAIModelID.GPT_3_5]: {
@@ -42,6 +42,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 12000,
     tokenLimit: 4000,
     modelType: 'foundational',
+    description: 'Fast and efficient for simple tasks. Legacy model with limitations.',
     isLegacy: true,
     agentId: 'asst_gpt35_agent',
   },
@@ -51,6 +52,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 24000,
     tokenLimit: 8000,
     modelType: 'foundational',
+    description: 'Advanced reasoning and analysis. Legacy model superseded by GPT-4o.',
     isLegacy: true,
     agentId: 'asst_gpt4_agent',
   },
@@ -60,8 +62,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 80000,
     tokenLimit: 8000,
     modelType: 'omni',
+    description: 'Most capable omni-modal model. Excellent for complex tasks, vision, and file analysis.',
     isLegacy: false,
-    agentId: process.env.AZURE_AI_AGENT_ID || 'asst_YE2WCgckdGgcD2nGtiWOhKhM',
+    agentId: 'asst_YE2WCgckdGgcD2nGtiWOhKhM',
   },
   [OpenAIModelID.GPT_4o_mini]: {
     id: OpenAIModelID.GPT_4o_mini,
@@ -69,6 +72,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 80000,
     tokenLimit: 8000,
     modelType: 'omni',
+    description: 'Faster and more affordable version of GPT-4o. Great balance of speed and capability.',
     isLegacy: false,
     agentId: 'asst_gpt4omini_agent',
   },
@@ -78,6 +82,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 80000,
     tokenLimit: 8000,
     modelType: 'foundational',
+    description: 'Enhanced GPT-4 with improved performance and accuracy.',
     isLegacy: false,
     agentId: 'asst_gpt41_agent',
   },
@@ -87,6 +92,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 80000,
     tokenLimit: 8000,
     modelType: 'foundational',
+    description: 'Preview of GPT-4.5. May have reliability issues.',
     isLegacy: true,
     agentId: 'asst_gpt45_agent',
   },
@@ -96,6 +102,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     maxLength: 128000,
     tokenLimit: 16000,
     modelType: 'omni',
+    description: 'Next generation model with extended context and advanced capabilities.',
     isLegacy: false,
   },
   [OpenAIModelID.GPT_o1]: {
@@ -106,6 +113,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
+    description: 'Optimized for complex reasoning tasks. Uses chain-of-thought processing.',
     isLegacy: false,
   },
   [OpenAIModelID.GPT_o1_mini]: {
@@ -116,6 +124,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
+    description: 'Faster reasoning model. Good for STEM and coding tasks.',
     isLegacy: false,
   },
   [OpenAIModelID.GPT_o3_mini]: {
@@ -126,6 +135,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
+    description: 'Advanced reasoning model with improved performance on complex problems.',
     isLegacy: false,
   },
 };
