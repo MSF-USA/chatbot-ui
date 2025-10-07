@@ -1,115 +1,209 @@
-# Chatbot UI
+# MSF AI Assistant
 
-## News
+An enterprise AI chatbot interface built for Médecins Sans Frontières (MSF), powered by Azure OpenAI and Next.js 14.
 
-Chatbot UI 2.0 is out as an updated, hosted product!
+## Overview
 
-Check out [Takeoff Chat](https://www.takeoffchat.com/).
+MSF AI Assistant provides a secure, privacy-focused chat interface for MSF staff to interact with large language models. All conversations are stored locally on the user's device, ensuring complete data privacy and control.
 
-Open source version coming soon!
+## Features
 
-## About
+- 🤖 **AI Chat** - Streaming conversations with GPT models via Azure OpenAI
+- 🔍 **Web Search** - Bing-powered web search with AI analysis
+- 🌐 **URL Analysis** - Extract and analyze content from any webpage
+- 🎤 **Audio Transcription** - Whisper API integration for audio/video files
+- 📁 **File Upload** - Support for PDFs, documents, and more
+- 🖼️ **Vision** - Upload and analyze images
+- 🌍 **Translation** - Multi-language translation with domain-specific options
+- 💾 **Local Storage** - All data stored on your device for privacy
+- 🎨 **Themes** - Light and dark mode support
+- 🌐 **i18n** - Support for 30+ languages
+- 📱 **Responsive** - Works on desktop and mobile devices
 
-Chatbot UI is an open source chat UI for AI models.
+For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 
-See a [demo](https://twitter.com/mckaywrigley/status/1640380021423603713?s=46&t=AowqkodyK6B4JccSOxSPew).
+## Documentation
 
-![Chatbot UI](./public/screenshots/screenshot-0402023.jpg)
+- [Architecture](./docs/ARCHITECTURE.md) - Technical architecture and stack details
+- [Features](./docs/FEATURES.md) - Complete feature documentation
+- [Setup Guide](./docs/SETUP.md) - Development environment setup
 
-## Updates
+## Quick Start
 
-Chatbot UI will be updated over time.
+### Prerequisites
 
-Expect frequent improvements.
+- Node.js 18+ and npm
+- Azure OpenAI API access
+- Azure AD application for authentication
 
-**Next up:**
+### Installation
 
-- [ ] Sharing
-- [ ] "Bots"
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-org/chatbot-ui.git
+   cd chatbot-ui
+   ```
 
-## Deploy
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-**Vercel**
+3. **Configure environment variables**
 
-Host your own live version of Chatbot UI with Vercel.
+   Copy `.env.example` to `.env.local` and configure:
+   ```bash
+   cp .env.example .env.local
+   ```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fmckaywrigley%2Fchatbot-ui)
+   Required variables:
+   ```env
+   # NextAuth Configuration
+   NEXTAUTH_URL=http://localhost:3000
+   NEXTAUTH_SECRET=your-secret-here
 
-**Docker**
+   # Azure AD Authentication
+   AZURE_AD_CLIENT_ID=your-client-id
+   AZURE_AD_CLIENT_SECRET=your-client-secret
+   AZURE_AD_TENANT_ID=your-tenant-id
 
-Build locally:
+   # Azure OpenAI
+   AZURE_OPENAI_API_KEY=your-api-key
+   AZURE_OPENAI_ENDPOINT=your-endpoint
+   AZURE_OPENAI_DEPLOYMENT_NAME=your-deployment
 
-```shell
-docker build -t chatgpt-ui .
-docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 chatgpt-ui
+   # Optional: Web Search
+   BING_API_KEY=your-bing-key
+   ```
+
+4. **Run development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## Development
+
+### Project Structure
+
+```
+/app              # Next.js App Router pages and API routes
+/components       # React components
+/lib              # Shared libraries and utilities
+/messages         # i18n translation files
+/types            # TypeScript type definitions
+/utils            # Utility functions
+/docs             # Documentation
 ```
 
-Pull from ghcr:
+### Tech Stack
 
-```
-docker run -e OPENAI_API_KEY=xxxxxxxx -p 3000:3000 ghcr.io/mckaywrigley/chatbot-ui:main
-```
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS
+- **State Management:** Zustand
+- **Authentication:** NextAuth.js with Azure AD
+- **i18n:** next-intl
+- **AI:** Azure OpenAI API
 
-## Running Locally
-
-**1. Clone Repo**
+### Available Scripts
 
 ```bash
-git clone https://github.com/mckaywrigley/chatbot-ui.git
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npm run type-check   # Run TypeScript type checking
 ```
 
-**2. Install Dependencies**
+## Deployment
+
+### Docker
+
+Build and run with Docker:
 
 ```bash
-npm i
+docker build -t msf-ai-assistant .
+docker run -p 3000:3000 --env-file .env.local msf-ai-assistant
 ```
 
-**3. Provide OpenAI API Key**
+### Vercel
 
-Create a .env.local file in the root of the repo with your OpenAI API Key:
+The application is optimized for deployment on Vercel:
 
-```bash
-OPENAI_API_KEY=YOUR_KEY
-```
-
-> You can set `OPENAI_API_HOST` where access to the official OpenAI host is restricted or unavailable, allowing users to configure an alternative host for their specific needs.
-
-> Additionally, if you have multiple OpenAI Organizations, you can set `OPENAI_ORGANIZATION` to specify one.
-
-**4. Run App**
-
-```bash
-npm run dev
-```
-
-**5. Use It**
-
-You should be able to start chatting.
+1. Push your code to GitHub
+2. Import project in Vercel
+3. Configure environment variables
+4. Deploy
 
 ## Configuration
 
-When deploying the application, the following environment variables can be set:
+### Environment Variables
 
-| Environment Variable              | Default value                  | Description                                                                                                                               |
-| --------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| OPENAI_API_KEY                    |                                | The default API key used for authentication with OpenAI                                                                                   |
-| OPENAI_API_HOST                   | `https://api.openai.com`       | The base url, for Azure use `https://<endpoint>.openai.azure.com`                                                                         |
-| OPENAI_API_TYPE                   | `openai`                       | The API type, options are `openai` or `azure`                                                                                             |
-| OPENAI_API_VERSION                | `2023-03-15-preview`           | Only applicable for Azure OpenAI                                                                                                          |
-| AZURE_DEPLOYMENT_ID               |                                | Needed when Azure OpenAI, Ref [Azure OpenAI API](https://learn.microsoft.com/zh-cn/azure/cognitive-services/openai/reference#completions) |
-| OPENAI_ORGANIZATION               |                                | Your OpenAI organization ID                                                                                                               |
-| DEFAULT_MODEL                     | `gpt-3.5-turbo`                | The default model to use on new conversations, for Azure use `gpt-35-turbo`                                                               |
-| NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT | [see here](utils/app/const.ts) | The default system prompt to use on new conversations                                                                                     |
-| NEXT_PUBLIC_DEFAULT_TEMPERATURE   | 1                              | The default temperature to use on new conversations                                                                                       |
-| GOOGLE_API_KEY                    |                                | See [Custom Search JSON API documentation][GCSE]                                                                                          |
-| GOOGLE_CSE_ID                     |                                | See [Custom Search JSON API documentation][GCSE]                                                                                          |
+See `.env.example` for all available configuration options.
 
-If you do not provide an OpenAI API key with `OPENAI_API_KEY`, users will have to provide their own key.
+Key configurations:
+- **NEXTAUTH_URL** - Your application URL
+- **NEXTAUTH_SECRET** - Secret for session encryption
+- **AZURE_OPENAI_API_KEY** - Your Azure OpenAI API key
+- **AZURE_OPENAI_ENDPOINT** - Your Azure OpenAI endpoint
+- **DEFAULT_MODEL** - Default GPT model to use
+- **DEFAULT_SYSTEM_PROMPT** - Default system instructions
 
-If you don't have an OpenAI API key, you can get one [here](https://platform.openai.com/account/api-keys).
+### Feature Flags
 
-## Contact
+Enable/disable features via environment variables:
+- **ENABLE_WEB_SEARCH** - Enable Bing web search
+- **ENABLE_TRANSCRIPTION** - Enable audio transcription
+- **ENABLE_VISION** - Enable image upload and vision
 
-If you have any questions, feel free to reach out to Mckay on [Twitter](https://twitter.com/mckaywrigley).
+## Privacy & Security
 
-[GCSE]: https://developers.google.com/custom-search/v1/overview
+- **Local Storage** - All conversations stored in browser localStorage
+- **No Server Persistence** - Chat history never stored on servers
+- **Azure Security** - Enterprise-grade security via Microsoft Azure
+- **SSO** - Secure single sign-on with Azure AD
+- **Data Control** - Users have full control over their data
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Guidelines
+
+- Write TypeScript with strict mode
+- Follow existing code style
+- Add tests for new features
+- Update documentation as needed
+- Ensure all types are properly defined
+
+## Support
+
+For issues, questions, or feature requests:
+- Open an issue on GitHub
+- Contact the MSF IT support team
+- See internal MSF documentation
+
+## License
+
+This project is proprietary software developed for Médecins Sans Frontières (MSF).
+
+## Acknowledgments
+
+Built with:
+- [Next.js](https://nextjs.org/) - React framework
+- [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) - AI models
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Zustand](https://github.com/pmndrs/zustand) - State management
+- [NextAuth.js](https://next-auth.js.org/) - Authentication
+
+---
+
+**Note:** This is an internal MSF application. For MSF staff use only.

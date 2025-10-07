@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { ErrorMessage } from '@/types/error';
 import {signOut} from "next-auth/react";
 import {FORCE_LOGOUT_ON_REFRESH_FAILURE, OPENAI_API_TYPE} from "@/lib/utils/app/const";
 
 const useErrorService = () => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   return {
     getModelsError: useMemo(
@@ -19,7 +19,7 @@ const useErrorService = () => {
         return !error
           ? null
           : ({
-              title: t('Error fetching models.'),
+              title: t('Error fetching models_'),
               code: error.status || 'unknown',
               messageLines: error.statusText
                 ? [error.statusText]

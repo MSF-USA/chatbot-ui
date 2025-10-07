@@ -8,7 +8,7 @@ import { useUI } from '@/lib/hooks/ui/useUI';
 import { ModelSelector } from './ModelSelector/ModelSelector';
 import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 interface ChatHeaderProps {
   userEmail?: string;
@@ -18,7 +18,7 @@ interface ChatHeaderProps {
  * Chat header with model selector, settings, and actions
  */
 export function ChatHeader({ userEmail }: ChatHeaderProps) {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
   const { selectedConversation, updateConversation } = useConversations();
   const { models } = useSettings();
   const { setIsSettingsOpen } = useUI();

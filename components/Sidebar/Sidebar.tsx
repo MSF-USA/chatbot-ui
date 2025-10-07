@@ -102,7 +102,7 @@ export function Sidebar() {
       {/* Tabs */}
       <div className="flex border-b border-neutral-300 dark:border-neutral-700">
         <button
-          className={`flex-1 p-3 text-sm font-semibold ${
+          className={`flex-1 p-3 text-sm font-semibold text-black dark:text-white ${
             activeTab === Tab.CONVERSATIONS
               ? 'border-b-2 border-black dark:border-white'
               : 'border-b-2 border-transparent'
@@ -112,7 +112,7 @@ export function Sidebar() {
           {t('Conversations')}
         </button>
         <button
-          className={`flex-1 p-3 text-sm font-semibold ${
+          className={`flex-1 p-3 text-sm font-semibold text-black dark:text-white ${
             activeTab === Tab.PROMPTS
               ? 'border-b-2 border-black dark:border-white'
               : 'border-b-2 border-transparent'
@@ -122,7 +122,7 @@ export function Sidebar() {
           {t('Prompts')}
         </button>
         <button
-          className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800"
+          className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-black dark:text-white"
           onClick={toggleChatbar}
           title={t('Close sidebar')}
         >
@@ -145,7 +145,7 @@ export function Sidebar() {
       <div className="p-3">
         <input
           type="text"
-          placeholder={t('Search conversations...')}
+          placeholder={t('Search conversations_ellipsis')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100 dark:placeholder-neutral-400"

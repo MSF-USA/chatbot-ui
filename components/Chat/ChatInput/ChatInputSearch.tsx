@@ -11,7 +11,7 @@ import React, {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 
 import { AgentType } from '@/types/agent';
@@ -108,7 +108,7 @@ const ChatInputSearch = ({
   systemPrompt,
   temperature,
 }: ChatInputSearchProps) => {
-  const { t } = useTranslation(['chat', 'agents']);
+  const t = useTranslations();
 
   const [mode, setMode] = useState<'search' | 'url'>(initialMode);
 

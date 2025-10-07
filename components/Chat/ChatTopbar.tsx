@@ -5,7 +5,7 @@ import {
   IconTool,
   IconSettings,
 } from '@tabler/icons-react';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
@@ -34,7 +34,7 @@ export const ChatTopbar = ({
   hasMessages = false,
   agentEnabled = false,
 }: Props) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   return (
     <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
@@ -95,7 +95,7 @@ export const ChatTopbar = ({
                 : FEEDBACK_EMAIL
             }`}
             className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
-            title={t('Request Support')}
+            title={t('sendFeedback')}
           >
             <IconExternalLink
               size={16}

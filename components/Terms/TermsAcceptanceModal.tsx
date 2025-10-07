@@ -1,6 +1,6 @@
 
 import React, { FC, useState, useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import {
   TermsData,
@@ -22,9 +22,9 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   user,
   onAcceptance
 }) => {
-  const { t } = useTranslation('common');
+  const t = useTranslations();
   const router = useRouter();
-  const userLocale = router.locale || 'en';
+  const userLocale = 'en'; // Default to English for terms
 
   const [termsData, setTermsData] = useState<TermsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -142,7 +142,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
         <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
-            <p className="text-gray-800 dark:text-white">{t('Loading terms and conditions...')}</p>
+            <p className="text-gray-800 dark:text-white">{t('Loading terms and conditions_ellipsis')}</p>
           </div>
         </div>
       </div>

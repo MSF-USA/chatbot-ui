@@ -7,7 +7,7 @@ import {
   IconTrash,
 } from '@tabler/icons-react';
 import { ChatInputSubmitTypes } from '@/types/chat';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import toast from "react-hot-toast";
 import Modal from "@/components/UI/Modal";
 
@@ -68,7 +68,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   setUploadProgress,
   simulateClick,
 }) => {
-  const { t } = useTranslation('transcribeModal');
+  const t = useTranslations();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);

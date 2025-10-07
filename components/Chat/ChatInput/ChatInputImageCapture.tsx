@@ -9,7 +9,7 @@ import React, {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { isMobile } from '@/lib/utils/app/env';
 
@@ -83,7 +83,7 @@ const ChatInputImageCapture = forwardRef<
     },
     ref,
   ) => {
-    const { t } = useTranslation('chat');
+    const t = useTranslations();
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);

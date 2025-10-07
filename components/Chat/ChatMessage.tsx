@@ -1,5 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import { Message, MessageType, getChatMessageContent } from '@/types/chat';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useChat } from '@/lib/hooks/chat/useChat';
@@ -21,7 +21,7 @@ export const ChatMessage: FC<Props> = ({
   onEdit,
   onQuestionClick,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } = useConversations();
   const { isStreaming: messageIsStreaming } = useChat();
 

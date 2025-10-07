@@ -1,6 +1,4 @@
 import { Inter } from 'next/font/google';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -13,19 +11,15 @@ export const metadata = {
 /**
  * Root layout for the entire application
  */
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const messages = await getMessages();
-
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
+        {children}
       </body>
     </html>
   );

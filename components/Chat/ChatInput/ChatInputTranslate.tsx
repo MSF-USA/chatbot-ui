@@ -22,7 +22,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     setParentModalIsOpen,
     defaultText
   }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState(false);

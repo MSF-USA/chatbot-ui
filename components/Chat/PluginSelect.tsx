@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { Plugin, PluginList } from '@/types/plugin';
 
@@ -15,7 +15,7 @@ export const PluginSelect: FC<Props> = ({
   onPluginChange,
   onKeyDown,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   const selectRef = useRef<HTMLSelectElement>(null);
 

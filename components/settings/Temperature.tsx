@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useTranslations } from 'next-intl';
-import { DEFAULT_TEMPERATURE } from '@/utils/app/const';
+import { DEFAULT_TEMPERATURE } from '@/lib/utils/app/const';
 
 interface Props {
   temperature: number;

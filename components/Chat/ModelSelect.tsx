@@ -13,7 +13,7 @@ import {
   IconX
 } from '@tabler/icons-react';
 import { FC, useState } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
@@ -178,7 +178,7 @@ interface ModelSelectProps {
 }
 
 export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
   const { selectedConversation, updateConversation } = useConversations();
   const { models, defaultModelId } = useSettings();
 

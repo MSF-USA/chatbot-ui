@@ -6,7 +6,7 @@ import {
 } from '@tabler/icons-react';
 import { FC, MutableRefObject, useState } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import { CommandDefinition, CommandType } from '@/services/commandParser';
 
@@ -177,7 +177,7 @@ export const PromptList: FC<Props> = ({
   showCommands = false,
   onImmediateCommandExecution,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   // Combine commands and prompts for display
   const totalItems = showCommands
