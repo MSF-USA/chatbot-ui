@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { suggestedPrompts } from '@/components/Chat/prompts';
 
 interface SuggestedPromptsProps {
@@ -13,7 +13,7 @@ interface SuggestedPromptsProps {
  */
 export function SuggestedPrompts({
   onSelectPrompt,
-  count = 4,
+  count = 3,
 }: SuggestedPromptsProps) {
   const randomPrompts = useMemo(() => {
     const shuffled = [...suggestedPrompts].sort(() => 0.5 - Math.random());
@@ -21,29 +21,35 @@ export function SuggestedPrompts({
   }, [count]);
 
   return (
-    <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
+    <div className="hidden sm:flex space-x-5">
       {randomPrompts.map((prompt, index) => {
         const Icon = prompt.icon;
 
         return (
           <button
             key={index}
+            className="bg-transparent text-black dark:text-white border border-[#E0E0E0] dark:border-[#444444] rounded-md px-2 py-1 text-sm hover:bg-[#F9F9F9] dark:hover:bg-[#2F2F2F] dark:hover:text-white transition"
             onClick={() => onSelectPrompt?.(prompt.prompt)}
-            className="flex items-start space-x-3 rounded-lg border border-neutral-300 bg-white p-4 text-left transition-colors hover:border-neutral-400 hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800 dark:hover:border-neutral-600 dark:hover:bg-neutral-700"
+            style={{
+              width: '200px',
+              height: '100px',
+              textAlign: 'start',
+              whiteSpace: 'normal',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'start',
+              justifyContent: 'center',
+              padding: '30px',
+            }}
           >
             {Icon && (
-              <div className="shrink-0">
-                <Icon size={24} className="text-blue-500" />
+              <div className="flex flex-col items-start">
+                <Icon className="h-5 w-5 mb-2" />
+                <div>
+                  <span>{prompt.title}</span>
+                </div>
               </div>
             )}
-            <div className="flex-1">
-              <h3 className="font-medium text-gray-800 dark:text-white">
-                {prompt.title}
-              </h3>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                {prompt.prompt}
-              </p>
-            </div>
           </button>
         );
       })}

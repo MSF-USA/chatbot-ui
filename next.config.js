@@ -1,8 +1,8 @@
-const { i18n } = require('./next-i18next.config');
+const createNextIntlPlugin = require('next-intl/plugin');
+const withNextIntl = createNextIntlPlugin('./i18n.ts');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  i18n,
   reactStrictMode: true,
   swcMinify: true,
   images: {
@@ -36,4 +36,4 @@ const withPWA = require('next-pwa')({
   reloadOnOnline: true,
 });
 
-module.exports = withPWA(nextConfig);
+module.exports = withNextIntl(withPWA(nextConfig));

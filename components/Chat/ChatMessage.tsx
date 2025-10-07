@@ -47,7 +47,7 @@ export const ChatMessage: FC<Props> = ({
   };
 
   const handleEditMessage = () => {
-    if (message.content != messageContent) {
+    if (message.content !== messageContent) {
       if (selectedConversation && onEdit) {
         onEdit({ ...message, content: messageContent });
       }

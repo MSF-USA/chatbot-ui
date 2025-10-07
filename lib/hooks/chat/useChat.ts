@@ -25,5 +25,6 @@ export function useChat() {
     requestStop: store.requestStop,
     resetStop: store.resetStop,
     resetChat: store.resetChat,
+    sendMessage: store.sendMessage,
   };
 }

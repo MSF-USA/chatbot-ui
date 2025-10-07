@@ -4,6 +4,7 @@ import { Chat } from '@/components/Chat/Chat';
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { SettingsDialog } from '@/components/settings/SettingsDialog';
 import { MigrationBanner } from '@/components/migration/MigrationBanner';
+import { ModelLoader } from '@/components/providers/ModelLoader';
 
 /**
  * Main chat page
@@ -11,6 +12,7 @@ import { MigrationBanner } from '@/components/migration/MigrationBanner';
 export default function ChatPage() {
   return (
     <>
+      <ModelLoader />
       <div className="flex h-screen w-screen overflow-hidden">
         <Sidebar />
 

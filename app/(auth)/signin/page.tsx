@@ -6,15 +6,15 @@ import logo from '@/public/logo_light.png';
 import loginBackground from '@/public/loginBackground.jpg';
 import microsoftLogo from '@/public/microsoft-logo.svg';
 
-const version = process.env.NEXT_PUBLIC_VERSION;
-const build = process.env.NEXT_PUBLIC_BUILD;
-const env = process.env.NEXT_PUBLIC_ENV;
-const email = process.env.NEXT_PUBLIC_EMAIL;
-
 /**
  * Sign-in page for App Router
  */
 export default function SignInPage() {
+  const version = process.env.NEXT_PUBLIC_VERSION;
+  const build = process.env.NEXT_PUBLIC_BUILD;
+  const env = process.env.NEXT_PUBLIC_ENV;
+  const email = process.env.NEXT_PUBLIC_EMAIL;
+
   return (
     <>
       <div className="h-screen overflow-hidden md:flex">
@@ -43,7 +43,7 @@ export default function SignInPage() {
         <div className="flex items-center justify-center h-full md:w-3/4">
           <button
             className="flex flex-row items-center gap-3 mb-80 md:mb-0 sm:mb-40 bg-zinc-950 hover:bg-zinc-800 text-white py-4 px-6 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-            onClick={() => signIn('azure-ad', { callbackUrl: '/' })}
+            onClick={() => signIn('microsoft-entra-id', { callbackUrl: '/' })}
           >
             <Image src={microsoftLogo} alt="Microsoft" width={24} height={24} />
             <span>Sign in with Microsoft</span>

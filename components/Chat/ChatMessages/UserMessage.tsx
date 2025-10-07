@@ -62,7 +62,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   );
 
   const handleEditMessage = () => {
-    if (localMessageContent != content) {
+    if (localMessageContent !== content) {
       if (selectedConversation && onEdit) {
         onEdit({ ...message, content: localMessageContent });
         setMessageContent(localMessageContent);
@@ -141,7 +141,6 @@ export const UserMessage: FC<UserMessageProps> = ({
                   const match = /language-(\w+)/.exec(className || '');
                   return !inline ? (
                     <CodeBlock
-                      key={Math.random()}
                       language={(match && match[1]) || ''}
                       value={String(children).replace(/\n$/, '')}
                       {...props}

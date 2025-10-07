@@ -3,6 +3,7 @@ import {
   IconExternalLink,
   IconChevronDown,
   IconTool,
+  IconSettings,
 } from '@tabler/icons-react';
 import { useTranslation } from 'next-i18next';
 import { isUSBased } from '@/lib/utils/app/userAuth';
@@ -60,12 +61,10 @@ export const ChatTopbar = ({
               title="Model Settings"
             >
               <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
-                {selectedModelName}
+                {selectedModelName || 'Select Model'}
               </span>
               {agentEnabled && (
-                <span title="Agent Tools Enabled">
-                  <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" />
-                </span>
+                <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" title="Agent Tools Enabled" />
               )}
               <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
             </button>
@@ -96,14 +95,13 @@ export const ChatTopbar = ({
                 : FEEDBACK_EMAIL
             }`}
             className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
-            title={t('sendFeedback')}
+            title={t('Request Support')}
           >
             <IconExternalLink
               size={16}
               className="mr-1 text-black dark:text-white/50"
             />
-            <span className="hidden sm:inline">{t('sendFeedback')}</span>
-            <span className="sm:hidden">Feedback</span>
+            <span className="hidden sm:inline">Request Support</span>
           </a>
         </div>
       </div>

@@ -8,7 +8,7 @@ interface ChatInputVoiceCaptureProps {
 }
 
 const SILENCE_THRESHOLD = -50; // in decibels
-const MAX_SILENT_DURATION = 6000; // in milliseconds (Changed to 7000ms for 7 seconds)
+const MAX_SILENT_DURATION = 6000; // in milliseconds
 
 const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
   {
@@ -41,17 +41,6 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
                 setHasMicrophone(false);
             });
     }, []);
-
-    /*
-        Useful for local debugging, but otherwise just annoying
-     */
-    const testAudioPlayback = (audioBlob: Blob) => {
-        const audioURL = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioURL);
-        audio.play().catch(error => {
-            console.error("Playback failed:", error);
-        });
-    };
 
     const startRecording = () => {
         navigator.mediaDevices

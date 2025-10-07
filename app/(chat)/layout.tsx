@@ -14,7 +14,7 @@ export default async function ChatLayout({
   const session = await auth();
 
   if (!session) {
-    redirect('/auth/signin');
+    redirect('/signin');
   }
 
   return (

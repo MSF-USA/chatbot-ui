@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { AzureBlobStorage, BlobProperty, getBlobBase64String } from '@/lib/utils/server/blob';
-import { getToken } from 'next-auth/jwt';
-import {Session} from "next-auth";
-import {auth} from "@/auth";
-import {getEnvVariable} from "@/lib/utils/app/env";
+import { Session } from 'next-auth';
+import { auth } from '@/auth';
+import { getEnvVariable } from '@/lib/utils/app/env';
 
 const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   if (typeof id !== 'string' || id.length < 1) {
@@ -40,13 +39,12 @@ export async function GET(
     fileType = requestedFileType;
   }
 
-  // @ts-ignore
-  const token: JWT = await getToken({ req: request });
   const session: Session | null = await auth();
-  if (!session) throw new Error("Failed to pull session!");
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  // @ts-ignore
-  const userId: string = session?.user?.id ?? token.userId ?? 'anonymous';
+  const userId: string = session?.user?.id ?? 'anonymous';
   const remoteFilepath = `${userId}/uploads/${fileType}s`;
 
   try {
