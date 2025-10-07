@@ -8,7 +8,7 @@ import {
   fetchTermsData,
   saveUserAcceptance,
   hasUserAcceptedAllRequiredDocuments
-} from '@/utils/app/termsAcceptance';
+} from '@/lib/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 import ReactMarkdown from 'react-markdown';
 import {IconLanguage} from "@tabler/icons-react";

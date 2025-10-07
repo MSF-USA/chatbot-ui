@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AzureBlobStorage, BlobStorage } from '@/utils/server/blob';
-import { getEnvVariable } from '@/utils/app/env';
-import Hasher from '@/utils/app/hash';
+import { AzureBlobStorage, BlobStorage } from '@/lib/utils/server/blob';
+import { getEnvVariable } from '@/lib/utils/app/env';
+import Hasher from '@/lib/utils/app/hash';
 import { getToken } from 'next-auth/jwt';
 import {JWT, Session} from 'next-auth';
-import {getServerSession} from 'next-auth/next';
-import {authOptions} from '@/pages/api/auth/[...nextauth]';
+import { auth } from '@/auth';
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -57,7 +56,7 @@ export async function POST(request: NextRequest) {
     if (!token)
       throw new Error(`Token could not be pulled from request: ${request}`);
 
-    const session: Session | null = await getServerSession(authOptions as any);
+    const session: Session | null = await auth();
     if (!session) throw new Error("Failed to pull session!");
 
     // @ts-ignore

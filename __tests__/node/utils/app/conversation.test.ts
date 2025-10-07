@@ -1,5 +1,5 @@
 import { describe, beforeEach, expect, it, vi } from 'vitest'
-import { updateConversation, saveConversation, saveConversations } from '@/utils/app/conversation'
+import { updateConversation, saveConversation, saveConversations } from '@/lib/utils/app/conversation'
 import { Conversation } from '@/types/chat';
 
 // Assuming these functions are correctly imported/handled in the actual environment

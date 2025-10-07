@@ -5,7 +5,7 @@ import {
   IconTool,
 } from '@tabler/icons-react';
 import { useTranslation } from 'next-i18next';
-import { isUSBased } from '@/utils/app/userAuth';
+import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 interface Props {

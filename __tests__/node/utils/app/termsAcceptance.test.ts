@@ -10,7 +10,7 @@ import {
   hasUserAcceptedAllRequiredDocuments,
   fetchTermsData,
   checkUserTermsAcceptance
-} from '@/utils/app/termsAcceptance';
+} from '@/lib/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 
 import { Mock } from 'vitest';

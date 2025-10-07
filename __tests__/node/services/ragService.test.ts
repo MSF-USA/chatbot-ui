@@ -2,7 +2,7 @@ import { IconNews } from '@tabler/icons-react';
 
 import { Session } from 'next-auth';
 
-import { RAGService } from '@/services/ragService';
+import { RAGService } from '@/lib/services/ragService';
 
 import { Bot } from '@/types/bots';
 import { Message, MessageType } from '@/types/chat';

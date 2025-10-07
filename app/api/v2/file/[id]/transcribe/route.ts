@@ -1,10 +1,9 @@
 import {NextRequest, NextResponse} from 'next/server';
-import {AzureBlobStorage, BlobProperty, BlobStorage} from '@/utils/server/blob';
-import {getEnvVariable} from '@/utils/app/env';
+import {AzureBlobStorage, BlobProperty, BlobStorage} from '@/lib/utils/server/blob';
+import {getEnvVariable} from '@/lib/utils/app/env';
 import {getToken} from 'next-auth/jwt';
 import {JWT, Session} from 'next-auth';
-import {getServerSession} from 'next-auth/next';
-import {authOptions} from '@/pages/api/auth/[...nextauth]';
+import { auth } from '@/auth';
 import {tmpdir} from 'os';
 import {join} from 'path';
 import fs from "fs";
@@ -21,7 +20,7 @@ export async function GET(
   const token: JWT | null = await getToken({ req: request });
   if (!token) throw new Error(`Token could not be pulled from request: ${request}`);
 
-  const session: Session | null = await getServerSession(authOptions as any);
+  const session: Session | null = await auth();
   if (!session) throw new Error("Failed to pull session!");
 
   const { id } = await params;

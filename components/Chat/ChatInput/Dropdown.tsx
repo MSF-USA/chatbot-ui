@@ -17,7 +17,7 @@ import React, {
 
 import { useTranslation } from 'next-i18next';
 
-import useEnhancedOutsideClick from '@/hooks/useEnhancedOutsideClick';
+import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
 
 import {
   ChatInputSubmitTypes,

@@ -3,8 +3,7 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 import { fetchAndParseWebpage, HttpError } from "@/services/webpageService";
 import { Session } from "next-auth";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { auth } from "@/auth";
 import { fetchAndParseBingSearch } from "@/services/bingService";
 import { SearchResult } from "@/types/bing";
 
@@ -33,7 +32,7 @@ ${JSON.stringify({
 }
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
-  const session: Session | null = await getServerSession(authOptions as any);
+  const session: Session | null = await auth();
   if (!session) throw new Error("Failed to pull session!");
 
   const { searchParams } = new URL(req.url);

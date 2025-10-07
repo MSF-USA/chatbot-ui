@@ -1,6 +1,6 @@
 import { DEFAULT_SYSTEM_PROMPT, OPENAI_API_HOST, DEFAULT_TEMPERATURE, OPENAI_API_TYPE,
     OPENAI_API_VERSION, OPENAI_ORGANIZATION, AZURE_DEPLOYMENT_ID, findWorkingConfiguration }
-    from '@/utils/app/const';
+    from '@/lib/utils/app/const';
 import { describe, it, vi, expect, beforeEach } from 'vitest'
 
 describe('Test Environment Variables', () => {

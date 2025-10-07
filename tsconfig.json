@@ -23,9 +23,11 @@
       "vitest/globals"
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@/lib/*": ["./lib/*"],
+      "@/components/*": ["./components/*"],
+      "@/app/*": ["./app/*"],
+      "@/types/*": ["./types/*"]
     },
     "plugins": [
       {

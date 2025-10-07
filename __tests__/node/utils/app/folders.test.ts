@@ -1,5 +1,5 @@
 import { vi, beforeEach, describe, it, expect } from 'vitest';
-import {saveFolders} from '@/utils/app/folders';
+import {saveFolders} from '@/lib/utils/app/folders';
 import {FolderInterface} from '@/types/folder';
 
 

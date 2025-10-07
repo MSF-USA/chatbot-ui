@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 
-import ChatService from '@/services/chatService';
+import ChatService from '@/lib/services/chatService';
 
 export const maxDuration: number = 300;
 

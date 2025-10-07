@@ -1,5 +1,5 @@
 import { vi, expect, beforeEach, describe, it } from 'vitest';
-import { updatePrompt, savePrompts } from '@/utils/app/prompts';
+import { updatePrompt, savePrompts } from '@/lib/utils/app/prompts';
 import { Prompt } from '@/types/prompt';
 import { OpenAIModel} from "@/types/openai";
 

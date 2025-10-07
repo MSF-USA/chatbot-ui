@@ -18,8 +18,8 @@ import {
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
-import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { useSmoothStreaming } from '@/lib/hooks/useSmoothStreaming';
+import { useStreamingSettings } from '@/lib/context/StreamingSettingsContext';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';

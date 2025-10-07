@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AzureBlobStorage } from "@/utils/server/blob";
 import { v4 as uuidv4 } from 'uuid';
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { auth } from "@/auth";
 import { DequeuedMessageItem } from '@azure/storage-queue';
 import {Session} from "next-auth";
 
 async function initializeBlobStorage(req: NextRequest) {
-    const session: Session | null = await getServerSession(authOptions as any);
+    const session: Session | null = await auth();
     if (!session) throw new Error("Failed to pull session!");
 
     const user = session.user;

@@ -1,6 +1,6 @@
 import React, { ReactNode, useEffect, useMemo } from 'react';
 import { IconX } from '@tabler/icons-react';
-import useModal from '@/hooks/useModal';
+import useModal from '@/lib/hooks/useModal';
 
 interface ModalProps {
   isOpen: boolean;

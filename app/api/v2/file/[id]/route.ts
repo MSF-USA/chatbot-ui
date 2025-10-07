@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AzureBlobStorage, BlobProperty, getBlobBase64String } from '@/utils/server/blob';
+import { AzureBlobStorage, BlobProperty, getBlobBase64String } from '@/lib/utils/server/blob';
 import { getToken } from 'next-auth/jwt';
 import {Session} from "next-auth";
-import {getServerSession} from "next-auth/next";
-import {authOptions} from "@/pages/api/auth/[...nextauth]";
+import {auth} from "@/auth";
 import {getEnvVariable} from "@/utils/app/env";
 
 const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
@@ -43,7 +42,7 @@ export async function GET(
 
   // @ts-ignore
   const token: JWT = await getToken({ req: request });
-  const session: Session | null = await getServerSession(authOptions as any);
+  const session: Session | null = await auth();
   if (!session) throw new Error("Failed to pull session!");
 
   // @ts-ignore

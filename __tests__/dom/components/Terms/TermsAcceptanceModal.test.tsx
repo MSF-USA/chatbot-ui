@@ -2,7 +2,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TermsAcceptanceModal } from '@/components/Terms/TermsAcceptanceModal';
-import * as termsAcceptance from '@/utils/app/termsAcceptance';
+import * as termsAcceptance from '@/lib/utils/app/termsAcceptance';
 import '@testing-library/jest-dom';
 
 vi.mock('next/router', () => ({
