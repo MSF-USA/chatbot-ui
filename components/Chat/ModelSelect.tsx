@@ -1,7 +1,7 @@
-import { 
-  IconSparkles, 
-  IconWorld, 
-  IconCode, 
+import {
+  IconSparkles,
+  IconWorld,
+  IconCode,
   IconInfoCircle,
   IconBolt,
   IconTool,
@@ -14,7 +14,9 @@ import {
 } from '@tabler/icons-react';
 import { FC, useContext, useState } from 'react';
 import { useTranslation } from 'next-i18next';
+
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+
 import HomeContext from '@/pages/api/home/home.context';
 import { TemperatureSlider } from '../Settings/Temperature';
 
@@ -35,12 +37,11 @@ const ModelCard: FC<ModelCardProps> = ({
   useAgent = false,
   onToggleAgent,
   temperature,
-  onChangeTemperature 
+  onChangeTemperature
 }) => {
   const modelConfig = OpenAIModels[model.id as OpenAIModelID];
-  const isGpt5 = model.id === OpenAIModelID.GPT_5;
-  const agentAvailable = !isGpt5; // Agents not available for GPT-5 yet
-  
+  const agentAvailable = Boolean(modelConfig?.agentId);
+
   return (
     <div
       className={`
@@ -90,17 +91,7 @@ const ModelCard: FC<ModelCardProps> = ({
               </span>
             )}
           </div>
-          
-          {/* GPT-5 Agent Notice */}
-          {isGpt5 && (
-            <div className="mb-3 p-2 bg-amber-50 dark:bg-amber-900/20 rounded-md">
-              <div className="flex items-start text-xs text-amber-700 dark:text-amber-300">
-                <IconAlertTriangle size={14} className="mr-1.5 mt-0.5 flex-shrink-0" />
-                <span>Agent services (web search, code interpreter) are not yet available for GPT-5</span>
-              </div>
-            </div>
-          )}
-          
+
           {/* Optional: Model description if available */}
           {modelConfig?.description && (
             <div className="text-xs text-gray-600 dark:text-gray-400">
@@ -210,12 +201,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       agentEnabled: true,
       agentId: OpenAIModels[model.id as OpenAIModelID]?.agentId
     } : model;
-    
+
+
     selectedConversation &&
-    handleUpdateConversation(selectedConversation, {
-      key: 'model',
-      value: modelToUse,
-    });
+      handleUpdateConversation(selectedConversation, {
+        key: 'model',
+        value: modelToUse,
+      });
   };
 
   const handleToggleAgent = (modelId: string) => {
@@ -247,6 +239,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const selectedModelId = selectedConversation?.model?.id || defaultModelId;
   const isAgentSelected = selectedConversation?.model && OpenAIModels[selectedConversation.model.id as OpenAIModelID]?.isAgent;
 
+  // TODO: Add internationalization support for all hardcoded strings
+  // Currently missing i18n for: "Select AI Model", "Choose your AI model...",
+  // "Agent Ready", "Enable AI Agent", "Web search & code interpreter", etc.
+
   return (
     <div className="w-full">
       {/* Header with close button */}
@@ -268,14 +264,14 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           </button>
         )}
       </div>
-      
+
       {/* Model Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {availableModels.map((model) => {
-          const isCurrentlySelected = selectedModelId === model.id || 
+          const isCurrentlySelected = selectedModelId === model.id ||
             (selectedConversation?.model?.name === model.name);
           const useAgent = isCurrentlySelected && selectedConversation?.model?.agentEnabled;
-          
+
           return (
             <ModelCard
               key={model.id}
@@ -285,7 +281,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               useAgent={useAgent}
               onToggleAgent={() => handleToggleAgent(model.id)}
               temperature={selectedConversation?.temperature}
-              onChangeTemperature={(temperature) => 
+              onChangeTemperature={(temperature) =>
                 selectedConversation && handleUpdateConversation(selectedConversation, {
                   key: 'temperature',
                   value: temperature,
@@ -295,14 +291,14 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           );
         })}
       </div>
-      
+
       {/* Info footer */}
       <div className="mt-6 text-xs text-gray-600 dark:text-gray-400">
         <div className="flex items-start">
           <IconInfoCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
           <div>
             <p>
-              <strong>Agent Mode:</strong> Automatically uses tools like web search and code interpreter when needed. 
+              <strong>Agent Mode:</strong> Automatically uses tools like web search and code interpreter when needed.
               Temperature and other settings remain fixed for optimal tool performance.
             </p>
           </div>

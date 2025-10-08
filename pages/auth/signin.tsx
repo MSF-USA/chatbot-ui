@@ -1,45 +1,55 @@
-import type { GetServerSidePropsContext, InferGetServerSidePropsType } from "next";
-import { getProviders, signIn } from "next-auth/react"
-import { getServerSession } from "next-auth/next"
-import { authOptions } from "../api/auth/[...nextauth]";
-import Image from 'next/image'
-import azure from '../../public/azure.png'
-import logo from '../../public/logo_light.png'
-import loginBackground from '../../public/loginBackground.jpg'
+import { getProviders, signIn } from 'next-auth/react';
+
+import type {
+  GetServerSidePropsContext,
+  InferGetServerSidePropsType,
+} from 'next';
+import { getServerSession } from 'next-auth/next';
+import Image from 'next/image';
+
+import azure from '../../public/azure.png';
+import loginBackground from '../../public/loginBackground.jpg';
+import logo from '../../public/logo_light.png';
+import { authOptions } from '../api/auth/[...nextauth]';
 
 const version = process.env.NEXT_PUBLIC_VERSION;
 const build = process.env.NEXT_PUBLIC_BUILD;
 const env = process.env.NEXT_PUBLIC_ENV;
 const email = process.env.NEXT_PUBLIC_EMAIL;
 
-export default function SignIn({ providers }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+export default function SignIn({
+  providers,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-<>
+    <>
       <div className="h-screen overflow-hidden md:flex">
         <div className="md:h-screen w-screen bg-zinc-900">
-          <div className="flex w-screen p-10" style={{ backgroundImage: `url(${loginBackground.src})`, width: '100%', height: '100%', backgroundSize: 'cover' }}>
+          <div
+            className="flex w-screen p-10"
+            style={{
+              backgroundImage: `url(${loginBackground.src})`,
+              width: '100%',
+              height: '100%',
+              backgroundSize: 'cover',
+            }}
+          >
             <div>
-              <Image
-                src={logo}
-                alt="MSF Logo"
-              />
+              <Image src={logo} alt="MSF Logo" />
             </div>
-            <h1 className="text-4xl font-thin text-white px-5 mt-3">MSF AI Assistant</h1>
+            <h1 className="text-4xl font-thin text-white px-5 mt-3">
+              MSF AI Assistant
+            </h1>
           </div>
         </div>
 
         {Object.values(providers).map((provider) => (
-          <div key={provider.name} className="flex items-center justify-center h-full md:w-3/4">
+          <div
+            key={provider.name}
+            className="flex items-center justify-center h-full md:w-3/4"
+          >
             <div className="flex flex-row mb-80 md:mb-0 sm:mb-40 bg-zinc-950 hover:bg-zinc-800 text-white py-4 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-              <Image
-                src={azure}
-                alt="Active Directory Logo"
-                width="25"
-              />
-              <button
-                className="px-3"
-                onClick={() => signIn(provider.id)}
-              >
+              <Image src={azure} alt="Active Directory Logo" width="25" />
+              <button className="px-3" onClick={() => signIn(provider.id)}>
                 Sign in with {provider.name}
               </button>
             </div>
@@ -52,17 +62,22 @@ export default function SignIn({ providers }: InferGetServerSidePropsType<typeof
             <div className="ml-2 group relative flex flex-row text-white">
               How Do I Get Access?
               <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full right-0 transform translate-x-0 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                Currently MSF AI Assistant is only available to USA and Amsterdam HQ staff.<br /><br />
+                Currently MSF AI Assistant is only available to USA and
+                Amsterdam HQ staff.
+                <br />
+                <br />
                 We hope to expand soon!
               </span>
             </div>
           </div>
-          <div className="text-gray-500">v{version}.{build}.{env}</div>
+          <div className="text-gray-500">
+            v{version}.{build}.{env}
+          </div>
           <div className="text-gray-500">{email}</div>
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
@@ -73,12 +88,12 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   // Note: Make sure not to redirect to the same page
   // To avoid an infinite loop!
   if (session) {
-    return { redirect: { destination: "/" } };
+    return { redirect: { destination: '/' } };
   }
 
   const providers = await getProviders();
 
   return {
     props: { providers: providers ?? [] },
-  }
+  };
 }

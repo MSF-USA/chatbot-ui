@@ -1,9 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-const useCloseOnOutsideAndEscape = (
-  isOpen: boolean,
-  onClose: () => void,
-) => {
+const useCloseOnOutsideAndEscape = (isOpen: boolean, onClose: () => void) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -31,6 +28,6 @@ const useCloseOnOutsideAndEscape = (
   }, [isOpen, onClose]);
 
   return ref;
-}
+};
 
 export default useCloseOnOutsideAndEscape;

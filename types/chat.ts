@@ -1,3 +1,4 @@
+import { AgentResponse, AgentType } from './agent';
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
 
@@ -84,6 +85,7 @@ export interface Message {
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
+  agentResponse?: AgentResponse;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
@@ -97,6 +99,12 @@ export interface ChatBody {
   botId: string | undefined;
   stream?: boolean;
   threadId?: string; // Azure AI Agent thread ID
+  agentSettings?: {
+    enabled: boolean;
+    enabledAgentTypes: AgentType[];
+  };
+  forceStandardChat?: boolean;
+  forceAgentType?: AgentType;
 }
 
 export interface Conversation {

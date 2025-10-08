@@ -134,7 +134,7 @@ const ChatInputImage = ({
   useImperativeHandle(imageInputRef, () => ({
     openFilePicker: () => {
       fileInputRef.current?.click();
-    }
+    },
   }));
 
   const openModalButtonRef: MutableRefObject<any> = useRef(null);
@@ -166,7 +166,7 @@ const ChatInputImage = ({
         accept={'image/*'}
       />
       <button
-        style={{display: 'none' }}
+        style={{ display: 'none' }}
         onClick={(e) => {
           onImageUploadButtonClick(e, imageInputRef as MutableRefObject<any>);
         }}

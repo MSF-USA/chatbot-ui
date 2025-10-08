@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-01-20",
+  "source": "MSF AI Assistant FAQ",
+  "items": [
+    {
+      "id": "faq_001",
+      "type": "faq",
+      "category": "general",
+      "question": "What is the MSF AI Assistant?",
+      "answer": "The MSF AI Assistant is a custom-built internal AI chat tool for Médecins Sans Frontières (MSF) staff, developed with Azure Open AI. This solution enhances privacy by keeping all data within MSF, offering a secure alternative to external services. Now and in the future, it will support tailored AI use cases that fit the specific needs of how we work. This initiative is part of MSF-USA's larger strategy to explore, assess, and prototype AI technologies in a way that's aligned with MSF principles and that further our humanitarian goals. The MSF AI Assistant can assist with a wide range of tasks, including answering questions, providing explanations, brainstorming creative content, and more. It's designed for use as an assistant to your work; always be sure to check its output for quality and accuracy.",
+      "keywords": ["MSF AI Assistant", "what is", "AI tool", "chat tool", "Azure Open AI", "MSF", "assistant", "AI", "artificial intelligence", "internal", "custom-built", "humanitarian", "médecins sans frontières", "doctors without borders"]
+    },
+    {
+      "id": "faq_002", 
+      "type": "faq",
+      "category": "capabilities",
+      "question": "How can the MSF AI Assistant assist employees of Doctors Without Borders (Médecins Sans Frontières)?",
+      "answer": "The MSF AI Assistant can assist employees of Doctors Without Borders/Médecins Sans Frontières (MSF) in various ways, such as:\n- Answering technical questions.\n- Generating or modifying reports and documentation.\n- Offering language translation assistance.\n- Assisting with brainstorming and idea generation.\n- Conversing in a human-like manner on a wide range of topics relevant to humanitarian work.",
+      "keywords": ["capabilities", "how can", "assist", "help", "employees", "staff", "features", "what can", "technical questions", "reports", "documentation", "translation", "brainstorming", "humanitarian work", "tasks"]
+    },
+    {
+      "id": "faq_003",
+      "type": "faq", 
+      "category": "examples",
+      "question": "What are some example questions I can ask the MSF AI Assistant?",
+      "answer": "Here are a few examples of questions you can ask the MSF AI Assistant:\n- 'Summarize the main points from this large set of data.'\n- 'Translate this document into French.'\n- 'Give me the history on this culture or geographical area.'\n- 'Provide ideas for improving logistics in remote areas.'",
+      "keywords": ["examples", "example questions", "sample", "what to ask", "summarize", "translate", "history", "culture", "logistics", "remote areas", "ideas", "data"]
+    },
+    {
+      "id": "faq_004",
+      "type": "faq",
+      "category": "prompts",
+      "question": "What is a prompt?",
+      "answer": "A prompt is the input or instruction that you provide to the MSF AI Assistant to generate a response. It can be a question, a statement, or any other form of text that guides the model on what kind of response you are looking for. For example, if you need help with translation, your prompt might be 'Translate this document into Spanish.'",
+      "keywords": ["prompt", "input", "instruction", "what is a prompt", "question", "statement", "text", "guide", "response", "translation", "example"]
+    },
+    {
+      "id": "faq_005",
+      "type": "faq",
+      "category": "prompts",
+      "question": "How do I create a reusable prompt?",
+      "answer": "To create a reusable prompt, you can use the 'Prompts' tab. Here's how:\n1. Navigate to the 'Prompts' tab in the MSF AI Assistant interface.\n2. Click on 'New Prompt.'\n3. Click on the newly created prompt to edit it.\n4. Enter the text of the prompt you want to reuse, such as 'Generate a daily activity report.'\n5. Save the prompt with a recognizable name.\n6. You can now access this prompt by typing '/' and selecting it from the list, making it easy to reuse whenever needed.",
+      "keywords": ["create prompt", "reusable prompt", "how to create", "prompts tab", "new prompt", "save prompt", "slash command", "/", "steps", "instructions", "interface"]
+    },
+    {
+      "id": "faq_006",
+      "type": "faq",
+      "category": "prompts",
+      "question": "How can I automate and reuse prompts?",
+      "answer": "Once you have created a reusable prompt, you can automate and reuse it by typing the '/' and then choosing the prompt from the list. This feature allows you to quickly access frequently used prompts without having to type them out each time. For example, you might have a prompt for generating a daily report or translating a document, which you can easily select and use whenever needed.",
+      "keywords": ["automate", "reuse prompts", "slash command", "/", "frequently used", "daily report", "quick access", "select", "choose", "list"]
+    },
+    {
+      "id": "faq_007",
+      "type": "faq",
+      "category": "privacy",
+      "question": "Where is my conversation data stored?",
+      "answer": "All conversation data with the MSF AI Assistant is stored locally on your own computer. This ensures that your data remains private and secure, and is not transmitted to external servers.",
+      "keywords": ["data storage", "conversation data", "where stored", "local", "computer", "private", "secure", "privacy", "external servers", "transmitted"]
+    },
+    {
+      "id": "faq_008",
+      "type": "faq",
+      "category": "reliability",
+      "question": "Should the MSF AI Assistant's responses be 100% trusted?",
+      "answer": "While the MSF AI Assistant is a powerful tool designed to assist with various tasks, it should not be considered a replacement for human judgment and expertise. Always confirm and fact-check the information provided by the AI Assistant to ensure accuracy and reliability.",
+      "keywords": ["trust", "reliability", "100% trusted", "fact-check", "human judgment", "accuracy", "verify", "confirm", "expertise", "replacement"]
+    },
+    {
+      "id": "faq_009",
+      "type": "faq",
+      "category": "storage",
+      "question": "Where are my conversations and custom bots?",
+      "answer": "Your conversations and custom bots are stored locally on your device, specifically in your browser's local storage. This means they will only be accessible when using the same browser on the same device. They will not appear on other devices or browsers.",
+      "keywords": ["conversations", "custom bots", "stored", "local storage", "browser", "device", "accessible", "same browser", "same device", "other devices"]
+    },
+    {
+      "id": "faq_010",
+      "type": "faq",
+      "category": "support",
+      "question": "Where should I go with bug reports, questions, or feedback?",
+      "answer": "We welcome feedback. Please reach out to our team at ai@newyork.msf.org.",
+      "keywords": ["bug reports", "questions", "feedback", "support", "contact", "ai@newyork.msf.org", "email", "team", "help"]
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Webzoeken",
+      "code_interpreter": "Code-interpreter",
+      "url_pull": "URL-analyse",
+      "local_knowledge": "Kennisbank",
+      "standard_chat": "Standaard chat",
+      "foundry": "Foundry",
+      "third_party": "Derde partij"
+    },
+    "error": {
+      "title": "Agent fout",
+      "unknown": "Er is een onbekende fout opgetreden",
+      "retry": "Opnieuw proberen",
+      "fallback": "Alternatief gebruiken"
+    },
+    "metadata": {
+      "processingTime": "Verwerkingstijd",
+      "confidence": "Vertrouwen",
+      "tokens": "Gebruikte tokens"
+    },
+    "resultsPanel": {
+      "placeholder": "Agent resultaten worden hier weergegeven"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Webzoeken - Zoekt op het web naar realtime informatie",
+      "code_interpreter": "Code-interpreter - Voert code uit en analyseert in meerdere talen",
+      "url_pull": "URL-analyse - Analyseert en extraheert inhoud van webpagina's",
+      "local_knowledge": "Kennisbank - Zoekt in interne kennisbank en documenten",
+      "standard_chat": "Standaard chat - Standaard conversatie-AI zonder tools",
+      "foundry": "Foundry - Gebruikt Azure AI Foundry voor geavanceerde mogelijkheden",
+      "third_party": "Derde partij - Agent van derden of aangepaste tool-integratie"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Webzoekresultaten worden hier weergegeven",
+      "title": "Zoekresultaten",
+      "noResults": "Geen resultaten gevonden",
+      "noData": "Geen zoekgegevens beschikbaar",
+      "results": "resultaten",
+      "confidence": "Relevantie",
+      "relevance": "Relevantie",
+      "source": "Bron",
+      "citations": "Citaten",
+      "cite": "Citeren",
+      "open": "Openen",
+      "openLink": "Link openen in nieuw tabblad",
+      "filters": "Filters",
+      "sortBy": "Sorteren op",
+      "filterBy": "Filteren op",
+      "all": "Alle",
+      "date": "Datum",
+      "query": "Zoekopdracht",
+      "searchTime": "Zoektijd",
+      "cached": "In cache",
+      "contentTypes": {
+        "webpage": "Webpagina's",
+        "news": "Nieuws",
+        "academic": "Academisch",
+        "image": "Afbeeldingen",
+        "video": "Video's"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Aantal resultaten",
+      "safeSearch": "Veilig zoeken",
+      "market": "Zoekmarkt"
+    },
+    "status": {
+      "searching": "Zoeken op het web...",
+      "optimizing": "Zoekopdracht optimaliseren...",
+      "processing": "Zoekresultaten verwerken..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Code-uitvoeringsresultaten worden hier weergegeven",
+      "title": "Uitvoeringsresultaten",
+      "noData": "Geen code-uitvoeringsgegevens beschikbaar",
+      "output": "Uitvoer",
+      "errors": "Fouten",
+      "logs": "Logboeken",
+      "executionTime": "Uitvoeringstijd",
+      "memoryUsage": "Geheugengebruik",
+      "cpuUsage": "CPU-gebruik",
+      "outputLines": "Uitvoerregels",
+      "executedCode": "Uitgevoerde code",
+      "download": "Downloaden",
+      "noOutput": "Geen uitvoer gegenereerd",
+      "noFiles": "Geen bestanden gegenereerd",
+      "outputSize": "Uitvoergrootte",
+      "unsupportedOutput": "Niet-ondersteunde uitvoerindeling",
+      "status": {
+        "success": "Succesvol",
+        "error": "Fout",
+        "timeout": "Time-out",
+        "memory_limit": "Geheugenlimiet overschreden",
+        "security_violation": "Beveiligingsschending",
+        "invalid_code": "Ongeldige code"
+      },
+      "outputTypes": {
+        "stdout": "Standaarduitvoer",
+        "stderr": "Foutuitvoer",
+        "return_value": "Retourwaarde",
+        "exception": "Uitzondering"
+      },
+      "tabs": {
+        "output": "Uitvoer",
+        "code": "Code",
+        "files": "Bestanden"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL-analyseresultaten",
+      "noData": "Geen URL-analysegegevens beschikbaar",
+      "summary": "Samenvatting",
+      "metadata": "Documentinformatie",
+      "processingTime": "Verwerkingstijd",
+      "preview": "Voorbeeld",
+      "view": "Bekijken"
+    },
+    "configuration": {
+      "timeout": "Verzoek time-out"
+    },
+    "status": {
+      "pulling": "URL-inhoud ophalen...",
+      "analyzing": "Document analyseren...",
+      "complete": "Analyse voltooid"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Kennisbankresultaten",
+      "noData": "Geen kennisbankgegevens beschikbaar",
+      "documents": "documenten",
+      "insights": "Belangrijke inzichten",
+      "relevance": "Relevantie",
+      "suggestions": "Suggesties"
+    },
+    "configuration": {
+      "searchMode": "Zoekmodus",
+      "threshold": "Relevantiedrempel"
+    },
+    "status": {
+      "searching": "Kennisbank doorzoeken...",
+      "analyzing": "Resultaten analyseren..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Documentanalyseresultaten worden hier weergegeven",
+      "title": "Analyseresultaten",
+      "noData": "Geen documentanalysegegevens beschikbaar",
+      "documents": "documenten",
+      "noDocuments": "Geen documenten gevonden",
+      "summary": "Samenvatting",
+      "insights": "Belangrijke inzichten",
+      "metadata": "Documentinformatie",
+      "processingTime": "Verwerkingstijd",
+      "searchTime": "Zoektijd",
+      "relevance": "Relevantie",
+      "cached": "In cache",
+      "preview": "Voorbeeld",
+      "view": "Bekijken",
+      "open": "Openen",
+      "bookmark": "Bladwijzer",
+      "suggestions": "Suggesties",
+      "tabs": {
+        "documents": "Documenten",
+        "insights": "Inzichten",
+        "failed": "Mislukt"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Laden...",
+      "searching": "Zoeken...",
+      "processing": "Verwerken...",
+      "analyzing": "Analyseren..."
+    },
+    "buttons": {
+      "retry": "Opnieuw proberen",
+      "cancel": "Annuleren",
+      "expand": "Uitvouwen",
+      "collapse": "Samenvouwen",
+      "configure": "Configureren",
+      "submit": "Verzenden"
+    },
+    "labels": {
+      "priority": "Prioriteit",
+      "estimatedTime": "Geschatte tijd",
+      "availability": "Beschikbaarheid",
+      "configuration": "Configuratie"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Er is een onbekende fout opgetreden",
+      "network": "Netwerkverbindingsfout",
+      "timeout": "Verzoek verlopen",
+      "unauthorized": "Toegang geweigerd",
+      "rateLimit": "Snelheidslimiet overschreden",
+      "serviceUnavailable": "Service tijdelijk niet beschikbaar"
+    },
+    "webSearch": {
+      "searchFailed": "Webzoeken mislukt",
+      "invalidQuery": "Ongeldige zoekopdracht"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Code-uitvoering mislukt",
+      "invalidCode": "Ongeldige of onveilige code"
+    },
+    "urlPull": {
+      "fetchFailed": "Kon URL-inhoud niet ophalen",
+      "invalidUrl": "Ongeldige of ontoegankelijke URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "Kennisbank zoeken mislukt",
+      "noAccess": "Geen toegang tot kennisbank"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Automatisch verzenden na verwerking",
+    "advancedOptions": "Geavanceerde opties",
+    "priority": {
+      "high": "Hoog",
+      "medium": "Gemiddeld",
+      "low": "Laag"
+    },
+    "safeSearch": {
+      "off": "Uit",
+      "moderate": "Gematigd",
+      "strict": "Strikt"
+    },
+    "market": {
+      "any": "Elke regio",
+      "local": "Lokale regio"
+    }
+  }
+}

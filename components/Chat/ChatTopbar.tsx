@@ -1,11 +1,15 @@
 import {
+  IconChevronDown,
   IconClearAll,
   IconExternalLink,
-  IconChevronDown,
   IconTool,
+  IconSettings,
 } from '@tabler/icons-react';
+
 import { useTranslation } from 'next-i18next';
+
 import { isUSBased } from '@/utils/app/userAuth';
+
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 interface Props {
@@ -59,7 +63,10 @@ export const ChatTopbar = ({
               aria-label="Model Settings"
               title="Model Settings"
             >
-              <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
+              <span
+                className="truncate font-bold dark:text-blue-50 text-gray-800"
+                title={selectedModelName}
+              >
                 {selectedModelName}
               </span>
               {agentEnabled && (
@@ -67,13 +74,33 @@ export const ChatTopbar = ({
                   <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" />
                 </span>
               )}
-              <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
+              <IconChevronDown
+                size={14}
+                className="ml-1.5 opacity-60 text-black dark:text-white"
+              />
             </button>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex items-center justify-center space-x-3">
+          {/* Settings Button */}
+          <div className="relative">
+            <button
+              className="flex items-center justify-center p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+              onClick={onSettingsClick}
+              aria-label="Model Settings"
+              title="Model Settings"
+            >
+              <IconSettings
+                size={18}
+                className={`${
+                  showSettings ? 'text-[#D7211E]' : 'text-black dark:text-white'
+                }`}
+              />
+            </button>
+          </div>
+
           {hasMessages && (
             <button
               className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
@@ -81,19 +108,14 @@ export const ChatTopbar = ({
               aria-label="Clear Conversation"
               title="Clear Conversation"
             >
-              <IconClearAll
-                size={18}
-                className="text-black dark:text-white"
-              />
+              <IconClearAll size={18} className="text-black dark:text-white" />
             </button>
           )}
 
           {/* Feedback Link */}
           <a
             href={`mailto:${
-              isUSBased(userEmail ?? '')
-                ? US_FEEDBACK_EMAIL
-                : FEEDBACK_EMAIL
+              isUSBased(userEmail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
             }`}
             className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
             title={t('sendFeedback')}

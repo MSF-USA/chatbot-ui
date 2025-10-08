@@ -11,6 +11,7 @@ export interface OpenAIModel {
   isAgent?: boolean;
   agentId?: string; // Azure AI Agent ID for this model
   agentEnabled?: boolean; // Whether agent mode is currently enabled
+  deployment?: string;
 }
 
 export enum OpenAIModelID {
@@ -21,7 +22,7 @@ export enum OpenAIModelID {
   GPT_41 = 'gpt-4.1',
   GPT_45 = 'gpt-45',
   GPT_5 = 'gpt-5',
-  GPT_o1 = 'gpt-o1',
+  GPT_o1 = 'o1',
   GPT_o1_mini = 'gpt-o1-mini',
   GPT_o3_mini = 'o3-mini',
 }
@@ -97,6 +98,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'omni',
     isLegacy: false,
+    agentId: 'asst_gpt5_agent',
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
@@ -107,10 +109,11 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     temperature: 1,
     modelType: 'reasoning',
     isLegacy: false,
+    deployment: 'o1',
   },
   [OpenAIModelID.GPT_o1_mini]: {
     id: OpenAIModelID.GPT_o1_mini,
-    name: 'o1-mini',
+    name: 'gpt-o1-mini',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,

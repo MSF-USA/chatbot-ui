@@ -33,19 +33,37 @@ export const extractCitationsFromContent = (
     }
   }
   // Next try the legacy JSON detection at the end
+  // Use a more specific regex that looks for citations JSON structure
   else {
-    const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+    // Look specifically for JSON with a "citations" key
+    const jsonMatch = content.match(/(\{"citations":\s*\[[\s\S]*?\]\s*\})$/);
     if (jsonMatch) {
-      extractionMethod = 'regex';
       const jsonStr = jsonMatch[1];
-      mainContent = content.slice(0, -jsonStr.length).trim();
-      try {
-        const parsedData = JSON.parse(jsonStr);
-        if (parsedData.citations) {
-          citationsData = parsedData.citations;
+      
+      // Additional validation to ensure this is likely citation JSON and not code
+      const looksLikeCitationJson = 
+        jsonStr.includes('"citations"') && 
+        jsonStr.length > 20 && // Citations JSON is typically longer
+        jsonStr.includes('":') && // JSON key-value separator
+        !jsonStr.includes('function') && // Not JavaScript code
+        !jsonStr.includes('class') && // Not class definition
+        !jsonStr.includes('=>') && // Not arrow function
+        !jsonStr.includes('console.'); // Not console statements
+      
+      if (looksLikeCitationJson) {
+        extractionMethod = 'regex';
+        const tempContent = content.slice(0, -jsonStr.length).trim();
+        
+        try {
+          const parsedData = JSON.parse(jsonStr);
+          if (parsedData.citations && Array.isArray(parsedData.citations)) {
+            citationsData = parsedData.citations;
+            mainContent = tempContent; // Only update if parsing succeeds
+          }
+        } catch (error) {
+          // Don't modify content if parsing fails - likely not citation JSON
+          console.warn('Content ended with braces but was not valid citation JSON, keeping original content');
         }
-      } catch (error) {
-        console.error('Error parsing citations JSON:', error);
       }
     }
   }

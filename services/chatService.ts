@@ -7,6 +7,7 @@ import {
   checkIsModelValid,
   isFileConversation,
   isImageConversation,
+  isReasoningModel,
 } from '@/utils/app/chat';
 import {
   APIM_CHAT_ENDPONT,
@@ -30,6 +31,7 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 import { OpenAIModelID, OpenAIVisionModelID, OpenAIModels } from '@/types/openai';
+import { Citation } from '@/types/rag';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
@@ -47,8 +49,8 @@ import { OpenAIStream, StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion } from 'openai/resources';
+import { ChatCompletionCreateParamsBase } from 'openai/resources/chat/completions/completions';
 import path from 'path';
-import {ResponseCreateParamsBase, ResponseInput} from "openai/resources/responses/responses";
 
 /**
  * ChatService class for handling chat-related API operations.
@@ -66,7 +68,7 @@ export default class ChatService {
 
     this.openAIClient = new AzureOpenAI({
       azureADTokenProvider,
-      apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+      apiVersion: process.env.OPENAI_API_VERSION ?? '2025-03-01-preview',
     });
 
     this.loggingService = new AzureMonitorLoggingService(
@@ -224,7 +226,7 @@ export default class ChatService {
           });
         }
       } catch (error) {
-        await this.loggingService.logFileError(
+        void this.loggingService.logFileError(
           startTime,
           error,
           modelId,
@@ -324,60 +326,70 @@ export default class ChatService {
       } else {
         // Check if this is an agent-enabled model
         if (modelConfig?.agentEnabled && modelConfig?.agentId) {
-          
+
           // Use Azure AI Agents directly
           const aiAgents = await import('@azure/ai-agents');
           const { DefaultAzureCredential } = await import('@azure/identity');
-          
+
           const endpoint = process.env.AZURE_AI_FOUNDRY_ENDPOINT;
           const agentId = modelConfig.agentId;
-          
+
           if (!endpoint || !agentId) {
             throw new Error('Azure AI Foundry endpoint or Agent ID not configured');
           }
-          
+
           const client = new aiAgents.AgentsClient(endpoint, new DefaultAzureCredential());
-          
+
           // Stream the response directly without importing specific event types
           // The events are string constants in the eventMessage.event field
-          
-          // Create a thread and run for this conversation with streaming
+
+          // TODO: GDPR Compliance & Thread Management Review
+          // - Evaluate whether Azure AI Agents threads should be used for conversation persistence
+          // - Implement GDPR "right to be forgotten" compliance:
+          //   * User data deletion must include deleting all associated conversation threads
+          //   * Need thread cleanup/deletion mechanism when user requests data deletion
+          //   * Consider thread retention policies and automatic expiration
+          // - Document thread lifecycle: creation, persistence, deletion
+          // - Ensure user consent for thread-based conversation storage
+          // - Consider alternative approaches that don't persist conversation state server-side
+
+          // Create a conversation thread and run for this conversation with streaming
           const lastMessage = messages[messages.length - 1];
-          
-          let thread;
+
+          let conversationThread: { id: string } | any;
           let isNewThread = false;
-          
+
           try {
             if (threadId) {
-              // For existing thread, we need to add all messages that aren't already in the thread
-              thread = { id: threadId };
-              
-              // Add all previous messages to the thread (Azure AI Agents needs full context)
+              // For existing conversation thread, we need to add all messages that aren't already in the thread
+              conversationThread = { id: threadId };
+
+              // Add all previous messages to the conversation thread (Azure AI Agents needs full context)
               for (let i = 0; i < messages.length - 1; i++) {
                 const msg = messages[i];
                 if (msg.role === 'user' || msg.role === 'assistant') {
                   await client.messages.create(
-                    thread.id,
+                    conversationThread.id,
                     msg.role as 'user' | 'assistant',
                     String(msg.content)
                   );
                 }
               }
             } else {
-              thread = await client.threads.create();
+              conversationThread = await client.threads.create();
               isNewThread = true;
             }
           } catch (threadError) {
-            console.error('Error with thread:', threadError);
+            console.error('Error with conversation thread:', threadError);
             throw threadError;
           }
-          
+
           try {
-            
+
             // The SDK expects parameters to be passed separately: (threadId, role, content)
             await client.messages.create(
-              thread.id, 
-              'user', 
+              conversationThread.id,
+              'user',
               String(lastMessage.content)
             );
           } catch (messageError) {
@@ -385,40 +397,42 @@ export default class ChatService {
             console.error('Full error object:', JSON.stringify(messageError, null, 2));
             throw messageError;
           }
-          
+
           // Create a run and get the stream
-          let streamEventMessages;
+          let streamEventMessages: AsyncIterable<any>;
           try {
-            
+
             // Check if client.runs exists
             if (!client.runs) {
               console.error('client.runs is undefined. Client structure:', Object.keys(client));
               throw new Error('AgentsClient does not have runs property - check SDK version');
             }
-            
+
             // The Azure AI Agents SDK expects the agentId as the second parameter
             // and returns an object with a stream() method
-            const run = client.runs.create(thread.id, agentId);
-            
-            
+            const run = client.runs.create(conversationThread.id, agentId);
+
+
             // Call stream() on the run object
             streamEventMessages = await run.stream();
-            
+
           } catch (streamError) {
             console.error('Error creating stream:', streamError);
-            console.error('Error stack:', streamError.stack);
+            if (streamError instanceof Error) {
+              console.error('Error stack:', streamError.stack);
+            }
             throw streamError;
           }
-          
+
           // Create a readable stream for the response
           const stream = new ReadableStream({
             async start(controller) {
               const encoder = new TextEncoder();
-              let citations = [];
+              let citations: Citation[] = [];
               let citationIndex = 1;
-              const citationMap = new Map();
+              const citationMap = new Map<string, number>();
               let hasCompletedMessage = false;
-              
+
               try {
                 for await (const eventMessage of streamEventMessages) {
                   // Handle different event types
@@ -427,7 +441,7 @@ export default class ChatService {
                       eventMessage.data.delta.content.forEach((contentPart: any) => {
                         if (contentPart.type === 'text' && contentPart.text?.value) {
                           let textChunk = contentPart.text.value;
-                          
+
                           // Convert citation format on the fly
                           textChunk = textChunk.replace(/【(\d+):(\d+)†source】/g, (match: string) => {
                             if (!citationMap.has(match)) {
@@ -436,7 +450,7 @@ export default class ChatService {
                             }
                             return `[${citationMap.get(match)}]`;
                           });
-                          
+
                           controller.enqueue(encoder.encode(textChunk));
                         }
                       });
@@ -448,7 +462,7 @@ export default class ChatService {
                       const annotations = eventMessage.data.content[0].text.annotations;
                       citations = [];
                       citationIndex = 1;
-                      
+
                       annotations.forEach((annotation: any) => {
                         if (annotation.type === 'url_citation' && annotation.urlCitation) {
                           citations.push({
@@ -467,7 +481,7 @@ export default class ChatService {
                       const separator = '\n\n<<<METADATA_START>>>';
                       const metadata = {
                         citations: citations.length > 0 ? citations : undefined,
-                        threadId: isNewThread ? thread.id : undefined
+                        threadId: isNewThread ? conversationThread.id : undefined
                       };
                       const metadataStr = `${separator}${JSON.stringify(metadata)}<<<METADATA_END>>>`;
                       controller.enqueue(encoder.encode(metadataStr));
@@ -483,7 +497,7 @@ export default class ChatService {
               }
             }
           });
-          
+
           // Log the completion
           await this.loggingService.logChatCompletion(
             startTime,
@@ -493,115 +507,110 @@ export default class ChatService {
             user,
             botId,
           );
-          
+
           return new StreamingTextResponse(stream);
         }
-        // TODO: Fix special handling for reasoning models
-        else if (this.isReasoningModel(modelId)) {
-        // For reasoning models:
-        // 1. Skip system messages
-        // 2. Force temperature to 1 or leave out
-        // 3. Don't stream responses
-        // 4. Don't specify max tokens (I think this is no longer required)
-        if (promptToSend && messages.length > 0 && messages[0].role === 'user') {
-          const firstUserMessage = messages[0];
-          const content = firstUserMessage.content;
+        // Special handling for reasoning models (o1, o1-mini, o3-mini)
+        else if (isReasoningModel(modelId)) {
+          // For reasoning models:
+          // 1. Don't use system messages - prepend system prompt to first user message
+          // 2. Use temperature of 1 (fixed)
+          // 3. Don't stream responses
+          // 4. Use standard chat.completions.create endpoint (not responses.create)
 
-          // If content is a string, prepend the system prompt
-          if (typeof content === 'string') {
-            firstUserMessage.content = `${promptToSend}\n\n${content}`;
-          } else if (Array.isArray(content)) {
-            // If content is an array, add system prompt to the first text element
-            const textContent = (content as any[]).find(item => item.type === 'text');
-            if (textContent && 'text' in textContent) {
-              textContent.text = `${promptToSend}\n\n${textContent.text}`;
-            }
-          }
-        }
+          const processedMessages = [...messages];
 
-        const chatCompletionParams: ResponseCreateParamsBase = {
-          model: modelId,
-          input: messages as ResponseInput,
-          user: JSON.stringify(user),
-          stream: false
-        }
+          // Reasoning models don't support system messages at all - skip system prompt entirely
+          // The system prompt will be ignored for reasoning models to avoid content filter violations
 
-        const responseData = await this.openAIClient.responses.create(chatCompletionParams);
-        const response = responseData as OpenAI.Responses.Response;
+          const requestBody: ChatCompletionCreateParamsBase = {
+            model: modelId,
+            messages:
+              processedMessages as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            temperature: 1, // Fixed temperature for reasoning models
+            stream: false, // Never stream reasoning models
+            user: JSON.stringify(user),
+            // Note: Don't include max_tokens for reasoning models as they manage token usage internally
+          };
 
-        const completion = response.output_text;
+          // Use standard chat completions endpoint for reasoning models
+          const response = await this.openAIClient.chat.completions.create(
+            requestBody,
+          );
 
-        // Log regular chat completion
-        await this.loggingService.logChatCompletion(
+          const completion =
+            (response as ChatCompletion).choices[0]?.message?.content || '';
+
+          // Log reasoning model chat completion
+          void this.loggingService.logChatCompletion(
             startTime,
             modelId,
             messages.length,
             1, // Log with temperature = 1
             user,
             botId,
-        );
-
-        return new Response(
-            JSON.stringify({ text: completion }),
-            { headers: { 'Content-Type': 'application/json' } },
-        );
-      } else {
-        // Normal model handling (unchanged)
-        const messagesWithSystemPrompt = [
-          {
-            role: 'system',
-            content: promptToSend || DEFAULT_SYSTEM_PROMPT,
-          },
-          ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
-        ];
-
-        const response = await this.openAIClient.chat.completions.create({
-          model: modelId,
-          messages:
-              messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-          temperature,
-          stream: streamResponse,
-          user: JSON.stringify(user),
-        });
-
-        if (streamResponse) {
-          const processedStream = createAzureOpenAIStreamProcessor(
-              response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
           );
 
-          // Log regular chat completion
-          await this.loggingService.logChatCompletion(
+          return new Response(JSON.stringify({ text: completion }), {
+            headers: { 'Content-Type': 'application/json' },
+          });
+        } else {
+          // Normal model handling (unchanged)
+          const messagesWithSystemPrompt = [
+            {
+              role: 'system',
+              content: promptToSend || DEFAULT_SYSTEM_PROMPT,
+            },
+            ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
+          ];
+
+          const response = await this.openAIClient.chat.completions.create({
+            model: modelId,
+            messages:
+              messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+            temperature,
+            stream: streamResponse,
+            user: JSON.stringify(user),
+          });
+
+          if (streamResponse) {
+            const processedStream = createAzureOpenAIStreamProcessor(
+              response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+            );
+
+            // Log regular chat completion
+            void this.loggingService.logChatCompletion(
               startTime,
               modelId,
               messages.length,
               temperature,
               user,
               botId,
-          );
+            );
 
-          return new StreamingTextResponse(processedStream);
-        }
+            return new StreamingTextResponse(processedStream);
+          }
 
-        const completion = response as OpenAI.Chat.Completions.ChatCompletion;
+          const completion = response as OpenAI.Chat.Completions.ChatCompletion;
 
-        // Log regular chat completion
-        await this.loggingService.logChatCompletion(
+          // Log regular chat completion
+          void this.loggingService.logChatCompletion(
             startTime,
             modelId,
             messages.length,
             temperature,
             user,
             botId,
-        );
+          );
 
-        return new Response(
-          JSON.stringify({ text: completion.choices[0]?.message?.content }),
-          { headers: { 'Content-Type': 'application/json' } },
-        );
-      }
+          return new Response(
+            JSON.stringify({ text: completion.choices[0]?.message?.content }),
+            { headers: { 'Content-Type': 'application/json' } },
+          );
+        }
       }
     } catch (error) {
-      await this.loggingService.logError(
+      void this.loggingService.logError(
         startTime,
         error,
         modelId,
@@ -628,7 +637,11 @@ export default class ChatService {
     }
   }
 
-  public async handleRequest(req: NextRequest): Promise<Response> {
+  public async handleRequest(
+    req: NextRequest,
+    providedSession?: Session | null,
+    providedToken?: JWT | null,
+  ): Promise<Response> {
     const {
       model,
       messages,
@@ -643,10 +656,12 @@ export default class ChatService {
     const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
 
     // Use fixed temperature of 1 for reasoning models, otherwise use provided temperature or default
-    const temperatureToUse = this.isReasoningModel(model.id) ? 1 : (temperature ?? DEFAULT_TEMPERATURE);
+    const temperatureToUse = isReasoningModel(model.id)
+      ? 1
+      : temperature ?? DEFAULT_TEMPERATURE;
 
     // Never stream for reasoning models, otherwise use provided stream value
-    const shouldStream = this.isReasoningModel(model.id) ? false : stream;
+    const shouldStream = isReasoningModel(model.id) ? false : stream;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
     const needsToHandleFiles: boolean =
@@ -673,9 +688,11 @@ export default class ChatService {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
-    const token = (await getToken({ req })) as JWT | null;
+    // Use provided session/token or extract them if not provided
+    const token = providedToken ?? ((await getToken({ req })) as JWT | null);
     if (!token) throw new Error('Could not pull token!');
-    const session: Session | null = await getServerSession(authOptions as any);
+    const session: Session | null =
+      providedSession ?? (await getServerSession(authOptions as any));
     if (!session) throw new Error('Could not pull session!');
 
     const user = session['user'];
@@ -713,13 +730,5 @@ export default class ChatService {
         threadId,
       );
     }
-  }
-
-  private isReasoningModel(id: OpenAIModelID | string) {
-    return [
-      OpenAIModelID.GPT_o1,
-      OpenAIModelID.GPT_o1_mini,
-      OpenAIModelID.GPT_o3_mini
-    ].includes(id as OpenAIModelID);
   }
 }

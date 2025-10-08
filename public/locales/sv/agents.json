@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Webbsökning",
+      "code_interpreter": "Kodtolk",
+      "url_pull": "URL-analys",
+      "local_knowledge": "Kunskapsbas",
+      "standard_chat": "Standardchatt",
+      "foundry": "Foundry",
+      "third_party": "Tredje part"
+    },
+    "error": {
+      "title": "Agentfel",
+      "unknown": "Ett okänt fel uppstod",
+      "retry": "Försök igen",
+      "fallback": "Använd alternativ"
+    },
+    "metadata": {
+      "processingTime": "Bearbetningstid",
+      "confidence": "Förtroende",
+      "tokens": "Använda tokens"
+    },
+    "resultsPanel": {
+      "placeholder": "Agentresultat kommer att visas här"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Webbsökning - Söker på webben efter realtidsinformation",
+      "code_interpreter": "Kodtolk - Kör och analyserar kod i flera språk",
+      "url_pull": "URL-analys - Analyserar och extraherar innehåll från webbsidor",
+      "local_knowledge": "Kunskapsbas - Söker i intern kunskapsbas och dokument",
+      "standard_chat": "Standardchatt - Standard konversations-AI utan verktyg",
+      "foundry": "Foundry - Använder Azure AI Foundry för avancerade funktioner",
+      "third_party": "Tredje part - Tredjepartsagent eller anpassad verktygsintegration"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Webbsökresultat kommer att visas här",
+      "title": "Sökresultat",
+      "noResults": "Inga resultat hittades",
+      "noData": "Inga sökdata tillgängliga",
+      "results": "resultat",
+      "confidence": "Relevans",
+      "relevance": "Relevans",
+      "source": "Källa",
+      "citations": "Citeringar",
+      "cite": "Citera",
+      "open": "Öppna",
+      "openLink": "Öppna länk i ny flik",
+      "filters": "Filter",
+      "sortBy": "Sortera efter",
+      "filterBy": "Filtrera efter",
+      "all": "Alla",
+      "date": "Datum",
+      "query": "Förfrågan",
+      "searchTime": "Söktid",
+      "cached": "Cachad",
+      "contentTypes": {
+        "webpage": "Webbsidor",
+        "news": "Nyheter",
+        "academic": "Akademiskt",
+        "image": "Bilder",
+        "video": "Videor"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Antal resultat",
+      "safeSearch": "Säker sökning",
+      "market": "Sökmarknad"
+    },
+    "status": {
+      "searching": "Söker på webben...",
+      "optimizing": "Optimerar sökfråga...",
+      "processing": "Bearbetar sökresultat..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Kodkörningsresultat kommer att visas här",
+      "title": "Körresultat",
+      "noData": "Inga kodkörningsdata tillgängliga",
+      "output": "Utdata",
+      "errors": "Fel",
+      "logs": "Loggar",
+      "executionTime": "Körningstid",
+      "memoryUsage": "Minnesanvändning",
+      "cpuUsage": "CPU-användning",
+      "outputLines": "Utdatarader",
+      "executedCode": "Exekverad kod",
+      "download": "Ladda ner",
+      "noOutput": "Inga utdata genererade",
+      "noFiles": "Inga filer genererade",
+      "outputSize": "Utdatastorlek",
+      "unsupportedOutput": "Ej stödd utdataformat",
+      "status": {
+        "success": "Framgång",
+        "error": "Fel",
+        "timeout": "Timeout",
+        "memory_limit": "Minnesgräns överskreds",
+        "security_violation": "Säkerhetsöverträdelse",
+        "invalid_code": "Ogiltig kod"
+      },
+      "outputTypes": {
+        "stdout": "Standardutdata",
+        "stderr": "Felutdata",
+        "return_value": "Returvärde",
+        "exception": "Undantag"
+      },
+      "tabs": {
+        "output": "Utdata",
+        "code": "Kod",
+        "files": "Filer"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "URL-analysresultat",
+      "noData": "Inga URL-analysdata tillgängliga",
+      "summary": "Sammanfattning",
+      "metadata": "Dokumentinfo",
+      "processingTime": "Bearbetningstid",
+      "preview": "Förhandsvisning",
+      "view": "Visa"
+    },
+    "configuration": {
+      "timeout": "Förfrågan timeout"
+    },
+    "status": {
+      "pulling": "Hämtar URL-innehåll...",
+      "analyzing": "Analyserar dokument...",
+      "complete": "Analys slutförd"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Kunskapsbasresultat",
+      "noData": "Inga kunskapsbasdata tillgängliga",
+      "documents": "dokument",
+      "insights": "Nyckelinsikter",
+      "relevance": "Relevans",
+      "suggestions": "Förslag"
+    },
+    "configuration": {
+      "searchMode": "Sökläge",
+      "threshold": "Relevanströskel"
+    },
+    "status": {
+      "searching": "Söker i kunskapsbas...",
+      "analyzing": "Analyserar resultat..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Dokumentanalysresultat kommer att visas här",
+      "title": "Analysresultat",
+      "noData": "Inga dokumentanalysdata tillgängliga",
+      "documents": "dokument",
+      "noDocuments": "Inga dokument hittades",
+      "summary": "Sammanfattning",
+      "insights": "Nyckelinsikter",
+      "metadata": "Dokumentinfo",
+      "processingTime": "Bearbetningstid",
+      "searchTime": "Söktid",
+      "relevance": "Relevans",
+      "cached": "Cachad",
+      "preview": "Förhandsvisning",
+      "view": "Visa",
+      "open": "Öppna",
+      "bookmark": "Bokmärke",
+      "suggestions": "Förslag",
+      "tabs": {
+        "documents": "Dokument",
+        "insights": "Insikter",
+        "failed": "Misslyckades"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Laddar...",
+      "searching": "Söker...",
+      "processing": "Bearbetar...",
+      "analyzing": "Analyserar..."
+    },
+    "buttons": {
+      "retry": "Försök igen",
+      "cancel": "Avbryt",
+      "expand": "Expandera",
+      "collapse": "Kollapsa",
+      "configure": "Konfigurera",
+      "submit": "Skicka"
+    },
+    "labels": {
+      "priority": "Prioritet",
+      "estimatedTime": "Uppskattad tid",
+      "availability": "Tillgänglighet",
+      "configuration": "Konfiguration"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Ett okänt fel inträffade",
+      "network": "Nätverksanslutningsfel",
+      "timeout": "Förfrågan timeout",
+      "unauthorized": "Åtkomst nekad",
+      "rateLimit": "Hastighetsgräns överskreds",
+      "serviceUnavailable": "Tjänst tillfälligt otillgänglig"
+    },
+    "webSearch": {
+      "searchFailed": "Webbsökning misslyckades",
+      "invalidQuery": "Ogiltig sökfråga"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Kodkörning misslyckades",
+      "invalidCode": "Ogiltig eller osäker kod"
+    },
+    "urlPull": {
+      "fetchFailed": "Misslyckades att hämta URL-innehåll",
+      "invalidUrl": "Ogiltig eller otillgänglig URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "Kunskapsbasssökning misslyckades",
+      "noAccess": "Ingen åtkomst till kunskapsbas"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Skicka automatiskt efter bearbetning",
+    "advancedOptions": "Avancerade alternativ",
+    "priority": {
+      "high": "Hög",
+      "medium": "Medel",
+      "low": "Låg"
+    },
+    "safeSearch": {
+      "off": "Av",
+      "moderate": "Måttlig",
+      "strict": "Strikt"
+    },
+    "market": {
+      "any": "Vilken region som helst",
+      "local": "Lokal region"
+    }
+  }
+}
