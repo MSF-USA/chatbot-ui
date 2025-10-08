@@ -28,13 +28,13 @@ describe('CitationList', () => {
       number: 1,
       title: 'Test Citation 1',
       url: 'https://test1.com',
-      date: '2023-01-01',
+      date: '2023-01-15T12:00:00Z',
     },
     {
       number: 2,
       title: 'Test Citation 2',
       url: 'https://test2.com',
-      date: '2023-01-02',
+      date: '2023-01-16T12:00:00Z',
     },
   ];
 
@@ -86,7 +86,7 @@ describe('CitationItem', () => {
     number: 1,
     title: 'Test Citation',
     url: 'https://www.example.com',
-    date: '2023-01-01',
+    date: '2023-01-15T12:00:00Z',
   };
 
   it('renders citation details correctly', () => {
@@ -95,7 +95,7 @@ describe('CitationItem', () => {
     const titleElement = screen.getByText('Test Citation');
     expect(titleElement).toBeInTheDocument();
 
-    const dateElement = screen.getByText('2023-01-01');
+    const dateElement = screen.getByText('Jan 15, 2023');
     expect(dateElement).toBeInTheDocument();
 
     const domainElement = screen.getByText('example');
@@ -111,7 +111,7 @@ describe('CitationItem', () => {
       number: 1,
       title: '',
       url: '',
-      date: '2023-01-01',
+      date: '2023-01-15T12:00:00Z',
     };
 
     const { container } = render(
@@ -127,13 +127,13 @@ describe('CitationMarkdown', () => {
       number: 1,
       title: 'Test Citation 1',
       url: 'https://www.example1.com',
-      date: '2023-01-01',
+      date: '2023-01-15T12:00:00Z',
     },
     {
       number: 2,
       title: 'Test Citation 2',
       url: 'https://www.example2.com',
-      date: '2023-01-02',
+      date: '2023-01-16T12:00:00Z',
     },
   ];
 
@@ -196,7 +196,7 @@ describe('CitationMarkdown', () => {
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', 'https://www.example1.com');
     expect(link).toHaveAttribute('title', 'Test Citation 1');
-    expect(screen.getByText('2023-01-01')).toBeInTheDocument();
+    expect(screen.getByText('Jan 15, 2023')).toBeInTheDocument();
     expect(screen.getByText('example1')).toBeInTheDocument();
   });
 
@@ -222,7 +222,7 @@ describe('CitationMarkdown', () => {
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', 'https://www.example2.com');
     expect(link).toHaveAttribute('title', 'Test Citation 2');
-    expect(screen.getByText('2023-01-02')).toBeInTheDocument();
+    expect(screen.getByText('Jan 16, 2023')).toBeInTheDocument();
     expect(screen.getByText('example2')).toBeInTheDocument();
   });
 
@@ -256,36 +256,31 @@ describe('CitationMarkdown', () => {
     expect(linkElement).toHaveAttribute('href', 'https://www.example1.com');
     expect(linkElement).toHaveAttribute('title', 'Test Citation 1');
 
-    expect(screen.getByText('2023-01-01')).toBeInTheDocument();
+    expect(screen.getByText('Jan 15, 2023')).toBeInTheDocument();
     expect(screen.getByText('example1')).toBeInTheDocument();
   });
 
-  it('ignores citations when conversation.bot is undefined', () => {
-    // Render with conversation.bot undefined
+  it('processes citations regardless of bot status (universal citations)', () => {
+    // Render with conversation.bot undefined - citations should still work
     const { container } = render(
       <CitationMarkdown
         citations={mockCitations}
         conversation={createMockConversation(false)}
       >
-        Here is a citation [1] that should not be interactive.
+        Here is a citation [1] that should be interactive.
       </CitationMarkdown>,
     );
 
-    // 1. Directly check if the rendered output has the correct text content
-    const paragraph = container.querySelector('p');
-    expect(paragraph).not.toBeNull();
-    expect(paragraph?.textContent).toBe(
-      'Here is a citation [1] that should not be interactive.',
-    );
-
-    // 2. Check that no citation-specific elements exist
-    const citationWrappers = container.querySelectorAll('.citation-wrapper');
-    expect(citationWrappers.length).toBe(0);
-
+    // Citations should be rendered as interactive elements even without bot
     const supElements = container.querySelectorAll('sup.citation-number');
-    expect(supElements.length).toBe(0);
+    expect(supElements.length).toBe(1);
 
-    // 3. Ensure no links were rendered (which would be in tooltips)
-    expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    // Citation should be styled and clickable
+    const citationNumber = screen.getByText('[', { exact: false });
+    expect(citationNumber).toBeInTheDocument();
+
+    // Verify the citation has the correct styling class
+    const sup = container.querySelector('sup.citation-number');
+    expect(sup).toHaveClass('citation-number');
   });
 });

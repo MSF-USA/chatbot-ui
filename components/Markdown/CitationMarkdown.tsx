@@ -28,6 +28,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       [],
     );
     const [remarkPlugins, setRemarkPlugins] = useState<any[]>([]);
+    const [tooltipPosition, setTooltipPosition] = useState<{ top: number; left: number } | null>(null);
 
     const hoverTimeoutRef = useRef<number | null>(null);
     const activeElementRef = useRef<HTMLElement | null>(null);
@@ -108,6 +109,93 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         }
       };
     }, []);
+    
+    const renderTooltip = useCallback((citation: Citation) => {
+      if (!tooltipPosition) return null;
+
+      let hostname = '';
+      let cleanDomain = '';
+
+      try {
+        if (citation.url) {
+          const url = new URL(citation.url);
+          hostname = url.hostname;
+          cleanDomain = hostname.replace(/^www\./, '').split('.')[0];
+        }
+      } catch (error) {
+        console.error('Invalid URL:', citation.url);
+      }
+
+      return (
+        <div
+          className="citation-tooltip fixed z-[9999] rounded-lg transition-all duration-300
+                    overflow-hidden text-xs border-2 border-transparent hover:border-blue-500 
+                    hover:shadow-lg h-[132px] w-48 p-2 pointer-events-auto
+                    bg-gray-200 dark:bg-[#171717]"
+          style={{
+            left: `${tooltipPosition.left}px`,
+            top: `${Math.max(10, tooltipPosition.top)}px`,
+          }}
+          onMouseEnter={() => {
+            if (hoverTimeoutRef.current) {
+              window.clearTimeout(hoverTimeoutRef.current);
+              hoverTimeoutRef.current = null;
+            }
+          }}
+          onMouseLeave={() => {
+            activeElementRef.current = null;
+            setHoveredCitation(null);
+            setTooltipPosition(null);
+          }}
+        >
+          <Link
+            href={citation.url || ''}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={citation.title || ''}
+            className="flex flex-col h-full no-underline justify-between"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex-grow">
+              <div
+                className="text-[12.5px] line-clamp-3 text-gray-800 dark:text-white mb-2"
+              >
+                {citation.title}
+              </div>
+            </div>
+            {citation.date && citation.date.trim() !== '' && (
+              <div className="text-[11px] text-gray-600 dark:text-gray-400 mb-6">
+                {new Date(citation.date).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'short',
+                  day: 'numeric'
+                })}
+              </div>
+            )}
+            <div
+              className="absolute bottom-0 left-0 right-0 dark:bg-[#1f1f1f] bg-gray-100 
+                          px-2 py-1 flex items-center dark:text-white text-gray-500 
+                          text-[11.5px] space-x-1"
+            >
+              <div className="flex items-center">
+                {hostname && (
+                  <img
+                    src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
+                    alt={`${hostname} favicon`}
+                    width={12}
+                    height={12}
+                    className="mr-1 my-0 p-0 align-middle"
+                  />
+                )}
+              </div>
+              <span className="truncate">{cleanDomain}</span>
+              <span>|</span>
+              <span>{citation.number}</span>
+            </div>
+          </Link>
+        </div>
+      );
+    }, [tooltipPosition, hoverTimeoutRef, setHoveredCitation, setTooltipPosition]);
 
     const createCitationElement = useCallback(
       (citationNumber: number, key: string) => {
@@ -139,6 +227,11 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
             hoverTimeoutRef.current = null;
           }
           activeElementRef.current = e.currentTarget;
+          const rect = e.currentTarget.getBoundingClientRect();
+          setTooltipPosition({
+            top: rect.top - 140,
+            left: rect.left
+          });
           setHoveredCitation({ number: citationNumber, key });
         };
 
@@ -153,6 +246,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
             hoverTimeoutRef.current = window.setTimeout(() => {
               if (activeElementRef.current === e.currentTarget) {
                 setHoveredCitation(null);
+                setTooltipPosition(null);
               }
               hoverTimeoutRef.current = null;
             }, 200);
@@ -160,7 +254,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         };
 
         return (
-          <span className="citation-wrapper relative inline-block" key={key}>
+          <span key={key} className="relative inline-block">
             <sup
               className="citation-number cursor-help mx-[1px] text-blue-600
                         dark:text-blue-400 hover:underline"
@@ -169,78 +263,17 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
             >
               [{citationNumber}]
             </sup>
-            {isHovered && (
-              <div
-                className="citation-tooltip absolute z-10 left-0 bg-gray-200
-                          dark:bg-[#171717] rounded-lg transition-all duration-300
-                          overflow-hidden text-xs border-2 border-transparent
-                          hover:border-blue-500 hover:shadow-lg h-32 w-48 p-2"
-                style={{
-                  top: 'auto',
-                  bottom: '100%',
-                  transform: 'translateY(-8px)',
-                }}
-                onMouseEnter={handleMouseEnter}
-                onMouseLeave={() => {
-                  activeElementRef.current = null;
-                  setHoveredCitation(null);
-                }}
-              >
-                <Link
-                  href={citation.url || ''}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title={citation.title || ''}
-                  className="flex flex-col h-full no-underline justify-between"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <div className="flex-grow">
-                    <div
-                      className="text-[12.5px] line-clamp-3 text-gray-800
-                                  dark:text-white mb-2"
-                    >
-                      {citation.title}
-                    </div>
-                  </div>
-                  {citation.date && (
-                    <div className="text-[11px] text-gray-600 dark:text-gray-400 mb-6">
-                      {citation.date}
-                    </div>
-                  )}
-                  <div
-                    className="absolute bottom-0 left-0 right-0
-                                dark:bg-[#1f1f1f] bg-gray-100 px-2 py-1
-                                flex items-center dark:text-white text-gray-500
-                                text-[11.5px] space-x-1"
-                  >
-                    <div className="flex items-center">
-                      {hostname && (
-                        <img
-                          src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
-                          alt={`${hostname} favicon`}
-                          width={12}
-                          height={12}
-                          className="mr-1 my-0 p-0 align-middle"
-                        />
-                      )}
-                    </div>
-                    <span className="truncate">{cleanDomain}</span>
-                    <span>|</span>
-                    <span>{citation.number}</span>
-                  </div>
-                </Link>
-              </div>
-            )}
+            {isHovered && hoveredCitation && renderTooltip(citation)}
           </span>
         );
       },
-      [hoveredCitation, extractedCitations],
+      [hoveredCitation, extractedCitations, renderTooltip, tooltipPosition],
     );
 
     const processTextWithCitations = useCallback(
       (text: string) => {
-        // Don't process citations if conversation.bot is undefined
-        if (!conversation?.bot) {
+        // Process citations if we have any
+        if (extractedCitations.length === 0) {
           return text;
         }
 
@@ -271,16 +304,15 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
         return <>{parts}</>;
       },
-      [createCitationElement, conversation],
+      [createCitationElement, extractedCitations],
     );
 
     const ParagraphWithCitations: Components['p'] = ({
       children,
       ...props
     }) => {
-      // Only process citations if conversation.bot exists
-      const hasCitationHandling =
-        !!conversation?.bot && extractedCitations.length > 0;
+      // Process citations if we have any
+      const hasCitationHandling = extractedCitations.length > 0;
       if (!hasCitationHandling) {
         return <p {...props}>{children}</p>;
       }
@@ -301,9 +333,8 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       children,
       ...props
     }) => {
-      // Only process citations if conversation.bot exists
-      const hasCitationHandling =
-        !!conversation?.bot && extractedCitations.length > 0;
+      // Process citations if we have any
+      const hasCitationHandling = extractedCitations.length > 0;
       if (!hasCitationHandling) {
         return <li {...props}>{children}</li>;
       }

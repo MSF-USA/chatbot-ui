@@ -2,6 +2,7 @@ import {
   IconChevronDown,
   IconClearAll,
   IconExternalLink,
+  IconTool,
   IconSettings,
 } from '@tabler/icons-react';
 
@@ -23,6 +24,7 @@ interface Props {
   onClearAll?: () => void;
   userEmail?: string;
   hasMessages?: boolean;
+  agentEnabled?: boolean;
 }
 
 export const ChatTopbar = ({
@@ -33,6 +35,7 @@ export const ChatTopbar = ({
   onClearAll,
   userEmail,
   hasMessages = false,
+  agentEnabled = false,
 }: Props) => {
   const { t } = useTranslation('chat');
 
@@ -66,6 +69,11 @@ export const ChatTopbar = ({
               >
                 {selectedModelName}
               </span>
+              {agentEnabled && (
+                <span title="Agent Tools Enabled">
+                  <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" />
+                </span>
+              )}
               <IconChevronDown
                 size={14}
                 className="ml-1.5 opacity-60 text-black dark:text-white"
