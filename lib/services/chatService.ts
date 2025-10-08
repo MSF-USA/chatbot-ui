@@ -195,7 +195,7 @@ export default class ChatService {
         console.log('File downloaded successfully.');
 
         fileBuffer = await this.retryReadFile(filePath);
-        const file: File = new File([fileBuffer], filename, {});
+        const file: File = new File([new Uint8Array(fileBuffer)], filename, {});
 
         const result = await parseAndQueryFileOpenAI({
           file,
@@ -285,7 +285,7 @@ export default class ChatService {
       BlobProperty.BLOB,
     ) as Promise<Buffer>);
 
-    fs.writeFile(filePath, blob, () => null);
+    fs.writeFile(filePath, new Uint8Array(blob), () => null);
   }
 
   async handleChatCompletion(
@@ -387,7 +387,7 @@ export default class ChatService {
             
             // The Azure AI Agents SDK expects the agentId as the second parameter
             // and returns an object with a stream() method
-            const run = client.runs.create(thread.id, agentId);
+            const run = client.runs.create(thread.id, String(agentId));
             
             
             // Call stream() on the run object
@@ -395,7 +395,9 @@ export default class ChatService {
             
           } catch (streamError) {
             console.error('Error creating stream:', streamError);
-            console.error('Error stack:', streamError.stack);
+            if (streamError instanceof Error) {
+              console.error('Error stack:', streamError.stack);
+            }
             throw streamError;
           }
           
@@ -403,7 +405,7 @@ export default class ChatService {
           const stream = new ReadableStream({
             async start(controller) {
               const encoder = new TextEncoder();
-              let citations = [];
+              let citations: any[] = [];
               let citationIndex = 1;
               const citationMap = new Map();
               let hasCompletedMessage = false;
@@ -703,7 +705,7 @@ export default class ChatService {
         botId,
         shouldStream,
         promptToSend,
-        model,
+        model as unknown as Record<string, unknown>,
         threadId,
       );
     }

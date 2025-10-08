@@ -21,8 +21,8 @@ const useModal = (
   onClose: () => void,
   preventOutsideClick: boolean = false,
   preventEscapeKey: boolean = false
-): RefObject<HTMLDivElement> => {
-  const modalRef = useRef<HTMLDivElement>(null);
+): RefObject<HTMLDivElement | null> => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
   
   // Handle outside clicks
   useEffect(() => {

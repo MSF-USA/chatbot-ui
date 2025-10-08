@@ -11,7 +11,7 @@ import { Citation } from '@/types/rag';
 
 interface CitationMarkdownProps extends Options {
   message?: Message;
-  conversation?: Conversation;
+  conversation?: Conversation | null;
   citations?: Citation[];
 }
 
@@ -41,8 +41,11 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         let citationsData: Citation[] = [];
         let source = 'none';
 
+        // Only process citations if conversation has a bot
+        const shouldProcessCitations = conversation?.bot !== undefined;
+
         // Priority 1: Use citations from the message object (already extracted during streaming)
-        if (message?.citations && message.citations.length > 0) {
+        if (shouldProcessCitations && message?.citations && message.citations.length > 0) {
           citationsData = [...message.citations];
           source = 'message';
 
@@ -54,12 +57,12 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           }
         }
         // Priority 2: Use provided citations prop
-        else if (citations && citations.length > 0) {
+        else if (shouldProcessCitations && citations && citations.length > 0) {
           citationsData = [...citations];
           source = 'props';
         }
         // Priority 3: Parse the content to extract citations
-        else {
+        else if (shouldProcessCitations) {
           const {
             text,
             citations: extractedCits,
@@ -357,8 +360,8 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         {...props}
         components={{
           ...components,
-          p: ParagraphWithCitations,
-          li: ListItemWithCitations,
+          p: ParagraphWithCitations as any,
+          li: ListItemWithCitations as any,
         }}
       >
         {displayContent}

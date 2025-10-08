@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { GET } from '@/app/api/v2/terms/route';
+import { GET } from '@/app/api/terms/route';
 import { NextRequest } from 'next/server';
 
 describe('Terms API Route', () => {

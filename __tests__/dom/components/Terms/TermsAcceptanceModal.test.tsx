@@ -21,19 +21,15 @@ vi.mock('next/router', () => ({
 }));
 
 
-vi.mock('@/utils/app/termsAcceptance', () => ({
+vi.mock('@/lib/utils/app/termsAcceptance', () => ({
   fetchTermsData: vi.fn(),
   saveUserAcceptance: vi.fn(),
   hasUserAcceptedAllRequiredDocuments: vi.fn()
 }));
 
-vi.mock('next-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key, // Return the key as the translation
-    i18n: {
-      language: 'en'
-    }
-  })
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
+  useLocale: () => 'en'
 }));
 
 describe('TermsAcceptanceModal', () => {
@@ -74,7 +70,7 @@ describe('TermsAcceptanceModal', () => {
 
   it('should render loading state initially', () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
-    expect(screen.getByText('Loading terms and conditions...')).toBeInTheDocument();
+    expect(screen.getByText('Loading terms and conditions_ellipsis')).toBeInTheDocument();
   });
 
   it('should render terms content after loading', async () => {

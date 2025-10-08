@@ -41,7 +41,7 @@ export interface ChatInputImageProps {
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   simulateClick?: boolean;
   labelText?: string;
-  imageInputRef?: React.RefObject<{ openFilePicker: () => void }>;
+  imageInputRef?: React.RefObject<{ openFilePicker: () => void } | null>;
 }
 
 const ChatInputImage = ({

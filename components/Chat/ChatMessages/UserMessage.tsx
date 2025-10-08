@@ -28,7 +28,7 @@ interface UserMessageProps {
   messageContent: string;
   setMessageContent: Dispatch<SetStateAction<string>>;
   isEditing: boolean;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
   setIsTyping: Dispatch<SetStateAction<boolean>>;
@@ -36,7 +36,7 @@ interface UserMessageProps {
   toggleEditing: (event: React.MouseEvent) => void;
   handleDeleteMessage: MouseEventHandler<HTMLButtonElement>;
   onEdit: (message: Message) => void;
-  selectedConversation: Conversation;
+  selectedConversation: Conversation | null;
 }
 
 export const UserMessage: FC<UserMessageProps> = ({
@@ -130,11 +130,10 @@ export const UserMessage: FC<UserMessageProps> = ({
           ) : (
             <MemoizedReactMarkdown
               className="prose prose-sm prose-invert text-white max-w-none"
-              style={{ maxWidth: 'none' }}
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeMathjax]}
               components={{
-              code({ node, inline, className, children, ...props }) {
+              code({ node, inline, className, children, ...props }: any) {
                 const match = /language-(\w+)/.exec(className || '');
                 return !inline ? (
                   <CodeBlock
@@ -148,7 +147,7 @@ export const UserMessage: FC<UserMessageProps> = ({
                   </code>
                 );
               },
-              table({ children }) {
+              table({ children }: any) {
                 return (
                   <div className="overflow-auto">
                     <table className="border-collapse border border-black px-3 py-1 dark:border-white">
@@ -157,14 +156,14 @@ export const UserMessage: FC<UserMessageProps> = ({
                   </div>
                 );
               },
-              th({ children }) {
+              th({ children }: any) {
                 return (
                   <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
                     {children}
                   </th>
                 );
               },
-              td({ children }) {
+              td({ children }: any) {
                 return (
                   <td className="break-words border border-black px-3 py-1 dark:border-white">
                     {children}

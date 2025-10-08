@@ -323,7 +323,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                          className,
                                                          children,
                                                          ...props
-                                                     }) {
+                                                     }: any) {
                                                     if (children.length) {
                                                         if (children[0] == "▍") {
                                                             return (
@@ -354,7 +354,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                         </code>
                                                     );
                                                 },
-                                                table({ children }) {
+                                                table({ children }: any) {
                                                     return (
                                                         <div className="overflow-auto">
                                                             <table className="max-w-full border-collapse border border-black px-3 py-1 dark:border-white">
@@ -363,14 +363,14 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                         </div>
                                                     );
                                                 },
-                                                th({ children }) {
+                                                th({ children }: any) {
                                                     return (
                                                         <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
                                                             {children}
                                                         </th>
                                                     );
                                                 },
-                                                td({ children }) {
+                                                td({ children }: any) {
                                                     return (
                                                         <td className="break-words border border-black px-3 py-1 dark:border-white">
                                                             {children}

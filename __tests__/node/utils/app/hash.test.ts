@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import Hasher from "@/utils/app/hash";
+import Hasher from "@/lib/utils/app/hash";
 
 describe('Hasher', () => {
   describe('sha256', () => {

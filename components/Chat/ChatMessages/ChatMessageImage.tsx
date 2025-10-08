@@ -236,7 +236,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                             remarkPlugins={[remarkGfm, remarkMath]}
                             rehypePlugins={[rehypeMathjax]}
                             components={{
-                                code({node, inline, className, children, ...props}) {
+                                code({node, inline, className, children, ...props}: any) {
                                     if (children.length) {
                                         if (children[0] == '▍') {
                                             return <span className="animate-pulse cursor-default mt-1">▍</span>
@@ -260,7 +260,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                                       </code>
                                     );
                                 },
-                                table({children}) {
+                                table({children}: any) {
                                     return (
                                       <div className="overflow-auto">
                                           <table
@@ -271,14 +271,14 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                                       </div>
                                     );
                                 },
-                                th({children}) {
+                                th({children}: any) {
                                     return (
                                       <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
                                           {children}
                                       </th>
                                     );
                                 },
-                                td({children}) {
+                                td({children}: any) {
                                     return (
                                       <td className="break-words border border-black px-3 py-1 dark:border-white">
                                           {children}

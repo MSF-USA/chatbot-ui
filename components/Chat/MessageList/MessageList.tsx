@@ -27,7 +27,7 @@ export function MessageList({ messages }: MessageListProps) {
       <div className="mx-auto w-full max-w-3xl space-y-4">
         {messages.map((message, index) => (
           <MessageItem
-            key={message.id || index}
+            key={index}
             message={message}
             messageIndex={index}
           />

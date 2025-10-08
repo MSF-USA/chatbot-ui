@@ -11,16 +11,16 @@ interface ChatMessageTextProps {
   setIsEditing: Dispatch<SetStateAction<boolean>>;
   setIsTyping: Dispatch<SetStateAction<boolean>>;
   handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  textareaRef: React.RefObject<HTMLTextAreaElement>;
+  textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   handlePressEnter: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   handleEditMessage: () => void;
   messageContent: string;
-  setMessageContent: Dispatch<SetStateAction<string>>;
+  setMessageContent: Dispatch<SetStateAction<string>> | Dispatch<SetStateAction<any>>;
   toggleEditing: (event: React.MouseEvent) => void;
   handleDeleteMessage: () => void;
   messageIsStreaming: boolean;
   messageIndex: number;
-  selectedConversation: Conversation;
+  selectedConversation: Conversation | null;
   messageCopied: boolean;
   onEdit?: (message: Message) => void;
   onQuestionClick?: (question: string) => void;
@@ -58,7 +58,7 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
     >
       {role === 'assistant' ? (
         <AssistantMessage
-          content={content}
+          content={content as string}
           message={message}
           copyOnClick={copyOnClick}
           messageIsStreaming={messageIsStreaming}
@@ -80,7 +80,7 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
           setIsEditing={setIsEditing}
           toggleEditing={toggleEditing}
           handleDeleteMessage={handleDeleteMessage}
-          onEdit={onEdit}
+          onEdit={onEdit || (() => {})}
           selectedConversation={selectedConversation}
         />
       )}

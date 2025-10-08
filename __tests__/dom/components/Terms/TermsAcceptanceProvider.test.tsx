@@ -6,7 +6,7 @@ import * as termsAcceptance from '@/lib/utils/app/termsAcceptance';
 import '@testing-library/jest-dom';
 
 // Mock the termsAcceptance utility functions
-vi.mock('@/utils/app/termsAcceptance', () => ({
+vi.mock('@/lib/utils/app/termsAcceptance', () => ({
   checkUserTermsAcceptance: vi.fn()
 }));
 

@@ -37,7 +37,7 @@ interface AssistantMessageProps {
   copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
-  selectedConversation: Conversation;
+  selectedConversation: Conversation | null;
   messageCopied: boolean;
   onRegenerate?: () => void;
 }
@@ -357,7 +357,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             </button>
 
             {/* Regenerate button - only show on last assistant message */}
-            {onRegenerate && !messageIsStreaming && messageIndex === selectedConversation.messages.length - 1 && (
+            {onRegenerate && !messageIsStreaming && selectedConversation && messageIndex === selectedConversation.messages.length - 1 && (
               <button
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
                 onClick={onRegenerate}

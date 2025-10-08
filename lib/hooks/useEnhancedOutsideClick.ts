@@ -13,7 +13,7 @@ import { RefObject, useEffect } from 'react';
  * @param useCapture - Boolean to determine if event should be captured in capture phase (true) or bubble phase (false)
  */
 const useEnhancedOutsideClick = (
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   onOutsideClick: () => void,
   isActive: boolean = true,
   useCapture: boolean = false

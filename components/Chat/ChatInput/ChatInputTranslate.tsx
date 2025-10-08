@@ -1,5 +1,4 @@
-import { FC } from "preact/compat";
-import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
+import React, {Dispatch, FC, SetStateAction, useEffect, useRef, useState} from "react";
 import { IconLanguage } from "@tabler/icons-react";
 import toast from "react-hot-toast";
 import BetaBadge from "@/components/Beta/Badge";

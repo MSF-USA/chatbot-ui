@@ -205,7 +205,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     },
     {
       id: 'image',
-      icon: <ImageIcon size={18} className="mr-3 text-amber-500" />,
+      icon: <ImageIcon className="mr-3 text-amber-500" />,
       label: 'Upload Image',
       tooltip: 'Upload Image',
       onClick: () => {

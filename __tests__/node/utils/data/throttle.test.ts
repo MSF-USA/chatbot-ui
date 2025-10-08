@@ -1,4 +1,4 @@
-import { throttle } from '../../../../utils/data/throttle'; // replace with correct path where your throttle function is present
+import { throttle } from '@/lib/utils/data/throttle';
 import { vi, describe, expect, it, beforeEach } from 'vitest';
 
 vi.useFakeTimers();

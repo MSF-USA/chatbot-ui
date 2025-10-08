@@ -12,7 +12,7 @@ interface SettingsFooterProps {
   version: string;
   build: string;
   env: string;
-  user?: Session['user'];
+  userEmail?: string;
   handleReset?: () => void;
   onClose?: () => void;
 }
@@ -21,7 +21,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
   version,
   build,
   env,
-  user,
+  userEmail,
   handleReset,
   onClose,
 }) => {
@@ -49,7 +49,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
         </div>
         <a
           href={`mailto:${
-            isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
+            isUSBased(userEmail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
           }`}
           className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm"
         >

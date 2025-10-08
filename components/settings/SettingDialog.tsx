@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
+import packageJson from '../../package.json';
 
 import { useCreateReducer } from '@/lib/hooks/useCreateReducer';
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
@@ -28,9 +29,9 @@ import { SettingsSidebar } from './SettingsSidebar';
 import faqData from './faq.json';
 import { SettingsSection } from './types';
 
-const version = process.env.NEXT_PUBLIC_VERSION;
-const build = process.env.NEXT_PUBLIC_BUILD;
-const env = process.env.NEXT_PUBLIC_ENV;
+const version = packageJson.version;
+const build = process.env.NEXT_PUBLIC_BUILD || 'Unknown';
+const env = process.env.NEXT_PUBLIC_ENV || 'development';
 
 /**
  * SettingDialog component adapted for Zustand stores
@@ -53,6 +54,7 @@ export function SettingDialog() {
       theme: 'light',
       temperature: 0.5,
       systemPrompt: '',
+      advancedMode: false,
     },
   });
 

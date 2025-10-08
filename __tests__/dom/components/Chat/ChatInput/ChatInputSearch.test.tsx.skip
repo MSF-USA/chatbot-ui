@@ -38,8 +38,8 @@ vi.mock('@tabler/icons-react', () => ({
   IconSearch: (props: any) => <svg data-testid="icon-search" {...props} />,
 }));
 
-vi.mock('next-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => key,
 }));
 
 const { hoistedMockHomeState, hoistedMockHomeDispatch } = vi.hoisted(() => ({

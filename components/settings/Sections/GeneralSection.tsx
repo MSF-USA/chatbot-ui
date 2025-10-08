@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 
 import { Settings } from '@/types/settings';
 
-import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
+import LanguageSwitcher from '@/components/sidebar/components/LanguageSwitcher';
 
 interface GeneralSectionProps {
   state: Settings;

@@ -379,7 +379,7 @@ describe('termsAcceptance utility', () => {
 
       const result = await checkUserTermsAcceptance(mockUser);
 
-      expect(fetch).toHaveBeenCalledWith('/api/v2/terms');
+      expect(fetch).toHaveBeenCalledWith('/api/terms');
       // expect(result).toBe(true);
     });
   });
@@ -388,7 +388,7 @@ describe('termsAcceptance utility', () => {
     it('should fetch terms data from the API', async () => {
       const result = await fetchTermsData();
 
-      expect(fetch).toHaveBeenCalledWith('/api/v2/terms');
+      expect(fetch).toHaveBeenCalledWith('/api/terms');
       expect(result).toEqual(mockTermsData);
     });
 
