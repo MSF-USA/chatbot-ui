@@ -153,8 +153,8 @@ const ModelCard: FC<ModelCardProps> = ({
         </div>
       )}
       
-      {/* Temperature control for non-agent mode */}
-      {isSelected && !useAgent && temperature !== undefined && onChangeTemperature && (
+      {/* Temperature control for non-agent mode and non-reasoning models */}
+      {isSelected && !useAgent && temperature !== undefined && onChangeTemperature && modelConfig?.modelType !== 'reasoning' && (
         <div className="px-4 pb-4 border-t border-gray-200 dark:border-gray-700">
           <div className="flex items-center text-xs font-medium text-gray-700 dark:text-gray-300 mb-2 mt-3">
             <IconTemperature size={14} className="mr-1.5" />
