@@ -130,9 +130,15 @@ export class LocalStorageService {
   /**
    * Migrate from legacy localStorage format
    */
-  static migrateFromLegacy(): void {
-    // Implementation would go here based on your old format
-    // For now, just mark as migrated
-    this.set('migrated', true);
+  static migrateFromLegacy(): { success: boolean; errors: string[] } {
+    try {
+      // Implementation would go here based on your old format
+      // For now, just mark as migrated
+      this.set('migrated', true);
+      return { success: true, errors: [] };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      return { success: false, errors: [errorMessage] };
+    }
   }
 }

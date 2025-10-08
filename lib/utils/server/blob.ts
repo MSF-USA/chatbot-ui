@@ -222,7 +222,7 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
 
     private async streamToBuffer(readableStream: NodeJS.ReadableStream): Promise<Buffer> {
         return new Promise((resolve, reject) => {
-            const chunks: Buffer[] = [];
+            const chunks: any[] = [];
             readableStream.on('data', (data) => {
                 chunks.push(data instanceof Buffer ? data : Buffer.from(data));
             });

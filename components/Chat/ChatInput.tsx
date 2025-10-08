@@ -75,7 +75,7 @@ export const ChatInput = ({
 
   const [textFieldValue, setTextFieldValue] = useState<string>('');
   const [imageFieldValue, setImageFieldValue] = useState<
-    ImageMessageContent | ImageMessageContent[] | null
+    ImageMessageContent | ImageMessageContent[] | null | undefined
   >();
   const [fileFieldValue, setFileFieldValue] = useState<
     | FileMessageContent
@@ -83,6 +83,7 @@ export const ChatInput = ({
     | ImageMessageContent
     | ImageMessageContent[]
     | null
+    | undefined
   >(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);

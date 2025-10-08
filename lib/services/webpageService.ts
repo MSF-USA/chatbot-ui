@@ -228,12 +228,12 @@ export async function fetchAndParseWebpage(url: string, maxRedirects = 5): Promi
       }
 
       let receivedLength = 0;
-      const chunks: Buffer[] = [];
+      const chunks: any[] = [];
 
 // Process the response body as a Node.js stream
       for await (const chunk of response.body) {
-        chunks.push(Buffer.from(chunk));
-        receivedLength += chunk.length;
+        chunks.push(Buffer.from(chunk as any));
+        receivedLength += (chunk as any).length;
 
         if (receivedLength > MAX_CONTENT_SIZE) {
           // For Node streams, we can destroy the stream

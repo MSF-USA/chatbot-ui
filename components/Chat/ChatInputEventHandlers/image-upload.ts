@@ -22,6 +22,7 @@ export const onImageUpload = async (
       | ImageMessageContent
       | ImageMessageContent[]
       | null
+      | undefined
     >
   >,
 ) => {
@@ -54,7 +55,7 @@ export const onImageUpload = async (
     },
   };
 
-  setFileFieldValue((prevValue) => {
+  setFileFieldValue((prevValue): FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null | undefined => {
     if (prevValue && Array.isArray(prevValue)) {
       setSubmitType('multi-file');
       return [...prevValue, imageMessage];

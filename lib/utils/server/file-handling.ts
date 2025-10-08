@@ -148,7 +148,7 @@ export async function loadDocument(file: File): Promise<string> {
 
   // Write the file to a temporary location
   const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.promises.writeFile(tempFilePath, buffer);
+  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer));
 
   switch (true) {
     case mimeType.startsWith('application/pdf'):

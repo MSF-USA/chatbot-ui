@@ -35,6 +35,7 @@ export interface ChatInputImageProps {
       | ImageMessageContent
       | ImageMessageContent[]
       | null
+      | undefined
     >
   >;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;

@@ -1,6 +1,6 @@
 import { isBase64, saveBase64AsFile, splitAudioFile, cleanUpFiles } from '@/lib/services/transcription/common';
 import fs from 'fs';
-import axios from 'axios';
+import fetch from 'node-fetch';
 import FormData from 'form-data';
 import { ITranscriptionService } from '@/types/transcription';
 import { DefaultAzureCredential } from '@azure/identity';
@@ -82,17 +82,21 @@ export class WhisperTranscriptionService implements ITranscriptionService {
       } else {
         headers['Authorization'] = `Bearer ${token}`;
       }
-      const response = await axios.post(
-          reqUrl,
-          formData,
-          {
-            headers
-          }
-      );
+      const response = await fetch(reqUrl, {
+        method: 'POST',
+        body: formData as any,
+        headers
+      });
 
-      return response.data.text || '';
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`);
+      }
+
+      const data = await response.json();
+      return data.text || '';
     } catch (error: any) {
-      const errorMessage = error.response?.data?.error?.message || error.message;
+      const errorMessage = error.message || 'Unknown error';
       throw new Error(`Error transcribing segment: ${errorMessage}`);
     }
   }

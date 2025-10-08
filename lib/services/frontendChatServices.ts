@@ -190,12 +190,12 @@ Document metadata: ${filename}
       // Store the summary with a clear association to its file
       if (content.type === 'file_url') {
         fileSummaries.push({
-          filename: content.originalFilename,
+          filename: content.originalFilename ?? 'Unknown file',
           summary: responseData.text ?? '',
         });
       } else {
         fileSummaries.push({
-          filename: `Image: ${content.image_url.url.split('/').pop()}`,
+          filename: `Image: ${content.image_url.url.split('/').pop() ?? 'Unknown'}`,
           summary: responseData.text ?? '',
         });
       }

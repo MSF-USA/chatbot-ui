@@ -360,9 +360,9 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         {...props}
         components={{
           ...components,
-          p: ParagraphWithCitations as any,
-          li: ListItemWithCitations as any,
-        }}
+          p: ParagraphWithCitations,
+          li: ListItemWithCitations,
+        } as any}
       >
         {displayContent}
       </ReactMarkdown>

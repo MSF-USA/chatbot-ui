@@ -83,11 +83,17 @@ export async function onFileUpload(
       | ImageMessageContent
       | ImageMessageContent[]
       | null
+      | undefined
     >
   >,
   setImageFieldValue: Dispatch<
     SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
+      | FileMessageContent
+      | FileMessageContent[]
+      | ImageMessageContent
+      | ImageMessageContent[]
+      | null
+      | undefined
     >
   >,
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,

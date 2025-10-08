@@ -42,10 +42,7 @@ export const ChatTopbar = ({
 
   return (
     <div className="sticky top-0 z-10 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out">
-      <div
-        className="mr-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 transition-all duration-300"
-        style={{ marginLeft: showChatbar ? '260px' : '64px' }}
-      >
+      <div className="mr-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 transition-all duration-300">
         {/* Bot/Model Info */}
         <div className="flex items-center min-w-0 justify-center sm:justify-start">
           {botInfo && (

@@ -277,8 +277,7 @@ export function Chat() {
       {/* Model Selection Modal */}
       {isModelSelectOpen && (
         <div
-          className="fixed top-0 right-0 bottom-0 z-[100] flex items-center justify-center bg-black/50 transition-all duration-300"
-          style={{ left: showChatbar ? '260px' : '56px' }}
+          className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[150]"
           onClick={() => setIsModelSelectOpen(false)}
         >
           <div
