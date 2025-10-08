@@ -161,6 +161,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
             )}
 
             {!isLoading && !loadError && imageBase64 && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 onClick={toggleImageStyleProps}
                 className="block hover:cursor-pointer max-w-full"

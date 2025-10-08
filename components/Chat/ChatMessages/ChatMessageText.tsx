@@ -53,7 +53,7 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
 
   return (
     <div
-      className="group md:px-4 text-gray-800 dark:text-gray-100"
+      className="group text-gray-800 dark:text-gray-100"
       style={{ overflowWrap: 'anywhere' }}
     >
       {role === 'assistant' ? (

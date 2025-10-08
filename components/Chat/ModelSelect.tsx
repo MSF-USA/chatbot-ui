@@ -3,7 +3,6 @@ import {
   IconCode,
   IconInfoCircle,
   IconTool,
-  IconBrain,
   IconCheck,
   IconTemperature,
   IconAlertTriangle,
@@ -23,7 +22,7 @@ interface ModelSelectProps {
 export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } = useConversations();
-  const { models, defaultModelId } = useSettings();
+  const { models, defaultModelId, setDefaultModelId } = useSettings();
 
   // Filter out legacy models and the standalone agent model
   const availableModels = models.filter(m =>
@@ -44,6 +43,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       console.warn('No conversation selected, cannot update model');
       return;
     }
+
+    // Set as default model for future conversations
+    setDefaultModelId(model.id as OpenAIModelID);
 
     // When selecting a model, use agent mode by default (except GPT-5)
     const shouldUseAgent = model.id !== OpenAIModelID.GPT_5 && OpenAIModels[model.id as OpenAIModelID]?.agentId;
@@ -123,12 +125,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   `}
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <IconBrain size={16} className="text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium text-sm text-gray-900 dark:text-white">
-                        {model.name}
-                      </span>
-                    </div>
+                    <span className="font-medium text-sm text-gray-900 dark:text-white">
+                      {model.name}
+                    </span>
                     {isSelected && (
                       <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
                     )}
@@ -162,12 +161,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             <div className="space-y-6">
               {/* Model Header */}
               <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <IconBrain size={32} className="text-gray-600 dark:text-gray-400" />
-                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                    {selectedModel.name}
-                  </h2>
-                </div>
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
+                  {selectedModel.name}
+                </h2>
                 <p className="text-gray-600 dark:text-gray-400">
                   {modelConfig.description}
                 </p>

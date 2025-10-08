@@ -97,7 +97,7 @@ export function MigrationBanner() {
                   Data Migration Required
                 </h3>
                 <p className="mt-1 text-sm text-yellow-700 dark:text-yellow-300">
-                  We've detected data from an older version. Migrate it to the new
+                  We&apos;ve detected data from an older version. Migrate it to the new
                   format?
                 </p>
               </div>

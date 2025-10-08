@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { useSession } from 'next-auth/react';
+import Image from 'next/image';
 import {
   IconPlus,
   IconFolderPlus,
@@ -17,6 +18,7 @@ import {
   IconCheck,
   IconDots,
   IconMenu2,
+  IconSearch,
 } from '@tabler/icons-react';
 import { PiSidebarSimple } from 'react-icons/pi';
 import { useUI } from '@/lib/hooks/ui/useUI';
@@ -26,11 +28,8 @@ import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 import { v4 as uuidv4 } from 'uuid';
 import Modal from '@/components/UI/Modal';
-
-enum Tab {
-  CONVERSATIONS = 'CONVERSATIONS',
-  PROMPTS = 'PROMPTS',
-}
+import lightTextLogo from '@/public/international_logo_black.png';
+import darkTextLogo from '@/public/international_logo_white.png';
 
 /**
  * Conversation item component with dropdown menu for folder management
@@ -55,8 +54,27 @@ function ConversationItem({
   t: any;
 }) {
   const [showMenu, setShowMenu] = useState(false);
+  const [showFolderSubmenu, setShowFolderSubmenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editingName, setEditingName] = useState(conversation.name);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+        setShowFolderSubmenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showMenu]);
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.effectAllowed = 'move';
@@ -74,14 +92,13 @@ function ConversationItem({
     <div
       draggable={!isEditing}
       onDragStart={handleDragStart}
-      className={`group flex items-center gap-2 rounded p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
+      className={`group flex items-center gap-2 rounded p-2 cursor-pointer ${
         selectedConversation?.id === conversation.id
-          ? 'bg-neutral-100 dark:bg-neutral-800'
+          ? 'bg-neutral-200 dark:bg-neutral-700'
           : ''
       }`}
-      onClick={() => !isEditing && handleSelectConversation(conversation.id)}
+      onClick={() => !isEditing && !showMenu && handleSelectConversation(conversation.id)}
     >
-      <IconMessage size={16} className="shrink-0 text-neutral-600 dark:text-neutral-400" />
       {isEditing ? (
         <input
           type="text"
@@ -105,36 +122,18 @@ function ConversationItem({
           {conversation.name}
         </span>
       )}
-      <div className="relative shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
+      <div ref={menuRef} className={`relative shrink-0 transition-opacity ${showMenu ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>
         {!isEditing && (
           <>
             <button
               className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
               onClick={(e) => {
                 e.stopPropagation();
-                setIsEditing(true);
-                setEditingName(conversation.name);
-              }}
-              title={t('Rename')}
-            >
-              <IconEdit size={14} className="text-neutral-600 dark:text-neutral-400" />
-            </button>
-            <button
-              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-              onClick={(e) => {
-                e.stopPropagation();
                 setShowMenu(!showMenu);
               }}
-              title={t('Move to folder')}
+              title={t('Options')}
             >
               <IconDots size={14} className="text-neutral-600 dark:text-neutral-400" />
-            </button>
-            <button
-              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-              onClick={(e) => handleDeleteConversation(conversation.id, e)}
-              title={t('Delete')}
-            >
-              <IconTrash size={14} className="text-neutral-600 dark:text-neutral-400" />
             </button>
           </>
         )}
@@ -146,31 +145,86 @@ function ConversationItem({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-1">
+              {/* Rename option */}
               <button
-                className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded"
+                className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleMoveToFolder(conversation.id, null);
                   setShowMenu(false);
+                  setIsEditing(true);
+                  setEditingName(conversation.name);
                 }}
               >
-                {t('No folder')}
-                {!conversation.folderId && <IconCheck size={14} className="inline ml-2" />}
+                <IconEdit size={14} className="text-neutral-600 dark:text-neutral-400" />
+                {t('Rename')}
               </button>
-              {folders.map((folder) => (
+
+              {/* Move to folder option with submenu */}
+              <div>
                 <button
-                  key={folder.id}
-                  className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded"
+                  className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center justify-between"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleMoveToFolder(conversation.id, folder.id);
-                    setShowMenu(false);
+                    setShowFolderSubmenu(!showFolderSubmenu);
                   }}
                 >
-                  {folder.name}
-                  {conversation.folderId === folder.id && <IconCheck size={14} className="inline ml-2" />}
+                  <span className="flex items-center gap-2">
+                    <IconFolder size={14} className="text-neutral-600 dark:text-neutral-400" />
+                    {t('Move to folder')}
+                  </span>
+                  {showFolderSubmenu ? (
+                    <IconChevronDown size={14} className="text-neutral-600 dark:text-neutral-400" />
+                  ) : (
+                    <IconChevronRight size={14} className="text-neutral-600 dark:text-neutral-400" />
+                  )}
                 </button>
-              ))}
+
+                {/* Folder submenu - inline expansion */}
+                {showFolderSubmenu && (
+                  <div className="pl-4 mt-1">
+                    <button
+                      className="w-full text-left px-3 py-2 text-xs text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center justify-between"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleMoveToFolder(conversation.id, null);
+                        setShowMenu(false);
+                        setShowFolderSubmenu(false);
+                      }}
+                    >
+                      {t('No folder')}
+                      {!conversation.folderId && <IconCheck size={12} className="shrink-0" />}
+                    </button>
+                    {folders.map((folder) => (
+                      <button
+                        key={folder.id}
+                        className="w-full text-left px-3 py-2 text-xs text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center justify-between"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMoveToFolder(conversation.id, folder.id);
+                          setShowMenu(false);
+                          setShowFolderSubmenu(false);
+                        }}
+                      >
+                        <span className="truncate">{folder.name}</span>
+                        {conversation.folderId === folder.id && <IconCheck size={12} className="shrink-0" />}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Delete option */}
+              <button
+                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-neutral-100 dark:text-red-400 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu(false);
+                  handleDeleteConversation(conversation.id, e);
+                }}
+              >
+                <IconTrash size={14} />
+                {t('Delete')}
+              </button>
             </div>
           </div>
         )}
@@ -185,7 +239,7 @@ function ConversationItem({
 export function Sidebar() {
   const t = useTranslations();
   const { data: session } = useSession();
-  const { showChatbar, toggleChatbar, setIsSettingsOpen } = useUI();
+  const { showChatbar, toggleChatbar, setIsSettingsOpen, theme } = useUI();
   const {
     conversations,
     selectedConversation,
@@ -203,7 +257,6 @@ export function Sidebar() {
   } = useConversations();
   const { defaultModelId, models, temperature, systemPrompt, prompts, addPrompt, updatePrompt, deletePrompt } = useSettings();
 
-  const [activeTab, setActiveTab] = useState<Tab>(Tab.CONVERSATIONS);
   const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editingFolderName, setEditingFolderName] = useState('');
@@ -216,16 +269,38 @@ export function Sidebar() {
   const [promptModalDescription, setPromptModalDescription] = useState('');
   const [promptModalContent, setPromptModalContent] = useState('');
   const [promptModalId, setPromptModalId] = useState<string | null>(null);
+  const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
+  const [isPromptsListOpen, setIsPromptsListOpen] = useState(false);
+
+  // Keyboard shortcut for search (⌘K / Ctrl+K)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsSearchModalOpen(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleNewConversation = () => {
     const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
     if (!defaultModel) return;
 
+    // Enable agent mode by default if the model has agentId
+    const modelWithAgent = defaultModel?.id === 'gpt-4o' && defaultModel.agentId ? {
+      ...defaultModel,
+      agentEnabled: true,
+      agentId: defaultModel.agentId
+    } : defaultModel;
+
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
       messages: [],
-      model: defaultModel,
+      model: modelWithAgent,
       prompt: systemPrompt || '',
       temperature: temperature || 0.5,
       folderId: null,
@@ -247,7 +322,7 @@ export function Sidebar() {
     return (
       <div className="fixed left-0 top-0 z-50 h-full w-14 flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out">
         {/* Top section with icons */}
-        <div className="flex flex-col items-center pt-4 space-y-2">
+        <div className="flex flex-col items-center pt-2 space-y-2">
           {/* Expand sidebar button */}
           <button
             className="p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
@@ -323,6 +398,7 @@ export function Sidebar() {
     }
 
     setIsPromptModalOpen(false);
+    setIsPromptsListOpen(true);
     setPromptModalId(null);
     setPromptModalName('');
     setPromptModalDescription('');
@@ -445,71 +521,62 @@ export function Sidebar() {
 
   return (
     <div className="fixed left-0 top-0 z-50 h-full w-[260px] flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out overflow-hidden">
-      {/* Tabs */}
-      <div className="flex border-b border-neutral-300 dark:border-neutral-700 min-w-[260px]">
+      {/* Header */}
+      <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-300 dark:border-neutral-700 min-w-[260px]">
+        <Image
+          src={theme === 'dark' ? darkTextLogo : lightTextLogo}
+          alt="MSF Logo"
+          priority
+          style={{
+            maxWidth: '75px',
+            height: 'auto',
+          }}
+        />
         <button
-          className={`flex-1 p-3 text-sm font-semibold text-black dark:text-white ${
-            activeTab === Tab.CONVERSATIONS
-              ? 'border-b-2 border-black dark:border-white'
-              : 'border-b-2 border-transparent'
-          }`}
-          onClick={() => setActiveTab(Tab.CONVERSATIONS)}
-        >
-          {t('Conversations')}
-        </button>
-        <button
-          className={`flex-1 p-3 text-sm font-semibold text-black dark:text-white ${
-            activeTab === Tab.PROMPTS
-              ? 'border-b-2 border-black dark:border-white'
-              : 'border-b-2 border-transparent'
-          }`}
-          onClick={() => setActiveTab(Tab.PROMPTS)}
-        >
-          {t('Prompts')}
-        </button>
-        <button
-          className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-black dark:text-white"
+          className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-black dark:text-white"
           onClick={toggleChatbar}
           title="Close sidebar"
         >
-          <PiSidebarSimple size={18} />
+          <PiSidebarSimple size={22} />
         </button>
       </div>
 
-      {/* Header with new button */}
-      <div className="flex items-center justify-between p-3 border-b border-neutral-300 dark:border-neutral-700 min-w-[260px]">
+      {/* Action buttons */}
+      <div className="px-3 py-2 border-b border-neutral-300 dark:border-neutral-700 min-w-[260px] space-y-1">
         <button
-          className="flex items-center gap-2 rounded px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-          onClick={activeTab === Tab.CONVERSATIONS ? handleNewConversation : handleNewPrompt}
+          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+          onClick={handleNewConversation}
         >
-          <IconPlus size={18} className="text-neutral-900 dark:text-white" />
-          <span>{activeTab === Tab.CONVERSATIONS ? t('New conversation') : t('New prompt')}</span>
+          <IconPlus size={16} />
+          <span>{t('New chat')}</span>
         </button>
-        {activeTab === Tab.CONVERSATIONS && (
-          <button
-            className="rounded p-2 text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-            onClick={handleCreateFolder}
-            title={t('New folder')}
-          >
-            <IconFolderPlus size={18} className="text-neutral-900 dark:text-white" />
-          </button>
-        )}
-      </div>
-
-      {/* Search */}
-      <div className="p-3 min-w-[260px]">
-        <input
-          type="text"
-          placeholder={t('Search conversations_ellipsis')}
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 placeholder-neutral-500 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100 dark:placeholder-neutral-400"
-        />
+        <button
+          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+          onClick={() => setIsSearchModalOpen(true)}
+        >
+          <IconSearch size={16} />
+          <span>{t('Search chats')}</span>
+          <span className="ml-auto text-xs text-neutral-500 dark:text-neutral-400">⌘K</span>
+        </button>
+        <button
+          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+          onClick={() => setIsPromptsListOpen(true)}
+        >
+          <IconMessage size={16} />
+          <span>{t('Prompts')}</span>
+        </button>
+        <button
+          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+          onClick={handleCreateFolder}
+        >
+          <IconFolderPlus size={16} />
+          <span>{t('New folder')}</span>
+        </button>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto min-w-[260px]">
-        {activeTab === Tab.CONVERSATIONS ? (
+        {(
           displayConversations.length === 0 ? (
             <div className="p-4 text-center text-sm text-neutral-500">
               {searchTerm
@@ -613,7 +680,6 @@ export function Sidebar() {
                   onDrop={(e) => handleDrop(e, null)}
                   onDragOver={(e) => handleDragOver(e, null)}
                   onDragLeave={handleDragLeave}
-                  className={dragOverFolderId === null ? 'bg-blue-50 dark:bg-blue-900/20 rounded' : ''}
                 >
                   {conversationsWithoutFolder.map((conversation) => (
                     <ConversationItem
@@ -632,93 +698,6 @@ export function Sidebar() {
               )}
             </div>
           )
-        ) : prompts.length === 0 ? (
-          <div className="p-4 text-center text-sm text-neutral-500">
-            {t('No prompts yet')}
-          </div>
-        ) : (
-          <div className="space-y-1 p-2">
-            {prompts.map((prompt) => (
-              <div
-                key={prompt.id}
-                className="group flex items-start gap-2 rounded p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              >
-                <IconMessage size={16} className="shrink-0 mt-1 text-neutral-600 dark:text-neutral-400" />
-                {editingPromptId === prompt.id ? (
-                  <div className="flex-1 space-y-2">
-                    <input
-                      type="text"
-                      value={editingPromptName}
-                      onChange={(e) => setEditingPromptName(e.target.value)}
-                      placeholder={t('Prompt name')}
-                      className="w-full rounded border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100"
-                    />
-                    <textarea
-                      value={editingPromptContent}
-                      onChange={(e) => setEditingPromptContent(e.target.value)}
-                      placeholder={t('Prompt content')}
-                      rows={3}
-                      className="w-full rounded border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100"
-                    />
-                    <div className="flex gap-2">
-                      <button
-                        onClick={handleSavePrompt}
-                        className="px-3 py-1 text-xs rounded bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-                      >
-                        {t('Save')}
-                      </button>
-                      <button
-                        onClick={() => {
-                          setEditingPromptId(null);
-                          setEditingPromptName('');
-                          setEditingPromptContent('');
-                        }}
-                        className="px-3 py-1 text-xs rounded border border-neutral-300 text-neutral-900 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
-                      >
-                        {t('Cancel')}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
-                        {prompt.name}
-                      </div>
-                      {prompt.content && (
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
-                          {prompt.content}
-                        </div>
-                      )}
-                    </div>
-                    <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
-                      <button
-                        className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPromptModalId(prompt.id);
-                          setPromptModalName(prompt.name);
-                          setPromptModalDescription(prompt.description || '');
-                          setPromptModalContent(prompt.content);
-                          setIsPromptModalOpen(true);
-                        }}
-                        title={t('Edit')}
-                      >
-                        <IconEdit size={14} className="text-neutral-600 dark:text-neutral-400" />
-                      </button>
-                      <button
-                        className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                        onClick={(e) => handleDeletePrompt(prompt.id, e)}
-                        title={t('Delete')}
-                      >
-                        <IconTrash size={14} className="text-neutral-600 dark:text-neutral-400" />
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
         )}
       </div>
 
@@ -745,14 +724,20 @@ export function Sidebar() {
       {/* Prompt Modal */}
       <Modal
         isOpen={isPromptModalOpen}
-        onClose={() => setIsPromptModalOpen(false)}
+        onClose={() => {
+          setIsPromptModalOpen(false);
+          setIsPromptsListOpen(true);
+        }}
         title={promptModalId ? t('Edit Prompt') : t('New Prompt')}
         size="lg"
         footer={
           <div className="flex justify-end gap-2">
             <button
               className="px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 rounded-md"
-              onClick={() => setIsPromptModalOpen(false)}
+              onClick={() => {
+                setIsPromptModalOpen(false);
+                setIsPromptsListOpen(true);
+              }}
             >
               {t('Cancel')}
             </button>
@@ -765,9 +750,9 @@ export function Sidebar() {
           </div>
         }
       >
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-bold mb-2 text-black dark:text-white">
               {t('Name')}
             </label>
             <input
@@ -775,35 +760,200 @@ export function Sidebar() {
               value={promptModalName}
               onChange={(e) => setPromptModalName(e.target.value)}
               placeholder={t('A name for your prompt_')}
-              className="w-full rounded-md border border-neutral-500 bg-white px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#40414F] dark:text-neutral-100"
+              className="w-full rounded-lg border border-neutral-200 dark:border-neutral-600 bg-transparent px-4 py-3 text-neutral-900 dark:text-neutral-100 focus:outline-none"
+              autoFocus
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-bold mb-2 text-black dark:text-white">
               {t('Description')}
+              <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 font-normal">(Optional)</span>
             </label>
             <textarea
               value={promptModalDescription}
               onChange={(e) => setPromptModalDescription(e.target.value)}
               placeholder={t('A description for your prompt_')}
               rows={3}
-              className="w-full rounded-md border border-neutral-500 bg-white px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#40414F] dark:text-neutral-100 resize-none"
+              className="w-full rounded-lg border border-neutral-200 dark:border-neutral-600 bg-transparent px-4 py-3 text-neutral-900 dark:text-neutral-100 focus:outline-none resize-none"
             />
           </div>
           <div>
-            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-bold mb-2 text-black dark:text-white">
               {t('Prompt')}
             </label>
+            <div className="mb-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 rounded-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
+              <span className="font-medium">Tip:</span> Use <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">{'{{variable}}'}</code> for dynamic content. Example: <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">{'{{name}}'}</code> is a <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">{'{{adjective}}'}</code> <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">{'{{noun}}'}</code>
+            </div>
             <textarea
               value={promptModalContent}
               onChange={(e) => setPromptModalContent(e.target.value)}
-              placeholder={t('Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}')}
+              placeholder="Enter your prompt template..."
               rows={10}
-              className="w-full rounded-md border border-neutral-500 bg-white px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#40414F] dark:text-neutral-100 resize-none"
+              className="w-full rounded-lg border border-neutral-200 dark:border-neutral-600 bg-transparent px-4 py-3 text-neutral-900 dark:text-neutral-100 focus:outline-none resize-none font-mono"
             />
           </div>
         </div>
       </Modal>
+
+      {/* Search Modal */}
+      {isSearchModalOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 pt-20"
+          onClick={() => {
+            setIsSearchModalOpen(false);
+            setSearchTerm('');
+          }}
+        >
+          <div
+            className="w-full max-w-2xl bg-white dark:bg-[#212121] rounded-lg shadow-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Search input */}
+            <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-300 dark:border-neutral-700">
+              <IconSearch size={20} className="text-neutral-500 dark:text-neutral-400" />
+              <input
+                type="text"
+                placeholder={t('Search...')}
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                autoFocus
+                className="flex-1 bg-transparent text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none"
+              />
+              <button
+                onClick={() => {
+                  setIsSearchModalOpen(false);
+                  setSearchTerm('');
+                }}
+                className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+              >
+                <IconX size={20} />
+              </button>
+            </div>
+
+            {/* Results */}
+            <div className="max-h-[60vh] overflow-y-auto">
+              {filteredConversations.length === 0 && searchTerm && (
+                <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
+                  {t('No conversations found')}
+                </div>
+              )}
+              {filteredConversations.length > 0 && (
+                <div className="py-2">
+                  {filteredConversations.map((conversation) => (
+                    <button
+                      key={conversation.id}
+                      className="w-full flex items-center gap-3 px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-left"
+                      onClick={() => {
+                        selectConversation(conversation.id);
+                        setIsSearchModalOpen(false);
+                        setSearchTerm('');
+                      }}
+                    >
+                      <IconMessage size={16} className="text-neutral-600 dark:text-neutral-400 shrink-0" />
+                      <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
+                        {conversation.name}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Prompts List Modal */}
+      {isPromptsListOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center bg-black/50 pt-20"
+          onClick={() => setIsPromptsListOpen(false)}
+        >
+          <div
+            className="w-full max-w-2xl bg-white dark:bg-[#212121] rounded-lg shadow-xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-300 dark:border-neutral-700">
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">{t('Prompts')}</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => {
+                    setPromptModalId(null);
+                    setPromptModalName('');
+                    setPromptModalDescription('');
+                    setPromptModalContent('');
+                    setIsPromptsListOpen(false);
+                    setIsPromptModalOpen(true);
+                  }}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+                >
+                  <IconPlus size={16} />
+                  {t('New prompt')}
+                </button>
+                <button
+                  onClick={() => setIsPromptsListOpen(false)}
+                  className="text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-300"
+                >
+                  <IconX size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Prompts list */}
+            <div className="max-h-[60vh] overflow-y-auto">
+              {prompts.length === 0 ? (
+                <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
+                  {t('No prompts yet')}
+                </div>
+              ) : (
+                <div className="py-2">
+                  {prompts.map((prompt) => (
+                    <div
+                      key={prompt.id}
+                      className="group flex items-start gap-3 px-4 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
+                          {prompt.name}
+                        </div>
+                        {prompt.content && (
+                          <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2">
+                            {prompt.content}
+                          </div>
+                        )}
+                      </div>
+                      <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
+                        <button
+                          className="rounded p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setPromptModalId(prompt.id);
+                            setPromptModalName(prompt.name);
+                            setPromptModalDescription(prompt.description || '');
+                            setPromptModalContent(prompt.content);
+                            setIsPromptsListOpen(false);
+                            setIsPromptModalOpen(true);
+                          }}
+                          title={t('Edit')}
+                        >
+                          <IconEdit size={16} className="text-neutral-600 dark:text-neutral-400" />
+                        </button>
+                        <button
+                          className="rounded p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                          onClick={(e) => handleDeletePrompt(prompt.id, e)}
+                          title={t('Delete')}
+                        >
+                          <IconTrash size={16} className="text-neutral-600 dark:text-neutral-400" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

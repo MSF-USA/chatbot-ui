@@ -317,30 +317,32 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   };
 
   return (
-    <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
-      <div className="prose mt-[-2px] w-full dark:prose-invert max-w-none">
+    <div className="relative flex px-4 py-3 text-base lg:px-0 w-full">
+      <div className="mt-[-2px] w-full">
         {loadingMessage && (
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
             {loadingMessage}
           </div>
         )}
 
-        <div className="flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            <CitationMarkdown
-              className="prose dark:prose-invert flex-1"
-              conversation={selectedConversation}
-              citations={citations}
-              remarkPlugins={remarkPlugins}
-              rehypePlugins={[rehypeMathjax]}
-              components={customMarkdownComponents}
-            >
+        <div className="flex flex-col w-full">
+          <div className="flex-1 w-full">
+            <div className="prose dark:prose-invert max-w-none w-full" style={{ maxWidth: 'none' }}>
+              <CitationMarkdown
+                className="max-w-none w-full"
+                conversation={selectedConversation}
+                citations={citations}
+                remarkPlugins={remarkPlugins}
+                rehypePlugins={[rehypeMathjax]}
+                components={customMarkdownComponents}
+              >
               {contentToDisplay}
             </CitationMarkdown>
+            </div>
           </div>
 
           {/* Action buttons at the bottom of the message */}
-          <div className="flex items-center gap-2 mt-2">
+          <div className="flex items-center gap-2 mt-1">
             {/* Copy button */}
             <button
               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"

@@ -45,6 +45,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
     const data = getStorageUsage();
     setStorageData(data);
     checkStorage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount
 
   return (

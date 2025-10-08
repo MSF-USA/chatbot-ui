@@ -179,6 +179,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
             >
               <div className="flex items-center">
                 {hostname && (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
                     alt={`${hostname} favicon`}
@@ -267,7 +268,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
           </span>
         );
       },
-      [hoveredCitation, extractedCitations, renderTooltip, tooltipPosition],
+      [hoveredCitation, extractedCitations, renderTooltip],
     );
 
     const processTextWithCitations = useCallback(

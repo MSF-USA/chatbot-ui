@@ -433,7 +433,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                           }`}
                           onClick={item.onClick}
                           role="menuitem"
-                          aria-selected={isSelected}
+                          aria-current={isSelected ? 'true' : undefined}
                           tabIndex={isSelected ? 0 : -1}
                         >
                           {item.icon}

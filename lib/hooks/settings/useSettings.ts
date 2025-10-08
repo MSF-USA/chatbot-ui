@@ -6,6 +6,7 @@ import {
 } from '@/lib/services/storage/localStorageService';
 import { Prompt } from '@/types/prompt';
 import { PluginKey } from '@/types/plugin';
+import { OpenAIModelID } from '@/types/openai';
 
 /**
  * Hook that manages settings with localStorage persistence
@@ -13,24 +14,8 @@ import { PluginKey } from '@/types/plugin';
 export function useSettings() {
   const store = useSettingsStore();
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    const temperature =
-      LocalStorageService.get<number>(StorageKeys.TEMPERATURE) ?? 0.5;
-    const systemPrompt =
-      LocalStorageService.get<string>(StorageKeys.SYSTEM_PROMPT) ?? '';
-    const apiKey = LocalStorageService.get<string>(StorageKeys.API_KEY) ?? '';
-    const pluginKeys =
-      LocalStorageService.get<PluginKey[]>(StorageKeys.PLUGIN_KEYS) ?? [];
-    const prompts =
-      LocalStorageService.get<Prompt[]>(StorageKeys.PROMPTS) ?? [];
-
-    store.setTemperature(temperature);
-    store.setSystemPrompt(systemPrompt);
-    store.setApiKey(apiKey);
-    store.setPluginKeys(pluginKeys);
-    store.setPrompts(prompts);
-  }, []);
+  // Note: localStorage loading is now handled by SettingsLoader component
+  // to avoid multiple simultaneous reads on app initialization
 
   // Persist temperature
   useEffect(() => {
@@ -56,6 +41,13 @@ export function useSettings() {
   useEffect(() => {
     LocalStorageService.set(StorageKeys.PROMPTS, store.prompts);
   }, [store.prompts]);
+
+  // Persist default model ID
+  useEffect(() => {
+    if (store.defaultModelId) {
+      LocalStorageService.set(StorageKeys.DEFAULT_MODEL_ID, store.defaultModelId);
+    }
+  }, [store.defaultModelId]);
 
   return {
     // State

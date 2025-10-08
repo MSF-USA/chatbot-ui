@@ -84,6 +84,7 @@ const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => 
                     <span>Failed to load image</span>
                 </div>
               ) : imageSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={imageSrc}
                   alt="Image Content"
@@ -107,6 +108,7 @@ const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => 
               onClick={handleCloseModal}
             >
                 <div className="relative max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={imageSrc}
                       alt="Full Size Image"

@@ -81,11 +81,12 @@ export const UserMessage: FC<UserMessageProps> = ({
     ) {
       setMessageContent(message.content);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message.content, messageContent]);
 
   return (
-    <div className="relative m-auto flex justify-end p-2 text-base md:max-w-2xl md:py-3 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-      <div className="flex flex-col items-end max-w-[65%]">
+    <div className="relative flex justify-end px-4 py-3 text-base lg:px-0 w-full">
+      <div className="flex flex-col items-end max-w-full">
         <div className="inline-block bg-gray-600 dark:bg-gray-600 rounded-2xl px-4 py-2.5 text-white text-sm">
           {isEditing ? (
             <div className="flex flex-col">
@@ -128,7 +129,8 @@ export const UserMessage: FC<UserMessageProps> = ({
             </div>
           ) : (
             <MemoizedReactMarkdown
-              className="prose prose-sm prose-invert text-white"
+              className="prose prose-sm prose-invert text-white max-w-none"
+              style={{ maxWidth: 'none' }}
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeMathjax]}
               components={{

@@ -63,6 +63,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
       stopAnimationLoop();
       document.removeEventListener('mousedown', handleClickOutside);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Start animation loop for progress updates

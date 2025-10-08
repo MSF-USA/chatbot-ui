@@ -51,6 +51,7 @@ export const CitationItem: React.FC<{ citation: Citation }> = ({
         )}
         <div className="absolute bottom-0 left-0 right-0 dark:bg-[#1f1f1f] bg-gray-100 px-2 py-1 flex items-center dark:text-white text-gray-500 text-[11.5px] space-x-1">
           <div className="flex items-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={`https://www.google.com/s2/favicons?domain=${hostname}&size=16`}
               alt={`${hostname} favicon`}

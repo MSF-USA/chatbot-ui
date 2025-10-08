@@ -120,14 +120,16 @@ export const CameraModal: FC<CameraModalProps> = ({
     };
 
     getDevices();
-    
+
     // Cleanup function to stop media stream when component unmounts or modal closes
     return () => {
+      const video = videoRef.current;
       if (isOpen === false) {
-        stopMediaStream(videoRef.current);
+        stopMediaStream(video);
       }
     };
-  }, [isOpen, videoRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const startCamera = async (deviceId: string) => {
     try {

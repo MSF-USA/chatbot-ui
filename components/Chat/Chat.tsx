@@ -60,11 +60,19 @@ export function Chat() {
     // If no conversations exist, create one
     if (conversations.length === 0) {
       const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
+
+      // Enable agent mode by default if the model has agentId
+      const modelWithAgent = defaultModel?.id === 'gpt-4o' && defaultModel.agentId ? {
+        ...defaultModel,
+        agentEnabled: true,
+        agentId: defaultModel.agentId
+      } : defaultModel;
+
       const newConversation = {
         id: uuidv4(),
         name: 'New Conversation',
         messages: [],
-        model: defaultModel,
+        model: modelWithAgent,
         prompt: systemPrompt || '',
         temperature: temperature || 0.5,
         folderId: null,

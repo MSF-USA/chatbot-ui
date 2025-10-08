@@ -67,13 +67,13 @@ export const ChatTopbar = ({
               aria-label="Select Model"
               title="Select Model"
             >
-              <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
+              <span className="truncate font-bold dark:text-blue-50 text-gray-800 text-base" title={selectedModelName}>
                 {selectedModelName || 'Select Model'}
               </span>
               {agentEnabled && (
                 <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" title="Agent Tools Enabled" />
               )}
-              <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
+              <IconChevronDown size={16} className="ml-1.5 opacity-60 text-black dark:text-white" />
             </button>
           </div>
         </div>

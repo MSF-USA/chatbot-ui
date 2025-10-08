@@ -46,38 +46,8 @@ export function useConversations() {
           )
       );
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    try {
-      const savedConversations =
-        LocalStorageService.get<Conversation[]>(StorageKeys.CONVERSATIONS) || [];
-      const savedFolders =
-        LocalStorageService.get<FolderInterface[]>(StorageKeys.FOLDERS) || [];
-      const selectedId =
-        LocalStorageService.get<string>(StorageKeys.SELECTED_CONVERSATION_ID) ||
-        null;
-
-      setConversations(savedConversations);
-      setFolders(savedFolders);
-
-      // Validate that selectedId exists in conversations
-      if (selectedId && savedConversations.find(c => c.id === selectedId)) {
-        selectConversation(selectedId);
-      } else if (savedConversations.length > 0) {
-        // If no valid selection, select the first conversation
-        selectConversation(savedConversations[0].id);
-      }
-    } catch (error) {
-      console.error('Error loading conversations from localStorage:', error);
-      // On error, start with empty state
-      setConversations([]);
-      setFolders([]);
-    } finally {
-      // Always mark as loaded, even on error
-      setIsLoaded(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // Note: localStorage loading is now handled by ConversationLoader component
+  // to avoid multiple simultaneous reads on app initialization
 
   // Persist conversations to localStorage (skip initial save)
   useEffect(() => {

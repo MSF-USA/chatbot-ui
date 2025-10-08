@@ -68,6 +68,7 @@ export function SettingDialog() {
       dispatch({ field: key as keyof Settings, value: loadedSettings[key as keyof Settings] });
     });
     setStorageData(getStorageUsage());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Close on click outside

@@ -11,26 +11,8 @@ import {
 export function useUI() {
   const store = useUIStore();
 
-  // Load from localStorage on mount
-  useEffect(() => {
-    const showChatbar =
-      LocalStorageService.get<boolean>(StorageKeys.SHOW_CHATBAR) ?? false;
-    const showPromptbar =
-      LocalStorageService.get<boolean>(StorageKeys.SHOW_PROMPTBAR) ?? true;
-    const theme =
-      LocalStorageService.get<'light' | 'dark'>(StorageKeys.THEME) ?? 'dark';
-
-    store.setShowChatbar(showChatbar);
-    store.setShowPromptbar(showPromptbar);
-    store.setTheme(theme);
-
-    // Apply theme to document
-    if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, []);
+  // Note: localStorage loading is now handled by UILoader component
+  // to avoid multiple simultaneous reads on app initialization
 
   // Persist showChatbar
   useEffect(() => {
