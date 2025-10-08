@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { Message, Conversation, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
-import { Plugin } from '@/types/plugin';
 import { makeRequest } from '@/lib/services/frontendChatServices';
 import { extractCitationsFromContent } from '@/lib/utils/app/citation';
 import { useConversationStore } from './conversationStore';
@@ -28,8 +27,7 @@ interface ChatStore {
   resetChat: () => void;
   sendMessage: (
     message: Message,
-    conversation: Conversation,
-    plugin?: Plugin | null
+    conversation: Conversation
   ) => Promise<void>;
 }
 
@@ -72,7 +70,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       stopRequested: false,
     }),
 
-  sendMessage: async (message, conversation, plugin = null) => {
+  sendMessage: async (message, conversation) => {
     try {
       set({ isStreaming: true, streamingContent: '', error: null, citations: [] });
 
@@ -84,11 +82,9 @@ export const useChatStore = create<ChatStore>((set) => ({
 
       // Make the API request
       const { response, hasComplexContent } = await makeRequest(
-        plugin,
         () => {}, // setRequestStatusMessage - not needed for now
         conversation,
         apiKey,
-        [], // pluginKeys - will implement later
         systemPrompt,
         temperature,
         true, // stream

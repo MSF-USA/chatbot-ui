@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSwipeable } from 'react-swipeable';
 import { useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
@@ -200,9 +200,9 @@ export function SettingDialog() {
     console.log('Import not yet implemented for Zustand', data);
   };
 
-  const checkStorage = () => {
+  const checkStorage = useCallback(() => {
     setStorageData(getStorageUsage());
-  };
+  }, []);
 
   // Render nothing if not open
   if (!isSettingsOpen) {
@@ -277,7 +277,6 @@ export function SettingDialog() {
 
                 {activeSection === SettingsSection.DATA_MANAGEMENT && (
                   <DataManagementSection
-                    homeState={homeState}
                     handleClearConversations={handleClearConversations}
                     handleImportConversations={handleImportConversations}
                     handleExportData={handleExportData}

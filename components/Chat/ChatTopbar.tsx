@@ -23,6 +23,7 @@ interface Props {
   userEmail?: string;
   hasMessages?: boolean;
   agentEnabled?: boolean;
+  showChatbar?: boolean;
 }
 
 export const ChatTopbar = ({
@@ -35,12 +36,16 @@ export const ChatTopbar = ({
   userEmail,
   hasMessages = false,
   agentEnabled = false,
+  showChatbar = false,
 }: Props) => {
   const t = useTranslations();
 
   return (
-    <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-      <div className="mx-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div className="sticky top-0 z-10 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out">
+      <div
+        className="mr-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 transition-all duration-300"
+        style={{ marginLeft: showChatbar ? '260px' : '64px' }}
+      >
         {/* Bot/Model Info */}
         <div className="flex items-center min-w-0 justify-center sm:justify-start">
           {botInfo && (

@@ -11,77 +11,108 @@ import { FolderInterface } from '@/types/folder';
  * Hook that manages conversations with localStorage persistence
  */
 export function useConversations() {
-  const store = useConversationStore();
+  // Subscribe to the underlying state that affects selectedConversation
+  const conversations = useConversationStore((state) => state.conversations);
+  const selectedConversationId = useConversationStore((state) => state.selectedConversationId);
+  const folders = useConversationStore((state) => state.folders);
+  const searchTerm = useConversationStore((state) => state.searchTerm);
+
+  // Get actions
+  const addConversation = useConversationStore((state) => state.addConversation);
+  const updateConversation = useConversationStore((state) => state.updateConversation);
+  const deleteConversation = useConversationStore((state) => state.deleteConversation);
+  const selectConversation = useConversationStore((state) => state.selectConversation);
+  const setConversations = useConversationStore((state) => state.setConversations);
+  const addFolder = useConversationStore((state) => state.addFolder);
+  const updateFolder = useConversationStore((state) => state.updateFolder);
+  const deleteFolder = useConversationStore((state) => state.deleteFolder);
+  const setFolders = useConversationStore((state) => state.setFolders);
+  const setSearchTerm = useConversationStore((state) => state.setSearchTerm);
+  const clearAll = useConversationStore((state) => state.clearAll);
+
+  // Compute selected conversation from state
+  const selectedConversation = conversations.find(c => c.id === selectedConversationId) || null;
+
+  // Compute filtered conversations
+  const filteredConversations = !searchTerm
+    ? conversations
+    : conversations.filter(
+        (c) =>
+          c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          c.messages.some((m) =>
+            m.content.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          )
+      );
 
   // Load from localStorage on mount
   useEffect(() => {
-    const conversations =
+    const savedConversations =
       LocalStorageService.get<Conversation[]>(StorageKeys.CONVERSATIONS) || [];
-    const folders =
+    const savedFolders =
       LocalStorageService.get<FolderInterface[]>(StorageKeys.FOLDERS) || [];
     const selectedId =
       LocalStorageService.get<string>(StorageKeys.SELECTED_CONVERSATION_ID) ||
       null;
 
-    store.setConversations(conversations);
-    store.setFolders(folders);
+    setConversations(savedConversations);
+    setFolders(savedFolders);
 
     // Validate that selectedId exists in conversations
-    if (selectedId && conversations.find(c => c.id === selectedId)) {
-      store.selectConversation(selectedId);
-    } else if (conversations.length > 0) {
+    if (selectedId && savedConversations.find(c => c.id === selectedId)) {
+      selectConversation(selectedId);
+    } else if (savedConversations.length > 0) {
       // If no valid selection, select the first conversation
-      store.selectConversation(conversations[0].id);
+      selectConversation(savedConversations[0].id);
     }
   }, []);
 
   // Persist conversations to localStorage
   useEffect(() => {
-    LocalStorageService.set(StorageKeys.CONVERSATIONS, store.conversations);
-  }, [store.conversations]);
+    LocalStorageService.set(StorageKeys.CONVERSATIONS, conversations);
+  }, [conversations]);
 
   // Persist folders to localStorage
   useEffect(() => {
-    LocalStorageService.set(StorageKeys.FOLDERS, store.folders);
-  }, [store.folders]);
+    LocalStorageService.set(StorageKeys.FOLDERS, folders);
+  }, [folders]);
 
   // Persist selected conversation ID
   useEffect(() => {
-    if (store.selectedConversationId) {
+    if (selectedConversationId) {
       LocalStorageService.set(
         StorageKeys.SELECTED_CONVERSATION_ID,
-        store.selectedConversationId
+        selectedConversationId
       );
     } else {
       LocalStorageService.remove(StorageKeys.SELECTED_CONVERSATION_ID);
     }
-  }, [store.selectedConversationId]);
+  }, [selectedConversationId]);
 
   return {
     // State
-    conversations: store.conversations,
-    selectedConversation: store.selectedConversation,
-    folders: store.folders,
-    searchTerm: store.searchTerm,
-    filteredConversations: store.filteredConversations,
+    conversations,
+    selectedConversation,
+    folders,
+    searchTerm,
+    filteredConversations,
 
     // Actions
-    addConversation: store.addConversation,
-    updateConversation: store.updateConversation,
-    deleteConversation: store.deleteConversation,
-    selectConversation: store.selectConversation,
-    setConversations: store.setConversations,
+    addConversation,
+    updateConversation,
+    deleteConversation,
+    selectConversation,
+    setConversations,
 
     // Folder actions
-    addFolder: store.addFolder,
-    updateFolder: store.updateFolder,
-    deleteFolder: store.deleteFolder,
-    setFolders: store.setFolders,
+    addFolder,
+    updateFolder,
+    deleteFolder,
+    setFolders,
 
     // Search
-    setSearchTerm: store.setSearchTerm,
+    setSearchTerm,
 
     // Bulk
-    clearAll: store.clearAll,
+    clearAll,
   };
 }

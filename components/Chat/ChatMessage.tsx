@@ -13,6 +13,7 @@ export interface Props {
   onEdit?: (editedMessage: Message) => void;
   onEditMessage?: () => void;
   onQuestionClick?: (question: string) => void;
+  onRegenerate?: () => void;
 }
 
 export const ChatMessage: FC<Props> = ({
@@ -20,6 +21,7 @@ export const ChatMessage: FC<Props> = ({
   messageIndex,
   onEdit,
   onQuestionClick,
+  onRegenerate,
 }) => {
   const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } = useConversations();
@@ -175,6 +177,7 @@ export const ChatMessage: FC<Props> = ({
         messageCopied={messagedCopied}
         onEdit={onEdit}
         onQuestionClick={onQuestionClick}
+        onRegenerate={onRegenerate}
       />
     );
   } else {

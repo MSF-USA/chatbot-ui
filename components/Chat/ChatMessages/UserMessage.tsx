@@ -1,7 +1,6 @@
 import {
   IconEdit,
   IconTrash,
-  IconUser,
 } from '@tabler/icons-react';
 import {
   Dispatch,
@@ -85,18 +84,14 @@ export const UserMessage: FC<UserMessageProps> = ({
   }, [message.content, messageContent]);
 
   return (
-    <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-      <div className="min-w-[40px] text-right font-bold">
-        <IconUser size={30} />
-      </div>
-
-      <div className="prose mt-[-2px] w-full dark:prose-invert">
-        <div className="flex w-full">
+    <div className="relative m-auto flex justify-end p-2 text-base md:max-w-2xl md:py-3 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
+      <div className="flex flex-col items-end max-w-[65%]">
+        <div className="inline-block bg-gray-600 dark:bg-gray-600 rounded-2xl px-4 py-2.5 text-white text-sm">
           {isEditing ? (
-            <div className="flex w-full flex-col">
+            <div className="flex flex-col">
               <textarea
                 ref={textareaRef}
-                className="w-full resize-none whitespace-pre-wrap border-none dark:bg-[#212121]"
+                className="w-full resize-none whitespace-pre-wrap border-none bg-transparent text-white"
                 value={localMessageContent}
                 onChange={(event) => setLocalMessageContent(event.target.value)}
                 onKeyDown={handlePressEnter}
@@ -133,70 +128,70 @@ export const UserMessage: FC<UserMessageProps> = ({
             </div>
           ) : (
             <MemoizedReactMarkdown
-              className="prose dark:prose-invert flex-1"
+              className="prose prose-sm prose-invert text-white"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeMathjax]}
               components={{
-                code({ node, inline, className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || '');
-                  return !inline ? (
-                    <CodeBlock
-                      language={(match && match[1]) || ''}
-                      value={String(children).replace(/\n$/, '')}
-                      {...props}
-                    />
-                  ) : (
-                    <code className={className} {...props}>
+              code({ node, inline, className, children, ...props }) {
+                const match = /language-(\w+)/.exec(className || '');
+                return !inline ? (
+                  <CodeBlock
+                    language={(match && match[1]) || ''}
+                    value={String(children).replace(/\n$/, '')}
+                    {...props}
+                  />
+                ) : (
+                  <code className={className} {...props}>
+                    {children}
+                  </code>
+                );
+              },
+              table({ children }) {
+                return (
+                  <div className="overflow-auto">
+                    <table className="border-collapse border border-black px-3 py-1 dark:border-white">
                       {children}
-                    </code>
-                  );
-                },
-                table({ children }) {
-                  return (
-                    <div className="overflow-auto">
-                      <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-                        {children}
-                      </table>
-                    </div>
-                  );
-                },
-                th({ children }) {
-                  return (
-                    <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-                      {children}
-                    </th>
-                  );
-                },
-                td({ children }) {
-                  return (
-                    <td className="break-words border border-black px-3 py-1 dark:border-white">
-                      {children}
-                    </td>
-                  );
-                },
-              }}
+                    </table>
+                  </div>
+                );
+              },
+              th({ children }) {
+                return (
+                  <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
+                    {children}
+                  </th>
+                );
+              },
+              td({ children }) {
+                return (
+                  <td className="break-words border border-black px-3 py-1 dark:border-white">
+                    {children}
+                  </td>
+                );
+              },
+            }}
             >
               {localMessageContent}
             </MemoizedReactMarkdown>
           )}
-
-          {!isEditing && (
-            <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
-              <button
-                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                onClick={toggleEditing}
-              >
-                <IconEdit size={20} />
-              </button>
-              <button
-                className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                onClick={handleDeleteMessage}
-              >
-                <IconTrash size={20} />
-              </button>
-            </div>
-          )}
         </div>
+
+        {!isEditing && (
+          <div className="flex gap-2 mt-1">
+            <button
+              className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+              onClick={toggleEditing}
+            >
+              <IconEdit size={18} />
+            </button>
+            <button
+              className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+              onClick={handleDeleteMessage}
+            >
+              <IconTrash size={18} />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

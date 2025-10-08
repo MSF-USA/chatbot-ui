@@ -12,7 +12,6 @@ import {
   RequestResult,
   ChatRequestResult,
 } from '@/types/chat';
-import { Plugin, PluginID } from '@/types/plugin';
 
 const isComplexContent = (
   content: (TextMessageContent | ImageMessageContent | FileMessageContent)[],
@@ -45,18 +44,6 @@ const createChatBody = (
   threadId: conversation.threadId,
 });
 
-const appendPluginKeys = (
-  chatBody: ChatBody,
-  pluginKeys: PluginKey[],
-) => ({
-  ...chatBody,
-  googleAPIKey: pluginKeys
-    .find((key) => key.pluginId === PluginID.GOOGLE_SEARCH)
-    ?.requiredKeys.find((key) => key.key === 'GOOGLE_API_KEY')?.value,
-  googleCSEId: pluginKeys
-    .find((key) => key.pluginId === PluginID.GOOGLE_SEARCH)
-    ?.requiredKeys.find((key) => key.key === 'GOOGLE_CSE_ID')?.value,
-});
 
 let checkStopInterval: NodeJS.Timeout | null = null;
 
@@ -119,11 +106,9 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
   }
 };
 export const makeRequest = async (
-  plugin: Plugin | null,
   setRequestStatusMessage: Dispatch<SetStateAction<string | null>>,
   updatedConversation: Conversation,
   apiKey: string,
-  pluginKeys: PluginKey[],
   systemPrompt: string,
   temperature: number,
   stream: boolean = true,
@@ -193,7 +178,7 @@ Document metadata: ${filename}
         updatedConversation.bot,
         false, // Don't stream intermediate steps
       );
-      const endpoint = getEndpoint(null);
+      const endpoint = getEndpoint();
       const requestBody = JSON.stringify(chatBody, null, 2);
 
       const { controller, response, body } = await sendRequest(
@@ -256,11 +241,9 @@ Provide a detailed comparison.
       stream, // Stream the final comparison response
     );
 
-    const endpoint = getEndpoint(plugin);
+    const endpoint = getEndpoint();
 
-    let requestBody = plugin
-      ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys))
-      : JSON.stringify(chatBody);
+    let requestBody = JSON.stringify(chatBody);
 
     setProgress(progressPercentage);
     const { controller, body, response } = await sendRequest(
@@ -307,11 +290,9 @@ Provide a detailed comparison.
       updatedConversation.bot,
       stream,
     );
-    const endpoint = getEndpoint(plugin);
+    const endpoint = getEndpoint();
 
-    let requestBody = plugin
-      ? JSON.stringify(appendPluginKeys(chatBody, pluginKeys))
-      : JSON.stringify(chatBody);
+    let requestBody = JSON.stringify(chatBody);
     const { controller, body, response } = await sendRequest(
       endpoint,
       requestBody,

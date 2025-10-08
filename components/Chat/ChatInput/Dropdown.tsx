@@ -6,6 +6,7 @@ import {
   IconLink,
   IconSearch,
   IconX,
+  IconFile,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -176,6 +177,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const t = useTranslations();
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Define menu items
   const menuItems: MenuItem[] = [
@@ -209,6 +211,17 @@ const Dropdown: React.FC<DropdownProps> = ({
       onClick: () => {
         closeDropdown();
         chatInputImageRef.current?.openFilePicker();
+      },
+      category: 'media',
+    },
+    {
+      id: 'file',
+      icon: <IconFile size={18} className="mr-3 text-green-500" />,
+      label: 'Upload File',
+      tooltip: 'Upload File',
+      onClick: () => {
+        closeDropdown();
+        fileInputRef.current?.click();
       },
       category: 'media',
     },
@@ -514,6 +527,24 @@ const Dropdown: React.FC<DropdownProps> = ({
         setParentModalIsOpen={setIsImageOpen}
         simulateClick={false}
         labelText=""
+      />
+
+      {/* Hidden file input for file uploads */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        onChange={(e) =>
+          onFileUpload(
+            e,
+            setSubmitType,
+            setFilePreviews,
+            setFileFieldValue,
+            setImageFieldValue,
+            setUploadProgress,
+          )
+        }
+        className="hidden"
+        multiple
       />
     </div>
   );

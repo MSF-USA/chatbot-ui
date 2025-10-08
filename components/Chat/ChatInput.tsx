@@ -22,7 +22,6 @@ import {
   TextMessageContent,
   getChatMessageContent,
 } from '@/types/chat';
-import { Plugin } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
@@ -46,7 +45,7 @@ import { PromptList } from './PromptList';
 import { VariableModal } from './VariableModal';
 
 interface Props {
-  onSend: (message: Message, plugin: Plugin | null) => void;
+  onSend: (message: Message) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -91,8 +90,6 @@ export const ChatInput = ({
   const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [showPluginSelect, setShowPluginSelect] = useState<boolean>(false);
-  const [plugin, setPlugin] = useState<Plugin | null>(null);
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
   const [placeholderText, setPlaceholderText] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
@@ -172,18 +169,14 @@ export const ChatInput = ({
       return;
     }
 
-    onSend(
-      {
-        role: 'user',
-        content,
-        messageType: submitType ?? 'text',
-      },
-      plugin,
-    );
+    onSend({
+      role: 'user',
+      content,
+      messageType: submitType ?? 'text',
+    });
     setTextFieldValue('');
     setImageFieldValue(null);
     setFileFieldValue(null);
-    setPlugin(null);
     setSubmitType('text');
 
     if (filePreviews.length > 0) {
@@ -242,9 +235,6 @@ export const ChatInput = ({
       if (filePreviews.length > 0) {
         setFilePreviews([]);
       }
-    } else if (event.key === '/' && event.metaKey && submitType === 'text') {
-      event.preventDefault();
-      setShowPluginSelect(!showPluginSelect);
     }
   };
 
@@ -389,12 +379,7 @@ export const ChatInput = ({
   }, []);
 
   useEffect(() => {
-    const isMobile = window.innerWidth < 600;
-    const fullPlaceholder = t('chatInputPlaceholderFull') || '';
-    const trimmedPlaceholder = isMobile
-      ? t('chatInputPlaceholder')
-      : fullPlaceholder;
-    setPlaceholderText(trimmedPlaceholder);
+    setPlaceholderText('Ask Anything');
   }, [t]);
 
   const handleFiles = (files: FileList | File[]) => {
@@ -456,7 +441,7 @@ export const ChatInput = ({
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
-      className={`bg-white dark:bg-[#212121] border-t border-gray-200 dark:border-gray-700 dark:border-opacity-50 transition-colors ${isDragOver ? 'bg-blue-50 dark:bg-blue-900/30 border-blue-300 dark:border-blue-700' : ''}`}
+      className={`bg-white dark:bg-[#212121] transition-colors ${isDragOver ? 'bg-blue-50 dark:bg-blue-900/30 border-t border-blue-300 dark:border-blue-700' : ''}`}
     >
       {isDragOver && (
         <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 dark:bg-blue-900/30 backdrop-blur-sm z-10 pointer-events-none">
@@ -482,31 +467,9 @@ export const ChatInput = ({
         </div>
       )}
 
-      <div className={'flex justify-center'}>
-        {!isStreaming &&
-          !filePreviews.length &&
-          selectedConversation &&
-          selectedConversation.messages.length > 0 && (
-            <button
-              className="max-h-52 overflow-y-auto flex items-center gap-3 mb-1 rounded border border-neutral-200 bg-white py-2 px-4 text-black hover:opacity-50 dark:border-neutral-600 dark:bg-[#212121] dark:text-white md:mb-1 md:mt-2"
-              onClick={onRegenerate}
-            >
-              <IconRepeat size={16} /> {t('Regenerate response')}
-            </button>
-          )}
-      </div>
 
-      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121]">
+      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121] pt-32">
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
-          <ChatInputFile
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setImageFieldValue={setImageFieldValue}
-            setUploadProgress={setUploadProgress}
-          />
-
           <ChatInputImageCapture
             ref={cameraRef}
             setSubmitType={setSubmitType}
@@ -518,33 +481,28 @@ export const ChatInput = ({
             hasCameraSupport={true}
           />
 
-          <ChatDropdown
-            onFileUpload={onFileUpload}
-            setSubmitType={setSubmitType}
-            setFilePreviews={setFilePreviews}
-            setFileFieldValue={setFileFieldValue}
-            setImageFieldValue={setImageFieldValue}
-            setUploadProgress={setUploadProgress}
-            setTextFieldValue={setTextFieldValue}
-            handleSend={handleSend}
-            textFieldValue={textFieldValue}
-            onCameraClick={() => {
-              cameraRef.current?.triggerCamera();
-            }}
-          />
-
-          <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-md border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-gray-900/50 dark:bg-[#40414F] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)] sm:mx-4">
-            <div className="absolute left-2 top-3">
-              <ChatInputVoiceCapture
+          <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-3xl border-0 bg-white dark:bg-[#40414F] dark:text-white sm:mx-4 focus-within:outline-none">
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+              <ChatDropdown
+                onFileUpload={onFileUpload}
+                setSubmitType={setSubmitType}
+                setFilePreviews={setFilePreviews}
+                setFileFieldValue={setFileFieldValue}
+                setImageFieldValue={setImageFieldValue}
+                setUploadProgress={setUploadProgress}
                 setTextFieldValue={setTextFieldValue}
-                setIsTranscribing={setIsTranscribing}
+                handleSend={handleSend}
+                textFieldValue={textFieldValue}
+                onCameraClick={() => {
+                  cameraRef.current?.triggerCamera();
+                }}
               />
             </div>
 
             <textarea
               ref={textareaRef}
               className={
-                'm-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-8 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 lg:' +
+                'm-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-24 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 focus:outline-none focus:ring-0 lg:' +
                 (isTranscribing ? ' animate-pulse' : '')
               }
               style={{
@@ -571,7 +529,11 @@ export const ChatInput = ({
               disabled={preventSubmission()}
             />
 
-            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+            <div className="absolute right-1.5 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
+              <ChatInputVoiceCapture
+                setTextFieldValue={setTextFieldValue}
+                setIsTranscribing={setIsTranscribing}
+              />
               <ChatInputSubmitButton
                 isStreaming={isStreaming}
                 isTranscribing={isTranscribing}
@@ -615,7 +577,7 @@ export const ChatInput = ({
           )}
         </div>
       </div>
-      <div className="px-3 pt-2 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-3 md:pb-6">
+      <div className="px-3 pt-1 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-1 md:pb-3">
         {t('chatDisclaimer')}
       </div>
     </div>

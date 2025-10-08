@@ -348,21 +348,11 @@ export default class ChatService {
           
           try {
             if (threadId) {
-              // For existing thread, we need to add all messages that aren't already in the thread
+              // For existing thread, just reuse it
+              // The thread already has all previous messages persisted
               thread = { id: threadId };
-              
-              // Add all previous messages to the thread (Azure AI Agents needs full context)
-              for (let i = 0; i < messages.length - 1; i++) {
-                const msg = messages[i];
-                if (msg.role === 'user' || msg.role === 'assistant') {
-                  await client.messages.create(
-                    thread.id,
-                    msg.role as 'user' | 'assistant',
-                    String(msg.content)
-                  );
-                }
-              }
             } else {
+              // Create a new thread for the first message
               thread = await client.threads.create();
               isNewThread = true;
             }
@@ -672,7 +662,10 @@ export default class ChatService {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
 
-    const token = (await getToken({ req })) as JWT | null;
+    const token = (await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET
+    })) as JWT | null;
     if (!token) throw new Error('Could not pull token!');
     const session: Session | null = await auth();
     if (!session) throw new Error('Could not pull session!');

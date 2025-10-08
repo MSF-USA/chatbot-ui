@@ -2,10 +2,10 @@ import {
   IconCheck,
   IconCopy,
   IconLoader2,
-  IconRobot,
   IconSettings,
   IconVolume,
   IconVolumeOff,
+  IconRefresh,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -39,6 +39,7 @@ interface AssistantMessageProps {
   messageIndex: number;
   selectedConversation: Conversation;
   messageCopied: boolean;
+  onRegenerate?: () => void;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
@@ -49,6 +50,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageIndex,
   selectedConversation,
   messageCopied,
+  onRegenerate,
 }) => {
   const [displayContent, setDisplayContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
@@ -250,11 +252,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
-  const StreamingIndicator = () => (
-    <span className="animate-pulse cursor-default inline-flex items-center ml-1 text-gray-500">
-      <IconLoader2 size={16} className="animate-spin mr-1" />
-    </span>
-  );
 
   // Custom components for markdown processing
   const customMarkdownComponents = {
@@ -320,12 +317,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   };
 
   return (
-    <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-      <div className="min-w-[40px] text-right font-bold">
-        <IconRobot size={30} />
-      </div>
-
-      <div className="prose mt-[-2px] w-full dark:prose-invert">
+    <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
+      <div className="prose mt-[-2px] w-full dark:prose-invert max-w-none">
         {loadingMessage && (
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
             {loadingMessage}
@@ -344,82 +337,53 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             >
               {contentToDisplay}
             </CitationMarkdown>
-            {/* Add streaming indicator at the end if content is streaming */}
-            {messageIsStreaming && contentToDisplay.length > 0 && (
-              <StreamingIndicator />
-            )}
           </div>
 
-          {/* Fixed action buttons at the bottom of the message */}
-          <div className="flex justify-end items-center mt-3 sm:mt-4">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              {/* Copy button */}
-              <div className="relative group">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    messageCopied 
-                      ? 'bg-green-500 text-white dark:bg-green-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={copyOnClick}
-                  aria-label={messageCopied ? "Copied" : "Copy message"}
-                >
-                  {messageCopied ? (
-                    <IconCheck size={18} />
-                  ) : (
-                    <IconCopy size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {messageCopied ? "Copied!" : "Copy message"}
-                </span>
-              </div>
+          {/* Action buttons at the bottom of the message */}
+          <div className="flex items-center gap-2 mt-2">
+            {/* Copy button */}
+            <button
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+              onClick={copyOnClick}
+              aria-label={messageCopied ? "Copied" : "Copy message"}
+            >
+              {messageCopied ? (
+                <IconCheck size={18} />
+              ) : (
+                <IconCopy size={18} />
+              )}
+            </button>
 
-              {/* Streaming Settings button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    showStreamingSettings
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={() => setShowStreamingSettings(!showStreamingSettings)}
-                  aria-label="Text streaming settings"
-                >
-                  <IconSettings size={18} className={showStreamingSettings ? 'animate-spin-slow' : ''} />
-                </button>
-                <span className="sr-only">
-                  Streaming settings
-                </span>
-              </div>
+            {/* Regenerate button - only show on last assistant message */}
+            {onRegenerate && !messageIsStreaming && messageIndex === selectedConversation.messages.length - 1 && (
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                onClick={onRegenerate}
+                aria-label="Regenerate response"
+              >
+                <IconRefresh size={18} />
+              </button>
+            )}
 
-              {/* Listen button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    audioUrl
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : isGeneratingAudio
-                        ? 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={audioUrl ? handleCloseAudio : handleTTS}
-                  disabled={isGeneratingAudio || messageIsStreaming}
-                  aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                >
-                  {isGeneratingAudio ? (
-                    <IconLoader2 size={18} className="animate-spin" />
-                  ) : audioUrl ? (
-                    <IconVolumeOff size={18} className="animate-pulse" />
-                  ) : (
-                    <IconVolume size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                </span>
-              </div>
-            </div>
+            {/* Listen button */}
+            <button
+              className={`transition-colors ${
+                isGeneratingAudio
+                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+              onClick={audioUrl ? handleCloseAudio : handleTTS}
+              disabled={isGeneratingAudio || messageIsStreaming}
+              aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
+            >
+              {isGeneratingAudio ? (
+                <IconLoader2 size={18} className="animate-spin" />
+              ) : audioUrl ? (
+                <IconVolumeOff size={18} />
+              ) : (
+                <IconVolume size={18} />
+              )}
+            </button>
           </div>
 
           {/* Streaming Settings Modal */}

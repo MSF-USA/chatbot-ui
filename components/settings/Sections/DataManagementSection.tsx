@@ -5,8 +5,9 @@ import { useTranslations } from 'next-intl';
 
 import { getStorageUsage } from '@/utils/app/storageMonitor';
 import { formatBytes } from '@/utils/app/storageUtils';
+import { useConversations } from '@/lib/hooks/conversation/useConversations';
 
-import { SidebarButton } from '../../Sidebar/SidebarButton';
+import { SidebarButton } from '../../sidebar/SidebarButton';
 import { ClearConversations } from '../ClearConversations';
 import { Import } from '../Import';
 
@@ -17,7 +18,6 @@ interface StorageData {
 }
 
 interface DataManagementSectionProps {
-  homeState: any; // Type should be refined based on actual HomeContext state
   handleClearConversations: () => void;
   handleImportConversations: (data: any) => void;
   handleExportData: () => void;
@@ -27,7 +27,6 @@ interface DataManagementSectionProps {
 }
 
 export const DataManagementSection: FC<DataManagementSectionProps> = ({
-  homeState,
   handleClearConversations,
   handleImportConversations,
   handleExportData,
@@ -35,6 +34,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
   onClose,
   checkStorage,
 }) => {
+  const { conversations } = useConversations();
   const t = useTranslations();
   const [storageData, setStorageData] = useState<StorageData>(() =>
     getStorageUsage(),
@@ -42,9 +42,10 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
 
   // Update storage data when component mounts
   useEffect(() => {
-    setStorageData(getStorageUsage());
+    const data = getStorageUsage();
+    setStorageData(data);
     checkStorage();
-  }, [checkStorage]);
+  }, []); // Only run on mount
 
   return (
     <div className="p-4">
@@ -108,7 +109,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
             {t('Data Actions')}
           </h3>
           <div className="flex flex-col space-y-2">
-            {homeState.conversations.length > 0 ? (
+            {conversations && conversations.length > 0 ? (
               <ClearConversations
                 onClearConversations={() => {
                   handleClearConversations();

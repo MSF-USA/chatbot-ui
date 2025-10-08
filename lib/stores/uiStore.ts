@@ -30,7 +30,7 @@ interface UIStore {
 
 export const useUIStore = create<UIStore>((set, get) => ({
   // Initial state
-  showChatbar: true,
+  showChatbar: false,
   showPromptbar: true,
   theme: 'dark',
   isSettingsOpen: false,
@@ -63,7 +63,7 @@ export const useUIStore = create<UIStore>((set, get) => ({
 
   resetUI: () =>
     set({
-      showChatbar: true,
+      showChatbar: false,
       showPromptbar: true,
       theme: 'dark',
       isSettingsOpen: false,

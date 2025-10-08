@@ -16,11 +16,14 @@ import {
   IconChevronDown,
   IconCheck,
   IconDots,
+  IconMenu2,
 } from '@tabler/icons-react';
+import { PiSidebarSimple } from 'react-icons/pi';
 import { useUI } from '@/lib/hooks/ui/useUI';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { Conversation } from '@/types/chat';
+import { Prompt } from '@/types/prompt';
 import { v4 as uuidv4 } from 'uuid';
 
 enum Tab {
@@ -50,8 +53,15 @@ function ConversationItem({
 }) {
   const [showMenu, setShowMenu] = useState(false);
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('conversationId', conversation.id);
+  };
+
   return (
     <div
+      draggable
+      onDragStart={handleDragStart}
       className={`group flex items-center gap-2 rounded p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
         selectedConversation?.id === conversation.id
           ? 'bg-neutral-100 dark:bg-neutral-800'
@@ -144,23 +154,16 @@ export function Sidebar() {
     updateFolder,
     deleteFolder,
   } = useConversations();
-  const { defaultModelId, models, temperature, systemPrompt, prompts } = useSettings();
+  const { defaultModelId, models, temperature, systemPrompt, prompts, addPrompt, updatePrompt, deletePrompt } = useSettings();
 
   const [activeTab, setActiveTab] = useState<Tab>(Tab.CONVERSATIONS);
   const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(new Set());
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editingFolderName, setEditingFolderName] = useState('');
-
-  if (!showChatbar) {
-    return (
-      <button
-        className="fixed left-0 top-1/2 z-50 h-12 w-8 -translate-y-1/2 rounded-r-md border-r border-t border-b border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100 dark:border-neutral-700 dark:bg-[#171717] dark:text-neutral-200 dark:hover:bg-neutral-800"
-        onClick={toggleChatbar}
-      >
-        <IconChevronRight size={18} className="ml-1" />
-      </button>
-    );
-  }
+  const [editingPromptId, setEditingPromptId] = useState<string | null>(null);
+  const [editingPromptName, setEditingPromptName] = useState('');
+  const [editingPromptContent, setEditingPromptContent] = useState('');
+  const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
 
   const handleNewConversation = () => {
     const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
@@ -177,6 +180,99 @@ export function Sidebar() {
     };
 
     addConversation(newConversation);
+  };
+
+  const getInitials = (name: string) => {
+    const cleanName = name.replace(/\(.*?\)/g, '').replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ').trim();
+    const names = cleanName.split(' ');
+    const firstInitial = names[0] ? names[0][0].toUpperCase() : '';
+    const lastInitial = names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
+    return firstInitial + lastInitial;
+  };
+
+  if (!showChatbar) {
+    return (
+      <div className="fixed left-0 top-0 z-50 h-full w-14 flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out">
+        {/* Top section with icons */}
+        <div className="flex flex-col items-center pt-4 space-y-2">
+          {/* Expand sidebar button */}
+          <button
+            className="p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+            onClick={toggleChatbar}
+            title="Open sidebar"
+          >
+            <PiSidebarSimple size={24} />
+          </button>
+
+          {/* New conversation button */}
+          <button
+            className="p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
+            onClick={handleNewConversation}
+            title={t('New conversation')}
+          >
+            <IconPlus size={24} />
+          </button>
+        </div>
+
+        {/* Bottom section with settings */}
+        <div className="mt-auto pb-4 flex flex-col items-center">
+          <button
+            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+            onClick={() => setIsSettingsOpen(true)}
+            title={t('Settings')}
+          >
+            {session?.user?.displayName ? (
+              <div
+                className="rounded-full bg-[#D7211E] h-8 w-8 flex items-center justify-center text-white font-semibold"
+                style={{ fontSize: '12px' }}
+              >
+                {getInitials(session.user.displayName)}
+              </div>
+            ) : (
+              <IconSettings size={24} className="text-neutral-700 dark:text-neutral-200" />
+            )}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const handleNewPrompt = () => {
+    const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
+    if (!defaultModel) return;
+
+    const newPrompt: Prompt = {
+      id: uuidv4(),
+      name: t('New Prompt'),
+      description: '',
+      content: '',
+      model: defaultModel,
+      folderId: null,
+    };
+
+    addPrompt(newPrompt);
+    setEditingPromptId(newPrompt.id);
+    setEditingPromptName(newPrompt.name);
+    setEditingPromptContent('');
+  };
+
+  const handleDeletePrompt = (promptId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm(t('Are you sure you want to delete this prompt?'))) {
+      deletePrompt(promptId);
+    }
+  };
+
+  const handleSavePrompt = () => {
+    if (editingPromptId && editingPromptName.trim()) {
+      updatePrompt(editingPromptId, {
+        name: editingPromptName.trim(),
+        content: editingPromptContent,
+      });
+    }
+    setEditingPromptId(null);
+    setEditingPromptName('');
+    setEditingPromptContent('');
   };
 
   const handleSelectConversation = (conversationId: string) => {
@@ -237,12 +333,26 @@ export function Sidebar() {
     updateConversation(conversationId, { folderId });
   };
 
-  const getInitials = (name: string) => {
-    const cleanName = name.replace(/\(.*?\)/g, '').replace(/[^a-zA-Z\s]/g, '').replace(/\s+/g, ' ').trim();
-    const names = cleanName.split(' ');
-    const firstInitial = names[0] ? names[0][0].toUpperCase() : '';
-    const lastInitial = names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
-    return firstInitial + lastInitial;
+  const handleDrop = (e: React.DragEvent, folderId: string | null) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const conversationId = e.dataTransfer.getData('conversationId');
+    if (conversationId) {
+      handleMoveToFolder(conversationId, folderId);
+    }
+    setDragOverFolderId(null);
+  };
+
+  const handleDragOver = (e: React.DragEvent, folderId: string | null) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverFolderId(folderId);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverFolderId(null);
   };
 
   const displayConversations = searchTerm ? filteredConversations : conversations;
@@ -257,9 +367,9 @@ export function Sidebar() {
   }));
 
   return (
-    <div className="relative flex h-full w-[260px] flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717]">
+    <div className="fixed left-0 top-0 z-50 h-full w-[260px] flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out overflow-hidden">
       {/* Tabs */}
-      <div className="flex border-b border-neutral-300 dark:border-neutral-700">
+      <div className="flex border-b border-neutral-300 dark:border-neutral-700 min-w-[260px]">
         <button
           className={`flex-1 p-3 text-sm font-semibold text-black dark:text-white ${
             activeTab === Tab.CONVERSATIONS
@@ -283,17 +393,17 @@ export function Sidebar() {
         <button
           className="p-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-black dark:text-white"
           onClick={toggleChatbar}
-          title={t('Close sidebar')}
+          title="Close sidebar"
         >
-          <IconX size={18} />
+          <PiSidebarSimple size={18} />
         </button>
       </div>
 
       {/* Header with new button */}
-      <div className="flex items-center justify-between p-3 border-b border-neutral-300 dark:border-neutral-700">
+      <div className="flex items-center justify-between p-3 border-b border-neutral-300 dark:border-neutral-700 min-w-[260px]">
         <button
           className="flex items-center gap-2 rounded px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-          onClick={handleNewConversation}
+          onClick={activeTab === Tab.CONVERSATIONS ? handleNewConversation : handleNewPrompt}
         >
           <IconPlus size={18} className="text-neutral-900 dark:text-white" />
           <span>{activeTab === Tab.CONVERSATIONS ? t('New conversation') : t('New prompt')}</span>
@@ -310,7 +420,7 @@ export function Sidebar() {
       </div>
 
       {/* Search */}
-      <div className="p-3">
+      <div className="p-3 min-w-[260px]">
         <input
           type="text"
           placeholder={t('Search conversations_ellipsis')}
@@ -321,7 +431,7 @@ export function Sidebar() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto min-w-[260px]">
         {activeTab === Tab.CONVERSATIONS ? (
           displayConversations.length === 0 ? (
             <div className="p-4 text-center text-sm text-neutral-500">
@@ -333,9 +443,17 @@ export function Sidebar() {
             <div className="space-y-1 p-2">
               {/* Render folders */}
               {folderGroups.map(({ folder, conversations: folderConversations }) => (
-                <div key={folder.id} className="mb-2">
+                <div
+                  key={folder.id}
+                  className="mb-2"
+                  onDrop={(e) => handleDrop(e, folder.id)}
+                  onDragOver={(e) => handleDragOver(e, folder.id)}
+                  onDragLeave={handleDragLeave}
+                >
                   {/* Folder header */}
-                  <div className="group flex items-center gap-2 rounded p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+                  <div className={`group flex items-center gap-2 rounded p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
+                    dragOverFolderId === folder.id ? 'bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400' : ''
+                  }`}>
                     <button
                       onClick={() => toggleFolder(folder.id)}
                       className="shrink-0"
@@ -413,7 +531,12 @@ export function Sidebar() {
 
               {/* Conversations without folder */}
               {conversationsWithoutFolder.length > 0 && (
-                <div>
+                <div
+                  onDrop={(e) => handleDrop(e, null)}
+                  onDragOver={(e) => handleDragOver(e, null)}
+                  onDragLeave={handleDragLeave}
+                  className={dragOverFolderId === null ? 'bg-blue-50 dark:bg-blue-900/20 rounded' : ''}
+                >
                   {conversationsWithoutFolder.map((conversation) => (
                     <ConversationItem
                       key={conversation.id}
@@ -430,15 +553,96 @@ export function Sidebar() {
               )}
             </div>
           )
-        ) : (
+        ) : prompts.length === 0 ? (
           <div className="p-4 text-center text-sm text-neutral-500">
-            {prompts.length === 0 ? t('No prompts yet') : 'Prompts coming soon'}
+            {t('No prompts yet')}
+          </div>
+        ) : (
+          <div className="space-y-1 p-2">
+            {prompts.map((prompt) => (
+              <div
+                key={prompt.id}
+                className="group flex items-start gap-2 rounded p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800"
+              >
+                <IconMessage size={16} className="shrink-0 mt-1 text-neutral-600 dark:text-neutral-400" />
+                {editingPromptId === prompt.id ? (
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      value={editingPromptName}
+                      onChange={(e) => setEditingPromptName(e.target.value)}
+                      placeholder={t('Prompt name')}
+                      className="w-full rounded border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100"
+                    />
+                    <textarea
+                      value={editingPromptContent}
+                      onChange={(e) => setEditingPromptContent(e.target.value)}
+                      placeholder={t('Prompt content')}
+                      rows={3}
+                      className="w-full rounded border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSavePrompt}
+                        className="px-3 py-1 text-xs rounded bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+                      >
+                        {t('Save')}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setEditingPromptId(null);
+                          setEditingPromptName('');
+                          setEditingPromptContent('');
+                        }}
+                        className="px-3 py-1 text-xs rounded border border-neutral-300 text-neutral-900 hover:bg-neutral-100 dark:border-neutral-600 dark:text-neutral-100 dark:hover:bg-neutral-800"
+                      >
+                        {t('Cancel')}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100 truncate">
+                        {prompt.name}
+                      </div>
+                      {prompt.content && (
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400 truncate mt-0.5">
+                          {prompt.content}
+                        </div>
+                      )}
+                    </div>
+                    <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
+                      <button
+                        className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditingPromptId(prompt.id);
+                          setEditingPromptName(prompt.name);
+                          setEditingPromptContent(prompt.content);
+                        }}
+                        title={t('Edit')}
+                      >
+                        <IconEdit size={14} className="text-neutral-600 dark:text-neutral-400" />
+                      </button>
+                      <button
+                        className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                        onClick={(e) => handleDeletePrompt(prompt.id, e)}
+                        title={t('Delete')}
+                      >
+                        <IconTrash size={14} className="text-neutral-600 dark:text-neutral-400" />
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>
 
       {/* Footer with user initials/settings */}
-      <div className="border-t border-neutral-300 dark:border-neutral-700">
+      <div className="border-t border-neutral-300 dark:border-neutral-700 min-w-[260px]">
         <button
           className="flex w-full items-center gap-3 p-3 text-sm text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
           onClick={() => setIsSettingsOpen(true)}

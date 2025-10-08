@@ -208,23 +208,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     defaultModelId
   });
 
-  // If no conversation exists, create one
-  useEffect(() => {
-    if (!selectedConversation && conversations.length === 0 && models.length > 0) {
-      const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
-      const newConversation: Conversation = {
-        id: uuidv4(),
-        name: 'New Conversation',
-        messages: [],
-        model: defaultModel,
-        prompt: systemPrompt || '',
-        temperature: defaultTemp || 0.5,
-        folderId: null,
-      };
-      console.log('ModelSelect creating initial conversation:', newConversation.id);
-      addConversation(newConversation);
-    }
-  }, [selectedConversation, conversations, models, defaultModelId, systemPrompt, defaultTemp, addConversation]);
+  // This component should not create conversations - that's handled by Chat.tsx
+  // We just need to ensure models are loaded before allowing selection
 
   const handleModelSelect = (model: OpenAIModel) => {
     if (!selectedConversation) {

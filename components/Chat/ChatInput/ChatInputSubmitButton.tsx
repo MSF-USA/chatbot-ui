@@ -2,7 +2,7 @@ import {IconLoader2, IconPlayerStop, IconSend} from "@tabler/icons-react";
 import {FC} from "react";
 
 interface ChatInputSubmitButtonProps {
-  messageIsStreaming: boolean;
+  isStreaming: boolean;
   isTranscribing: boolean;
   handleSend: () => void;
   handleStopConversation: () => void;
@@ -11,7 +11,7 @@ interface ChatInputSubmitButtonProps {
 
 const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
   {
-    messageIsStreaming,
+    isStreaming,
     handleSend,
     handleStopConversation,
     isTranscribing,
@@ -21,14 +21,14 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
   return (
     <>
       {preventSubmission() ? (
-        messageIsStreaming ? (
+        isStreaming ? (
           <button
-            className="flex items-center justify-center w-8 h-8 rounded-md 
-                      bg-gray-200 text-gray-700 hover:bg-gray-300 
+            className="flex items-center justify-center w-8 h-8 rounded-md
+                      bg-gray-200 text-gray-700 hover:bg-gray-300
                       dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600
                       transition-colors duration-200"
             onClick={handleStopConversation}
-            disabled={!messageIsStreaming}
+            disabled={!isStreaming}
             aria-label="Stop generation"
           >
             <IconPlayerStop size={16}/>
@@ -39,14 +39,14 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
           </div>
         )
       ) : (
-        <button 
+        <button
           onClick={handleSend}
-          className="flex items-center justify-center w-8 h-8 rounded-md
-                    hover:bg-gray-100 dark:hover:bg-gray-700
+          className="flex items-center justify-center w-9 h-9 rounded-full
+                    bg-gray-300 text-black hover:bg-gray-400 dark:bg-[#171717] dark:text-white dark:hover:bg-[#252525]
                     transition-colors duration-200"
           aria-label="Send message"
         >
-          <IconSend size={18}/>
+          <IconSend size={18} className="ml-0.5" />
         </button>
       )}
     </>

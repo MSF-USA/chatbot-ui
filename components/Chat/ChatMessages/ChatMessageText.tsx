@@ -24,6 +24,7 @@ interface ChatMessageTextProps {
   messageCopied: boolean;
   onEdit?: (message: Message) => void;
   onQuestionClick?: (question: string) => void;
+  onRegenerate?: () => void;
 }
 
 export const ChatMessageText: FC<ChatMessageTextProps> = ({
@@ -46,16 +47,13 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
   messageCopied,
   onEdit,
   onQuestionClick,
+  onRegenerate,
 }) => {
   const { role, content } = message;
 
   return (
     <div
-      className={`group md:px-4 ${
-        role === 'assistant'
-          ? 'border-b border-black/10 bg-gray-50 text-gray-800 dark:border-gray-900/50 dark:bg-[#2f2f2f] dark:text-gray-100'
-          : 'border-b border-black/10 bg-white text-gray-800 dark:border-gray-900/50 dark:bg-[#212121] dark:text-gray-100'
-      }`}
+      className="group md:px-4 text-gray-800 dark:text-gray-100"
       style={{ overflowWrap: 'anywhere' }}
     >
       {role === 'assistant' ? (
@@ -67,6 +65,7 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
           messageCopied={messageCopied}
+          onRegenerate={onRegenerate}
         />
       ) : (
         <UserMessage

@@ -19,7 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 export function Chat() {
   const { selectedConversation, updateConversation, conversations, addConversation, selectConversation } = useConversations();
   const { isStreaming, streamingContent, error, sendMessage, citations } = useChat();
-  const { isSettingsOpen, setIsSettingsOpen, toggleChatbar } = useUI();
+  const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } = useUI();
   const { models, defaultModelId, systemPrompt, temperature } = useSettings();
 
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
@@ -44,7 +44,11 @@ export function Chat() {
 
   // Create default conversation if none exists
   useEffect(() => {
-    if (conversations.length === 0 && models.length > 0) {
+    // Wait for models to load
+    if (models.length === 0) return;
+
+    // If no conversations exist, create one
+    if (conversations.length === 0) {
       const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
       const newConversation = {
         id: uuidv4(),
@@ -56,10 +60,11 @@ export function Chat() {
         folderId: null,
       };
       addConversation(newConversation);
-    } else if (!selectedConversation && conversations.length > 0) {
+    } else if (!selectedConversation) {
+      // If conversations exist but none is selected, select the first one
       selectConversation(conversations[0].id);
     }
-  }, [conversations, models, selectedConversation, defaultModelId, systemPrompt, temperature, addConversation, selectConversation]);
+  }, [conversations.length, models.length, selectedConversation, defaultModelId, systemPrompt, temperature, addConversation, selectConversation, models, conversations]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -112,14 +117,15 @@ export function Chat() {
 
     // Add user message to conversation
     const updatedMessages = [...selectedConversation.messages, message];
+
+    // Update just the messages field
+    updateConversation(selectedConversation.id, { messages: updatedMessages });
+
+    // Send to API with updated conversation (includes user message)
     const updatedConversation = {
       ...selectedConversation,
       messages: updatedMessages,
     };
-
-    updateConversation(selectedConversation.id, updatedConversation);
-
-    // Send to API with updated conversation (includes user message)
     sendMessage?.(message, updatedConversation);
   }, [selectedConversation, updateConversation, sendMessage]);
 
@@ -160,7 +166,7 @@ export function Chat() {
   const hasMessages = messages.length > 0 || isStreaming;
 
   return (
-    <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-white dark:bg-[#212121]">
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-white dark:bg-[#212121] transition-all">
       {/* Header */}
       <ChatTopbar
         botInfo={null}
@@ -175,6 +181,7 @@ export function Chat() {
         onClearAll={handleClearAll}
         hasMessages={hasMessages}
         agentEnabled={selectedConversation?.model?.agentEnabled || false}
+        showChatbar={showChatbar}
       />
 
       {/* Messages */}
@@ -192,20 +199,35 @@ export function Chat() {
                 message={message}
                 messageIndex={index}
                 onEdit={handleEditMessage}
+                onRegenerate={handleRegenerate}
               />
             ))}
-            {/* Show streaming message */}
-            {isStreaming && streamingContent && (
-              <MemoizedChatMessage
-                message={{
-                  role: 'assistant',
-                  content: streamingContent,
-                  messageType: 'text',
-                  citations,
-                }}
-                messageIndex={messages.length}
-                onEdit={() => {}}
-              />
+            {/* Show streaming message or loading indicator */}
+            {isStreaming && (
+              <>
+                {streamingContent ? (
+                  <MemoizedChatMessage
+                    message={{
+                      role: 'assistant',
+                      content: streamingContent,
+                      messageType: 'text',
+                      citations,
+                    }}
+                    messageIndex={messages.length}
+                    onEdit={() => {}}
+                  />
+                ) : (
+                  <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
             )}
             <div ref={messagesEndRef} />
           </div>
@@ -235,7 +257,11 @@ export function Chat() {
 
       {/* Model Selection Modal */}
       {isModelSelectOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setIsModelSelectOpen(false)}>
+        <div
+          className="fixed top-0 right-0 bottom-0 z-[100] flex items-center justify-center bg-black/50 transition-all duration-300"
+          style={{ left: showChatbar ? '260px' : '56px' }}
+          onClick={() => setIsModelSelectOpen(false)}
+        >
           <div
             className="max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4 rounded-lg bg-white dark:bg-[#212121] p-6 shadow-xl"
             onClick={(e) => e.stopPropagation()}

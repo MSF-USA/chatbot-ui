@@ -14,7 +14,7 @@ export function useUI() {
   // Load from localStorage on mount
   useEffect(() => {
     const showChatbar =
-      LocalStorageService.get<boolean>(StorageKeys.SHOW_CHATBAR) ?? true;
+      LocalStorageService.get<boolean>(StorageKeys.SHOW_CHATBAR) ?? false;
     const showPromptbar =
       LocalStorageService.get<boolean>(StorageKeys.SHOW_PROMPTBAR) ?? true;
     const theme =
