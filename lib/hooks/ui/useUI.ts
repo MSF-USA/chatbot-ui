@@ -21,7 +21,7 @@ export function useUI() {
 
   // Persist showPromptbar
   useEffect(() => {
-    LocalStorageService.set(StorageKeys.SHOW_PROMPTBAR, store.showPromptbar);
+    LocalStorageService.set(StorageKeys.SHOW_PROMPT_BAR, store.showPromptbar);
   }, [store.showPromptbar]);
 
   // Persist theme and update document

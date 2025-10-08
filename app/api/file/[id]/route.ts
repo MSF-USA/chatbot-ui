@@ -70,7 +70,7 @@ export async function GET(
         session.user
       );
       const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.BLOB) as Promise<Buffer>);
-      return new NextResponse(Buffer.from(blob));
+      return new NextResponse(new Uint8Array(blob));
     } else {
       throw new Error(`Invalid fileType requested: ${fileType}`);
     }

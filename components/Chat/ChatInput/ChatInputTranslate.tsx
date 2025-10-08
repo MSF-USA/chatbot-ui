@@ -3,7 +3,7 @@ import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "reac
 import { IconLanguage } from "@tabler/icons-react";
 import toast from "react-hot-toast";
 import BetaBadge from "@/components/Beta/Badge";
-import {useTranslation} from "next-i18next";
+import { useTranslations } from "next-intl";
 import Modal from "@/components/UI/Modal";
 
 interface ChatInputTranslateProps {

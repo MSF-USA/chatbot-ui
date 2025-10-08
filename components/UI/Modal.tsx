@@ -15,7 +15,7 @@ interface ModalProps {
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   icon?: ReactNode;
   footer?: ReactNode;
-  initialFocusRef?: React.RefObject<HTMLElement>;
+  initialFocusRef?: React.RefObject<HTMLElement | null>;
   headerClassName?: string;
   betaBadge?: ReactNode;
   closeWithButton?: boolean;

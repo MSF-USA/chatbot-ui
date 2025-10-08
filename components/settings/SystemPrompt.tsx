@@ -15,8 +15,8 @@ import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 
-import { PromptList } from '../Chat/PromptList';
-import { VariableModal } from '../Chat/VariableModal';
+import { PromptList } from '../Chat/ChatInput/PromptList';
+import { VariableModal } from '../Chat/ChatInput/VariableModal';
 
 interface Props {
   prompts: Prompt[];

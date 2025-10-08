@@ -412,8 +412,9 @@ export default class ChatService {
                 for await (const eventMessage of streamEventMessages) {
                   // Handle different event types
                   if (eventMessage.event === 'thread.message.delta') {
-                    if (eventMessage.data?.delta?.content && Array.isArray(eventMessage.data.delta.content)) {
-                      eventMessage.data.delta.content.forEach((contentPart: { type: string; text?: { value: string } }) => {
+                    const messageData = eventMessage.data as any;
+                    if (messageData?.delta?.content && Array.isArray(messageData.delta.content)) {
+                      messageData.delta.content.forEach((contentPart: { type: string; text?: { value: string } }) => {
                         if (contentPart.type === 'text' && contentPart.text?.value) {
                           let textChunk = contentPart.text.value;
                           
@@ -433,8 +434,9 @@ export default class ChatService {
                   } else if (eventMessage.event === 'thread.message.completed') {
                     hasCompletedMessage = true;
                     // Extract citations from annotations
-                    if (eventMessage.data?.content?.[0]?.text?.annotations) {
-                      const annotations = eventMessage.data.content[0].text.annotations;
+                    const messageData = eventMessage.data as any;
+                    if (messageData?.content?.[0]?.text?.annotations) {
+                      const annotations = messageData.content[0].text.annotations;
                       citations = [];
                       citationIndex = 1;
                       

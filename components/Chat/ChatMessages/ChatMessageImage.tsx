@@ -26,7 +26,7 @@ interface ChatMessageImageProps {
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsTyping: Dispatch<SetStateAction<boolean>>;
     handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
-    textareaRef: React.RefObject<HTMLTextAreaElement>;
+    textareaRef: React.RefObject<HTMLTextAreaElement | null>;
     handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
     handleEditMessage: () => void;
     toggleEditing: (event: React.MouseEvent) => void;

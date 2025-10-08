@@ -247,5 +247,15 @@
   "Delay between frames (ms)": "Delay between frames (ms)",
   "Advanced Settings": "Advanced Settings",
   "Advanced": "Advanced",
-  "Take photo": "Take photo"
+  "Take photo": "Take photo",
+  "Higher values produce more creative and varied responses, lower values are more focused and deterministic": "Higher values produce more creative and varied responses, lower values are more focused and deterministic.",
+  "*Note that these default settings only apply to new conversations once saved": "*Note that these default settings only apply to new conversations once saved.",
+  "Storage Information": "Storage Information",
+  "Storage Usage": "Storage Usage",
+  "Storage usage is normal": "Storage usage is normal",
+  "Local storage info": "Local storage info",
+  "Data Actions": "Data Actions",
+  "Profile": "Profile",
+  "Job Title": "Job Title",
+  "Authentication": "Authentication"
 }

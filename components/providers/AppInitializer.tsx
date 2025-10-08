@@ -45,7 +45,7 @@ export function AppInitializer() {
       const showChatbar =
         LocalStorageService.get<boolean>(StorageKeys.SHOW_CHATBAR) ?? false;
       const showPromptbar =
-        LocalStorageService.get<boolean>(StorageKeys.SHOW_PROMPTBAR) ?? true;
+        LocalStorageService.get<boolean>(StorageKeys.SHOW_PROMPT_BAR) ?? true;
       const theme =
         LocalStorageService.get<'light' | 'dark'>(StorageKeys.THEME) ?? 'dark';
 

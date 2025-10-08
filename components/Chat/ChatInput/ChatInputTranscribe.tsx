@@ -25,7 +25,7 @@ async function retryOperation<T>(
     } catch (error) {
       if (attempt < maxRetries) {
         if (onRetry) {
-          onRetry(attempt, error);
+          onRetry(attempt, error instanceof Error ? error : new Error(String(error)));
         }
         // Wait before retrying
         await new Promise((resolve) => setTimeout(resolve, waitTime));

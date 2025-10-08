@@ -41,8 +41,8 @@ import ChatInputVoiceCapture from '@/components/Chat/ChatInput/ChatInputVoiceCap
 import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 
-import { PromptList } from './PromptList';
-import { VariableModal } from './VariableModal';
+import { PromptList } from './ChatInput/PromptList';
+import { VariableModal } from './ChatInput/VariableModal';
 
 interface Props {
   onSend: (message: Message) => void;

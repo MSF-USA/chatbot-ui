@@ -60,7 +60,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
               {t(
-                'Higher values produce more creative and varied responses, lower values are more focused and deterministic.',
+                'Higher values produce more creative and varied responses, lower values are more focused and deterministic',
               )}
             </p>
           </div>
@@ -209,7 +209,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
         <hr className="border-gray-300 dark:border-neutral-700" />
         <span className="block text-[12px] text-black/50 dark:text-white/50">
           {t(
-            '*Note that these default settings only apply to new conversations once saved.',
+            '*Note that these default settings only apply to new conversations once saved',
           )}
         </span>
 
