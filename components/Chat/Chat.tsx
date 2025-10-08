@@ -17,7 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Main chat component - migrated to use Zustand stores
  */
 export function Chat() {
-  const { selectedConversation, updateConversation, conversations, addConversation, selectConversation } = useConversations();
+  const { selectedConversation, updateConversation, conversations, addConversation, selectConversation, isLoaded } = useConversations();
   const { isStreaming, streamingContent, error, sendMessage, citations } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } = useUI();
   const { models, defaultModelId, systemPrompt, temperature } = useSettings();
@@ -25,6 +25,7 @@ export function Chat() {
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
   const [filePreviews, setFilePreviews] = useState<any[]>([]);
   const [isModelSelectOpen, setIsModelSelectOpen] = useState(false);
+  const hasInitializedRef = useRef(false);
 
   // Close modal on ESC key
   useEffect(() => {
@@ -42,10 +43,19 @@ export function Chat() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const stopConversationRef = useRef<boolean>(false);
 
-  // Create default conversation if none exists
+  // Create default conversation if none exists - runs once after data is loaded
   useEffect(() => {
+    // Only run initialization once
+    if (hasInitializedRef.current) return;
+
+    // Wait for conversations to load from localStorage
+    if (!isLoaded) return;
+
     // Wait for models to load
     if (models.length === 0) return;
+
+    // Mark as initialized to prevent multiple runs
+    hasInitializedRef.current = true;
 
     // If no conversations exist, create one
     if (conversations.length === 0) {
@@ -64,7 +74,8 @@ export function Chat() {
       // If conversations exist but none is selected, select the first one
       selectConversation(conversations[0].id);
     }
-  }, [conversations.length, models.length, selectedConversation, defaultModelId, systemPrompt, temperature, addConversation, selectConversation, models, conversations]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, models.length]);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {

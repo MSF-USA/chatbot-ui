@@ -19,7 +19,7 @@ import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Settings } from '@/types/settings';
 
-import { SidebarButton } from '../Sidebar/SidebarButton';
+import { SidebarButton } from '../sidebar/SidebarButton';
 import { NavigationItem } from './NavigationItem';
 import { SettingsSection } from './types';
 

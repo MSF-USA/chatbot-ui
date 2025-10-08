@@ -16,6 +16,7 @@ export function useConversations() {
   const selectedConversationId = useConversationStore((state) => state.selectedConversationId);
   const folders = useConversationStore((state) => state.folders);
   const searchTerm = useConversationStore((state) => state.searchTerm);
+  const isLoaded = useConversationStore((state) => state.isLoaded);
 
   // Get actions
   const addConversation = useConversationStore((state) => state.addConversation);
@@ -23,6 +24,7 @@ export function useConversations() {
   const deleteConversation = useConversationStore((state) => state.deleteConversation);
   const selectConversation = useConversationStore((state) => state.selectConversation);
   const setConversations = useConversationStore((state) => state.setConversations);
+  const setIsLoaded = useConversationStore((state) => state.setIsLoaded);
   const addFolder = useConversationStore((state) => state.addFolder);
   const updateFolder = useConversationStore((state) => state.updateFolder);
   const deleteFolder = useConversationStore((state) => state.deleteFolder);
@@ -46,38 +48,52 @@ export function useConversations() {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const savedConversations =
-      LocalStorageService.get<Conversation[]>(StorageKeys.CONVERSATIONS) || [];
-    const savedFolders =
-      LocalStorageService.get<FolderInterface[]>(StorageKeys.FOLDERS) || [];
-    const selectedId =
-      LocalStorageService.get<string>(StorageKeys.SELECTED_CONVERSATION_ID) ||
-      null;
+    try {
+      const savedConversations =
+        LocalStorageService.get<Conversation[]>(StorageKeys.CONVERSATIONS) || [];
+      const savedFolders =
+        LocalStorageService.get<FolderInterface[]>(StorageKeys.FOLDERS) || [];
+      const selectedId =
+        LocalStorageService.get<string>(StorageKeys.SELECTED_CONVERSATION_ID) ||
+        null;
 
-    setConversations(savedConversations);
-    setFolders(savedFolders);
+      setConversations(savedConversations);
+      setFolders(savedFolders);
 
-    // Validate that selectedId exists in conversations
-    if (selectedId && savedConversations.find(c => c.id === selectedId)) {
-      selectConversation(selectedId);
-    } else if (savedConversations.length > 0) {
-      // If no valid selection, select the first conversation
-      selectConversation(savedConversations[0].id);
+      // Validate that selectedId exists in conversations
+      if (selectedId && savedConversations.find(c => c.id === selectedId)) {
+        selectConversation(selectedId);
+      } else if (savedConversations.length > 0) {
+        // If no valid selection, select the first conversation
+        selectConversation(savedConversations[0].id);
+      }
+    } catch (error) {
+      console.error('Error loading conversations from localStorage:', error);
+      // On error, start with empty state
+      setConversations([]);
+      setFolders([]);
+    } finally {
+      // Always mark as loaded, even on error
+      setIsLoaded(true);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Persist conversations to localStorage
+  // Persist conversations to localStorage (skip initial save)
   useEffect(() => {
+    if (!isLoaded) return; // Don't save until initial load is complete
     LocalStorageService.set(StorageKeys.CONVERSATIONS, conversations);
-  }, [conversations]);
+  }, [conversations, isLoaded]);
 
-  // Persist folders to localStorage
+  // Persist folders to localStorage (skip initial save)
   useEffect(() => {
+    if (!isLoaded) return; // Don't save until initial load is complete
     LocalStorageService.set(StorageKeys.FOLDERS, folders);
-  }, [folders]);
+  }, [folders, isLoaded]);
 
-  // Persist selected conversation ID
+  // Persist selected conversation ID (skip initial save)
   useEffect(() => {
+    if (!isLoaded) return; // Don't save until initial load is complete
     if (selectedConversationId) {
       LocalStorageService.set(
         StorageKeys.SELECTED_CONVERSATION_ID,
@@ -86,7 +102,7 @@ export function useConversations() {
     } else {
       LocalStorageService.remove(StorageKeys.SELECTED_CONVERSATION_ID);
     }
-  }, [selectedConversationId]);
+  }, [selectedConversationId, isLoaded]);
 
   return {
     // State
@@ -95,6 +111,7 @@ export function useConversations() {
     folders,
     searchTerm,
     filteredConversations,
+    isLoaded,
 
     // Actions
     addConversation,

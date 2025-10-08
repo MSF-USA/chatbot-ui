@@ -15,14 +15,14 @@ export function SuggestedPrompts({
   onSelectPrompt,
   count = 3,
 }: SuggestedPromptsProps) {
-  const randomPrompts = useMemo(() => {
-    const shuffled = [...suggestedPrompts].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, count);
+  // Use first N prompts to avoid hydration mismatch from randomization
+  const displayedPrompts = useMemo(() => {
+    return suggestedPrompts.slice(0, count);
   }, [count]);
 
   return (
     <div className="hidden sm:flex space-x-5">
-      {randomPrompts.map((prompt, index) => {
+      {displayedPrompts.map((prompt, index) => {
         const Icon = prompt.icon;
 
         return (

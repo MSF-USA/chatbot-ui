@@ -150,10 +150,23 @@ export const useChatStore = create<ChatStore>((set) => ({
 
       // Update conversation with assistant message
       const conversationStore = useConversationStore.getState();
-      conversationStore.updateConversation(conversation.id, {
+      const updates: Partial<Conversation> = {
         messages: [...conversation.messages, assistantMessage],
         ...(extractedThreadId ? { threadId: extractedThreadId } : {}),
-      });
+      };
+
+      // Auto-name conversation from first user message if still "New Conversation"
+      if (conversation.name === 'New Conversation' && conversation.messages.length > 0) {
+        const firstUserMessage = conversation.messages.find(m => m.role === 'user');
+        if (firstUserMessage && typeof firstUserMessage.content === 'string') {
+          // Take first 50 characters or until first line break
+          const content = firstUserMessage.content.split('\n')[0];
+          const name = content.length > 50 ? content.substring(0, 50) + '...' : content;
+          updates.name = name || 'New Conversation';
+        }
+      }
+
+      conversationStore.updateConversation(conversation.id, updates);
 
       set({ isStreaming: false, streamingContent: '' });
     } catch (error) {

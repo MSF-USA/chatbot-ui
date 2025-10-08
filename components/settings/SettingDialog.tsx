@@ -46,7 +46,7 @@ export function SettingDialog() {
     setSystemPrompt,
     prompts
   } = useSettings();
-  const { conversations, clearConversations: clearAllConversations } = useConversations();
+  const { conversations, clearAll: clearAllConversations } = useConversations();
 
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: {

@@ -25,6 +25,7 @@ import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 import { v4 as uuidv4 } from 'uuid';
+import Modal from '@/components/UI/Modal';
 
 enum Tab {
   CONVERSATIONS = 'CONVERSATIONS',
@@ -40,6 +41,7 @@ function ConversationItem({
   handleSelectConversation,
   handleDeleteConversation,
   handleMoveToFolder,
+  handleRenameConversation,
   folders,
   t,
 }: {
@@ -48,49 +50,94 @@ function ConversationItem({
   handleSelectConversation: (id: string) => void;
   handleDeleteConversation: (id: string, e: React.MouseEvent) => void;
   handleMoveToFolder: (conversationId: string, folderId: string | null) => void;
+  handleRenameConversation: (id: string, currentName: string) => void;
   folders: any[];
   t: any;
 }) {
   const [showMenu, setShowMenu] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingName, setEditingName] = useState(conversation.name);
 
   const handleDragStart = (e: React.DragEvent) => {
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('conversationId', conversation.id);
   };
 
+  const handleSaveName = () => {
+    if (editingName.trim()) {
+      handleRenameConversation(conversation.id, editingName.trim());
+    }
+    setIsEditing(false);
+  };
+
   return (
     <div
-      draggable
+      draggable={!isEditing}
       onDragStart={handleDragStart}
       className={`group flex items-center gap-2 rounded p-2 cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
         selectedConversation?.id === conversation.id
           ? 'bg-neutral-100 dark:bg-neutral-800'
           : ''
       }`}
-      onClick={() => handleSelectConversation(conversation.id)}
+      onClick={() => !isEditing && handleSelectConversation(conversation.id)}
     >
       <IconMessage size={16} className="shrink-0 text-neutral-600 dark:text-neutral-400" />
-      <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
-        {conversation.name}
-      </span>
-      <div className="relative shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
-        <button
-          className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowMenu(!showMenu);
+      {isEditing ? (
+        <input
+          type="text"
+          value={editingName}
+          onChange={(e) => setEditingName(e.target.value)}
+          onBlur={handleSaveName}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleSaveName();
+            } else if (e.key === 'Escape') {
+              setEditingName(conversation.name);
+              setIsEditing(false);
+            }
           }}
-          title={t('Move to folder')}
-        >
-          <IconDots size={14} className="text-neutral-600 dark:text-neutral-400" />
-        </button>
-        <button
-          className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-          onClick={(e) => handleDeleteConversation(conversation.id, e)}
-          title={t('Delete')}
-        >
-          <IconTrash size={14} className="text-neutral-600 dark:text-neutral-400" />
-        </button>
+          autoFocus
+          onClick={(e) => e.stopPropagation()}
+          className="flex-1 rounded border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100"
+        />
+      ) : (
+        <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
+          {conversation.name}
+        </span>
+      )}
+      <div className="relative shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
+        {!isEditing && (
+          <>
+            <button
+              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(true);
+                setEditingName(conversation.name);
+              }}
+              title={t('Rename')}
+            >
+              <IconEdit size={14} className="text-neutral-600 dark:text-neutral-400" />
+            </button>
+            <button
+              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowMenu(!showMenu);
+              }}
+              title={t('Move to folder')}
+            >
+              <IconDots size={14} className="text-neutral-600 dark:text-neutral-400" />
+            </button>
+            <button
+              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+              onClick={(e) => handleDeleteConversation(conversation.id, e)}
+              title={t('Delete')}
+            >
+              <IconTrash size={14} className="text-neutral-600 dark:text-neutral-400" />
+            </button>
+          </>
+        )}
 
         {/* Dropdown menu */}
         {showMenu && (
@@ -164,6 +211,11 @@ export function Sidebar() {
   const [editingPromptName, setEditingPromptName] = useState('');
   const [editingPromptContent, setEditingPromptContent] = useState('');
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
+  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
+  const [promptModalName, setPromptModalName] = useState('');
+  const [promptModalDescription, setPromptModalDescription] = useState('');
+  const [promptModalContent, setPromptModalContent] = useState('');
+  const [promptModalId, setPromptModalId] = useState<string | null>(null);
 
   const handleNewConversation = () => {
     const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
@@ -180,6 +232,7 @@ export function Sidebar() {
     };
 
     addConversation(newConversation);
+    selectConversation(newConversation.id);
   };
 
   const getInitials = (name: string) => {
@@ -238,22 +291,42 @@ export function Sidebar() {
   }
 
   const handleNewPrompt = () => {
+    setPromptModalId(null);
+    setPromptModalName('');
+    setPromptModalDescription('');
+    setPromptModalContent('');
+    setIsPromptModalOpen(true);
+  };
+
+  const handleSavePromptModal = () => {
     const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
     if (!defaultModel) return;
 
-    const newPrompt: Prompt = {
-      id: uuidv4(),
-      name: t('New Prompt'),
-      description: '',
-      content: '',
-      model: defaultModel,
-      folderId: null,
-    };
+    if (promptModalId) {
+      // Update existing prompt
+      updatePrompt(promptModalId, {
+        name: promptModalName.trim() || t('New Prompt'),
+        description: promptModalDescription,
+        content: promptModalContent.trim(),
+      });
+    } else {
+      // Create new prompt
+      const newPrompt: Prompt = {
+        id: uuidv4(),
+        name: promptModalName.trim() || t('New Prompt'),
+        description: promptModalDescription,
+        content: promptModalContent.trim(),
+        model: defaultModel,
+        folderId: null,
+      };
+      addPrompt(newPrompt);
+    }
 
-    addPrompt(newPrompt);
-    setEditingPromptId(newPrompt.id);
-    setEditingPromptName(newPrompt.name);
-    setEditingPromptContent('');
+    setIsPromptModalOpen(false);
+    setPromptModalId(null);
+    setPromptModalName('');
+    setPromptModalDescription('');
+    setPromptModalContent('');
   };
 
   const handleDeletePrompt = (promptId: string, e: React.MouseEvent) => {
@@ -331,6 +404,10 @@ export function Sidebar() {
 
   const handleMoveToFolder = (conversationId: string, folderId: string | null) => {
     updateConversation(conversationId, { folderId });
+  };
+
+  const handleRenameConversation = (conversationId: string, newName: string) => {
+    updateConversation(conversationId, { name: newName });
   };
 
   const handleDrop = (e: React.DragEvent, folderId: string | null) => {
@@ -520,6 +597,7 @@ export function Sidebar() {
                           handleSelectConversation={handleSelectConversation}
                           handleDeleteConversation={handleDeleteConversation}
                           handleMoveToFolder={handleMoveToFolder}
+                          handleRenameConversation={handleRenameConversation}
                           folders={folders}
                           t={t}
                         />
@@ -545,6 +623,7 @@ export function Sidebar() {
                       handleSelectConversation={handleSelectConversation}
                       handleDeleteConversation={handleDeleteConversation}
                       handleMoveToFolder={handleMoveToFolder}
+                      handleRenameConversation={handleRenameConversation}
                       folders={folders}
                       t={t}
                     />
@@ -617,9 +696,11 @@ export function Sidebar() {
                         className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setEditingPromptId(prompt.id);
-                          setEditingPromptName(prompt.name);
-                          setEditingPromptContent(prompt.content);
+                          setPromptModalId(prompt.id);
+                          setPromptModalName(prompt.name);
+                          setPromptModalDescription(prompt.description || '');
+                          setPromptModalContent(prompt.content);
+                          setIsPromptModalOpen(true);
                         }}
                         title={t('Edit')}
                       >
@@ -660,6 +741,69 @@ export function Sidebar() {
           <span>{t('Settings')}</span>
         </button>
       </div>
+
+      {/* Prompt Modal */}
+      <Modal
+        isOpen={isPromptModalOpen}
+        onClose={() => setIsPromptModalOpen(false)}
+        title={promptModalId ? t('Edit Prompt') : t('New Prompt')}
+        size="lg"
+        footer={
+          <div className="flex justify-end gap-2">
+            <button
+              className="px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 rounded-md"
+              onClick={() => setIsPromptModalOpen(false)}
+            >
+              {t('Cancel')}
+            </button>
+            <button
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+              onClick={handleSavePromptModal}
+            >
+              {t('Save')}
+            </button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+              {t('Name')}
+            </label>
+            <input
+              type="text"
+              value={promptModalName}
+              onChange={(e) => setPromptModalName(e.target.value)}
+              placeholder={t('A name for your prompt_')}
+              className="w-full rounded-md border border-neutral-500 bg-white px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#40414F] dark:text-neutral-100"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+              {t('Description')}
+            </label>
+            <textarea
+              value={promptModalDescription}
+              onChange={(e) => setPromptModalDescription(e.target.value)}
+              placeholder={t('A description for your prompt_')}
+              rows={3}
+              className="w-full rounded-md border border-neutral-500 bg-white px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#40414F] dark:text-neutral-100 resize-none"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+              {t('Prompt')}
+            </label>
+            <textarea
+              value={promptModalContent}
+              onChange={(e) => setPromptModalContent(e.target.value)}
+              placeholder={t('Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}')}
+              rows={10}
+              className="w-full rounded-md border border-neutral-500 bg-white px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#40414F] dark:text-neutral-100 resize-none"
+            />
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

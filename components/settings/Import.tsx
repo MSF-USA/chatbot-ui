@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 
 import { SupportedExportFormats } from '@/types/export';
 
-import { SidebarButton } from '../Sidebar/SidebarButton';
+import { SidebarButton } from '../sidebar/SidebarButton';
 
 interface Props {
   onImport: (data: SupportedExportFormats) => void;

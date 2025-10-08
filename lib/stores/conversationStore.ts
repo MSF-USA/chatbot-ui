@@ -8,6 +8,7 @@ interface ConversationStore {
   selectedConversationId: string | null;
   folders: FolderInterface[];
   searchTerm: string;
+  isLoaded: boolean;
 
   // Computed
   selectedConversation: Conversation | null;
@@ -19,6 +20,7 @@ interface ConversationStore {
   updateConversation: (id: string, updates: Partial<Conversation>) => void;
   deleteConversation: (id: string) => void;
   selectConversation: (id: string | null) => void;
+  setIsLoaded: (isLoaded: boolean) => void;
 
   // Folder actions
   setFolders: (folders: FolderInterface[]) => void;
@@ -39,6 +41,7 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
   selectedConversationId: null,
   folders: [],
   searchTerm: '',
+  isLoaded: false,
 
   // Computed getters
   get selectedConversation() {
@@ -90,6 +93,8 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
     })),
 
   selectConversation: (id) => set({ selectedConversationId: id }),
+
+  setIsLoaded: (isLoaded) => set({ isLoaded }),
 
   // Folder actions
   setFolders: (folders) => set({ folders }),
