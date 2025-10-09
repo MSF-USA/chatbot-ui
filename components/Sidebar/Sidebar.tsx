@@ -813,7 +813,7 @@ export function Sidebar() {
               <IconSearch size={20} className="text-neutral-500 dark:text-neutral-400" />
               <input
                 type="text"
-                placeholder={t('Search...')}
+                placeholder={t('Search_ellipsis')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 autoFocus

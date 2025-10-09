@@ -3,6 +3,15 @@ import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { PluginKey } from '@/types/plugin';
 
+export interface CustomAgent {
+  id: string;
+  name: string;
+  agentId: string;  // Azure AI Foundry agent ID
+  baseModelId: OpenAIModelID;
+  description?: string;
+  createdAt: string;
+}
+
 interface SettingsStore {
   // State
   temperature: number;
@@ -12,6 +21,7 @@ interface SettingsStore {
   defaultModelId: OpenAIModelID | undefined;
   models: OpenAIModel[];
   prompts: Prompt[];
+  customAgents: CustomAgent[];
 
   // Server-side flags
   serverSideApiKeyIsSet: boolean;
@@ -31,6 +41,12 @@ interface SettingsStore {
   setServerSideApiKeyIsSet: (isSet: boolean) => void;
   setServerSidePluginKeysSet: (isSet: boolean) => void;
 
+  // Custom Agent Actions
+  setCustomAgents: (agents: CustomAgent[]) => void;
+  addCustomAgent: (agent: CustomAgent) => void;
+  updateCustomAgent: (id: string, updates: Partial<CustomAgent>) => void;
+  deleteCustomAgent: (id: string) => void;
+
   // Reset
   resetSettings: () => void;
 }
@@ -47,6 +63,7 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
   defaultModelId: undefined,
   models: [],
   prompts: [],
+  customAgents: [],
   serverSideApiKeyIsSet: false,
   serverSidePluginKeysSet: false,
 
@@ -84,6 +101,26 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
 
   setServerSidePluginKeysSet: (isSet) => set({ serverSidePluginKeysSet: isSet }),
 
+  // Custom Agent Actions
+  setCustomAgents: (agents) => set({ customAgents: agents }),
+
+  addCustomAgent: (agent) =>
+    set((state) => ({
+      customAgents: [...state.customAgents, agent],
+    })),
+
+  updateCustomAgent: (id, updates) =>
+    set((state) => ({
+      customAgents: state.customAgents.map((a) =>
+        a.id === id ? { ...a, ...updates } : a
+      ),
+    })),
+
+  deleteCustomAgent: (id) =>
+    set((state) => ({
+      customAgents: state.customAgents.filter((a) => a.id !== id),
+    })),
+
   resetSettings: () =>
     set({
       temperature: DEFAULT_TEMPERATURE,
@@ -91,5 +128,6 @@ export const useSettingsStore = create<SettingsStore>((set) => ({
       apiKey: '',
       pluginKeys: [],
       prompts: [],
+      customAgents: [],
     }),
 }));

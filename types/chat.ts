@@ -115,6 +115,16 @@ export interface Conversation {
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
 
+export type FileFieldValue =
+  | FileMessageContent
+  | FileMessageContent[]
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | (FileMessageContent | ImageMessageContent)[]
+  | null;
+
+export type ImageFieldValue = ImageMessageContent | ImageMessageContent[] | null;
+
 type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
 
 export interface FilePreview {

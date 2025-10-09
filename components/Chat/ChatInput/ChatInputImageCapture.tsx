@@ -15,9 +15,8 @@ import { isMobile } from '@/lib/utils/app/env';
 
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
   FilePreview,
-  ImageMessageContent,
+  FileFieldValue,
 } from '@/types/chat';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
@@ -49,16 +48,7 @@ export interface ChatInputImageCaptureProps {
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-      | undefined
-    >
-  >;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   visible?: boolean;
   hasCameraSupport: boolean;

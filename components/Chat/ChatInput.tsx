@@ -21,6 +21,8 @@ import {
   MessageType,
   TextMessageContent,
   getChatMessageContent,
+  FileFieldValue,
+  ImageFieldValue,
 } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 
@@ -74,17 +76,8 @@ export const ChatInput = ({
   const { prompts } = useSettings();
 
   const [textFieldValue, setTextFieldValue] = useState<string>('');
-  const [imageFieldValue, setImageFieldValue] = useState<
-    ImageMessageContent | ImageMessageContent[] | null | undefined
-  >();
-  const [fileFieldValue, setFileFieldValue] = useState<
-    | FileMessageContent
-    | FileMessageContent[]
-    | ImageMessageContent
-    | ImageMessageContent[]
-    | null
-    | undefined
-  >(null);
+  const [imageFieldValue, setImageFieldValue] = useState<FileFieldValue>(null);
+  const [fileFieldValue, setFileFieldValue] = useState<FileFieldValue>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [showPromptList, setShowPromptList] = useState<boolean>(false);
   const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
@@ -469,7 +462,7 @@ export const ChatInput = ({
       )}
 
 
-      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121] pt-32">
+      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121] pt-4">
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
           <ChatInputImageCapture
             ref={cameraRef}

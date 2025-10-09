@@ -22,10 +22,10 @@ import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
 
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
   FilePreview,
-  ImageMessageContent,
   Message,
+  FileFieldValue,
+  ImageFieldValue,
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
 
@@ -41,38 +41,14 @@ interface DropdownProps {
     event: React.ChangeEvent<any> | File[] | FileList,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;

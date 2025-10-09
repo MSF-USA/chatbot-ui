@@ -8,9 +8,8 @@ import React, {
 
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
   FilePreview,
-  ImageMessageContent,
+  FileFieldValue,
 } from '@/types/chat';
 
 import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
@@ -28,16 +27,7 @@ export interface ChatInputImageProps {
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-      | undefined
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   simulateClick?: boolean;

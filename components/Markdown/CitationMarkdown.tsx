@@ -41,8 +41,8 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         let citationsData: Citation[] = [];
         let source = 'none';
 
-        // Only process citations if conversation has a bot
-        const shouldProcessCitations = conversation?.bot !== undefined;
+        // Process citations if we have them
+        const shouldProcessCitations = true; // Always process citations if they exist
 
         // Priority 1: Use citations from the message object (already extracted during streaming)
         if (shouldProcessCitations && message?.citations && message.citations.length > 0) {
@@ -267,7 +267,6 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
             >
               [{citationNumber}]
             </sup>
-            {isHovered && hoveredCitation && renderTooltip(citation)}
           </span>
         );
       },
@@ -335,6 +334,7 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
     const ListItemWithCitations: Components['li'] = ({
       children,
+      ordered,
       ...props
     }) => {
       // Process citations if we have any
@@ -355,17 +355,25 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
       );
     };
 
+    // Find the citation for the tooltip
+    const tooltipCitation = hoveredCitation
+      ? extractedCitations.find((c) => c.number === hoveredCitation.number)
+      : null;
+
     return (
-      <ReactMarkdown
-        {...props}
-        components={{
-          ...components,
-          p: ParagraphWithCitations,
-          li: ListItemWithCitations,
-        } as any}
-      >
-        {displayContent}
-      </ReactMarkdown>
+      <>
+        <ReactMarkdown
+          {...props}
+          components={{
+            ...components,
+            p: ParagraphWithCitations,
+            li: ListItemWithCitations,
+          } as any}
+        >
+          {displayContent}
+        </ReactMarkdown>
+        {hoveredCitation && tooltipCitation && renderTooltip(tooltipCitation)}
+      </>
     );
   },
   (prevProps, nextProps) => {

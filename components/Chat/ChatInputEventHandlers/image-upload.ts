@@ -6,6 +6,7 @@ import {
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
+  FileFieldValue,
 } from '@/types/chat';
 
 import { isChangeEvent } from '@/components/Chat/ChatInputEventHandlers/common';
@@ -15,16 +16,7 @@ export const onImageUpload = async (
   prompt: any,
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-      | undefined
-    >
-  >,
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
 ) => {
   let file: File;
   if (isChangeEvent(event)) {
@@ -55,13 +47,13 @@ export const onImageUpload = async (
     },
   };
 
-  setFileFieldValue((prevValue): FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null | undefined => {
+  setFileFieldValue((prevValue) => {
     if (prevValue && Array.isArray(prevValue)) {
       setSubmitType('multi-file');
-      return [...prevValue, imageMessage];
+      return [...prevValue, imageMessage] as (FileMessageContent | ImageMessageContent)[];
     } else if (prevValue) {
       setSubmitType('multi-file');
-      return [prevValue, imageMessage];
+      return [prevValue, imageMessage] as (FileMessageContent | ImageMessageContent)[];
     } else {
       setSubmitType('image');
       return [imageMessage];

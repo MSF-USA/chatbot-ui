@@ -86,3 +86,30 @@ select {
   outline: none;
   margin: 0 5px;
 }
+
+/* Citation styling - ensure citations are blue and hoverable even in prose */
+.prose sup.citation-number,
+.prose-invert sup.citation-number,
+.prose .citation-number,
+.prose-invert .citation-number {
+  color: #2563eb !important; /* blue-600 */
+  cursor: help !important;
+  text-decoration: none !important;
+  font-weight: normal !important;
+  position: relative;
+  user-select: none;
+}
+
+.dark .prose sup.citation-number,
+.dark .prose-invert sup.citation-number,
+.dark .prose .citation-number,
+.dark .prose-invert .citation-number {
+  color: #60a5fa !important; /* blue-400 */
+}
+
+.prose sup.citation-number:hover,
+.prose-invert sup.citation-number:hover,
+.prose .citation-number:hover,
+.prose-invert .citation-number:hover {
+  text-decoration: underline !important;
+}

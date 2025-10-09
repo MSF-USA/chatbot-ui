@@ -374,6 +374,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
         initialFocusRef={inputTextRef}
         footer={modalFooter}
         closeWithButton={true}
+        className="!z-[100]"
       >
         {modalContent}
       </Modal>

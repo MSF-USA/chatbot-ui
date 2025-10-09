@@ -46,11 +46,7 @@ interface ChatInputSearchProps {
         | null
       >
     >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
+    setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
@@ -64,11 +60,7 @@ interface ChatInputSearchProps {
       | null
     >
   >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   initialMode?: 'search' | 'url';

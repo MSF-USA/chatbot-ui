@@ -78,7 +78,7 @@ const Modal: React.FC<ModalProps> = ({
   const showDivider = showHeader && title;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-auto ${className.includes('!z-') ? className.match(/!z-\[\d+\]/)?.[0] || '' : ''}`}>
       {/* Backdrop/overlay */}
       <div
         className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity"
@@ -89,7 +89,7 @@ const Modal: React.FC<ModalProps> = ({
       {/* Modal container */}
       <div
         ref={modalContentRef}
-        className={`${sizeClasses} w-full bg-white dark:bg-[#171717] rounded-lg shadow-lg p-6 relative z-10 ${className}`}
+        className={`${sizeClasses} w-full bg-white dark:bg-[#171717] rounded-lg shadow-lg p-6 relative z-10 ${className.replace(/!z-\[\d+\]/, '')}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}

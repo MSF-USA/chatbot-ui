@@ -10,7 +10,7 @@ import React, {
 
 import { useTranslations } from 'next-intl';
 
-import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
+import {ChatInputSubmitTypes, FilePreview, FileFieldValue} from '@/types/chat';
 
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 import Modal from '@/components/UI/Modal';
@@ -22,9 +22,7 @@ const onTakePhotoButtonClick = (
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<
-    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
-  >,
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
   closeModal: () => void,
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>,
 ) => {
@@ -77,9 +75,7 @@ interface CameraModalProps {
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setImageFieldValue: Dispatch<
-    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
-  >;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 

@@ -18,6 +18,7 @@ export enum StorageKeys {
   MODELS = 'models',
   SERVER_SIDE_API_KEY_IS_SET = 'serverSideApiKeyIsSet',
   SERVER_SIDE_PLUGIN_KEYS_SET = 'serverSidePluginKeysSet',
+  CUSTOM_AGENTS = 'customAgents',
 }
 
 export class LocalStorageService {
