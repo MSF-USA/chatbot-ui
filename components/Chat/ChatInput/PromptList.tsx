@@ -8,7 +8,7 @@ import { FC, MutableRefObject, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { CommandDefinition, CommandType } from '@/services/commandParser';
+import { CommandDefinition, CommandType } from '@/types/commands';
 
 import { Prompt } from '@/types/prompt';
 

@@ -1,14 +1,8 @@
-import { useEffect } from 'react';
 import { useConversationStore } from '@/lib/stores/conversationStore';
-import {
-  LocalStorageService,
-  StorageKeys,
-} from '@/lib/services/storage/localStorageService';
-import { Conversation } from '@/types/chat';
-import { FolderInterface } from '@/types/folder';
 
 /**
- * Hook that manages conversations with localStorage persistence
+ * Hook that manages conversations
+ * Persistence is handled automatically by Zustand persist middleware
  */
 export function useConversations() {
   // Subscribe to the underlying state that affects selectedConversation
@@ -45,34 +39,6 @@ export function useConversations() {
             m.content.toString().toLowerCase().includes(searchTerm.toLowerCase())
           )
       );
-
-  // Note: localStorage loading is now handled by ConversationLoader component
-  // to avoid multiple simultaneous reads on app initialization
-
-  // Persist conversations to localStorage (skip initial save)
-  useEffect(() => {
-    if (!isLoaded) return; // Don't save until initial load is complete
-    LocalStorageService.set(StorageKeys.CONVERSATIONS, conversations);
-  }, [conversations, isLoaded]);
-
-  // Persist folders to localStorage (skip initial save)
-  useEffect(() => {
-    if (!isLoaded) return; // Don't save until initial load is complete
-    LocalStorageService.set(StorageKeys.FOLDERS, folders);
-  }, [folders, isLoaded]);
-
-  // Persist selected conversation ID (skip initial save)
-  useEffect(() => {
-    if (!isLoaded) return; // Don't save until initial load is complete
-    if (selectedConversationId) {
-      LocalStorageService.set(
-        StorageKeys.SELECTED_CONVERSATION_ID,
-        selectedConversationId
-      );
-    } else {
-      LocalStorageService.remove(StorageKeys.SELECTED_CONVERSATION_ID);
-    }
-  }, [selectedConversationId, isLoaded]);
 
   return {
     // State

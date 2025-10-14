@@ -6,7 +6,8 @@ import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/lib/utils/app/cons
 
 let tempConversation: Conversation = {
     id: '1',
-    model: undefined,
+    name: 'Test Conversation',
+    model: OpenAIModels[OpenAIModelID.GPT_4o],
     prompt: '',
     messages: [],
     folderId: '',
@@ -18,7 +19,8 @@ beforeEach(() => {
     // initialized with minimum properties for a "Conversation" type
     tempConversation = {
         id: '1',
-        model: undefined,
+        name: 'Test Conversation',
+        model: OpenAIModels[OpenAIModelID.GPT_4o],
         prompt: '',
         messages: [],
         folderId: '',
@@ -27,13 +29,9 @@ beforeEach(() => {
 
     tempHistory = [
         { ...tempConversation },
-        { ...tempConversation, id: '2' },
-        { ...tempConversation, id: '3' }
+        { ...tempConversation, id: '2', name: 'Test 2' },
+        { ...tempConversation, id: '3', name: 'Test 3' }
     ]
-    tempHistory.reduce((item) => {
-        item.model = undefined;
-        return item
-    })
 })
 
 describe('Conversation tests', () => {
@@ -49,13 +47,9 @@ describe('Conversation tests', () => {
     })
 
     it('cleans conversation history with valid array correctly', () => {
-        // @ts-ignore
-        const results: Conversation[] = cleanConversationHistory(tempHistory.reduce((item) => {
-            item.model = null;
-            return item
-        }))
+        const results: Conversation[] = cleanConversationHistory(tempHistory)
 
-        for (const result: Conversation in results) {
+        for (const result of results) {
             expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_3_5])
             expect(result.prompt).toBe(DEFAULT_SYSTEM_PROMPT)
             expect(result.temperature).toBe(DEFAULT_TEMPERATURE)
@@ -65,6 +59,7 @@ describe('Conversation tests', () => {
     })
 
     it('returns an empty array when a non-array input is used for cleaning conversation history', () => {
+        // @ts-ignore - testing error handling with invalid input
         const result = cleanConversationHistory('this is not an array')
 
         expect(result).toStrictEqual([])

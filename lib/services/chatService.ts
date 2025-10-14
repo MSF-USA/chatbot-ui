@@ -9,11 +9,9 @@ import {
   isImageConversation,
 } from '@/lib/utils/app/chat';
 import {
-  APIM_CHAT_ENDPONT,
   AZURE_DEPLOYMENT_ID,
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_TEMPERATURE,
-  OPENAI_API_HOST,
   OPENAI_API_VERSION,
 } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/documentSummary';

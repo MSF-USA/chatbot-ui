@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { Conversation } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 
@@ -9,10 +10,6 @@ interface ConversationStore {
   folders: FolderInterface[];
   searchTerm: string;
   isLoaded: boolean;
-
-  // Computed
-  selectedConversation: Conversation | null;
-  filteredConversations: Conversation[];
 
   // Conversation actions
   setConversations: (conversations: Conversation[]) => void;
@@ -35,36 +32,15 @@ interface ConversationStore {
   clearAll: () => void;
 }
 
-export const useConversationStore = create<ConversationStore>((set, get) => ({
+export const useConversationStore = create<ConversationStore>()(
+  persist(
+    (set, get) => ({
   // Initial state
   conversations: [],
   selectedConversationId: null,
   folders: [],
   searchTerm: '',
   isLoaded: false,
-
-  // Computed getters
-  get selectedConversation() {
-    const state = get();
-    return (
-      state.conversations.find((c) => c.id === state.selectedConversationId) ||
-      null
-    );
-  },
-
-  get filteredConversations() {
-    const state = get();
-    if (!state.searchTerm) return state.conversations;
-
-    const term = state.searchTerm.toLowerCase();
-    return state.conversations.filter(
-      (c) =>
-        c.name.toLowerCase().includes(term) ||
-        c.messages.some((m) =>
-          m.content.toString().toLowerCase().includes(term)
-        )
-    );
-  },
 
   // Conversation actions
   setConversations: (conversations) => set({ conversations }),
@@ -129,4 +105,22 @@ export const useConversationStore = create<ConversationStore>((set, get) => ({
       folders: [],
       searchTerm: '',
     }),
-}));
+    }),
+    {
+      name: 'conversation-storage',
+      version: 1, // Increment this when schema changes to trigger migrations
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        conversations: state.conversations,
+        selectedConversationId: state.selectedConversationId,
+        folders: state.folders,
+      }),
+      onRehydrateStorage: () => (state) => {
+        // Mark as loaded after hydration
+        if (state) {
+          state.isLoaded = true;
+        }
+      },
+    }
+  )
+);

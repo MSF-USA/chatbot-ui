@@ -3,8 +3,8 @@ import { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { getStorageUsage } from '@/utils/app/storageMonitor';
-import { formatBytes } from '@/utils/app/storageUtils';
+import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
+import { formatBytes } from '@/lib/utils/app/storageUtils';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 
 import { SidebarButton } from '../../sidebar/SidebarButton';

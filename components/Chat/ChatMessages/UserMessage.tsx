@@ -19,7 +19,7 @@ import { Conversation, Message } from '@/types/chat';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
-import rehypeMathjax from 'rehype-mathjax';
+import rehypeMathjax from 'rehype-mathjax/svg';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
@@ -128,8 +128,8 @@ export const UserMessage: FC<UserMessageProps> = ({
               </div>
             </div>
           ) : (
+            <div className="prose prose-sm prose-invert text-white max-w-none">
             <MemoizedReactMarkdown
-              className="prose prose-sm prose-invert text-white max-w-none"
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeMathjax]}
               components={{
@@ -174,6 +174,7 @@ export const UserMessage: FC<UserMessageProps> = ({
             >
               {localMessageContent}
             </MemoizedReactMarkdown>
+            </div>
           )}
         </div>
 

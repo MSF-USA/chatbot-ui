@@ -9,7 +9,7 @@ import { Settings } from '@/types/settings';
 import { SystemPrompt } from '../SystemPrompt';
 import { TemperatureSlider } from '../Temperature';
 
-import { useStreamingSettings } from '@/lib/context/StreamingSettingsContext';
+import { useSettingsStore } from '@/lib/stores/settingsStore';
 
 interface ChatSettingsSectionProps {
   state: Settings;
@@ -32,7 +32,14 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   onClose,
 }) => {
   const t = useTranslations();
-  const { settings, updateSettings } = useStreamingSettings();
+
+  // Get streaming settings from store
+  const smoothStreamingEnabled = useSettingsStore((state) => state.smoothStreamingEnabled);
+  const charsPerFrame = useSettingsStore((state) => state.charsPerFrame);
+  const frameDelay = useSettingsStore((state) => state.frameDelay);
+  const setSmoothStreamingEnabled = useSettingsStore((state) => state.setSmoothStreamingEnabled);
+  const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
+  const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
 
   return (
     <div className="p-4">
@@ -88,21 +95,21 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                 <input
                   type="checkbox"
                   className="opacity-0 w-0 h-0"
-                  checked={settings.smoothStreamingEnabled}
+                  checked={smoothStreamingEnabled}
                   onChange={(e) =>
-                    updateSettings({ smoothStreamingEnabled: e.target.checked })
+                    setSmoothStreamingEnabled(e.target.checked)
                   }
                 />
                 <span
                   className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                    settings.smoothStreamingEnabled
+                    smoothStreamingEnabled
                       ? 'bg-blue-500 dark:bg-blue-600'
                       : 'bg-gray-300 dark:bg-gray-600'
                   }`}
                 >
                   <span
                     className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                      settings.smoothStreamingEnabled
+                      smoothStreamingEnabled
                         ? 'translate-x-5'
                         : 'translate-x-0.5'
                     } top-0.5 left-0`}
@@ -117,23 +124,23 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                 <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t('Speed (characters per frame)')}
                   <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                    {settings.charsPerFrame}
+                    {charsPerFrame}
                   </span>
                 </label>
                 <input
                   type="range"
                   min="1"
                   max="10"
-                  value={settings.charsPerFrame}
+                  value={charsPerFrame}
                   onChange={(e) =>
-                    updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                    setCharsPerFrame(parseInt(e.target.value))
                   }
                   className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                    settings.smoothStreamingEnabled
+                    smoothStreamingEnabled
                       ? 'bg-gray-300 dark:bg-gray-600'
                       : 'bg-gray-200 dark:bg-gray-700 opacity-50'
                   }`}
-                  disabled={!settings.smoothStreamingEnabled}
+                  disabled={!smoothStreamingEnabled}
                 />
                 <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
                   <span>{t('Slower')}</span>
@@ -146,7 +153,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                 <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t('Delay between frames (ms)')}
                   <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                    {settings.frameDelay}ms
+                    {frameDelay}ms
                   </span>
                 </label>
                 <input
@@ -154,16 +161,16 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                   min="5"
                   max="50"
                   step="5"
-                  value={settings.frameDelay}
+                  value={frameDelay}
                   onChange={(e) =>
-                    updateSettings({ frameDelay: parseInt(e.target.value) })
+                    setFrameDelay(parseInt(e.target.value))
                   }
                   className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                    settings.smoothStreamingEnabled
+                    smoothStreamingEnabled
                       ? 'bg-gray-300 dark:bg-gray-600'
                       : 'bg-gray-200 dark:bg-gray-700 opacity-50'
                   }`}
-                  disabled={!settings.smoothStreamingEnabled}
+                  disabled={!smoothStreamingEnabled}
                 />
                 <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
                   <span>{t('Faster')}</span>

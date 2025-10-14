@@ -8,7 +8,7 @@ import packageJson from '../../package.json';
 
 import { useCreateReducer } from '@/lib/hooks/useCreateReducer';
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
-import { getStorageUsage } from '@/utils/app/storageMonitor';
+import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
 
 import { Settings } from '@/types/settings';
 

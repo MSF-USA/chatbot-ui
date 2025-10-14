@@ -17,13 +17,13 @@ import { useTranslations } from 'next-intl';
 import { AgentType } from '@/types/agent';
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
   Message,
   MessageType,
 } from '@/types/chat';
-import { Plugin, PluginID } from '@/types/plugin';
 
 import BetaBadge from '@/components/Beta/Badge';
 import Modal from '@/components/UI/Modal';
@@ -37,29 +37,13 @@ interface ChatInputSearchProps {
     event: React.ChangeEvent<any> | File[] | FileList,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
@@ -67,7 +51,6 @@ interface ChatInputSearchProps {
   // New props for agent-based web search
   onSend?: (
     message: Message,
-    plugin: Plugin | null,
     forceStandardChat?: boolean,
     forcedAgentType?: AgentType,
   ) => void;
@@ -75,7 +58,6 @@ interface ChatInputSearchProps {
   setProgress?: Dispatch<SetStateAction<number | null>>;
   stopConversationRef?: { current: boolean };
   apiKey?: string;
-  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
   systemPrompt?: string;
   temperature?: number;
 }
@@ -96,7 +78,6 @@ const ChatInputSearch = ({
   setProgress,
   stopConversationRef,
   apiKey,
-  pluginKeys,
   systemPrompt,
   temperature,
 }: ChatInputSearchProps) => {
@@ -237,7 +218,7 @@ const ChatInputSearch = ({
           messageType: MessageType.TEXT,
         };
         // Pass AgentType.WEB_SEARCH as forced agent to ensure web search is used
-        onSend(userMessage, null, undefined, AgentType.WEB_SEARCH);
+        onSend(userMessage, undefined, AgentType.WEB_SEARCH);
       }
 
       // Close modal and reset state

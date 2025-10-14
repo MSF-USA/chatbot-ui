@@ -25,9 +25,7 @@ import {
   FilePreview,
   Message,
   FileFieldValue,
-  ImageFieldValue,
 } from '@/types/chat';
-import { Plugin, PluginID } from '@/types/plugin';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
@@ -42,13 +40,13 @@ interface DropdownProps {
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
     setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
-  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
@@ -57,14 +55,12 @@ interface DropdownProps {
   // New props for agent-based web search
   onSend?: (
     message: Message,
-    plugin: Plugin | null,
     forceStandardChat?: boolean,
   ) => void;
   setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
   setProgress?: Dispatch<SetStateAction<number | null>>;
   stopConversationRef?: { current: boolean };
   apiKey?: string;
-  pluginKeys?: { pluginId: PluginID; requiredKeys: any[] }[];
   systemPrompt?: string;
   temperature?: number;
 }
@@ -95,7 +91,6 @@ const Dropdown: React.FC<DropdownProps> = ({
   setProgress,
   stopConversationRef,
   apiKey,
-  pluginKeys,
   systemPrompt,
   temperature,
 }) => {
@@ -449,7 +444,6 @@ const Dropdown: React.FC<DropdownProps> = ({
         setProgress={setProgress}
         stopConversationRef={stopConversationRef}
         apiKey={apiKey}
-        pluginKeys={pluginKeys}
         systemPrompt={systemPrompt}
         temperature={temperature}
       />

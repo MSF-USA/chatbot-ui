@@ -123,6 +123,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, account }): Promise<JWT> {
+      // Initial sign in - store tokens
       if (account) {
         return {
           ...token,
@@ -135,23 +136,50 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       }
 
-      if (Date.now() < token.accessTokenExpires) {
+      // Token is still valid - return as-is
+      // Refresh proactively 5 minutes before expiry to prevent API failures
+      const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
+      if (Date.now() < token.accessTokenExpires - FIVE_MINUTES_IN_MS) {
         return token;
       }
 
+      // Token is expired or will expire soon - refresh it
       return refreshAccessToken(token);
     },
     async session({ session, token }): Promise<Session> {
-      const userData = await fetchUserData(token.accessToken);
+      // If token refresh failed, pass error to session
+      if (token.error) {
+        return {
+          ...session,
+          accessToken: token.accessToken,
+          accessTokenExpires: token.accessTokenExpires,
+          error: token.error,
+          expires: session.expires,
+        };
+      }
 
-      return {
-        ...session,
-        user: userData,
-        accessToken: token.accessToken,
-        accessTokenExpires: token.accessTokenExpires,
-        error: token.error,
-        expires: session.expires,
-      };
+      try {
+        const userData = await fetchUserData(token.accessToken);
+
+        return {
+          ...session,
+          user: userData,
+          accessToken: token.accessToken,
+          accessTokenExpires: token.accessTokenExpires,
+          error: undefined,
+          expires: session.expires,
+        };
+      } catch (error) {
+        // If fetching user data fails, pass error to session
+        console.error('Failed to fetch user data:', error);
+        return {
+          ...session,
+          accessToken: token.accessToken,
+          accessTokenExpires: token.accessTokenExpires,
+          error: 'UserDataFetchError',
+          expires: session.expires,
+        };
+      }
     },
   },
 });

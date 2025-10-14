@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -28,7 +29,9 @@ interface UIStore {
   resetUI: () => void;
 }
 
-export const useUIStore = create<UIStore>((set, get) => ({
+export const useUIStore = create<UIStore>()(
+  persist(
+    (set) => ({
   // Initial state
   showChatbar: false,
   showPromptbar: true,
@@ -71,4 +74,16 @@ export const useUIStore = create<UIStore>((set, get) => ({
       isTermsModalOpen: false,
       loading: false,
     }),
-}));
+    }),
+    {
+      name: 'ui-storage',
+      version: 1, // Increment this when schema changes to trigger migrations
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        showChatbar: state.showChatbar,
+        showPromptbar: state.showPromptbar,
+        theme: state.theme,
+      }),
+    }
+  )
+);

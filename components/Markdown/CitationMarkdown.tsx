@@ -41,8 +41,8 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
         let citationsData: Citation[] = [];
         let source = 'none';
 
-        // Process citations if we have them
-        const shouldProcessCitations = true; // Always process citations if they exist
+        // Process citations only if conversation has a bot associated with it
+        const shouldProcessCitations = !!conversation?.bot;
 
         // Priority 1: Use citations from the message object (already extracted during streaming)
         if (shouldProcessCitations && message?.citations && message.citations.length > 0) {
@@ -334,7 +334,6 @@ export const CitationMarkdown: FC<CitationMarkdownProps> = memo(
 
     const ListItemWithCitations: Components['li'] = ({
       children,
-      ordered,
       ...props
     }) => {
       // Process citations if we have any

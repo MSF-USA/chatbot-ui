@@ -7,7 +7,6 @@ import { Toaster } from 'react-hot-toast';
 import { LDProvider } from 'launchdarkly-react-client-sdk';
 import { Session } from 'next-auth';
 import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
-import { StreamingSettingsProvider } from '@/lib/context/StreamingSettingsContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -36,7 +35,7 @@ interface AppProvidersProps {
 
 /**
  * Wrapper for all application providers
- * Composes: Session, React Query, LaunchDarkly, Terms, Streaming Settings, Toast
+ * Composes: Session, React Query, LaunchDarkly, Terms, Toast
  */
 export function AppProviders({
   children,
@@ -45,7 +44,11 @@ export function AppProviders({
   userContext,
 }: AppProvidersProps) {
   return (
-    <SessionProvider session={session} refetchInterval={5 * 60} refetchOnWindowFocus={true}>
+    <SessionProvider
+      session={session}
+      refetchInterval={5 * 60 * 1000}
+      refetchOnWindowFocus={true}
+    >
       <QueryClientProvider client={queryClient}>
         {launchDarklyClientId ? (
           <LDProvider
@@ -67,18 +70,14 @@ export function AppProviders({
             }}
           >
             <TermsAcceptanceProvider>
-              <StreamingSettingsProvider>
-                <Toaster position="top-center" />
-                {children}
-              </StreamingSettingsProvider>
+              <Toaster position="top-center" />
+              {children}
             </TermsAcceptanceProvider>
           </LDProvider>
         ) : (
           <TermsAcceptanceProvider>
-            <StreamingSettingsProvider>
-              <Toaster position="top-center" />
-              {children}
-            </StreamingSettingsProvider>
+            <Toaster position="top-center" />
+            {children}
           </TermsAcceptanceProvider>
         )}
       </QueryClientProvider>

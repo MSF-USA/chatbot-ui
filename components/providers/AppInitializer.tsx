@@ -3,127 +3,79 @@
 import { useEffect, useRef } from 'react';
 import { useConversationStore } from '@/lib/stores/conversationStore';
 import { useSettingsStore } from '@/lib/stores/settingsStore';
-import { useUIStore } from '@/lib/stores/uiStore';
-import {
-  LocalStorageService,
-  StorageKeys,
-} from '@/lib/services/storage/localStorageService';
-import { Conversation } from '@/types/chat';
-import { FolderInterface } from '@/types/folder';
-import { Prompt } from '@/types/prompt';
-import { PluginKey } from '@/types/plugin';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { getDefaultModel, isModelDisabled } from '@/config/models';
+import { LocalStorageService } from '@/lib/services/storage/localStorageService';
 
 /**
- * AppInitializer - Centralized initialization for all app state
+ * AppInitializer - Handles app initialization logic
  *
- * Loads data from localStorage in the correct order:
- * 1. UI state (theme, sidebar visibility)
- * 2. Settings (temperature, prompts, API keys, defaultModelId)
- * 3. Models (filtered based on environment)
- * 4. Conversations (needs models to be available)
- *
- * This ensures only ONE localStorage read per key on app startup,
- * preventing performance issues from multiple simultaneous reads.
+ * With Zustand persist middleware, localStorage hydration is automatic.
+ * This component handles:
+ * 1. Automatic background data migration (from old localStorage format)
+ * 2. Model filtering (based on environment config)
+ * 3. Default model selection (from environment if not persisted)
+ * 4. Selected conversation validation
  */
 export function AppInitializer() {
   const hasLoadedRef = useRef(false);
 
-  // Get store setters
-  const uiStore = useUIStore();
-  const settingsStore = useSettingsStore();
-  const conversationStore = useConversationStore();
-
   useEffect(() => {
-    // Ensure we only load once, even in React StrictMode
+    // Ensure we only initialize once, even in React StrictMode
     if (hasLoadedRef.current) return;
     hasLoadedRef.current = true;
 
     try {
-      // 1. Load UI state first (especially theme for visual consistency)
-      const showChatbar =
-        LocalStorageService.get<boolean>(StorageKeys.SHOW_CHATBAR) ?? false;
-      const showPromptbar =
-        LocalStorageService.get<boolean>(StorageKeys.SHOW_PROMPT_BAR) ?? true;
-      const theme =
-        LocalStorageService.get<'light' | 'dark'>(StorageKeys.THEME) ?? 'dark';
+      // Run automatic background migration first (if needed)
+      // This safely copies old data to new Zustand format without deleting anything
+      if (LocalStorageService.hasLegacyData()) {
+        const result = LocalStorageService.migrateFromLegacy();
 
-      uiStore.setShowChatbar(showChatbar);
-      uiStore.setShowPromptbar(showPromptbar);
-      uiStore.setTheme(theme);
-
-      // Apply theme to document immediately
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
+        if (!result.success) {
+          console.error('Migration failed:', result.errors);
+          // Continue anyway - stores will use defaults or partial data
+        }
+        // No reload needed - Zustand will use the newly created data
       }
 
-      // 2. Load settings
-      const temperature =
-        LocalStorageService.get<number>(StorageKeys.TEMPERATURE) ?? 0.5;
-      const systemPrompt =
-        LocalStorageService.get<string>(StorageKeys.SYSTEM_PROMPT) ?? '';
-      const apiKey = LocalStorageService.get<string>(StorageKeys.API_KEY) ?? '';
-      const pluginKeys =
-        LocalStorageService.get<PluginKey[]>(StorageKeys.PLUGIN_KEYS) ?? [];
-      const prompts =
-        LocalStorageService.get<Prompt[]>(StorageKeys.PROMPTS) ?? [];
-      const defaultModelId =
-        LocalStorageService.get<OpenAIModelID>(StorageKeys.DEFAULT_MODEL_ID);
+      // Continue with normal initialization
+      // Access stores directly for one-time initialization
+      const { setModels, defaultModelId, setDefaultModelId } = useSettingsStore.getState();
+      const { conversations, selectedConversationId, selectConversation, setIsLoaded } = useConversationStore.getState();
 
-      settingsStore.setTemperature(temperature);
-      settingsStore.setSystemPrompt(systemPrompt);
-      settingsStore.setApiKey(apiKey);
-      settingsStore.setPluginKeys(pluginKeys);
-      settingsStore.setPrompts(prompts);
-
-      // 3. Load models (filtered by environment)
+      // 1. Initialize models list (filtered by environment)
       const models: OpenAIModel[] = Object.values(OpenAIModels).filter(
         m => !m.isLegacy && !isModelDisabled(m.id)
       );
-      settingsStore.setModels(models);
+      setModels(models);
 
-      // Set default model (from localStorage or environment config)
-      if (defaultModelId) {
-        settingsStore.setDefaultModelId(defaultModelId);
-      } else {
+      // 2. Set default model if not already persisted
+      if (!defaultModelId && models.length > 0) {
         const envDefaultModelId = getDefaultModel();
         const defaultModel = models.find(m => m.id === envDefaultModelId) || models[0];
         if (defaultModel) {
-          settingsStore.setDefaultModelId(defaultModel.id as OpenAIModelID);
+          setDefaultModelId(defaultModel.id as OpenAIModelID);
         }
       }
 
-      // 4. Load conversations (needs models to be available for validation)
-      const savedConversations =
-        LocalStorageService.get<Conversation[]>(StorageKeys.CONVERSATIONS) || [];
-      const savedFolders =
-        LocalStorageService.get<FolderInterface[]>(StorageKeys.FOLDERS) || [];
-      const selectedId =
-        LocalStorageService.get<string>(StorageKeys.SELECTED_CONVERSATION_ID) ||
-        null;
-
-      conversationStore.setConversations(savedConversations);
-      conversationStore.setFolders(savedFolders);
-
-      // Validate that selectedId exists in conversations
-      if (selectedId && savedConversations.find(c => c.id === selectedId)) {
-        conversationStore.selectConversation(selectedId);
-      } else if (savedConversations.length > 0) {
-        // If no valid selection, select the first conversation
-        conversationStore.selectConversation(savedConversations[0].id);
+      // 3. Validate selected conversation exists
+      if (selectedConversationId && !conversations.find(c => c.id === selectedConversationId)) {
+        // Selected conversation no longer exists, select first available
+        if (conversations.length > 0) {
+          selectConversation(conversations[0].id);
+        } else {
+          selectConversation(null);
+        }
       }
 
-      // Mark conversations as loaded
-      conversationStore.setIsLoaded(true);
+      // Mark as loaded
+      setIsLoaded(true);
     } catch (error) {
-      console.error('Error initializing app state from localStorage:', error);
+      console.error('Error initializing app state:', error);
       // On error, mark as loaded anyway to prevent blocking the app
-      conversationStore.setIsLoaded(true);
+      useConversationStore.getState().setIsLoaded(true);
     }
-  }, [uiStore, settingsStore, conversationStore]);
+  }, []); // Empty deps - only run once
 
   return null; // This component doesn't render anything
 }

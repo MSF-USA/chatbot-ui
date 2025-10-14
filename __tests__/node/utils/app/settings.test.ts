@@ -9,6 +9,7 @@ describe('Settings Manager', () => {
         theme: 'dark',
         temperature: 0.5,
         systemPrompt: '',
+        advancedMode: false,
     };
 
     beforeEach(() => {

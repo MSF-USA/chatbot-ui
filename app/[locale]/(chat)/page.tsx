@@ -3,7 +3,6 @@
 import { Chat } from '@/components/Chat/Chat';
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { SettingDialog } from '@/components/settings/SettingDialog';
-import { MigrationBanner } from '@/components/migration/MigrationBanner';
 import { AppInitializer } from '@/components/providers/AppInitializer';
 import { useUI } from '@/lib/hooks/ui/useUI';
 
@@ -29,8 +28,6 @@ export default function ChatPage() {
 
         <SettingDialog />
       </div>
-
-      <MigrationBanner />
     </>
   );
 }

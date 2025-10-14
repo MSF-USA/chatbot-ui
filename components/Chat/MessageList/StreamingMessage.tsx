@@ -3,6 +3,7 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+import rehypeMathjax from 'rehype-mathjax/svg';
 
 interface StreamingMessageProps {
   content: string;
@@ -23,7 +24,10 @@ export function StreamingMessage({ content }: StreamingMessageProps) {
         {/* Message Content */}
         <div className="flex-1 overflow-hidden">
           <div className="prose dark:prose-invert max-w-none">
-            <ReactMarkdown remarkPlugins={[remarkGfm, remarkMath]}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={[rehypeMathjax]}
+            >
               {content}
             </ReactMarkdown>
           </div>

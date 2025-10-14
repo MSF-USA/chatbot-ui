@@ -226,9 +226,11 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
         {/* Document content */}
         <div className="overflow-y-auto flex-grow mb-4 bg-gray-100 dark:bg-[#2a2b32] p-4 rounded">
-          <ReactMarkdown className="prose dark:prose-invert max-w-none">
-            {documentContent}
-          </ReactMarkdown>
+          <div className="prose dark:prose-invert max-w-none">
+            <ReactMarkdown>
+              {documentContent}
+            </ReactMarkdown>
+          </div>
           <div className="text-sm text-gray-500 dark:text-gray-400 mt-4">
             {t('Version')}: {currentDocumentData?.version}
           </div>

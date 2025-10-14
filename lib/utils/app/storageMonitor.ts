@@ -7,11 +7,11 @@
  * - Check if storage is nearing capacity
  * - Provide functions to manage conversations by recency
  * - Calculate potential space savings
+ *
+ * Updated for Zustand persist middleware
  */
-import { Conversation, Message } from '@/types/chat';
-import { FolderInterface } from '@/types/folder';
-import { Prompt } from '@/types/prompt';
-import { Settings } from '@/types/settings';
+import { Conversation } from '@/types/chat';
+import { useConversationStore } from '@/lib/stores/conversationStore';
 
 // Constants
 export const STORAGE_THRESHOLDS = {
@@ -24,13 +24,11 @@ export const MIN_RETAINED_CONVERSATIONS = 5; // Minimum number of conversations 
 // Local storage key for dismissed thresholds
 const DISMISSED_THRESHOLDS_KEY = 'dismissedStorageThresholds';
 
-// Storage keys used in the application
-const STORAGE_KEYS = {
-  CONVERSATIONS: 'conversations',
-  FOLDERS: 'folders',
-  PROMPTS: 'prompts',
-  SETTINGS: 'settings',
-  SELECTED_CONVERSATION: 'selectedConversation',
+// Zustand persist storage keys (these are the actual localStorage keys)
+const ZUSTAND_STORAGE_KEYS = {
+  CONVERSATIONS: 'conversation-storage', // Zustand persist key for conversationStore
+  SETTINGS: 'settings-storage', // Zustand persist key for settingsStore
+  UI: 'ui-storage', // Zustand persist key for uiStore
 };
 
 // Helper to check if we're in a browser environment
@@ -243,15 +241,18 @@ export const updateStorageStats = () => {
 
 /**
  * Get conversations sorted by date (most recent first)
+ * Updated to read from Zustand persist structure
  */
 export const getSortedConversations = (): Conversation[] => {
   requireBrowser();
 
   try {
-    const conversationsJson = localStorage.getItem(STORAGE_KEYS.CONVERSATIONS);
-    if (!conversationsJson) return [];
+    // Read from Zustand persist structure: {state: {conversations: [...]}, version: 1}
+    const conversationStorageJson = localStorage.getItem(ZUSTAND_STORAGE_KEYS.CONVERSATIONS);
+    if (!conversationStorageJson) return [];
 
-    const conversations: Conversation[] = JSON.parse(conversationsJson);
+    const persistedData = JSON.parse(conversationStorageJson);
+    const conversations: Conversation[] = persistedData?.state?.conversations || [];
 
     // Separate conversations with and without dates
     const conversationsWithDates: Conversation[] = [];
@@ -295,6 +296,7 @@ export const getSortedConversations = (): Conversation[] => {
 
 /**
  * Calculate space that would be freed by removing older conversations
+ * Updated for Zustand persist structure
  */
 export const calculateSpaceFreed = (
   keepCount: number,
@@ -311,12 +313,16 @@ export const calculateSpaceFreed = (
       return { spaceFreed: 0, conversationsRemoved: 0, percentFreed: 0 };
     }
 
-    // Get the current size of all conversations
-    const currentSize = getItemSize(STORAGE_KEYS.CONVERSATIONS);
+    // Get the current size of Zustand conversation storage
+    const currentSize = getItemSize(ZUSTAND_STORAGE_KEYS.CONVERSATIONS);
 
-    // Calculate what would be kept
+    // Calculate what would be kept (need to account for Zustand persist wrapper)
     const keptConversations = sortedConversations.slice(0, keepCount);
-    const keptSize = getStringSizeInBytes(JSON.stringify(keptConversations));
+    const keptPersistStructure = {
+      state: { conversations: keptConversations },
+      version: 1
+    };
+    const keptSize = getStringSizeInBytes(JSON.stringify(keptPersistStructure));
 
     // Calculate space freed
     const spaceFreed = currentSize - keptSize;
@@ -336,6 +342,7 @@ export const calculateSpaceFreed = (
 
 /**
  * Clear older conversations while keeping the most recent ones
+ * Updated to use Zustand stores instead of direct localStorage manipulation
  */
 export const clearOlderConversations = (keepCount: number): boolean => {
   requireBrowser();
@@ -354,33 +361,25 @@ export const clearOlderConversations = (keepCount: number): boolean => {
     // Keep only the most recent conversations
     const keptConversations = sortedConversations.slice(0, keepCount);
 
-    // Save the kept conversations back to localStorage
-    localStorage.setItem(
-      STORAGE_KEYS.CONVERSATIONS,
-      JSON.stringify(keptConversations),
-    );
+    // Use Zustand store to update conversations
+    const conversationStore = useConversationStore.getState();
+    const { selectedConversationId, selectConversation, setConversations } = conversationStore;
+
+    // Update conversations in the store (this will auto-persist via Zustand persist)
+    setConversations(keptConversations);
 
     // Reset dismissed thresholds since user has taken action
     resetDismissedThresholds();
 
     // If the selected conversation was removed, update it to the most recent one
-    const selectedConversationJson = localStorage.getItem(
-      STORAGE_KEYS.SELECTED_CONVERSATION,
-    );
-    if (selectedConversationJson) {
-      const selectedConversation: Conversation = JSON.parse(
-        selectedConversationJson,
-      );
+    if (selectedConversationId) {
       const isSelectedKept = keptConversations.some(
-        (c) => c.id === selectedConversation.id,
+        (c) => c.id === selectedConversationId,
       );
 
       if (!isSelectedKept && keptConversations.length > 0) {
         // Always use the first (most recent) conversation as the new selected one
-        localStorage.setItem(
-          STORAGE_KEYS.SELECTED_CONVERSATION,
-          JSON.stringify(keptConversations[0]),
-        );
+        selectConversation(keptConversations[0].id);
       }
     }
 

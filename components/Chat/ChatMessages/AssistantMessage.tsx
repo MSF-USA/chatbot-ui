@@ -19,7 +19,7 @@ import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
 import { useSmoothStreaming } from '@/lib/hooks/useSmoothStreaming';
-import { useStreamingSettings } from '@/lib/context/StreamingSettingsContext';
+import { useSettingsStore } from '@/lib/stores/settingsStore';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
@@ -27,7 +27,7 @@ import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
-import rehypeMathjax from 'rehype-mathjax';
+import rehypeMathjax from 'rehype-mathjax/svg';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
@@ -60,8 +60,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
   const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
 
-  // Get streaming settings from context
-  const { settings, updateSettings } = useStreamingSettings();
+  // Get streaming settings from store
+  const smoothStreamingEnabled = useSettingsStore((state) => state.smoothStreamingEnabled);
+  const charsPerFrame = useSettingsStore((state) => state.charsPerFrame);
+  const frameDelay = useSettingsStore((state) => state.frameDelay);
+  const setSmoothStreamingEnabled = useSettingsStore((state) => state.setSmoothStreamingEnabled);
+  const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
+  const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
 
   const citationsProcessed = useRef(false);
   const processingAttempts = useRef(0);
@@ -70,9 +75,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const smoothContent = useSmoothStreaming({
     isStreaming: messageIsStreaming,
     content: displayContent,
-    charsPerFrame: settings.charsPerFrame,
-    frameDelay: settings.frameDelay,
-    enabled: settings.smoothStreamingEnabled,
+    charsPerFrame: charsPerFrame,
+    frameDelay: frameDelay,
+    enabled: smoothStreamingEnabled,
   });
 
   // Clean up resources when component unmounts
@@ -209,7 +214,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
-  const contentToDisplay = settings.smoothStreamingEnabled && messageIsStreaming
+  const contentToDisplay = smoothStreamingEnabled && messageIsStreaming
     ? smoothContent
     : displayContentWithoutCitations;
 
@@ -255,12 +260,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   // Custom components for markdown processing
   const customMarkdownComponents = {
-    code({ inline, className, children, ...props }: {
-      inline?: boolean;
-      className?: string;
-      children: React.ReactNode[];
-    }) {
-      if (children.length) {
+    code({ inline, className, children, ...props }: any) {
+      if (children?.length) {
         if (children[0] == '▍') {
           return (
             <span className="animate-pulse cursor-default mt-1">
@@ -284,7 +285,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </code>
       );
     },
-    table({ children }: { children: React.ReactNode }) {
+    table({ children }: any) {
       return (
         <div className="overflow-auto">
           <table className="border-collapse border border-black px-3 py-1 dark:border-white">
@@ -293,21 +294,21 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </div>
       );
     },
-    th({ children }: { children: React.ReactNode }) {
+    th({ children }: any) {
       return (
         <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
           {children}
         </th>
       );
     },
-    td({ children }: { children: React.ReactNode }) {
+    td({ children }: any) {
       return (
         <td className="break-words border border-black px-3 py-1 dark:border-white">
           {children}
         </td>
       );
     },
-    p({ children }: { children: React.ReactNode }) {
+    p({ children }: any) {
       return (
         <p>
           {children}
@@ -329,7 +330,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           <div className="flex-1 w-full">
             <div className="prose dark:prose-invert max-w-none w-full" style={{ maxWidth: 'none' }}>
               <CitationMarkdown
-                className="max-w-none w-full"
                 conversation={selectedConversation}
                 citations={citations}
                 remarkPlugins={remarkPlugins}
@@ -403,19 +403,19 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                       <input
                         type="checkbox"
                         className="opacity-0 w-0 h-0"
-                        checked={settings.smoothStreamingEnabled}
+                        checked={smoothStreamingEnabled}
                         onChange={(e) =>
-                          updateSettings({ smoothStreamingEnabled: e.target.checked })
+                          setSmoothStreamingEnabled(e.target.checked)
                         }
                       />
                       <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                        settings.smoothStreamingEnabled 
-                          ? 'bg-blue-500 dark:bg-blue-600' 
+                        smoothStreamingEnabled
+                          ? 'bg-blue-500 dark:bg-blue-600'
                           : 'bg-gray-300 dark:bg-gray-600'
                       }`}>
                         <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                          settings.smoothStreamingEnabled 
-                            ? 'translate-x-5' 
+                          smoothStreamingEnabled
+                            ? 'translate-x-5'
                             : 'translate-x-0.5'
                         } top-0.5 left-0`}></span>
                       </span>
@@ -427,23 +427,23 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
                     <span>Speed (characters per frame)</span>
                     <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {settings.charsPerFrame}
+                      {charsPerFrame}
                     </span>
                   </label>
                   <input
                     type="range"
                     min="1"
                     max="10"
-                    value={settings.charsPerFrame}
+                    value={charsPerFrame}
                     onChange={(e) =>
-                      updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                      setCharsPerFrame(parseInt(e.target.value))
                     }
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      settings.smoothStreamingEnabled
+                      smoothStreamingEnabled
                         ? 'bg-gray-300 dark:bg-gray-600'
                         : 'bg-gray-200 dark:bg-gray-700 opacity-50'
                     }`}
-                    disabled={!settings.smoothStreamingEnabled}
+                    disabled={!smoothStreamingEnabled}
                   />
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
                     <span>Slower</span>
@@ -455,7 +455,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
                     <span>Delay between frames (ms)</span>
                     <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {settings.frameDelay}ms
+                      {frameDelay}ms
                     </span>
                   </label>
                   <input
@@ -463,16 +463,16 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     min="5"
                     max="50"
                     step="5"
-                    value={settings.frameDelay}
+                    value={frameDelay}
                     onChange={(e) =>
-                      updateSettings({ frameDelay: parseInt(e.target.value) })
+                      setFrameDelay(parseInt(e.target.value))
                     }
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      settings.smoothStreamingEnabled
+                      smoothStreamingEnabled
                         ? 'bg-gray-300 dark:bg-gray-600'
                         : 'bg-gray-200 dark:bg-gray-700 opacity-50'
                     }`}
-                    disabled={!settings.smoothStreamingEnabled}
+                    disabled={!smoothStreamingEnabled}
                   />
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
                     <span>Faster</span>

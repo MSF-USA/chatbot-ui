@@ -76,7 +76,6 @@ export const useChatStore = create<ChatStore>((set) => ({
 
       // Get settings from settings store
       const settings = useSettingsStore.getState();
-      const apiKey = settings.apiKey || '';
       const systemPrompt = settings.systemPrompt;
       const temperature = settings.temperature;
 
@@ -84,7 +83,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       const { response, hasComplexContent } = await makeRequest(
         () => {}, // setRequestStatusMessage - not needed for now
         conversation,
-        apiKey,
+        '', // apiKey - not used, backend uses Azure AD authentication
         systemPrompt,
         temperature,
         true, // stream

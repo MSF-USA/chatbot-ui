@@ -1,7 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
 
-import { getEndpoint } from '@/lib/utils/app/api';
-
 import {
   ChatBody,
   Conversation,
@@ -178,11 +176,10 @@ Document metadata: ${filename}
         updatedConversation.bot,
         false, // Don't stream intermediate steps
       );
-      const endpoint = getEndpoint();
       const requestBody = JSON.stringify(chatBody, null, 2);
 
       const { controller, response, body } = await sendRequest(
-        endpoint,
+        '/api/chat',
         requestBody,
       );
       const responseData = await response.json();
@@ -241,13 +238,11 @@ Provide a detailed comparison.
       stream, // Stream the final comparison response
     );
 
-    const endpoint = getEndpoint();
-
     let requestBody = JSON.stringify(chatBody);
 
     setProgress(progressPercentage);
     const { controller, body, response } = await sendRequest(
-      endpoint,
+      '/api/chat',
       requestBody,
       stopConversationRef,
     );
@@ -290,11 +285,9 @@ Provide a detailed comparison.
       updatedConversation.bot,
       stream,
     );
-    const endpoint = getEndpoint();
-
     let requestBody = JSON.stringify(chatBody);
     const { controller, body, response } = await sendRequest(
-      endpoint,
+      '/api/chat',
       requestBody,
       stopConversationRef
     );

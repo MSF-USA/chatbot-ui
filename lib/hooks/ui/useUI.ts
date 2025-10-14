@@ -1,33 +1,15 @@
 import { useEffect } from 'react';
 import { useUIStore } from '@/lib/stores/uiStore';
-import {
-  LocalStorageService,
-  StorageKeys,
-} from '@/lib/services/storage/localStorageService';
 
 /**
- * Hook that manages UI state with localStorage persistence
+ * Hook that manages UI state
+ * Persistence is handled automatically by Zustand persist middleware
  */
 export function useUI() {
   const store = useUIStore();
 
-  // Note: localStorage loading is now handled by UILoader component
-  // to avoid multiple simultaneous reads on app initialization
-
-  // Persist showChatbar
+  // Update document class for theme (not persisted, just DOM manipulation)
   useEffect(() => {
-    LocalStorageService.set(StorageKeys.SHOW_CHATBAR, store.showChatbar);
-  }, [store.showChatbar]);
-
-  // Persist showPromptbar
-  useEffect(() => {
-    LocalStorageService.set(StorageKeys.SHOW_PROMPT_BAR, store.showPromptbar);
-  }, [store.showPromptbar]);
-
-  // Persist theme and update document
-  useEffect(() => {
-    LocalStorageService.set(StorageKeys.THEME, store.theme);
-
     if (store.theme === 'dark') {
       document.documentElement.classList.add('dark');
     } else {

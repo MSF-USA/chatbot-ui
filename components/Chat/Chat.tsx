@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useChat } from '@/lib/hooks/chat/useChat';
 import { useUI } from '@/lib/hooks/ui/useUI';
@@ -9,6 +10,7 @@ import { ChatTopbar } from './ChatTopbar';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ChatInput } from './ChatInput';
 import { ModelSelect } from './ModelSelect';
+import { LoadingScreen } from './LoadingScreen';
 import { Message } from '@/types/chat';
 import { EmptyState } from './EmptyState/EmptyState';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
  * Main chat component - migrated to use Zustand stores
  */
 export function Chat() {
+  const { data: session, status } = useSession();
   const { selectedConversation, updateConversation, conversations, addConversation, selectConversation, isLoaded } = useConversations();
   const { isStreaming, streamingContent, error, sendMessage, citations } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } = useUI();
@@ -183,6 +186,12 @@ export function Chat() {
 
   const messages = selectedConversation?.messages || [];
   const hasMessages = messages.length > 0 || isStreaming;
+
+  // Show loading screen until session and data are fully loaded
+  // This prevents UI flickering during initialization
+  if (status === 'loading' || !isLoaded || models.length === 0) {
+    return <LoadingScreen />;
+  }
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-white dark:bg-[#212121] transition-all">

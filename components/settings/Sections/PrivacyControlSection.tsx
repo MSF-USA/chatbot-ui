@@ -19,7 +19,7 @@ import React, { useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import privacyPolicyData from '@/utils/knowledge/privacyPolicy.json';
+import privacyPolicyData from '@/lib/data/privacyPolicy.json';
 
 /**
  * Component props

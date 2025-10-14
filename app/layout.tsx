@@ -25,9 +25,11 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('theme');
-                  var parsedTheme = theme ? JSON.parse(theme) : 'dark';
-                  if (parsedTheme === 'dark') {
+                  // Zustand persist stores data as: {state: {...}, version: 0}
+                  var uiStorage = localStorage.getItem('ui-storage');
+                  var parsedStorage = uiStorage ? JSON.parse(uiStorage) : null;
+                  var theme = parsedStorage?.state?.theme || 'dark';
+                  if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');

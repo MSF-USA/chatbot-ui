@@ -5,7 +5,7 @@ import {getBase64FromImageURL} from "@/lib/utils/app/image";
 import { MemoizedReactMarkdown } from "@/components/Markdown/MemoizedReactMarkdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeMathjax from "rehype-mathjax";
+import rehypeMathjax from "rehype-mathjax/svg";
 import {CodeBlock} from "@/components/Markdown/CodeBlock";
 import {fetchImageBase64FromMessageContent} from "@/lib/services/imageService";
 
@@ -231,8 +231,8 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                       </div>
                     ) : (
                       <>
+                          <div className="prose dark:prose-invert flex-1">
                           <MemoizedReactMarkdown
-                            className="prose dark:prose-invert flex-1"
                             remarkPlugins={[remarkGfm, remarkMath]}
                             rehypePlugins={[rehypeMathjax]}
                             components={{
@@ -289,6 +289,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                           >
                               {text?.text || ""}
                           </MemoizedReactMarkdown>
+                          </div>
                           <div
                             className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
                               <button
