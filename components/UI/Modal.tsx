@@ -1,4 +1,5 @@
 import React, { ReactNode, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { IconX } from '@tabler/icons-react';
 import useModal from '@/lib/hooks/useModal';
 
@@ -77,8 +78,11 @@ const Modal: React.FC<ModalProps> = ({
   // Only show divider if there's actually content in the header
   const showDivider = showHeader && title;
 
-  return (
-    <div className={`fixed inset-0 z-50 flex items-center justify-center overflow-y-auto ${className.includes('!z-') ? className.match(/!z-\[\d+\]/)?.[0] || '' : ''}`}>
+  // Extract z-index from className if provided
+  const zIndexClass = className.match(/(!?z-\[?\d+\]?)/)?.[0] || 'z-50';
+
+  const modalContent = (
+    <div className={`fixed inset-0 ${zIndexClass} flex items-center justify-center overflow-y-auto`}>
       {/* Backdrop/overlay */}
       <div
         className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm transition-opacity"
@@ -89,7 +93,7 @@ const Modal: React.FC<ModalProps> = ({
       {/* Modal container */}
       <div
         ref={modalContentRef}
-        className={`${sizeClasses} w-full bg-white dark:bg-[#171717] rounded-lg shadow-lg p-6 relative z-10 ${className.replace(/!z-\[\d+\]/, '')}`}
+        className={`${sizeClasses} w-full bg-white dark:bg-[#171717] rounded-lg shadow-lg p-6 relative z-10 ${className.replace(/!?z-\[?\d+\]?/, '')}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby={title ? "modal-title" : undefined}
@@ -176,6 +180,13 @@ const Modal: React.FC<ModalProps> = ({
       </div>
     </div>
   );
+
+  // Use portal to render modal at document root to avoid z-index stacking issues
+  if (typeof window !== 'undefined') {
+    return createPortal(modalContent, document.body);
+  }
+
+  return null;
 };
 
 export default Modal;

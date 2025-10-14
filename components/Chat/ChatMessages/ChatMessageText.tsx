@@ -1,4 +1,4 @@
-import { FC, Dispatch, SetStateAction, KeyboardEvent } from 'react';
+import React, { FC, Dispatch, SetStateAction, KeyboardEvent } from 'react';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';

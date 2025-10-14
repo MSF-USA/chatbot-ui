@@ -1,6 +1,6 @@
 'use client';
 
-import { ChangeEvent, FC } from 'react';
+import React, { ChangeEvent, FC } from 'react';
 import { useLocale } from 'next-intl';
 import { usePathname, useRouter } from '@/lib/navigation';
 import { useParams } from 'next/navigation';

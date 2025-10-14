@@ -5,7 +5,6 @@ import {
   IconLanguage,
   IconLink,
   IconSearch,
-  IconX,
   IconFile,
 } from '@tabler/icons-react';
 import React, {
@@ -19,6 +18,11 @@ import React, {
 import { useTranslations } from 'next-intl';
 
 import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
+import { useDropdownKeyboardNav } from '@/lib/hooks/useDropdownKeyboardNav';
+
+import { DropdownSearchInput } from './DropdownSearchInput';
+import { DropdownCategoryGroup } from './DropdownCategoryGroup';
+import { MenuItem } from './DropdownMenuItem';
 
 import {
   ChatInputSubmitTypes,
@@ -63,16 +67,6 @@ interface DropdownProps {
   apiKey?: string;
   systemPrompt?: string;
   temperature?: number;
-}
-
-// Define the menu item structure
-interface MenuItem {
-  id: string;
-  icon: React.ReactNode;
-  label: string;
-  tooltip: string;
-  onClick: () => void;
-  category: 'web' | 'media' | 'transform';
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -236,57 +230,23 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const flattenedItems = filteredItems;
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (!isOpen) return;
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setSelectedIndex((prevIndex) =>
-          prevIndex < flattenedItems.length - 1 ? prevIndex + 1 : 0,
-        );
-        break;
-
-      case 'ArrowUp':
-        event.preventDefault();
-        setSelectedIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : flattenedItems.length - 1,
-        );
-        break;
-
-      case 'Enter':
-        event.preventDefault();
-        if (flattenedItems[selectedIndex]) {
-          flattenedItems[selectedIndex].onClick();
-        }
-        break;
-
-      case 'Escape':
-        event.preventDefault();
-        if (filterQuery) {
-          setFilterQuery('');
-          setSelectedIndex(0);
-        } else {
-          closeDropdown();
-          setSearchConfig((prev) => ({ ...prev, isOpen: false }));
-          setIsTranscribeOpen(false);
-          setIsTranslateOpen(false);
-          setIsImageOpen(false);
-        }
-        break;
-
-      default:
-        if (
-          event.key.length === 1 &&
-          !event.ctrlKey &&
-          !event.altKey &&
-          !event.metaKey
-        ) {
-          filterInputRef.current?.focus();
-        }
-        break;
-    }
-  };
+  // Use keyboard navigation hook
+  const { handleKeyDown } = useDropdownKeyboardNav({
+    isOpen,
+    items: flattenedItems,
+    selectedIndex,
+    setSelectedIndex,
+    filterQuery,
+    setFilterQuery,
+    closeDropdown,
+    filterInputRef,
+    onCloseModals: () => {
+      setSearchConfig((prev) => ({ ...prev, isOpen: false }));
+      setIsTranscribeOpen(false);
+      setIsTranslateOpen(false);
+      setIsImageOpen(false);
+    },
+  });
 
   // Group menu items by category
   const groupedItems = filteredItems.reduce((acc, item) => {
@@ -347,76 +307,23 @@ const Dropdown: React.FC<DropdownProps> = ({
           role="menu"
           onKeyDown={handleKeyDown}
         >
-          {/* Search/Filter Input */}
-          <div className="sticky top-0 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <div className="relative">
-              <input
-                ref={filterInputRef}
-                type="text"
-                placeholder="Search features..."
-                value={filterQuery}
-                onChange={(e) => setFilterQuery(e.target.value)}
-                className="w-full px-3 py-2 pl-10 pr-8 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Search features"
-                role="searchbox"
-              />
-              <IconSearch
-                className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500"
-                size={16}
-              />
-              {filterQuery && (
-                <button
-                  onClick={() => setFilterQuery('')}
-                  className="absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                  aria-label="Clear search"
-                >
-                  <IconX size={16} />
-                </button>
-              )}
-            </div>
-          </div>
+          <DropdownSearchInput
+            value={filterQuery}
+            onChange={setFilterQuery}
+            onClear={() => setFilterQuery('')}
+            inputRef={filterInputRef}
+          />
 
           <div className="max-h-80 overflow-y-auto custom-scrollbar">
             {Object.entries(groupedItems).length > 0 ? (
               Object.entries(groupedItems).map(([category, items]) => (
-                <div
+                <DropdownCategoryGroup
                   key={category}
-                  className="px-1 py-1"
-                  role="group"
-                  aria-label={category}
-                >
-                  <h3 className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </h3>
-                  {items.map((item) => {
-                    const itemIndex = flattenedItems.findIndex(
-                      (i) => i.id === item.id,
-                    );
-                    const isSelected = itemIndex === selectedIndex;
-
-                    return (
-                      <div key={item.id} className="group relative">
-                        <button
-                          className={`flex items-center px-3 py-2.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 transition-colors duration-150 ${
-                            isSelected
-                              ? 'bg-gray-100 dark:bg-gray-700'
-                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                          }`}
-                          onClick={item.onClick}
-                          role="menuitem"
-                          aria-current={isSelected ? 'true' : undefined}
-                          tabIndex={isSelected ? 0 : -1}
-                        >
-                          {item.icon}
-                          <span>{item.label}</span>
-                        </button>
-                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap z-20">
-                          {item.tooltip}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                  category={category}
+                  items={items}
+                  flattenedItems={flattenedItems}
+                  selectedIndex={selectedIndex}
+                />
               ))
             ) : (
               <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">

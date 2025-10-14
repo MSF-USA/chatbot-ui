@@ -1,5 +1,5 @@
 import { XIcon } from "@/components/Icons/cancel";
-import { Dispatch, FC, SetStateAction, MouseEvent, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, MouseEvent, useState } from "react";
 import {ChatInputSubmitTypes, FilePreview} from "@/types/chat";
 import FileIcon from "@/components/Icons/file";
 import {IconInfoCircle} from "@tabler/icons-react";

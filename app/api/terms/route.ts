@@ -1,5 +1,4 @@
-
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
 // English terms
@@ -143,7 +142,7 @@ const termsData: TermsData = {
   }
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     return NextResponse.json(termsData);
   } catch (error) {

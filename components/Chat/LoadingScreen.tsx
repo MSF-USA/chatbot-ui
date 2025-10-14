@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * Loading screen shown during app initialization
  * Displays while data is being loaded from localStorage

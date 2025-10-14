@@ -39,7 +39,7 @@ describe('Conversation tests', () => {
     it('cleans single conversation correctly', () => {
         const result: Conversation = cleanSelectedConversation(tempConversation)
 
-        expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_3_5])
+        expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_4o])
         expect(result.prompt).toBe(DEFAULT_SYSTEM_PROMPT)
         expect(result.temperature).toBe(DEFAULT_TEMPERATURE)
         expect(result.folderId).toBe(null)
@@ -50,7 +50,7 @@ describe('Conversation tests', () => {
         const results: Conversation[] = cleanConversationHistory(tempHistory)
 
         for (const result of results) {
-            expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_3_5])
+            expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_4o])
             expect(result.prompt).toBe(DEFAULT_SYSTEM_PROMPT)
             expect(result.temperature).toBe(DEFAULT_TEMPERATURE)
             expect(result.folderId).toBe(null)

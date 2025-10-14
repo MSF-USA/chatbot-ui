@@ -33,6 +33,9 @@ export class LocalStorageService {
       return JSON.parse(item) as T;
     } catch (error) {
       console.error(`Error reading from localStorage key "${key}":`, error);
+      console.error(`Raw value: "${window.localStorage.getItem(key)}"`);
+      console.warn(`Removing corrupted localStorage key "${key}"`);
+      window.localStorage.removeItem(key);
       return null;
     }
   }
@@ -91,7 +94,14 @@ export class LocalStorageService {
   static getAllKeys(): string[] {
     if (typeof window === 'undefined') return [];
 
-    return Object.keys(window.localStorage);
+    const keys: string[] = [];
+    for (let i = 0; i < window.localStorage.length; i++) {
+      const key = window.localStorage.key(i);
+      if (key !== null) {
+        keys.push(key);
+      }
+    }
+    return keys;
   }
 
   /**

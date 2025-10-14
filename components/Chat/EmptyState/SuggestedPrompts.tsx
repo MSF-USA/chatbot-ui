@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { suggestedPrompts } from '@/components/Chat/prompts';
 
 interface SuggestedPromptsProps {

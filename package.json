@@ -11,7 +11,9 @@
     "test:node": "vitest --run --config ./vitest.config.node.ts",
     "test:jsdom": "vitest --run --config ./vitest.config.jsdom.ts",
     "test": "npm run test:node && npm run test:jsdom",
-    "coverage": "vitest run --coverage",
+    "coverage:node": "vitest run --coverage --config ./vitest.config.node.ts",
+    "coverage:jsdom": "vitest run --coverage --config ./vitest.config.jsdom.ts",
+    "coverage": "npm run coverage:node && npm run coverage:jsdom",
     "search:config": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts",
     "search:config-downtime": "npx ts-node --project tsconfig.scripts.json scripts/search/index.ts --allow-downtime"
   },

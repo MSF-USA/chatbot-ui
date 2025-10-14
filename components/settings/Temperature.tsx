@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { useTranslations } from 'next-intl';
 import { DEFAULT_TEMPERATURE } from '@/lib/utils/app/const';
 

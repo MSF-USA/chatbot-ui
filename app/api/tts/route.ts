@@ -12,7 +12,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const { text } = await request.json();
     const cleanedText = cleanMarkdown(text);
-    if (!text || !cleanedText) {
+    if (!cleanedText) {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
     }
 

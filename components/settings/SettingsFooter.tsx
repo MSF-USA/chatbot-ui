@@ -1,5 +1,5 @@
 import { IconExternalLink } from '@tabler/icons-react';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';

@@ -1,11 +1,10 @@
-import {
-  IconDownload,
-  IconPlayerPause,
-  IconPlayerPlay,
-  IconX,
-  IconChevronDown,
-} from '@tabler/icons-react';
+import { IconDownload, IconX } from '@tabler/icons-react';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { PlaybackButton } from './Audio/PlaybackButton';
+import { AudioTimeDisplay } from './Audio/AudioTimeDisplay';
+import { SpeedControl } from './Audio/SpeedControl';
+import { ProgressBar } from './Audio/ProgressBar';
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -21,17 +20,9 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  const speedDropdownRef = useRef<HTMLDivElement>(null);
 
   // Available playback speeds
   const speeds = [0.75, 1, 1.25, 1.5, 1.75, 2];
-
-  // Format time from seconds to MM:SS
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-  };
 
   // Clean up resources when component unmounts
   useEffect(() => {
@@ -50,18 +41,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
           });
     }
 
-    // Add click event listener to close dropdown when clicking outside
-    const handleClickOutside = (event: MouseEvent) => {
-      if (speedDropdownRef.current && !speedDropdownRef.current.contains(event.target as Node)) {
-        setShowSpeedDropdown(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
     return () => {
       stopAnimationLoop();
-      document.removeEventListener('mousedown', handleClickOutside);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -267,55 +248,23 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
         <div className="flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
-              <button
-                  onClick={togglePlayback}
-                  className="mr-2 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
-                  aria-label={isPlaying ? "Pause" : "Play"}
-              >
-                {isPlaying ?
-                    <IconPlayerPause size={20} /> :
-                    <IconPlayerPlay size={20} />
-                }
-              </button>
-              <div className="text-xs text-gray-600 dark:text-gray-300">
-                {formatTime(audioRef.current?.currentTime || 0)} / {formatTime(audioDuration)}
-                {playbackSpeed !== 1 && (
-                  <span className="ml-1 text-xs text-gray-500 dark:text-gray-400">
-                    ({playbackSpeed}x)
-                  </span>
-                )}
-              </div>
+              <PlaybackButton isPlaying={isPlaying} onToggle={togglePlayback} />
+              <AudioTimeDisplay
+                currentTime={audioRef.current?.currentTime || 0}
+                duration={audioDuration}
+                playbackSpeed={playbackSpeed}
+              />
             </div>
 
             <div className="flex items-center">
-              {/* Playback speed dropdown */}
-              <div className="relative" ref={speedDropdownRef}>
-                <button
-                    onClick={toggleSpeedDropdown}
-                    className="mx-1 px-2 py-1 text-xs rounded flex items-center bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 focus:outline-none"
-                    aria-label="Change playback speed"
-                    title="Change playback speed"
-                >
-                  {playbackSpeed}x <IconChevronDown size={14} className="ml-1" />
-                </button>
-
-                {/* Speed dropdown menu - now appears above the button */}
-                {showSpeedDropdown && (
-                    <div className="absolute right-0 bottom-full mb-1 w-20 bg-white dark:bg-gray-800 rounded shadow-lg border border-gray-200 dark:border-gray-700 z-10">
-                      {speeds.map((speed) => (
-                          <button
-                              key={speed}
-                              onClick={() => changePlaybackSpeed(speed)}
-                              className={`block w-full text-left px-3 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                                  speed === playbackSpeed ? 'bg-gray-100 dark:bg-gray-700 font-semibold' : ''
-                              }`}
-                          >
-                            {speed}x
-                          </button>
-                      ))}
-                    </div>
-                )}
-              </div>
+              <SpeedControl
+                playbackSpeed={playbackSpeed}
+                speeds={speeds}
+                showDropdown={showSpeedDropdown}
+                onToggleDropdown={toggleSpeedDropdown}
+                onChangeSpeed={changePlaybackSpeed}
+                onClickOutside={() => setShowSpeedDropdown(false)}
+              />
 
               {/* Download button */}
               <button
@@ -339,16 +288,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             </div>
           </div>
 
-          {/* Progress bar */}
-          <div
-              className="relative h-2 rounded-full bg-gray-200 dark:bg-gray-700 cursor-pointer"
-              onClick={handleSeek}
-          >
-            <div
-                className="absolute top-0 left-0 h-2 rounded-full bg-blue-500 dark:bg-blue-600 transition-all duration-100"
-                style={{ width: `${audioProgress}%` }}
-            ></div>
-          </div>
+          <ProgressBar progress={audioProgress} onSeek={handleSeek} />
         </div>
       </div>
   );

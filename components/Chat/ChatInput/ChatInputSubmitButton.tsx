@@ -1,5 +1,5 @@
 import {IconLoader2, IconPlayerStop, IconSend} from "@tabler/icons-react";
-import {FC} from "react";
+import React, {FC} from "react";
 
 interface ChatInputSubmitButtonProps {
   isStreaming: boolean;

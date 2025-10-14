@@ -240,7 +240,7 @@ export async function parseAndQueryFileOpenAI({
   }
 }
 
-function splitIntoChunks(text: string, chunkSize: number = 6000): string[] {
+export function splitIntoChunks(text: string, chunkSize: number = 6000): string[] {
   const chunks: string[] = [];
   for (let i = 0; i < text.length; i += chunkSize) {
     chunks.push(text.slice(i, i + chunkSize));

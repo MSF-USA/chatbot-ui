@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { Message, Conversation, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
-import { makeRequest } from '@/lib/services/frontendChatServices';
+import { makeRequest } from '@/lib/services/chat/frontendChatService';
 import { extractCitationsFromContent } from '@/lib/utils/app/citation';
 import { useConversationStore } from './conversationStore';
 import { useSettingsStore } from './settingsStore';

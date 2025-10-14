@@ -39,12 +39,14 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/your-org/chatbot-ui.git
    cd chatbot-ui
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
@@ -52,6 +54,7 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 3. **Configure environment variables**
 
    Copy `.env.example` to `.env.local` and configure:
+
    ```bash
    cp .env.example .env.local
    ```
@@ -59,6 +62,7 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
    Then edit `.env.local` with your actual values. See `.env.example` for all available configuration options and detailed descriptions of each variable.
 
 4. **Run development server**
+
    ```bash
    npm run dev
    ```
@@ -131,6 +135,7 @@ The application is optimized for deployment on Vercel:
 ### Environment Variables
 
 See `.env.example` for all available configuration options, including:
+
 - NextAuth configuration (URL, secret, Azure AD)
 - Azure OpenAI credentials and endpoints
 - Optional services (Azure Speech, Blob Storage, AI Foundry, LaunchDarkly)
@@ -143,17 +148,20 @@ Copy `.env.example` to `.env.local` and update with your actual values.
 Model settings and environment-specific configurations are managed in two files:
 
 **`types/openai.ts`** - Single source of truth for all model metadata:
+
 - Model names, descriptions, token limits
 - Agent IDs for Azure AI Foundry integration
 - Model capabilities (streaming, temperature, etc.)
 
 **`config/models.ts`** - Environment-specific overrides (localhost, dev, prod):
+
 - Default model per environment
 - Disabled models per environment
 
 ### Feature Flags
 
 Enable/disable features via environment variables:
+
 - **ENABLE_WEB_SEARCH** - Enable Bing web search
 - **ENABLE_TRANSCRIPTION** - Enable audio transcription
 - **ENABLE_VISION** - Enable image upload and vision
@@ -185,17 +193,15 @@ Enable/disable features via environment variables:
 ## Support
 
 For issues, questions, or feature requests:
+
 - Open an issue on GitHub
 - Contact the MSF IT support team
 - See internal MSF documentation
 
-## License
-
-This project is proprietary software developed for Médecins Sans Frontières (MSF).
-
 ## Acknowledgments
 
 Built with:
+
 - [Next.js](https://nextjs.org/) - React framework
 - [Azure OpenAI](https://azure.microsoft.com/en-us/products/ai-services/openai-service) - AI models
 - [Tailwind CSS](https://tailwindcss.com/) - Styling

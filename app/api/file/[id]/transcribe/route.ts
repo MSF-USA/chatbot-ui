@@ -64,9 +64,9 @@ export async function GET(
 
     transcript = await transcriptionService.transcribe(tmpFilePath);
 
-    unlinkAsync(tmpFilePath);
+    await unlinkAsync(tmpFilePath);
     // **Delete the blob from Azure Blob Storage**
-    blockBlobClient.delete();
+    await blockBlobClient.delete();
 
     return NextResponse.json({ transcript });
   } catch (error) {

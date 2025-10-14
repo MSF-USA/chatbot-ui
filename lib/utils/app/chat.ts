@@ -10,6 +10,9 @@ import {OpenAIModelID, OpenAIVisionModelID} from "@/types/openai";
  * @returns {boolean} - Returns true if the last message in the conversation has content of the specified type, false otherwise.
  */
 const isConversationType = (messages: Message[], type: string): boolean => {
+    if (messages.length === 0) {
+        return false;
+    }
     const lastMessage = messages.length === 1 ? messages[0] : messages[messages.length-1];
     if(Array.isArray(lastMessage.content)) {
         return lastMessage.content.some(contentItem => contentItem.type === type);

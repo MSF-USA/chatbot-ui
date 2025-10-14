@@ -5,6 +5,10 @@ import { auth } from "@/auth";
 import { DequeuedMessageItem } from '@azure/storage-queue';
 import {Session} from "next-auth";
 
+// Allowed queue categories for security
+const ALLOWED_QUEUE_CATEGORIES = ['transcription', 'general'] as const;
+type QueueCategory = typeof ALLOWED_QUEUE_CATEGORIES[number];
+
 async function initializeBlobStorage(req: NextRequest) {
     const session: Session | null = await auth();
     if (!session) throw new Error("Failed to pull session!");
@@ -40,6 +44,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
         if (!messageId || !category) {
             return NextResponse.json({ error: 'Missing messageId or category' }, { status: 400 });
+        }
+
+        // Validate queue category against whitelist
+        if (!ALLOWED_QUEUE_CATEGORIES.includes(category.toLowerCase() as QueueCategory)) {
+            return NextResponse.json({
+                error: 'Invalid queue category',
+                allowedCategories: ALLOWED_QUEUE_CATEGORIES
+            }, { status: 400 });
         }
 
         const { azureBlobStorage, user } = await initializeBlobStorage(req);
@@ -104,8 +116,14 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             return NextResponse.json({ error: 'Missing message or category' }, { status: 400 });
         }
 
-        // TODO: Only have a list of fixed / legitimate queueNames and validate. Currently this could
-        //   create arbitrary queues.
+        // Validate queue category against whitelist
+        if (!ALLOWED_QUEUE_CATEGORIES.includes(category.toLowerCase())) {
+            return NextResponse.json({
+                error: 'Invalid queue category',
+                allowedCategories: ALLOWED_QUEUE_CATEGORIES
+            }, { status: 400 });
+        }
+
         const queueName = category.toLowerCase();
 
         // Ensure the queue exists
@@ -162,6 +180,14 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
 
         if (!messageId || !category || !newMessageContent) {
             return NextResponse.json({ error: 'Missing messageId, category, or message' }, { status: 400 });
+        }
+
+        // Validate queue category against whitelist
+        if (!ALLOWED_QUEUE_CATEGORIES.includes(category.toLowerCase() as QueueCategory)) {
+            return NextResponse.json({
+                error: 'Invalid queue category',
+                allowedCategories: ALLOWED_QUEUE_CATEGORIES
+            }, { status: 400 });
         }
 
         const queueName = category.toLowerCase();
@@ -229,6 +255,14 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
 
         if (!messageId || !category) {
             return NextResponse.json({ error: 'Missing messageId or category' }, { status: 400 });
+        }
+
+        // Validate queue category against whitelist
+        if (!ALLOWED_QUEUE_CATEGORIES.includes(category.toLowerCase() as QueueCategory)) {
+            return NextResponse.json({
+                error: 'Invalid queue category',
+                allowedCategories: ALLOWED_QUEUE_CATEGORIES
+            }, { status: 400 });
         }
 
         const { azureBlobStorage, user } = await initializeBlobStorage(req);
