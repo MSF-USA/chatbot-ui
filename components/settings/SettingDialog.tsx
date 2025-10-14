@@ -26,7 +26,7 @@ import { HelpSupportSection } from './Sections/HelpSupportSection';
 import { PrivacyControlSection } from './Sections/PrivacyControlSection';
 import { SettingsFooter } from './SettingsFooter';
 import { SettingsSidebar } from './SettingsSidebar';
-import faqData from './faq.json';
+import faqData from '@/lib/data/faq.json';
 import { SettingsSection } from './types';
 
 const version = packageJson.version;

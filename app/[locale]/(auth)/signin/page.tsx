@@ -5,12 +5,13 @@ import Image from 'next/image';
 import logo from '@/public/logo_light.png';
 import loginBackground from '@/public/loginBackground.jpg';
 import microsoftLogo from '@/public/microsoft-logo.svg';
+import packageJson from '@/../package.json';
 
 /**
  * Sign-in page for App Router
  */
 export default function SignInPage() {
-  const version = process.env.NEXT_PUBLIC_VERSION;
+  const version = packageJson.version;
   const build = process.env.NEXT_PUBLIC_BUILD;
   const env = process.env.NEXT_PUBLIC_ENV;
   const email = process.env.NEXT_PUBLIC_EMAIL;

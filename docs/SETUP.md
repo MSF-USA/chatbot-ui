@@ -6,8 +6,8 @@ This guide will help you set up the MSF AI Assistant development environment fro
 
 ### Required Software
 
-- **Node.js** 18.x or higher
-- **npm** 9.x or higher (comes with Node.js)
+- **Node.js** 24.x or higher
+- **npm** 10.x or higher (comes with Node.js)
 - **Git** for version control
 - A code editor (VS Code recommended)
 
@@ -33,12 +33,12 @@ npm install
 ```
 
 This will install all required packages including:
-- Next.js 14
-- React 18
+- Next.js 15
+- React 19
 - TypeScript
 - Tailwind CSS
 - Zustand
-- NextAuth.js
+- NextAuth.js v5
 - And other dependencies
 
 ### 3. Environment Configuration
@@ -53,40 +53,30 @@ cp .env.example .env.local
 
 #### Configure Required Variables
 
-Edit `.env.local` and add your credentials:
+Edit `.env.local` and add your actual credentials. The `.env.example` file contains detailed descriptions of all available environment variables.
 
-**NextAuth Configuration:**
-```env
-NEXTAUTH_URL=http://localhost:3000
-NEXTAUTH_SECRET=your-secret-here-generate-with-openssl-rand-base64-32
-```
+**Minimum required variables:**
+- `NEXTAUTH_URL` - Your application URL (e.g., http://localhost:3000)
+- `NEXTAUTH_SECRET` - Generate with: `openssl rand -base64 32`
+- `AZURE_AD_CLIENT_ID` - From Azure AD app registration
+- `AZURE_AD_CLIENT_SECRET` - From Azure AD app registration
+- `AZURE_AD_TENANT_ID` - From Azure AD
+- `AZURE_OPENAI_API_KEY` - From Azure OpenAI resource
+- `AZURE_OPENAI_ENDPOINT` - From Azure OpenAI resource
+- `AZURE_OPENAI_DEPLOYMENT_NAME` - Your model deployment name
 
-**Azure AD Authentication:**
-```env
-AZURE_AD_CLIENT_ID=your-azure-ad-client-id
-AZURE_AD_CLIENT_SECRET=your-azure-ad-client-secret
-AZURE_AD_TENANT_ID=your-azure-ad-tenant-id
-```
+**Optional variables:**
+- `AZURE_SPEECH_API_KEY` / `AZURE_SPEECH_REGION` - For text-to-speech
+- `AZURE_BLOB_STORAGE_*` - For file uploads
+- `WHISPER_*` - For audio transcription
+- `AZURE_AI_FOUNDRY_ENDPOINT` - For AI agent support
+- `LAUNCHDARKLY_CLIENT_ID` - For feature flags
 
-**Azure OpenAI:**
-```env
-AZURE_OPENAI_API_KEY=your-azure-openai-api-key
-AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
-AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4
-AZURE_OPENAI_API_VERSION=2024-02-15-preview
-```
+See `.env.example` for complete documentation of all variables.
 
-**Optional - Web Search:**
-```env
-BING_API_KEY=your-bing-search-api-key
-```
+### 4. Azure Setup (Optional but Recommended)
 
-**Optional - Transcription:**
-```env
-AZURE_WHISPER_DEPLOYMENT_NAME=whisper
-```
-
-### 4. Azure Setup
+Follow these steps to set up your Azure resources for the application.
 
 #### Azure OpenAI Service
 
@@ -119,28 +109,7 @@ AZURE_WHISPER_DEPLOYMENT_NAME=whisper
 9. Create new client secret
 10. Copy secret value → `AZURE_AD_CLIENT_SECRET`
 
-#### Bing Search API (Optional)
-
-1. Navigate to [Azure Portal](https://portal.azure.com)
-2. Create "Bing Search v7" resource
-3. Go to "Keys and Endpoint"
-4. Copy API key → `BING_API_KEY`
-
-### 5. Database Setup (Optional)
-
-The application uses localStorage by default. For production deployments with server-side conversation storage:
-
-1. Set up a PostgreSQL database
-2. Add database URL to `.env.local`:
-   ```env
-   DATABASE_URL=postgresql://user:password@localhost:5432/msf_ai_assistant
-   ```
-3. Run migrations:
-   ```bash
-   npm run db:migrate
-   ```
-
-### 6. Start Development Server
+### 5. Start Development Server
 
 ```bash
 npm run dev
@@ -187,9 +156,10 @@ npm install
 ```
 
 **"Authentication failed"**
-- Verify Azure AD credentials in `.env.local`
-- Check redirect URI is configured in Azure AD app
-- Ensure `NEXTAUTH_URL` matches your application URL
+- Verify all Azure AD credentials in `.env.local` match `.env.example` format
+- Check redirect URI is configured in Azure AD app registration
+- Ensure `NEXTAUTH_URL` matches your application URL exactly
+- Verify `NEXTAUTH_SECRET` is set and is a valid base64 string
 
 **"Failed to fetch AI response"**
 - Verify Azure OpenAI credentials
@@ -199,10 +169,10 @@ npm install
 
 **"Build failed" with TypeScript errors**
 ```bash
-# Run type checking to see all errors
-npm run type-check
+# Build will show TypeScript errors
+npm run build
 
-# Fix reported errors before building
+# Fix reported errors before deploying
 ```
 
 **Port 3000 already in use**
@@ -264,13 +234,6 @@ Configure settings (`.vscode/settings.json`):
 - Review [FEATURES.md](./FEATURES.md) for feature documentation
 - Check existing issues and PRs on GitHub
 - Join the development Slack channel (if applicable)
-
-## Production Deployment
-
-For production deployment instructions, see:
-- [Vercel Deployment Guide](./DEPLOYMENT_VERCEL.md)
-- [Docker Deployment Guide](./DEPLOYMENT_DOCKER.md)
-- [Azure App Service Guide](./DEPLOYMENT_AZURE.md)
 
 ## Support
 

@@ -1,6 +1,6 @@
 # MSF AI Assistant
 
-An enterprise AI chatbot interface built for Médecins Sans Frontières (MSF), powered by Azure OpenAI and Next.js 14.
+An enterprise AI chatbot interface built for Médecins Sans Frontières (MSF), powered by Azure OpenAI and Next.js 15.
 
 ## Overview
 
@@ -9,7 +9,7 @@ MSF AI Assistant provides a secure, privacy-focused chat interface for MSF staff
 ## Features
 
 - 🤖 **AI Chat** - Streaming conversations with GPT models via Azure OpenAI
-- 🔍 **Web Search** - Bing-powered web search with AI analysis
+- 🔍 **Web Search** - Azure AI Foundry Bing grounding with AI analysis
 - 🌐 **URL Analysis** - Extract and analyze content from any webpage
 - 🎤 **Audio Transcription** - Whisper API integration for audio/video files
 - 📁 **File Upload** - Support for PDFs, documents, and more
@@ -32,7 +32,7 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 
 ### Prerequisites
 
-- Node.js 18+ and npm
+- Node.js 24+ and npm 10+
 - Azure OpenAI API access
 - Azure AD application for authentication
 
@@ -56,25 +56,7 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
    cp .env.example .env.local
    ```
 
-   Required variables:
-   ```env
-   # NextAuth Configuration
-   NEXTAUTH_URL=http://localhost:3000
-   NEXTAUTH_SECRET=your-secret-here
-
-   # Azure AD Authentication
-   AZURE_AD_CLIENT_ID=your-client-id
-   AZURE_AD_CLIENT_SECRET=your-client-secret
-   AZURE_AD_TENANT_ID=your-tenant-id
-
-   # Azure OpenAI
-   AZURE_OPENAI_API_KEY=your-api-key
-   AZURE_OPENAI_ENDPOINT=your-endpoint
-   AZURE_OPENAI_DEPLOYMENT_NAME=your-deployment
-
-   # Optional: Web Search
-   BING_API_KEY=your-bing-key
-   ```
+   Then edit `.env.local` with your actual values. See `.env.example` for all available configuration options and detailed descriptions of each variable.
 
 4. **Run development server**
    ```bash
@@ -93,19 +75,24 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 /app              # Next.js App Router pages and API routes
 /components       # React components
 /lib              # Shared libraries and utilities
+  /data           # Static data files
+  /hooks          # Custom React hooks
+  /services       # Business logic services
+  /stores         # Zustand state stores
+  /utils          # Utility functions
 /messages         # i18n translation files
 /types            # TypeScript type definitions
-/utils            # Utility functions
+/config           # Configuration files
 /docs             # Documentation
 ```
 
 ### Tech Stack
 
-- **Framework:** Next.js 14 (App Router)
+- **Framework:** Next.js 15 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **State Management:** Zustand
-- **Authentication:** NextAuth.js with Azure AD
+- **Authentication:** NextAuth.js v5 with Azure AD
 - **i18n:** next-intl
 - **AI:** Azure OpenAI API
 
@@ -116,7 +103,7 @@ npm run dev          # Start development server
 npm run build        # Build for production
 npm run start        # Start production server
 npm run lint         # Run ESLint
-npm run type-check   # Run TypeScript type checking
+npm run test         # Run all tests
 ```
 
 ## Deployment
@@ -143,14 +130,13 @@ The application is optimized for deployment on Vercel:
 
 ### Environment Variables
 
-See `.env.example` for all available configuration options.
+See `.env.example` for all available configuration options, including:
+- NextAuth configuration (URL, secret, Azure AD)
+- Azure OpenAI credentials and endpoints
+- Optional services (Azure Speech, Blob Storage, AI Foundry, LaunchDarkly)
+- Application settings (version, environment, default prompts)
 
-Key configurations:
-- **NEXTAUTH_URL** - Your application URL
-- **NEXTAUTH_SECRET** - Secret for session encryption
-- **AZURE_OPENAI_API_KEY** - Your Azure OpenAI API key
-- **AZURE_OPENAI_ENDPOINT** - Your Azure OpenAI endpoint
-- **NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT** - Default system instructions
+Copy `.env.example` to `.env.local` and update with your actual values.
 
 ### Model Configuration
 

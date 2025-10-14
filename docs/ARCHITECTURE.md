@@ -2,22 +2,22 @@
 
 ## Overview
 
-MSF AI Assistant is a Next.js 14 application built with the App Router, providing an AI chatbot interface powered by Azure OpenAI. The application uses modern React patterns with TypeScript and Zustand for state management.
+MSF AI Assistant is a Next.js 15 application built with the App Router, providing an AI chatbot interface powered by Azure OpenAI. The application uses modern React patterns with TypeScript and Zustand for state management.
 
 ## Technology Stack
 
 ### Core Framework
-- **Next.js 14** - App Router architecture
-- **React 18** - UI library with Server and Client Components
+- **Next.js 15** - App Router architecture
+- **React 19** - UI library with Server and Client Components
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
 
 ### State Management
 - **Zustand** - Lightweight state management
   - `useUI` - UI state (theme, modals, sidebar)
-  - `useSettings` - User settings (temperature, system prompt)
-  - `useConversations` - Conversation management
-  - `useStreamingSettings` - Text streaming preferences
+  - `useSettings` - User settings (temperature, system prompt, prompts)
+  - `useConversations` - Conversation management and folders
+  - `useChatStore` - Active chat state and message handling
 
 ### Authentication
 - **NextAuth.js** - Authentication with Azure AD integration
@@ -36,38 +36,38 @@ MSF AI Assistant is a Next.js 14 application built with the App Router, providin
 
 ```
 /app                    # Next.js App Router pages
-  /(auth)              # Authentication pages (signin)
-  /(chat)              # Main chat interface
+  /[locale]            # Internationalized pages
   /api                 # API routes
-    /v2                # Current API version
-      /chat            # Chat completion endpoints
-      /file            # File upload/transcription
-      /transcription   # Audio transcription
-      /web             # Web search and scraping
-      /tts             # Text-to-speech
+    /agents            # AI agent endpoints
+    /auth              # Authentication (NextAuth)
+    /chat              # Chat completion endpoints
+    /file              # File upload/processing
+    /transcription     # Audio transcription
+    /web               # Web search and scraping
+    /tts               # Text-to-speech
 
 /components            # React components
   /Chat                # Chat interface components
-  /Sidebar             # Sidebar with conversations/prompts
-  /Settings            # Settings dialog and sections
+  /sidebar             # Sidebar with conversations/prompts
+  /settings            # Settings dialog and sections
   /providers           # Context providers
 
 /lib                   # Shared libraries
-  /context             # React contexts
+  /data                # Static data files
   /hooks               # Custom React hooks
+  /services            # Business logic services
   /stores              # Zustand stores
   /utils               # Utility functions
 
 /messages              # Internationalization files
-  en.json             # English translations
-  fr.json             # French translations
-  ...                 # 30+ other languages
+  en.json              # English translations
+  fr.json              # French translations
+  ...                  # 30+ other languages
 
 /types                 # TypeScript type definitions
 
-/utils                 # Utility functions and helpers
-  /app                 # App-specific utilities
-  /knowledge           # Knowledge base data
+/config                # Configuration files
+  models.ts            # Environment-specific model config
 
 /public                # Static assets
 ```

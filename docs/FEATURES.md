@@ -27,11 +27,10 @@
 ## Advanced Features
 
 ### Web Search
-- Bing API integration for real-time web searches
+- Azure AI Foundry Bing grounding for real-time web searches
 - AI-powered result analysis and summarization
 - Citation of sources with URLs
-- Safe search filtering options
-- Market/region selection
+- Integrated directly into AI agent responses
 - Optimized search query generation
 
 ### URL Content Puller
