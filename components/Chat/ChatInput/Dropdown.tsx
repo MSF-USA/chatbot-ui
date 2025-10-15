@@ -302,7 +302,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute ml-12 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
+          className="absolute bottom-full mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out left-0 sm:left-40 sm:ml-12 sm:transform sm:-translate-x-full"
           tabIndex={-1}
           role="menu"
           onKeyDown={handleKeyDown}

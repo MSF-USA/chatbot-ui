@@ -1,6 +1,7 @@
 import {
   IconDatabase,
   IconDeviceDesktop,
+  IconDeviceMobile,
   IconExternalLink,
   IconHelp,
   IconMessage,
@@ -115,6 +116,14 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
             activeSection={activeSection}
             label={t('Account')}
             icon={<IconUser size={18} />}
+            onClick={setActiveSection}
+          />
+
+          <NavigationItem
+            section={SettingsSection.MOBILE_APP}
+            activeSection={activeSection}
+            label={t('Mobile App')}
+            icon={<IconDeviceMobile size={18} />}
             onClick={setActiveSection}
           />
 

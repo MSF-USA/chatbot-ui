@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useMemo } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { IconX } from '@tabler/icons-react';
 import useModal from '@/lib/hooks/useModal';
@@ -53,7 +53,13 @@ const Modal: React.FC<ModalProps> = ({
   betaBadge,
   closeWithButton = true,
 }) => {
+  const [mounted, setMounted] = useState(false);
   const modalContentRef = useModal(isOpen, onClose, preventOutsideClick, preventEscapeKey);
+
+  // Track if component is mounted to avoid SSR hydration issues
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Set focus on the specified element when the modal opens
   useEffect(() => {
@@ -182,11 +188,12 @@ const Modal: React.FC<ModalProps> = ({
   );
 
   // Use portal to render modal at document root to avoid z-index stacking issues
-  if (typeof window !== 'undefined') {
-    return createPortal(modalContent, document.body);
+  // Wait for client-side mount to prevent SSR hydration mismatch
+  if (!mounted) {
+    return null;
   }
 
-  return null;
+  return createPortal(modalContent, document.body);
 };
 
 export default Modal;

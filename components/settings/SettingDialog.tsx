@@ -23,6 +23,7 @@ import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
 import { GeneralSection } from './Sections/GeneralSection';
 import { HelpSupportSection } from './Sections/HelpSupportSection';
+import { MobileAppSection } from './Sections/MobileAppSection';
 import { PrivacyControlSection } from './Sections/PrivacyControlSection';
 import { SettingsFooter } from './SettingsFooter';
 import { SettingsSidebar } from './SettingsSidebar';
@@ -291,6 +292,10 @@ export function SettingDialog() {
 
                 {activeSection === SettingsSection.ACCOUNT && (
                   <AccountSection user={session?.user} />
+                )}
+
+                {activeSection === SettingsSection.MOBILE_APP && (
+                  <MobileAppSection />
                 )}
 
                 {activeSection === SettingsSection.HELP_SUPPORT && (

@@ -28,6 +28,7 @@ export class AIFoundryAgentHandler {
       const aiAgents = await import('@azure/ai-agents');
       const { DefaultAzureCredential } = await import('@azure/identity');
 
+      // AI Foundry uses a separate project endpoint (services.ai.azure.com)
       const endpoint = process.env.AZURE_AI_FOUNDRY_ENDPOINT;
       const agentId = modelConfig.agentId;
 

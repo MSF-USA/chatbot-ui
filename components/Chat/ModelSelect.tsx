@@ -9,7 +9,9 @@ import {
   IconX,
   IconRobot,
   IconPlus,
-  IconSettings
+  IconSettings,
+  IconChevronDown,
+  IconChevronUp
 } from '@tabler/icons-react';
 import { FC, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
@@ -21,6 +23,7 @@ import { CustomAgent } from '@/lib/stores/settingsStore';
 import { TemperatureSlider } from '../settings/Temperature';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
+import { OpenAIIcon, DeepSeekIcon, XAIIcon } from '../Icons/providers';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -35,12 +38,47 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const [showAgentForm, setShowAgentForm] = useState(false);
   const [showAgentManager, setShowAgentManager] = useState(false);
   const [editingAgent, setEditingAgent] = useState<CustomAgent | undefined>();
+  const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Helper function to get provider icon
+  const getProviderIcon = (provider?: string, size: 'sm' | 'lg' = 'sm') => {
+    const iconProps = { className: size === 'lg' ? "w-6 h-6 flex-shrink-0" : "w-4 h-4 flex-shrink-0" };
+    switch (provider) {
+      case 'openai':
+        return <OpenAIIcon {...iconProps} />;
+      case 'deepseek':
+        return <DeepSeekIcon {...iconProps} />;
+      case 'xai':
+        return <XAIIcon {...iconProps} />;
+      default:
+        return null;
+    }
+  };
 
   // Filter out legacy models and the standalone agent model
-  const baseModels = models.filter(m =>
-    !OpenAIModels[m.id as OpenAIModelID]?.isLegacy &&
-    !OpenAIModels[m.id as OpenAIModelID]?.isAgent
-  );
+  const baseModels = models
+    .filter(m =>
+      !OpenAIModels[m.id as OpenAIModelID]?.isLegacy &&
+      !OpenAIModels[m.id as OpenAIModelID]?.isAgent
+    )
+    .sort((a, b) => {
+      const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
+      const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
+
+      // Provider order: openai, deepseek, xai
+      const providerOrder = { openai: 0, deepseek: 1, xai: 2 };
+      const providerDiff = (providerOrder[aProvider as keyof typeof providerOrder] ?? 3) - (providerOrder[bProvider as keyof typeof providerOrder] ?? 3);
+
+      if (providerDiff !== 0) return providerDiff;
+
+      // Within OpenAI, ensure GPT-5 is first
+      if (aProvider === 'openai') {
+        if (a.id === OpenAIModelID.GPT_5) return -1;
+        if (b.id === OpenAIModelID.GPT_5) return 1;
+      }
+
+      return a.name.localeCompare(b.name);
+    });
 
   // Convert custom agents to OpenAIModel format
   const customAgentModels: OpenAIModel[] = useMemo(() => {
@@ -67,7 +105,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const modelConfig = selectedModel ? OpenAIModels[selectedModel.id as OpenAIModelID] : null;
   const isCustomAgent = selectedModel?.id?.startsWith('custom-');
   const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5;
-  const agentAvailable = !isGpt5;
+  const agentAvailable = modelConfig?.agentId !== undefined;
   const useAgent = selectedConversation?.model?.agentEnabled || isCustomAgent;
 
   const handleModelSelect = (model: OpenAIModel) => {
@@ -79,8 +117,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     // Set as default model for future conversations
     setDefaultModelId(model.id as OpenAIModelID);
 
-    // When selecting a model, use agent mode by default (except GPT-5)
-    const shouldUseAgent = model.id !== OpenAIModelID.GPT_5 && OpenAIModels[model.id as OpenAIModelID]?.agentId;
+    // When selecting a model, use agent mode by default if available
+    const shouldUseAgent = OpenAIModels[model.id as OpenAIModelID]?.agentId !== undefined;
     const modelToUse = shouldUseAgent ? {
       ...model,
       agentEnabled: true,
@@ -197,9 +235,12 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                       `}
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-medium text-sm text-gray-900 dark:text-white">
-                          {model.name}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          {getProviderIcon(config?.provider)}
+                          <span className="font-medium text-sm text-gray-900 dark:text-white">
+                            {model.name}
+                          </span>
+                        </div>
                         {isSelected && (
                           <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
                         )}
@@ -227,65 +268,88 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               </div>
             </div>
 
-            {/* Custom Agents */}
-            {customAgentModels.length > 0 && (
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase">
-                    Custom Agents
-                  </h4>
+            {/* Advanced Settings - Collapsible Section */}
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <button
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <IconSettings size={16} className="text-gray-600 dark:text-gray-400" />
+                  <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
+                    Advanced
+                  </span>
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
                     Experimental
                   </span>
                 </div>
-                <div className="space-y-2">
-                  {customAgentModels.map((model) => {
-                    const isSelected = selectedModelId === model.id;
-
-                    return (
-                      <button
-                        key={model.id}
-                        onClick={() => handleModelSelect(model)}
-                        className={`
-                          w-full text-left p-3 rounded-lg transition-all duration-150
-                          ${isSelected
-                            ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
-                            : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
-                          }
-                        `}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="font-medium text-sm text-gray-900 dark:text-white">
-                            {model.name}
-                          </span>
-                          {isSelected && (
-                            <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
-                          )}
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
-                            Custom
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* Add Custom Agent Button */}
-            <div>
-              <button
-                onClick={() => setShowAgentForm(true)}
-                className="w-full p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center justify-center gap-2"
-              >
-                <IconPlus size={16} />
-                Add Custom Agent
+                {showAdvanced ? (
+                  <IconChevronUp size={16} className="text-gray-600 dark:text-gray-400" />
+                ) : (
+                  <IconChevronDown size={16} className="text-gray-600 dark:text-gray-400" />
+                )}
               </button>
-              <p className="mt-2 text-xs text-center text-gray-500 dark:text-gray-400">
-                MSF AI Assistant Foundry only
-              </p>
+
+              {/* Collapsible Content */}
+              {showAdvanced && (
+                <div className="mt-3 space-y-4">
+                  {/* Custom Agents */}
+                  {customAgentModels.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
+                        Custom Agents
+                      </h4>
+                      <div className="space-y-2">
+                        {customAgentModels.map((model) => {
+                          const isSelected = selectedModelId === model.id;
+
+                          return (
+                            <button
+                              key={model.id}
+                              onClick={() => handleModelSelect(model)}
+                              className={`
+                                w-full text-left p-3 rounded-lg transition-all duration-150
+                                ${isSelected
+                                  ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
+                                  : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+                                }
+                              `}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="font-medium text-sm text-gray-900 dark:text-white">
+                                  {model.name}
+                                </span>
+                                {isSelected && (
+                                  <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1.5">
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300">
+                                  Custom
+                                </span>
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Add Custom Agent Button */}
+                  <div>
+                    <button
+                      onClick={() => setShowAgentForm(true)}
+                      className="w-full p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm text-gray-600 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <IconPlus size={16} />
+                      Add Custom Agent
+                    </button>
+                    <p className="mt-2 text-xs text-center text-gray-500 dark:text-gray-400">
+                      MSF AI Assistant Foundry only
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -296,9 +360,12 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             <div className="space-y-6">
               {/* Model Header */}
               <div>
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">
-                  {selectedModel.name}
-                </h2>
+                <div className="flex items-center gap-3 mb-3">
+                  {getProviderIcon(selectedModel.provider || modelConfig?.provider, 'lg')}
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                    {selectedModel.name}
+                  </h2>
+                </div>
                 <p className="text-gray-600 dark:text-gray-400">
                   {selectedModel.description || modelConfig?.description}
                 </p>
@@ -328,13 +395,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                 </div>
               )}
 
-              {/* GPT-5 Agent Notice */}
-              {isGpt5 && (
+              {/* No Agent Notice for models without agent support */}
+              {!agentAvailable && !isCustomAgent && (
                 <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                   <div className="flex items-start">
                     <IconAlertTriangle size={18} className="mr-2 mt-0.5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
                     <div className="text-sm text-amber-700 dark:text-amber-300">
-                      <strong>Note:</strong> Agent services (web search, code interpreter) are not yet available for GPT-5
+                      <strong>Note:</strong> Agent services (web search, code interpreter) are not yet available for this model
                     </div>
                   </div>
                 </div>
@@ -427,8 +494,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           </div>
         </div>
 
-        {/* Advanced Features */}
-        {customAgents.length > 0 && (
+        {/* Advanced Features - Only show when advanced section is expanded */}
+        {customAgents.length > 0 && showAdvanced && (
           <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
             <button
               onClick={() => setShowAgentManager(true)}

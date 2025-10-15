@@ -377,15 +377,15 @@ export default class ChatService {
 
     let modelToUse = model.id;
 
-    // Check if the model is legacy and migrate to gpt-4o
+    // Check if the model is legacy and migrate to gpt-5
     const modelConfig = Object.values(OpenAIModels).find(m => m.id === model.id);
     if (modelConfig?.isLegacy) {
-      console.log(`Migrating legacy model ${model.id} to ${OpenAIModelID.GPT_4o}`);
-      modelToUse = OpenAIModelID.GPT_4o;
+      console.log(`Migrating legacy model ${model.id} to ${OpenAIModelID.GPT_5}`);
+      modelToUse = OpenAIModelID.GPT_5;
     }
 
     if (isValidModel && needsToHandleImages && !isImageModel) {
-      modelToUse = 'gpt-4o';
+      modelToUse = 'gpt-5';
     } else if (modelToUse == null || !isValidModel) {
       modelToUse = AZURE_DEPLOYMENT_ID;
     }
@@ -437,9 +437,8 @@ export default class ChatService {
 
   private isReasoningModel(id: OpenAIModelID | string) {
     return [
-      OpenAIModelID.GPT_o1,
-      OpenAIModelID.GPT_o1_mini,
-      OpenAIModelID.GPT_o3_mini
+      OpenAIModelID.GPT_o3,
+      OpenAIModelID.GROK_4_FAST_REASONING
     ].includes(id as OpenAIModelID);
   }
 }

@@ -41,7 +41,7 @@ export const ChatTopbar = ({
   const t = useTranslations();
 
   return (
-    <div className="sticky top-0 z-10 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out">
+    <div className="sticky top-0 z-20 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out bg-white dark:bg-[#212121]">
       <div className="mr-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 transition-all duration-300">
         {/* Bot/Model Info */}
         <div className="flex items-center min-w-0 justify-center sm:justify-start">

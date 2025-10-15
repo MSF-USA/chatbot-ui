@@ -318,52 +318,6 @@ export function Sidebar() {
     return firstInitial + lastInitial;
   };
 
-  if (!showChatbar) {
-    return (
-      <div className="fixed left-0 top-0 z-50 h-full w-14 flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out">
-        {/* Top section with icons */}
-        <div className="flex flex-col items-center pt-2 space-y-2">
-          {/* Expand sidebar button */}
-          <button
-            className="p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
-            onClick={toggleChatbar}
-            title="Open sidebar"
-          >
-            <PiSidebarSimple size={24} />
-          </button>
-
-          {/* New conversation button */}
-          <button
-            className="p-2 rounded-lg text-neutral-700 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 transition-colors"
-            onClick={handleNewConversation}
-            title={t('New conversation')}
-          >
-            <IconPlus size={24} />
-          </button>
-        </div>
-
-        {/* Bottom section with settings */}
-        <div className="mt-auto pb-4 flex flex-col items-center">
-          <button
-            className="p-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-            onClick={() => setIsSettingsOpen(true)}
-            title={t('Settings')}
-          >
-            {session?.user?.displayName ? (
-              <div
-                className="rounded-full bg-[#D7211E] h-8 w-8 flex items-center justify-center text-white font-semibold"
-                style={{ fontSize: '12px' }}
-              >
-                {getInitials(session.user.displayName)}
-              </div>
-            ) : (
-              <IconSettings size={24} className="text-neutral-700 dark:text-neutral-200" />
-            )}
-          </button>
-        </div>
-      </div>
-    );
-  }
 
   const handleNewPrompt = () => {
     setPromptModalId(null);
@@ -520,62 +474,82 @@ export function Sidebar() {
   }));
 
   return (
-    <div className="fixed left-0 top-0 z-50 h-full w-[260px] flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-3 py-2 border-b border-neutral-300 dark:border-neutral-700 min-w-[260px]">
-        <Image
-          src={theme === 'dark' ? darkTextLogo : lightTextLogo}
-          alt="MSF Logo"
-          priority
-          style={{
-            maxWidth: '75px',
-            height: 'auto',
-          }}
-        />
-        <button
-          className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-black dark:text-white"
+    <>
+      {/* Mobile backdrop */}
+      {showChatbar && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40 transition-opacity"
           onClick={toggleChatbar}
-          title="Close sidebar"
-        >
-          <PiSidebarSimple size={22} />
-        </button>
-      </div>
+        />
+      )}
+
+      {/* Sidebar - hidden on mobile by default, overlay when open */}
+      <div className={`fixed left-0 top-0 z-50 h-full flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out overflow-hidden w-[260px] ${
+        showChatbar ? 'translate-x-0' : '-translate-x-full md:translate-x-0 md:w-14'
+      }`}>
+        {/* Header */}
+        <div className={`flex items-center px-3 py-2 border-b transition-all duration-300 ${showChatbar ? 'justify-between border-neutral-300 dark:border-neutral-700' : 'justify-center border-transparent'}`}>
+          {showChatbar && (
+            <Image
+              src={theme === 'dark' ? darkTextLogo : lightTextLogo}
+              alt="MSF Logo"
+              priority
+              style={{
+                maxWidth: '75px',
+                height: 'auto',
+              }}
+            />
+          )}
+          <button
+            className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-black dark:text-white"
+            onClick={toggleChatbar}
+            title={showChatbar ? 'Collapse sidebar' : 'Expand sidebar'}
+          >
+            <PiSidebarSimple size={22} />
+          </button>
+        </div>
 
       {/* Action buttons */}
-      <div className="px-3 py-2 border-b border-neutral-300 dark:border-neutral-700 min-w-[260px] space-y-1">
+      <div className={`py-2 space-y-1 border-b transition-all duration-300 ${showChatbar ? 'px-3 border-neutral-300 dark:border-neutral-700' : 'px-0 border-transparent'}`}>
         <button
-          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+          className={`flex items-center w-full rounded-lg text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-3 py-4'}`}
           onClick={handleNewConversation}
+          title={t('New chat')}
         >
-          <IconPlus size={16} />
-          <span>{t('New chat')}</span>
+          <IconPlus size={20} stroke={2} className="shrink-0" />
+          <span className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}>{t('New chat')}</span>
         </button>
-        <button
-          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-          onClick={() => setIsSearchModalOpen(true)}
-        >
-          <IconSearch size={16} />
-          <span>{t('Search chats')}</span>
-          <span className="ml-auto text-xs text-neutral-500 dark:text-neutral-400">⌘K</span>
-        </button>
-        <button
-          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-          onClick={() => setIsPromptsListOpen(true)}
-        >
-          <IconMessage size={16} />
-          <span>{t('Prompts')}</span>
-        </button>
-        <button
-          className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-          onClick={handleCreateFolder}
-        >
-          <IconFolderPlus size={16} />
-          <span>{t('New folder')}</span>
-        </button>
+        <div className={`transition-all duration-300 space-y-1 ${showChatbar ? 'opacity-100 max-h-[500px]' : 'opacity-0 max-h-0 overflow-hidden'}`}>
+          <button
+            className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+            onClick={() => setIsSearchModalOpen(true)}
+            title={t('Search chats')}
+          >
+            <IconSearch size={16} />
+            <span className="whitespace-nowrap">{t('Search chats')}</span>
+            <span className="ml-auto text-xs text-neutral-500 dark:text-neutral-400 whitespace-nowrap">⌘K</span>
+          </button>
+          <button
+            className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+            onClick={() => setIsPromptsListOpen(true)}
+            title={t('Prompts')}
+          >
+            <IconMessage size={16} />
+            <span className="whitespace-nowrap">{t('Prompts')}</span>
+          </button>
+          <button
+            className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
+            onClick={handleCreateFolder}
+            title={t('New folder')}
+          >
+            <IconFolderPlus size={16} />
+            <span className="whitespace-nowrap">{t('New folder')}</span>
+          </button>
+        </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto min-w-[260px]">
+      <div className={`flex-1 overflow-y-auto transition-all duration-300 ${showChatbar ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         {(
           displayConversations.length === 0 ? (
             <div className="p-4 text-center text-sm text-neutral-500">
@@ -702,14 +676,15 @@ export function Sidebar() {
       </div>
 
       {/* Footer with user initials/settings */}
-      <div className="border-t border-neutral-300 dark:border-neutral-700 min-w-[260px]">
+      <div className={`border-t transition-all duration-300 ${showChatbar ? 'border-neutral-300 dark:border-neutral-700' : 'border-transparent'}`}>
         <button
-          className="flex w-full items-center gap-3 p-3 text-sm text-neutral-700 transition-colors duration-200 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+          className={`flex w-full items-center p-3 text-sm text-neutral-700 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 ${showChatbar ? 'gap-3' : 'justify-center'}`}
           onClick={() => setIsSettingsOpen(true)}
+          title={t('Settings')}
         >
           {session?.user?.displayName ? (
             <div
-              className="rounded-full bg-[#D7211E] h-10 w-10 flex items-center justify-center text-white font-semibold"
+              className="rounded-full bg-[#D7211E] h-10 w-10 flex items-center justify-center text-white font-semibold shrink-0"
               style={{ fontSize: '16px' }}
             >
               {getInitials(session.user.displayName)}
@@ -717,7 +692,7 @@ export function Sidebar() {
           ) : (
             <IconSettings size={18} />
           )}
-          <span>{t('Settings')}</span>
+          <span className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}>{t('Settings')}</span>
         </button>
       </div>
 
@@ -955,5 +930,6 @@ export function Sidebar() {
         </div>
       )}
     </div>
+    </>
   );
 }

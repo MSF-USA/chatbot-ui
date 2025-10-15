@@ -33,6 +33,8 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
         return t('Data Management');
       case SettingsSection.ACCOUNT:
         return t('Account');
+      case SettingsSection.MOBILE_APP:
+        return t('Mobile App');
       case SettingsSection.HELP_SUPPORT:
         return t('Help & Support');
       default:

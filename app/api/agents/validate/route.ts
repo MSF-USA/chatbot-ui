@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // AI Foundry uses a separate project endpoint (services.ai.azure.com)
     const endpoint = process.env.AZURE_AI_FOUNDRY_ENDPOINT;
     if (!endpoint) {
       return NextResponse.json(

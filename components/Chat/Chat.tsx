@@ -15,10 +15,15 @@ import { Message } from '@/types/chat';
 import { EmptyState } from './EmptyState/EmptyState';
 import { v4 as uuidv4 } from 'uuid';
 
+interface ChatProps {
+  mobileModelSelectOpen?: boolean;
+  onMobileModelSelectChange?: (open: boolean) => void;
+}
+
 /**
  * Main chat component - migrated to use Zustand stores
  */
-export function Chat() {
+export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatProps = {}) {
   const { data: session, status } = useSession();
   const { selectedConversation, updateConversation, conversations, addConversation, selectConversation, isLoaded } = useConversations();
   const { isStreaming, streamingContent, error, sendMessage, citations } = useChat();
@@ -29,6 +34,20 @@ export function Chat() {
   const [filePreviews, setFilePreviews] = useState<any[]>([]);
   const [isModelSelectOpen, setIsModelSelectOpen] = useState(false);
   const hasInitializedRef = useRef(false);
+
+  // Sync with mobile header model select state
+  useEffect(() => {
+    if (mobileModelSelectOpen !== undefined && mobileModelSelectOpen !== isModelSelectOpen) {
+      setIsModelSelectOpen(mobileModelSelectOpen);
+    }
+  }, [mobileModelSelectOpen]);
+
+  // Notify parent when modal state changes (for mobile header sync)
+  useEffect(() => {
+    if (onMobileModelSelectChange && mobileModelSelectOpen !== undefined) {
+      onMobileModelSelectChange(isModelSelectOpen);
+    }
+  }, [isModelSelectOpen]);
 
   // Close modal on ESC key
   useEffect(() => {
@@ -195,22 +214,24 @@ export function Chat() {
 
   return (
     <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-white dark:bg-[#212121] transition-all">
-      {/* Header */}
-      <ChatTopbar
-        botInfo={null}
-        selectedModelName={
-          selectedConversation?.model?.name ||
-          models.find(m => m.id === defaultModelId)?.name ||
-          'GPT-4o'
-        }
-        showSettings={isSettingsOpen}
-        onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
-        onModelClick={() => setIsModelSelectOpen(true)}
-        onClearAll={handleClearAll}
-        hasMessages={hasMessages}
-        agentEnabled={selectedConversation?.model?.agentEnabled || false}
-        showChatbar={showChatbar}
-      />
+      {/* Header - Hidden on mobile, shown on desktop */}
+      <div className="hidden md:block">
+        <ChatTopbar
+          botInfo={null}
+          selectedModelName={
+            selectedConversation?.model?.name ||
+            models.find(m => m.id === defaultModelId)?.name ||
+            'GPT-4o'
+          }
+          showSettings={isSettingsOpen}
+          onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          onModelClick={() => setIsModelSelectOpen(true)}
+          onClearAll={handleClearAll}
+          hasMessages={hasMessages}
+          agentEnabled={selectedConversation?.model?.agentEnabled || false}
+          showChatbar={showChatbar}
+        />
+      </div>
 
       {/* Messages */}
       <div
