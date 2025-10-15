@@ -7,7 +7,7 @@ import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
 import { formatBytes } from '@/lib/utils/app/storageUtils';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 
-import { SidebarButton } from '../../sidebar/SidebarButton';
+import { SidebarButton } from '../../Sidebar/SidebarButton';
 import { ClearConversations } from '../ClearConversations';
 import { Import } from '../Import';
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 
-import { SettingsFooter } from '@/components/Settings/SettingsFooter';
+import { SettingsFooter } from '@/components/settings/SettingsFooter';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({

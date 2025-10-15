@@ -3,7 +3,7 @@ import { FC, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { SidebarButton } from '@/components/sidebar/SidebarButton';
+import { SidebarButton } from '@/components/Sidebar/SidebarButton';
 
 interface Props {
   onClearConversations: () => void;

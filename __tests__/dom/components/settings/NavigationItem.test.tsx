@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import '@testing-library/jest-dom';
 
-import { NavigationItem } from '@/components/Settings/NavigationItem';
-import { SettingsSection } from '@/components/Settings/types';
+import { NavigationItem } from '@/components/settings/NavigationItem';
+import { SettingsSection } from '@/components/settings/types';
 
 describe('NavigationItem', () => {
   const mockOnClick = vi.fn();

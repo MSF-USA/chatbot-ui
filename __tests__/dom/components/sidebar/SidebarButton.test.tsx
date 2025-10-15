@@ -3,7 +3,7 @@ import React from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import '@testing-library/jest-dom';
 
-import { SidebarButton } from '@/components/sidebar/SidebarButton';
+import { SidebarButton } from '@/components/Sidebar/SidebarButton';
 
 describe('SidebarButton', () => {
   const mockIcon = <svg data-testid="test-icon">Icon</svg>;
