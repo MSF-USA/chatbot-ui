@@ -19,7 +19,7 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
   const [name, setName] = useState(existingAgent?.name || '');
   const [agentId, setAgentId] = useState(existingAgent?.agentId || '');
   const [baseModelId, setBaseModelId] = useState<OpenAIModelID>(
-    existingAgent?.baseModelId || OpenAIModelID.GPT_4o
+    existingAgent?.baseModelId || OpenAIModelID.GPT_5
   );
   const [description, setDescription] = useState(existingAgent?.description || '');
   const [error, setError] = useState<string | null>(null);

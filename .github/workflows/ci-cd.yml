@@ -24,10 +24,34 @@ permissions:
   pull-requests: write
 
 jobs:
+  # JOB 0: Lint and Type Check (runs before build)
+  lint_and_typecheck:
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run TypeScript type check
+        run: npx tsc --noEmit
+
   # JOB 1: Handles the PR lifecycle: Build, Test, Push, and Deploy to a SHARED Preview Environment
   build_and_preview_pr:
     # Only run when a PR is opened or updated
     if: github.event_name == 'pull_request'
+    needs: lint_and_typecheck
     runs-on: ubuntu-latest
     environment: dev
     steps:
@@ -198,6 +222,7 @@ jobs:
   # JOB 3: Build for PROD and Deploy to STAGING after a merge to main
   build_and_deploy_staging:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: lint_and_typecheck
     runs-on: ubuntu-latest
     environment: staging
     steps:

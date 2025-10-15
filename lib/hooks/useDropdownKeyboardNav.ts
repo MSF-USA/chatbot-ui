@@ -13,7 +13,7 @@ export interface UseDropdownKeyboardNavParams {
   filterQuery: string;
   setFilterQuery: (query: string) => void;
   closeDropdown: () => void;
-  filterInputRef?: React.RefObject<HTMLInputElement>;
+  filterInputRef?: React.RefObject<HTMLInputElement | null>;
   onCloseModals?: () => void;
 }
 

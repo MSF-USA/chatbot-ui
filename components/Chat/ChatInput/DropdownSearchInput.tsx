@@ -5,7 +5,7 @@ interface DropdownSearchInputProps {
   value: string;
   onChange: (value: string) => void;
   onClear: () => void;
-  inputRef?: React.RefObject<HTMLInputElement>;
+  inputRef?: React.RefObject<HTMLInputElement | null>;
   placeholder?: string;
 }
 

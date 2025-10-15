@@ -341,21 +341,19 @@ export default class ChatService {
     const modelConfig = OpenAIModels[modelId as OpenAIModelID];
     const supportsTemperature = modelConfig?.supportsTemperature !== false; // Default to true if not specified
 
-    const requestParams: any = {
+    const baseParams = {
       model: modelId,
       messages: messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-      stream: streamResponse,
       user: JSON.stringify(user),
+      ...(supportsTemperature && { temperature }),
     };
 
-    // Only include temperature if supported
-    if (supportsTemperature) {
-      requestParams.temperature = temperature;
-    }
-
-    const response = await this.azureOpenAIClient.chat.completions.create(requestParams);
-
     if (streamResponse) {
+      const response = await this.azureOpenAIClient.chat.completions.create({
+        ...baseParams,
+        stream: true,
+      });
+
       const processedStream = createAzureOpenAIStreamProcessor(
         response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
       );
@@ -372,6 +370,11 @@ export default class ChatService {
 
       return new StreamingTextResponse(processedStream);
     }
+
+    const response = await this.azureOpenAIClient.chat.completions.create({
+      ...baseParams,
+      stream: false,
+    });
 
     const completion = response as OpenAI.Chat.Completions.ChatCompletion;
 
@@ -575,12 +578,13 @@ export default class ChatService {
     }
   }
 
-  private isReasoningModel(id: OpenAIModelID | string) {
+  private isReasoningModel(id: OpenAIModelID | string): boolean {
     // This function is for models that use the special Azure responses.create() API
     // and require non-streaming mode with temperature=1
-    return [
+    const reasoningModels: OpenAIModelID[] = [
       // OpenAIModelID.GPT_o3, // o3 uses standard chat completions API
       // OpenAIModelID.GROK_4_FAST_REASONING // Grok 4 supports streaming like DeepSeek-R1
-    ].includes(id as OpenAIModelID);
+    ];
+    return reasoningModels.includes(id as OpenAIModelID);
   }
 }
