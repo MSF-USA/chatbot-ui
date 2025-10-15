@@ -119,6 +119,16 @@ export default class ChatService {
     threadId?: string,
   ): Promise<Response> {
     const startTime = Date.now();
+
+    // Debug logging
+    console.log('=== handleChatCompletion Debug ===');
+    console.log('modelId:', modelId);
+    console.log('modelConfig:', JSON.stringify(modelConfig, null, 2));
+    console.log('agentEnabled:', modelConfig?.agentEnabled);
+    console.log('agentId:', modelConfig?.agentId);
+    console.log('Will use agent?', modelConfig?.agentEnabled && modelConfig?.agentId);
+    console.log('===================================');
+
     try {
       // Strategy 1: RAG/Bot flow
       if (botId) {
@@ -401,12 +411,15 @@ export default class ChatService {
       ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
     ];
 
-    // Check if model supports temperature
+    // Check if model supports temperature and get deployment name
     const modelConfig = OpenAIModels[modelId as OpenAIModelID];
     const supportsTemperature = modelConfig?.supportsTemperature !== false; // Default to true if not specified
 
+    // Use deployment name if specified, otherwise fall back to model ID
+    const modelToUse = modelConfig?.deploymentName || modelId;
+
     const requestParams: any = {
-      model: modelId,
+      model: modelToUse,
       messages: messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
       stream: streamResponse,
       user: JSON.stringify(user),
@@ -418,6 +431,22 @@ export default class ChatService {
     }
 
     const response = await this.openAIClient.chat.completions.create(requestParams);
+    return await this.processOpenAISDKResponse(response, streamResponse, startTime, modelId, messages.length, temperature, user, botId);
+  }
+
+  /**
+   * Process OpenAI SDK response (extracted for clarity)
+   */
+  private async processOpenAISDKResponse(
+    response: any,
+    streamResponse: boolean,
+    startTime: number,
+    modelId: string,
+    messageCount: number,
+    temperature: number,
+    user: Session['user'],
+    botId: string | undefined
+  ): Promise<Response> {
 
     if (streamResponse) {
       const processedStream = createAzureOpenAIStreamProcessor(
@@ -428,7 +457,7 @@ export default class ChatService {
       await this.loggingService.logChatCompletion(
         startTime,
         modelId,
-        messages.length,
+        messageCount,
         temperature,
         user,
         botId,
@@ -443,7 +472,7 @@ export default class ChatService {
     await this.loggingService.logChatCompletion(
       startTime,
       modelId,
-      messages.length,
+      messageCount,
       temperature,
       user,
       botId,

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import logo from '@/public/logo_light.png';
 import loginBackground from '@/public/loginBackground.jpg';
 import microsoftLogo from '@/public/microsoft-logo.svg';
-import packageJson from '@/../package.json';
+import packageJson from '@/package.json';
 
 /**
  * Sign-in page for App Router

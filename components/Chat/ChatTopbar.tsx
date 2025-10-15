@@ -8,7 +8,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
-import { OpenAIIcon, DeepSeekIcon, XAIIcon } from '../Icons/providers';
+import { OpenAIIcon, DeepSeekIcon, XAIIcon, MetaIcon } from '../Icons/providers';
 
 interface Props {
   botInfo: {
@@ -53,6 +53,8 @@ export const ChatTopbar = ({
         return <DeepSeekIcon {...iconProps} />;
       case 'xai':
         return <XAIIcon {...iconProps} />;
+      case 'meta':
+        return <MetaIcon {...iconProps} />;
       default:
         return null;
     }

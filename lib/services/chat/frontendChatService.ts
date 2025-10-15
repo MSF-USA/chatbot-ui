@@ -1,4 +1,5 @@
 import { Conversation } from '@/types/chat';
+import { OpenAIModels, OpenAIModelID } from '@/types/openai';
 
 /**
  * Frontend service for making chat API requests
@@ -36,8 +37,13 @@ export async function makeRequest(
 ): Promise<MakeRequestResponse> {
   const { model, messages, bot, threadId } = conversation;
 
+  // Merge conversation model with latest configuration from OpenAIModels
+  // This ensures properties like sdk, supportsTemperature, etc. are always current
+  const latestModelConfig = OpenAIModels[model.id as OpenAIModelID];
+  const modelToSend = latestModelConfig ? { ...latestModelConfig, ...model } : model;
+
   const requestBody = {
-    model,
+    model: modelToSend,
     messages,
     prompt: systemPrompt,
     temperature,

@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@azure/ai-agents": "^1.1.0",
+    "@azure/ai-projects": "^1.0.0-beta.8",
     "@azure/identity": "^4.4.1",
     "@azure/monitor-ingestion": "^1.1.0",
     "@azure/openai": "^2.0.0-beta.2",

@@ -23,7 +23,7 @@ import { CustomAgent } from '@/lib/stores/settingsStore';
 import { TemperatureSlider } from '../settings/Temperature';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
-import { OpenAIIcon, DeepSeekIcon, XAIIcon } from '../Icons/providers';
+import { OpenAIIcon, DeepSeekIcon, XAIIcon, MetaIcon } from '../Icons/providers';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -50,6 +50,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         return <DeepSeekIcon {...iconProps} />;
       case 'xai':
         return <XAIIcon {...iconProps} />;
+      case 'meta':
+        return <MetaIcon {...iconProps} />;
       default:
         return null;
     }
@@ -64,16 +66,16 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
       const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
 
-      // Provider order: openai, deepseek, xai
-      const providerOrder = { openai: 0, deepseek: 1, xai: 2 };
-      const providerDiff = (providerOrder[aProvider as keyof typeof providerOrder] ?? 3) - (providerOrder[bProvider as keyof typeof providerOrder] ?? 3);
+      // Provider order: openai, meta, deepseek, xai
+      const providerOrder = { openai: 0, meta: 1, deepseek: 2, xai: 3 };
+      const providerDiff = (providerOrder[aProvider as keyof typeof providerOrder] ?? 4) - (providerOrder[bProvider as keyof typeof providerOrder] ?? 4);
 
       if (providerDiff !== 0) return providerDiff;
 
-      // Within OpenAI, ensure GPT-5 is first
+      // Within OpenAI, ensure GPT-4.1 is first
       if (aProvider === 'openai') {
-        if (a.id === OpenAIModelID.GPT_5) return -1;
-        if (b.id === OpenAIModelID.GPT_5) return 1;
+        if (a.id === OpenAIModelID.GPT_4_1) return -1;
+        if (b.id === OpenAIModelID.GPT_4_1) return 1;
       }
 
       return a.name.localeCompare(b.name);
