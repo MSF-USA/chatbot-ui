@@ -19,7 +19,14 @@ const mockUseSettings = {
 };
 
 const mockUseCustomAgents = {
-  customAgents: [],
+  customAgents: [] as Array<{
+    id: string;
+    name: string;
+    agentId: string;
+    baseModelId: string;
+    description?: string;
+    createdAt: string;
+  }>,
   addCustomAgent: vi.fn(),
   updateCustomAgent: vi.fn(),
   deleteCustomAgent: vi.fn(),

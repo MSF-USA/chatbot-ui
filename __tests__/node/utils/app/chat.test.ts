@@ -15,8 +15,9 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'What is in this image?' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -29,9 +30,10 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'Compare these images' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image1.jpg' } },
-            { type: 'image_url', image_url: { url: 'https://example.com/image2.jpg' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/image1.jpg', detail: 'auto' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/image2.jpg', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -43,6 +45,7 @@ describe('Chat Utilities', () => {
         {
           role: 'user',
           content: 'Just a text message',
+          messageType: undefined,
         },
       ];
 
@@ -56,6 +59,7 @@ describe('Chat Utilities', () => {
           content: [
             { type: 'text', text: 'Just text content' },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -68,16 +72,19 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'First message' },
-            { type: 'image_url', image_url: { url: 'https://example.com/old.jpg' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/old.jpg', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
         {
           role: 'assistant',
           content: 'I see an image',
+          messageType: undefined,
         },
         {
           role: 'user',
           content: 'Now just text',
+          messageType: undefined,
         },
       ];
 
@@ -89,8 +96,9 @@ describe('Chat Utilities', () => {
         {
           role: 'user',
           content: [
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -114,6 +122,7 @@ describe('Chat Utilities', () => {
             { type: 'text', text: 'Analyze this file' },
             { type: 'file_url', url: 'https://example.com/document.pdf' },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -125,6 +134,7 @@ describe('Chat Utilities', () => {
         {
           role: 'user',
           content: 'Just text',
+          messageType: undefined,
         },
       ];
 
@@ -138,6 +148,7 @@ describe('Chat Utilities', () => {
           content: [
             { type: 'text', text: 'Just text content' },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -152,14 +163,17 @@ describe('Chat Utilities', () => {
             { type: 'text', text: 'First message' },
             { type: 'file_url', url: 'https://example.com/old.pdf' },
           ],
+          messageType: undefined,
         },
         {
           role: 'assistant',
           content: 'I analyzed the file',
+          messageType: undefined,
         },
         {
           role: 'user',
           content: 'Now just text',
+          messageType: undefined,
         },
       ];
 
@@ -174,6 +188,7 @@ describe('Chat Utilities', () => {
             { type: 'text', text: 'Please summarize this document' },
             { type: 'file_url', url: 'https://example.com/report.docx' },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -186,8 +201,9 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'Look at this' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -297,8 +313,9 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'Analyze this chart' },
-            { type: 'image_url', image_url: { url: 'https://example.com/chart.png' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/chart.png', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -317,6 +334,7 @@ describe('Chat Utilities', () => {
             { type: 'text', text: 'Summarize this PDF' },
             { type: 'file_url', url: 'https://example.com/document.pdf' },
           ],
+          messageType: undefined,
         },
       ];
 
@@ -332,6 +350,7 @@ describe('Chat Utilities', () => {
         {
           role: 'user',
           content: 'Just a regular text question',
+          messageType: undefined,
         },
       ];
 
@@ -348,8 +367,9 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'What is in this image?' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg' } },
+            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
           ],
+          messageType: undefined,
         },
       ];
 

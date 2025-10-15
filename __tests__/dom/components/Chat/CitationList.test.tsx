@@ -143,8 +143,8 @@ describe('CitationList', () => {
   describe('Deduplication', () => {
     it('deduplicates citations by URL', () => {
       const duplicateCitations: Citation[] = [
-        { title: 'Article', url: 'https://example.com/1', number: 1 },
-        { title: 'Same Article', url: 'https://example.com/1', number: 2 },
+        { title: 'Article', url: 'https://example.com/1', date: '2024-01-01', number: 1 },
+        { title: 'Same Article', url: 'https://example.com/1', date: '2024-01-01', number: 2 },
       ];
 
       render(<CitationList citations={duplicateCitations} />);
@@ -155,8 +155,8 @@ describe('CitationList', () => {
 
     it('deduplicates citations by title', () => {
       const duplicateCitations: Citation[] = [
-        { title: 'Same Title', url: 'https://example.com/1', number: 1 },
-        { title: 'Same Title', url: 'https://example.com/2', number: 2 },
+        { title: 'Same Title', url: 'https://example.com/1', date: '2024-01-01', number: 1 },
+        { title: 'Same Title', url: 'https://example.com/2', date: '2024-01-02', number: 2 },
       ];
 
       render(<CitationList citations={duplicateCitations} />);
@@ -172,8 +172,8 @@ describe('CitationList', () => {
 
     it('handles citations without URLs', () => {
       const citationsWithoutUrls: Citation[] = [
-        { title: 'Article 1', number: 1 },
-        { title: 'Article 2', number: 2 },
+        { title: 'Article 1', url: '', date: '2024-01-01', number: 1 },
+        { title: 'Article 2', url: '', date: '2024-01-02', number: 2 },
       ];
 
       render(<CitationList citations={citationsWithoutUrls} />);
@@ -263,6 +263,7 @@ describe('CitationList', () => {
       const manyCitations = Array.from({ length: 20 }, (_, i) => ({
         title: `Article ${i + 1}`,
         url: `https://example.com/${i + 1}`,
+        date: '2024-01-01',
         number: i + 1,
       }));
 
@@ -274,8 +275,8 @@ describe('CitationList', () => {
 
     it('handles citations without numbers', async () => {
       const citationsWithoutNumbers: Citation[] = [
-        { title: 'Article 1', url: 'https://example.com/1' },
-        { title: 'Article 2', url: 'https://example.com/2' },
+        { title: 'Article 1', url: 'https://example.com/1', date: '2024-01-01', number: 1 },
+        { title: 'Article 2', url: 'https://example.com/2', date: '2024-01-02', number: 2 },
       ];
 
       render(<CitationList citations={citationsWithoutNumbers} />);

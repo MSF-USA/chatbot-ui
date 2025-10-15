@@ -15,7 +15,7 @@ describe('frontendChatService', () => {
     const createMockConversation = (modelOverrides: Partial<OpenAIModel> = {}): Conversation => ({
       id: 'conv-1',
       name: 'Test Conversation',
-      messages: [{ role: 'user', content: 'Hello' }],
+      messages: [{ role: 'user', content: 'Hello', messageType: undefined }],
       model: {
         id: OpenAIModelID.DEEPSEEK_V3_1,
         name: 'DeepSeek-V3.1',
@@ -301,7 +301,7 @@ describe('frontendChatService', () => {
       const conversation: Conversation = {
         id: 'conv-1',
         name: 'Test',
-        messages: [{ role: 'user', content: 'Hello' }],
+        messages: [{ role: 'user', content: 'Hello', messageType: undefined }],
         model: OpenAIModels[OpenAIModelID.GPT_5],
         prompt: '',
         temperature: 0.7,

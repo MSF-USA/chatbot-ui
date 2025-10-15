@@ -18,6 +18,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: 'https://example.com/images/test-image.jpg',
+          detail: 'auto',
         },
       };
 
@@ -40,6 +41,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: 'https://storage.azure.com/container/folder/subfolder/image.png',
+          detail: 'auto',
         },
       };
 
@@ -95,6 +97,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: 'https://example.com/images/test.jpg',
+          detail: 'auto',
         },
       };
 
@@ -118,6 +121,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: 'https://example.com/images/test.jpg',
+          detail: 'auto',
         },
       };
 
@@ -125,7 +129,7 @@ describe('Image Service', () => {
         json: async () => {
           throw new Error('Invalid JSON');
         },
-      } as Response);
+      } as unknown as Response);
 
       const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -142,6 +146,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: 'https://example.com/images/test.jpg?size=large&quality=high',
+          detail: 'auto',
         },
       };
 
@@ -168,6 +173,7 @@ describe('Image Service', () => {
           type: 'image_url',
           image_url: {
             url: `https://example.com/image.${format}`,
+            detail: 'auto',
           },
         };
 
@@ -191,6 +197,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: '/local/path/to/image.jpg',
+          detail: 'auto',
         },
       };
 
@@ -213,6 +220,7 @@ describe('Image Service', () => {
         type: 'image_url',
         image_url: {
           url: 'image.jpg',
+          detail: 'auto',
         },
       };
 

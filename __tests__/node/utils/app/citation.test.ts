@@ -7,7 +7,7 @@ describe('Citation Utilities', () => {
       const content = `This is some text content.
 
 ---CITATIONS_DATA---
-{"citations":[{"title":"Test Source","url":"https://example.com","snippet":"Test snippet"}]}`;
+{"citations":[{"title":"Test Source","url":"https://example.com","date":"2024-01-01","number":1}]}`;
 
       const result = extractCitationsFromContent(content);
 
@@ -16,7 +16,8 @@ describe('Citation Utilities', () => {
       expect(result.citations[0]).toEqual({
         title: 'Test Source',
         url: 'https://example.com',
-        snippet: 'Test snippet',
+        date: '2024-01-01',
+        number: 1,
       });
       expect(result.extractionMethod).toBe('marker');
     });
@@ -54,9 +55,9 @@ describe('Citation Utilities', () => {
 
 ---CITATIONS_DATA---
 {"citations":[
-  {"title":"Source 1","url":"https://source1.com","snippet":"First snippet"},
-  {"title":"Source 2","url":"https://source2.com","snippet":"Second snippet"},
-  {"title":"Source 3","url":"https://source3.com","snippet":"Third snippet"}
+  {"title":"Source 1","url":"https://source1.com","date":"2024-01-01","number":1},
+  {"title":"Source 2","url":"https://source2.com","date":"2024-01-02","number":2},
+  {"title":"Source 3","url":"https://source3.com","date":"2024-01-03","number":3}
 ]}`;
 
       const result = extractCitationsFromContent(content);
@@ -177,26 +178,26 @@ describe('Citation Utilities', () => {
       const content = `Text.
 
 ---CITATIONS_DATA---
-{"citations":[{"title":"Test & Co.","url":"https://example.com?foo=bar&baz=qux","snippet":"Quote: \\"Hello\\""}]}`;
+{"citations":[{"title":"Test & Co.","url":"https://example.com?foo=bar&baz=qux","date":"2024-01-01","number":1}]}`;
 
       const result = extractCitationsFromContent(content);
 
       expect(result.citations[0].title).toBe('Test & Co.');
       expect(result.citations[0].url).toContain('foo=bar&baz=qux');
-      expect(result.citations[0].snippet).toContain('Quote: "Hello"');
+      expect(result.extractionMethod).toBe('marker');
     });
 
     it('should handle unicode characters in content and citations', () => {
       const content = `Text with émojis 🎉 and symbols ∑.
 
 ---CITATIONS_DATA---
-{"citations":[{"title":"Tëst Søurçe","url":"https://example.com","snippet":"Émojis: 😀"}]}`;
+{"citations":[{"title":"Tëst Søurçe","url":"https://example.com","date":"2024-01-01","number":1}]}`;
 
       const result = extractCitationsFromContent(content);
 
       expect(result.text).toBe('Text with émojis 🎉 and symbols ∑.');
       expect(result.citations[0].title).toBe('Tëst Søurçe');
-      expect(result.citations[0].snippet).toBe('Émojis: 😀');
+      expect(result.extractionMethod).toBe('marker');
     });
 
     it('should handle newlines and multiline text', () => {

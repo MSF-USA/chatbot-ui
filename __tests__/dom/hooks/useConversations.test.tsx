@@ -22,7 +22,7 @@ describe('useConversations', () => {
     id,
     name,
     messages,
-    model: { id: 'gpt-4', name: 'GPT-4' },
+    model: { id: 'gpt-4', name: 'GPT-4', maxLength: 4000, tokenLimit: 4000 },
     prompt: '',
     temperature: 0.7,
     folderId: null,

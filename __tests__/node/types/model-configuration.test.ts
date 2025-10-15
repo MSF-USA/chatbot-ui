@@ -129,9 +129,10 @@ describe('Model Configuration', () => {
         // Should match format like "Aug 6, 2025 8:00 PM" or "May 13, 2025 12:16 AM"
         // or special cases like "Real-time web search" for agent models
         // or simplified date format like "Jan 20, 2025" for some models
-        const isFullDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/.test(model.knowledgeCutoff);
-        const isSimpleDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(model.knowledgeCutoff);
-        const isSpecialCase = model.knowledgeCutoff === 'Real-time web search';
+        const cutoff = model.knowledgeCutoff || '';
+        const isFullDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/.test(cutoff);
+        const isSimpleDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(cutoff);
+        const isSpecialCase = cutoff === 'Real-time web search';
         expect(isFullDateFormat || isSimpleDateFormat || isSpecialCase).toBe(true);
       });
     });

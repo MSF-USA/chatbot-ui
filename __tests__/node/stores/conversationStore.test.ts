@@ -32,7 +32,7 @@ describe('conversationStore', () => {
       id,
       name,
       messages: [],
-      model: { id: 'gpt-4', name: 'GPT-4' },
+      model: { id: 'gpt-4', name: 'GPT-4', maxLength: 4000, tokenLimit: 4000 },
       prompt: '',
       temperature: 0.7,
       folderId: null,
@@ -124,7 +124,7 @@ describe('conversationStore', () => {
         const conversation = createMockConversation('1', 'Test');
         useConversationStore.getState().setConversations([conversation]);
 
-        const newMessages = [{ role: 'user' as const, content: 'Hello' }];
+        const newMessages = [{ role: 'user' as const, content: 'Hello', messageType: undefined }];
         useConversationStore.getState().updateConversation('1', { messages: newMessages });
 
         const updated = useConversationStore.getState().conversations[0];
@@ -290,7 +290,7 @@ describe('conversationStore', () => {
       id,
       name,
       messages: [],
-      model: { id: 'gpt-4', name: 'GPT-4' },
+      model: { id: 'gpt-4', name: 'GPT-4', maxLength: 4000, tokenLimit: 4000 },
       prompt: '',
       temperature: 0.7,
       folderId: null,

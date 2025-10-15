@@ -442,7 +442,7 @@ describe('useEnhancedOutsideClick', () => {
 
   describe('Edge Cases', () => {
     it('handles null ref gracefully', () => {
-      const nullRef: RefObject<HTMLDivElement> = { current: null };
+      const nullRef: RefObject<HTMLDivElement | null> = { current: null };
 
       vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(nullRef, onOutsideClick, true));

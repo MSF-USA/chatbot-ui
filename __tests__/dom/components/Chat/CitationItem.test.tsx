@@ -94,6 +94,7 @@ describe('CitationItem', () => {
       const citationWithoutDate: Citation = {
         title: 'Example Article',
         url: 'https://www.example.com',
+        date: '',
         number: 1,
       };
 
@@ -142,6 +143,7 @@ describe('CitationItem', () => {
       const citation: Citation = {
         title: 'Test',
         url: 'https://www.github.com/test',
+        date: '2024-01-01',
         number: 1,
       };
 
@@ -153,6 +155,7 @@ describe('CitationItem', () => {
       const citation: Citation = {
         title: 'Test',
         url: 'https://stackoverflow.com/questions',
+        date: '2024-01-01',
         number: 1,
       };
 
@@ -164,6 +167,7 @@ describe('CitationItem', () => {
       const citation: Citation = {
         title: 'Test',
         url: 'https://docs.example.com/page',
+        date: '2024-01-01',
         number: 1,
       };
 
@@ -175,6 +179,7 @@ describe('CitationItem', () => {
       const citation: Citation = {
         title: 'Test',
         url: 'not-a-valid-url',
+        date: '2024-01-01',
         number: 1,
       };
 

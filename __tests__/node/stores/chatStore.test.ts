@@ -67,6 +67,7 @@ describe('chatStore', () => {
       const message: Message = {
         role: 'user',
         content: 'Hello',
+        messageType: undefined,
       };
 
       useChatStore.getState().setCurrentMessage(message);
@@ -78,6 +79,7 @@ describe('chatStore', () => {
       const message: Message = {
         role: 'user',
         content: 'Hello',
+        messageType: undefined,
       };
 
       useChatStore.getState().setCurrentMessage(message);
@@ -91,10 +93,12 @@ describe('chatStore', () => {
       const message1: Message = {
         role: 'user',
         content: 'First',
+        messageType: undefined,
       };
       const message2: Message = {
         role: 'assistant',
         content: 'Second',
+        messageType: undefined,
       };
 
       useChatStore.getState().setCurrentMessage(message1);
@@ -176,10 +180,10 @@ describe('chatStore', () => {
     it('sets citations', () => {
       const citations: Citation[] = [
         {
-          id: '1',
           title: 'Test Citation',
           url: 'https://example.com',
-          content: 'Test content',
+          date: '2024-01-01',
+          number: 1,
         },
       ];
 
@@ -190,10 +194,10 @@ describe('chatStore', () => {
 
     it('replaces existing citations', () => {
       const citations1: Citation[] = [
-        { id: '1', title: 'First', url: 'https://example.com', content: 'First' },
+        { title: 'First', url: 'https://example.com', date: '2024-01-01', number: 1 },
       ];
       const citations2: Citation[] = [
-        { id: '2', title: 'Second', url: 'https://example2.com', content: 'Second' },
+        { title: 'Second', url: 'https://example2.com', date: '2024-01-02', number: 2 },
       ];
 
       useChatStore.getState().setCitations(citations1);
@@ -204,7 +208,7 @@ describe('chatStore', () => {
 
     it('can set empty array', () => {
       const citations: Citation[] = [
-        { id: '1', title: 'Test', url: 'https://example.com', content: 'Test' },
+        { title: 'Test', url: 'https://example.com', date: '2024-01-01', number: 1 },
       ];
 
       useChatStore.getState().setCitations(citations);
@@ -270,10 +274,10 @@ describe('chatStore', () => {
     it('resets all state to initial values', () => {
       // Set all state to non-initial values
       useChatStore.setState({
-        currentMessage: { role: 'user', content: 'Test' },
+        currentMessage: { role: 'user', content: 'Test', messageType: undefined },
         isStreaming: true,
         streamingContent: 'Content',
-        citations: [{ id: '1', title: 'Test', url: 'https://example.com', content: 'Test' }],
+        citations: [{ title: 'Test', url: 'https://example.com', date: '2024-01-01', number: 1 }],
         error: 'Error',
         stopRequested: true,
       });
@@ -306,8 +310,8 @@ describe('chatStore', () => {
     const createMockConversation = (): Conversation => ({
       id: 'conv-1',
       name: 'Test Conversation',
-      messages: [{ role: 'user', content: 'Hello' }],
-      model: { id: 'gpt-4', name: 'GPT-4' },
+      messages: [{ role: 'user', content: 'Hello', messageType: undefined }],
+      model: { id: 'gpt-4', name: 'GPT-4', maxLength: 4000, tokenLimit: 4000 },
       prompt: '',
       temperature: 0.7,
       folderId: null,
@@ -316,6 +320,7 @@ describe('chatStore', () => {
     const createMockMessage = (): Message => ({
       role: 'user',
       content: 'Test message',
+      messageType: undefined,
     });
 
     beforeEach(() => {
@@ -334,6 +339,7 @@ describe('chatStore', () => {
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Response text',
         citations: [],
+        extractionMethod: 'test',
       });
     });
 
@@ -383,6 +389,7 @@ describe('chatStore', () => {
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Hello world',
         citations: [],
+        extractionMethod: 'test',
       });
 
       const message = createMockMessage();
@@ -410,6 +417,7 @@ describe('chatStore', () => {
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Response',
         citations: [],
+        extractionMethod: 'test',
       });
 
       const updateConversation = vi.fn();
@@ -449,6 +457,7 @@ describe('chatStore', () => {
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Response',
         citations: [],
+        extractionMethod: 'test',
       });
 
       const updateConversation = vi.fn();
@@ -460,7 +469,7 @@ describe('chatStore', () => {
       const conversation: Conversation = {
         ...createMockConversation(),
         name: 'New Conversation',
-        messages: [{ role: 'user', content: 'What is the weather?' }],
+        messages: [{ role: 'user', content: 'What is the weather?', messageType: undefined }],
       };
 
       await useChatStore.getState().sendMessage(message, conversation);
@@ -487,6 +496,7 @@ describe('chatStore', () => {
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Response',
         citations: [],
+        extractionMethod: 'test',
       });
 
       const updateConversation = vi.fn();
@@ -498,7 +508,7 @@ describe('chatStore', () => {
       const conversation: Conversation = {
         ...createMockConversation(),
         name: 'New Conversation',
-        messages: [{ role: 'user', content: longMessage }],
+        messages: [{ role: 'user', content: longMessage, messageType: undefined }],
       };
 
       await useChatStore.getState().sendMessage(createMockMessage(), conversation);
@@ -552,6 +562,7 @@ describe('chatStore', () => {
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Response',
         citations: [],
+        extractionMethod: 'test',
       });
 
       const message = createMockMessage();
@@ -578,12 +589,13 @@ describe('chatStore', () => {
       });
 
       const mockCitations: Citation[] = [
-        { id: '1', title: 'Source', url: 'https://example.com', content: 'Content' },
+        { title: 'Source', url: 'https://example.com', date: '2024-01-01', number: 1 },
       ];
 
       vi.mocked(extractCitationsFromContent).mockReturnValue({
         text: 'Response text',
         citations: mockCitations,
+        extractionMethod: 'test',
       });
 
       const message = createMockMessage();

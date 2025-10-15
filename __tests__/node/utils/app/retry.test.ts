@@ -211,7 +211,7 @@ describe('Retry Utilities', () => {
       const result = await retryAsync(mockOperation);
 
       expect(result).toBeInstanceOf(Buffer);
-      expect(result.toString()).toBe('test');
+      expect((result as Buffer).toString()).toBe('test');
     });
 
     it('should preserve error details when retries exhausted', async () => {

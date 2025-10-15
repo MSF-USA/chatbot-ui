@@ -46,11 +46,13 @@ describe('ChatMessageText', () => {
   const createAssistantMessage = (content: string = 'Hello'): Message => ({
     role: 'assistant',
     content,
+    messageType: undefined,
   });
 
   const createUserMessage = (content: string = 'Hi'): Message => ({
     role: 'user',
     content,
+    messageType: undefined,
   });
 
   describe('Message Routing', () => {
@@ -302,7 +304,7 @@ describe('ChatMessageText', () => {
         id: '1',
         name: 'Test',
         messages: [],
-        model: { id: 'gpt-4', name: 'GPT-4' },
+        model: { id: 'gpt-4', name: 'GPT-4', maxLength: 4000, tokenLimit: 4000 },
         prompt: '',
         temperature: 0.7,
         folderId: null,
