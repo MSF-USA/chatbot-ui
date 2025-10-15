@@ -14,9 +14,9 @@ export class WhisperTranscriptionService implements ITranscriptionService {
   private credential: DefaultAzureCredential;
 
   constructor() {
-    const apiKey = process.env.WHISPER_API_KEY ?? process.env.OPENAI_API_KEY;
-    const azureEndpoint = process.env.WHISPER_ENDPOINT ?? process.env.AZURE_OPENAI_ENDPOINT;
-    const deployment = process.env.WHISPER_DEPLOYMENT ?? 'whisper';
+    const apiKey = process.env.OPENAI_API_KEY;
+    const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const deployment = 'whisper'; // Standard deployment name for Whisper
 
     this.apiKey = apiKey;
     this.endpoint = azureEndpoint;
@@ -24,8 +24,8 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     this.client = null; // Not using the AzureOpenAI client
     this.credential = new DefaultAzureCredential();
 
-    if (!this.endpoint || !this.deployment) {
-      throw new Error('Azure OpenAI endpoint or deployment are not set.');
+    if (!this.endpoint) {
+      throw new Error('AZURE_OPENAI_ENDPOINT is not set.');
     }
   }
 
@@ -75,7 +75,8 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     const formHeaders = formData.getHeaders();
 
     try {
-      const reqUrl: string = `${this.endpoint!.trim()}/openai/deployments/${this.deployment}/audio/transcriptions?api-version=2024-08-01-preview`;
+      const apiVersion = process.env.OPENAI_API_VERSION || '2025-04-01-preview';
+      const reqUrl: string = `${this.endpoint!.trim()}/openai/deployments/${this.deployment}/audio/transcriptions?api-version=${apiVersion}`;
       const headers = formHeaders;
       if (this.apiKey) {
         headers['api-key'] = this.apiKey;

@@ -10,10 +10,10 @@ export const DEFAULT_USE_KNOWLEDGE_BASE =
   process.env.DEFAULT_USE_KNOWLEDGE_BASE === 'true' || false;
 
 export const OPENAI_API_VERSION =
-  process.env.OPENAI_API_VERSION || '2024-12-01-preview';
+  process.env.OPENAI_API_VERSION || '2025-04-01-preview';
 
-export const AZURE_DEPLOYMENT_ID =
-  process.env.AZURE_DEPLOYMENT_ID || 'gpt-35-turbo';
+export const DEFAULT_MODEL =
+  process.env.DEFAULT_MODEL || 'gpt-4.1';
 
 export const APIM_MANAGEMENT_ENDPONT =
   process.env.APIM_MANAGEMENT_ENDPONT || 'localhostmgmt';

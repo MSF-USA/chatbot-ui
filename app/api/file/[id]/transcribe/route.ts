@@ -27,8 +27,9 @@ export async function GET(
 
   const { searchParams } = new URL(request.url);
   let transcriptionServiceName = searchParams.get('service');
+  // Default to Whisper (Azure OpenAI) for audio transcription
   if (!transcriptionServiceName || (!['whisper', 'azureCognitiveSpeechService'].includes(transcriptionServiceName))) {
-    transcriptionServiceName = 'azureCognitiveSpeechService'
+    transcriptionServiceName = 'whisper'
   }
 
 

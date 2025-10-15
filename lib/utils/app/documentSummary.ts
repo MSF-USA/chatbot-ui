@@ -3,6 +3,7 @@ import { Session } from 'next-auth';
 import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
+import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
 import { loadDocument } from '@/lib/utils/server/file-handling';
 
 import {
@@ -94,11 +95,10 @@ export async function parseAndQueryFileOpenAI({
     scope,
   );
 
-  const apiVersion = process.env.OPENAI_API_VERSION ?? '2024-12-01-preview';
   const client = new AzureOpenAI({
     azureADTokenProvider,
     deployment: modelId,
-    apiVersion,
+    apiVersion: OPENAI_API_VERSION,
   });
 
   let combinedSummary: string = '';

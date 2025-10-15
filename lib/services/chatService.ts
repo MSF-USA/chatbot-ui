@@ -9,9 +9,10 @@ import {
   isImageConversation,
 } from '@/lib/utils/app/chat';
 import {
-  AZURE_DEPLOYMENT_ID,
+  DEFAULT_MODEL,
   DEFAULT_SYSTEM_PROMPT,
   DEFAULT_TEMPERATURE,
+  OPENAI_API_VERSION,
 } from '@/lib/utils/app/const';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
@@ -59,7 +60,7 @@ export default class ChatService {
     // Azure OpenAI client for GPT models
     this.azureOpenAIClient = new AzureOpenAI({
       azureADTokenProvider,
-      apiVersion: process.env.OPENAI_API_VERSION ?? '2024-12-01-preview',
+      apiVersion: OPENAI_API_VERSION,
     });
 
     // Standard OpenAI client for Grok/DeepSeek models via AI Foundry endpoint
@@ -526,7 +527,7 @@ export default class ChatService {
     if (isValidModel && needsToHandleImages && !isImageModel) {
       modelToUse = 'gpt-5';
     } else if (modelToUse == null || !isValidModel) {
-      modelToUse = AZURE_DEPLOYMENT_ID;
+      modelToUse = DEFAULT_MODEL;
     }
 
     const token = (await getToken({

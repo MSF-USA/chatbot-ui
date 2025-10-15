@@ -104,17 +104,25 @@ export async function POST(request: NextRequest) {
     );
   };
 
-  const fileData = await request.text();
+  try {
+    const fileData = await request.text();
 
-  // Check file size
-  const fileSize = Buffer.byteLength(fileData);
-  if (fileSize > MAX_FILE_SIZE) {
+    // Check file size
+    const fileSize = Buffer.byteLength(fileData);
+    if (fileSize > MAX_FILE_SIZE) {
+      return NextResponse.json(
+        { error: `File size exceeds maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB` },
+        { status: 413 }
+      );
+    }
+
+    const fileURI: string = await uploadFileToBlobStorage(fileData);
+    return NextResponse.json({ message: 'File uploaded', uri: fileURI });
+  } catch (error) {
+    console.error('Error uploading file:', error);
     return NextResponse.json(
-      { error: `File size exceeds maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB` },
-      { status: 413 }
+      { error: 'Failed to upload file', details: error instanceof Error ? error.message : String(error) },
+      { status: 500 }
     );
   }
-
-  const fileURI: string = await uploadFileToBlobStorage(fileData);
-  return NextResponse.json({ message: 'File uploaded', uri: fileURI });
 }

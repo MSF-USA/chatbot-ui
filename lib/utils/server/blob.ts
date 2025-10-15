@@ -17,6 +17,7 @@ import {
     QueueDeleteMessageResponse,
     StorageSharedKeyCredential as QueueSharedKeyCredential,
 } from '@azure/storage-queue';
+import { DefaultAzureCredential } from '@azure/identity';
 
 export enum BlobProperty {
     URL = 'url',
@@ -92,13 +93,6 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
             name = storageAccountName;
         }
 
-        let key: string;
-        if (storageAccountAccessKey) {
-            key = storageAccountAccessKey
-        } else {
-            key = getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user});
-        }
-
         if (!this.containerName) {
             this.containerName = getEnvVariable(
               {
@@ -110,16 +104,17 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
             )
         }
 
-        const sharedKeyCredential = new StorageSharedKeyCredential(name, key);
+        // Use Azure Entra ID (DefaultAzureCredential) for authentication
+        const credential = new DefaultAzureCredential();
+
         this.blobServiceClient = new BlobServiceClient(
           `https://${name}.blob.core.windows.net`,
-          sharedKeyCredential
+          credential
         );
 
-        const queueSharedKeyCredential = new QueueSharedKeyCredential(name, key);
         this.queueServiceClient = new QueueServiceClient(
             `https://${name}.queue.core.windows.net`,
-            queueSharedKeyCredential
+            credential
         );
     }
 

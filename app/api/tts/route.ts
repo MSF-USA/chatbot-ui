@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
 import { cleanMarkdown } from "@/lib/utils/app/clean";
-import {Session} from "next-auth";
-import {auth} from "@/auth";
+import { Session } from "next-auth";
+import { auth } from "@/auth";
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   const session: Session | null = await auth();
@@ -16,10 +16,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
     }
 
-    const speechConfig = sdk.SpeechConfig.fromSubscription(
-      process.env.AZURE_SPEECH_API_KEY!,
-      process.env.AZURE_SPEECH_REGION!
-    );
+    // Azure Speech Services configuration
+    const region = 'eastus2';
+    const apiKey = process.env.OPENAI_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('OPENAI_API_KEY is not configured');
+    }
+
+    // Create speech config with API key
+    const speechConfig = sdk.SpeechConfig.fromSubscription(apiKey, region);
     speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
 
     const synthesizer = new sdk.SpeechSynthesizer(speechConfig);
@@ -45,11 +51,16 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
             resolve(response);
           } else {
-            reject(new Error(`Speech synthesis canceled, reason: ${result.reason}`));
+            // Get detailed cancellation error information
+            const cancellationDetails = sdk.CancellationDetails.fromResult(result);
+            const errorDetails = `Speech synthesis canceled. Reason: ${cancellationDetails.reason}, ErrorCode: ${cancellationDetails.ErrorCode}, ErrorDetails: ${cancellationDetails.errorDetails}`;
+            console.error(errorDetails);
+            reject(new Error(errorDetails));
           }
           synthesizer.close();
         },
         (error) => {
+          console.error('TTS error callback:', error);
           synthesizer.close();
           reject(error);
         }
