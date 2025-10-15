@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import { IconX } from '@tabler/icons-react';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useChat } from '@/lib/hooks/chat/useChat';
 import { useUI } from '@/lib/hooks/ui/useUI';
@@ -14,6 +15,7 @@ import { LoadingScreen } from './LoadingScreen';
 import { Message } from '@/types/chat';
 import { EmptyState } from './EmptyState/EmptyState';
 import { v4 as uuidv4 } from 'uuid';
+import { OpenAIModels, OpenAIModelID } from '@/types/openai';
 
 interface ChatProps {
   mobileModelSelectOpen?: boolean;
@@ -26,7 +28,7 @@ interface ChatProps {
 export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatProps = {}) {
   const { data: session, status } = useSession();
   const { selectedConversation, updateConversation, conversations, addConversation, selectConversation, isLoaded } = useConversations();
-  const { isStreaming, streamingContent, error, sendMessage, citations } = useChat();
+  const { isStreaming, streamingContent, error, sendMessage, citations, clearError } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } = useUI();
   const { models, defaultModelId, systemPrompt, temperature } = useSettings();
 
@@ -59,6 +61,17 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isModelSelectOpen]);
+
+  // Auto-dismiss error after 10 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 10000); // 10 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearError]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
@@ -223,6 +236,10 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
             models.find(m => m.id === defaultModelId)?.name ||
             'GPT-4o'
           }
+          selectedModelProvider={
+            OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]?.provider ||
+            models.find(m => m.id === defaultModelId)?.provider
+          }
           showSettings={isSettingsOpen}
           onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
           onModelClick={() => setIsModelSelectOpen(true)}
@@ -286,8 +303,15 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
       {/* Error Display */}
       {error && (
         <div className="absolute bottom-[160px] left-0 right-0 mx-auto w-full max-w-3xl px-4 py-2">
-          <div className="rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200">
-            {error}
+          <div className="rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-start justify-between">
+            <span className="flex-1">{error}</span>
+            <button
+              onClick={clearError}
+              className="ml-4 text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-100 transition-colors flex-shrink-0"
+              aria-label="Dismiss error"
+            >
+              <IconX size={20} />
+            </button>
           </div>
         </div>
       )}

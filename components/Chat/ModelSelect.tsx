@@ -55,11 +55,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     }
   };
 
-  // Filter out legacy models and the standalone agent model
+  // Filter out legacy models
   const baseModels = models
     .filter(m =>
-      !OpenAIModels[m.id as OpenAIModelID]?.isLegacy &&
-      !OpenAIModels[m.id as OpenAIModelID]?.isAgent
+      !OpenAIModels[m.id as OpenAIModelID]?.isLegacy
     )
     .sort((a, b) => {
       const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
@@ -234,32 +233,21 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                         }
                       `}
                     >
-                      <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           {getProviderIcon(config?.provider)}
                           <span className="font-medium text-sm text-gray-900 dark:text-white">
                             {model.name}
                           </span>
+                          {config?.agentId && (
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
+                              <IconTool size={10} className="mr-0.5" />
+                              Agent
+                            </span>
+                          )}
                         </div>
                         {isSelected && (
                           <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium ${
-                          config?.modelType === 'reasoning'
-                            ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-                            : config?.modelType === 'omni'
-                            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                            : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
-                        }`}>
-                          {config?.modelType || 'foundational'}
-                        </span>
-                        {config?.agentId && model.id !== OpenAIModelID.GPT_5 && (
-                          <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                            <IconTool size={10} className="mr-0.5" />
-                            Agent
-                          </span>
                         )}
                       </div>
                     </button>
@@ -366,9 +354,29 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                     {selectedModel.name}
                   </h2>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400">
+                <p className="text-gray-600 dark:text-gray-400 mb-3">
                   {selectedModel.description || modelConfig?.description}
                 </p>
+
+                {/* Model Type and Knowledge Cutoff */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                    modelConfig?.modelType === 'reasoning'
+                      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                      : modelConfig?.modelType === 'omni'
+                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                      : modelConfig?.modelType === 'agent'
+                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                      : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
+                  }`}>
+                    {modelConfig?.modelType || 'foundational'}
+                  </span>
+                  {modelConfig?.knowledgeCutoff && (
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      Knowledge cutoff: {modelConfig.knowledgeCutoff}
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Custom Agent Info */}
@@ -457,7 +465,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               )}
 
               {/* Temperature Control */}
-              {!useAgent && selectedConversation && (
+              {!useAgent && selectedConversation && modelConfig?.supportsTemperature !== false && (
                 <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center mb-3">
                     <IconTemperature size={20} className="mr-2 text-gray-600 dark:text-gray-400" />
@@ -474,6 +482,18 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                       })
                     }
                   />
+                </div>
+              )}
+
+              {/* Temperature Not Supported Notice */}
+              {!useAgent && modelConfig?.supportsTemperature === false && (
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-start">
+                    <IconInfoCircle size={18} className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                    <div className="text-sm text-blue-700 dark:text-blue-300">
+                      <strong>OpenAI Model Update:</strong> Newer OpenAI models (GPT-5 series, o3) no longer support custom temperature settings. These models use optimized, fixed temperature values for consistent performance.
+                    </div>
+                  </div>
                 </div>
               )}
 

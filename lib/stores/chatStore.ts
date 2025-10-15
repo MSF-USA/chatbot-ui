@@ -22,6 +22,7 @@ interface ChatStore {
   appendStreamingContent: (chunk: string) => void;
   setCitations: (citations: Citation[]) => void;
   setError: (error: string | null) => void;
+  clearError: () => void;
   requestStop: () => void;
   resetStop: () => void;
   resetChat: () => void;
@@ -55,6 +56,8 @@ export const useChatStore = create<ChatStore>((set) => ({
   setCitations: (citations) => set({ citations }),
 
   setError: (error) => set({ error }),
+
+  clearError: () => set({ error: null }),
 
   requestStop: () => set({ stopRequested: true }),
 

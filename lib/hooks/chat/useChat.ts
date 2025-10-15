@@ -22,6 +22,7 @@ export function useChat() {
     appendStreamingContent: store.appendStreamingContent,
     setCitations: store.setCitations,
     setError: store.setError,
+    clearError: store.clearError,
     requestStop: store.requestStop,
     resetStop: store.resetStop,
     resetChat: store.resetChat,

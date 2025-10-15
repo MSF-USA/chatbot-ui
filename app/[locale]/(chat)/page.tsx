@@ -8,6 +8,8 @@ import { useUI } from '@/lib/hooks/ui/useUI';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { IconMenu2, IconChevronDown, IconClearAll, IconTool } from '@tabler/icons-react';
 import { useState } from 'react';
+import { OpenAIModels, OpenAIModelID } from '@/types/openai';
+import { OpenAIIcon, DeepSeekIcon, XAIIcon } from '@/components/Icons/providers';
 
 /**
  * Main chat page
@@ -20,6 +22,22 @@ export default function ChatPage() {
   const displayModelName = selectedConversation?.model?.name || 'Chat';
   const hasMessages = (selectedConversation?.messages?.length || 0) > 0;
   const agentEnabled = selectedConversation?.model?.agentEnabled || false;
+  const modelProvider = OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]?.provider;
+
+  // Helper function to get provider icon
+  const getProviderIcon = (provider?: string) => {
+    const iconProps = { className: "w-3.5 h-3.5 flex-shrink-0" };
+    switch (provider) {
+      case 'openai':
+        return <OpenAIIcon {...iconProps} />;
+      case 'deepseek':
+        return <DeepSeekIcon {...iconProps} />;
+      case 'xai':
+        return <XAIIcon {...iconProps} />;
+      default:
+        return null;
+    }
+  };
 
   const handleClearAll = () => {
     if (selectedConversation && window.confirm('Are you sure you want to clear this conversation?')) {
@@ -53,7 +71,8 @@ export default function ChatPage() {
               className="ml-2 flex items-center px-2 py-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors min-w-0"
               aria-label="Select Model"
             >
-              <span className="font-semibold text-neutral-900 dark:text-white truncate text-sm">
+              {getProviderIcon(modelProvider)}
+              <span className="font-semibold text-neutral-900 dark:text-white truncate text-sm ml-1.5">
                 {displayModelName}
               </span>
               {agentEnabled && (

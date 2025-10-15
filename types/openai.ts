@@ -13,6 +13,8 @@ export interface OpenAIModel {
   agentEnabled?: boolean; // Whether agent mode is currently enabled
   provider?: 'openai' | 'deepseek' | 'xai'; // Model provider
   knowledgeCutoff?: string; // Knowledge cutoff date
+  sdk?: 'azure-openai' | 'openai'; // Which SDK this model requires
+  supportsTemperature?: boolean; // Whether this model supports custom temperature values
 }
 
 export enum OpenAIModelID {
@@ -46,6 +48,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     description: 'Advanced open-source model optimized for reasoning and coding tasks.',
     isLegacy: false,
     provider: 'deepseek',
+    knowledgeCutoff: 'Apr 16, 2025 12:45 AM',
+    sdk: 'openai',
+    supportsTemperature: true,
   },
   [OpenAIModelID.GROK_3]: {
     id: OpenAIModelID.GROK_3,
@@ -56,6 +61,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     description: 'xAI\'s latest model with advanced reasoning and multimodal capabilities.',
     isLegacy: false,
     provider: 'xai',
+    knowledgeCutoff: 'May 13, 2025 12:16 AM',
+    sdk: 'openai',
+    supportsTemperature: true,
   },
   [OpenAIModelID.GROK_4_FAST_REASONING]: {
     id: OpenAIModelID.GROK_4_FAST_REASONING,
@@ -68,6 +76,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     description: 'Fast reasoning variant of Grok 4 optimized for quick problem-solving.',
     isLegacy: false,
     provider: 'xai',
+    knowledgeCutoff: 'Jun 26, 2025 8:00 PM',
+    sdk: 'openai',
+    supportsTemperature: true,
   },
   [OpenAIModelID.GPT_5]: {
     id: OpenAIModelID.GPT_5,
@@ -79,6 +90,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     isLegacy: false,
     agentId: 'asst_DHpJVkpNIBiaGgIkvyFALMI',
     provider: 'openai',
+    knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
+    sdk: 'azure-openai',
+    supportsTemperature: false,
   },
   [OpenAIModelID.GPT_5_PRO]: {
     id: OpenAIModelID.GPT_5_PRO,
@@ -89,6 +103,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     description: 'Enhanced GPT-5 with improved performance and extended capabilities.',
     isLegacy: false,
     provider: 'openai',
+    knowledgeCutoff: 'Oct 5, 2025 8:00 PM',
+    sdk: 'azure-openai',
+    supportsTemperature: false,
   },
   [OpenAIModelID.GPT_5_CHAT]: {
     id: OpenAIModelID.GPT_5_CHAT,
@@ -101,6 +118,9 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     isAgent: true,
     agentId: 'asst_qyXsZc1wjTvLYHyyFYrXV3Ev',
     provider: 'openai',
+    knowledgeCutoff: 'Oct 1, 2025 8:00 PM',
+    sdk: 'azure-openai',
+    supportsTemperature: false,
   },
   [OpenAIModelID.GPT_o3]: {
     id: OpenAIModelID.GPT_o3,
@@ -113,5 +133,8 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     description: 'Latest reasoning model with enhanced problem-solving capabilities and extended context.',
     isLegacy: false,
     provider: 'openai',
+    knowledgeCutoff: 'Apr 8, 2025 8:00 PM',
+    sdk: 'azure-openai',
+    supportsTemperature: false,
   },
 };

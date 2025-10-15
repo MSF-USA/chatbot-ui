@@ -43,7 +43,8 @@ import { ResponseCreateParamsBase, ResponseInput } from 'openai/resources/respon
  * ChatService class for handling chat-related API operations.
  */
 export default class ChatService {
-  private openAIClient: AzureOpenAI;
+  private azureOpenAIClient: AzureOpenAI;
+  private openAIClient: OpenAI;
   private loggingService: AzureMonitorLoggingService;
   private ragService: RAGService;
   private fileHandler: FileConversationHandler;
@@ -55,9 +56,17 @@ export default class ChatService {
       'https://cognitiveservices.azure.com/.default',
     );
 
-    this.openAIClient = new AzureOpenAI({
+    // Azure OpenAI client for GPT models
+    this.azureOpenAIClient = new AzureOpenAI({
       azureADTokenProvider,
       apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+    });
+
+    // Standard OpenAI client for Grok/DeepSeek models via AI Foundry endpoint
+    this.openAIClient = new OpenAI({
+      baseURL: process.env.AZURE_AI_FOUNDRY_OPENAI_ENDPOINT ||
+                `${process.env.AZURE_AI_FOUNDRY_ENDPOINT?.replace('/api/projects/default', '')}/openai/v1/`,
+      apiKey: process.env.OPENAI_API_KEY,
     });
 
     this.loggingService = new AzureMonitorLoggingService(
@@ -71,7 +80,7 @@ export default class ChatService {
       process.env.SEARCH_INDEX!,
       process.env.SEARCH_ENDPOINT_API_KEY!,
       this.loggingService,
-      this.openAIClient,
+      this.azureOpenAIClient,
     );
 
     this.fileHandler = new FileConversationHandler(this.loggingService);
@@ -137,7 +146,24 @@ export default class ChatService {
         );
       }
 
-      // Strategy 3: Reasoning model flow
+      // Strategy 3: Check SDK type and route accordingly
+      const sdkType = modelConfig?.sdk || 'azure-openai';
+
+      if (sdkType === 'openai') {
+        // Use standard OpenAI client for Grok/DeepSeek models
+        return await this.handleOpenAISDKChat(
+          modelId,
+          messages,
+          temperature,
+          user,
+          botId,
+          streamResponse,
+          promptToSend,
+          startTime,
+        );
+      }
+
+      // Strategy 4: Reasoning model flow (Azure OpenAI)
       if (this.isReasoningModel(modelId)) {
         return await this.handleReasoningModel(
           modelId,
@@ -149,7 +175,7 @@ export default class ChatService {
         );
       }
 
-      // Strategy 4: Standard chat flow
+      // Strategy 5: Standard Azure OpenAI chat flow
       return await this.handleStandardChat(
         modelId,
         messages,
@@ -258,7 +284,7 @@ export default class ChatService {
       stream: false
     };
 
-    const responseData = await this.openAIClient.responses.create(chatCompletionParams);
+    const responseData = await this.azureOpenAIClient.responses.create(chatCompletionParams);
     const response = responseData as OpenAI.Responses.Response;
 
     const completion = response.output_text;
@@ -300,14 +326,98 @@ export default class ChatService {
       ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
     ];
 
-    const response = await this.openAIClient.chat.completions.create({
+    // Check if model supports temperature
+    const modelConfig = OpenAIModels[modelId as OpenAIModelID];
+    const supportsTemperature = modelConfig?.supportsTemperature !== false; // Default to true if not specified
+
+    const requestParams: any = {
       model: modelId,
-      messages:
-        messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
-      temperature,
+      messages: messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
       stream: streamResponse,
       user: JSON.stringify(user),
-    });
+    };
+
+    // Only include temperature if supported
+    if (supportsTemperature) {
+      requestParams.temperature = temperature;
+    }
+
+    const response = await this.azureOpenAIClient.chat.completions.create(requestParams);
+
+    if (streamResponse) {
+      const processedStream = createAzureOpenAIStreamProcessor(
+        response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+      );
+
+      // Log regular chat completion
+      await this.loggingService.logChatCompletion(
+        startTime,
+        modelId,
+        messages.length,
+        temperature,
+        user,
+        botId,
+      );
+
+      return new StreamingTextResponse(processedStream);
+    }
+
+    const completion = response as OpenAI.Chat.Completions.ChatCompletion;
+
+    // Log regular chat completion
+    await this.loggingService.logChatCompletion(
+      startTime,
+      modelId,
+      messages.length,
+      temperature,
+      user,
+      botId,
+    );
+
+    return new Response(
+      JSON.stringify({ text: completion.choices[0]?.message?.content }),
+      { headers: { 'Content-Type': 'application/json' } },
+    );
+  }
+
+  /**
+   * Handles chat completion using standard OpenAI SDK (for Grok/DeepSeek models)
+   */
+  private async handleOpenAISDKChat(
+    modelId: string,
+    messages: Message[],
+    temperature: number,
+    user: Session['user'],
+    botId: string | undefined,
+    streamResponse: boolean,
+    promptToSend: string | undefined,
+    startTime: number,
+  ): Promise<Response> {
+    const messagesWithSystemPrompt = [
+      {
+        role: 'system',
+        content: promptToSend || DEFAULT_SYSTEM_PROMPT,
+      },
+      ...(messages as OpenAI.Chat.Completions.ChatCompletionMessageParam[]),
+    ];
+
+    // Check if model supports temperature
+    const modelConfig = OpenAIModels[modelId as OpenAIModelID];
+    const supportsTemperature = modelConfig?.supportsTemperature !== false; // Default to true if not specified
+
+    const requestParams: any = {
+      model: modelId,
+      messages: messagesWithSystemPrompt as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
+      stream: streamResponse,
+      user: JSON.stringify(user),
+    };
+
+    // Only include temperature if supported
+    if (supportsTemperature) {
+      requestParams.temperature = temperature;
+    }
+
+    const response = await this.openAIClient.chat.completions.create(requestParams);
 
     if (streamResponse) {
       const processedStream = createAzureOpenAIStreamProcessor(

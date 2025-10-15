@@ -8,6 +8,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+import { OpenAIIcon, DeepSeekIcon, XAIIcon } from '../Icons/providers';
 
 interface Props {
   botInfo: {
@@ -16,6 +17,7 @@ interface Props {
     color: string;
   } | null;
   selectedModelName: string | undefined;
+  selectedModelProvider?: string;
   showSettings: boolean;
   onSettingsClick: () => void;
   onModelClick?: () => void;
@@ -29,6 +31,7 @@ interface Props {
 export const ChatTopbar = ({
   botInfo,
   selectedModelName,
+  selectedModelProvider,
   showSettings,
   onSettingsClick,
   onModelClick,
@@ -39,6 +42,21 @@ export const ChatTopbar = ({
   showChatbar = false,
 }: Props) => {
   const t = useTranslations();
+
+  // Helper function to get provider icon
+  const getProviderIcon = (provider?: string) => {
+    const iconProps = { className: "w-4 h-4 flex-shrink-0" };
+    switch (provider) {
+      case 'openai':
+        return <OpenAIIcon {...iconProps} />;
+      case 'deepseek':
+        return <DeepSeekIcon {...iconProps} />;
+      case 'xai':
+        return <XAIIcon {...iconProps} />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="sticky top-0 z-20 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out bg-white dark:bg-[#212121]">
@@ -64,7 +82,8 @@ export const ChatTopbar = ({
               aria-label="Select Model"
               title="Select Model"
             >
-              <span className="truncate font-bold dark:text-blue-50 text-gray-800 text-base" title={selectedModelName}>
+              {getProviderIcon(selectedModelProvider)}
+              <span className="truncate font-bold dark:text-blue-50 text-gray-800 text-base ml-2" title={selectedModelName}>
                 {selectedModelName || 'Select Model'}
               </span>
               {agentEnabled && (
