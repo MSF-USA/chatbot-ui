@@ -26,6 +26,9 @@ import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
+
+import { parseThinkingContent } from '@/lib/utils/app/thinking';
 
 import rehypeMathjax from 'rehype-mathjax/svg';
 import remarkGfm from 'remark-gfm';
@@ -53,7 +56,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   onRegenerate,
 }) => {
   const [displayContent, setDisplayContent] = useState('');
+  const [streamingContent, setStreamingContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
+  const [thinking, setThinking] = useState<string>('');
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
@@ -74,7 +79,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   // Use smooth streaming hook for animated text display
   const smoothContent = useSmoothStreaming({
     isStreaming: messageIsStreaming,
-    content: displayContent,
+    content: streamingContent || displayContent,
     charsPerFrame: charsPerFrame,
     frameDelay: frameDelay,
     enabled: smoothStreamingEnabled,
@@ -91,8 +96,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   useEffect(() => {
     const processContent = () => {
-      let mainContent = content;
+      // First, parse thinking content from the raw content
+      const { thinking: inlineThinking, content: contentWithoutThinking } = parseThinkingContent(content);
+
+      let mainContent = contentWithoutThinking;
       let citationsData: Citation[] = [];
+      let metadataThinking = '';
       let extractionMethod = 'none';
 
       // First check if citations are in the message object
@@ -102,13 +111,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       }
       // Then check for the newer metadata format
       else {
-        const metadataMatch = content.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
+        const metadataMatch = contentWithoutThinking.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
         if (metadataMatch) {
           extractionMethod = 'metadata';
-          mainContent = content.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
-          
+          mainContent = contentWithoutThinking.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
+
           try {
             const parsedData = JSON.parse(metadataMatch[1]);
+
+            // Extract citations
             if (parsedData.citations) {
               // Deduplicate citations by URL or title
               const uniqueCitationsMap = new Map();
@@ -120,6 +131,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               });
               citationsData = Array.from(uniqueCitationsMap.values());
             }
+
+            // Extract thinking from metadata (takes precedence over inline thinking)
+            if (parsedData.thinking) {
+              metadataThinking = parsedData.thinking;
+            }
           } catch (error) {
             // Silently ignore parsing errors
           }
@@ -127,17 +143,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       // Next try the legacy JSON detection at the end
       else if (!messageIsStreaming) {
         // Only try legacy JSON parsing when not streaming to avoid partial JSON
-        const jsonMatch = content.match(/(\{[\s\S]*\})$/);
+        const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
         if (jsonMatch) {
           const jsonStr = jsonMatch[1].trim();
           // Validate JSON structure before parsing
           if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
             const openBraces = (jsonStr.match(/{/g) || []).length;
             const closeBraces = (jsonStr.match(/}/g) || []).length;
-            
+
             if (openBraces === closeBraces) {
               extractionMethod = 'regex';
-              mainContent = content.slice(0, -jsonMatch[1].length).trim();
+              mainContent = contentWithoutThinking.slice(0, -jsonMatch[1].length).trim();
               try {
                 const parsedData = JSON.parse(jsonStr);
                 if (parsedData.citations) {
@@ -184,7 +200,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
       processingAttempts.current++;
 
+      // Determine final thinking content (priority: message > metadata > inline)
+      const finalThinking = message?.thinking || metadataThinking || inlineThinking || '';
+
+      // For streaming, also compute content without metadata for display
+      const streamingDisplay = contentWithoutThinking
+        .replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '')
+        .split(/(\{[\s\S]*\})$/)[0];
+
       setDisplayContent(mainContent);
+      setStreamingContent(streamingDisplay);
+      setThinking(finalThinking);
       if (mainContent.includes('```math')) {
         setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
       }
@@ -207,10 +233,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
-  // Determine what to display - when streaming, use the raw content with metadata stripped
-  // When not streaming, use the processed content
+  // Determine what to display - when streaming, use pre-processed streaming content
+  // When not streaming, use the fully processed content
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '').split(/(\{[\s\S]*\})$/)[0]
+    ? streamingContent
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
@@ -327,10 +353,19 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         )}
 
         <div className="flex flex-col w-full">
+          {/* Thinking block - displayed before main content */}
+          {thinking && (
+            <ThinkingBlock
+              thinking={thinking}
+              isStreaming={messageIsStreaming && !contentToDisplay}
+            />
+          )}
+
           <div className="flex-1 w-full">
             <div className="prose dark:prose-invert max-w-none w-full" style={{ maxWidth: 'none' }}>
               <CitationMarkdown
                 conversation={selectedConversation}
+                message={message}
                 citations={citations}
                 remarkPlugins={remarkPlugins}
                 rehypePlugins={[rehypeMathjax]}

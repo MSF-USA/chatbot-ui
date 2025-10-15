@@ -7,14 +7,13 @@ import { AzureMonitorLoggingService } from '../loggingService';
  * Handles Azure AI Foundry Agent-based chat completions with Bing grounding
  *
  * Package structure:
- * - Uses @azure/ai-projects (AIProjectClient) as the main client
- * - AIProjectClient.agents provides access to agent operations
+ * - Uses @azure/ai-agents (AgentsClient) for streaming support
  *
  * API structure:
- * - project.agents.getAgent(agentId) - retrieves agent details
- * - project.agents.threads.create() - creates a new thread
- * - project.agents.messages.create(threadId, role, content) - adds a message
- * - project.agents.runs.create(threadId, agentId).stream() - creates streaming run
+ * - client.threads.create() - creates a new thread
+ * - client.messages.create(threadId, role, content) - adds a message
+ * - client.runs.create(threadId, agentId) - returns run object with stream() method (DO NOT await!)
+ * - run.stream() - returns async iterator of streaming events
  */
 export class AIFoundryAgentHandler {
   constructor(private loggingService: AzureMonitorLoggingService) {}
@@ -34,8 +33,8 @@ export class AIFoundryAgentHandler {
     const startTime = Date.now();
 
     try {
-      // Use Azure AI Projects SDK
-      const { AIProjectClient } = await import('@azure/ai-projects');
+      // Use Azure AI Agents SDK for streaming support
+      const aiAgents = await import('@azure/ai-agents');
       const { DefaultAzureCredential } = await import('@azure/identity');
 
       // AI Foundry uses a separate project endpoint (services.ai.azure.com)
@@ -46,22 +45,7 @@ export class AIFoundryAgentHandler {
         throw new Error('Azure AI Foundry endpoint or Agent ID not configured');
       }
 
-      const project = new AIProjectClient(endpoint, new DefaultAzureCredential());
-
-      // Verify the agent exists before proceeding
-      console.log('Verifying agent exists:', agentId);
-      try {
-        const agent = await project.agents.getAgent(String(agentId));
-        console.log('Agent verified:', agent.name);
-      } catch (agentError: any) {
-        console.error('Agent verification failed:', agentError);
-        console.error('Agent error details:', {
-          message: agentError?.message,
-          statusCode: agentError?.statusCode,
-          code: agentError?.code
-        });
-        throw new Error(`Agent '${agentId}' not found in Azure AI Foundry. Please check the agent ID.`);
-      }
+      const client = new aiAgents.AgentsClient(endpoint, new DefaultAzureCredential());
 
       // Create a thread and run for this conversation with streaming
       const lastMessage = messages[messages.length - 1];
@@ -76,7 +60,7 @@ export class AIFoundryAgentHandler {
           thread = { id: threadId };
         } else {
           // Create a new thread for the first message
-          thread = await project.agents.threads.create();
+          thread = await client.threads.create();
           isNewThread = true;
         }
       } catch (threadError) {
@@ -86,7 +70,7 @@ export class AIFoundryAgentHandler {
 
       try {
         // The SDK expects parameters to be passed separately: (threadId, role, content)
-        await project.agents.messages.create(
+        await client.messages.create(
           thread.id,
           'user',
           String(lastMessage.content)
@@ -107,33 +91,24 @@ export class AIFoundryAgentHandler {
           endpoint: endpoint
         });
 
-        // Use AIProjectClient API for creating streaming run
-        const run = await project.agents.runs.create(thread.id, String(agentId));
+        // Check if client.runs exists
+        if (!client.runs) {
+          console.error('client.runs is undefined. Client structure:', Object.keys(client));
+          throw new Error('AgentsClient does not have runs property - check SDK version');
+        }
 
-        // Get the streaming events
+        // The Azure AI Agents SDK expects the agentId as the second parameter
+        // and returns an object with a stream() method (DO NOT await the create call!)
+        const run = client.runs.create(thread.id, String(agentId));
+
+        // Call stream() on the run object
         streamEventMessages = await run.stream();
-      } catch (streamError: any) {
+      } catch (streamError) {
         console.error('Error creating stream:', streamError);
-        console.error('Agent configuration:', { threadId: thread.id, agentId, endpoint });
-
-        // Try to extract response body for more details
-        if (streamError?.response?.body) {
-          console.error('Response body:', streamError.response.body);
+        if (streamError instanceof Error) {
+          console.error('Error stack:', streamError.stack);
         }
-        if (streamError?.response?.bodyAsText) {
-          console.error('Response body text:', streamError.response.bodyAsText);
-        }
-        if (streamError?.details) {
-          console.error('Error details:', streamError.details);
-        }
-        if (streamError?.message) {
-          console.error('Error message:', streamError.message);
-        }
-
-        // Log the full error object for debugging
-        console.error('Full error:', JSON.stringify(streamError, Object.getOwnPropertyNames(streamError), 2));
-
-        throw new Error(`Failed to create agent run: ${streamError.message || 'Unknown error'}. Check that agent ID '${agentId}' exists in Azure AI Foundry.`);
+        throw streamError;
       }
 
       // Create a readable stream for the response

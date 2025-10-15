@@ -10,7 +10,7 @@ export const DEFAULT_USE_KNOWLEDGE_BASE =
   process.env.DEFAULT_USE_KNOWLEDGE_BASE === 'true' || false;
 
 export const OPENAI_API_VERSION =
-  process.env.OPENAI_API_VERSION || '2024-08-01-preview';
+  process.env.OPENAI_API_VERSION || '2024-12-01-preview';
 
 export const AZURE_DEPLOYMENT_ID =
   process.env.AZURE_DEPLOYMENT_ID || 'gpt-35-turbo';

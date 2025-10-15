@@ -174,8 +174,8 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     name: 'Grok 4 Fast Reasoning',
     maxLength: 128000,
     tokenLimit: 16000,
-    stream: false,
-    temperature: 1,
+    // stream: false, // Removed - streaming should work like DeepSeek-R1
+    // temperature: 1, // Removed - let user control temperature
     modelType: 'reasoning',
     description: 'Fast reasoning variant of Grok 4 optimized for quick problem-solving.',
     isLegacy: false,

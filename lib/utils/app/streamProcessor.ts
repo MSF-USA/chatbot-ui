@@ -1,4 +1,5 @@
 import { RAGService } from '@/lib/services/ragService';
+import { parseThinkingContent } from '@/lib/utils/app/thinking';
 
 import OpenAI from 'openai';
 import { TextEncoder } from 'util';
@@ -49,19 +50,36 @@ export function createAzureOpenAIStreamProcessor(
             }
           }
 
-          if (ragService && !controllerClosed) {
-            // Get citations using the preserved source mapping
-            const citations = ragService.getCurrentCitations();
+          if (!controllerClosed) {
+            // Parse thinking content from the accumulated content
+            const { thinking, content } = parseThinkingContent(allContent);
 
-            // Deduplicate citations for the final output
-            const uniqueCitations = ragService.deduplicateCitations(citations);
+            // Prepare metadata to append
+            const metadata: any = {};
+            let hasMetadata = false;
 
-            if (uniqueCitations.length > 0) {
-              const citationsJson = JSON.stringify({
-                citations: uniqueCitations,
-              });
+            // Add citations if available
+            if (ragService) {
+              const citations = ragService.getCurrentCitations();
+              const uniqueCitations = ragService.deduplicateCitations(citations);
+
+              if (uniqueCitations.length > 0) {
+                metadata.citations = uniqueCitations;
+                hasMetadata = true;
+              }
+            }
+
+            // Add thinking content if available
+            if (thinking) {
+              metadata.thinking = thinking;
+              hasMetadata = true;
+            }
+
+            // Append metadata if we have any
+            if (hasMetadata) {
+              const metadataJson = JSON.stringify(metadata);
               controller.enqueue(
-                encoder.encode('\n\n---CITATIONS_DATA---\n' + citationsJson),
+                encoder.encode(`\n\n<<<METADATA_START>>>${metadataJson}<<<METADATA_END>>>`),
               );
             }
           }

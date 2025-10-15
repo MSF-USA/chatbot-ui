@@ -82,6 +82,9 @@ export const useChatStore = create<ChatStore>((set) => ({
       const systemPrompt = settings.systemPrompt;
       const temperature = settings.temperature;
 
+      // Check if model supports streaming
+      const modelSupportsStreaming = conversation.model.stream !== false;
+
       // Make the API request
       const { response, hasComplexContent } = await makeRequest(
         () => {}, // setRequestStatusMessage - not needed for now
@@ -89,7 +92,7 @@ export const useChatStore = create<ChatStore>((set) => ({
         '', // apiKey - not used, backend uses Azure AD authentication
         systemPrompt,
         temperature,
-        true, // stream
+        modelSupportsStreaming, // Only stream if model supports it
         () => {}, // setProgress
         { current: false } // stopConversationRef - will wire up later
       );
@@ -98,20 +101,14 @@ export const useChatStore = create<ChatStore>((set) => ({
         throw new Error('No response body');
       }
 
-      // Handle streaming response
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
       let text = '';
       let extractedCitations: Citation[] = [];
       let extractedThreadId: string | undefined;
 
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) break;
-
-        const chunk = decoder.decode(value);
-        text += chunk;
+      // Handle non-streaming response (e.g., o3, grok-4-fast-reasoning, DeepSeek-R1)
+      if (!modelSupportsStreaming) {
+        const data = await response.json();
+        text = data.text || '';
 
         // Extract metadata if present
         const metadataMatch = text.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
@@ -123,23 +120,58 @@ export const useChatStore = create<ChatStore>((set) => ({
               text = cleanedText;
               extractedCitations = metadata.citations;
             }
-            if (metadata.threadId && !extractedThreadId) {
+            if (metadata.threadId) {
               extractedThreadId = metadata.threadId;
             }
           } catch (error) {
-            // Silently ignore parsing errors during streaming
-          }
-        } else {
-          // Fallback to legacy citation extraction
-          const { text: cleanedText, citations } = extractCitationsFromContent(text);
-          if (citations.length > 0) {
-            text = cleanedText;
-            extractedCitations = citations;
+            // Silently ignore parsing errors
           }
         }
 
-        // Update streaming content
+        // Update streaming content to show the response
         set({ streamingContent: text, citations: extractedCitations });
+      }
+      // Handle streaming response
+      else {
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+
+        while (true) {
+          const { done, value } = await reader.read();
+
+          if (done) break;
+
+          const chunk = decoder.decode(value);
+          text += chunk;
+
+          // Extract metadata if present
+          const metadataMatch = text.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
+          if (metadataMatch) {
+            const cleanedText = text.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
+            try {
+              const metadata = JSON.parse(metadataMatch[1]);
+              if (metadata.citations && metadata.citations.length > 0) {
+                text = cleanedText;
+                extractedCitations = metadata.citations;
+              }
+              if (metadata.threadId && !extractedThreadId) {
+                extractedThreadId = metadata.threadId;
+              }
+            } catch (error) {
+              // Silently ignore parsing errors during streaming
+            }
+          } else {
+            // Fallback to legacy citation extraction
+            const { text: cleanedText, citations } = extractCitationsFromContent(text);
+            if (citations.length > 0) {
+              text = cleanedText;
+              extractedCitations = citations;
+            }
+          }
+
+          // Update streaming content
+          set({ streamingContent: text, citations: extractedCitations });
+        }
       }
 
       // Create assistant message

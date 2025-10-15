@@ -44,6 +44,11 @@ export interface TextMessageContent {
   text: string;
 }
 
+export interface ThinkingContent {
+  type: 'thinking';
+  thinking: string;
+}
+
 export function getChatMessageContent(message: Message): string {
   if (typeof message.content === 'string') {
     return message.content;
@@ -84,6 +89,7 @@ export interface Message {
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
+  thinking?: string;
 }
 
 export type Role = 'system' | 'assistant' | 'user';

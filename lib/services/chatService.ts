@@ -59,7 +59,7 @@ export default class ChatService {
     // Azure OpenAI client for GPT models
     this.azureOpenAIClient = new AzureOpenAI({
       azureADTokenProvider,
-      apiVersion: process.env.OPENAI_API_VERSION ?? '2024-08-01-preview',
+      apiVersion: process.env.OPENAI_API_VERSION ?? '2024-12-01-preview',
     });
 
     // Standard OpenAI client for Grok/DeepSeek models via AI Foundry endpoint
@@ -575,9 +575,11 @@ export default class ChatService {
   }
 
   private isReasoningModel(id: OpenAIModelID | string) {
+    // This function is for models that use the special Azure responses.create() API
+    // and require non-streaming mode with temperature=1
     return [
-      OpenAIModelID.GPT_o3,
-      OpenAIModelID.GROK_4_FAST_REASONING
+      // OpenAIModelID.GPT_o3, // o3 uses standard chat completions API
+      // OpenAIModelID.GROK_4_FAST_REASONING // Grok 4 supports streaming like DeepSeek-R1
     ].includes(id as OpenAIModelID);
   }
 }
