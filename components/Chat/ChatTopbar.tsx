@@ -1,12 +1,14 @@
 import {
   IconClearAll,
   IconExternalLink,
-  IconSettings,
   IconChevronDown,
+  IconTool,
+  IconSettings,
 } from '@tabler/icons-react';
-import { useTranslation } from 'next-i18next';
-import { isUSBased } from '@/utils/app/userAuth';
+import { useTranslations } from 'next-intl';
+import { isUSBased } from '@/lib/utils/app/userAuth';
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+import { OpenAIIcon, DeepSeekIcon, XAIIcon, MetaIcon } from '../Icons/providers';
 
 interface Props {
   botInfo: {
@@ -15,27 +17,52 @@ interface Props {
     color: string;
   } | null;
   selectedModelName: string | undefined;
+  selectedModelProvider?: string;
   showSettings: boolean;
   onSettingsClick: () => void;
+  onModelClick?: () => void;
   onClearAll?: () => void;
   userEmail?: string;
   hasMessages?: boolean;
+  agentEnabled?: boolean;
+  showChatbar?: boolean;
 }
 
 export const ChatTopbar = ({
   botInfo,
   selectedModelName,
+  selectedModelProvider,
   showSettings,
   onSettingsClick,
+  onModelClick,
   onClearAll,
   userEmail,
   hasMessages = false,
+  agentEnabled = false,
+  showChatbar = false,
 }: Props) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
+
+  // Helper function to get provider icon
+  const getProviderIcon = (provider?: string) => {
+    const iconProps = { className: "w-4 h-4 flex-shrink-0" };
+    switch (provider) {
+      case 'openai':
+        return <OpenAIIcon {...iconProps} />;
+      case 'deepseek':
+        return <DeepSeekIcon {...iconProps} />;
+      case 'xai':
+        return <XAIIcon {...iconProps} />;
+      case 'meta':
+        return <MetaIcon {...iconProps} />;
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
-      <div className="mx-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div className="sticky top-0 z-20 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out bg-white dark:bg-[#212121]">
+      <div className="mr-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 transition-all duration-300">
         {/* Bot/Model Info */}
         <div className="flex items-center min-w-0 justify-center sm:justify-start">
           {botInfo && (
@@ -53,39 +80,24 @@ export const ChatTopbar = ({
           <div className="truncate min-w-0">
             <button
               className="flex items-center justify-center rounded-md transition-colors px-2 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600"
-              onClick={onSettingsClick}
-              aria-label="Model Settings"
-              title="Model Settings"
+              onClick={onModelClick || onSettingsClick}
+              aria-label="Select Model"
+              title="Select Model"
             >
-              <span className="truncate font-bold dark:text-blue-50 text-gray-800" title={selectedModelName}>
-                {selectedModelName}
+              {getProviderIcon(selectedModelProvider)}
+              <span className="truncate font-bold dark:text-blue-50 text-gray-800 text-base ml-2" title={selectedModelName}>
+                {selectedModelName || 'Select Model'}
               </span>
-              <IconChevronDown size={14} className="ml-1.5 opacity-60 text-black dark:text-white" />
+              {agentEnabled && (
+                <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" title="Agent Tools Enabled" />
+              )}
+              <IconChevronDown size={16} className="ml-1.5 opacity-60 text-black dark:text-white" />
             </button>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex items-center justify-center space-x-3">
-          {/* Settings Button */}
-          <div className="relative">
-            <button
-              className="flex items-center justify-center p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              onClick={onSettingsClick}
-              aria-label="Model Settings"
-              title="Model Settings"
-            >
-              <IconSettings
-                size={18}
-                className={`${
-                  showSettings
-                    ? 'text-[#D7211E]'
-                    : 'text-black dark:text-white'
-                }`}
-              />
-            </button>
-          </div>
-
           {hasMessages && (
             <button
               className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
@@ -114,8 +126,7 @@ export const ChatTopbar = ({
               size={16}
               className="mr-1 text-black dark:text-white/50"
             />
-            <span className="hidden sm:inline">{t('sendFeedback')}</span>
-            <span className="sm:hidden">Feedback</span>
+            <span className="hidden sm:inline">Request Support</span>
           </a>
         </div>
       </div>

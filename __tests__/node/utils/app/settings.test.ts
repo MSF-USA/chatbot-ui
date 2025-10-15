@@ -1,4 +1,4 @@
-import { getSettings, saveSettings } from '@/utils/app/settings';
+import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { Settings } from '@/types/settings';
 import {vi, beforeEach, describe, it, expect, Mock} from 'vitest';
 
@@ -9,6 +9,7 @@ describe('Settings Manager', () => {
         theme: 'dark',
         temperature: 0.5,
         systemPrompt: '',
+        advancedMode: false,
     };
 
     beforeEach(() => {

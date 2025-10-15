@@ -1,13 +1,13 @@
 import {Dispatch, FC, KeyboardEventHandler, SetStateAction, useEffect, useState} from "react";
 import {IconEdit, IconRobot, IconTrash, IconUser} from "@tabler/icons-react";
 import {ImageMessageContent, Message, TextMessageContent} from "@/types/chat";
-import {getBase64FromImageURL} from "@/utils/app/image";
+import {getBase64FromImageURL} from "@/lib/utils/app/image";
 import { MemoizedReactMarkdown } from "@/components/Markdown/MemoizedReactMarkdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeMathjax from "rehype-mathjax";
+import rehypeMathjax from "rehype-mathjax/svg";
 import {CodeBlock} from "@/components/Markdown/CodeBlock";
-import {fetchImageBase64FromMessageContent} from "@/services/imageService";
+import {fetchImageBase64FromMessageContent} from "@/lib/services/imageService";
 
 /**
  * Properties for styling images in chat messages
@@ -25,11 +25,11 @@ interface ChatMessageImageProps {
     isEditing: boolean;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsTyping: Dispatch<SetStateAction<boolean>>;
-    handleInputChange: (event: any) => void;
-    textareaRef: any;
+    handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    textareaRef: React.RefObject<HTMLTextAreaElement | null>;
     handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
     handleEditMessage: () => void;
-    toggleEditing: (event: any) => void;
+    toggleEditing: (event: React.MouseEvent) => void;
     handleDeleteMessage: () => void;
     onEdit: (message: Message) => void;
 }
@@ -161,6 +161,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
             )}
 
             {!isLoading && !loadError && imageBase64 && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 onClick={toggleImageStyleProps}
                 className="block hover:cursor-pointer max-w-full"
@@ -230,12 +231,12 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                       </div>
                     ) : (
                       <>
+                          <div className="prose dark:prose-invert flex-1">
                           <MemoizedReactMarkdown
-                            className="prose dark:prose-invert flex-1"
                             remarkPlugins={[remarkGfm, remarkMath]}
                             rehypePlugins={[rehypeMathjax]}
                             components={{
-                                code({node, inline, className, children, ...props}) {
+                                code({node, inline, className, children, ...props}: any) {
                                     if (children.length) {
                                         if (children[0] == '▍') {
                                             return <span className="animate-pulse cursor-default mt-1">▍</span>
@@ -259,7 +260,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                                       </code>
                                     );
                                 },
-                                table({children}) {
+                                table({children}: any) {
                                     return (
                                       <div className="overflow-auto">
                                           <table
@@ -270,14 +271,14 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                                       </div>
                                     );
                                 },
-                                th({children}) {
+                                th({children}: any) {
                                     return (
                                       <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
                                           {children}
                                       </th>
                                     );
                                 },
-                                td({children}) {
+                                td({children}: any) {
                                     return (
                                       <td className="break-words border border-black px-3 py-1 dark:border-white">
                                           {children}
@@ -288,6 +289,7 @@ const ChatMessageImage: FC<ChatMessageImageProps> = (
                           >
                               {text?.text || ""}
                           </MemoizedReactMarkdown>
+                          </div>
                           <div
                             className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
                               <button

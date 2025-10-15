@@ -1,6 +1,6 @@
 
 import React, { FC, useState, useEffect } from 'react';
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/router';
 import {
   TermsData,
@@ -8,7 +8,7 @@ import {
   fetchTermsData,
   saveUserAcceptance,
   hasUserAcceptedAllRequiredDocuments
-} from '@/utils/app/termsAcceptance';
+} from '@/lib/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 import ReactMarkdown from 'react-markdown';
 import {IconLanguage} from "@tabler/icons-react";
@@ -22,9 +22,9 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   user,
   onAcceptance
 }) => {
-  const { t } = useTranslation('common');
+  const t = useTranslations();
   const router = useRouter();
-  const userLocale = router.locale || 'en';
+  const userLocale = 'en'; // Default to English for terms
 
   const [termsData, setTermsData] = useState<TermsData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -142,7 +142,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
       <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
         <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-2xl w-full">
           <div className="text-center">
-            <p className="text-gray-800 dark:text-white">{t('Loading terms and conditions...')}</p>
+            <p className="text-gray-800 dark:text-white">{t('Loading terms and conditions_ellipsis')}</p>
           </div>
         </div>
       </div>
@@ -226,9 +226,11 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
         {/* Document content */}
         <div className="overflow-y-auto flex-grow mb-4 bg-gray-100 dark:bg-[#2a2b32] p-4 rounded">
-          <ReactMarkdown className="prose dark:prose-invert max-w-none">
-            {documentContent}
-          </ReactMarkdown>
+          <div className="prose dark:prose-invert max-w-none">
+            <ReactMarkdown>
+              {documentContent}
+            </ReactMarkdown>
+          </div>
           <div className="text-sm text-gray-500 dark:text-gray-400 mt-4">
             {t('Version')}: {currentDocumentData?.version}
           </div>

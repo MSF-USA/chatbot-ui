@@ -3,12 +3,12 @@ import { FC, memo, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { oneDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
 import {
   generateRandomString,
   programmingLanguages,
-} from '@/utils/app/codeblock';
+} from '@/lib/utils/app/codeblock';
 
 interface Props {
   language: string;
@@ -16,8 +16,8 @@ interface Props {
 }
 
 export const CodeBlock: FC<Props> = memo(({ language, value }) => {
-  const { t } = useTranslation('markdown');
-  const [isCopied, setIsCopied] = useState<Boolean>(false);
+  const t = useTranslations();
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const copyToClipboard = () => {
     if (!navigator.clipboard || !navigator.clipboard.writeText) {

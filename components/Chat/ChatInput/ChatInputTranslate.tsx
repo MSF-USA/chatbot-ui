@@ -1,9 +1,7 @@
-import { FC } from "preact/compat";
-import React, {Dispatch, SetStateAction, useEffect, useRef, useState} from "react";
-import { IconLanguage } from "@tabler/icons-react";
+import React, {Dispatch, FC, SetStateAction, useEffect, useRef, useState} from "react";
+import { IconLanguage, IconArrowsExchange } from "@tabler/icons-react";
 import toast from "react-hot-toast";
-import BetaBadge from "@/components/Beta/Badge";
-import {useTranslation} from "next-i18next";
+import { useTranslations } from "next-intl";
 import Modal from "@/components/UI/Modal";
 
 interface ChatInputTranslateProps {
@@ -22,7 +20,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
     setParentModalIsOpen,
     defaultText
   }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -124,28 +122,21 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   const modalContent = (
     <>
       {/* Language selection */}
-      <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
-        <div className="w-full">
-          <label
-            htmlFor="source-language"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
-          >
-            {t('translatorSourceLanguageLabel')}
-          </label>
-          <select
-            id="source-language"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-            value={sourceLanguage}
-            onChange={(e) => setSourceLanguage(e.target.value)}
-          >
-            <option value="" className={'text-gray-400 dark:text-gray-400'}>{t('translatorEmptyFromLanguage')}</option>
-            {languages.map((language) => (
-              <option key={language.value} value={language.value}>
-                {language.label} ({language.autonym})
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="flex items-center gap-3">
+        <select
+          id="source-language"
+          className="flex-1 pl-4 pr-10 py-3 text-base bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-all"
+          value={sourceLanguage}
+          onChange={(e) => setSourceLanguage(e.target.value)}
+        >
+          <option value="" className="text-gray-500 dark:text-gray-400">{t('translatorEmptyFromLanguage')}</option>
+          {languages.map((language) => (
+            <option key={language.value} value={language.value}>
+              {language.label} ({language.autonym})
+            </option>
+          ))}
+        </select>
+
         <button
           id={'translate-language-swap'}
           onClick={() => {
@@ -153,84 +144,65 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
             setSourceLanguage(targetLanguage);
             setTargetLanguage(temp);
           }}
-          className="hidden md:flex items-center justify-center px-3 py-2 mt-6 md:mt-0 rounded-md border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
+          className="flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
+          title="Swap languages"
+          aria-label="Swap languages"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M4 7h16M4 7l4-4M4 7l4 4M20 17H4M20 17l-4-4M20 17l-4 4"
-            />
-          </svg>
-          <span className="sr-only">Swap languages</span>
+          <IconArrowsExchange size={20} />
         </button>
-        <div className="w-full">
-          <label
-            htmlFor="target-language"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+
+        {useTargetLanguageDropdown ? (
+          <select
+            id="target-language"
+            className="flex-1 pl-4 pr-10 py-3 text-base bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-all"
+            value={targetLanguage}
+            onChange={(e) => setTargetLanguage(e.target.value)}
           >
-            {t('translatorTargetLanguageLabel')}
-          </label>
-          {useTargetLanguageDropdown ? (
-            <select
-              id="target-language"
-              className="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-              value={targetLanguage}
-              onChange={(e) => setTargetLanguage(e.target.value)}
-            >
-              <option value="" className={'text-gray-400 dark:text-gray-400'}>{t('translatorEmptyToLanguage')}</option>
-              {languages.map((language) => (
-                <option key={language.value} value={language.value}>
-                  {language.label} ({language.autonym})
-                </option>
-              ))}
-            </select>
-          ) : (
-            <input
-              type="text"
-              placeholder="Type a language"
-              className="mt-2 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-              value={targetLanguage}
-              onChange={(e) => setTargetLanguage(e.target.value)}
-            />
-          )}
-        </div>
+            <option value="" className="text-gray-500 dark:text-gray-400">{t('translatorEmptyToLanguage')}</option>
+            {languages.map((language) => (
+              <option key={language.value} value={language.value}>
+                {language.label} ({language.autonym})
+              </option>
+            ))}
+          </select>
+        ) : (
+          <input
+            type="text"
+            placeholder="Type a language"
+            className="flex-1 pl-4 pr-10 py-3 text-base bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-all"
+            value={targetLanguage}
+            onChange={(e) => setTargetLanguage(e.target.value)}
+          />
+        )}
       </div>
       {/* Input text area */}
-      <div className="my-4">
+      <div className="my-6">
         <label
           htmlFor="input-text"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+          className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white"
         >
-          {t('translatorTextToTranslateLabel')}
+          Enter text to translate
         </label>
         <textarea
           id="input-text"
           ref={inputTextRef}
           rows={6}
-          className="mt-1 block w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md dark:bg-gray-700 text-black dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          className="block w-full px-4 py-3 bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none transition-all"
           placeholder={t('translatorTextToTranslatePlaceholder')}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
         ></textarea>
       </div>
       {/* Advanced options */}
-      <div className="my-4">
+      <div className="my-6">
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center text-sm font-medium text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500"
+          className="flex items-center text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors"
         >
           {t('advancedOptionsButton')}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`h-5 w-5 ml-1 transform ${showAdvanced ? "rotate-180" : ""}`}
+            className={`h-5 w-5 ml-2 transform transition-transform ${showAdvanced ? "rotate-180" : ""}`}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -239,19 +211,19 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
           </svg>
         </button>
         {showAdvanced && (
-          <div className="mt-2 p-4 border border-gray-300 dark:border-gray-600 rounded-md">
+          <div className="mt-4 p-5 bg-gray-50 dark:bg-[#1A202C] border border-gray-200 dark:border-gray-700 rounded-lg">
             {/* Advanced options content */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                 <label
                   htmlFor="translation-type"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white"
                 >
                   {t('translatorTranslationTypeLabel')}
                 </label>
                 <select
                   id="translation-type"
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  className="block w-full pl-4 pr-10 py-2.5 text-base bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-all"
                   value={translationType}
                   onChange={(e) => setTranslationType(e.target.value)}
                 >
@@ -264,13 +236,13 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
               <div>
                 <label
                   htmlFor="domain-specific"
-                  className="block text-sm font-medium text-gray-700 dark:text-gray-200"
+                  className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white"
                 >
                   {t('translatorTranslationDomainLabel')}
                 </label>
                 <select
                   id="domain-specific"
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+                  className="block w-full pl-4 pr-10 py-2.5 text-base bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-all"
                   value={domainSpecific}
                   onChange={(e) => setDomainSpecific(e.target.value)}
                 >
@@ -282,19 +254,18 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                 </select>
               </div>
             </div>
-            <div
-              className="flex flex-col md:flex-row md:items-center md:space-x-6 space-y-4 md:space-y-0 mt-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-6 space-y-3 sm:space-y-0 mt-5">
               <div className="flex items-center">
                 <input
                   id="use-formal-language"
                   type="checkbox"
                   checked={useFormalLanguage}
                   onChange={(e) => setUseFormalLanguage(e.target.checked)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                  className="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded transition-all"
                 />
                 <label
                   htmlFor="use-formal-language"
-                  className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
+                  className="ml-3 block text-sm font-medium text-gray-900 dark:text-gray-100"
                 >
                   {t('translatorFormalLanguageLabel')}
                 </label>
@@ -305,11 +276,11 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
                   type="checkbox"
                   checked={useGenderNeutralLanguage}
                   onChange={(e) => setUseGenderNeutralLanguage(e.target.checked)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+                  className="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded transition-all"
                 />
                 <label
                   htmlFor="use-gender-neutral-language"
-                  className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
+                  className="ml-3 block text-sm font-medium text-gray-900 dark:text-gray-100"
                 >
                   {t('translatorGenderNeutralLabel')}
                 </label>
@@ -319,17 +290,17 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
         )}
       </div>
       {/* Add auto-submit toggle before the Translate button */}
-      <div className="flex items-center mt-4">
+      <div className="flex items-center">
         <input
           id="auto-submit"
           type="checkbox"
           checked={autoSubmit}
           onChange={(e) => setAutoSubmit(e.target.checked)}
-          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded"
+          className="h-4 w-4 text-blue-600 focus:ring-2 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded transition-all"
         />
         <label
           htmlFor="auto-submit"
-          className="ml-2 block text-sm text-gray-700 dark:text-gray-200"
+          className="ml-3 block text-sm font-medium text-gray-900 dark:text-gray-100"
         >
           {t('autoSubmitButton')}
         </label>
@@ -340,7 +311,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
   const modalFooter = (
     <button
       onClick={handleTranslate}
-      className="w-full flex justify-center py-3 px-4 text-base font-medium text-black p-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300"
+      className="w-full flex justify-center py-3 px-6 text-base font-semibold text-black bg-white hover:bg-gray-100 border border-gray-300 rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700"
     >
       {autoSubmit ? t('translatorTranslateButton') : t('generatePromptButton')}
     </button>
@@ -364,17 +335,11 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = (
       <Modal
         isOpen={isModalOpen}
         onClose={closeModal}
-        title={
-          <h3 className="text-2xl font-semibold text-gray-800 dark:text-white flex items-center">
-            <IconLanguage className="h-8 w-8 mr-2" />
-            {t('translatorTitle')}
-          </h3>
-        }
         size="lg"
-        betaBadge={<BetaBadge />}
         initialFocusRef={inputTextRef}
         footer={modalFooter}
         closeWithButton={true}
+        className="!z-[100]"
       >
         {modalContent}
       </Modal>

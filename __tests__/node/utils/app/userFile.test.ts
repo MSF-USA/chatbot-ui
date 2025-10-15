@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import fs from 'fs/promises';
-import {UserFileHandler} from "@/utils/app/userFile";
+import {UserFileHandler} from "@/lib/utils/app/userFile";
 
 describe('UserFileHandler', () => {
   const validFileTypes = {

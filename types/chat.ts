@@ -44,6 +44,11 @@ export interface TextMessageContent {
   text: string;
 }
 
+export interface ThinkingContent {
+  type: 'thinking';
+  thinking: string;
+}
+
 export function getChatMessageContent(message: Message): string {
   if (typeof message.content === 'string') {
     return message.content;
@@ -84,6 +89,7 @@ export interface Message {
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
+  thinking?: string;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
@@ -96,6 +102,7 @@ export interface ChatBody {
   temperature: number;
   botId: string | undefined;
   stream?: boolean;
+  threadId?: string; // Azure AI Agent thread ID
 }
 
 export interface Conversation {
@@ -109,9 +116,20 @@ export interface Conversation {
   bot?: string;
   createdAt?: string;
   updatedAt?: string;
+  threadId?: string; // Azure AI Agent thread ID
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
+
+export type FileFieldValue =
+  | FileMessageContent
+  | FileMessageContent[]
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | (FileMessageContent | ImageMessageContent)[]
+  | null;
+
+export type ImageFieldValue = ImageMessageContent | ImageMessageContent[] | null;
 
 type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
 

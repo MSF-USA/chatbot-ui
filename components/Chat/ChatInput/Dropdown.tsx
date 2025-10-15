@@ -5,7 +5,7 @@ import {
   IconLanguage,
   IconLink,
   IconSearch,
-  IconX,
+  IconFile,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -15,15 +15,20 @@ import React, {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
-import useEnhancedOutsideClick from '@/hooks/useEnhancedOutsideClick';
+import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
+import { useDropdownKeyboardNav } from '@/lib/hooks/useDropdownKeyboardNav';
+
+import { DropdownSearchInput } from './DropdownSearchInput';
+import { DropdownCategoryGroup } from './DropdownCategoryGroup';
+import { MenuItem } from './DropdownMenuItem';
 
 import {
   ChatInputSubmitTypes,
-  FileMessageContent,
   FilePreview,
-  ImageMessageContent,
+  Message,
+  FileFieldValue,
 } from '@/types/chat';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
@@ -31,60 +36,37 @@ import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCap
 import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
-import ImageIcon from "@/components/Icons/image";
+import ImageIcon from '@/components/Icons/image';
 
 interface DropdownProps {
   onFileUpload: (
     event: React.ChangeEvent<any> | File[] | FileList,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   handleSend: () => void;
   textFieldValue: string;
   onCameraClick: () => void;
-}
-
-// Define the menu item structure
-interface MenuItem {
-  id: string;
-  icon: React.ReactNode;
-  label: string;
-  tooltip: string;
-  onClick: () => void;
-  category: 'web' | 'media' | 'transform';
+  // New props for agent-based web search
+  onSend?: (
+    message: Message,
+    forceStandardChat?: boolean,
+  ) => void;
+  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
+  setProgress?: Dispatch<SetStateAction<number | null>>;
+  stopConversationRef?: { current: boolean };
+  apiKey?: string;
+  systemPrompt?: string;
+  temperature?: number;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -98,6 +80,13 @@ const Dropdown: React.FC<DropdownProps> = ({
   handleSend,
   textFieldValue,
   onCameraClick,
+  onSend,
+  setRequestStatusMessage,
+  setProgress,
+  stopConversationRef,
+  apiKey,
+  systemPrompt,
+  temperature,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -148,18 +137,19 @@ const Dropdown: React.FC<DropdownProps> = ({
       setFilterQuery('');
       setSelectedIndex(0);
     }, 10);
-  }
+  };
 
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Define menu items
   const menuItems: MenuItem[] = [
     {
       id: 'search',
       icon: <IconSearch size={18} className="mr-3 text-blue-500" />,
-      label: t('chatFeaturesDropdownSearchModal'),
+      label: 'Web Search',
       tooltip: 'Web Search',
       onClick: () => {
         setSearchConfig((prev) => ({ ...prev, isOpen: true }));
@@ -170,7 +160,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     {
       id: 'transcribe',
       icon: <IconFileMusic size={18} className="mr-3 text-purple-500" />,
-      label: t('chatFeaturesDropdownTranscribeModal'),
+      label: 'Transcribe Audio',
       tooltip: 'Transcribe Audio',
       onClick: () => {
         setIsTranscribeOpen(true);
@@ -180,8 +170,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     },
     {
       id: 'image',
-      icon: <ImageIcon size={18} className="mr-3 text-amber-500" />,
-      label: t('chatFeaturesDropdownImageModal'),
+      icon: <ImageIcon className="mr-3 text-amber-500" />,
+      label: 'Upload Image',
       tooltip: 'Upload Image',
       onClick: () => {
         closeDropdown();
@@ -190,9 +180,20 @@ const Dropdown: React.FC<DropdownProps> = ({
       category: 'media',
     },
     {
+      id: 'file',
+      icon: <IconFile size={18} className="mr-3 text-green-500" />,
+      label: 'Upload File',
+      tooltip: 'Upload File',
+      onClick: () => {
+        closeDropdown();
+        fileInputRef.current?.click();
+      },
+      category: 'media',
+    },
+    {
       id: 'translate',
       icon: <IconLanguage size={18} className="mr-3 text-teal-500" />,
-      label: t('chatFeaturesDropdownTranslateModal'),
+      label: 'Translate Text',
       tooltip: 'Translate Text',
       onClick: () => {
         setIsTranslateOpen(true);
@@ -200,77 +201,52 @@ const Dropdown: React.FC<DropdownProps> = ({
       },
       category: 'transform',
     },
-    ...(hasCameraSupport ? [{
-      id: 'camera',
-      icon: <IconCamera size={18} className="mr-3 text-red-500" />,
-      label: t('Camera'),
-      tooltip: 'Capture Image',
-      onClick: () => {
-        onCameraClick();
-        closeDropdown();
-      },
-      category: 'media' as 'web' | 'media' | 'transform',
-    }] : []),
+    ...(hasCameraSupport
+      ? [
+          {
+            id: 'camera',
+            icon: <IconCamera size={18} className="mr-3 text-red-500" />,
+            label: 'Camera',
+            tooltip: 'Capture Image',
+            onClick: () => {
+              onCameraClick();
+              closeDropdown();
+            },
+            category: 'media' as 'web' | 'media' | 'transform',
+          },
+        ]
+      : []),
   ];
 
   // Filter menu items based on search query
   const filteredItems = filterQuery
     ? menuItems.filter(
-        item =>
+        (item) =>
           item.label.toLowerCase().includes(filterQuery.toLowerCase()) ||
           item.tooltip.toLowerCase().includes(filterQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(filterQuery.toLowerCase())
+          item.category.toLowerCase().includes(filterQuery.toLowerCase()),
       )
     : menuItems;
 
   const flattenedItems = filteredItems;
 
-  const handleKeyDown = (event: React.KeyboardEvent) => {
-    if (!isOpen) return;
-
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setSelectedIndex((prevIndex) =>
-          prevIndex < flattenedItems.length - 1 ? prevIndex + 1 : 0
-        );
-        break;
-
-      case 'ArrowUp':
-        event.preventDefault();
-        setSelectedIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : flattenedItems.length - 1
-        );
-        break;
-
-      case 'Enter':
-        event.preventDefault();
-        if (flattenedItems[selectedIndex]) {
-          flattenedItems[selectedIndex].onClick();
-        }
-        break;
-
-      case 'Escape':
-        event.preventDefault();
-        if (filterQuery) {
-          setFilterQuery('');
-          setSelectedIndex(0);
-        } else {
-          closeDropdown();
-          setSearchConfig((prev) => ({ ...prev, isOpen: false }));
-          setIsTranscribeOpen(false);
-          setIsTranslateOpen(false);
-          setIsImageOpen(false);
-        }
-        break;
-
-      default:
-        if (event.key.length === 1 && !event.ctrlKey && !event.altKey && !event.metaKey) {
-          filterInputRef.current?.focus();
-        }
-        break;
-    }
-  };
+  // Use keyboard navigation hook
+  const { handleKeyDown } = useDropdownKeyboardNav({
+    isOpen,
+    items: flattenedItems,
+    selectedIndex,
+    setSelectedIndex,
+    filterQuery,
+    setFilterQuery,
+    closeDropdown,
+    filterInputRef,
+    onCloseModals: () => {
+      setSearchConfig((prev) => ({ ...prev, isOpen: false }));
+      setIsTranscribeOpen(false);
+      setIsTranslateOpen(false);
+      setIsImageOpen(false);
+    },
+  });
 
   // Group menu items by category
   const groupedItems = filteredItems.reduce((acc, item) => {
@@ -307,10 +283,9 @@ const Dropdown: React.FC<DropdownProps> = ({
             if (isOpen) {
               closeDropdown();
             } else {
-              setIsOpen(true)
-              }
+              setIsOpen(true);
             }
-          }
+          }}
           aria-haspopup="true"
           aria-expanded={isOpen}
           aria-label="Toggle dropdown menu"
@@ -327,71 +302,28 @@ const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute ml-12 left-40 bottom-full mb-2 transform -translate-x-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out"
+          className="absolute bottom-full mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out left-0 sm:left-40 sm:ml-12 sm:transform sm:-translate-x-full"
           tabIndex={-1}
           role="menu"
           onKeyDown={handleKeyDown}
         >
-          {/* Search/Filter Input */}
-          <div className="sticky top-0 p-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-            <div className="relative">
-              <input
-                ref={filterInputRef}
-                type="text"
-                placeholder="Search features..."
-                value={filterQuery}
-                onChange={(e) => setFilterQuery(e.target.value)}
-                className="w-full px-3 py-2 pl-10 pr-8 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-900 text-black dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Search features"
-                role="searchbox"
-              />
-              <IconSearch className="absolute left-3 top-2.5 text-gray-400 dark:text-gray-500" size={16} />
-              {filterQuery && (
-                <button
-                  onClick={() => setFilterQuery('')}
-                  className="absolute right-3 top-2.5 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                  aria-label="Clear search"
-                >
-                  <IconX size={16} />
-                </button>
-              )}
-            </div>
-          </div>
+          <DropdownSearchInput
+            value={filterQuery}
+            onChange={setFilterQuery}
+            onClear={() => setFilterQuery('')}
+            inputRef={filterInputRef}
+          />
 
           <div className="max-h-80 overflow-y-auto custom-scrollbar">
             {Object.entries(groupedItems).length > 0 ? (
               Object.entries(groupedItems).map(([category, items]) => (
-                <div key={category} className="px-1 py-1" role="group" aria-label={category}>
-                  <h3 className="px-3 py-1 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                    {category.charAt(0).toUpperCase() + category.slice(1)}
-                  </h3>
-                  {items.map((item) => {
-                    const itemIndex = flattenedItems.findIndex((i) => i.id === item.id);
-                    const isSelected = itemIndex === selectedIndex;
-
-                    return (
-                      <div key={item.id} className="group relative">
-                        <button
-                          className={`flex items-center px-3 py-2.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 transition-colors duration-150 ${
-                            isSelected
-                              ? 'bg-gray-100 dark:bg-gray-700'
-                              : 'hover:bg-gray-100 dark:hover:bg-gray-700'
-                          }`}
-                          onClick={item.onClick}
-                          role="menuitem"
-                          aria-selected={isSelected}
-                          tabIndex={isSelected ? 0 : -1}
-                        >
-                          {item.icon}
-                          <span>{item.label}</span>
-                        </button>
-                        <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md text-nowrap z-20">
-                          {item.tooltip}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <DropdownCategoryGroup
+                  key={category}
+                  category={category}
+                  items={items}
+                  flattenedItems={flattenedItems}
+                  selectedIndex={selectedIndex}
+                />
               ))
             ) : (
               <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
@@ -414,7 +346,13 @@ const Dropdown: React.FC<DropdownProps> = ({
         setImageFieldValue={setImageFieldValue}
         setUploadProgress={setUploadProgress}
         setTextFieldValue={setTextFieldValue}
-        handleSend={handleSend}
+        onSend={onSend}
+        setRequestStatusMessage={setRequestStatusMessage}
+        setProgress={setProgress}
+        stopConversationRef={stopConversationRef}
+        apiKey={apiKey}
+        systemPrompt={systemPrompt}
+        temperature={temperature}
       />
 
       {/* Chat Input Image Capture Modal */}
@@ -466,6 +404,24 @@ const Dropdown: React.FC<DropdownProps> = ({
         setParentModalIsOpen={setIsImageOpen}
         simulateClick={false}
         labelText=""
+      />
+
+      {/* Hidden file input for file uploads */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        onChange={(e) =>
+          onFileUpload(
+            e,
+            setSubmitType,
+            setFilePreviews,
+            setFileFieldValue,
+            setImageFieldValue,
+            setUploadProgress,
+          )
+        }
+        className="hidden"
+        multiple
       />
     </div>
   );

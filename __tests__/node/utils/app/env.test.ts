@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {getEnvVariable, isMobile} from "@/utils/app/env";
+import {getEnvVariable, isMobile} from "@/lib/utils/app/env";
 
 describe('getEnvVariable', () => {
   const originalEnv = process.env;

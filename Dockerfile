@@ -1,5 +1,5 @@
 # ---- Base Node ----
-FROM node:21-alpine AS base
+FROM node:24-alpine AS base
 WORKDIR /app
 COPY package*.json ./
 
@@ -27,7 +27,7 @@ ENV NEXT_PUBLIC_ENV=$ENV
 RUN npm run build
 
 # ---- Production ----
-FROM node:21-alpine AS production
+FROM node:24-alpine AS production
 WORKDIR /app
 
 # pdftotext package

@@ -1,8 +1,8 @@
 import {IconLoader2, IconPlayerStop, IconSend} from "@tabler/icons-react";
-import {FC} from "react";
+import React, {FC} from "react";
 
 interface ChatInputSubmitButtonProps {
-  messageIsStreaming: boolean;
+  isStreaming: boolean;
   isTranscribing: boolean;
   handleSend: () => void;
   handleStopConversation: () => void;
@@ -11,31 +11,46 @@ interface ChatInputSubmitButtonProps {
 
 const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
   {
-    messageIsStreaming,
+    isStreaming,
     handleSend,
     handleStopConversation,
     isTranscribing,
     preventSubmission,
   }
 ) => {
-  return (<>
-    {preventSubmission() ? (messageIsStreaming ?
-        <button
-          className="flex items-center gap-1 rounded px-3 py-1 text-black
-                    hover:opacity-80 dark:border-neutral-600 dark:text-red-600"
-          onClick={handleStopConversation}
-          disabled={!messageIsStreaming}
+  return (
+    <>
+      {preventSubmission() ? (
+        isStreaming ? (
+          <button
+            className="flex items-center justify-center w-8 h-8 rounded-md
+                      bg-gray-200 text-gray-700 hover:bg-gray-300
+                      dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600
+                      transition-colors duration-200"
+            onClick={handleStopConversation}
+            disabled={!isStreaming}
+            aria-label="Stop generation"
           >
-          <IconPlayerStop size={18}/>
-        </button> : <IconLoader2 className="animate-spin text-gray-500" size={18}/>
-      // <div
-      //     className="h-4 w-4 animate-spin rounded-full border-t-2 border-neutral-800 opacity-60 dark:border-neutral-100"></div>
-    ) : (
-      <button onClick={handleSend}>
-        <IconSend size={18}/>
-      </button>
-    )}
-  </>)
+            <IconPlayerStop size={16}/>
+          </button>
+        ) : (
+          <div className="flex items-center justify-center w-8 h-8">
+            <IconLoader2 className="animate-spin text-gray-500" size={18}/>
+          </div>
+        )
+      ) : (
+        <button
+          onClick={handleSend}
+          className="flex items-center justify-center w-9 h-9 rounded-full
+                    bg-gray-300 text-black hover:bg-gray-400 dark:bg-[#171717] dark:text-white dark:hover:bg-[#252525]
+                    transition-colors duration-200"
+          aria-label="Send message"
+        >
+          <IconSend size={18} className="ml-0.5" />
+        </button>
+      )}
+    </>
+  )
 }
 
 export default ChatInputSubmitButton;

@@ -1,5 +1,5 @@
 import { XIcon } from "@/components/Icons/cancel";
-import { Dispatch, FC, SetStateAction, MouseEvent, useState } from "react";
+import React, { Dispatch, FC, SetStateAction, MouseEvent, useState } from "react";
 import {ChatInputSubmitTypes, FilePreview} from "@/types/chat";
 import FileIcon from "@/components/Icons/file";
 import {IconInfoCircle} from "@tabler/icons-react";
@@ -75,6 +75,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
       onTouchEnd={() => setTimeout(() => setIsHovered(false), 3000)} // Hide after 3 seconds on mobile
     >
       {isImage ? (
+        // eslint-disable-next-line @next/next/no-img-element
         <img
           alt="Preview"
           className="object-cover w-full h-auto max-h-[150px]"

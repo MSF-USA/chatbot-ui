@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2018",
     "lib": [
       "dom",
       "dom.iterable",
@@ -23,9 +23,11 @@
       "vitest/globals"
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@/lib/*": ["./lib/*"],
+      "@/components/*": ["./components/*"],
+      "@/app/*": ["./app/*"],
+      "@/types/*": ["./types/*"]
     },
     "plugins": [
       {

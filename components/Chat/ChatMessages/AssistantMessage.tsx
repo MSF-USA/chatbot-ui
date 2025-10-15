@@ -2,10 +2,10 @@ import {
   IconCheck,
   IconCopy,
   IconLoader2,
-  IconRobot,
   IconSettings,
   IconVolume,
   IconVolumeOff,
+  IconRefresh,
 } from '@tabler/icons-react';
 import {
   FC,
@@ -15,49 +15,63 @@ import {
   useState,
 } from 'react';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
-import { useSmoothStreaming } from '@/hooks/useSmoothStreaming';
-import { useStreamingSettings } from '@/context/StreamingSettingsContext';
+import { useSmoothStreaming } from '@/lib/hooks/useSmoothStreaming';
+import { useSettingsStore } from '@/lib/stores/settingsStore';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 
-import rehypeMathjax from 'rehype-mathjax';
+import { parseThinkingContent } from '@/lib/utils/app/thinking';
+
+import rehypeMathjax from 'rehype-mathjax/svg';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
 interface AssistantMessageProps {
   content: string;
+  message?: Message;
   copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
-  selectedConversation: Conversation;
+  selectedConversation: Conversation | null;
   messageCopied: boolean;
+  onRegenerate?: () => void;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
+  message,
   copyOnClick,
   messageIsStreaming,
   messageIndex,
   selectedConversation,
   messageCopied,
+  onRegenerate,
 }) => {
   const [displayContent, setDisplayContent] = useState('');
+  const [streamingContent, setStreamingContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
+  const [thinking, setThinking] = useState<string>('');
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
   const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
 
-  // Get streaming settings from context
-  const { settings, updateSettings } = useStreamingSettings();
+  // Get streaming settings from store
+  const smoothStreamingEnabled = useSettingsStore((state) => state.smoothStreamingEnabled);
+  const charsPerFrame = useSettingsStore((state) => state.charsPerFrame);
+  const frameDelay = useSettingsStore((state) => state.frameDelay);
+  const setSmoothStreamingEnabled = useSettingsStore((state) => state.setSmoothStreamingEnabled);
+  const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
+  const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
 
   const citationsProcessed = useRef(false);
   const processingAttempts = useRef(0);
@@ -65,10 +79,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   // Use smooth streaming hook for animated text display
   const smoothContent = useSmoothStreaming({
     isStreaming: messageIsStreaming,
-    content: displayContent,
-    charsPerFrame: settings.charsPerFrame,
-    frameDelay: settings.frameDelay,
-    enabled: settings.smoothStreamingEnabled,
+    content: streamingContent || displayContent,
+    charsPerFrame: charsPerFrame,
+    frameDelay: frameDelay,
+    enabled: smoothStreamingEnabled,
   });
 
   // Clean up resources when component unmounts
@@ -82,43 +96,30 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   useEffect(() => {
     const processContent = () => {
-      let mainContent = content;
+      // First, parse thinking content from the raw content
+      const { thinking: inlineThinking, content: contentWithoutThinking } = parseThinkingContent(content);
+
+      let mainContent = contentWithoutThinking;
       let citationsData: Citation[] = [];
+      let metadataThinking = '';
       let extractionMethod = 'none';
 
-      // First check for the newer citation marker format
-      const citationMarker = content.indexOf('\n\n---CITATIONS_DATA---\n');
-      if (citationMarker !== -1) {
-        extractionMethod = 'marker';
-        mainContent = content.slice(0, citationMarker);
-        const jsonStr = content.slice(citationMarker + 22); // Length of marker
-
-        try {
-          const parsedData = JSON.parse(jsonStr);
-          if (parsedData.citations) {
-            // Deduplicate citations by URL or title
-            const uniqueCitationsMap = new Map();
-            parsedData.citations.forEach((citation: Citation) => {
-              const key = citation.url || citation.title;
-              if (key && !uniqueCitationsMap.has(key)) {
-                uniqueCitationsMap.set(key, citation);
-              }
-            });
-            citationsData = Array.from(uniqueCitationsMap.values());
-          }
-        } catch (error) {
-          console.error('Error parsing citations JSON with marker:', error);
-        }
+      // First check if citations are in the message object
+      if (message?.citations && message.citations.length > 0) {
+        extractionMethod = 'message';
+        citationsData = message.citations;
       }
-      // Next try the legacy JSON detection at the end
+      // Then check for the newer metadata format
       else {
-        const jsonMatch = content.match(/(\{[\s\S]*\})$/);
-        if (jsonMatch) {
-          extractionMethod = 'regex';
-          const jsonStr = jsonMatch[1];
-          mainContent = content.slice(0, -jsonStr.length).trim();
+        const metadataMatch = contentWithoutThinking.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
+        if (metadataMatch) {
+          extractionMethod = 'metadata';
+          mainContent = contentWithoutThinking.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
+
           try {
-            const parsedData = JSON.parse(jsonStr);
+            const parsedData = JSON.parse(metadataMatch[1]);
+
+            // Extract citations
             if (parsedData.citations) {
               // Deduplicate citations by URL or title
               const uniqueCitationsMap = new Map();
@@ -130,11 +131,50 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               });
               citationsData = Array.from(uniqueCitationsMap.values());
             }
+
+            // Extract thinking from metadata (takes precedence over inline thinking)
+            if (parsedData.thinking) {
+              metadataThinking = parsedData.thinking;
+            }
           } catch (error) {
-            console.error('Error parsing citations JSON:', error);
+            // Silently ignore parsing errors
+          }
+        }
+      // Next try the legacy JSON detection at the end
+      else if (!messageIsStreaming) {
+        // Only try legacy JSON parsing when not streaming to avoid partial JSON
+        const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
+        if (jsonMatch) {
+          const jsonStr = jsonMatch[1].trim();
+          // Validate JSON structure before parsing
+          if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
+            const openBraces = (jsonStr.match(/{/g) || []).length;
+            const closeBraces = (jsonStr.match(/}/g) || []).length;
+
+            if (openBraces === closeBraces) {
+              extractionMethod = 'regex';
+              mainContent = contentWithoutThinking.slice(0, -jsonMatch[1].length).trim();
+              try {
+                const parsedData = JSON.parse(jsonStr);
+                if (parsedData.citations) {
+                  // Deduplicate citations by URL or title
+                  const uniqueCitationsMap = new Map();
+                  parsedData.citations.forEach((citation: Citation) => {
+                    const key = citation.url || citation.title;
+                    if (key && !uniqueCitationsMap.has(key)) {
+                      uniqueCitationsMap.set(key, citation);
+                    }
+                  });
+                  citationsData = Array.from(uniqueCitationsMap.values());
+                }
+              } catch (error) {
+                // Silently ignore parsing errors
+              }
+            }
           }
         }
       }
+      } // Close the outer else block
 
       // Check for message-stored citations in the conversation
       if (
@@ -157,19 +197,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         citationsData = Array.from(uniqueCitationsMap.values());
       }
 
-      // Debug logging
-      console.debug(`[Message ${messageIndex}] Citation extraction:`, {
-        method: extractionMethod,
-        count: citationsData.length,
-        contentLength: content.length,
-        displayContentLength: mainContent.length,
-        processingAttempts: processingAttempts.current,
-        streamingActive: messageIsStreaming,
-      });
 
       processingAttempts.current++;
 
+      // Determine final thinking content (priority: message > metadata > inline)
+      const finalThinking = message?.thinking || metadataThinking || inlineThinking || '';
+
+      // For streaming, also compute content without metadata for display
+      const streamingDisplay = contentWithoutThinking
+        .replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '')
+        .split(/(\{[\s\S]*\})$/)[0];
+
       setDisplayContent(mainContent);
+      setStreamingContent(streamingDisplay);
+      setThinking(finalThinking);
       if (mainContent.includes('```math')) {
         setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
       }
@@ -186,19 +227,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   }, [
     content,
+    message,
     messageIsStreaming,
     messageIndex,
     selectedConversation?.messages,
   ]);
 
-  // Determine what to display - when streaming, use the raw content with citations stripped
-  // When not streaming, use the processed content
+  // Determine what to display - when streaming, use pre-processed streaming content
+  // When not streaming, use the fully processed content
   const displayContentWithoutCitations = messageIsStreaming
-    ? content.split(/(\{[\s\S]*\})$/)[0].split('\n\n---CITATIONS_DATA---\n')[0]
+    ? streamingContent
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
-  const contentToDisplay = settings.smoothStreamingEnabled && messageIsStreaming
+  const contentToDisplay = smoothStreamingEnabled && messageIsStreaming
     ? smoothContent
     : displayContentWithoutCitations;
 
@@ -207,7 +249,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setIsGeneratingAudio(true);
       setLoadingMessage('Generating audio...');
 
-      const response = await fetch('/api/v2/tts', {
+      const response = await fetch('/api/tts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -241,22 +283,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
-  const StreamingIndicator = () => (
-    <span className="animate-pulse cursor-default inline-flex items-center ml-1 text-gray-500">
-      <IconLoader2 size={16} className="animate-spin mr-1" />
-    </span>
-  );
 
   // Custom components for markdown processing
   const customMarkdownComponents = {
-    code({ node, inline, className, children, ...props }: {
-      node: any;
-      inline?: boolean;
-      className?: string;
-      children: React.ReactNode[];
-      [key: string]: any;
-    }) {
-      if (children.length) {
+    code({ inline, className, children, ...props }: any) {
+      if (children?.length) {
         if (children[0] == '▍') {
           return (
             <span className="animate-pulse cursor-default mt-1">
@@ -270,7 +301,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
       return !inline ? (
         <CodeBlock
-          key={Math.random()}
           language={(match && match[1]) || ''}
           value={String(children).replace(/\n$/, '')}
           {...props}
@@ -281,7 +311,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </code>
       );
     },
-    table({ children }: { children: React.ReactNode }) {
+    table({ children }: any) {
       return (
         <div className="overflow-auto">
           <table className="border-collapse border border-black px-3 py-1 dark:border-white">
@@ -290,23 +320,23 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         </div>
       );
     },
-    th({ children }: { children: React.ReactNode }) {
+    th({ children }: any) {
       return (
         <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
           {children}
         </th>
       );
     },
-    td({ children }: { children: React.ReactNode }) {
+    td({ children }: any) {
       return (
         <td className="break-words border border-black px-3 py-1 dark:border-white">
           {children}
         </td>
       );
     },
-    p({ children, ...props }: { children: React.ReactNode; [key: string]: any }) {
+    p({ children }: any) {
       return (
-        <p {...props}>
+        <p>
           {children}
         </p>
       );
@@ -314,125 +344,83 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   };
 
   return (
-    <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-      <div className="min-w-[40px] text-right font-bold">
-        <IconRobot size={30} />
-      </div>
-
-      <div className="prose mt-[-2px] w-full dark:prose-invert">
+    <div className="relative flex px-4 py-3 text-base lg:px-0 w-full">
+      <div className="mt-[-2px] w-full">
         {loadingMessage && (
           <div className="text-sm text-gray-500 dark:text-gray-400 mb-2 animate-pulse">
             {loadingMessage}
           </div>
         )}
 
-        <div className="flex flex-col">
-          <div className="flex-1 overflow-hidden">
-            {selectedConversation?.bot ? (
-              <>
-                <CitationMarkdown
-                  className="prose dark:prose-invert flex-1"
-                  conversation={selectedConversation}
-                  citations={citations}
-                  remarkPlugins={remarkPlugins}
-                  rehypePlugins={[rehypeMathjax]}
-                  components={customMarkdownComponents}
-                >
-                  {contentToDisplay}
-                </CitationMarkdown>
-                {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && contentToDisplay.length > 0 && (
-                  <StreamingIndicator />
-                )}
-              </>
-            ) : (
-              <>
-                <MemoizedReactMarkdown
-                  className="prose dark:prose-invert flex-1"
-                  remarkPlugins={remarkPlugins}
-                  rehypePlugins={[rehypeMathjax]}
-                  components={customMarkdownComponents}
-                >
-                  {contentToDisplay}
-                </MemoizedReactMarkdown>
-                {/* Add streaming indicator at the end if content is streaming */}
-                {messageIsStreaming && contentToDisplay.length > 0 && (
-                  <StreamingIndicator />
-                )}
-              </>
-            )}
+        <div className="flex flex-col w-full">
+          {/* Thinking block - displayed before main content */}
+          {thinking && (
+            <ThinkingBlock
+              thinking={thinking}
+              isStreaming={messageIsStreaming && !contentToDisplay}
+            />
+          )}
+
+          <div className="flex-1 w-full">
+            <div className="prose dark:prose-invert max-w-none w-full" style={{ maxWidth: 'none' }}>
+              <CitationMarkdown
+                conversation={selectedConversation}
+                message={message}
+                citations={citations}
+                remarkPlugins={remarkPlugins}
+                rehypePlugins={[rehypeMathjax]}
+                components={customMarkdownComponents}
+              >
+              {contentToDisplay}
+            </CitationMarkdown>
+            </div>
           </div>
 
-          {/* Fixed action buttons at the bottom of the message */}
-          <div className="flex justify-end items-center mt-3 sm:mt-4">
-            <div className="bg-gray-100 dark:bg-gray-800 rounded-full p-1 flex items-center shadow-sm border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              {/* Copy button */}
-              <div className="relative group">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    messageCopied 
-                      ? 'bg-green-500 text-white dark:bg-green-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={copyOnClick}
-                  aria-label={messageCopied ? "Copied" : "Copy message"}
-                >
-                  {messageCopied ? (
-                    <IconCheck size={18} />
-                  ) : (
-                    <IconCopy size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {messageCopied ? "Copied!" : "Copy message"}
-                </span>
-              </div>
+          {/* Action buttons at the bottom of the message */}
+          <div className="flex items-center gap-2 mt-1">
+            {/* Copy button */}
+            <button
+              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+              onClick={copyOnClick}
+              aria-label={messageCopied ? "Copied" : "Copy message"}
+            >
+              {messageCopied ? (
+                <IconCheck size={18} />
+              ) : (
+                <IconCopy size={18} />
+              )}
+            </button>
 
-              {/* Streaming Settings button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    showStreamingSettings
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={() => setShowStreamingSettings(!showStreamingSettings)}
-                  aria-label="Text streaming settings"
-                >
-                  <IconSettings size={18} className={showStreamingSettings ? 'animate-spin-slow' : ''} />
-                </button>
-                <span className="sr-only">
-                  Streaming settings
-                </span>
-              </div>
+            {/* Regenerate button - only show on last assistant message */}
+            {onRegenerate && !messageIsStreaming && selectedConversation && messageIndex === selectedConversation.messages.length - 1 && (
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                onClick={onRegenerate}
+                aria-label="Regenerate response"
+              >
+                <IconRefresh size={18} />
+              </button>
+            )}
 
-              {/* Listen button */}
-              <div className="relative group ml-1">
-                <button
-                  className={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${
-                    audioUrl
-                      ? 'bg-blue-500 text-white dark:bg-blue-600 scale-105'
-                      : isGeneratingAudio
-                        ? 'bg-gray-300 text-gray-500 dark:bg-gray-600 dark:text-gray-400 cursor-not-allowed'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:scale-105'
-                  }`}
-                  onClick={audioUrl ? handleCloseAudio : handleTTS}
-                  disabled={isGeneratingAudio || messageIsStreaming}
-                  aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                >
-                  {isGeneratingAudio ? (
-                    <IconLoader2 size={18} className="animate-spin" />
-                  ) : audioUrl ? (
-                    <IconVolumeOff size={18} className="animate-pulse" />
-                  ) : (
-                    <IconVolume size={18} />
-                  )}
-                </button>
-                <span className="sr-only">
-                  {audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
-                </span>
-              </div>
-            </div>
+            {/* Listen button */}
+            <button
+              className={`transition-colors ${
+                isGeneratingAudio
+                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+              onClick={audioUrl ? handleCloseAudio : handleTTS}
+              disabled={isGeneratingAudio || messageIsStreaming}
+              aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
+            >
+              {isGeneratingAudio ? (
+                <IconLoader2 size={18} className="animate-spin" />
+              ) : audioUrl ? (
+                <IconVolumeOff size={18} />
+              ) : (
+                <IconVolume size={18} />
+              )}
+            </button>
           </div>
 
           {/* Streaming Settings Modal */}
@@ -450,19 +438,19 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                       <input
                         type="checkbox"
                         className="opacity-0 w-0 h-0"
-                        checked={settings.smoothStreamingEnabled}
+                        checked={smoothStreamingEnabled}
                         onChange={(e) =>
-                          updateSettings({ smoothStreamingEnabled: e.target.checked })
+                          setSmoothStreamingEnabled(e.target.checked)
                         }
                       />
                       <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                        settings.smoothStreamingEnabled 
-                          ? 'bg-blue-500 dark:bg-blue-600' 
+                        smoothStreamingEnabled
+                          ? 'bg-blue-500 dark:bg-blue-600'
                           : 'bg-gray-300 dark:bg-gray-600'
                       }`}>
                         <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                          settings.smoothStreamingEnabled 
-                            ? 'translate-x-5' 
+                          smoothStreamingEnabled
+                            ? 'translate-x-5'
                             : 'translate-x-0.5'
                         } top-0.5 left-0`}></span>
                       </span>
@@ -474,23 +462,23 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
                     <span>Speed (characters per frame)</span>
                     <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {settings.charsPerFrame}
+                      {charsPerFrame}
                     </span>
                   </label>
                   <input
                     type="range"
                     min="1"
                     max="10"
-                    value={settings.charsPerFrame}
+                    value={charsPerFrame}
                     onChange={(e) =>
-                      updateSettings({ charsPerFrame: parseInt(e.target.value) })
+                      setCharsPerFrame(parseInt(e.target.value))
                     }
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      settings.smoothStreamingEnabled
+                      smoothStreamingEnabled
                         ? 'bg-gray-300 dark:bg-gray-600'
                         : 'bg-gray-200 dark:bg-gray-700 opacity-50'
                     }`}
-                    disabled={!settings.smoothStreamingEnabled}
+                    disabled={!smoothStreamingEnabled}
                   />
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
                     <span>Slower</span>
@@ -502,7 +490,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
                     <span>Delay between frames (ms)</span>
                     <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {settings.frameDelay}ms
+                      {frameDelay}ms
                     </span>
                   </label>
                   <input
@@ -510,16 +498,16 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     min="5"
                     max="50"
                     step="5"
-                    value={settings.frameDelay}
+                    value={frameDelay}
                     onChange={(e) =>
-                      updateSettings({ frameDelay: parseInt(e.target.value) })
+                      setFrameDelay(parseInt(e.target.value))
                     }
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      settings.smoothStreamingEnabled
+                      smoothStreamingEnabled
                         ? 'bg-gray-300 dark:bg-gray-600'
                         : 'bg-gray-200 dark:bg-gray-700 opacity-50'
                     }`}
-                    disabled={!settings.smoothStreamingEnabled}
+                    disabled={!smoothStreamingEnabled}
                   />
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
                     <span>Faster</span>

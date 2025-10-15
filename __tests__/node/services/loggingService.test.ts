@@ -1,6 +1,6 @@
 import { Session } from 'next-auth';
 
-import { AzureMonitorLoggingService } from '@/services/loggingService';
+import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
 import { DefaultAzureCredential } from '@azure/identity';
 import { LogsIngestionClient } from '@azure/monitor-ingestion';

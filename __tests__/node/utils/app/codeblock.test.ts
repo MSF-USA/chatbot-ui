@@ -1,4 +1,4 @@
-import { programmingLanguages, generateRandomString } from '@/utils/app/codeblock';
+import { programmingLanguages, generateRandomString } from '@/lib/utils/app/codeblock';
 import { vi, afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 describe('programmingLanguages map', () => {

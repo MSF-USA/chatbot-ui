@@ -2,11 +2,11 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { TermsAcceptanceProvider } from '@/components/Terms/TermsAcceptanceProvider';
-import * as termsAcceptance from '@/utils/app/termsAcceptance';
+import * as termsAcceptance from '@/lib/utils/app/termsAcceptance';
 import '@testing-library/jest-dom';
 
 // Mock the termsAcceptance utility functions
-vi.mock('@/utils/app/termsAcceptance', () => ({
+vi.mock('@/lib/utils/app/termsAcceptance', () => ({
   checkUserTermsAcceptance: vi.fn()
 }));
 

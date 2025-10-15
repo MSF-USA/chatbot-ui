@@ -8,7 +8,7 @@ interface ChatInputVoiceCaptureProps {
 }
 
 const SILENCE_THRESHOLD = -50; // in decibels
-const MAX_SILENT_DURATION = 6000; // in milliseconds (Changed to 7000ms for 7 seconds)
+const MAX_SILENT_DURATION = 6000; // in milliseconds
 
 const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
   {
@@ -30,33 +30,43 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
 
     useEffect(() => {
         // Check for microphone availability
+        console.log('[VoiceCapture] Checking for microphone...');
         navigator.mediaDevices
             .enumerateDevices()
             .then((devices) => {
+                console.log('[VoiceCapture] Devices found:', devices);
                 const hasMic = devices.some((device) => device.kind === "audioinput");
+                console.log('[VoiceCapture] Has microphone:', hasMic);
                 setHasMicrophone(hasMic);
             })
             .catch((err) => {
-                console.error("Error accessing media devices.", err);
+                console.error("[VoiceCapture] Error accessing media devices:", err);
                 setHasMicrophone(false);
             });
     }, []);
 
-    /*
-        Useful for local debugging, but otherwise just annoying
-     */
-    const testAudioPlayback = (audioBlob: Blob) => {
-        const audioURL = URL.createObjectURL(audioBlob);
-        const audio = new Audio(audioURL);
-        audio.play().catch(error => {
-            console.error("Playback failed:", error);
-        });
-    };
+    const startRecording = async () => {
+        console.log('[VoiceCapture] startRecording called');
+        console.log('[VoiceCapture] navigator.mediaDevices:', navigator.mediaDevices);
+        console.log('[VoiceCapture] getUserMedia available:', typeof navigator.mediaDevices?.getUserMedia);
 
-    const startRecording = () => {
-        navigator.mediaDevices
-            .getUserMedia({ audio: true })
-            .then((stream) => {
+        // Check current permission status
+        try {
+            const permissionStatus = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+            console.log('[VoiceCapture] Microphone permission state:', permissionStatus.state);
+
+            if (permissionStatus.state === 'denied') {
+                alert('Microphone access is denied. Please enable it in your browser settings.');
+                return;
+            }
+        } catch (permErr) {
+            console.log('[VoiceCapture] Could not check permissions:', permErr);
+        }
+
+        try {
+            console.log('[VoiceCapture] Calling getUserMedia...');
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            console.log('[VoiceCapture] Got media stream:', stream);
                 mediaStreamRef.current = stream;
                 const mediaRecorder = new MediaRecorder(stream);
                 mediaRecorderRef.current = mediaRecorder;
@@ -119,10 +129,12 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
                 }, 100);
 
                 setIsRecording(true);
-            })
-            .catch((err) => {
-                console.error("The following error occurred: " + err);
-            });
+        } catch (err: any) {
+            console.error("[VoiceCapture] Error getting user media:", err);
+            console.error("[VoiceCapture] Error name:", err.name);
+            console.error("[VoiceCapture] Error message:", err.message);
+            alert(`Microphone access error: ${err.message}`);
+        }
     };
 
     const stopRecording = () => {
@@ -169,7 +181,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
 
             // Upload the audioBlob to the server
             const uploadResponse = await fetch(
-              `/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
+              `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
               {
                   method: 'POST',
                   body: base64Data,
@@ -188,7 +200,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
             const fileID = encodeURIComponent(fileURI.split('/').pop());
 
             // Call the transcribe endpoint
-            const transcribeResponse = await fetch(`/api/v2/file/${fileID}/transcribe`, {
+            const transcribeResponse = await fetch(`/api/file/${fileID}/transcribe`, {
                 method: 'GET',
             });
 
@@ -210,14 +222,26 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = (
     };
 
     if (!hasMicrophone) {
+        console.log('[VoiceCapture] No microphone available, hiding component');
         return null; // Don't display the component if no microphones are available
     }
+
+    console.log('[VoiceCapture] Rendering component');
 
     return (
         <div className="voice-capture">
           <button
               className={isRecording ? ' backdrop-blur' : ''}
-              onClick={isRecording ? stopRecording : startRecording}
+              onClick={(e) => {
+                  console.log('[VoiceCapture] Button clicked, isRecording:', isRecording);
+                  e.preventDefault();
+                  e.stopPropagation();
+                  if (isRecording) {
+                      stopRecording();
+                  } else {
+                      startRecording();
+                  }
+              }}
               title={isRecording ? 'Click to stop recording' : 'Click to start recording'} // Tooltip added
           >
               {isRecording ? (

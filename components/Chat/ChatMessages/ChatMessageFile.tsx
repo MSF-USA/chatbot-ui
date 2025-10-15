@@ -17,7 +17,7 @@ import FileIcon from "@/components/Icons/file";
 import { MemoizedReactMarkdown } from "@/components/Markdown/MemoizedReactMarkdown";
 import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
-import rehypeMathjax from "rehype-mathjax";
+import rehypeMathjax from "rehype-mathjax/svg";
 import { CodeBlock } from "@/components/Markdown/CodeBlock";
 import {
     FileMessageContent,
@@ -26,7 +26,7 @@ import {
     ImageMessageContent,
 } from "@/types/chat";
 import ImageIcon from "@/components/Icons/image";
-import {fetchImageBase64FromMessageContent} from "@/services/imageService";
+import {fetchImageBase64FromMessageContent} from "@/lib/services/imageService";
 
 /**
  * Component to display image files in chat messages
@@ -84,6 +84,7 @@ const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => 
                     <span>Failed to load image</span>
                 </div>
               ) : imageSrc ? (
+                // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={imageSrc}
                   alt="Image Content"
@@ -107,6 +108,7 @@ const ChatMessageFileImage: FC<{ image: ImageMessageContent }> = ({ image }) => 
               onClick={handleCloseModal}
             >
                 <div className="relative max-w-full max-h-full" onClick={(e) => e.stopPropagation()}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={imageSrc}
                       alt="Full Size Image"
@@ -131,11 +133,11 @@ export interface ChatMessageFileProps {
     isEditing: boolean;
     setIsEditing: Dispatch<SetStateAction<boolean>>;
     setIsTyping: Dispatch<SetStateAction<boolean>>;
-    handleInputChange: (event: any) => void;
-    textareaRef: any;
+    handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+    textareaRef: React.RefObject<HTMLTextAreaElement | null>;
     handlePressEnter: KeyboardEventHandler<HTMLTextAreaElement>;
     handleEditMessage: () => void;
-    toggleEditing: (event: any) => void;
+    toggleEditing: (event: React.MouseEvent) => void;
     handleDeleteMessage: () => void;
     onEdit: (message: Message) => void | undefined;
 }
@@ -199,11 +201,11 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
         }
     }, [text]);
 
-    const downloadFile = (event: any, fileUrl: string) => {
+    const downloadFile = (event: React.MouseEvent, fileUrl: string) => {
         event.preventDefault();
         if (fileUrl) {
             const filename = fileUrl.split("/").pop();
-            const downloadUrl = `/api/v2/file/${filename}`;
+            const downloadUrl = `/api/file/${filename}`;
             window.open(downloadUrl, "_blank");
         }
     };
@@ -310,8 +312,8 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                     </div>
                                 ) : (
                                     <>
+                                        <div className="prose dark:prose-invert flex-1">
                                         <MemoizedReactMarkdown
-                                            className="prose dark:prose-invert flex-1"
                                             remarkPlugins={[remarkGfm, remarkMath]}
                                             rehypePlugins={[rehypeMathjax]}
                                             components={{
@@ -321,7 +323,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                          className,
                                                          children,
                                                          ...props
-                                                     }) {
+                                                     }: any) {
                                                     if (children.length) {
                                                         if (children[0] == "▍") {
                                                             return (
@@ -352,7 +354,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                         </code>
                                                     );
                                                 },
-                                                table({ children }) {
+                                                table({ children }: any) {
                                                     return (
                                                         <div className="overflow-auto">
                                                             <table className="max-w-full border-collapse border border-black px-3 py-1 dark:border-white">
@@ -361,14 +363,14 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                                         </div>
                                                     );
                                                 },
-                                                th({ children }) {
+                                                th({ children }: any) {
                                                     return (
                                                         <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
                                                             {children}
                                                         </th>
                                                     );
                                                 },
-                                                td({ children }) {
+                                                td({ children }: any) {
                                                     return (
                                                         <td className="break-words border border-black px-3 py-1 dark:border-white">
                                                             {children}
@@ -379,6 +381,7 @@ const ChatMessageFile: FC<ChatMessageFileProps> = ({
                                         >
                                             {text.text}
                                         </MemoizedReactMarkdown>
+                                        </div>
                                         <div className="md:-mr-8 ml-1 md:ml-0 flex flex-col md:flex-row gap-4 md:gap-1 items-center md:items-start justify-end md:justify-start">
                                             <button
                                                 className="invisible group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"

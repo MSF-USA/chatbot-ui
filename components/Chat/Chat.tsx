@@ -1,1020 +1,347 @@
-import { Transition } from '@headlessui/react';
-import {
-  IconInfoCircle,
-  IconSettings,
-} from '@tabler/icons-react';
-import {
-  MutableRefObject,
-  memo,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import toast from 'react-hot-toast';
+'use client';
 
-import { useTranslation } from 'next-i18next';
-import Image from 'next/image';
-
-import { makeRequest } from '@/services/frontendChatServices';
-
-import { extractCitationsFromContent } from '@/utils/app/citation';
-import { OPENAI_API_HOST_TYPE } from '@/utils/app/const';
-import { saveConversation, saveConversations } from '@/utils/app/conversation';
-import { throttle } from '@/utils/data/throttle';
-
-import { getBotById } from '@/types/bots';
-import {
-  ChatBody,
-  Conversation,
-  FileMessageContent,
-  FilePreview,
-  Message,
-  MessageType,
-  TextMessageContent,
-} from '@/types/chat';
-import { Plugin } from '@/types/plugin';
-import { Citation } from '@/types/rag';
-
-import HomeContext from '@/pages/api/home/home.context';
-
-import lightTextLogo from '../../public/international_logo_black.png';
-import darkTextLogo from '../../public/international_logo_white.png';
-import { TemperatureSlider } from '../Settings/Temperature';
-import Spinner from '../Spinner';
-import { ChatInput } from './ChatInput';
-import { ChatLoader } from './ChatLoader';
-import { ErrorMessageDiv } from './ErrorMessageDiv';
-import { MemoizedChatMessage } from './MemoizedChatMessage';
-import { ModelSelect } from './ModelSelect';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { useSession } from 'next-auth/react';
+import { IconX } from '@tabler/icons-react';
+import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useChat } from '@/lib/hooks/chat/useChat';
+import { useUI } from '@/lib/hooks/ui/useUI';
+import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { ChatTopbar } from './ChatTopbar';
-import { suggestedPrompts } from './prompts';
+import { MemoizedChatMessage } from './MemoizedChatMessage';
+import { ChatInput } from './ChatInput';
+import { ModelSelect } from './ModelSelect';
+import { LoadingScreen } from './LoadingScreen';
+import { Message } from '@/types/chat';
+import { EmptyState } from './EmptyState/EmptyState';
+import { v4 as uuidv4 } from 'uuid';
+import { OpenAIModels, OpenAIModelID } from '@/types/openai';
 
-import { debounce } from '@tanstack/virtual-core';
-
-interface Props {
-  stopConversationRef: MutableRefObject<boolean>;
+interface ChatProps {
+  mobileModelSelectOpen?: boolean;
+  onMobileModelSelectChange?: (open: boolean) => void;
 }
 
-const getRandomPrompts = (
-  num: number,
-): { title: string; prompt: string; icon: React.ElementType | null }[] => {
-  const shuffled = [...suggestedPrompts].sort(() => 0.5 - Math.random());
-  const randomPrompts = shuffled.slice(0, num);
+/**
+ * Main chat component - migrated to use Zustand stores
+ */
+export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatProps = {}) {
+  const { data: session, status } = useSession();
+  const { selectedConversation, updateConversation, conversations, addConversation, selectConversation, isLoaded } = useConversations();
+  const { isStreaming, streamingContent, error, sendMessage, citations, clearError } = useChat();
+  const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } = useUI();
+  const { models, defaultModelId, systemPrompt, temperature } = useSettings();
 
-  return randomPrompts;
-};
+  const [showScrollDownButton, setShowScrollDownButton] = useState(false);
+  const [filePreviews, setFilePreviews] = useState<any[]>([]);
+  const [isModelSelectOpen, setIsModelSelectOpen] = useState(false);
+  const hasInitializedRef = useRef(false);
 
-export const Chat = memo(({ stopConversationRef }: Props) => {
-  const { t } = useTranslation('chat');
+  // Sync with mobile header model select state
+  useEffect(() => {
+    if (mobileModelSelectOpen !== undefined && mobileModelSelectOpen !== isModelSelectOpen) {
+      setIsModelSelectOpen(mobileModelSelectOpen);
+    }
+  }, [mobileModelSelectOpen]);
 
-  const {
-    state: {
-      selectedConversation,
-      conversations,
-      models,
-      apiKey,
-      serverSideApiKeyIsSet,
-      messageIsStreaming,
-      modelError,
-      loading,
-      prompts,
-      temperature,
-      systemPrompt,
-      user,
-      lightMode,
-    },
-    handleUpdateConversation,
-    dispatch: homeDispatch,
-  } = useContext(HomeContext);
-  let {
-    state: { pluginKeys },
-  } = useContext(HomeContext);
-  if (typeof pluginKeys === 'string') {
-    pluginKeys = JSON.parse(pluginKeys);
-  }
+  // Notify parent when modal state changes (for mobile header sync)
+  useEffect(() => {
+    if (onMobileModelSelectChange && mobileModelSelectOpen !== undefined) {
+      onMobileModelSelectChange(isModelSelectOpen);
+    }
+  }, [isModelSelectOpen]);
 
-  const [currentMessage, setCurrentMessage] = useState<Message>();
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState<boolean>(true);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
-  const [showScrollDownButton, setShowScrollDownButton] =
-    useState<boolean>(false);
-  const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
-  const [randomPrompts, setRandomPrompts] = useState<
-    { title: string; prompt: string; icon: React.ElementType | null }[]
-  >([]);
-  const [botInfo, setBotInfo] = useState<{
-    id: string;
-    name: string;
-    color: string;
-  } | null>(null);
-  const [requestStatusMessage, setRequestStatusMessage] = useState<
-    string | null
-  >(null);
-  const [progress, setProgress] = useState<number | null>(null);
+  // Close modal on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModelSelectOpen) {
+        setIsModelSelectOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isModelSelectOpen]);
+
+  // Auto-dismiss error after 10 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        clearError();
+      }, 10000); // 10 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [error, clearError]);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const modalRef = useRef<HTMLDivElement>(null);
+  const stopConversationRef = useRef<boolean>(false);
 
-  const updateConversationFromUserInput = (
-    userMessage: Message,
-    selectedConversation: Conversation,
-    deleteCount: number | null,
-  ): Conversation => {
-    let updatedConversation: Conversation;
-    if (deleteCount) {
-      const updatedMessages = [...selectedConversation.messages];
-      for (let i = 0; i < deleteCount; i++) {
-        updatedMessages.pop();
-      }
-      updatedConversation = {
-        ...selectedConversation,
-        messages: [...updatedMessages, userMessage],
-      };
-    } else {
-      updatedConversation = {
-        ...selectedConversation,
-        messages: [...selectedConversation.messages, userMessage],
-      };
-    }
-
-    return updatedConversation;
-  };
-
-  const updateBotInfo = useCallback(() => {
-    if (selectedConversation?.bot) {
-      const bot = getBotById(selectedConversation.bot);
-      if (bot) {
-        setBotInfo({ id: bot.id, name: bot.name, color: bot.color });
-      } else {
-        setBotInfo(null);
-      }
-    } else {
-      setBotInfo(null);
-    }
-  }, [selectedConversation]);
-
+  // Create default conversation if none exists - runs once after data is loaded
   useEffect(() => {
-    updateBotInfo();
-  }, [selectedConversation, updateBotInfo]);
+    // Only run initialization once
+    if (hasInitializedRef.current) return;
 
-  const setConversationTitle = (
-    updatedConversation: Conversation,
-    message: Message,
-  ): Conversation => {
-    // TODO: Add generated title option with these as fallback, similar to how other LLM frontends work
-    let title = '';
-    if (typeof message.content === 'string') {
-      title = message.content.substring(0, 30);
-    } else if (Array.isArray(message.content)) {
-      const contentTypes = message.content.map((section) => section.type);
-      if (contentTypes.includes('image_url')) {
-        title = 'Image Chat';
-      } else if (contentTypes.includes('file_url')) {
-        const fileSection = (
-          message.content as (FileMessageContent | TextMessageContent)[]
-        ).find(
-          (section) => (section as FileMessageContent).originalFilename,
-        ) as FileMessageContent;
-        title = fileSection?.originalFilename
-          ? `File: ${fileSection.originalFilename.substring(0, 20)}`
-          : 'File Chat';
-      } else {
-        const textSection = (
-          message.content as (TextMessageContent | any)[]
-        ).find(
-          (section) => (section as TextMessageContent).type === 'text',
-        ) as TextMessageContent;
-        title = textSection?.text
-          ? textSection.text.substring(0, 30)
-          : 'New Chat';
-      }
-    } else if ((message.content as TextMessageContent)?.type === 'text') {
-      title = (message.content as TextMessageContent).text.substring(0, 30);
-    } else {
-      title = 'New Chat';
+    // Wait for conversations to load from localStorage
+    if (!isLoaded) return;
+
+    // Wait for models to load
+    if (models.length === 0) return;
+
+    // Mark as initialized to prevent multiple runs
+    hasInitializedRef.current = true;
+
+    // If no conversations exist, create one
+    if (conversations.length === 0) {
+      const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
+
+      // Enable agent mode by default if the model has agentId
+      const modelWithAgent = defaultModel?.id === 'gpt-4o' && defaultModel.agentId ? {
+        ...defaultModel,
+        agentEnabled: true,
+        agentId: defaultModel.agentId
+      } : defaultModel;
+
+      const newConversation = {
+        id: uuidv4(),
+        name: 'New Conversation',
+        messages: [],
+        model: modelWithAgent,
+        prompt: systemPrompt || '',
+        temperature: temperature || 0.5,
+        folderId: null,
+      };
+      addConversation(newConversation);
+    } else if (!selectedConversation) {
+      // If conversations exist but none is selected, select the first one
+      selectConversation(conversations[0].id);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, models.length]);
 
-    title = title.trim().length > 0 ? title : 'New Chat';
-    title = title.length > 30 ? title.substring(0, 30) + '...' : title;
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [selectedConversation?.messages, streamingContent]);
 
-    return {
-      ...updatedConversation,
-      name: title,
+  // Handle scroll detection for scroll-down button
+  useEffect(() => {
+    const handleScroll = () => {
+      if (chatContainerRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+        const isScrolledUp = scrollHeight - scrollTop - clientHeight > 100;
+        setShowScrollDownButton(isScrolledUp);
+      }
     };
-  };
 
-  const debouncedUpdateConversation = useCallback(
-    debounce(
-      window,
-      (content: string, updateConversation: CallableFunction) => {
-        updateConversation(content);
-      },
-      100,
-    ),
-    [],
-  );
-
-  const handleNormalChatBackendStreaming = async (
-    data: ReadableStream,
-    controller: AbortController,
-    updatedConversation: Conversation,
-    selectedConversation: Conversation,
-    originalConversations: Conversation[],
-  ) => {
-    const reader = data.getReader();
-    const decoder = new TextDecoder();
-    let done = false;
-    let text = '';
-    let updatedConversationCopy = { ...updatedConversation };
-    let extractedCitations: Citation[] = [];
-
-    const checkStopInterval = setInterval(() => {
-      if (stopConversationRef.current) {
-        console.log('Stop detected in handleNormalChatBackendStreaming');
-        done = true;
-        clearInterval(checkStopInterval);
-      }
-    }, 100);
-
-    while (!done) {
-      // Check if a stop was requested before reading more data
-      if (stopConversationRef.current) {
-        console.log('Stop detected in streaming loop - breaking');
-        break;
-      }
-      
-      try {
-        const { value, done: doneReading } = await reader.read();
-        done = doneReading;
-        
-        if (stopConversationRef.current) {
-          break;
-        }
-
-      if (value) {
-        const chunkValue = decoder.decode(value);
-        text += chunkValue;
-
-      if (stopConversationRef.current) {
-          break;
-        }
-
-        // Extract citations
-        const {
-          text: cleanedText,
-          citations,
-          extractionMethod,
-        } = extractCitationsFromContent(text);
-
-        if (citations.length > 0) {
-          // Use the clean text and extracted citations
-          text = cleanedText;
-          extractedCitations = citations;
-          console.log(
-            `Extracted ${citations.length} citations using ${extractionMethod} format`,
-          );
-        }
-
-        if (
-          updatedConversationCopy.messages.length === 0 ||
-          updatedConversationCopy.messages[
-            updatedConversationCopy.messages.length - 1
-          ].role !== 'assistant'
-        ) {
-          // If there's no assistant message, create a new one
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: [
-              ...updatedConversationCopy.messages,
-              {
-                role: 'assistant',
-                content: text,
-                messageType: MessageType.TEXT,
-                citations:
-                  extractedCitations.length > 0 ? [...extractedCitations] : [],
-              },
-            ],
-          };
-        } else {
-          // Update the existing assistant message
-          const updatedMessages = [
-            ...updatedConversationCopy.messages.slice(0, -1),
-            {
-              ...updatedConversationCopy.messages[
-                updatedConversationCopy.messages.length - 1
-              ],
-              content: text,
-              citations:
-                extractedCitations.length > 0
-                  ? [...extractedCitations]
-                  : updatedConversationCopy.messages[
-                      updatedConversationCopy.messages.length - 1
-                    ].citations || [],
-            },
-          ];
-          updatedConversationCopy = {
-            ...updatedConversationCopy,
-            messages: updatedMessages,
-          };
-        }
-
-        // Update the state to trigger a re-render
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
-      }
-    } catch (error) {
-      console.error('Error in stream processing:', error);
-      clearInterval(checkStopInterval);
-      break;
-     }
+    const container = chatContainerRef.current;
+    if (container) {
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
     }
-    
-    clearInterval(checkStopInterval);
+  }, []);
 
-
-    // Final check for citations after stream completes
-    if (extractedCitations.length === 0) {
-      const {
-        text: cleanedText,
-        citations,
-        extractionMethod,
-      } = extractCitationsFromContent(text);
-
-      if (citations.length > 0) {
-        text = cleanedText;
-        extractedCitations = citations;
-        console.log(
-          `Final extraction - ${citations.length} citations using ${extractionMethod} format`,
-        );
-
-        // If we found citations in the final check, update the conversation again
-        const updatedMessages = [
-          ...updatedConversationCopy.messages.slice(0, -1),
-          {
-            ...updatedConversationCopy.messages[
-              updatedConversationCopy.messages.length - 1
-            ],
-            content: text,
-            citations: [...extractedCitations],
-          },
-        ];
-        updatedConversationCopy = {
-          ...updatedConversationCopy,
-          messages: updatedMessages,
-        };
-
-        // Update state one last time
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversationCopy,
-        });
-      }
-    }
-
-    saveConversation(updatedConversationCopy);
-
-    const updatedConversations: Conversation[] = originalConversations.map(
-      (conversation) => {
-        if (conversation.id === selectedConversation.id) {
-          return updatedConversationCopy;
-        }
-        return conversation;
-      },
-    );
-    if (updatedConversations.length === 0) {
-      updatedConversations.push(updatedConversationCopy);
-    }
-
-    return updatedConversations;
-  };
-
-  const handleSend = useCallback(
-    async (message: Message, deleteCount = 0, plugin: Plugin | null = null) => {
-      if (selectedConversation) {
-        
-        stopConversationRef.current = false;
-
-        let updatedConversation: Conversation = updateConversationFromUserInput(
-          message,
-          selectedConversation,
-          deleteCount,
-        );
-
-        homeDispatch({
-          field: 'selectedConversation',
-          value: updatedConversation,
-        });
-        homeDispatch({ field: 'loading', value: true });
-        homeDispatch({ field: 'messageIsStreaming', value: true });
-
-        try {
-
-         // Sets up a manual check for the stop button being pressed
-          const abortCheckInterval = setInterval(() => {
-            if (stopConversationRef.current) {
-              console.log('Stop requested - updating UI state');
-              homeDispatch({ field: 'loading', value: false });
-              homeDispatch({ field: 'messageIsStreaming', value: false });
-              stopConversationRef.current = false;
-              clearInterval(abortCheckInterval);
-            }
-          }, 100);
-          
-          // Clean up interval after 60 seconds as a safety measure
-          setTimeout(() => clearInterval(abortCheckInterval), 60000);
-
-          const { controller, body, response, hasComplexContent, setOnAbort } =
-            await makeRequest(
-              plugin,
-              setRequestStatusMessage,
-              updatedConversation,
-              apiKey,
-              pluginKeys,
-              systemPrompt,
-              temperature,
-              true,
-              setProgress,
-              stopConversationRef,
-            );
-
-          clearInterval(abortCheckInterval);
-          
-          // Set up the abort handler to reset UI state when the conversation is stopped
-          setOnAbort?.(() => {
-            homeDispatch({ field: 'loading', value: false });
-            homeDispatch({ field: 'messageIsStreaming', value: false });
-            stopConversationRef.current = false;
-          });
-
-          if (hasComplexContent) {
-            // Handle complex content case
-            console.log('Message contains complex content');
-            // Add your logic here
-          }
-
-          if (!response.ok) {
-            homeDispatch({ field: 'loading', value: false });
-            homeDispatch({ field: 'messageIsStreaming', value: false });
-            let errorResp: any;
-            try {
-              errorResp = await response.json();
-            } catch (errorResponsePullError) {
-              errorResp = {};
-            }
-            toast.error(
-              response.statusText ?? errorResp.error ?? 'Response failed',
-            );
-            return;
-          }
-          const data = response.body;
-
-          if (!data) {
-            homeDispatch({ field: 'loading', value: false });
-            homeDispatch({ field: 'messageIsStreaming', value: false });
-            return;
-          }
-          if (!plugin) {
-            if (updatedConversation.messages.length === 1) {
-              updatedConversation = setConversationTitle(
-                updatedConversation,
-                message,
-              );
-            }
-            homeDispatch({ field: 'loading', value: false });
-
-            // TODO: Either force everything through streaming or implement a
-            //    non-streaming version of this as well
-            const streaming = true;
-            if (streaming) {
-              const stream = new ReadableStream({
-                start(controller) {
-                  const reader = data.getReader();
-
-                  function push() {
-
-                  // Check if stop was requested before reading more data
-                    if (stopConversationRef.current) {
-                      console.log('Stopping stream in ReadableStream - user requested stop');
-                      controller.close();
-                      return;
-                    }
-
-                    reader.read().then(({ done, value }) => {
-                      if (done) {
-                        controller.close();
-                        return;
-                      }
-                      controller.enqueue(value);
-                      push();
-                    });
-                  }
-
-                  push();
-                },
-              });
-              const updatedConversations =
-                await handleNormalChatBackendStreaming(
-                  stream,
-                  controller,
-                  updatedConversation,
-                  selectedConversation,
-                  conversations,
-                );
-
-              homeDispatch({
-                field: 'conversations',
-                value: updatedConversations,
-              });
-              saveConversations(updatedConversations);
-              homeDispatch({ field: 'messageIsStreaming', value: false });
-            } else {
-              const reader = data.getReader();
-              const updatedConversations =
-                await handleNormalChatBackendStreaming(
-                  data,
-                  controller,
-                  updatedConversation,
-                  selectedConversation,
-                  conversations,
-                );
-
-              homeDispatch({
-                field: 'conversations',
-                value: updatedConversations,
-              });
-              saveConversations(updatedConversations);
-              homeDispatch({ field: 'messageIsStreaming', value: false });
-            }
-          } else {
-            throw new Error('Plugins not currently supported.');
-          }
-        } catch (error: unknown) {
-          homeDispatch({ field: 'loading', value: false });
-          homeDispatch({ field: 'messageIsStreaming', value: false });
-
-          if (error instanceof Error) {
-            if (error.message === 'Request timed out') {
-              toast.error('Request timed out. Please try again.');
-            } else {
-              toast.error(`Error: ${error.message}`);
-            }
-          } else {
-            toast.error('An unknown error occurred');
-          }
-
-          console.error('Error in handleSend:', error);
-        }
-      }
-    },
-    [
-      apiKey,
-      conversations,
-      handleNormalChatBackendStreaming,
-      homeDispatch,
-      pluginKeys,
-      selectedConversation,
-      systemPrompt,
-      temperature,
-    ],
-  );
-
-  const scrollToBottom = useCallback(() => {
-    if (autoScrollEnabled) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-      textareaRef.current?.focus();
-    }
-  }, [autoScrollEnabled]);
-
-  useEffect(() => {
-    if (autoScrollEnabled) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [selectedConversation, autoScrollEnabled]);
-
-  const handleScroll = () => {
-    if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } =
-        chatContainerRef.current;
-      const bottomTolerance = 35;
-
-      if (scrollTop + clientHeight < scrollHeight - bottomTolerance) {
-        setAutoScrollEnabled(false);
-        setShowScrollDownButton(true);
-      } else {
-        setAutoScrollEnabled(true);
-        setShowScrollDownButton(false);
-      }
-    }
-  };
-
-  const handleScrollDown = () => {
-    chatContainerRef.current?.scrollTo({
-      top: chatContainerRef.current.scrollHeight,
-      behavior: 'smooth',
-    });
-  };
-
-  const handleSettings = () => {
-    setShowSettings(!showSettings);
-  };
-
-  const onClearAll = () => {
-    if (
-      confirm(
-        // @ts-ignore
-        t<string>('Are you sure you want to clear all messages?') as string,
-      ) &&
-      selectedConversation
-    ) {
-      handleUpdateConversation(selectedConversation, {
-        key: 'messages',
-        value: [],
+  const handleClearAll = () => {
+    if (selectedConversation && window.confirm('Are you sure you want to clear this conversation?')) {
+      updateConversation(selectedConversation.id, {
+        ...selectedConversation,
+        messages: [],
       });
     }
   };
 
-  const scrollDown = () => {
-    if (autoScrollEnabled) {
-      messagesEndRef.current?.scrollIntoView(true);
-    }
-  };
-  const throttledScrollDown = throttle(scrollDown, 250);
+  const handleEditMessage = (editedMessage: Message) => {
+    if (!selectedConversation) return;
 
-  const handleClickOutside = (event: any) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setShowSettings(false);
-    }
-  };
-
-  useEffect(() => {
-    throttledScrollDown();
-    selectedConversation &&
-      setCurrentMessage(
-        selectedConversation.messages[selectedConversation.messages.length - 2],
-      );
-  }, [selectedConversation, throttledScrollDown]);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setAutoScrollEnabled(entry.isIntersecting);
-        if (entry.isIntersecting) {
-          textareaRef.current?.focus();
-        }
-      },
-      {
-        root: null,
-        threshold: 0.5,
-      },
+    const updatedMessages = selectedConversation.messages.map((msg, idx) =>
+      idx === selectedConversation.messages.indexOf(editedMessage) ? editedMessage : msg
     );
-    const messagesEndElement = messagesEndRef.current;
-    if (messagesEndElement) {
-      observer.observe(messagesEndElement);
-    }
-    return () => {
-      if (messagesEndElement) {
-        observer.unobserve(messagesEndElement);
-      }
+
+    updateConversation(selectedConversation.id, {
+      ...selectedConversation,
+      messages: updatedMessages,
+    });
+  };
+
+  const handleSend = useCallback((message: Message) => {
+    if (!selectedConversation) return;
+
+    // Add user message to conversation
+    const updatedMessages = [...selectedConversation.messages, message];
+
+    // Update just the messages field
+    updateConversation(selectedConversation.id, { messages: updatedMessages });
+
+    // Send to API with updated conversation (includes user message)
+    const updatedConversation = {
+      ...selectedConversation,
+      messages: updatedMessages,
     };
-  }, [messagesEndRef]);
-  const showSplash =
-    !(apiKey || serverSideApiKeyIsSet) && OPENAI_API_HOST_TYPE !== 'apim';
+    sendMessage?.(message, updatedConversation);
+  }, [selectedConversation, updateConversation, sendMessage]);
 
-  const [image, setImage] = useState(true);
+  const handleSelectPrompt = useCallback((prompt: string) => {
+    handleSend({
+      role: 'user',
+      content: prompt,
+      messageType: 'text',
+    });
+  }, [handleSend]);
 
-  useEffect(() => {
-    setRandomPrompts(getRandomPrompts(3));
-  }, []);
+  const handleScrollDown = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleRegenerate = () => {
+    if (!selectedConversation || selectedConversation.messages.length === 0) return;
+
+    // Get the last user message
+    const lastUserMessageIndex = selectedConversation.messages.findLastIndex(m => m.role === 'user');
+    if (lastUserMessageIndex === -1) return;
+
+    // Remove messages after the last user message and resend
+    const messagesUpToLastUser = selectedConversation.messages.slice(0, lastUserMessageIndex + 1);
+    updateConversation(selectedConversation.id, {
+      ...selectedConversation,
+      messages: messagesUpToLastUser,
+    });
+
+    // Resend the last user message
+    const lastUserMessage = selectedConversation.messages[lastUserMessageIndex];
+    sendMessage?.(lastUserMessage, { ...selectedConversation, messages: messagesUpToLastUser });
+  };
+
+  const messages = selectedConversation?.messages || [];
+  const hasMessages = messages.length > 0 || isStreaming;
+
+  // Show loading screen until session and data are fully loaded
+  // This prevents UI flickering during initialization
+  if (status === 'loading' || !isLoaded || models.length === 0) {
+    return <LoadingScreen />;
+  }
 
   return (
-    <div className="flex flex-col h-full w-full overflow-x-hidden bg-white dark:bg-[#212121]">
-      {showSplash ? (
-        <div className="mx-auto flex h-full flex-col justify-center space-y-6 sm:w-[600px]">
-          <div className="text-center text-4xl font-bold text-black dark:text-white">
-            {t('welcomeMessage')}
-          </div>
-          <div className="text-center text-lg text-black dark:text-white">
-            <div className="mb-8">{`MSF AI Assistant is an open source clone of OpenAI's ChatGPT UI.`}</div>
-            <div className="mb-2 font-bold">
-              Important: MSF AI Assistant is 100% unaffiliated with OpenAI.
-            </div>
-          </div>
-          <div className="text-center text-gray-500 dark:text-gray-400">
-            <div className="mb-2">
-              MSF AI Assistant allows you to plug in your API key to use this UI
-              with their API.
-            </div>
-            <div className="mb-2">
-              It is <span className="italic">only</span> used to communicate
-              with their API.
-            </div>
-            <div className="mb-2">
-              {t(
-                'Please set your OpenAI API key in the bottom left of the sidebar.',
-              )}
-            </div>
-            <div>
-              {t("If you don't have an OpenAI API key, you can get one here: ")}
-              <a
-                href="https://platform.openai.com/account/api-keys"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                openai.com
-              </a>
-            </div>
-          </div>
-        </div>
-      ) : modelError ? (
-        <ErrorMessageDiv error={modelError} />
-      ) : (
-        <>
-          <div
-            className="flex-1 overflow-auto"
-            ref={chatContainerRef}
-            onScroll={handleScroll}
-          >
-            {selectedConversation?.messages?.length === 0 ? (
-              <>
-                {models.length > 0 && (
-                  <Transition
-                    appear={true}
-                    show={image}
-                    enter="transition-opacity duration-1000"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div>
-                      {/* Topbar w/o content */}
-                      <ChatTopbar 
-                        botInfo={botInfo}
-                        selectedModelName={selectedConversation?.model?.name}
-                        showSettings={showSettings}
-                        onSettingsClick={handleSettings}
-                        userEmail={user?.mail}
-                      />
+    <div className="relative flex h-full w-full flex-col overflow-x-hidden bg-white dark:bg-[#212121] transition-all">
+      {/* Header - Hidden on mobile, shown on desktop */}
+      <div className="hidden md:block">
+        <ChatTopbar
+          botInfo={null}
+          selectedModelName={
+            selectedConversation?.model?.name ||
+            models.find(m => m.id === defaultModelId)?.name ||
+            'GPT-4o'
+          }
+          selectedModelProvider={
+            OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]?.provider ||
+            models.find(m => m.id === defaultModelId)?.provider
+          }
+          showSettings={isSettingsOpen}
+          onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
+          onModelClick={() => setIsModelSelectOpen(true)}
+          onClearAll={handleClearAll}
+          hasMessages={hasMessages}
+          agentEnabled={selectedConversation?.model?.agentEnabled || false}
+          showChatbar={showChatbar}
+        />
+      </div>
 
-                      {showSettings && (
-                        <Transition
-                          appear={true}
-                          show={showSettings}
-                          enter="transition-opacity duration-500"
-                          enterFrom="opacity-0"
-                          enterTo="opacity-100"
-                          leave="transition-opacity duration-300"
-                          leaveFrom="opacity-100"
-                          leaveTo="opacity-0"
-                        >
-                          <div
-                            className="fixed inset-0 z-50 flex items-center justify-center"
-                            onClick={handleClickOutside}
-                          >
-                            <div className="fixed inset-0 bg-black opacity-50" />
-                            <div
-                              ref={modalRef}
-                              className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
-                            >
-                              <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                                {t('modelSelectionDialogue')}
-                                <ModelSelect />
-                              </div>
-                              <div className="text-black dark:text-white">
-                                {t('Temperature')}
-                              </div>
-                              <TemperatureSlider
-                                temperature={selectedConversation.temperature}
-                                onChangeTemperature={(temperature) =>
-                                  handleUpdateConversation(
-                                    selectedConversation,
-                                    {
-                                      key: 'temperature',
-                                      value: temperature,
-                                    },
-                                  )
-                                }
-                              />
-                            </div>
-                          </div>
-                        </Transition>
-                      )}
-                    </div>
-                  </Transition>
-                )}
-                <div className="flex h-[88%] items-center justify-center">
-                  <div className="mx-auto flex flex-col px-3">
-                    <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
-                      {models.length === 0 ? (
-                        <div>
-                          <Spinner size="16px" className="mx-auto" />
-                        </div>
-                      ) : (
-                        <div className="flex flex-col items-center">
-                          <div className="flex flex-row justify-center items-end">
-                            {!showSettings && (
-                              <Transition
-                                appear={true}
-                                show={image}
-                                enter="transition-opacity duration-1000"
-                                enterFrom="opacity-0"
-                                enterTo="opacity-100"
-                                leave="transition-opacity duration-300"
-                                leaveFrom="opacity-100"
-                                leaveTo="opacity-0"
-                              >
-                                <div className="flex-shrink-0 flex flex-col items-center">
-                                  <div className="ml-2 group relative flex flex-row">
-                                    <Image
-                                      src={
-                                        lightMode === 'light'
-                                          ? lightTextLogo
-                                          : darkTextLogo
-                                      }
-                                      alt="MSF Logo"
-                                      style={{
-                                        maxWidth: '150px',
-                                        maxHeight: '150px',
-                                      }}
-                                    />
-                                    <IconInfoCircle
-                                      size={20}
-                                      className="text-black dark:text-white"
-                                    />
-                                    <span className="tooltip absolute bg-gray-700 text-white text-center py-2 px-3 w-[255px] rounded-lg text-sm bottom-full left-1/2 transform -translate-x-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300">
-                                      Type question below to get started.
-                                      <br />
-                                      <br />
-                                      Individual chat settings can be modified
-                                      with top banner gear icon.
-                                      <br />
-                                      <br />
-                                      Default settings can be modified in bottom
-                                      left settings menu.
-                                    </span>
-                                  </div>
-                                </div>
-                              </Transition>
-                            )}
-                          </div>
-                          <div className="mt-8 flex justify-center w-full">
-                            <div className="hidden sm:flex space-x-5">
-                              {randomPrompts.map((prompt, index) => (
-                                <button
-                                  key={index}
-                                  className="bg-transparent text-black dark:text-white border border-[#E0E0E0] dark:border-[#444444] rounded-md px-2 py-1 text-sm hover:bg-[#F9F9F9] dark:hover:bg-[#2F2F2F] dark:hover:text-white transition"
-                                  onClick={() =>
-                                    handleSend({
-                                      role: 'user',
-                                      content: prompt.prompt,
-                                      messageType: 'text',
-                                    })
-                                  }
-                                  style={{
-                                    width: '200px',
-                                    height: '100px',
-                                    textAlign: 'start',
-                                    whiteSpace: 'normal',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'start',
-                                    justifyContent: 'center',
-                                    padding: '30px',
-                                  }}
-                                >
-                                  {prompt.icon && (
-                                    <div className="flex flex-col items-start">
-                                      <prompt.icon className="h-5 w-5 mb-2" />
-                                      <div>
-                                        <span>{prompt.title}</span>
-                                      </div>
-                                    </div>
-                                  )}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </>
-            ) : (
+      {/* Messages */}
+      <div
+        ref={chatContainerRef}
+        className="flex-1 overflow-auto"
+      >
+        {!hasMessages ? (
+          <EmptyState onSelectPrompt={handleSelectPrompt} />
+        ) : (
+          <div className="mx-auto max-w-3xl pb-[200px]">
+            {messages.map((message, index) => (
+              <MemoizedChatMessage
+                key={index}
+                message={message}
+                messageIndex={index}
+                onEdit={handleEditMessage}
+                onRegenerate={handleRegenerate}
+              />
+            ))}
+            {/* Show streaming message or loading indicator */}
+            {isStreaming && (
               <>
-                <ChatTopbar 
-                  botInfo={botInfo}
-                  selectedModelName={selectedConversation?.model?.name}
-                  showSettings={showSettings}
-                  onSettingsClick={handleSettings}
-                  onClearAll={onClearAll}
-                  userEmail={user?.mail}
-                  hasMessages={true}
-                />
-                {showSettings && (
-                  <Transition
-                    appear={true}
-                    show={showSettings}
-                    enter="transition-opacity duration-500"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="transition-opacity duration-300"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                  >
-                    <div
-                      className="fixed inset-0 z-50 flex items-center justify-center"
-                      onClick={handleClickOutside}
-                    >
-                      <div className="fixed inset-0 bg-black opacity-50" />
-                      <div
-                        ref={modalRef}
-                        className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
-                      >
-                        <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                          {t('AI Model Selection:')}
-                          <ModelSelect />
-                        </div>
-                        <div className="text-black dark:text-white">
-                          {selectedConversation ? t('Temperature') : ''}
-                        </div>
-                        {selectedConversation ? (
-                          <TemperatureSlider
-                            temperature={selectedConversation?.temperature}
-                            onChangeTemperature={(temperature) =>
-                              handleUpdateConversation(selectedConversation, {
-                                key: 'temperature',
-                                value: temperature,
-                              })
-                            }
-                          />
-                        ) : (
-                          <></>
-                        )}
+                {streamingContent ? (
+                  <MemoizedChatMessage
+                    message={{
+                      role: 'assistant',
+                      content: streamingContent,
+                      messageType: 'text',
+                      citations,
+                    }}
+                    messageIndex={messages.length}
+                    onEdit={() => {}}
+                  />
+                ) : (
+                  <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
+                    <div className="flex items-center space-x-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                       </div>
                     </div>
-                  </Transition>
+                  </div>
                 )}
-
-                {selectedConversation?.messages.map((message, index) => (
-                  <MemoizedChatMessage
-                    key={`conversation-message-${index}`}
-                    message={message}
-                    messageIndex={index}
-                    onEdit={(editedMessage) => {
-                      setCurrentMessage(editedMessage);
-                      // discard edited message and the ones that come after then resend
-                      handleSend(
-                        editedMessage,
-                        selectedConversation?.messages.length - index,
-                      );
-                    }}
-                  />
-                ))}
-
-                {loading && (
-                  <ChatLoader
-                    requestStatusMessage={requestStatusMessage}
-                    progress={progress}
-                  />
-                )}
-
-                <div
-                  className="h-[2px] bg-white dark:bg-[#212121]"
-                  ref={messagesEndRef}
-                />
               </>
             )}
+            <div ref={messagesEndRef} />
           </div>
+        )}
+      </div>
 
-          <ChatInput
-            stopConversationRef={stopConversationRef}
-            textareaRef={textareaRef}
-            onSend={(message, plugin) => {
-              setCurrentMessage(message);
-              handleSend(message, 0, plugin);
-            }}
-            onScrollDownClick={handleScrollDown}
-            onRegenerate={() => {
-              if (currentMessage) {
-                handleSend(currentMessage, 2, null);
-              }
-            }}
-            showScrollDownButton={showScrollDownButton}
-            setFilePreviews={setFilePreviews}
-            filePreviews={filePreviews}
-          />
-        </>
+      {/* Error Display */}
+      {error && (
+        <div className="absolute bottom-[160px] left-0 right-0 mx-auto w-full max-w-3xl px-4 py-2">
+          <div className="rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-start justify-between">
+            <span className="flex-1">{error}</span>
+            <button
+              onClick={clearError}
+              className="ml-4 text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-100 transition-colors flex-shrink-0"
+              aria-label="Dismiss error"
+            >
+              <IconX size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Chat Input */}
+      <ChatInput
+        onSend={handleSend}
+        onRegenerate={handleRegenerate}
+        onScrollDownClick={handleScrollDown}
+        stopConversationRef={stopConversationRef}
+        textareaRef={textareaRef}
+        showScrollDownButton={showScrollDownButton}
+        filePreviews={filePreviews}
+        setFilePreviews={setFilePreviews}
+      />
+
+      {/* Model Selection Modal */}
+      {isModelSelectOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[150]"
+          onClick={() => setIsModelSelectOpen(false)}
+        >
+          <div
+            className="max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4 rounded-lg bg-white dark:bg-[#212121] p-6 shadow-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ModelSelect onClose={() => setIsModelSelectOpen(false)} />
+          </div>
+        </div>
       )}
     </div>
   );
-});
-Chat.displayName = 'Chat';
+}

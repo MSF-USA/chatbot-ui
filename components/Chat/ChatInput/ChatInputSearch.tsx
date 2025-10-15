@@ -1,29 +1,29 @@
 import {
   IconBrandBing,
-  IconChevronDown,
-  IconChevronUp,
   IconLink,
   IconSearch,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
   SetStateAction,
-  useContext,
   useEffect,
   useRef,
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
+
+import { AgentType } from '@/types/agent';
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
+  Message,
+  MessageType,
 } from '@/types/chat';
-
-import HomeContext from '@/pages/api/home/home.context';
 
 import BetaBadge from '@/components/Beta/Badge';
 import Modal from '@/components/UI/Modal';
@@ -37,42 +37,29 @@ interface ChatInputSearchProps {
     event: React.ChangeEvent<any> | File[] | FileList,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
     setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<
-      SetStateAction<
-        | FileMessageContent
-        | FileMessageContent[]
-        | ImageMessageContent
-        | ImageMessageContent[]
-        | null
-      >
-    >,
-    setImageFieldValue: Dispatch<
-      SetStateAction<
-        ImageMessageContent | ImageMessageContent[] | null | undefined
-      >
-    >,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<
-    SetStateAction<
-      | FileMessageContent
-      | FileMessageContent[]
-      | ImageMessageContent
-      | ImageMessageContent[]
-      | null
-    >
-  >;
-  setImageFieldValue: Dispatch<
-    SetStateAction<
-      ImageMessageContent | ImageMessageContent[] | null | undefined
-    >
-  >;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   setTextFieldValue: Dispatch<SetStateAction<string>>;
-  handleSend: () => void;
   initialMode?: 'search' | 'url';
+  // New props for agent-based web search
+  onSend?: (
+    message: Message,
+    forceStandardChat?: boolean,
+    forcedAgentType?: AgentType,
+  ) => void;
+  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
+  setProgress?: Dispatch<SetStateAction<number | null>>;
+  stopConversationRef?: { current: boolean };
+  apiKey?: string;
+  systemPrompt?: string;
+  temperature?: number;
 }
 
 const ChatInputSearch = ({
@@ -85,13 +72,16 @@ const ChatInputSearch = ({
   setImageFieldValue,
   setUploadProgress,
   setTextFieldValue,
-  handleSend,
   initialMode = 'search',
+  onSend,
+  setRequestStatusMessage,
+  setProgress,
+  stopConversationRef,
+  apiKey,
+  systemPrompt,
+  temperature,
 }: ChatInputSearchProps) => {
-  const { t } = useTranslation('chat');
-  const {
-    state: { user },
-  } = useContext(HomeContext);
+  const t = useTranslations();
 
   const [mode, setMode] = useState<'search' | 'url'>(initialMode);
 
@@ -104,22 +94,12 @@ const ChatInputSearch = ({
 
   // Search Mode States
   const [searchInput, setSearchInput] = useState('');
-  const [searchQuestionInput, setSearchQuestionInput] = useState('');
   const [searchError, setSearchError] = useState<string | null>(null);
   const [searchStatusMessage, setSearchStatusMessage] = useState<string | null>(
     null,
   );
   const [isSearchSubmitting, setIsSearchSubmitting] = useState<boolean>(false);
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
-  const [shouldOptimizeInput, setShouldOptimizeInput] = useState<boolean>(true);
-  const [mkt, setMkt] = useState<string>('');
-  const [safeSearch, setSafeSearch] = useState<string>('Moderate');
-  const [count, setCount] = useState<number | null>(5);
-  const [offset, setOffset] = useState<number>(0);
 
-  // Common States
-  const [autoSubmit, setAutoSubmit] = useState<boolean>(true);
-  const [isReadyToSend, setIsReadyToSend] = useState<boolean>(false);
 
   const urlInputRef = useRef<HTMLInputElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -135,17 +115,13 @@ const ChatInputSearch = ({
       // Only if modal is intended to be open
       if (mode === 'url' && !urlQuestionInput && urlInput) {
         setUrlQuestionInput(t('defaultWebPullerQuestion'));
-      } else if (mode === 'search' && !searchQuestionInput && searchInput) {
-        setSearchQuestionInput(t('webSearchModalDefaultQuestion'));
       }
     }
   }, [
     urlInput,
-    searchInput,
     mode,
     t,
     urlQuestionInput,
-    searchQuestionInput,
     isOpen,
   ]);
 
@@ -160,14 +136,8 @@ const ChatInputSearch = ({
     }
   }, [isOpen, mode]);
 
-  // Handle sending the message after successful operation if autoSubmit is true
-  useEffect(() => {
-    if (isReadyToSend) {
-      setIsReadyToSend(false);
-      handleSend();
-      onClose(); // Close modal after sending
-    }
-  }, [isReadyToSend, handleSend, onClose]);
+
+
 
   const handleUrlSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -209,8 +179,7 @@ const ChatInputSearch = ({
           'webPullerCitationPrompt',
         )}: ${urlInput}\n\n${t('webPullerReferencePrompt')}`,
       );
-      if (autoSubmit) setIsReadyToSend(true);
-      else onClose();
+      onClose();
 
       setUrlInput('');
       setUrlQuestionInput('');
@@ -233,96 +202,34 @@ const ChatInputSearch = ({
     event.preventDefault();
     setSearchError(null);
     setIsSearchSubmitting(true);
-    let adjustedCount = count ?? 5;
-    adjustedCount = Math.min(Math.max(adjustedCount, 1), 15);
 
     try {
-      let optimizedQuery = searchInput;
-      let optimizedQuestion =
-        searchQuestionInput || t('webSearchModalDefaultQuestion');
+      const originalQuery = searchInput;
 
-      if (shouldOptimizeInput && searchInput) {
-        // ensure searchInput is not empty for optimization
-        setSearchStatusMessage(t('webSearchModalOptimizingStatusMessage'));
-        try {
-          const optimizeResponse = await fetch('/api/v2/web/search/structure', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              question: searchInput,
-              user,
-              modelId: 'gpt-4o',
-            }),
-          });
-          if (optimizeResponse.ok) {
-            const optimizeData = await optimizeResponse.json();
-            optimizedQuery = optimizeData.optimizedQuery;
-            optimizedQuestion = optimizeData.optimizedQuestion;
-            setSearchInput(optimizedQuery);
-            setSearchQuestionInput(optimizedQuestion);
-          } else {
-            console.warn(
-              'Failed to optimize query:',
-              optimizeResponse.statusText,
-            );
-          }
-        } catch (optError) {
-          console.warn('Error optimizing query:', optError);
-        }
+      // Simply send the search query with forced web search agent
+      // The parent component's agentic service will handle:
+      // 1. Query optimization
+      // 2. Agent execution
+      // 3. Response generation with citations
+      if (onSend) {
+        const userMessage: Message = {
+          role: 'user',
+          content: originalQuery,
+          messageType: MessageType.TEXT,
+        };
+        // Pass AgentType.WEB_SEARCH as forced agent to ensure web search is used
+        onSend(userMessage, undefined, AgentType.WEB_SEARCH);
       }
 
-      setSearchStatusMessage(t('webSearchModalSearchingStatusMessage'));
-      const queryParams = new URLSearchParams({
-        q: optimizedQuery,
-        mkt,
-        safeSearch,
-        count: adjustedCount.toString(),
-        offset: offset.toString(),
-      }).toString();
-
-      const response = await fetch(`/api/v2/web/search?${queryParams}`);
-      if (!response.ok)
-        throw new Error(
-          t('errorFailedToFetchSearchResults') ||
-            'Failed to fetch search results',
-        );
-      const data = await response.json();
-      if (data.error) throw new Error(data.error);
-
-      const content = data.content;
-      setSearchStatusMessage(t('webSearchModalHandlingContentStatusMessage'));
-      const hash = crypto.createHash('sha256').update(content).digest('hex');
-      const blob = new Blob([content], { type: 'text/plain' });
-      const fileName = `search-${optimizedQuery
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')}_${hash}.txt`;
-      const file = new File([blob], fileName, { type: 'text/plain' });
-
-      await onFileUpload(
-        [file],
-        setSubmitType,
-        setFilePreviews,
-        setFileFieldValue,
-        setImageFieldValue,
-        setUploadProgress,
-      );
-      setTextFieldValue(
-        `${optimizedQuestion}\n\n${t(
-          'webSearchModalPromptUserContext',
-        )}:\n\n\`\`\`user-request\n${optimizedQuery}\n\`\`\`\n\n${t(
-          'webSearchModalPromptCitation',
-        )}`,
-      );
-      if (autoSubmit) setIsReadyToSend(true);
-      else onClose();
+      // Close modal and reset state
+      onClose();
       setSearchInput('');
-      setSearchQuestionInput('');
     } catch (error: any) {
       console.error(error);
       setSearchError(
         error.message ||
           t('errorOccurredFetchingSearchResults') ||
-          'An error occurred while fetching search results',
+          'An error occurred while initiating web search',
       );
     } finally {
       setSearchStatusMessage(null);
@@ -332,34 +239,36 @@ const ChatInputSearch = ({
 
   const isSubmitting = isUrlSubmitting || isSearchSubmitting;
 
-  const renderTabs = () => (
-    <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
-      <button
-        onClick={() => setMode('search')}
-        disabled={isSubmitting}
-        className={`px-4 py-2 font-medium ${
-          mode === 'search'
-            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-        }`}
-        aria-pressed={mode === 'search'}
-      >
-        {t('webSearchModalTitle')}
-      </button>
-      <button
-        onClick={() => setMode('url')}
-        disabled={isSubmitting}
-        className={`px-4 py-2 font-medium ${
-          mode === 'url'
-            ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
-            : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
-        }`}
-        aria-pressed={mode === 'url'}
-      >
-        {t('chatUrlInputTitle')}
-      </button>
-    </div>
-  );
+  const renderTabs = () => {
+    return (
+      <div className="mb-4 flex justify-center border-b border-gray-300 dark:border-gray-600">
+        <button
+          onClick={() => setMode('search')}
+          disabled={isSubmitting}
+          className={`px-4 py-2 font-medium ${
+            mode === 'search'
+              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          aria-pressed={mode === 'search'}
+        >
+          {t('webSearchModalTitle')}
+        </button>
+        <button
+          onClick={() => setMode('url')}
+          disabled={isSubmitting}
+          className={`px-4 py-2 font-medium ${
+            mode === 'url'
+              ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+              : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
+          }`}
+          aria-pressed={mode === 'url'}
+        >
+          {t('chatUrlInputTitle')}
+        </button>
+      </div>
+    );
+  };
 
   const renderUrlForm = () => (
     <form onSubmit={handleUrlSubmit} className={'mt-1'}>
@@ -409,29 +318,13 @@ const ChatInputSearch = ({
           </p>
         )}
       </div>
-      <div className="flex items-center">
-        <input
-          id="auto-submit-url"
-          type="checkbox"
-          checked={autoSubmit}
-          onChange={(e) => setAutoSubmit(e.target.checked)}
-          disabled={isSubmitting}
-          className="h-4 w-4 mr-2"
-        />
-        <label
-          htmlFor="auto-submit-url"
-          className="text-sm text-gray-700 dark:text-gray-200"
-        >
-          {t('autoSubmitButton')}
-        </label>
-      </div>
       <button
         type="submit"
         disabled={isSubmitting}
         className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
       >
         <IconLink className="mr-2 h-4 w-4" />
-        {autoSubmit ? t('submitButton') : t('generatePromptButton')}
+        {t('submitButton')}
       </button>
     </form>
   );
@@ -443,221 +336,24 @@ const ChatInputSearch = ({
           <em className="text-sm text-gray-500 dark:text-gray-400 mb-2 ml-1">
             {t('webSearchInputDescription')}
           </em>
-          <div className="flex items-center">
-            <div className="relative w-full">
-              <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <input
-                id="search-term"
-                type="text"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                placeholder={t('searchQueryPlaceholder')}
-                required
-                disabled={isSubmitting}
-                title={t('searchQueryPlaceholder')}
-                ref={searchInputRef}
-                className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
+          <div className="relative w-full">
+            <IconBrandBing className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
-              id="auto-submit-search"
-              type="checkbox"
-              checked={autoSubmit}
-              onChange={(e) => setAutoSubmit(e.target.checked)}
+              id="search-term"
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder={t('searchQueryPlaceholder')}
+              required
               disabled={isSubmitting}
-              title={
-                t('autoSubmitTooltip') ||
-                'Automatically submit the question after search'
-              }
-              className="h-4 w-4 mr-2"
+              title={t('searchQueryPlaceholder')}
+              ref={searchInputRef}
+              className="w-full pl-10 pr-2 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
             />
-            <label
-              htmlFor="auto-submit-search"
-              className="text-sm text-gray-700 dark:text-gray-200"
-            >
-              {t('autoSubmitButton')}
-            </label>
           </div>
-          <button
-            type="button"
-            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-500 flex items-center"
-            onClick={() => setIsAdvancedOpen(!isAdvancedOpen)}
-            disabled={isSubmitting}
-            aria-expanded={isAdvancedOpen}
-            aria-controls="advanced-options-search"
-          >
-            {t('advancedOptionsButton')}
-            {isAdvancedOpen ? (
-              <IconChevronUp className="ml-2 h-4 w-4" />
-            ) : (
-              <IconChevronDown className="ml-2 h-4 w-4" />
-            )}
-          </button>
         </div>
-
-        {isAdvancedOpen && (
-          <div
-            id="advanced-options-search"
-            className="space-y-4 border-t border-gray-200 dark:border-gray-700 pt-4"
-          >
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label
-                htmlFor="optimize-input"
-                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-              >
-                {t('webSearchModalOptimizeLabel')}
-              </label>
-              <input
-                id="optimize-input"
-                type="checkbox"
-                checked={shouldOptimizeInput}
-                onChange={(e) =>
-                  setShouldOptimizeInput(e.target.checked)
-                }
-                disabled={isSubmitting}
-                title={
-                  t('optimizeQueryTooltip') ||
-                  'Do you want us to use AI to generate a more targeted set of queries to answer your question?'
-                }
-                className="h-4 w-4"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label
-                htmlFor="search-question-input"
-                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-              >
-                {t('webPullerQuestionLabel')}
-              </label>
-              <input
-                id="search-question-input"
-                type="text"
-                value={searchQuestionInput}
-                onChange={(e) => setSearchQuestionInput(e.target.value)}
-                placeholder={t('webSearchModalDefaultQuestion')}
-                disabled={isSubmitting}
-                title={
-                  t('processPagesTooltip') ||
-                  'Enter what you want the AI to do to pre-process the pages it finds'
-                }
-                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-              />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label
-                htmlFor="market"
-                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-              >
-                {t('webSearchModalMarketLabel')}
-              </label>
-              <select
-                id="market"
-                value={mkt}
-                onChange={(e) => setMkt(e.target.value)}
-                disabled={isSubmitting}
-                title={t('selectMarketTooltip') || 'Select the market'}
-                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              >
-                <option value="">
-                  {t('marketOptionAny') || 'Any'}
-                </option>
-                <option value="ar">
-                  {t('marketOptionAr') || 'Arabic (General)'}
-                </option>
-                <option value="en">
-                  {t('marketOptionEn') || 'English (General)'}
-                </option>
-                <option value="en-US">
-                  {t('marketOptionEnUs') || 'English (United States)'}
-                </option>
-                <option value="en-GB">
-                  {t('marketOptionEnGb') || 'English (United Kingdom)'}
-                </option>
-                <option value="fr-FR">
-                  {t('marketOptionFrFr') || 'French (France)'}
-                </option>
-                <option value="es">
-                  {t('marketOptionEs') || 'Spanish (General)'}
-                </option>
-                <option value="es-ES">
-                  {t('marketOptionEsEs') || 'Spanish (Spain)'}
-                </option>
-                <option value="de-DE">
-                  {t('marketOptionDeDe') || 'German (Germany)'}
-                </option>
-              </select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label
-                htmlFor="safe-search"
-                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-              >
-                {t('webSearchModalSafeSearchLabel')}
-              </label>
-              <select
-                id="safe-search"
-                value={safeSearch}
-                onChange={(e) => setSafeSearch(e.target.value)}
-                disabled={isSubmitting}
-                title={
-                  t('selectSafeSearchTooltip') ||
-                  'Select the safe search level'
-                }
-                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-              >
-                <option value="Off">{t('safeSearchOptionOff')}</option>
-                <option value="Moderate">
-                  {t('safeSearchOptionModerate')}
-                </option>
-                <option value="Strict">
-                  {t('safeSearchOptionStrict')}
-                </option>
-              </select>
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <label
-                htmlFor="count"
-                className="text-right text-sm font-medium text-gray-700 dark:text-gray-200"
-              >
-                {t('webSearchModalResultsLabel')}
-              </label>
-              <input
-                id="count"
-                type="number"
-                min="1"
-                max="15"
-                value={count === null ? '' : count}
-                onChange={(e) => {
-                  const val = e.target.value;
-                  setCount(val === '' ? null : parseInt(val, 10));
-                }}
-                onBlur={() => {
-                  if (count !== null) {
-                    const adjusted = Math.max(1, Math.min(count, 15));
-                    if (adjusted !== count) setCount(adjusted);
-                  } else {
-                    setCount(5);
-                  }
-                }}
-                disabled={isSubmitting}
-                title={
-                  t('numResultsTooltip') ||
-                  'Enter the number of results (1-15)'
-                }
-                className="col-span-3 mt-1 w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white bg-white dark:bg-gray-700"
-              />
-            </div>
-          </div>
-        )}
         {searchError && (
-          <p
-            className="text-red-500 text-sm mt-2 text-center"
-            role="alert"
-          >
+          <p className="text-red-500 text-sm mt-2 text-center" role="alert">
             {searchError}
           </p>
         )}
@@ -676,7 +372,7 @@ const ChatInputSearch = ({
         className="w-full px-4 py-2 mt-4 text-black text-base font-medium border rounded-md shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:hover:bg-neutral-300 flex items-center justify-center"
       >
         <IconSearch className="mr-2 h-4 w-4" />
-        {autoSubmit ? t('submitButton') : t('generatePromptButton')}
+        {t('submitButton')}
       </button>
     </form>
   );

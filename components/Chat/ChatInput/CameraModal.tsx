@@ -8,9 +8,9 @@ import React, {
   useState,
 } from 'react';
 
-import { useTranslation } from 'next-i18next';
+import { useTranslations } from 'next-intl';
 
-import {ChatInputSubmitTypes, FileMessageContent, FilePreview, ImageMessageContent} from '@/types/chat';
+import {ChatInputSubmitTypes, FilePreview, FileFieldValue} from '@/types/chat';
 
 import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
 import Modal from '@/components/UI/Modal';
@@ -22,9 +22,7 @@ const onTakePhotoButtonClick = (
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<
-    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
-  >,
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
   closeModal: () => void,
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>,
 ) => {
@@ -77,9 +75,7 @@ interface CameraModalProps {
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setImageFieldValue: Dispatch<
-    SetStateAction<FileMessageContent | FileMessageContent[] | ImageMessageContent | ImageMessageContent[] | null>
-  >;
+  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
@@ -95,7 +91,7 @@ export const CameraModal: FC<CameraModalProps> = ({
   setImageFieldValue,
   setUploadProgress,
 }) => {
-  const { t } = useTranslation('chat');
+  const t = useTranslations();
   const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
   const [selectedCamera, setSelectedCamera] = useState<string>('');
 
@@ -120,14 +116,16 @@ export const CameraModal: FC<CameraModalProps> = ({
     };
 
     getDevices();
-    
+
     // Cleanup function to stop media stream when component unmounts or modal closes
     return () => {
+      const video = videoRef.current;
       if (isOpen === false) {
-        stopMediaStream(videoRef.current);
+        stopMediaStream(video);
       }
     };
-  }, [isOpen, videoRef]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const startCamera = async (deviceId: string) => {
     try {

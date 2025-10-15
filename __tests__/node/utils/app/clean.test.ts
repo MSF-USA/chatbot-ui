@@ -1,12 +1,13 @@
 import { describe, it, beforeEach, expect, vi } from 'vitest'
-import { cleanSelectedConversation, cleanConversationHistory } from '../../../../utils/app/clean'
-import { Conversation, } from '../../../../types/chat'
-import { OpenAIModels, OpenAIModelID } from '../../../../types/openai'
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '../../../../utils/app/const'
+import { cleanSelectedConversation, cleanConversationHistory } from '@/lib/utils/app/clean'
+import { Conversation, } from '@/types/chat'
+import { OpenAIModels, OpenAIModelID } from '@/types/openai'
+import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/lib/utils/app/const'
 
 let tempConversation: Conversation = {
     id: '1',
-    model: undefined,
+    name: 'Test Conversation',
+    model: OpenAIModels[OpenAIModelID.GPT_5],
     prompt: '',
     messages: [],
     folderId: '',
@@ -18,7 +19,8 @@ beforeEach(() => {
     // initialized with minimum properties for a "Conversation" type
     tempConversation = {
         id: '1',
-        model: undefined,
+        name: 'Test Conversation',
+        model: OpenAIModels[OpenAIModelID.GPT_5],
         prompt: '',
         messages: [],
         folderId: '',
@@ -27,13 +29,9 @@ beforeEach(() => {
 
     tempHistory = [
         { ...tempConversation },
-        { ...tempConversation, id: '2' },
-        { ...tempConversation, id: '3' }
+        { ...tempConversation, id: '2', name: 'Test 2' },
+        { ...tempConversation, id: '3', name: 'Test 3' }
     ]
-    tempHistory.reduce((item) => {
-        item.model = undefined;
-        return item
-    })
 })
 
 describe('Conversation tests', () => {
@@ -41,7 +39,7 @@ describe('Conversation tests', () => {
     it('cleans single conversation correctly', () => {
         const result: Conversation = cleanSelectedConversation(tempConversation)
 
-        expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_3_5])
+        expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_5])
         expect(result.prompt).toBe(DEFAULT_SYSTEM_PROMPT)
         expect(result.temperature).toBe(DEFAULT_TEMPERATURE)
         expect(result.folderId).toBe(null)
@@ -49,14 +47,10 @@ describe('Conversation tests', () => {
     })
 
     it('cleans conversation history with valid array correctly', () => {
-        // @ts-ignore
-        const results: Conversation[] = cleanConversationHistory(tempHistory.reduce((item) => {
-            item.model = null;
-            return item
-        }))
+        const results: Conversation[] = cleanConversationHistory(tempHistory)
 
-        for (const result: Conversation in results) {
-            expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_3_5])
+        for (const result of results) {
+            expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_5])
             expect(result.prompt).toBe(DEFAULT_SYSTEM_PROMPT)
             expect(result.temperature).toBe(DEFAULT_TEMPERATURE)
             expect(result.folderId).toBe(null)
@@ -65,6 +59,7 @@ describe('Conversation tests', () => {
     })
 
     it('returns an empty array when a non-array input is used for cleaning conversation history', () => {
+        // @ts-ignore - testing error handling with invalid input
         const result = cleanConversationHistory('this is not an array')
 
         expect(result).toStrictEqual([])

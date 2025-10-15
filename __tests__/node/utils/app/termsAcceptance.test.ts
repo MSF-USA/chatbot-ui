@@ -10,7 +10,7 @@ import {
   hasUserAcceptedAllRequiredDocuments,
   fetchTermsData,
   checkUserTermsAcceptance
-} from '@/utils/app/termsAcceptance';
+} from '@/lib/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 
 import { Mock } from 'vitest';
@@ -38,15 +38,23 @@ describe('termsAcceptance utility', () => {
 
   const mockTermsData: TermsData = {
     platformTerms: {
-      content: 'Platform Terms Content',
+      localized: {
+        en: {
+          content: 'Platform Terms Content',
+          hash: 'abc123'
+        }
+      },
       version: '1.0.0',
-      hash: 'abc123',
       required: true
     },
     privacyPolicy: {
-      content: 'Privacy Policy Content',
+      localized: {
+        en: {
+          content: 'Privacy Policy Content',
+          hash: 'def456'
+        }
+      },
       version: '1.0.0',
-      hash: 'def456',
       required: true
     }
   };
@@ -111,6 +119,7 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
@@ -206,7 +215,7 @@ describe('termsAcceptance utility', () => {
 
   describe('hasUserAcceptedDocument', () => {
     it('should return false if user has no acceptance records', () => {
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', mockTermsData);
       expect(result).toBe(false);
     });
 
@@ -218,13 +227,14 @@ describe('termsAcceptance utility', () => {
             documentType: 'privacyPolicy',
             version: '1.0.0',
             hash: 'def456',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
       };
       localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', mockTermsData);
       expect(result).toBe(false);
     });
 
@@ -236,13 +246,14 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '0.9.0', // Different version
             hash: 'abc123',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
       };
       localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', mockTermsData);
       expect(result).toBe(false);
     });
 
@@ -254,13 +265,14 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'differentHash', // Different hash
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
       };
       localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', mockTermsData);
       expect(result).toBe(false);
     });
 
@@ -272,29 +284,38 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
       };
       localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', mockTermsData);
       // expect(result).toBe(true);
     });
   });
 
   describe('hasUserAcceptedAllRequiredDocuments', () => {
-    const mockTermsData: TermsData = {
+    const localMockTermsData: TermsData = {
       platformTerms: {
-        content: 'Platform Terms Content',
+        localized: {
+          en: {
+            content: 'Platform Terms Content',
+            hash: 'abc123'
+          }
+        },
         version: '1.0.0',
-        hash: 'abc123',
         required: true
       },
       privacyPolicy: {
-        content: 'Privacy Policy Content',
+        localized: {
+          en: {
+            content: 'Privacy Policy Content',
+            hash: 'def456'
+          }
+        },
         version: '1.0.0',
-        hash: 'def456',
         required: true
       }
     };
@@ -306,7 +327,7 @@ describe('termsAcceptance utility', () => {
 
     it('should return false if user has not accepted any documents', () => {
       localStorageMock.getItem.mockReturnValue(null);
-      const result = hasUserAcceptedAllRequiredDocuments(mockUserId, mockTermsData);
+      const result = hasUserAcceptedAllRequiredDocuments(mockUserId, localMockTermsData);
       expect(result).toBe(false);
     });
 
@@ -318,6 +339,7 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
@@ -336,12 +358,14 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
+            locale: 'en',
             acceptedAt: 1234567890
           },
           {
             documentType: 'privacyPolicy',
             version: '1.0.0',
             hash: 'def456',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
@@ -363,12 +387,14 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
+            locale: 'en',
             acceptedAt: 1234567890
           },
           {
             documentType: 'privacyPolicy',
             version: '1.0.0',
             hash: 'def456',
+            locale: 'en',
             acceptedAt: 1234567890
           }
         ]
@@ -379,7 +405,7 @@ describe('termsAcceptance utility', () => {
 
       const result = await checkUserTermsAcceptance(mockUser);
 
-      expect(fetch).toHaveBeenCalledWith('/api/v2/terms');
+      expect(fetch).toHaveBeenCalledWith('/api/terms');
       // expect(result).toBe(true);
     });
   });
@@ -388,7 +414,7 @@ describe('termsAcceptance utility', () => {
     it('should fetch terms data from the API', async () => {
       const result = await fetchTermsData();
 
-      expect(fetch).toHaveBeenCalledWith('/api/v2/terms');
+      expect(fetch).toHaveBeenCalledWith('/api/terms');
       expect(result).toEqual(mockTermsData);
     });
 
