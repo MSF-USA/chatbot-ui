@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function XAIIcon(props: React.SVGProps<SVGSVGElement>) {
   const { className, ...rest } = props;
   return (

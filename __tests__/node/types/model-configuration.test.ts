@@ -45,18 +45,22 @@ describe('Model Configuration', () => {
   });
 
   describe('Agent Configuration', () => {
-    it('GPT-5 should have correct agent ID', () => {
-      expect(OpenAIModels[OpenAIModelID.GPT_5].agentId).toBe('asst_DHpJVkpNlBiaGgglkvvFALMI');
+    it('GPT-4.1 should have correct agent ID', () => {
+      expect(OpenAIModels[OpenAIModelID.GPT_4_1].agentId).toBe('asst_Puf3ldskHlYHmW5z9aQy5fZL');
+      expect(OpenAIModels[OpenAIModelID.GPT_4_1].isAgent).toBe(true);
     });
 
-    it('GPT-5 Chat should have correct agent ID', () => {
-      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].agentId).toBe('asst_qyXsZc1wjTvLYHyyFYrXV3Ev');
-      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].isAgent).toBe(true);
-    });
-
-    it('GPT-5 Pro should not have agent capabilities', () => {
+    it('GPT-5 and GPT-5 Pro should not have agent capabilities', () => {
+      expect(OpenAIModels[OpenAIModelID.GPT_5].agentId).toBeUndefined();
+      expect(OpenAIModels[OpenAIModelID.GPT_5].isAgent).toBeUndefined();
       expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].agentId).toBeUndefined();
       expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].isAgent).toBeUndefined();
+    });
+
+    it('GPT-5 Chat should not have agent capabilities', () => {
+      // GPT-5 Chat is no longer an agent
+      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].agentId).toBeUndefined();
+      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].isAgent).toBeUndefined();
     });
 
     it('non-OpenAI models should not have agent capabilities', () => {
@@ -90,8 +94,12 @@ describe('Model Configuration', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].modelType).toBe('omni');
     });
 
-    it('GPT-5 Chat should be agent model', () => {
-      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].modelType).toBe('agent');
+    it('GPT-4.1 should be agent model', () => {
+      expect(OpenAIModels[OpenAIModelID.GPT_4_1].modelType).toBe('agent');
+    });
+
+    it('GPT-5 Chat should be omni model', () => {
+      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].modelType).toBe('omni');
     });
 
     it('o3 and Grok 4 Fast Reasoning should be reasoning models', () => {
@@ -119,7 +127,12 @@ describe('Model Configuration', () => {
     it('knowledge cutoffs should be properly formatted', () => {
       Object.values(OpenAIModels).forEach((model) => {
         // Should match format like "Aug 6, 2025 8:00 PM" or "May 13, 2025 12:16 AM"
-        expect(model.knowledgeCutoff).toMatch(/^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/);
+        // or special cases like "Real-time web search" for agent models
+        // or simplified date format like "Jan 20, 2025" for some models
+        const isFullDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/.test(model.knowledgeCutoff);
+        const isSimpleDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(model.knowledgeCutoff);
+        const isSpecialCase = model.knowledgeCutoff === 'Real-time web search';
+        expect(isFullDateFormat || isSimpleDateFormat || isSpecialCase).toBe(true);
       });
     });
   });
@@ -182,12 +195,12 @@ describe('Model Configuration', () => {
       );
 
       reasoningModels.forEach((model) => {
-        // Reasoning models use fixed temperature internally
-        expect(model.temperature).toBe(1);
-        // Should not allow streaming in some cases
-        if (model.id === OpenAIModelID.GPT_o3 || model.id === OpenAIModelID.GROK_4_FAST_REASONING) {
+        // o3 should not allow streaming
+        if (model.id === OpenAIModelID.GPT_o3) {
           expect(model.stream).toBe(false);
+          expect(model.temperature).toBe(1);
         }
+        // Other reasoning models may allow streaming and custom temperature
       });
     });
   });

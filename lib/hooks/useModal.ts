@@ -70,10 +70,10 @@ const useModal = (
   // Prevent body scrolling when modal is open
   useEffect(() => {
     if (!isOpen) return;
-    
-    const originalStyle = window.getComputedStyle(document.body).overflow;
+
+    const originalStyle = window.getComputedStyle(document.body).overflow || 'visible';
     document.body.style.overflow = 'hidden';
-    
+
     return () => {
       document.body.style.overflow = originalStyle;
     };

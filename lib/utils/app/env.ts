@@ -45,8 +45,13 @@ export function getEnvVariable(
     }
 
     let euUser: boolean = true;
-    if (user?.mail && user.mail.toLowerCase()?.indexOf('newyork.msf.org') > -1) {
-        euUser = false;
+    if (user?.mail) {
+        const emailLower = user.mail.toLowerCase();
+        const domain = emailLower.split('@')[1];
+        // Check if domain ends with newyork.msf.org (or is exactly newyork.msf.org)
+        if (domain && (domain === 'newyork.msf.org' || domain.endsWith('.newyork.msf.org'))) {
+            euUser = false;
+        }
     }
 
     let value: string | undefined;

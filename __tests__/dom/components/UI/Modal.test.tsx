@@ -42,13 +42,13 @@ describe('Modal', () => {
   it('renders with different size classes', () => {
     const mockOnClose = vi.fn();
 
-    const { rerender, container } = render(
+    const { rerender } = render(
       <Modal isOpen={true} onClose={mockOnClose} size="sm">
         <div>Content</div>
       </Modal>
     );
 
-    let modalContainer = container.querySelector('[role="dialog"]');
+    let modalContainer = document.body.querySelector('[role="dialog"]');
     expect(modalContainer).toHaveClass('max-w-sm');
 
     rerender(
@@ -57,7 +57,7 @@ describe('Modal', () => {
       </Modal>
     );
 
-    modalContainer = container.querySelector('[role="dialog"]');
+    modalContainer = document.body.querySelector('[role="dialog"]');
     expect(modalContainer).toHaveClass('max-w-2xl');
 
     rerender(
@@ -66,7 +66,7 @@ describe('Modal', () => {
       </Modal>
     );
 
-    modalContainer = container.querySelector('[role="dialog"]');
+    modalContainer = document.body.querySelector('[role="dialog"]');
     expect(modalContainer).toHaveClass('max-w-4xl');
   });
 
@@ -110,13 +110,13 @@ describe('Modal', () => {
 
   it('calls onClose when backdrop is clicked', () => {
     const mockOnClose = vi.fn();
-    const { container } = render(
+    render(
       <Modal isOpen={true} onClose={mockOnClose}>
         <div>Content</div>
       </Modal>
     );
 
-    const backdrop = container.querySelector('.bg-black.bg-opacity-40');
+    const backdrop = document.body.querySelector('.bg-black.bg-opacity-40');
     expect(backdrop).toBeInTheDocument();
 
     if (backdrop) {
@@ -181,13 +181,13 @@ describe('Modal', () => {
 
   it('has correct aria attributes', () => {
     const mockOnClose = vi.fn();
-    const { container } = render(
+    render(
       <Modal isOpen={true} onClose={mockOnClose} title="Test Modal">
         <div>Content</div>
       </Modal>
     );
 
-    const modal = container.querySelector('[role="dialog"]');
+    const modal = document.body.querySelector('[role="dialog"]');
     expect(modal).toHaveAttribute('aria-modal', 'true');
     expect(modal).toHaveAttribute('aria-labelledby', 'modal-title');
   });
@@ -209,25 +209,26 @@ describe('Modal', () => {
 
   it('applies custom className', () => {
     const mockOnClose = vi.fn();
-    const { container } = render(
+    render(
       <Modal isOpen={true} onClose={mockOnClose} className="custom-modal-class">
         <div>Content</div>
       </Modal>
     );
 
-    // The className is applied but may be processed, just verify it's in the DOM somewhere
-    expect(container.innerHTML).toContain('custom-modal-class');
+    // The className is applied to the modal dialog
+    const modal = document.body.querySelector('[role="dialog"]');
+    expect(modal?.className).toContain('custom-modal-class');
   });
 
   it('applies custom contentClassName', () => {
     const mockOnClose = vi.fn();
-    const { container } = render(
+    render(
       <Modal isOpen={true} onClose={mockOnClose} contentClassName="custom-content-class">
         <div>Content</div>
       </Modal>
     );
 
-    const contentDiv = container.querySelector('.modal-content');
+    const contentDiv = document.body.querySelector('.modal-content');
     expect(contentDiv).toHaveClass('custom-content-class');
   });
 });

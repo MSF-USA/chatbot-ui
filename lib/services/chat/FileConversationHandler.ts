@@ -151,7 +151,8 @@ export class FileConversationHandler {
       BlobProperty.BLOB,
     ) as Promise<Buffer>);
 
-    fs.writeFile(filePath, new Uint8Array(blob), () => null);
+    // Write file with secure permissions (0o600 = read/write for owner only)
+    await fs.promises.writeFile(filePath, new Uint8Array(blob), { mode: 0o600 });
   }
 
   /**

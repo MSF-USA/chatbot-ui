@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function MetaIcon(props: React.SVGProps<SVGSVGElement>) {
   const { className, ...rest } = props;
   return (

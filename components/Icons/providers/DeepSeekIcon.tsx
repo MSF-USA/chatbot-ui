@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function DeepSeekIcon(props: React.SVGProps<SVGSVGElement>) {
   const { className, ...rest } = props;
   return (

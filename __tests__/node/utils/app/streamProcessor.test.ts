@@ -51,8 +51,9 @@ describe('Azure OpenAI Stream Processor', () => {
       reader.releaseLock();
     }
 
-    // Extract just the content part, not the citations
-    return content.split('\n\n---CITATIONS_DATA---')[0];
+    // Extract just the content part, not the citations/metadata
+    const metadataStart = content.indexOf('\n\n<<<METADATA_START>>>');
+    return metadataStart > -1 ? content.slice(0, metadataStart) : content;
   }
 
   beforeEach(() => {
@@ -203,9 +204,10 @@ describe('Azure OpenAI Stream Processor', () => {
       reader.releaseLock();
     }
 
-    // Verify the citations are appended correctly
+    // Verify the citations are appended correctly with new metadata format
     expect(fullContent).toContain('Hello [1] World [2]');
-    expect(fullContent).toContain('---CITATIONS_DATA---');
+    expect(fullContent).toContain('<<<METADATA_START>>>');
+    expect(fullContent).toContain('<<<METADATA_END>>>');
     expect(fullContent).toContain('"title":"Test Source 1"');
     expect(fullContent).toContain('"title":"Test Source 2"');
   });

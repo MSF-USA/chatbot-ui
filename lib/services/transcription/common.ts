@@ -24,7 +24,8 @@ export async function saveBase64AsFile(base64String: string): Promise<string> {
   console.log('Saving base64 string as file...');
   const tempFilePath = path.join(os.tmpdir(), `temp_audio_${Date.now()}.wav`);
   const buffer = Buffer.from(base64String, 'base64');
-  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer));
+  // Write file with secure permissions (0o600 = read/write for owner only)
+  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer), { mode: 0o600 });
   console.log(`File saved at: ${tempFilePath}`);
   console.timeEnd('saveBase64AsFile');
   return tempFilePath;

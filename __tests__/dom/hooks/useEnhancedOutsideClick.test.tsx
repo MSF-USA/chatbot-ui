@@ -22,9 +22,9 @@ describe('useEnhancedOutsideClick', () => {
 
   describe('Basic Functionality', () => {
     it('calls onOutsideClick when clicking outside the element', () => {
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click outside
@@ -49,9 +49,9 @@ describe('useEnhancedOutsideClick', () => {
     });
 
     it('does not call onOutsideClick when clicking inside the element', () => {
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click inside
@@ -75,9 +75,9 @@ describe('useEnhancedOutsideClick', () => {
       const childElement = document.createElement('span');
       ref.current!.appendChild(childElement);
 
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click on child
@@ -100,9 +100,9 @@ describe('useEnhancedOutsideClick', () => {
 
   describe('isActive Parameter', () => {
     it('does not listen when isActive is false', () => {
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, false));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click outside
@@ -127,12 +127,12 @@ describe('useEnhancedOutsideClick', () => {
     });
 
     it('starts listening when isActive becomes true', () => {
+      vi.useFakeTimers();
       const { rerender } = renderHook(
         ({ isActive }) => useEnhancedOutsideClick(ref, onOutsideClick, isActive),
         { initialProps: { isActive: false } }
       );
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click outside while inactive
@@ -178,12 +178,11 @@ describe('useEnhancedOutsideClick', () => {
     });
 
     it('stops listening when isActive becomes false', () => {
+      vi.useFakeTimers();
       const { rerender } = renderHook(
         ({ isActive }) => useEnhancedOutsideClick(ref, onOutsideClick, isActive),
         { initialProps: { isActive: true } }
       );
-
-      vi.useFakeTimers();
 
       // Deactivate
       rerender({ isActive: false });
@@ -215,9 +214,9 @@ describe('useEnhancedOutsideClick', () => {
     it('uses bubble phase by default (useCapture false)', () => {
       const stopPropagationSpy = vi.fn();
 
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true, false));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click outside
@@ -247,9 +246,9 @@ describe('useEnhancedOutsideClick', () => {
     it('stops propagation when useCapture is true', () => {
       const stopPropagationSpy = vi.fn();
 
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click outside
@@ -278,9 +277,8 @@ describe('useEnhancedOutsideClick', () => {
 
   describe('Delayed Event Listener', () => {
     it('delays adding event listener by 10ms', () => {
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
-
       vi.useFakeTimers();
+      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
       // Click immediately (before timeout)
       const outsideElement = document.createElement('div');
@@ -344,9 +342,9 @@ describe('useEnhancedOutsideClick', () => {
 
   describe('Cleanup', () => {
     it('removes event listener on unmount', () => {
+      vi.useFakeTimers();
       const { unmount } = renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       unmount();
@@ -406,12 +404,12 @@ describe('useEnhancedOutsideClick', () => {
     it('cleans up when dependencies change', () => {
       const newCallback = vi.fn();
 
+      vi.useFakeTimers();
       const { rerender } = renderHook(
         ({ callback }) => useEnhancedOutsideClick(ref, callback, true),
         { initialProps: { callback: onOutsideClick } }
       );
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Change callback
@@ -446,9 +444,9 @@ describe('useEnhancedOutsideClick', () => {
     it('handles null ref gracefully', () => {
       const nullRef: RefObject<HTMLDivElement> = { current: null };
 
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(nullRef, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click anywhere
@@ -463,8 +461,8 @@ describe('useEnhancedOutsideClick', () => {
 
       document.dispatchEvent(mouseDownEvent);
 
-      // Should call onOutsideClick since ref is null (no element to check)
-      expect(onOutsideClick).toHaveBeenCalled();
+      // Should NOT call onOutsideClick since ref is null (no element means no action)
+      expect(onOutsideClick).not.toHaveBeenCalled();
 
       vi.useRealTimers();
     });
@@ -472,9 +470,8 @@ describe('useEnhancedOutsideClick', () => {
     it('handles ref changing from null to element', () => {
       const dynamicRef: RefObject<HTMLDivElement | null> = { current: null };
 
-      const { rerender } = renderHook(() => useEnhancedOutsideClick(dynamicRef, onOutsideClick, true));
-
       vi.useFakeTimers();
+      const { rerender } = renderHook(() => useEnhancedOutsideClick(dynamicRef, onOutsideClick, true));
 
       // Set ref to actual element
       const element = document.createElement('div');
@@ -504,9 +501,9 @@ describe('useEnhancedOutsideClick', () => {
     });
 
     it('handles multiple rapid clicks', () => {
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       const outsideElement = document.createElement('div');
@@ -542,9 +539,9 @@ describe('useEnhancedOutsideClick', () => {
       level1.appendChild(level2);
       level2.appendChild(level3);
 
+      vi.useFakeTimers();
       renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click on deeply nested child

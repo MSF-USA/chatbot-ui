@@ -61,12 +61,15 @@ describe('ModelSelect', () => {
     it('renders list of available models', () => {
       render(<ModelSelect />);
 
-      // Check for GPT-5
-      expect(screen.getByText('GPT-5')).toBeInTheDocument();
+      // Check that model buttons exist (using getAllByRole since there might be multiple GPT-5 variants)
+      const gpt5Buttons = screen.getAllByRole('button').filter(btn => btn.textContent?.includes('GPT-5'));
+      expect(gpt5Buttons.length).toBeGreaterThan(0);
+
       // Check for DeepSeek
-      expect(screen.getByText('DeepSeek-V3.1')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /DeepSeek-V3\.1/i })).toBeInTheDocument();
+
       // Check for Grok
-      expect(screen.getByText('Grok 3')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: /Grok 3/i })).toBeInTheDocument();
     });
 
     it('displays agent badge for models with agent capabilities', () => {
@@ -135,8 +138,8 @@ describe('ModelSelect', () => {
     it('enables agent mode by default when selecting model with agent capabilities', async () => {
       render(<ModelSelect />);
 
-      const gpt5Button = screen.getByText('GPT-5').closest('button');
-      fireEvent.click(gpt5Button!);
+      const gpt41Button = screen.getByRole('button', { name: /GPT-4\.1/i });
+      fireEvent.click(gpt41Button);
 
       await waitFor(() => {
         expect(mockUseConversations.updateConversation).toHaveBeenCalledWith(
@@ -144,7 +147,7 @@ describe('ModelSelect', () => {
           expect.objectContaining({
             model: expect.objectContaining({
               agentEnabled: true,
-              agentId: 'asst_DHpJVkpNlBiaGgglkvvFALMI',
+              agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL',
             }),
           })
         );
@@ -158,7 +161,7 @@ describe('ModelSelect', () => {
         id: 'conv-1',
         name: 'Test',
         messages: [],
-        model: OpenAIModels[OpenAIModelID.GPT_5],
+        model: OpenAIModels[OpenAIModelID.GPT_4_1],
         prompt: '',
         temperature: 0.7,
         folderId: null,
@@ -258,7 +261,7 @@ describe('ModelSelect', () => {
         name: 'Test',
         messages: [],
         model: {
-          ...OpenAIModels[OpenAIModelID.GPT_5],
+          ...OpenAIModels[OpenAIModelID.GPT_4_1],
           agentEnabled: true,
         },
         prompt: '',
@@ -398,7 +401,7 @@ describe('ModelSelect', () => {
       expect(deepseekIndex).toBeLessThan(grokIndex);
     });
 
-    it('places GPT-5 first among OpenAI models', () => {
+    it('places GPT-4.1 first among OpenAI models', () => {
       const { container } = render(<ModelSelect />);
 
       const modelButtons = screen.getAllByRole('button').filter(
@@ -413,8 +416,8 @@ describe('ModelSelect', () => {
         name => name.includes('GPT') || name.includes('o3')
       );
 
-      // GPT-5 should be first
-      expect(openAIModels[0]).toContain('GPT-5');
+      // GPT-4.1 should be first (agent model)
+      expect(openAIModels[0]).toContain('GPT-4.1');
     });
   });
 

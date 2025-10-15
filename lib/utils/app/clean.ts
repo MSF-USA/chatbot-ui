@@ -16,7 +16,7 @@ export const cleanSelectedConversation = (conversation: Conversation) => {
   if (!updatedConversation.model) {
     updatedConversation = {
       ...updatedConversation,
-      model: updatedConversation.model || OpenAIModels[OpenAIModelID.GPT_4o],
+      model: updatedConversation.model || OpenAIModels[OpenAIModelID.GPT_5],
     };
   }
 
@@ -68,7 +68,7 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
     try {
       if (!conversation.model || (conversation.model as OpenAIModel)?.isLegacy) {
         // TODO: Replace with environmentally set default model so fixing doesn't require code change
-        conversation.model = OpenAIModels[OpenAIModelID.GPT_4o];
+        conversation.model = OpenAIModels[OpenAIModelID.GPT_5];
       }
 
       if (!conversation.prompt) {

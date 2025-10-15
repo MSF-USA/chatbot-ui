@@ -17,7 +17,9 @@ export const useCreateReducer = <T>({ initialState }: { initialState: T }) => {
     | { type?: 'change'; field: FieldNames<T>; value: T[FieldNames<T>] };
 
   const reducer = (state: T, action: Action) => {
-    if (!action.type) return { ...state, [action.field]: action.value };
+    if (!action.type || action.type === 'change') {
+      return { ...state, [action.field]: action.value };
+    }
 
     if (action.type === 'reset') return initialState;
 

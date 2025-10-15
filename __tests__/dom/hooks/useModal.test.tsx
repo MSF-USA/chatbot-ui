@@ -34,15 +34,15 @@ describe('useModal', () => {
 
   describe('Outside Click Behavior', () => {
     it('calls onClose when clicking outside modal', () => {
+      vi.useFakeTimers();
       const { result } = renderHook(() => useModal(true, onClose));
 
       // Create a mock modal element
       const modalElement = document.createElement('div');
-      result.current = { current: modalElement };
+      document.body.appendChild(modalElement);
+      result.current.current = modalElement;
 
       // Wait for the timeout in useModal
-      vi.useFakeTimers();
-      renderHook(() => useModal(true, onClose));
       vi.advanceTimersByTime(20);
 
       // Click outside the modal
@@ -67,14 +67,14 @@ describe('useModal', () => {
     });
 
     it('does not call onClose when clicking inside modal', () => {
+      vi.useFakeTimers();
       const { result } = renderHook(() => useModal(true, onClose));
 
       // Create a mock modal element
       const modalElement = document.createElement('div');
-      result.current = { current: modalElement };
+      document.body.appendChild(modalElement);
+      result.current.current = modalElement;
 
-      vi.useFakeTimers();
-      renderHook(() => useModal(true, onClose));
       vi.advanceTimersByTime(20);
 
       // Click inside the modal
@@ -95,14 +95,14 @@ describe('useModal', () => {
     });
 
     it('respects preventOutsideClick option', () => {
+      vi.useFakeTimers();
       const { result } = renderHook(() => useModal(true, onClose, true));
 
       // Create a mock modal element
       const modalElement = document.createElement('div');
-      result.current = { current: modalElement };
+      document.body.appendChild(modalElement);
+      result.current.current = modalElement;
 
-      vi.useFakeTimers();
-      renderHook(() => useModal(true, onClose, true));
       vi.advanceTimersByTime(20);
 
       // Click outside the modal
@@ -127,9 +127,9 @@ describe('useModal', () => {
     });
 
     it('does not listen for clicks when modal is closed', () => {
+      vi.useFakeTimers();
       renderHook(() => useModal(false, onClose));
 
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       // Click anywhere
@@ -367,6 +367,7 @@ describe('useModal', () => {
     });
 
     it('works with both prevention options enabled', () => {
+      vi.useFakeTimers();
       renderHook(() => useModal(true, onClose, true, true));
 
       // Try Escape
@@ -378,7 +379,6 @@ describe('useModal', () => {
       document.dispatchEvent(escapeEvent);
 
       // Try outside click
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       const mouseDownEvent = new MouseEvent('mousedown', {
@@ -393,13 +393,13 @@ describe('useModal', () => {
     });
 
     it('handles null ref gracefully', () => {
+      vi.useFakeTimers();
       const { result } = renderHook(() => useModal(true, onClose));
 
       // Ref is null by default
       expect(result.current.current).toBeNull();
 
       // Should not crash when events are triggered
-      vi.useFakeTimers();
       vi.advanceTimersByTime(20);
 
       const mouseDownEvent = new MouseEvent('mousedown', {

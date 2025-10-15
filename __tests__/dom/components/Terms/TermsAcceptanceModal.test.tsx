@@ -77,7 +77,7 @@ describe('TermsAcceptanceModal', () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     expect(screen.getByText('Terms and Conditions')).toBeInTheDocument();
@@ -100,7 +100,7 @@ describe('TermsAcceptanceModal', () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     expect(screen.getByText('Version: 1.0.1')).toBeInTheDocument();
@@ -110,7 +110,7 @@ describe('TermsAcceptanceModal', () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     const termsCheckbox = screen.getByLabelText(/I accept the Terms of Service/);
@@ -128,7 +128,7 @@ describe('TermsAcceptanceModal', () => {
     render(<TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />);
 
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     const acceptButton = screen.getByText('Accept and Continue');
@@ -154,7 +154,7 @@ describe('TermsAcceptanceModal', () => {
 
     // Wait for the terms to load
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     // Accept the document
@@ -187,7 +187,7 @@ describe('TermsAcceptanceModal', () => {
 
     // Wait for the terms to load
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     // Accept the document
@@ -218,7 +218,7 @@ describe('TermsAcceptanceModal', () => {
 
     // Wait for the terms to load
     await waitFor(() => {
-      expect(screen.queryByText('Loading terms and conditions...')).not.toBeInTheDocument();
+      expect(screen.queryByText('Loading terms and conditions_ellipsis')).not.toBeInTheDocument();
     });
 
     // Accept the document

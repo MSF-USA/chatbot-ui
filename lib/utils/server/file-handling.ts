@@ -146,9 +146,9 @@ export async function loadDocument(file: File): Promise<string> {
   const mimeType = lookup(file.name) || 'application/octet-stream';
   const tempFilePath = `/tmp/${file.name}`;
 
-  // Write the file to a temporary location
+  // Write the file to a temporary location with secure permissions (0o600 = read/write for owner only)
   const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer));
+  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer), { mode: 0o600 });
 
   switch (true) {
     case mimeType.startsWith('application/pdf'):

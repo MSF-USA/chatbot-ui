@@ -1,4 +1,5 @@
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 
 // Example setup code
 beforeAll(() => {

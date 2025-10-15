@@ -1,3 +1,4 @@
+import React, { FC, useState, useMemo } from 'react';
 import {
   IconWorld,
   IconCode,
@@ -13,7 +14,6 @@ import {
   IconChevronDown,
   IconChevronUp
 } from '@tabler/icons-react';
-import { FC, useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
