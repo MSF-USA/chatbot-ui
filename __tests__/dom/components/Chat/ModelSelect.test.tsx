@@ -1,9 +1,12 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ModelSelect } from '@/components/Chat/ModelSelect';
-import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
 import { Conversation } from '@/types/chat';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
+import { ModelSelect } from '@/components/Chat/ModelSelect';
+
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the hooks
 const mockUseConversations = {
@@ -13,7 +16,7 @@ const mockUseConversations = {
 };
 
 const mockUseSettings = {
-  models: Object.values(OpenAIModels).filter(m => !m.isLegacy),
+  models: Object.values(OpenAIModels).filter((m) => !m.isLegacy),
   defaultModelId: OpenAIModelID.GPT_5,
   setDefaultModelId: vi.fn(),
 };
@@ -69,14 +72,20 @@ describe('ModelSelect', () => {
       render(<ModelSelect />);
 
       // Check that model buttons exist (using getAllByRole since there might be multiple GPT-5 variants)
-      const gpt5Buttons = screen.getAllByRole('button').filter(btn => btn.textContent?.includes('GPT-5'));
+      const gpt5Buttons = screen
+        .getAllByRole('button')
+        .filter((btn) => btn.textContent?.includes('GPT-5'));
       expect(gpt5Buttons.length).toBeGreaterThan(0);
 
       // Check for DeepSeek
-      expect(screen.getByRole('button', { name: /DeepSeek-V3\.1/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /DeepSeek-V3\.1/i }),
+      ).toBeInTheDocument();
 
       // Check for Grok
-      expect(screen.getByRole('button', { name: /Grok 3/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /Grok 3/i }),
+      ).toBeInTheDocument();
     });
 
     it('displays agent badge for models with agent capabilities', () => {
@@ -112,7 +121,9 @@ describe('ModelSelect', () => {
       const { container } = render(<ModelSelect />);
 
       // Should have blue background for selected model
-      const selectedElements = container.querySelectorAll('.bg-blue-50, .dark\\:bg-blue-900\\/20');
+      const selectedElements = container.querySelectorAll(
+        '.bg-blue-50, .dark\\:bg-blue-900\\/20',
+      );
       expect(selectedElements.length).toBeGreaterThan(0);
     });
   });
@@ -121,7 +132,9 @@ describe('ModelSelect', () => {
     it('calls updateConversation when model is selected', async () => {
       render(<ModelSelect />);
 
-      const deepseekButton = screen.getByText('DeepSeek-V3.1').closest('button');
+      const deepseekButton = screen
+        .getByText('DeepSeek-V3.1')
+        .closest('button');
       expect(deepseekButton).not.toBeNull();
 
       fireEvent.click(deepseekButton!);
@@ -134,11 +147,15 @@ describe('ModelSelect', () => {
     it('sets default model when model is selected', async () => {
       render(<ModelSelect />);
 
-      const deepseekButton = screen.getByText('DeepSeek-V3.1').closest('button');
+      const deepseekButton = screen
+        .getByText('DeepSeek-V3.1')
+        .closest('button');
       fireEvent.click(deepseekButton!);
 
       await waitFor(() => {
-        expect(mockUseSettings.setDefaultModelId).toHaveBeenCalledWith(OpenAIModelID.DEEPSEEK_V3_1);
+        expect(mockUseSettings.setDefaultModelId).toHaveBeenCalledWith(
+          OpenAIModelID.DEEPSEEK_V3_1,
+        );
       });
     });
 
@@ -156,7 +173,7 @@ describe('ModelSelect', () => {
               agentEnabled: true,
               agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL',
             }),
-          })
+          }),
         );
       });
     });
@@ -208,7 +225,9 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.getByText(/Agent services.*not yet available/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Agent services.*not yet available/),
+      ).toBeInTheDocument();
     });
   });
 
@@ -226,7 +245,11 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.getByText('Temperature Control')).toBeInTheDocument();
+      // Expand advanced options
+      const advancedButton = screen.getByText('Advanced Options');
+      fireEvent.click(advancedButton);
+
+      expect(screen.getByText('Temperature')).toBeInTheDocument();
     });
 
     it('does not display temperature slider for models that do not support temperature', () => {
@@ -242,7 +265,11 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.queryByText('Temperature Control')).not.toBeInTheDocument();
+      // Expand advanced options
+      const advancedButton = screen.getByText('Advanced Options');
+      fireEvent.click(advancedButton);
+
+      expect(screen.queryByText('Temperature')).not.toBeInTheDocument();
     });
 
     it('displays notice for models that do not support temperature', () => {
@@ -258,8 +285,13 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.getByText(/OpenAI Model Update/)).toBeInTheDocument();
-      expect(screen.getByText(/no longer support custom temperature/)).toBeInTheDocument();
+      // Expand advanced options
+      const advancedButton = screen.getByText('Advanced Options');
+      fireEvent.click(advancedButton);
+
+      expect(
+        screen.getByText(/fixed temperature values for consistent performance/),
+      ).toBeInTheDocument();
     });
 
     it('hides temperature slider when agent mode is enabled', () => {
@@ -390,19 +422,21 @@ describe('ModelSelect', () => {
     it('orders providers correctly (OpenAI, DeepSeek, xAI)', () => {
       const { container } = render(<ModelSelect />);
 
-      const modelButtons = screen.getAllByRole('button').filter(
-        button => button.querySelector('.font-medium')
-      );
+      const modelButtons = screen
+        .getAllByRole('button')
+        .filter((button) => button.querySelector('.font-medium'));
 
       // Get model names in order
       const modelNames = modelButtons.map(
-        button => button.querySelector('.font-medium')?.textContent || ''
+        (button) => button.querySelector('.font-medium')?.textContent || '',
       );
 
       // GPT-5 (OpenAI) should come before DeepSeek
-      const gpt5Index = modelNames.findIndex(name => name.includes('GPT-5'));
-      const deepseekIndex = modelNames.findIndex(name => name.includes('DeepSeek'));
-      const grokIndex = modelNames.findIndex(name => name.includes('Grok'));
+      const gpt5Index = modelNames.findIndex((name) => name.includes('GPT-5'));
+      const deepseekIndex = modelNames.findIndex((name) =>
+        name.includes('DeepSeek'),
+      );
+      const grokIndex = modelNames.findIndex((name) => name.includes('Grok'));
 
       expect(gpt5Index).toBeLessThan(deepseekIndex);
       expect(deepseekIndex).toBeLessThan(grokIndex);
@@ -411,16 +445,16 @@ describe('ModelSelect', () => {
     it('places GPT-4.1 first among OpenAI models', () => {
       const { container } = render(<ModelSelect />);
 
-      const modelButtons = screen.getAllByRole('button').filter(
-        button => button.querySelector('.font-medium')
-      );
+      const modelButtons = screen
+        .getAllByRole('button')
+        .filter((button) => button.querySelector('.font-medium'));
 
       const modelNames = modelButtons.map(
-        button => button.querySelector('.font-medium')?.textContent || ''
+        (button) => button.querySelector('.font-medium')?.textContent || '',
       );
 
       const openAIModels = modelNames.filter(
-        name => name.includes('GPT') || name.includes('o3')
+        (name) => name.includes('GPT') || name.includes('o3'),
       );
 
       // GPT-4.1 should be first (agent model)
@@ -433,10 +467,13 @@ describe('ModelSelect', () => {
       const onClose = vi.fn();
       render(<ModelSelect onClose={onClose} />);
 
-      const closeButtons = screen.getAllByRole('button').filter(
-        button => button.getAttribute('aria-label') === 'Close' ||
-                  button.querySelector('svg')
-      );
+      const closeButtons = screen
+        .getAllByRole('button')
+        .filter(
+          (button) =>
+            button.getAttribute('aria-label') === 'Close' ||
+            button.querySelector('svg'),
+        );
 
       // Click the X button
       if (closeButtons.length > 0) {

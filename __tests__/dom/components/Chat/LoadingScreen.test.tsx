@@ -1,9 +1,10 @@
 import { render } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it } from 'vitest';
-import '@testing-library/jest-dom';
 
 import { LoadingScreen } from '@/components/Chat/LoadingScreen';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it } from 'vitest';
 
 describe('LoadingScreen', () => {
   it('renders loading screen', () => {
@@ -11,21 +12,11 @@ describe('LoadingScreen', () => {
     expect(container.firstChild).toBeInTheDocument();
   });
 
-  it('displays three animated dots', () => {
+  it('displays breathing animation circle', () => {
     const { container } = render(<LoadingScreen />);
 
-    const dots = container.querySelectorAll('.animate-bounce');
-    expect(dots).toHaveLength(3);
-  });
-
-  it('has correct animation delays', () => {
-    const { container } = render(<LoadingScreen />);
-
-    const dots = container.querySelectorAll('.animate-bounce');
-
-    expect(dots[0]).toHaveStyle({ animationDelay: '0ms' });
-    expect(dots[1]).toHaveStyle({ animationDelay: '150ms' });
-    expect(dots[2]).toHaveStyle({ animationDelay: '300ms' });
+    const breathingCircle = container.querySelector('.animate-breathing');
+    expect(breathingCircle).toBeInTheDocument();
   });
 
   it('has full height and width', () => {
@@ -52,35 +43,22 @@ describe('LoadingScreen', () => {
     expect(wrapper).toHaveClass('dark:bg-[#212121]');
   });
 
-  it('dots have correct styling', () => {
+  it('breathing circle has correct styling', () => {
     const { container } = render(<LoadingScreen />);
 
-    const dots = container.querySelectorAll('.animate-bounce');
-
-    dots.forEach(dot => {
-      expect(dot).toHaveClass('h-3');
-      expect(dot).toHaveClass('w-3');
-      expect(dot).toHaveClass('rounded-full');
-      expect(dot).toHaveClass('bg-gray-500');
-      expect(dot).toHaveClass('dark:bg-gray-400');
-    });
+    const circle = container.querySelector('.animate-breathing');
+    expect(circle).toHaveClass('h-8');
+    expect(circle).toHaveClass('w-8');
+    expect(circle).toHaveClass('rounded-full');
+    expect(circle).toHaveClass('bg-gray-500');
+    expect(circle).toHaveClass('dark:bg-gray-400');
   });
 
-  it('dots are arranged in a flex row', () => {
+  it('has flex layout', () => {
     const { container } = render(<LoadingScreen />);
 
-    const dotsContainer = container.querySelector('.flex.space-x-2');
-    expect(dotsContainer).toBeInTheDocument();
-    expect(dotsContainer?.children).toHaveLength(3);
-  });
-
-  it('has nested flex column structure', () => {
-    const { container } = render(<LoadingScreen />);
-
-    const flexCol = container.querySelector('.flex-col');
-    expect(flexCol).toBeInTheDocument();
-    expect(flexCol).toHaveClass('items-center');
-    expect(flexCol).toHaveClass('space-y-4');
+    const wrapper = container.firstChild;
+    expect(wrapper).toHaveClass('flex');
   });
 
   it('matches snapshot', () => {
