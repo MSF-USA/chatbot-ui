@@ -1,10 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 
 import { SuggestedPrompts } from '@/components/Chat/EmptyState/SuggestedPrompts';
 import { suggestedPrompts } from '@/components/Chat/prompts';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('SuggestedPrompts', () => {
   it('renders suggested prompts', () => {
@@ -52,13 +53,19 @@ describe('SuggestedPrompts', () => {
     const buttons = screen.getAllByRole('button');
 
     fireEvent.click(buttons[0]);
-    expect(mockOnSelectPrompt).toHaveBeenLastCalledWith(suggestedPrompts[0].prompt);
+    expect(mockOnSelectPrompt).toHaveBeenLastCalledWith(
+      suggestedPrompts[0].prompt,
+    );
 
     fireEvent.click(buttons[1]);
-    expect(mockOnSelectPrompt).toHaveBeenLastCalledWith(suggestedPrompts[1].prompt);
+    expect(mockOnSelectPrompt).toHaveBeenLastCalledWith(
+      suggestedPrompts[1].prompt,
+    );
 
     fireEvent.click(buttons[2]);
-    expect(mockOnSelectPrompt).toHaveBeenLastCalledWith(suggestedPrompts[2].prompt);
+    expect(mockOnSelectPrompt).toHaveBeenLastCalledWith(
+      suggestedPrompts[2].prompt,
+    );
 
     expect(mockOnSelectPrompt).toHaveBeenCalledTimes(3);
   });
@@ -75,7 +82,7 @@ describe('SuggestedPrompts', () => {
 
     // Each button should have an icon inside
     const buttons = container.querySelectorAll('button');
-    buttons.forEach(button => {
+    buttons.forEach((button) => {
       const icon = button.querySelector('svg');
       expect(icon).toBeInTheDocument();
     });
@@ -87,7 +94,7 @@ describe('SuggestedPrompts', () => {
     const wrapper = container.firstChild;
     expect(wrapper).toHaveClass('hidden');
     expect(wrapper).toHaveClass('sm:flex');
-    expect(wrapper).toHaveClass('space-x-5');
+    expect(wrapper).toHaveClass('gap-3');
   });
 
   it('buttons have correct styling', () => {
@@ -95,24 +102,11 @@ describe('SuggestedPrompts', () => {
 
     const buttons = screen.getAllByRole('button');
 
-    buttons.forEach(button => {
-      expect(button).toHaveClass('bg-transparent');
-      expect(button).toHaveClass('text-black');
-      expect(button).toHaveClass('dark:text-white');
+    buttons.forEach((button) => {
+      expect(button).toHaveClass('bg-white');
+      expect(button).toHaveClass('dark:bg-[#1F1F1F]');
       expect(button).toHaveClass('border');
-      expect(button).toHaveClass('rounded-md');
-    });
-  });
-
-  it('buttons have correct inline styles', () => {
-    render(<SuggestedPrompts />);
-
-    const buttons = screen.getAllByRole('button');
-
-    buttons.forEach(button => {
-      expect(button).toHaveStyle({ width: '200px' });
-      expect(button).toHaveStyle({ height: '100px' });
-      expect(button).toHaveStyle({ textAlign: 'start' });
+      expect(button).toHaveClass('rounded-full');
     });
   });
 
@@ -125,14 +119,14 @@ describe('SuggestedPrompts', () => {
     expect(buttons.length).toBeLessThanOrEqual(suggestedPrompts.length);
   });
 
-  it('displays prompts with flex column layout', () => {
+  it('displays prompts with flex row layout', () => {
     const { container } = render(<SuggestedPrompts count={2} />);
 
     const buttons = container.querySelectorAll('button');
-    buttons.forEach(button => {
-      const flexDiv = button.querySelector('.flex-col');
+    buttons.forEach((button) => {
+      const flexDiv = button.querySelector('.flex-row');
       expect(flexDiv).toBeInTheDocument();
-      expect(flexDiv).toHaveClass('items-start');
+      expect(flexDiv).toHaveClass('items-center');
     });
   });
 
@@ -140,10 +134,9 @@ describe('SuggestedPrompts', () => {
     const { container } = render(<SuggestedPrompts count={2} />);
 
     const icons = container.querySelectorAll('svg');
-    icons.forEach(icon => {
-      expect(icon).toHaveClass('h-5');
-      expect(icon).toHaveClass('w-5');
-      expect(icon).toHaveClass('mb-2');
+    icons.forEach((icon) => {
+      expect(icon).toHaveClass('h-3.5');
+      expect(icon).toHaveClass('w-3.5');
     });
   });
 
@@ -151,11 +144,15 @@ describe('SuggestedPrompts', () => {
     // Test that rendering twice gives same prompts
     const { rerender } = render(<SuggestedPrompts count={3} />);
 
-    const firstPrompts = screen.getAllByRole('button').map(b => b.textContent);
+    const firstPrompts = screen
+      .getAllByRole('button')
+      .map((b) => b.textContent);
 
     rerender(<SuggestedPrompts count={3} />);
 
-    const secondPrompts = screen.getAllByRole('button').map(b => b.textContent);
+    const secondPrompts = screen
+      .getAllByRole('button')
+      .map((b) => b.textContent);
 
     expect(firstPrompts).toEqual(secondPrompts);
   });

@@ -24,9 +24,11 @@ describe('AzureOpenAIHandler', () => {
 
     mockUser = {
       id: 'user-123',
-      name: 'Test User',
-      email: 'test@example.com',
-    } as Session['user'];
+      givenName: 'Test',
+      surname: 'User',
+      displayName: 'Test User',
+      mail: 'test@example.com',
+    };
 
     handler = new AzureOpenAIHandler(mockClient);
   });
@@ -130,7 +132,7 @@ describe('AzureOpenAIHandler', () => {
       expect(params.messages).toBe(messages);
       expect(params.stream).toBe(true);
       expect(params.user).toBe(JSON.stringify(mockUser));
-      expect(params.reasoning_effort).toBe('medium');
+      expect((params as any).reasoning_effort).toBe('medium');
       expect(params).not.toHaveProperty('temperature');
       expect(params).not.toHaveProperty('verbosity');
     });
@@ -158,7 +160,7 @@ describe('AzureOpenAIHandler', () => {
         'high',
       );
 
-      expect(params.verbosity).toBe('high');
+      expect((params as any).verbosity).toBe('high');
       expect(params).not.toHaveProperty('temperature');
     });
 
@@ -186,8 +188,8 @@ describe('AzureOpenAIHandler', () => {
         'low',
       );
 
-      expect(params.reasoning_effort).toBe('high');
-      expect(params.verbosity).toBe('low');
+      expect((params as any).reasoning_effort).toBe('high');
+      expect((params as any).verbosity).toBe('low');
     });
 
     it('should not include reasoning_effort if model does not support it', () => {

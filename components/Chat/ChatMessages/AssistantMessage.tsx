@@ -44,8 +44,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageCopied,
   onRegenerate,
 }) => {
-  const [displayContent, setDisplayContent] = useState('');
-  const [streamingContent, setStreamingContent] = useState('');
+  const [processedContent, setProcessedContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [thinking, setThinking] = useState<string>('');
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
@@ -66,13 +65,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
   const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
 
-  const citationsProcessed = useRef(false);
-  const processingAttempts = useRef(0);
-
   // Use smooth streaming hook for animated text display
   const smoothContent = useSmoothStreaming({
     isStreaming: messageIsStreaming,
-    content: streamingContent || displayContent,
+    content: processedContent,
     charsPerFrame: charsPerFrame,
     frameDelay: frameDelay,
     enabled: smoothStreamingEnabled,
@@ -87,143 +83,79 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     };
   }, [audioUrl]);
 
+  // Process content once per change - simplified logic
   useEffect(() => {
-    const processContent = () => {
-      // First, parse thinking content from the raw content
-      const { thinking: inlineThinking, content: contentWithoutThinking } =
-        parseThinkingContent(content);
+    // Parse thinking content from the raw content
+    const { thinking: inlineThinking, content: contentWithoutThinking } =
+      parseThinkingContent(content);
 
-      let mainContent = contentWithoutThinking;
-      let citationsData: Citation[] = [];
-      let metadataThinking = '';
-      let extractionMethod = 'none';
+    let mainContent = contentWithoutThinking;
+    let citationsData: Citation[] = [];
+    let metadataThinking = '';
 
-      // First check if citations are in the message object
-      if (message?.citations && message.citations.length > 0) {
-        extractionMethod = 'message';
-        citationsData = message.citations;
-      }
-      // Then check for the newer metadata format
-      else {
-        const metadataMatch = contentWithoutThinking.match(
-          /\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s,
+    // Priority 1: Citations from message object (already processed)
+    if (message?.citations && message.citations.length > 0) {
+      citationsData = message.citations;
+    }
+    // Priority 2: Parse metadata format (new approach)
+    else {
+      const metadataMatch = contentWithoutThinking.match(
+        /\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s,
+      );
+      if (metadataMatch) {
+        mainContent = contentWithoutThinking.replace(
+          /\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s,
+          '',
         );
-        if (metadataMatch) {
-          extractionMethod = 'metadata';
-          mainContent = contentWithoutThinking.replace(
-            /\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s,
-            '',
-          );
 
+        try {
+          const parsedData = JSON.parse(metadataMatch[1]);
+          if (parsedData.citations) {
+            citationsData = deduplicateCitations(parsedData.citations);
+          }
+          if (parsedData.thinking) {
+            metadataThinking = parsedData.thinking;
+          }
+        } catch (error) {
+          // Silently ignore parsing errors during streaming
+        }
+      }
+      // Priority 3: Legacy JSON at end (only when not streaming)
+      else if (!messageIsStreaming) {
+        const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
+        if (jsonMatch && isValidJSON(jsonMatch[1])) {
+          mainContent = contentWithoutThinking
+            .slice(0, -jsonMatch[1].length)
+            .trim();
           try {
-            const parsedData = JSON.parse(metadataMatch[1]);
-
-            // Extract citations
+            const parsedData = JSON.parse(jsonMatch[1].trim());
             if (parsedData.citations) {
-              // Deduplicate citations by URL or title
-              const uniqueCitationsMap = new Map();
-              parsedData.citations.forEach((citation: Citation) => {
-                const key = citation.url || citation.title;
-                if (key && !uniqueCitationsMap.has(key)) {
-                  uniqueCitationsMap.set(key, citation);
-                }
-              });
-              citationsData = Array.from(uniqueCitationsMap.values());
-            }
-
-            // Extract thinking from metadata (takes precedence over inline thinking)
-            if (parsedData.thinking) {
-              metadataThinking = parsedData.thinking;
+              citationsData = deduplicateCitations(parsedData.citations);
             }
           } catch (error) {
             // Silently ignore parsing errors
           }
         }
-        // Next try the legacy JSON detection at the end
-        else if (!messageIsStreaming) {
-          // Only try legacy JSON parsing when not streaming to avoid partial JSON
-          const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
-          if (jsonMatch) {
-            const jsonStr = jsonMatch[1].trim();
-            // Validate JSON structure before parsing
-            if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
-              const openBraces = (jsonStr.match(/{/g) || []).length;
-              const closeBraces = (jsonStr.match(/}/g) || []).length;
-
-              if (openBraces === closeBraces) {
-                extractionMethod = 'regex';
-                mainContent = contentWithoutThinking
-                  .slice(0, -jsonMatch[1].length)
-                  .trim();
-                try {
-                  const parsedData = JSON.parse(jsonStr);
-                  if (parsedData.citations) {
-                    // Deduplicate citations by URL or title
-                    const uniqueCitationsMap = new Map();
-                    parsedData.citations.forEach((citation: Citation) => {
-                      const key = citation.url || citation.title;
-                      if (key && !uniqueCitationsMap.has(key)) {
-                        uniqueCitationsMap.set(key, citation);
-                      }
-                    });
-                    citationsData = Array.from(uniqueCitationsMap.values());
-                  }
-                } catch (error) {
-                  // Silently ignore parsing errors
-                }
-              }
-            }
-          }
-        }
-      } // Close the outer else block
-
-      // Check for message-stored citations in the conversation
-      if (
-        citationsData.length === 0 &&
-        selectedConversation?.messages?.[messageIndex]?.citations &&
-        selectedConversation.messages[messageIndex].citations!.length > 0
-      ) {
-        extractionMethod = 'message-stored';
-
-        // Deduplicate citations by URL or title
-        const uniqueCitationsMap = new Map();
-        selectedConversation.messages[messageIndex].citations!.forEach(
-          (citation: Citation) => {
-            const key = citation.url || citation.title;
-            if (key && !uniqueCitationsMap.has(key)) {
-              uniqueCitationsMap.set(key, citation);
-            }
-          },
-        );
-        citationsData = Array.from(uniqueCitationsMap.values());
       }
-
-      processingAttempts.current++;
-
-      // Determine final thinking content (priority: message > metadata > inline)
-      const finalThinking =
-        message?.thinking || metadataThinking || inlineThinking || '';
-
-      // For streaming, also compute content without metadata for display
-      const streamingDisplay = contentWithoutThinking
-        .replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '')
-        .split(/(\{[\s\S]*\})$/)[0];
-
-      setDisplayContent(mainContent);
-      setStreamingContent(streamingDisplay);
-      setThinking(finalThinking);
-      // Streamdown handles math automatically, no need to configure plugins
-      setCitations(citationsData);
-      citationsProcessed.current = true;
-    };
-
-    processContent();
-
-    // If we're streaming, reprocess when streaming stops to catch final citations
-    if (!messageIsStreaming && processingAttempts.current <= 2) {
-      const timer = setTimeout(processContent, 500);
-      return () => clearTimeout(timer);
     }
+
+    // Priority 4: Fallback to conversation-stored citations
+    if (
+      citationsData.length === 0 &&
+      selectedConversation?.messages?.[messageIndex]?.citations
+    ) {
+      citationsData = deduplicateCitations(
+        selectedConversation.messages[messageIndex].citations!,
+      );
+    }
+
+    // Determine final thinking content (priority: message > metadata > inline)
+    const finalThinking =
+      message?.thinking || metadataThinking || inlineThinking || '';
+
+    setProcessedContent(mainContent);
+    setThinking(finalThinking);
+    setCitations(citationsData);
   }, [
     content,
     message,
@@ -232,17 +164,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
-  // Determine what to display - when streaming, use pre-processed streaming content
-  // When not streaming, use the fully processed content
-  const displayContentWithoutCitations = messageIsStreaming
-    ? streamingContent
-    : displayContent;
-
-  // Use the smooth content for display when streaming and smooth streaming is enabled
+  // Use smooth streaming if enabled, otherwise use processed content directly
   const contentToDisplay =
     smoothStreamingEnabled && messageIsStreaming
       ? smoothContent
-      : displayContentWithoutCitations;
+      : processedContent;
 
   const handleTTS = async () => {
     try {
@@ -254,7 +180,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: displayContentWithoutCitations }),
+        body: JSON.stringify({ text: processedContent }),
       });
 
       if (!response.ok) {
@@ -482,5 +408,28 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     </div>
   );
 };
+
+// Helper function to deduplicate citations by URL or title
+function deduplicateCitations(citations: Citation[]): Citation[] {
+  const uniqueCitationsMap = new Map();
+  citations.forEach((citation: Citation) => {
+    const key = citation.url || citation.title;
+    if (key && !uniqueCitationsMap.has(key)) {
+      uniqueCitationsMap.set(key, citation);
+    }
+  });
+  return Array.from(uniqueCitationsMap.values());
+}
+
+// Helper function to validate JSON structure
+function isValidJSON(jsonStr: string): boolean {
+  const trimmed = jsonStr.trim();
+  if (!trimmed.startsWith('{') || !trimmed.endsWith('}')) {
+    return false;
+  }
+  const openBraces = (trimmed.match(/{/g) || []).length;
+  const closeBraces = (trimmed.match(/}/g) || []).length;
+  return openBraces === closeBraces;
+}
 
 export default AssistantMessage;

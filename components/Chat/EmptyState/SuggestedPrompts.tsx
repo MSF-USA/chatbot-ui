@@ -29,15 +29,15 @@ export function SuggestedPrompts({
         return (
           <button
             key={index}
-            className="group relative bg-white dark:bg-[#1F1F1F] text-black dark:text-white border border-gray-200 dark:border-[#3F3F3F] rounded-full px-5 py-3 text-center hover:border-gray-400 dark:hover:border-[#555555] hover:shadow-lg dark:hover:shadow-[#0a0a0a]/60 transition-all duration-200 ease-in-out"
+            className="group relative bg-white dark:bg-[#1F1F1F] text-black dark:text-white border border-gray-200 dark:border-[#3F3F3F] rounded-full px-4 py-2 text-center hover:border-gray-400 dark:hover:border-[#555555] hover:shadow-lg dark:hover:shadow-[#0a0a0a]/60 transition-all duration-200 ease-in-out"
             onClick={() => onSelectPrompt?.(prompt.prompt)}
           >
             {Icon && (
-              <div className="flex flex-row items-center justify-center gap-3 whitespace-nowrap">
-                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-[#2F2F2F] flex-shrink-0 group-hover:bg-gray-200 dark:group-hover:bg-[#3F3F3F] transition-colors">
-                  <Icon className="h-4 w-4 text-gray-700 dark:text-gray-300" />
+              <div className="flex flex-row items-center justify-center gap-2 whitespace-nowrap">
+                <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-[#2F2F2F] flex-shrink-0 group-hover:bg-gray-200 dark:group-hover:bg-[#3F3F3F] transition-colors">
+                  <Icon className="h-3.5 w-3.5 text-gray-700 dark:text-gray-300" />
                 </div>
-                <h3 className="font-medium text-base text-gray-900 dark:text-gray-100">
+                <h3 className="font-medium text-sm text-gray-900 dark:text-gray-100">
                   {prompt.title}
                 </h3>
               </div>

@@ -324,11 +324,9 @@ export function Chat({
       {/* Empty state with centered input */}
       {!hasMessages ? (
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-          <div className="w-full flex flex-col items-center">
+          <div className="w-full flex flex-col items-center justify-center gap-8">
             {/* Suggested Prompts */}
-            <div className="mb-12">
-              <EmptyState onSelectPrompt={handleSelectPrompt} />
-            </div>
+            <EmptyState onSelectPrompt={handleSelectPrompt} />
 
             {/* Centered Chat Input */}
             <div className="w-full max-w-3xl">
@@ -338,7 +336,7 @@ export function Chat({
                 onScrollDownClick={handleScrollDown}
                 stopConversationRef={stopConversationRef}
                 textareaRef={textareaRef}
-                showScrollDownButton={showScrollDownButton}
+                showScrollDownButton={false}
                 filePreviews={filePreviews}
                 setFilePreviews={setFilePreviews}
                 showDisclaimer={false}

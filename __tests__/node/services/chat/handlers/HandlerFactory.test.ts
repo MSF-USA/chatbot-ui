@@ -199,10 +199,10 @@ describe('HandlerFactory', () => {
 
       Object.entries(OpenAIModels).forEach(([modelId, modelConfig]) => {
         const handlerName = HandlerFactory.getHandlerName(modelConfig);
-        expect(handlerName).toBe(
-          expectedHandlers[modelId as OpenAIModelID],
+        expect(
+          handlerName,
           `Model ${modelId} should use ${expectedHandlers[modelId as OpenAIModelID]}`,
-        );
+        ).toBe(expectedHandlers[modelId as OpenAIModelID]);
       });
     });
   });

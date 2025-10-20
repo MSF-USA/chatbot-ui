@@ -24,9 +24,11 @@ describe('StandardOpenAIHandler', () => {
 
     mockUser = {
       id: 'user-123',
-      name: 'Test User',
-      email: 'test@example.com',
-    } as Session['user'];
+      givenName: 'Test',
+      surname: 'User',
+      displayName: 'Test User',
+      mail: 'test@example.com',
+    };
 
     handler = new StandardOpenAIHandler(mockClient);
   });

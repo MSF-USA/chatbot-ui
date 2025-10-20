@@ -1,93 +1,82 @@
 import {
-  IconAlignJustified,
+  IconBriefcase,
   IconBulb,
   IconCalendar,
-  IconCheckbox,
-  IconDatabase,
-  IconHelpHexagon,
-  IconLanguage,
+  IconChecklist,
+  IconFileAnalytics,
+  IconFileText,
+  IconGitMerge,
   IconMail,
   IconPresentation,
-  IconSchool,
-  IconSettingsAutomation,
+  IconReportAnalytics,
   IconSourceCode,
-  IconTextScan2,
 } from '@tabler/icons-react';
 
 export const suggestedPrompts = [
   {
-    title: 'Translate Something',
-    prompt: 'I would like some text translated.',
-    icon: IconLanguage,
+    title: 'Create Diagrams',
+    prompt:
+      'Show me how you can create diagrams and flowcharts. What kinds of processes, workflows, or systems can you help me visualize? Give me some examples.',
+    icon: IconGitMerge,
   },
   {
-    title: 'Draft an Email',
+    title: 'Draft Professional Content',
     prompt:
-      "You're a clear, concise and persuasive writer. Can you draft an email on a specific subject for me?",
+      'I need help writing professional documents - emails, reports, summaries. Can you show me examples of how you can help with different types of business writing?',
     icon: IconMail,
   },
   {
+    title: 'Analyze Information',
+    prompt:
+      'How can you help me analyze data or information? Show me different ways you might break down numbers, find patterns, or extract insights from documents or datasets.',
+    icon: IconReportAnalytics,
+  },
+  {
+    title: 'Plan & Organize',
+    prompt:
+      'Can you help me plan projects or organize work? Give me examples of how you might create timelines, agendas, or project plans with different structures.',
+    icon: IconChecklist,
+  },
+  {
     title: 'Brainstorm Ideas',
-    prompt: 'I need assistance brainstorming about a specific idea.',
+    prompt:
+      'I want to brainstorm solutions to a problem. Show me how you approach creative thinking and idea generation - what kinds of questions would you ask and how do you explore possibilities?',
     icon: IconBulb,
   },
   {
-    title: 'Summarize Text',
-    prompt: 'I need a large set of text summarized.',
-    icon: IconAlignJustified,
-  },
-  {
-    title: 'Analyze Data',
+    title: 'Build Presentations',
     prompt:
-      'I need some data analyzed. Can you suggest three ways I might do that before I share the data?',
-    icon: IconDatabase,
-  },
-  {
-    title: 'Automate Something',
-    prompt:
-      'I need to automate something for work. Can you suggest some ways I might do that based on the task?',
-    icon: IconSettingsAutomation,
-  },
-  {
-    title: 'Suggest Some Options for Help',
-    prompt:
-      "I'm not sure where to start with using AI to assist my work or how I might need assistance. Can you suggest some ways in which you can help?",
-    icon: IconHelpHexagon,
-  },
-  {
-    title: 'Edit Text',
-    prompt:
-      'I have a chunk of text which needs revision. Please examine the text and revise it to the best of your ability.',
-    icon: IconTextScan2,
-  },
-  {
-    title: 'Create a Presentation Outline',
-    prompt:
-      'I need to create a compelling presentation on a specific subject. Please help me outline or draft it.',
+      'How can you help me create presentations? Show me examples of different presentation structures, visual suggestions, and how you organize information for different audiences.',
     icon: IconPresentation,
   },
   {
-    title: 'Generate a Meeting Agenda',
+    title: 'Work with Code',
     prompt:
-      'Can you help me create an agenda for an upcoming meeting? Ask me about the meeting goals, the time allotted and the attendees before giving suggestions.',
-    icon: IconCalendar,
-  },
-  {
-    title: 'Develop a Survey',
-    prompt:
-      'Can you help me design a survey to gather feedback or information on a particular topic?',
-    icon: IconCheckbox,
-  },
-  {
-    title: 'Debug My Code',
-    prompt:
-      "I'm having trouble with a particular coding task. Can you help me give the right context about the problem so you can suggest a way to fix the issue?",
+      "Can you help with coding or scripts? Show me examples - whether it's writing new code, debugging issues, or explaining how something works step-by-step.",
     icon: IconSourceCode,
   },
   {
-    title: 'Learn About a topic',
+    title: 'Decision Support',
     prompt:
-      'I need help learning the background and a few important points about a specific topic.',
-    icon: IconSchool,
+      "I need to make a decision but I'm not sure how to evaluate my options. Can you show me different frameworks or approaches you use to help think through choices?",
+    icon: IconBriefcase,
+  },
+  {
+    title: 'Summarize & Synthesize',
+    prompt:
+      'How do you help with summarizing long documents or synthesizing information from multiple sources? Show me examples of different summary formats and levels of detail.',
+    icon: IconFileText,
+  },
+  {
+    title: 'Explain Complex Topics',
+    prompt:
+      'Can you explain complicated concepts in simple terms? Show me how you break down complex ideas, use analogies, and adapt explanations for different knowledge levels.',
+    icon: IconFileAnalytics,
+  },
+  {
+    title: 'Create Schedules',
+    prompt:
+      'I need help organizing time and creating schedules. Show me different ways you can structure agendas, calendars, or time-based plans with examples.',
+    icon: IconCalendar,
   },
 ];
