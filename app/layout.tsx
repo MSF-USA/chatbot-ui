@@ -1,6 +1,10 @@
 import { Inter } from 'next/font/google';
+
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+
 import './globals.css';
+
+import 'katex/dist/katex.min.css';
 
 const inter = Inter({ subsets: ['latin'] });
 

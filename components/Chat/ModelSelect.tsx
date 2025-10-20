@@ -1,29 +1,39 @@
-import React, { FC, useState, useMemo } from 'react';
 import {
-  IconWorld,
+  IconAlertTriangle,
+  IconCheck,
+  IconChevronDown,
+  IconChevronUp,
   IconCode,
   IconInfoCircle,
-  IconTool,
-  IconCheck,
-  IconTemperature,
-  IconAlertTriangle,
-  IconX,
-  IconRobot,
   IconPlus,
+  IconRobot,
   IconSettings,
-  IconChevronDown,
-  IconChevronUp
+  IconTemperature,
+  IconTool,
+  IconWorld,
+  IconX,
 } from '@tabler/icons-react';
+import React, { FC, useMemo, useState } from 'react';
+
 import { useTranslations } from 'next-intl';
-import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { useCustomAgents } from '@/lib/hooks/settings/useCustomAgents';
-import { CustomAgent } from '@/lib/stores/settingsStore';
+import { useSettings } from '@/lib/hooks/settings/useSettings';
+
+import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+
+import {
+  DeepSeekIcon,
+  MetaIcon,
+  OpenAIIcon,
+  XAIIcon,
+} from '../Icons/providers';
 import { TemperatureSlider } from '../settings/Temperature';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
-import { OpenAIIcon, DeepSeekIcon, XAIIcon, MetaIcon } from '../Icons/providers';
+
+import { CustomAgent } from '@/lib/stores/settingsStore';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -31,9 +41,11 @@ interface ModelSelectProps {
 
 export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const t = useTranslations();
-  const { selectedConversation, updateConversation, conversations } = useConversations();
+  const { selectedConversation, updateConversation, conversations } =
+    useConversations();
   const { models, defaultModelId, setDefaultModelId } = useSettings();
-  const { customAgents, addCustomAgent, updateCustomAgent, deleteCustomAgent } = useCustomAgents();
+  const { customAgents, addCustomAgent, updateCustomAgent, deleteCustomAgent } =
+    useCustomAgents();
 
   const [showAgentForm, setShowAgentForm] = useState(false);
   const [showAgentManager, setShowAgentManager] = useState(false);
@@ -42,7 +54,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   // Helper function to get provider icon
   const getProviderIcon = (provider?: string, size: 'sm' | 'lg' = 'sm') => {
-    const iconProps = { className: size === 'lg' ? "w-6 h-6 flex-shrink-0" : "w-4 h-4 flex-shrink-0" };
+    const iconProps = {
+      className:
+        size === 'lg' ? 'w-6 h-6 flex-shrink-0' : 'w-4 h-4 flex-shrink-0',
+    };
     switch (provider) {
       case 'openai':
         return <OpenAIIcon {...iconProps} />;
@@ -59,16 +74,16 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   // Filter out legacy models
   const baseModels = models
-    .filter(m =>
-      !OpenAIModels[m.id as OpenAIModelID]?.isLegacy
-    )
+    .filter((m) => !OpenAIModels[m.id as OpenAIModelID]?.isLegacy)
     .sort((a, b) => {
       const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
       const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
 
       // Provider order: openai, meta, deepseek, xai
       const providerOrder = { openai: 0, meta: 1, deepseek: 2, xai: 3 };
-      const providerDiff = (providerOrder[aProvider as keyof typeof providerOrder] ?? 4) - (providerOrder[bProvider as keyof typeof providerOrder] ?? 4);
+      const providerDiff =
+        (providerOrder[aProvider as keyof typeof providerOrder] ?? 4) -
+        (providerOrder[bProvider as keyof typeof providerOrder] ?? 4);
 
       if (providerDiff !== 0) return providerDiff;
 
@@ -83,7 +98,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   // Convert custom agents to OpenAIModel format
   const customAgentModels: OpenAIModel[] = useMemo(() => {
-    return customAgents.map(agent => {
+    return customAgents.map((agent) => {
       const baseModel = OpenAIModels[agent.baseModelId];
       return {
         ...baseModel,
@@ -91,7 +106,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         name: agent.name,
         agentId: agent.agentId,
         agentEnabled: true,
-        description: agent.description || `Custom agent based on ${baseModel.name}`,
+        description:
+          agent.description || `Custom agent based on ${baseModel.name}`,
         modelType: 'agent' as const,
       };
     });
@@ -102,8 +118,11 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   const selectedModelId = selectedConversation?.model?.id || defaultModelId;
 
-  const selectedModel = availableModels.find(m => m.id === selectedModelId) || availableModels[0];
-  const modelConfig = selectedModel ? OpenAIModels[selectedModel.id as OpenAIModelID] : null;
+  const selectedModel =
+    availableModels.find((m) => m.id === selectedModelId) || availableModels[0];
+  const modelConfig = selectedModel
+    ? OpenAIModels[selectedModel.id as OpenAIModelID]
+    : null;
   const isCustomAgent = selectedModel?.id?.startsWith('custom-');
   const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5;
   const agentAvailable = modelConfig?.agentId !== undefined;
@@ -115,19 +134,28 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       return;
     }
 
+    // Validate that the model exists in available models
+    if (!availableModels.find((m) => m.id === model.id)) {
+      console.error('Selected model not found in available models:', model.id);
+      return;
+    }
+
     // Set as default model for future conversations
     setDefaultModelId(model.id as OpenAIModelID);
 
     // When selecting a model, use agent mode by default if available
-    const shouldUseAgent = OpenAIModels[model.id as OpenAIModelID]?.agentId !== undefined;
-    const modelToUse = shouldUseAgent ? {
-      ...model,
-      agentEnabled: true,
-      agentId: OpenAIModels[model.id as OpenAIModelID]?.agentId
-    } : model;
+    const shouldUseAgent =
+      OpenAIModels[model.id as OpenAIModelID]?.agentId !== undefined;
+    const modelToUse = shouldUseAgent
+      ? {
+          ...model,
+          agentEnabled: true,
+          agentId: OpenAIModels[model.id as OpenAIModelID]?.agentId,
+        }
+      : model;
 
+    // Only update the model field to avoid overwriting other conversation properties
     updateConversation(selectedConversation.id, {
-      ...selectedConversation,
       model: modelToUse,
     });
   };
@@ -138,16 +166,18 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     const currentlyHasAgent = selectedConversation.model?.agentEnabled;
     const modelConfig = OpenAIModels[selectedModel.id as OpenAIModelID];
 
-    const modelToUse = currentlyHasAgent ?
-      { ...selectedModel, agentEnabled: false } :
-      (modelConfig?.agentId ? {
-        ...selectedModel,
-        agentEnabled: true,
-        agentId: modelConfig.agentId
-      } : selectedModel);
+    const modelToUse = currentlyHasAgent
+      ? { ...selectedModel, agentEnabled: false }
+      : modelConfig?.agentId
+        ? {
+            ...selectedModel,
+            agentEnabled: true,
+            agentId: modelConfig.agentId,
+          }
+        : selectedModel;
 
+    // Only update the model field to avoid overwriting other conversation properties
     updateConversation(selectedConversation.id, {
-      ...selectedConversation,
       model: modelToUse,
     });
   };
@@ -172,10 +202,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     deleteCustomAgent(agentId);
 
     // If currently selected model is the deleted agent, switch to default
-    if (selectedConversation && selectedConversation.model?.id === `custom-${agentId}`) {
+    if (
+      selectedConversation &&
+      selectedConversation.model?.id === `custom-${agentId}`
+    ) {
       const defaultModel = baseModels[0];
+      // Only update the model field to avoid overwriting other conversation properties
       updateConversation(selectedConversation.id, {
-        ...selectedConversation,
         model: defaultModel,
       });
     }
@@ -195,7 +228,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             Select AI Model
           </h3>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Choose your AI model and optionally enable agent capabilities for enhanced functionality
+            Choose your AI model and optionally enable agent capabilities for
+            enhanced functionality
           </p>
         </div>
         {onClose && (
@@ -229,9 +263,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                       onClick={() => handleModelSelect(model)}
                       className={`
                         w-full text-left p-3 rounded-lg transition-all duration-150
-                        ${isSelected
-                          ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
-                          : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+                        ${
+                          isSelected
+                            ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
+                            : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
                         }
                       `}
                     >
@@ -249,7 +284,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           )}
                         </div>
                         {isSelected && (
-                          <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
+                          <IconCheck
+                            size={16}
+                            className="text-blue-600 dark:text-blue-400"
+                          />
                         )}
                       </div>
                     </button>
@@ -265,7 +303,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                 className="w-full flex items-center justify-between p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <IconSettings size={16} className="text-gray-600 dark:text-gray-400" />
+                  <IconSettings
+                    size={16}
+                    className="text-gray-600 dark:text-gray-400"
+                  />
                   <span className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase">
                     Advanced
                   </span>
@@ -274,9 +315,15 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   </span>
                 </div>
                 {showAdvanced ? (
-                  <IconChevronUp size={16} className="text-gray-600 dark:text-gray-400" />
+                  <IconChevronUp
+                    size={16}
+                    className="text-gray-600 dark:text-gray-400"
+                  />
                 ) : (
-                  <IconChevronDown size={16} className="text-gray-600 dark:text-gray-400" />
+                  <IconChevronDown
+                    size={16}
+                    className="text-gray-600 dark:text-gray-400"
+                  />
                 )}
               </button>
 
@@ -299,9 +346,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                               onClick={() => handleModelSelect(model)}
                               className={`
                                 w-full text-left p-3 rounded-lg transition-all duration-150
-                                ${isSelected
-                                  ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
-                                  : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
+                                ${
+                                  isSelected
+                                    ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
+                                    : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
                                 }
                               `}
                             >
@@ -310,7 +358,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                   {model.name}
                                 </span>
                                 {isSelected && (
-                                  <IconCheck size={16} className="text-blue-600 dark:text-blue-400" />
+                                  <IconCheck
+                                    size={16}
+                                    className="text-blue-600 dark:text-blue-400"
+                                  />
                                 )}
                               </div>
                               <div className="flex items-center gap-1.5">
@@ -351,7 +402,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               {/* Model Header */}
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  {getProviderIcon(selectedModel.provider || modelConfig?.provider, 'lg')}
+                  {getProviderIcon(
+                    selectedModel.provider || modelConfig?.provider,
+                    'lg',
+                  )}
                   <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
                     {selectedModel.name}
                   </h2>
@@ -362,15 +416,17 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
                 {/* Model Type and Knowledge Cutoff */}
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
-                    modelConfig?.modelType === 'reasoning'
-                      ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-                      : modelConfig?.modelType === 'omni'
-                      ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
-                      : modelConfig?.modelType === 'agent'
-                      ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
-                      : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
-                  }`}>
+                  <span
+                    className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
+                      modelConfig?.modelType === 'reasoning'
+                        ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                        : modelConfig?.modelType === 'omni'
+                          ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                          : modelConfig?.modelType === 'agent'
+                            ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
+                            : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
+                    }`}
+                  >
                     {modelConfig?.modelType || 'foundational'}
                   </span>
                   {modelConfig?.knowledgeCutoff && (
@@ -385,9 +441,14 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               {isCustomAgent && (
                 <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <div className="flex items-start mb-3">
-                    <IconRobot size={18} className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                    <IconRobot
+                      size={18}
+                      className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                    />
                     <div className="text-sm text-blue-700 dark:text-blue-300">
-                      <strong>Custom Agent:</strong> This agent runs on the MSF AI Assistant Foundry instance with agent capabilities always enabled.
+                      <strong>Custom Agent:</strong> This agent runs on the MSF
+                      AI Assistant Foundry instance with agent capabilities
+                      always enabled.
                     </div>
                   </div>
 
@@ -409,9 +470,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               {!agentAvailable && !isCustomAgent && (
                 <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                   <div className="flex items-start">
-                    <IconAlertTriangle size={18} className="mr-2 mt-0.5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+                    <IconAlertTriangle
+                      size={18}
+                      className="mr-2 mt-0.5 flex-shrink-0 text-amber-600 dark:text-amber-400"
+                    />
                     <div className="text-sm text-amber-700 dark:text-amber-300">
-                      <strong>Note:</strong> Agent services (web search, code interpreter) are not yet available for this model
+                      <strong>Note:</strong> Agent services (web search, code
+                      interpreter) are not yet available for this model
                     </div>
                   </div>
                 </div>
@@ -422,7 +487,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                 <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-2">
-                      <IconTool size={20} className="text-gray-600 dark:text-gray-400" />
+                      <IconTool
+                        size={20}
+                        className="text-gray-600 dark:text-gray-400"
+                      />
                       <div>
                         <div className="font-medium text-gray-900 dark:text-white">
                           Enable AI Agent
@@ -436,12 +504,18 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                       onClick={handleToggleAgent}
                       className="flex items-center"
                     >
-                      <div className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        useAgent ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'
-                      }`}>
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                          useAgent ? 'translate-x-6' : 'translate-x-1'
-                        }`} />
+                      <div
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                          useAgent
+                            ? 'bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            useAgent ? 'translate-x-6' : 'translate-x-1'
+                          }`}
+                        />
                       </div>
                     </button>
                   </div>
@@ -450,11 +524,17 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   {useAgent && (
                     <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700">
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                        <IconWorld size={16} className="mr-2 text-gray-600 dark:text-gray-400" />
+                        <IconWorld
+                          size={16}
+                          className="mr-2 text-gray-600 dark:text-gray-400"
+                        />
                         <span>Real-time web search</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                        <IconCode size={16} className="mr-2 text-gray-600 dark:text-gray-400" />
+                        <IconCode
+                          size={16}
+                          className="mr-2 text-gray-600 dark:text-gray-400"
+                        />
                         <span>Code interpreter & file analysis</span>
                       </div>
                       <div className="flex items-center text-sm text-gray-500 dark:text-gray-500">
@@ -467,38 +547,206 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               )}
 
               {/* Temperature Control */}
-              {!useAgent && selectedConversation && modelConfig?.supportsTemperature !== false && (
-                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center mb-3">
-                    <IconTemperature size={20} className="mr-2 text-gray-600 dark:text-gray-400" />
-                    <span className="font-medium text-gray-900 dark:text-white">
-                      Temperature Control
-                    </span>
+              {!useAgent &&
+                selectedConversation &&
+                modelConfig?.supportsTemperature !== false && (
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center mb-3">
+                      <IconTemperature
+                        size={20}
+                        className="mr-2 text-gray-600 dark:text-gray-400"
+                      />
+                      <span className="font-medium text-gray-900 dark:text-white">
+                        Temperature Control
+                      </span>
+                    </div>
+                    <TemperatureSlider
+                      temperature={selectedConversation.temperature || 0.5}
+                      onChangeTemperature={(temperature) =>
+                        updateConversation(selectedConversation.id, {
+                          temperature,
+                        })
+                      }
+                    />
                   </div>
-                  <TemperatureSlider
-                    temperature={selectedConversation.temperature || 0.5}
-                    onChangeTemperature={(temperature) =>
-                      updateConversation(selectedConversation.id, {
-                        ...selectedConversation,
-                        temperature,
-                      })
-                    }
-                  />
-                </div>
-              )}
+                )}
 
               {/* Temperature Not Supported Notice */}
               {!useAgent && modelConfig?.supportsTemperature === false && (
                 <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                   <div className="flex items-start">
-                    <IconInfoCircle size={18} className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                    <IconInfoCircle
+                      size={18}
+                      className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                    />
                     <div className="text-sm text-blue-700 dark:text-blue-300">
-                      <strong>OpenAI Model Update:</strong> Newer OpenAI models (GPT-5 series, o3) no longer support custom temperature settings. These models use optimized, fixed temperature values for consistent performance.
+                      <strong>OpenAI Model Update:</strong> Newer OpenAI models
+                      (GPT-5 series, o3) no longer support custom temperature
+                      settings. These models use optimized, fixed temperature
+                      values for consistent performance.
                     </div>
                   </div>
                 </div>
               )}
 
+              {/* Reasoning Effort Control (GPT-5, o3) */}
+              {!useAgent &&
+                selectedConversation &&
+                modelConfig?.supportsReasoningEffort && (
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center mb-3">
+                      <IconSettings
+                        size={20}
+                        className="mr-2 text-gray-600 dark:text-gray-400"
+                      />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          Reasoning Effort
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          Control how much computational effort the model uses
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      {modelConfig?.supportsMinimalReasoning && (
+                        <button
+                          onClick={() =>
+                            updateConversation(selectedConversation.id, {
+                              reasoningEffort: 'minimal',
+                            })
+                          }
+                          className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                            (selectedConversation.reasoningEffort ||
+                              selectedConversation.model.reasoningEffort) ===
+                            'minimal'
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                          }`}
+                        >
+                          Minimal
+                        </button>
+                      )}
+                      <button
+                        onClick={() =>
+                          updateConversation(selectedConversation.id, {
+                            reasoningEffort: 'low',
+                          })
+                        }
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                          (selectedConversation.reasoningEffort ||
+                            selectedConversation.model.reasoningEffort) ===
+                          'low'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        Low
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateConversation(selectedConversation.id, {
+                            reasoningEffort: 'medium',
+                          })
+                        }
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                          (selectedConversation.reasoningEffort ||
+                            selectedConversation.model.reasoningEffort) ===
+                          'medium'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        Medium
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateConversation(selectedConversation.id, {
+                            reasoningEffort: 'high',
+                          })
+                        }
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                          (selectedConversation.reasoningEffort ||
+                            selectedConversation.model.reasoningEffort) ===
+                          'high'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        High
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+              {/* Verbosity Control (GPT-5 only) */}
+              {!useAgent &&
+                selectedConversation &&
+                modelConfig?.supportsVerbosity && (
+                  <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center mb-3">
+                      <IconInfoCircle
+                        size={20}
+                        className="mr-2 text-gray-600 dark:text-gray-400"
+                      />
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white">
+                          Verbosity
+                        </div>
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          Control response detail level
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() =>
+                          updateConversation(selectedConversation.id, {
+                            verbosity: 'low',
+                          })
+                        }
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                          (selectedConversation.verbosity ||
+                            selectedConversation.model.verbosity) === 'low'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        Low
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateConversation(selectedConversation.id, {
+                            verbosity: 'medium',
+                          })
+                        }
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                          (selectedConversation.verbosity ||
+                            selectedConversation.model.verbosity) === 'medium'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        Medium
+                      </button>
+                      <button
+                        onClick={() =>
+                          updateConversation(selectedConversation.id, {
+                            verbosity: 'high',
+                          })
+                        }
+                        className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-colors ${
+                          (selectedConversation.verbosity ||
+                            selectedConversation.model.verbosity) === 'high'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        High
+                      </button>
+                    </div>
+                  </div>
+                )}
             </div>
           )}
         </div>
@@ -510,8 +758,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           <IconInfoCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
           <div>
             <p>
-              <strong>Agent Mode:</strong> Automatically uses tools like web search and code interpreter when needed.
-              Temperature and other settings remain fixed for optimal tool performance.
+              <strong>Agent Mode:</strong> Automatically uses tools like web
+              search and code interpreter when needed. Temperature and other
+              settings remain fixed for optimal tool performance.
             </p>
           </div>
         </div>
@@ -571,11 +820,17 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               {/* Info Banner */}
               <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                 <div className="flex items-start">
-                  <IconInfoCircle size={16} className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400" />
+                  <IconInfoCircle
+                    size={16}
+                    className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                  />
                   <div className="text-xs text-blue-700 dark:text-blue-300">
-                    <strong>Instance Restriction:</strong> Custom agents only work with the <strong>MSF AI Assistant Foundry instance</strong>.
-                    Agent IDs must be created by an administrator in this specific instance and shared with you.
-                    External or personal Azure AI Foundry instances are not supported.
+                    <strong>Instance Restriction:</strong> Custom agents only
+                    work with the{' '}
+                    <strong>MSF AI Assistant Foundry instance</strong>. Agent
+                    IDs must be created by an administrator in this specific
+                    instance and shared with you. External or personal Azure AI
+                    Foundry instances are not supported.
                   </div>
                 </div>
               </div>

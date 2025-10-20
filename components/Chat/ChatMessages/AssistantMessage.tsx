@@ -2,35 +2,30 @@ import {
   IconCheck,
   IconCopy,
   IconLoader2,
+  IconRefresh,
   IconSettings,
   IconVolume,
   IconVolumeOff,
-  IconRefresh,
 } from '@tabler/icons-react';
-import {
-  FC,
-  MouseEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { FC, MouseEvent, useEffect, useRef, useState } from 'react';
+
+import { useSmoothStreaming } from '@/lib/hooks/useSmoothStreaming';
+
+import { parseThinkingContent } from '@/lib/utils/app/thinking';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
-import { useSmoothStreaming } from '@/lib/hooks/useSmoothStreaming';
-import { useSettingsStore } from '@/lib/stores/settingsStore';
-
 import AudioPlayer from '@/components/Chat/AudioPlayer';
+import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
-import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
+import { MermaidBlock } from '@/components/Markdown/MermaidBlock';
 
-import { parseThinkingContent } from '@/lib/utils/app/thinking';
-
-import rehypeMathjax from 'rehype-mathjax/svg';
+import { useSettingsStore } from '@/lib/stores/settingsStore';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
@@ -63,13 +58,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
-  const [showStreamingSettings, setShowStreamingSettings] = useState<boolean>(false);
+  const [showStreamingSettings, setShowStreamingSettings] =
+    useState<boolean>(false);
 
   // Get streaming settings from store
-  const smoothStreamingEnabled = useSettingsStore((state) => state.smoothStreamingEnabled);
+  const smoothStreamingEnabled = useSettingsStore(
+    (state) => state.smoothStreamingEnabled,
+  );
   const charsPerFrame = useSettingsStore((state) => state.charsPerFrame);
   const frameDelay = useSettingsStore((state) => state.frameDelay);
-  const setSmoothStreamingEnabled = useSettingsStore((state) => state.setSmoothStreamingEnabled);
+  const setSmoothStreamingEnabled = useSettingsStore(
+    (state) => state.setSmoothStreamingEnabled,
+  );
   const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
   const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
 
@@ -97,7 +97,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   useEffect(() => {
     const processContent = () => {
       // First, parse thinking content from the raw content
-      const { thinking: inlineThinking, content: contentWithoutThinking } = parseThinkingContent(content);
+      const { thinking: inlineThinking, content: contentWithoutThinking } =
+        parseThinkingContent(content);
 
       let mainContent = contentWithoutThinking;
       let citationsData: Citation[] = [];
@@ -111,10 +112,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       }
       // Then check for the newer metadata format
       else {
-        const metadataMatch = contentWithoutThinking.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
+        const metadataMatch = contentWithoutThinking.match(
+          /\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s,
+        );
         if (metadataMatch) {
           extractionMethod = 'metadata';
-          mainContent = contentWithoutThinking.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
+          mainContent = contentWithoutThinking.replace(
+            /\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s,
+            '',
+          );
 
           try {
             const parsedData = JSON.parse(metadataMatch[1]);
@@ -140,40 +146,42 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             // Silently ignore parsing errors
           }
         }
-      // Next try the legacy JSON detection at the end
-      else if (!messageIsStreaming) {
-        // Only try legacy JSON parsing when not streaming to avoid partial JSON
-        const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
-        if (jsonMatch) {
-          const jsonStr = jsonMatch[1].trim();
-          // Validate JSON structure before parsing
-          if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
-            const openBraces = (jsonStr.match(/{/g) || []).length;
-            const closeBraces = (jsonStr.match(/}/g) || []).length;
+        // Next try the legacy JSON detection at the end
+        else if (!messageIsStreaming) {
+          // Only try legacy JSON parsing when not streaming to avoid partial JSON
+          const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
+          if (jsonMatch) {
+            const jsonStr = jsonMatch[1].trim();
+            // Validate JSON structure before parsing
+            if (jsonStr.startsWith('{') && jsonStr.endsWith('}')) {
+              const openBraces = (jsonStr.match(/{/g) || []).length;
+              const closeBraces = (jsonStr.match(/}/g) || []).length;
 
-            if (openBraces === closeBraces) {
-              extractionMethod = 'regex';
-              mainContent = contentWithoutThinking.slice(0, -jsonMatch[1].length).trim();
-              try {
-                const parsedData = JSON.parse(jsonStr);
-                if (parsedData.citations) {
-                  // Deduplicate citations by URL or title
-                  const uniqueCitationsMap = new Map();
-                  parsedData.citations.forEach((citation: Citation) => {
-                    const key = citation.url || citation.title;
-                    if (key && !uniqueCitationsMap.has(key)) {
-                      uniqueCitationsMap.set(key, citation);
-                    }
-                  });
-                  citationsData = Array.from(uniqueCitationsMap.values());
+              if (openBraces === closeBraces) {
+                extractionMethod = 'regex';
+                mainContent = contentWithoutThinking
+                  .slice(0, -jsonMatch[1].length)
+                  .trim();
+                try {
+                  const parsedData = JSON.parse(jsonStr);
+                  if (parsedData.citations) {
+                    // Deduplicate citations by URL or title
+                    const uniqueCitationsMap = new Map();
+                    parsedData.citations.forEach((citation: Citation) => {
+                      const key = citation.url || citation.title;
+                      if (key && !uniqueCitationsMap.has(key)) {
+                        uniqueCitationsMap.set(key, citation);
+                      }
+                    });
+                    citationsData = Array.from(uniqueCitationsMap.values());
+                  }
+                } catch (error) {
+                  // Silently ignore parsing errors
                 }
-              } catch (error) {
-                // Silently ignore parsing errors
               }
             }
           }
         }
-      }
       } // Close the outer else block
 
       // Check for message-stored citations in the conversation
@@ -197,11 +205,11 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         citationsData = Array.from(uniqueCitationsMap.values());
       }
 
-
       processingAttempts.current++;
 
       // Determine final thinking content (priority: message > metadata > inline)
-      const finalThinking = message?.thinking || metadataThinking || inlineThinking || '';
+      const finalThinking =
+        message?.thinking || metadataThinking || inlineThinking || '';
 
       // For streaming, also compute content without metadata for display
       const streamingDisplay = contentWithoutThinking
@@ -240,9 +248,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     : displayContent;
 
   // Use the smooth content for display when streaming and smooth streaming is enabled
-  const contentToDisplay = smoothStreamingEnabled && messageIsStreaming
-    ? smoothContent
-    : displayContentWithoutCitations;
+  const contentToDisplay =
+    smoothStreamingEnabled && messageIsStreaming
+      ? smoothContent
+      : displayContentWithoutCitations;
 
   const handleTTS = async () => {
     try {
@@ -283,28 +292,26 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
-
   // Custom components for markdown processing
   const customMarkdownComponents = {
     code({ inline, className, children, ...props }: any) {
       if (children?.length) {
         if (children[0] == '▍') {
-          return (
-            <span className="animate-pulse cursor-default mt-1">
-              ▍
-            </span>
-          );
+          return <span className="animate-pulse cursor-default mt-1">▍</span>;
         }
       }
 
       const match = /language-(\w+)/.exec(className || '');
+      const language = (match && match[1]) || '';
+      const value = String(children).replace(/\n$/, '');
+
+      // Render Mermaid diagrams with custom component
+      if (!inline && language === 'mermaid') {
+        return <MermaidBlock chart={value} />;
+      }
 
       return !inline ? (
-        <CodeBlock
-          language={(match && match[1]) || ''}
-          value={String(children).replace(/\n$/, '')}
-          {...props}
-        />
+        <CodeBlock language={language} value={value} {...props} />
       ) : (
         <code className={className} {...props}>
           {children}
@@ -335,12 +342,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       );
     },
     p({ children }: any) {
-      return (
-        <p>
-          {children}
-        </p>
-      );
-    }
+      return <p>{children}</p>;
+    },
   };
 
   return (
@@ -362,17 +365,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           )}
 
           <div className="flex-1 w-full">
-            <div className="prose dark:prose-invert max-w-none w-full" style={{ maxWidth: 'none' }}>
+            <div
+              className="prose dark:prose-invert max-w-none w-full"
+              style={{ maxWidth: 'none' }}
+            >
               <CitationMarkdown
                 conversation={selectedConversation}
                 message={message}
                 citations={citations}
                 remarkPlugins={remarkPlugins}
-                rehypePlugins={[rehypeMathjax]}
+                rehypePlugins={[rehypeKatex]}
                 components={customMarkdownComponents}
               >
-              {contentToDisplay}
-            </CitationMarkdown>
+                {contentToDisplay}
+              </CitationMarkdown>
             </div>
           </div>
 
@@ -382,25 +388,24 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             <button
               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
               onClick={copyOnClick}
-              aria-label={messageCopied ? "Copied" : "Copy message"}
+              aria-label={messageCopied ? 'Copied' : 'Copy message'}
             >
-              {messageCopied ? (
-                <IconCheck size={18} />
-              ) : (
-                <IconCopy size={18} />
-              )}
+              {messageCopied ? <IconCheck size={18} /> : <IconCopy size={18} />}
             </button>
 
             {/* Regenerate button - only show on last assistant message */}
-            {onRegenerate && !messageIsStreaming && selectedConversation && messageIndex === selectedConversation.messages.length - 1 && (
-              <button
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                onClick={onRegenerate}
-                aria-label="Regenerate response"
-              >
-                <IconRefresh size={18} />
-              </button>
-            )}
+            {onRegenerate &&
+              !messageIsStreaming &&
+              selectedConversation &&
+              messageIndex === selectedConversation.messages.length - 1 && (
+                <button
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                  onClick={onRegenerate}
+                  aria-label="Regenerate response"
+                >
+                  <IconRefresh size={18} />
+                </button>
+              )}
 
             {/* Listen button */}
             <button
@@ -411,7 +416,13 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               }`}
               onClick={audioUrl ? handleCloseAudio : handleTTS}
               disabled={isGeneratingAudio || messageIsStreaming}
-              aria-label={audioUrl ? "Stop audio" : isGeneratingAudio ? "Generating audio..." : "Listen"}
+              aria-label={
+                audioUrl
+                  ? 'Stop audio'
+                  : isGeneratingAudio
+                    ? 'Generating audio...'
+                    : 'Listen'
+              }
             >
               {isGeneratingAudio ? (
                 <IconLoader2 size={18} className="animate-spin" />
@@ -443,16 +454,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                           setSmoothStreamingEnabled(e.target.checked)
                         }
                       />
-                      <span className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                        smoothStreamingEnabled
-                          ? 'bg-blue-500 dark:bg-blue-600'
-                          : 'bg-gray-300 dark:bg-gray-600'
-                      }`}>
-                        <span className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                      <span
+                        className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
                           smoothStreamingEnabled
-                            ? 'translate-x-5'
-                            : 'translate-x-0.5'
-                        } top-0.5 left-0`}></span>
+                            ? 'bg-blue-500 dark:bg-blue-600'
+                            : 'bg-gray-300 dark:bg-gray-600'
+                        }`}
+                      >
+                        <span
+                          className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
+                            smoothStreamingEnabled
+                              ? 'translate-x-5'
+                              : 'translate-x-0.5'
+                          } top-0.5 left-0`}
+                        ></span>
                       </span>
                     </div>
                   </label>
@@ -470,9 +485,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     min="1"
                     max="10"
                     value={charsPerFrame}
-                    onChange={(e) =>
-                      setCharsPerFrame(parseInt(e.target.value))
-                    }
+                    onChange={(e) => setCharsPerFrame(parseInt(e.target.value))}
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
                       smoothStreamingEnabled
                         ? 'bg-gray-300 dark:bg-gray-600'
@@ -499,9 +512,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     max="50"
                     step="5"
                     value={frameDelay}
-                    onChange={(e) =>
-                      setFrameDelay(parseInt(e.target.value))
-                    }
+                    onChange={(e) => setFrameDelay(parseInt(e.target.value))}
                     className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
                       smoothStreamingEnabled
                         ? 'bg-gray-300 dark:bg-gray-600'
@@ -519,10 +530,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           )}
 
           {audioUrl && (
-              <AudioPlayer
-                  audioUrl={audioUrl}
-                  onClose={handleCloseAudio}
-              />
+            <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
           )}
         </div>
 

@@ -1,12 +1,18 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { AzureBlobStorage, BlobProperty, getBlobBase64String } from '@/lib/utils/server/blob';
 import { Session } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+
+import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { BlobProperty, getBlobBase64String } from '@/lib/utils/server/blob';
+
 import { auth } from '@/auth';
-import { getEnvVariable } from '@/lib/utils/app/env';
 
 const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   if (typeof id !== 'string' || id.length < 1) {
-    console.error(`Invalid id type '${typeof id}' for object: ${JSON.stringify(id)}`);
+    console.error(
+      `Invalid id type '${typeof id}' for object: ${JSON.stringify(id)}`,
+    );
     return false;
   }
   const idParts: string[] = id.split('.');
@@ -22,16 +28,18 @@ const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
 };
 
 export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const { id } = await params;
   const { searchParams } = new URL(request.url);
   const requestedFileType = searchParams.get('filetype');
 
-
   if (!isValidSha256Hash(id)) {
-    return NextResponse.json({ error: 'Invalid file identifier' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid file identifier' },
+      { status: 400 },
+    );
   }
 
   let fileType: 'image' | 'file' = 'file';
@@ -44,38 +52,36 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const userId: string = session?.user?.id ?? 'anonymous';
+  const userId = getUserIdFromSession(session);
   const remoteFilepath = `${userId}/uploads/${fileType}s`;
 
   try {
     if (fileType === 'image') {
       const base64String: string = await getBlobBase64String(
-        userId, id as string,
+        userId,
+        id as string,
         undefined,
-        session.user
+        session.user,
       );
       return NextResponse.json({ base64Url: base64String });
     } else if (fileType === 'file') {
-      const blobStorage = new AzureBlobStorage(
-        getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
-        getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
-        getEnvVariable(
-          {
-            name: 'AZURE_BLOB_STORAGE_CONTAINER',
-            throwErrorOnFail: false,
-            defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
-            user: session.user
-          }
-        ),
-        session.user
-      );
-      const blob: Buffer = await (blobStorage.get(`${remoteFilepath}/${id}`, BlobProperty.BLOB) as Promise<Buffer>);
+      const blobStorage = createBlobStorageClient(session);
+      const blob: Buffer = await (blobStorage.get(
+        `${remoteFilepath}/${id}`,
+        BlobProperty.BLOB,
+      ) as Promise<Buffer>);
       return new NextResponse(new Uint8Array(blob));
     } else {
       throw new Error(`Invalid fileType requested: ${fileType}`);
     }
   } catch (error) {
     console.error('Error retrieving blob:', error);
-    return NextResponse.json({ error: 'Failed to retrieve file' }, { status: 500, headers: { 'Cache-Control': 's-maxage=43200, stale-while-revalidate' } });
+    return NextResponse.json(
+      { error: 'Failed to retrieve file' },
+      {
+        status: 500,
+        headers: { 'Cache-Control': 's-maxage=43200, stale-while-revalidate' },
+      },
+    );
   }
 }

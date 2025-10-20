@@ -162,9 +162,9 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const lines = ${{ steps.coverage-stats.outputs.lines }};
-            const functions = ${{ steps.coverage-stats.outputs.functions }};
-            const branches = ${{ steps.coverage-stats.outputs.branches }};
+            const lines = parseFloat('${{ steps.coverage-stats.outputs.lines }}') || 0;
+            const functions = parseFloat('${{ steps.coverage-stats.outputs.functions }}') || 0;
+            const branches = parseFloat('${{ steps.coverage-stats.outputs.branches }}') || 0;
             const artifactUrl = `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const previewUrl = `${{ steps.get_url.outputs.containerAppUrl }}`;
             const prNumber = context.issue.number;

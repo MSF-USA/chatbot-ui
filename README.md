@@ -17,7 +17,7 @@ MSF AI Assistant provides a secure, privacy-focused chat interface for MSF staff
 - 🌍 **Translation** - Multi-language translation with domain-specific options
 - 💾 **Local Storage** - All data stored on your device for privacy
 - 🎨 **Themes** - Light and dark mode support
-- 🌐 **i18n** - Support for 30+ languages
+- 🌐 **i18n** - Support for 33 languages
 - 📱 **Responsive** - Works on desktop and mobile devices
 
 For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
@@ -33,7 +33,7 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 ### Prerequisites
 
 - Node.js 24+ and npm 10+
-- Azure OpenAI API access
+- Azure OpenAI or Azure AI Foundry API access
 - Azure AD application for authentication
 
 ### Installation
@@ -41,8 +41,8 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-org/chatbot-ui.git
-   cd chatbot-ui
+   git clone https://github.com/Medecins-Sans-Frontieres-Collaborate/ai-assistant-app.git
+   cd ai-assistant-app
    ```
 
 2. **Install dependencies**
@@ -137,9 +137,9 @@ The application is optimized for deployment on Vercel:
 See `.env.example` for all available configuration options, including:
 
 - NextAuth configuration (URL, secret, Azure AD)
-- Azure OpenAI credentials and endpoints
-- Optional services (Azure Speech, Blob Storage, AI Foundry, LaunchDarkly)
-- Application settings (version, environment, default prompts)
+- Azure OpenAI and Azure AI Foundry credentials and endpoints
+- Optional services (Azure Blob Storage, Azure AI Search, LaunchDarkly)
+- Application settings (environment, rate limiting)
 
 Copy `.env.example` to `.env.local` and update with your actual values.
 
@@ -160,11 +160,7 @@ Model settings and environment-specific configurations are managed in two files:
 
 ### Feature Flags
 
-Enable/disable features via environment variables:
-
-- **ENABLE_WEB_SEARCH** - Enable Bing web search
-- **ENABLE_TRANSCRIPTION** - Enable audio transcription
-- **ENABLE_VISION** - Enable image upload and vision
+Feature flags are managed via LaunchDarkly. See `.env.example` for LaunchDarkly configuration options.
 
 ## Privacy & Security
 

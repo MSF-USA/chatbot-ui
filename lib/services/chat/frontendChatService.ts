@@ -1,5 +1,5 @@
 import { Conversation } from '@/types/chat';
-import { OpenAIModels, OpenAIModelID } from '@/types/openai';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 /**
  * Frontend service for making chat API requests
@@ -33,16 +33,19 @@ export async function makeRequest(
   temperature: number,
   stream: boolean,
   setProgress: (progress: any) => void,
-  stopConversationRef: { current: boolean }
+  stopConversationRef: { current: boolean },
 ): Promise<MakeRequestResponse> {
-  const { model, messages, bot, threadId } = conversation;
+  const { model, messages, bot, threadId, reasoningEffort, verbosity } =
+    conversation;
 
   // Merge conversation model with latest configuration from OpenAIModels
   // This ensures properties like sdk, supportsTemperature, etc. are always current
   const latestModelConfig = OpenAIModels[model.id as OpenAIModelID];
-  const modelToSend = latestModelConfig ? { ...latestModelConfig, ...model } : model;
+  const modelToSend = latestModelConfig
+    ? { ...latestModelConfig, ...model }
+    : model;
 
-  const requestBody = {
+  const requestBody: any = {
     model: modelToSend,
     messages,
     prompt: systemPrompt,
@@ -51,6 +54,17 @@ export async function makeRequest(
     stream,
     threadId,
   };
+
+  // Add reasoning_effort if present in conversation or model
+  if (reasoningEffort || modelToSend.reasoningEffort) {
+    requestBody.reasoningEffort =
+      reasoningEffort || modelToSend.reasoningEffort;
+  }
+
+  // Add verbosity if present in conversation or model
+  if (verbosity || modelToSend.verbosity) {
+    requestBody.verbosity = verbosity || modelToSend.verbosity;
+  }
 
   const response = await fetch('/api/chat', {
     method: 'POST',
@@ -69,7 +83,8 @@ export async function makeRequest(
   const hasComplexContent = messages.some((message) => {
     if (Array.isArray(message.content)) {
       return message.content.some(
-        (content: any) => content.type === 'image_url' || content.type === 'file'
+        (content: any) =>
+          content.type === 'image_url' || content.type === 'file',
       );
     }
     return false;

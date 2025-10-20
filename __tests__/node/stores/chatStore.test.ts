@@ -1,7 +1,15 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { useChatStore } from '@/lib/stores/chatStore';
-import { Message, MessageType, Conversation } from '@/types/chat';
+import { makeRequest } from '@/lib/services/chat/frontendChatService';
+
+import { extractCitationsFromContent } from '@/lib/utils/app/citation';
+import { parseMetadataFromContent } from '@/lib/utils/app/metadata';
+
+import { Conversation, Message, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
+
+import { useChatStore } from '@/lib/stores/chatStore';
+import { useConversationStore } from '@/lib/stores/conversationStore';
+import { useSettingsStore } from '@/lib/stores/settingsStore';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock external dependencies
 vi.mock('@/lib/services/chat/frontendChatService', () => ({
@@ -24,10 +32,10 @@ vi.mock('@/lib/utils/app/citation', () => ({
   extractCitationsFromContent: vi.fn(),
 }));
 
-import { makeRequest } from '@/lib/services/chat/frontendChatService';
-import { useConversationStore } from '@/lib/stores/conversationStore';
-import { useSettingsStore } from '@/lib/stores/settingsStore';
-import { extractCitationsFromContent } from '@/lib/utils/app/citation';
+vi.mock('@/lib/utils/app/metadata', () => ({
+  parseMetadataFromContent: vi.fn(),
+  createStreamDecoder: vi.fn(() => new TextDecoder()),
+}));
 
 describe('chatStore', () => {
   beforeEach(() => {
@@ -194,10 +202,20 @@ describe('chatStore', () => {
 
     it('replaces existing citations', () => {
       const citations1: Citation[] = [
-        { title: 'First', url: 'https://example.com', date: '2024-01-01', number: 1 },
+        {
+          title: 'First',
+          url: 'https://example.com',
+          date: '2024-01-01',
+          number: 1,
+        },
       ];
       const citations2: Citation[] = [
-        { title: 'Second', url: 'https://example2.com', date: '2024-01-02', number: 2 },
+        {
+          title: 'Second',
+          url: 'https://example2.com',
+          date: '2024-01-02',
+          number: 2,
+        },
       ];
 
       useChatStore.getState().setCitations(citations1);
@@ -208,7 +226,12 @@ describe('chatStore', () => {
 
     it('can set empty array', () => {
       const citations: Citation[] = [
-        { title: 'Test', url: 'https://example.com', date: '2024-01-01', number: 1 },
+        {
+          title: 'Test',
+          url: 'https://example.com',
+          date: '2024-01-01',
+          number: 1,
+        },
       ];
 
       useChatStore.getState().setCitations(citations);
@@ -274,10 +297,21 @@ describe('chatStore', () => {
     it('resets all state to initial values', () => {
       // Set all state to non-initial values
       useChatStore.setState({
-        currentMessage: { role: 'user', content: 'Test', messageType: undefined },
+        currentMessage: {
+          role: 'user',
+          content: 'Test',
+          messageType: undefined,
+        },
         isStreaming: true,
         streamingContent: 'Content',
-        citations: [{ title: 'Test', url: 'https://example.com', date: '2024-01-01', number: 1 }],
+        citations: [
+          {
+            title: 'Test',
+            url: 'https://example.com',
+            date: '2024-01-01',
+            number: 1,
+          },
+        ],
         error: 'Error',
         stopRequested: true,
       });
@@ -335,18 +369,22 @@ describe('chatStore', () => {
         updateConversation: vi.fn(),
       } as any);
 
-      // Mock citation extraction (default: no citations)
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Response text',
+      // Mock metadata parsing (default: no citations)
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Response text',
         citations: [],
-        extractionMethod: 'test',
+        extractionMethod: 'none',
       });
     });
 
     it('sets streaming state at start', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Hello') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Hello'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -360,7 +398,9 @@ describe('chatStore', () => {
       const message = createMockMessage();
       const conversation = createMockConversation();
 
-      const promise = useChatStore.getState().sendMessage(message, conversation);
+      const promise = useChatStore
+        .getState()
+        .sendMessage(message, conversation);
 
       // Check state is set immediately
       expect(useChatStore.getState().isStreaming).toBe(true);
@@ -373,9 +413,16 @@ describe('chatStore', () => {
 
     it('handles streaming response chunks', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Hello') })
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode(' world') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Hello'),
+          })
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode(' world'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -386,10 +433,10 @@ describe('chatStore', () => {
         hasComplexContent: false,
       });
 
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Hello world',
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Hello world',
         citations: [],
-        extractionMethod: 'test',
+        extractionMethod: 'none',
       });
 
       const message = createMockMessage();
@@ -402,8 +449,12 @@ describe('chatStore', () => {
 
     it('updates conversation with assistant message', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Response') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Response'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -414,10 +465,10 @@ describe('chatStore', () => {
         hasComplexContent: false,
       });
 
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Response',
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Response',
         citations: [],
-        extractionMethod: 'test',
+        extractionMethod: 'none',
       });
 
       const updateConversation = vi.fn();
@@ -430,20 +481,27 @@ describe('chatStore', () => {
 
       await useChatStore.getState().sendMessage(message, conversation);
 
-      expect(updateConversation).toHaveBeenCalledWith('conv-1', expect.objectContaining({
-        messages: expect.arrayContaining([
-          expect.objectContaining({
-            role: 'assistant',
-            content: 'Response',
-          }),
-        ]),
-      }));
+      expect(updateConversation).toHaveBeenCalledWith(
+        'conv-1',
+        expect.objectContaining({
+          messages: expect.arrayContaining([
+            expect.objectContaining({
+              role: 'assistant',
+              content: 'Response',
+            }),
+          ]),
+        }),
+      );
     });
 
     it('auto-names conversation from first user message', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Response') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Response'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -454,10 +512,10 @@ describe('chatStore', () => {
         hasComplexContent: false,
       });
 
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Response',
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Response',
         citations: [],
-        extractionMethod: 'test',
+        extractionMethod: 'none',
       });
 
       const updateConversation = vi.fn();
@@ -469,20 +527,33 @@ describe('chatStore', () => {
       const conversation: Conversation = {
         ...createMockConversation(),
         name: 'New Conversation',
-        messages: [{ role: 'user', content: 'What is the weather?', messageType: undefined }],
+        messages: [
+          {
+            role: 'user',
+            content: 'What is the weather?',
+            messageType: undefined,
+          },
+        ],
       };
 
       await useChatStore.getState().sendMessage(message, conversation);
 
-      expect(updateConversation).toHaveBeenCalledWith('conv-1', expect.objectContaining({
-        name: 'What is the weather?',
-      }));
+      expect(updateConversation).toHaveBeenCalledWith(
+        'conv-1',
+        expect.objectContaining({
+          name: 'What is the weather?',
+        }),
+      );
     });
 
     it('truncates long conversation names', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Response') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Response'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -493,10 +564,10 @@ describe('chatStore', () => {
         hasComplexContent: false,
       });
 
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Response',
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Response',
         citations: [],
-        extractionMethod: 'test',
+        extractionMethod: 'none',
       });
 
       const updateConversation = vi.fn();
@@ -508,14 +579,21 @@ describe('chatStore', () => {
       const conversation: Conversation = {
         ...createMockConversation(),
         name: 'New Conversation',
-        messages: [{ role: 'user', content: longMessage, messageType: undefined }],
+        messages: [
+          { role: 'user', content: longMessage, messageType: undefined },
+        ],
       };
 
-      await useChatStore.getState().sendMessage(createMockMessage(), conversation);
+      await useChatStore
+        .getState()
+        .sendMessage(createMockMessage(), conversation);
 
-      expect(updateConversation).toHaveBeenCalledWith('conv-1', expect.objectContaining({
-        name: 'a'.repeat(50) + '...',
-      }));
+      expect(updateConversation).toHaveBeenCalledWith(
+        'conv-1',
+        expect.objectContaining({
+          name: 'a'.repeat(50) + '...',
+        }),
+      );
     });
 
     it('handles error and sets error state', async () => {
@@ -547,8 +625,12 @@ describe('chatStore', () => {
 
     it('resets streaming state after completion', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Response') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Response'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -559,10 +641,10 @@ describe('chatStore', () => {
         hasComplexContent: false,
       });
 
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Response',
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Response',
         citations: [],
-        extractionMethod: 'test',
+        extractionMethod: 'none',
       });
 
       const message = createMockMessage();
@@ -574,10 +656,14 @@ describe('chatStore', () => {
       expect(useChatStore.getState().streamingContent).toBe('');
     });
 
-    it('extracts citations from legacy format', async () => {
+    it('extracts citations from metadata format', async () => {
       const mockReader = {
-        read: vi.fn()
-          .mockResolvedValueOnce({ done: false, value: new TextEncoder().encode('Response text') })
+        read: vi
+          .fn()
+          .mockResolvedValueOnce({
+            done: false,
+            value: new TextEncoder().encode('Response text'),
+          })
           .mockResolvedValueOnce({ done: true, value: undefined }),
       };
 
@@ -589,13 +675,18 @@ describe('chatStore', () => {
       });
 
       const mockCitations: Citation[] = [
-        { title: 'Source', url: 'https://example.com', date: '2024-01-01', number: 1 },
+        {
+          title: 'Source',
+          url: 'https://example.com',
+          date: '2024-01-01',
+          number: 1,
+        },
       ];
 
-      vi.mocked(extractCitationsFromContent).mockReturnValue({
-        text: 'Response text',
+      vi.mocked(parseMetadataFromContent).mockReturnValue({
+        content: 'Response text',
         citations: mockCitations,
-        extractionMethod: 'test',
+        extractionMethod: 'metadata',
       });
 
       const message = createMockMessage();
@@ -603,14 +694,18 @@ describe('chatStore', () => {
 
       await useChatStore.getState().sendMessage(message, conversation);
 
-      const updateConversation = vi.mocked(useConversationStore.getState).mock.results[0].value.updateConversation;
-      expect(updateConversation).toHaveBeenCalledWith('conv-1', expect.objectContaining({
-        messages: expect.arrayContaining([
-          expect.objectContaining({
-            citations: mockCitations,
-          }),
-        ]),
-      }));
+      const updateConversation = vi.mocked(useConversationStore.getState).mock
+        .results[0].value.updateConversation;
+      expect(updateConversation).toHaveBeenCalledWith(
+        'conv-1',
+        expect.objectContaining({
+          messages: expect.arrayContaining([
+            expect.objectContaining({
+              citations: mockCitations,
+            }),
+          ]),
+        }),
+      );
     });
   });
 

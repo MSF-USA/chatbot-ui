@@ -1,7 +1,4 @@
-import {
-  IconEdit,
-  IconTrash,
-} from '@tabler/icons-react';
+import { IconEdit, IconTrash } from '@tabler/icons-react';
 import {
   Dispatch,
   FC,
@@ -19,7 +16,7 @@ import { Conversation, Message } from '@/types/chat';
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
 import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
 
-import rehypeMathjax from 'rehype-mathjax/svg';
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 
@@ -129,51 +126,51 @@ export const UserMessage: FC<UserMessageProps> = ({
             </div>
           ) : (
             <div className="prose prose-sm prose-invert text-white max-w-none">
-            <MemoizedReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath]}
-              rehypePlugins={[rehypeMathjax]}
-              components={{
-              code({ node, inline, className, children, ...props }: any) {
-                const match = /language-(\w+)/.exec(className || '');
-                return !inline ? (
-                  <CodeBlock
-                    language={(match && match[1]) || ''}
-                    value={String(children).replace(/\n$/, '')}
-                    {...props}
-                  />
-                ) : (
-                  <code className={className} {...props}>
-                    {children}
-                  </code>
-                );
-              },
-              table({ children }: any) {
-                return (
-                  <div className="overflow-auto">
-                    <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-                      {children}
-                    </table>
-                  </div>
-                );
-              },
-              th({ children }: any) {
-                return (
-                  <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-                    {children}
-                  </th>
-                );
-              },
-              td({ children }: any) {
-                return (
-                  <td className="break-words border border-black px-3 py-1 dark:border-white">
-                    {children}
-                  </td>
-                );
-              },
-            }}
-            >
-              {localMessageContent}
-            </MemoizedReactMarkdown>
+              <MemoizedReactMarkdown
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+                components={{
+                  code({ node, inline, className, children, ...props }: any) {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline ? (
+                      <CodeBlock
+                        language={(match && match[1]) || ''}
+                        value={String(children).replace(/\n$/, '')}
+                        {...props}
+                      />
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                  table({ children }: any) {
+                    return (
+                      <div className="overflow-auto">
+                        <table className="border-collapse border border-black px-3 py-1 dark:border-white">
+                          {children}
+                        </table>
+                      </div>
+                    );
+                  },
+                  th({ children }: any) {
+                    return (
+                      <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
+                        {children}
+                      </th>
+                    );
+                  },
+                  td({ children }: any) {
+                    return (
+                      <td className="break-words border border-black px-3 py-1 dark:border-white">
+                        {children}
+                      </td>
+                    );
+                  },
+                }}
+              >
+                {localMessageContent}
+              </MemoizedReactMarkdown>
             </div>
           )}
         </div>

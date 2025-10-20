@@ -39,6 +39,38 @@ module.exports = {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
+        'bounce-dot': {
+          '0%, 80%, 100%': {
+            transform: 'translateY(0)',
+            animationTimingFunction: 'cubic-bezier(0.8, 0, 1, 1)',
+          },
+          '40%': {
+            transform: 'translateY(-0.5rem)',
+            animationTimingFunction: 'cubic-bezier(0, 0, 0.2, 1)',
+          },
+        },
+        breathing: {
+          '0%, 100%': {
+            transform: 'scale(1)',
+            opacity: '0.8',
+          },
+          '50%': {
+            transform: 'scale(1.3)',
+            opacity: '1',
+          },
+        },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'slide-in-from-top': {
+          '0%': { transform: 'translateY(-1rem)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'slide-in-from-bottom': {
+          '0%': { transform: 'translateY(1rem)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
       },
       animation: {
         'scroll-text': 'scroll-text 10s linear infinite',
@@ -47,6 +79,13 @@ module.exports = {
         'progress-bar-stripes': 'progress-bar-stripes 1s linear infinite',
         'animate-pulse': 'pulse 2s infinite',
         'spin-slow': 'spin-slow 4s linear infinite',
+        'bounce-dot-1': 'bounce-dot 1.4s infinite 0s',
+        'bounce-dot-2': 'bounce-dot 1.4s infinite 0.2s',
+        'bounce-dot-3': 'bounce-dot 1.4s infinite 0.4s',
+        breathing: 'breathing 1.5s ease-in-out infinite',
+        'fade-in': 'fade-in 0.5s ease-out forwards',
+        'fade-in-top': 'slide-in-from-top 0.7s ease-out forwards',
+        'fade-in-bottom': 'slide-in-from-bottom 0.7s ease-out 0.15s forwards',
       },
     },
   },

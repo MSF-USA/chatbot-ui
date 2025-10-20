@@ -1,8 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { AzureBlobStorage, BlobStorage } from '@/lib/utils/server/blob';
-import { getEnvVariable } from '@/lib/utils/app/env';
-import Hasher from '@/lib/utils/app/hash';
 import { Session } from 'next-auth';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+
+import Hasher from '@/lib/utils/app/hash';
+import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { BlobStorage } from '@/lib/utils/server/blob';
+
 import { auth } from '@/auth';
 
 // Maximum file size: 50MB
@@ -15,15 +19,30 @@ export async function POST(request: NextRequest) {
   const mimeType: string | null = searchParams.get('mime');
 
   if (!filename) {
-    return NextResponse.json({ error: 'Filename is required' }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Filename is required' },
+      { status: 400 },
+    );
   }
 
   if (filetype) {
     const extension = filename.split('.').pop()?.toLowerCase();
-    const executableExtensions = ['exe', 'bat', 'cmd', 'sh', 'dll', 'msi', 'jar', 'app'];
+    const executableExtensions = [
+      'exe',
+      'bat',
+      'cmd',
+      'sh',
+      'dll',
+      'msi',
+      'jar',
+      'app',
+    ];
 
     if (extension && executableExtensions.includes(extension)) {
-      return NextResponse.json({error: 'Executable files are not allowed'}, {status: 400});
+      return NextResponse.json(
+        { error: 'Executable files are not allowed' },
+        { status: 400 },
+      );
     }
 
     if (mimeType) {
@@ -37,7 +56,10 @@ export async function POST(request: NextRequest) {
       ];
 
       if (executableMimeTypes.includes(mimeType)) {
-        return NextResponse.json({error: 'Invalid file type submitted'}, {status: 400});
+        return NextResponse.json(
+          { error: 'Invalid file type submitted' },
+          { status: 400 },
+        );
       }
     }
   }
@@ -58,30 +80,18 @@ export async function POST(request: NextRequest) {
 
   const uploadFileToBlobStorage = async (data: string) => {
     const session: Session | null = await auth();
-    if (!session) throw new Error("Failed to pull session!");
+    if (!session) throw new Error('Failed to pull session!');
 
-    const userId: string = session?.user?.id ?? 'anonymous';
+    const userId = getUserIdFromSession(session);
 
-    let blobStorageClient: BlobStorage = new AzureBlobStorage(
-      getEnvVariable({name: 'AZURE_BLOB_STORAGE_NAME', user: session.user}),
-      getEnvVariable({name: 'AZURE_BLOB_STORAGE_KEY', user: session.user}),
-      getEnvVariable(
-        {
-          name: 'AZURE_BLOB_STORAGE_CONTAINER',
-          throwErrorOnFail: false,
-          defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
-          user: session.user
-        }
-      ),
-      session.user
-    );
+    const blobStorageClient: BlobStorage = createBlobStorageClient(session);
 
     const hashedFileContents = Hasher.sha256(data).slice(0, 200);
     const extension: string | undefined = filename.split('.').pop();
 
     let contentType;
-    if(mimeType) {
-      contentType = mimeType
+    if (mimeType) {
+      contentType = mimeType;
     } else if (extension) {
       contentType = getContentType(extension);
     } else {
@@ -90,7 +100,8 @@ export async function POST(request: NextRequest) {
 
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
 
-    const isImage = (mimeType && mimeType.startsWith('image/')) || filetype === 'image';
+    const isImage =
+      (mimeType && mimeType.startsWith('image/')) || filetype === 'image';
     const decodedData = isImage ? data : Buffer.from(data, 'base64');
 
     return await blobStorageClient.upload(
@@ -100,7 +111,7 @@ export async function POST(request: NextRequest) {
         blobHTTPHeaders: {
           blobContentType: contentType,
         },
-      }
+      },
     );
   };
 
@@ -111,8 +122,10 @@ export async function POST(request: NextRequest) {
     const fileSize = Buffer.byteLength(fileData);
     if (fileSize > MAX_FILE_SIZE) {
       return NextResponse.json(
-        { error: `File size exceeds maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB` },
-        { status: 413 }
+        {
+          error: `File size exceeds maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
+        },
+        { status: 413 },
       );
     }
 
@@ -121,8 +134,11 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error uploading file:', error);
     return NextResponse.json(
-      { error: 'Failed to upload file', details: error instanceof Error ? error.message : String(error) },
-      { status: 500 }
+      {
+        error: 'Failed to upload file',
+        details: error instanceof Error ? error.message : String(error),
+      },
+      { status: 500 },
     );
   }
 }

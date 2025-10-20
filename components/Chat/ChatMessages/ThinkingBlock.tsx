@@ -1,17 +1,26 @@
-import { IconBrain, IconChevronDown, IconChevronRight } from '@tabler/icons-react';
+import {
+  IconBrain,
+  IconChevronDown,
+  IconChevronRight,
+} from '@tabler/icons-react';
 import { FC, useState } from 'react';
-import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+
 import { CodeBlock } from '@/components/Markdown/CodeBlock';
+import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
+
+import rehypeKatex from 'rehype-katex';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-import rehypeMathjax from 'rehype-mathjax/svg';
 
 interface ThinkingBlockProps {
   thinking: string;
   isStreaming?: boolean;
 }
 
-export const ThinkingBlock: FC<ThinkingBlockProps> = ({ thinking, isStreaming }) => {
+export const ThinkingBlock: FC<ThinkingBlockProps> = ({
+  thinking,
+  isStreaming,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   if (!thinking || thinking.trim() === '') {
@@ -72,9 +81,7 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({ thinking, isStreaming })
       >
         <div className="flex items-center gap-2">
           <IconBrain size={18} className="flex-shrink-0" />
-          <span>
-            {isStreaming ? 'Thinking...' : 'View reasoning process'}
-          </span>
+          <span>{isStreaming ? 'Thinking...' : 'View reasoning process'}</span>
         </div>
         {isExpanded ? (
           <IconChevronDown size={18} className="flex-shrink-0" />
@@ -88,7 +95,7 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({ thinking, isStreaming })
           <div className="prose dark:prose-invert prose-sm max-w-none text-gray-700 dark:text-gray-300">
             <MemoizedReactMarkdown
               remarkPlugins={[remarkGfm, [remarkMath, { singleDollar: false }]]}
-              rehypePlugins={[rehypeMathjax]}
+              rehypePlugins={[rehypeKatex]}
               components={customMarkdownComponents}
             >
               {thinking}

@@ -1,7 +1,15 @@
 import { Session } from 'next-auth';
-import { StreamingTextResponse } from 'ai';
+
+import {
+  appendMetadataToStream,
+  createStreamEncoder,
+} from '@/lib/utils/app/metadata';
+
 import { Message } from '@/types/chat';
+
 import { AzureMonitorLoggingService } from '../loggingService';
+
+import { StreamingTextResponse } from 'ai';
 
 /**
  * Handles Azure AI Foundry Agent-based chat completions with Bing grounding
@@ -45,7 +53,10 @@ export class AIFoundryAgentHandler {
         throw new Error('Azure AI Foundry endpoint or Agent ID not configured');
       }
 
-      const client = new aiAgents.AgentsClient(endpoint, new DefaultAzureCredential());
+      const client = new aiAgents.AgentsClient(
+        endpoint,
+        new DefaultAzureCredential(),
+      );
 
       // Create a thread and run for this conversation with streaming
       const lastMessage = messages[messages.length - 1];
@@ -73,11 +84,14 @@ export class AIFoundryAgentHandler {
         await client.messages.create(
           thread.id,
           'user',
-          String(lastMessage.content)
+          String(lastMessage.content),
         );
       } catch (messageError) {
         console.error('Error creating message:', messageError);
-        console.error('Full error object:', JSON.stringify(messageError, null, 2));
+        console.error(
+          'Full error object:',
+          JSON.stringify(messageError, null, 2),
+        );
         throw messageError;
       }
 
@@ -88,13 +102,18 @@ export class AIFoundryAgentHandler {
         console.log('Creating run with:', {
           threadId: thread.id,
           agentId: String(agentId),
-          endpoint: endpoint
+          endpoint: endpoint,
         });
 
         // Check if client.runs exists
         if (!client.runs) {
-          console.error('client.runs is undefined. Client structure:', Object.keys(client));
-          throw new Error('AgentsClient does not have runs property - check SDK version');
+          console.error(
+            'client.runs is undefined. Client structure:',
+            Object.keys(client),
+          );
+          throw new Error(
+            'AgentsClient does not have runs property - check SDK version',
+          );
         }
 
         // The Azure AI Agents SDK expects the agentId as the second parameter
@@ -114,7 +133,7 @@ export class AIFoundryAgentHandler {
       // Create a readable stream for the response
       const stream = new ReadableStream({
         async start(controller) {
-          const encoder = new TextEncoder();
+          const encoder = createStreamEncoder();
           let citations: any[] = [];
           let citationIndex = 1;
           const citationMap = new Map();
@@ -125,23 +144,37 @@ export class AIFoundryAgentHandler {
               // Handle different event types
               if (eventMessage.event === 'thread.message.delta') {
                 const messageData = eventMessage.data as any;
-                if (messageData?.delta?.content && Array.isArray(messageData.delta.content)) {
-                  messageData.delta.content.forEach((contentPart: { type: string; text?: { value: string } }) => {
-                    if (contentPart.type === 'text' && contentPart.text?.value) {
-                      let textChunk = contentPart.text.value;
+                if (
+                  messageData?.delta?.content &&
+                  Array.isArray(messageData.delta.content)
+                ) {
+                  messageData.delta.content.forEach(
+                    (contentPart: {
+                      type: string;
+                      text?: { value: string };
+                    }) => {
+                      if (
+                        contentPart.type === 'text' &&
+                        contentPart.text?.value
+                      ) {
+                        let textChunk = contentPart.text.value;
 
-                      // Convert citation format on the fly
-                      textChunk = textChunk.replace(/【(\d+):(\d+)†source】/g, (match: string) => {
-                        if (!citationMap.has(match)) {
-                          citationMap.set(match, citationIndex);
-                          citationIndex++;
-                        }
-                        return `[${citationMap.get(match)}]`;
-                      });
+                        // Convert citation format on the fly
+                        textChunk = textChunk.replace(
+                          /【(\d+):(\d+)†source】/g,
+                          (match: string) => {
+                            if (!citationMap.has(match)) {
+                              citationMap.set(match, citationIndex);
+                              citationIndex++;
+                            }
+                            return `[${citationMap.get(match)}]`;
+                          },
+                        );
 
-                      controller.enqueue(encoder.encode(textChunk));
-                    }
-                  });
+                        controller.enqueue(encoder.encode(textChunk));
+                      }
+                    },
+                  );
                 }
               } else if (eventMessage.event === 'thread.message.completed') {
                 hasCompletedMessage = true;
@@ -152,31 +185,39 @@ export class AIFoundryAgentHandler {
                   citations = [];
                   citationIndex = 1;
 
-                  annotations.forEach((annotation: { type: string; urlCitation?: { title?: string; url?: string } }) => {
-                    if (annotation.type === 'url_citation' && annotation.urlCitation) {
-                      citations.push({
-                        number: citationIndex++,
-                        title: annotation.urlCitation.title || `Source ${citationIndex}`,
-                        url: annotation.urlCitation.url || '',
-                        date: '' // Agent citations don't have publication dates
-                      });
-                    }
-                  });
+                  annotations.forEach(
+                    (annotation: {
+                      type: string;
+                      urlCitation?: { title?: string; url?: string };
+                    }) => {
+                      if (
+                        annotation.type === 'url_citation' &&
+                        annotation.urlCitation
+                      ) {
+                        citations.push({
+                          number: citationIndex++,
+                          title:
+                            annotation.urlCitation.title ||
+                            `Source ${citationIndex}`,
+                          url: annotation.urlCitation.url || '',
+                          date: '', // Agent citations don't have publication dates
+                        });
+                      }
+                    },
+                  );
                 }
               } else if (eventMessage.event === 'thread.run.completed') {
-                // Only append metadata at the very end, after we have everything
-                if (citations.length > 0 || isNewThread) {
-                  // Use a unique separator that won't appear in normal content
-                  const separator = '\n\n<<<METADATA_START>>>';
-                  const metadata = {
-                    citations: citations.length > 0 ? citations : undefined,
-                    threadId: isNewThread ? thread.id : undefined
-                  };
-                  const metadataStr = `${separator}${JSON.stringify(metadata)}<<<METADATA_END>>>`;
-                  controller.enqueue(encoder.encode(metadataStr));
-                }
+                // Append metadata at the very end using utility function
+                appendMetadataToStream(controller, {
+                  citations: citations.length > 0 ? citations : undefined,
+                  threadId: isNewThread ? thread.id : undefined,
+                });
               } else if (eventMessage.event === 'error') {
-                controller.error(new Error(`Agent error: ${JSON.stringify(eventMessage.data)}`));
+                controller.error(
+                  new Error(
+                    `Agent error: ${JSON.stringify(eventMessage.data)}`,
+                  ),
+                );
               } else if (eventMessage.event === 'done') {
                 controller.close();
               }
@@ -184,7 +225,7 @@ export class AIFoundryAgentHandler {
           } catch (error) {
             controller.error(error);
           }
-        }
+        },
       });
 
       // Log the completion

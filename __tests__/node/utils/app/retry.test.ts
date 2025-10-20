@@ -1,5 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { retryWithExponentialBackoff, retryAsync } from '@/lib/utils/app/retry';
+import { retryAsync, retryWithExponentialBackoff } from '@/lib/utils/app/retry';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('Retry Utilities', () => {
   beforeEach(() => {
@@ -29,7 +30,9 @@ describe('Retry Utilities', () => {
         .mockRejectedValueOnce(new Error('Fail 2'))
         .mockResolvedValue('success');
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryWithExponentialBackoff(mockFn);
 
@@ -42,8 +45,12 @@ describe('Retry Utilities', () => {
       expect(result).toBe('success');
       expect(mockFn).toHaveBeenCalledTimes(3);
       expect(consoleWarnSpy).toHaveBeenCalledTimes(2);
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 1 failed. Retrying in 1000ms...');
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 2 failed. Retrying in 2000ms...');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 1 failed. Retrying in 1000ms...',
+      );
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 2 failed. Retrying in 2000ms...',
+      );
 
       consoleWarnSpy.mockRestore();
     });
@@ -52,7 +59,9 @@ describe('Retry Utilities', () => {
       const error = new Error('Persistent failure');
       const mockFn = vi.fn().mockRejectedValue(error);
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryWithExponentialBackoff(mockFn, 2); // Max 2 retries
 
@@ -79,18 +88,24 @@ describe('Retry Utilities', () => {
         .mockRejectedValueOnce(new Error('Fail 2'))
         .mockResolvedValue('success');
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryWithExponentialBackoff(mockFn, 3, 500); // Base delay 500ms
 
-      await vi.advanceTimersByTimeAsync(500);  // 2^0 * 500 = 500ms
+      await vi.advanceTimersByTimeAsync(500); // 2^0 * 500 = 500ms
       await vi.advanceTimersByTimeAsync(1000); // 2^1 * 500 = 1000ms
 
       const result = await promise;
 
       expect(result).toBe('success');
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 1 failed. Retrying in 500ms...');
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 2 failed. Retrying in 1000ms...');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 1 failed. Retrying in 500ms...',
+      );
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 2 failed. Retrying in 1000ms...',
+      );
 
       consoleWarnSpy.mockRestore();
     });
@@ -104,11 +119,13 @@ describe('Retry Utilities', () => {
         .mockRejectedValueOnce(new Error('Fail 4'))
         .mockResolvedValue('success');
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryWithExponentialBackoff(mockFn, 5, 5000); // Base delay 5s
 
-      await vi.advanceTimersByTimeAsync(5000);  // 2^0 * 5000 = 5000ms
+      await vi.advanceTimersByTimeAsync(5000); // 2^0 * 5000 = 5000ms
       await vi.advanceTimersByTimeAsync(10000); // 2^1 * 5000 = 10000ms (capped at 10s)
       await vi.advanceTimersByTimeAsync(10000); // 2^2 * 5000 = 20000ms (capped at 10s)
       await vi.advanceTimersByTimeAsync(10000); // 2^3 * 5000 = 40000ms (capped at 10s)
@@ -116,8 +133,12 @@ describe('Retry Utilities', () => {
       const result = await promise;
 
       expect(result).toBe('success');
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 3 failed. Retrying in 10000ms...');
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 4 failed. Retrying in 10000ms...');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 3 failed. Retrying in 10000ms...',
+      );
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 4 failed. Retrying in 10000ms...',
+      );
 
       consoleWarnSpy.mockRestore();
     });
@@ -147,7 +168,9 @@ describe('Retry Utilities', () => {
         .mockRejectedValueOnce(new Error('Fail 1'))
         .mockResolvedValue('success');
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryAsync(mockOperation);
 
@@ -157,7 +180,9 @@ describe('Retry Utilities', () => {
 
       expect(result).toBe('success');
       expect(mockOperation).toHaveBeenCalledTimes(2);
-      expect(consoleWarnSpy).toHaveBeenCalledWith('Attempt 1 failed. Retrying...');
+      expect(consoleWarnSpy).toHaveBeenCalledWith(
+        'Attempt 1 failed. Retrying in 1000ms...',
+      );
 
       consoleWarnSpy.mockRestore();
     });
@@ -166,7 +191,9 @@ describe('Retry Utilities', () => {
       const error = new Error('Persistent failure');
       const mockOperation = vi.fn().mockRejectedValue(error);
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryAsync(mockOperation, 1); // Max 1 retry
 
@@ -190,7 +217,9 @@ describe('Retry Utilities', () => {
         .mockRejectedValueOnce(new Error('Fail 2'))
         .mockResolvedValue('success');
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryAsync(mockOperation, 2, 2000); // 2 retries, 2s base delay
 
@@ -219,7 +248,9 @@ describe('Retry Utilities', () => {
       (customError as any).code = 'CUSTOM_CODE';
       const mockOperation = vi.fn().mockRejectedValue(customError);
 
-      const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleWarnSpy = vi
+        .spyOn(console, 'warn')
+        .mockImplementation(() => {});
 
       const promise = retryAsync(mockOperation, 0); // No retries
 
@@ -234,21 +265,29 @@ describe('Retry Utilities', () => {
     it('retryWithExponentialBackoff should handle zero retries', async () => {
       const mockFn = vi.fn().mockRejectedValue(new Error('Immediate failure'));
 
-      await expect(retryWithExponentialBackoff(mockFn, 0)).rejects.toThrow('Immediate failure');
+      await expect(retryWithExponentialBackoff(mockFn, 0)).rejects.toThrow(
+        'Immediate failure',
+      );
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('retryAsync should handle zero retries', async () => {
-      const mockOperation = vi.fn().mockRejectedValue(new Error('Immediate failure'));
+      const mockOperation = vi
+        .fn()
+        .mockRejectedValue(new Error('Immediate failure'));
 
-      await expect(retryAsync(mockOperation, 0)).rejects.toThrow('Immediate failure');
+      await expect(retryAsync(mockOperation, 0)).rejects.toThrow(
+        'Immediate failure',
+      );
       expect(mockOperation).toHaveBeenCalledTimes(1);
     });
 
     it('should handle promise rejection with non-Error values', async () => {
       const mockFn = vi.fn().mockRejectedValue('String error');
 
-      await expect(retryWithExponentialBackoff(mockFn, 0)).rejects.toBe('String error');
+      await expect(retryWithExponentialBackoff(mockFn, 0)).rejects.toBe(
+        'String error',
+      );
     });
   });
 });

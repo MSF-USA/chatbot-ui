@@ -103,6 +103,8 @@ export interface ChatBody {
   botId: string | undefined;
   stream?: boolean;
   threadId?: string; // Azure AI Agent thread ID
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
+  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
 }
 
 export interface Conversation {
@@ -117,6 +119,8 @@ export interface Conversation {
   createdAt?: string;
   updatedAt?: string;
   threadId?: string; // Azure AI Agent thread ID
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
+  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
@@ -129,7 +133,10 @@ export type FileFieldValue =
   | (FileMessageContent | ImageMessageContent)[]
   | null;
 
-export type ImageFieldValue = ImageMessageContent | ImageMessageContent[] | null;
+export type ImageFieldValue =
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | null;
 
 type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
 

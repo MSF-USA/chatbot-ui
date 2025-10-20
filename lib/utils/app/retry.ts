@@ -22,9 +22,7 @@ export async function retryWithExponentialBackoff<T>(
         throw error;
       }
       const delay = Math.min(Math.pow(2, attempt) * baseDelay, 10000); // Max delay of 10 seconds
-      console.warn(
-        `Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`,
-      );
+      console.warn(`Attempt ${attempt + 1} failed. Retrying in ${delay}ms...`);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   }
@@ -33,6 +31,7 @@ export async function retryWithExponentialBackoff<T>(
 
 /**
  * Retry an async operation with exponential backoff
+ * This is an alias for retryWithExponentialBackoff for backwards compatibility
  * @param {Function} operation - The async operation to retry
  * @param {number} maxRetries - Maximum number of retries
  * @param {number} baseDelay - Base delay in milliseconds between retries
@@ -43,19 +42,5 @@ export async function retryAsync<T>(
   maxRetries: number = 2,
   baseDelay: number = 1000,
 ): Promise<T> {
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      return await operation();
-    } catch (error) {
-      if (attempt === maxRetries) {
-        throw error;
-      }
-      console.warn(`Attempt ${attempt + 1} failed. Retrying...`);
-      await delay(Math.pow(2, attempt) * baseDelay); // Exponential backoff
-    }
-  }
-  throw new Error('Failed after maximum retries');
+  return retryWithExponentialBackoff(operation, maxRetries, baseDelay);
 }

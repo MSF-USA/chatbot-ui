@@ -113,3 +113,139 @@ select {
 .prose-invert .citation-number:hover {
   text-decoration: underline !important;
 }
+
+/* Markdown table improvements */
+.prose table,
+.prose-invert table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+}
+
+.prose th,
+.prose-invert th {
+  background-color: #f3f4f6;
+  font-weight: 600;
+  text-align: left;
+}
+
+.dark .prose th,
+.dark .prose-invert th {
+  background-color: #374151;
+}
+
+.prose td,
+.prose th,
+.prose-invert td,
+.prose-invert th {
+  padding: 0.75rem 1rem;
+  border: 1px solid #e5e7eb;
+}
+
+.dark .prose td,
+.dark .prose th,
+.dark .prose-invert td,
+.dark .prose-invert th {
+  border-color: #4b5563;
+}
+
+.prose tr:nth-child(even),
+.prose-invert tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.dark .prose tr:nth-child(even),
+.dark .prose-invert tr:nth-child(even) {
+  background-color: #1f2937;
+}
+
+/* Mobile table scrolling */
+@media (max-width: 768px) {
+  .prose table,
+  .prose-invert table {
+    font-size: 0.875rem;
+  }
+
+  .prose td,
+  .prose th,
+  .prose-invert td,
+  .prose-invert th {
+    padding: 0.5rem;
+  }
+}
+
+/* Breathing animation for streaming indicator */
+@keyframes breathing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+.animate-breathing {
+  animation: breathing 2s ease-in-out infinite;
+}
+
+/* Dark mode improvements for prose */
+.dark .prose,
+.dark .prose-invert {
+  color: #e5e7eb;
+}
+
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6,
+.dark .prose-invert h1,
+.dark .prose-invert h2,
+.dark .prose-invert h3,
+.dark .prose-invert h4,
+.dark .prose-invert h5,
+.dark .prose-invert h6 {
+  color: #f3f4f6;
+}
+
+.dark .prose a,
+.dark .prose-invert a {
+  color: #60a5fa;
+}
+
+.dark .prose code,
+.dark .prose-invert code {
+  background-color: #374151;
+  color: #f3f4f6;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25rem;
+}
+
+.dark .prose pre,
+.dark .prose-invert pre {
+  background-color: #1f2937;
+  border: 1px solid #374151;
+}
+
+.dark .prose blockquote,
+.dark .prose-invert blockquote {
+  border-left-color: #4b5563;
+  color: #d1d5db;
+}
+
+/* KaTeX dark mode support */
+.dark .katex {
+  color: #e5e7eb;
+}
+
+.dark .katex .mord,
+.dark .katex .mbin,
+.dark .katex .mrel,
+.dark .katex .mop {
+  color: #e5e7eb;
+}

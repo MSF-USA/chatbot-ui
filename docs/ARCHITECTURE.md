@@ -7,27 +7,32 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 ## Technology Stack
 
 ### Core Framework
+
 - **Next.js 15** - App Router architecture
 - **React 19** - UI library with Server and Client Components
 - **TypeScript** - Type-safe development
 - **Tailwind CSS** - Utility-first styling
 
 ### State Management
+
 - **Zustand** - Lightweight state management
-  - `useUI` - UI state (theme, modals, sidebar)
-  - `useSettings` - User settings (temperature, system prompt, prompts)
-  - `useConversations` - Conversation management and folders
+  - `useUIStore` - UI state (theme, modals, sidebar)
+  - `useSettingsStore` - User settings (temperature, system prompt, prompts)
+  - `useConversationStore` - Conversation management and folders
   - `useChatStore` - Active chat state and message handling
 
 ### Authentication
+
 - **NextAuth.js** - Authentication with Azure AD integration
 
 ### Internationalization
+
 - **next-intl** - App Router compatible i18n library
 - Translation files in `messages/{locale}.json`
-- Supports 30+ languages
+- Supports 33 languages
 
 ### AI Integration
+
 - **Azure OpenAI** - GPT models via Microsoft Azure
 - Streaming responses with custom smooth streaming implementation
 - Support for function calling and structured outputs
@@ -42,8 +47,9 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
     /auth              # Authentication (NextAuth)
     /chat              # Chat completion endpoints
     /file              # File upload/processing
+    /health            # Health check endpoint
+    /terms             # Terms and privacy endpoints
     /transcription     # Audio transcription
-    /web               # Web search and scraping
     /tts               # Text-to-speech
 
 /components            # React components
@@ -75,6 +81,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 ## Key Features
 
 ### Chat Interface
+
 - Real-time streaming responses with smooth streaming mode
 - Conversation management (create, edit, delete, search)
 - Folder organization for conversations
@@ -83,6 +90,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 - Markdown rendering
 
 ### Advanced Features
+
 - **Web Search** - Bing API integration for web searches
 - **URL Puller** - Extract and analyze content from URLs
 - **File Upload** - Support for various file types
@@ -92,6 +100,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 - **Language Translation** - Multi-language translation
 
 ### Settings Management
+
 - **General Settings** - Language and theme preferences
 - **Chat Settings** - Temperature, system prompt, streaming options
 - **Privacy Control** - Privacy policy and terms
@@ -99,6 +108,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 - **Account Settings** - User information management
 
 ### Storage
+
 - Browser localStorage for client-side data persistence
 - Conversation history
 - User preferences
@@ -107,6 +117,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 ## Data Flow
 
 ### Client-Side
+
 1. User interacts with Chat component
 2. Message sent to API route via fetch
 3. Streaming response handled by custom stream reader
@@ -114,6 +125,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 5. Conversation saved to localStorage via Zustand store
 
 ### Server-Side
+
 1. API route receives request
 2. Validates authentication via NextAuth
 3. Calls Azure OpenAI API
@@ -123,6 +135,7 @@ MSF AI Assistant is a Next.js 15 application built with the App Router, providin
 ## State Management Pattern
 
 ### Zustand Stores
+
 Each store is a focused slice of state with actions:
 
 ```typescript
@@ -130,18 +143,20 @@ Each store is a focused slice of state with actions:
 const useConversations = create<ConversationsState>((set) => ({
   conversations: [],
   selectedConversation: null,
-  addConversation: (conversation) => set((state) => ({
-    conversations: [...state.conversations, conversation]
-  })),
+  addConversation: (conversation) =>
+    set((state) => ({
+      conversations: [...state.conversations, conversation],
+    })),
   // ... other actions
-}))
+}));
 ```
 
 ### Component Usage
+
 ```typescript
 function Chat() {
-  const { selectedConversation, updateConversation } = useConversations();
-  const { temperature } = useSettings();
+  const { selectedConversation, updateConversation } = useConversationStore();
+  const { temperature } = useSettingsStore();
 
   // Component logic
 }
@@ -158,12 +173,14 @@ function Chat() {
 ## Internationalization
 
 ### Translation Structure
+
 - All translations in `messages/{locale}.json`
 - Component usage: `const t = useTranslations()`
 - Support for parameterized translations
 - Dynamic locale switching
 
 ### Adding a New Translation
+
 1. Add key-value pair to `messages/en.json`
 2. Copy to other locale files
 3. Translate the value for each locale
@@ -188,19 +205,23 @@ function Chat() {
 ## Deployment
 
 ### Environment Variables
+
 See `.env.example` for required variables:
+
 - `NEXTAUTH_URL` - Application URL
 - `NEXTAUTH_SECRET` - Session encryption key
 - `AZURE_AD_*` - Azure AD configuration
 - `AZURE_OPENAI_*` - Azure OpenAI credentials
 
 ### Build Process
+
 ```bash
 npm run build    # Production build
 npm run start    # Start production server
 ```
 
 ### Docker Support
+
 ```bash
 docker build -t msf-ai-assistant .
 docker run -p 3000:3000 msf-ai-assistant
@@ -210,10 +231,10 @@ docker run -p 3000:3000 msf-ai-assistant
 
 1. Feature development in feature branches
 2. Local testing with `npm run dev`
-3. Type checking with `npm run type-check`
+3. Run tests with `npm test`
 4. Build verification with `npm run build`
 5. PR review and merge to main
-6. Automated deployment
+6. Automated deployment via GitHub workflows
 
 ## Testing Strategy
 

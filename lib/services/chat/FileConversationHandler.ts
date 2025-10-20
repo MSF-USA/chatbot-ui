@@ -1,13 +1,19 @@
-import { JWT, Session } from 'next-auth';
-import fs from 'fs';
-import { StreamingTextResponse } from 'ai';
+import { Session } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 
-import { Message, FileMessageContent, TextMessageContent } from '@/types/chat';
-import { AzureBlobStorage, BlobProperty } from '@/lib/utils/server/blob';
-import { getEnvVariable } from '@/lib/utils/app/env';
+import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
+
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/documentSummary';
-import { retryWithExponentialBackoff, retryAsync } from '@/lib/utils/app/retry';
+import { retryAsync, retryWithExponentialBackoff } from '@/lib/utils/app/retry';
+import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { BlobProperty } from '@/lib/utils/server/blob';
+
+import { FileMessageContent, Message, TextMessageContent } from '@/types/chat';
+
 import { AzureMonitorLoggingService } from '../loggingService';
+
+import { StreamingTextResponse } from 'ai';
+import fs from 'fs';
 
 /**
  * Handles file conversation processing including file download and analysis
@@ -130,39 +136,37 @@ export class FileConversationHandler {
     token: JWT,
     user: Session['user'],
   ): Promise<void> {
-    const userId: string = user?.id ?? (token as any).userId ?? 'anonymous';
+    // Create a minimal session object for the factory
+    const session: Session = { user, expires: '' } as Session;
+
+    const userId = getUserIdFromSession(session, token);
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop();
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
 
-    const blobStorage = new AzureBlobStorage(
-      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user }),
-      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user }),
-      getEnvVariable({
-        name: 'AZURE_BLOB_STORAGE_CONTAINER',
-        throwErrorOnFail: false,
-        defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
-        user,
-      }),
-      user,
-    );
+    const blobStorage = createBlobStorageClient(session);
     const blob: Buffer = await (blobStorage.get(
       `${remoteFilepath}/${id}`,
       BlobProperty.BLOB,
     ) as Promise<Buffer>);
 
     // Write file with secure permissions (0o600 = read/write for owner only)
-    await fs.promises.writeFile(filePath, new Uint8Array(blob), { mode: 0o600 });
+    await fs.promises.writeFile(filePath, new Uint8Array(blob), {
+      mode: 0o600,
+    });
   }
 
   /**
    * Retry reading a file with exponential backoff
    */
-  private async retryReadFile(filePath: string, maxRetries: number = 2): Promise<Buffer> {
+  private async retryReadFile(
+    filePath: string,
+    maxRetries: number = 2,
+  ): Promise<Buffer> {
     return retryAsync(
       () => Promise.resolve(fs.readFileSync(filePath)),
       maxRetries,
-      1000
+      1000,
     );
   }
 }

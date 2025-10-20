@@ -1,21 +1,26 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSession } from 'next-auth/react';
 import { IconX } from '@tabler/icons-react';
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useSession } from 'next-auth/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { useChat } from '@/lib/hooks/chat/useChat';
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { ChatTopbar } from './ChatTopbar';
-import { MemoizedChatMessage } from './MemoizedChatMessage';
-import { ChatInput } from './ChatInput';
-import { ModelSelect } from './ModelSelect';
-import { LoadingScreen } from './LoadingScreen';
+import { useUI } from '@/lib/hooks/ui/useUI';
+
 import { Message } from '@/types/chat';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
+import { ChatInput } from './ChatInput';
+import { ChatTopbar } from './ChatTopbar';
 import { EmptyState } from './EmptyState/EmptyState';
+import { LoadingScreen } from './LoadingScreen';
+import { MemoizedChatMessage } from './MemoizedChatMessage';
+import { ModelSelect } from './ModelSelect';
+
+import { useConversationStore } from '@/lib/stores/conversationStore';
 import { v4 as uuidv4 } from 'uuid';
-import { OpenAIModels, OpenAIModelID } from '@/types/openai';
 
 interface ChatProps {
   mobileModelSelectOpen?: boolean;
@@ -25,11 +30,29 @@ interface ChatProps {
 /**
  * Main chat component - migrated to use Zustand stores
  */
-export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatProps = {}) {
+export function Chat({
+  mobileModelSelectOpen,
+  onMobileModelSelectChange,
+}: ChatProps = {}) {
   const { data: session, status } = useSession();
-  const { selectedConversation, updateConversation, conversations, addConversation, selectConversation, isLoaded } = useConversations();
-  const { isStreaming, streamingContent, error, sendMessage, citations, clearError } = useChat();
-  const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } = useUI();
+  const {
+    selectedConversation,
+    updateConversation,
+    conversations,
+    addConversation,
+    selectConversation,
+    isLoaded,
+  } = useConversations();
+  const {
+    isStreaming,
+    streamingContent,
+    error,
+    sendMessage,
+    citations,
+    clearError,
+  } = useChat();
+  const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } =
+    useUI();
   const { models, defaultModelId, systemPrompt, temperature } = useSettings();
 
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
@@ -39,7 +62,10 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
 
   // Sync with mobile header model select state
   useEffect(() => {
-    if (mobileModelSelectOpen !== undefined && mobileModelSelectOpen !== isModelSelectOpen) {
+    if (
+      mobileModelSelectOpen !== undefined &&
+      mobileModelSelectOpen !== isModelSelectOpen
+    ) {
       setIsModelSelectOpen(mobileModelSelectOpen);
     }
   }, [mobileModelSelectOpen]);
@@ -94,14 +120,18 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
 
     // If no conversations exist, create one
     if (conversations.length === 0) {
-      const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
+      const defaultModel =
+        models.find((m) => m.id === defaultModelId) || models[0];
 
       // Enable agent mode by default if the model has agentId
-      const modelWithAgent = defaultModel?.id === 'gpt-4o' && defaultModel.agentId ? {
-        ...defaultModel,
-        agentEnabled: true,
-        agentId: defaultModel.agentId
-      } : defaultModel;
+      const modelWithAgent =
+        defaultModel?.id === 'gpt-4o' && defaultModel.agentId
+          ? {
+              ...defaultModel,
+              agentEnabled: true,
+              agentId: defaultModel.agentId,
+            }
+          : defaultModel;
 
       const newConversation = {
         id: uuidv4(),
@@ -131,7 +161,8 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
   useEffect(() => {
     const handleScroll = () => {
       if (chatContainerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+        const { scrollTop, scrollHeight, clientHeight } =
+          chatContainerRef.current;
         const isScrolledUp = scrollHeight - scrollTop - clientHeight > 100;
         setShowScrollDownButton(isScrolledUp);
       }
@@ -145,51 +176,76 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
   }, []);
 
   const handleClearAll = () => {
-    if (selectedConversation && window.confirm('Are you sure you want to clear this conversation?')) {
-      updateConversation(selectedConversation.id, {
-        ...selectedConversation,
+    const state = useConversationStore.getState();
+    const currentConversation = state.conversations.find(
+      (c) => c.id === state.selectedConversationId,
+    );
+
+    if (
+      currentConversation &&
+      window.confirm('Are you sure you want to clear this conversation?')
+    ) {
+      updateConversation(currentConversation.id, {
         messages: [],
       });
     }
   };
 
   const handleEditMessage = (editedMessage: Message) => {
-    if (!selectedConversation) return;
-
-    const updatedMessages = selectedConversation.messages.map((msg, idx) =>
-      idx === selectedConversation.messages.indexOf(editedMessage) ? editedMessage : msg
+    const state = useConversationStore.getState();
+    const currentConversation = state.conversations.find(
+      (c) => c.id === state.selectedConversationId,
     );
 
-    updateConversation(selectedConversation.id, {
-      ...selectedConversation,
+    if (!currentConversation) return;
+
+    const updatedMessages = currentConversation.messages.map((msg, idx) =>
+      idx === currentConversation.messages.indexOf(editedMessage)
+        ? editedMessage
+        : msg,
+    );
+
+    updateConversation(currentConversation.id, {
       messages: updatedMessages,
     });
   };
 
-  const handleSend = useCallback((message: Message) => {
-    if (!selectedConversation) return;
+  const handleSend = useCallback(
+    (message: Message) => {
+      // Get the latest conversation state at send time to avoid stale closures
+      const state = useConversationStore.getState();
+      const currentConversation = state.conversations.find(
+        (c) => c.id === state.selectedConversationId,
+      );
 
-    // Add user message to conversation
-    const updatedMessages = [...selectedConversation.messages, message];
+      if (!currentConversation) return;
 
-    // Update just the messages field
-    updateConversation(selectedConversation.id, { messages: updatedMessages });
+      // Add user message to conversation
+      const updatedMessages = [...currentConversation.messages, message];
 
-    // Send to API with updated conversation (includes user message)
-    const updatedConversation = {
-      ...selectedConversation,
-      messages: updatedMessages,
-    };
-    sendMessage?.(message, updatedConversation);
-  }, [selectedConversation, updateConversation, sendMessage]);
+      // Update just the messages field
+      updateConversation(currentConversation.id, { messages: updatedMessages });
 
-  const handleSelectPrompt = useCallback((prompt: string) => {
-    handleSend({
-      role: 'user',
-      content: prompt,
-      messageType: 'text',
-    });
-  }, [handleSend]);
+      // Send to API with updated conversation (includes user message and latest model)
+      const updatedConversation = {
+        ...currentConversation,
+        messages: updatedMessages,
+      };
+      sendMessage?.(message, updatedConversation);
+    },
+    [updateConversation, sendMessage],
+  );
+
+  const handleSelectPrompt = useCallback(
+    (prompt: string) => {
+      handleSend({
+        role: 'user',
+        content: prompt,
+        messageType: 'text',
+      });
+    },
+    [handleSend],
+  );
 
   const handleScrollDown = () => {
     if (messagesEndRef.current) {
@@ -198,22 +254,36 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
   };
 
   const handleRegenerate = () => {
-    if (!selectedConversation || selectedConversation.messages.length === 0) return;
+    // Get the latest conversation state to avoid stale closures
+    const state = useConversationStore.getState();
+    const currentConversation = state.conversations.find(
+      (c) => c.id === state.selectedConversationId,
+    );
+
+    if (!currentConversation || currentConversation.messages.length === 0)
+      return;
 
     // Get the last user message
-    const lastUserMessageIndex = selectedConversation.messages.findLastIndex(m => m.role === 'user');
+    const lastUserMessageIndex = currentConversation.messages.findLastIndex(
+      (m) => m.role === 'user',
+    );
     if (lastUserMessageIndex === -1) return;
 
     // Remove messages after the last user message and resend
-    const messagesUpToLastUser = selectedConversation.messages.slice(0, lastUserMessageIndex + 1);
-    updateConversation(selectedConversation.id, {
-      ...selectedConversation,
+    const messagesUpToLastUser = currentConversation.messages.slice(
+      0,
+      lastUserMessageIndex + 1,
+    );
+    updateConversation(currentConversation.id, {
       messages: messagesUpToLastUser,
     });
 
-    // Resend the last user message
-    const lastUserMessage = selectedConversation.messages[lastUserMessageIndex];
-    sendMessage?.(lastUserMessage, { ...selectedConversation, messages: messagesUpToLastUser });
+    // Resend the last user message with the latest model
+    const lastUserMessage = currentConversation.messages[lastUserMessageIndex];
+    sendMessage?.(lastUserMessage, {
+      ...currentConversation,
+      messages: messagesUpToLastUser,
+    });
   };
 
   const messages = selectedConversation?.messages || [];
@@ -233,12 +303,13 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
           botInfo={null}
           selectedModelName={
             selectedConversation?.model?.name ||
-            models.find(m => m.id === defaultModelId)?.name ||
+            models.find((m) => m.id === defaultModelId)?.name ||
             'GPT-4o'
           }
           selectedModelProvider={
-            OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]?.provider ||
-            models.find(m => m.id === defaultModelId)?.provider
+            OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]
+              ?.provider ||
+            models.find((m) => m.id === defaultModelId)?.provider
           }
           showSettings={isSettingsOpen}
           onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
@@ -251,10 +322,7 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
       </div>
 
       {/* Messages */}
-      <div
-        ref={chatContainerRef}
-        className="flex-1 overflow-auto"
-      >
+      <div ref={chatContainerRef} className="flex-1 overflow-auto">
         {!hasMessages ? (
           <EmptyState onSelectPrompt={handleSelectPrompt} />
         ) : (
@@ -286,9 +354,18 @@ export function Chat({ mobileModelSelectOpen, onMobileModelSelectChange }: ChatP
                   <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
                     <div className="flex items-center space-x-2">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                        <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        <div
+                          className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '0ms' }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '150ms' }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: '300ms' }}
+                        ></div>
                       </div>
                     </div>
                   </div>

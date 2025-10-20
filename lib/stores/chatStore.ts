@@ -1,10 +1,17 @@
-import { create } from 'zustand';
-import { Message, Conversation, MessageType } from '@/types/chat';
-import { Citation } from '@/types/rag';
 import { makeRequest } from '@/lib/services/chat/frontendChatService';
-import { extractCitationsFromContent } from '@/lib/utils/app/citation';
+
+import {
+  createStreamDecoder,
+  parseMetadataFromContent,
+} from '@/lib/utils/app/metadata';
+
+import { Conversation, Message, MessageType } from '@/types/chat';
+import { Citation } from '@/types/rag';
+
 import { useConversationStore } from './conversationStore';
 import { useSettingsStore } from './settingsStore';
+
+import { create } from 'zustand';
 
 interface ChatStore {
   // State
@@ -26,10 +33,7 @@ interface ChatStore {
   requestStop: () => void;
   resetStop: () => void;
   resetChat: () => void;
-  sendMessage: (
-    message: Message,
-    conversation: Conversation
-  ) => Promise<void>;
+  sendMessage: (message: Message, conversation: Conversation) => Promise<void>;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -75,7 +79,12 @@ export const useChatStore = create<ChatStore>((set) => ({
 
   sendMessage: async (message, conversation) => {
     try {
-      set({ isStreaming: true, streamingContent: '', error: null, citations: [] });
+      set({
+        isStreaming: true,
+        streamingContent: '',
+        error: null,
+        citations: [],
+      });
 
       // Get settings from settings store
       const settings = useSettingsStore.getState();
@@ -94,7 +103,7 @@ export const useChatStore = create<ChatStore>((set) => ({
         temperature,
         modelSupportsStreaming, // Only stream if model supports it
         () => {}, // setProgress
-        { current: false } // stopConversationRef - will wire up later
+        { current: false }, // stopConversationRef - will wire up later
       );
 
       if (!response.body) {
@@ -108,25 +117,13 @@ export const useChatStore = create<ChatStore>((set) => ({
       // Handle non-streaming response (e.g., o3, grok-4-fast-reasoning, DeepSeek-R1)
       if (!modelSupportsStreaming) {
         const data = await response.json();
-        text = data.text || '';
+        const rawText = data.text || '';
 
-        // Extract metadata if present
-        const metadataMatch = text.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
-        if (metadataMatch) {
-          const cleanedText = text.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
-          try {
-            const metadata = JSON.parse(metadataMatch[1]);
-            if (metadata.citations && metadata.citations.length > 0) {
-              text = cleanedText;
-              extractedCitations = metadata.citations;
-            }
-            if (metadata.threadId) {
-              extractedThreadId = metadata.threadId;
-            }
-          } catch (error) {
-            // Silently ignore parsing errors
-          }
-        }
+        // Extract metadata using utility function
+        const parsed = parseMetadataFromContent(rawText);
+        text = parsed.content;
+        extractedCitations = parsed.citations;
+        extractedThreadId = parsed.threadId;
 
         // Update streaming content to show the response
         set({ streamingContent: text, citations: extractedCitations });
@@ -134,7 +131,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       // Handle streaming response
       else {
         const reader = response.body.getReader();
-        const decoder = new TextDecoder();
+        const decoder = createStreamDecoder();
 
         while (true) {
           const { done, value } = await reader.read();
@@ -144,33 +141,25 @@ export const useChatStore = create<ChatStore>((set) => ({
           const chunk = decoder.decode(value);
           text += chunk;
 
-          // Extract metadata if present
-          const metadataMatch = text.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
-          if (metadataMatch) {
-            const cleanedText = text.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
-            try {
-              const metadata = JSON.parse(metadataMatch[1]);
-              if (metadata.citations && metadata.citations.length > 0) {
-                text = cleanedText;
-                extractedCitations = metadata.citations;
-              }
-              if (metadata.threadId && !extractedThreadId) {
-                extractedThreadId = metadata.threadId;
-              }
-            } catch (error) {
-              // Silently ignore parsing errors during streaming
-            }
-          } else {
-            // Fallback to legacy citation extraction
-            const { text: cleanedText, citations } = extractCitationsFromContent(text);
-            if (citations.length > 0) {
-              text = cleanedText;
-              extractedCitations = citations;
-            }
+          // Extract metadata using utility function
+          const parsed = parseMetadataFromContent(text);
+          const displayText = parsed.content;
+
+          // Update citations if found
+          if (parsed.citations.length > 0) {
+            extractedCitations = parsed.citations;
+          }
+
+          // Update threadId if found (only once)
+          if (parsed.threadId && !extractedThreadId) {
+            extractedThreadId = parsed.threadId;
           }
 
           // Update streaming content
-          set({ streamingContent: text, citations: extractedCitations });
+          set({ streamingContent: displayText, citations: extractedCitations });
+
+          // Update text for final message
+          text = displayText;
         }
       }
 
@@ -179,7 +168,8 @@ export const useChatStore = create<ChatStore>((set) => ({
         role: 'assistant',
         content: text,
         messageType: MessageType.TEXT,
-        citations: extractedCitations.length > 0 ? extractedCitations : undefined,
+        citations:
+          extractedCitations.length > 0 ? extractedCitations : undefined,
       };
 
       // Update conversation with assistant message
@@ -190,12 +180,18 @@ export const useChatStore = create<ChatStore>((set) => ({
       };
 
       // Auto-name conversation from first user message if still "New Conversation"
-      if (conversation.name === 'New Conversation' && conversation.messages.length > 0) {
-        const firstUserMessage = conversation.messages.find(m => m.role === 'user');
+      if (
+        conversation.name === 'New Conversation' &&
+        conversation.messages.length > 0
+      ) {
+        const firstUserMessage = conversation.messages.find(
+          (m) => m.role === 'user',
+        );
         if (firstUserMessage && typeof firstUserMessage.content === 'string') {
           // Take first 50 characters or until first line break
           const content = firstUserMessage.content.split('\n')[0];
-          const name = content.length > 50 ? content.substring(0, 50) + '...' : content;
+          const name =
+            content.length > 50 ? content.substring(0, 50) + '...' : content;
           updates.name = name || 'New Conversation';
         }
       }
@@ -206,9 +202,10 @@ export const useChatStore = create<ChatStore>((set) => ({
     } catch (error) {
       console.error('sendMessage error:', error);
       set({
-        error: error instanceof Error ? error.message : 'Failed to send message',
+        error:
+          error instanceof Error ? error.message : 'Failed to send message',
         isStreaming: false,
-        streamingContent: ''
+        streamingContent: '',
       });
     }
   },

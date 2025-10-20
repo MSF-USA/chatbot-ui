@@ -1,8 +1,12 @@
 import { RAGService } from '@/lib/services/ragService';
+
+import {
+  appendMetadataToStream,
+  createStreamEncoder,
+} from '@/lib/utils/app/metadata';
 import { parseThinkingContent } from '@/lib/utils/app/thinking';
 
 import OpenAI from 'openai';
-import { TextEncoder } from 'util';
 
 /**
  * Creates a stream processor for Azure OpenAI completions that handles citation tracking.
@@ -14,11 +18,11 @@ import { TextEncoder } from 'util';
 export function createAzureOpenAIStreamProcessor(
   response: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
   ragService?: RAGService,
-  stopConversationRef?: { current: boolean }
+  stopConversationRef?: { current: boolean },
 ): ReadableStream {
   return new ReadableStream({
     start: (controller) => {
-      const encoder = new TextEncoder();
+      const encoder = createStreamEncoder();
       let allContent = '';
       let controllerClosed = false;
 
@@ -32,9 +36,9 @@ export function createAzureOpenAIStreamProcessor(
                 controllerClosed = true;
                 controller.close();
               }
-              return; 
+              return;
             }
-            
+
             if (chunk?.choices?.[0]?.delta?.content) {
               const contentChunk = chunk.choices[0].delta.content;
               allContent += contentChunk;
@@ -54,34 +58,21 @@ export function createAzureOpenAIStreamProcessor(
             // Parse thinking content from the accumulated content
             const { thinking, content } = parseThinkingContent(allContent);
 
-            // Prepare metadata to append
-            const metadata: any = {};
-            let hasMetadata = false;
-
-            // Add citations if available
+            // Get citations if available
+            let citations;
             if (ragService) {
-              const citations = ragService.getCurrentCitations();
-              const uniqueCitations = ragService.deduplicateCitations(citations);
-
-              if (uniqueCitations.length > 0) {
-                metadata.citations = uniqueCitations;
-                hasMetadata = true;
-              }
+              const rawCitations = ragService.getCurrentCitations();
+              const uniqueCitations =
+                ragService.deduplicateCitations(rawCitations);
+              citations =
+                uniqueCitations.length > 0 ? uniqueCitations : undefined;
             }
 
-            // Add thinking content if available
-            if (thinking) {
-              metadata.thinking = thinking;
-              hasMetadata = true;
-            }
-
-            // Append metadata if we have any
-            if (hasMetadata) {
-              const metadataJson = JSON.stringify(metadata);
-              controller.enqueue(
-                encoder.encode(`\n\n<<<METADATA_START>>>${metadataJson}<<<METADATA_END>>>`),
-              );
-            }
+            // Append metadata using utility function
+            appendMetadataToStream(controller, {
+              citations,
+              thinking,
+            });
           }
 
           if (!controllerClosed) {
@@ -90,15 +81,17 @@ export function createAzureOpenAIStreamProcessor(
           }
         } catch (error: any) {
           console.error('Stream processing error:', error);
-          
-          if (error.name === 'AbortError' || 
-              error.message === 'Abort error: Fetch is already aborted' ||
-              error.message?.includes('abort') || 
-              error.message?.includes('Abort')) {
+
+          if (
+            error.name === 'AbortError' ||
+            error.message === 'Abort error: Fetch is already aborted' ||
+            error.message?.includes('abort') ||
+            error.message?.includes('Abort')
+          ) {
             console.log('Stream aborted by user, closing cleanly');
             if (!controllerClosed) {
               controllerClosed = true;
-              controller.close(); 
+              controller.close();
             }
           } else {
             if (!controllerClosed) {

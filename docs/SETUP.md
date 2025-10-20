@@ -13,17 +13,17 @@ This guide will help you set up the MSF AI Assistant development environment fro
 
 ### Required Access
 
-- Azure OpenAI API access
+- Azure OpenAI or Azure AI Foundry API access
 - Azure AD application credentials
-- Bing Search API key (optional, for web search)
+- Optional: Azure Blob Storage, Azure AI Search, LaunchDarkly
 
 ## Installation Steps
 
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/your-org/chatbot-ui.git
-cd chatbot-ui
+git clone https://github.com/Medecins-Sans-Frontieres-Collaborate/ai-assistant-app.git
+cd ai-assistant-app
 ```
 
 ### 2. Install Dependencies
@@ -33,6 +33,7 @@ npm install
 ```
 
 This will install all required packages including:
+
 - Next.js 15
 - React 19
 - TypeScript
@@ -56,21 +57,22 @@ cp .env.example .env.local
 Edit `.env.local` and add your actual credentials. The `.env.example` file contains detailed descriptions of all available environment variables.
 
 **Minimum required variables:**
+
 - `NEXTAUTH_URL` - Your application URL (e.g., http://localhost:3000)
 - `NEXTAUTH_SECRET` - Generate with: `openssl rand -base64 32`
 - `AZURE_AD_CLIENT_ID` - From Azure AD app registration
 - `AZURE_AD_CLIENT_SECRET` - From Azure AD app registration
 - `AZURE_AD_TENANT_ID` - From Azure AD
-- `AZURE_OPENAI_API_KEY` - From Azure OpenAI resource
+- `OPENAI_API_KEY` - From Azure OpenAI resource
 - `AZURE_OPENAI_ENDPOINT` - From Azure OpenAI resource
-- `AZURE_OPENAI_DEPLOYMENT_NAME` - Your model deployment name
+- `DEFAULT_MODEL` - Your default model deployment name (e.g., gpt-4o)
 
 **Optional variables:**
-- `AZURE_SPEECH_API_KEY` / `AZURE_SPEECH_REGION` - For text-to-speech
-- `AZURE_BLOB_STORAGE_*` - For file uploads
-- `WHISPER_*` - For audio transcription
-- `AZURE_AI_FOUNDRY_ENDPOINT` - For AI agent support
-- `LAUNCHDARKLY_CLIENT_ID` - For feature flags
+
+- `AZURE_AI_FOUNDRY_ENDPOINT` - For AI agents and third-party models
+- `AZURE_BLOB_STORAGE_NAME` - For file uploads
+- `SEARCH_ENDPOINT` / `SEARCH_ENDPOINT_API_KEY` - For Azure AI Search
+- `LAUNCHDARKLY_CLIENT_ID` / `LAUNCHDARKLY_SDK_KEY` - For feature flags
 
 See `.env.example` for complete documentation of all variables.
 
@@ -84,14 +86,14 @@ Follow these steps to set up your Azure resources for the application.
 2. Create or navigate to your Azure OpenAI resource
 3. Go to "Keys and Endpoint"
 4. Copy:
-   - API Key → `AZURE_OPENAI_API_KEY`
+   - API Key → `OPENAI_API_KEY`
    - Endpoint → `AZURE_OPENAI_ENDPOINT`
 5. Go to "Model deployments"
 6. Deploy required models:
-   - GPT-4 or GPT-3.5-turbo
-   - (Optional) Whisper for transcription
-   - (Optional) DALL-E for image generation
-7. Copy deployment name → `AZURE_OPENAI_DEPLOYMENT_NAME`
+   - GPT-4o, GPT-4, or GPT-3.5-turbo
+   - (Optional) Whisper for transcription (deployment name must be "whisper")
+   - (Optional) Text-embedding-ada-002 for embeddings
+7. Copy your preferred default deployment name → `DEFAULT_MODEL`
 
 #### Azure AD Application
 
@@ -149,6 +151,7 @@ Try these features to ensure everything works:
 ### Common Issues
 
 **"Module not found" errors**
+
 ```bash
 # Clear node_modules and reinstall
 rm -rf node_modules package-lock.json
@@ -156,18 +159,21 @@ npm install
 ```
 
 **"Authentication failed"**
+
 - Verify all Azure AD credentials in `.env.local` match `.env.example` format
 - Check redirect URI is configured in Azure AD app registration
 - Ensure `NEXTAUTH_URL` matches your application URL exactly
 - Verify `NEXTAUTH_SECRET` is set and is a valid base64 string
 
 **"Failed to fetch AI response"**
+
 - Verify Azure OpenAI credentials
 - Check API endpoint is correct
 - Ensure model deployment exists and is named correctly
 - Check API version is compatible
 
 **"Build failed" with TypeScript errors**
+
 ```bash
 # Build will show TypeScript errors
 npm run build
@@ -176,6 +182,7 @@ npm run build
 ```
 
 **Port 3000 already in use**
+
 ```bash
 # Use a different port
 PORT=3001 npm run dev
@@ -194,6 +201,7 @@ NODE_ENV=development
 ### Check Logs
 
 Development server logs appear in your terminal. Look for:
+
 - API route errors
 - Authentication issues
 - Environment variable warnings
@@ -228,6 +236,105 @@ Configure settings (`.vscode/settings.json`):
 }
 ```
 
+## Git Hooks Setup
+
+The project uses [Husky](https://typicode.github.io/husky/) for Git hooks with automated checks before commits.
+
+### What's Included
+
+**Pre-commit Hook:**
+
+- **Secret Scanning** - Uses [secretlint](https://github.com/secretlint/secretlint) to detect:
+  - AWS access keys
+  - API keys (OpenAI, Google, etc.)
+  - GitHub tokens
+  - Private keys
+  - Other sensitive credentials
+- **Code Formatting** - Auto-formats code with Prettier
+- **Linting** - Runs on JavaScript/TypeScript files
+
+### Automatic Setup
+
+Hooks are automatically installed when you run:
+
+```bash
+npm install
+```
+
+The `prepare` script in `package.json` runs `husky` which installs the Git hooks.
+
+### Manual Hook Installation
+
+If hooks weren't installed automatically:
+
+```bash
+npx husky install
+```
+
+### Running Checks Manually
+
+Test the pre-commit hook without committing:
+
+```bash
+npx lint-staged
+```
+
+Run secret scanning on all files:
+
+```bash
+npx secretlint "**/*"
+```
+
+### Bypassing Hooks
+
+**⚠️ Not recommended** - Only use in emergencies:
+
+```bash
+git commit --no-verify -m "your message"
+```
+
+### Configuration Files
+
+- `.husky/pre-commit` - Pre-commit hook script
+- `.secretlintrc.json` - Secret scanning rules
+- `package.json` > `lint-staged` - Staged files configuration
+
+### Troubleshooting
+
+**Hook not running:**
+
+```bash
+# Reinstall hooks
+npx husky install
+```
+
+**False positive in secret detection:**
+
+```bash
+# Add exception to .secretlintrc.json
+{
+  "rules": [
+    {
+      "id": "@secretlint/secretlint-rule-preset-recommend",
+      "allowMessageIds": ["YOUR_PATTERN_ID"]
+    }
+  ]
+}
+```
+
+**Want to add more checks:**
+
+Edit `package.json` > `lint-staged`:
+
+```json
+"lint-staged": {
+  "*": ["secretlint"],
+  "*.{js,jsx,ts,tsx}": [
+    "prettier --write"
+  ]
+}
+```
+
 ## Next Steps
 
 - Read [ARCHITECTURE.md](./ARCHITECTURE.md) to understand the codebase
@@ -238,6 +345,7 @@ Configure settings (`.vscode/settings.json`):
 ## Support
 
 For setup help:
+
 1. Check this documentation
 2. Search existing GitHub issues
 3. Contact the development team
