@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* KaTeX CSS for math rendering */
+@import "katex/dist/katex.min.css";
+
+/* Streamdown styles - @source directive requires Tailwind v4 */
+/* Uncomment when upgrading to Tailwind v4:
+@source "../node_modules/streamdown/dist/index.js";
+*/
+
 ::-webkit-scrollbar-track {
   background-color: transparent;
 }
@@ -218,19 +226,7 @@ select {
   color: #60a5fa;
 }
 
-.dark .prose code,
-.dark .prose-invert code {
-  background-color: #374151;
-  color: #f3f4f6;
-  padding: 0.2em 0.4em;
-  border-radius: 0.25rem;
-}
-
-.dark .prose pre,
-.dark .prose-invert pre {
-  background-color: #1f2937;
-  border: 1px solid #374151;
-}
+/* Removed custom code/pre styling - let Streamdown handle it with Shiki */
 
 .dark .prose blockquote,
 .dark .prose-invert blockquote {

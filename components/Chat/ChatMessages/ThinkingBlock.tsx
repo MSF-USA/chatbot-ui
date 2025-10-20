@@ -5,12 +5,7 @@ import {
 } from '@tabler/icons-react';
 import { FC, useState } from 'react';
 
-import { CodeBlock } from '@/components/Markdown/CodeBlock';
-import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
-
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
+import { Streamdown } from 'streamdown';
 
 interface ThinkingBlockProps {
   thinking: string;
@@ -26,50 +21,6 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({
   if (!thinking || thinking.trim() === '') {
     return null;
   }
-
-  const customMarkdownComponents = {
-    code({ inline, className, children, ...props }: any) {
-      const match = /language-(\w+)/.exec(className || '');
-
-      return !inline ? (
-        <CodeBlock
-          language={(match && match[1]) || ''}
-          value={String(children).replace(/\n$/, '')}
-          {...props}
-        />
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    },
-    table({ children }: any) {
-      return (
-        <div className="overflow-auto">
-          <table className="border-collapse border border-gray-400 dark:border-gray-600 px-3 py-1">
-            {children}
-          </table>
-        </div>
-      );
-    },
-    th({ children }: any) {
-      return (
-        <th className="break-words border border-gray-400 dark:border-gray-600 bg-gray-300 dark:bg-gray-700 px-3 py-1">
-          {children}
-        </th>
-      );
-    },
-    td({ children }: any) {
-      return (
-        <td className="break-words border border-gray-400 dark:border-gray-600 px-3 py-1">
-          {children}
-        </td>
-      );
-    },
-    p({ children }: any) {
-      return <p>{children}</p>;
-    },
-  };
 
   return (
     <div className="mb-3 border border-blue-200 dark:border-blue-900/50 rounded-lg overflow-hidden bg-blue-50/50 dark:bg-blue-950/20 transition-all">
@@ -93,13 +44,13 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({
       {isExpanded && (
         <div className="px-4 py-3 border-t border-blue-200 dark:border-blue-900/50 animate-in fade-in slide-in-from-top-1 duration-200">
           <div className="prose dark:prose-invert prose-sm max-w-none text-gray-700 dark:text-gray-300">
-            <MemoizedReactMarkdown
-              remarkPlugins={[remarkGfm, [remarkMath, { singleDollar: false }]]}
-              rehypePlugins={[rehypeKatex]}
-              components={customMarkdownComponents}
+            <Streamdown
+              isAnimating={isStreaming}
+              controls={true}
+              shikiTheme={['github-light', 'github-dark']}
             >
               {thinking}
-            </MemoizedReactMarkdown>
+            </Streamdown>
           </div>
         </div>
       )}

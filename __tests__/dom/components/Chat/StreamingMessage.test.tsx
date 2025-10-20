@@ -1,19 +1,17 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 
 import { StreamingMessage } from '@/components/Chat/MessageList/StreamingMessage';
 
-// Mock react-markdown
-vi.mock('react-markdown', () => ({
-  default: ({ children }: { children: string }) => <div data-testid="markdown-content">{children}</div>,
-}));
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
-// Mock remark/rehype plugins
-vi.mock('remark-gfm', () => ({ default: () => {} }));
-vi.mock('remark-math', () => ({ default: () => {} }));
-vi.mock('rehype-mathjax/svg', () => ({ default: () => {} }));
+// Mock streamdown
+vi.mock('streamdown', () => ({
+  Streamdown: ({ children }: { children: string }) => (
+    <div data-testid="markdown-content">{children}</div>
+  ),
+}));
 
 describe('StreamingMessage', () => {
   describe('Rendering', () => {
@@ -94,21 +92,21 @@ describe('StreamingMessage', () => {
   });
 
   describe('Streaming Indicator', () => {
-    it('has pulsing animation', () => {
+    it('has breathing animation', () => {
       const { container } = render(<StreamingMessage content="Test" />);
 
-      const pulsingDot = container.querySelector('.animate-pulse');
-      expect(pulsingDot).toBeInTheDocument();
+      const breathingDot = container.querySelector('.animate-breathing');
+      expect(breathingDot).toBeInTheDocument();
     });
 
     it('indicator has correct styling', () => {
       const { container } = render(<StreamingMessage content="Test" />);
 
-      const pulsingDot = container.querySelector('.animate-pulse');
-      expect(pulsingDot).toHaveClass('h-2');
-      expect(pulsingDot).toHaveClass('w-2');
-      expect(pulsingDot).toHaveClass('rounded-full');
-      expect(pulsingDot).toHaveClass('bg-blue-500');
+      const breathingDot = container.querySelector('.animate-breathing');
+      expect(breathingDot).toHaveClass('h-3');
+      expect(breathingDot).toHaveClass('w-3');
+      expect(breathingDot).toHaveClass('rounded-full');
+      expect(breathingDot).toHaveClass('bg-blue-500');
     });
 
     it('indicator text has correct styling', () => {
@@ -133,7 +131,9 @@ describe('StreamingMessage', () => {
     it('has flex layout for avatar and content', () => {
       const { container } = render(<StreamingMessage content="Test" />);
 
-      const flexContainer = container.querySelector('.flex.items-start.space-x-3');
+      const flexContainer = container.querySelector(
+        '.flex.items-start.space-x-3',
+      );
       expect(flexContainer).toBeInTheDocument();
     });
 

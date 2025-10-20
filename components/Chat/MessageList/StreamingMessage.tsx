@@ -1,27 +1,18 @@
 'use client';
 
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
 
-import { useDebounce } from '@/lib/hooks/useDebounce';
-
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
+import { Streamdown } from 'streamdown';
 
 interface StreamingMessageProps {
   content: string;
 }
 
 /**
- * Streaming message display with markdown rendering and debouncing for performance
- * Debouncing reduces re-renders during rapid streaming updates
+ * Streaming message display with Streamdown
+ * Streamdown is optimized for AI streaming and handles incomplete markdown gracefully
  */
 export function StreamingMessage({ content }: StreamingMessageProps) {
-  // Debounce content updates to reduce markdown parsing overhead during streaming
-  // Use 50ms delay for smooth streaming while preventing excessive re-renders
-  const debouncedContent = useDebounce(content, 50);
-
   return (
     <div className="group relative">
       <div className="flex items-start space-x-3">
@@ -33,12 +24,13 @@ export function StreamingMessage({ content }: StreamingMessageProps) {
         {/* Message Content */}
         <div className="flex-1 overflow-hidden">
           <div className="prose dark:prose-invert max-w-none">
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm, remarkMath]}
-              rehypePlugins={[rehypeKatex]}
+            <Streamdown
+              isAnimating={true}
+              controls={true}
+              shikiTheme={['github-light', 'github-dark']}
             >
-              {debouncedContent}
-            </ReactMarkdown>
+              {content}
+            </Streamdown>
           </div>
 
           {/* Streaming Indicator - Breathing Circle Animation */}

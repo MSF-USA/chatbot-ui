@@ -9,8 +9,6 @@ import { Message } from '@/types/chat';
 
 import { AzureMonitorLoggingService } from '../loggingService';
 
-import { StreamingTextResponse } from 'ai';
-
 /**
  * Handles Azure AI Foundry Agent-based chat completions with Bing grounding
  *
@@ -238,7 +236,13 @@ export class AIFoundryAgentHandler {
         botId,
       );
 
-      return new StreamingTextResponse(stream);
+      return new Response(stream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
     } catch (error) {
       // Log error
       await this.loggingService.logError(

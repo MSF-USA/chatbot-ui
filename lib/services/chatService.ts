@@ -40,7 +40,6 @@ import {
 import '@azure/openai/types';
 import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import { StreamingTextResponse } from 'ai';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
 import { ChatCompletion } from 'openai/resources';
@@ -246,7 +245,13 @@ export default class ChatService {
     );
 
     if (streamResponse) {
-      return new StreamingTextResponse(response as ReadableStream);
+      return new Response(response as ReadableStream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
     } else {
       const completionText = (response as ChatCompletion)?.choices?.[0]?.message
         ?.content;
@@ -408,7 +413,13 @@ export default class ChatService {
         botId,
       );
 
-      return new StreamingTextResponse(processedStream);
+      return new Response(processedStream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
     }
 
     const completion = response as OpenAI.Chat.Completions.ChatCompletion;

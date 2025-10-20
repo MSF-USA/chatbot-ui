@@ -12,7 +12,6 @@ import { FileMessageContent, Message, TextMessageContent } from '@/types/chat';
 
 import { AzureMonitorLoggingService } from '../loggingService';
 
-import { StreamingTextResponse } from 'ai';
 import fs from 'fs';
 
 /**
@@ -85,7 +84,13 @@ export class FileConversationHandler {
           if (typeof result === 'string') {
             throw new Error('Expected a ReadableStream for streaming response');
           }
-          return new StreamingTextResponse(result);
+          return new Response(result, {
+            headers: {
+              'Content-Type': 'text/plain; charset=utf-8',
+              'Cache-Control': 'no-cache',
+              Connection: 'keep-alive',
+            },
+          });
         } else {
           if (result instanceof ReadableStream) {
             throw new Error('Expected a string for non-streaming response');

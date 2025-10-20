@@ -12,23 +12,23 @@ import {
 
 import { useTranslations } from 'next-intl';
 
+import { useChat } from '@/lib/hooks/chat/useChat';
+import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useSettings } from '@/lib/hooks/settings/useSettings';
+
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FileMessageContent,
   FilePreview,
+  ImageFieldValue,
   ImageMessageContent,
   Message,
   MessageType,
   TextMessageContent,
   getChatMessageContent,
-  FileFieldValue,
-  ImageFieldValue,
 } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
-
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useChat } from '@/lib/hooks/chat/useChat';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
@@ -55,6 +55,7 @@ interface Props {
   showScrollDownButton: boolean;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   filePreviews: FilePreview[];
+  showDisclaimer?: boolean;
 }
 
 export const ChatInput = ({
@@ -66,9 +67,9 @@ export const ChatInput = ({
   showScrollDownButton,
   filePreviews,
   setFilePreviews,
+  showDisclaimer = true,
 }: Props) => {
   const t = useTranslations();
-
 
   // Zustand hooks
   const { selectedConversation } = useConversations();
@@ -128,8 +129,8 @@ export const ChatInput = ({
       const imageContents = imageFieldValue
         ? [...wrapInArray(imageFieldValue), ...wrapInArray(fileFieldValue)]
         : fileFieldValue
-        ? [...wrapInArray(fileFieldValue)]
-        : [];
+          ? [...wrapInArray(fileFieldValue)]
+          : [];
       return [
         ...imageContents,
         { type: 'text', text: textFieldValue } as TextMessageContent,
@@ -441,8 +442,19 @@ export const ChatInput = ({
         <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 dark:bg-blue-900/30 backdrop-blur-sm z-10 pointer-events-none">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
             <div className="text-blue-500 mb-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="mx-auto h-12 w-12"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"
+                />
               </svg>
             </div>
           </div>
@@ -460,7 +472,6 @@ export const ChatInput = ({
           </div>
         </div>
       )}
-
 
       <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121] pt-4">
         <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
@@ -571,9 +582,11 @@ export const ChatInput = ({
           )}
         </div>
       </div>
-      <div className="px-3 pt-1 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-1 md:pb-3">
-        {t('chatDisclaimer')}
-      </div>
+      {showDisclaimer && (
+        <div className="px-3 pt-1 pb-3 text-center items-center text-[12px] text-black/50 dark:text-white/50 md:px-4 md:pt-1 md:pb-3">
+          {t('chatDisclaimer')}
+        </div>
+      )}
     </div>
   );
 };

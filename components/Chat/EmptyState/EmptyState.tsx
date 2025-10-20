@@ -1,10 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
-import { SuggestedPrompts } from './SuggestedPrompts';
+
 import Image from 'next/image';
+
 import { useUI } from '@/lib/hooks/ui/useUI';
+
+import { SuggestedPrompts } from './SuggestedPrompts';
+
 import lightTextLogo from '@/public/international_logo_black.png';
 import darkTextLogo from '@/public/international_logo_white.png';
 
@@ -16,33 +19,25 @@ interface EmptyStateProps {
  * Empty state shown when no messages in conversation
  */
 export function EmptyState({ onSelectPrompt }: EmptyStateProps) {
-  const t = useTranslations();
   const { theme } = useUI();
 
   return (
-    <div className="flex h-[88%] items-center justify-center">
-      <div className="mx-auto flex flex-col px-3">
-        <div className="text-center text-3xl font-thin text-gray-800 dark:text-gray-100">
-          <div className="flex flex-col items-center">
-            <div className="flex flex-row justify-center items-end">
-              <div className="flex-shrink-0 flex flex-col items-center">
-                <Image
-                  src={theme === 'dark' ? darkTextLogo : lightTextLogo}
-                  alt="MSF Logo"
-                  priority
-                  style={{
-                    maxWidth: '150px',
-                    maxHeight: '150px',
-                  }}
-                />
-              </div>
-            </div>
-            <div className="mt-8 flex justify-center w-full">
-              <SuggestedPrompts onSelectPrompt={onSelectPrompt} />
-            </div>
-          </div>
-        </div>
+    <div className="w-full flex flex-col items-center">
+      <div className="flex items-center gap-4 mb-10">
+        <Image
+          src={theme === 'dark' ? darkTextLogo : lightTextLogo}
+          alt="MSF Logo"
+          priority
+          style={{
+            width: '80px',
+            height: 'auto',
+          }}
+        />
+        <h2 className="text-3xl font-extralight text-gray-700 dark:text-gray-200">
+          Here to help
+        </h2>
       </div>
+      <SuggestedPrompts onSelectPrompt={onSelectPrompt} />
     </div>
   );
 }

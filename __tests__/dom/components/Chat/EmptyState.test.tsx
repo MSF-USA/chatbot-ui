@@ -1,28 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 
 import { EmptyState } from '@/components/Chat/EmptyState/EmptyState';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => key,
-}));
-
-// Mock useUI hook
-vi.mock('@/lib/hooks/ui/useUI', () => ({
-  useUI: () => ({
-    theme: 'light',
-  }),
-}));
-
-// Mock next/image
-vi.mock('next/image', () => ({
-  default: (props: any) => {
-    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-    return <img {...props} />;
-  },
 }));
 
 describe('EmptyState', () => {
@@ -31,11 +17,18 @@ describe('EmptyState', () => {
     expect(container.firstChild).toBeInTheDocument();
   });
 
-  it('displays MSF logo', () => {
+  it('displays title text', () => {
     render(<EmptyState />);
 
-    const logo = screen.getByAltText('MSF Logo');
-    expect(logo).toBeInTheDocument();
+    const title = screen.getByText('chat.emptyState.title');
+    expect(title).toBeInTheDocument();
+  });
+
+  it('displays subtitle text', () => {
+    render(<EmptyState />);
+
+    const subtitle = screen.getByText('chat.emptyState.subtitle');
+    expect(subtitle).toBeInTheDocument();
   });
 
   it('renders SuggestedPrompts component', () => {
@@ -66,48 +59,40 @@ describe('EmptyState', () => {
     expect(wrapper).toHaveClass('justify-center');
   });
 
-  it('has correct text styling', () => {
-    const { container } = render(<EmptyState />);
-
-    const textContainer = container.querySelector('.text-3xl');
-    expect(textContainer).toBeInTheDocument();
-    expect(textContainer).toHaveClass('font-thin');
-    expect(textContainer).toHaveClass('text-gray-800');
-    expect(textContainer).toHaveClass('dark:text-gray-100');
-  });
-
-  it('logo has correct max dimensions', () => {
+  it('has correct title styling', () => {
     render(<EmptyState />);
 
-    const logo = screen.getByAltText('MSF Logo');
-    expect(logo).toHaveStyle({ maxWidth: '150px' });
-    expect(logo).toHaveStyle({ maxHeight: '150px' });
+    const title = screen.getByText('chat.emptyState.title');
+    expect(title).toHaveClass('text-4xl');
+    expect(title).toHaveClass('font-semibold');
+    expect(title).toHaveClass('text-gray-800');
+    expect(title).toHaveClass('dark:text-gray-100');
   });
 
-  it('centers logo and content', () => {
+  it('has correct subtitle styling', () => {
+    render(<EmptyState />);
+
+    const subtitle = screen.getByText('chat.emptyState.subtitle');
+    expect(subtitle).toHaveClass('text-lg');
+    expect(subtitle).toHaveClass('text-gray-600');
+    expect(subtitle).toHaveClass('dark:text-gray-400');
+  });
+
+  it('centers content', () => {
     const { container } = render(<EmptyState />);
 
-    const centerDiv = container.querySelector('.text-center');
-    expect(centerDiv).toBeInTheDocument();
+    const textCenter = container.querySelector('.text-center');
+    expect(textCenter).toBeInTheDocument();
 
     const flexCol = container.querySelector('.flex-col.items-center');
     expect(flexCol).toBeInTheDocument();
   });
 
-  it('has margin between logo and prompts', () => {
+  it('has margin between title section and prompts', () => {
     const { container } = render(<EmptyState />);
 
-    const promptsWrapper = container.querySelector('.mt-8');
-    expect(promptsWrapper).toBeInTheDocument();
-  });
-
-  it('works with dark theme', () => {
-    // The component uses useUI hook which is already mocked at module level
-    // Just verify it renders without errors
-    render(<EmptyState />);
-
-    const logo = screen.getByAltText('MSF Logo');
-    expect(logo).toBeInTheDocument();
+    const titleSection = container.querySelector('.mb-8');
+    expect(titleSection).toBeInTheDocument();
   });
 
   it('works without onSelectPrompt callback', () => {
@@ -122,17 +107,6 @@ describe('EmptyState', () => {
 
     const px3 = container.querySelector('.px-3');
     expect(px3).toBeInTheDocument();
-  });
-
-  it('logo renders with priority prop passed to Image component', () => {
-    // Note: next/image's priority prop is a Next.js optimization
-    // In tests with our mock, it gets passed to the img element
-    // The important thing is that the logo renders
-    render(<EmptyState />);
-
-    const logo = screen.getByAltText('MSF Logo');
-    expect(logo).toBeInTheDocument();
-    // The priority optimization is handled by Next.js, not visible in DOM
   });
 
   it('matches snapshot', () => {

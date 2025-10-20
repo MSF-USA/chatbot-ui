@@ -13,12 +13,7 @@ import { useTranslations } from 'next-intl';
 
 import { Conversation, Message } from '@/types/chat';
 
-import { CodeBlock } from '@/components/Markdown/CodeBlock';
-import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
-
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
+import { Streamdown } from 'streamdown';
 
 interface UserMessageProps {
   message: Message;
@@ -84,7 +79,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   return (
     <div className="relative flex justify-end px-4 py-3 text-base lg:px-0 w-full">
       <div className="flex flex-col items-end max-w-full">
-        <div className="inline-block bg-gray-600 dark:bg-gray-600 rounded-2xl px-4 py-2.5 text-white text-sm">
+        <div className="inline-block bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base">
           {isEditing ? (
             <div className="flex flex-col">
               <textarea
@@ -125,52 +120,13 @@ export const UserMessage: FC<UserMessageProps> = ({
               </div>
             </div>
           ) : (
-            <div className="prose prose-sm prose-invert text-white max-w-none">
-              <MemoizedReactMarkdown
-                remarkPlugins={[remarkGfm, remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-                components={{
-                  code({ node, inline, className, children, ...props }: any) {
-                    const match = /language-(\w+)/.exec(className || '');
-                    return !inline ? (
-                      <CodeBlock
-                        language={(match && match[1]) || ''}
-                        value={String(children).replace(/\n$/, '')}
-                        {...props}
-                      />
-                    ) : (
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    );
-                  },
-                  table({ children }: any) {
-                    return (
-                      <div className="overflow-auto">
-                        <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-                          {children}
-                        </table>
-                      </div>
-                    );
-                  },
-                  th({ children }: any) {
-                    return (
-                      <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-                        {children}
-                      </th>
-                    );
-                  },
-                  td({ children }: any) {
-                    return (
-                      <td className="break-words border border-black px-3 py-1 dark:border-white">
-                        {children}
-                      </td>
-                    );
-                  },
-                }}
+            <div className="prose prose-invert text-white max-w-none">
+              <Streamdown
+                controls={true}
+                shikiTheme={['github-light', 'github-dark']}
               >
                 {localMessageContent}
-              </MemoizedReactMarkdown>
+              </Streamdown>
             </div>
           )}
         </div>

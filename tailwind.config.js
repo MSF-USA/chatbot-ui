@@ -4,6 +4,7 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
+    './node_modules/streamdown/dist/**/*.{js,ts,jsx,tsx}',
   ],
   darkMode: 'class',
   theme: {
@@ -51,11 +52,11 @@ module.exports = {
         },
         breathing: {
           '0%, 100%': {
-            transform: 'scale(1)',
-            opacity: '0.8',
+            transform: 'scale(0.25)',
+            opacity: '0.3',
           },
           '50%': {
-            transform: 'scale(1.3)',
+            transform: 'scale(1.0)',
             opacity: '1',
           },
         },

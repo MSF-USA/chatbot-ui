@@ -19,15 +19,9 @@ import { Citation } from '@/types/rag';
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
-import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
-import { CodeBlock } from '@/components/Markdown/CodeBlock';
-import { MemoizedReactMarkdown } from '@/components/Markdown/MemoizedReactMarkdown';
-import { MermaidBlock } from '@/components/Markdown/MermaidBlock';
+import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 
 import { useSettingsStore } from '@/lib/stores/settingsStore';
-import rehypeKatex from 'rehype-katex';
-import remarkGfm from 'remark-gfm';
-import remarkMath from 'remark-math';
 
 interface AssistantMessageProps {
   content: string;
@@ -57,7 +51,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-  const [remarkPlugins, setRemarkPlugins] = useState<any[]>([remarkGfm]);
   const [showStreamingSettings, setShowStreamingSettings] =
     useState<boolean>(false);
 
@@ -219,9 +212,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setDisplayContent(mainContent);
       setStreamingContent(streamingDisplay);
       setThinking(finalThinking);
-      if (mainContent.includes('```math')) {
-        setRemarkPlugins([remarkGfm, [remarkMath, { singleDollar: false }]]);
-      }
+      // Streamdown handles math automatically, no need to configure plugins
       setCitations(citationsData);
       citationsProcessed.current = true;
     };
@@ -292,59 +283,10 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
-  // Custom components for markdown processing
-  const customMarkdownComponents = {
-    code({ inline, className, children, ...props }: any) {
-      if (children?.length) {
-        if (children[0] == '▍') {
-          return <span className="animate-pulse cursor-default mt-1">▍</span>;
-        }
-      }
-
-      const match = /language-(\w+)/.exec(className || '');
-      const language = (match && match[1]) || '';
-      const value = String(children).replace(/\n$/, '');
-
-      // Render Mermaid diagrams with custom component
-      if (!inline && language === 'mermaid') {
-        return <MermaidBlock chart={value} />;
-      }
-
-      return !inline ? (
-        <CodeBlock language={language} value={value} {...props} />
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    },
-    table({ children }: any) {
-      return (
-        <div className="overflow-auto">
-          <table className="border-collapse border border-black px-3 py-1 dark:border-white">
-            {children}
-          </table>
-        </div>
-      );
-    },
-    th({ children }: any) {
-      return (
-        <th className="break-words border border-black bg-gray-500 px-3 py-1 text-white dark:border-white">
-          {children}
-        </th>
-      );
-    },
-    td({ children }: any) {
-      return (
-        <td className="break-words border border-black px-3 py-1 dark:border-white">
-          {children}
-        </td>
-      );
-    },
-    p({ children }: any) {
-      return <p>{children}</p>;
-    },
-  };
+  // Custom components for Streamdown
+  // Note: Streamdown handles code highlighting (Shiki), Mermaid, and math (KaTeX) built-in
+  // We don't override the code component - let Streamdown handle it
+  const customMarkdownComponents = {};
 
   return (
     <div className="relative flex px-4 py-3 text-base lg:px-0 w-full">
@@ -369,16 +311,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               className="prose dark:prose-invert max-w-none w-full"
               style={{ maxWidth: 'none' }}
             >
-              <CitationMarkdown
+              <CitationStreamdown
                 conversation={selectedConversation}
                 message={message}
                 citations={citations}
-                remarkPlugins={remarkPlugins}
-                rehypePlugins={[rehypeKatex]}
                 components={customMarkdownComponents}
+                isAnimating={messageIsStreaming}
+                controls={true}
+                shikiTheme={['github-light', 'github-dark']}
               >
                 {contentToDisplay}
-              </CitationMarkdown>
+              </CitationStreamdown>
             </div>
           </div>
 

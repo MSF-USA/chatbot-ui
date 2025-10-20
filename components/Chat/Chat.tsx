@@ -321,89 +321,101 @@ export function Chat({
         />
       </div>
 
-      {/* Messages */}
-      <div ref={chatContainerRef} className="flex-1 overflow-auto">
-        {!hasMessages ? (
-          <EmptyState onSelectPrompt={handleSelectPrompt} />
-        ) : (
-          <div className="mx-auto max-w-3xl pb-[200px]">
-            {messages.map((message, index) => (
-              <MemoizedChatMessage
-                key={index}
-                message={message}
-                messageIndex={index}
-                onEdit={handleEditMessage}
-                onRegenerate={handleRegenerate}
-              />
-            ))}
-            {/* Show streaming message or loading indicator */}
-            {isStreaming && (
-              <>
-                {streamingContent ? (
-                  <MemoizedChatMessage
-                    message={{
-                      role: 'assistant',
-                      content: streamingContent,
-                      messageType: 'text',
-                      citations,
-                    }}
-                    messageIndex={messages.length}
-                    onEdit={() => {}}
-                  />
-                ) : (
-                  <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex space-x-1">
-                        <div
-                          className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: '0ms' }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: '150ms' }}
-                        ></div>
-                        <div
-                          className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce"
-                          style={{ animationDelay: '300ms' }}
-                        ></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
-        )}
-      </div>
+      {/* Empty state with centered input */}
+      {!hasMessages ? (
+        <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
+          <div className="w-full flex flex-col items-center">
+            {/* Suggested Prompts */}
+            <div className="mb-12">
+              <EmptyState onSelectPrompt={handleSelectPrompt} />
+            </div>
 
-      {/* Error Display */}
-      {error && (
-        <div className="absolute bottom-[160px] left-0 right-0 mx-auto w-full max-w-3xl px-4 py-2">
-          <div className="rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-start justify-between">
-            <span className="flex-1">{error}</span>
-            <button
-              onClick={clearError}
-              className="ml-4 text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-100 transition-colors flex-shrink-0"
-              aria-label="Dismiss error"
-            >
-              <IconX size={20} />
-            </button>
+            {/* Centered Chat Input */}
+            <div className="w-full max-w-3xl">
+              <ChatInput
+                onSend={handleSend}
+                onRegenerate={handleRegenerate}
+                onScrollDownClick={handleScrollDown}
+                stopConversationRef={stopConversationRef}
+                textareaRef={textareaRef}
+                showScrollDownButton={showScrollDownButton}
+                filePreviews={filePreviews}
+                setFilePreviews={setFilePreviews}
+                showDisclaimer={false}
+              />
+            </div>
           </div>
         </div>
-      )}
+      ) : (
+        <>
+          {/* Messages */}
+          <div ref={chatContainerRef} className="flex-1 overflow-auto">
+            <div className="mx-auto max-w-3xl pb-[100px]">
+              {messages.map((message, index) => (
+                <MemoizedChatMessage
+                  key={index}
+                  message={message}
+                  messageIndex={index}
+                  onEdit={handleEditMessage}
+                  onRegenerate={handleRegenerate}
+                />
+              ))}
+              {/* Show streaming message or loading indicator */}
+              {isStreaming && (
+                <>
+                  {streamingContent ? (
+                    <MemoizedChatMessage
+                      message={{
+                        role: 'assistant',
+                        content: streamingContent,
+                        messageType: 'text',
+                        citations,
+                      }}
+                      messageIndex={messages.length}
+                      onEdit={() => {}}
+                    />
+                  ) : (
+                    <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
+                      <div className="flex items-center">
+                        <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing"></div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+          </div>
 
-      {/* Chat Input */}
-      <ChatInput
-        onSend={handleSend}
-        onRegenerate={handleRegenerate}
-        onScrollDownClick={handleScrollDown}
-        stopConversationRef={stopConversationRef}
-        textareaRef={textareaRef}
-        showScrollDownButton={showScrollDownButton}
-        filePreviews={filePreviews}
-        setFilePreviews={setFilePreviews}
-      />
+          {/* Error Display */}
+          {error && (
+            <div className="absolute bottom-[160px] left-0 right-0 mx-auto w-full max-w-3xl px-4 py-2">
+              <div className="rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-start justify-between">
+                <span className="flex-1">{error}</span>
+                <button
+                  onClick={clearError}
+                  className="ml-4 text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-100 transition-colors flex-shrink-0"
+                  aria-label="Dismiss error"
+                >
+                  <IconX size={20} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Chat Input - Bottom position */}
+          <ChatInput
+            onSend={handleSend}
+            onRegenerate={handleRegenerate}
+            onScrollDownClick={handleScrollDown}
+            stopConversationRef={stopConversationRef}
+            textareaRef={textareaRef}
+            showScrollDownButton={showScrollDownButton}
+            filePreviews={filePreviews}
+            setFilePreviews={setFilePreviews}
+          />
+        </>
+      )}
 
       {/* Model Selection Modal */}
       {isModelSelectOpen && (

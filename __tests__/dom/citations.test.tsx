@@ -6,7 +6,7 @@ import { Citation } from '@/types/rag';
 
 import { CitationItem } from '@/components/Chat/Citations/CitationItem';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
-import { CitationMarkdown } from '@/components/Markdown/CitationMarkdown';
+import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
@@ -121,7 +121,7 @@ describe('CitationItem', () => {
   });
 });
 
-describe('CitationMarkdown', () => {
+describe('CitationStreamdown', () => {
   const mockCitations: Citation[] = [
     {
       number: 1,
@@ -139,12 +139,12 @@ describe('CitationMarkdown', () => {
 
   it('renders citation numbers with correct styling', () => {
     render(
-      <CitationMarkdown
+      <CitationStreamdown
         citations={mockCitations}
         conversation={createMockConversation()}
       >
         Here is a citation [1].
-      </CitationMarkdown>,
+      </CitationStreamdown>,
     );
 
     const citation = screen.getByText('[1]');
@@ -156,12 +156,12 @@ describe('CitationMarkdown', () => {
 
   it('renders multiple adjacent citations with correct styling', () => {
     render(
-      <CitationMarkdown
+      <CitationStreamdown
         citations={mockCitations}
         conversation={createMockConversation()}
       >
         Here are multiple citations [1][2] in a row.
-      </CitationMarkdown>,
+      </CitationStreamdown>,
     );
 
     // Verify base styling for all citations
@@ -176,12 +176,12 @@ describe('CitationMarkdown', () => {
 
   it('shows correct tooltip for first citation', async () => {
     render(
-      <CitationMarkdown
+      <CitationStreamdown
         citations={mockCitations}
         conversation={createMockConversation()}
       >
         Here are multiple citations [1][2] in a row.
-      </CitationMarkdown>,
+      </CitationStreamdown>,
     );
 
     const citation = screen.getByText('[1]');
@@ -202,12 +202,12 @@ describe('CitationMarkdown', () => {
 
   it('shows correct tooltip for second citation', async () => {
     render(
-      <CitationMarkdown
+      <CitationStreamdown
         citations={mockCitations}
         conversation={createMockConversation()}
       >
         Here are multiple citations [1][2] in a row.
-      </CitationMarkdown>,
+      </CitationStreamdown>,
     );
 
     const citation = screen.getByText('[2]');
@@ -228,12 +228,12 @@ describe('CitationMarkdown', () => {
 
   it('displays tooltip with correct content on hover', async () => {
     render(
-      <CitationMarkdown
+      <CitationStreamdown
         citations={mockCitations}
         conversation={createMockConversation()}
       >
         Here is a citation [1].
-      </CitationMarkdown>,
+      </CitationStreamdown>,
     );
 
     const citation = screen.getByText('[1]');
@@ -263,12 +263,12 @@ describe('CitationMarkdown', () => {
   it('ignores citations when conversation.bot is undefined', () => {
     // Render with conversation.bot undefined
     const { container } = render(
-      <CitationMarkdown
+      <CitationStreamdown
         citations={mockCitations}
         conversation={createMockConversation(false)}
       >
         Here is a citation [1] that should not be interactive.
-      </CitationMarkdown>,
+      </CitationStreamdown>,
     );
 
     // 1. Directly check if the rendered output has the correct text content

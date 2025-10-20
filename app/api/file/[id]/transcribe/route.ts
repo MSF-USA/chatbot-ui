@@ -2,14 +2,10 @@ import { Session } from 'next-auth';
 import { JWT, getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
+import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
-import { getEnvVariable } from '@/lib/utils/app/env';
-import {
-  AzureBlobStorage,
-  BlobProperty,
-  BlobStorage,
-} from '@/lib/utils/server/blob';
+import { getUserIdFromSession } from '@/lib/utils/app/session';
 
 import { auth } from '@/auth';
 import fs from 'fs';
@@ -34,35 +30,24 @@ export async function GET(
   const { id } = await params;
 
   const { searchParams } = new URL(request.url);
-  let transcriptionServiceName = searchParams.get('service');
+  let transcriptionServiceName: 'whisper' | 'azureCognitiveSpeechService' =
+    'whisper';
+  const serviceParam = searchParams.get('service');
   // Default to Whisper (Azure OpenAI) for audio transcription
   if (
-    !transcriptionServiceName ||
-    !['whisper', 'azureCognitiveSpeechService'].includes(
-      transcriptionServiceName,
-    )
+    serviceParam &&
+    ['whisper', 'azureCognitiveSpeechService'].includes(serviceParam)
   ) {
-    transcriptionServiceName = 'whisper';
+    transcriptionServiceName = serviceParam as
+      | 'whisper'
+      | 'azureCognitiveSpeechService';
   }
 
   let transcript: string | undefined;
 
   try {
-    // @ts-ignore
-    const userId: string =
-      (session.user as any)?.id ?? token.userId ?? 'anonymous';
-
-    let blobStorageClient: BlobStorage = new AzureBlobStorage(
-      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user: session.user }),
-      getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user: session.user }),
-      getEnvVariable({
-        name: 'AZURE_BLOB_STORAGE_CONTAINER',
-        throwErrorOnFail: false,
-        defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
-        user: session.user,
-      }),
-      session.user,
-    );
+    const userId = getUserIdFromSession(session, token);
+    const blobStorageClient = createBlobStorageClient(session);
 
     const filePath = `${userId}/uploads/files/${id}`;
 
@@ -71,7 +56,6 @@ export async function GET(
     const tmpFilePath = join(tmpdir(), `${Date.now()}_${id}`);
     await blockBlobClient.downloadToFile(tmpFilePath);
 
-    // @ts-expect-error This is handled in logic above making sure that the name is not null and valid
     const transcriptionService =
       TranscriptionServiceFactory.getTranscriptionService(
         transcriptionServiceName,

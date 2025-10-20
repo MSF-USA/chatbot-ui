@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useMemo } from 'react';
+
 import { suggestedPrompts } from '@/components/Chat/prompts';
 
 interface SuggestedPromptsProps {
@@ -21,33 +22,24 @@ export function SuggestedPrompts({
   }, [count]);
 
   return (
-    <div className="hidden sm:flex space-x-5">
+    <div className="hidden sm:flex sm:flex-wrap sm:justify-center gap-3 max-w-5xl mx-auto">
       {displayedPrompts.map((prompt, index) => {
         const Icon = prompt.icon;
 
         return (
           <button
             key={index}
-            className="bg-transparent text-black dark:text-white border border-[#E0E0E0] dark:border-[#444444] rounded-md px-2 py-1 text-sm hover:bg-[#F9F9F9] dark:hover:bg-[#2F2F2F] dark:hover:text-white transition"
+            className="group relative bg-white dark:bg-[#1F1F1F] text-black dark:text-white border border-gray-200 dark:border-[#3F3F3F] rounded-full px-5 py-3 text-center hover:border-gray-400 dark:hover:border-[#555555] hover:shadow-lg dark:hover:shadow-[#0a0a0a]/60 transition-all duration-200 ease-in-out"
             onClick={() => onSelectPrompt?.(prompt.prompt)}
-            style={{
-              width: '200px',
-              height: '100px',
-              textAlign: 'start',
-              whiteSpace: 'normal',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'start',
-              justifyContent: 'center',
-              padding: '30px',
-            }}
           >
             {Icon && (
-              <div className="flex flex-col items-start">
-                <Icon className="h-5 w-5 mb-2" />
-                <div>
-                  <span>{prompt.title}</span>
+              <div className="flex flex-row items-center justify-center gap-3 whitespace-nowrap">
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-[#2F2F2F] flex-shrink-0 group-hover:bg-gray-200 dark:group-hover:bg-[#3F3F3F] transition-colors">
+                  <Icon className="h-4 w-4 text-gray-700 dark:text-gray-300" />
                 </div>
+                <h3 className="font-medium text-base text-gray-900 dark:text-gray-100">
+                  {prompt.title}
+                </h3>
               </div>
             )}
           </button>
