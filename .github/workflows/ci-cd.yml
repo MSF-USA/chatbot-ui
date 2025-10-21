@@ -68,15 +68,15 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Log in to DEV Azure Container Registry
-        run: az acr login --name ${{ vars.DEV_ACR_NAME }}
+      - name: Log in to Azure Container Registry
+        run: az acr login --name ${{ vars.ACR_NAME }}
 
-      - name: Build and Push PR Image to DEV Registry
+      - name: Build and Push PR Image
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
+          tags: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:pr-${{ github.event.number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -108,54 +108,20 @@ jobs:
           path: ./coverage
           retention-days: 90
 
-      - name: 🚀 Deploy DEV Container App
+      - name: 🚀 Deploy Container App
         id: deploy
         uses: azure/container-apps-deploy-action@v2
         with:
-          resourceGroup: ${{ vars.DEV_RESOURCE_GROUP }}
-          # IMPORTANT: Use a static name for your single preview app from a GitHub variable
+          resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
-          imageToDeploy: ${{ vars.DEV_ACR_NAME }}.azurecr.io/ai-assistant-dev:pr-${{ github.event.number }}
-          targetPort: 3000
-          ingress: 'external'
-          registryUrl: ${{ vars.DEV_ACR_NAME }}.azurecr.io
-          registryUsername: ${{ secrets.ACR_USERNAME }}
-          registryPassword: ${{ secrets.ACR_PASSWORD }}
-
-      - name: Set Environment Variables and Secrets via CLI
-        uses: azure/CLI@v1
-        with:
-          inlineScript: |
-            # Target the static app name for secrets
-            az containerapp secret set \
-              --name ${{ vars.CONTAINER_APP_NAME }} \
-              --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
-              --secrets \
-                "nextauth-secret=${{ secrets.NEXTAUTH_SECRET }}" \
-                "openai-api-key=${{ secrets.OPENAI_API_KEY }}" \
-                "launchdarkly-sdk-key=${{ secrets.LAUNCHDARKLY_SDK_KEY }}" \
-                "search-endpoint-api-key=${{ secrets.SEARCH_ENDPOINT_API_KEY }}"
-
-            readarray -t env_vars <<< "${{ vars.DEV_ENVIRONMENT_VARS }}"
-
-            # Target the static app name for environment variables
-            az containerapp update \
-              --name ${{ vars.CONTAINER_APP_NAME }} \
-              --resource-group ${{ vars.DEV_RESOURCE_GROUP }} \
-              --container-name ${{ vars.CONTAINER_APP_NAME }} \
-              --set-env-vars \
-                "NEXTAUTH_SECRET=secretref:nextauth-secret" \
-                "OPENAI_API_KEY=secretref:openai-api-key" \
-                "LAUNCHDARKLY_SDK_KEY=secretref:launchdarkly-sdk-key" \
-                "SEARCH_ENDPOINT_API_KEY=secretref:search-endpoint-api-key" \
-                "${env_vars[@]}"
+          imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:pr-${{ github.event.number }}
 
       - name: Get Container App URL
         id: get_url
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            APP_URL=$(az containerapp show --name ${{ vars.CONTAINER_APP_NAME }} --resource-group ${{ vars.DEV_RESOURCE_GROUP }} --query "properties.configuration.ingress.fqdn" -o tsv)
+            APP_URL=$(az containerapp show --name ${{ vars.CONTAINER_APP_NAME }} --resource-group ${{ vars.RESOURCE_GROUP }} --query "properties.configuration.ingress.fqdn" -o tsv)
             echo "containerAppUrl=https://${APP_URL}" >> $GITHUB_OUTPUT
 
       - name: Post Updated Status Comment to PR
@@ -239,10 +205,10 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: Log in to PROD Azure Container Registry
+      - name: Log in to Azure Container Registry
         run: az acr login --name ${{ vars.ACR_NAME }}
 
-      - name: Build and Push to PROD Registry
+      - name: Build and Push Image
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -251,15 +217,12 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: 🚀 Deploy to STAGING Environment
+      - name: 🚀 Deploy Container App
         uses: azure/container-apps-deploy-action@v2
         with:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
-          registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
-          registryUsername: ${{ secrets.ACR_USERNAME }}
-          registryPassword: ${{ secrets.ACR_PASSWORD }}
 
   # JOB 4: Manual deployment to PRODUCTION
   deploy_prod_manual:
@@ -274,12 +237,9 @@ jobs:
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      - name: 🚀 Deploy to PRODUCTION Environment
+      - name: 🚀 Deploy Container App
         uses: azure/container-apps-deploy-action@v2
         with:
           resourceGroup: ${{ vars.RESOURCE_GROUP }}
           containerAppName: ${{ vars.CONTAINER_APP_NAME }}
           imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
-          registryUrl: ${{ vars.ACR_NAME }}.azurecr.io
-          registryUsername: ${{ secrets.ACR_USERNAME }}
-          registryPassword: ${{ secrets.ACR_PASSWORD }}
