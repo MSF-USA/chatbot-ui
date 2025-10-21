@@ -108,7 +108,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   providers: [
     MicrosoftEntraID({
-      id: 'azure-ad',
       clientId: process.env.AZURE_CLIENT_ID || '',
       clientSecret: process.env.AZURE_CLIENT_SECRET || '',
       issuer: `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/v2.0`,
