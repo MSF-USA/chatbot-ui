@@ -5,6 +5,10 @@ const withNextIntl = createNextIntlPlugin('./i18n.ts');
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['streamdown', 'shiki', 'mermaid'],
+
+  // Remove X-Powered-By header for security
+  poweredByHeader: false,
+
   images: {
     domains: ['www.google.com'],
   },

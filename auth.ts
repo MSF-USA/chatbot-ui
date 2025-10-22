@@ -25,6 +25,10 @@ declare module 'next-auth/jwt' {
     accessTokenExpires: number;
     refreshToken?: string;
     error?: string;
+    // Store minimal user data in JWT to avoid API calls on every request
+    userId?: string;
+    userDisplayName?: string;
+    userMail?: string;
   }
 }
 
@@ -115,6 +119,11 @@ async function fetchUserData(accessToken: string): Promise<UserData> {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
+  session: {
+    strategy: 'jwt',
+    maxAge: 12 * 60 * 60, // 12 hours (reduced from default 30 days)
+    updateAge: 60 * 60, // Update session every 1 hour
+  },
   providers: [
     MicrosoftEntraID({
       clientId: process.env.AZURE_CLIENT_ID || '',
@@ -133,17 +142,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, account }): Promise<JWT> {
-      // Initial sign in - store tokens
+      // Initial sign in - store tokens and fetch user data ONCE
       if (account) {
-        return {
-          ...token,
-          accessToken: account.access_token!,
-          accessTokenExpires: account.expires_at
-            ? account.expires_at * 1000
-            : Date.now() + 24 * 60 * 60 * 1000,
-          refreshToken: account.refresh_token,
-          error: undefined,
-        };
+        try {
+          const userData = await fetchUserData(account.access_token!);
+          return {
+            ...token,
+            accessToken: account.access_token!,
+            accessTokenExpires: account.expires_at
+              ? account.expires_at * 1000
+              : Date.now() + 24 * 60 * 60 * 1000,
+            refreshToken: account.refresh_token,
+            error: undefined,
+            // Store minimal user data in JWT to avoid fetching on every request
+            userId: userData.id,
+            userDisplayName: userData.displayName,
+            userMail: userData.mail,
+          };
+        } catch (error) {
+          console.error('Failed to fetch user data during login:', error);
+          return {
+            ...token,
+            accessToken: account.access_token!,
+            accessTokenExpires: account.expires_at
+              ? account.expires_at * 1000
+              : Date.now() + 24 * 60 * 60 * 1000,
+            refreshToken: account.refresh_token,
+            error: 'UserDataFetchError',
+          };
+        }
       }
 
       // Token is still valid - return as-is
@@ -157,42 +184,18 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return refreshAccessToken(token);
     },
     async session({ session, token }): Promise<Session> {
-      // If token refresh failed, pass error to session
-      if (token.error) {
-        return {
-          ...session,
-          error: token.error,
-          expires: session.expires,
-        };
-      }
-
-      try {
-        // Only fetch minimal user data to keep session token small
-        // Full user data can be fetched client-side or in API routes as needed
-        // accessToken is kept in JWT token only (not in session cookie)
-        const userData = await fetchUserData(token.accessToken);
-
-        return {
-          ...session,
-          user: {
-            id: userData.id,
-            displayName: userData.displayName,
-            mail: userData.mail,
-            // givenName, surname, jobTitle, department, companyName are optional
-            // Fetch full profile via /api/user/profile when needed to keep session cookie small
-          } as Session['user'],
-          error: undefined,
-          expires: session.expires,
-        };
-      } catch (error) {
-        // If fetching user data fails, pass error to session
-        console.error('Failed to fetch user data:', error);
-        return {
-          ...session,
-          error: 'UserDataFetchError',
-          expires: session.expires,
-        };
-      }
+      // Pass through user data from JWT (no API calls on every request!)
+      // Full user data can be fetched on-demand via /api/user/profile
+      return {
+        ...session,
+        user: {
+          id: token.userId || '',
+          displayName: token.userDisplayName || '',
+          mail: token.userMail,
+        } as Session['user'],
+        error: token.error,
+        expires: session.expires,
+      };
     },
   },
 });

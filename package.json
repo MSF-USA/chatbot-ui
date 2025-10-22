@@ -3,9 +3,9 @@
   "version": "2.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "NODE_OPTIONS='--max-http-header-size=32768' next dev",
+    "build": "NODE_OPTIONS='--max-http-header-size=32768' next build",
+    "start": "NODE_OPTIONS='--max-http-header-size=32768' next start",
     "lint": "next lint",
     "format": "prettier --write .",
     "test:node": "vitest --run --config ./vitest.config.node.mts",

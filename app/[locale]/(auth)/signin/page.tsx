@@ -28,7 +28,7 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-zinc-950">
+    <div className="relative min-h-screen w-full overflow-hidden bg-black">
       {/* Dark overlay for depth */}
       <div className="absolute inset-0 bg-black/40 z-[1]" />
 
@@ -42,7 +42,7 @@ export default function SignInPage() {
         }}
       >
         {/* Subtle vignette effect */}
-        <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-transparent via-transparent to-zinc-950" />
+        <div className="absolute inset-0 bg-gradient-to-b md:bg-gradient-to-r from-transparent via-transparent to-black" />
       </div>
 
       {/* Content */}
