@@ -361,7 +361,7 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.getByText(/Next generation model/)).toBeInTheDocument();
+      expect(screen.getByText(/most advanced model/)).toBeInTheDocument();
     });
   });
 

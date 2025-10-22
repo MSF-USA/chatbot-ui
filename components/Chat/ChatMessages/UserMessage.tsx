@@ -77,7 +77,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   }, [message.content, messageContent]);
 
   return (
-    <div className="relative flex justify-end px-4 py-3 text-base lg:px-0 w-full">
+    <div className="relative flex justify-end px-4 py-1 text-base lg:px-0 w-full">
       <div className="flex flex-col items-end max-w-full">
         <div className="inline-block bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base">
           {isEditing ? (
@@ -120,7 +120,7 @@ export const UserMessage: FC<UserMessageProps> = ({
               </div>
             </div>
           ) : (
-            <div className="prose prose-invert text-white max-w-none">
+            <div className="prose prose-invert prose-p:my-2 text-white max-w-none">
               <Streamdown
                 controls={true}
                 shikiTheme={['github-light', 'github-dark']}

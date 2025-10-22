@@ -262,7 +262,7 @@ export default class ChatService {
   }
 
   /**
-   * Handles reasoning model chat (o1, o3-mini, etc.)
+   * Handles reasoning model chat (GPT-5 Pro, etc.) via responses.create() API
    */
   private async handleReasoningModel(
     modelId: string,
@@ -272,10 +272,9 @@ export default class ChatService {
     startTime: number,
     botId: string | undefined,
   ): Promise<Response> {
-    // For reasoning models:
-    // 1. Skip system messages
-    // 2. Force temperature to 1 or leave out
-    // 3. Don't stream responses
+    // For reasoning models using responses.create():
+    // 1. Skip system messages (merge into user message)
+    // 2. Supports streaming
     if (promptToSend && messages.length > 0 && messages[0].role === 'user') {
       const firstUserMessage = messages[0];
       const content = firstUserMessage.content;
@@ -297,17 +296,19 @@ export default class ChatService {
     const chatCompletionParams: ResponseCreateParamsBase = {
       model: modelId,
       input: messages as ResponseInput,
-      user: JSON.stringify(user),
-      stream: false,
+      user: user.email || user.name || 'unknown', // Max 64 chars - use email or name instead of full JSON
+      stream: true, // Enable streaming
     };
 
-    const responseData =
+    const response =
       await this.azureOpenAIClient.responses.create(chatCompletionParams);
-    const response = responseData as OpenAI.Responses.Response;
 
-    const completion = response.output_text;
+    // Process the stream
+    const processedStream = createAzureOpenAIStreamProcessor(
+      response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+    );
 
-    // Log regular chat completion
+    // Log chat completion
     await this.loggingService.logChatCompletion(
       startTime,
       modelId,
@@ -317,8 +318,12 @@ export default class ChatService {
       botId,
     );
 
-    return new Response(JSON.stringify({ text: completion }), {
-      headers: { 'Content-Type': 'application/json' },
+    return new Response(processedStream, {
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+      },
     });
   }
 
@@ -542,10 +547,8 @@ export default class ChatService {
 
   private isReasoningModel(id: OpenAIModelID | string): boolean {
     // This function is for models that use the special Azure responses.create() API
-    // and require non-streaming mode with temperature=1
     const reasoningModels: OpenAIModelID[] = [
       // OpenAIModelID.GPT_o3, // o3 uses standard chat completions API
-      // OpenAIModelID.GROK_4_FAST_REASONING // Grok 4 supports streaming like DeepSeek-R1
     ];
     return reasoningModels.includes(id as OpenAIModelID);
   }

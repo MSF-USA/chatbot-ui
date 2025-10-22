@@ -64,6 +64,7 @@ interface DropdownProps {
   apiKey?: string;
   systemPrompt?: string;
   temperature?: number;
+  openDownward?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -84,6 +85,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   apiKey,
   systemPrompt,
   temperature,
+  openDownward = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
@@ -283,6 +285,8 @@ const Dropdown: React.FC<DropdownProps> = ({
       <div className="group">
         <button
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault();
+            event.stopPropagation();
             if (isOpen) {
               closeDropdown();
             } else {
@@ -302,11 +306,11 @@ const Dropdown: React.FC<DropdownProps> = ({
       </div>
 
       {/* Enhanced Dropdown Menu */}
-      {isOpen && (
+      {isOpen && !isClosing && (
         <div
           ref={dropdownRef}
-          className={`absolute bottom-full mb-2 left-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-[9999] w-64 outline-none overflow-hidden ${
-            isClosing ? 'animate-slide-down' : 'animate-slide-up'
+          className={`absolute ${openDownward ? 'top-full mt-2 z-[10000]' : 'bottom-full mb-2 z-[9999]'} left-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg w-64 outline-none overflow-hidden ${
+            openDownward ? 'animate-slide-down-reverse' : 'animate-slide-up'
           }`}
           tabIndex={-1}
           role="menu"

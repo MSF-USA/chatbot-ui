@@ -3,8 +3,10 @@
  *
  * Tests the safe migration from legacy localStorage format to Zustand persist stores
  */
-
-import { LocalStorageService, StorageKeys } from '@/lib/services/storage/localStorageService';
+import {
+  LocalStorageService,
+  StorageKeys,
+} from '@/lib/services/storage/localStorageService';
 
 // Mock localStorage
 const localStorageMock = (() => {
@@ -56,13 +58,19 @@ describe('LocalStorageService Migration', () => {
     });
 
     it('should return true when legacy conversations exist', () => {
-      localStorage.setItem(StorageKeys.CONVERSATIONS, JSON.stringify([{ id: 'test' }]));
+      localStorage.setItem(
+        StorageKeys.CONVERSATIONS,
+        JSON.stringify([{ id: 'test' }]),
+      );
 
       expect(LocalStorageService.hasLegacyData()).toBe(true);
     });
 
     it('should return true when legacy conversationHistory exists', () => {
-      localStorage.setItem('conversationHistory', JSON.stringify([{ id: 'test' }]));
+      localStorage.setItem(
+        'conversationHistory',
+        JSON.stringify([{ id: 'test' }]),
+      );
 
       expect(LocalStorageService.hasLegacyData()).toBe(true);
     });
@@ -85,7 +93,10 @@ describe('LocalStorageService Migration', () => {
 
     it('should skip settings migration if new format already exists', () => {
       const existingSettings = { state: { temperature: 0.8 }, version: 1 };
-      localStorage.setItem('settings-storage', JSON.stringify(existingSettings));
+      localStorage.setItem(
+        'settings-storage',
+        JSON.stringify(existingSettings),
+      );
       localStorage.setItem(StorageKeys.TEMPERATURE, '0.7');
 
       const result = LocalStorageService.migrateFromLegacy();
@@ -107,10 +118,22 @@ describe('LocalStorageService Migration', () => {
 
     it('should migrate all settings fields', () => {
       localStorage.setItem(StorageKeys.TEMPERATURE, JSON.stringify(0.8));
-      localStorage.setItem(StorageKeys.SYSTEM_PROMPT, JSON.stringify('Test prompt'));
-      localStorage.setItem(StorageKeys.DEFAULT_MODEL_ID, JSON.stringify('gpt-4'));
-      localStorage.setItem(StorageKeys.PROMPTS, JSON.stringify([{ id: '1', name: 'Test' }]));
-      localStorage.setItem(StorageKeys.CUSTOM_AGENTS, JSON.stringify([{ id: 'a1' }]));
+      localStorage.setItem(
+        StorageKeys.SYSTEM_PROMPT,
+        JSON.stringify('Test prompt'),
+      );
+      localStorage.setItem(
+        StorageKeys.DEFAULT_MODEL_ID,
+        JSON.stringify('gpt-4'),
+      );
+      localStorage.setItem(
+        StorageKeys.PROMPTS,
+        JSON.stringify([{ id: '1', name: 'Test' }]),
+      );
+      localStorage.setItem(
+        StorageKeys.CUSTOM_AGENTS,
+        JSON.stringify([{ id: 'a1' }]),
+      );
 
       LocalStorageService.migrateFromLegacy();
 
@@ -120,7 +143,6 @@ describe('LocalStorageService Migration', () => {
       expect(settings.state.defaultModelId).toBe('gpt-4');
       expect(settings.state.prompts).toEqual([{ id: '1', name: 'Test' }]);
       expect(settings.state.customAgents).toEqual([{ id: 'a1' }]);
-      expect(settings.state.smoothStreamingEnabled).toBe(true);
     });
 
     it('should use correct defaults for missing settings', () => {
@@ -137,7 +159,10 @@ describe('LocalStorageService Migration', () => {
 
     it('should not include models in settings (not persisted)', () => {
       localStorage.setItem(StorageKeys.TEMPERATURE, '0.7');
-      localStorage.setItem(StorageKeys.MODELS, JSON.stringify([{ id: 'gpt-4' }]));
+      localStorage.setItem(
+        StorageKeys.MODELS,
+        JSON.stringify([{ id: 'gpt-4' }]),
+      );
 
       LocalStorageService.migrateFromLegacy();
 
@@ -154,7 +179,10 @@ describe('LocalStorageService Migration', () => {
       ];
 
       // Test with 'conversations' key
-      localStorage.setItem(StorageKeys.CONVERSATIONS, JSON.stringify(conversations));
+      localStorage.setItem(
+        StorageKeys.CONVERSATIONS,
+        JSON.stringify(conversations),
+      );
       LocalStorageService.migrateFromLegacy();
 
       let convData = JSON.parse(localStorage.getItem('conversation-storage')!);
@@ -162,7 +190,10 @@ describe('LocalStorageService Migration', () => {
 
       // Clean up and test with 'conversationHistory' key
       localStorage.clear();
-      localStorage.setItem('conversationHistory', JSON.stringify(conversations));
+      localStorage.setItem(
+        'conversationHistory',
+        JSON.stringify(conversations),
+      );
       LocalStorageService.migrateFromLegacy();
 
       convData = JSON.parse(localStorage.getItem('conversation-storage')!);
@@ -172,22 +203,32 @@ describe('LocalStorageService Migration', () => {
     it('should migrate folders and selectedConversationId', () => {
       const folders = [{ id: 'f1', name: 'Work', type: 'chat' }];
       localStorage.setItem(StorageKeys.FOLDERS, JSON.stringify(folders));
-      localStorage.setItem(StorageKeys.SELECTED_CONVERSATION_ID, JSON.stringify('conv123'));
+      localStorage.setItem(
+        StorageKeys.SELECTED_CONVERSATION_ID,
+        JSON.stringify('conv123'),
+      );
 
       LocalStorageService.migrateFromLegacy();
 
-      const convData = JSON.parse(localStorage.getItem('conversation-storage')!);
+      const convData = JSON.parse(
+        localStorage.getItem('conversation-storage')!,
+      );
       expect(convData.version).toBe(1);
       expect(convData.state.folders).toEqual(folders);
       expect(convData.state.selectedConversationId).toBe('conv123');
     });
 
     it('should not include isLoaded in persisted data', () => {
-      localStorage.setItem(StorageKeys.CONVERSATIONS, JSON.stringify([{ id: '1' }]));
+      localStorage.setItem(
+        StorageKeys.CONVERSATIONS,
+        JSON.stringify([{ id: '1' }]),
+      );
 
       LocalStorageService.migrateFromLegacy();
 
-      const convData = JSON.parse(localStorage.getItem('conversation-storage')!);
+      const convData = JSON.parse(
+        localStorage.getItem('conversation-storage')!,
+      );
       expect(convData.state).not.toHaveProperty('isLoaded');
     });
   });
@@ -229,7 +270,10 @@ describe('LocalStorageService Migration', () => {
   describe('migrateFromLegacy() - Safety Features', () => {
     it('should create backup before migration', () => {
       localStorage.setItem(StorageKeys.TEMPERATURE, JSON.stringify(0.7));
-      localStorage.setItem(StorageKeys.CONVERSATIONS, JSON.stringify([{ id: '1' }]));
+      localStorage.setItem(
+        StorageKeys.CONVERSATIONS,
+        JSON.stringify([{ id: '1' }]),
+      );
 
       LocalStorageService.migrateFromLegacy();
 
@@ -246,15 +290,22 @@ describe('LocalStorageService Migration', () => {
 
     it('should NOT delete old data after migration', () => {
       localStorage.setItem(StorageKeys.TEMPERATURE, JSON.stringify(0.7));
-      localStorage.setItem(StorageKeys.CONVERSATIONS, JSON.stringify([{ id: '1' }]));
+      localStorage.setItem(
+        StorageKeys.CONVERSATIONS,
+        JSON.stringify([{ id: '1' }]),
+      );
       localStorage.setItem(StorageKeys.THEME, JSON.stringify('dark'));
 
       LocalStorageService.migrateFromLegacy();
 
       // Old data should still exist
-      expect(localStorage.getItem(StorageKeys.TEMPERATURE)).toBe(JSON.stringify(0.7));
+      expect(localStorage.getItem(StorageKeys.TEMPERATURE)).toBe(
+        JSON.stringify(0.7),
+      );
       expect(localStorage.getItem(StorageKeys.CONVERSATIONS)).toBeTruthy();
-      expect(localStorage.getItem(StorageKeys.THEME)).toBe(JSON.stringify('dark'));
+      expect(localStorage.getItem(StorageKeys.THEME)).toBe(
+        JSON.stringify('dark'),
+      );
     });
 
     it('should mark migration complete only on success', () => {
@@ -286,12 +337,20 @@ describe('LocalStorageService Migration', () => {
     });
 
     it('should handle null/undefined values', () => {
-      localStorage.setItem(StorageKeys.CONVERSATIONS, JSON.stringify([{ id: '1' }]));
-      localStorage.setItem(StorageKeys.SELECTED_CONVERSATION_ID, JSON.stringify(null));
+      localStorage.setItem(
+        StorageKeys.CONVERSATIONS,
+        JSON.stringify([{ id: '1' }]),
+      );
+      localStorage.setItem(
+        StorageKeys.SELECTED_CONVERSATION_ID,
+        JSON.stringify(null),
+      );
 
       LocalStorageService.migrateFromLegacy();
 
-      const convData = JSON.parse(localStorage.getItem('conversation-storage')!);
+      const convData = JSON.parse(
+        localStorage.getItem('conversation-storage')!,
+      );
       expect(convData.state.selectedConversationId).toBe(null);
       expect(convData.state.conversations).toEqual([{ id: '1' }]);
     });

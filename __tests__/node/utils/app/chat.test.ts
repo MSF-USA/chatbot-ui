@@ -1,11 +1,13 @@
-import { describe, it, expect } from 'vitest';
 import {
-  isImageConversation,
-  isFileConversation,
   checkIsModelValid,
+  isFileConversation,
+  isImageConversation,
 } from '@/lib/utils/app/chat';
-import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
+
 import { Message } from '@/types/chat';
+import { OpenAIModelID, OpenAIVisionModelID } from '@/types/openai';
+
+import { describe, expect, it } from 'vitest';
 
 describe('Chat Utilities', () => {
   describe('isImageConversation', () => {
@@ -15,7 +17,13 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'What is in this image?' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/image.jpg',
+                detail: 'auto',
+              },
+            },
           ],
           messageType: undefined,
         },
@@ -30,8 +38,20 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'Compare these images' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image1.jpg', detail: 'auto' } },
-            { type: 'image_url', image_url: { url: 'https://example.com/image2.jpg', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/image1.jpg',
+                detail: 'auto',
+              },
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/image2.jpg',
+                detail: 'auto',
+              },
+            },
           ],
           messageType: undefined,
         },
@@ -56,9 +76,7 @@ describe('Chat Utilities', () => {
       const messages: Message[] = [
         {
           role: 'user',
-          content: [
-            { type: 'text', text: 'Just text content' },
-          ],
+          content: [{ type: 'text', text: 'Just text content' }],
           messageType: undefined,
         },
       ];
@@ -72,7 +90,10 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'First message' },
-            { type: 'image_url', image_url: { url: 'https://example.com/old.jpg', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: { url: 'https://example.com/old.jpg', detail: 'auto' },
+            },
           ],
           messageType: undefined,
         },
@@ -96,7 +117,13 @@ describe('Chat Utilities', () => {
         {
           role: 'user',
           content: [
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/image.jpg',
+                detail: 'auto',
+              },
+            },
           ],
           messageType: undefined,
         },
@@ -145,9 +172,7 @@ describe('Chat Utilities', () => {
       const messages: Message[] = [
         {
           role: 'user',
-          content: [
-            { type: 'text', text: 'Just text content' },
-          ],
+          content: [{ type: 'text', text: 'Just text content' }],
           messageType: undefined,
         },
       ];
@@ -201,7 +226,13 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'Look at this' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/image.jpg',
+                detail: 'auto',
+              },
+            },
           ],
           messageType: undefined,
         },
@@ -221,8 +252,8 @@ describe('Chat Utilities', () => {
         expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
       });
 
-      it('should return true for valid GPT-5 Pro model', () => {
-        expect(checkIsModelValid('gpt-5-pro', OpenAIModelID)).toBe(true);
+      it('should return true for valid GPT-5 Chat model', () => {
+        expect(checkIsModelValid('gpt-5-chat', OpenAIModelID)).toBe(true);
       });
 
       it('should return true for valid o3 model', () => {
@@ -264,11 +295,15 @@ describe('Chat Utilities', () => {
       });
 
       it('should return false for non-vision model', () => {
-        expect(checkIsModelValid('DeepSeek-R1', OpenAIVisionModelID)).toBe(false);
+        expect(checkIsModelValid('DeepSeek-R1', OpenAIVisionModelID)).toBe(
+          false,
+        );
       });
 
       it('should return false for invalid vision model', () => {
-        expect(checkIsModelValid('invalid-vision', OpenAIVisionModelID)).toBe(false);
+        expect(checkIsModelValid('invalid-vision', OpenAIVisionModelID)).toBe(
+          false,
+        );
       });
     });
 
@@ -277,7 +312,7 @@ describe('Chat Utilities', () => {
         const invalidEnum = { INVALID: 'invalid' };
 
         expect(() => checkIsModelValid('gpt-4', invalidEnum)).toThrow(
-          'Invalid enum provided for validModelIDs'
+          'Invalid enum provided for validModelIDs',
         );
       });
 
@@ -293,9 +328,8 @@ describe('Chat Utilities', () => {
 
     describe('Edge cases', () => {
       it('should handle model IDs with similar prefixes', () => {
-        // gpt-5 vs gpt-5-pro vs gpt-5-chat
+        // gpt-5 vs gpt-5-chat
         expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
-        expect(checkIsModelValid('gpt-5-pro', OpenAIModelID)).toBe(true);
         expect(checkIsModelValid('gpt-5-chat', OpenAIModelID)).toBe(true);
       });
 
@@ -313,7 +347,13 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'Analyze this chart' },
-            { type: 'image_url', image_url: { url: 'https://example.com/chart.png', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/chart.png',
+                detail: 'auto',
+              },
+            },
           ],
           messageType: undefined,
         },
@@ -367,7 +407,13 @@ describe('Chat Utilities', () => {
           role: 'user',
           content: [
             { type: 'text', text: 'What is in this image?' },
-            { type: 'image_url', image_url: { url: 'https://example.com/image.jpg', detail: 'auto' } },
+            {
+              type: 'image_url',
+              image_url: {
+                url: 'https://example.com/image.jpg',
+                detail: 'auto',
+              },
+            },
           ],
           messageType: undefined,
         },

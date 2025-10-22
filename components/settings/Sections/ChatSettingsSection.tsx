@@ -1,4 +1,3 @@
-import { IconSettings } from '@tabler/icons-react';
 import { FC } from 'react';
 
 import { Session } from 'next-auth';
@@ -8,8 +7,6 @@ import { Settings } from '@/types/settings';
 
 import { SystemPrompt } from '../SystemPrompt';
 import { TemperatureSlider } from '../Temperature';
-
-import { useSettingsStore } from '@/lib/stores/settingsStore';
 
 interface ChatSettingsSectionProps {
   state: Settings;
@@ -32,14 +29,6 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   onClose,
 }) => {
   const t = useTranslations();
-
-  // Get streaming settings from store
-  const smoothStreamingEnabled = useSettingsStore((state) => state.smoothStreamingEnabled);
-  const charsPerFrame = useSettingsStore((state) => state.charsPerFrame);
-  const frameDelay = useSettingsStore((state) => state.frameDelay);
-  const setSmoothStreamingEnabled = useSettingsStore((state) => state.setSmoothStreamingEnabled);
-  const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
-  const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
 
   return (
     <div className="p-4">
@@ -70,114 +59,6 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
                 'Higher values produce more creative and varied responses, lower values are more focused and deterministic',
               )}
             </p>
-          </div>
-        </div>
-
-        {/* Text Streaming Settings Section */}
-        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-          <div className="flex items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-            <h3 className="text-md font-bold text-black dark:text-white">
-              {t('Text Streaming Settings')}
-            </h3>
-            <IconSettings size={16} className="ml-2 text-gray-500" />
-          </div>
-
-          <div className="space-y-5">
-            {/* Smooth Streaming Toggle */}
-            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-800/40 p-3 rounded-lg">
-              <label className="cursor-pointer text-sm text-gray-700 dark:text-gray-300 flex items-center">
-                <span className="font-medium">{t('Smooth streaming')}</span>
-                <p className="text-xs text-gray-500 dark:text-gray-400 block mt-1">
-                  {t('Enable for a more natural reading experience')}
-                </p>
-              </label>
-              <div className="relative inline-block w-10 h-5">
-                <input
-                  type="checkbox"
-                  className="opacity-0 w-0 h-0"
-                  checked={smoothStreamingEnabled}
-                  onChange={(e) =>
-                    setSmoothStreamingEnabled(e.target.checked)
-                  }
-                />
-                <span
-                  className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                    smoothStreamingEnabled
-                      ? 'bg-blue-500 dark:bg-blue-600'
-                      : 'bg-gray-300 dark:bg-gray-600'
-                  }`}
-                >
-                  <span
-                    className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                      smoothStreamingEnabled
-                        ? 'translate-x-5'
-                        : 'translate-x-0.5'
-                    } top-0.5 left-0`}
-                  ></span>
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Characters Per Frame Slider */}
-              <div className="bg-gray-50 dark:bg-gray-800/40 p-3 rounded-lg">
-                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('Speed (characters per frame)')}
-                  <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                    {charsPerFrame}
-                  </span>
-                </label>
-                <input
-                  type="range"
-                  min="1"
-                  max="10"
-                  value={charsPerFrame}
-                  onChange={(e) =>
-                    setCharsPerFrame(parseInt(e.target.value))
-                  }
-                  className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                    smoothStreamingEnabled
-                      ? 'bg-gray-300 dark:bg-gray-600'
-                      : 'bg-gray-200 dark:bg-gray-700 opacity-50'
-                  }`}
-                  disabled={!smoothStreamingEnabled}
-                />
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
-                  <span>{t('Slower')}</span>
-                  <span>{t('Faster')}</span>
-                </div>
-              </div>
-
-              {/* Frame Delay Slider */}
-              <div className="bg-gray-50 dark:bg-gray-800/40 p-3 rounded-lg">
-                <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('Delay between frames (ms)')}
-                  <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                    {frameDelay}ms
-                  </span>
-                </label>
-                <input
-                  type="range"
-                  min="5"
-                  max="50"
-                  step="5"
-                  value={frameDelay}
-                  onChange={(e) =>
-                    setFrameDelay(parseInt(e.target.value))
-                  }
-                  className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                    smoothStreamingEnabled
-                      ? 'bg-gray-300 dark:bg-gray-600'
-                      : 'bg-gray-200 dark:bg-gray-700 opacity-50'
-                  }`}
-                  disabled={!smoothStreamingEnabled}
-                />
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
-                  <span>{t('Faster')}</span>
-                  <span>{t('Slower')}</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 

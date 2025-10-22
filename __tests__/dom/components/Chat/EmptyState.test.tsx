@@ -17,22 +17,19 @@ describe('EmptyState', () => {
     expect(container.firstChild).toBeInTheDocument();
   });
 
-  it('renders SuggestedPrompts component', () => {
+  it('renders greeting heading', () => {
     render(<EmptyState />);
 
-    // SuggestedPrompts renders buttons
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBeGreaterThan(0);
+    const heading = screen.getByRole('heading');
+    expect(heading).toBeInTheDocument();
+    expect(heading).toHaveTextContent('How can I help?');
   });
 
-  it('passes onSelectPrompt to SuggestedPrompts', () => {
-    const mockOnSelectPrompt = vi.fn();
-    render(<EmptyState onSelectPrompt={mockOnSelectPrompt} />);
+  it('displays user name when provided', () => {
+    render(<EmptyState userName="John" />);
 
-    const buttons = screen.getAllByRole('button');
-    expect(buttons.length).toBeGreaterThan(0);
-
-    // The prop should be passed down (SuggestedPrompts tests verify it works)
+    const heading = screen.getByRole('heading');
+    expect(heading).toHaveTextContent('How can I help, John?');
   });
 
   it('has correct layout structure', () => {
@@ -40,10 +37,8 @@ describe('EmptyState', () => {
 
     const wrapper = container.firstChild;
     expect(wrapper).toHaveClass('flex');
-    expect(wrapper).toHaveClass('flex-col');
     expect(wrapper).toHaveClass('items-center');
     expect(wrapper).toHaveClass('justify-center');
-    expect(wrapper).toHaveClass('w-full');
   });
 
   it('centers content vertically and horizontally', () => {
@@ -54,7 +49,13 @@ describe('EmptyState', () => {
     expect(wrapper).toHaveClass('justify-center');
   });
 
-  it('works without onSelectPrompt callback', () => {
-    expect(() => render(<EmptyState />)).not.toThrow();
+  it('heading has correct styling', () => {
+    render(<EmptyState />);
+
+    const heading = screen.getByRole('heading');
+    expect(heading).toHaveClass('text-2xl');
+    expect(heading).toHaveClass('font-light');
+    expect(heading).toHaveClass('text-gray-400');
+    expect(heading).toHaveClass('dark:text-gray-500');
   });
 });

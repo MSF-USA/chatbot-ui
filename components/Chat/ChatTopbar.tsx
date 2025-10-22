@@ -1,14 +1,26 @@
 import {
-  IconClearAll,
-  IconExternalLink,
   IconChevronDown,
-  IconTool,
+  IconClearAll,
+  IconDots,
+  IconExternalLink,
+  IconHelp,
   IconSettings,
+  IconTool,
 } from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
+
 import { useTranslations } from 'next-intl';
+
 import { isUSBased } from '@/lib/utils/app/userAuth';
+
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
-import { OpenAIIcon, DeepSeekIcon, XAIIcon, MetaIcon } from '../Icons/providers';
+
+import {
+  DeepSeekIcon,
+  MetaIcon,
+  OpenAIIcon,
+  XAIIcon,
+} from '../Icons/providers';
 
 interface Props {
   botInfo: {
@@ -42,10 +54,28 @@ export const ChatTopbar = ({
   showChatbar = false,
 }: Props) => {
   const t = useTranslations();
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showMenu]);
 
   // Helper function to get provider icon
   const getProviderIcon = (provider?: string) => {
-    const iconProps = { className: "w-4 h-4 flex-shrink-0" };
+    const iconProps = { className: 'w-4 h-4 flex-shrink-0' };
     switch (provider) {
       case 'openai':
         return <OpenAIIcon {...iconProps} />;
@@ -85,49 +115,80 @@ export const ChatTopbar = ({
               title="Select Model"
             >
               {getProviderIcon(selectedModelProvider)}
-              <span className="truncate font-bold dark:text-blue-50 text-gray-800 text-base ml-2" title={selectedModelName}>
+              <span
+                className="truncate font-bold dark:text-blue-50 text-gray-800 text-base ml-2"
+                title={selectedModelName}
+              >
                 {selectedModelName || 'Select Model'}
               </span>
               {agentEnabled && (
-                <IconTool size={14} className="ml-1.5 text-gray-600 dark:text-gray-400" title="Agent Tools Enabled" />
+                <IconTool
+                  size={14}
+                  className="ml-1.5 text-gray-600 dark:text-gray-400"
+                  title="Agent Tools Enabled"
+                />
               )}
-              <IconChevronDown size={16} className="ml-1.5 opacity-60 text-black dark:text-white" />
+              <IconChevronDown
+                size={16}
+                className="ml-1.5 opacity-60 text-black dark:text-white"
+              />
             </button>
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center justify-center space-x-3">
-          {hasMessages && (
+        {/* Controls - 3-dot menu */}
+        <div className="flex items-center justify-center" ref={menuRef}>
+          <div className="relative">
             <button
               className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
-              onClick={onClearAll}
-              aria-label="Clear Conversation"
-              title="Clear Conversation"
+              onClick={() => setShowMenu(!showMenu)}
+              aria-label="Menu"
+              title="Menu"
             >
-              <IconClearAll
-                size={18}
-                className="text-black dark:text-white"
-              />
+              <IconDots size={20} className="text-black dark:text-white" />
             </button>
-          )}
 
-          {/* Feedback Link */}
-          <a
-            href={`mailto:${
-              isUSBased(userEmail ?? '')
-                ? US_FEEDBACK_EMAIL
-                : FEEDBACK_EMAIL
-            }`}
-            className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
-            title={t('sendFeedback')}
-          >
-            <IconExternalLink
-              size={16}
-              className="mr-1 text-black dark:text-white/50"
-            />
-            <span className="hidden sm:inline">Request Support</span>
-          </a>
+            {/* Dropdown menu */}
+            {showMenu && (
+              <div className="absolute right-0 top-full mt-1 z-10 w-48 rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
+                <div className="p-1">
+                  {/* Clear option */}
+                  {hasMessages && (
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                      onClick={() => {
+                        onClearAll?.();
+                        setShowMenu(false);
+                      }}
+                    >
+                      <IconClearAll
+                        size={16}
+                        className="text-neutral-600 dark:text-neutral-400 shrink-0"
+                      />
+                      Clear
+                    </button>
+                  )}
+
+                  {/* Request Support option */}
+                  <a
+                    href={`mailto:${
+                      isUSBased(userEmail ?? '')
+                        ? US_FEEDBACK_EMAIL
+                        : FEEDBACK_EMAIL
+                    }`}
+                    className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                    onClick={() => setShowMenu(false)}
+                  >
+                    <IconExternalLink
+                      size={16}
+                      className="text-neutral-600 dark:text-neutral-400 shrink-0"
+                    />
+                    Request Support
+                  </a>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>

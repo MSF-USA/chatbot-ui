@@ -32,23 +32,19 @@ export interface OpenAIModel {
 export enum OpenAIModelID {
   GPT_4_1 = 'gpt-4.1',
   GPT_5 = 'gpt-5',
-  GPT_5_PRO = 'gpt-5-pro',
   GPT_5_CHAT = 'gpt-5-chat',
   GPT_o3 = 'o3',
   LLAMA_4_MAVERICK = 'Llama-4-Maverick-17B-128E-Instruct-FP8',
   DEEPSEEK_R1 = 'DeepSeek-R1',
   DEEPSEEK_V3_1 = 'DeepSeek-V3.1',
   GROK_3 = 'grok-3',
-  GROK_4_FAST_REASONING = 'grok-4-fast-reasoning',
 }
 
 export enum OpenAIVisionModelID {
   GPT_4_1 = 'gpt-4.1',
   GPT_5 = 'gpt-5',
-  GPT_5_PRO = 'gpt-5-pro',
   GPT_5_CHAT = 'gpt-5-chat',
   GROK_3 = 'grok-3',
-  GROK_4_FAST_REASONING = 'grok-4-fast-reasoning',
 }
 
 // Fallback model ID
@@ -62,7 +58,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'agent',
     description:
-      'Advanced model with Bing grounding and real-time web search capabilities.',
+      'AI agent powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
     isLegacy: false,
     isAgent: true,
     agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL',
@@ -81,7 +77,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'omni',
     description:
-      'Next generation model with extended context and advanced capabilities. Supports reasoning effort and verbosity controls.',
+      "OpenAI's most advanced model, excelling at complex reasoning, code generation, and technical problem-solving. Best for analytical tasks, programming challenges, research, and detailed explanations. Supports adjustable reasoning effort and response verbosity.",
     isLegacy: false,
     provider: 'openai',
     knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
@@ -93,25 +89,6 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     verbosity: 'medium',
     supportsVerbosity: true,
   },
-  [OpenAIModelID.GPT_5_PRO]: {
-    id: OpenAIModelID.GPT_5_PRO,
-    name: 'GPT-5 Pro',
-    maxLength: 128000,
-    tokenLimit: 16000,
-    modelType: 'omni',
-    description:
-      'Enhanced GPT-5 with improved performance and extended capabilities. Supports reasoning effort and verbosity controls.',
-    isLegacy: false,
-    provider: 'openai',
-    knowledgeCutoff: 'Oct 5, 2025 8:00 PM',
-    sdk: 'azure-openai',
-    supportsTemperature: false,
-    reasoningEffort: 'medium',
-    supportsReasoningEffort: true,
-    supportsMinimalReasoning: true,
-    verbosity: 'medium',
-    supportsVerbosity: true,
-  },
   [OpenAIModelID.GPT_5_CHAT]: {
     id: OpenAIModelID.GPT_5_CHAT,
     name: 'GPT-5 Chat',
@@ -119,28 +96,25 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'omni',
     description:
-      'GPT-5 with enhanced emotional intelligence and mental health capabilities. Specialized for empathetic interactions with improved understanding of emotional context and supportive responses. Supports reasoning effort and verbosity controls.',
+      'Specialized variant of GPT-5 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.',
     isLegacy: false,
     provider: 'openai',
     knowledgeCutoff: 'Oct 1, 2025 8:00 PM',
     sdk: 'azure-openai',
     supportsTemperature: false,
-    reasoningEffort: 'medium',
-    supportsReasoningEffort: true,
-    supportsMinimalReasoning: true,
-    verbosity: 'medium',
-    supportsVerbosity: true,
+    supportsReasoningEffort: false,
+    supportsVerbosity: false,
   },
   [OpenAIModelID.GPT_o3]: {
     id: OpenAIModelID.GPT_o3,
-    name: 'o3-mini',
+    name: 'o3',
     maxLength: 200000, // ← Fixed: was 128K, actually 200K input
     tokenLimit: 100000, // ← Fixed: was 16K, actually 100K output
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
     description:
-      'Latest reasoning model with enhanced problem-solving capabilities and extended context. Supports reasoning effort control.',
+      "OpenAI's most advanced reasoning model with breakthrough problem-solving capabilities. Excels at complex mathematics, scientific reasoning, coding challenges, and multi-step logical tasks. Extended 200K context window. Supports reasoning effort control.",
     isLegacy: false,
     provider: 'openai',
     knowledgeCutoff: 'Apr 8, 2025 8:00 PM',
@@ -158,7 +132,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'foundational',
     description:
-      "Meta's Llama 4 Maverick with 17B parameters and 128 expert routing for advanced reasoning.",
+      'Fast and cost-effective model from Meta. Great for everyday tasks like writing, summarization, and basic coding help. Good balance of speed and quality for routine work.',
     isLegacy: false,
     provider: 'meta',
     knowledgeCutoff: 'May 7, 2025 7:11 AM',
@@ -175,7 +149,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 32768, // ← Fixed: was 8K, actually 32K
     modelType: 'reasoning',
     description:
-      "DeepSeek's reasoning model with 671B params (37B active MoE). Best without system prompts - include all instructions in user messages.",
+      'Reasoning specialist that shows its work step-by-step. Excellent for math problems, logic puzzles, and understanding complex concepts. See how it thinks through problems in real-time.',
     isLegacy: false,
     provider: 'deepseek',
     knowledgeCutoff: 'Jan 20, 2025',
@@ -193,7 +167,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 32768, // ← Updated to match R1
     modelType: 'foundational',
     description:
-      'Advanced open-source model optimized for reasoning and coding tasks. Best without system prompts.',
+      'Strong all-around model especially good at coding and technical writing. Great for debugging code, writing documentation, and explaining technical concepts. Fast and reliable for development work.',
     isLegacy: false,
     provider: 'deepseek',
     knowledgeCutoff: 'Apr 16, 2025 12:45 AM',
@@ -211,26 +185,10 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'omni',
     description:
-      "xAI's latest model with advanced reasoning and multimodal capabilities.",
+      'Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.',
     isLegacy: false,
     provider: 'xai',
     knowledgeCutoff: 'May 13, 2025 12:16 AM',
-    sdk: 'openai',
-    supportsTemperature: true,
-    supportsReasoningEffort: false,
-    supportsVerbosity: false,
-  },
-  [OpenAIModelID.GROK_4_FAST_REASONING]: {
-    id: OpenAIModelID.GROK_4_FAST_REASONING,
-    name: 'Grok 4 Fast Reasoning',
-    maxLength: 131000, // ← Updated to 131K per documentation
-    tokenLimit: 16000,
-    modelType: 'reasoning',
-    description:
-      'Fast reasoning variant of Grok 4 optimized for quick problem-solving.',
-    isLegacy: false,
-    provider: 'xai',
-    knowledgeCutoff: 'Jun 26, 2025 8:00 PM',
     sdk: 'openai',
     supportsTemperature: true,
     supportsReasoningEffort: false,

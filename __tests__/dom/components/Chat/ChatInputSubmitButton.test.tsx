@@ -1,9 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 
 import ChatInputSubmitButton from '@/components/Chat/ChatInput/ChatInputSubmitButton';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('ChatInputSubmitButton', () => {
   const mockHandleSend = vi.fn();
@@ -27,7 +28,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Send message');
@@ -44,7 +45,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Send message');
@@ -63,7 +64,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Send message');
@@ -84,7 +85,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Stop generation');
@@ -101,7 +102,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Stop generation');
@@ -120,13 +121,16 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       // When not streaming and submission prevented, shows loader
-      const container = screen.getByText((content, element) => {
-        return element?.classList.contains('animate-spin') || false;
-      }, { selector: 'svg' });
+      const container = screen.getByText(
+        (content, element) => {
+          return element?.classList.contains('animate-spin') || false;
+        },
+        { selector: 'svg' },
+      );
       expect(container).toBeInTheDocument();
     });
 
@@ -140,13 +144,13 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Stop generation');
-      expect(button).toHaveClass('rounded-md');
-      expect(button).toHaveClass('bg-gray-200');
-      expect(button).toHaveClass('dark:bg-gray-700');
+      expect(button).toHaveClass('rounded-full');
+      expect(button).toHaveClass('bg-gray-300');
+      expect(button).toHaveClass('dark:bg-[#171717]');
     });
   });
 
@@ -161,7 +165,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const spinner = container.querySelector('.animate-spin');
@@ -178,7 +182,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const spinner = container.querySelector('.animate-spin');
@@ -195,10 +199,12 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
-      const wrapper = container.querySelector('.flex.items-center.justify-center.w-8.h-8');
+      const wrapper = container.querySelector(
+        '.flex.items-center.justify-center.w-10.h-10',
+      );
       expect(wrapper).toBeInTheDocument();
     });
   });
@@ -214,7 +220,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       // When not prevented, should still show send button
@@ -234,7 +240,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Send message');
@@ -252,7 +258,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Stop generation');
@@ -272,7 +278,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Send message');
@@ -289,7 +295,7 @@ describe('ChatInputSubmitButton', () => {
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
-        />
+        />,
       );
 
       const button = screen.getByLabelText('Stop generation');

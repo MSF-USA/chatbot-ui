@@ -34,7 +34,14 @@ export function createAzureOpenAIStreamProcessor(
               console.log('Stream processing stopped by user');
               if (!controllerClosed) {
                 controllerClosed = true;
-                controller.close();
+                try {
+                  controller.close();
+                } catch (closeError: any) {
+                  // Ignore errors if controller is already closed
+                  if (closeError.code !== 'ERR_INVALID_STATE') {
+                    console.error('Error closing controller:', closeError);
+                  }
+                }
               }
               return;
             }
@@ -77,7 +84,14 @@ export function createAzureOpenAIStreamProcessor(
 
           if (!controllerClosed) {
             controllerClosed = true;
-            controller.close();
+            try {
+              controller.close();
+            } catch (closeError: any) {
+              // Ignore errors if controller is already closed
+              if (closeError.code !== 'ERR_INVALID_STATE') {
+                console.error('Error closing controller:', closeError);
+              }
+            }
           }
         } catch (error: any) {
           console.error('Stream processing error:', error);
@@ -91,7 +105,14 @@ export function createAzureOpenAIStreamProcessor(
             console.log('Stream aborted by user, closing cleanly');
             if (!controllerClosed) {
               controllerClosed = true;
-              controller.close();
+              try {
+                controller.close();
+              } catch (closeError: any) {
+                // Ignore errors if controller is already closed
+                if (closeError.code !== 'ERR_INVALID_STATE') {
+                  console.error('Error closing controller:', closeError);
+                }
+              }
             }
           } else {
             if (!controllerClosed) {

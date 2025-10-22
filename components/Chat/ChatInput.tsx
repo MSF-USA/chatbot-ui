@@ -486,8 +486,8 @@ export const ChatInput = ({
             hasCameraSupport={true}
           />
 
-          <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white sm:mx-4 focus-within:outline-none">
-            <div className="absolute left-2 top-1/2 transform -translate-y-1/2">
+          <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white sm:mx-4 focus-within:outline-none z-0">
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-[10001]">
               <ChatDropdown
                 onFileUpload={onFileUpload}
                 setSubmitType={setSubmitType}
@@ -501,6 +501,7 @@ export const ChatInput = ({
                 onCameraClick={() => {
                   cameraRef.current?.triggerCamera();
                 }}
+                openDownward={!showDisclaimer}
               />
             </div>
 

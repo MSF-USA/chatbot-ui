@@ -1,5 +1,6 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { OpenAIModelID } from '@/types/openai';
+
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * Tests for chatService SDK routing logic
@@ -22,22 +23,13 @@ describe('ChatService SDK Routing', () => {
         id: OpenAIModelID.GROK_3,
         sdk: 'openai',
       };
-      const grok4Config = {
-        id: OpenAIModelID.GROK_4_FAST_REASONING,
-        sdk: 'openai',
-      };
 
       expect(grok3Config.sdk).toBe('openai');
-      expect(grok4Config.sdk).toBe('openai');
     });
 
     it('should route GPT-5 models to Azure OpenAI SDK client', () => {
       const gpt5Config = {
         id: OpenAIModelID.GPT_5,
-        sdk: 'azure-openai',
-      };
-      const gpt5ProConfig = {
-        id: OpenAIModelID.GPT_5_PRO,
         sdk: 'azure-openai',
       };
       const gpt5ChatConfig = {
@@ -46,7 +38,6 @@ describe('ChatService SDK Routing', () => {
       };
 
       expect(gpt5Config.sdk).toBe('azure-openai');
-      expect(gpt5ProConfig.sdk).toBe('azure-openai');
       expect(gpt5ChatConfig.sdk).toBe('azure-openai');
     });
 
@@ -93,39 +84,23 @@ describe('ChatService SDK Routing', () => {
         { name: 'standard', priority: 5 }, // Standard chat flow
       ];
 
-      expect(priorities.find(p => p.name === 'agent')?.priority).toBeLessThan(
-        priorities.find(p => p.name === 'sdk')?.priority || 0
+      expect(priorities.find((p) => p.name === 'agent')?.priority).toBeLessThan(
+        priorities.find((p) => p.name === 'sdk')?.priority || 0,
       );
     });
   });
 
   describe('Reasoning Model Routing', () => {
     it('should identify o3 as reasoning model', () => {
-      const reasoningModels = [
-        OpenAIModelID.GPT_o3,
-        OpenAIModelID.GROK_4_FAST_REASONING,
-      ];
+      const reasoningModels = [OpenAIModelID.GPT_o3];
 
       expect(reasoningModels).toContain(OpenAIModelID.GPT_o3);
     });
 
-    it('should identify Grok 4 Fast Reasoning as reasoning model', () => {
-      const reasoningModels = [
-        OpenAIModelID.GPT_o3,
-        OpenAIModelID.GROK_4_FAST_REASONING,
-      ];
-
-      expect(reasoningModels).toContain(OpenAIModelID.GROK_4_FAST_REASONING);
-    });
-
     it('should not identify non-reasoning models as reasoning', () => {
-      const reasoningModels = [
-        OpenAIModelID.GPT_o3,
-        OpenAIModelID.GROK_4_FAST_REASONING,
-      ];
+      const reasoningModels = [OpenAIModelID.GPT_o3];
 
       expect(reasoningModels).not.toContain(OpenAIModelID.GPT_5);
-      expect(reasoningModels).not.toContain(OpenAIModelID.GPT_5_PRO);
       expect(reasoningModels).not.toContain(OpenAIModelID.GROK_3);
       expect(reasoningModels).not.toContain(OpenAIModelID.DEEPSEEK_V3_1);
     });
@@ -164,26 +139,31 @@ describe('ChatService SDK Routing', () => {
       };
 
       // Default to true if not specified
-      const shouldIncludeTemp = unknownModelRequest.supportsTemperature !== false;
+      const shouldIncludeTemp =
+        unknownModelRequest.supportsTemperature !== false;
       expect(shouldIncludeTemp).toBe(true);
     });
   });
 
   describe('Endpoint Configuration', () => {
     it('should use AI Foundry OpenAI endpoint for OpenAI SDK models', () => {
-      const expectedEndpoint = 'https://ts-aiassist-dev.services.ai.azure.com/openai/v1/';
+      const expectedEndpoint =
+        'https://ts-aiassist-dev.services.ai.azure.com/openai/v1/';
 
       // This would be derived from env var or default calculation
-      const derivedEndpoint = 'https://ts-aiassist-dev.services.ai.azure.com/openai/v1/';
+      const derivedEndpoint =
+        'https://ts-aiassist-dev.services.ai.azure.com/openai/v1/';
 
       expect(derivedEndpoint).toBe(expectedEndpoint);
     });
 
     it('should use AI Foundry agent endpoint for agent models', () => {
-      const expectedEndpoint = 'https://ts-aiassist-dev.services.ai.azure.com/api/projects/default';
+      const expectedEndpoint =
+        'https://ts-aiassist-dev.services.ai.azure.com/api/projects/default';
 
       // Agent endpoint
-      const agentEndpoint = 'https://ts-aiassist-dev.services.ai.azure.com/api/projects/default';
+      const agentEndpoint =
+        'https://ts-aiassist-dev.services.ai.azure.com/api/projects/default';
 
       expect(agentEndpoint).toBe(expectedEndpoint);
     });
@@ -280,10 +260,7 @@ describe('ChatService SDK Routing', () => {
 
   describe('Stream Handling', () => {
     it('should not stream reasoning model responses', () => {
-      const reasoningModelIds = [
-        OpenAIModelID.GPT_o3,
-        OpenAIModelID.GROK_4_FAST_REASONING,
-      ];
+      const reasoningModelIds = [OpenAIModelID.GPT_o3];
 
       reasoningModelIds.forEach((modelId) => {
         const shouldStream = !reasoningModelIds.includes(modelId);
@@ -298,10 +275,7 @@ describe('ChatService SDK Routing', () => {
         OpenAIModelID.DEEPSEEK_V3_1,
       ];
 
-      const reasoningModelIds = [
-        OpenAIModelID.GPT_o3,
-        OpenAIModelID.GROK_4_FAST_REASONING,
-      ];
+      const reasoningModelIds = [OpenAIModelID.GPT_o3];
 
       regularModelIds.forEach((modelId) => {
         const shouldStream = !reasoningModelIds.includes(modelId);
@@ -320,7 +294,9 @@ describe('ChatService SDK Routing', () => {
 
       expect(combinedMessage).toContain(systemPrompt);
       expect(combinedMessage).toContain(userMessage);
-      expect(combinedMessage).toMatch(/^You are a helpful assistant\n\nWhat is 2\+2\?$/);
+      expect(combinedMessage).toMatch(
+        /^You are a helpful assistant\n\nWhat is 2\+2\?$/,
+      );
     });
 
     it('should use system message for non-reasoning models', () => {

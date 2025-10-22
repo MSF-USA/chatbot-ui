@@ -1,11 +1,11 @@
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
 import { describe, expect, it } from 'vitest';
-import { OpenAIModels, OpenAIModelID } from '@/types/openai';
 
 describe('Model Configuration', () => {
   describe('SDK Configuration', () => {
     it('GPT-5 models should use azure-openai SDK', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5].sdk).toBe('azure-openai');
-      expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].sdk).toBe('azure-openai');
       expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].sdk).toBe('azure-openai');
     });
 
@@ -19,42 +19,45 @@ describe('Model Configuration', () => {
 
     it('Grok models should use openai SDK', () => {
       expect(OpenAIModels[OpenAIModelID.GROK_3].sdk).toBe('openai');
-      expect(OpenAIModels[OpenAIModelID.GROK_4_FAST_REASONING].sdk).toBe('openai');
     });
   });
 
   describe('Temperature Support', () => {
     it('GPT-5 models should not support temperature', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5].supportsTemperature).toBe(false);
-      expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].supportsTemperature).toBe(false);
-      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].supportsTemperature).toBe(false);
+      expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].supportsTemperature).toBe(
+        false,
+      );
     });
 
     it('o3 should not support temperature', () => {
-      expect(OpenAIModels[OpenAIModelID.GPT_o3].supportsTemperature).toBe(false);
+      expect(OpenAIModels[OpenAIModelID.GPT_o3].supportsTemperature).toBe(
+        false,
+      );
     });
 
     it('DeepSeek should support temperature', () => {
-      expect(OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].supportsTemperature).toBe(true);
+      expect(
+        OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].supportsTemperature,
+      ).toBe(true);
     });
 
     it('Grok models should support temperature', () => {
       expect(OpenAIModels[OpenAIModelID.GROK_3].supportsTemperature).toBe(true);
-      expect(OpenAIModels[OpenAIModelID.GROK_4_FAST_REASONING].supportsTemperature).toBe(true);
     });
   });
 
   describe('Agent Configuration', () => {
     it('GPT-4.1 should have correct agent ID', () => {
-      expect(OpenAIModels[OpenAIModelID.GPT_4_1].agentId).toBe('asst_Puf3ldskHlYHmW5z9aQy5fZL');
+      expect(OpenAIModels[OpenAIModelID.GPT_4_1].agentId).toBe(
+        'asst_Puf3ldskHlYHmW5z9aQy5fZL',
+      );
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].isAgent).toBe(true);
     });
 
-    it('GPT-5 and GPT-5 Pro should not have agent capabilities', () => {
+    it('GPT-5 should not have agent capabilities', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5].agentId).toBeUndefined();
       expect(OpenAIModels[OpenAIModelID.GPT_5].isAgent).toBeUndefined();
-      expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].agentId).toBeUndefined();
-      expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].isAgent).toBeUndefined();
     });
 
     it('GPT-5 Chat should not have agent capabilities', () => {
@@ -66,32 +69,30 @@ describe('Model Configuration', () => {
     it('non-OpenAI models should not have agent capabilities', () => {
       expect(OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].agentId).toBeUndefined();
       expect(OpenAIModels[OpenAIModelID.GROK_3].agentId).toBeUndefined();
-      expect(OpenAIModels[OpenAIModelID.GROK_4_FAST_REASONING].agentId).toBeUndefined();
     });
   });
 
   describe('Provider Configuration', () => {
     it('GPT models should have openai provider', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5].provider).toBe('openai');
-      expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].provider).toBe('openai');
       expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].provider).toBe('openai');
       expect(OpenAIModels[OpenAIModelID.GPT_o3].provider).toBe('openai');
     });
 
     it('DeepSeek should have deepseek provider', () => {
-      expect(OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].provider).toBe('deepseek');
+      expect(OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].provider).toBe(
+        'deepseek',
+      );
     });
 
     it('Grok models should have xai provider', () => {
       expect(OpenAIModels[OpenAIModelID.GROK_3].provider).toBe('xai');
-      expect(OpenAIModels[OpenAIModelID.GROK_4_FAST_REASONING].provider).toBe('xai');
     });
   });
 
   describe('Model Types', () => {
-    it('GPT-5 and GPT-5 Pro should be omni models', () => {
+    it('GPT-5 should be omni model', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5].modelType).toBe('omni');
-      expect(OpenAIModels[OpenAIModelID.GPT_5_PRO].modelType).toBe('omni');
     });
 
     it('GPT-4.1 should be agent model', () => {
@@ -102,9 +103,8 @@ describe('Model Configuration', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_5_CHAT].modelType).toBe('omni');
     });
 
-    it('o3 and Grok 4 Fast Reasoning should be reasoning models', () => {
+    it('o3 should be reasoning model', () => {
       expect(OpenAIModels[OpenAIModelID.GPT_o3].modelType).toBe('reasoning');
-      expect(OpenAIModels[OpenAIModelID.GROK_4_FAST_REASONING].modelType).toBe('reasoning');
     });
 
     it('Grok 3 should be omni model', () => {
@@ -112,7 +112,9 @@ describe('Model Configuration', () => {
     });
 
     it('DeepSeek should be foundational model', () => {
-      expect(OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].modelType).toBe('foundational');
+      expect(OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1].modelType).toBe(
+        'foundational',
+      );
     });
   });
 
@@ -130,10 +132,15 @@ describe('Model Configuration', () => {
         // or special cases like "Real-time web search" for agent models
         // or simplified date format like "Jan 20, 2025" for some models
         const cutoff = model.knowledgeCutoff || '';
-        const isFullDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/.test(cutoff);
-        const isSimpleDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(cutoff);
+        const isFullDateFormat =
+          /^[A-Z][a-z]{2} \d{1,2}, \d{4} \d{1,2}:\d{2} (AM|PM)$/.test(cutoff);
+        const isSimpleDateFormat = /^[A-Z][a-z]{2} \d{1,2}, \d{4}$/.test(
+          cutoff,
+        );
         const isSpecialCase = cutoff === 'Real-time web search';
-        expect(isFullDateFormat || isSimpleDateFormat || isSpecialCase).toBe(true);
+        expect(isFullDateFormat || isSimpleDateFormat || isSpecialCase).toBe(
+          true,
+        );
       });
     });
   });
@@ -162,7 +169,9 @@ describe('Model Configuration', () => {
     });
 
     it('agent models should have agent-specific fields', () => {
-      const agentModels = Object.values(OpenAIModels).filter(m => m.isAgent || m.agentId);
+      const agentModels = Object.values(OpenAIModels).filter(
+        (m) => m.isAgent || m.agentId,
+      );
 
       agentModels.forEach((model) => {
         expect(model.agentId).toBeDefined();
@@ -173,7 +182,9 @@ describe('Model Configuration', () => {
 
   describe('SDK and Temperature Consistency', () => {
     it('azure-openai SDK models should not support temperature (OpenAI constraint)', () => {
-      const azureOpenAIModels = Object.values(OpenAIModels).filter(m => m.sdk === 'azure-openai');
+      const azureOpenAIModels = Object.values(OpenAIModels).filter(
+        (m) => m.sdk === 'azure-openai',
+      );
 
       azureOpenAIModels.forEach((model) => {
         expect(model.supportsTemperature).toBe(false);
@@ -181,7 +192,9 @@ describe('Model Configuration', () => {
     });
 
     it('openai SDK models should support temperature', () => {
-      const openAISDKModels = Object.values(OpenAIModels).filter(m => m.sdk === 'openai');
+      const openAISDKModels = Object.values(OpenAIModels).filter(
+        (m) => m.sdk === 'openai',
+      );
 
       openAISDKModels.forEach((model) => {
         expect(model.supportsTemperature).toBe(true);
@@ -192,7 +205,7 @@ describe('Model Configuration', () => {
   describe('Reasoning Models', () => {
     it('reasoning models should have correct configuration', () => {
       const reasoningModels = Object.values(OpenAIModels).filter(
-        m => m.modelType === 'reasoning'
+        (m) => m.modelType === 'reasoning',
       );
 
       reasoningModels.forEach((model) => {

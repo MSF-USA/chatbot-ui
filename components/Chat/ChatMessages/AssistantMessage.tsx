@@ -3,13 +3,10 @@ import {
   IconCopy,
   IconLoader2,
   IconRefresh,
-  IconSettings,
   IconVolume,
   IconVolumeOff,
 } from '@tabler/icons-react';
 import { FC, MouseEvent, useEffect, useRef, useState } from 'react';
-
-import { useSmoothStreaming } from '@/lib/hooks/useSmoothStreaming';
 
 import { parseThinkingContent } from '@/lib/utils/app/thinking';
 
@@ -21,7 +18,6 @@ import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 
-import { useSettingsStore } from '@/lib/stores/settingsStore';
 import type { MermaidConfig } from 'mermaid';
 
 interface AssistantMessageProps {
@@ -51,30 +47,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
-  const [showStreamingSettings, setShowStreamingSettings] =
-    useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-
-  // Get streaming settings from store
-  const smoothStreamingEnabled = useSettingsStore(
-    (state) => state.smoothStreamingEnabled,
-  );
-  const charsPerFrame = useSettingsStore((state) => state.charsPerFrame);
-  const frameDelay = useSettingsStore((state) => state.frameDelay);
-  const setSmoothStreamingEnabled = useSettingsStore(
-    (state) => state.setSmoothStreamingEnabled,
-  );
-  const setCharsPerFrame = useSettingsStore((state) => state.setCharsPerFrame);
-  const setFrameDelay = useSettingsStore((state) => state.setFrameDelay);
-
-  // Use smooth streaming hook for animated text display
-  const smoothContent = useSmoothStreaming({
-    isStreaming: messageIsStreaming,
-    content: processedContent,
-    charsPerFrame: charsPerFrame,
-    frameDelay: frameDelay,
-    enabled: smoothStreamingEnabled,
-  });
 
   // Detect dark mode
   useEffect(() => {
@@ -185,12 +158,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
-  // Use smooth streaming if enabled, otherwise use processed content directly
-  const contentToDisplay =
-    smoothStreamingEnabled && messageIsStreaming
-      ? smoothContent
-      : processedContent;
-
   const handleTTS = async () => {
     try {
       setIsGeneratingAudio(true);
@@ -295,7 +262,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           {thinking && (
             <ThinkingBlock
               thinking={thinking}
-              isStreaming={messageIsStreaming && !contentToDisplay}
+              isStreaming={messageIsStreaming && !processedContent}
             />
           )}
 
@@ -314,7 +281,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 shikiTheme={['github-light', 'github-dark']}
                 mermaidConfig={mermaidConfig}
               >
-                {contentToDisplay}
+                {processedContent}
               </CitationStreamdown>
             </div>
           </div>
@@ -370,101 +337,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               )}
             </button>
           </div>
-
-          {/* Streaming Settings Modal */}
-          {showStreamingSettings && (
-            <div className="mt-3 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg text-sm shadow-md border border-gray-200 dark:border-gray-700 transition-all">
-              <h4 className="font-medium mb-3 text-gray-700 dark:text-gray-300 flex items-center">
-                <IconSettings size={16} className="mr-2" />
-                Text Streaming Settings
-              </h4>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <label className="cursor-pointer text-gray-700 dark:text-gray-300 flex items-center">
-                    <span>Smooth streaming</span>
-                    <div className="relative inline-block w-10 h-5 ml-2">
-                      <input
-                        type="checkbox"
-                        className="opacity-0 w-0 h-0"
-                        checked={smoothStreamingEnabled}
-                        onChange={(e) =>
-                          setSmoothStreamingEnabled(e.target.checked)
-                        }
-                      />
-                      <span
-                        className={`absolute cursor-pointer inset-0 rounded-full transition-all duration-300 ${
-                          smoothStreamingEnabled
-                            ? 'bg-blue-500 dark:bg-blue-600'
-                            : 'bg-gray-300 dark:bg-gray-600'
-                        }`}
-                      >
-                        <span
-                          className={`absolute w-4 h-4 bg-white rounded-full transition-transform duration-300 transform ${
-                            smoothStreamingEnabled
-                              ? 'translate-x-5'
-                              : 'translate-x-0.5'
-                          } top-0.5 left-0`}
-                        ></span>
-                      </span>
-                    </div>
-                  </label>
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
-                    <span>Speed (characters per frame)</span>
-                    <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {charsPerFrame}
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min="1"
-                    max="10"
-                    value={charsPerFrame}
-                    onChange={(e) => setCharsPerFrame(parseInt(e.target.value))}
-                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      smoothStreamingEnabled
-                        ? 'bg-gray-300 dark:bg-gray-600'
-                        : 'bg-gray-200 dark:bg-gray-700 opacity-50'
-                    }`}
-                    disabled={!smoothStreamingEnabled}
-                  />
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
-                    <span>Slower</span>
-                    <span>Faster</span>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block mb-2 text-gray-700 dark:text-gray-300 flex items-center">
-                    <span>Delay between frames (ms)</span>
-                    <span className="text-xs font-medium ml-2 px-2 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full">
-                      {frameDelay}ms
-                    </span>
-                  </label>
-                  <input
-                    type="range"
-                    min="5"
-                    max="50"
-                    step="5"
-                    value={frameDelay}
-                    onChange={(e) => setFrameDelay(parseInt(e.target.value))}
-                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${
-                      smoothStreamingEnabled
-                        ? 'bg-gray-300 dark:bg-gray-600'
-                        : 'bg-gray-200 dark:bg-gray-700 opacity-50'
-                    }`}
-                    disabled={!smoothStreamingEnabled}
-                  />
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 flex justify-between">
-                    <span>Faster</span>
-                    <span>Slower</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {audioUrl && (
             <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />

@@ -1,7 +1,8 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useSettingsStore, CustomAgent } from '@/lib/stores/settingsStore';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
+
+import { CustomAgent, useSettingsStore } from '@/lib/stores/settingsStore';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('settingsStore', () => {
   beforeEach(() => {
@@ -13,9 +14,6 @@ describe('settingsStore', () => {
       models: [],
       prompts: [],
       customAgents: [],
-      smoothStreamingEnabled: true,
-      charsPerFrame: 3,
-      frameDelay: 10,
     });
   });
 
@@ -29,9 +27,6 @@ describe('settingsStore', () => {
       expect(state.models).toEqual([]);
       expect(state.prompts).toEqual([]);
       expect(state.customAgents).toEqual([]);
-      expect(state.smoothStreamingEnabled).toBe(true);
-      expect(state.charsPerFrame).toBe(3);
-      expect(state.frameDelay).toBe(10);
     });
   });
 
@@ -68,9 +63,13 @@ describe('settingsStore', () => {
   describe('System Prompt', () => {
     describe('setSystemPrompt', () => {
       it('sets system prompt', () => {
-        useSettingsStore.getState().setSystemPrompt('You are a helpful assistant');
+        useSettingsStore
+          .getState()
+          .setSystemPrompt('You are a helpful assistant');
 
-        expect(useSettingsStore.getState().systemPrompt).toBe('You are a helpful assistant');
+        expect(useSettingsStore.getState().systemPrompt).toBe(
+          'You are a helpful assistant',
+        );
       });
 
       it('updates system prompt', () => {
@@ -109,9 +108,13 @@ You should be concise.`;
 
       it('updates default model ID', () => {
         useSettingsStore.getState().setDefaultModelId('gpt-4' as OpenAIModelID);
-        useSettingsStore.getState().setDefaultModelId('gpt-3.5-turbo' as OpenAIModelID);
+        useSettingsStore
+          .getState()
+          .setDefaultModelId('gpt-3.5-turbo' as OpenAIModelID);
 
-        expect(useSettingsStore.getState().defaultModelId).toBe('gpt-3.5-turbo');
+        expect(useSettingsStore.getState().defaultModelId).toBe(
+          'gpt-3.5-turbo',
+        );
       });
 
       it('can set to undefined', () => {
@@ -154,7 +157,9 @@ You should be concise.`;
       });
 
       it('can set empty array', () => {
-        useSettingsStore.getState().setModels([createMockModel('gpt-4', 'GPT-4')]);
+        useSettingsStore
+          .getState()
+          .setModels([createMockModel('gpt-4', 'GPT-4')]);
         useSettingsStore.getState().setModels([]);
 
         expect(useSettingsStore.getState().models).toEqual([]);
@@ -163,12 +168,21 @@ You should be concise.`;
   });
 
   describe('Prompts', () => {
-    const createMockPrompt = (id: string, name: string, content: string): Prompt => ({
+    const createMockPrompt = (
+      id: string,
+      name: string,
+      content: string,
+    ): Prompt => ({
       id,
       name,
       description: '',
       content,
-      model: { id: 'gpt-4' as OpenAIModelID, name: 'GPT-4', maxLength: 4096, tokenLimit: 4096 },
+      model: {
+        id: 'gpt-4' as OpenAIModelID,
+        name: 'GPT-4',
+        maxLength: 4096,
+        tokenLimit: 4096,
+      },
       folderId: null,
     });
 
@@ -231,9 +245,13 @@ You should be concise.`;
         const prompt = createMockPrompt('1', 'Test', 'Original content');
         useSettingsStore.getState().setPrompts([prompt]);
 
-        useSettingsStore.getState().updatePrompt('1', { content: 'Updated content' });
+        useSettingsStore
+          .getState()
+          .updatePrompt('1', { content: 'Updated content' });
 
-        expect(useSettingsStore.getState().prompts[0].content).toBe('Updated content');
+        expect(useSettingsStore.getState().prompts[0].content).toBe(
+          'Updated content',
+        );
       });
 
       it('updates multiple fields', () => {
@@ -311,62 +329,12 @@ You should be concise.`;
     });
   });
 
-  describe('Streaming Settings', () => {
-    describe('setSmoothStreamingEnabled', () => {
-      it('enables smooth streaming', () => {
-        useSettingsStore.getState().setSmoothStreamingEnabled(true);
-
-        expect(useSettingsStore.getState().smoothStreamingEnabled).toBe(true);
-      });
-
-      it('disables smooth streaming', () => {
-        useSettingsStore.getState().setSmoothStreamingEnabled(false);
-
-        expect(useSettingsStore.getState().smoothStreamingEnabled).toBe(false);
-      });
-
-      it('toggles smooth streaming', () => {
-        useSettingsStore.getState().setSmoothStreamingEnabled(false);
-        expect(useSettingsStore.getState().smoothStreamingEnabled).toBe(false);
-
-        useSettingsStore.getState().setSmoothStreamingEnabled(true);
-        expect(useSettingsStore.getState().smoothStreamingEnabled).toBe(true);
-      });
-    });
-
-    describe('setCharsPerFrame', () => {
-      it('sets chars per frame', () => {
-        useSettingsStore.getState().setCharsPerFrame(5);
-
-        expect(useSettingsStore.getState().charsPerFrame).toBe(5);
-      });
-
-      it('updates chars per frame', () => {
-        useSettingsStore.getState().setCharsPerFrame(10);
-        useSettingsStore.getState().setCharsPerFrame(1);
-
-        expect(useSettingsStore.getState().charsPerFrame).toBe(1);
-      });
-    });
-
-    describe('setFrameDelay', () => {
-      it('sets frame delay', () => {
-        useSettingsStore.getState().setFrameDelay(20);
-
-        expect(useSettingsStore.getState().frameDelay).toBe(20);
-      });
-
-      it('updates frame delay', () => {
-        useSettingsStore.getState().setFrameDelay(50);
-        useSettingsStore.getState().setFrameDelay(5);
-
-        expect(useSettingsStore.getState().frameDelay).toBe(5);
-      });
-    });
-  });
-
   describe('Custom Agents', () => {
-    const createMockAgent = (id: string, name: string, agentId: string): CustomAgent => ({
+    const createMockAgent = (
+      id: string,
+      name: string,
+      agentId: string,
+    ): CustomAgent => ({
       id,
       name,
       agentId,
@@ -416,7 +384,10 @@ You should be concise.`;
         useSettingsStore.getState().addCustomAgent(second);
 
         expect(useSettingsStore.getState().customAgents).toHaveLength(2);
-        expect(useSettingsStore.getState().customAgents).toEqual([first, second]);
+        expect(useSettingsStore.getState().customAgents).toEqual([
+          first,
+          second,
+        ]);
       });
     });
 
@@ -427,16 +398,22 @@ You should be concise.`;
 
         useSettingsStore.getState().updateCustomAgent('1', { name: 'Updated' });
 
-        expect(useSettingsStore.getState().customAgents[0].name).toBe('Updated');
+        expect(useSettingsStore.getState().customAgents[0].name).toBe(
+          'Updated',
+        );
       });
 
       it('updates agent description', () => {
         const agent = createMockAgent('1', 'Test', 'agent-1');
         useSettingsStore.getState().setCustomAgents([agent]);
 
-        useSettingsStore.getState().updateCustomAgent('1', { description: 'New description' });
+        useSettingsStore
+          .getState()
+          .updateCustomAgent('1', { description: 'New description' });
 
-        expect(useSettingsStore.getState().customAgents[0].description).toBe('New description');
+        expect(useSettingsStore.getState().customAgents[0].description).toBe(
+          'New description',
+        );
       });
 
       it('updates multiple fields', () => {
@@ -471,7 +448,9 @@ You should be concise.`;
         const agent = createMockAgent('1', 'Test', 'agent-1');
         useSettingsStore.getState().setCustomAgents([agent]);
 
-        useSettingsStore.getState().updateCustomAgent('999', { name: 'Updated' });
+        useSettingsStore
+          .getState()
+          .updateCustomAgent('999', { name: 'Updated' });
 
         expect(useSettingsStore.getState().customAgents[0].name).toBe('Test');
       });
@@ -519,12 +498,38 @@ You should be concise.`;
         temperature: 0.9,
         systemPrompt: 'Custom prompt',
         defaultModelId: 'gpt-4' as OpenAIModelID,
-        models: [{ id: 'gpt-4' as OpenAIModelID, name: 'GPT-4', maxLength: 4096, tokenLimit: 4096 }],
-        prompts: [{ id: '1', name: 'Test', description: '', content: 'Content', model: { id: 'gpt-4' as OpenAIModelID, name: 'GPT-4', maxLength: 4096, tokenLimit: 4096 }, folderId: null }],
-        customAgents: [{ id: '1', name: 'Agent', agentId: 'agent-1', baseModelId: 'gpt-4' as OpenAIModelID, createdAt: new Date().toISOString() }],
-        smoothStreamingEnabled: false,
-        charsPerFrame: 10,
-        frameDelay: 50,
+        models: [
+          {
+            id: 'gpt-4' as OpenAIModelID,
+            name: 'GPT-4',
+            maxLength: 4096,
+            tokenLimit: 4096,
+          },
+        ],
+        prompts: [
+          {
+            id: '1',
+            name: 'Test',
+            description: '',
+            content: 'Content',
+            model: {
+              id: 'gpt-4' as OpenAIModelID,
+              name: 'GPT-4',
+              maxLength: 4096,
+              tokenLimit: 4096,
+            },
+            folderId: null,
+          },
+        ],
+        customAgents: [
+          {
+            id: '1',
+            name: 'Agent',
+            agentId: 'agent-1',
+            baseModelId: 'gpt-4' as OpenAIModelID,
+            createdAt: new Date().toISOString(),
+          },
+        ],
       });
 
       useSettingsStore.getState().resetSettings();
@@ -534,13 +539,17 @@ You should be concise.`;
       expect(state.systemPrompt).toBe('');
       expect(state.prompts).toEqual([]);
       expect(state.customAgents).toEqual([]);
-      expect(state.smoothStreamingEnabled).toBe(true);
-      expect(state.charsPerFrame).toBe(3);
-      expect(state.frameDelay).toBe(10);
     });
 
     it('preserves models and defaultModelId', () => {
-      const models = [{ id: 'gpt-4' as OpenAIModelID, name: 'GPT-4', maxLength: 4096, tokenLimit: 4096 }];
+      const models = [
+        {
+          id: 'gpt-4' as OpenAIModelID,
+          name: 'GPT-4',
+          maxLength: 4096,
+          tokenLimit: 4096,
+        },
+      ];
       useSettingsStore.setState({
         models,
         defaultModelId: 'gpt-4' as OpenAIModelID,
@@ -567,7 +576,6 @@ You should be concise.`;
     it('changes do not affect subsequent tests', () => {
       useSettingsStore.getState().setTemperature(0.9);
       useSettingsStore.getState().setSystemPrompt('Test');
-      useSettingsStore.getState().setSmoothStreamingEnabled(false);
 
       // Manually reset (beforeEach also does this)
       useSettingsStore.setState({
@@ -577,15 +585,11 @@ You should be concise.`;
         models: [],
         prompts: [],
         customAgents: [],
-        smoothStreamingEnabled: true,
-        charsPerFrame: 3,
-        frameDelay: 10,
       });
 
       const state = useSettingsStore.getState();
       expect(state.temperature).toBe(0.5);
       expect(state.systemPrompt).toBe('');
-      expect(state.smoothStreamingEnabled).toBe(true);
     });
   });
 });

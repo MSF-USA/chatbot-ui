@@ -70,14 +70,18 @@ export function Chat({
     ) {
       setIsModelSelectOpen(mobileModelSelectOpen);
     }
-  }, [mobileModelSelectOpen, isModelSelectOpen]);
+  }, [mobileModelSelectOpen]);
 
   // Notify parent when modal state changes (for mobile header sync)
   useEffect(() => {
-    if (onMobileModelSelectChange && mobileModelSelectOpen !== undefined) {
+    if (
+      onMobileModelSelectChange &&
+      mobileModelSelectOpen !== undefined &&
+      isModelSelectOpen !== mobileModelSelectOpen
+    ) {
       onMobileModelSelectChange(isModelSelectOpen);
     }
-  }, [isModelSelectOpen, mobileModelSelectOpen, onMobileModelSelectChange]);
+  }, [isModelSelectOpen, onMobileModelSelectChange]);
 
   // Close modal on ESC key
   useEffect(() => {
@@ -338,7 +342,7 @@ export function Chat({
             />
 
             {/* Centered Chat Input */}
-            <div className="w-full max-w-3xl">
+            <div className="w-full max-w-3xl relative z-50">
               <ChatInput
                 onSend={handleSend}
                 onRegenerate={handleRegenerate}
@@ -353,7 +357,9 @@ export function Chat({
             </div>
 
             {/* Suggested Prompts below input */}
-            <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
+            <div className="relative z-10">
+              <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
+            </div>
           </div>
         </div>
       ) : (

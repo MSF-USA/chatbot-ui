@@ -113,7 +113,7 @@ export class LocalStorageService {
     const data: Record<string, unknown> = {};
     const keys = this.getAllKeys();
 
-    keys.forEach(key => {
+    keys.forEach((key) => {
       const value = this.get(key);
       if (value !== null) {
         data[key] = value;
@@ -144,7 +144,11 @@ export class LocalStorageService {
    * - Skips if target already has data (don't overwrite)
    * - Old data remains forever (zero risk of data loss)
    */
-  static migrateFromLegacy(): { success: boolean; errors: string[]; skipped?: boolean } {
+  static migrateFromLegacy(): {
+    success: boolean;
+    errors: string[];
+    skipped?: boolean;
+  } {
     if (typeof window === 'undefined') {
       return { success: false, errors: ['Cannot run migration on server'] };
     }
@@ -167,7 +171,10 @@ export class LocalStorageService {
           date: new Date().toISOString(),
           data: this.exportData(),
         };
-        localStorage.setItem('data_migration_backup', JSON.stringify(backupData));
+        localStorage.setItem(
+          'data_migration_backup',
+          JSON.stringify(backupData),
+        );
         console.log('✓ Backup created');
       } catch (error) {
         console.warn('Could not create backup:', error);
@@ -185,13 +192,18 @@ export class LocalStorageService {
           const oldTemperature = this.get<number>(StorageKeys.TEMPERATURE);
           const oldSystemPrompt = this.get<string>(StorageKeys.SYSTEM_PROMPT);
           const oldPrompts = this.get<any[]>(StorageKeys.PROMPTS);
-          const oldDefaultModelId = this.get<string>(StorageKeys.DEFAULT_MODEL_ID);
+          const oldDefaultModelId = this.get<string>(
+            StorageKeys.DEFAULT_MODEL_ID,
+          );
           const oldCustomAgents = this.get<any[]>(StorageKeys.CUSTOM_AGENTS);
 
           // Check if there's anything to migrate
-          const hasOldData = oldTemperature !== null || oldSystemPrompt !== null ||
-                            oldPrompts !== null || oldDefaultModelId !== null ||
-                            oldCustomAgents !== null;
+          const hasOldData =
+            oldTemperature !== null ||
+            oldSystemPrompt !== null ||
+            oldPrompts !== null ||
+            oldDefaultModelId !== null ||
+            oldCustomAgents !== null;
 
           if (hasOldData) {
             // Create new Zustand format with CORRECT version
@@ -204,14 +216,14 @@ export class LocalStorageService {
                 defaultModelId: oldDefaultModelId ?? undefined,
                 prompts: oldPrompts ?? [],
                 customAgents: oldCustomAgents ?? [],
-                smoothStreamingEnabled: true,
-                charsPerFrame: 3,
-                frameDelay: 10,
               },
               version: 1, // CORRECT: Match Zustand persist version
             };
 
-            localStorage.setItem('settings-storage', JSON.stringify(settingsData));
+            localStorage.setItem(
+              'settings-storage',
+              JSON.stringify(settingsData),
+            );
             console.log('✓ Settings migrated');
           } else {
             console.log('✓ No old settings data to migrate');
@@ -225,18 +237,26 @@ export class LocalStorageService {
 
       // Migrate Conversation Store
       try {
-        const existingConversations = localStorage.getItem('conversation-storage');
+        const existingConversations = localStorage.getItem(
+          'conversation-storage',
+        );
 
         if (existingConversations) {
           console.log('✓ Conversations already in new format, skipping');
         } else {
           // Read old format (try both possible keys)
-          const oldConversations = this.get<any[]>(StorageKeys.CONVERSATIONS) ||
-                                   this.get<any[]>('conversationHistory');
+          const oldConversations =
+            this.get<any[]>(StorageKeys.CONVERSATIONS) ||
+            this.get<any[]>('conversationHistory');
           const oldFolders = this.get<any[]>(StorageKeys.FOLDERS);
-          const oldSelectedId = this.get<string>(StorageKeys.SELECTED_CONVERSATION_ID);
+          const oldSelectedId = this.get<string>(
+            StorageKeys.SELECTED_CONVERSATION_ID,
+          );
 
-          const hasOldData = oldConversations !== null || oldFolders !== null || oldSelectedId !== null;
+          const hasOldData =
+            oldConversations !== null ||
+            oldFolders !== null ||
+            oldSelectedId !== null;
 
           if (hasOldData) {
             // Create new Zustand format with CORRECT version
@@ -250,10 +270,15 @@ export class LocalStorageService {
               version: 1, // CORRECT: Match Zustand persist version
             };
 
-            localStorage.setItem('conversation-storage', JSON.stringify(conversationData));
+            localStorage.setItem(
+              'conversation-storage',
+              JSON.stringify(conversationData),
+            );
 
             if (oldConversations && oldConversations.length > 0) {
-              console.log(`✓ Migrated ${oldConversations.length} conversations`);
+              console.log(
+                `✓ Migrated ${oldConversations.length} conversations`,
+              );
             } else {
               console.log('✓ Conversations migrated');
             }
@@ -277,9 +302,14 @@ export class LocalStorageService {
           // Read old format
           const oldTheme = this.get<string>(StorageKeys.THEME);
           const oldShowChatbar = this.get<boolean>(StorageKeys.SHOW_CHATBAR);
-          const oldShowPromptbar = this.get<boolean>(StorageKeys.SHOW_PROMPT_BAR);
+          const oldShowPromptbar = this.get<boolean>(
+            StorageKeys.SHOW_PROMPT_BAR,
+          );
 
-          const hasOldData = oldTheme !== null || oldShowChatbar !== null || oldShowPromptbar !== null;
+          const hasOldData =
+            oldTheme !== null ||
+            oldShowChatbar !== null ||
+            oldShowPromptbar !== null;
 
           if (hasOldData) {
             // Create new Zustand format with CORRECT version
@@ -309,15 +339,20 @@ export class LocalStorageService {
       // Mark migration as complete ONLY if successful
       if (errors.length === 0) {
         localStorage.setItem('data_migration_v2_complete', 'true');
-        console.log('✅ Migration complete! Old data preserved in localStorage.');
-        console.log('💡 Tip: Old data will remain for safety. You can manually clear it in Settings if desired.');
+        console.log(
+          '✅ Migration complete! Old data preserved in localStorage.',
+        );
+        console.log(
+          '💡 Tip: Old data will remain for safety. You can manually clear it in Settings if desired.',
+        );
       } else {
         console.error('❌ Migration had errors. Will retry on next load.');
       }
 
       return { success: errors.length === 0, errors };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error';
       errors.push(errorMessage);
       console.error('❌ Migration failed:', errorMessage);
       return { success: false, errors };
@@ -342,6 +377,6 @@ export class LocalStorageService {
       StorageKeys.THEME,
     ];
 
-    return oldKeys.some(key => this.has(key));
+    return oldKeys.some((key) => this.has(key));
   }
 }

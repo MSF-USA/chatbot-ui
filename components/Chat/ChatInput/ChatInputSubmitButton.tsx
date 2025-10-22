@@ -22,14 +22,13 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
         isStreaming ? (
           <button
             className="flex items-center justify-center w-10 h-10 rounded-full
-                      bg-gray-800 text-white hover:bg-gray-900
-                      dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300
-                      transition-colors duration-200 shadow-sm"
+                      bg-gray-300 text-black hover:bg-gray-400 dark:bg-[#171717] dark:text-white dark:hover:bg-[#252525]
+                      transition-colors duration-200"
             onClick={handleStopConversation}
             disabled={!isStreaming}
             aria-label="Stop generation"
           >
-            <IconPlayerStop size={20} />
+            <IconPlayerStop size={18} />
           </button>
         ) : (
           <div className="flex items-center justify-center w-10 h-10">
