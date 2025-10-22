@@ -1,11 +1,11 @@
 import {
   IconCamera,
   IconCirclePlus,
+  IconFile,
   IconFileMusic,
   IconLanguage,
   IconLink,
   IconSearch,
-  IconFile,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -17,18 +17,14 @@ import React, {
 
 import { useTranslations } from 'next-intl';
 
-import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
 import { useDropdownKeyboardNav } from '@/lib/hooks/useDropdownKeyboardNav';
-
-import { DropdownSearchInput } from './DropdownSearchInput';
-import { DropdownCategoryGroup } from './DropdownCategoryGroup';
-import { MenuItem } from './DropdownMenuItem';
+import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
 
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FilePreview,
   Message,
-  FileFieldValue,
 } from '@/types/chat';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
@@ -37,6 +33,10 @@ import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ImageIcon from '@/components/Icons/image';
+
+import { DropdownCategoryGroup } from './DropdownCategoryGroup';
+import { MenuItem } from './DropdownMenuItem';
+import { DropdownSearchInput } from './DropdownSearchInput';
 
 interface DropdownProps {
   onFileUpload: (
@@ -57,10 +57,7 @@ interface DropdownProps {
   textFieldValue: string;
   onCameraClick: () => void;
   // New props for agent-based web search
-  onSend?: (
-    message: Message,
-    forceStandardChat?: boolean,
-  ) => void;
+  onSend?: (message: Message, forceStandardChat?: boolean) => void;
   setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
   setProgress?: Dispatch<SetStateAction<number | null>>;
   stopConversationRef?: { current: boolean };
@@ -89,6 +86,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   temperature,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
 
   const [SearchConfig, setSearchConfig] = useState<{
     isOpen: boolean;
@@ -131,12 +129,14 @@ const Dropdown: React.FC<DropdownProps> = ({
   }, []);
 
   const closeDropdown = () => {
-    // Use a short timeout to prevent immediate reopening
+    setIsClosing(true);
+    // Wait for slide-down animation to complete before removing from DOM
     setTimeout(() => {
       setIsOpen(false);
+      setIsClosing(false);
       setFilterQuery('');
       setSelectedIndex(0);
-    }, 10);
+    }, 200); // Match animation duration
   };
 
   const t = useTranslations();
@@ -249,13 +249,16 @@ const Dropdown: React.FC<DropdownProps> = ({
   });
 
   // Group menu items by category
-  const groupedItems = filteredItems.reduce((acc, item) => {
-    if (!acc[item.category]) {
-      acc[item.category] = [];
-    }
-    acc[item.category].push(item);
-    return acc;
-  }, {} as Record<string, MenuItem[]>);
+  const groupedItems = filteredItems.reduce(
+    (acc, item) => {
+      if (!acc[item.category]) {
+        acc[item.category] = [];
+      }
+      acc[item.category].push(item);
+      return acc;
+    },
+    {} as Record<string, MenuItem[]>,
+  );
 
   // Logic to handle clicks outside the Dropdown Menu
   useEnhancedOutsideClick(dropdownRef, closeDropdown, isOpen, true);
@@ -302,7 +305,9 @@ const Dropdown: React.FC<DropdownProps> = ({
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute bottom-full mb-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 w-64 outline-none overflow-hidden transition-all duration-200 ease-in-out left-0 sm:left-40 sm:ml-12 sm:transform sm:-translate-x-full"
+          className={`absolute bottom-full mb-2 left-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-[9999] w-64 outline-none overflow-hidden ${
+            isClosing ? 'animate-slide-down' : 'animate-slide-up'
+          }`}
           tabIndex={-1}
           role="menu"
           onKeyDown={handleKeyDown}

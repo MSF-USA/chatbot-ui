@@ -1,5 +1,5 @@
-import {IconLoader2, IconPlayerStop, IconSend} from "@tabler/icons-react";
-import React, {FC} from "react";
+import { IconLoader2, IconPlayerStop, IconSend } from '@tabler/icons-react';
+import React, { FC } from 'react';
 
 interface ChatInputSubmitButtonProps {
   isStreaming: boolean;
@@ -9,39 +9,37 @@ interface ChatInputSubmitButtonProps {
   preventSubmission: () => boolean;
 }
 
-const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
-  {
-    isStreaming,
-    handleSend,
-    handleStopConversation,
-    isTranscribing,
-    preventSubmission,
-  }
-) => {
+const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
+  isStreaming,
+  handleSend,
+  handleStopConversation,
+  isTranscribing,
+  preventSubmission,
+}) => {
   return (
     <>
       {preventSubmission() ? (
         isStreaming ? (
           <button
-            className="flex items-center justify-center w-8 h-8 rounded-md
-                      bg-gray-200 text-gray-700 hover:bg-gray-300
-                      dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600
-                      transition-colors duration-200"
+            className="flex items-center justify-center w-10 h-10 rounded-full
+                      bg-gray-800 text-white hover:bg-gray-900
+                      dark:bg-gray-200 dark:text-gray-900 dark:hover:bg-gray-300
+                      transition-colors duration-200 shadow-sm"
             onClick={handleStopConversation}
             disabled={!isStreaming}
             aria-label="Stop generation"
           >
-            <IconPlayerStop size={16}/>
+            <IconPlayerStop size={20} />
           </button>
         ) : (
-          <div className="flex items-center justify-center w-8 h-8">
-            <IconLoader2 className="animate-spin text-gray-500" size={18}/>
+          <div className="flex items-center justify-center w-10 h-10">
+            <IconLoader2 className="animate-spin text-gray-500" size={20} />
           </div>
         )
       ) : (
         <button
           onClick={handleSend}
-          className="flex items-center justify-center w-9 h-9 rounded-full
+          className="flex items-center justify-center w-10 h-10 rounded-full
                     bg-gray-300 text-black hover:bg-gray-400 dark:bg-[#171717] dark:text-white dark:hover:bg-[#252525]
                     transition-colors duration-200"
           aria-label="Send message"
@@ -50,7 +48,7 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = (
         </button>
       )}
     </>
-  )
-}
+  );
+};
 
 export default ChatInputSubmitButton;

@@ -72,6 +72,14 @@ module.exports = {
           '0%': { transform: 'translateY(1rem)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        'slide-up': {
+          '0%': { transform: 'translateY(0.5rem)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        'slide-down': {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '100%': { transform: 'translateY(0.5rem)', opacity: '0' },
+        },
       },
       animation: {
         'scroll-text': 'scroll-text 10s linear infinite',
@@ -87,6 +95,8 @@ module.exports = {
         'fade-in': 'fade-in 0.5s ease-out forwards',
         'fade-in-top': 'slide-in-from-top 0.7s ease-out forwards',
         'fade-in-bottom': 'slide-in-from-bottom 0.7s ease-out 0.15s forwards',
+        'slide-up': 'slide-up 0.2s ease-out',
+        'slide-down': 'slide-down 0.2s ease-in',
       },
     },
   },

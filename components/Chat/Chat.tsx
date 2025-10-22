@@ -15,6 +15,7 @@ import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { ChatInput } from './ChatInput';
 import { ChatTopbar } from './ChatTopbar';
 import { EmptyState } from './EmptyState/EmptyState';
+import { SuggestedPrompts } from './EmptyState/SuggestedPrompts';
 import { LoadingScreen } from './LoadingScreen';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
@@ -46,6 +47,7 @@ export function Chat({
   const {
     isStreaming,
     streamingContent,
+    streamingConversationId,
     error,
     sendMessage,
     citations,
@@ -68,14 +70,14 @@ export function Chat({
     ) {
       setIsModelSelectOpen(mobileModelSelectOpen);
     }
-  }, [mobileModelSelectOpen]);
+  }, [mobileModelSelectOpen, isModelSelectOpen]);
 
   // Notify parent when modal state changes (for mobile header sync)
   useEffect(() => {
     if (onMobileModelSelectChange && mobileModelSelectOpen !== undefined) {
       onMobileModelSelectChange(isModelSelectOpen);
     }
-  }, [isModelSelectOpen]);
+  }, [isModelSelectOpen, mobileModelSelectOpen, onMobileModelSelectChange]);
 
   // Close modal on ESC key
   useEffect(() => {
@@ -287,7 +289,9 @@ export function Chat({
   };
 
   const messages = selectedConversation?.messages || [];
-  const hasMessages = messages.length > 0 || isStreaming;
+  const hasMessages =
+    messages.length > 0 ||
+    (isStreaming && streamingConversationId === selectedConversation?.id);
 
   // Show loading screen until session and data are fully loaded
   // This prevents UI flickering during initialization
@@ -324,9 +328,14 @@ export function Chat({
       {/* Empty state with centered input */}
       {!hasMessages ? (
         <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-          <div className="w-full flex flex-col items-center justify-center gap-8">
-            {/* Suggested Prompts */}
-            <EmptyState onSelectPrompt={handleSelectPrompt} />
+          <div className="w-full flex flex-col items-center justify-center gap-6 -translate-y-12">
+            {/* Logo and Heading */}
+            <EmptyState
+              userName={
+                session?.user?.givenName ||
+                session?.user?.displayName?.split(' ')[0]
+              }
+            />
 
             {/* Centered Chat Input */}
             <div className="w-full max-w-3xl">
@@ -342,6 +351,9 @@ export function Chat({
                 showDisclaimer={false}
               />
             </div>
+
+            {/* Suggested Prompts below input */}
+            <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
           </div>
         </div>
       ) : (
@@ -359,28 +371,29 @@ export function Chat({
                 />
               ))}
               {/* Show streaming message or loading indicator */}
-              {isStreaming && (
-                <>
-                  {streamingContent ? (
-                    <MemoizedChatMessage
-                      message={{
-                        role: 'assistant',
-                        content: streamingContent,
-                        messageType: 'text',
-                        citations,
-                      }}
-                      messageIndex={messages.length}
-                      onEdit={() => {}}
-                    />
-                  ) : (
-                    <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
-                      <div className="flex items-center">
-                        <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing"></div>
+              {isStreaming &&
+                streamingConversationId === selectedConversation?.id && (
+                  <>
+                    {streamingContent ? (
+                      <MemoizedChatMessage
+                        message={{
+                          role: 'assistant',
+                          content: streamingContent,
+                          messageType: 'text',
+                          citations,
+                        }}
+                        messageIndex={messages.length}
+                        onEdit={() => {}}
+                      />
+                    ) : (
+                      <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
+                        <div className="flex items-center">
+                          <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing"></div>
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              )}
+                    )}
+                  </>
+                )}
               <div ref={messagesEndRef} />
             </div>
           </div>

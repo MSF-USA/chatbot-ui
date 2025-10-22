@@ -22,6 +22,7 @@ import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 
 import { useSettingsStore } from '@/lib/stores/settingsStore';
+import type { MermaidConfig } from 'mermaid';
 
 interface AssistantMessageProps {
   content: string;
@@ -52,6 +53,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [showStreamingSettings, setShowStreamingSettings] =
     useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   // Get streaming settings from store
   const smoothStreamingEnabled = useSettingsStore(
@@ -73,6 +75,25 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     frameDelay: frameDelay,
     enabled: smoothStreamingEnabled,
   });
+
+  // Detect dark mode
+  useEffect(() => {
+    const updateTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setIsDarkMode(isDark);
+    };
+
+    updateTheme();
+
+    // Watch for theme changes
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   // Clean up resources when component unmounts
   useEffect(() => {
@@ -214,6 +235,52 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   // We don't override the code component - let Streamdown handle it
   const customMarkdownComponents = {};
 
+  // Mermaid configuration with dark mode support
+  const mermaidConfig: MermaidConfig = {
+    startOnLoad: false,
+    theme: isDarkMode ? 'dark' : 'default',
+    themeVariables: isDarkMode
+      ? {
+          // Dark mode colors - make everything visible on dark background
+          primaryColor: '#3b82f6',
+          primaryTextColor: '#e5e7eb',
+          primaryBorderColor: '#60a5fa',
+          lineColor: '#9ca3af',
+          secondaryColor: '#1e293b',
+          tertiaryColor: '#0f172a',
+          background: '#1f2937',
+          mainBkg: '#1f2937',
+          secondBkg: '#111827',
+          textColor: '#f3f4f6',
+          border1: '#4b5563',
+          border2: '#6b7280',
+          arrowheadColor: '#e5e7eb', // White arrows
+          fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          fontSize: '14px',
+          // Sequence diagram specific
+          actorTextColor: '#f3f4f6',
+          actorLineColor: '#9ca3af',
+          signalColor: '#e5e7eb',
+          signalTextColor: '#f3f4f6',
+          labelBoxBkgColor: '#374151',
+          labelBoxBorderColor: '#6b7280',
+          labelTextColor: '#f3f4f6',
+          loopTextColor: '#f3f4f6',
+          activationBorderColor: '#60a5fa',
+          activationBkgColor: '#1e3a8a',
+          sequenceNumberColor: '#ffffff',
+        }
+      : {
+          // Light mode colors
+          primaryColor: '#3b82f6',
+          fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+          fontSize: '14px',
+        },
+    logLevel: 'error', // Only log errors, don't crash
+    securityLevel: 'loose', // More lenient parsing
+    suppressErrorRendering: true, // Hide error messages from UI
+  };
+
   return (
     <div className="relative flex px-4 py-3 text-base lg:px-0 w-full">
       <div className="mt-[-2px] w-full">
@@ -245,6 +312,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 isAnimating={messageIsStreaming}
                 controls={true}
                 shikiTheme={['github-light', 'github-dark']}
+                mermaidConfig={mermaidConfig}
               >
                 {contentToDisplay}
               </CitationStreamdown>

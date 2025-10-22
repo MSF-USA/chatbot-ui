@@ -2,19 +2,20 @@
 
 import React from 'react';
 
-import { SuggestedPrompts } from './SuggestedPrompts';
-
 interface EmptyStateProps {
-  onSelectPrompt?: (prompt: string) => void;
+  userName?: string;
 }
 
 /**
- * Empty state shown when no messages in conversation
+ * Empty state header with greeting
  */
-export function EmptyState({ onSelectPrompt }: EmptyStateProps) {
+export function EmptyState({ userName }: EmptyStateProps) {
   return (
-    <div className="w-full flex flex-col items-center justify-center">
-      <SuggestedPrompts onSelectPrompt={onSelectPrompt} />
+    <div className="flex items-center justify-center">
+      {/* Heading */}
+      <h1 className="text-2xl font-light text-gray-400 dark:text-gray-500">
+        How can I help{userName ? `, ${userName}` : ''}?
+      </h1>
     </div>
   );
 }

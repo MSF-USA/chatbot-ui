@@ -11,6 +11,7 @@ export function useChat() {
     currentMessage: store.currentMessage,
     isStreaming: store.isStreaming,
     streamingContent: store.streamingContent,
+    streamingConversationId: store.streamingConversationId,
     citations: store.citations,
     error: store.error,
     stopRequested: store.stopRequested,

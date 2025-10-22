@@ -18,6 +18,7 @@ interface ChatStore {
   currentMessage: Message | undefined;
   isStreaming: boolean;
   streamingContent: string;
+  streamingConversationId: string | null;
   citations: Citation[];
   error: string | null;
   stopRequested: boolean;
@@ -41,6 +42,7 @@ export const useChatStore = create<ChatStore>((set) => ({
   currentMessage: undefined,
   isStreaming: false,
   streamingContent: '',
+  streamingConversationId: null,
   citations: [],
   error: null,
   stopRequested: false,
@@ -72,6 +74,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       currentMessage: undefined,
       isStreaming: false,
       streamingContent: '',
+      streamingConversationId: null,
       citations: [],
       error: null,
       stopRequested: false,
@@ -82,6 +85,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       set({
         isStreaming: true,
         streamingContent: '',
+        streamingConversationId: conversation.id,
         error: null,
         citations: [],
       });
@@ -198,7 +202,11 @@ export const useChatStore = create<ChatStore>((set) => ({
 
       conversationStore.updateConversation(conversation.id, updates);
 
-      set({ isStreaming: false, streamingContent: '' });
+      set({
+        isStreaming: false,
+        streamingContent: '',
+        streamingConversationId: null,
+      });
     } catch (error) {
       console.error('sendMessage error:', error);
       set({
@@ -206,6 +214,7 @@ export const useChatStore = create<ChatStore>((set) => ({
           error instanceof Error ? error.message : 'Failed to send message',
         isStreaming: false,
         streamingContent: '',
+        streamingConversationId: null,
       });
     }
   },

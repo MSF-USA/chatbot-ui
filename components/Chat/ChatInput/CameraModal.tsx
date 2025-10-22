@@ -10,9 +10,13 @@ import React, {
 
 import { useTranslations } from 'next-intl';
 
-import {ChatInputSubmitTypes, FilePreview, FileFieldValue} from '@/types/chat';
+import {
+  ChatInputSubmitTypes,
+  FileFieldValue,
+  FilePreview,
+} from '@/types/chat';
 
-import {onFileUpload} from "@/components/Chat/ChatInputEventHandlers/file-upload";
+import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import Modal from '@/components/UI/Modal';
 
 const onTakePhotoButtonClick = (
@@ -42,13 +46,13 @@ const onTakePhotoButtonClick = (
         const newEvent = new Event('change');
         fileInputRef.current!.dispatchEvent(newEvent);
         onFileUpload(
-            // @ts-ignore
-            newEvent,
-            setSubmitType,
-            setFilePreviews,
-            setImageFieldValue,
-            setImageFieldValue,
-            setUploadProgress,
+          // @ts-ignore
+          newEvent,
+          setSubmitType,
+          setFilePreviews,
+          setImageFieldValue,
+          setImageFieldValue,
+          setUploadProgress,
         );
       }
     }, 'image/png');
@@ -96,6 +100,9 @@ export const CameraModal: FC<CameraModalProps> = ({
   const [selectedCamera, setSelectedCamera] = useState<string>('');
 
   useEffect(() => {
+    // Capture the ref value at effect execution time
+    const video = videoRef.current;
+
     const getDevices = async () => {
       try {
         const devices = await navigator.mediaDevices.enumerateDevices();
@@ -119,7 +126,6 @@ export const CameraModal: FC<CameraModalProps> = ({
 
     // Cleanup function to stop media stream when component unmounts or modal closes
     return () => {
-      const video = videoRef.current;
       if (isOpen === false) {
         stopMediaStream(video);
       }
@@ -138,7 +144,9 @@ export const CameraModal: FC<CameraModalProps> = ({
     } catch (error) {
       console.error('Error starting camera:', error);
       // Show an error message to the user
-      alert('Could not access camera. Please check your camera permissions and try again.');
+      alert(
+        'Could not access camera. Please check your camera permissions and try again.',
+      );
       closeModal();
     }
   };
@@ -186,7 +194,7 @@ export const CameraModal: FC<CameraModalProps> = ({
       </div>
     </>
   );
-  
+
   const modalFooter = (
     <button
       onClick={() => {
@@ -199,7 +207,7 @@ export const CameraModal: FC<CameraModalProps> = ({
           setSubmitType,
           setImageFieldValue,
           closeModal,
-          setUploadProgress
+          setUploadProgress,
         );
       }}
       className="w-full bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md flex items-center justify-center"

@@ -1,31 +1,49 @@
 import createMiddleware from 'next-intl/middleware';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+
+import { locales, routing } from './config/i18n';
+
 import { auth } from '@/auth';
-import { routing } from './config/i18n';
 
 const handleI18nRouting = createMiddleware(routing);
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
+// Public pages that don't require authentication
+const publicPages = ['/signin', '/auth-error'];
 
-  // Skip middleware entirely for API routes (especially auth callbacks)
-  if (pathname.startsWith('/api')) {
-    return;
-  }
+// Regex to match public pages with optional locale prefix
+const publicPathnameRegex = RegExp(
+  `^(/(${locales.join('|')})?)?(${publicPages.map((p) => p.replace('/', '\\/')).join('|')}|/api)/?$`,
+  'i',
+);
 
-  // Allow public routes (signin, auth-error)
-  const publicRoutes = ['/signin', '/auth-error'];
-  const isPublicRoute = publicRoutes.some(route => pathname.includes(route));
-
-  // Require auth for protected routes
-  if (!isPublicRoute && !req.auth) {
+// Auth middleware that also handles i18n
+const authMiddleware = auth((req) => {
+  // For authenticated routes, run i18n middleware
+  if (!req.auth) {
     const signInUrl = new URL('/signin', req.url);
-    return Response.redirect(signInUrl);
+    return NextResponse.redirect(signInUrl);
   }
-
-  // Run i18n middleware for all non-API requests
   return handleI18nRouting(req as unknown as NextRequest);
 });
+
+export default function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+
+  // Skip API routes and static files entirely
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next')) {
+    return NextResponse.next();
+  }
+
+  const isPublicPage = publicPathnameRegex.test(pathname);
+
+  // For public pages, only run i18n middleware (don't wrap in auth)
+  if (isPublicPage) {
+    return handleI18nRouting(req);
+  }
+
+  // For protected pages, run auth middleware which includes i18n
+  return (authMiddleware as any)(req);
+}
 
 export const config = {
   matcher: [
