@@ -119,6 +119,7 @@ async function fetchUserData(accessToken: string): Promise<UserData> {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
+  useSecureCookies: true, // Force secure cookies regardless of protocol detection
   session: {
     strategy: 'jwt',
     maxAge: 12 * 60 * 60, // 12 hours (reduced from default 30 days)
