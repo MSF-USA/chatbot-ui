@@ -3,6 +3,17 @@ import { JWT } from 'next-auth/jwt';
 import MicrosoftEntraID from 'next-auth/providers/microsoft-entra-id';
 
 declare module 'next-auth' {
+  interface User {
+    id: string;
+    displayName: string;
+    givenName?: string;
+    surname?: string;
+    mail?: string;
+    jobTitle?: string;
+    department?: string;
+    companyName?: string;
+  }
+
   interface Session {
     accessToken: string;
     accessTokenExpires: number;
@@ -21,8 +32,8 @@ declare module 'next-auth/jwt' {
 
 interface UserData {
   id: string;
-  givenName: string;
-  surname: string;
+  givenName?: string;
+  surname?: string;
   displayName: string;
   jobTitle?: string;
   department?: string;
@@ -160,11 +171,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       try {
+        // Only fetch minimal user data to keep session token small
+        // Full user data can be fetched client-side or in API routes as needed
         const userData = await fetchUserData(token.accessToken);
 
         return {
           ...session,
-          user: userData,
+          user: {
+            id: userData.id,
+            displayName: userData.displayName,
+            mail: userData.mail,
+            // givenName, surname, jobTitle, department, companyName are optional
+            // Fetch full profile via /api/user/profile when needed to keep session cookie small
+          } as Session['user'],
           accessToken: token.accessToken,
           accessTokenExpires: token.accessTokenExpires,
           error: undefined,

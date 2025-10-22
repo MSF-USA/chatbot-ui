@@ -1,21 +1,22 @@
 'use client';
 
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { useSwipeable } from 'react-swipeable';
 import { useSession } from 'next-auth/react';
-import { useTranslations } from 'next-intl';
-import packageJson from '../../package.json';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSwipeable } from 'react-swipeable';
 
+import { useTranslations } from 'next-intl';
+
+import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useUI } from '@/lib/hooks/ui/useUI';
 import { useCreateReducer } from '@/lib/hooks/useCreateReducer';
+
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
 
 import { Settings } from '@/types/settings';
 
-import { useUI } from '@/lib/hooks/ui/useUI';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-
+import packageJson from '../../package.json';
 import { MobileHeader } from './MobileHeader';
 import { MobileNavigation } from './MobileNavigation';
 import { AccountSection } from './Sections/AccountSection';
@@ -27,8 +28,9 @@ import { MobileAppSection } from './Sections/MobileAppSection';
 import { PrivacyControlSection } from './Sections/PrivacyControlSection';
 import { SettingsFooter } from './SettingsFooter';
 import { SettingsSidebar } from './SettingsSidebar';
-import faqData from '@/lib/data/faq.json';
 import { SettingsSection } from './types';
+
+import faqData from '@/lib/data/faq.json';
 
 const version = packageJson.version;
 const build = process.env.NEXT_PUBLIC_BUILD || 'Unknown';
@@ -46,7 +48,7 @@ export function SettingDialog() {
     setTemperature,
     systemPrompt,
     setSystemPrompt,
-    prompts
+    prompts,
   } = useSettings();
   const { conversations, clearAll: clearAllConversations } = useConversations();
 
@@ -60,15 +62,21 @@ export function SettingDialog() {
   });
 
   const [storageData, setStorageData] = useState<any>(null);
+  const [fullProfile, setFullProfile] = useState<any>(null);
   const modalRef = useRef<HTMLDivElement>(null);
-  const [activeSection, setActiveSection] = useState<SettingsSection>(SettingsSection.GENERAL);
+  const [activeSection, setActiveSection] = useState<SettingsSection>(
+    SettingsSection.GENERAL,
+  );
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
 
   // Load settings and storage on client side only
   useEffect(() => {
     const loadedSettings = getSettings();
     Object.keys(loadedSettings).forEach((key) => {
-      dispatch({ field: key as keyof Settings, value: loadedSettings[key as keyof Settings] });
+      dispatch({
+        field: key as keyof Settings,
+        value: loadedSettings[key as keyof Settings],
+      });
     });
     setStorageData(getStorageUsage());
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -102,6 +110,43 @@ export function SettingDialog() {
       setStorageData(getStorageUsage());
     }
   }, [isSettingsOpen]);
+
+  // Prefetch user profile when settings opens (with localStorage caching)
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (!isSettingsOpen || !session?.user?.id) return;
+
+      // Check if we have a cached profile for this user
+      const cacheKey = `user_profile_${session.user.id}`;
+      const cachedProfile = localStorage.getItem(cacheKey);
+
+      if (cachedProfile) {
+        try {
+          setFullProfile(JSON.parse(cachedProfile));
+          return;
+        } catch (e) {
+          // Invalid cache, fetch fresh
+          localStorage.removeItem(cacheKey);
+        }
+      }
+
+      try {
+        const response = await fetch('/api/user/profile');
+        if (response.ok) {
+          const profile = await response.json();
+          setFullProfile(profile);
+          // Cache the full profile in localStorage
+          localStorage.setItem(cacheKey, JSON.stringify(profile));
+        }
+      } catch (error) {
+        console.error('Failed to prefetch user profile:', error);
+      }
+    };
+
+    if (isSettingsOpen) {
+      fetchProfile();
+    }
+  }, [isSettingsOpen, session?.user?.id]);
 
   // Check for mobile view
   useEffect(() => {
@@ -162,7 +207,9 @@ export function SettingDialog() {
   };
 
   const handleReset = () => {
-    const defaultTheme: 'light' | 'dark' = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const defaultTheme: 'light' | 'dark' = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches
       ? 'dark'
       : 'light';
     const defaultSettings: Settings = {
@@ -276,7 +323,9 @@ export function SettingDialog() {
                 )}
 
                 {activeSection === SettingsSection.PRIVACY_CONTROL && (
-                  <PrivacyControlSection onClose={() => setIsSettingsOpen(false)} />
+                  <PrivacyControlSection
+                    onClose={() => setIsSettingsOpen(false)}
+                  />
                 )}
 
                 {activeSection === SettingsSection.DATA_MANAGEMENT && (
@@ -291,7 +340,10 @@ export function SettingDialog() {
                 )}
 
                 {activeSection === SettingsSection.ACCOUNT && (
-                  <AccountSection user={session?.user} />
+                  <AccountSection
+                    user={session?.user}
+                    prefetchedProfile={fullProfile}
+                  />
                 )}
 
                 {activeSection === SettingsSection.MOBILE_APP && (
