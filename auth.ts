@@ -142,35 +142,23 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, account }): Promise<JWT> {
-      // Initial sign in - store tokens and fetch user data ONCE
+      // Initial sign in - store tokens and use data from OAuth flow
       if (account) {
-        try {
-          const userData = await fetchUserData(account.access_token!);
-          return {
-            ...token,
-            accessToken: account.access_token!,
-            accessTokenExpires: account.expires_at
-              ? account.expires_at * 1000
-              : Date.now() + 24 * 60 * 60 * 1000,
-            refreshToken: account.refresh_token,
-            error: undefined,
-            // Store minimal user data in JWT to avoid fetching on every request
-            userId: userData.id,
-            userDisplayName: userData.displayName,
-            userMail: userData.mail,
-          };
-        } catch (error) {
-          console.error('Failed to fetch user data during login:', error);
-          return {
-            ...token,
-            accessToken: account.access_token!,
-            accessTokenExpires: account.expires_at
-              ? account.expires_at * 1000
-              : Date.now() + 24 * 60 * 60 * 1000,
-            refreshToken: account.refresh_token,
-            error: 'UserDataFetchError',
-          };
-        }
+        // Use data already provided by NextAuth from the OAuth flow
+        // No need to make an additional Graph API call during login
+        return {
+          ...token,
+          accessToken: account.access_token!,
+          accessTokenExpires: account.expires_at
+            ? account.expires_at * 1000
+            : Date.now() + 24 * 60 * 60 * 1000,
+          refreshToken: account.refresh_token,
+          error: undefined,
+          // Store minimal user data from OAuth token (avoids API calls on every request)
+          userId: token.sub || '', // sub is the user's unique ID from OAuth
+          userDisplayName: token.name || '',
+          userMail: token.email || undefined,
+        };
       }
 
       // Token is still valid - return as-is
