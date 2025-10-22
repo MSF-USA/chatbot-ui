@@ -850,7 +850,13 @@ export function Sidebar() {
         >
           <button
             className={`flex w-full items-center p-3 text-sm text-neutral-700 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 ${showChatbar ? 'gap-3' : 'justify-center'}`}
-            onClick={() => setShowUserMenu(!showUserMenu)}
+            onClick={() => {
+              if (showChatbar) {
+                setShowUserMenu(!showUserMenu);
+              } else {
+                setIsSettingsOpen(true);
+              }
+            }}
             title={session?.user?.displayName || t('Settings')}
           >
             {isLoadingPhoto ? (
