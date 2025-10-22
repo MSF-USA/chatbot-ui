@@ -468,6 +468,7 @@ export const ChatInput = ({
               filePreviews={filePreviews}
               setFilePreviews={setFilePreviews}
               setSubmitType={setSubmitType}
+              uploadProgress={uploadProgress}
             />
           </div>
         </div>

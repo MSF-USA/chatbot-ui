@@ -16,14 +16,46 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get access token from JWT (not stored in session to keep cookies small)
+    // Get refresh token from JWT
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
     });
 
-    if (!token?.accessToken) {
-      return NextResponse.json({ error: 'No access token' }, { status: 401 });
+    if (!token?.refreshToken) {
+      return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
+    }
+
+    // Fetch fresh access token using refresh token
+    let accessToken: string;
+    try {
+      const tokenResponse = await fetch(
+        `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/token`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            grant_type: 'refresh_token',
+            client_id: process.env.AZURE_CLIENT_ID || '',
+            client_secret: process.env.AZURE_CLIENT_SECRET || '',
+            refresh_token: token.refreshToken as string,
+            scope: 'openid User.Read User.ReadBasic.all offline_access',
+          }).toString(),
+        },
+      );
+
+      if (!tokenResponse.ok) {
+        throw new Error('Failed to refresh token');
+      }
+
+      const tokens = await tokenResponse.json();
+      accessToken = tokens.access_token;
+    } catch (error) {
+      console.error('Error refreshing access token:', error);
+      return NextResponse.json(
+        { error: 'Failed to refresh token' },
+        { status: 401 },
+      );
     }
 
     // Fetch full user data from Microsoft Graph
@@ -32,7 +64,7 @@ export async function GET(req: NextRequest) {
       `https://graph.microsoft.com/v1.0/me?$select=${selectProperties}`,
       {
         headers: {
-          Authorization: `Bearer ${token.accessToken}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-type': 'application/json',
         },
       },
@@ -51,7 +83,7 @@ export async function GET(req: NextRequest) {
         'https://graph.microsoft.com/v1.0/me/photo/$value',
         {
           headers: {
-            Authorization: `Bearer ${token.accessToken}`,
+            Authorization: `Bearer ${accessToken}`,
           },
         },
       );

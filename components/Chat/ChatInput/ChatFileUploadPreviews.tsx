@@ -1,48 +1,60 @@
-import { XIcon } from "@/components/Icons/cancel";
-import React, { Dispatch, FC, SetStateAction, MouseEvent, useState } from "react";
-import {ChatInputSubmitTypes, FilePreview} from "@/types/chat";
-import FileIcon from "@/components/Icons/file";
-import {IconInfoCircle} from "@tabler/icons-react";
+import { IconInfoCircle } from '@tabler/icons-react';
+import React, {
+  Dispatch,
+  FC,
+  MouseEvent,
+  SetStateAction,
+  useState,
+} from 'react';
+
+import { ChatInputSubmitTypes, FilePreview } from '@/types/chat';
+
+import { XIcon } from '@/components/Icons/cancel';
+import FileIcon from '@/components/Icons/file';
 
 interface ChatFileUploadPreviewsProps {
   filePreviews: FilePreview[];
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+  uploadProgress?: { [key: string]: number };
 }
 
 interface ChatFileUploadPreviewProps {
   filePreview: FilePreview;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
+  progress?: number;
 }
 
 const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   filePreview,
   setFilePreviews,
   setSubmitType,
+  progress,
 }) => {
   if (!filePreview) {
     throw new Error('Empty filePreview found');
   }
-  
+
   const [isHovered, setIsHovered] = useState(false);
-  
+
   const removeFilePreview = (
     event: MouseEvent<HTMLButtonElement>,
-    filePreview: FilePreview
+    filePreview: FilePreview,
   ) => {
     event.preventDefault();
     setFilePreviews((prevPreviews) => {
       const newPreviews = prevPreviews.filter(
-        (prevPreview) => prevPreview !== filePreview
+        (prevPreview) => prevPreview !== filePreview,
       );
-      if (newPreviews.length === 0) setSubmitType("text");
+      if (newPreviews.length === 0) setSubmitType('text');
       return newPreviews;
     });
   };
 
   const { name, type, status, previewUrl } = filePreview;
   const isImage = type.startsWith('image/');
+  const showProgress = status === 'uploading' && progress !== undefined;
 
   let filename = name;
 
@@ -58,16 +70,16 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   // Determine if the filename is long
   const isLongFilename = filename && filename.length > 16;
   // Apply auto-scrolling animation for long filenames
-  const textClassName = isLongFilename ? "animate-scroll-text-auto" : "";
+  const textClassName = isLongFilename ? 'animate-scroll-text-auto' : '';
 
   return (
     <div
       className="relative rounded-md overflow-hidden border border-black dark:border-white bg-white dark:bg-[#2f2f2f] text-black dark:text-white m-1 p-2 group"
       style={{
-        width: "calc(50% - 0.5rem)",
-        maxWidth: "280px",
-        minWidth: "200px",
-        height: isImage ? "auto" : "74px", // Fixed height for non-image files
+        width: 'calc(50% - 0.5rem)',
+        maxWidth: '280px',
+        minWidth: '200px',
+        height: isImage ? 'auto' : '74px', // Fixed height for non-image files
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -82,16 +94,21 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
           src={previewUrl}
         />
       ) : (
-        <div className="flex items-center h-full pr-8"> {/* Added right padding to avoid text under remove button */}
+        <div className="flex items-center h-full pr-8">
+          {' '}
+          {/* Added right padding to avoid text under remove button */}
           <FileIcon className="w-8 h-8 mr-2 flex-shrink-0" />
           {filename && (
             <div className="flex flex-col overflow-hidden max-w-full">
               <div className="relative overflow-hidden w-full">
-                <span className={`block whitespace-nowrap ${textClassName}`} style={{ paddingRight: "8px" }}>
+                <span
+                  className={`block whitespace-nowrap ${textClassName}`}
+                  style={{ paddingRight: '8px' }}
+                >
                   {filename}
                 </span>
               </div>
-              
+
               {/* Display warning if file is a PDF */}
               {isPdf && status === 'completed' && (
                 <span
@@ -106,19 +123,34 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
           )}
         </div>
       )}
-      
-      {status !== 'completed' && (
+
+      {showProgress && (
+        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700">
+          <div
+            className="h-full bg-blue-500 transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+
+      {status === 'uploading' && progress !== undefined && (
+        <div className="absolute bottom-2 left-2 text-xs text-white bg-black bg-opacity-75 px-2 py-0.5 rounded">
+          {Math.round(progress)}%
+        </div>
+      )}
+
+      {status !== 'completed' && status !== 'uploading' && (
         <div className="absolute bottom-1 left-1 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
           {status}
         </div>
       )}
-      
+
       <button
         className={`absolute top-1 right-1 rounded-full ${isHovered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'} transition-opacity duration-200`}
         onClick={(event) => removeFilePreview(event, filePreview)}
         aria-label="Remove"
       >
-        <XIcon className="dark:bg-[#212121] bg-white rounded w-5 h-5"/>
+        <XIcon className="dark:bg-[#212121] bg-white rounded w-5 h-5" />
         <span className="sr-only">Remove</span>
       </button>
     </div>
@@ -129,6 +161,7 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
   filePreviews,
   setFilePreviews,
   setSubmitType,
+  uploadProgress,
 }) => {
   if (filePreviews.length === 0) {
     return null;
@@ -142,6 +175,7 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
           filePreview={filePreview}
           setFilePreviews={setFilePreviews}
           setSubmitType={setSubmitType}
+          progress={uploadProgress?.[filePreview.name]}
         />
       ))}
     </div>

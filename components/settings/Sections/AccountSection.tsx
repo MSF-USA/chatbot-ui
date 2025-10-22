@@ -67,41 +67,35 @@ export const AccountSection: FC<AccountSectionProps> = ({
         {/* User Profile Information */}
         {user && (
           <div className="mt-4 bg-gray-50 dark:bg-gray-800/40 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center mb-3">
-              <div className="h-8 w-8 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center mr-2 overflow-hidden">
-                {fullProfile?.photoUrl ? (
-                  <img
-                    src={fullProfile.photoUrl}
-                    alt={user?.displayName || 'User'}
-                    className="h-8 w-8 rounded-full object-cover"
-                  />
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-blue-600 dark:text-blue-300"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-              </div>
-              <h3 className="text-sm font-bold text-black dark:text-white">
-                {t('Profile')}
-              </h3>
-            </div>
             <div className="grid grid-cols-2 gap-2">
               {(user?.displayName || fullProfile?.displayName) && (
-                <div className="col-span-2">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('Name')}
-                  </div>
-                  <div className="text-sm font-medium text-black dark:text-white">
-                    {user?.displayName || fullProfile?.displayName}
+                <div className="col-span-2 mb-2">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {fullProfile?.photoUrl ? (
+                        <img
+                          src={fullProfile.photoUrl}
+                          alt={user?.displayName || 'User'}
+                          className="h-10 w-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-6 w-6 text-blue-600 dark:text-blue-300"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      )}
+                    </div>
+                    <div className="text-sm font-medium text-black dark:text-white">
+                      {user?.displayName || fullProfile?.displayName}
+                    </div>
                   </div>
                 </div>
               )}

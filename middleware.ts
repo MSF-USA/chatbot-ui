@@ -23,7 +23,16 @@ const authMiddleware = auth((req) => {
     const signInUrl = new URL('/signin', req.url);
     return NextResponse.redirect(signInUrl);
   }
-  return handleI18nRouting(req as unknown as NextRequest);
+
+  const response = handleI18nRouting(req as unknown as NextRequest);
+
+  // If i18n is trying to redirect (307/308), just continue instead
+  // This prevents redirect loops when localePrefix is 'never'
+  if (response && (response.status === 307 || response.status === 308)) {
+    return NextResponse.next();
+  }
+
+  return response;
 });
 
 export default function middleware(req: NextRequest) {

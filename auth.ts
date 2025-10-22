@@ -21,7 +21,7 @@ declare module 'next-auth' {
 
 declare module 'next-auth/jwt' {
   interface JWT {
-    accessToken: string;
+    accessToken?: string; // Not stored to reduce cookie size - fetched on-demand
     accessTokenExpires: number;
     refreshToken?: string;
     error?: string;
@@ -134,6 +134,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           scope: 'openid User.Read User.ReadBasic.all offline_access',
         },
       },
+      // Disable PKCE since Azure Container Apps ingress truncates the cookies
+      checks: ['state'],
     }),
   ],
   pages: {
@@ -144,11 +146,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, account }): Promise<JWT> {
       // Initial sign in - store tokens and use data from OAuth flow
       if (account) {
-        // Use data already provided by NextAuth from the OAuth flow
-        // No need to make an additional Graph API call during login
+        // Only store refresh token to reduce cookie size
+        // Access token will be fetched on-demand when needed
         return {
           ...token,
-          accessToken: account.access_token!,
+          // Don't store access token - cuts cookie size in half!
+          // accessToken: account.access_token!,
           accessTokenExpires: account.expires_at
             ? account.expires_at * 1000
             : Date.now() + 24 * 60 * 60 * 1000,
@@ -161,15 +164,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         };
       }
 
-      // Token is still valid - return as-is
-      // Refresh proactively 5 minutes before expiry to prevent API failures
-      const FIVE_MINUTES_IN_MS = 5 * 60 * 1000;
-      if (Date.now() < token.accessTokenExpires - FIVE_MINUTES_IN_MS) {
-        return token;
-      }
-
-      // Token is expired or will expire soon - refresh it
-      return refreshAccessToken(token);
+      // For JWT strategy, we don't need to refresh tokens here
+      // They'll be refreshed on-demand when needed
+      return token;
     },
     async session({ session, token }): Promise<Session> {
       // Pass through user data from JWT (no API calls on every request!)
