@@ -16,6 +16,7 @@ declare module 'next-auth' {
 
   interface Session {
     error?: string;
+    refreshToken?: string;
   }
 }
 
@@ -179,6 +180,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           mail: token.userMail,
         } as Session['user'],
         error: token.error,
+        refreshToken: token.refreshToken, // Expose refresh token for on-demand user profile fetching
         expires: session.expires,
       };
     },

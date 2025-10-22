@@ -1,5 +1,4 @@
 import { Session } from 'next-auth';
-import { JWT, getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
@@ -19,11 +18,6 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  // @ts-ignore
-  const token: JWT | null = await getToken({ req: request });
-  if (!token)
-    throw new Error(`Token could not be pulled from request: ${request}`);
-
   const session: Session | null = await auth();
   if (!session) throw new Error('Failed to pull session!');
 
@@ -46,7 +40,7 @@ export async function GET(
   let transcript: string | undefined;
 
   try {
-    const userId = getUserIdFromSession(session, token);
+    const userId = getUserIdFromSession(session);
     const blobStorageClient = createBlobStorageClient(session);
 
     const filePath = `${userId}/uploads/files/${id}`;

@@ -1,5 +1,4 @@
 import { Session } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
@@ -27,7 +26,6 @@ export class FileConversationHandler {
    */
   async handleFileConversation(
     messagesToSend: Message[],
-    token: JWT,
     modelId: string,
     user: Session['user'],
     botId: string | undefined,
@@ -62,7 +60,7 @@ export class FileConversationHandler {
       const filePath = `/tmp/${filename}`;
 
       try {
-        await this.downloadFile(fileUrl, filePath, token, user);
+        await this.downloadFile(fileUrl, filePath, user);
         console.log('File downloaded successfully.');
 
         fileBuffer = await this.retryReadFile(filePath);
@@ -138,13 +136,12 @@ export class FileConversationHandler {
   private async downloadFile(
     fileUrl: string,
     filePath: string,
-    token: JWT,
     user: Session['user'],
   ): Promise<void> {
     // Create a minimal session object for the factory
     const session: Session = { user, expires: '' } as Session;
 
-    const userId = getUserIdFromSession(session, token);
+    const userId = getUserIdFromSession(session);
     const remoteFilepath = `${userId}/uploads/files`;
     const id: string | undefined = fileUrl.split('/').pop();
     if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);

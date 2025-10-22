@@ -1,4 +1,3 @@
-import { getToken } from 'next-auth/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
@@ -16,13 +15,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get refresh token from JWT
-    const token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
-    });
-
-    if (!token?.refreshToken) {
+    // Get refresh token from session (exposed via session callback in auth.ts)
+    if (!session.refreshToken) {
       return NextResponse.json({ error: 'No refresh token' }, { status: 401 });
     }
 
@@ -38,7 +32,7 @@ export async function GET(req: NextRequest) {
             grant_type: 'refresh_token',
             client_id: process.env.AZURE_CLIENT_ID || '',
             client_secret: process.env.AZURE_CLIENT_SECRET || '',
-            refresh_token: token.refreshToken as string,
+            refresh_token: session.refreshToken,
             scope: 'openid User.Read User.ReadBasic.all offline_access',
           }).toString(),
         },

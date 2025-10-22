@@ -1,5 +1,4 @@
 import { Session } from 'next-auth';
-import { JWT } from 'next-auth/jwt';
 
 import { isFileConversation, isImageConversation } from '@/lib/utils/app/chat';
 import { getBase64FromImageURL } from '@/lib/utils/app/image';
@@ -56,7 +55,6 @@ export const getMessagesToSend = async (
   encoding: any,
   promptLength: number,
   tokenLimit: number,
-  token: JWT,
   user: Session['user'],
 ): Promise<Message[]> => {
   const conversationType: ContentType = getMessageContentType(
@@ -75,7 +73,6 @@ export const getMessagesToSend = async (
         message.content,
         conversationType,
         isLastMessage,
-        token,
         user,
       );
     } else if (typeof message.content === 'string') {
@@ -110,7 +107,6 @@ const processMessageContent = async (
     | (TextMessageContent | ImageMessageContent)[],
   conversationType: ContentType,
   isLastMessageInConversation: boolean,
-  token: JWT,
   user: Session['user'],
 ): Promise<
   | (TextMessageContent | FileMessageContent)[]
@@ -147,7 +143,6 @@ const processMessageContent = async (
     ) {
       const imageUrl: string = await processImageUrl(
         contentSection as ImageMessageContent,
-        token,
         user,
       );
       allText += imageUrl;
@@ -175,7 +170,6 @@ const getContentTypePrefix = (contentType: ContentType): string => {
 
 const processImageUrl = async (
   contentSection: ImageMessageContent,
-  token: JWT,
   user: Session['user'],
 ): Promise<string> => {
   const id: string | undefined = contentSection.image_url.url.split('/').pop();
@@ -186,7 +180,7 @@ const processImageUrl = async (
   let url: string;
   try {
     url = await getBlobBase64String(
-      (token as any).userId ?? user?.id ?? 'anonymous',
+      user?.id ?? 'anonymous',
       contentSection.image_url.url.split('/')[
         contentSection.image_url.url.split('/').length - 1
       ],

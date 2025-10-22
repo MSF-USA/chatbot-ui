@@ -47,14 +47,25 @@ export default function middleware(req: NextRequest) {
       pathname.startsWith('/api/auth'));
 
   if (shouldLog) {
+    const authCookies = req.cookies
+      .getAll()
+      .filter((c) => c.name.includes('auth'))
+      .map((c) => ({ name: c.name, valueLength: c.value.length }));
+
     console.log('[Middleware Debug]', {
       pathname,
       host: req.headers.get('host'),
       xForwardedHost: req.headers.get('x-forwarded-host'),
       xForwardedProto: req.headers.get('x-forwarded-proto'),
+      xForwardedFor: req.headers.get('x-forwarded-for'),
       protocol: req.nextUrl.protocol,
-      hasCookies: req.cookies.getAll().length > 0,
-      cookieCount: req.cookies.getAll().length,
+      url: req.url,
+      nextUrl: req.nextUrl.href,
+      origin: req.headers.get('origin'),
+      referer: req.headers.get('referer'),
+      totalCookies: req.cookies.getAll().length,
+      authCookies: authCookies.length,
+      authCookieDetails: authCookies,
     });
   }
 

@@ -1,5 +1,4 @@
 import { Session } from 'next-auth';
-import { JWT, getToken } from 'next-auth/jwt';
 import { NextRequest } from 'next/server';
 
 import {
@@ -498,11 +497,6 @@ export default class ChatService {
       modelToUse = DEFAULT_MODEL;
     }
 
-    const token = (await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
-    })) as JWT | null;
-    if (!token) throw new Error('Could not pull token!');
     const session: Session | null = await auth();
     if (!session) throw new Error('Could not pull session!');
 
@@ -514,7 +508,6 @@ export default class ChatService {
       encoding,
       prompt_tokens.length,
       model.tokenLimit,
-      token,
       user,
     );
     encoding.free();
@@ -522,7 +515,6 @@ export default class ChatService {
     if (needsToHandleFiles) {
       return this.fileHandler.handleFileConversation(
         messagesToSend,
-        token,
         model.id,
         user,
         botId,
