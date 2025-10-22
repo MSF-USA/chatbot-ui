@@ -1,21 +1,27 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
+
+import { FilePreview } from '@/types/chat';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
-import { FilePreview } from '@/types/chat';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mock icons
 vi.mock('@/components/Icons/cancel', () => ({
   XIcon: ({ className }: { className: string }) => (
-    <div data-testid="x-icon" className={className}>X</div>
+    <div data-testid="x-icon" className={className}>
+      X
+    </div>
   ),
 }));
 
 vi.mock('@/components/Icons/file', () => ({
   default: ({ className }: { className: string }) => (
-    <div data-testid="file-icon" className={className}>File</div>
+    <div data-testid="file-icon" className={className}>
+      File
+    </div>
   ),
 }));
 
@@ -51,7 +57,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(container.firstChild).toBeNull();
@@ -66,7 +72,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[imagePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const img = screen.getByAltText('Preview');
@@ -81,7 +87,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[imagePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const img = screen.getByAltText('Preview');
@@ -101,7 +107,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={previews}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const images = screen.getAllByAltText('Preview');
@@ -117,7 +123,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.getByText('document.pdf')).toBeInTheDocument();
@@ -131,7 +137,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[pdfPreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.getByText('Text Only')).toBeInTheDocument();
@@ -147,7 +153,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.queryByText('Text Only')).not.toBeInTheDocument();
@@ -163,7 +169,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[pdfPreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.queryByText('Text Only')).not.toBeInTheDocument();
@@ -177,7 +183,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const filenameSpan = container.querySelector('.animate-scroll-text-auto');
@@ -192,7 +198,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const filenameSpan = container.querySelector('.animate-scroll-text-auto');
@@ -208,7 +214,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.queryByText('completed')).not.toBeInTheDocument();
@@ -221,10 +227,11 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+          uploadProgress={{ [filePreview.name]: 50 }}
+        />,
       );
 
-      expect(screen.getByText('uploading')).toBeInTheDocument();
+      expect(screen.getByText('50%')).toBeInTheDocument();
     });
 
     it('shows status badge when pending', () => {
@@ -234,7 +241,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.getByText('pending')).toBeInTheDocument();
@@ -247,7 +254,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       expect(screen.getByText('failed')).toBeInTheDocument();
@@ -260,13 +267,14 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+          uploadProgress={{ [filePreview.name]: 75 }}
+        />,
       );
 
-      const statusBadge = screen.getByText('uploading');
+      const statusBadge = screen.getByText('75%');
       expect(statusBadge).toHaveClass('absolute');
-      expect(statusBadge).toHaveClass('bottom-1');
-      expect(statusBadge).toHaveClass('bg-opacity-50');
+      expect(statusBadge).toHaveClass('bottom-2');
+      expect(statusBadge).toHaveClass('bg-opacity-75');
     });
   });
 
@@ -278,7 +286,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const removeButton = screen.getByLabelText('Remove');
@@ -292,7 +300,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const removeButton = screen.getByLabelText('Remove');
@@ -312,7 +320,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={previews}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const removeButtons = screen.getAllByLabelText('Remove');
@@ -332,7 +340,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const removeButton = screen.getByLabelText('Remove');
@@ -353,11 +361,14 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const removeButton = screen.getByLabelText('Remove');
-      const clickEvent = new MouseEvent('click', { bubbles: true, cancelable: true });
+      const clickEvent = new MouseEvent('click', {
+        bubbles: true,
+        cancelable: true,
+      });
       const preventDefaultSpy = vi.spyOn(clickEvent, 'preventDefault');
 
       fireEvent(removeButton, clickEvent);
@@ -374,7 +385,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const previewContainer = container.querySelector('.group');
@@ -393,7 +404,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const previewContainer = container.querySelector('.group');
@@ -413,7 +424,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const previewContainer = container.querySelector('.group');
@@ -430,7 +441,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const previewContainer = container.querySelector('.group');
@@ -455,7 +466,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const wrapper = container.firstChild as HTMLElement;
@@ -471,7 +482,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const preview = container.querySelector('.group');
@@ -492,7 +503,7 @@ describe('ChatFileUploadPreviews', () => {
             filePreviews={[null as any]}
             setFilePreviews={mockSetFilePreviews}
             setSubmitType={mockSetSubmitType}
-          />
+          />,
         );
       }).toThrow('Empty filePreview found');
     });
@@ -506,7 +517,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const removeButton = screen.getByLabelText('Remove');
@@ -520,10 +531,12 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
-      expect(screen.getByText('Remove', { selector: '.sr-only' })).toBeInTheDocument();
+      expect(
+        screen.getByText('Remove', { selector: '.sr-only' }),
+      ).toBeInTheDocument();
     });
 
     it('image has alt text', () => {
@@ -533,7 +546,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[imagePreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const img = screen.getByAltText('Preview');
@@ -547,7 +560,7 @@ describe('ChatFileUploadPreviews', () => {
           filePreviews={[pdfPreview]}
           setFilePreviews={mockSetFilePreviews}
           setSubmitType={mockSetSubmitType}
-        />
+        />,
       );
 
       const warning = container.querySelector('[title]');

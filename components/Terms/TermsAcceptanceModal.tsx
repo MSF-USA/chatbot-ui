@@ -159,7 +159,8 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   // Get all versions for header
   const versions = Object.values(termsData)
-    .map((doc) => doc.version)
+    .map((doc) => doc?.version)
+    .filter(Boolean)
     .join(', ');
 
   return (
@@ -203,6 +204,8 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 py-4">
           {Object.entries(termsData).map(([docType, doc]) => {
+            if (!doc) return null;
+
             let documentContent =
               doc.localized[currentLocale]?.content ||
               doc.localized['en']?.content ||

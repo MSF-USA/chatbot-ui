@@ -38,6 +38,26 @@ const authMiddleware = auth((req) => {
 export default function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Debug: Log proxy headers to diagnose cookie issues (Azure only)
+  // Log on root, signin, and auth callback paths where redirect loops occur
+  const shouldLog =
+    process.env.NODE_ENV !== 'development' &&
+    (pathname === '/' ||
+      pathname === '/signin' ||
+      pathname.startsWith('/api/auth'));
+
+  if (shouldLog) {
+    console.log('[Middleware Debug]', {
+      pathname,
+      host: req.headers.get('host'),
+      xForwardedHost: req.headers.get('x-forwarded-host'),
+      xForwardedProto: req.headers.get('x-forwarded-proto'),
+      protocol: req.nextUrl.protocol,
+      hasCookies: req.cookies.getAll().length > 0,
+      cookieCount: req.cookies.getAll().length,
+    });
+  }
+
   // Skip API routes and static files entirely
   if (pathname.startsWith('/api') || pathname.startsWith('/_next')) {
     return NextResponse.next();
