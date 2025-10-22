@@ -296,7 +296,7 @@ export default class ChatService {
     const chatCompletionParams: ResponseCreateParamsBase = {
       model: modelId,
       input: messages as ResponseInput,
-      user: user.email || user.name || 'unknown', // Max 64 chars - use email or name instead of full JSON
+      user: user.mail || user.displayName || 'unknown', // Max 64 chars - use email or name instead of full JSON
       stream: true, // Enable streaming
     };
 
