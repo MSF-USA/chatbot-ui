@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
 
@@ -7,12 +8,22 @@ import { auth } from '@/auth';
  * Fetches full user profile data from Microsoft Graph
  * This endpoint is called on-demand to avoid bloating the session cookie
  */
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const session = await auth();
 
-    if (!session?.accessToken) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get access token from JWT (not stored in session to keep cookies small)
+    const token = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET || process.env.AUTH_SECRET,
+    });
+
+    if (!token?.accessToken) {
+      return NextResponse.json({ error: 'No access token' }, { status: 401 });
     }
 
     // Fetch full user data from Microsoft Graph
@@ -21,7 +32,7 @@ export async function GET() {
       `https://graph.microsoft.com/v1.0/me?$select=${selectProperties}`,
       {
         headers: {
-          Authorization: `Bearer ${session.accessToken}`,
+          Authorization: `Bearer ${token.accessToken}`,
           'Content-type': 'application/json',
         },
       },
@@ -40,7 +51,7 @@ export async function GET() {
         'https://graph.microsoft.com/v1.0/me/photo/$value',
         {
           headers: {
-            Authorization: `Bearer ${session.accessToken}`,
+            Authorization: `Bearer ${token.accessToken}`,
           },
         },
       );

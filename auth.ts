@@ -15,8 +15,6 @@ declare module 'next-auth' {
   }
 
   interface Session {
-    accessToken: string;
-    accessTokenExpires: number;
     error?: string;
   }
 }
@@ -163,8 +161,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       if (token.error) {
         return {
           ...session,
-          accessToken: token.accessToken,
-          accessTokenExpires: token.accessTokenExpires,
           error: token.error,
           expires: session.expires,
         };
@@ -173,6 +169,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       try {
         // Only fetch minimal user data to keep session token small
         // Full user data can be fetched client-side or in API routes as needed
+        // accessToken is kept in JWT token only (not in session cookie)
         const userData = await fetchUserData(token.accessToken);
 
         return {
@@ -184,8 +181,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             // givenName, surname, jobTitle, department, companyName are optional
             // Fetch full profile via /api/user/profile when needed to keep session cookie small
           } as Session['user'],
-          accessToken: token.accessToken,
-          accessTokenExpires: token.accessTokenExpires,
           error: undefined,
           expires: session.expires,
         };
@@ -194,8 +189,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         console.error('Failed to fetch user data:', error);
         return {
           ...session,
-          accessToken: token.accessToken,
-          accessTokenExpires: token.accessTokenExpires,
           error: 'UserDataFetchError',
           expires: session.expires,
         };

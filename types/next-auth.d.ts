@@ -4,8 +4,8 @@ declare module 'next-auth' {
   interface Session {
     user: {
       id: string;
-      givenName: string;
-      surname: string;
+      givenName?: string;
+      surname?: string;
       displayName: string;
       jobTitle?: string;
       department?: string;
@@ -13,8 +13,7 @@ declare module 'next-auth' {
       companyName?: string;
     };
     error?: string;
-    accessToken: string;
-    accessTokenExpires: number;
+    // accessToken is kept in JWT only (server-side) to reduce cookie size
   }
 
   interface JWT {
