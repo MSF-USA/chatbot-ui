@@ -80,8 +80,8 @@
       "type": "faq",
       "category": "support",
       "question": "Where should I go with bug reports, questions, or feedback?",
-      "answer": "We welcome feedback. Please reach out to our team at ai@newyork.msf.org.",
-      "keywords": ["bug reports", "questions", "feedback", "support", "contact", "ai@newyork.msf.org", "email", "team", "help"]
+      "answer": "We welcome feedback. Click the 'Request Support' link in the application to choose your organization and get the appropriate support contact. Options include MSF USA, OCA HQ (Amsterdam), OCG HQ (Geneva), or field staff guidance.",
+      "keywords": ["bug reports", "questions", "feedback", "support", "contact", "email", "team", "help", "request support", "MSF USA", "OCA", "OCG", "field staff"]
     }
   ]
 }
