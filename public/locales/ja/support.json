@@ -1,0 +1,16 @@
+{
+  "Support": "サポート",
+  "Choose Your Organization": "組織を選択してください",
+  "Select your organization to get the right support contact": "適切なサポート連絡先を取得するには、組織を選択してください",
+  "MSF USA": "MSF USA",
+  "MSF USA Description": "MSF USAのスタッフメンバー向け",
+  "OCA HQ": "OCA HQ",
+  "OCA HQ Description": "アムステルダム運営センター本部のスタッフ向け",
+  "OCG HQ": "OCG HQ",
+  "OCG HQ Description": "ジュネーブ運営センター本部のスタッフ向け",
+  "Field Staff / Other": "現場スタッフ / その他",
+  "Field Staff Description": "現場スタッフおよびその他のMSFスタッフ向け",
+  "Field Staff Message": "現場スタッフおよびその他のMSFスタッフ向け：\n\n1. まず現地のITサポートにご連絡ください\n2. 解決されない場合は、運営センター(OC)のIT部門にエスカレーションしてもらってください\n3. それでも解決されない場合は、運営センターのIT部門がSITS（共有ITサービス）にエスカレーションできます",
+  "Close": "閉じる",
+  "Contact Support": "サポートに連絡"
+}
