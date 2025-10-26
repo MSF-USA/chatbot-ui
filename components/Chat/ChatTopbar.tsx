@@ -4,12 +4,11 @@ import {
   IconExternalLink,
   IconSettings,
 } from '@tabler/icons-react';
+import { useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
-import { isUSBased } from '@/utils/app/userAuth';
-
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+import { SupportModal } from '@/components/Support/SupportModal';
 
 interface Props {
   botInfo: {
@@ -35,6 +34,7 @@ export const ChatTopbar = ({
   hasMessages = false,
 }: Props) => {
   const { t } = useTranslation('chat');
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   return (
     <div className="sticky top-0 z-10 border-b border-neutral-300 bg-neutral-100 py-2 text-sm text-neutral-500 dark:border-none dark:bg-[#2F2F2F] dark:text-neutral-200">
@@ -104,11 +104,9 @@ export const ChatTopbar = ({
             </button>
           )}
 
-          {/* Feedback Link */}
-          <a
-            href={`mailto:${
-              isUSBased(userEmail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
-            }`}
+          {/* Feedback Button */}
+          <button
+            onClick={() => setIsSupportModalOpen(true)}
             className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-[12px]"
             title={t('sendFeedback')}
           >
@@ -118,9 +116,16 @@ export const ChatTopbar = ({
             />
             <span className="hidden sm:inline">{t('sendFeedback')}</span>
             <span className="sm:hidden">Feedback</span>
-          </a>
+          </button>
         </div>
       </div>
+
+      {/* Support Modal */}
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        userEmail={userEmail}
+      />
     </div>
   );
 };
