@@ -240,9 +240,9 @@ export const SupportModal: FC<SupportModalProps> = ({
               {selectedOption.email ? (
                 // Email organization expansion
                 <div className="flex flex-col space-y-4">
-                  {/* Email address with scrolling animation */}
-                  <div className="overflow-hidden">
-                    <div className="animate-scroll-text-auto">
+                  {/* Email address with scrolling animation (mobile only) */}
+                  <div className="overflow-hidden md:overflow-visible">
+                    <div className="animate-scroll-text-auto md:animate-none">
                       <p className="text-base font-mono text-gray-700 dark:text-gray-300 whitespace-nowrap">
                         {selectedOption.email}
                       </p>
