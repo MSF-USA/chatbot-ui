@@ -18,15 +18,38 @@ interface SupportModalProps {
 }
 
 /**
+ * Extracts the domain portion from an email address
+ */
+const getEmailDomain = (email: string): string => {
+  const parts = email.split('@');
+  return parts.length === 2 ? parts[1] : '';
+};
+
+/**
+ * Checks if email domain matches or is a valid subdomain of allowed domain
+ * Prevents superdomain attacks (e.g., newyork.msf.org.attacker.com)
+ */
+const isDomainMatch = (email: string, allowedDomain: string): boolean => {
+  const domain = getEmailDomain(email.toLowerCase());
+  if (!domain) return false;
+
+  // Exact match (e.g., newyork.msf.org)
+  if (domain === allowedDomain) return true;
+
+  // Valid subdomain match (e.g., mail.newyork.msf.org)
+  // Only matches if domain ends with ".allowedDomain" to prevent superdomain attacks
+  return domain.endsWith('.' + allowedDomain);
+};
+
+/**
  * Determines the recommended support option based on user email domain
  */
 const getRecommendedOptionId = (email?: string): string => {
   if (!email) return 'field-staff';
-  const emailLower = email.toLowerCase();
 
-  if (emailLower.includes('newyork.msf.org')) return 'msf-usa';
-  if (emailLower.includes('amsterdam.msf.org')) return 'oca-hq';
-  if (emailLower.includes('geneva.msf.org')) return 'ocg-hq';
+  if (isDomainMatch(email, 'newyork.msf.org')) return 'msf-usa';
+  if (isDomainMatch(email, 'amsterdam.msf.org')) return 'oca-hq';
+  if (isDomainMatch(email, 'geneva.msf.org')) return 'ocg-hq';
 
   return 'field-staff';
 };
