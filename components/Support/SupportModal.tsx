@@ -223,58 +223,66 @@ export const SupportModal: FC<SupportModalProps> = ({
                     </div>
                   </div>
                 </button>
-
-                {/* Expanded email view for organization options */}
-                {option.email && isExpanded && (
-                  <div className={`mt-2 p-4 rounded-lg border transition-all ${colors.bg} ${colors.border}`}>
-                    <div className="flex flex-col space-y-3">
-                      {/* Email address with scrolling animation */}
-                      <div className="overflow-hidden">
-                        <div className="animate-scroll-text-auto">
-                          <p className="text-sm font-mono text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                            {option.email}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Action buttons */}
-                      <div className="flex gap-2">
-                        <button
-                          onClick={(e) => handleCopyEmail(option.email!, e)}
-                          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${colors.text} ${colors.bg} hover:bg-opacity-80 border ${colors.border}`}
-                          title="Copy email to clipboard"
-                        >
-                          <IconCopy size={18} />
-                          <span className="text-sm font-medium">
-                            {copiedEmail === option.email ? 'Copied!' : 'Copy'}
-                          </span>
-                        </button>
-
-                        <button
-                          onClick={(e) => handleMailtoClick(option.email!, e)}
-                          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-colors ${colors.text} ${colors.bg} hover:bg-opacity-80 border ${colors.border}`}
-                          title="Open email client"
-                        >
-                          <IconMailForward size={18} />
-                          <span className="text-sm font-medium">Send Email</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Expanded field staff message */}
-                {option.isFieldStaff && isExpanded && (
-                  <div className="mt-2 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg border border-gray-300 dark:border-gray-600">
-                    <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                      {t('Field Staff Message')}
-                    </p>
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
+
+        {/* Dedicated expansion zone below grid */}
+        {expandedOption && (() => {
+          const selectedOption = allOptions.find(opt => opt.id === expandedOption);
+          if (!selectedOption) return null;
+
+          const colors = getColorClasses(selectedOption.color);
+
+          return (
+            <div className={`mt-6 p-6 rounded-lg border-2 transition-all animate-in slide-in-from-top duration-300 ${colors.bg} ${colors.border}`}>
+              {selectedOption.email ? (
+                // Email organization expansion
+                <div className="flex flex-col space-y-4">
+                  {/* Email address with scrolling animation */}
+                  <div className="overflow-hidden">
+                    <div className="animate-scroll-text-auto">
+                      <p className="text-base font-mono text-gray-700 dark:text-gray-300 whitespace-nowrap">
+                        {selectedOption.email}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Action buttons */}
+                  <div className="flex gap-3">
+                    <button
+                      onClick={(e) => handleCopyEmail(selectedOption.email!, e)}
+                      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md transition-all ${colors.text} ${colors.bg} hover:brightness-95 dark:hover:brightness-110 border-2 ${colors.border} font-medium`}
+                      title="Copy email to clipboard"
+                    >
+                      <IconCopy size={20} />
+                      <span className="text-sm">
+                        {copiedEmail === selectedOption.email ? 'Copied!' : 'Copy Email'}
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={(e) => handleMailtoClick(selectedOption.email!, e)}
+                      className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-md transition-all ${colors.text} ${colors.bg} hover:brightness-95 dark:hover:brightness-110 border-2 ${colors.border} font-medium`}
+                      title="Open email client"
+                    >
+                      <IconMailForward size={20} />
+                      <span className="text-sm">Send Email</span>
+                    </button>
+                  </div>
+                </div>
+              ) : selectedOption.isFieldStaff ? (
+                // Field staff expansion
+                <div>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line leading-relaxed">
+                    {t('Field Staff Message')}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          );
+        })()}
 
         <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
           <button
