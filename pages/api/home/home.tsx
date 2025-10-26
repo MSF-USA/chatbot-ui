@@ -666,6 +666,7 @@ export const getServerSideProps: GetServerSideProps = async ({
         'markdown',
         'promptbar',
         'settings',
+        'support',
         'transcribeModal',
       ])),
     },
