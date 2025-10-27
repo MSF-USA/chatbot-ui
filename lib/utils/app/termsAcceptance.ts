@@ -52,47 +52,51 @@ export const getUserAcceptance = (userId: string): UserAcceptance | null => {
     if (!allAcceptances) return null;
 
     const acceptances: UserAcceptance[] = JSON.parse(allAcceptances);
-    return acceptances.find(a => a.userId === userId) || null;
+    return acceptances.find((a) => a.userId === userId) || null;
   } catch (error) {
-    console.error('Error retrieving terms acceptance from localStorage:', error);
+    console.error(
+      'Error retrieving terms acceptance from localStorage:',
+      error,
+    );
     return null;
   }
 };
 
 // Function to save user acceptance to localStorage
 export const saveUserAcceptance = (
-    userId: string,
-    documentType: string,
-    version: string,
-    hash: string,
-    locale: string = 'en'
+  userId: string,
+  documentType: string,
+  version: string,
+  hash: string,
+  locale: string = 'en',
 ): void => {
   if (typeof window === 'undefined') return; // Not in browser environment
 
   try {
     const allAcceptancesStr = localStorage.getItem(TERMS_ACCEPTANCE_KEY);
     const allAcceptances: UserAcceptance[] = allAcceptancesStr
-        ? JSON.parse(allAcceptancesStr)
-        : [];
+      ? JSON.parse(allAcceptancesStr)
+      : [];
 
-    const userAcceptance = allAcceptances.find(a => a.userId === userId);
+    const userAcceptance = allAcceptances.find((a) => a.userId === userId);
 
     const newAcceptanceRecord: AcceptanceRecord = {
       documentType,
       version,
       hash,
       locale,
-      acceptedAt: Date.now()
+      acceptedAt: Date.now(),
     };
 
     if (userAcceptance) {
       // Update existing record or add new one
       const existingRecordIndex = userAcceptance.acceptedDocuments.findIndex(
-          doc => doc.documentType === documentType
+        (doc) => doc.documentType === documentType,
       );
 
       if (existingRecordIndex >= 0) {
-        userAcceptance.acceptedDocuments[existingRecordIndex] = newAcceptanceRecord;
+        userAcceptance.acceptedDocuments[existingRecordIndex] =
+          newAcceptanceRecord;
       } else {
         userAcceptance.acceptedDocuments.push(newAcceptanceRecord);
       }
@@ -100,7 +104,7 @@ export const saveUserAcceptance = (
       // Create new user acceptance record
       allAcceptances.push({
         userId,
-        acceptedDocuments: [newAcceptanceRecord]
+        acceptedDocuments: [newAcceptanceRecord],
       });
     }
 
@@ -112,17 +116,17 @@ export const saveUserAcceptance = (
 
 // Function to check if a user has accepted a specific document
 export const hasUserAcceptedDocument = (
-    userId: string,
-    documentType: string,
-    version: string,
-    termsData: TermsData,
-    locale: string = 'en'
+  userId: string,
+  documentType: string,
+  version: string,
+  termsData: TermsData,
+  locale: string = 'en',
 ): boolean => {
   const userAcceptance = getUserAcceptance(userId);
   if (!userAcceptance) return false;
 
   const acceptedDocument = userAcceptance.acceptedDocuments.find(
-      doc => doc.documentType === documentType
+    (doc) => doc.documentType === documentType,
   );
 
   if (!acceptedDocument) return false;
@@ -133,20 +137,30 @@ export const hasUserAcceptedDocument = (
 
   // Check if the version matches and the hash matches the localized content
   return (
-      acceptedDocument.version === version &&
-      document.localized[acceptedDocument.locale] &&
-      acceptedDocument.hash === document.localized[acceptedDocument.locale].hash
+    acceptedDocument.version === version &&
+    document.localized[acceptedDocument.locale] &&
+    acceptedDocument.hash === document.localized[acceptedDocument.locale].hash
   );
 };
 
 // Function to check if a user has accepted all required documents
 export const hasUserAcceptedAllRequiredDocuments = (
-    userId: string,
-    termsData: TermsData,
-    locale: string = 'en'
+  userId: string,
+  termsData: TermsData,
+  locale: string = 'en',
 ): boolean => {
   for (const [docType, document] of Object.entries(termsData)) {
-    if (document && document.required && !hasUserAcceptedDocument(userId, docType, document.version, termsData, locale)) {
+    if (
+      document &&
+      document.required &&
+      !hasUserAcceptedDocument(
+        userId,
+        docType,
+        document.version,
+        termsData,
+        locale,
+      )
+    ) {
       return false;
     }
   }
@@ -169,11 +183,16 @@ export const fetchTermsData = async (): Promise<TermsData> => {
 };
 
 // Function to check if the user needs to accept terms
-export const checkUserTermsAcceptance = async (user: Session['user'], locale: string = 'en'): Promise<boolean> => {
+export const checkUserTermsAcceptance = async (
+  user: Session['user'],
+  locale: string = 'en',
+): Promise<boolean> => {
   if (!user) return false;
 
   try {
-    const userId = user?.id || user?.mail || '';
+    // Use email (mail) as the primary identifier for terms acceptance
+    // This is more stable and human-readable than the Azure AD GUID
+    const userId = user?.mail || user?.id || '';
     if (!userId) return false;
 
     const termsData = await fetchTermsData();

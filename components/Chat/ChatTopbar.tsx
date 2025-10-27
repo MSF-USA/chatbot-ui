@@ -7,11 +7,10 @@ import {
   IconSettings,
   IconTool,
 } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
-
-import { isUSBased } from '@/lib/utils/app/userAuth';
 
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
@@ -54,6 +53,7 @@ export const ChatTopbar = ({
   showChatbar = false,
 }: Props) => {
   const t = useTranslations();
+  const { data: session } = useSession();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -172,7 +172,7 @@ export const ChatTopbar = ({
                   {/* Request Support option */}
                   <a
                     href={`mailto:${
-                      isUSBased(userEmail ?? '')
+                      session?.user?.region === 'US'
                         ? US_FEEDBACK_EMAIL
                         : FEEDBACK_EMAIL
                     }`}

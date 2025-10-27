@@ -63,6 +63,9 @@ export function Chat({
   const hasInitializedRef = useRef(false);
 
   // Sync with mobile header model select state
+  // Note: isModelSelectOpen is intentionally excluded from deps to prevent render loop
+  // This effect should only run when the EXTERNAL prop (mobileModelSelectOpen) changes,
+  // not when our internal state (isModelSelectOpen) changes, since we're setting it here
   useEffect(() => {
     if (
       mobileModelSelectOpen !== undefined &&
@@ -70,9 +73,13 @@ export function Chat({
     ) {
       setIsModelSelectOpen(mobileModelSelectOpen);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mobileModelSelectOpen]);
 
   // Notify parent when modal state changes (for mobile header sync)
+  // Note: mobileModelSelectOpen is intentionally excluded from deps to prevent excessive notifications
+  // We only want to notify the parent when OUR internal state changes, not when the prop changes
+  // (since the prop changing already triggers the sync effect above)
   useEffect(() => {
     if (
       onMobileModelSelectChange &&
@@ -81,6 +88,7 @@ export function Chat({
     ) {
       onMobileModelSelectChange(isModelSelectOpen);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModelSelectOpen, onMobileModelSelectChange]);
 
   // Close modal on ESC key
@@ -437,11 +445,11 @@ export function Chat({
       {/* Model Selection Modal */}
       {isModelSelectOpen && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[150]"
+          className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[150] animate-fade-in-fast"
           onClick={() => setIsModelSelectOpen(false)}
         >
           <div
-            className="max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4 rounded-lg bg-white dark:bg-[#212121] p-6 shadow-xl"
+            className="max-w-4xl w-full max-h-[90vh] overflow-y-auto mx-4 rounded-lg bg-white dark:bg-[#212121] p-6 shadow-xl animate-modal-in"
             onClick={(e) => e.stopPropagation()}
           >
             <ModelSelect onClose={() => setIsModelSelectOpen(false)} />

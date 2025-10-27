@@ -12,6 +12,7 @@ declare module 'next-auth' {
     jobTitle?: string;
     department?: string;
     companyName?: string;
+    region?: 'US' | 'EU';
   }
 
   interface Session {
@@ -26,10 +27,16 @@ declare module 'next-auth/jwt' {
     accessTokenExpires: number;
     refreshToken?: string;
     error?: string;
-    // Store minimal user data in JWT to avoid API calls on every request
+    // Store full user profile data in JWT for logging/analytics
     userId?: string;
     userDisplayName?: string;
     userMail?: string;
+    userGivenName?: string;
+    userSurname?: string;
+    userJobTitle?: string;
+    userDepartment?: string;
+    userCompanyName?: string;
+    userRegion?: 'US' | 'EU';
   }
 }
 
@@ -145,24 +152,60 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, account }): Promise<JWT> {
-      // Initial sign in - store tokens and use data from OAuth flow
-      if (account) {
-        // Only store refresh token to reduce cookie size
-        // Access token will be fetched on-demand when needed
-        return {
-          ...token,
-          // Don't store access token - cuts cookie size in half!
-          // accessToken: account.access_token!,
-          accessTokenExpires: account.expires_at
-            ? account.expires_at * 1000
-            : Date.now() + 24 * 60 * 60 * 1000,
-          refreshToken: account.refresh_token,
-          error: undefined,
-          // Store minimal user data from OAuth token (avoids API calls on every request)
-          userId: token.sub || '', // sub is the user's unique ID from OAuth
-          userDisplayName: token.name || '',
-          userMail: token.email || undefined,
-        };
+      // Initial sign in - fetch full user profile from Microsoft Graph
+      if (account && account.access_token) {
+        try {
+          // Fetch full user profile for logging/analytics
+          const userData = await fetchUserData(account.access_token);
+
+          // Determine region based on email
+          const userRegion: 'US' | 'EU' =
+            userData.mail && userData.mail.toLowerCase().includes('newyork')
+              ? 'US'
+              : 'EU';
+
+          return {
+            ...token,
+            // Don't store access token - cuts cookie size in half!
+            // accessToken: account.access_token!,
+            accessTokenExpires: account.expires_at
+              ? account.expires_at * 1000
+              : Date.now() + 24 * 60 * 60 * 1000,
+            refreshToken: account.refresh_token,
+            error: undefined,
+            // Store full user profile from Microsoft Graph
+            userId: userData.id,
+            userDisplayName: userData.displayName,
+            userMail: userData.mail,
+            userGivenName: userData.givenName,
+            userSurname: userData.surname,
+            userJobTitle: userData.jobTitle,
+            userDepartment: userData.department,
+            userCompanyName: userData.companyName,
+            userRegion,
+          };
+        } catch (error) {
+          console.error('Error fetching user data during login:', error);
+          // Fallback to OAuth token data if Graph API fails
+          const fallbackEmail = token.email || undefined;
+          const userRegion: 'US' | 'EU' =
+            fallbackEmail && fallbackEmail.toLowerCase().includes('newyork')
+              ? 'US'
+              : 'EU';
+
+          return {
+            ...token,
+            accessTokenExpires: account.expires_at
+              ? account.expires_at * 1000
+              : Date.now() + 24 * 60 * 60 * 1000,
+            refreshToken: account.refresh_token,
+            error: undefined,
+            userId: token.sub || '',
+            userDisplayName: token.name || '',
+            userMail: fallbackEmail,
+            userRegion,
+          };
+        }
       }
 
       // For JWT strategy, we don't need to refresh tokens here
@@ -170,17 +213,35 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }): Promise<Session> {
-      // Pass through user data from JWT (no API calls on every request!)
-      // Full user data can be fetched on-demand via /api/user/profile
+      // Pass through full user profile from JWT
+      // All user data is available for logging/analytics without API calls
+
+      // Fallback to standard JWT claims if custom fields are missing (for old tokens)
+      const userId = token.userId || token.sub || '';
+      const userDisplayName = token.userDisplayName || token.name || '';
+      const userMail = token.userMail || token.email || undefined;
+
+      // Determine region from email if not set in token (for old tokens)
+      let userRegion = token.userRegion;
+      if (!userRegion && userMail) {
+        userRegion = userMail.toLowerCase().includes('newyork') ? 'US' : 'EU';
+      }
+
       return {
         ...session,
         user: {
-          id: token.userId || '',
-          displayName: token.userDisplayName || '',
-          mail: token.userMail,
+          id: userId,
+          displayName: userDisplayName,
+          mail: userMail,
+          givenName: token.userGivenName,
+          surname: token.userSurname,
+          jobTitle: token.userJobTitle,
+          department: token.userDepartment,
+          companyName: token.userCompanyName,
+          region: userRegion,
         } as Session['user'],
         error: token.error,
-        refreshToken: token.refreshToken, // Expose refresh token for on-demand user profile fetching
+        refreshToken: token.refreshToken, // Expose refresh token for on-demand profile refresh if needed
         expires: session.expires,
       };
     },

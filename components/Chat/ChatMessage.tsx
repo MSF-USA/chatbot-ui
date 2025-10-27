@@ -1,11 +1,24 @@
 import { FC, useEffect, useRef, useState } from 'react';
+
 import { useTranslations } from 'next-intl';
-import { Message, MessageType, getChatMessageContent } from '@/types/chat';
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
+
 import { useChat } from '@/lib/hooks/chat/useChat';
-import ChatMessageFile from '@/components/Chat/ChatMessages/ChatMessageFile';
-import ChatMessageImage from '@/components/Chat/ChatMessages/ChatMessageImage';
+import { useConversations } from '@/lib/hooks/conversation/useConversations';
+
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  MessageType,
+  TextMessageContent,
+  getChatMessageContent,
+} from '@/types/chat';
+
+import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import ChatMessageText from '@/components/Chat/ChatMessages/ChatMessageText';
+import { FileContent } from '@/components/Chat/ChatMessages/FileContent';
+import { ImageContent } from '@/components/Chat/ChatMessages/ImageContent';
+import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';
 
 export interface Props {
   message: Message;
@@ -24,7 +37,8 @@ export const ChatMessage: FC<Props> = ({
   onRegenerate,
 }) => {
   const t = useTranslations();
-  const { selectedConversation, updateConversation, conversations } = useConversations();
+  const { selectedConversation, updateConversation, conversations } =
+    useConversations();
   const { isStreaming: messageIsStreaming } = useChat();
 
   const [isEditing, setIsEditing] = useState<boolean>(false);
@@ -38,9 +52,7 @@ export const ChatMessage: FC<Props> = ({
     setIsEditing(!isEditing);
   };
 
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement>,
-  ) => {
+  const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setMessageContent(event.target.value);
     if (textareaRef.current) {
       textareaRef.current.style.height = 'inherit';
@@ -110,48 +122,142 @@ export const ChatMessage: FC<Props> = ({
     }
   }, [isEditing]);
 
-  const isImageMessage =
-    message.messageType === MessageType.IMAGE ||
-    (Array.isArray(message.content) &&
-      message.content.some((content) => content.type === 'image_url'));
-  const isFileMessage =
-    (message.messageType === MessageType.FILE ||
-      (Array.isArray(message.content) &&
-        message.content.some((content) => content.type === 'file_url')));
+  // Check if message has images or files
+  const hasImages =
+    Array.isArray(message.content) &&
+    message.content.some((content) => content.type === 'image_url');
+  const hasFiles =
+    Array.isArray(message.content) &&
+    message.content.some((content) => content.type === 'file_url');
 
-  if (isFileMessage) {
-    return (
-      <ChatMessageFile
-        message={message}
-        handleDeleteMessage={handleDeleteMessage}
-        onEdit={onEdit as any}
-        handleEditMessage={handleEditMessage}
-        handleInputChange={handleInputChange}
-        handlePressEnter={handlePressEnter}
-        setIsTyping={setIsTyping}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        toggleEditing={toggleEditing}
-        textareaRef={textareaRef}
-      />
-    );
-  } else if (isImageMessage) {
-    return (
-      <ChatMessageImage
-        message={message}
-        handleDeleteMessage={handleDeleteMessage}
-        onEdit={onEdit as any}
-        handleEditMessage={handleEditMessage}
-        handleInputChange={handleInputChange}
-        handlePressEnter={handlePressEnter}
-        setIsTyping={setIsTyping}
-        isEditing={isEditing}
-        setIsEditing={setIsEditing}
-        toggleEditing={toggleEditing}
-        textareaRef={textareaRef}
-      />
-    );
-  } else if (
+  // Extract content by type
+  const getContentByType = () => {
+    if (!Array.isArray(message.content))
+      return { images: [], files: [], text: null };
+
+    const images = message.content.filter(
+      (c) => c.type === 'image_url',
+    ) as ImageMessageContent[];
+    const files = message.content.filter(
+      (c) => c.type === 'file_url',
+    ) as FileMessageContent[];
+    const text = message.content.find((c) => c.type === 'text') as
+      | TextMessageContent
+      | undefined;
+
+    return { images, files, text };
+  };
+
+  // Render image messages with composition
+  if (hasImages) {
+    const { images, text } = getContentByType();
+    const textContent = text?.text || '';
+
+    if (message.role === 'user') {
+      return (
+        <UserMessage
+          message={message}
+          messageContent={textContent}
+          setMessageContent={setMessageContent}
+          isEditing={isEditing}
+          textareaRef={textareaRef}
+          handleInputChange={handleInputChange}
+          handlePressEnter={handlePressEnter}
+          setIsTyping={setIsTyping}
+          setIsEditing={setIsEditing}
+          toggleEditing={toggleEditing}
+          handleDeleteMessage={handleDeleteMessage}
+          onEdit={onEdit || (() => {})}
+          selectedConversation={selectedConversation}
+          onRegenerate={onRegenerate}
+        >
+          <ImageContent images={images} />
+          {text && (
+            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+              {text.text}
+            </div>
+          )}
+        </UserMessage>
+      );
+    } else {
+      return (
+        <div className="group text-gray-800 dark:text-gray-100">
+          <AssistantMessage
+            content={textContent}
+            message={message}
+            copyOnClick={copyOnClick}
+            messageIsStreaming={messageIsStreaming}
+            messageIndex={messageIndex}
+            selectedConversation={selectedConversation}
+            messageCopied={messagedCopied}
+            onRegenerate={onRegenerate}
+          >
+            <div className="mb-3">
+              <ImageContent images={images} />
+            </div>
+            {text && <div className="prose dark:prose-invert">{text.text}</div>}
+          </AssistantMessage>
+        </div>
+      );
+    }
+  }
+
+  // Render file messages with composition
+  if (hasFiles) {
+    const { images, files, text } = getContentByType();
+    const textContent = text?.text || '';
+
+    if (message.role === 'user') {
+      return (
+        <UserMessage
+          message={message}
+          messageContent={textContent}
+          setMessageContent={setMessageContent}
+          isEditing={isEditing}
+          textareaRef={textareaRef}
+          handleInputChange={handleInputChange}
+          handlePressEnter={handlePressEnter}
+          setIsTyping={setIsTyping}
+          setIsEditing={setIsEditing}
+          toggleEditing={toggleEditing}
+          handleDeleteMessage={handleDeleteMessage}
+          onEdit={onEdit || (() => {})}
+          selectedConversation={selectedConversation}
+          onRegenerate={onRegenerate}
+        >
+          <FileContent files={files} images={images} />
+          {text && (
+            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+              {text.text}
+            </div>
+          )}
+        </UserMessage>
+      );
+    } else {
+      return (
+        <div className="group text-gray-800 dark:text-gray-100">
+          <AssistantMessage
+            content={textContent}
+            message={message}
+            copyOnClick={copyOnClick}
+            messageIsStreaming={messageIsStreaming}
+            messageIndex={messageIndex}
+            selectedConversation={selectedConversation}
+            messageCopied={messagedCopied}
+            onRegenerate={onRegenerate}
+          >
+            <div className="mb-3">
+              <FileContent files={files} images={images} />
+            </div>
+            {text && <div className="prose dark:prose-invert">{text.text}</div>}
+          </AssistantMessage>
+        </div>
+      );
+    }
+  }
+
+  // Render text-only messages
+  if (
     (message.messageType === MessageType.TEXT ||
       message.messageType === undefined) &&
     typeof message.content === 'string'

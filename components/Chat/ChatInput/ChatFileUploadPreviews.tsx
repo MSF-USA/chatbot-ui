@@ -1,4 +1,4 @@
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, {
   Dispatch,
   FC,
@@ -11,6 +11,38 @@ import { ChatInputSubmitTypes, FilePreview } from '@/types/chat';
 
 import { XIcon } from '@/components/Icons/cancel';
 import FileIcon from '@/components/Icons/file';
+
+/**
+ * Lightbox modal for full-screen image viewing
+ */
+interface LightboxProps {
+  imageUrl: string;
+  onClose: () => void;
+}
+
+const Lightbox: FC<LightboxProps> = ({ imageUrl, onClose }) => {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
+      onClick={onClose}
+    >
+      <button
+        className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <IconX size={32} />
+      </button>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl}
+        alt="Full size preview"
+        className="max-w-[90vw] max-h-[90vh] object-contain"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>
+  );
+};
 
 interface ChatFileUploadPreviewsProps {
   filePreviews: FilePreview[];
@@ -37,6 +69,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   }
 
   const [isHovered, setIsHovered] = useState(false);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
   const removeFilePreview = (
     event: MouseEvent<HTMLButtonElement>,
@@ -52,20 +85,67 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
     });
   };
 
+  const openLightbox = (imageUrl: string) => {
+    setLightboxImage(imageUrl);
+  };
+
   const { name, type, status, previewUrl } = filePreview;
   const isImage = type.startsWith('image/');
   const showProgress = status === 'uploading' && progress !== undefined;
 
   let filename = name;
 
-  // Check if the file is a PDF
-  let isPdf = false;
-  if (filename) {
-    const extension = filename.split('.').pop()?.toLowerCase();
-    if (extension === 'pdf') {
-      isPdf = true;
+  // Get file extension and type info
+  const extension = filename?.split('.').pop()?.toLowerCase() || '';
+  const isPdf = extension === 'pdf';
+
+  // File type styling
+  const getFileTypeStyle = (ext: string) => {
+    switch (ext) {
+      case 'pdf':
+        return {
+          bg: 'bg-red-50 dark:bg-red-950',
+          text: 'text-red-600 dark:text-red-400',
+          border: 'border-red-200 dark:border-red-800',
+        };
+      case 'doc':
+      case 'docx':
+        return {
+          bg: 'bg-blue-50 dark:bg-blue-950',
+          text: 'text-blue-600 dark:text-blue-400',
+          border: 'border-blue-200 dark:border-blue-800',
+        };
+      case 'xls':
+      case 'xlsx':
+        return {
+          bg: 'bg-green-50 dark:bg-green-950',
+          text: 'text-green-600 dark:text-green-400',
+          border: 'border-green-200 dark:border-green-800',
+        };
+      case 'ppt':
+      case 'pptx':
+        return {
+          bg: 'bg-orange-50 dark:bg-orange-950',
+          text: 'text-orange-600 dark:text-orange-400',
+          border: 'border-orange-200 dark:border-orange-800',
+        };
+      case 'txt':
+      case 'md':
+        return {
+          bg: 'bg-gray-50 dark:bg-gray-900',
+          text: 'text-gray-600 dark:text-gray-400',
+          border: 'border-gray-200 dark:border-gray-700',
+        };
+      default:
+        return {
+          bg: 'bg-gray-50 dark:bg-gray-900',
+          text: 'text-gray-600 dark:text-gray-400',
+          border: 'border-gray-200 dark:border-gray-700',
+        };
     }
-  }
+  };
+
+  const fileStyle = getFileTypeStyle(extension);
 
   // Determine if the filename is long
   const isLongFilename = filename && filename.length > 16;
@@ -73,87 +153,121 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   const textClassName = isLongFilename ? 'animate-scroll-text-auto' : '';
 
   return (
-    <div
-      className="relative rounded-md overflow-hidden border border-black dark:border-white bg-white dark:bg-[#2f2f2f] text-black dark:text-white m-1 p-2 group"
-      style={{
-        width: 'calc(50% - 0.5rem)',
-        maxWidth: '280px',
-        minWidth: '200px',
-        height: isImage ? 'auto' : '74px', // Fixed height for non-image files
-      }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      onTouchStart={() => setIsHovered(true)}
-      onTouchEnd={() => setTimeout(() => setIsHovered(false), 3000)} // Hide after 3 seconds on mobile
-    >
-      {isImage ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          alt="Preview"
-          className="object-cover w-full h-auto max-h-[150px]"
-          src={previewUrl}
+    <>
+      {/* Render lightbox if image is selected */}
+      {lightboxImage && (
+        <Lightbox
+          imageUrl={lightboxImage}
+          onClose={() => setLightboxImage(null)}
         />
-      ) : (
-        <div className="flex items-center h-full pr-8">
-          {' '}
-          {/* Added right padding to avoid text under remove button */}
-          <FileIcon className="w-8 h-8 mr-2 flex-shrink-0" />
-          {filename && (
-            <div className="flex flex-col overflow-hidden max-w-full">
-              <div className="relative overflow-hidden w-full">
-                <span
-                  className={`block whitespace-nowrap ${textClassName}`}
-                  style={{ paddingRight: '8px' }}
-                >
-                  {filename}
-                </span>
-              </div>
+      )}
 
-              {/* Display warning if file is a PDF */}
-              {isPdf && status === 'completed' && (
-                <span
-                  title="Currently only the text content of PDFs gets processed; images, charts, and other visualizations are not included."
-                  className="flex items-center text-xs text-blue-500 mt-1"
-                >
-                  <IconInfoCircle size={16} className="flex-shrink-0" />
-                  <span className="ml-1 whitespace-nowrap">Text Only</span>
-                </span>
+      <div
+        className="relative rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 group"
+        style={{
+          width: 'calc(50% - 0.25rem)',
+          maxWidth: '280px',
+          minWidth: '200px',
+          height: isImage ? '150px' : '80px',
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => setTimeout(() => setIsHovered(false), 3000)}
+      >
+        {isImage ? (
+          <div className="relative w-full h-full">
+            {previewUrl ? (
+              <>
+                <div
+                  className="w-full h-full cursor-pointer hover:opacity-90 transition-opacity"
+                  style={{
+                    backgroundImage: `url(${previewUrl})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                  }}
+                  onClick={() => openLightbox(previewUrl)}
+                />
+                {/* Shimmer overlay during upload */}
+                {status === 'uploading' && (
+                  <div className="absolute inset-0 pointer-events-none">
+                    <div
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer"
+                      style={{
+                        backgroundSize: '200% 100%',
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/20" />
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full relative overflow-hidden bg-gray-200 dark:bg-gray-700">
+                {/* Skeleton shimmer for loading preview */}
+                <div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 dark:via-white/10 to-transparent animate-shimmer"
+                  style={{
+                    backgroundSize: '200% 100%',
+                  }}
+                />
+                <span className="sr-only">Loading preview...</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div
+            className={`flex flex-col h-full p-3 ${fileStyle.bg} border ${fileStyle.border} transition-colors`}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div
+                className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${fileStyle.text} bg-white dark:bg-black/20`}
+              >
+                {extension}
+              </div>
+              {status === 'uploading' && progress !== undefined && (
+                <div className={`text-xs font-medium ${fileStyle.text}`}>
+                  {Math.round(progress)}%
+                </div>
               )}
             </div>
-          )}
-        </div>
-      )}
+            <div className="flex-1 min-w-0">
+              <div className={`text-sm font-medium truncate ${fileStyle.text}`}>
+                {filename}
+              </div>
+              {isPdf && status === 'completed' && (
+                <div
+                  className={`flex items-center gap-1 text-xs mt-1 ${fileStyle.text}`}
+                >
+                  <IconInfoCircle size={12} />
+                  <span>Text extraction only</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
-      {showProgress && (
-        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700">
-          <div
-            className="h-full bg-blue-500 transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
+        {/* Remove button */}
+        <button
+          className={`absolute top-2 right-2 rounded-full bg-white dark:bg-gray-800 shadow-lg ${
+            isHovered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
+          } transition-opacity duration-200 hover:scale-110`}
+          onClick={(event) => removeFilePreview(event, filePreview)}
+          aria-label="Remove"
+        >
+          <XIcon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          <span className="sr-only">Remove</span>
+        </button>
 
-      {status === 'uploading' && progress !== undefined && (
-        <div className="absolute bottom-2 left-2 text-xs text-white bg-black bg-opacity-75 px-2 py-0.5 rounded">
-          {Math.round(progress)}%
-        </div>
-      )}
-
-      {status !== 'completed' && status !== 'uploading' && (
-        <div className="absolute bottom-1 left-1 text-xs text-white bg-black bg-opacity-50 px-1 rounded">
-          {status}
-        </div>
-      )}
-
-      <button
-        className={`absolute top-1 right-1 rounded-full ${isHovered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'} transition-opacity duration-200`}
-        onClick={(event) => removeFilePreview(event, filePreview)}
-        aria-label="Remove"
-      >
-        <XIcon className="dark:bg-[#212121] bg-white rounded w-5 h-5" />
-        <span className="sr-only">Remove</span>
-      </button>
-    </div>
+        {/* Status indicator */}
+        {status === 'failed' && (
+          <div className="absolute inset-0 bg-red-500/10 backdrop-blur-sm flex items-center justify-center">
+            <span className="text-red-600 dark:text-red-400 text-sm font-medium">
+              Failed to upload
+            </span>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 
@@ -168,16 +282,24 @@ const ChatFileUploadPreviews: FC<ChatFileUploadPreviewsProps> = ({
   }
 
   return (
-    <div className="flex flex-wrap max-w-full overflow-x-auto py-2">
-      {filePreviews.map((filePreview, index) => (
-        <ChatFileUploadPreview
-          key={`${filePreview}-${index}`}
-          filePreview={filePreview}
-          setFilePreviews={setFilePreviews}
-          setSubmitType={setSubmitType}
-          progress={uploadProgress?.[filePreview.name]}
-        />
-      ))}
+    <div className="px-4 pt-2 bg-white dark:bg-[#212121]">
+      <div className="mb-1.5">
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          {filePreviews.length}{' '}
+          {filePreviews.length === 1 ? 'attachment' : 'attachments'}
+        </span>
+      </div>
+      <div className="flex flex-wrap gap-2 mb-2">
+        {filePreviews.map((filePreview, index) => (
+          <ChatFileUploadPreview
+            key={`${filePreview}-${index}`}
+            filePreview={filePreview}
+            setFilePreviews={setFilePreviews}
+            setSubmitType={setSubmitType}
+            progress={uploadProgress?.[filePreview.name]}
+          />
+        ))}
+      </div>
     </div>
   );
 };

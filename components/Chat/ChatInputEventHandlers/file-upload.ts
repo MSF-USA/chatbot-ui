@@ -3,10 +3,10 @@ import toast from 'react-hot-toast';
 
 import {
   ChatInputSubmitTypes,
+  FileFieldValue,
   FileMessageContent,
   FilePreview,
   ImageMessageContent,
-  FileFieldValue,
 } from '@/types/chat';
 
 import { isChangeEvent } from '@/components/Chat/ChatInputEventHandlers/common';
@@ -99,11 +99,11 @@ export async function onFileUpload(
     return;
   }
 
-  // Initialize all file previews at once before processing
+  // Initialize all file previews at once before processing - start with uploading status
   const allFilePreviews: FilePreview[] = Array.from(files).map((file) => ({
     name: file.name,
     type: file.type,
-    status: 'pending',
+    status: 'uploading',
     previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : '',
   }));
 
@@ -133,31 +133,22 @@ export async function onFileUpload(
 
     if (isImage) {
       // Handle image upload
-      return new Promise<void>((resolve, reject) => {
-        onImageUpload(
-          file,
-          '',
-          setFilePreviews,
-          setSubmitType,
-          setFileFieldValue,
-        );
-        resolve();
-      });
+      return onImageUpload(
+        file,
+        '',
+        setFilePreviews,
+        setSubmitType,
+        setFileFieldValue,
+        setUploadProgress,
+      );
     } else {
       // Handle non-image file upload
       return new Promise<void>((resolve, reject) => {
         // Implement the upload logic here
         // For simplicity, let's assume uploading the file to your server
+        // Status is already set to 'uploading' when preview is created
         const chunkSize = 1024 * 1024 * 5; // 5MB chunks
         let uploadedBytes = 0;
-
-        setFilePreviews((prevPreviews) =>
-          prevPreviews.map((preview) =>
-            preview.name === file.name
-              ? { ...preview, status: 'uploading' }
-              : preview,
-          ),
-        );
 
         const uploadChunk = () => {
           const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
@@ -170,7 +161,7 @@ export async function onFileUpload(
 
             try {
               const response = await fetch(
-                `/api/v2/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
+                `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
                 {
                   method: 'POST',
                   body: base64Chunk,

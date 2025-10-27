@@ -24,9 +24,18 @@ export function createBlobStorageClient(
       user: session.user,
     });
 
+  // AzureBlobStorage uses DefaultAzureCredential (Entra ID), no key needed
+  // The key parameter is optional and unused - included only for backward compatibility
+  const storageKey = getEnvVariable({
+    name: 'AZURE_BLOB_STORAGE_KEY',
+    throwErrorOnFail: false,
+    defaultValue: undefined,
+    user: session.user,
+  });
+
   return new AzureBlobStorage(
     getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user: session.user }),
-    getEnvVariable({ name: 'AZURE_BLOB_STORAGE_KEY', user: session.user }),
+    storageKey,
     containerName,
     session.user,
   );

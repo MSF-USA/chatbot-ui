@@ -72,6 +72,16 @@ module.exports = {
           '0%': { transform: 'translateY(1rem)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        'modal-in': {
+          '0%': {
+            transform: 'translateY(1rem) scale(0.95)',
+            opacity: '0',
+          },
+          '100%': {
+            transform: 'translateY(0) scale(1)',
+            opacity: '1',
+          },
+        },
         'slide-up': {
           '0%': { transform: 'translateY(0.5rem)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
@@ -83,6 +93,10 @@ module.exports = {
         'slide-down-reverse': {
           '0%': { transform: 'translateY(-0.5rem)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         },
       },
       animation: {
@@ -97,11 +111,14 @@ module.exports = {
         'bounce-dot-3': 'bounce-dot 1.4s infinite 0.4s',
         breathing: 'breathing 1.5s ease-in-out infinite',
         'fade-in': 'fade-in 0.5s ease-out forwards',
+        'fade-in-fast': 'fade-in 0.2s ease-out forwards',
         'fade-in-top': 'slide-in-from-top 0.7s ease-out forwards',
         'fade-in-bottom': 'slide-in-from-bottom 0.7s ease-out 0.15s forwards',
+        'modal-in': 'modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
         'slide-up': 'slide-up 0.2s ease-out',
         'slide-down': 'slide-down 0.2s ease-in',
         'slide-down-reverse': 'slide-down-reverse 0.2s ease-out',
+        shimmer: 'shimmer 4s linear infinite',
       },
     },
   },

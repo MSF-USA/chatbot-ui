@@ -6,7 +6,7 @@ import {
   IconVolume,
   IconVolumeOff,
 } from '@tabler/icons-react';
-import { FC, MouseEvent, useEffect, useRef, useState } from 'react';
+import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
 import { parseThinkingContent } from '@/lib/utils/app/thinking';
 
@@ -29,6 +29,7 @@ interface AssistantMessageProps {
   selectedConversation: Conversation | null;
   messageCopied: boolean;
   onRegenerate?: () => void;
+  children?: ReactNode; // Allow custom content (images, files, etc.)
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
@@ -40,6 +41,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   selectedConversation,
   messageCopied,
   onRegenerate,
+  children,
 }) => {
   const [processedContent, setProcessedContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
@@ -266,24 +268,40 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             />
           )}
 
-          <div className="flex-1 w-full">
-            <div
-              className="prose dark:prose-invert max-w-none w-full"
-              style={{ maxWidth: 'none' }}
-            >
-              <CitationStreamdown
-                conversation={selectedConversation}
-                message={message}
-                citations={citations}
-                components={customMarkdownComponents}
-                isAnimating={messageIsStreaming}
-                controls={true}
-                shikiTheme={['github-light', 'github-dark']}
-                mermaidConfig={mermaidConfig}
+          {/* Try Again button for failed messages */}
+          {message?.error && onRegenerate && (
+            <div className="mb-4">
+              <button
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-colors"
+                onClick={onRegenerate}
+                aria-label="Try again"
               >
-                {processedContent}
-              </CitationStreamdown>
+                <IconRefresh size={18} />
+                Try Again
+              </button>
             </div>
+          )}
+
+          <div className="flex-1 w-full">
+            {children || (
+              <div
+                className="prose dark:prose-invert max-w-none w-full"
+                style={{ maxWidth: 'none' }}
+              >
+                <CitationStreamdown
+                  conversation={selectedConversation}
+                  message={message}
+                  citations={citations}
+                  components={customMarkdownComponents}
+                  isAnimating={messageIsStreaming}
+                  controls={true}
+                  shikiTheme={['github-light', 'github-dark']}
+                  mermaidConfig={mermaidConfig}
+                >
+                  {processedContent}
+                </CitationStreamdown>
+              </div>
+            )}
           </div>
 
           {/* Action buttons at the bottom of the message */}
@@ -296,20 +314,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             >
               {messageCopied ? <IconCheck size={18} /> : <IconCopy size={18} />}
             </button>
-
-            {/* Regenerate button - only show on last assistant message */}
-            {onRegenerate &&
-              !messageIsStreaming &&
-              selectedConversation &&
-              messageIndex === selectedConversation.messages.length - 1 && (
-                <button
-                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                  onClick={onRegenerate}
-                  aria-label="Regenerate response"
-                >
-                  <IconRefresh size={18} />
-                </button>
-              )}
 
             {/* Listen button */}
             <button

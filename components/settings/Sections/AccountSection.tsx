@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 import { SignInSignOut } from '../SignInSignOut';
 
@@ -71,12 +72,13 @@ export const AccountSection: FC<AccountSectionProps> = ({
               {(user?.displayName || fullProfile?.displayName) && (
                 <div className="col-span-2 mb-2">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    <div className="h-10 w-10 rounded-full bg-blue-100 dark:bg-blue-900/50 flex items-center justify-center overflow-hidden flex-shrink-0 relative">
                       {fullProfile?.photoUrl ? (
-                        <img
+                        <Image
                           src={fullProfile.photoUrl}
                           alt={user?.displayName || 'User'}
-                          className="h-10 w-10 rounded-full object-cover"
+                          fill
+                          className="rounded-full object-cover"
                         />
                       ) : (
                         <svg

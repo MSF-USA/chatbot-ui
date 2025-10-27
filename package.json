@@ -6,7 +6,7 @@
     "dev": "NODE_OPTIONS='--max-http-header-size=32768' next dev",
     "build": "NODE_OPTIONS='--max-http-header-size=32768' next build",
     "start": "NODE_OPTIONS='--max-http-header-size=32768' next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "test:node": "vitest --run --config ./vitest.config.node.mts",
     "test:jsdom": "vitest --run --config ./vitest.config.jsdom.mts",

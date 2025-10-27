@@ -11,11 +11,10 @@ import {
   IconShield,
   IconUser,
 } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 import { FC, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
-
-import { isUSBased } from '@/lib/utils/app/userAuth';
 
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Settings } from '@/types/settings';
@@ -47,6 +46,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
   dispatch,
 }) => {
   const t = useTranslations();
+  const { data: session } = useSession();
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
   const confirmReset = () => {
@@ -172,7 +172,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
         {/* Feedback link - styled similar to ChatTopbar */}
         <a
           href={`mailto:${
-            isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
+            session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
           }`}
           className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-sm"
           title={t('sendFeedback')}

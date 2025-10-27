@@ -30,8 +30,16 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   const [currentLocale, setCurrentLocale] = useState<string>(userLocale);
   const [availableLocales, setAvailableLocales] = useState<string[]>(['en']);
 
-  // Get user ID
-  const userId = user?.id || user?.mail || '';
+  // Use email (mail) as the primary identifier for terms acceptance
+  // This ensures consistency with checkUserTermsAcceptance
+  const userId = user?.mail || user?.id || '';
+
+  // Debug logging for missing user data
+  useEffect(() => {
+    if (!userId) {
+      console.error('Terms Modal: Missing user ID/email. User object:', user);
+    }
+  }, [userId, user]);
 
   // Fetch terms data
   useEffect(() => {
@@ -66,7 +74,17 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
 
   // Handle final acceptance of all terms
   const handleAcceptAllTerms = async () => {
-    if (!termsData || !userId) return;
+    if (!termsData) {
+      console.error('Terms Modal: Missing terms data');
+      setError('Terms data not loaded. Please refresh the page.');
+      return;
+    }
+
+    if (!userId) {
+      console.error('Terms Modal: Missing user ID. User object:', user);
+      setError('Unable to identify user. Please sign out and sign back in.');
+      return;
+    }
 
     try {
       // Save acceptance for all documents with current locale
@@ -107,7 +125,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         <div className="bg-white dark:bg-[#1f1f1f] p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-gray-300 dark:border-gray-600">
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-12 h-12 mb-3 rounded-full bg-blue-100 dark:bg-blue-900/30">
-              <div className="w-6 h-6 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
             </div>
             <p className="text-sm font-medium text-gray-800 dark:text-white">
               {t('Loading terms and conditions_ellipsis')}

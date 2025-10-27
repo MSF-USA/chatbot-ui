@@ -1,9 +1,10 @@
-import { IconEdit, IconTrash } from '@tabler/icons-react';
+import { IconEdit, IconRefresh, IconTrash } from '@tabler/icons-react';
 import {
   Dispatch,
   FC,
   KeyboardEventHandler,
   MouseEventHandler,
+  ReactNode,
   SetStateAction,
   useEffect,
   useState,
@@ -29,6 +30,8 @@ interface UserMessageProps {
   handleDeleteMessage: MouseEventHandler<HTMLButtonElement>;
   onEdit: (message: Message) => void;
   selectedConversation: Conversation | null;
+  onRegenerate?: () => void;
+  children?: ReactNode; // Allow custom content (images, files, etc.)
 }
 
 export const UserMessage: FC<UserMessageProps> = ({
@@ -45,6 +48,8 @@ export const UserMessage: FC<UserMessageProps> = ({
   toggleEditing,
   handleDeleteMessage,
   onEdit,
+  onRegenerate,
+  children,
 }) => {
   const t = useTranslations();
   const { role, content, messageType } = message;
@@ -120,19 +125,32 @@ export const UserMessage: FC<UserMessageProps> = ({
               </div>
             </div>
           ) : (
-            <div className="prose prose-invert prose-p:my-2 text-white max-w-none">
-              <Streamdown
-                controls={true}
-                shikiTheme={['github-light', 'github-dark']}
-              >
-                {localMessageContent}
-              </Streamdown>
-            </div>
+            <>
+              {children || (
+                <div className="prose prose-invert prose-p:my-2 text-white max-w-none">
+                  <Streamdown
+                    controls={true}
+                    shikiTheme={['github-light', 'github-dark']}
+                  >
+                    {localMessageContent}
+                  </Streamdown>
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {!isEditing && (
           <div className="flex gap-2 mt-1">
+            {onRegenerate && (
+              <button
+                className="visible md:invisible md:group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                onClick={onRegenerate}
+                aria-label="Retry message"
+              >
+                <IconRefresh size={18} />
+              </button>
+            )}
             <button
               className="visible md:invisible md:group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
               onClick={toggleEditing}

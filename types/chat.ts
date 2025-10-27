@@ -90,6 +90,7 @@ export interface Message {
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
   thinking?: string;
+  error?: boolean; // Indicates if the message generation failed
 }
 
 export type Role = 'system' | 'assistant' | 'user';

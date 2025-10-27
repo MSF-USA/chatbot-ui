@@ -186,7 +186,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.',
-    isLegacy: false,
+    isLegacy: true, // Disabled temporarily
     provider: 'xai',
     knowledgeCutoff: 'May 13, 2025 12:16 AM',
     sdk: 'openai',

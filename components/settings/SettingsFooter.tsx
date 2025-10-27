@@ -1,10 +1,8 @@
 import { IconExternalLink } from '@tabler/icons-react';
+import { useSession } from 'next-auth/react';
 import React, { FC } from 'react';
 
-import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
-
-import { isUSBased } from '@/lib/utils/app/userAuth';
 
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
@@ -26,6 +24,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
   onClose,
 }) => {
   const t = useTranslations();
+  const { data: session } = useSession();
 
   return (
     <div className="flex flex-col px-4 py-3 border-t border-gray-300 dark:border-neutral-700">
@@ -49,7 +48,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
         </div>
         <a
           href={`mailto:${
-            isUSBased(userEmail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
+            session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
           }`}
           className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm"
         >

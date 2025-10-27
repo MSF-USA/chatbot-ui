@@ -868,11 +868,16 @@ export function Sidebar() {
                 />
               </div>
             ) : userPhotoUrl ? (
-              <img
-                src={userPhotoUrl}
-                alt={session?.user?.displayName || 'User'}
-                className={`rounded-full object-cover shrink-0 transition-all duration-300 ${showChatbar ? 'h-10 w-10' : 'h-8 w-8'}`}
-              />
+              <div
+                className={`relative rounded-full shrink-0 transition-all duration-300 ${showChatbar ? 'h-10 w-10' : 'h-8 w-8'}`}
+              >
+                <Image
+                  src={userPhotoUrl}
+                  alt={session?.user?.displayName || 'User'}
+                  fill
+                  className="rounded-full object-cover"
+                />
+              </div>
             ) : session?.user?.displayName ? (
               <div
                 className={`rounded-full bg-[#D7211E] flex items-center justify-center text-white font-semibold shrink-0 transition-all duration-300 ${showChatbar ? 'h-10 w-10' : 'h-8 w-8'}`}

@@ -462,15 +462,13 @@ export const ChatInput = ({
       )}
 
       {filePreviews.length > 0 && (
-        <div className="px-4 py-2 max-h-52 overflow-y-auto">
-          <div className="w-full flex justify-center items-center space-x-2">
-            <ChatFileUploadPreviews
-              filePreviews={filePreviews}
-              setFilePreviews={setFilePreviews}
-              setSubmitType={setSubmitType}
-              uploadProgress={uploadProgress}
-            />
-          </div>
+        <div className="max-h-52 overflow-y-auto">
+          <ChatFileUploadPreviews
+            filePreviews={filePreviews}
+            setFilePreviews={setFilePreviews}
+            setSubmitType={setSubmitType}
+            uploadProgress={uploadProgress}
+          />
         </div>
       )}
 
