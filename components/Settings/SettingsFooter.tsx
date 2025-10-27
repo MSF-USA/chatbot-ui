@@ -1,12 +1,10 @@
 import { IconExternalLink } from '@tabler/icons-react';
-import { FC } from 'react';
+import { FC, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslation } from 'next-i18next';
 
-import { isUSBased } from '@/utils/app/userAuth';
-
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+import { SupportModal } from '@/components/Support/SupportModal';
 
 interface SettingsFooterProps {
   version: string;
@@ -26,6 +24,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
   onClose,
 }) => {
   const { t } = useTranslation('settings');
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col px-4 py-3 border-t border-gray-300 dark:border-neutral-700">
@@ -47,19 +46,23 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
         <div className="text-gray-500 text-sm">
           v{version}.{build}.{env}
         </div>
-        <a
-          href={`mailto:${
-            isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
-          }`}
-          className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm"
+        <button
+          onClick={() => setIsSupportModalOpen(true)}
+          className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm hover:opacity-80 transition-opacity"
         >
           <IconExternalLink
             size={16}
             className={'inline mr-1 text-black dark:text-white'}
           />
           {t('sendFeedback')}
-        </a>
+        </button>
       </div>
+
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        userEmail={user?.mail}
+      />
     </div>
   );
 };

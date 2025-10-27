@@ -14,9 +14,8 @@ import { FC, useState } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
-import { isUSBased } from '@/utils/app/userAuth';
+import { SupportModal } from '@/components/Support/SupportModal';
 
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Settings } from '@/types/settings';
 
 import { SidebarButton } from '../Sidebar/SidebarButton';
@@ -47,6 +46,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
 }) => {
   const { t } = useTranslation('settings');
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
 
   const confirmReset = () => {
     setShowResetConfirmation(true);
@@ -160,11 +160,9 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           </div>
         </div>
 
-        {/* Feedback link - styled similar to ChatTopbar */}
-        <a
-          href={`mailto:${
-            isUSBased(user?.mail ?? '') ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
-          }`}
+        {/* Feedback button */}
+        <button
+          onClick={() => setIsSupportModalOpen(true)}
           className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-sm"
           title={t('sendFeedback')}
         >
@@ -173,7 +171,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
             className="mr-2 text-black dark:text-white/50"
           />
           <span>{t('sendFeedback')}</span>
-        </a>
+        </button>
 
         {/* Reset settings button - made more distinct */}
         <button
@@ -214,6 +212,13 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           </div>
         </div>
       )}
+
+      {/* Support Modal */}
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        userEmail={user?.mail}
+      />
     </div>
   );
 };

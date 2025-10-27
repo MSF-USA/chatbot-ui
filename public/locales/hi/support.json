@@ -1,0 +1,16 @@
+{
+  "Support": "समर्थन",
+  "Choose Your Organization": "अपना संगठन चुनें",
+  "Select your organization to get the right support contact": "सही समर्थन संपर्क प्राप्त करने के लिए अपना संगठन चुनें",
+  "MSF USA": "MSF USA",
+  "MSF USA Description": "MSF USA कर्मचारी सदस्यों के लिए",
+  "OCA HQ": "OCA HQ",
+  "OCA HQ Description": "एम्स्टर्डम परिचालन केंद्र मुख्यालय के कर्मचारियों के लिए",
+  "OCG HQ": "OCG HQ",
+  "OCG HQ Description": "जिनेवा परिचालन केंद्र मुख्यालय के कर्मचारियों के लिए",
+  "Field Staff / Other": "क्षेत्रीय कर्मचारी / अन्य",
+  "Field Staff Description": "क्षेत्रीय कर्मचारियों और अन्य MSF कर्मियों के लिए",
+  "Field Staff Message": "क्षेत्रीय कर्मचारियों और अन्य MSF कर्मियों के लिए:\n\n1. पहले अपने स्थानीय IT समर्थन से संपर्क करें\n2. यदि हल नहीं हुआ, तो उन्हें आपके परिचालन केंद्र (OC) के IT विभाग को एस्केलेट करना चाहिए\n3. यदि फिर भी हल नहीं हुआ, तो परिचालन केंद्र का IT विभाग SITS (साझा IT सेवाएं) को एस्केलेट कर सकता है",
+  "Close": "बंद करें",
+  "Contact Support": "समर्थन से संपर्क करें"
+}

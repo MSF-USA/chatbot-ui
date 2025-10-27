@@ -1,0 +1,16 @@
+{
+  "Support": "支持",
+  "Choose Your Organization": "选择您的组织",
+  "Select your organization to get the right support contact": "选择您的组织以获取正确的支持联系方式",
+  "MSF USA": "MSF USA",
+  "MSF USA Description": "面向MSF USA员工",
+  "OCA HQ": "OCA HQ",
+  "OCA HQ Description": "面向阿姆斯特丹运营中心总部员工",
+  "OCG HQ": "OCG HQ",
+  "OCG HQ Description": "面向日内瓦运营中心总部员工",
+  "Field Staff / Other": "现场工作人员/其他",
+  "Field Staff Description": "面向现场工作人员和其他MSF人员",
+  "Field Staff Message": "面向现场工作人员和其他MSF人员：\n\n1. 首先联系您当地的IT支持\n2. 如果未解决，他们应将问题升级到您的运营中心(OC)IT部门\n3. 如果仍未解决，运营中心IT部门可以将问题升级到SITS(共享IT服务)",
+  "Close": "关闭",
+  "Contact Support": "联系支持"
+}

@@ -19,3 +19,7 @@ export const FEEDBACK_EMAIL: string = checkValidEmail(
   process.env.NEXT_PUBLIC_FEEDBACK_EMAIL,
   'ai.team@amsterdam.msf.org',
 );
+export const OCG_FEEDBACK_EMAIL: string = checkValidEmail(
+  process.env.NEXT_PUBLIC_OCG_FEEDBACK_EMAIL,
+  'ai-support.gva@geneva.msf.org',
+);

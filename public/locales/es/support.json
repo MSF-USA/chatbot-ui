@@ -1,0 +1,16 @@
+{
+  "Support": "Soporte",
+  "Choose Your Organization": "Elija su organización",
+  "Select your organization to get the right support contact": "Seleccione su organización para obtener el contacto de soporte adecuado",
+  "MSF USA": "MSF USA",
+  "MSF USA Description": "Para miembros del personal de MSF USA",
+  "OCA HQ": "OCA HQ",
+  "OCA HQ Description": "Para el personal de la sede del Centro Operacional de Ámsterdam",
+  "OCG HQ": "OCG HQ",
+  "OCG HQ Description": "Para el personal de la sede del Centro Operacional de Ginebra",
+  "Field Staff / Other": "Personal de campo / Otro",
+  "Field Staff Description": "Para personal de campo y otro personal de MSF",
+  "Field Staff Message": "Para personal de campo y otros miembros de MSF:\n\n1. Contacte primero a su soporte de TI local\n2. Si no se resuelve, deben escalarlo al departamento de TI de su Centro Operacional (CO)\n3. Si aún no se resuelve, el departamento de TI del CO puede escalarlo a SITS (Servicios de TI Compartidos)",
+  "Close": "Cerrar",
+  "Contact Support": "Contactar soporte"
+}
