@@ -64,18 +64,27 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  const MIME_TYPE_MAP: Record<string, string> = {
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    png: 'image/png',
+    gif: 'image/gif',
+    pdf: 'application/pdf',
+    doc: 'application/msword',
+    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    xls: 'application/vnd.ms-excel',
+    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ppt: 'application/vnd.ms-powerpoint',
+    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    txt: 'text/plain',
+    md: 'text/markdown',
+  };
+
   const getContentType = (extension: string): string => {
-    switch (extension.toLowerCase().trim()) {
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'png':
-        return 'image/png';
-      case 'gif':
-        return 'image/gif';
-      default:
-        return 'application/octet-stream';
-    }
+    return (
+      MIME_TYPE_MAP[extension.toLowerCase().trim()] ||
+      'application/octet-stream'
+    );
   };
 
   const uploadFileToBlobStorage = async (data: string) => {

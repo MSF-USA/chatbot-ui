@@ -115,21 +115,37 @@ export async function onFileUpload(
 
   const uploadPromises = Array.from(files).map(async (file) => {
     if (!isFileAllowed(file)) {
-      toast.error(`Invalid file type provided: ${file.name}`);
+      toast.error(`Invalid file type: ${file.name}`);
+      // Remove the failed file from previews
+      setFilePreviews((prevPreviews) =>
+        prevPreviews.filter((preview) => preview.name !== file.name),
+      );
       return;
     }
 
     if (!isFileSupported(file)) {
-      toast.error(`This file type is currently unsupported: ${file.name}`);
-      return;
-    }
-
-    if (file.size > 10485760) {
-      toast.error(`File ${file.name} must be less than 10MB.`);
+      toast.error(
+        `Unsupported file type: ${file.name}. Audio and video files are not supported.`,
+      );
+      // Remove the failed file from previews
+      setFilePreviews((prevPreviews) =>
+        prevPreviews.filter((preview) => preview.name !== file.name),
+      );
       return;
     }
 
     const isImage = file.type.startsWith('image/');
+    const maxSize = isImage ? 5242880 : 10485760; // 5MB for images, 10MB for files
+    const maxSizeMB = isImage ? 5 : 10;
+
+    if (file.size > maxSize) {
+      toast.error(`${file.name} must be less than ${maxSizeMB}MB.`);
+      // Remove the failed file from previews
+      setFilePreviews((prevPreviews) =>
+        prevPreviews.filter((preview) => preview.name !== file.name),
+      );
+      return;
+    }
 
     if (isImage) {
       // Handle image upload
@@ -194,28 +210,15 @@ export async function onFileUpload(
                   };
 
                   setFileFieldValue((prevValue) => {
-                    let newFileArray: FileMessageContent[];
+                    let newFileArray: (
+                      | FileMessageContent
+                      | ImageMessageContent
+                    )[];
                     if (prevValue && Array.isArray(prevValue)) {
-                      newFileArray = [
-                        ...(
-                          prevValue as (
-                            | FileMessageContent
-                            | ImageMessageContent
-                          )[]
-                        ).filter(
-                          (item): item is FileMessageContent =>
-                            (item as FileMessageContent).type === 'file_url',
-                        ),
-                        newValue,
-                      ];
-                    } else if (
-                      prevValue &&
-                      (prevValue as FileMessageContent).type === 'file_url'
-                    ) {
-                      newFileArray = [
-                        prevValue as FileMessageContent,
-                        newValue,
-                      ];
+                      // Keep both images and files - don't filter out images
+                      newFileArray = [...prevValue, newValue];
+                    } else if (prevValue) {
+                      newFileArray = [prevValue, newValue];
                     } else {
                       newFileArray = [newValue];
                     }

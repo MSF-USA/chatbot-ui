@@ -5,7 +5,9 @@ import {
   IconFileMusic,
   IconLanguage,
   IconLink,
+  IconPaperclip,
   IconSearch,
+  IconWorld,
 } from '@tabler/icons-react';
 import React, {
   Dispatch,
@@ -29,14 +31,12 @@ import {
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import ChatInputSearch from '@/components/Chat/ChatInput/ChatInputSearch';
 import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ImageIcon from '@/components/Icons/image';
 
 import { DropdownCategoryGroup } from './DropdownCategoryGroup';
 import { MenuItem } from './DropdownMenuItem';
-import { DropdownSearchInput } from './DropdownSearchInput';
 
 interface DropdownProps {
   onFileUpload: (
@@ -56,15 +56,9 @@ interface DropdownProps {
   handleSend: () => void;
   textFieldValue: string;
   onCameraClick: () => void;
-  // New props for agent-based web search
-  onSend?: (message: Message, forceStandardChat?: boolean) => void;
-  setRequestStatusMessage?: Dispatch<SetStateAction<string | null>>;
-  setProgress?: Dispatch<SetStateAction<number | null>>;
-  stopConversationRef?: { current: boolean };
-  apiKey?: string;
-  systemPrompt?: string;
-  temperature?: number;
   openDownward?: boolean;
+  webSearchMode: boolean;
+  setWebSearchMode: Dispatch<SetStateAction<boolean>>;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -78,34 +72,18 @@ const Dropdown: React.FC<DropdownProps> = ({
   handleSend,
   textFieldValue,
   onCameraClick,
-  onSend,
-  setRequestStatusMessage,
-  setProgress,
-  stopConversationRef,
-  apiKey,
-  systemPrompt,
-  temperature,
   openDownward = false,
+  webSearchMode,
+  setWebSearchMode,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-
-  const [SearchConfig, setSearchConfig] = useState<{
-    isOpen: boolean;
-    mode: 'search' | 'url';
-  }>({
-    isOpen: false,
-    mode: 'search',
-  });
-
   const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
-  const [filterQuery, setFilterQuery] = useState('');
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [hasCameraSupport, setHasCameraSupport] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const filterInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const checkCameraSupport = async () => {
@@ -136,8 +114,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     setTimeout(() => {
       setIsOpen(false);
       setIsClosing(false);
-      setFilterQuery('');
-      setSelectedIndex(0);
+      setSelectedIndex(-1);
     }, 200); // Match animation duration
   };
 
@@ -150,20 +127,22 @@ const Dropdown: React.FC<DropdownProps> = ({
   const menuItems: MenuItem[] = [
     {
       id: 'search',
-      icon: <IconSearch size={18} className="mr-3 text-blue-500" />,
-      label: 'Web Search',
-      tooltip: 'Web Search',
+      icon: <IconWorld size={16} className="mr-2 text-blue-500" />,
+      label: webSearchMode ? '✓ Web Search' : 'Web Search',
+      infoTooltip:
+        '🔍 Web Search Mode\n\n⚠️ When enabled, your queries will be routed to a specialized web search model with Bing grounding capabilities instead of your currently selected model.\n\n💡 Web search mode stays active across multiple queries until you toggle it off.',
       onClick: () => {
-        setSearchConfig((prev) => ({ ...prev, isOpen: true }));
+        setWebSearchMode(!webSearchMode);
         closeDropdown();
       },
       category: 'web',
     },
     {
       id: 'transcribe',
-      icon: <IconFileMusic size={18} className="mr-3 text-purple-500" />,
+      icon: <IconFileMusic size={16} className="mr-2 text-purple-500" />,
       label: 'Transcribe Audio',
-      tooltip: 'Transcribe Audio',
+      infoTooltip:
+        '🎵 Audio: MP3, WAV, M4A, OGG\n\n🎬 Video: MP4, MOV, AVI, WEBM\n\n⏱️ Max duration: 25 minutes\n📏 Max file size: 25MB\n\n💬 Converts speech to text',
       onClick: () => {
         setIsTranscribeOpen(true);
         closeDropdown();
@@ -171,21 +150,16 @@ const Dropdown: React.FC<DropdownProps> = ({
       category: 'media',
     },
     {
-      id: 'image',
-      icon: <ImageIcon className="mr-3 text-amber-500" />,
-      label: 'Upload Image',
-      tooltip: 'Upload Image',
-      onClick: () => {
-        closeDropdown();
-        chatInputImageRef.current?.openFilePicker();
-      },
-      category: 'media',
-    },
-    {
-      id: 'file',
-      icon: <IconFile size={18} className="mr-3 text-green-500" />,
-      label: 'Upload File',
-      tooltip: 'Upload File',
+      id: 'attach',
+      icon: (
+        <IconPaperclip
+          size={16}
+          className="mr-2 text-gray-700 dark:text-gray-300"
+        />
+      ),
+      label: 'Add photos & files',
+      infoTooltip:
+        '📷 Images: JPEG, PNG, GIF (max 5MB)\n\n📄 Documents: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, MD (max 10MB)\n\n📎 Upload up to 5 files at once\n💡 Mix images and documents together',
       onClick: () => {
         closeDropdown();
         fileInputRef.current?.click();
@@ -194,9 +168,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     },
     {
       id: 'translate',
-      icon: <IconLanguage size={18} className="mr-3 text-teal-500" />,
+      icon: <IconLanguage size={16} className="mr-2 text-teal-500" />,
       label: 'Translate Text',
-      tooltip: 'Translate Text',
       onClick: () => {
         setIsTranslateOpen(true);
         closeDropdown();
@@ -207,9 +180,8 @@ const Dropdown: React.FC<DropdownProps> = ({
       ? [
           {
             id: 'camera',
-            icon: <IconCamera size={18} className="mr-3 text-red-500" />,
+            icon: <IconCamera size={16} className="mr-2 text-red-500" />,
             label: 'Camera',
-            tooltip: 'Capture Image',
             onClick: () => {
               onCameraClick();
               closeDropdown();
@@ -220,30 +192,14 @@ const Dropdown: React.FC<DropdownProps> = ({
       : []),
   ];
 
-  // Filter menu items based on search query
-  const filteredItems = filterQuery
-    ? menuItems.filter(
-        (item) =>
-          item.label.toLowerCase().includes(filterQuery.toLowerCase()) ||
-          item.tooltip.toLowerCase().includes(filterQuery.toLowerCase()) ||
-          item.category.toLowerCase().includes(filterQuery.toLowerCase()),
-      )
-    : menuItems;
-
-  const flattenedItems = filteredItems;
-
   // Use keyboard navigation hook
   const { handleKeyDown } = useDropdownKeyboardNav({
     isOpen,
-    items: flattenedItems,
+    items: menuItems,
     selectedIndex,
     setSelectedIndex,
-    filterQuery,
-    setFilterQuery,
     closeDropdown,
-    filterInputRef,
     onCloseModals: () => {
-      setSearchConfig((prev) => ({ ...prev, isOpen: false }));
       setIsTranscribeOpen(false);
       setIsTranslateOpen(false);
       setIsImageOpen(false);
@@ -251,7 +207,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   });
 
   // Group menu items by category
-  const groupedItems = filteredItems.reduce(
+  const groupedItems = menuItems.reduce(
     (acc, item) => {
       if (!acc[item.category]) {
         acc[item.category] = [];
@@ -264,20 +220,6 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   // Logic to handle clicks outside the Dropdown Menu
   useEnhancedOutsideClick(dropdownRef, closeDropdown, isOpen, true);
-
-  // Reset selected index when filtered items change
-  useEffect(() => {
-    setSelectedIndex(0);
-  }, [filterQuery]);
-
-  // Focus on search input when dropdown opens
-  useEffect(() => {
-    if (isOpen && filterInputRef.current) {
-      setTimeout(() => {
-        filterInputRef.current?.focus();
-      }, 100);
-    }
-  }, [isOpen]);
 
   return (
     <div className="relative">
@@ -316,53 +258,19 @@ const Dropdown: React.FC<DropdownProps> = ({
           role="menu"
           onKeyDown={handleKeyDown}
         >
-          <DropdownSearchInput
-            value={filterQuery}
-            onChange={setFilterQuery}
-            onClear={() => setFilterQuery('')}
-            inputRef={filterInputRef}
-          />
-
           <div className="max-h-80 overflow-y-auto custom-scrollbar">
-            {Object.entries(groupedItems).length > 0 ? (
-              Object.entries(groupedItems).map(([category, items]) => (
-                <DropdownCategoryGroup
-                  key={category}
-                  category={category}
-                  items={items}
-                  flattenedItems={flattenedItems}
-                  selectedIndex={selectedIndex}
-                />
-              ))
-            ) : (
-              <div className="px-4 py-3 text-center text-gray-500 dark:text-gray-400">
-                No features match your search
-              </div>
-            )}
+            {Object.entries(groupedItems).map(([category, items]) => (
+              <DropdownCategoryGroup
+                key={category}
+                category={category}
+                items={items}
+                flattenedItems={menuItems}
+                selectedIndex={selectedIndex}
+              />
+            ))}
           </div>
         </div>
       )}
-
-      {/* Search/URL Modal */}
-      <ChatInputSearch
-        isOpen={SearchConfig.isOpen}
-        onClose={() => setSearchConfig((prev) => ({ ...prev, isOpen: false }))}
-        initialMode={SearchConfig.mode}
-        onFileUpload={onFileUpload}
-        setSubmitType={setSubmitType}
-        setFilePreviews={setFilePreviews}
-        setFileFieldValue={setFileFieldValue}
-        setImageFieldValue={setImageFieldValue}
-        setUploadProgress={setUploadProgress}
-        setTextFieldValue={setTextFieldValue}
-        onSend={onSend}
-        setRequestStatusMessage={setRequestStatusMessage}
-        setProgress={setProgress}
-        stopConversationRef={stopConversationRef}
-        apiKey={apiKey}
-        systemPrompt={systemPrompt}
-        temperature={temperature}
-      />
 
       {/* Chat Input Image Capture Modal */}
       {isImageOpen && (
@@ -419,6 +327,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       <input
         ref={fileInputRef}
         type="file"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md"
         onChange={(e) =>
           onFileUpload(
             e,

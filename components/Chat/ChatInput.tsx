@@ -1,4 +1,9 @@
-import { IconArrowDown, IconRepeat } from '@tabler/icons-react';
+import {
+  IconArrowDown,
+  IconRepeat,
+  IconSearch,
+  IconWorld,
+} from '@tabler/icons-react';
 import {
   Dispatch,
   KeyboardEvent,
@@ -16,6 +21,7 @@ import { useChat } from '@/lib/hooks/chat/useChat';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
 
+import { AgentType } from '@/types/agent';
 import {
   ChatInputSubmitTypes,
   FileFieldValue,
@@ -47,7 +53,11 @@ import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
 
 interface Props {
-  onSend: (message: Message) => void;
+  onSend: (
+    message: Message,
+    forceStandardChat?: boolean,
+    forcedAgentType?: AgentType,
+  ) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -92,6 +102,7 @@ export const ChatInput = ({
     [key: string]: number;
   }>({});
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
+  const [webSearchMode, setWebSearchMode] = useState<boolean>(false);
 
   const promptListRef = useRef<HTMLUListElement | null>(null);
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
@@ -164,11 +175,19 @@ export const ChatInput = ({
       return;
     }
 
-    onSend({
-      role: 'user',
-      content,
-      messageType: submitType ?? 'text',
-    });
+    // If web search mode is active, force the web search agent
+    const forcedAgentType = webSearchMode ? AgentType.WEB_SEARCH : undefined;
+
+    onSend(
+      {
+        role: 'user',
+        content,
+        messageType: submitType ?? 'text',
+      },
+      undefined,
+      forcedAgentType,
+    );
+
     setTextFieldValue('');
     setImageFieldValue(null);
     setFileFieldValue(null);
@@ -485,91 +504,140 @@ export const ChatInput = ({
             hasCameraSupport={true}
           />
 
-          <div className="relative mx-2 max-w-[900px] flex w-full flex-grow flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white sm:mx-4 focus-within:outline-none z-0">
-            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 z-[10001]">
-              <ChatDropdown
-                onFileUpload={onFileUpload}
-                setSubmitType={setSubmitType}
-                setFilePreviews={setFilePreviews}
-                setFileFieldValue={setFileFieldValue}
-                setImageFieldValue={setImageFieldValue}
-                setUploadProgress={setUploadProgress}
-                setTextFieldValue={setTextFieldValue}
-                handleSend={handleSend}
-                textFieldValue={textFieldValue}
-                onCameraClick={() => {
-                  cameraRef.current?.triggerCamera();
+          <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
+            <div
+              className={`relative flex w-full flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none z-0 transition-all duration-200 ${webSearchMode ? 'min-h-[120px]' : ''}`}
+            >
+              <textarea
+                ref={textareaRef}
+                className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 transition-all duration-200 ${
+                  webSearchMode
+                    ? 'pt-3 pb-[88px] pl-3'
+                    : 'py-2 pl-10 md:py-3 md:pl-10'
+                }`}
+                style={{
+                  resize: 'none',
+                  bottom: `${textareaRef?.current?.scrollHeight}px`,
+                  maxHeight: '400px',
+                  overflow: `${
+                    textareaRef.current &&
+                    textareaRef.current.scrollHeight > 400
+                      ? 'auto'
+                      : 'hidden'
+                  }`,
                 }}
-                openDownward={!showDisclaimer}
+                placeholder={
+                  isTranscribing
+                    ? t('transcribingChatPlaceholder')
+                    : webSearchMode
+                      ? 'Search the web'
+                      : placeholderText
+                }
+                value={textFieldValue}
+                rows={1}
+                onCompositionStart={() => setIsTyping(true)}
+                onCompositionEnd={() => setIsTyping(false)}
+                onChange={handleChange}
+                onKeyDown={handleKeyDown}
+                disabled={preventSubmission()}
               />
-            </div>
 
-            <textarea
-              ref={textareaRef}
-              className={
-                'm-0 w-full resize-none border-0 bg-transparent p-0 py-2 pr-24 pl-10 text-black dark:bg-transparent dark:text-white md:py-3 md:pl-10 focus:outline-none focus:ring-0 lg:' +
-                (isTranscribing ? ' animate-pulse' : '')
-              }
-              style={{
-                resize: 'none',
-                bottom: `${textareaRef?.current?.scrollHeight}px`,
-                maxHeight: '400px',
-                overflow: `${
-                  textareaRef.current && textareaRef.current.scrollHeight > 400
-                    ? 'auto'
-                    : 'hidden'
-                }`,
-              }}
-              placeholder={
-                isTranscribing
-                  ? t('transcribingChatPlaceholder')
-                  : placeholderText
-              }
-              value={textFieldValue}
-              rows={1}
-              onCompositionStart={() => setIsTyping(true)}
-              onCompositionEnd={() => setIsTyping(false)}
-              onChange={handleChange}
-              onKeyDown={handleKeyDown}
-              disabled={preventSubmission()}
-            />
+              {/* Bottom row with all buttons and search badge */}
+              <div
+                className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
+                  webSearchMode
+                    ? 'bottom-2'
+                    : 'top-1/2 transform -translate-y-1/2'
+                }`}
+              >
+                <ChatDropdown
+                  onFileUpload={onFileUpload}
+                  setSubmitType={setSubmitType}
+                  setFilePreviews={setFilePreviews}
+                  setFileFieldValue={setFileFieldValue}
+                  setImageFieldValue={setImageFieldValue}
+                  setUploadProgress={setUploadProgress}
+                  setTextFieldValue={setTextFieldValue}
+                  handleSend={handleSend}
+                  textFieldValue={textFieldValue}
+                  onCameraClick={() => {
+                    cameraRef.current?.triggerCamera();
+                  }}
+                  openDownward={!showDisclaimer}
+                  webSearchMode={webSearchMode}
+                  setWebSearchMode={setWebSearchMode}
+                />
 
-            <div className="absolute right-1.5 top-1/2 transform -translate-y-1/2 flex items-center gap-3">
-              <ChatInputVoiceCapture
-                setTextFieldValue={setTextFieldValue}
-                setIsTranscribing={setIsTranscribing}
-              />
-              <ChatInputSubmitButton
-                isStreaming={isStreaming}
-                isTranscribing={isTranscribing}
-                handleSend={handleSend}
-                handleStopConversation={handleStopConversation}
-                preventSubmission={preventSubmission}
-              />
-            </div>
-
-            {showScrollDownButton && (
-              <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
-                <button
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
-                  onClick={onScrollDownClick}
-                >
-                  <IconArrowDown size={18} />
-                </button>
+                {webSearchMode && (
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium border border-gray-300 dark:border-gray-600">
+                    <IconWorld className="w-5 h-5 text-blue-500" />
+                    <span>Search</span>
+                    <button
+                      onClick={() => setWebSearchMode(false)}
+                      className="ml-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors"
+                      aria-label="Disable web search"
+                    >
+                      <svg
+                        className="w-3.5 h-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
 
-            {showPromptList && filteredPrompts.length > 0 && (
-              <div className="absolute bottom-12 w-full">
-                <PromptList
-                  activePromptIndex={activePromptIndex}
-                  prompts={filteredPrompts}
-                  onSelect={handleInitModal}
-                  onMouseOver={setActivePromptIndex}
-                  promptListRef={promptListRef}
+              <div
+                className={`absolute right-1.5 flex items-center gap-3 z-[10001] transition-all duration-200 ${
+                  webSearchMode
+                    ? 'bottom-2'
+                    : 'top-1/2 transform -translate-y-1/2'
+                }`}
+              >
+                <ChatInputVoiceCapture
+                  setTextFieldValue={setTextFieldValue}
+                  setIsTranscribing={setIsTranscribing}
+                />
+                <ChatInputSubmitButton
+                  isStreaming={isStreaming}
+                  isTranscribing={isTranscribing}
+                  handleSend={handleSend}
+                  handleStopConversation={handleStopConversation}
+                  preventSubmission={preventSubmission}
                 />
               </div>
-            )}
+
+              {showScrollDownButton && (
+                <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
+                  <button
+                    className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
+                    onClick={onScrollDownClick}
+                  >
+                    <IconArrowDown size={18} />
+                  </button>
+                </div>
+              )}
+
+              {showPromptList && filteredPrompts.length > 0 && (
+                <div className="absolute bottom-12 w-full">
+                  <PromptList
+                    activePromptIndex={activePromptIndex}
+                    prompts={filteredPrompts}
+                    onSelect={handleInitModal}
+                    onMouseOver={setActivePromptIndex}
+                    promptListRef={promptListRef}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
           {isModalVisible && (

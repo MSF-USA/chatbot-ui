@@ -1,8 +1,12 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
 
-import { useDropdownKeyboardNav, KeyboardNavItem } from '@/lib/hooks/useDropdownKeyboardNav';
+import {
+  KeyboardNavItem,
+  useDropdownKeyboardNav,
+} from '@/lib/hooks/useDropdownKeyboardNav';
+
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useDropdownKeyboardNav', () => {
   const createKeyboardEvent = (key: string, options: any = {}) => {
@@ -22,10 +26,8 @@ describe('useDropdownKeyboardNav', () => {
   });
 
   let mockSetSelectedIndex: ReturnType<typeof vi.fn>;
-  let mockSetFilterQuery: ReturnType<typeof vi.fn>;
   let mockCloseDropdown: ReturnType<typeof vi.fn>;
   let mockOnCloseModals: ReturnType<typeof vi.fn>;
-  let mockFilterInputRef: React.RefObject<HTMLInputElement>;
 
   beforeEach(() => {
     mockSetSelectedIndex = vi.fn((arg) => {
@@ -34,29 +36,25 @@ describe('useDropdownKeyboardNav', () => {
         return arg(0); // Default previous index
       }
     });
-    mockSetFilterQuery = vi.fn();
     mockCloseDropdown = vi.fn();
     mockOnCloseModals = vi.fn();
-    mockFilterInputRef = {
-      current: {
-        focus: vi.fn(),
-      } as any,
-    };
   });
 
   describe('ArrowDown Navigation', () => {
     it('moves selection down by one', () => {
-      const items = [createMockItem('1'), createMockItem('2'), createMockItem('3')];
+      const items = [
+        createMockItem('1'),
+        createMockItem('2'),
+        createMockItem('3'),
+      ];
       const { result } = renderHook(() =>
         useDropdownKeyboardNav({
           isOpen: true,
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowDown');
@@ -76,10 +74,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 1, // Last item
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowDown');
@@ -100,10 +96,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowDown');
@@ -124,10 +118,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 1,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowUp');
@@ -140,17 +132,19 @@ describe('useDropdownKeyboardNav', () => {
     });
 
     it('wraps to last item when at start', () => {
-      const items = [createMockItem('1'), createMockItem('2'), createMockItem('3')];
+      const items = [
+        createMockItem('1'),
+        createMockItem('2'),
+        createMockItem('3'),
+      ];
       const { result } = renderHook(() =>
         useDropdownKeyboardNav({
           isOpen: true,
           items,
           selectedIndex: 0, // First item
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowUp');
@@ -170,10 +164,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowUp');
@@ -187,17 +179,19 @@ describe('useDropdownKeyboardNav', () => {
 
   describe('Enter Key', () => {
     it('calls onClick of selected item', () => {
-      const items = [createMockItem('1'), createMockItem('2'), createMockItem('3')];
+      const items = [
+        createMockItem('1'),
+        createMockItem('2'),
+        createMockItem('3'),
+      ];
       const { result } = renderHook(() =>
         useDropdownKeyboardNav({
           isOpen: true,
           items,
           selectedIndex: 1,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Enter');
@@ -217,10 +211,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 5, // Out of bounds
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Enter');
@@ -239,10 +231,8 @@ describe('useDropdownKeyboardNav', () => {
           items: [],
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Enter');
@@ -262,10 +252,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Enter');
@@ -278,7 +266,7 @@ describe('useDropdownKeyboardNav', () => {
   });
 
   describe('Escape Key', () => {
-    it('clears filter query when it has value', () => {
+    it('closes dropdown', () => {
       const items = [createMockItem('1')];
       const { result } = renderHook(() =>
         useDropdownKeyboardNav({
@@ -286,35 +274,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: 'search text',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
-      );
-
-      const event = createKeyboardEvent('Escape');
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(event.preventDefault).toHaveBeenCalled();
-      expect(mockSetFilterQuery).toHaveBeenCalledWith('');
-      expect(mockSetSelectedIndex).toHaveBeenCalledWith(0);
-      expect(mockCloseDropdown).not.toHaveBeenCalled();
-    });
-
-    it('closes dropdown when filter query is empty', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Escape');
@@ -326,7 +287,7 @@ describe('useDropdownKeyboardNav', () => {
       expect(mockCloseDropdown).toHaveBeenCalled();
     });
 
-    it('calls onCloseModals when provided and filter is empty', () => {
+    it('calls onCloseModals when provided', () => {
       const items = [createMockItem('1')];
       const { result } = renderHook(() =>
         useDropdownKeyboardNav({
@@ -334,11 +295,9 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
           onCloseModals: mockOnCloseModals,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Escape');
@@ -350,29 +309,6 @@ describe('useDropdownKeyboardNav', () => {
       expect(mockOnCloseModals).toHaveBeenCalled();
     });
 
-    it('does not call onCloseModals when filter has value', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: 'search',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          onCloseModals: mockOnCloseModals,
-        })
-      );
-
-      const event = createKeyboardEvent('Escape');
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(mockOnCloseModals).not.toHaveBeenCalled();
-    });
-
     it('prevents default browser behavior', () => {
       const items = [createMockItem('1')];
       const { result } = renderHook(() =>
@@ -381,10 +317,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Escape');
@@ -393,146 +327,6 @@ describe('useDropdownKeyboardNav', () => {
       });
 
       expect(event.preventDefault).toHaveBeenCalled();
-    });
-  });
-
-  describe('Auto-focus Filter Input', () => {
-    it('focuses filter input on printable character', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          filterInputRef: mockFilterInputRef,
-        })
-      );
-
-      const event = createKeyboardEvent('a');
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(mockFilterInputRef.current?.focus).toHaveBeenCalled();
-    });
-
-    it('does not focus on Ctrl+key combinations', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          filterInputRef: mockFilterInputRef,
-        })
-      );
-
-      const event = createKeyboardEvent('a', { ctrlKey: true });
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(mockFilterInputRef.current?.focus).not.toHaveBeenCalled();
-    });
-
-    it('does not focus on Alt+key combinations', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          filterInputRef: mockFilterInputRef,
-        })
-      );
-
-      const event = createKeyboardEvent('a', { altKey: true });
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(mockFilterInputRef.current?.focus).not.toHaveBeenCalled();
-    });
-
-    it('does not focus on Meta+key combinations', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          filterInputRef: mockFilterInputRef,
-        })
-      );
-
-      const event = createKeyboardEvent('a', { metaKey: true });
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(mockFilterInputRef.current?.focus).not.toHaveBeenCalled();
-    });
-
-    it('does not focus on multi-character keys', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          filterInputRef: mockFilterInputRef,
-        })
-      );
-
-      const event = createKeyboardEvent('Shift');
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      expect(mockFilterInputRef.current?.focus).not.toHaveBeenCalled();
-    });
-
-    it('handles missing filterInputRef gracefully', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          // No filterInputRef provided
-        })
-      );
-
-      const event = createKeyboardEvent('a');
-      act(() => {
-        result.current.handleKeyDown(event);
-      });
-
-      // Should not throw
     });
   });
 
@@ -545,10 +339,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowDown');
@@ -568,10 +360,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Enter');
@@ -590,10 +380,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('Escape');
@@ -614,10 +402,8 @@ describe('useDropdownKeyboardNav', () => {
           items,
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       // ArrowDown should wrap to 0
@@ -644,10 +430,8 @@ describe('useDropdownKeyboardNav', () => {
           items: [],
           selectedIndex: 0,
           setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
           closeDropdown: mockCloseDropdown,
-        })
+        }),
       );
 
       const event = createKeyboardEvent('ArrowDown');
@@ -656,33 +440,6 @@ describe('useDropdownKeyboardNav', () => {
       });
 
       expect(mockSetSelectedIndex).toHaveBeenCalled();
-    });
-
-    it('handles all special characters for auto-focus', () => {
-      const items = [createMockItem('1')];
-      const { result } = renderHook(() =>
-        useDropdownKeyboardNav({
-          isOpen: true,
-          items,
-          selectedIndex: 0,
-          setSelectedIndex: mockSetSelectedIndex,
-          filterQuery: '',
-          setFilterQuery: mockSetFilterQuery,
-          closeDropdown: mockCloseDropdown,
-          filterInputRef: mockFilterInputRef,
-        })
-      );
-
-      const specialChars = ['!', '@', '#', '$', '%', '1', '9'];
-      specialChars.forEach((char) => {
-        vi.clearAllMocks();
-        const event = createKeyboardEvent(char);
-        act(() => {
-          result.current.handleKeyDown(event);
-        });
-
-        expect(mockFilterInputRef.current?.focus).toHaveBeenCalled();
-      });
     });
   });
 });

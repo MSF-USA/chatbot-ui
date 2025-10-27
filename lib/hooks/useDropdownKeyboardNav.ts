@@ -10,26 +10,20 @@ export interface UseDropdownKeyboardNavParams {
   items: KeyboardNavItem[];
   selectedIndex: number;
   setSelectedIndex: (index: number | ((prev: number) => number)) => void;
-  filterQuery: string;
-  setFilterQuery: (query: string) => void;
   closeDropdown: () => void;
-  filterInputRef?: React.RefObject<HTMLInputElement | null>;
   onCloseModals?: () => void;
 }
 
 /**
  * Custom hook for managing keyboard navigation in dropdown menus
- * Handles ArrowUp, ArrowDown, Enter, Escape, and auto-focus on typing
+ * Handles ArrowUp, ArrowDown, Enter, and Escape keys
  */
 export const useDropdownKeyboardNav = ({
   isOpen,
   items,
   selectedIndex,
   setSelectedIndex,
-  filterQuery,
-  setFilterQuery,
   closeDropdown,
-  filterInputRef,
   onCloseModals,
 }: UseDropdownKeyboardNavParams) => {
   const handleKeyDown = useCallback(
@@ -60,27 +54,8 @@ export const useDropdownKeyboardNav = ({
 
         case 'Escape':
           event.preventDefault();
-          if (filterQuery) {
-            // Clear filter first
-            setFilterQuery('');
-            setSelectedIndex(0);
-          } else {
-            // Close dropdown and all modals
-            closeDropdown();
-            onCloseModals?.();
-          }
-          break;
-
-        default:
-          // Auto-focus filter input on any printable character
-          if (
-            event.key.length === 1 &&
-            !event.ctrlKey &&
-            !event.altKey &&
-            !event.metaKey
-          ) {
-            filterInputRef?.current?.focus();
-          }
+          closeDropdown();
+          onCloseModals?.();
           break;
       }
     },
@@ -89,11 +64,8 @@ export const useDropdownKeyboardNav = ({
       items,
       selectedIndex,
       setSelectedIndex,
-      filterQuery,
-      setFilterQuery,
       closeDropdown,
       onCloseModals,
-      filterInputRef,
     ],
   );
 

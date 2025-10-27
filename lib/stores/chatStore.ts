@@ -5,6 +5,7 @@ import {
   parseMetadataFromContent,
 } from '@/lib/utils/app/metadata';
 
+import { AgentType } from '@/types/agent';
 import { Conversation, Message, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
@@ -34,7 +35,12 @@ interface ChatStore {
   requestStop: () => void;
   resetStop: () => void;
   resetChat: () => void;
-  sendMessage: (message: Message, conversation: Conversation) => Promise<void>;
+  sendMessage: (
+    message: Message,
+    conversation: Conversation,
+    forceStandardChat?: boolean,
+    forcedAgentType?: AgentType,
+  ) => Promise<void>;
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -80,7 +86,12 @@ export const useChatStore = create<ChatStore>((set) => ({
       stopRequested: false,
     }),
 
-  sendMessage: async (message, conversation) => {
+  sendMessage: async (
+    message,
+    conversation,
+    forceStandardChat,
+    forcedAgentType,
+  ) => {
     try {
       set({
         isStreaming: true,
@@ -108,6 +119,8 @@ export const useChatStore = create<ChatStore>((set) => ({
         modelSupportsStreaming, // Only stream if model supports it
         () => {}, // setProgress
         { current: false }, // stopConversationRef - will wire up later
+        forceStandardChat,
+        forcedAgentType,
       );
 
       if (!response.body) {

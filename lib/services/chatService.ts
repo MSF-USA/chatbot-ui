@@ -15,6 +15,7 @@ import {
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
 
+import { AgentType } from '@/types/agent';
 import { bots } from '@/types/bots';
 import { ChatBody, Message } from '@/types/chat';
 import {
@@ -130,6 +131,7 @@ export default class ChatService {
     threadId?: string,
     reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high',
     verbosity?: 'low' | 'medium' | 'high',
+    forcedAgentType?: string,
   ): Promise<Response> {
     const startTime = Date.now();
 
@@ -138,9 +140,46 @@ export default class ChatService {
     console.log('modelId:', modelId);
     console.log('Handler:', HandlerFactory.getHandlerName(modelConfig as any));
     console.log('agentEnabled:', modelConfig?.agentEnabled);
+    console.log('forcedAgentType:', forcedAgentType);
     console.log('===================================');
 
     try {
+      // Strategy 0: Forced Web Search Agent (highest priority)
+      if (forcedAgentType === AgentType.WEB_SEARCH) {
+        console.log('Web search mode detected - routing to web search agent');
+
+        // Find the web search agent configuration (GPT-4.1 with agentEnabled and Bing grounding)
+        const webSearchModel = Object.values(OpenAIModels).find(
+          (model) => model.agentEnabled && model.agentId,
+        );
+
+        if (webSearchModel) {
+          console.log(
+            'Using web search agent:',
+            webSearchModel.id,
+            'with agentId:',
+            webSearchModel.agentId,
+          );
+
+          return await this.agentHandler.handleAgentChat(
+            webSearchModel.id,
+            webSearchModel as unknown as Record<string, unknown>,
+            messages,
+            temperature,
+            user,
+            botId,
+            threadId,
+          );
+        } else {
+          console.error(
+            'No web search agent found in OpenAIModels configuration',
+          );
+          throw new Error(
+            'Web search agent not configured. Please ensure a model with agentEnabled and agentId is available.',
+          );
+        }
+      }
+
       // Strategy 1: RAG/Bot flow
       if (botId) {
         return await this.handleBotChat(
@@ -455,6 +494,7 @@ export default class ChatService {
       threadId,
       reasoningEffort,
       verbosity,
+      forcedAgentType,
     } = (await req.json()) as ChatBody;
 
     const encoding = await this.initTiktoken();
@@ -533,6 +573,7 @@ export default class ChatService {
         threadId,
         reasoningEffort,
         verbosity,
+        forcedAgentType,
       );
     }
   }

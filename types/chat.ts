@@ -106,6 +106,7 @@ export interface ChatBody {
   threadId?: string; // Azure AI Agent thread ID
   reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
   verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
+  forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
 }
 
 export interface Conversation {

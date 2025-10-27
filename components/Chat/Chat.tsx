@@ -9,6 +9,7 @@ import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { useUI } from '@/lib/hooks/ui/useUI';
 
+import { AgentType } from '@/types/agent';
 import { Message } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -225,7 +226,11 @@ export function Chat({
   };
 
   const handleSend = useCallback(
-    (message: Message) => {
+    (
+      message: Message,
+      forceStandardChat?: boolean,
+      forcedAgentType?: AgentType,
+    ) => {
       // Get the latest conversation state at send time to avoid stale closures
       const state = useConversationStore.getState();
       const currentConversation = state.conversations.find(
@@ -245,7 +250,12 @@ export function Chat({
         ...currentConversation,
         messages: updatedMessages,
       };
-      sendMessage?.(message, updatedConversation);
+      sendMessage?.(
+        message,
+        updatedConversation,
+        forceStandardChat,
+        forcedAgentType,
+      );
     },
     [updateConversation, sendMessage],
   );

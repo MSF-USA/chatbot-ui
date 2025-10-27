@@ -1,3 +1,4 @@
+import { AgentType } from '@/types/agent';
 import { Conversation } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -34,6 +35,8 @@ export async function makeRequest(
   stream: boolean,
   setProgress: (progress: any) => void,
   stopConversationRef: { current: boolean },
+  forceStandardChat?: boolean,
+  forcedAgentType?: AgentType,
 ): Promise<MakeRequestResponse> {
   const { model, messages, bot, threadId, reasoningEffort, verbosity } =
     conversation;
@@ -53,6 +56,7 @@ export async function makeRequest(
     botId: bot,
     stream,
     threadId,
+    forcedAgentType,
   };
 
   // Add reasoning_effort if present in conversation or model

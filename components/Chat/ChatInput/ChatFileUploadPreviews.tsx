@@ -99,53 +99,29 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   const extension = filename?.split('.').pop()?.toLowerCase() || '';
   const isPdf = extension === 'pdf';
 
-  // File type styling
-  const getFileTypeStyle = (ext: string) => {
+  // File type styling - just for the badge color
+  const getFileTypeColor = (ext: string) => {
     switch (ext) {
       case 'pdf':
-        return {
-          bg: 'bg-red-50 dark:bg-red-950',
-          text: 'text-red-600 dark:text-red-400',
-          border: 'border-red-200 dark:border-red-800',
-        };
+        return 'bg-red-500 text-white';
       case 'doc':
       case 'docx':
-        return {
-          bg: 'bg-blue-50 dark:bg-blue-950',
-          text: 'text-blue-600 dark:text-blue-400',
-          border: 'border-blue-200 dark:border-blue-800',
-        };
+        return 'bg-blue-500 text-white';
       case 'xls':
       case 'xlsx':
-        return {
-          bg: 'bg-green-50 dark:bg-green-950',
-          text: 'text-green-600 dark:text-green-400',
-          border: 'border-green-200 dark:border-green-800',
-        };
+        return 'bg-green-500 text-white';
       case 'ppt':
       case 'pptx':
-        return {
-          bg: 'bg-orange-50 dark:bg-orange-950',
-          text: 'text-orange-600 dark:text-orange-400',
-          border: 'border-orange-200 dark:border-orange-800',
-        };
+        return 'bg-orange-500 text-white';
       case 'txt':
       case 'md':
-        return {
-          bg: 'bg-gray-50 dark:bg-gray-900',
-          text: 'text-gray-600 dark:text-gray-400',
-          border: 'border-gray-200 dark:border-gray-700',
-        };
+        return 'bg-gray-500 text-white';
       default:
-        return {
-          bg: 'bg-gray-50 dark:bg-gray-900',
-          text: 'text-gray-600 dark:text-gray-400',
-          border: 'border-gray-200 dark:border-gray-700',
-        };
+        return 'bg-gray-500 text-white';
     }
   };
 
-  const fileStyle = getFileTypeStyle(extension);
+  const badgeColor = getFileTypeColor(extension);
 
   // Determine if the filename is long
   const isLongFilename = filename && filename.length > 16;
@@ -215,29 +191,25 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
             )}
           </div>
         ) : (
-          <div
-            className={`flex flex-col h-full p-3 ${fileStyle.bg} border ${fileStyle.border} transition-colors`}
-          >
+          <div className="flex flex-col h-full p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <div
-                className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${fileStyle.text} bg-white dark:bg-black/20`}
+                className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${badgeColor}`}
               >
                 {extension}
               </div>
               {status === 'uploading' && progress !== undefined && (
-                <div className={`text-xs font-medium ${fileStyle.text}`}>
+                <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
                   {Math.round(progress)}%
                 </div>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className={`text-sm font-medium truncate ${fileStyle.text}`}>
+              <div className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
                 {filename}
               </div>
               {isPdf && status === 'completed' && (
-                <div
-                  className={`flex items-center gap-1 text-xs mt-1 ${fileStyle.text}`}
-                >
+                <div className="flex items-center gap-1 text-xs mt-1 text-gray-600 dark:text-gray-400">
                   <IconInfoCircle size={12} />
                   <span>Text extraction only</span>
                 </div>
