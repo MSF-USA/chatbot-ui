@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 
 import {
   checkIsModelValid,
-  isFileConversation,
+  isAudioVideoConversation,
   isImageConversation,
 } from '@/lib/utils/app/chat';
 import {
@@ -509,8 +509,6 @@ export default class ChatService {
     const shouldStream = this.isReasoningModel(model.id) ? false : stream;
 
     const needsToHandleImages: boolean = isImageConversation(messages);
-    const needsToHandleFiles: boolean =
-      !needsToHandleImages && isFileConversation(messages);
 
     const isValidModel: boolean = checkIsModelValid(model.id, OpenAIModelID);
     const isImageModel: boolean = checkIsModelValid(
@@ -552,7 +550,13 @@ export default class ChatService {
     );
     encoding.free();
 
-    if (needsToHandleFiles) {
+    // Check if audio/video files need transcription
+    const needsAudioVideoTranscription =
+      isAudioVideoConversation(messagesToSend);
+
+    // Route audio/video to FileConversationHandler for transcription
+    // Other files (images, documents) can go through normal flow (including web search)
+    if (needsAudioVideoTranscription) {
       return this.fileHandler.handleFileConversation(
         messagesToSend,
         model.id,

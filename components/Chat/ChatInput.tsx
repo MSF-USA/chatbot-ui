@@ -66,6 +66,7 @@ interface Props {
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   filePreviews: FilePreview[];
   showDisclaimer?: boolean;
+  onTranscriptionStatusChange?: (status: string | null) => void;
 }
 
 export const ChatInput = ({
@@ -78,6 +79,7 @@ export const ChatInput = ({
   filePreviews,
   setFilePreviews,
   showDisclaimer = true,
+  onTranscriptionStatusChange,
 }: Props) => {
   const t = useTranslations();
 
@@ -98,6 +100,9 @@ export const ChatInput = ({
   const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
   const [placeholderText, setPlaceholderText] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
+    null,
+  );
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
   }>({});
@@ -148,10 +153,11 @@ export const ChatInput = ({
       ];
     } else if (submitType === 'file' || submitType == 'multi-file') {
       const fileContents = fileFieldValue ? wrapInArray(fileFieldValue) : [];
-      return [
-        ...fileContents,
-        { type: 'text', text: textFieldValue } as TextMessageContent,
-      ];
+      // Only include text content if text is not empty (for audio/video transcription without instructions)
+      const textContent = textFieldValue.trim()
+        ? [{ type: 'text', text: textFieldValue } as TextMessageContent]
+        : [];
+      return [...fileContents, ...textContent];
     } else {
       throw new Error(`Invalid submit type for message: ${submitType}`);
     }
@@ -170,7 +176,9 @@ export const ChatInput = ({
       | (TextMessageContent | FileMessageContent)[]
       | (TextMessageContent | ImageMessageContent)[] = buildContent();
 
-    if (!textFieldValue) {
+    // Allow empty text if files are attached (e.g., audio/video transcription without instructions)
+    const hasFiles = filePreviews.length > 0;
+    if (!textFieldValue && !hasFiles) {
       alert(t('Please enter a message'));
       return;
     }
@@ -396,6 +404,31 @@ export const ChatInput = ({
     setPlaceholderText('Ask Anything');
   }, [t]);
 
+  // Update placeholder when audio/video files are attached
+  const hasAudioVideoFiles = filePreviews.some(
+    (preview) =>
+      preview.type.startsWith('audio/') || preview.type.startsWith('video/'),
+  );
+  const audioVideoPlaceholder = hasAudioVideoFiles
+    ? 'Optional: add instructions (e.g., translate, summarize)...'
+    : placeholderText;
+
+  // Notify parent when transcription status changes
+  useEffect(() => {
+    onTranscriptionStatusChange?.(transcriptionStatus);
+  }, [transcriptionStatus, onTranscriptionStatusChange]);
+
+  // Auto-disable web search when audio/video files are attached (they need transcription)
+  // Images and documents can work with web search mode
+  useEffect(() => {
+    if (hasAudioVideoFiles && webSearchMode) {
+      setWebSearchMode(false);
+      console.log(
+        'Web search auto-disabled: audio/video files need transcription',
+      );
+    }
+  }, [hasAudioVideoFiles, webSearchMode, setWebSearchMode]);
+
   const handleFiles = (files: FileList | File[]) => {
     const filesArray = Array.from(files);
 
@@ -531,7 +564,7 @@ export const ChatInput = ({
                     ? t('transcribingChatPlaceholder')
                     : webSearchMode
                       ? 'Search the web'
-                      : placeholderText
+                      : audioVideoPlaceholder
                 }
                 value={textFieldValue}
                 rows={1}
@@ -566,6 +599,7 @@ export const ChatInput = ({
                   openDownward={!showDisclaimer}
                   webSearchMode={webSearchMode}
                   setWebSearchMode={setWebSearchMode}
+                  setTranscriptionStatus={setTranscriptionStatus}
                 />
 
                 {webSearchMode && (

@@ -61,6 +61,9 @@ export function Chat({
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
   const [filePreviews, setFilePreviews] = useState<any[]>([]);
   const [isModelSelectOpen, setIsModelSelectOpen] = useState(false);
+  const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
+    null,
+  );
   const hasInitializedRef = useRef(false);
 
   // Sync with mobile header model select state
@@ -371,6 +374,7 @@ export function Chat({
                 filePreviews={filePreviews}
                 setFilePreviews={setFilePreviews}
                 showDisclaimer={false}
+                onTranscriptionStatusChange={setTranscriptionStatus}
               />
             </div>
 
@@ -394,6 +398,17 @@ export function Chat({
                   onRegenerate={handleRegenerate}
                 />
               ))}
+              {/* Show transcription status indicator */}
+              {transcriptionStatus && (
+                <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-4 h-4 bg-blue-500 dark:bg-blue-400 rounded-full animate-breathing"></div>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {transcriptionStatus}
+                    </span>
+                  </div>
+                </div>
+              )}
               {/* Show streaming message or loading indicator */}
               {isStreaming &&
                 streamingConversationId === selectedConversation?.id && (
@@ -448,6 +463,7 @@ export function Chat({
             showScrollDownButton={showScrollDownButton}
             filePreviews={filePreviews}
             setFilePreviews={setFilePreviews}
+            onTranscriptionStatusChange={setTranscriptionStatus}
           />
         </>
       )}

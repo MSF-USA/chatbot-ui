@@ -31,12 +31,10 @@ import {
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ImageIcon from '@/components/Icons/image';
 
-import { DropdownCategoryGroup } from './DropdownCategoryGroup';
-import { MenuItem } from './DropdownMenuItem';
+import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
 
 interface DropdownProps {
   onFileUpload: (
@@ -59,6 +57,7 @@ interface DropdownProps {
   openDownward?: boolean;
   webSearchMode: boolean;
   setWebSearchMode: Dispatch<SetStateAction<boolean>>;
+  setTranscriptionStatus: Dispatch<SetStateAction<string | null>>;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -75,10 +74,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   openDownward = false,
   webSearchMode,
   setWebSearchMode,
+  setTranscriptionStatus,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
-  const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -127,10 +126,10 @@ const Dropdown: React.FC<DropdownProps> = ({
   const menuItems: MenuItem[] = [
     {
       id: 'search',
-      icon: <IconWorld size={16} className="mr-2 text-blue-500" />,
+      icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
       label: webSearchMode ? '✓ Web Search' : 'Web Search',
       infoTooltip:
-        '🔍 Web Search Mode\n\n⚠️ When enabled, your queries will be routed to a specialized web search model with Bing grounding capabilities instead of your currently selected model.\n\n💡 Web search mode stays active across multiple queries until you toggle it off.',
+        'Routes your query to a specialized search model with real-time Bing web access.\n\nStays active across multiple messages until toggled off.\n\nNote: Uses search model instead of your selected model.',
       onClick: () => {
         setWebSearchMode(!webSearchMode);
         closeDropdown();
@@ -138,28 +137,16 @@ const Dropdown: React.FC<DropdownProps> = ({
       category: 'web',
     },
     {
-      id: 'transcribe',
-      icon: <IconFileMusic size={16} className="mr-2 text-purple-500" />,
-      label: 'Transcribe Audio',
-      infoTooltip:
-        '🎵 Audio: MP3, WAV, M4A, OGG\n\n🎬 Video: MP4, MOV, AVI, WEBM\n\n⏱️ Max duration: 25 minutes\n📏 Max file size: 25MB\n\n💬 Converts speech to text',
-      onClick: () => {
-        setIsTranscribeOpen(true);
-        closeDropdown();
-      },
-      category: 'media',
-    },
-    {
       id: 'attach',
       icon: (
         <IconPaperclip
-          size={16}
-          className="mr-2 text-gray-700 dark:text-gray-300"
+          size={18}
+          className="text-gray-700 dark:text-gray-300 flex-shrink-0"
         />
       ),
-      label: 'Add photos & files',
+      label: 'Attach files',
       infoTooltip:
-        '📷 Images: JPEG, PNG, GIF (max 5MB)\n\n📄 Documents: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT, MD (max 10MB)\n\n📎 Upload up to 5 files at once\n💡 Mix images and documents together',
+        'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n• Audio/Video: MP3, MP4, M4A, WAV, WEBM (25MB max)\n\nAudio/video files are automatically transcribed. Add optional instructions like "translate to Spanish" or "summarize key points."\n\nUpload up to 5 files at once.\n\nNote: Images and documents work with web search. Audio/video automatically disables web search for transcription.',
       onClick: () => {
         closeDropdown();
         fileInputRef.current?.click();
@@ -168,7 +155,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     },
     {
       id: 'translate',
-      icon: <IconLanguage size={16} className="mr-2 text-teal-500" />,
+      icon: <IconLanguage size={18} className="text-teal-500 flex-shrink-0" />,
       label: 'Translate Text',
       onClick: () => {
         setIsTranslateOpen(true);
@@ -180,7 +167,9 @@ const Dropdown: React.FC<DropdownProps> = ({
       ? [
           {
             id: 'camera',
-            icon: <IconCamera size={16} className="mr-2 text-red-500" />,
+            icon: (
+              <IconCamera size={18} className="text-red-500 flex-shrink-0" />
+            ),
             label: 'Camera',
             onClick: () => {
               onCameraClick();
@@ -200,23 +189,10 @@ const Dropdown: React.FC<DropdownProps> = ({
     setSelectedIndex,
     closeDropdown,
     onCloseModals: () => {
-      setIsTranscribeOpen(false);
       setIsTranslateOpen(false);
       setIsImageOpen(false);
     },
   });
-
-  // Group menu items by category
-  const groupedItems = menuItems.reduce(
-    (acc, item) => {
-      if (!acc[item.category]) {
-        acc[item.category] = [];
-      }
-      acc[item.category].push(item);
-      return acc;
-    },
-    {} as Record<string, MenuItem[]>,
-  );
 
   // Logic to handle clicks outside the Dropdown Menu
   useEnhancedOutsideClick(dropdownRef, closeDropdown, isOpen, true);
@@ -258,14 +234,12 @@ const Dropdown: React.FC<DropdownProps> = ({
           role="menu"
           onKeyDown={handleKeyDown}
         >
-          <div className="max-h-80 overflow-y-auto custom-scrollbar">
-            {Object.entries(groupedItems).map(([category, items]) => (
-              <DropdownCategoryGroup
-                key={category}
-                category={category}
-                items={items}
-                flattenedItems={menuItems}
-                selectedIndex={selectedIndex}
+          <div className="max-h-80 overflow-y-auto custom-scrollbar p-1">
+            {menuItems.map((item, index) => (
+              <DropdownMenuItem
+                key={item.id}
+                item={item}
+                isSelected={index === selectedIndex}
               />
             ))}
           </div>
@@ -281,21 +255,6 @@ const Dropdown: React.FC<DropdownProps> = ({
           setImageFieldValue={setFileFieldValue}
           setUploadProgress={setUploadProgress}
           hasCameraSupport={hasCameraSupport}
-        />
-      )}
-
-      {/* Chat Input Transcribe Modal */}
-      {isTranscribeOpen && (
-        <ChatInputTranscribe
-          setTextFieldValue={setTextFieldValue}
-          setFileFieldValue={setFileFieldValue}
-          setImageFieldValue={setImageFieldValue}
-          setUploadProgress={setUploadProgress}
-          onFileUpload={onFileUpload}
-          setSubmitType={setSubmitType}
-          setFilePreviews={setFilePreviews}
-          setParentModalIsOpen={setIsTranscribeOpen}
-          simulateClick={true}
         />
       )}
 
@@ -323,11 +282,11 @@ const Dropdown: React.FC<DropdownProps> = ({
         labelText=""
       />
 
-      {/* Hidden file input for file uploads */}
+      {/* Hidden file input for all file uploads (including audio/video for transcription) */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,audio/*,video/*,.mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm"
         onChange={(e) =>
           onFileUpload(
             e,

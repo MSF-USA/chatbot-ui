@@ -1,9 +1,15 @@
-import { isBase64, saveBase64AsFile, splitAudioFile, cleanUpFiles } from '@/lib/services/transcription/common';
+import {
+  cleanUpFiles,
+  isBase64,
+  saveBase64AsFile,
+} from '@/lib/services/transcription/common';
+
+import { ITranscriptionService } from '@/types/transcription';
+
+import { DefaultAzureCredential } from '@azure/identity';
+import FormData from 'form-data';
 import fs from 'fs';
 import fetch from 'node-fetch';
-import FormData from 'form-data';
-import { ITranscriptionService } from '@/types/transcription';
-import { DefaultAzureCredential } from '@azure/identity';
 
 export class WhisperTranscriptionService implements ITranscriptionService {
   private modelName: string = 'whisper-1';
@@ -31,28 +37,36 @@ export class WhisperTranscriptionService implements ITranscriptionService {
 
   async transcribe(input: string): Promise<string> {
     let filePath: string;
+    let shouldCleanup = false;
 
     if (isBase64(input)) {
       filePath = await saveBase64AsFile(input);
+      shouldCleanup = true;
     } else {
       filePath = input;
     }
 
-    const maxSize = 25 * 1024 * 1024; // 25MB
-    const audioSegments = await splitAudioFile(filePath, maxSize);
+    try {
+      // Check file size (Whisper API limit is 25MB)
+      const maxSize = 25 * 1024 * 1024; // 25MB
+      const fileSize = fs.statSync(filePath).size;
 
-    const transcripts = [];
-    for (const segmentPath of audioSegments) {
-      const transcript = await this.transcribeSegment(segmentPath);
-      transcripts.push(transcript);
+      if (fileSize > maxSize) {
+        throw new Error(
+          `Audio file size (${(fileSize / 1024 / 1024).toFixed(2)}MB) exceeds the maximum limit of 25MB. Please upload a shorter audio file.`,
+        );
+      }
+
+      // Transcribe the file directly (Whisper supports mp3, mp4, mpeg, mpga, m4a, wav, webm)
+      const transcript = await this.transcribeSegment(filePath);
+
+      return transcript;
+    } finally {
+      // Clean up temporary file if we created it from base64
+      if (shouldCleanup) {
+        void cleanUpFiles([filePath]);
+      }
     }
-
-    const fullTranscript = transcripts.join(' ');
-
-    // Clean up temporary files
-    void cleanUpFiles([filePath, ...audioSegments]);
-
-    return fullTranscript;
   }
 
   private async transcribeSegment(segmentPath: string): Promise<string> {
@@ -86,12 +100,14 @@ export class WhisperTranscriptionService implements ITranscriptionService {
       const response = await fetch(reqUrl, {
         method: 'POST',
         body: formData as any,
-        headers
+        headers,
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`);
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`,
+        );
       }
 
       const data = await response.json();

@@ -1,17 +1,13 @@
-import {ITranscriptionService} from "@/types/transcription";
-import {WhisperTranscriptionService} from "@/lib/services/transcription/whisperTranscriptionService";
-import {ACSTranscriptionService} from "@/lib/services/transcription/azureSpeechTranscriptionService";
+import { WhisperTranscriptionService } from '@/lib/services/transcription/whisperTranscriptionService';
 
+import { ITranscriptionService } from '@/types/transcription';
 
 export class TranscriptionServiceFactory {
-  static getTranscriptionService(method: 'whisper' | 'azureCognitiveSpeechService'): ITranscriptionService {
+  static getTranscriptionService(method: 'whisper'): ITranscriptionService {
     if (method === 'whisper') {
       return new WhisperTranscriptionService();
-    } else if (method === 'azureCognitiveSpeechService') {
-      return new ACSTranscriptionService();
     } else {
       throw new Error('Invalid transcription method');
     }
   }
 }
-

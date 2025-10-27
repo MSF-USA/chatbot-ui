@@ -10,6 +10,7 @@ export interface MenuItem {
   infoTooltip?: string;
   onClick: () => void;
   category: 'web' | 'media' | 'transform';
+  disabled?: boolean;
 }
 
 interface DropdownMenuItemProps {
@@ -26,7 +27,7 @@ export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
 }) => {
   const [showInfo, setShowInfo] = useState(false);
   const infoIconRef = React.useRef<HTMLDivElement>(null);
-  const timeoutRef = React.useRef<NodeJS.Timeout>();
+  const timeoutRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
   const [tooltipPos, setTooltipPos] = React.useState({ left: 0, top: 0 });
 
   const handleMouseEnter = () => {
@@ -61,17 +62,21 @@ export const DropdownMenuItem: React.FC<DropdownMenuItemProps> = ({
     <div className="group relative">
       <button
         data-item-id={item.id}
-        className={`flex items-center justify-between px-2 py-1.5 w-full text-left rounded-md text-gray-800 dark:text-gray-200 transition-colors duration-150 text-sm ${
-          isSelected
-            ? 'bg-gray-100 dark:bg-gray-700'
-            : 'hover:bg-gray-100 dark:hover:bg-gray-700'
+        className={`flex items-center justify-between px-3 py-2 w-full text-left rounded-md transition-colors duration-150 text-sm ${
+          item.disabled
+            ? 'opacity-50 cursor-not-allowed text-gray-500 dark:text-gray-500'
+            : isSelected
+              ? 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+              : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-800 dark:text-gray-200'
         }`}
-        onClick={item.onClick}
+        onClick={item.disabled ? undefined : item.onClick}
         role="menuitem"
         aria-current={isSelected ? 'true' : undefined}
+        aria-disabled={item.disabled ? 'true' : undefined}
         tabIndex={isSelected ? 0 : -1}
+        disabled={item.disabled}
       >
-        <div className="flex items-center">
+        <div className="flex items-center gap-2.5 flex-1">
           {item.icon}
           <span>{item.label}</span>
         </div>

@@ -79,11 +79,48 @@ export class AIFoundryAgentHandler {
 
       try {
         // The SDK expects parameters to be passed separately: (threadId, role, content)
-        await client.messages.create(
-          thread.id,
-          'user',
-          String(lastMessage.content),
-        );
+        // For multimodal content (images, files), convert to SDK format
+        let messageContent: string | any[];
+
+        if (typeof lastMessage.content === 'string') {
+          // Simple text message
+          messageContent = lastMessage.content;
+        } else if (Array.isArray(lastMessage.content)) {
+          // Multimodal content - convert to Azure SDK format
+          messageContent = lastMessage.content.map((item: any) => {
+            if (item.type === 'text') {
+              return { type: 'text', text: item.text };
+            } else if (item.type === 'image_url') {
+              // Convert image_url to imageUrl (Azure SDK uses camelCase)
+              return {
+                type: 'image_url',
+                imageUrl: {
+                  url: item.image_url.url,
+                  detail: item.image_url.detail || 'auto',
+                },
+              };
+            } else if (item.type === 'file_url') {
+              // For non-image files, add as text with context
+              // Note: Azure AI Agents SDK handles files via file search tool
+              return {
+                type: 'text',
+                text: `[File attached: ${item.originalFilename || 'file'}]`,
+              };
+            }
+            return item;
+          });
+        } else if (
+          typeof lastMessage.content === 'object' &&
+          'text' in lastMessage.content
+        ) {
+          // Single TextMessageContent object
+          messageContent = (lastMessage.content as any).text;
+        } else {
+          // Fallback
+          messageContent = String(lastMessage.content);
+        }
+
+        await client.messages.create(thread.id, 'user', messageContent as any);
       } catch (messageError) {
         console.error('Error creating message:', messageError);
         console.error(

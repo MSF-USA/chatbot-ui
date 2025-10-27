@@ -49,28 +49,8 @@ function isFileAllowed(file: File): boolean {
   );
 }
 
-const unsupportedExtensions: string[] = [
-  '.mp3',
-  '.wav',
-  '.ogg',
-  '.flac',
-  '.m4a',
-  '.aac',
-  '.mp4',
-  '.avi',
-  '.mov',
-  '.wmv',
-  '.flv',
-  '.mkv',
-  '.webm',
-];
-
-function isFileSupported(file: File): boolean {
-  const extension = '.' + file.name.split('.').pop()?.toLowerCase();
-  return (
-    !(file.type.startsWith('audio/') || file.type.startsWith('video/')) &&
-    !unsupportedExtensions.includes(extension)
-  );
+function isAudioOrVideo(file: File): boolean {
+  return file.type.startsWith('audio/') || file.type.startsWith('video/');
 }
 
 export async function onFileUpload(
@@ -123,20 +103,10 @@ export async function onFileUpload(
       return;
     }
 
-    if (!isFileSupported(file)) {
-      toast.error(
-        `Unsupported file type: ${file.name}. Audio and video files are not supported.`,
-      );
-      // Remove the failed file from previews
-      setFilePreviews((prevPreviews) =>
-        prevPreviews.filter((preview) => preview.name !== file.name),
-      );
-      return;
-    }
-
     const isImage = file.type.startsWith('image/');
-    const maxSize = isImage ? 5242880 : 10485760; // 5MB for images, 10MB for files
-    const maxSizeMB = isImage ? 5 : 10;
+    const isAudioVideo = isAudioOrVideo(file);
+    const maxSize = isImage ? 5242880 : isAudioVideo ? 26214400 : 10485760; // 5MB for images, 25MB for audio/video, 10MB for files
+    const maxSizeMB = isImage ? 5 : isAudioVideo ? 25 : 10;
 
     if (file.size > maxSize) {
       toast.error(`${file.name} must be less than ${maxSizeMB}MB.`);

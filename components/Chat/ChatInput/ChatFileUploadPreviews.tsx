@@ -91,6 +91,8 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
 
   const { name, type, status, previewUrl } = filePreview;
   const isImage = type.startsWith('image/');
+  const isAudio = type.startsWith('audio/');
+  const isVideo = type.startsWith('video/');
   const showProgress = status === 'uploading' && progress !== undefined;
 
   let filename = name;
@@ -100,7 +102,9 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   const isPdf = extension === 'pdf';
 
   // File type styling - just for the badge color
-  const getFileTypeColor = (ext: string) => {
+  const getFileTypeColor = (ext: string, fileType: string) => {
+    if (fileType.startsWith('audio/')) return 'bg-purple-500 text-white';
+    if (fileType.startsWith('video/')) return 'bg-pink-500 text-white';
     switch (ext) {
       case 'pdf':
         return 'bg-red-500 text-white';
@@ -121,7 +125,8 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
     }
   };
 
-  const badgeColor = getFileTypeColor(extension);
+  const badgeColor = getFileTypeColor(extension, type);
+  const badgeText = isAudio ? '🎵' : isVideo ? '🎬' : extension.toUpperCase();
 
   // Determine if the filename is long
   const isLongFilename = filename && filename.length > 16;
@@ -144,7 +149,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
           width: 'calc(50% - 0.25rem)',
           maxWidth: '280px',
           minWidth: '200px',
-          height: isImage ? '150px' : '80px',
+          height: isImage ? '150px' : 'auto',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -191,12 +196,12 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
             )}
           </div>
         ) : (
-          <div className="flex flex-col h-full p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="flex items-center gap-2 mb-2">
+          <div className="flex flex-col p-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="flex items-center gap-2 mb-1.5">
               <div
-                className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${badgeColor}`}
+                className={`px-1.5 py-0.5 rounded text-xs font-semibold ${badgeColor}`}
               >
-                {extension}
+                {badgeText}
               </div>
               {status === 'uploading' && progress !== undefined && (
                 <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
@@ -204,14 +209,20 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                 </div>
               )}
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0">
               <div className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
                 {filename}
               </div>
               {isPdf && status === 'completed' && (
-                <div className="flex items-center gap-1 text-xs mt-1 text-gray-600 dark:text-gray-400">
+                <div className="flex items-center gap-1 text-xs mt-0.5 text-gray-600 dark:text-gray-400">
                   <IconInfoCircle size={12} />
                   <span>Text extraction only</span>
+                </div>
+              )}
+              {(isAudio || isVideo) && status === 'completed' && (
+                <div className="flex items-center gap-1 text-xs mt-0.5 text-purple-600 dark:text-purple-400">
+                  <IconInfoCircle size={12} />
+                  <span>Will be transcribed</span>
                 </div>
               )}
             </div>

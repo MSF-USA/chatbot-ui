@@ -231,6 +231,7 @@
   "transcribingButton": "Transcribing...",
   "transcribeButton": "Transcribe",
   "transcriptionResult": "Transcription Result",
+  "transcriptionComplete": "Transcription complete! Text added to chat input.",
   "copyToClipboard": "Copy to Clipboard",
   "downloadAsTXT": "Download as TXT",
   "injectIntoChat": "Inject into Chat",
