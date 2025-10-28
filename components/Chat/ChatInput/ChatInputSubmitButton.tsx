@@ -1,4 +1,4 @@
-import { IconLoader2, IconPlayerStop, IconSend } from '@tabler/icons-react';
+import { IconLoader2, IconPlayerStop, IconSend2 } from '@tabler/icons-react';
 import React, { FC } from 'react';
 
 interface ChatInputSubmitButtonProps {
@@ -43,7 +43,7 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
                     transition-colors duration-200"
           aria-label="Send message"
         >
-          <IconSend size={18} className="ml-0.5" />
+          <IconSend2 size={18} className="ml-0.5" />
         </button>
       )}
     </>

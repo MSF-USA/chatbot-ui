@@ -138,8 +138,22 @@ export const FileContent: FC<FileContentProps> = ({ files, images }) => {
           file.originalFilename || file.url.split('/').pop() || '';
         const extension = filename.split('.').pop()?.toLowerCase() || '';
 
+        // Check if this is an audio or video file
+        const isAudioVideo = [
+          'mp3',
+          'mp4',
+          'mpeg',
+          'mpga',
+          'm4a',
+          'wav',
+          'webm',
+        ].includes(extension);
+
         // File type badge color
         const getBadgeColor = (ext: string) => {
+          // Audio/video files get purple
+          if (isAudioVideo) return 'bg-purple-500 text-white';
+
           switch (ext) {
             case 'pdf':
               return 'bg-red-500 text-white';
@@ -160,22 +174,33 @@ export const FileContent: FC<FileContentProps> = ({ files, images }) => {
           }
         };
 
+        const containerStyle = isAudioVideo
+          ? {
+              width: 'fit-content',
+              minWidth: '280px',
+              maxWidth: '100%',
+            }
+          : undefined;
+
         return (
           <div
             key={`file-${index}`}
             onClick={(event) => downloadFile(event, file.url)}
-            className="relative flex flex-col p-3 m-1 rounded-lg border border-gray-300 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors w-full sm:w-[calc(50%-0.5rem)] bg-white dark:bg-gray-900"
+            className={`relative flex flex-col ${isAudioVideo ? 'p-4' : 'p-3'} m-1 rounded-lg border border-gray-300 dark:border-gray-700 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors bg-white dark:bg-gray-900 ${!isAudioVideo ? 'w-full sm:w-[calc(50%-0.5rem)]' : ''}`}
+            style={containerStyle}
           >
             <div className="flex items-center justify-between mb-2">
               <div
-                className={`px-2 py-0.5 rounded text-xs font-semibold uppercase ${getBadgeColor(extension)}`}
+                className={`px-2 py-1 rounded ${isAudioVideo ? 'text-sm' : 'text-xs'} font-semibold uppercase ${getBadgeColor(extension)}`}
               >
                 {extension}
               </div>
-              <IconDownload className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <IconDownload className="w-5 h-5 text-gray-600 dark:text-gray-400 flex-shrink-0" />
             </div>
-            <div className="relative overflow-hidden">
-              <span className="block text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+            <div className="relative">
+              <span
+                className={`block ${isAudioVideo ? 'text-base' : 'text-sm'} font-medium text-gray-900 dark:text-gray-100 ${isAudioVideo ? 'break-words' : 'truncate'}`}
+              >
                 {filename}
               </span>
             </div>

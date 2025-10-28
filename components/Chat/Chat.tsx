@@ -440,6 +440,7 @@ export function Chat({
                   message={message}
                   messageIndex={index}
                   onEdit={handleEditMessage}
+                  onQuestionClick={handleSelectPrompt}
                   onRegenerate={handleRegenerate}
                   onSaveAsPrompt={handleOpenSavePromptModal}
                 />
@@ -449,7 +450,12 @@ export function Chat({
                 <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
                   <div className="flex items-center space-x-3">
                     <div className="w-4 h-4 bg-blue-500 dark:bg-blue-400 rounded-full animate-breathing"></div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    <span
+                      className="text-sm bg-gradient-to-r from-gray-600 via-gray-500 to-gray-600 dark:from-gray-400 dark:via-gray-300 dark:to-gray-400 bg-clip-text text-transparent animate-shimmer"
+                      style={{
+                        backgroundSize: '200% 100%',
+                      }}
+                    >
                       {transcriptionStatus}
                     </span>
                   </div>
@@ -469,12 +475,18 @@ export function Chat({
                         }}
                         messageIndex={messages.length}
                         onEdit={() => {}}
+                        onQuestionClick={handleSelectPrompt}
                       />
                     ) : (
                       <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
                         <div className="flex items-center gap-3">
                           <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing flex-shrink-0"></div>
-                          <div className="text-gray-500 dark:text-gray-400 text-sm animate-pulse">
+                          <div
+                            className="text-sm bg-gradient-to-r from-gray-500 via-gray-400 to-gray-500 dark:from-gray-400 dark:via-gray-300 dark:to-gray-400 bg-clip-text text-transparent animate-shimmer"
+                            style={{
+                              backgroundSize: '200% 100%',
+                            }}
+                          >
                             {loadingMessage || 'Thinking...'}
                           </div>
                         </div>

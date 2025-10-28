@@ -101,10 +101,10 @@ function ConversationItem({
     <div
       draggable={!isEditing}
       onDragStart={handleDragStart}
-      className={`group flex items-center gap-2 rounded p-2 cursor-pointer ${
+      className={`group flex items-center gap-2 rounded p-2 cursor-pointer transition-all duration-200 ${
         selectedConversation?.id === conversation.id
           ? 'bg-neutral-200 dark:bg-neutral-700'
-          : ''
+          : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:shadow-sm'
       }`}
       onClick={() =>
         !isEditing && !showMenu && handleSelectConversation(conversation.id)
@@ -823,19 +823,28 @@ export function Sidebar() {
                     {/* Folder conversations */}
                     {!collapsedFolders.has(folder.id) && (
                       <div className="ml-6 space-y-1 mt-1">
-                        {folderConversations.map((conversation) => (
-                          <ConversationItem
-                            key={conversation.id}
-                            conversation={conversation}
-                            selectedConversation={selectedConversation}
-                            handleSelectConversation={handleSelectConversation}
-                            handleDeleteConversation={handleDeleteConversation}
-                            handleMoveToFolder={handleMoveToFolder}
-                            handleRenameConversation={handleRenameConversation}
-                            folders={folders}
-                            t={t}
-                          />
-                        ))}
+                        {folderConversations
+                          .slice()
+                          .reverse()
+                          .map((conversation) => (
+                            <ConversationItem
+                              key={conversation.id}
+                              conversation={conversation}
+                              selectedConversation={selectedConversation}
+                              handleSelectConversation={
+                                handleSelectConversation
+                              }
+                              handleDeleteConversation={
+                                handleDeleteConversation
+                              }
+                              handleMoveToFolder={handleMoveToFolder}
+                              handleRenameConversation={
+                                handleRenameConversation
+                              }
+                              folders={folders}
+                              t={t}
+                            />
+                          ))}
                       </div>
                     )}
                   </div>
@@ -849,19 +858,22 @@ export function Sidebar() {
                   onDragOver={(e) => handleDragOver(e, null)}
                   onDragLeave={handleDragLeave}
                 >
-                  {conversationsWithoutFolder.map((conversation) => (
-                    <ConversationItem
-                      key={conversation.id}
-                      conversation={conversation}
-                      selectedConversation={selectedConversation}
-                      handleSelectConversation={handleSelectConversation}
-                      handleDeleteConversation={handleDeleteConversation}
-                      handleMoveToFolder={handleMoveToFolder}
-                      handleRenameConversation={handleRenameConversation}
-                      folders={folders}
-                      t={t}
-                    />
-                  ))}
+                  {conversationsWithoutFolder
+                    .slice()
+                    .reverse()
+                    .map((conversation) => (
+                      <ConversationItem
+                        key={conversation.id}
+                        conversation={conversation}
+                        selectedConversation={selectedConversation}
+                        handleSelectConversation={handleSelectConversation}
+                        handleDeleteConversation={handleDeleteConversation}
+                        handleMoveToFolder={handleMoveToFolder}
+                        handleRenameConversation={handleRenameConversation}
+                        folders={folders}
+                        t={t}
+                      />
+                    ))}
                 </div>
               )}
             </div>

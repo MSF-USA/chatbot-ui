@@ -18,6 +18,13 @@ export async function retryWithExponentialBackoff<T>(
     try {
       return await fn();
     } catch (error) {
+      // Don't retry on rate limit errors - throw immediately
+      if (
+        error instanceof Error &&
+        error.message.includes('RateLimitReached')
+      ) {
+        throw error;
+      }
       if (attempt === maxRetries) {
         throw error;
       }

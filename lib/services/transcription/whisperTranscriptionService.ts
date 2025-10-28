@@ -6,31 +6,49 @@ import {
 
 import { ITranscriptionService } from '@/types/transcription';
 
-import { DefaultAzureCredential } from '@azure/identity';
-import FormData from 'form-data';
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
 import fs from 'fs';
+import { AzureOpenAI } from 'openai';
 
 export class WhisperTranscriptionService implements ITranscriptionService {
   private modelName: string = 'whisper-1';
-  private endpoint?: string | null;
-  private apiKey?: string | null;
-  private deployment?: string;
-  private client: null;
-  private credential: DefaultAzureCredential;
+  private deployment: string;
+  private client: AzureOpenAI;
 
   constructor() {
     const apiKey = process.env.OPENAI_API_KEY;
     const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
-    const deployment = 'whisper'; // Standard deployment name for Whisper
+    const deployment = 'whisper';
+    const apiVersion = process.env.OPENAI_API_VERSION || '2025-04-01-preview';
 
-    this.apiKey = apiKey;
-    this.endpoint = azureEndpoint;
-    this.deployment = deployment;
-    this.client = null; // Not using the AzureOpenAI client
-    this.credential = new DefaultAzureCredential();
-
-    if (!this.endpoint) {
+    if (!azureEndpoint) {
       throw new Error('AZURE_OPENAI_ENDPOINT is not set.');
+    }
+
+    this.deployment = deployment;
+
+    // Initialize Azure OpenAI client with either API key or Azure AD auth
+    if (apiKey) {
+      this.client = new AzureOpenAI({
+        apiKey,
+        endpoint: azureEndpoint,
+        apiVersion,
+        deployment: this.deployment,
+      });
+    } else {
+      const credential = new DefaultAzureCredential();
+      const scope = 'https://cognitiveservices.azure.com/.default';
+      const azureADTokenProvider = getBearerTokenProvider(credential, scope);
+
+      this.client = new AzureOpenAI({
+        endpoint: azureEndpoint,
+        apiVersion,
+        deployment: this.deployment,
+        azureADTokenProvider,
+      });
     }
   }
 
@@ -48,7 +66,8 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     try {
       // Check file size (Whisper API limit is 25MB)
       const maxSize = 25 * 1024 * 1024; // 25MB
-      const fileSize = fs.statSync(filePath).size;
+      const stats = await fs.promises.stat(filePath);
+      const fileSize = stats.size;
 
       if (fileSize > maxSize) {
         throw new Error(
@@ -69,49 +88,34 @@ export class WhisperTranscriptionService implements ITranscriptionService {
   }
 
   private async transcribeSegment(segmentPath: string): Promise<string> {
-    const fileSize = fs.statSync(segmentPath).size;
+    const stats = await fs.promises.stat(segmentPath);
+    const fileSize = stats.size;
+
     if (fileSize > 25 * 1024 * 1024) {
       throw new Error('Segment size exceeds the maximum allowed size of 25MB.');
     }
 
-    const audioFile = fs.createReadStream(segmentPath);
-
-    // Obtain the Azure AD token
-    const scope = 'https://cognitiveservices.azure.com/.default';
-    const accessToken = await this.credential.getToken(scope);
-    const token = accessToken?.token;
-
-    const formData = new FormData();
-    formData.append('file', audioFile);
-    formData.append('model', this.modelName);
-
-    const formHeaders = formData.getHeaders();
-
     try {
-      const apiVersion = process.env.OPENAI_API_VERSION || '2025-04-01-preview';
-      const reqUrl: string = `${this.endpoint!.trim()}/openai/deployments/${this.deployment}/audio/transcriptions?api-version=${apiVersion}`;
-      const headers = formHeaders;
-      if (this.apiKey) {
-        headers['api-key'] = this.apiKey;
-      } else {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-      const response = await fetch(reqUrl, {
-        method: 'POST',
-        body: formData as any,
-        headers,
+      // Use OpenAI SDK which handles file streams properly
+      const transcription = await this.client.audio.transcriptions.create({
+        file: fs.createReadStream(segmentPath),
+        model: this.deployment,
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
+      return transcription.text || '';
+    } catch (error: any) {
+      // Handle rate limit errors with user-friendly message
+      if (error.status === 429 || error.code === 'rate_limit_exceeded') {
+        const retryAfterMatch = error.message?.match(
+          /retry after (\d+) seconds?/i,
+        );
+        const waitTime = retryAfterMatch ? retryAfterMatch[1] : 'a few';
+
         throw new Error(
-          `HTTP error! status: ${response.status}, message: ${JSON.stringify(errorData)}`,
+          `The audio transcription service is currently at capacity due to high usage. Please wait ${waitTime} seconds and try again. Note: This is a shared service, so capacity may be affected by other users.`,
         );
       }
 
-      const data = await response.json();
-      return data.text || '';
-    } catch (error: any) {
       const errorMessage = error.message || 'Unknown error';
       throw new Error(`Error transcribing segment: ${errorMessage}`);
     }

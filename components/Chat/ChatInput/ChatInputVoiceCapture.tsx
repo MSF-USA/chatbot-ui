@@ -232,36 +232,39 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = React.memo(
 
     return (
       <div className="voice-capture">
-        <button
-          className={isRecording ? ' backdrop-blur' : ''}
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (isRecording) {
+        {isRecording ? (
+          <button
+            className="flex items-center gap-2 px-3 py-2 rounded-full bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               stopRecording();
-            } else {
-              startRecording();
-            }
-          }}
-          title={
-            isRecording ? 'Click to stop recording' : 'Click to start recording'
-          }
-        >
-          {isRecording ? (
-            <div className="flex items-center">
-              <IconPlayerRecordFilled className="rounded h-5 w-5 animate-pulse text-red-500" />
-              {/* Optional visible text to indicate stopping */}
-              <span className="ml-2 text-red-500">Click to stop recording</span>
+            }}
+            title="Click to stop recording"
+          >
+            <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-red-500" />
+            <span className="text-sm font-medium text-red-600 dark:text-red-400 whitespace-nowrap">
+              Stop recording
+            </span>
+          </button>
+        ) : (
+          <div className="group relative">
+            <button
+              className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 hover:bg-gray-100/50 dark:text-gray-400 dark:hover:bg-gray-800/50 transition-colors duration-200"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                startRecording();
+              }}
+              aria-label="Start voice recording"
+            >
+              <MicIcon className="h-5 w-5" />
+            </button>
+            <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md whitespace-nowrap z-50">
+              Voice Input
             </div>
-          ) : (
-            <MicIcon className="text-black dark:text-white rounded h-5 w-5" />
-          )}
-          <span className="sr-only">
-            {isRecording
-              ? 'Click to stop recording'
-              : 'Click to start recording'}
-          </span>
-        </button>
+          </div>
+        )}
       </div>
     );
   },

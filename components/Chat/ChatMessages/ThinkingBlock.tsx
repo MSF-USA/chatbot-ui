@@ -32,7 +32,18 @@ export const ThinkingBlock: FC<ThinkingBlockProps> = ({
       >
         <div className="flex items-center gap-2">
           <IconBrain size={18} className="flex-shrink-0" />
-          <span>{isStreaming ? 'Thinking...' : 'View reasoning process'}</span>
+          {isStreaming ? (
+            <span
+              className="bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 dark:from-blue-300 dark:via-blue-200 dark:to-blue-300 bg-clip-text text-transparent animate-shimmer"
+              style={{
+                backgroundSize: '200% 100%',
+              }}
+            >
+              Thinking...
+            </span>
+          ) : (
+            <span>View reasoning process</span>
+          )}
         </div>
         {isExpanded ? (
           <IconChevronDown size={18} className="flex-shrink-0" />

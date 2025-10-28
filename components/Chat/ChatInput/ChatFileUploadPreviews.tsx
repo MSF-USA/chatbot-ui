@@ -70,23 +70,35 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
 
   const [isHovered, setIsHovered] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const removeFilePreview = (
     event: MouseEvent<HTMLButtonElement>,
     filePreview: FilePreview,
   ) => {
     event.preventDefault();
-    setFilePreviews((prevPreviews) => {
-      const newPreviews = prevPreviews.filter(
-        (prevPreview) => prevPreview !== filePreview,
-      );
-      if (newPreviews.length === 0) setSubmitType('text');
-      return newPreviews;
-    });
+    // Trigger exit animation
+    setIsRemoving(true);
+    // Wait for animation to complete before removing from state
+    setTimeout(() => {
+      setFilePreviews((prevPreviews) => {
+        const newPreviews = prevPreviews.filter(
+          (prevPreview) => prevPreview !== filePreview,
+        );
+        if (newPreviews.length === 0) setSubmitType('text');
+        return newPreviews;
+      });
+    }, 200); // Match the animation duration
   };
 
   const openLightbox = (imageUrl: string) => {
-    setLightboxImage(imageUrl);
+    // Only open lightbox for images, not for audio/video files
+    if (
+      !filePreview.type.startsWith('audio/') &&
+      !filePreview.type.startsWith('video/')
+    ) {
+      setLightboxImage(imageUrl);
+    }
   };
 
   const { name, type, status, previewUrl } = filePreview;
@@ -135,6 +147,18 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
 
   return (
     <>
+      <style jsx>{`
+        @keyframes slideInScale {
+          0% {
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+      `}</style>
       {/* Render lightbox if image is selected */}
       {lightboxImage && (
         <Lightbox
@@ -144,12 +168,17 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
       )}
 
       <div
-        className="relative rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 group"
+        className={`relative rounded-lg overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 group transition-all duration-200 ease-out ${
+          isRemoving
+            ? 'opacity-0 scale-90 translate-x-2 translate-y-2'
+            : 'opacity-100 scale-100 translate-x-0 translate-y-0'
+        } hover:scale-[1.02] hover:shadow-lg`}
         style={{
           width: 'calc(50% - 0.25rem)',
           maxWidth: '280px',
           minWidth: '200px',
           height: isImage ? '150px' : 'auto',
+          animation: isRemoving ? 'none' : 'slideInScale 0.3s ease-out',
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
@@ -210,7 +239,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
               )}
             </div>
             <div className="min-w-0">
-              <div className="text-sm font-medium truncate text-gray-900 dark:text-gray-100">
+              <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
                 {filename}
               </div>
               {isPdf && status === 'completed' && (
@@ -233,11 +262,11 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
         <button
           className={`absolute top-2 right-2 rounded-full bg-white dark:bg-gray-800 shadow-lg ${
             isHovered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
-          } transition-opacity duration-200 hover:scale-110`}
+          } transition-all duration-200 hover:scale-110 hover:rotate-90 hover:bg-red-50 dark:hover:bg-red-900/30 active:scale-95`}
           onClick={(event) => removeFilePreview(event, filePreview)}
           aria-label="Remove"
         >
-          <XIcon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          <XIcon className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors hover:text-red-600 dark:hover:text-red-400" />
           <span className="sr-only">Remove</span>
         </button>
 

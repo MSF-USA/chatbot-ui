@@ -437,6 +437,15 @@ export const ChatInput = ({
     onTranscriptionStatusChange?.(transcriptionStatus);
   }, [transcriptionStatus, onTranscriptionStatusChange]);
 
+  // Clear file attachments when switching conversations
+  useEffect(() => {
+    setFilePreviews([]);
+    setFileFieldValue(null);
+    setImageFieldValue(null);
+    setUploadProgress({});
+    setSubmitType('text');
+  }, [selectedConversation?.id]);
+
   // Auto-disable web search when audio/video files are attached (they need transcription)
   // Images and documents can work with web search mode
   useEffect(() => {
@@ -498,7 +507,17 @@ export const ChatInput = ({
   };
 
   const preventSubmission = (): boolean => {
-    return isTranscribing || isStreaming;
+    // Check if any files are still uploading
+    const hasUploadingFiles = filePreviews.some(
+      (preview) => preview.status === 'uploading',
+    );
+    const hasIncompleteUploads = Object.values(uploadProgress).some(
+      (progress) => progress < 100,
+    );
+
+    return (
+      isTranscribing || isStreaming || hasUploadingFiles || hasIncompleteUploads
+    );
   };
 
   return (
@@ -649,7 +668,7 @@ export const ChatInput = ({
               </div>
 
               <div
-                className={`absolute right-1.5 flex items-center gap-3 z-[10001] transition-all duration-200 ${
+                className={`absolute right-2.5 flex items-center gap-2 z-[10001] transition-all duration-200 ${
                   webSearchMode
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
@@ -664,10 +683,7 @@ export const ChatInput = ({
                   isTranscribing={isTranscribing}
                   handleSend={handleSend}
                   handleStopConversation={handleStopConversation}
-                  preventSubmission={
-                    preventSubmission ||
-                    Object.values(uploadProgress).some((p) => p < 100)
-                  }
+                  preventSubmission={preventSubmission}
                 />
               </div>
 
