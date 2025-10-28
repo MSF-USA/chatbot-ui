@@ -245,5 +245,11 @@
   "Data Actions": "Dataåtgärder",
   "Profile": "Profil",
   "Job Title": "Jobbtitel",
-  "Authentication": "Autentisering"
+  "Authentication": "Autentisering",
+  "Collapse folder": "Dölj mapp",
+  "Expand folder": "Expandera mapp",
+  "Import prompts": "Importera instruktioner",
+  "Export all prompts": "Exportera alla instruktioner",
+  "New": "Ny",
+  "Export": "Exportera"
 }

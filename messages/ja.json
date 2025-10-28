@@ -253,5 +253,11 @@
   "Data Actions": "データアクション",
   "Profile": "プロフィール",
   "Job Title": "役職名",
-  "Authentication": "認証"
+  "Authentication": "認証",
+  "Collapse folder": "フォルダを折りたたむ",
+  "Expand folder": "フォルダを展開",
+  "Import prompts": "プロンプトをインポート",
+  "Export all prompts": "すべてのプロンプトをエクスポート",
+  "New": "新規",
+  "Export": "エクスポート"
 }

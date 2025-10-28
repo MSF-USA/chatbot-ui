@@ -195,5 +195,11 @@
   "Data Actions": "Дії з даними",
   "Profile": "Профіль",
   "Job Title": "Посада",
-  "Authentication": "Аутентифікація"
+  "Authentication": "Аутентифікація",
+  "Collapse folder": "Згорнути папку",
+  "Expand folder": "Розгорнути папку",
+  "Import prompts": "Імпортувати підказки",
+  "Export all prompts": "Експортувати всі підказки",
+  "New": "Новий",
+  "Export": "Експорт"
 }

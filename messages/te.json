@@ -245,5 +245,11 @@
   "Data Actions": "డేటా చర్యలు",
   "Profile": "ప్రొఫైల్",
   "Job Title": "ఉద్యోగ శీర్షిక",
-  "Authentication": "ప్రామాణీకరణ"
+  "Authentication": "ప్రామాణీకరణ",
+  "Collapse folder": "ఫోల్డర్‌ను కుదించండి",
+  "Expand folder": "ఫోల్డర్‌ను విస్తరించండి",
+  "Import prompts": "ప్రాంప్ట్‌లను దిగుమతి చేయండి",
+  "Export all prompts": "అన్ని ప్రాంప్ట్‌లను ఎగుమతి చేయండి",
+  "New": "కొత్తది",
+  "Export": "ఎగుమతి"
 }

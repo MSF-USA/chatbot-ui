@@ -244,10 +244,6 @@ describe('Chat Utilities', () => {
 
   describe('checkIsModelValid', () => {
     describe('OpenAI Models', () => {
-      it('should return true for valid GPT-4.1 model', () => {
-        expect(checkIsModelValid('gpt-4.1', OpenAIModelID)).toBe(true);
-      });
-
       it('should return true for valid GPT-5 model', () => {
         expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
       });
@@ -282,10 +278,6 @@ describe('Chat Utilities', () => {
     });
 
     describe('Vision Models', () => {
-      it('should return true for GPT-4.1 with vision capabilities', () => {
-        expect(checkIsModelValid('gpt-4.1', OpenAIVisionModelID)).toBe(true);
-      });
-
       it('should return true for GPT-5 with vision capabilities', () => {
         expect(checkIsModelValid('gpt-5', OpenAIVisionModelID)).toBe(true);
       });
@@ -319,8 +311,8 @@ describe('Chat Utilities', () => {
       });
 
       it('should be case-sensitive', () => {
-        expect(checkIsModelValid('GPT-4.1', OpenAIModelID)).toBe(false);
-        expect(checkIsModelValid('gpt-4.1', OpenAIModelID)).toBe(true);
+        expect(checkIsModelValid('GPT-5', OpenAIModelID)).toBe(false);
+        expect(checkIsModelValid('gpt-5', OpenAIModelID)).toBe(true);
       });
     });
 

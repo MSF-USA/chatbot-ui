@@ -267,5 +267,11 @@
   "What is this?": "What is this?",
   "No prompts found": "No prompts found",
   "Select a prompt to view details": "Select a prompt to view details",
-  "Content": "Content"
+  "Content": "Content",
+  "Collapse folder": "Collapse folder",
+  "Expand folder": "Expand folder",
+  "Import prompts": "Import prompts",
+  "Export all prompts": "Export all prompts",
+  "New": "New",
+  "Export": "Export"
 }

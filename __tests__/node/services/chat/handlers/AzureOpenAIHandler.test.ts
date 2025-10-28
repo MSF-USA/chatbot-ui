@@ -199,12 +199,12 @@ describe('AzureOpenAIHandler', () => {
       ] as any;
 
       const modelConfig: OpenAIModel = {
-        ...OpenAIModels[OpenAIModelID.GPT_4_1],
+        ...OpenAIModels[OpenAIModelID.GPT_5_CHAT],
         supportsReasoningEffort: false,
       };
 
       const params = handler.buildRequestParams(
-        'gpt-4.1',
+        'gpt-5-chat',
         messages,
         0.7,
         mockUser,

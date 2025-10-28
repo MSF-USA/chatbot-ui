@@ -253,5 +253,11 @@
   "Data Actions": "إجراءات البيانات",
   "Profile": "الملف الشخصي",
   "Job Title": "المسمى الوظيفي",
-  "Authentication": "المصادقة"
+  "Authentication": "المصادقة",
+  "Collapse folder": "طي المجلد",
+  "Expand folder": "توسيع المجلد",
+  "Import prompts": "استيراد المطالبات",
+  "Export all prompts": "تصدير جميع المطالبات",
+  "New": "جديد",
+  "Export": "تصدير"
 }

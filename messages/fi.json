@@ -253,5 +253,11 @@
   "Data Actions": "Tietotoiminnot",
   "Profile": "Profiili",
   "Job Title": "Ammattinimike",
-  "Authentication": "Todennus"
+  "Authentication": "Todennus",
+  "Collapse folder": "Tiivistä kansio",
+  "Expand folder": "Laajenna kansio",
+  "Import prompts": "Tuo kehotukset",
+  "Export all prompts": "Vie kaikki kehotukset",
+  "New": "Uusi",
+  "Export": "Vie"
 }

@@ -258,5 +258,11 @@
   "Data Actions": "Actions sur les données",
   "Profile": "Profil",
   "Job Title": "Titre du poste",
-  "Authentication": "Authentification"
+  "Authentication": "Authentification",
+  "Collapse folder": "Réduire le dossier",
+  "Expand folder": "Développer le dossier",
+  "Import prompts": "Importer les instructions",
+  "Export all prompts": "Exporter toutes les instructions",
+  "New": "Nouveau",
+  "Export": "Exporter"
 }

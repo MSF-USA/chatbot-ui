@@ -203,5 +203,11 @@
   "Data Actions": "Akce s daty",
   "Profile": "Profil",
   "Job Title": "Pracovní pozice",
-  "Authentication": "Autentizace"
+  "Authentication": "Autentizace",
+  "Collapse folder": "Sbalit složku",
+  "Expand folder": "Rozbalit složku",
+  "Import prompts": "Importovat výzvy",
+  "Export all prompts": "Exportovat všechny výzvy",
+  "New": "Nový",
+  "Export": "Exportovat"
 }

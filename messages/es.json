@@ -253,5 +253,11 @@
   "Data Actions": "Acciones de datos",
   "Profile": "Perfil",
   "Job Title": "Título del trabajo",
-  "Authentication": "Autenticación"
+  "Authentication": "Autenticación",
+  "Collapse folder": "Contraer carpeta",
+  "Expand folder": "Expandir carpeta",
+  "Import prompts": "Importar instrucciones",
+  "Export all prompts": "Exportar todas las instrucciones",
+  "New": "Nuevo",
+  "Export": "Exportar"
 }

@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 import {
   checkIsModelValid,
   isAudioVideoConversation,
+  isCustomAgentModel,
   isImageConversation,
   isReasoningModel,
 } from '@/lib/utils/app/chat';
@@ -229,6 +230,7 @@ export default class ChatService {
 
       // Handle image model upgrades
       const needsToHandleImages: boolean = isImageConversation(messages);
+      const isCustomAgent: boolean = isCustomAgentModel(model.id);
       const isValidModel: boolean = checkIsModelValid(model.id, OpenAIModelID);
       const isImageModel: boolean = checkIsModelValid(
         model.id,
@@ -237,7 +239,12 @@ export default class ChatService {
 
       let modelToUse = model.id;
 
-      if (isValidModel && needsToHandleImages && !isImageModel) {
+      if (
+        isValidModel &&
+        needsToHandleImages &&
+        !isImageModel &&
+        !isCustomAgent
+      ) {
         modelToUse = 'gpt-5';
         console.log(
           `[ChatService] Image detected - upgrading from ${model.id} to ${modelToUse} for vision support`,
@@ -250,9 +257,14 @@ export default class ChatService {
       }
 
       // Get model configuration using the potentially upgraded model
-      const modelConfig = Object.values(OpenAIModels).find(
-        (m) => m.id === modelToUse,
-      ) as OpenAIModel | undefined;
+      // For custom agents, use the model config passed in (which already has the full config)
+      // For standard models, look up in OpenAIModels
+      const modelConfig =
+        isCustomAgent && modelToUse === model.id
+          ? model
+          : (Object.values(OpenAIModels).find((m) => m.id === modelToUse) as
+              | OpenAIModel
+              | undefined);
 
       if (!modelConfig) {
         throw new Error(`Model configuration not found for: ${modelToUse}`);

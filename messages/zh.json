@@ -253,5 +253,11 @@
   "Data Actions": "数据操作",
   "Profile": "个人资料",
   "Job Title": "职位",
-  "Authentication": "认证"
+  "Authentication": "认证",
+  "Collapse folder": "折叠文件夹",
+  "Expand folder": "展开文件夹",
+  "Import prompts": "导入提示",
+  "Export all prompts": "导出所有提示",
+  "New": "新建",
+  "Export": "导出"
 }

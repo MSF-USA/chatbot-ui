@@ -1070,6 +1070,9 @@ export function Sidebar() {
           setIsPromptsListOpen(false);
           setIsPromptModalOpen(true);
         }}
+        onImportPrompts={(newPrompts: Prompt[]) => {
+          newPrompts.forEach((prompt) => addPrompt(prompt));
+        }}
         editingFolderId={editingFolderId}
         editingFolderName={editingFolderName}
         onEditingFolderNameChange={setEditingFolderName}

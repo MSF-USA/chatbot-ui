@@ -253,5 +253,11 @@
   "Data Actions": "Datenaktionen",
   "Profile": "Profil",
   "Job Title": "Berufsbezeichnung",
-  "Authentication": "Authentifizierung"
+  "Authentication": "Authentifizierung",
+  "Collapse folder": "Ordner einklappen",
+  "Expand folder": "Ordner erweitern",
+  "Import prompts": "Eingabeaufforderungen importieren",
+  "Export all prompts": "Alle Eingabeaufforderungen exportieren",
+  "New": "Neu",
+  "Export": "Exportieren"
 }

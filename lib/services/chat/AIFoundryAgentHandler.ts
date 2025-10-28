@@ -157,10 +157,21 @@ export class AIFoundryAgentHandler {
 
         // Call stream() on the run object
         streamEventMessages = await run.stream();
-      } catch (streamError) {
+      } catch (streamError: any) {
         console.error('Error creating stream:', streamError);
         if (streamError instanceof Error) {
           console.error('Error stack:', streamError.stack);
+        }
+        // Log the full error details including response body if available
+        if (streamError.response) {
+          console.error('Error response status:', streamError.response.status);
+          console.error('Error response body:', streamError.response.body);
+        }
+        if (streamError.details) {
+          console.error(
+            'Error details:',
+            JSON.stringify(streamError.details, null, 2),
+          );
         }
         throw streamError;
       }

@@ -195,5 +195,11 @@
   "Data Actions": "Vitendo vya Data",
   "Profile": "Wasifu",
   "Job Title": "Cheo cha Kazi",
-  "Authentication": "Uthibitishaji"
+  "Authentication": "Uthibitishaji",
+  "Collapse folder": "Funga folda",
+  "Expand folder": "Panua folda",
+  "Import prompts": "Ingiza vidokezo",
+  "Export all prompts": "Toa vidokezo vyote",
+  "New": "Mpya",
+  "Export": "Toa"
 }

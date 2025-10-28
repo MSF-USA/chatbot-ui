@@ -245,5 +245,11 @@
   "Data Actions": "Działania na danych",
   "Profile": "Profil",
   "Job Title": "Stanowisko",
-  "Authentication": "Uwierzytelnianie"
+  "Authentication": "Uwierzytelnianie",
+  "Collapse folder": "Zwiń folder",
+  "Expand folder": "Rozwiń folder",
+  "Import prompts": "Importuj podpowiedzi",
+  "Export all prompts": "Eksportuj wszystkie podpowiedzi",
+  "New": "Nowy",
+  "Export": "Eksportuj"
 }

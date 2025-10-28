@@ -117,12 +117,22 @@ export const isFileConversation = (messages: Message[]): boolean => {
 };
 
 /**
- * Validates if a model ID exists in the allowed model IDs
+ * Checks if a model ID represents a custom agent
+ */
+export const isCustomAgentModel = (modelId: string | undefined): boolean => {
+  if (!modelId) return false;
+  return modelId.startsWith('custom-');
+};
+
+/**
+ * Validates if a model ID exists in the allowed model IDs or is a custom agent
  */
 export const checkIsModelValid = (
   modelId: string | undefined,
   allowedModelIds: Record<string, string> | typeof OpenAIModelID,
 ): boolean => {
   if (!modelId) return false;
+  // Custom agents are always valid
+  if (isCustomAgentModel(modelId)) return true;
   return Object.values(allowedModelIds).includes(modelId);
 };

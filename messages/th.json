@@ -195,5 +195,11 @@
   "Data Actions": "การกระทำข้อมูล",
   "Profile": "โปรไฟล์",
   "Job Title": "ตำแหน่งงาน",
-  "Authentication": "การยืนยันตัวตน"
+  "Authentication": "การยืนยันตัวตน",
+  "Collapse folder": "ยุบโฟลเดอร์",
+  "Expand folder": "ขยายโฟลเดอร์",
+  "Import prompts": "นำเข้าคำแนะนำ",
+  "Export all prompts": "ส่งออกคำแนะนำทั้งหมด",
+  "New": "ใหม่",
+  "Export": "ส่งออก"
 }

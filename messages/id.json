@@ -245,5 +245,11 @@
   "Data Actions": "Tindakan Data",
   "Profile": "Profil",
   "Job Title": "Jabatan",
-  "Authentication": "Autentikasi"
+  "Authentication": "Autentikasi",
+  "Collapse folder": "Ciutkan folder",
+  "Expand folder": "Perluas folder",
+  "Import prompts": "Impor petunjuk",
+  "Export all prompts": "Ekspor semua petunjuk",
+  "New": "Baru",
+  "Export": "Ekspor"
 }

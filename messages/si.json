@@ -245,5 +245,11 @@
   "Data Actions": "දත්ත ක්‍රියා",
   "Profile": "පැතිකඩ",
   "Job Title": "රැකියා තනතුර",
-  "Authentication": "සත්‍යාපනය"
+  "Authentication": "සත්‍යාපනය",
+  "Collapse folder": "ෆෝල්ඩරය හකුළන්න",
+  "Expand folder": "ෆෝල්ඩරය පුළුල් කරන්න",
+  "Import prompts": "විමසුම් ආයාත කරන්න",
+  "Export all prompts": "සියලුම විමසුම් අපනයනය කරන්න",
+  "New": "නව",
+  "Export": "අපනයනය"
 }

@@ -203,5 +203,11 @@
   "Data Actions": "የውሂብ ተግባሮች",
   "Profile": "መገለጫ",
   "Job Title": "የስራ መጠሪያ",
-  "Authentication": "ማረጋገጫ"
+  "Authentication": "ማረጋገጫ",
+  "Collapse folder": "አቃፊን ሰብስብ",
+  "Expand folder": "አቃፊን አስፋፋ",
+  "Import prompts": "ፕሮምፕቶችን አስመጣ",
+  "Export all prompts": "ሁሉንም ፕሮምፕቶች ላክ",
+  "New": "አዲስ",
+  "Export": "ላክ"
 }

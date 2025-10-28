@@ -199,6 +199,12 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     setShowAgentManager(false);
   };
 
+  const handleImportAgents = (agents: CustomAgent[]) => {
+    agents.forEach((agent) => {
+      addCustomAgent(agent);
+    });
+  };
+
   const handleDeleteAgent = (agentId: string) => {
     deleteCustomAgent(agentId);
 
@@ -799,6 +805,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           onSave={handleSaveAgent}
           onClose={handleCloseAgentForm}
           existingAgent={editingAgent}
+          existingAgents={customAgents}
         />
       )}
 
@@ -853,6 +860,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                 agents={customAgents}
                 onEdit={handleEditAgent}
                 onDelete={handleDeleteAgent}
+                onImport={handleImportAgents}
               />
             </div>
 

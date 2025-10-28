@@ -185,7 +185,7 @@ describe('ModelSelect', () => {
         id: 'conv-1',
         name: 'Test',
         messages: [],
-        model: OpenAIModels[OpenAIModelID.GPT_4_1],
+        model: OpenAIModels[OpenAIModelID.GPT_5],
         prompt: '',
         temperature: 0.7,
         folderId: null,
@@ -300,7 +300,7 @@ describe('ModelSelect', () => {
         name: 'Test',
         messages: [],
         model: {
-          ...OpenAIModels[OpenAIModelID.GPT_4_1],
+          ...OpenAIModels[OpenAIModelID.GPT_5],
           agentEnabled: true,
         },
         prompt: '',

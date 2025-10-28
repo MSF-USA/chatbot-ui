@@ -245,5 +245,11 @@
   "Data Actions": "Veri İşlemleri",
   "Profile": "Profil",
   "Job Title": "İş Unvanı",
-  "Authentication": "Kimlik Doğrulama"
+  "Authentication": "Kimlik Doğrulama",
+  "Collapse folder": "Klasörü daralt",
+  "Expand folder": "Klasörü genişlet",
+  "Import prompts": "İstemleri içe aktar",
+  "Export all prompts": "Tüm istemleri dışa aktar",
+  "New": "Yeni",
+  "Export": "Dışa aktar"
 }

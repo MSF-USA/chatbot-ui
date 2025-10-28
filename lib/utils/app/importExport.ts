@@ -4,6 +4,7 @@ import {
   ExportFormatV2,
   ExportFormatV3,
   ExportFormatV4,
+  ExportFormatV5,
   LatestExportFormat,
   SupportedExportFormats,
 } from '@/types/export';
@@ -28,21 +29,26 @@ export function isExportFormatV4(obj: any): obj is ExportFormatV4 {
   return obj.version === 4;
 }
 
-export const isLatestExportFormat = isExportFormatV4;
+export function isExportFormatV5(obj: any): obj is ExportFormatV5 {
+  return obj.version === 5;
+}
+
+export const isLatestExportFormat = isExportFormatV5;
 
 export function cleanData(data: SupportedExportFormats): LatestExportFormat {
   if (isExportFormatV1(data)) {
     return {
-      version: 4,
+      version: 5,
       history: cleanConversationHistory(data),
       folders: [],
       prompts: [],
+      customAgents: [],
     };
   }
 
   if (isExportFormatV2(data)) {
     return {
-      version: 4,
+      version: 5,
       history: cleanConversationHistory(data.history || []),
       folders: (data.folders || []).map((chatFolder) => ({
         id: chatFolder.id.toString(),
@@ -50,14 +56,19 @@ export function cleanData(data: SupportedExportFormats): LatestExportFormat {
         type: 'chat',
       })),
       prompts: [],
+      customAgents: [],
     };
   }
 
   if (isExportFormatV3(data)) {
-    return { ...data, version: 4, prompts: [] };
+    return { ...data, version: 5, prompts: [], customAgents: [] };
   }
 
   if (isExportFormatV4(data)) {
+    return { ...data, version: 5, customAgents: [] };
+  }
+
+  if (isExportFormatV5(data)) {
     return data;
   }
 
@@ -75,6 +86,7 @@ export const exportData = () => {
   let history = localStorage.getItem('conversationHistory');
   let folders = localStorage.getItem('folders');
   let prompts = localStorage.getItem('prompts');
+  let customAgents = localStorage.getItem('settings-storage');
 
   if (history) {
     history = JSON.parse(history);
@@ -88,11 +100,19 @@ export const exportData = () => {
     prompts = JSON.parse(prompts);
   }
 
+  // Extract customAgents from settings-storage
+  let customAgentsArray = [];
+  if (customAgents) {
+    const settingsData = JSON.parse(customAgents);
+    customAgentsArray = settingsData?.state?.customAgents || [];
+  }
+
   const data = {
-    version: 4,
+    version: 5,
     history: history || [],
     folders: folders || [],
     prompts: prompts || [],
+    customAgents: customAgentsArray,
   } as LatestExportFormat;
 
   const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -112,7 +132,7 @@ export const exportData = () => {
 export const importData = (
   data: SupportedExportFormats,
 ): LatestExportFormat => {
-  const { history, folders, prompts } = cleanData(data);
+  const { history, folders, prompts, customAgents } = cleanData(data);
 
   const oldConversations = localStorage.getItem('conversationHistory');
   const oldConversationsParsed = oldConversations
@@ -155,10 +175,23 @@ export const importData = (
   );
   localStorage.setItem('prompts', JSON.stringify(newPrompts));
 
+  // Handle custom agents - merge with existing settings-storage
+  const settingsStorage = localStorage.getItem('settings-storage');
+  const settingsData = settingsStorage
+    ? JSON.parse(settingsStorage)
+    : { state: {} };
+  const oldCustomAgents = settingsData?.state?.customAgents || [];
+  const newCustomAgents = [...oldCustomAgents, ...customAgents].filter(
+    (agent, index, self) => index === self.findIndex((a) => a.id === agent.id),
+  );
+  settingsData.state = { ...settingsData.state, customAgents: newCustomAgents };
+  localStorage.setItem('settings-storage', JSON.stringify(settingsData));
+
   return {
-    version: 4,
+    version: 5,
     history: newHistory,
     folders: newFolders,
     prompts: newPrompts,
+    customAgents: newCustomAgents,
   };
 };

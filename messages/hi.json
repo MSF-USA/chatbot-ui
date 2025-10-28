@@ -251,5 +251,11 @@
   "Data Actions": "डेटा क्रियाएं",
   "Profile": "प्रोफ़ाइल",
   "Job Title": "नौकरी का शीर्षक",
-  "Authentication": "प्रमाणीकरण"
+  "Authentication": "प्रमाणीकरण",
+  "Collapse folder": "फ़ोल्डर संक्षिप्त करें",
+  "Expand folder": "फ़ोल्डर विस्तृत करें",
+  "Import prompts": "प्रॉम्प्ट आयात करें",
+  "Export all prompts": "सभी प्रॉम्प्ट निर्यात करें",
+  "New": "नया",
+  "Export": "निर्यात"
 }

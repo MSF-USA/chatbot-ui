@@ -253,5 +253,11 @@
   "Data Actions": "פעולות נתונים",
   "Profile": "פרופיל",
   "Job Title": "תפקיד",
-  "Authentication": "אימות"
+  "Authentication": "אימות",
+  "Collapse folder": "כווץ תיקייה",
+  "Expand folder": "הרחב תיקייה",
+  "Import prompts": "ייבא הנחיות",
+  "Export all prompts": "ייצא את כל ההנחיות",
+  "New": "חדש",
+  "Export": "ייצוא"
 }

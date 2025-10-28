@@ -203,5 +203,11 @@
   "Data Actions": "اقدامات داده",
   "Profile": "نمایه",
   "Job Title": "عنوان شغلی",
-  "Authentication": "احراز هویت"
+  "Authentication": "احراز هویت",
+  "Collapse folder": "جمع کردن پوشه",
+  "Expand folder": "گسترش پوشه",
+  "Import prompts": "وارد کردن دستورات",
+  "Export all prompts": "صادر کردن همه دستورات",
+  "New": "جدید",
+  "Export": "صادر کردن"
 }

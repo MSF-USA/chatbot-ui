@@ -245,5 +245,11 @@
   "Data Actions": "Hành động dữ liệu",
   "Profile": "Hồ sơ",
   "Job Title": "Chức danh công việc",
-  "Authentication": "Xác thực"
+  "Authentication": "Xác thực",
+  "Collapse folder": "Thu gọn thư mục",
+  "Expand folder": "Mở rộng thư mục",
+  "Import prompts": "Nhập lời nhắc",
+  "Export all prompts": "Xuất tất cả lời nhắc",
+  "New": "Mới",
+  "Export": "Xuất"
 }

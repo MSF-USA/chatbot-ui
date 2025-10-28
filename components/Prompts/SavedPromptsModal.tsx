@@ -4,16 +4,24 @@ import {
   IconChevronDown,
   IconChevronRight,
   IconEdit,
+  IconFileExport,
   IconFolder,
   IconFolderPlus,
   IconPlus,
   IconSearch,
   IconTrash,
+  IconUpload,
   IconX,
 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
+
+import {
+  exportPrompts,
+  handlePromptFileImport,
+  importPrompts,
+} from '@/lib/utils/app/promptExport';
 
 import { FolderInterface } from '@/types/folder';
 import { Prompt } from '@/types/prompt';
@@ -34,6 +42,7 @@ interface SavedPromptsModalProps {
   onDeletePrompt: (promptId: string, e: React.MouseEvent) => void;
   onMovePromptToFolder: (promptId: string, folderId: string | null) => void;
   onCreatePrompt: () => void;
+  onImportPrompts: (newPrompts: Prompt[]) => void;
   editingFolderId: string | null;
   editingFolderName: string;
   onEditingFolderNameChange: (name: string) => void;
@@ -55,6 +64,7 @@ export function SavedPromptsModal({
   onDeletePrompt,
   onMovePromptToFolder,
   onCreatePrompt,
+  onImportPrompts,
   editingFolderId,
   editingFolderName,
   onEditingFolderNameChange,
@@ -68,6 +78,7 @@ export function SavedPromptsModal({
   const [isDragging, setIsDragging] = useState(false);
   const editInputRef = useRef<HTMLInputElement>(null);
   const justStartedEditingRef = useRef(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Focus input when editing starts
   useEffect(() => {
@@ -131,6 +142,52 @@ export function SavedPromptsModal({
     onClose();
   };
 
+  const handleExportAll = () => {
+    if (prompts.length === 0) {
+      alert(t('No prompts to export'));
+      return;
+    }
+    exportPrompts(prompts);
+  };
+
+  const handleExportSingle = (prompt: Prompt) => {
+    exportPrompts([prompt]);
+  };
+
+  const handleImportClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const data = await handlePromptFileImport(file);
+      const { prompts: newPrompts, conflicts } = importPrompts(data, prompts);
+
+      if (conflicts.length > 0) {
+        const conflictNames = conflicts.map((c) => c.imported.name).join(', ');
+        const proceed = confirm(
+          `${conflicts.length} prompt(s) with similar names already exist: ${conflictNames}. Import anyway? They will be created as duplicates.`,
+        );
+        if (!proceed) {
+          e.target.value = '';
+          return;
+        }
+      }
+
+      onImportPrompts(newPrompts);
+      alert(`Successfully imported ${newPrompts.length} prompt(s)`);
+    } catch (error) {
+      alert(
+        `Failed to import prompts: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    } finally {
+      e.target.value = '';
+    }
+  };
+
   // Filter prompts based on search query
   const searchLower = promptSearchQuery.toLowerCase().trim();
   const filteredPrompts = prompts.filter((prompt) => {
@@ -167,76 +224,127 @@ export function SavedPromptsModal({
       onClick={handleClose}
     >
       <div
-        className="max-w-5xl w-full h-[90vh] mx-4 rounded-lg bg-white dark:bg-[#212121] p-6 shadow-xl animate-modal-in flex flex-col"
+        className="max-w-6xl w-full h-[90vh] mx-4 rounded-lg bg-white dark:bg-[#212121] shadow-xl animate-modal-in flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex-shrink-0 flex justify-between items-start mb-6">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-              {t('Saved Prompts')}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              Manage and organize your reusable prompt templates. Type{' '}
-              <span className="font-mono text-xs bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
-                /
-              </span>{' '}
-              in chat to access them.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={onCreateFolder}
-              className="p-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              title={t('New folder')}
-            >
-              <IconFolderPlus size={18} />
-            </button>
-            <button
-              onClick={onCreatePrompt}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-            >
-              <IconPlus size={16} />
-              {t('New prompt')}
-            </button>
+        <div className="flex-shrink-0 px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                {t('Saved Prompts')}
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                Type{' '}
+                <span className="font-mono bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
+                  /
+                </span>{' '}
+                in chat to access your prompts
+              </p>
+            </div>
             <button
               onClick={handleClose}
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
-              <IconX size={24} />
+              <IconX size={20} />
             </button>
           </div>
         </div>
 
+        {/* Toolbar */}
+        <div className="flex-shrink-0 px-6 py-3 bg-gray-50 dark:bg-[#1a1a1a] border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between gap-4">
+            {/* Search */}
+            <div className="flex-1 relative max-w-md">
+              <IconSearch
+                size={16}
+                className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              />
+              <input
+                type="text"
+                value={promptSearchQuery}
+                onChange={(e) => setPromptSearchQuery(e.target.value)}
+                placeholder={t('Search prompts_ellipsis')}
+                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+              />
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+
+              <div className="relative group">
+                <button
+                  onClick={handleImportClick}
+                  className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  aria-label={t('Import prompts')}
+                >
+                  <IconUpload size={18} />
+                </button>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  {t('Import prompts')}
+                </div>
+              </div>
+
+              <div className="relative group">
+                <button
+                  onClick={handleExportAll}
+                  className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  aria-label={t('Export all prompts')}
+                >
+                  <IconFileExport size={18} />
+                </button>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  {t('Export all prompts')}
+                </div>
+              </div>
+
+              <div className="h-6 w-px bg-gray-300 dark:bg-gray-600"></div>
+
+              <div className="relative group">
+                <button
+                  onClick={onCreateFolder}
+                  className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                  aria-label={t('New folder')}
+                >
+                  <IconFolderPlus size={18} />
+                </button>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                  {t('New folder')}
+                </div>
+              </div>
+
+              <button
+                onClick={onCreatePrompt}
+                className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700"
+              >
+                <IconPlus size={16} />
+                {t('New')}
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Master-Detail Layout */}
-        <div className="flex-1 flex gap-6 min-h-0">
+        <div className="flex-1 flex min-h-0">
           {/* Left: Prompts List */}
           <div
-            className={`flex-shrink-0 overflow-y-auto transition-all duration-200 ease-in-out border-r pr-4 min-h-0 will-change-[width] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500 ${
+            className={`flex-shrink-0 overflow-y-auto transition-all duration-200 ease-in-out min-h-0 will-change-[width] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500 ${
               selectedPromptId
-                ? 'w-80 border-gray-200 dark:border-gray-700'
-                : 'w-full border-transparent pr-0'
+                ? 'w-96 border-r border-gray-200 dark:border-gray-700'
+                : 'w-full'
             }`}
             style={{
               scrollbarWidth: 'thin',
             }}
           >
-            <div className="space-y-3">
-              {/* Search */}
-              <div className="relative">
-                <IconSearch
-                  size={16}
-                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-                />
-                <input
-                  type="text"
-                  value={promptSearchQuery}
-                  onChange={(e) => setPromptSearchQuery(e.target.value)}
-                  placeholder={t('Search prompts_ellipsis')}
-                  className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-500"
-                />
-              </div>
-
+            <div className="p-4">
               {/* List */}
               <div>
                 {!hasResults ? (
@@ -244,12 +352,15 @@ export function SavedPromptsModal({
                     {searchLower ? t('No prompts found') : t('No prompts yet')}
                   </div>
                 ) : (
-                  <div className="p-2">
+                  <div
+                    className={!selectedPromptId ? 'space-y-2' : 'space-y-1'}
+                  >
                     {/* Prompt Folders */}
                     {filteredFolders.map((folder) => {
                       const folderPrompts = filteredPrompts.filter(
                         (p) => p.folderId === folder.id,
                       );
+                      const isCollapsed = collapsedFolders.has(folder.id);
                       return (
                         <div
                           key={folder.id}
@@ -259,27 +370,43 @@ export function SavedPromptsModal({
                           onDragLeave={handleDragLeave}
                         >
                           <div
-                            className={`group flex items-center gap-2 px-4 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors rounded ${
+                            className={`group flex items-center gap-3 px-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors rounded-lg ${
                               isDragging && dragOverFolderId === folder.id
                                 ? 'bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400'
                                 : ''
-                            }`}
+                            } ${!selectedPromptId ? 'py-3.5' : 'py-2.5'}`}
                           >
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                onToggleFolder(folder.id);
-                              }}
-                              className="shrink-0 text-neutral-600 dark:text-neutral-400"
-                            >
-                              {collapsedFolders.has(folder.id) ? (
-                                <IconChevronRight size={14} />
-                              ) : (
-                                <IconChevronDown size={14} />
-                              )}
-                            </button>
+                            <div className="relative group/chevron">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onToggleFolder(folder.id);
+                                }}
+                                className="shrink-0 p-1 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-neutral-200 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded transition-colors"
+                                aria-label={
+                                  isCollapsed
+                                    ? t('Expand folder')
+                                    : t('Collapse folder')
+                                }
+                              >
+                                {isCollapsed ? (
+                                  <IconChevronRight
+                                    size={!selectedPromptId ? 22 : 18}
+                                  />
+                                ) : (
+                                  <IconChevronDown
+                                    size={!selectedPromptId ? 22 : 18}
+                                  />
+                                )}
+                              </button>
+                              <div className="absolute top-full left-1/2 -translate-x-1/2 mt-1 px-2 py-1 bg-gray-900 dark:bg-gray-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover/chevron:opacity-100 transition-opacity pointer-events-none z-10">
+                                {isCollapsed
+                                  ? t('Expand folder')
+                                  : t('Collapse folder')}
+                              </div>
+                            </div>
                             <IconFolder
-                              size={16}
+                              size={!selectedPromptId ? 22 : 18}
                               className="shrink-0 text-neutral-600 dark:text-neutral-400"
                             />
                             {editingFolderId === folder.id ? (
@@ -316,18 +443,28 @@ export function SavedPromptsModal({
                                   }
                                 }}
                                 onClick={(e) => e.stopPropagation()}
-                                className="flex-1 bg-transparent border-b border-neutral-400 dark:border-neutral-600 focus:outline-none text-sm text-neutral-900 dark:text-neutral-100"
+                                className={`flex-1 bg-transparent border-b border-neutral-400 dark:border-neutral-600 focus:outline-none text-neutral-900 dark:text-neutral-100 mr-2 ${!selectedPromptId ? 'text-lg' : 'text-base'}`}
                               />
                             ) : (
-                              <span className="flex-1 truncate text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                                {folder.name} ({folderPrompts.length})
-                              </span>
+                              <>
+                                <span
+                                  className={`truncate font-medium text-neutral-900 dark:text-neutral-100 ${!selectedPromptId ? 'text-lg' : 'text-base'}`}
+                                >
+                                  {folder.name}
+                                </span>
+                                <span
+                                  className={`shrink-0 text-neutral-500 dark:text-neutral-400 font-medium ml-2 ${!selectedPromptId ? 'text-base' : 'text-sm'}`}
+                                >
+                                  {folderPrompts.length}
+                                </span>
+                              </>
                             )}
+                            <div className="flex-1"></div>
                             <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               {editingFolderId !== folder.id && (
                                 <>
                                   <button
-                                    className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer"
+                                    className="rounded p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700 cursor-pointer"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       e.preventDefault();
@@ -337,12 +474,12 @@ export function SavedPromptsModal({
                                     type="button"
                                   >
                                     <IconEdit
-                                      size={14}
+                                      size={!selectedPromptId ? 18 : 16}
                                       className="text-neutral-600 dark:text-neutral-400"
                                     />
                                   </button>
                                   <button
-                                    className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                                    className="rounded p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       onDeleteFolder(folder.id, e);
@@ -350,7 +487,7 @@ export function SavedPromptsModal({
                                     title={t('Delete')}
                                   >
                                     <IconTrash
-                                      size={14}
+                                      size={!selectedPromptId ? 18 : 16}
                                       className="text-neutral-600 dark:text-neutral-400"
                                     />
                                   </button>
@@ -360,8 +497,10 @@ export function SavedPromptsModal({
                           </div>
 
                           {/* Folder prompts */}
-                          {!collapsedFolders.has(folder.id) && (
-                            <div className="ml-6 space-y-2 mt-1 p-1">
+                          {!isCollapsed && (
+                            <div
+                              className={`mt-1 ml-8 pl-2 border-l-2 border-neutral-200 dark:border-neutral-700 ${!selectedPromptId ? 'space-y-2' : 'space-y-1'}`}
+                            >
                               {folderPrompts.map((prompt) => (
                                 <div
                                   key={prompt.id}
@@ -378,6 +517,7 @@ export function SavedPromptsModal({
                                       (f) => f.type === 'prompt',
                                     )}
                                     isSelected={selectedPromptId === prompt.id}
+                                    isExpanded={!selectedPromptId}
                                     onClick={() =>
                                       handleToggleSelection(prompt.id)
                                     }
@@ -386,7 +526,7 @@ export function SavedPromptsModal({
                                       onDeletePrompt(prompt.id, e)
                                     }
                                     onMoveToFolder={onMovePromptToFolder}
-                                    t={t}
+                                    onExport={() => handleExportSingle(prompt)}
                                   />
                                 </div>
                               ))}
@@ -403,8 +543,10 @@ export function SavedPromptsModal({
                       onDragLeave={handleDragLeave}
                       className={
                         isDragging && dragOverFolderId === null
-                          ? 'bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400 rounded p-2 space-y-2'
-                          : 'space-y-2'
+                          ? `bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400 rounded p-2 ${!selectedPromptId ? 'space-y-2' : 'space-y-1'}`
+                          : !selectedPromptId
+                            ? 'space-y-2'
+                            : 'space-y-1'
                       }
                     >
                       {filteredPrompts
@@ -423,11 +565,12 @@ export function SavedPromptsModal({
                                 (f) => f.type === 'prompt',
                               )}
                               isSelected={selectedPromptId === prompt.id}
+                              isExpanded={!selectedPromptId}
                               onClick={() => handleToggleSelection(prompt.id)}
                               onEdit={() => onEditPrompt(prompt)}
                               onDelete={(e) => onDeletePrompt(prompt.id, e)}
                               onMoveToFolder={onMovePromptToFolder}
-                              t={t}
+                              onExport={() => handleExportSingle(prompt)}
                             />
                           </div>
                         ))}
@@ -441,21 +584,19 @@ export function SavedPromptsModal({
           {/* Right: Prompt Details */}
           {selectedPromptId && selectedPrompt && (
             <div
-              className="flex-1 overflow-y-auto min-h-0 w-0 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500"
+              className="flex-1 overflow-y-auto min-h-0 w-0 bg-gray-50 dark:bg-[#1a1a1a] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-gray-300 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:hover:bg-gray-400 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600 dark:[&::-webkit-scrollbar-thumb]:hover:bg-gray-500"
               style={{
                 scrollbarWidth: 'thin',
               }}
             >
-              <div className="space-y-6">
+              <div className="p-6 space-y-6">
                 {/* Prompt Header */}
                 <div>
-                  <div className="mb-2">
-                    <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                      {selectedPrompt.name}
-                    </h2>
-                  </div>
+                  <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+                    {selectedPrompt.name}
+                  </h2>
                   {selectedPrompt.description && (
-                    <p className="text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                       {selectedPrompt.description}
                     </p>
                   )}
@@ -463,27 +604,27 @@ export function SavedPromptsModal({
 
                 {/* Prompt Content */}
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
                     {t('Content')}
                   </h3>
-                  <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <pre className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
+                  <div className="p-4 bg-white dark:bg-[#212121] rounded-lg border border-gray-200 dark:border-gray-700">
+                    <pre className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono leading-relaxed">
                       {selectedPrompt.content}
                     </pre>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 pt-2">
                   <button
                     onClick={() => onEditPrompt(selectedPrompt)}
-                    className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+                    className="px-4 py-2 text-sm font-medium rounded-lg transition-colors bg-blue-600 text-white hover:bg-blue-700"
                   >
                     {t('Edit')}
                   </button>
                   <button
                     onClick={(e) => onDeletePrompt(selectedPrompt.id, e)}
-                    className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-800 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                   >
                     {t('Delete')}
                   </button>

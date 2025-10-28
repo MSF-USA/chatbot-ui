@@ -244,5 +244,11 @@
   "Data Actions": "Gegevensacties",
   "Profile": "Profiel",
   "Job Title": "Functietitel",
-  "Authentication": "Authenticatie"
+  "Authentication": "Authenticatie",
+  "Collapse folder": "Map samenvouwen",
+  "Expand folder": "Map uitvouwen",
+  "Import prompts": "Prompts importeren",
+  "Export all prompts": "Alle prompts exporteren",
+  "New": "Nieuw",
+  "Export": "Exporteren"
 }

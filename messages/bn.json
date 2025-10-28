@@ -253,5 +253,11 @@
   "Data Actions": "ডেটা ক্রিয়া",
   "Profile": "প্রোফাইল",
   "Job Title": "কাজের শিরোনাম",
-  "Authentication": "প্রমাণীকরণ"
+  "Authentication": "প্রমাণীকরণ",
+  "Collapse folder": "ফোল্ডার সংকুচিত করুন",
+  "Expand folder": "ফোল্ডার প্রসারিত করুন",
+  "Import prompts": "প্রম্পট আমদানি করুন",
+  "Export all prompts": "সমস্ত প্রম্পট রপ্তানি করুন",
+  "New": "নতুন",
+  "Export": "রপ্তানি"
 }

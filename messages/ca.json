@@ -253,5 +253,11 @@
   "Data Actions": "Accions de dades",
   "Profile": "Perfil",
   "Job Title": "Títol del treball",
-  "Authentication": "Autenticació"
+  "Authentication": "Autenticació",
+  "Collapse folder": "Reduir carpeta",
+  "Expand folder": "Expandir carpeta",
+  "Import prompts": "Importar indicacions",
+  "Export all prompts": "Exportar totes les indicacions",
+  "New": "Nou",
+  "Export": "Exportar"
 }

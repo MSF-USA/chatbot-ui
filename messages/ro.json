@@ -245,5 +245,11 @@
   "Data Actions": "Acțiuni date",
   "Profile": "Profil",
   "Job Title": "Titlu post",
-  "Authentication": "Autentificare"
+  "Authentication": "Autentificare",
+  "Collapse folder": "Restrânge dosarul",
+  "Expand folder": "Extinde dosarul",
+  "Import prompts": "Importă solicitări",
+  "Export all prompts": "Exportă toate solicitările",
+  "New": "Nou",
+  "Export": "Exportă"
 }

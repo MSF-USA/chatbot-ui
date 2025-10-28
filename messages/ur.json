@@ -251,5 +251,11 @@
   "Data Actions": "ڈیٹا کی کارروائیاں",
   "Profile": "پروفائل",
   "Job Title": "ملازمت کا عنوان",
-  "Authentication": "تصدیق"
+  "Authentication": "تصدیق",
+  "Collapse folder": "فولڈر کو سمیٹیں",
+  "Expand folder": "فولڈر کو پھیلائیں",
+  "Import prompts": "اشارے درآمد کریں",
+  "Export all prompts": "تمام اشارے برآمد کریں",
+  "New": "نیا",
+  "Export": "برآمد کریں"
 }
