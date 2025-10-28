@@ -54,32 +54,34 @@ export interface ThinkingContent {
 export function getChatMessageContent(message: Message): string {
   if (typeof message.content === 'string') {
     return message.content;
-  } else if (
-    Array.isArray(message.content) &&
-    message.content.some((contentItem) => contentItem.type !== 'text')
-  ) {
-    // @ts-ignore
+  } else if (Array.isArray(message.content)) {
     const imageContent = message.content.find(
-      // @ts-ignore
-      (contentItem) => contentItem.type === 'image_url',
-    ) as ImageMessageContent;
+      (contentItem): contentItem is ImageMessageContent =>
+        contentItem.type === 'image_url',
+    );
     if (imageContent) {
       return imageContent.image_url.url;
-    } else {
-      // @ts-ignore
-      const fileContent = message.content.find(
-        // @ts-ignore
-        (contentItem) => contentItem.type === 'file_url',
-      ) as FileMessageContent;
+    }
+    const fileContent = message.content.find(
+      (contentItem): contentItem is FileMessageContent =>
+        contentItem.type === 'file_url',
+    );
+    if (fileContent) {
       return fileContent.url;
+    }
+    const textContent = message.content.find(
+      (contentItem): contentItem is TextMessageContent =>
+        contentItem.type === 'text',
+    );
+    if (textContent) {
+      return textContent.text;
     }
   } else if ((message.content as TextMessageContent).type === 'text') {
     return (message.content as TextMessageContent).text;
-  } else {
-    throw new Error(
-      `Invalid message type or structure: ${JSON.stringify(message)}`,
-    );
   }
+  throw new Error(
+    `Invalid message type or structure: ${JSON.stringify(message)}`,
+  );
 }
 
 export interface Message {

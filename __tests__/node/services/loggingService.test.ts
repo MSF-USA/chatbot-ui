@@ -7,13 +7,8 @@ import { LogsIngestionClient } from '@azure/monitor-ingestion';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Azure Identity and Monitor Ingestion
-vi.mock('@azure/identity', () => ({
-  DefaultAzureCredential: vi.fn(),
-}));
-
-vi.mock('@azure/monitor-ingestion', () => ({
-  LogsIngestionClient: vi.fn(),
-}));
+vi.mock('@azure/identity');
+vi.mock('@azure/monitor-ingestion');
 
 describe('AzureMonitorLoggingService', () => {
   let loggingService: AzureMonitorLoggingService;
@@ -39,8 +34,12 @@ describe('AzureMonitorLoggingService', () => {
       upload: vi.fn().mockResolvedValue(undefined),
     };
 
-    (LogsIngestionClient as any).mockImplementation(() => mockClient);
-    (DefaultAzureCredential as any).mockImplementation(() => ({}));
+    (LogsIngestionClient as any).mockImplementation(function (this: any) {
+      return mockClient;
+    });
+    (DefaultAzureCredential as any).mockImplementation(function (this: any) {
+      return {};
+    });
 
     loggingService = new AzureMonitorLoggingService(
       'test-endpoint',
@@ -396,7 +395,7 @@ describe('AzureMonitorLoggingService', () => {
         '2024-01-01',
         '2024-01-31',
         mockUser,
-        true
+        true,
       );
 
       expect(console.error).toHaveBeenCalled();

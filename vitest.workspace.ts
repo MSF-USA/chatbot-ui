@@ -1,7 +1,7 @@
 import path from 'path';
-import { defineWorkspace } from 'vitest/config';
+import { defineConfig } from 'vitest/config';
 
-export default defineWorkspace([
+const workspaceConfig = [
   {
     test: {
       name: 'dom',
@@ -27,4 +27,6 @@ export default defineWorkspace([
       },
     },
   },
-]);
+];
+
+export default workspaceConfig;

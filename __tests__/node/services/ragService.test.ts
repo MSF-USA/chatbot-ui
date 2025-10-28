@@ -13,12 +13,7 @@ import { ChatCompletion } from 'openai/resources';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Azure Search Documents
-vi.mock('@azure/search-documents', () => {
-  return {
-    SearchClient: vi.fn(),
-    AzureKeyCredential: vi.fn(),
-  };
-});
+vi.mock('@azure/search-documents');
 
 // Mock ReadableStream if it's not available in the test environment
 if (typeof ReadableStream === 'undefined') {
@@ -123,8 +118,15 @@ describe('RAGService', () => {
       },
     };
 
-    (SearchClient as any).mockImplementation(() => mockSearchClient);
-    (AzureKeyCredential as any).mockImplementation((key: string) => ({ key }));
+    (SearchClient as any).mockImplementation(function (this: any) {
+      return mockSearchClient;
+    });
+    (AzureKeyCredential as any).mockImplementation(function (
+      this: any,
+      key: string,
+    ) {
+      return { key };
+    });
 
     ragService = new RAGService(
       'test-endpoint',

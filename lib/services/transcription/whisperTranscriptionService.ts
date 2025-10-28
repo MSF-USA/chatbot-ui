@@ -9,7 +9,6 @@ import { ITranscriptionService } from '@/types/transcription';
 import { DefaultAzureCredential } from '@azure/identity';
 import FormData from 'form-data';
 import fs from 'fs';
-import fetch from 'node-fetch';
 
 export class WhisperTranscriptionService implements ITranscriptionService {
   private modelName: string = 'whisper-1';
