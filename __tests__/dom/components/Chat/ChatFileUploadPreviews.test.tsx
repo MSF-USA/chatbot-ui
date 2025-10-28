@@ -30,8 +30,13 @@ describe('ChatFileUploadPreviews', () => {
   const mockSetSubmitType = vi.fn();
 
   beforeEach(() => {
+    vi.useFakeTimers();
     mockSetFilePreviews.mockClear();
     mockSetSubmitType.mockClear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   const createImagePreview = (overrides = {}): FilePreview => ({
@@ -283,6 +288,9 @@ describe('ChatFileUploadPreviews', () => {
       const removeButton = screen.getByLabelText('Remove');
       fireEvent.click(removeButton);
 
+      // Advance timers to trigger the setTimeout callback
+      vi.runAllTimers();
+
       expect(mockSetFilePreviews).toHaveBeenCalled();
     });
 
@@ -303,6 +311,9 @@ describe('ChatFileUploadPreviews', () => {
       const removeButtons = screen.getAllByLabelText('Remove');
       fireEvent.click(removeButtons[0]);
 
+      // Advance timers to trigger the setTimeout callback
+      vi.runAllTimers();
+
       expect(mockSetFilePreviews).toHaveBeenCalled();
       const updateFunction = mockSetFilePreviews.mock.calls[0][0];
       const newPreviews = updateFunction(previews);
@@ -322,6 +333,9 @@ describe('ChatFileUploadPreviews', () => {
 
       const removeButton = screen.getByLabelText('Remove');
       fireEvent.click(removeButton);
+
+      // Advance timers to trigger the setTimeout callback
+      vi.runAllTimers();
 
       const updateFunction = mockSetFilePreviews.mock.calls[0][0];
       updateFunction([filePreview]);

@@ -1,4 +1,7 @@
-import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from '@/lib/utils/app/const';
+import {
+  DEFAULT_SYSTEM_PROMPT,
+  DEFAULT_TEMPERATURE,
+} from '@/lib/utils/app/const';
 import {
   cleanData,
   isExportFormatV1,
@@ -85,7 +88,7 @@ describe('cleanData Functions', () => {
       const obj = cleanData(data);
       expect(isLatestExportFormat(obj)).toBe(true);
       expect(obj).toEqual({
-        version: 4,
+        version: 5,
         history: [
           {
             id: 1,
@@ -108,6 +111,7 @@ describe('cleanData Functions', () => {
         ],
         folders: [],
         prompts: [],
+        customAgents: [],
       });
     });
   });
@@ -141,7 +145,7 @@ describe('cleanData Functions', () => {
       const obj = cleanData(data);
       expect(isLatestExportFormat(obj)).toBe(true);
       expect(obj).toEqual({
-        version: 4,
+        version: 5,
         history: [
           {
             id: '1',
@@ -170,6 +174,7 @@ describe('cleanData Functions', () => {
           },
         ],
         prompts: [],
+        customAgents: [],
       });
     });
   });
@@ -220,7 +225,7 @@ describe('cleanData Functions', () => {
       const obj = cleanData(data);
       expect(isLatestExportFormat(obj)).toBe(true);
       expect(obj).toEqual({
-        version: 4,
+        version: 5,
         history: [
           {
             id: '1',
@@ -258,6 +263,7 @@ describe('cleanData Functions', () => {
             folderId: null,
           },
         ],
+        customAgents: [],
       });
     });
   });

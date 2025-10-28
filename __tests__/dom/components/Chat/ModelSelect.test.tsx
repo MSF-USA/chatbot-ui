@@ -185,7 +185,7 @@ describe('ModelSelect', () => {
         id: 'conv-1',
         name: 'Test',
         messages: [],
-        model: OpenAIModels[OpenAIModelID.GPT_5],
+        model: OpenAIModels[OpenAIModelID.GPT_4_1],
         prompt: '',
         temperature: 0.7,
         folderId: null,
