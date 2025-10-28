@@ -4,6 +4,8 @@ import { IconX } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { useChat } from '@/lib/hooks/chat/useChat';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
@@ -12,6 +14,8 @@ import { useUI } from '@/lib/hooks/ui/useUI';
 import { AgentType } from '@/types/agent';
 import { Message } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
+import { PromptModal } from '@/components/Prompts/PromptModal';
 
 import { ChatInput } from './ChatInput';
 import { ChatTopbar } from './ChatTopbar';
@@ -36,6 +40,7 @@ export function Chat({
   mobileModelSelectOpen,
   onMobileModelSelectChange,
 }: ChatProps = {}) {
+  const t = useTranslations();
   const { data: session, status } = useSession();
   const {
     selectedConversation,
@@ -53,10 +58,12 @@ export function Chat({
     sendMessage,
     citations,
     clearError,
+    loadingMessage,
   } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, toggleChatbar, showChatbar } =
     useUI();
-  const { models, defaultModelId, systemPrompt, temperature } = useSettings();
+  const { models, defaultModelId, systemPrompt, temperature, addPrompt } =
+    useSettings();
 
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
   const [filePreviews, setFilePreviews] = useState<any[]>([]);
@@ -64,6 +71,10 @@ export function Chat({
   const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
     null,
   );
+  const [isSavePromptModalOpen, setIsSavePromptModalOpen] = useState(false);
+  const [savePromptContent, setSavePromptContent] = useState('');
+  const [savePromptName, setSavePromptName] = useState('');
+  const [savePromptDescription, setSavePromptDescription] = useState('');
   const hasInitializedRef = useRef(false);
 
   // Sync with mobile header model select state
@@ -207,6 +218,40 @@ export function Chat({
         messages: [],
       });
     }
+  };
+
+  const handleOpenSavePromptModal = (content: string) => {
+    setSavePromptContent(content);
+    const timestamp = new Date().toLocaleString();
+    setSavePromptName(`Saved prompt - ${timestamp}`);
+    setSavePromptDescription('Saved from message');
+    setIsSavePromptModalOpen(true);
+  };
+
+  const handleSavePrompt = (
+    name: string,
+    description: string,
+    content: string,
+  ) => {
+    const defaultModel =
+      models.find((m) => m.id === defaultModelId) || models[0];
+
+    const newPrompt = {
+      id: `prompt-${Date.now()}`,
+      name: name || 'Untitled prompt',
+      description: description,
+      content: content,
+      model: defaultModel,
+      folderId: null,
+    };
+
+    addPrompt(newPrompt);
+    setIsSavePromptModalOpen(false);
+
+    // Reset fields
+    setSavePromptName('');
+    setSavePromptDescription('');
+    setSavePromptContent('');
   };
 
   const handleEditMessage = (editedMessage: Message) => {
@@ -396,6 +441,7 @@ export function Chat({
                   messageIndex={index}
                   onEdit={handleEditMessage}
                   onRegenerate={handleRegenerate}
+                  onSaveAsPrompt={handleOpenSavePromptModal}
                 />
               ))}
               {/* Show transcription status indicator */}
@@ -426,8 +472,11 @@ export function Chat({
                       />
                     ) : (
                       <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">
-                        <div className="flex items-center">
-                          <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing"></div>
+                        <div className="flex items-center gap-3">
+                          <div className="w-4 h-4 bg-gray-500 dark:bg-gray-400 rounded-full animate-breathing flex-shrink-0"></div>
+                          <div className="text-gray-500 dark:text-gray-400 text-sm animate-pulse">
+                            {loadingMessage || 'Thinking...'}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -482,6 +531,17 @@ export function Chat({
           </div>
         </div>
       )}
+
+      {/* Save Prompt Modal */}
+      <PromptModal
+        isOpen={isSavePromptModalOpen}
+        onClose={() => setIsSavePromptModalOpen(false)}
+        onSave={handleSavePrompt}
+        initialName={savePromptName}
+        initialDescription={savePromptDescription}
+        initialContent={savePromptContent}
+        title={t('Save as prompt')}
+      />
     </div>
   );
 }

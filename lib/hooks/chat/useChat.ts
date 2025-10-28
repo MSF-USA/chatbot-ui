@@ -15,6 +15,7 @@ export function useChat() {
     citations: store.citations,
     error: store.error,
     stopRequested: store.stopRequested,
+    loadingMessage: store.loadingMessage,
 
     // Actions
     setCurrentMessage: store.setCurrentMessage,
@@ -27,6 +28,7 @@ export function useChat() {
     requestStop: store.requestStop,
     resetStop: store.resetStop,
     resetChat: store.resetChat,
+    setLoadingMessage: store.setLoadingMessage,
     sendMessage: store.sendMessage,
   };
 }

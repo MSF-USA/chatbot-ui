@@ -15,15 +15,12 @@ vi.mock('@/lib/services/imageService', () => ({
   fetchImageBase64FromMessageContent: vi.fn(),
 }));
 
-// Mock file and image icons
-vi.mock('@/components/Icons/file', () => ({
-  default: ({ className }: any) =>
-    React.createElement('div', { 'data-testid': 'file-icon', className }),
-}));
-
-vi.mock('@/components/Icons/image', () => ({
-  default: ({ className }: any) =>
-    React.createElement('div', { 'data-testid': 'image-icon', className }),
+// Mock tabler icons
+vi.mock('@tabler/icons-react', () => ({
+  IconDownload: ({ className }: any) =>
+    React.createElement('div', { 'data-testid': 'download-icon', className }),
+  IconX: ({ className }: any) =>
+    React.createElement('div', { 'data-testid': 'close-icon', className }),
 }));
 
 describe('FileContent', () => {
@@ -61,7 +58,7 @@ describe('FileContent', () => {
       render(<FileContent files={files} images={[]} />);
 
       expect(screen.getByText('document.pdf')).toBeInTheDocument();
-      expect(screen.getByTestId('file-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('download-icon')).toBeInTheDocument();
     });
 
     it('renders multiple files', () => {
@@ -144,7 +141,7 @@ describe('FileContent', () => {
       render(<FileContent files={[]} images={images} />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('image-icon')).toBeInTheDocument();
+        expect(screen.getByTestId('download-icon')).toBeInTheDocument();
       });
     });
 
@@ -229,8 +226,8 @@ describe('FileContent', () => {
 
       await waitFor(() => {
         const modal = screen.getByAltText('Full size preview').closest('div');
-        if (modal?.parentElement) {
-          fireEvent.click(modal.parentElement);
+        if (modal) {
+          fireEvent.click(modal);
         }
       });
 
@@ -327,9 +324,11 @@ describe('FileContent', () => {
 
       const { container } = render(<FileContent files={files} images={[]} />);
 
-      const fileContainer = screen.getByText('document.pdf').closest('div');
+      const fileContainer = screen
+        .getByText('document.pdf')
+        .closest('.cursor-pointer');
       expect(fileContainer).toHaveClass('cursor-pointer');
-      expect(fileContainer).toHaveClass('hover:bg-gray-100');
+      expect(fileContainer).toHaveClass('hover:bg-gray-50');
     });
 
     it('displays download icon for files', () => {
@@ -340,7 +339,7 @@ describe('FileContent', () => {
       const { container } = render(<FileContent files={files} images={[]} />);
 
       // IconDownload is rendered (mocked as part of the file container)
-      expect(screen.getByTestId('file-icon')).toBeInTheDocument();
+      expect(screen.getByTestId('download-icon')).toBeInTheDocument();
     });
 
     it('applies correct layout classes', () => {
@@ -375,7 +374,9 @@ describe('FileContent', () => {
 
       render(<FileContent files={files} images={[]} />);
 
-      const fileContainer = screen.getByText('document.pdf').closest('div');
+      const fileContainer = screen
+        .getByText('document.pdf')
+        .closest('.cursor-pointer');
       expect(fileContainer).toHaveClass('cursor-pointer');
     });
 

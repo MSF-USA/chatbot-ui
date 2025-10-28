@@ -11,6 +11,7 @@ declare module 'next-auth' {
       department?: string;
       mail?: string;
       companyName?: string;
+      region?: 'US' | 'EU';
     };
     error?: string;
     // accessToken is kept in JWT only (server-side) to reduce cookie size

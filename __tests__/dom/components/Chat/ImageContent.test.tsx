@@ -234,8 +234,8 @@ describe('ImageContent', () => {
 
       await waitFor(() => {
         const overlay = screen.getByAltText('Full size preview').closest('div');
-        if (overlay?.parentElement) {
-          fireEvent.click(overlay.parentElement);
+        if (overlay) {
+          fireEvent.click(overlay);
         }
       });
 

@@ -82,9 +82,9 @@ describe('ModelSelect', () => {
         screen.getByRole('button', { name: /DeepSeek-V3\.1/i }),
       ).toBeInTheDocument();
 
-      // Check for Grok
+      // Check for Llama
       expect(
-        screen.getByRole('button', { name: /Grok 3/i }),
+        screen.getByRole('button', { name: /Llama 4 Maverick/i }),
       ).toBeInTheDocument();
     });
 
@@ -217,7 +217,7 @@ describe('ModelSelect', () => {
         id: 'conv-1',
         name: 'Test',
         messages: [],
-        model: OpenAIModels[OpenAIModelID.GROK_3],
+        model: OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK],
         prompt: '',
         temperature: 0.7,
         folderId: null,
@@ -419,7 +419,7 @@ describe('ModelSelect', () => {
       expect(screen.getByText('Models')).toBeInTheDocument();
     });
 
-    it('orders providers correctly (OpenAI, DeepSeek, xAI)', () => {
+    it('orders providers correctly (OpenAI, DeepSeek, Meta)', () => {
       const { container } = render(<ModelSelect />);
 
       const modelButtons = screen
@@ -431,15 +431,15 @@ describe('ModelSelect', () => {
         (button) => button.querySelector('.font-medium')?.textContent || '',
       );
 
-      // GPT-5 (OpenAI) should come before DeepSeek
+      // GPT-5 (OpenAI) should come before Llama (Meta), and Llama before DeepSeek
       const gpt5Index = modelNames.findIndex((name) => name.includes('GPT-5'));
+      const llamaIndex = modelNames.findIndex((name) => name.includes('Llama'));
       const deepseekIndex = modelNames.findIndex((name) =>
         name.includes('DeepSeek'),
       );
-      const grokIndex = modelNames.findIndex((name) => name.includes('Grok'));
 
-      expect(gpt5Index).toBeLessThan(deepseekIndex);
-      expect(deepseekIndex).toBeLessThan(grokIndex);
+      expect(gpt5Index).toBeLessThan(llamaIndex);
+      expect(llamaIndex).toBeLessThan(deepseekIndex);
     });
 
     it('places GPT-4.1 first among OpenAI models', () => {

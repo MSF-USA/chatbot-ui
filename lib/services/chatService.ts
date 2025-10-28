@@ -5,6 +5,7 @@ import {
   checkIsModelValid,
   isAudioVideoConversation,
   isImageConversation,
+  isReasoningModel,
 } from '@/lib/utils/app/chat';
 import {
   DEFAULT_MODEL,
@@ -12,12 +13,9 @@ import {
   DEFAULT_TEMPERATURE,
   OPENAI_API_VERSION,
 } from '@/lib/utils/app/const';
-import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
 
-import { AgentType } from '@/types/agent';
-import { bots } from '@/types/bots';
-import { ChatBody, Message } from '@/types/chat';
+import { ChatBody } from '@/types/chat';
 import {
   OpenAIModel,
   OpenAIModelID,
@@ -27,8 +25,13 @@ import {
 
 import { AIFoundryAgentHandler } from './chat/AIFoundryAgentHandler';
 import { FileConversationHandler } from './chat/FileConversationHandler';
-import { HandlerFactory } from './chat/handlers/HandlerFactory';
-import { ModelHandler } from './chat/handlers/ModelHandler';
+import { AIFoundryAgentChatHandler } from './chat/handlers/AIFoundryAgentChatHandler';
+import { ChatContext } from './chat/handlers/ChatContext';
+import { ChatRequestHandler } from './chat/handlers/ChatRequestHandler';
+import { ForcedAgentHandler } from './chat/handlers/ForcedAgentHandler';
+import { RAGHandler } from './chat/handlers/RAGHandler';
+import { ReasoningModelHandler } from './chat/handlers/ReasoningModelHandler';
+import { StandardModelChatHandler } from './chat/handlers/StandardModelChatHandler';
 import { AzureMonitorLoggingService } from './loggingService';
 import { RAGService } from './ragService';
 
@@ -42,15 +45,12 @@ import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
 import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
 import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
-import { ChatCompletion } from 'openai/resources';
-import {
-  ResponseCreateParamsBase,
-  ResponseInput,
-} from 'openai/resources/responses/responses';
 import path from 'path';
 
 /**
  * ChatService class for handling chat-related API operations.
+ *
+ * Uses Chain of Responsibility pattern to route requests to appropriate handlers.
  */
 export default class ChatService {
   private azureOpenAIClient: AzureOpenAI;
@@ -59,6 +59,9 @@ export default class ChatService {
   private ragService: RAGService;
   private fileHandler: FileConversationHandler;
   private agentHandler: AIFoundryAgentHandler;
+
+  // Handler chain (sorted by priority)
+  private handlers: ChatRequestHandler[];
 
   constructor() {
     const azureADTokenProvider = getBearerTokenProvider(
@@ -96,6 +99,35 @@ export default class ChatService {
 
     this.fileHandler = new FileConversationHandler(this.loggingService);
     this.agentHandler = new AIFoundryAgentHandler(this.loggingService);
+
+    // Initialize handler chain
+    // Note: Audio/video is handled as special case before handler chain (to preserve original messages)
+    // Order is determined by getPriority() - lower numbers = higher priority
+    this.handlers = [
+      new ForcedAgentHandler(this.agentHandler),
+      new RAGHandler(
+        this.ragService,
+        this.loggingService,
+        this.azureOpenAIClient,
+      ),
+      new AIFoundryAgentChatHandler(this.agentHandler),
+      new ReasoningModelHandler(this.azureOpenAIClient, this.loggingService),
+      new StandardModelChatHandler(
+        this.azureOpenAIClient,
+        this.openAIClient,
+        this.loggingService,
+      ),
+    ].sort((a, b) => a.getPriority() - b.getPriority());
+
+    console.log(
+      '[ChatService] Initialized with handler chain:',
+      this.handlers
+        .map((h) => `${h.getName()} (priority ${h.getPriority()})`)
+        .join(', '),
+    );
+    console.log(
+      '[ChatService] Note: Audio/video handled as special case before handler chain',
+    );
   }
 
   /**
@@ -116,132 +148,162 @@ export default class ChatService {
   }
 
   /**
-   * Handles chat completion with different strategies based on model configuration.
-   * Uses Strategy Pattern with specialized handlers for different model providers.
+   * Determines if streaming should be used for this model.
    */
-  async handleChatCompletion(
-    modelId: string,
-    messages: Message[],
-    temperature: number,
-    user: Session['user'],
-    botId?: string,
-    streamResponse: boolean = true,
-    promptToSend?: string,
-    modelConfig?: Record<string, unknown>,
-    threadId?: string,
-    reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high',
-    verbosity?: 'low' | 'medium' | 'high',
-    forcedAgentType?: string,
-  ): Promise<Response> {
+  private shouldStream(
+    modelId: OpenAIModelID | string,
+    requestedStream: boolean,
+  ): boolean {
+    // Reasoning models don't support streaming
+    return isReasoningModel(modelId) ? false : requestedStream;
+  }
+
+  /**
+   * Determines the appropriate temperature for this model.
+   */
+  private getTemperature(
+    modelId: OpenAIModelID | string,
+    requestedTemperature?: number,
+  ): number {
+    // Reasoning models use fixed temperature of 1
+    return isReasoningModel(modelId)
+      ? 1
+      : (requestedTemperature ?? DEFAULT_TEMPERATURE);
+  }
+
+  /**
+   * Handles incoming chat requests using Chain of Responsibility pattern.
+   */
+  public async handleRequest(req: NextRequest): Promise<Response> {
     const startTime = Date.now();
 
-    // Debug logging
-    console.log('=== handleChatCompletion Debug ===');
-    console.log('modelId:', modelId);
-    console.log('Handler:', HandlerFactory.getHandlerName(modelConfig as any));
-    console.log('agentEnabled:', modelConfig?.agentEnabled);
-    console.log('forcedAgentType:', forcedAgentType);
-    console.log('===================================');
-
     try {
-      // Strategy 0: Forced Web Search Agent (highest priority)
-      if (forcedAgentType === AgentType.WEB_SEARCH) {
-        console.log('Web search mode detected - routing to web search agent');
-
-        // Find the web search agent configuration (GPT-4.1 with agentEnabled and Bing grounding)
-        const webSearchModel = Object.values(OpenAIModels).find(
-          (model) => model.agentEnabled && model.agentId,
-        );
-
-        if (webSearchModel) {
-          console.log(
-            'Using web search agent:',
-            webSearchModel.id,
-            'with agentId:',
-            webSearchModel.agentId,
-          );
-
-          return await this.agentHandler.handleAgentChat(
-            webSearchModel.id,
-            webSearchModel as unknown as Record<string, unknown>,
-            messages,
-            temperature,
-            user,
-            botId,
-            threadId,
-          );
-        } else {
-          console.error(
-            'No web search agent found in OpenAIModels configuration',
-          );
-          throw new Error(
-            'Web search agent not configured. Please ensure a model with agentEnabled and agentId is available.',
-          );
-        }
-      }
-
-      // Strategy 1: RAG/Bot flow
-      if (botId) {
-        return await this.handleBotChat(
-          messages,
-          botId,
-          modelId,
-          streamResponse,
-          user,
-          startTime,
-          temperature,
-        );
-      }
-
-      // Strategy 2: AI Foundry Agent flow (GPT-4.1 with agentEnabled)
-      if (modelConfig?.agentEnabled && modelConfig?.agentId) {
-        return await this.agentHandler.handleAgentChat(
-          modelId,
-          modelConfig,
-          messages,
-          temperature,
-          user,
-          botId,
-          threadId,
-        );
-      }
-
-      // Strategy 3: Reasoning model flow (uses special Responses API)
-      if (this.isReasoningModel(modelId)) {
-        return await this.handleReasoningModel(
-          modelId,
-          messages,
-          user,
-          promptToSend,
-          startTime,
-          botId,
-        );
-      }
-
-      // Strategy 4: Standard chat flow using provider-specific handlers
-      const model = modelConfig as unknown as OpenAIModel;
-      return await this.handleModelChat(
-        modelId,
-        messages,
-        temperature,
-        user,
-        botId,
-        streamResponse,
-        promptToSend,
-        startTime,
+      // Parse request body
+      const {
         model,
+        messages,
+        prompt,
+        temperature,
+        botId,
+        stream = true,
+        threadId,
         reasoningEffort,
         verbosity,
+        forcedAgentType,
+      } = (await req.json()) as ChatBody;
+
+      console.log('[ChatService] Request:', {
+        modelId: model.id,
+        messageCount: messages.length,
+        botId,
+        forcedAgentType,
+      });
+
+      // Authenticate
+      const session: Session | null = await auth();
+      if (!session) throw new Error('Could not pull session!');
+      const user = session['user'];
+
+      // CRITICAL: Check for audio/video FIRST on ORIGINAL messages
+      // This must happen before getMessagesToSend() to preserve file metadata (originalFilename)
+      if (isAudioVideoConversation(messages)) {
+        console.log(
+          '[ChatService] Audio/video detected - routing to FileConversationHandler',
+        );
+        return this.fileHandler.handleFileConversation(
+          messages, // Original messages, not processed!
+          model.id,
+          user,
+          botId,
+          this.shouldStream(model.id, stream),
+        );
+      }
+
+      // Initialize tokenizer (only for non-audio/video requests)
+      const encoding = await this.initTiktoken();
+
+      // Determine stream and temperature settings
+      const streamResponse = this.shouldStream(model.id, stream);
+      const temperatureToUse = this.getTemperature(model.id, temperature);
+      const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
+
+      // Handle image model upgrades
+      const needsToHandleImages: boolean = isImageConversation(messages);
+      const isValidModel: boolean = checkIsModelValid(model.id, OpenAIModelID);
+      const isImageModel: boolean = checkIsModelValid(
+        model.id,
+        OpenAIVisionModelID,
       );
+
+      let modelToUse = model.id;
+
+      if (isValidModel && needsToHandleImages && !isImageModel) {
+        modelToUse = 'gpt-5';
+        console.log(
+          `[ChatService] Image detected - upgrading from ${model.id} to ${modelToUse} for vision support`,
+        );
+      } else if (modelToUse == null || !isValidModel) {
+        modelToUse = DEFAULT_MODEL;
+        console.log(
+          `[ChatService] Invalid model ${model.id} - falling back to ${modelToUse}`,
+        );
+      }
+
+      // Get model configuration using the potentially upgraded model
+      const modelConfig = Object.values(OpenAIModels).find(
+        (m) => m.id === modelToUse,
+      ) as OpenAIModel | undefined;
+
+      if (!modelConfig) {
+        throw new Error(`Model configuration not found for: ${modelToUse}`);
+      }
+
+      // Process messages through token limit filter
+      const prompt_tokens = encoding.encode(promptToSend);
+      const messagesToSend = await getMessagesToSend(
+        messages,
+        encoding,
+        prompt_tokens.length,
+        modelConfig.tokenLimit, // Use upgraded model's token limit
+        user,
+      );
+      encoding.free();
+
+      // Build context for handler chain
+      const context: ChatContext = {
+        messages: messagesToSend,
+        model: modelConfig,
+        user,
+        temperature: temperatureToUse,
+        systemPrompt: promptToSend,
+        streamResponse,
+        botId,
+        threadId,
+        reasoningEffort,
+        verbosity,
+        forcedAgentType,
+      };
+
+      // Find appropriate handler
+      const handler = this.handlers.find((h) => h.canHandle(context));
+
+      if (!handler) {
+        throw new Error('No handler found for request');
+      }
+
+      console.log(`[ChatService] Routing to ${handler.getName()}`);
+
+      // Execute handler
+      return await handler.handle(context);
     } catch (error) {
       await this.loggingService.logError(
         startTime,
         error,
-        modelId,
-        messages.length,
-        temperature,
-        user,
-        botId,
+        'unknown',
+        0,
+        DEFAULT_TEMPERATURE,
+        { id: 'unknown', displayName: 'unknown', mail: undefined },
+        undefined,
       );
 
       let statusCode = 500;
@@ -254,339 +316,12 @@ export default class ChatService {
         errorMessage = error.message;
       }
 
+      console.error('[ChatService] Error:', errorMessage, error);
+
       return new Response(JSON.stringify({ error: errorMessage }), {
         status: statusCode,
         headers: { 'Content-Type': 'application/json' },
       });
     }
-  }
-
-  /**
-   * Handles RAG/bot-augmented chat
-   */
-  private async handleBotChat(
-    messages: Message[],
-    botId: string,
-    modelId: string,
-    streamResponse: boolean,
-    user: Session['user'],
-    startTime: number,
-    temperature: number,
-  ): Promise<Response> {
-    const response = await this.ragService.augmentMessages(
-      messages,
-      botId,
-      bots,
-      modelId,
-      streamResponse,
-      user,
-    );
-
-    if (streamResponse) {
-      return new Response(response as ReadableStream, {
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
-    } else {
-      const completionText = (response as ChatCompletion)?.choices?.[0]?.message
-        ?.content;
-      return new Response(JSON.stringify({ text: completionText }), {
-        headers: { 'Content-Type': 'application/json' },
-      });
-    }
-  }
-
-  /**
-   * Handles reasoning model chat (GPT-5 Pro, etc.) via responses.create() API
-   */
-  private async handleReasoningModel(
-    modelId: string,
-    messages: Message[],
-    user: Session['user'],
-    promptToSend: string | undefined,
-    startTime: number,
-    botId: string | undefined,
-  ): Promise<Response> {
-    // For reasoning models using responses.create():
-    // 1. Skip system messages (merge into user message)
-    // 2. Supports streaming
-    if (promptToSend && messages.length > 0 && messages[0].role === 'user') {
-      const firstUserMessage = messages[0];
-      const content = firstUserMessage.content;
-
-      // If content is a string, prepend the system prompt
-      if (typeof content === 'string') {
-        firstUserMessage.content = `${promptToSend}\n\n${content}`;
-      } else if (Array.isArray(content)) {
-        // If content is an array, add system prompt to the first text element
-        const textContent = (content as any[]).find(
-          (item) => item.type === 'text',
-        );
-        if (textContent && 'text' in textContent) {
-          textContent.text = `${promptToSend}\n\n${textContent.text}`;
-        }
-      }
-    }
-
-    const chatCompletionParams: ResponseCreateParamsBase = {
-      model: modelId,
-      input: messages as ResponseInput,
-      user: user.mail || user.displayName || 'unknown', // Max 64 chars - use email or name instead of full JSON
-      stream: true, // Enable streaming
-    };
-
-    const response =
-      await this.azureOpenAIClient.responses.create(chatCompletionParams);
-
-    // Process the stream
-    const processedStream = createAzureOpenAIStreamProcessor(
-      response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
-    );
-
-    // Log chat completion
-    await this.loggingService.logChatCompletion(
-      startTime,
-      modelId,
-      messages.length,
-      1, // Log with temperature = 1
-      user,
-      botId,
-    );
-
-    return new Response(processedStream, {
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Cache-Control': 'no-cache',
-        Connection: 'keep-alive',
-      },
-    });
-  }
-
-  /**
-   * Handles chat completion using provider-specific handlers.
-   * Uses HandlerFactory to select appropriate handler (Azure, DeepSeek, or Standard).
-   */
-  private async handleModelChat(
-    modelId: string,
-    messages: Message[],
-    temperature: number,
-    user: Session['user'],
-    botId: string | undefined,
-    streamResponse: boolean,
-    promptToSend: string | undefined,
-    startTime: number,
-    modelConfig: OpenAIModel,
-    reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high',
-    verbosity?: 'low' | 'medium' | 'high',
-  ): Promise<Response> {
-    // Get the appropriate handler for this model
-    const handler: ModelHandler = HandlerFactory.getHandler(
-      modelConfig,
-      this.azureOpenAIClient,
-      this.openAIClient,
-      this.loggingService,
-    );
-
-    // Let the handler prepare messages (handles DeepSeek system prompt merging, etc.)
-    const preparedMessages = handler.prepareMessages(
-      messages,
-      promptToSend,
-      modelConfig,
-    );
-
-    // Let the handler build request parameters (handles reasoning_effort, verbosity, etc.)
-    const requestParams = handler.buildRequestParams(
-      modelId,
-      preparedMessages,
-      temperature,
-      user,
-      streamResponse,
-      modelConfig,
-      reasoningEffort,
-      verbosity,
-    );
-
-    // Execute the request
-    const response = await handler.executeRequest(
-      requestParams,
-      streamResponse,
-    );
-
-    // Process and return response
-    return await this.processResponse(
-      response,
-      streamResponse,
-      startTime,
-      modelId,
-      messages.length,
-      temperature,
-      user,
-      botId,
-    );
-  }
-
-  /**
-   * Process response from any handler (Azure or OpenAI SDK)
-   */
-  private async processResponse(
-    response: any,
-    streamResponse: boolean,
-    startTime: number,
-    modelId: string,
-    messageCount: number,
-    temperature: number,
-    user: Session['user'],
-    botId: string | undefined,
-  ): Promise<Response> {
-    if (streamResponse) {
-      const processedStream = createAzureOpenAIStreamProcessor(
-        response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
-      );
-
-      // Log chat completion
-      await this.loggingService.logChatCompletion(
-        startTime,
-        modelId,
-        messageCount,
-        temperature,
-        user,
-        botId,
-      );
-
-      return new Response(processedStream, {
-        headers: {
-          'Content-Type': 'text/plain; charset=utf-8',
-          'Cache-Control': 'no-cache',
-          Connection: 'keep-alive',
-        },
-      });
-    }
-
-    const completion = response as OpenAI.Chat.Completions.ChatCompletion;
-
-    // Log chat completion
-    await this.loggingService.logChatCompletion(
-      startTime,
-      modelId,
-      messageCount,
-      temperature,
-      user,
-      botId,
-    );
-
-    return new Response(
-      JSON.stringify({ text: completion.choices[0]?.message?.content }),
-      { headers: { 'Content-Type': 'application/json' } },
-    );
-  }
-
-  public async handleRequest(req: NextRequest): Promise<Response> {
-    const {
-      model,
-      messages,
-      prompt,
-      temperature,
-      botId,
-      stream = true,
-      threadId,
-      reasoningEffort,
-      verbosity,
-      forcedAgentType,
-    } = (await req.json()) as ChatBody;
-
-    const encoding = await this.initTiktoken();
-    const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
-
-    // Use fixed temperature of 1 for reasoning models, otherwise use provided temperature or default
-    const temperatureToUse = this.isReasoningModel(model.id)
-      ? 1
-      : (temperature ?? DEFAULT_TEMPERATURE);
-
-    // Never stream for reasoning models, otherwise use provided stream value
-    const shouldStream = this.isReasoningModel(model.id) ? false : stream;
-
-    const needsToHandleImages: boolean = isImageConversation(messages);
-
-    const isValidModel: boolean = checkIsModelValid(model.id, OpenAIModelID);
-    const isImageModel: boolean = checkIsModelValid(
-      model.id,
-      OpenAIVisionModelID,
-    );
-
-    let modelToUse = model.id;
-
-    // Check if the model is legacy and migrate to gpt-5
-    const modelConfig = Object.values(OpenAIModels).find(
-      (m) => m.id === model.id,
-    );
-    if (modelConfig?.isLegacy) {
-      console.log(
-        `Migrating legacy model ${model.id} to ${OpenAIModelID.GPT_5}`,
-      );
-      modelToUse = OpenAIModelID.GPT_5;
-    }
-
-    if (isValidModel && needsToHandleImages && !isImageModel) {
-      modelToUse = 'gpt-5';
-    } else if (modelToUse == null || !isValidModel) {
-      modelToUse = DEFAULT_MODEL;
-    }
-
-    const session: Session | null = await auth();
-    if (!session) throw new Error('Could not pull session!');
-
-    const user = session['user'];
-
-    const prompt_tokens = encoding.encode(promptToSend);
-    const messagesToSend: Message[] = await getMessagesToSend(
-      messages,
-      encoding,
-      prompt_tokens.length,
-      model.tokenLimit,
-      user,
-    );
-    encoding.free();
-
-    // Check if audio/video files need transcription
-    const needsAudioVideoTranscription =
-      isAudioVideoConversation(messagesToSend);
-
-    // Route audio/video to FileConversationHandler for transcription
-    // Other files (images, documents) can go through normal flow (including web search)
-    if (needsAudioVideoTranscription) {
-      return this.fileHandler.handleFileConversation(
-        messagesToSend,
-        model.id,
-        user,
-        botId,
-        shouldStream,
-      );
-    } else {
-      return this.handleChatCompletion(
-        modelToUse,
-        messagesToSend,
-        temperatureToUse,
-        user,
-        botId,
-        shouldStream,
-        promptToSend,
-        model as unknown as Record<string, unknown>,
-        threadId,
-        reasoningEffort,
-        verbosity,
-        forcedAgentType,
-      );
-    }
-  }
-
-  private isReasoningModel(id: OpenAIModelID | string): boolean {
-    // This function is for models that use the special Azure responses.create() API
-    const reasoningModels: OpenAIModelID[] = [
-      // OpenAIModelID.GPT_o3, // o3 uses standard chat completions API
-    ];
-    return reasoningModels.includes(id as OpenAIModelID);
   }
 }

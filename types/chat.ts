@@ -1,3 +1,5 @@
+import { TranscriptMetadata } from '@/lib/utils/app/metadata';
+
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
 
@@ -90,6 +92,7 @@ export interface Message {
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
   thinking?: string;
+  transcript?: TranscriptMetadata;
   error?: boolean; // Indicates if the message generation failed
 }
 

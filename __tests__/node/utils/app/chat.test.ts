@@ -308,12 +308,10 @@ describe('Chat Utilities', () => {
     });
 
     describe('Error handling', () => {
-      it('should throw error for invalid enum type', () => {
-        const invalidEnum = { INVALID: 'invalid' };
+      it('should return false for model not in the provided enum', () => {
+        const customEnum = { CUSTOM_MODEL: 'custom-model' };
 
-        expect(() => checkIsModelValid('gpt-4', invalidEnum)).toThrow(
-          'Invalid enum provided for validModelIDs',
-        );
+        expect(checkIsModelValid('gpt-4', customEnum)).toBe(false);
       });
 
       it('should handle special characters in model ID', () => {

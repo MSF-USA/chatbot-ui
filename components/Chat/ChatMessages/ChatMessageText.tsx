@@ -1,8 +1,9 @@
-import React, { FC, Dispatch, SetStateAction, KeyboardEvent } from 'react';
+import React, { Dispatch, FC, KeyboardEvent, SetStateAction } from 'react';
+
+import { Conversation, Message } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';
-import { Message, Conversation } from '@/types/chat';
 
 interface ChatMessageTextProps {
   message: Message;
@@ -15,7 +16,7 @@ interface ChatMessageTextProps {
   handlePressEnter: (event: KeyboardEvent<HTMLTextAreaElement>) => void;
   handleEditMessage: () => void;
   messageContent: string;
-  setMessageContent: Dispatch<SetStateAction<string>> | Dispatch<SetStateAction<any>>;
+  setMessageContent: Dispatch<SetStateAction<Message['content']>>;
   toggleEditing: (event: React.MouseEvent) => void;
   handleDeleteMessage: () => void;
   messageIsStreaming: boolean;
@@ -25,6 +26,7 @@ interface ChatMessageTextProps {
   onEdit?: (message: Message) => void;
   onQuestionClick?: (question: string) => void;
   onRegenerate?: () => void;
+  onSaveAsPrompt?: () => void;
 }
 
 export const ChatMessageText: FC<ChatMessageTextProps> = ({
@@ -48,6 +50,7 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
   onEdit,
   onQuestionClick,
   onRegenerate,
+  onSaveAsPrompt,
 }) => {
   const { role, content } = message;
 
@@ -82,6 +85,7 @@ export const ChatMessageText: FC<ChatMessageTextProps> = ({
           handleDeleteMessage={handleDeleteMessage}
           onEdit={onEdit || (() => {})}
           selectedConversation={selectedConversation}
+          onSaveAsPrompt={onSaveAsPrompt}
         />
       )}
     </div>

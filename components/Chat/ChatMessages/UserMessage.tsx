@@ -1,4 +1,9 @@
-import { IconEdit, IconRefresh, IconTrash } from '@tabler/icons-react';
+import {
+  IconDeviceFloppy,
+  IconEdit,
+  IconRefresh,
+  IconTrash,
+} from '@tabler/icons-react';
 import {
   Dispatch,
   FC,
@@ -19,7 +24,7 @@ import { Streamdown } from 'streamdown';
 interface UserMessageProps {
   message: Message;
   messageContent: string;
-  setMessageContent: Dispatch<SetStateAction<string>>;
+  setMessageContent: Dispatch<SetStateAction<Message['content']>>;
   isEditing: boolean;
   textareaRef: React.RefObject<HTMLTextAreaElement | null>;
   handleInputChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -31,6 +36,7 @@ interface UserMessageProps {
   onEdit: (message: Message) => void;
   selectedConversation: Conversation | null;
   onRegenerate?: () => void;
+  onSaveAsPrompt?: () => void;
   children?: ReactNode; // Allow custom content (images, files, etc.)
 }
 
@@ -49,6 +55,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   handleDeleteMessage,
   onEdit,
   onRegenerate,
+  onSaveAsPrompt,
   children,
 }) => {
   const t = useTranslations();
@@ -149,6 +156,16 @@ export const UserMessage: FC<UserMessageProps> = ({
                 aria-label="Retry message"
               >
                 <IconRefresh size={18} />
+              </button>
+            )}
+            {onSaveAsPrompt && (
+              <button
+                className="visible md:invisible md:group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                onClick={onSaveAsPrompt}
+                aria-label={t('Save as prompt')}
+                title={t('Save as prompt')}
+              >
+                <IconDeviceFloppy size={18} />
               </button>
             )}
             <button

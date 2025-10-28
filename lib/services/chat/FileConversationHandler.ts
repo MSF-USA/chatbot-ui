@@ -3,6 +3,7 @@ import { Session } from 'next-auth';
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/documentSummary';
+import { appendMetadataToStream } from '@/lib/utils/app/metadata';
 import { retryAsync, retryWithExponentialBackoff } from '@/lib/utils/app/retry';
 import { getUserIdFromSession } from '@/lib/utils/app/session';
 import { BlobProperty } from '@/lib/utils/server/blob';
@@ -69,10 +70,13 @@ export class FileConversationHandler {
 
       let prompt: string = '';
       let fileUrl: string | null = null;
+      let originalFilename: string | undefined;
       content.forEach((section) => {
         if (section.type === 'text') prompt = section.text;
-        else if (section.type === 'file_url') fileUrl = section.url;
-        else
+        else if (section.type === 'file_url') {
+          fileUrl = section.url;
+          originalFilename = section.originalFilename;
+        } else
           throw new Error(
             `Unexpected content section type: ${JSON.stringify(section)}`,
           );
@@ -82,9 +86,15 @@ export class FileConversationHandler {
       // Prompt is optional - it stays as '' if no text content was provided
       if (!fileUrl) throw new Error('Could not find file URL!');
 
-      filename = (fileUrl as string).split('/').pop();
-      if (!filename) throw new Error('Could not parse filename from URL!');
-      const filePath = `/tmp/${filename}`;
+      // Use blob hash for file operations, but keep original filename for display
+      const blobId = (fileUrl as string).split('/').pop();
+      if (!blobId) throw new Error('Could not parse blob ID from URL!');
+
+      filename = originalFilename || blobId; // Use original filename if available (guaranteed to be string)
+      const filePath = `/tmp/${blobId}`; // Use blob ID for file path to avoid conflicts
+
+      // TypeScript assertion: filename is guaranteed to be a string at this point
+      if (!filename) throw new Error('Filename is required');
 
       try {
         console.log('[FileHandler] Processing file:', filename);
@@ -122,15 +132,16 @@ export class FileConversationHandler {
               prompt,
             );
 
-            // Use parseAndQueryFileOpenAI's underlying logic to process with GPT
-            const file: File = new File(
-              [new Uint8Array(fileBuffer)],
-              filename,
-              {},
+            // Create a text file with the transcript content (not the audio binary!)
+            // This allows parseAndQueryFileOpenAI to process it as a document
+            const transcriptFile: File = new File(
+              [transcript],
+              filename.replace(/\.(mp3|mp4|mpeg|mpga|m4a|wav|webm)$/i, '.txt'),
+              { type: 'text/plain' },
             );
             const result = await parseAndQueryFileOpenAI({
-              file,
-              prompt: `Here is the full transcription from ${filename}:\n\n${transcript}\n\nNow, ${prompt}`,
+              file: transcriptFile,
+              prompt: prompt, // parseAndQueryFileOpenAI will process the file content and apply this prompt
               modelId,
               user,
               botId,
@@ -138,36 +149,48 @@ export class FileConversationHandler {
               stream: streamResponse,
             });
 
-            console.log('Transcript processed with user instructions.');
+            console.log(
+              '[FileHandler] Transcript processed with user instructions. Streaming:',
+              streamResponse,
+            );
 
+            // Return processed content with transcript metadata
             if (streamResponse) {
+              console.log('[FileHandler] Preparing streaming response...');
               if (typeof result === 'string') {
                 throw new Error(
                   'Expected a ReadableStream for streaming response',
                 );
               }
 
-              // For streaming, we need to prepend the original transcript
-              const encoder = new TextEncoder();
-              const transcriptHeader = `# Original Transcription: ${filename}\n\n\`\`\`\n${transcript}\n\`\`\`\n\n---\n\n# Processed Result\n\n`;
-
               const combinedStream = new ReadableStream({
                 async start(controller) {
-                  // Send the original transcript first
-                  controller.enqueue(encoder.encode(transcriptHeader));
-
-                  // Then stream the GPT response
+                  // Stream the GPT-processed result
                   const reader = result.getReader();
+                  let processedText = '';
+
                   try {
+                    const decoder = new TextDecoder();
                     while (true) {
                       const { done, value } = await reader.read();
                       if (done) break;
+                      const chunk = decoder.decode(value, { stream: true });
+                      processedText += chunk;
                       controller.enqueue(value);
                     }
                   } finally {
                     reader.releaseLock();
-                    controller.close();
                   }
+
+                  // Append metadata with transcript
+                  appendMetadataToStream(controller, {
+                    transcript: {
+                      filename: filename!, // Non-null assertion: filename is guaranteed to exist
+                      transcript,
+                      processedContent: processedText,
+                    },
+                  });
+                  controller.close();
                 },
               });
 
@@ -183,23 +206,40 @@ export class FileConversationHandler {
                 throw new Error('Expected a string for non-streaming response');
               }
 
-              // For non-streaming, prepend the original transcript
-              const combinedResponse = `# Original Transcription: ${filename}\n\n\`\`\`\n${transcript}\n\`\`\`\n\n---\n\n# Processed Result\n\n${result}`;
-
-              return new Response(JSON.stringify({ text: combinedResponse }), {
-                headers: { 'Content-Type': 'application/json' },
-              });
+              return new Response(
+                JSON.stringify({
+                  text: result,
+                  metadata: {
+                    transcript: {
+                      filename,
+                      transcript,
+                      processedContent: result,
+                    },
+                  },
+                }),
+                {
+                  headers: { 'Content-Type': 'application/json' },
+                },
+              );
             }
           } else {
-            // No additional instructions - just return the transcript
-            const formattedResponse = `# Transcription: ${filename}\n\n\`\`\`\n${transcript}\n\`\`\``;
+            // No additional instructions - return empty content with transcript metadata
+            console.log(
+              '[FileHandler] No instructions provided, returning transcript via metadata. Streaming:',
+              streamResponse,
+            );
 
             if (streamResponse) {
-              // For streaming, create a simple readable stream
-              const encoder = new TextEncoder();
+              // For streaming, send empty content + metadata
               const stream = new ReadableStream({
                 start(controller) {
-                  controller.enqueue(encoder.encode(formattedResponse));
+                  // Send metadata with transcript
+                  appendMetadataToStream(controller, {
+                    transcript: {
+                      filename: filename!, // Non-null assertion: filename is guaranteed to exist
+                      transcript,
+                    },
+                  });
                   controller.close();
                 },
               });
@@ -211,9 +251,20 @@ export class FileConversationHandler {
                 },
               });
             } else {
-              return new Response(JSON.stringify({ text: formattedResponse }), {
-                headers: { 'Content-Type': 'application/json' },
-              });
+              return new Response(
+                JSON.stringify({
+                  text: '',
+                  metadata: {
+                    transcript: {
+                      filename,
+                      transcript,
+                    },
+                  },
+                }),
+                {
+                  headers: { 'Content-Type': 'application/json' },
+                },
+              );
             }
           }
         } else {

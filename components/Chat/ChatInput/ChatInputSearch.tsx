@@ -456,12 +456,15 @@ const ChatInputSearch = ({
 
   return createPortal(
     <div
-      className="fixed inset-0 bg-black/70 backdrop-blur-lg z-[99999] flex items-center justify-center p-4"
+      className="fixed inset-0 bg-black/70 backdrop-blur-lg z-[99999] flex items-center justify-center p-4 animate-fade-in-fast"
       onClick={onClose}
       style={{ isolation: 'isolate' }}
     >
       {/* Search Container */}
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl">
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-3xl animate-modal-in"
+      >
         {content}
       </div>
     </div>,

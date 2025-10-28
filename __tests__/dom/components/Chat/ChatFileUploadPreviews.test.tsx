@@ -65,9 +65,9 @@ describe('ChatFileUploadPreviews', () => {
   });
 
   describe('Image Previews', () => {
-    it('renders image preview', () => {
+    it('renders image preview with background image', () => {
       const imagePreview = createImagePreview();
-      render(
+      const { container } = render(
         <ChatFileUploadPreviews
           filePreviews={[imagePreview]}
           setFilePreviews={mockSetFilePreviews}
@@ -75,14 +75,14 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const img = screen.getByAltText('Preview');
-      expect(img).toBeInTheDocument();
-      expect(img).toHaveAttribute('src', imagePreview.previewUrl);
+      // Image is rendered as a div with background-image
+      const imageDiv = container.querySelector('[style*="background-image"]');
+      expect(imageDiv).toBeInTheDocument();
     });
 
-    it('image has correct styling', () => {
+    it('image preview has correct styling', () => {
       const imagePreview = createImagePreview();
-      render(
+      const { container } = render(
         <ChatFileUploadPreviews
           filePreviews={[imagePreview]}
           setFilePreviews={mockSetFilePreviews}
@@ -90,10 +90,8 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const img = screen.getByAltText('Preview');
-      expect(img).toHaveClass('object-cover');
-      expect(img).toHaveClass('w-full');
-      expect(img).toHaveClass('max-h-[150px]');
+      const imageDiv = container.querySelector('[style*="background-image"]');
+      expect(imageDiv).toHaveClass('cursor-pointer');
     });
 
     it('renders multiple image previews', () => {
@@ -102,7 +100,7 @@ describe('ChatFileUploadPreviews', () => {
         createImagePreview({ name: 'img2.jpg', type: 'image/jpeg' }),
       ];
 
-      render(
+      const { container } = render(
         <ChatFileUploadPreviews
           filePreviews={previews}
           setFilePreviews={mockSetFilePreviews}
@@ -110,13 +108,15 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const images = screen.getAllByAltText('Preview');
-      expect(images).toHaveLength(2);
+      const imageDivs = container.querySelectorAll(
+        '[style*="background-image"]',
+      );
+      expect(imageDivs).toHaveLength(2);
     });
   });
 
   describe('File Previews', () => {
-    it('renders file preview with icon and name', () => {
+    it('renders file preview with name and extension badge', () => {
       const filePreview = createFilePreview();
       render(
         <ChatFileUploadPreviews
@@ -127,10 +127,10 @@ describe('ChatFileUploadPreviews', () => {
       );
 
       expect(screen.getByText('document.pdf')).toBeInTheDocument();
-      expect(screen.getByTestId('file-icon')).toBeInTheDocument();
+      expect(screen.getByText('PDF')).toBeInTheDocument();
     });
 
-    it('displays PDF warning for PDF files', () => {
+    it('displays PDF info message for PDF files', () => {
       const pdfPreview = createFilePreview({ name: 'report.pdf' });
       render(
         <ChatFileUploadPreviews
@@ -140,10 +140,10 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(screen.getByText('Text Only')).toBeInTheDocument();
+      expect(screen.getByText('Text extraction only')).toBeInTheDocument();
     });
 
-    it('does not show PDF warning for non-PDF files', () => {
+    it('does not show PDF info message for non-PDF files', () => {
       const filePreview = createFilePreview({
         name: 'document.txt',
         type: 'text/plain',
@@ -156,10 +156,12 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(screen.queryByText('Text Only')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Text extraction only'),
+      ).not.toBeInTheDocument();
     });
 
-    it('does not show PDF warning when status is not completed', () => {
+    it('does not show PDF info message when status is not completed', () => {
       const pdfPreview = createFilePreview({
         name: 'report.pdf',
         status: 'uploading',
@@ -172,11 +174,14 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(screen.queryByText('Text Only')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Text extraction only'),
+      ).not.toBeInTheDocument();
     });
 
-    it('applies scrolling animation for long filenames', () => {
-      const longFilename = 'very-long-filename-that-exceeds-16-characters.pdf';
+    it('truncates long filenames', () => {
+      const longFilename =
+        'very-long-filename-that-exceeds-normal-width-limits.pdf';
       const filePreview = createFilePreview({ name: longFilename });
       const { container } = render(
         <ChatFileUploadPreviews
@@ -186,28 +191,13 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const filenameSpan = container.querySelector('.animate-scroll-text-auto');
-      expect(filenameSpan).toBeInTheDocument();
-    });
-
-    it('does not apply scrolling animation for short filenames', () => {
-      const shortFilename = 'short.pdf';
-      const filePreview = createFilePreview({ name: shortFilename });
-      const { container } = render(
-        <ChatFileUploadPreviews
-          filePreviews={[filePreview]}
-          setFilePreviews={mockSetFilePreviews}
-          setSubmitType={mockSetSubmitType}
-        />,
-      );
-
-      const filenameSpan = container.querySelector('.animate-scroll-text-auto');
-      expect(filenameSpan).not.toBeInTheDocument();
+      const filenameDiv = screen.getByText(longFilename);
+      expect(filenameDiv).toHaveClass('truncate');
     });
   });
 
   describe('Status Display', () => {
-    it('does not show status badge when completed', () => {
+    it('does not show status text when completed', () => {
       const filePreview = createFilePreview({ status: 'completed' });
       render(
         <ChatFileUploadPreviews
@@ -218,9 +208,10 @@ describe('ChatFileUploadPreviews', () => {
       );
 
       expect(screen.queryByText('completed')).not.toBeInTheDocument();
+      expect(screen.queryByText(/Failed/)).not.toBeInTheDocument();
     });
 
-    it('shows status badge when uploading', () => {
+    it('shows progress percentage when uploading', () => {
       const filePreview = createFilePreview({ status: 'uploading' });
       render(
         <ChatFileUploadPreviews
@@ -234,20 +225,7 @@ describe('ChatFileUploadPreviews', () => {
       expect(screen.getByText('50%')).toBeInTheDocument();
     });
 
-    it('shows status badge when pending', () => {
-      const filePreview = createFilePreview({ status: 'pending' });
-      render(
-        <ChatFileUploadPreviews
-          filePreviews={[filePreview]}
-          setFilePreviews={mockSetFilePreviews}
-          setSubmitType={mockSetSubmitType}
-        />,
-      );
-
-      expect(screen.getByText('pending')).toBeInTheDocument();
-    });
-
-    it('shows status badge when failed', () => {
+    it('shows failed status message when failed', () => {
       const filePreview = createFilePreview({ status: 'failed' });
       render(
         <ChatFileUploadPreviews
@@ -257,12 +235,12 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(screen.getByText('failed')).toBeInTheDocument();
+      expect(screen.getByText('Failed to upload')).toBeInTheDocument();
     });
 
-    it('status badge has correct styling', () => {
+    it('progress percentage has correct styling', () => {
       const filePreview = createFilePreview({ status: 'uploading' });
-      const { container } = render(
+      render(
         <ChatFileUploadPreviews
           filePreviews={[filePreview]}
           setFilePreviews={mockSetFilePreviews}
@@ -271,10 +249,9 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const statusBadge = screen.getByText('75%');
-      expect(statusBadge).toHaveClass('absolute');
-      expect(statusBadge).toHaveClass('bottom-2');
-      expect(statusBadge).toHaveClass('bg-opacity-75');
+      const progressText = screen.getByText('75%');
+      expect(progressText).toHaveClass('text-xs');
+      expect(progressText).toHaveClass('font-medium');
     });
   });
 
@@ -469,10 +446,9 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const wrapper = container.firstChild as HTMLElement;
-      expect(wrapper).toHaveClass('flex');
-      expect(wrapper).toHaveClass('flex-wrap');
-      expect(wrapper).toHaveClass('overflow-x-auto');
+      const innerWrapper = container.querySelector('.flex.flex-wrap');
+      expect(innerWrapper).toBeInTheDocument();
+      expect(innerWrapper).toHaveClass('gap-2');
     });
 
     it('preview has correct styling', () => {
@@ -486,9 +462,8 @@ describe('ChatFileUploadPreviews', () => {
       );
 
       const preview = container.querySelector('.group');
-      expect(preview).toHaveClass('rounded-md');
-      expect(preview).toHaveClass('border');
-      expect(preview).toHaveClass('dark:border-white');
+      expect(preview).toHaveClass('rounded-lg');
+      expect(preview).toHaveClass('relative');
     });
   });
 
@@ -539,9 +514,9 @@ describe('ChatFileUploadPreviews', () => {
       ).toBeInTheDocument();
     });
 
-    it('image has alt text', () => {
+    it('image preview is keyboard accessible', () => {
       const imagePreview = createImagePreview();
-      render(
+      const { container } = render(
         <ChatFileUploadPreviews
           filePreviews={[imagePreview]}
           setFilePreviews={mockSetFilePreviews}
@@ -549,13 +524,14 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const img = screen.getByAltText('Preview');
-      expect(img).toBeInTheDocument();
+      const imageDiv = container.querySelector('[style*="background-image"]');
+      expect(imageDiv).toBeInTheDocument();
+      expect(imageDiv).toHaveClass('cursor-pointer');
     });
 
-    it('PDF warning has title attribute', () => {
+    it('PDF info message is accessible', () => {
       const pdfPreview = createFilePreview({ name: 'report.pdf' });
-      const { container } = render(
+      render(
         <ChatFileUploadPreviews
           filePreviews={[pdfPreview]}
           setFilePreviews={mockSetFilePreviews}
@@ -563,9 +539,8 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const warning = container.querySelector('[title]');
-      expect(warning).toHaveAttribute('title');
-      expect(warning?.getAttribute('title')).toContain('text content');
+      const infoMessage = screen.getByText('Text extraction only');
+      expect(infoMessage).toBeInTheDocument();
     });
   });
 });

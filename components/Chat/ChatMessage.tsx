@@ -19,6 +19,7 @@ import ChatMessageText from '@/components/Chat/ChatMessages/ChatMessageText';
 import { FileContent } from '@/components/Chat/ChatMessages/FileContent';
 import { ImageContent } from '@/components/Chat/ChatMessages/ImageContent';
 import { UserMessage } from '@/components/Chat/ChatMessages/UserMessage';
+import { TranscriptViewer } from '@/components/Chat/TranscriptViewer';
 
 export interface Props {
   message: Message;
@@ -27,6 +28,7 @@ export interface Props {
   onEditMessage?: () => void;
   onQuestionClick?: (question: string) => void;
   onRegenerate?: () => void;
+  onSaveAsPrompt?: (content: string) => void;
 }
 
 export const ChatMessage: FC<Props> = ({
@@ -35,6 +37,7 @@ export const ChatMessage: FC<Props> = ({
   onEdit,
   onQuestionClick,
   onRegenerate,
+  onSaveAsPrompt,
 }) => {
   const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } =
@@ -111,6 +114,13 @@ export const ChatMessage: FC<Props> = ({
     });
   };
 
+  const handleSaveAsPromptClick = () => {
+    const content = getChatMessageContent(message);
+    if (onSaveAsPrompt) {
+      onSaveAsPrompt(content);
+    }
+  };
+
   useEffect(() => {
     setMessageContent(message.content);
   }, [message.content]);
@@ -148,6 +158,65 @@ export const ChatMessage: FC<Props> = ({
     return { images, files, text };
   };
 
+  // Handle translate action - sends a new message to translate the transcript
+  const handleTranslate = (transcript: string, targetLanguage: string) => {
+    if (!onQuestionClick) return;
+
+    // Language names for better readability in the prompt
+    const languageNames: Record<string, string> = {
+      en: 'English',
+      es: 'Spanish',
+      fr: 'French',
+      de: 'German',
+      nl: 'Dutch',
+      it: 'Italian',
+      pt: 'Portuguese',
+      ru: 'Russian',
+      zh: 'Chinese',
+      ja: 'Japanese',
+      ko: 'Korean',
+      ar: 'Arabic',
+      hi: 'Hindi',
+    };
+
+    const languageName = languageNames[targetLanguage] || targetLanguage;
+
+    // Send the translation request immediately
+    onQuestionClick(
+      `Please translate the following transcript to ${languageName}:\n\n${transcript}`,
+    );
+  };
+
+  // Render transcript viewer for transcription messages
+  if (message.transcript && message.role === 'assistant') {
+    return (
+      <div className="group text-gray-800 dark:text-gray-100">
+        <AssistantMessage
+          content={typeof message.content === 'string' ? message.content : ''}
+          message={message}
+          copyOnClick={copyOnClick}
+          messageIsStreaming={messageIsStreaming}
+          messageIndex={messageIndex}
+          selectedConversation={selectedConversation}
+          messageCopied={messagedCopied}
+          onRegenerate={onRegenerate}
+        >
+          {message.transcript.processedContent && (
+            <div className="prose dark:prose-invert max-w-none mb-4">
+              {message.transcript.processedContent}
+            </div>
+          )}
+          <TranscriptViewer
+            filename={message.transcript.filename}
+            transcript={message.transcript.transcript}
+            processedContent={message.transcript.processedContent}
+            onTranslate={handleTranslate}
+          />
+        </AssistantMessage>
+      </div>
+    );
+  }
+
   // Render image messages with composition
   if (hasImages) {
     const { images, text } = getContentByType();
@@ -170,6 +239,7 @@ export const ChatMessage: FC<Props> = ({
           onEdit={onEdit || (() => {})}
           selectedConversation={selectedConversation}
           onRegenerate={onRegenerate}
+          onSaveAsPrompt={handleSaveAsPromptClick}
         >
           <ImageContent images={images} />
           {text && (
@@ -224,6 +294,7 @@ export const ChatMessage: FC<Props> = ({
           onEdit={onEdit || (() => {})}
           selectedConversation={selectedConversation}
           onRegenerate={onRegenerate}
+          onSaveAsPrompt={handleSaveAsPromptClick}
         >
           <FileContent files={files} images={images} />
           {text && (
@@ -284,6 +355,7 @@ export const ChatMessage: FC<Props> = ({
         onEdit={onEdit}
         onQuestionClick={onQuestionClick}
         onRegenerate={onRegenerate}
+        onSaveAsPrompt={handleSaveAsPromptClick}
       />
     );
   } else {

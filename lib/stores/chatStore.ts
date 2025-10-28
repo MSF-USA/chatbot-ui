@@ -23,6 +23,7 @@ interface ChatStore {
   citations: Citation[];
   error: string | null;
   stopRequested: boolean;
+  loadingMessage: string | null;
 
   // Actions
   setCurrentMessage: (message: Message | undefined) => void;
@@ -35,6 +36,7 @@ interface ChatStore {
   requestStop: () => void;
   resetStop: () => void;
   resetChat: () => void;
+  setLoadingMessage: (message: string | null) => void;
   sendMessage: (
     message: Message,
     conversation: Conversation,
@@ -52,6 +54,7 @@ export const useChatStore = create<ChatStore>((set) => ({
   citations: [],
   error: null,
   stopRequested: false,
+  loadingMessage: null,
 
   // Actions
   setCurrentMessage: (message) => set({ currentMessage: message }),
@@ -75,6 +78,8 @@ export const useChatStore = create<ChatStore>((set) => ({
 
   resetStop: () => set({ stopRequested: false }),
 
+  setLoadingMessage: (message) => set({ loadingMessage: message }),
+
   resetChat: () =>
     set({
       currentMessage: undefined,
@@ -84,6 +89,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       citations: [],
       error: null,
       stopRequested: false,
+      loadingMessage: null,
     }),
 
   sendMessage: async (
@@ -93,12 +99,59 @@ export const useChatStore = create<ChatStore>((set) => ({
     forcedAgentType,
   ) => {
     try {
+      // Determine loading message based on message type
+      let loadingMessage = 'Thinking...';
+
+      // Check if this is a file message
+      if (Array.isArray(message.content)) {
+        const hasFileUrl = message.content.some(
+          (item: any) => item.type === 'file_url',
+        );
+        const hasImageUrl = message.content.some(
+          (item: any) => item.type === 'image_url',
+        );
+
+        if (hasFileUrl) {
+          // Check if it's an audio/video file for transcription
+          const audioVideoExtensions = [
+            '.mp3',
+            '.mp4',
+            '.mpeg',
+            '.mpga',
+            '.m4a',
+            '.wav',
+            '.webm',
+          ];
+          const isAudioVideo = message.content.some((item: any) => {
+            if (item.type === 'file_url' && item.url) {
+              const ext = '.' + item.url.split('.').pop()?.toLowerCase();
+              return audioVideoExtensions.includes(ext);
+            }
+            return false;
+          });
+
+          if (isAudioVideo) {
+            const hasText = message.content.some(
+              (item: any) => item.type === 'text' && item.text?.trim(),
+            );
+            loadingMessage = hasText
+              ? 'Transcribing and processing...'
+              : 'Transcribing audio...';
+          } else {
+            loadingMessage = 'Processing file...';
+          }
+        } else if (hasImageUrl) {
+          loadingMessage = 'Analyzing image...';
+        }
+      }
+
       set({
         isStreaming: true,
         streamingContent: '',
         streamingConversationId: conversation.id,
         error: null,
         citations: [],
+        loadingMessage,
       });
 
       // Get settings from settings store
@@ -130,6 +183,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       let text = '';
       let extractedCitations: Citation[] = [];
       let extractedThreadId: string | undefined;
+      let extractedTranscript: any | undefined;
 
       // Handle non-streaming response (e.g., o3, grok-4-fast-reasoning, DeepSeek-R1)
       if (!modelSupportsStreaming) {
@@ -143,7 +197,11 @@ export const useChatStore = create<ChatStore>((set) => ({
         extractedThreadId = parsed.threadId;
 
         // Update streaming content to show the response
-        set({ streamingContent: text, citations: extractedCitations });
+        set({
+          streamingContent: text,
+          citations: extractedCitations,
+          loadingMessage: null,
+        });
       }
       // Handle streaming response
       else {
@@ -172,8 +230,17 @@ export const useChatStore = create<ChatStore>((set) => ({
             extractedThreadId = parsed.threadId;
           }
 
-          // Update streaming content
-          set({ streamingContent: displayText, citations: extractedCitations });
+          // Update transcript if found (only once)
+          if (parsed.transcript && !extractedTranscript) {
+            extractedTranscript = parsed.transcript;
+          }
+
+          // Update streaming content and clear loading message on first chunk
+          set({
+            streamingContent: displayText,
+            citations: extractedCitations,
+            loadingMessage: null,
+          });
 
           // Update text for final message
           text = displayText;
@@ -187,6 +254,7 @@ export const useChatStore = create<ChatStore>((set) => ({
         messageType: MessageType.TEXT,
         citations:
           extractedCitations.length > 0 ? extractedCitations : undefined,
+        transcript: extractedTranscript,
       };
 
       // Update conversation with assistant message
@@ -204,12 +272,37 @@ export const useChatStore = create<ChatStore>((set) => ({
         const firstUserMessage = conversation.messages.find(
           (m) => m.role === 'user',
         );
-        if (firstUserMessage && typeof firstUserMessage.content === 'string') {
-          // Take first 50 characters or until first line break
-          const content = firstUserMessage.content.split('\n')[0];
-          const name =
-            content.length > 50 ? content.substring(0, 50) + '...' : content;
-          updates.name = name || 'New Conversation';
+        if (firstUserMessage) {
+          let name = 'New Conversation';
+
+          // Check if it's a file upload with originalFilename
+          if (Array.isArray(firstUserMessage.content)) {
+            const fileContent = firstUserMessage.content.find(
+              (item: any) => item.type === 'file_url' && item.originalFilename,
+            );
+            if (fileContent && (fileContent as any).originalFilename) {
+              name = (fileContent as any).originalFilename;
+            } else {
+              // Fallback to text content if present
+              const textContent = firstUserMessage.content.find(
+                (item: any) => item.type === 'text' && item.text,
+              );
+              if (textContent && (textContent as any).text) {
+                const content = (textContent as any).text.split('\n')[0];
+                name =
+                  content.length > 50
+                    ? content.substring(0, 50) + '...'
+                    : content;
+              }
+            }
+          } else if (typeof firstUserMessage.content === 'string') {
+            // Take first 50 characters or until first line break
+            const content = firstUserMessage.content.split('\n')[0];
+            name =
+              content.length > 50 ? content.substring(0, 50) + '...' : content;
+          }
+
+          updates.name = name;
         }
       }
 
@@ -219,6 +312,7 @@ export const useChatStore = create<ChatStore>((set) => ({
         isStreaming: false,
         streamingContent: '',
         streamingConversationId: null,
+        loadingMessage: null,
       });
     } catch (error) {
       console.error('sendMessage error:', error);
@@ -228,6 +322,7 @@ export const useChatStore = create<ChatStore>((set) => ({
         isStreaming: false,
         streamingContent: '',
         streamingConversationId: null,
+        loadingMessage: null,
       });
     }
   },

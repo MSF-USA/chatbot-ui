@@ -2,8 +2,8 @@ import { Session } from 'next-auth';
 
 import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
-import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
+import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
 import { loadDocument } from '@/lib/utils/server/file-handling';
 
 import {
@@ -86,8 +86,24 @@ export async function parseAndQueryFileOpenAI({
   stream = true,
 }: ParseAndQueryFilterOpenAIArguments): Promise<ReadableStream | string> {
   const startTime = Date.now();
+  console.log(
+    '[parseAndQueryFileOpenAI] Starting with file:',
+    file.name,
+    'size:',
+    file.size,
+    'stream:',
+    stream,
+  );
+  console.log('[parseAndQueryFileOpenAI] Prompt length:', prompt.length);
+
   const fileContent = await loadDocument(file);
+  console.log(
+    '[parseAndQueryFileOpenAI] File content loaded, length:',
+    fileContent.length,
+  );
+
   let chunks: string[] = splitIntoChunks(fileContent);
+  console.log('[parseAndQueryFileOpenAI] Split into chunks:', chunks.length);
 
   const scope = 'https://cognitiveservices.azure.com/.default';
   const azureADTokenProvider = getBearerTokenProvider(
@@ -107,6 +123,10 @@ export async function parseAndQueryFileOpenAI({
 
   while (chunks.length > 0) {
     const currentChunks = chunks.splice(0, 5);
+    console.log(
+      `[parseAndQueryFileOpenAI] Processing batch of ${currentChunks.length} chunks, ${chunks.length} remaining`,
+    );
+
     const summaryPromises = currentChunks.map((chunk) =>
       summarizeChunk(
         client,
@@ -122,6 +142,11 @@ export async function parseAndQueryFileOpenAI({
     );
 
     const summaries = await Promise.all(summaryPromises);
+    console.log(
+      '[parseAndQueryFileOpenAI] Batch completed, summaries received:',
+      summaries.filter((s) => s !== null).length,
+    );
+
     const validSummaries = summaries.filter((summary) => summary !== null);
     processedChunkCount += validSummaries.length;
 
@@ -158,8 +183,13 @@ export async function parseAndQueryFileOpenAI({
   };
 
   try {
+    console.log(
+      '[parseAndQueryFileOpenAI] Creating chat completion, botId:',
+      botId,
+    );
     let response;
     if (botId) {
+      console.log('[parseAndQueryFileOpenAI] Using bot with data sources');
       response = await client.chat.completions.create({
         ...commonParams,
         //@ts-ignore
@@ -178,8 +208,11 @@ export async function parseAndQueryFileOpenAI({
         ],
       });
     } else {
+      console.log('[parseAndQueryFileOpenAI] Using standard chat completion');
       response = await client.chat.completions.create(commonParams);
     }
+
+    console.log('[parseAndQueryFileOpenAI] Got response, stream:', stream);
 
     if (stream) {
       await loggingService.logFileSuccess(
@@ -240,7 +273,10 @@ export async function parseAndQueryFileOpenAI({
   }
 }
 
-export function splitIntoChunks(text: string, chunkSize: number = 6000): string[] {
+export function splitIntoChunks(
+  text: string,
+  chunkSize: number = 6000,
+): string[] {
   const chunks: string[] = [];
   for (let i = 0; i < text.length; i += chunkSize) {
     chunks.push(text.slice(i, i + chunkSize));

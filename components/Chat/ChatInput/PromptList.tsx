@@ -9,7 +9,6 @@ import { FC, MutableRefObject, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { CommandDefinition, CommandType } from '@/types/commands';
-
 import { Prompt } from '@/types/prompt';
 
 interface Props {
@@ -159,9 +158,15 @@ const PromptItem: FC<PromptItemProps> = ({
       }}
       onMouseEnter={onMouseEnter}
     >
-      <div className="flex items-center space-x-2">
-        <IconCommand size={16} className="text-gray-400 flex-shrink-0" />
-        <span className="truncate">{prompt.name}</span>
+      <div className="flex items-start">
+        <div className="flex-1 min-w-0">
+          <div className="font-medium truncate">{prompt.name}</div>
+          {isActive && prompt.description && (
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+              {prompt.description}
+            </p>
+          )}
+        </div>
       </div>
     </li>
   );

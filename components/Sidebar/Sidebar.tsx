@@ -4,6 +4,7 @@ import {
   IconCheck,
   IconChevronDown,
   IconChevronRight,
+  IconDeviceFloppy,
   IconDots,
   IconEdit,
   IconFolder,
@@ -31,6 +32,8 @@ import { useUI } from '@/lib/hooks/ui/useUI';
 import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 
+import { PromptModal } from '@/components/Prompts/PromptModal';
+import { SavedPromptsModal } from '@/components/Prompts/SavedPromptsModal';
 import Modal from '@/components/UI/Modal';
 
 import lightTextLogo from '@/public/international_logo_black.png';
@@ -438,7 +441,11 @@ export function Sidebar() {
     setIsPromptModalOpen(true);
   };
 
-  const handleSavePromptModal = () => {
+  const handleSavePromptModal = (
+    name: string,
+    description: string,
+    content: string,
+  ) => {
     const defaultModel =
       models.find((m) => m.id === defaultModelId) || models[0];
     if (!defaultModel) return;
@@ -446,17 +453,17 @@ export function Sidebar() {
     if (promptModalId) {
       // Update existing prompt
       updatePrompt(promptModalId, {
-        name: promptModalName.trim() || t('New Prompt'),
-        description: promptModalDescription,
-        content: promptModalContent.trim(),
+        name: name || t('New Prompt'),
+        description: description,
+        content: content,
       });
     } else {
       // Create new prompt
       const newPrompt: Prompt = {
         id: uuidv4(),
-        name: promptModalName.trim() || t('New Prompt'),
-        description: promptModalDescription,
-        content: promptModalContent.trim(),
+        name: name || t('New Prompt'),
+        description: description,
+        content: content,
         model: defaultModel,
         folderId: null,
       };
@@ -476,6 +483,13 @@ export function Sidebar() {
     if (window.confirm(t('Are you sure you want to delete this prompt?'))) {
       deletePrompt(promptId);
     }
+  };
+
+  const handleMovePromptToFolder = (
+    promptId: string,
+    folderId: string | null,
+  ) => {
+    updatePrompt(promptId, { folderId });
   };
 
   const handleSavePrompt = () => {
@@ -511,6 +525,17 @@ export function Sidebar() {
       id: uuidv4(),
       name: t('New folder'),
       type: 'chat' as const,
+    };
+    addFolder(newFolder);
+    setEditingFolderId(newFolder.id);
+    setEditingFolderName(newFolder.name);
+  };
+
+  const handleCreatePromptFolder = () => {
+    const newFolder = {
+      id: uuidv4(),
+      name: t('New folder'),
+      type: 'prompt' as const,
     };
     addFolder(newFolder);
     setEditingFolderId(newFolder.id);
@@ -677,10 +702,10 @@ export function Sidebar() {
             <button
               className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
               onClick={() => setIsPromptsListOpen(true)}
-              title={t('Prompts')}
+              title={t('Saved Prompts')}
             >
-              <IconMessage size={16} />
-              <span className="whitespace-nowrap">{t('Prompts')}</span>
+              <IconDeviceFloppy size={16} />
+              <span className="whitespace-nowrap">{t('Saved Prompts')}</span>
             </button>
             <button
               className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
@@ -743,7 +768,7 @@ export function Sidebar() {
                         size={16}
                         className="shrink-0 text-neutral-600 dark:text-neutral-400"
                       />
-                      {editingFolderId === folder.id ? (
+                      {editingFolderId === folder.id && !isPromptsListOpen ? (
                         <input
                           type="text"
                           value={editingFolderName}
@@ -929,94 +954,18 @@ export function Sidebar() {
         </div>
 
         {/* Prompt Modal */}
-        <Modal
+        <PromptModal
           isOpen={isPromptModalOpen}
           onClose={() => {
             setIsPromptModalOpen(false);
             setIsPromptsListOpen(true);
           }}
+          onSave={handleSavePromptModal}
+          initialName={promptModalName}
+          initialDescription={promptModalDescription}
+          initialContent={promptModalContent}
           title={promptModalId ? t('Edit Prompt') : t('New Prompt')}
-          size="lg"
-          footer={
-            <div className="flex justify-end gap-2">
-              <button
-                className="px-4 py-2 text-sm font-medium text-neutral-700 hover:bg-neutral-100 dark:text-neutral-300 dark:hover:bg-neutral-800 rounded-md"
-                onClick={() => {
-                  setIsPromptModalOpen(false);
-                  setIsPromptsListOpen(true);
-                }}
-              >
-                {t('Cancel')}
-              </button>
-              <button
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
-                onClick={handleSavePromptModal}
-              >
-                {t('Save')}
-              </button>
-            </div>
-          }
-        >
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-bold mb-2 text-black dark:text-white">
-                {t('Name')}
-              </label>
-              <input
-                type="text"
-                value={promptModalName}
-                onChange={(e) => setPromptModalName(e.target.value)}
-                placeholder={t('A name for your prompt_')}
-                className="w-full rounded-lg border border-neutral-200 dark:border-neutral-600 bg-transparent px-4 py-3 text-neutral-900 dark:text-neutral-100 focus:outline-none"
-                autoFocus
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold mb-2 text-black dark:text-white">
-                {t('Description')}
-                <span className="text-xs text-gray-500 dark:text-gray-400 ml-2 font-normal">
-                  (Optional)
-                </span>
-              </label>
-              <textarea
-                value={promptModalDescription}
-                onChange={(e) => setPromptModalDescription(e.target.value)}
-                placeholder={t('A description for your prompt_')}
-                rows={3}
-                className="w-full rounded-lg border border-neutral-200 dark:border-neutral-600 bg-transparent px-4 py-3 text-neutral-900 dark:text-neutral-100 focus:outline-none resize-none"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-bold mb-2 text-black dark:text-white">
-                {t('Prompt')}
-              </label>
-              <div className="mb-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/40 rounded-lg px-3 py-2 border border-gray-200 dark:border-gray-700">
-                <span className="font-medium">Tip:</span> Use{' '}
-                <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">
-                  {'{{variable}}'}
-                </code>{' '}
-                for dynamic content. Example:{' '}
-                <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">
-                  {'{{name}}'}
-                </code>{' '}
-                is a{' '}
-                <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">
-                  {'{{adjective}}'}
-                </code>{' '}
-                <code className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-300">
-                  {'{{noun}}'}
-                </code>
-              </div>
-              <textarea
-                value={promptModalContent}
-                onChange={(e) => setPromptModalContent(e.target.value)}
-                placeholder="Enter your prompt template..."
-                rows={10}
-                className="w-full rounded-lg border border-neutral-200 dark:border-neutral-600 bg-transparent px-4 py-3 text-neutral-900 dark:text-neutral-100 focus:outline-none resize-none font-mono"
-              />
-            </div>
-          </div>
-        </Modal>
+        />
 
         {/* Search Modal */}
         <Modal
@@ -1078,97 +1027,46 @@ export function Sidebar() {
             )}
           </div>
         </Modal>
-
-        {/* Prompts List Modal */}
-        <Modal
-          isOpen={isPromptsListOpen}
-          onClose={() => setIsPromptsListOpen(false)}
-          className="z-[100]"
-          closeWithButton={false}
-          size="lg"
-          contentClassName="-m-6"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 pr-12 border-b border-neutral-300 dark:border-neutral-700">
-            <h3 className="text-lg font-semibold text-neutral-900 dark:text-white">
-              {t('Prompts')}
-            </h3>
-            <button
-              onClick={() => {
-                setPromptModalId(null);
-                setPromptModalName('');
-                setPromptModalDescription('');
-                setPromptModalContent('');
-                setIsPromptsListOpen(false);
-                setIsPromptModalOpen(true);
-              }}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-neutral-900 text-white hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-            >
-              <IconPlus size={16} />
-              {t('New prompt')}
-            </button>
-          </div>
-
-          {/* Prompts list */}
-          <div className="max-h-[60vh] overflow-y-auto">
-            {prompts.length === 0 ? (
-              <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
-                {t('No prompts yet')}
-              </div>
-            ) : (
-              <div className="py-2">
-                {prompts.map((prompt) => (
-                  <div
-                    key={prompt.id}
-                    className="group flex items-start gap-3 px-6 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div className="text-sm font-medium text-neutral-900 dark:text-neutral-100">
-                        {prompt.name}
-                      </div>
-                      {prompt.content && (
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400 mt-1 line-clamp-2">
-                          {prompt.content}
-                        </div>
-                      )}
-                    </div>
-                    <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
-                      <button
-                        className="rounded p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setPromptModalId(prompt.id);
-                          setPromptModalName(prompt.name);
-                          setPromptModalDescription(prompt.description || '');
-                          setPromptModalContent(prompt.content);
-                          setIsPromptsListOpen(false);
-                          setIsPromptModalOpen(true);
-                        }}
-                        title={t('Edit')}
-                      >
-                        <IconEdit
-                          size={16}
-                          className="text-neutral-600 dark:text-neutral-400"
-                        />
-                      </button>
-                      <button
-                        className="rounded p-1.5 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                        onClick={(e) => handleDeletePrompt(prompt.id, e)}
-                        title={t('Delete')}
-                      >
-                        <IconTrash
-                          size={16}
-                          className="text-neutral-600 dark:text-neutral-400"
-                        />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </Modal>
       </div>
+
+      {/* Prompts List Modal */}
+      <SavedPromptsModal
+        isOpen={isPromptsListOpen}
+        onClose={() => setIsPromptsListOpen(false)}
+        prompts={prompts}
+        folders={folders}
+        collapsedFolders={collapsedFolders}
+        onToggleFolder={toggleFolder}
+        onCreateFolder={handleCreatePromptFolder}
+        onRenameFolder={handleRenameFolder}
+        onDeleteFolder={handleDeleteFolder}
+        onEditPrompt={(prompt: Prompt) => {
+          setPromptModalId(prompt.id);
+          setPromptModalName(prompt.name);
+          setPromptModalDescription(prompt.description || '');
+          setPromptModalContent(prompt.content);
+          setIsPromptsListOpen(false);
+          setIsPromptModalOpen(true);
+        }}
+        onDeletePrompt={handleDeletePrompt}
+        onMovePromptToFolder={handleMovePromptToFolder}
+        onCreatePrompt={() => {
+          setPromptModalId(null);
+          setPromptModalName('');
+          setPromptModalDescription('');
+          setPromptModalContent('');
+          setIsPromptsListOpen(false);
+          setIsPromptModalOpen(true);
+        }}
+        editingFolderId={editingFolderId}
+        editingFolderName={editingFolderName}
+        onEditingFolderNameChange={setEditingFolderName}
+        onSaveFolderName={handleSaveFolderName}
+        onCancelEditFolder={() => {
+          setEditingFolderId(null);
+          setEditingFolderName('');
+        }}
+      />
     </>
   );
 }

@@ -170,11 +170,30 @@ export const ChatInput = ({
       }
       return;
     }
+
+    // Check if files are still uploading
+    const isUploading = Object.values(uploadProgress).some(
+      (progress) => progress < 100,
+    );
+    if (isUploading) {
+      alert(t('Please wait for files to finish uploading'));
+      return;
+    }
+
+    console.log('[ChatInput handleSend] submitType:', submitType);
+    console.log('[ChatInput handleSend] filePreviews:', filePreviews);
+    console.log('[ChatInput handleSend] fileFieldValue:', fileFieldValue);
+
     const content:
       | string
       | TextMessageContent
       | (TextMessageContent | FileMessageContent)[]
       | (TextMessageContent | ImageMessageContent)[] = buildContent();
+
+    console.log(
+      '[ChatInput handleSend] built content:',
+      JSON.stringify(content).substring(0, 200),
+    );
 
     // Allow empty text if files are attached (e.g., audio/video transcription without instructions)
     const hasFiles = filePreviews.length > 0;
@@ -539,11 +558,11 @@ export const ChatInput = ({
 
           <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
             <div
-              className={`relative flex w-full flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none z-0 transition-all duration-200 ${webSearchMode ? 'min-h-[120px]' : ''}`}
+              className={`relative flex w-full flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 transition-[min-height] duration-200 ${webSearchMode ? 'min-h-[120px]' : ''}`}
             >
               <textarea
                 ref={textareaRef}
-                className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 transition-all duration-200 ${
+                className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 focus:border-0 ${
                   webSearchMode
                     ? 'pt-3 pb-[88px] pl-3'
                     : 'py-2 pl-10 md:py-3 md:pl-10'
@@ -645,7 +664,10 @@ export const ChatInput = ({
                   isTranscribing={isTranscribing}
                   handleSend={handleSend}
                   handleStopConversation={handleStopConversation}
-                  preventSubmission={preventSubmission}
+                  preventSubmission={
+                    preventSubmission ||
+                    Object.values(uploadProgress).some((p) => p < 100)
+                  }
                 />
               </div>
 

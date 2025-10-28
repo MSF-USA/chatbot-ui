@@ -1,10 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 
 import { DropdownCategoryGroup } from '@/components/Chat/ChatInput/DropdownCategoryGroup';
 import { MenuItem } from '@/components/Chat/ChatInput/DropdownMenuItem';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mock DropdownMenuItem to isolate testing
 vi.mock('@/components/Chat/ChatInput/DropdownMenuItem', () => ({
@@ -19,7 +20,11 @@ vi.mock('@/components/Chat/ChatInput/DropdownMenuItem', () => ({
 describe('DropdownCategoryGroup', () => {
   const TestIcon = () => <svg data-testid="test-icon">Icon</svg>;
 
-  const createMenuItem = (id: string, label: string, category: 'web' | 'media' | 'transform' = 'web'): MenuItem => ({
+  const createMenuItem = (
+    id: string,
+    label: string,
+    category: 'web' | 'media' | 'transform' = 'web',
+  ): MenuItem => ({
     id,
     icon: <TestIcon />,
     label,
@@ -29,20 +34,6 @@ describe('DropdownCategoryGroup', () => {
   });
 
   describe('Rendering', () => {
-    it('renders category header', () => {
-      const items = [createMenuItem('item1', 'Item 1')];
-      render(
-        <DropdownCategoryGroup
-          category="web"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      expect(screen.getByText('Web')).toBeInTheDocument();
-    });
-
     it('renders all items in category', () => {
       const items = [
         createMenuItem('item1', 'Item 1'),
@@ -56,7 +47,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
       expect(screen.getByTestId('menu-item-item1')).toBeInTheDocument();
@@ -64,65 +55,18 @@ describe('DropdownCategoryGroup', () => {
       expect(screen.getByTestId('menu-item-item3')).toBeInTheDocument();
     });
 
-    it('renders empty category with header only', () => {
-      render(
+    it('renders empty category with no items', () => {
+      const { container } = render(
         <DropdownCategoryGroup
           category="transform"
           items={[]}
           flattenedItems={[]}
           selectedIndex={0}
-        />
+        />,
       );
 
-      expect(screen.getByText('Transform')).toBeInTheDocument();
       expect(screen.queryByTestId(/menu-item-/)).not.toBeInTheDocument();
-    });
-  });
-
-  describe('Category Title Formatting', () => {
-    it('capitalizes first letter of category', () => {
-      const items = [createMenuItem('item1', 'Item 1')];
-
-      render(
-        <DropdownCategoryGroup
-          category="web"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      expect(screen.getByText('Web')).toBeInTheDocument();
-    });
-
-    it('handles multi-word categories', () => {
-      const items = [createMenuItem('item1', 'Item 1')];
-
-      render(
-        <DropdownCategoryGroup
-          category="media"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      expect(screen.getByText('Media')).toBeInTheDocument();
-    });
-
-    it('handles transform category', () => {
-      const items = [createMenuItem('item1', 'Item 1', 'transform')];
-
-      render(
-        <DropdownCategoryGroup
-          category="transform"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      expect(screen.getByText('Transform')).toBeInTheDocument();
+      expect(container.firstChild).toBeInTheDocument(); // Container still exists
     });
   });
 
@@ -139,7 +83,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
       const item1 = screen.getByTestId('menu-item-item1');
@@ -161,7 +105,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={1}
-        />
+        />,
       );
 
       const item1 = screen.getByTestId('menu-item-item1');
@@ -186,7 +130,7 @@ describe('DropdownCategoryGroup', () => {
           items={categoryItems}
           flattenedItems={allItems}
           selectedIndex={2} // Points to media1 in flattened list
-        />
+        />,
       );
 
       const mediaItem = screen.getByTestId('menu-item-media1');
@@ -202,7 +146,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={10}
-        />
+        />,
       );
 
       const item1 = screen.getByTestId('menu-item-item1');
@@ -219,48 +163,12 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
       const groupContainer = container.firstChild as HTMLElement;
       expect(groupContainer).toHaveClass('px-1');
-      expect(groupContainer).toHaveClass('py-1');
-    });
-
-    it('header has correct styling classes', () => {
-      const items = [createMenuItem('item1', 'Item 1')];
-      render(
-        <DropdownCategoryGroup
-          category="web"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      const header = screen.getByText('Web');
-      expect(header).toHaveClass('px-3');
-      expect(header).toHaveClass('py-1');
-      expect(header).toHaveClass('text-xs');
-      expect(header).toHaveClass('font-medium');
-      expect(header).toHaveClass('uppercase');
-      expect(header).toHaveClass('tracking-wider');
-    });
-
-    it('header has correct color classes', () => {
-      const items = [createMenuItem('item1', 'Item 1')];
-      render(
-        <DropdownCategoryGroup
-          category="web"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      const header = screen.getByText('Web');
-      expect(header).toHaveClass('text-gray-500');
-      expect(header).toHaveClass('dark:text-gray-400');
+      expect(groupContainer).toHaveClass('-my-0.5');
     });
   });
 
@@ -273,7 +181,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
       const group = container.firstChild as HTMLElement;
@@ -288,26 +196,11 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
       const group = container.firstChild as HTMLElement;
       expect(group).toHaveAttribute('aria-label', 'media');
-    });
-
-    it('header is h3 element for proper hierarchy', () => {
-      const items = [createMenuItem('item1', 'Item 1')];
-      render(
-        <DropdownCategoryGroup
-          category="web"
-          items={items}
-          flattenedItems={items}
-          selectedIndex={0}
-        />
-      );
-
-      const header = screen.getByText('Web');
-      expect(header.tagName).toBe('H3');
     });
   });
 
@@ -320,10 +213,9 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
-      expect(screen.getByText('Web')).toBeInTheDocument();
       expect(screen.getByText('Web Search')).toBeInTheDocument();
     });
 
@@ -338,26 +230,26 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
-      expect(screen.getByText('Media')).toBeInTheDocument();
       expect(screen.getByText('Upload Image')).toBeInTheDocument();
       expect(screen.getByText('Upload File')).toBeInTheDocument();
     });
 
     it('handles transform category', () => {
-      const items = [createMenuItem('translate', 'Translate Text', 'transform')];
+      const items = [
+        createMenuItem('translate', 'Translate Text', 'transform'),
+      ];
       render(
         <DropdownCategoryGroup
           category="transform"
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
-      expect(screen.getByText('Transform')).toBeInTheDocument();
       expect(screen.getByText('Translate Text')).toBeInTheDocument();
     });
   });
@@ -376,14 +268,25 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
-      const renderedItems = container.querySelectorAll('[data-testid^="menu-item-"]');
+      const renderedItems = container.querySelectorAll(
+        '[data-testid^="menu-item-"]',
+      );
       expect(renderedItems).toHaveLength(3);
-      expect(renderedItems[0]).toHaveAttribute('data-testid', 'menu-item-item1');
-      expect(renderedItems[1]).toHaveAttribute('data-testid', 'menu-item-item2');
-      expect(renderedItems[2]).toHaveAttribute('data-testid', 'menu-item-item3');
+      expect(renderedItems[0]).toHaveAttribute(
+        'data-testid',
+        'menu-item-item1',
+      );
+      expect(renderedItems[1]).toHaveAttribute(
+        'data-testid',
+        'menu-item-item2',
+      );
+      expect(renderedItems[2]).toHaveAttribute(
+        'data-testid',
+        'menu-item-item3',
+      );
     });
   });
 
@@ -396,7 +299,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={0}
-        />
+        />,
       );
 
       expect(screen.getByTestId('menu-item-only')).toBeInTheDocument();
@@ -404,7 +307,7 @@ describe('DropdownCategoryGroup', () => {
 
     it('handles large number of items', () => {
       const items = Array.from({ length: 50 }, (_, i) =>
-        createMenuItem(`item${i}`, `Item ${i}`)
+        createMenuItem(`item${i}`, `Item ${i}`),
       );
 
       render(
@@ -413,7 +316,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={25}
-        />
+        />,
       );
 
       expect(screen.getAllByTestId(/menu-item-/)).toHaveLength(50);
@@ -427,7 +330,7 @@ describe('DropdownCategoryGroup', () => {
           items={items}
           flattenedItems={items}
           selectedIndex={-1}
-        />
+        />,
       );
 
       const item1 = screen.getByTestId('menu-item-item1');

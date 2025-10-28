@@ -1,12 +1,22 @@
 import { Citation } from '@/types/rag';
 
 /**
+ * Transcript metadata for audio/video transcriptions
+ */
+export interface TranscriptMetadata {
+  filename: string;
+  transcript: string;
+  processedContent?: string; // If user provided instructions for processing
+}
+
+/**
  * Metadata object that can be embedded in streamed responses
  */
 export interface StreamMetadata {
   citations?: Citation[];
   threadId?: string;
   thinking?: string;
+  transcript?: TranscriptMetadata;
 }
 
 /**
@@ -17,6 +27,7 @@ export interface ParsedMetadata {
   citations: Citation[];
   threadId?: string;
   thinking?: string;
+  transcript?: TranscriptMetadata;
   extractionMethod: 'metadata' | 'none';
 }
 
@@ -32,6 +43,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
   let citations: Citation[] = [];
   let threadId: string | undefined;
   let thinking: string | undefined;
+  let transcript: TranscriptMetadata | undefined;
   let extractionMethod: ParsedMetadata['extractionMethod'] = 'none';
 
   // Check for metadata format
@@ -56,6 +68,9 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
       if (parsedData.thinking) {
         thinking = parsedData.thinking;
       }
+      if (parsedData.transcript) {
+        transcript = parsedData.transcript;
+      }
     } catch (error) {
       console.error('Error parsing metadata JSON:', error);
     }
@@ -66,6 +81,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
     citations,
     threadId,
     thinking,
+    transcript,
     extractionMethod,
   };
 }
@@ -89,6 +105,7 @@ export function appendMetadataToStream(
   if (metadata.citations) cleanMetadata.citations = metadata.citations;
   if (metadata.threadId) cleanMetadata.threadId = metadata.threadId;
   if (metadata.thinking) cleanMetadata.thinking = metadata.thinking;
+  if (metadata.transcript) cleanMetadata.transcript = metadata.transcript;
 
   // Only append if we have actual metadata
   if (Object.keys(cleanMetadata).length > 0) {

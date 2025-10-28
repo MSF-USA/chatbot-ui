@@ -1,9 +1,13 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
 
-import { DropdownMenuItem, MenuItem } from '@/components/Chat/ChatInput/DropdownMenuItem';
+import {
+  DropdownMenuItem,
+  MenuItem,
+} from '@/components/Chat/ChatInput/DropdownMenuItem';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('DropdownMenuItem', () => {
   const TestIcon = () => <svg data-testid="test-icon">Icon</svg>;
@@ -31,13 +35,6 @@ describe('DropdownMenuItem', () => {
       render(<DropdownMenuItem item={item} isSelected={false} />);
 
       expect(screen.getByTestId('test-icon')).toBeInTheDocument();
-    });
-
-    it('renders tooltip', () => {
-      const item = createMenuItem({ tooltip: 'Search the web' });
-      render(<DropdownMenuItem item={item} isSelected={false} />);
-
-      expect(screen.getByText('Search the web')).toBeInTheDocument();
     });
 
     it('button has menuitem role', () => {
@@ -142,7 +139,10 @@ describe('DropdownMenuItem', () => {
     });
 
     it('works with transform category', () => {
-      const item = createMenuItem({ category: 'transform', label: 'Translate' });
+      const item = createMenuItem({
+        category: 'transform',
+        label: 'Translate',
+      });
       render(<DropdownMenuItem item={item} isSelected={false} />);
 
       expect(screen.getByText('Translate')).toBeInTheDocument();
@@ -169,27 +169,6 @@ describe('DropdownMenuItem', () => {
       const button = screen.getByRole('menuitem');
       expect(button).toHaveClass('transition-colors');
       expect(button).toHaveClass('duration-150');
-    });
-
-    it('tooltip has correct styling', () => {
-      const item = createMenuItem({ tooltip: 'Test' });
-      const { container } = render(<DropdownMenuItem item={item} isSelected={false} />);
-
-      const tooltip = screen.getByText('Test');
-      expect(tooltip).toHaveClass('absolute');
-      expect(tooltip).toHaveClass('bg-black');
-      expect(tooltip).toHaveClass('text-white');
-      expect(tooltip).toHaveClass('text-xs');
-      expect(tooltip).toHaveClass('rounded');
-    });
-
-    it('tooltip is hidden by default', () => {
-      const item = createMenuItem({ tooltip: 'Test' });
-      const { container } = render(<DropdownMenuItem item={item} isSelected={false} />);
-
-      const tooltip = screen.getByText('Test');
-      expect(tooltip).toHaveClass('hidden');
-      expect(tooltip).toHaveClass('group-hover:block');
     });
   });
 
