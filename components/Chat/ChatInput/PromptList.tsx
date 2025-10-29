@@ -1,5 +1,7 @@
 import {
+  IconCheck,
   IconCommand,
+  IconFolder,
   IconHelp,
   IconRobot,
   IconSettings,
@@ -9,6 +11,7 @@ import { FC, MutableRefObject, useState } from 'react';
 import { useTranslations } from 'next-intl';
 
 import { CommandDefinition, CommandType } from '@/types/commands';
+import { FolderInterface } from '@/types/folder';
 import { Prompt } from '@/types/prompt';
 
 interface Props {
@@ -20,6 +23,7 @@ interface Props {
   commands?: CommandDefinition[];
   showCommands?: boolean;
   onImmediateCommandExecution?: (command: CommandDefinition) => void;
+  folders?: FolderInterface[];
 }
 
 interface CommandItemProps {
@@ -74,11 +78,13 @@ const CommandItem: FC<CommandItemProps> = ({
 
   return (
     <li
-      className={`${isActive ? 'bg-gray-200 dark:bg-[#171717]' : ''} ${
+      className={`group relative cursor-pointer px-3 py-2.5 text-sm transition-all duration-150 ${
         isExecuting
-          ? 'bg-green-100 dark:bg-green-900 border-green-300 dark:border-green-700'
-          : ''
-      } cursor-pointer px-3 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-all duration-300`}
+          ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border-l-2 border-green-500'
+          : isActive
+            ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-l-2 border-blue-500'
+            : 'hover:bg-gray-50 dark:hover:bg-[#2a2a2a] border-l-2 border-transparent'
+      }`}
       onClick={async (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -96,16 +102,34 @@ const CommandItem: FC<CommandItemProps> = ({
       }}
       onMouseEnter={onMouseEnter}
     >
-      <div className="flex items-start space-x-2">
-        <div className="flex-shrink-0 mt-0.5">
+      <div className="flex items-start gap-3">
+        {isActive && !isExecuting && (
+          <div className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 animate-scale-in">
+            <div className="h-2 w-2 rounded-full bg-white" />
+          </div>
+        )}
+        {isExecuting && (
+          <div className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 animate-scale-in">
+            <IconCheck size={12} className="text-white" />
+          </div>
+        )}
+        <div
+          className={`flex-shrink-0 mt-0.5 ${isActive || isExecuting ? '' : 'ml-7'}`}
+        >
           {getCommandIcon(command.type)}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center space-x-2">
-            <span className="font-medium text-blue-600 dark:text-blue-400">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span
+              className={`font-medium transition-colors ${
+                isActive
+                  ? 'text-blue-700 dark:text-blue-400'
+                  : 'text-blue-600 dark:text-blue-400'
+              }`}
+            >
               /{command.command}
             </span>
-            <span className="px-2 py-0.5 text-xs rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+            <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
               {getCommandTypeLabel(command.type)}
             </span>
           </div>
@@ -113,19 +137,19 @@ const CommandItem: FC<CommandItemProps> = ({
             {command.description}
           </p>
           {isActive && (
-            <>
-              <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                <span className="font-mono bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">
+            <div className="mt-2 space-y-1 animate-fade-in-fast">
+              <div className="text-xs text-gray-500 dark:text-gray-500">
+                <span className="font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
                   {command.usage}
                 </span>
               </div>
               {command.examples.length > 0 && (
-                <div className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                <div className="text-xs text-gray-500 dark:text-gray-500">
                   <span className="text-gray-400">e.g. </span>
                   <span className="font-mono">{command.examples[0]}</span>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
@@ -148,9 +172,11 @@ const PromptItem: FC<PromptItemProps> = ({
 }) => {
   return (
     <li
-      className={`${
-        isActive ? 'bg-gray-200 dark:bg-[#171717]' : ''
-      } cursor-pointer px-3 py-2 text-sm text-black dark:text-white hover:bg-gray-100 dark:hover:bg-[#2a2a2a] transition-colors`}
+      className={`group relative cursor-pointer px-3 py-2.5 text-sm transition-all duration-150 ${
+        isActive
+          ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-l-2 border-blue-500'
+          : 'hover:bg-gray-50 dark:hover:bg-[#2a2a2a] border-l-2 border-transparent'
+      }`}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -158,11 +184,24 @@ const PromptItem: FC<PromptItemProps> = ({
       }}
       onMouseEnter={onMouseEnter}
     >
-      <div className="flex items-start">
-        <div className="flex-1 min-w-0">
-          <div className="font-medium truncate">{prompt.name}</div>
+      <div className="flex items-start gap-2">
+        {isActive && (
+          <div className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 animate-scale-in">
+            <div className="h-2 w-2 rounded-full bg-white" />
+          </div>
+        )}
+        <div className={`flex-1 min-w-0 ${isActive ? '' : 'ml-7'}`}>
+          <div
+            className={`font-medium truncate transition-colors ${
+              isActive
+                ? 'text-blue-700 dark:text-blue-400'
+                : 'text-black dark:text-white'
+            }`}
+          >
+            {prompt.name}
+          </div>
           {isActive && prompt.description && (
-            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+            <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 animate-fade-in-fast">
               {prompt.description}
             </p>
           )}
@@ -181,24 +220,65 @@ export const PromptList: FC<Props> = ({
   commands = [],
   showCommands = false,
   onImmediateCommandExecution,
+  folders = [],
 }) => {
   const t = useTranslations();
 
-  // Combine commands and prompts for display
-  const totalItems = showCommands
-    ? commands.length + prompts.length
-    : prompts.length;
+  // Filter prompt folders only
+  const promptFolders = folders.filter((f) => f.type === 'prompt');
+
+  // Group prompts by folder
+  const promptsByFolder: Record<string, Prompt[]> = {};
+  const unfolderPrompts: Prompt[] = [];
+
+  prompts.forEach((prompt) => {
+    if (prompt.folderId) {
+      if (!promptsByFolder[prompt.folderId]) {
+        promptsByFolder[prompt.folderId] = [];
+      }
+      promptsByFolder[prompt.folderId].push(prompt);
+    } else {
+      unfolderPrompts.push(prompt);
+    }
+  });
+
+  // Flatten prompts for indexing: commands, then folder prompts, then unfolder prompts
+  const flattenedItems: Array<
+    | { type: 'command'; command: CommandDefinition }
+    | { type: 'folder-header'; folder: FolderInterface }
+    | { type: 'prompt'; prompt: Prompt }
+  > = [];
+
+  // Add commands first
+  if (showCommands) {
+    commands.forEach((command) => {
+      flattenedItems.push({ type: 'command', command });
+    });
+  }
+
+  // Add folder headers and their prompts
+  promptFolders.forEach((folder) => {
+    const folderPrompts = promptsByFolder[folder.id] || [];
+    if (folderPrompts.length > 0) {
+      flattenedItems.push({ type: 'folder-header', folder });
+      folderPrompts.forEach((prompt) => {
+        flattenedItems.push({ type: 'prompt', prompt });
+      });
+    }
+  });
+
+  // Add unfolder prompts
+  unfolderPrompts.forEach((prompt) => {
+    flattenedItems.push({ type: 'prompt', prompt });
+  });
+
   const commandsCount = showCommands ? commands.length : 0;
+  const totalItems = flattenedItems.filter(
+    (item) => item.type === 'command' || item.type === 'prompt',
+  ).length;
 
   const handleItemClick = (index: number) => {
-    if (showCommands && index < commandsCount) {
-      // This is a command - handle command selection
-      // For now, we'll just call onSelect, but this could be extended
-      onSelect();
-    } else {
-      // This is a prompt
-      onSelect();
-    }
+    onSelect();
   };
 
   const handleItemMouseEnter = (index: number) => {
@@ -208,7 +288,7 @@ export const PromptList: FC<Props> = ({
   return (
     <ul
       ref={promptListRef}
-      className="z-10 max-h-80 w-full overflow-y-auto rounded border border-black/10 bg-white shadow-[0_0_10px_rgba(0,0,0,0.10)] dark:border-neutral-500 dark:bg-[#212121] dark:text-white dark:shadow-[0_0_15px_rgba(0,0,0,0.10)]"
+      className="z-10 max-h-80 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-xl dark:border-gray-700 dark:bg-[#212121] dark:text-white animate-fade-in-fast"
     >
       {showCommands && commands.length > 0 && (
         <>
@@ -228,18 +308,75 @@ export const PromptList: FC<Props> = ({
         </>
       )}
 
-      {prompts.map((prompt, index) => {
-        const adjustedIndex = showCommands ? commandsCount + index : index;
+      {/* Render folder sections */}
+      {promptFolders.map((folder) => {
+        const folderPrompts = promptsByFolder[folder.id] || [];
+        if (folderPrompts.length === 0) return null;
+
+        // Find the base index for this folder's prompts
+        const folderBaseIndex =
+          commandsCount +
+          flattenedItems
+            .slice(
+              0,
+              flattenedItems.findIndex(
+                (item) =>
+                  item.type === 'folder-header' && item.folder.id === folder.id,
+              ),
+            )
+            .filter((item) => item.type === 'prompt').length;
+
         return (
-          <PromptItem
-            key={prompt.id}
-            prompt={prompt}
-            isActive={adjustedIndex === activePromptIndex}
-            onClick={() => handleItemClick(adjustedIndex)}
-            onMouseEnter={() => handleItemMouseEnter(adjustedIndex)}
-          />
+          <div key={folder.id}>
+            <li className="sticky top-0 z-10 px-3 py-2 text-xs font-semibold text-gray-600 dark:text-gray-400 bg-gray-100/95 dark:bg-neutral-800/95 backdrop-blur-sm flex items-center gap-2 border-b border-gray-200 dark:border-neutral-700">
+              <IconFolder
+                size={14}
+                className="text-gray-500 dark:text-gray-400"
+              />
+              <span className="flex-1">{folder.name}</span>
+              <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-700 px-2 text-[10px] font-medium text-gray-600 dark:text-gray-300">
+                {folderPrompts.length}
+              </span>
+            </li>
+            {folderPrompts.map((prompt, index) => {
+              const adjustedIndex = folderBaseIndex + index;
+              return (
+                <PromptItem
+                  key={prompt.id}
+                  prompt={prompt}
+                  isActive={adjustedIndex === activePromptIndex}
+                  onClick={() => handleItemClick(adjustedIndex)}
+                  onMouseEnter={() => handleItemMouseEnter(adjustedIndex)}
+                />
+              );
+            })}
+          </div>
         );
       })}
+
+      {/* Render unfolder prompts */}
+      {unfolderPrompts.length > 0 && (
+        <>
+          {promptFolders.some((f) => promptsByFolder[f.id]?.length > 0) && (
+            <li className="border-t border-gray-200 dark:border-gray-700 my-1" />
+          )}
+          {unfolderPrompts.map((prompt, index) => {
+            const adjustedIndex =
+              commandsCount +
+              Object.values(promptsByFolder).flat().length +
+              index;
+            return (
+              <PromptItem
+                key={prompt.id}
+                prompt={prompt}
+                isActive={adjustedIndex === activePromptIndex}
+                onClick={() => handleItemClick(adjustedIndex)}
+                onMouseEnter={() => handleItemMouseEnter(adjustedIndex)}
+              />
+            );
+          })}
+        </>
+      )}
 
       {totalItems === 0 && (
         <li className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">

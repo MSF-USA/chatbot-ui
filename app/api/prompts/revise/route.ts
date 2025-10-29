@@ -1,0 +1,208 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+import { auth } from '@/auth';
+import {
+  DefaultAzureCredential,
+  getBearerTokenProvider,
+} from '@azure/identity';
+import { AzureOpenAI } from 'openai';
+
+export const maxDuration = 60;
+
+const PROMPT_GENERATION_SYSTEM_PROMPT = `You are an expert at crafting effective AI prompts. Your role is to help users create prompts from scratch based on their requirements.
+
+When given a description or goal, create a comprehensive prompt that:
+1. **Clarity**: Has clear and specific instructions
+2. **Structure**: Is organized logically
+3. **Context**: Includes relevant context for the AI
+4. **Variables**: Uses {{variableName}} syntax for dynamic content where appropriate
+5. **Examples**: Includes examples when helpful
+6. **Constraints**: Specifies important constraints or requirements
+
+Return your response as JSON with this structure:
+{
+  "revisedPrompt": "The generated prompt",
+  "improvements": [
+    {
+      "category": "Clarity|Structure|Context|Variables|Examples|Constraints",
+      "description": "What was included and why"
+    }
+  ],
+  "suggestions": [
+    "Tips for using this prompt effectively"
+  ]
+}
+
+Focus on making prompts:
+- Clear and specific
+- Action-oriented
+- Well-structured
+- Appropriate for the intended use case
+- Easy to maintain and reuse`;
+
+const PROMPT_REVISION_SYSTEM_PROMPT = `You are an expert at crafting effective AI prompts. Your role is to help users improve their prompts for better results.
+
+When given a prompt, analyze it and provide improvements in these areas:
+1. **Clarity**: Make instructions clearer and more specific
+2. **Structure**: Organize the prompt logically
+3. **Context**: Add relevant context that helps the AI understand the task
+4. **Variables**: Suggest useful variables using {{variableName}} syntax
+5. **Examples**: When appropriate, suggest adding examples
+6. **Constraints**: Add important constraints or requirements
+
+Return your response as JSON with this structure:
+{
+  "revisedPrompt": "The improved version of the prompt",
+  "improvements": [
+    {
+      "category": "Clarity|Structure|Context|Variables|Examples|Constraints",
+      "description": "What was improved and why"
+    }
+  ],
+  "suggestions": [
+    "Additional tips for using this prompt effectively"
+  ]
+}
+
+Focus on making prompts:
+- Clear and specific
+- Action-oriented
+- Well-structured
+- Appropriate for the intended use case
+- Easy to maintain and reuse`;
+
+interface RevisionRequest {
+  promptName: string;
+  promptDescription?: string;
+  promptContent: string;
+  revisionGoal?: string;
+  generateNew?: boolean;
+  additionalContext?: string;
+}
+
+interface RevisionResponse {
+  revisedPrompt: string;
+  improvements: Array<{
+    category: string;
+    description: string;
+  }>;
+  suggestions: string[];
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    // Check authentication
+    const session = await auth();
+    if (!session?.user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Parse request body
+    const body: RevisionRequest = await req.json();
+    const {
+      promptName,
+      promptDescription,
+      promptContent,
+      revisionGoal,
+      generateNew,
+      additionalContext,
+    } = body;
+
+    // For generation, we need either a revision goal or description
+    if (generateNew) {
+      if (!revisionGoal && !promptDescription) {
+        return NextResponse.json(
+          { error: 'Description or goal is required for prompt generation' },
+          { status: 400 },
+        );
+      }
+    } else {
+      // For revision, we need prompt content
+      if (!promptContent || promptContent.trim().length === 0) {
+        return NextResponse.json(
+          { error: 'Prompt content is required' },
+          { status: 400 },
+        );
+      }
+    }
+
+    // Initialize Azure OpenAI client
+    const azureADTokenProvider = getBearerTokenProvider(
+      new DefaultAzureCredential(),
+      'https://cognitiveservices.azure.com/.default',
+    );
+
+    const client = new AzureOpenAI({
+      azureADTokenProvider,
+      apiVersion: '2024-08-01-preview',
+    });
+
+    // Build user message based on mode
+    let userMessage = '';
+    let systemPrompt = PROMPT_REVISION_SYSTEM_PROMPT;
+
+    if (generateNew) {
+      // Generation mode
+      systemPrompt = PROMPT_GENERATION_SYSTEM_PROMPT;
+      userMessage = `I need a new prompt created:\n\n`;
+      userMessage += `**Name:** ${promptName}\n`;
+      if (promptDescription) {
+        userMessage += `**Description:** ${promptDescription}\n`;
+      }
+      userMessage += `\n**Requirements:** ${revisionGoal || promptDescription}\n`;
+      if (additionalContext) {
+        userMessage += `\n**Additional Context from Files:**\n${additionalContext}\n`;
+      }
+    } else {
+      // Revision mode
+      userMessage = `I need help improving this prompt:\n\n`;
+      userMessage += `**Name:** ${promptName}\n`;
+      if (promptDescription) {
+        userMessage += `**Description:** ${promptDescription}\n`;
+      }
+      userMessage += `\n**Current Prompt:**\n${promptContent}\n`;
+      if (revisionGoal) {
+        userMessage += `\n**Specific Goal:** ${revisionGoal}`;
+      }
+      if (additionalContext) {
+        userMessage += `\n\n**Additional Context from Files:**\n${additionalContext}`;
+      }
+    }
+
+    // Call Azure OpenAI
+    const response = await client.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMessage },
+      ],
+      temperature: 0.7,
+      max_tokens: 2000,
+      response_format: { type: 'json_object' },
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No response from AI');
+    }
+
+    // Parse and validate response
+    const revision: RevisionResponse = JSON.parse(content);
+
+    if (!revision.revisedPrompt) {
+      throw new Error('Invalid response format from AI');
+    }
+
+    return NextResponse.json({
+      success: true,
+      ...revision,
+    });
+  } catch (error) {
+    console.error('[Prompt Revision API] Error:', error);
+
+    const errorMessage =
+      error instanceof Error ? error.message : 'Failed to revise prompt';
+
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  }
+}

@@ -59,7 +59,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'agent',
     description:
-      'AI agent powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
+      'AI model powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
     isLegacy: false,
     isAgent: true,
     agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL', // Dev agent ID
@@ -67,7 +67,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     provider: 'openai',
     knowledgeCutoff: 'Real-time web search',
     sdk: 'azure-openai',
-    supportsTemperature: false,
+    supportsTemperature: true,
     supportsReasoningEffort: false,
     supportsVerbosity: false,
   },
@@ -205,7 +205,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 16000,
     modelType: 'agent',
     description:
-      'AI agent powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
+      'AI model powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
     isLegacy: false,
     isAgent: true,
     agentId: 'asst_PROD_AGENT_ID_PLACEHOLDER', // Production agent ID - set in Terraform
@@ -213,7 +213,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     provider: 'openai',
     knowledgeCutoff: 'Real-time web search',
     sdk: 'azure-openai',
-    supportsTemperature: false,
+    supportsTemperature: true,
     supportsReasoningEffort: false,
     supportsVerbosity: false,
   },

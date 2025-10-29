@@ -200,6 +200,52 @@ select {
   animation: breathing 2s ease-in-out infinite;
 }
 
+/* Fade in animation */
+@keyframes fade-in-fast {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-fast {
+  animation: fade-in-fast 0.15s ease-out;
+}
+
+/* Modal slide in animation */
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-modal-in {
+  animation: modal-in 0.2s ease-out;
+}
+
+/* Scale in animation */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scale-in 0.15s ease-out;
+}
+
 /* Dark mode improvements for prose */
 .dark .prose,
 .dark .prose-invert {

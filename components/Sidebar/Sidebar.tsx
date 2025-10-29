@@ -32,7 +32,7 @@ import { useUI } from '@/lib/hooks/ui/useUI';
 import { Conversation } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 
-import { PromptModal } from '@/components/Prompts/PromptModal';
+import { PromptDashboard } from '@/components/Prompts/PromptDashboard';
 import { SavedPromptsModal } from '@/components/Prompts/SavedPromptsModal';
 import Modal from '@/components/UI/Modal';
 
@@ -965,20 +965,6 @@ export function Sidebar() {
           )}
         </div>
 
-        {/* Prompt Modal */}
-        <PromptModal
-          isOpen={isPromptModalOpen}
-          onClose={() => {
-            setIsPromptModalOpen(false);
-            setIsPromptsListOpen(true);
-          }}
-          onSave={handleSavePromptModal}
-          initialName={promptModalName}
-          initialDescription={promptModalDescription}
-          initialContent={promptModalContent}
-          title={promptModalId ? t('Edit Prompt') : t('New Prompt')}
-        />
-
         {/* Search Modal */}
         <Modal
           isOpen={isSearchModalOpen}
@@ -1040,6 +1026,19 @@ export function Sidebar() {
           </div>
         </Modal>
       </div>
+
+      {/* Prompt Dashboard */}
+      <PromptDashboard
+        isOpen={isPromptModalOpen}
+        onClose={() => {
+          setIsPromptModalOpen(false);
+          setIsPromptsListOpen(true);
+        }}
+        onSave={handleSavePromptModal}
+        initialName={promptModalName}
+        initialDescription={promptModalDescription}
+        initialContent={promptModalContent}
+      />
 
       {/* Prompts List Modal */}
       <SavedPromptsModal

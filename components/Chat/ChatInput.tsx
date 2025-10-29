@@ -84,7 +84,7 @@ export const ChatInput = ({
   const t = useTranslations();
 
   // Zustand hooks
-  const { selectedConversation } = useConversations();
+  const { selectedConversation, folders } = useConversations();
   const { isStreaming, setIsStreaming } = useChat();
   const { prompts } = useSettings();
 
@@ -286,7 +286,7 @@ export const ChatInput = ({
       case 'ArrowDown':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : prevIndex,
+          prevIndex < filteredPrompts.length - 1 ? prevIndex + 1 : prevIndex,
         );
         break;
       case 'ArrowUp':
@@ -298,7 +298,7 @@ export const ChatInput = ({
       case 'Tab':
         event.preventDefault();
         setActivePromptIndex((prevIndex) =>
-          prevIndex < prompts.length - 1 ? prevIndex + 1 : 0,
+          prevIndex < filteredPrompts.length - 1 ? prevIndex + 1 : 0,
         );
         break;
       case 'Enter':
@@ -706,6 +706,7 @@ export const ChatInput = ({
                     onSelect={handleInitModal}
                     onMouseOver={setActivePromptIndex}
                     promptListRef={promptListRef}
+                    folders={folders}
                   />
                 </div>
               )}

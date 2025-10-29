@@ -1,6 +1,8 @@
 'use client';
 
 import {
+  IconBolt,
+  IconBraces,
   IconChevronDown,
   IconChevronRight,
   IconEdit,
@@ -8,7 +10,9 @@ import {
   IconFolder,
   IconFolderPlus,
   IconPlus,
+  IconRepeat,
   IconSearch,
+  IconSparkles,
   IconTrash,
   IconUpload,
   IconX,
@@ -348,8 +352,136 @@ export function SavedPromptsModal({
               {/* List */}
               <div>
                 {!hasResults ? (
-                  <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
-                    {searchLower ? t('No prompts found') : t('No prompts yet')}
+                  <div className="p-8">
+                    {searchLower ? (
+                      <div className="text-center text-neutral-500 dark:text-neutral-400">
+                        {t('No prompts found')}
+                      </div>
+                    ) : (
+                      <div className="max-w-3xl mx-auto space-y-8">
+                        {/* Header */}
+                        <div className="text-center space-y-2">
+                          <h3 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                            {t('Save Time with Reusable Prompts')}
+                          </h3>
+                          <p className="text-gray-600 dark:text-gray-400">
+                            {t(
+                              'Turn your repetitive tasks into one-click commands',
+                            )}
+                          </p>
+                        </div>
+
+                        {/* Benefits */}
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <div className="flex flex-col items-center text-center p-4 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700">
+                            <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 mb-3">
+                              <IconBolt
+                                size={20}
+                                className="text-neutral-600 dark:text-neutral-400"
+                              />
+                            </div>
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                              {t('Work faster')}
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {t('Type / to instantly access any saved prompt')}
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col items-center text-center p-4 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700">
+                            <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 mb-3">
+                              <IconRepeat
+                                size={20}
+                                className="text-neutral-600 dark:text-neutral-400"
+                              />
+                            </div>
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                              {t('Stay consistent')}
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {t('Get reliable results every time')}
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col items-center text-center p-4 rounded-lg bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700">
+                            <div className="w-10 h-10 flex items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-700 mb-3">
+                              <IconBraces
+                                size={20}
+                                className="text-neutral-600 dark:text-neutral-400"
+                              />
+                            </div>
+                            <h4 className="font-medium text-gray-900 dark:text-white mb-1">
+                              {t('Use variables')}
+                            </h4>
+                            <p className="text-sm text-gray-600 dark:text-gray-400">
+                              {t('Make prompts dynamic with placeholders')}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Example */}
+                        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
+                          <div className="flex items-center gap-2 mb-4">
+                            <IconSparkles
+                              size={18}
+                              className="text-gray-600 dark:text-gray-400"
+                            />
+                            <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                              {t('Example Prompt')}
+                            </h4>
+                          </div>
+
+                          <div className="space-y-4">
+                            {/* Prompt definition */}
+                            <div className="rounded-lg border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                              <div className="bg-neutral-100 dark:bg-neutral-800 px-4 py-2 border-b border-neutral-200 dark:border-neutral-700">
+                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                  {t('Email Response Template')}
+                                </p>
+                              </div>
+                              <div className="p-4 bg-white dark:bg-neutral-900">
+                                <pre className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap font-mono">
+                                  {`Write a professional email response to {{recipient}} regarding {{topic}}.
+
+The tone should be {{tone}} and include:
+- A brief greeting
+- Response to their inquiry
+- Clear next steps
+- Professional closing`}
+                                </pre>
+                              </div>
+                            </div>
+
+                            {/* How to use */}
+                            <div className="flex items-start gap-3 p-3 rounded-lg bg-neutral-50 dark:bg-neutral-800/50">
+                              <div className="shrink-0 w-6 h-6 flex items-center justify-center rounded bg-neutral-200 dark:bg-neutral-700 mt-0.5">
+                                <span className="text-xs font-semibold text-neutral-600 dark:text-neutral-400">
+                                  /
+                                </span>
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm text-gray-600 dark:text-gray-400">
+                                  {t(
+                                    'Type / in chat, select your prompt, and fill in the variables when prompted',
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* CTA */}
+                        <div className="text-center pt-2">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {t('Get started by clicking')}{' '}
+                            <span className="font-semibold text-blue-600 dark:text-blue-400">
+                              {t('New')}
+                            </span>{' '}
+                            {t('above')}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div

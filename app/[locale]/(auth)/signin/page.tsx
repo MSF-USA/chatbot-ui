@@ -1,10 +1,11 @@
 'use client';
 
-import { IconHelp, IconMail } from '@tabler/icons-react';
+import { IconAlertCircle, IconHelp, IconMail } from '@tabler/icons-react';
 import { signIn } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Image from 'next/image';
+import { useSearchParams } from 'next/navigation';
 
 import packageJson from '@/package.json';
 import logo from '@/public/logo_light.png';
@@ -16,15 +17,70 @@ import microsoftLogo from '@/public/microsoft-logo.svg';
 export default function SignInPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showAccessInfo, setShowAccessInfo] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   const version = packageJson.version;
   const build = process.env.NEXT_PUBLIC_BUILD;
   const env = process.env.NEXT_PUBLIC_ENV;
   const email = process.env.NEXT_PUBLIC_EMAIL;
 
+  // Check for errors in URL params (from NextAuth redirects)
+  useEffect(() => {
+    const urlError = searchParams.get('error');
+    if (urlError) {
+      const errorMessages: Record<string, string> = {
+        Configuration:
+          'There is a problem with the authentication server configuration.',
+        AccessDenied: 'Access was denied. Please check your permissions.',
+        Verification:
+          'The verification token has expired or has already been used.',
+        OAuthSignin:
+          'Unable to connect to authentication service. Please try again.',
+        OAuthCallback: 'Unable to complete authentication. Please try again.',
+        OAuthCreateAccount: 'Unable to create account. Please contact support.',
+        EmailCreateAccount: 'Unable to create account. Please contact support.',
+        Callback: 'Authentication callback failed. Please try again.',
+        OAuthAccountNotLinked:
+          'This account is already linked to another user.',
+        EmailSignin: 'Unable to send sign-in email.',
+        CredentialsSignin: 'Sign in failed. Please check your credentials.',
+        SessionRequired: 'Please sign in to access this page.',
+      };
+      setError(
+        errorMessages[urlError] ||
+          'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
+      );
+    }
+  }, [searchParams]);
+
   const handleSignIn = async () => {
-    setIsLoading(true);
-    await signIn('microsoft-entra-id', { callbackUrl: '/' });
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const result = await signIn('microsoft-entra-id', {
+        callbackUrl: '/',
+        redirect: false,
+      });
+
+      // If sign in didn't redirect and returned an error
+      if (result?.error) {
+        setError(
+          'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
+        );
+        setIsLoading(false);
+      } else if (result?.ok) {
+        // Successful sign in, redirect
+        window.location.href = result.url || '/';
+      }
+    } catch (err) {
+      console.error('Sign in error:', err);
+      setError(
+        'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
+      );
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -119,6 +175,38 @@ export default function SignInPage() {
                   </>
                 )}
               </button>
+
+              {/* Error Message */}
+              {error && (
+                <div className="mt-4 md:mt-6 rounded-xl bg-red-500/10 border border-red-500/30 p-3 md:p-4 animate-fade-in">
+                  <div className="flex items-start gap-2 md:gap-3">
+                    <IconAlertCircle className="h-4 w-4 md:h-5 md:w-5 text-red-400 flex-shrink-0 mt-0.5" />
+                    <div className="flex-1 space-y-2">
+                      <p className="text-xs md:text-sm text-red-200 leading-relaxed">
+                        {error}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                        <button
+                          onClick={handleSignIn}
+                          disabled={isLoading}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-red-100 border border-red-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          Try Again
+                        </button>
+                        {email && (
+                          <a
+                            href={`mailto:${email}`}
+                            className="inline-flex items-center gap-1.5 text-xs text-red-300 hover:text-red-100 underline underline-offset-2 transition-colors"
+                          >
+                            <IconMail className="h-3 w-3" />
+                            Contact support
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Divider */}
               <div className="my-6 md:my-8 flex items-center gap-3 md:gap-4">

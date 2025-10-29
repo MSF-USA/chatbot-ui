@@ -1,3 +1,9 @@
+import {
+  IconBraces,
+  IconCheck,
+  IconSparkles,
+  IconX,
+} from '@tabler/icons-react';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { Prompt } from '@/types/prompt';
@@ -78,46 +84,101 @@ export const VariableModal: FC<Props> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm animate-fade-in-fast"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in-fast"
       onKeyDown={handleKeyDown}
     >
       <div
         ref={modalRef}
-        className="dark:border-netural-400 inline-block max-h-[400px] transform overflow-y-auto rounded-lg border border-gray-300 bg-white px-4 pt-5 pb-4 text-left align-bottom shadow-xl dark:bg-[#171717] sm:my-8 sm:max-h-[600px] sm:w-full sm:max-w-lg sm:p-6 sm:align-middle animate-modal-in"
+        className="relative inline-block max-h-[90vh] w-full max-w-lg transform overflow-hidden rounded-xl border border-gray-200 bg-white text-left align-bottom shadow-2xl transition-all dark:border-gray-700 dark:bg-[#212121] sm:my-8 sm:align-middle animate-modal-in"
         role="dialog"
       >
-        <div className="mb-4 text-xl font-bold text-black dark:text-neutral-200">
-          {prompt.name}
+        {/* Header */}
+        <div className="relative border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-5 dark:border-gray-700 dark:from-blue-900/20 dark:to-purple-900/20">
+          <button
+            onClick={onClose}
+            className="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-white/50 dark:hover:bg-black/30"
+            aria-label="Close"
+          >
+            <IconX size={20} />
+          </button>
+
+          <div className="flex items-start gap-3 pr-8">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 shadow-lg">
+              <IconSparkles size={20} className="text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                {prompt.name}
+              </h3>
+              {prompt.description && (
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                  {prompt.description}
+                </p>
+              )}
+            </div>
+          </div>
         </div>
 
-        <div className="mb-4 text-sm italic text-black dark:text-neutral-200">
-          {prompt.description}
+        {/* Content */}
+        <div className="max-h-[calc(90vh-220px)] overflow-y-auto px-6 py-5 space-y-5">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/10 px-3 py-2 rounded-lg border border-blue-100 dark:border-blue-900/30">
+            <IconBraces size={16} className="shrink-0" />
+            <span>Fill in the variables below to customize your prompt</span>
+          </div>
+
+          {updatedVariables.map((variable, index) => (
+            <div key={index} className="space-y-2">
+              <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+                <div className="flex h-6 w-6 items-center justify-center rounded bg-gray-100 dark:bg-gray-800 text-xs font-mono text-gray-600 dark:text-gray-400">
+                  {index + 1}
+                </div>
+                <span className="font-mono text-blue-600 dark:text-blue-400">
+                  {`{{${variable.key}}}`}
+                </span>
+              </label>
+
+              <textarea
+                ref={index === 0 ? nameInputRef : undefined}
+                className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/20"
+                style={{ resize: 'vertical', minHeight: '80px' }}
+                placeholder={`Enter value for ${variable.key}...`}
+                value={variable.value}
+                onChange={(e) => handleChange(index, e.target.value)}
+                rows={3}
+              />
+            </div>
+          ))}
         </div>
 
-        {updatedVariables.map((variable, index) => (
-          <div className="mb-4" key={index}>
-            <div className="mb-2 text-sm font-bold text-neutral-200">
-              {variable.key}
+        {/* Footer */}
+        <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-[#1a1a1a]">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+              <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs dark:border-gray-600 dark:bg-gray-800">
+                <span>⏎</span> Submit
+              </kbd>
+              <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs dark:border-gray-600 dark:bg-gray-800">
+                <span>Esc</span> Cancel
+              </kbd>
             </div>
 
-            <textarea
-              ref={index === 0 ? nameInputRef : undefined}
-              className="mt-1 w-full rounded-lg border border-neutral-500 px-4 py-2 text-neutral-900 shadow focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-[#2a2a2f] dark:text-neutral-100"
-              style={{ resize: 'none' }}
-              placeholder={`Enter a value for ${variable.key}...`}
-              value={variable.value}
-              onChange={(e) => handleChange(index, e.target.value)}
-              rows={3}
-            />
+            <div className="flex gap-2">
+              <button
+                onClick={onClose}
+                className="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleSubmit}
+                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:from-blue-700 hover:to-purple-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+              >
+                <IconCheck size={16} />
+                <span>Apply Variables</span>
+              </button>
+            </div>
           </div>
-        ))}
-
-        <button
-          className="mt-6 w-full rounded-lg border border-neutral-500 px-4 py-2 text-neutral-900 shadow hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300"
-          onClick={handleSubmit}
-        >
-          Submit
-        </button>
+        </div>
       </div>
     </div>
   );
