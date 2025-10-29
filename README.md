@@ -1,5 +1,7 @@
 # MSF AI Assistant
 
+banana
+
 An enterprise AI chatbot interface built for Médecins Sans Frontières (MSF), powered by Azure OpenAI and Next.js 15.
 
 ## Overview
