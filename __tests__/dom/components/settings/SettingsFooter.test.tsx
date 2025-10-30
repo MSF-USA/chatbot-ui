@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
-import { SettingsFooter } from '@/components/settings/SettingsFooter';
+import { SettingsFooter } from '@/components/Settings/SettingsFooter';
 
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';

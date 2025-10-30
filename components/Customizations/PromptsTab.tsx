@@ -20,6 +20,9 @@ import { useTranslations } from 'next-intl';
 
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useFolderManagement } from '@/lib/hooks/ui/useFolderManagement';
+import { useItemSearch } from '@/lib/hooks/ui/useItemSearch';
+import { useModalForm } from '@/lib/hooks/ui/useModalForm';
 
 import {
   exportPrompts,
@@ -49,106 +52,46 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
     useSettings();
   const { addFolder, updateFolder, deleteFolder } = useConversations();
 
-  // PromptDashboard state
-  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
-  const [promptModalName, setPromptModalName] = useState('');
-  const [promptModalDescription, setPromptModalDescription] = useState('');
-  const [promptModalContent, setPromptModalContent] = useState('');
-  const [promptModalToneId, setPromptModalToneId] = useState<string | null>(
-    null,
-  );
-  const [promptModalId, setPromptModalId] = useState<string | null>(null);
+  // PromptDashboard modal state
+  const promptModal = useModalForm<{
+    name: string;
+    description: string;
+    content: string;
+    toneId: string | null;
+  }>({
+    initialState: {
+      name: '',
+      description: '',
+      content: '',
+      toneId: null,
+    },
+  });
 
   // Local state
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedPromptId, setSelectedPromptId] = useState<string | null>(null);
-  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(
-    new Set(),
-  );
-  const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
-  const [editingFolderName, setEditingFolderName] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const editInputRef = useRef<HTMLInputElement>(null);
 
-  // Focus editing input when folder editing starts
-  useEffect(() => {
-    if (editingFolderId && editInputRef.current) {
-      setTimeout(() => {
-        editInputRef.current?.focus();
-        editInputRef.current?.select();
-      }, 0);
-    }
-  }, [editingFolderId]);
-
-  // Filter prompts by search
-  const filteredPrompts = prompts.filter((prompt) =>
-    prompt.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // Search
+  const {
+    searchQuery,
+    setSearchQuery,
+    filteredItems: filteredPrompts,
+  } = useItemSearch({
+    items: prompts,
+    searchFields: ['name'],
+  });
 
   // Find selected prompt
   const selectedPrompt = prompts.find((p) => p.id === selectedPromptId);
 
-  // Group prompts by folder
-  const promptsByFolder: Record<string, Prompt[]> = {};
-  const unfolderPrompts: Prompt[] = [];
-
-  filteredPrompts.forEach((prompt) => {
-    if (prompt.folderId) {
-      if (!promptsByFolder[prompt.folderId]) {
-        promptsByFolder[prompt.folderId] = [];
-      }
-      promptsByFolder[prompt.folderId].push(prompt);
-    } else {
-      unfolderPrompts.push(prompt);
-    }
+  // Folder management
+  const folderManager = useFolderManagement({
+    items: filteredPrompts,
   });
 
-  // Handlers
-  const handleCreateFolder = () => {
-    const newFolder: FolderInterface = {
-      id: uuidv4(),
-      name: t('New folder'),
-      type: 'prompt',
-    };
-    addFolder(newFolder);
-    setEditingFolderId(newFolder.id);
-    setEditingFolderName(newFolder.name);
-  };
-
-  const handleRenameFolder = (folderId: string, currentName: string) => {
-    setEditingFolderId(folderId);
-    setEditingFolderName(currentName);
-  };
-
-  const handleSaveFolderName = () => {
-    if (editingFolderId && editingFolderName.trim()) {
-      updateFolder(editingFolderId, editingFolderName.trim());
-    }
-    setEditingFolderId(null);
-    setEditingFolderName('');
-  };
-
-  const handleDeleteFolder = (folderId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm(t('Are you sure you want to delete this folder?'))) {
-      deleteFolder(folderId);
-    }
-  };
-
-  const toggleFolder = (folderId: string) => {
-    setCollapsedFolders((prev) => {
-      const next = new Set(prev);
-      if (next.has(folderId)) {
-        next.delete(folderId);
-      } else {
-        next.add(folderId);
-      }
-      return next;
-    });
-  };
+  const promptsByFolder = folderManager.groupedItems.byFolder;
+  const unfolderPrompts = folderManager.groupedItems.unfolderedItems;
 
   const handleMoveToFolder = (promptId: string, folderId: string | null) => {
     updatePrompt(promptId, { folderId });
@@ -162,36 +105,6 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
         setSelectedPromptId(null);
       }
     }
-  };
-
-  const handleDragStart = (e: React.DragEvent, promptId: string) => {
-    e.stopPropagation();
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('promptId', promptId);
-    setIsDragging(true);
-  };
-
-  const handleDrop = (e: React.DragEvent, folderId: string | null) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const promptId = e.dataTransfer.getData('promptId');
-    if (promptId) {
-      handleMoveToFolder(promptId, folderId);
-    }
-    setDragOverFolderId(null);
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (e: React.DragEvent, folderId: string | null) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOverFolderId(folderId);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOverFolderId(null);
   };
 
   const handleExportAll = () => {
@@ -287,21 +200,20 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
               </button>
               <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" />
               <button
-                onClick={handleCreateFolder}
+                onClick={() =>
+                  folderManager.handleCreateFolder(
+                    'prompt',
+                    t('New folder'),
+                    addFolder,
+                  )
+                }
                 className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
                 title="New folder"
               >
                 <IconFolderPlus size={18} />
               </button>
               <button
-                onClick={() => {
-                  setPromptModalId(null);
-                  setPromptModalName('');
-                  setPromptModalDescription('');
-                  setPromptModalContent('');
-                  setPromptModalToneId(null);
-                  setIsPromptModalOpen(true);
-                }}
+                onClick={() => promptModal.openNew()}
                 className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
               >
                 <IconPlus size={16} />
@@ -316,22 +228,30 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
           {/* Folders */}
           {folders.map((folder) => {
             const folderPrompts = promptsByFolder[folder.id] || [];
-            if (folderPrompts.length === 0 && !editingFolderId) return null;
+            if (folderPrompts.length === 0 && !folderManager.editingFolderId)
+              return null;
 
-            const isCollapsed = collapsedFolders.has(folder.id);
+            const isCollapsed = folderManager.collapsedFolders.has(folder.id);
 
             return (
               <div key={folder.id} className="mb-4">
                 <div
                   className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    dragOverFolderId === folder.id
+                    folderManager.dragOverFolderId === folder.id
                       ? 'bg-blue-100 dark:bg-blue-900/30'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
-                  onClick={() => toggleFolder(folder.id)}
-                  onDrop={(e) => handleDrop(e, folder.id)}
-                  onDragOver={(e) => handleDragOver(e, folder.id)}
-                  onDragLeave={handleDragLeave}
+                  onClick={() => folderManager.toggleFolder(folder.id)}
+                  onDrop={(e) =>
+                    folderManager.handleDrop(
+                      e,
+                      folder.id,
+                      handleMoveToFolder,
+                      'promptId',
+                    )
+                  }
+                  onDragOver={(e) => folderManager.handleDragOver(e, folder.id)}
+                  onDragLeave={folderManager.handleDragLeave}
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {isCollapsed ? (
@@ -340,18 +260,23 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
                       <IconChevronDown size={16} className="text-gray-500" />
                     )}
                     <IconFolder size={16} className="text-gray-500" />
-                    {editingFolderId === folder.id ? (
+                    {folderManager.editingFolderId === folder.id ? (
                       <input
-                        ref={editInputRef}
+                        ref={folderManager.editInputRef}
                         type="text"
-                        value={editingFolderName}
-                        onChange={(e) => setEditingFolderName(e.target.value)}
-                        onBlur={handleSaveFolderName}
+                        value={folderManager.editingFolderName}
+                        onChange={(e) =>
+                          folderManager.setEditingFolderName(e.target.value)
+                        }
+                        onBlur={() =>
+                          folderManager.handleSaveFolderName(updateFolder)
+                        }
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleSaveFolderName();
+                          if (e.key === 'Enter')
+                            folderManager.handleSaveFolderName(updateFolder);
                           if (e.key === 'Escape') {
-                            setEditingFolderId(null);
-                            setEditingFolderName('');
+                            folderManager.setEditingFolderId(null);
+                            folderManager.setEditingFolderName('');
                           }
                         }}
                         onClick={(e) => e.stopPropagation()}
@@ -369,7 +294,7 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleRenameFolder(folder.id, folder.name);
+                      folderManager.handleRenameFolder(folder.id, folder.name);
                     }}
                     className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
                   >
@@ -383,8 +308,14 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
                       <div
                         key={prompt.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, prompt.id)}
-                        onDragEnd={() => setIsDragging(false)}
+                        onDragStart={(e) =>
+                          folderManager.handleDragStart(
+                            e,
+                            prompt.id,
+                            'promptId',
+                          )
+                        }
+                        onDragEnd={() => folderManager.setIsDragging(false)}
                       >
                         <PromptItem
                           prompt={prompt}
@@ -392,12 +323,12 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
                           isSelected={selectedPromptId === prompt.id}
                           onClick={() => setSelectedPromptId(prompt.id)}
                           onEdit={() => {
-                            setPromptModalId(prompt.id);
-                            setPromptModalName(prompt.name);
-                            setPromptModalDescription(prompt.description || '');
-                            setPromptModalContent(prompt.content);
-                            setPromptModalToneId(prompt.toneId || null);
-                            setIsPromptModalOpen(true);
+                            promptModal.openEdit(prompt.id, {
+                              name: prompt.name,
+                              description: prompt.description || '',
+                              content: prompt.content,
+                              toneId: prompt.toneId || null,
+                            });
                           }}
                           onDelete={(e) => handleDeletePrompt(prompt.id, e)}
                           onMoveToFolder={handleMoveToFolder}
@@ -414,17 +345,26 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
           {/* Unfolder prompts */}
           {unfolderPrompts.length > 0 && (
             <div
-              className={`space-y-1 ${dragOverFolderId === null && isDragging ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2' : ''}`}
-              onDrop={(e) => handleDrop(e, null)}
-              onDragOver={(e) => handleDragOver(e, null)}
-              onDragLeave={handleDragLeave}
+              className={`space-y-1 ${folderManager.dragOverFolderId === null && folderManager.isDragging ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2' : ''}`}
+              onDrop={(e) =>
+                folderManager.handleDrop(
+                  e,
+                  null,
+                  handleMoveToFolder,
+                  'promptId',
+                )
+              }
+              onDragOver={(e) => folderManager.handleDragOver(e, null)}
+              onDragLeave={folderManager.handleDragLeave}
             >
               {unfolderPrompts.map((prompt) => (
                 <div
                   key={prompt.id}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, prompt.id)}
-                  onDragEnd={() => setIsDragging(false)}
+                  onDragStart={(e) =>
+                    folderManager.handleDragStart(e, prompt.id, 'promptId')
+                  }
+                  onDragEnd={() => folderManager.setIsDragging(false)}
                 >
                   <PromptItem
                     prompt={prompt}
@@ -432,12 +372,12 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
                     isSelected={selectedPromptId === prompt.id}
                     onClick={() => setSelectedPromptId(prompt.id)}
                     onEdit={() => {
-                      setPromptModalId(prompt.id);
-                      setPromptModalName(prompt.name);
-                      setPromptModalDescription(prompt.description || '');
-                      setPromptModalContent(prompt.content);
-                      setPromptModalToneId(prompt.toneId || null);
-                      setIsPromptModalOpen(true);
+                      promptModal.openEdit(prompt.id, {
+                        name: prompt.name,
+                        description: prompt.description || '',
+                        content: prompt.content,
+                        toneId: prompt.toneId || null,
+                      });
                     }}
                     onDelete={(e) => handleDeletePrompt(prompt.id, e)}
                     onMoveToFolder={handleMoveToFolder}
@@ -549,12 +489,12 @@ Include:
             <div className="flex gap-2 mt-6">
               <button
                 onClick={() => {
-                  setPromptModalId(selectedPrompt.id);
-                  setPromptModalName(selectedPrompt.name);
-                  setPromptModalDescription(selectedPrompt.description || '');
-                  setPromptModalContent(selectedPrompt.content);
-                  setPromptModalToneId(selectedPrompt.toneId || null);
-                  setIsPromptModalOpen(true);
+                  promptModal.openEdit(selectedPrompt.id, {
+                    name: selectedPrompt.name,
+                    description: selectedPrompt.description || '',
+                    content: selectedPrompt.content,
+                    toneId: selectedPrompt.toneId || null,
+                  });
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
               >
@@ -580,17 +520,17 @@ Include:
 
       {/* Prompt Editor Modal */}
       <PromptDashboard
-        isOpen={isPromptModalOpen}
-        onClose={() => setIsPromptModalOpen(false)}
+        isOpen={promptModal.isOpen}
+        onClose={() => promptModal.close()}
         onSave={(
           name: string,
           description: string,
           content: string,
           toneId?: string | null,
         ) => {
-          if (promptModalId) {
+          if (promptModal.itemId) {
             // Update existing prompt
-            updatePrompt(promptModalId, {
+            updatePrompt(promptModal.itemId, {
               name,
               description,
               content,
@@ -611,12 +551,12 @@ Include:
             };
             addPrompt(newPrompt);
           }
-          setIsPromptModalOpen(false);
+          promptModal.close();
         }}
-        initialName={promptModalName}
-        initialDescription={promptModalDescription}
-        initialContent={promptModalContent}
-        initialToneId={promptModalToneId}
+        initialName={promptModal.formData.name}
+        initialDescription={promptModal.formData.description}
+        initialContent={promptModal.formData.content}
+        initialToneId={promptModal.formData.toneId}
       />
     </div>
   );

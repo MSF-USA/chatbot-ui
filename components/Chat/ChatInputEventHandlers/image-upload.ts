@@ -1,7 +1,7 @@
 import React, { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import toast from 'react-hot-toast';
 
-import { cacheImageBase64 } from '@/lib/services/imageService';
+import { FileUploadService } from '@/lib/services/fileUploadService';
 
 import {
   ChatInputSubmitTypes,
@@ -34,30 +34,23 @@ export const onImageUpload = async (
     return;
   }
 
-  if (file.size > 5242480) {
-    toast.error('Image upload must be <5mb');
-    return;
-  }
-
   try {
-    // Status is already set to 'uploading' when preview is created
-    const base64String = await readFileAsDataURL(file);
-    const data = await uploadImage(file.name, base64String, (progress) => {
-      if (setUploadProgress) {
-        setUploadProgress((prev) => ({
-          ...prev,
-          [file.name]: progress,
-        }));
-      }
-    });
-
-    // Cache the base64 data so we don't need to fetch it from server again
-    cacheImageBase64(data.uri, base64String);
+    const result = await FileUploadService.uploadSingleFile(
+      file,
+      (progress) => {
+        if (setUploadProgress) {
+          setUploadProgress((prev) => ({
+            ...prev,
+            [file.name]: progress,
+          }));
+        }
+      },
+    );
 
     const imageMessage: ImageMessageContent = {
       type: 'image_url',
       image_url: {
-        url: data.uri,
+        url: result.url,
         detail: 'auto',
       },
     };
@@ -85,13 +78,17 @@ export const onImageUpload = async (
     setFilePreviews((prevFilePreviews) =>
       prevFilePreviews.map((preview) =>
         preview.name === file.name
-          ? { ...preview, previewUrl: base64String, status: 'completed' }
+          ? { ...preview, status: 'completed' }
           : preview,
       ),
     );
   } catch (error) {
     console.error('Image upload failed:', error);
-    toast.error(`Failed to upload image: ${file.name}`);
+    toast.error(
+      error instanceof Error
+        ? error.message
+        : `Failed to upload image: ${file.name}`,
+    );
 
     // Update status to failed
     setFilePreviews((prevFilePreviews) =>
@@ -100,70 +97,6 @@ export const onImageUpload = async (
       ),
     );
   }
-};
-
-const readFileAsDataURL = (file: File): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-    reader.readAsDataURL(file);
-  });
-};
-
-const uploadImage = async (
-  filename: string,
-  base64String: string,
-  onProgress?: (progress: number) => void,
-): Promise<{ uri: string }> => {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-
-    // Track upload progress
-    xhr.upload.addEventListener('progress', (event) => {
-      if (event.lengthComputable && onProgress) {
-        const progress = (event.loaded / event.total) * 100;
-        onProgress(progress);
-      }
-    });
-
-    // Handle completion
-    xhr.addEventListener('load', () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        try {
-          const data = JSON.parse(xhr.responseText);
-          resolve(data);
-        } catch (error) {
-          reject(new Error('Failed to parse response'));
-        }
-      } else {
-        try {
-          const error = JSON.parse(xhr.responseText);
-          reject(
-            new Error(error.error || `Upload failed with status ${xhr.status}`),
-          );
-        } catch {
-          reject(new Error(`Upload failed with status ${xhr.status}`));
-        }
-      }
-    });
-
-    // Handle errors
-    xhr.addEventListener('error', () => {
-      reject(new Error('Network error occurred'));
-    });
-
-    xhr.addEventListener('abort', () => {
-      reject(new Error('Upload aborted'));
-    });
-
-    // Open connection and send data
-    xhr.open(
-      'POST',
-      `/api/file/upload?filename=${encodeURI(filename)}&filetype=image`,
-    );
-    xhr.send(base64String);
-  });
 };
 
 export function onImageUploadButtonClick(

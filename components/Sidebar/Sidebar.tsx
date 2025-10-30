@@ -2,21 +2,17 @@
 
 import {
   IconBolt,
-  IconCheck,
   IconChevronDown,
   IconChevronRight,
-  IconDots,
   IconEdit,
   IconFolder,
   IconFolderPlus,
   IconLogout,
-  IconMenu2,
   IconMessage,
   IconPlus,
   IconSearch,
   IconSettings,
   IconTrash,
-  IconX,
 } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
@@ -27,6 +23,7 @@ import Image from 'next/image';
 
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useFolderManagement } from '@/lib/hooks/ui/useFolderManagement';
 import { useUI } from '@/lib/hooks/ui/useUI';
 
 import { Conversation } from '@/types/chat';
@@ -34,235 +31,11 @@ import { Conversation } from '@/types/chat';
 import { CustomizationsModal } from '@/components/Customizations/CustomizationsModal';
 import Modal from '@/components/UI/Modal';
 
+import { ConversationItem } from './ConversationItem';
+
 import lightTextLogo from '@/public/international_logo_black.png';
 import darkTextLogo from '@/public/international_logo_white.png';
 import { v4 as uuidv4 } from 'uuid';
-
-/**
- * Conversation item component with dropdown menu for folder management
- */
-function ConversationItem({
-  conversation,
-  selectedConversation,
-  handleSelectConversation,
-  handleDeleteConversation,
-  handleMoveToFolder,
-  handleRenameConversation,
-  folders,
-  t,
-}: {
-  conversation: Conversation;
-  selectedConversation: Conversation | null;
-  handleSelectConversation: (id: string) => void;
-  handleDeleteConversation: (id: string, e: React.MouseEvent) => void;
-  handleMoveToFolder: (conversationId: string, folderId: string | null) => void;
-  handleRenameConversation: (id: string, currentName: string) => void;
-  folders: any[];
-  t: any;
-}) {
-  const [showMenu, setShowMenu] = useState(false);
-  const [showFolderSubmenu, setShowFolderSubmenu] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [editingName, setEditingName] = useState(conversation.name);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  // Close menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-        setShowMenu(false);
-        setShowFolderSubmenu(false);
-      }
-    };
-
-    if (showMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }
-  }, [showMenu]);
-
-  const handleDragStart = (e: React.DragEvent) => {
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('conversationId', conversation.id);
-  };
-
-  const handleSaveName = () => {
-    if (editingName.trim()) {
-      handleRenameConversation(conversation.id, editingName.trim());
-    }
-    setIsEditing(false);
-  };
-
-  return (
-    <div
-      draggable={!isEditing}
-      onDragStart={handleDragStart}
-      className={`group flex items-center gap-2 rounded p-2 cursor-pointer transition-all duration-200 ${
-        selectedConversation?.id === conversation.id
-          ? 'bg-neutral-200 dark:bg-neutral-700'
-          : 'hover:bg-neutral-100 dark:hover:bg-neutral-800 hover:shadow-sm'
-      }`}
-      onClick={() =>
-        !isEditing && !showMenu && handleSelectConversation(conversation.id)
-      }
-    >
-      {isEditing ? (
-        <input
-          type="text"
-          value={editingName}
-          onChange={(e) => setEditingName(e.target.value)}
-          onBlur={handleSaveName}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleSaveName();
-            } else if (e.key === 'Escape') {
-              setEditingName(conversation.name);
-              setIsEditing(false);
-            }
-          }}
-          autoFocus
-          onClick={(e) => e.stopPropagation()}
-          className="flex-1 rounded border border-neutral-300 bg-white px-2 py-1 text-sm text-neutral-900 focus:border-neutral-500 focus:outline-none dark:border-neutral-600 dark:bg-[#212121] dark:text-neutral-100"
-        />
-      ) : (
-        <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
-          {conversation.name}
-        </span>
-      )}
-      <div
-        ref={menuRef}
-        className={`relative shrink-0 transition-opacity ${showMenu ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-      >
-        {!isEditing && (
-          <>
-            <button
-              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowMenu(!showMenu);
-              }}
-              title={t('Options')}
-            >
-              <IconDots
-                size={14}
-                className="text-neutral-600 dark:text-neutral-400"
-              />
-            </button>
-          </>
-        )}
-
-        {/* Dropdown menu */}
-        {showMenu && (
-          <div
-            className="absolute right-0 top-full mt-1 z-10 w-48 rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="p-1">
-              {/* Rename option */}
-              <button
-                className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMenu(false);
-                  setIsEditing(true);
-                  setEditingName(conversation.name);
-                }}
-              >
-                <IconEdit
-                  size={14}
-                  className="text-neutral-600 dark:text-neutral-400"
-                />
-                {t('Rename')}
-              </button>
-
-              {/* Move to folder option with submenu */}
-              <div>
-                <button
-                  className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center justify-between"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowFolderSubmenu(!showFolderSubmenu);
-                  }}
-                >
-                  <span className="flex items-center gap-2">
-                    <IconFolder
-                      size={14}
-                      className="text-neutral-600 dark:text-neutral-400"
-                    />
-                    {t('Move to folder')}
-                  </span>
-                  {showFolderSubmenu ? (
-                    <IconChevronDown
-                      size={14}
-                      className="text-neutral-600 dark:text-neutral-400"
-                    />
-                  ) : (
-                    <IconChevronRight
-                      size={14}
-                      className="text-neutral-600 dark:text-neutral-400"
-                    />
-                  )}
-                </button>
-
-                {/* Folder submenu - inline expansion */}
-                {showFolderSubmenu && (
-                  <div className="pl-4 mt-1">
-                    <button
-                      className="w-full text-left px-3 py-2 text-xs text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center justify-between"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleMoveToFolder(conversation.id, null);
-                        setShowMenu(false);
-                        setShowFolderSubmenu(false);
-                      }}
-                    >
-                      {t('No folder')}
-                      {!conversation.folderId && (
-                        <IconCheck size={12} className="shrink-0" />
-                      )}
-                    </button>
-                    {folders.map((folder) => (
-                      <button
-                        key={folder.id}
-                        className="w-full text-left px-3 py-2 text-xs text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center justify-between"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleMoveToFolder(conversation.id, folder.id);
-                          setShowMenu(false);
-                          setShowFolderSubmenu(false);
-                        }}
-                      >
-                        <span className="truncate">{folder.name}</span>
-                        {conversation.folderId === folder.id && (
-                          <IconCheck size={12} className="shrink-0" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Delete option */}
-              <button
-                className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-neutral-100 dark:text-red-400 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowMenu(false);
-                  handleDeleteConversation(conversation.id, e);
-                }}
-              >
-                <IconTrash size={14} />
-                {t('Delete')}
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /**
  * Sidebar with conversation list - migrated to use Zustand stores
@@ -287,18 +60,23 @@ export function Sidebar() {
     deleteFolder,
   } = useConversations();
   const { defaultModelId, models, temperature, systemPrompt } = useSettings();
-  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(
-    new Set(),
-  );
-  const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
-  const [editingFolderName, setEditingFolderName] = useState('');
-  const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
+
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isCustomizationsOpen, setIsCustomizationsOpen] = useState(false);
   const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null);
   const [isLoadingPhoto, setIsLoadingPhoto] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Determine which conversations to display (search results or all)
+  const displayConversations = searchTerm
+    ? filteredConversations
+    : conversations;
+
+  // Folder management
+  const folderManager = useFolderManagement({
+    items: displayConversations,
+  });
 
   // Fetch user photo on mount (with localStorage caching)
   useEffect(() => {
@@ -430,57 +208,11 @@ export function Sidebar() {
   };
 
   const handleCreateFolder = () => {
-    const newFolder = {
-      id: uuidv4(),
-      name: t('New folder'),
-      type: 'chat' as const,
-    };
-    addFolder(newFolder);
-    setEditingFolderId(newFolder.id);
-    setEditingFolderName(newFolder.name);
+    folderManager.handleCreateFolder('chat', t('New folder'), addFolder);
   };
 
   const handleCreatePromptFolder = () => {
-    const newFolder = {
-      id: uuidv4(),
-      name: t('New folder'),
-      type: 'prompt' as const,
-    };
-    addFolder(newFolder);
-    setEditingFolderId(newFolder.id);
-    setEditingFolderName(newFolder.name);
-  };
-
-  const handleRenameFolder = (folderId: string, currentName: string) => {
-    setEditingFolderId(folderId);
-    setEditingFolderName(currentName);
-  };
-
-  const handleSaveFolderName = () => {
-    if (editingFolderId && editingFolderName.trim()) {
-      updateFolder(editingFolderId, editingFolderName.trim());
-    }
-    setEditingFolderId(null);
-    setEditingFolderName('');
-  };
-
-  const handleDeleteFolder = (folderId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm(t('Are you sure you want to delete this folder?'))) {
-      deleteFolder(folderId);
-    }
-  };
-
-  const toggleFolder = (folderId: string) => {
-    setCollapsedFolders((prev) => {
-      const next = new Set(prev);
-      if (next.has(folderId)) {
-        next.delete(folderId);
-      } else {
-        next.add(folderId);
-      }
-      return next;
-    });
+    folderManager.handleCreateFolder('prompt', t('New folder'), addFolder);
   };
 
   const handleMoveToFolder = (
@@ -497,43 +229,13 @@ export function Sidebar() {
     updateConversation(conversationId, { name: newName });
   };
 
-  const handleDrop = (e: React.DragEvent, folderId: string | null) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const conversationId = e.dataTransfer.getData('conversationId');
-    if (conversationId) {
-      handleMoveToFolder(conversationId, folderId);
-    }
-    setDragOverFolderId(null);
-  };
-
-  const handleDragOver = (e: React.DragEvent, folderId: string | null) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOverFolderId(folderId);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOverFolderId(null);
-  };
-
-  const displayConversations = searchTerm
-    ? filteredConversations
-    : conversations;
-
-  // Group conversations by folder
-  const conversationsInFolders = displayConversations.filter((c) => c.folderId);
-  const conversationsWithoutFolder = displayConversations.filter(
-    (c) => !c.folderId,
-  );
+  // Group conversations by folder using the hook's grouped items
+  const conversationsByFolder = folderManager.groupedItems.byFolder;
+  const conversationsWithoutFolder = folderManager.groupedItems.unfolderedItems;
 
   const folderGroups = folders.map((folder) => ({
     folder,
-    conversations: conversationsInFolders.filter(
-      (c) => c.folderId === folder.id,
-    ),
+    conversations: conversationsByFolder[folder.id] || [],
   }));
 
   return (
@@ -645,23 +347,32 @@ export function Sidebar() {
                   <div
                     key={folder.id}
                     className="mb-2"
-                    onDrop={(e) => handleDrop(e, folder.id)}
-                    onDragOver={(e) => handleDragOver(e, folder.id)}
-                    onDragLeave={handleDragLeave}
+                    onDrop={(e) =>
+                      folderManager.handleDrop(
+                        e,
+                        folder.id,
+                        handleMoveToFolder,
+                        'conversationId',
+                      )
+                    }
+                    onDragOver={(e) =>
+                      folderManager.handleDragOver(e, folder.id)
+                    }
+                    onDragLeave={folderManager.handleDragLeave}
                   >
                     {/* Folder header */}
                     <div
                       className={`group flex items-center gap-2 rounded p-2 hover:bg-neutral-100 dark:hover:bg-neutral-800 ${
-                        dragOverFolderId === folder.id
+                        folderManager.dragOverFolderId === folder.id
                           ? 'bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400'
                           : ''
                       }`}
                     >
                       <button
-                        onClick={() => toggleFolder(folder.id)}
+                        onClick={() => folderManager.toggleFolder(folder.id)}
                         className="shrink-0"
                       >
-                        {collapsedFolders.has(folder.id) ? (
+                        {folderManager.collapsedFolders.has(folder.id) ? (
                           <IconChevronRight
                             size={16}
                             className="text-neutral-600 dark:text-neutral-400"
@@ -677,19 +388,24 @@ export function Sidebar() {
                         size={16}
                         className="shrink-0 text-neutral-600 dark:text-neutral-400"
                       />
-                      {editingFolderId === folder.id &&
+                      {folderManager.editingFolderId === folder.id &&
                       !isCustomizationsOpen ? (
                         <input
+                          ref={folderManager.editInputRef}
                           type="text"
-                          value={editingFolderName}
-                          onChange={(e) => setEditingFolderName(e.target.value)}
-                          onBlur={handleSaveFolderName}
+                          value={folderManager.editingFolderName}
+                          onChange={(e) =>
+                            folderManager.setEditingFolderName(e.target.value)
+                          }
+                          onBlur={() =>
+                            folderManager.handleSaveFolderName(updateFolder)
+                          }
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
-                              handleSaveFolderName();
+                              folderManager.handleSaveFolderName(updateFolder);
                             } else if (e.key === 'Escape') {
-                              setEditingFolderId(null);
-                              setEditingFolderName('');
+                              folderManager.setEditingFolderId(null);
+                              folderManager.setEditingFolderName('');
                             }
                           }}
                           autoFocus
@@ -701,12 +417,15 @@ export function Sidebar() {
                         </span>
                       )}
                       <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
-                        {editingFolderId !== folder.id && (
+                        {folderManager.editingFolderId !== folder.id && (
                           <>
                             <button
                               className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
                               onClick={() =>
-                                handleRenameFolder(folder.id, folder.name)
+                                folderManager.handleRenameFolder(
+                                  folder.id,
+                                  folder.name,
+                                )
                               }
                               title={t('Rename')}
                             >
@@ -717,7 +436,16 @@ export function Sidebar() {
                             </button>
                             <button
                               className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                              onClick={(e) => handleDeleteFolder(folder.id, e)}
+                              onClick={(e) =>
+                                folderManager.handleDeleteFolder(
+                                  folder.id,
+                                  e,
+                                  deleteFolder,
+                                  t(
+                                    'Are you sure you want to delete this folder?',
+                                  ),
+                                )
+                              }
                               title={t('Delete')}
                             >
                               <IconTrash
@@ -731,7 +459,7 @@ export function Sidebar() {
                     </div>
 
                     {/* Folder conversations */}
-                    {!collapsedFolders.has(folder.id) && (
+                    {!folderManager.collapsedFolders.has(folder.id) && (
                       <div className="ml-6 space-y-1 mt-1">
                         {folderConversations
                           .slice()
@@ -764,9 +492,16 @@ export function Sidebar() {
               {/* Conversations without folder */}
               {conversationsWithoutFolder.length > 0 && (
                 <div
-                  onDrop={(e) => handleDrop(e, null)}
-                  onDragOver={(e) => handleDragOver(e, null)}
-                  onDragLeave={handleDragLeave}
+                  onDrop={(e) =>
+                    folderManager.handleDrop(
+                      e,
+                      null,
+                      handleMoveToFolder,
+                      'conversationId',
+                    )
+                  }
+                  onDragOver={(e) => folderManager.handleDragOver(e, null)}
+                  onDragLeave={folderManager.handleDragLeave}
                 >
                   {conversationsWithoutFolder
                     .slice()

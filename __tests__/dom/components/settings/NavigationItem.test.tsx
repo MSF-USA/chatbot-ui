@@ -1,10 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import '@testing-library/jest-dom';
 
-import { NavigationItem } from '@/components/settings/NavigationItem';
-import { SettingsSection } from '@/components/settings/types';
+import { NavigationItem } from '@/components/Settings/NavigationItem';
+import { SettingsSection } from '@/components/Settings/types';
+
+import '@testing-library/jest-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('NavigationItem', () => {
   const mockOnClick = vi.fn();
@@ -21,7 +22,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       expect(screen.getByText('General Settings')).toBeInTheDocument();
@@ -37,7 +38,7 @@ describe('NavigationItem', () => {
           label="General Settings"
           icon={<TestIcon />}
           onClick={mockOnClick}
-        />
+        />,
       );
 
       expect(screen.getByTestId('test-icon')).toBeInTheDocument();
@@ -50,7 +51,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const iconSpan = container.querySelector('.mr-3');
@@ -64,7 +65,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -80,7 +81,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -96,7 +97,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.CHAT_SETTINGS}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -113,7 +114,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -127,7 +128,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.CHAT_SETTINGS}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -143,7 +144,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.CHAT_SETTINGS}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -160,7 +161,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -177,7 +178,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="Data Management"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -195,7 +196,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -209,7 +210,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -223,7 +224,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -237,7 +238,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       const button = screen.getByRole('button');
@@ -254,7 +255,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.GENERAL}
           label="General"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       expect(screen.getByText('General')).toBeInTheDocument();
@@ -267,7 +268,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.CHAT_SETTINGS}
           label="Chat Settings"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       expect(screen.getByText('Chat Settings')).toBeInTheDocument();
@@ -280,7 +281,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.PRIVACY_CONTROL}
           label="Privacy Control"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       expect(screen.getByText('Privacy Control')).toBeInTheDocument();
@@ -293,7 +294,7 @@ describe('NavigationItem', () => {
           activeSection={SettingsSection.ACCOUNT}
           label="Account"
           onClick={mockOnClick}
-        />
+        />,
       );
 
       expect(screen.getByText('Account')).toBeInTheDocument();

@@ -1,5 +1,5 @@
 import { AgentType } from '@/types/agent';
-import { Conversation } from '@/types/chat';
+import { ChatBody, Conversation } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 /**
@@ -48,7 +48,7 @@ export async function makeRequest(
     ? { ...latestModelConfig, ...model }
     : model;
 
-  const requestBody: any = {
+  const requestBody: Omit<ChatBody, 'key'> = {
     model: modelToSend,
     messages,
     prompt: systemPrompt,
@@ -87,8 +87,8 @@ export async function makeRequest(
   const hasComplexContent = messages.some((message) => {
     if (Array.isArray(message.content)) {
       return message.content.some(
-        (content: any) =>
-          content.type === 'image_url' || content.type === 'file',
+        (content) =>
+          content.type === 'image_url' || content.type === 'file_url',
       );
     }
     return false;

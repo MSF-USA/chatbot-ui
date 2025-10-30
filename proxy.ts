@@ -35,7 +35,7 @@ const authMiddleware = auth((req) => {
   return response;
 });
 
-export default function middleware(req: NextRequest) {
+export default function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   // Debug: Log proxy headers to diagnose cookie issues (Azure only)

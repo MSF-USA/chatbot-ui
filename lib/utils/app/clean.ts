@@ -1,56 +1,7 @@
 import { Conversation } from '@/types/chat';
-import {OpenAIModel, OpenAIModelID, OpenAIModels} from '@/types/openai';
+import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import { DEFAULT_SYSTEM_PROMPT, DEFAULT_TEMPERATURE } from './const';
-
-export const cleanSelectedConversation = (conversation: Conversation) => {
-  // added model for each conversation (3/20/23)
-  // added system prompt for each conversation (3/21/23)
-  // added folders (3/23/23)
-  // added prompts (3/26/23)
-  // added messages (4/16/23)
-
-  let updatedConversation = conversation;
-
-  // check for model on each conversation
-  if (!updatedConversation.model) {
-    updatedConversation = {
-      ...updatedConversation,
-      model: updatedConversation.model || OpenAIModels[OpenAIModelID.GPT_5],
-    };
-  }
-
-  // check for system prompt on each conversation
-  if (!updatedConversation.prompt) {
-    updatedConversation = {
-      ...updatedConversation,
-      prompt: updatedConversation.prompt || DEFAULT_SYSTEM_PROMPT,
-    };
-  }
-
-  if (!updatedConversation.temperature) {
-    updatedConversation = {
-      ...updatedConversation,
-      temperature: updatedConversation.temperature || DEFAULT_TEMPERATURE,
-    };
-  }
-
-  if (!updatedConversation.folderId) {
-    updatedConversation = {
-      ...updatedConversation,
-      folderId: updatedConversation.folderId || null,
-    };
-  }
-
-  if (!updatedConversation.messages) {
-    updatedConversation = {
-      ...updatedConversation,
-      messages: updatedConversation.messages || [],
-    };
-  }
-
-  return updatedConversation;
-};
 
 export const cleanConversationHistory = (history: any[]): Conversation[] => {
   // added model for each conversation (3/20/23)
@@ -66,7 +17,10 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
 
   return history.reduce((acc: any[], conversation) => {
     try {
-      if (!conversation.model || (conversation.model as OpenAIModel)?.isLegacy) {
+      if (
+        !conversation.model ||
+        (conversation.model as OpenAIModel)?.isLegacy
+      ) {
         // TODO: Replace with environmentally set default model so fixing doesn't require code change
         conversation.model = OpenAIModels[OpenAIModelID.GPT_5];
       }
@@ -114,4 +68,4 @@ export const cleanMarkdown = (text: string): string => {
   text = text.replace(/^>\s*/gm, '');
 
   return text.trim();
-}
+};

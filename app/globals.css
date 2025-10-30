@@ -1,9 +1,9 @@
+/* KaTeX CSS for math rendering */
+@import "katex/dist/katex.min.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* KaTeX CSS for math rendering */
-@import "katex/dist/katex.min.css";
 
 /* Streamdown styles - @source directive requires Tailwind v4 */
 /* Uncomment when upgrading to Tailwind v4:

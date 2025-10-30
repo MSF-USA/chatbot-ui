@@ -9,7 +9,19 @@ import { useTranslations } from 'next-intl';
 import { useChat } from '@/lib/hooks/chat/useChat';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useAutoDismissError } from '@/lib/hooks/ui/useAutoDismissError';
+import { useModalState } from '@/lib/hooks/ui/useModalSync';
 import { useUI } from '@/lib/hooks/ui/useUI';
+
+import {
+  canInitializeConversation,
+  createDefaultConversation,
+  shouldCreateDefaultConversation,
+} from '@/lib/utils/app/conversationInit';
+import {
+  scrollToBottom,
+  shouldShowScrollButton,
+} from '@/lib/utils/app/scrolling';
 
 import { AgentType } from '@/types/agent';
 import { Message } from '@/types/chat';
@@ -26,7 +38,6 @@ import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
 
 import { useConversationStore } from '@/lib/stores/conversationStore';
-import { v4 as uuidv4 } from 'uuid';
 
 interface ChatProps {
   mobileModelSelectOpen?: boolean;
@@ -34,7 +45,7 @@ interface ChatProps {
 }
 
 /**
- * Main chat component - migrated to use Zustand stores
+ * Main chat component
  */
 export function Chat({
   mobileModelSelectOpen,
@@ -66,8 +77,6 @@ export function Chat({
     useSettings();
 
   const [showScrollDownButton, setShowScrollDownButton] = useState(false);
-  const [filePreviews, setFilePreviews] = useState<any[]>([]);
-  const [isModelSelectOpen, setIsModelSelectOpen] = useState(false);
   const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
     null,
   );
@@ -77,34 +86,11 @@ export function Chat({
   const [savePromptDescription, setSavePromptDescription] = useState('');
   const hasInitializedRef = useRef(false);
 
-  // Sync with mobile header model select state
-  // Note: isModelSelectOpen is intentionally excluded from deps to prevent render loop
-  // This effect should only run when the EXTERNAL prop (mobileModelSelectOpen) changes,
-  // not when our internal state (isModelSelectOpen) changes, since we're setting it here
-  useEffect(() => {
-    if (
-      mobileModelSelectOpen !== undefined &&
-      mobileModelSelectOpen !== isModelSelectOpen
-    ) {
-      setIsModelSelectOpen(mobileModelSelectOpen);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mobileModelSelectOpen]);
-
-  // Notify parent when modal state changes (for mobile header sync)
-  // Note: mobileModelSelectOpen is intentionally excluded from deps to prevent excessive notifications
-  // We only want to notify the parent when OUR internal state changes, not when the prop changes
-  // (since the prop changing already triggers the sync effect above)
-  useEffect(() => {
-    if (
-      onMobileModelSelectChange &&
-      mobileModelSelectOpen !== undefined &&
-      isModelSelectOpen !== mobileModelSelectOpen
-    ) {
-      onMobileModelSelectChange(isModelSelectOpen);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModelSelectOpen, onMobileModelSelectChange]);
+  const [isModelSelectOpen, setIsModelSelectOpen] = useModalState(
+    mobileModelSelectOpen,
+    false,
+    onMobileModelSelectChange,
+  );
 
   // Close modal on ESC key
   useEffect(() => {
@@ -117,60 +103,29 @@ export function Chat({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isModelSelectOpen]);
 
-  // Auto-dismiss error after 10 seconds
-  useEffect(() => {
-    if (error) {
-      const timer = setTimeout(() => {
-        clearError();
-      }, 10000); // 10 seconds
-
-      return () => clearTimeout(timer);
-    }
-  }, [error, clearError]);
+  useAutoDismissError(error, clearError, 10000);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const stopConversationRef = useRef<boolean>(false);
 
-  // Create default conversation if none exists - runs once after data is loaded
+  // Create default conversation if none exists
   useEffect(() => {
     // Only run initialization once
     if (hasInitializedRef.current) return;
 
-    // Wait for conversations to load from localStorage
-    if (!isLoaded) return;
+    if (!canInitializeConversation(isLoaded, models.length > 0)) return;
 
-    // Wait for models to load
-    if (models.length === 0) return;
-
-    // Mark as initialized to prevent multiple runs
     hasInitializedRef.current = true;
 
-    // If no conversations exist, create one
-    if (conversations.length === 0) {
-      const defaultModel =
-        models.find((m) => m.id === defaultModelId) || models[0];
-
-      // Enable agent mode by default if the model has agentId
-      const modelWithAgent =
-        defaultModel?.id === 'gpt-4o' && defaultModel.agentId
-          ? {
-              ...defaultModel,
-              agentEnabled: true,
-              agentId: defaultModel.agentId,
-            }
-          : defaultModel;
-
-      const newConversation = {
-        id: uuidv4(),
-        name: 'New Conversation',
-        messages: [],
-        model: modelWithAgent,
-        prompt: systemPrompt || '',
-        temperature: temperature || 0.5,
-        folderId: null,
-      };
+    if (shouldCreateDefaultConversation(conversations)) {
+      const newConversation = createDefaultConversation(
+        models,
+        defaultModelId,
+        systemPrompt || '',
+        temperature || 0.5,
+      );
       addConversation(newConversation);
     } else if (!selectedConversation) {
       // If conversations exist but none is selected, select the first one
@@ -181,20 +136,14 @@ export function Chat({
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
+    scrollToBottom(messagesEndRef, 'smooth');
   }, [selectedConversation?.messages, streamingContent]);
 
   // Handle scroll detection for scroll-down button
   useEffect(() => {
     const handleScroll = () => {
-      if (chatContainerRef.current) {
-        const { scrollTop, scrollHeight, clientHeight } =
-          chatContainerRef.current;
-        const isScrolledUp = scrollHeight - scrollTop - clientHeight > 100;
-        setShowScrollDownButton(isScrolledUp);
-      }
+      const shouldShow = shouldShowScrollButton(chatContainerRef.current, 100);
+      setShowScrollDownButton(shouldShow);
     };
 
     const container = chatContainerRef.current;
@@ -319,11 +268,7 @@ export function Chat({
     [handleSend],
   );
 
-  const handleScrollDown = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const handleScrollDown = () => scrollToBottom(messagesEndRef, 'smooth');
 
   const handleRegenerate = () => {
     // Get the latest conversation state to avoid stale closures
@@ -416,8 +361,6 @@ export function Chat({
                 stopConversationRef={stopConversationRef}
                 textareaRef={textareaRef}
                 showScrollDownButton={false}
-                filePreviews={filePreviews}
-                setFilePreviews={setFilePreviews}
                 showDisclaimer={false}
                 onTranscriptionStatusChange={setTranscriptionStatus}
               />
@@ -522,8 +465,6 @@ export function Chat({
             stopConversationRef={stopConversationRef}
             textareaRef={textareaRef}
             showScrollDownButton={showScrollDownButton}
-            filePreviews={filePreviews}
-            setFilePreviews={setFilePreviews}
             onTranscriptionStatusChange={setTranscriptionStatus}
           />
         </>

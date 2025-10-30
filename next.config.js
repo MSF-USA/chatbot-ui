@@ -9,8 +9,21 @@ const nextConfig = {
   // Remove X-Powered-By header for security
   poweredByHeader: false,
 
+  generateBuildId: async () => {
+    return (
+      process.env.GITHUB_SHA ||
+      process.env.BUILD_ID ||
+      new Date().getTime().toString()
+    );
+  },
+
   images: {
-    domains: ['www.google.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.google.com',
+      },
+    ],
   },
 
   rewrites: async () => {
@@ -74,12 +87,4 @@ const nextConfig = {
   },
 };
 
-const withPWA = require('next-pwa')({
-  dest: 'public', // Destination directory for the PWA files
-  disable: process.env.NODE_ENV === 'development', // Disable PWA in development mode
-  register: true, // Register the PWA service worker
-  // skipWaiting: true, // Skip waiting for service worker activation
-  reloadOnOnline: true,
-});
-
-module.exports = withNextIntl(withPWA(nextConfig));
+module.exports = withNextIntl(nextConfig);

@@ -90,7 +90,7 @@ export default function SignInPage() {
 
       {/* Background SVG Map */}
       <div
-        className="absolute left-1/2 -translate-x-1/2 md:-left-[10%] md:translate-x-0 top-1/2 -translate-y-1/2 w-[90%] md:w-[85%] h-[60%] md:h-[95%] bg-no-repeat opacity-40 md:opacity-60 z-0"
+        className="absolute left-1/2 -translate-x-1/2 md:-left-[12%] md:translate-x-0 top-1/2 -translate-y-1/2 w-[90%] md:w-[85%] h-[60%] md:h-[95%] bg-no-repeat opacity-40 md:opacity-60 z-0"
         style={{
           backgroundImage: `url(/msf-map-background.svg)`,
           backgroundPosition: 'center',
@@ -104,7 +104,7 @@ export default function SignInPage() {
       {/* Content */}
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8 pb-24 md:py-12 md:pr-[5%]">
         {/* Container for logo and card */}
-        <div className="w-full max-w-md opacity-0 animate-fade-in-bottom md:ml-auto space-y-6 md:space-y-8">
+        <div className="w-full max-w-md lg:max-w-lg 2xl:max-w-2xl opacity-0 animate-fade-in-bottom md:ml-auto md:mr-8 space-y-6 md:space-y-8">
           {/* Logo and Title - Outside glass card */}
           <div className="text-center">
             <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
@@ -120,10 +120,10 @@ export default function SignInPage() {
           </div>
 
           {/* Glass Card - Fade in animation with delay */}
-          <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-white/[0.03] backdrop-blur-3xl border border-white/[0.2] shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] flex flex-col">
+          <div className="relative overflow-hidden rounded-2xl md:rounded-3xl bg-white/[0.015] backdrop-blur-3xl border border-white/[0.1] shadow-[0_8px_32px_0_rgba(0,0,0,0.4)] flex flex-col">
             {/* Multi-layer glass effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-tl from-zinc-800/10 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.07] via-white/[0.015] to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-tl from-zinc-800/[0.05] to-transparent" />
 
             {/* Frosted glass edge highlight */}
             <div className="absolute inset-0 rounded-2xl md:rounded-3xl border-t border-l border-white/[0.1]" />

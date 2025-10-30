@@ -5,7 +5,12 @@ import {
   createStreamEncoder,
 } from '@/lib/utils/app/metadata';
 
-import { Message } from '@/types/chat';
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
 
 import { AzureMonitorLoggingService } from '../loggingService';
 
@@ -80,47 +85,59 @@ export class AIFoundryAgentHandler {
       try {
         // The SDK expects parameters to be passed separately: (threadId, role, content)
         // For multimodal content (images, files), convert to SDK format
-        let messageContent: string | any[];
+        let messageContent:
+          | string
+          | Array<
+              | { type: 'text'; text: string }
+              | { type: 'image_url'; imageUrl: { url: string; detail: string } }
+            >;
 
         if (typeof lastMessage.content === 'string') {
           // Simple text message
           messageContent = lastMessage.content;
         } else if (Array.isArray(lastMessage.content)) {
           // Multimodal content - convert to Azure SDK format
-          messageContent = lastMessage.content.map((item: any) => {
-            if (item.type === 'text') {
-              return { type: 'text', text: item.text };
-            } else if (item.type === 'image_url') {
-              // Convert image_url to imageUrl (Azure SDK uses camelCase)
-              return {
-                type: 'image_url',
-                imageUrl: {
-                  url: item.image_url.url,
-                  detail: item.image_url.detail || 'auto',
-                },
-              };
-            } else if (item.type === 'file_url') {
-              // For non-image files, add as text with context
-              // Note: Azure AI Agents SDK handles files via file search tool
-              return {
-                type: 'text',
-                text: `[File attached: ${item.originalFilename || 'file'}]`,
-              };
-            }
-            return item;
-          });
+          messageContent = lastMessage.content.map(
+            (
+              item:
+                | TextMessageContent
+                | ImageMessageContent
+                | FileMessageContent,
+            ) => {
+              if (item.type === 'text') {
+                return { type: 'text', text: item.text };
+              } else if (item.type === 'image_url') {
+                // Convert image_url to imageUrl (Azure SDK uses camelCase)
+                return {
+                  type: 'image_url',
+                  imageUrl: {
+                    url: item.image_url.url,
+                    detail: item.image_url.detail || 'auto',
+                  },
+                };
+              } else if (item.type === 'file_url') {
+                // For non-image files, add as text with context
+                // Note: Azure AI Agents SDK handles files via file search tool
+                return {
+                  type: 'text',
+                  text: `[File attached: ${item.originalFilename || 'file'}]`,
+                };
+              }
+              return item;
+            },
+          );
         } else if (
           typeof lastMessage.content === 'object' &&
           'text' in lastMessage.content
         ) {
           // Single TextMessageContent object
-          messageContent = (lastMessage.content as any).text;
+          messageContent = (lastMessage.content as TextMessageContent).text;
         } else {
           // Fallback
           messageContent = String(lastMessage.content);
         }
 
-        await client.messages.create(thread.id, 'user', messageContent as any);
+        await client.messages.create(thread.id, 'user', messageContent);
       } catch (messageError) {
         console.error('Error creating message:', messageError);
         console.error(
@@ -180,16 +197,28 @@ export class AIFoundryAgentHandler {
       const stream = new ReadableStream({
         async start(controller) {
           const encoder = createStreamEncoder();
-          let citations: any[] = [];
+          let citations: Array<{
+            number: number;
+            title: string;
+            url: string;
+            date: string;
+          }> = [];
           let citationIndex = 1;
-          const citationMap = new Map();
+          const citationMap = new Map<string, number>();
           let hasCompletedMessage = false;
 
           try {
             for await (const eventMessage of streamEventMessages) {
               // Handle different event types
               if (eventMessage.event === 'thread.message.delta') {
-                const messageData = eventMessage.data as any;
+                const messageData = eventMessage.data as {
+                  delta?: {
+                    content?: Array<{
+                      type: string;
+                      text?: { value: string };
+                    }>;
+                  };
+                };
                 if (
                   messageData?.delta?.content &&
                   Array.isArray(messageData.delta.content)
@@ -225,7 +254,16 @@ export class AIFoundryAgentHandler {
               } else if (eventMessage.event === 'thread.message.completed') {
                 hasCompletedMessage = true;
                 // Extract citations from annotations
-                const messageData = eventMessage.data as any;
+                const messageData = eventMessage.data as {
+                  content?: Array<{
+                    text?: {
+                      annotations?: Array<{
+                        type: string;
+                        urlCitation?: { title?: string; url?: string };
+                      }>;
+                    };
+                  }>;
+                };
                 if (messageData?.content?.[0]?.text?.annotations) {
                   const annotations = messageData.content[0].text.annotations;
                   citations = [];

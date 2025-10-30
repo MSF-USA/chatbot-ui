@@ -20,6 +20,14 @@ import { useTranslations } from 'next-intl';
 
 import { useTones } from '@/lib/hooks/settings/useTones';
 
+import {
+  PromptRevisionResponse,
+  generatePrompt,
+  revisePrompt,
+} from '@/lib/services/prompts/promptRevisionService';
+
+import { extractVariables } from '@/lib/utils/chat/variables';
+
 interface PromptDashboardProps {
   isOpen: boolean;
   onClose: () => void;
@@ -33,19 +41,6 @@ interface PromptDashboardProps {
   initialDescription?: string;
   initialContent?: string;
   initialToneId?: string | null;
-}
-
-interface Improvement {
-  category: string;
-  description: string;
-}
-
-interface RevisionResponse {
-  success: boolean;
-  revisedPrompt: string;
-  improvements: Improvement[];
-  suggestions: string[];
-  error?: string;
 }
 
 export const PromptDashboard: FC<PromptDashboardProps> = ({
@@ -67,9 +62,8 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
   );
   const [revisionGoal, setRevisionGoal] = useState('');
   const [isRevising, setIsRevising] = useState(false);
-  const [revisionResult, setRevisionResult] = useState<RevisionResponse | null>(
-    null,
-  );
+  const [revisionResult, setRevisionResult] =
+    useState<PromptRevisionResponse | null>(null);
   const [showVariableHelp, setShowVariableHelp] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [fileContents, setFileContents] = useState<string>('');
@@ -151,26 +145,12 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
     setRevisionResult(null);
 
     try {
-      const response = await fetch('/api/prompts/revise', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          promptName: name || 'Untitled Prompt',
-          promptDescription: description,
-          promptContent: '',
-          revisionGoal: revisionGoal || description,
-          generateNew: true,
-          additionalContext: fileContents || undefined,
-        }),
+      const data = await generatePrompt({
+        promptName: name || 'Untitled Prompt',
+        promptDescription: description,
+        revisionGoal: revisionGoal || description,
+        additionalContext: fileContents || undefined,
       });
-
-      const data: RevisionResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to generate prompt');
-      }
 
       setRevisionResult(data);
     } catch (error) {
@@ -193,26 +173,14 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
     setRevisionResult(null);
 
     try {
-      const response = await fetch('/api/prompts/revise', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          promptName: name || 'Untitled Prompt',
-          promptDescription: description,
-          promptContent: content,
-          revisionGoal: revisionGoal || undefined,
-          generateNew: false,
-          additionalContext: fileContents || undefined,
-        }),
+      const data = await revisePrompt({
+        promptName: name || 'Untitled Prompt',
+        promptDescription: description,
+        promptContent: content,
+        revisionGoal: revisionGoal || undefined,
+        generateNew: false,
+        additionalContext: fileContents || undefined,
       });
-
-      const data: RevisionResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to revise prompt');
-      }
 
       setRevisionResult(data);
     } catch (error) {
@@ -235,16 +203,6 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
       e.preventDefault();
       handleSave();
     }
-  };
-
-  // Extract variables from content
-  const extractVariables = (text: string): string[] => {
-    const regex = /{{(.*?)}}/g;
-    const matches = text.matchAll(regex);
-    const vars = Array.from(matches, (m) => m[1]).filter(
-      (v, i, arr) => arr.indexOf(v) === i,
-    );
-    return vars;
   };
 
   const variables = extractVariables(content);

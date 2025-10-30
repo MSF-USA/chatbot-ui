@@ -11,6 +11,11 @@ import { v4 as uuidv4 } from 'uuid';
 const ALLOWED_QUEUE_CATEGORIES = ['transcription', 'general'] as const;
 type QueueCategory = (typeof ALLOWED_QUEUE_CATEGORIES)[number];
 
+// Azure Queue Storage limits
+const MAX_PEEK_MESSAGES = 32;
+const MAX_RECEIVE_MESSAGES = 32;
+const MAX_PAGINATION_ATTEMPTS = 100; // Prevent infinite loops (32 * 100 = 3200 max messages)
+
 async function initializeBlobStorage(req: NextRequest) {
   const session: Session | null = await auth();
   if (!session) throw new Error('Failed to pull session!');
@@ -73,43 +78,63 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     const { azureBlobStorage, user } = await initializeBlobStorage(req);
     const queueName = category.toLowerCase();
+    const queueClient = azureBlobStorage.getQueueClient(queueName);
 
-    // Peeking messages to find the message and estimate position
-    // Azure Queue Storage allows peeking up to 32 messages at a time
-    // TODO: Handle conditions where there are more than 32 messages
-    const maxPeekMessages = 32;
-    const peekedMessages = await azureBlobStorage
-      .getQueueClient(queueName)
-      .peekMessages({ numberOfMessages: maxPeekMessages });
-
-    const messages = peekedMessages.peekedMessageItems;
-
+    // Peeking messages with pagination to handle queues with >32 messages
     let position = -1;
     let originalMessage: any = null;
+    let totalPeeked = 0;
 
-    for (let i = 0; i < messages.length; i++) {
-      const message = messages[i];
-      const messageContent = JSON.parse(base64Decode(message.messageText));
+    for (let attempt = 0; attempt < MAX_PAGINATION_ATTEMPTS; attempt++) {
+      const peekedMessages = await queueClient.peekMessages({
+        numberOfMessages: MAX_PEEK_MESSAGES,
+      });
 
-      if (messageContent.messageId === messageId) {
-        if (messageContent.userId !== user.id) {
-          return NextResponse.json(
-            {
-              message:
-                'Forbidden: this message is not marked with your user identifier.',
-            },
-            { status: 403 },
-          );
+      const messages = peekedMessages.peekedMessageItems;
+
+      if (messages.length === 0) {
+        // No more messages in queue
+        break;
+      }
+
+      for (let i = 0; i < messages.length; i++) {
+        const message = messages[i];
+        const messageContent = JSON.parse(base64Decode(message.messageText));
+
+        if (messageContent.messageId === messageId) {
+          if (messageContent.userId !== user.id) {
+            return NextResponse.json(
+              {
+                message:
+                  'Forbidden: this message is not marked with your user identifier.',
+              },
+              { status: 403 },
+            );
+          }
+          position = totalPeeked + i + 1; // Positions start at 1
+          originalMessage = messageContent;
+          break;
         }
-        position = i + 1; // Positions start at 1
-        originalMessage = messageContent;
+      }
+
+      if (position !== -1) {
+        // Found the message
+        break;
+      }
+
+      totalPeeked += messages.length;
+
+      // If we got fewer than MAX_PEEK_MESSAGES, we've reached the end
+      if (messages.length < MAX_PEEK_MESSAGES) {
         break;
       }
     }
 
     if (position === -1) {
       return NextResponse.json(
-        { error: 'Message not found or not in the first 32 messages' },
+        {
+          error: `Message not found in queue (searched ${totalPeeked} messages)`,
+        },
         { status: 404 },
       );
     }
@@ -247,30 +272,54 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
     const queueName = category.toLowerCase();
     const queueClient = azureBlobStorage.getQueueClient(queueName);
 
-    // TODO: Handle conditions where there are more than 32 messages
-    const receiveResponse = await queueClient.receiveMessages({
-      numberOfMessages: 32,
-      visibilityTimeout: 30,
-    });
-
+    // Receive messages with pagination to handle queues with >32 messages
     let targetMessage: DequeuedMessageItem | null = null;
+    let totalReceived = 0;
 
-    for (const message of receiveResponse.receivedMessageItems) {
-      const messageContent = JSON.parse(base64Decode(message.messageText));
+    for (let attempt = 0; attempt < MAX_PAGINATION_ATTEMPTS; attempt++) {
+      const receiveResponse = await queueClient.receiveMessages({
+        numberOfMessages: MAX_RECEIVE_MESSAGES,
+        visibilityTimeout: 30,
+      });
 
-      if (messageContent.messageId === messageId) {
-        // Check if the message belongs to the user
-        if (messageContent.userId !== user.id) {
-          return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      const messages = receiveResponse.receivedMessageItems;
+
+      if (messages.length === 0) {
+        // No more messages in queue
+        break;
+      }
+
+      for (const message of messages) {
+        const messageContent = JSON.parse(base64Decode(message.messageText));
+
+        if (messageContent.messageId === messageId) {
+          // Check if the message belongs to the user
+          if (messageContent.userId !== user.id) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+          }
+          targetMessage = message;
+          break;
         }
-        targetMessage = message;
+      }
+
+      if (targetMessage) {
+        // Found the message
+        break;
+      }
+
+      totalReceived += messages.length;
+
+      // If we got fewer than MAX_RECEIVE_MESSAGES, we've reached the end
+      if (messages.length < MAX_RECEIVE_MESSAGES) {
         break;
       }
     }
 
     if (!targetMessage) {
       return NextResponse.json(
-        { error: 'Message not found in the queue' },
+        {
+          error: `Message not found in queue (searched ${totalReceived} messages)`,
+        },
         { status: 404 },
       );
     }
@@ -348,30 +397,54 @@ export async function DELETE(req: NextRequest): Promise<NextResponse> {
     const queueName = category.toLowerCase();
     const queueClient = azureBlobStorage.getQueueClient(queueName);
 
-    // TODO: Handle conditions where there are more than 32 messages
-    const receiveResponse = await queueClient.receiveMessages({
-      numberOfMessages: 32,
-      visibilityTimeout: 30,
-    });
-
+    // Receive messages with pagination to handle queues with >32 messages
     let targetMessage: DequeuedMessageItem | null = null;
+    let totalReceived = 0;
 
-    for (const message of receiveResponse.receivedMessageItems) {
-      const messageContent = JSON.parse(base64Decode(message.messageText));
+    for (let attempt = 0; attempt < MAX_PAGINATION_ATTEMPTS; attempt++) {
+      const receiveResponse = await queueClient.receiveMessages({
+        numberOfMessages: MAX_RECEIVE_MESSAGES,
+        visibilityTimeout: 30,
+      });
 
-      if (messageContent.messageId === messageId) {
-        // Check if the message belongs to the user
-        if (messageContent.userId !== user.id) {
-          return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      const messages = receiveResponse.receivedMessageItems;
+
+      if (messages.length === 0) {
+        // No more messages in queue
+        break;
+      }
+
+      for (const message of messages) {
+        const messageContent = JSON.parse(base64Decode(message.messageText));
+
+        if (messageContent.messageId === messageId) {
+          // Check if the message belongs to the user
+          if (messageContent.userId !== user.id) {
+            return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+          }
+          targetMessage = message;
+          break;
         }
-        targetMessage = message;
+      }
+
+      if (targetMessage) {
+        // Found the message
+        break;
+      }
+
+      totalReceived += messages.length;
+
+      // If we got fewer than MAX_RECEIVE_MESSAGES, we've reached the end
+      if (messages.length < MAX_RECEIVE_MESSAGES) {
         break;
       }
     }
 
     if (!targetMessage) {
       return NextResponse.json(
-        { error: 'Message not found in the queue' },
+        {
+          error: `Message not found in queue (searched ${totalReceived} messages)`,
+        },
         { status: 404 },
       );
     }

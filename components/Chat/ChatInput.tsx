@@ -15,6 +15,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import { useDropzone } from 'react-dropzone';
 
 import { useTranslations } from 'next-intl';
 
@@ -22,6 +23,17 @@ import { useChat } from '@/lib/hooks/chat/useChat';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { useTones } from '@/lib/hooks/settings/useTones';
+import { usePromptSelection } from '@/lib/hooks/ui/usePromptSelection';
+import { useUploadState } from '@/lib/hooks/ui/useUploadState';
+
+import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
+import { buildMessageContent } from '@/lib/utils/chat/contentBuilder';
+import {
+  shouldPreventSubmission,
+  validateMessageSubmission,
+} from '@/lib/utils/chat/validation';
+import { parseVariables, replaceVariables } from '@/lib/utils/chat/variables';
+import { isMobileDevice } from '@/lib/utils/device/detection';
 
 import { AgentType } from '@/types/agent';
 import {
@@ -49,7 +61,6 @@ import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ChatInputVoiceCapture from '@/components/Chat/ChatInput/ChatInputVoiceCapture';
 import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 
 import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
@@ -65,8 +76,6 @@ interface Props {
   stopConversationRef: MutableRefObject<boolean>;
   textareaRef: MutableRefObject<HTMLTextAreaElement | null>;
   showScrollDownButton: boolean;
-  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  filePreviews: FilePreview[];
   showDisclaimer?: boolean;
   onTranscriptionStatusChange?: (status: string | null) => void;
 }
@@ -78,8 +87,6 @@ export const ChatInput = ({
   stopConversationRef,
   textareaRef,
   showScrollDownButton,
-  filePreviews,
-  setFilePreviews,
   showDisclaimer = true,
   onTranscriptionStatusChange,
 }: Props) => {
@@ -91,26 +98,31 @@ export const ChatInput = ({
   const { prompts } = useSettings();
   const { tones } = useTones();
 
+  // Upload state management
+  const {
+    filePreviews,
+    setFilePreviews,
+    fileFieldValue,
+    setFileFieldValue,
+    imageFieldValue,
+    setImageFieldValue,
+    uploadProgress,
+    setUploadProgress,
+    submitType,
+    setSubmitType,
+    handleFileUpload,
+  } = useUploadState();
+
   const [textFieldValue, setTextFieldValue] = useState<string>('');
-  const [imageFieldValue, setImageFieldValue] = useState<FileFieldValue>(null);
-  const [fileFieldValue, setFileFieldValue] = useState<FileFieldValue>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [showPromptList, setShowPromptList] = useState<boolean>(false);
-  const [activePromptIndex, setActivePromptIndex] = useState<number>(0);
-  const [promptInputValue, setPromptInputValue] = useState<string>('');
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedPromptForModal, setSelectedPromptForModal] =
     useState<Prompt | null>(null);
-  const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
   const [placeholderText, setPlaceholderText] = useState('');
-  const [isDragOver, setIsDragOver] = useState(false);
   const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
     null,
   );
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
-  }>({});
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const [webSearchMode, setWebSearchMode] = useState<boolean>(false);
   const [selectedToneId, setSelectedToneId] = useState<string | null>(null);
@@ -119,12 +131,46 @@ export const ChatInput = ({
     [key: string]: string;
   } | null>(null);
 
-  const promptListRef = useRef<HTMLUListElement | null>(null);
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
-  const filteredPrompts: Prompt[] = prompts.filter((prompt) =>
-    prompt.name.toLowerCase().includes(promptInputValue.toLowerCase()),
-  );
+  const {
+    showPromptList,
+    setShowPromptList,
+    activePromptIndex,
+    setActivePromptIndex,
+    promptInputValue,
+    filteredPrompts,
+    promptListRef,
+    handlePromptSelect: handlePromptSelectFromHook,
+    handleKeyDownPromptList,
+    handleInitModal,
+    updatePromptListVisibilityCallback,
+    findAndSelectMatchingPrompt,
+  } = usePromptSelection({
+    prompts,
+    onPromptSelect: (prompt, parsedVariables, hasVariables) => {
+      setVariables(parsedVariables);
+
+      if (hasVariables) {
+        setSelectedPromptForModal(prompt);
+        setIsModalVisible(true);
+      } else {
+        setTextFieldValue((prevContent) => {
+          const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
+          return updatedContent;
+        });
+        updatePromptListVisibilityCallback(prompt.content);
+      }
+    },
+    onResetInputState: () => {
+      if (submitType !== 'text') {
+        setSubmitType('text');
+      }
+      if (filePreviews.length > 0) {
+        setFilePreviews([]);
+      }
+    },
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value: string = e.target.value;
@@ -142,36 +188,16 @@ export const ChatInput = ({
     }
 
     setTextFieldValue(value);
-    updatePromptListVisibility(value);
+    updatePromptListVisibilityCallback(value);
   };
 
-  const buildContent = () => {
-    const wrapInArray = (value: any) =>
-      Array.isArray(value) ? value : [value];
-
-    if (submitType === 'text') {
-      return textFieldValue;
-    } else if (submitType === 'image') {
-      const imageContents = imageFieldValue
-        ? [...wrapInArray(imageFieldValue), ...wrapInArray(fileFieldValue)]
-        : fileFieldValue
-          ? [...wrapInArray(fileFieldValue)]
-          : [];
-      return [
-        ...imageContents,
-        { type: 'text', text: textFieldValue } as TextMessageContent,
-      ];
-    } else if (submitType === 'file' || submitType == 'multi-file') {
-      const fileContents = fileFieldValue ? wrapInArray(fileFieldValue) : [];
-      // Only include text content if text is not empty (for audio/video transcription without instructions)
-      const textContent = textFieldValue.trim()
-        ? [{ type: 'text', text: textFieldValue } as TextMessageContent]
-        : [];
-      return [...fileContents, ...textContent];
-    } else {
-      throw new Error(`Invalid submit type for message: ${submitType}`);
-    }
-  };
+  const buildContent = () =>
+    buildMessageContent(
+      submitType,
+      textFieldValue,
+      imageFieldValue,
+      fileFieldValue,
+    );
 
   const handleSend = () => {
     if (isStreaming) {
@@ -181,12 +207,14 @@ export const ChatInput = ({
       return;
     }
 
-    // Check if files are still uploading
-    const isUploading = Object.values(uploadProgress).some(
-      (progress) => progress < 100,
+    const validation = validateMessageSubmission(
+      textFieldValue,
+      filePreviews,
+      uploadProgress,
     );
-    if (isUploading) {
-      alert(t('Please wait for files to finish uploading'));
+
+    if (!validation.valid) {
+      alert(t(validation.error || 'Cannot send message'));
       return;
     }
 
@@ -194,23 +222,12 @@ export const ChatInput = ({
     console.log('[ChatInput handleSend] filePreviews:', filePreviews);
     console.log('[ChatInput handleSend] fileFieldValue:', fileFieldValue);
 
-    const content:
-      | string
-      | TextMessageContent
-      | (TextMessageContent | FileMessageContent)[]
-      | (TextMessageContent | ImageMessageContent)[] = buildContent();
+    const content = buildContent();
 
     console.log(
       '[ChatInput handleSend] built content:',
       JSON.stringify(content).substring(0, 200),
     );
-
-    // Allow empty text if files are attached (e.g., audio/video transcription without instructions)
-    const hasFiles = filePreviews.length > 0;
-    if (!textFieldValue && !hasFiles) {
-      alert(t('Please enter a message'));
-      return;
-    }
 
     // If web search mode is active, force the web search agent
     const forcedAgentType = webSearchMode ? AgentType.WEB_SEARCH : undefined;
@@ -249,21 +266,7 @@ export const ChatInput = ({
     setIsStreaming(false);
   };
 
-  const isMobile = () => {
-    const userAgent =
-      typeof window.navigator === 'undefined' ? '' : navigator.userAgent;
-    const mobileRegex =
-      /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobile|mobile|CriOS/i;
-    return mobileRegex.test(userAgent);
-  };
-
-  const handleInitModal = () => {
-    const selectedPrompt = filteredPrompts[activePromptIndex];
-    if (selectedPrompt) {
-      handlePromptSelect(selectedPrompt);
-    }
-    setShowPromptList(false);
-  };
+  const isMobile = isMobileDevice;
 
   const handleKeyDownInput = (
     key: string,
@@ -287,95 +290,11 @@ export const ChatInput = ({
     }
   };
 
-  const handleKeyDownPromptList = (
-    event: KeyboardEvent<HTMLTextAreaElement>,
-  ) => {
-    switch (event.key) {
-      case 'ArrowDown':
-        event.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex < filteredPrompts.length - 1 ? prevIndex + 1 : prevIndex,
-        );
-        break;
-      case 'ArrowUp':
-        event.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex > 0 ? prevIndex - 1 : prevIndex,
-        );
-        break;
-      case 'Tab':
-        event.preventDefault();
-        setActivePromptIndex((prevIndex) =>
-          prevIndex < filteredPrompts.length - 1 ? prevIndex + 1 : 0,
-        );
-        break;
-      case 'Enter':
-        event.preventDefault();
-        handleInitModal();
-        if (submitType !== 'text') {
-          setSubmitType('text');
-        }
-        if (filePreviews.length > 0) {
-          setFilePreviews([]);
-        }
-        break;
-      case 'Escape':
-        event.preventDefault();
-        setShowPromptList(false);
-        break;
-      default:
-        setActivePromptIndex(0);
-        break;
-    }
-  };
-
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (showPromptList) {
       handleKeyDownPromptList(e);
     } else {
-      // Handle cases when showPromptList is false
       handleKeyDownInput(e.key, e);
-    }
-  };
-
-  const parseVariables = (content: string) => {
-    const regex = /{{(.*?)}}/g;
-    const foundVariables = [];
-    let match;
-
-    while ((match = regex.exec(content)) !== null) {
-      foundVariables.push(match[1]);
-    }
-
-    return foundVariables;
-  };
-
-  const updatePromptListVisibility = useCallback((text: string) => {
-    const match = /\/\w*$/.exec(text);
-
-    if (match) {
-      setShowPromptList(true);
-      setPromptInputValue(match[0].slice(1));
-    } else {
-      setShowPromptList(false);
-      setPromptInputValue('');
-    }
-  }, []);
-
-  const handlePromptSelect = (prompt: Prompt) => {
-    const parsedVariables = parseVariables(prompt.content);
-    setVariables(parsedVariables);
-
-    if (parsedVariables.length > 0) {
-      // Store the prompt for later use after variables are filled
-      setSelectedPromptForModal(prompt);
-      setIsModalVisible(true);
-    } else {
-      setTextFieldValue((prevContent) => {
-        const updatedContent = prevContent?.replace(/\/\w*$/, prompt.content);
-        return updatedContent;
-      });
-      updatePromptListVisibility(prompt.content);
     }
   };
 
@@ -385,13 +304,10 @@ export const ChatInput = ({
   ) => {
     if (!selectedPromptForModal) return;
 
-    // Replace variables in the prompt content
-    const contentWithVariables = selectedPromptForModal.content.replace(
-      /{{(.*?)}}/g,
-      (match, variable) => {
-        const index = variables.indexOf(variable);
-        return updatedVariables[index];
-      },
+    const contentWithVariables = replaceVariables(
+      selectedPromptForModal.content,
+      variables,
+      updatedVariables,
     );
 
     // Replace the /prompt text in the input with the filled-in content
@@ -409,12 +325,6 @@ export const ChatInput = ({
       textareaRef.current.focus();
     }
   };
-
-  useEffect(() => {
-    if (promptListRef.current) {
-      promptListRef.current.scrollTop = activePromptIndex * 30;
-    }
-  }, [activePromptIndex]);
 
   useEffect(() => {
     if (textareaRef && textareaRef.current) {
@@ -481,78 +391,56 @@ export const ChatInput = ({
     }
   }, [hasAudioVideoFiles, webSearchMode, setWebSearchMode]);
 
+  // File upload handler
   const handleFiles = (files: FileList | File[]) => {
     const filesArray = Array.from(files);
 
     if (filesArray.length > 0) {
-      onFileUpload(
-        filesArray,
-        setSubmitType,
-        setFilePreviews,
-        setFileFieldValue,
-        setImageFieldValue,
-        setUploadProgress,
-      );
+      handleFileUpload(filesArray);
     }
   };
 
-  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop: handleFiles,
+    accept: {
+      'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.webp'],
+      'application/pdf': ['.pdf'],
+      'application/msword': ['.doc'],
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        ['.docx'],
+      'application/vnd.ms-excel': ['.xls'],
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
+        '.xlsx',
+      ],
+      'application/vnd.ms-powerpoint': ['.ppt'],
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+        ['.pptx'],
+      'text/plain': ['.txt'],
+      'text/markdown': ['.md'],
+      'audio/*': ['.mp3', '.wav', '.m4a', '.webm'],
+      'video/*': ['.mp4', '.webm'],
+    },
+    maxSize: FILE_SIZE_LIMITS.AUDIO_VIDEO_MAX_BYTES,
+    maxFiles: 5,
+    noClick: true, // Don't trigger file picker on click
+    noKeyboard: true, // Don't trigger on keyboard
+  });
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragOver(false);
-
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      const files = e.dataTransfer.files;
-      handleFiles(files);
-      try {
-        e.dataTransfer.clearData();
-      } catch (err: any) {
-        // e.target.value = ""
-      }
-    }
-  };
-
-  const preventSubmission = (): boolean => {
-    // Check if any files are still uploading
-    const hasUploadingFiles = filePreviews.some(
-      (preview) => preview.status === 'uploading',
+  const preventSubmission = (): boolean =>
+    shouldPreventSubmission(
+      isTranscribing,
+      isStreaming,
+      filePreviews,
+      uploadProgress,
     );
-    const hasIncompleteUploads = Object.values(uploadProgress).some(
-      (progress) => progress < 100,
-    );
-
-    return (
-      isTranscribing || isStreaming || hasUploadingFiles || hasIncompleteUploads
-    );
-  };
 
   return (
     <div
-      onDragEnter={handleDragEnter}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      className={`bg-white dark:bg-[#212121] transition-colors ${isDragOver ? 'bg-blue-50 dark:bg-blue-900/30 border-t border-blue-300 dark:border-blue-700' : ''}`}
+      {...getRootProps()}
+      className={`bg-white dark:bg-[#212121] transition-colors ${isDragActive ? 'bg-blue-50 dark:bg-blue-900/30 border-t border-blue-300 dark:border-blue-700' : ''}`}
     >
-      {isDragOver && (
+      <input {...getInputProps()} />
+      {isDragActive && (
         <div className="absolute inset-0 flex items-center justify-center bg-blue-50/70 dark:bg-blue-900/30 backdrop-blur-sm z-10 pointer-events-none">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-center">
             <div className="text-blue-500 mb-2">
@@ -646,7 +534,7 @@ export const ChatInput = ({
                 }`}
               >
                 <ChatDropdown
-                  onFileUpload={onFileUpload}
+                  onFileUpload={handleFileUpload}
                   setSubmitType={setSubmitType}
                   setFilePreviews={setFilePreviews}
                   setFileFieldValue={setFileFieldValue}

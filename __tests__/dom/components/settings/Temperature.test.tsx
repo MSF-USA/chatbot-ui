@@ -1,18 +1,20 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi, beforeEach } from 'vitest';
-import '@testing-library/jest-dom';
 
-import { TemperatureSlider } from '@/components/settings/Temperature';
+import { TemperatureSlider } from '@/components/Settings/Temperature';
+
+import '@testing-library/jest-dom';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({
   useTranslations: () => (key: string) => {
     const translations: Record<string, string> = {
-      'temperatureDescription': 'Higher values will make the output more random, while lower values will make it more focused and deterministic.',
-      'Precise': 'Precise',
-      'Neutral': 'Neutral',
-      'Creative': 'Creative',
+      temperatureDescription:
+        'Higher values will make the output more random, while lower values will make it more focused and deterministic.',
+      Precise: 'Precise',
+      Neutral: 'Neutral',
+      Creative: 'Creative',
     };
     return translations[key] || key;
   },
@@ -30,7 +32,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.7}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     const slider = screen.getByRole('slider');
@@ -42,7 +44,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.7}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('0.7')).toBeInTheDocument();
@@ -53,10 +55,12 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
-    expect(screen.getByText(/Higher values will make the output more random/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Higher values will make the output more random/),
+    ).toBeInTheDocument();
   });
 
   it('displays temperature labels', () => {
@@ -64,7 +68,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('Precise')).toBeInTheDocument();
@@ -77,7 +81,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     const slider = screen.getByRole('slider') as HTMLInputElement;
@@ -92,7 +96,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     const slider = screen.getByRole('slider');
@@ -107,7 +111,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.3}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('0.3')).toBeInTheDocument();
@@ -116,7 +120,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.9}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('0.9')).toBeInTheDocument();
@@ -128,7 +132,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('0.0')).toBeInTheDocument();
@@ -141,7 +145,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={1}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('1.0')).toBeInTheDocument();
@@ -154,7 +158,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.123456}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('0.1')).toBeInTheDocument();
@@ -163,7 +167,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.789}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     expect(screen.getByText('0.8')).toBeInTheDocument();
@@ -174,7 +178,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     const slider = screen.getByRole('slider');
@@ -194,7 +198,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     const slider = container.querySelector('input[type="range"]');
@@ -207,7 +211,7 @@ describe('TemperatureSlider', () => {
       <TemperatureSlider
         temperature={0.5}
         onChangeTemperature={mockOnChangeTemperature}
-      />
+      />,
     );
 
     const labelList = container.querySelector('ul');

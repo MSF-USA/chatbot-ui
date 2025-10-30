@@ -4,11 +4,13 @@ import { useTranslations } from 'next-intl';
 
 import { SettingsSection } from './types';
 
-interface MobileHeaderProps {
+interface MobileSettingsHeaderProps {
   activeSection: SettingsSection;
 }
 
-export const MobileHeader: FC<MobileHeaderProps> = ({ activeSection }) => {
+export const MobileSettingsHeader: FC<MobileSettingsHeaderProps> = ({
+  activeSection,
+}) => {
   const t = useTranslations();
 
   // Helper function to get the section title

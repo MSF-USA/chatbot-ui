@@ -17,8 +17,8 @@ import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
 import { Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
-import { MobileHeader } from './MobileHeader';
 import { MobileNavigation } from './MobileNavigation';
+import { MobileSettingsHeader } from './MobileSettingsHeader';
 import { AccountSection } from './Sections/AccountSection';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
@@ -298,7 +298,9 @@ export function SettingDialog() {
                 {...swipeHandlers}
               >
                 {/* Mobile header */}
-                {isMobileView && <MobileHeader activeSection={activeSection} />}
+                {isMobileView && (
+                  <MobileSettingsHeader activeSection={activeSection} />
+                )}
 
                 {/* Section content */}
                 {activeSection === SettingsSection.GENERAL && (

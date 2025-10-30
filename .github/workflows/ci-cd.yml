@@ -38,6 +38,16 @@ jobs:
           node-version: '24'
           cache: 'npm'
 
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.npm
+            ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
+
       - name: Install dependencies
         run: npm ci
 
@@ -79,6 +89,8 @@ jobs:
           tags: |
             ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:pr-${{ github.event.number }}
             ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:pr-${{ github.event.number }}-${{ github.sha }}
+          build-args: |
+            BUILD=${{ github.run_number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -217,6 +229,8 @@ jobs:
           context: .
           push: true
           tags: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+          build-args: |
+            BUILD=${{ github.run_number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

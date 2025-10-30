@@ -1,6 +1,8 @@
 import React, { ChangeEvent, Dispatch, SetStateAction } from 'react';
 import toast from 'react-hot-toast';
 
+import { FileUploadService } from '@/lib/services/fileUploadService';
+
 import {
   ChatInputSubmitTypes,
   FileFieldValue,
@@ -10,48 +12,6 @@ import {
 } from '@/types/chat';
 
 import { isChangeEvent } from '@/components/Chat/ChatInputEventHandlers/common';
-import { onImageUpload } from '@/components/Chat/ChatInputEventHandlers/image-upload';
-
-const disallowedExtensions: string[] = [
-  '.exe',
-  '.dll',
-  '.cmd',
-  '.msi',
-  '.zip',
-  '.rar',
-  '.7z',
-  '.tar',
-  '.gz',
-  '.iso',
-];
-
-const disallowedMimeTypes: string[] = [
-  'application/x-msdownload',
-  'application/x-executable',
-  'application/x-dosexec',
-  'application/x-msdos-program',
-  'application/x-msi',
-  'application/zip',
-  'application/x-rar-compressed',
-  'application/x-7z-compressed',
-  'application/x-tar',
-  'application/gzip',
-  'application/x-iso9660-image',
-  'application/octet-stream',
-];
-
-function isFileAllowed(file: File): boolean {
-  const extension =
-    '.' + file.name.split('.')[file.name.split('.').length - 1].toLowerCase();
-  return (
-    !disallowedExtensions.includes(extension) &&
-    !disallowedMimeTypes.includes(file.type)
-  );
-}
-
-function isAudioOrVideo(file: File): boolean {
-  return file.type.startsWith('audio/') || file.type.startsWith('video/');
-}
 
 export async function onFileUpload(
   event: React.ChangeEvent<any> | FileList | File[],
@@ -79,173 +39,80 @@ export async function onFileUpload(
     return;
   }
 
-  // Initialize all file previews at once before processing - start with uploading status
-  const allFilePreviews: FilePreview[] = Array.from(files).map((file) => ({
+  const filesArray = Array.from(files);
+
+  // Initialize all file previews at once before processing
+  const allFilePreviews: FilePreview[] = filesArray.map((file) => ({
     name: file.name,
     type: file.type,
     status: 'uploading',
     previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : '',
   }));
 
-  // Set all previews at once
   setFilePreviews((prevState) => [...prevState, ...allFilePreviews]);
 
-  const fileFieldValues: FileMessageContent[] = [];
-  const imageFieldValues: ImageMessageContent[] = [];
+  // Upload files using FileUploadService
+  const results = await FileUploadService.uploadMultipleFiles(
+    filesArray,
+    (progressMap) => {
+      setUploadProgress(progressMap);
+    },
+  );
 
-  const uploadPromises = Array.from(files).map(async (file) => {
-    if (!isFileAllowed(file)) {
-      toast.error(`Invalid file type: ${file.name}`);
-      // Remove the failed file from previews
-      setFilePreviews((prevPreviews) =>
-        prevPreviews.filter((preview) => preview.name !== file.name),
-      );
-      return;
-    }
+  // Process successful uploads and update state
+  results.forEach((result) => {
+    if (result.type === 'image') {
+      const imageMessage: ImageMessageContent = {
+        type: 'image_url',
+        image_url: {
+          url: result.url,
+          detail: 'auto',
+        },
+      };
 
-    const isImage = file.type.startsWith('image/');
-    const isAudioVideo = isAudioOrVideo(file);
-    const maxSize = isImage ? 5242880 : isAudioVideo ? 26214400 : 10485760; // 5MB for images, 25MB for audio/video, 10MB for files
-    const maxSizeMB = isImage ? 5 : isAudioVideo ? 25 : 10;
-
-    if (file.size > maxSize) {
-      toast.error(`${file.name} must be less than ${maxSizeMB}MB.`);
-      // Remove the failed file from previews
-      setFilePreviews((prevPreviews) =>
-        prevPreviews.filter((preview) => preview.name !== file.name),
-      );
-      return;
-    }
-
-    if (isImage) {
-      // Handle image upload
-      return onImageUpload(
-        file,
-        '',
-        setFilePreviews,
-        setSubmitType,
-        setFileFieldValue,
-        setUploadProgress,
-      );
+      setFileFieldValue((prevValue) => {
+        if (prevValue && Array.isArray(prevValue)) {
+          setSubmitType('multi-file');
+          return [...prevValue, imageMessage];
+        } else if (prevValue) {
+          setSubmitType('multi-file');
+          return [prevValue, imageMessage];
+        } else {
+          setSubmitType('image');
+          return [imageMessage];
+        }
+      });
     } else {
-      // Handle non-image file upload
-      return new Promise<void>((resolve, reject) => {
-        // Implement the upload logic here
-        // For simplicity, let's assume uploading the file to your server
-        // Status is already set to 'uploading' when preview is created
-        const chunkSize = 1024 * 1024 * 5; // 5MB chunks
-        let uploadedBytes = 0;
+      const fileMessage: FileMessageContent = {
+        type: 'file_url',
+        url: result.url,
+        originalFilename: result.originalFilename,
+      };
 
-        const uploadChunk = () => {
-          const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
+      setFileFieldValue((prevValue) => {
+        let newFileArray: (FileMessageContent | ImageMessageContent)[];
+        if (prevValue && Array.isArray(prevValue)) {
+          newFileArray = [...prevValue, fileMessage];
+        } else if (prevValue) {
+          newFileArray = [prevValue, fileMessage];
+        } else {
+          newFileArray = [fileMessage];
+        }
 
-          const reader = new FileReader();
-          reader.onloadend = async () => {
-            const base64Chunk = btoa(reader.result as string);
-            const encodedFileName = encodeURIComponent(file.name);
-            const encodedMimeType = encodeURIComponent(file.type);
-
-            try {
-              const response = await fetch(
-                `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
-                {
-                  method: 'POST',
-                  body: base64Chunk,
-                  headers: {
-                    'x-file-name': encodedFileName,
-                  },
-                },
-              );
-
-              if (response.ok) {
-                uploadedBytes += chunkSize;
-                const progress = Math.min(
-                  (uploadedBytes / file.size) * 100,
-                  100,
-                );
-                setUploadProgress((prev) => ({
-                  ...prev,
-                  [file.name]: progress,
-                }));
-
-                if (uploadedBytes < file.size) {
-                  uploadChunk();
-                } else {
-                  const resp = await response.json();
-
-                  const newValue: FileMessageContent = {
-                    type: 'file_url',
-                    url: resp.uri ?? resp.filename,
-                    originalFilename: file.name,
-                  };
-
-                  setFileFieldValue((prevValue) => {
-                    let newFileArray: (
-                      | FileMessageContent
-                      | ImageMessageContent
-                    )[];
-                    if (prevValue && Array.isArray(prevValue)) {
-                      // Keep both images and files - don't filter out images
-                      newFileArray = [...prevValue, newValue];
-                    } else if (prevValue) {
-                      newFileArray = [prevValue, newValue];
-                    } else {
-                      newFileArray = [newValue];
-                    }
-
-                    setSubmitType(
-                      newFileArray.length > 1 ? 'multi-file' : 'file',
-                    );
-                    return newFileArray;
-                  });
-
-                  setFilePreviews((prevPreviews) =>
-                    prevPreviews.map((preview) =>
-                      preview.name === file.name
-                        ? { ...preview, status: 'completed' }
-                        : preview,
-                    ),
-                  );
-
-                  resolve();
-                }
-              } else {
-                toast.error(`File upload failed: ${file.name}`);
-                setFilePreviews((prevPreviews) =>
-                  prevPreviews.map((preview) =>
-                    preview.name === file.name
-                      ? { ...preview, status: 'failed' }
-                      : preview,
-                  ),
-                );
-
-                reject();
-              }
-            } catch (error) {
-              toast.error(`File upload failed: ${file.name}`);
-              setFilePreviews((prevPreviews) =>
-                prevPreviews.map((preview) =>
-                  preview.name === file.name
-                    ? { ...preview, status: 'failed' }
-                    : preview,
-                ),
-              );
-
-              reject();
-            }
-          };
-          reader.readAsBinaryString(chunk);
-        };
-
-        uploadChunk();
+        setSubmitType(newFileArray.length > 1 ? 'multi-file' : 'file');
+        return newFileArray;
       });
     }
+
+    // Update preview status to completed
+    setFilePreviews((prevPreviews) =>
+      prevPreviews.map((preview) =>
+        preview.name === result.originalFilename
+          ? { ...preview, status: 'completed' }
+          : preview,
+      ),
+    );
   });
-
-  // Wait for all uploads to complete
-  await Promise.all(uploadPromises);
-
-  toast.success('Files uploaded successfully');
 
   // Reset the file input value to allow re-upload of the same files if needed
   if (isChangeEvent(event)) {

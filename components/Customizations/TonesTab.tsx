@@ -20,6 +20,9 @@ import { useTranslations } from 'next-intl';
 
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useTones } from '@/lib/hooks/settings/useTones';
+import { useFolderManagement } from '@/lib/hooks/ui/useFolderManagement';
+import { useItemSearch } from '@/lib/hooks/ui/useItemSearch';
+import { useModalForm } from '@/lib/hooks/ui/useModalForm';
 
 import {
   exportTones,
@@ -48,110 +51,48 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
   const { addTone, updateTone, deleteTone } = useTones();
   const { addFolder, updateFolder, deleteFolder } = useConversations();
 
-  // ToneDashboard state
-  const [isToneModalOpen, setIsToneModalOpen] = useState(false);
-  const [toneModalName, setToneModalName] = useState('');
-  const [toneModalDescription, setToneModalDescription] = useState('');
-  const [toneModalVoiceRules, setToneModalVoiceRules] = useState('');
-  const [toneModalExamples, setToneModalExamples] = useState('');
-  const [toneModalTags, setToneModalTags] = useState<string[]>([]);
-  const [toneModalId, setToneModalId] = useState<string | null>(null);
+  // ToneDashboard modal state
+  const toneModal = useModalForm<{
+    name: string;
+    description: string;
+    voiceRules: string;
+    examples: string;
+    tags: string[];
+  }>({
+    initialState: {
+      name: '',
+      description: '',
+      voiceRules: '',
+      examples: '',
+      tags: [],
+    },
+  });
 
   // Local state
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedToneId, setSelectedToneId] = useState<string | null>(null);
-  const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(
-    new Set(),
-  );
-  const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
-  const [editingFolderName, setEditingFolderName] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const editInputRef = useRef<HTMLInputElement>(null);
 
-  // Focus editing input when folder editing starts
-  useEffect(() => {
-    if (editingFolderId && editInputRef.current) {
-      setTimeout(() => {
-        editInputRef.current?.focus();
-        editInputRef.current?.select();
-      }, 0);
-    }
-  }, [editingFolderId]);
-
-  // Filter tones by search
-  const filteredTones = tones.filter(
-    (tone) =>
-      tone.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tone.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tone.tags?.some((tag) =>
-        tag.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-  );
+  // Search
+  const {
+    searchQuery,
+    setSearchQuery,
+    filteredItems: filteredTones,
+  } = useItemSearch({
+    items: tones,
+    searchFields: ['name', 'description', 'tags'],
+  });
 
   // Find selected tone
   const selectedTone = tones.find((t) => t.id === selectedToneId);
 
-  // Group tones by folder
-  const tonesByFolder: Record<string, Tone[]> = {};
-  const unfolderTones: Tone[] = [];
-
-  filteredTones.forEach((tone) => {
-    if (tone.folderId) {
-      if (!tonesByFolder[tone.folderId]) {
-        tonesByFolder[tone.folderId] = [];
-      }
-      tonesByFolder[tone.folderId].push(tone);
-    } else {
-      unfolderTones.push(tone);
-    }
+  // Folder management
+  const folderManager = useFolderManagement({
+    items: filteredTones,
   });
 
-  // Handlers
-  const handleCreateFolder = () => {
-    const newFolder: FolderInterface = {
-      id: uuidv4(),
-      name: t('New folder'),
-      type: 'tone',
-    };
-    addFolder(newFolder);
-    setEditingFolderId(newFolder.id);
-    setEditingFolderName(newFolder.name);
-  };
-
-  const handleRenameFolder = (folderId: string, currentName: string) => {
-    setEditingFolderId(folderId);
-    setEditingFolderName(currentName);
-  };
-
-  const handleSaveFolderName = () => {
-    if (editingFolderId && editingFolderName.trim()) {
-      updateFolder(editingFolderId, editingFolderName.trim());
-    }
-    setEditingFolderId(null);
-    setEditingFolderName('');
-  };
-
-  const handleDeleteFolder = (folderId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm(t('Are you sure you want to delete this folder?'))) {
-      deleteFolder(folderId);
-    }
-  };
-
-  const toggleFolder = (folderId: string) => {
-    setCollapsedFolders((prev) => {
-      const next = new Set(prev);
-      if (next.has(folderId)) {
-        next.delete(folderId);
-      } else {
-        next.add(folderId);
-      }
-      return next;
-    });
-  };
+  const tonesByFolder = folderManager.groupedItems.byFolder;
+  const unfolderTones = folderManager.groupedItems.unfolderedItems;
 
   const handleMoveToFolder = (toneId: string, folderId: string | null) => {
     updateTone(toneId, { folderId });
@@ -165,36 +106,6 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
         setSelectedToneId(null);
       }
     }
-  };
-
-  const handleDragStart = (e: React.DragEvent, toneId: string) => {
-    e.stopPropagation();
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('toneId', toneId);
-    setIsDragging(true);
-  };
-
-  const handleDrop = (e: React.DragEvent, folderId: string | null) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const toneId = e.dataTransfer.getData('toneId');
-    if (toneId) {
-      handleMoveToFolder(toneId, folderId);
-    }
-    setDragOverFolderId(null);
-    setIsDragging(false);
-  };
-
-  const handleDragOver = (e: React.DragEvent, folderId: string | null) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOverFolderId(folderId);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragOverFolderId(null);
   };
 
   const handleExportAll = () => {
@@ -290,22 +201,20 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
               </button>
               <div className="h-6 w-px bg-gray-300 dark:bg-gray-600" />
               <button
-                onClick={handleCreateFolder}
+                onClick={() =>
+                  folderManager.handleCreateFolder(
+                    'tone',
+                    t('New folder'),
+                    addFolder,
+                  )
+                }
                 className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
                 title="New folder"
               >
                 <IconFolderPlus size={18} />
               </button>
               <button
-                onClick={() => {
-                  setToneModalId(null);
-                  setToneModalName('');
-                  setToneModalDescription('');
-                  setToneModalVoiceRules('');
-                  setToneModalExamples('');
-                  setToneModalTags([]);
-                  setIsToneModalOpen(true);
-                }}
+                onClick={() => toneModal.openNew()}
                 className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
               >
                 <IconPlus size={16} />
@@ -320,22 +229,30 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
           {/* Folders */}
           {folders.map((folder) => {
             const folderTones = tonesByFolder[folder.id] || [];
-            if (folderTones.length === 0 && !editingFolderId) return null;
+            if (folderTones.length === 0 && !folderManager.editingFolderId)
+              return null;
 
-            const isCollapsed = collapsedFolders.has(folder.id);
+            const isCollapsed = folderManager.collapsedFolders.has(folder.id);
 
             return (
               <div key={folder.id} className="mb-4">
                 <div
                   className={`flex items-center justify-between px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                    dragOverFolderId === folder.id
+                    folderManager.dragOverFolderId === folder.id
                       ? 'bg-blue-100 dark:bg-blue-900/30'
                       : 'hover:bg-gray-100 dark:hover:bg-gray-800'
                   }`}
-                  onClick={() => toggleFolder(folder.id)}
-                  onDrop={(e) => handleDrop(e, folder.id)}
-                  onDragOver={(e) => handleDragOver(e, folder.id)}
-                  onDragLeave={handleDragLeave}
+                  onClick={() => folderManager.toggleFolder(folder.id)}
+                  onDrop={(e) =>
+                    folderManager.handleDrop(
+                      e,
+                      folder.id,
+                      handleMoveToFolder,
+                      'toneId',
+                    )
+                  }
+                  onDragOver={(e) => folderManager.handleDragOver(e, folder.id)}
+                  onDragLeave={folderManager.handleDragLeave}
                 >
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     {isCollapsed ? (
@@ -344,18 +261,23 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                       <IconChevronDown size={16} className="text-gray-500" />
                     )}
                     <IconFolder size={16} className="text-gray-500" />
-                    {editingFolderId === folder.id ? (
+                    {folderManager.editingFolderId === folder.id ? (
                       <input
-                        ref={editInputRef}
+                        ref={folderManager.editInputRef}
                         type="text"
-                        value={editingFolderName}
-                        onChange={(e) => setEditingFolderName(e.target.value)}
-                        onBlur={handleSaveFolderName}
+                        value={folderManager.editingFolderName}
+                        onChange={(e) =>
+                          folderManager.setEditingFolderName(e.target.value)
+                        }
+                        onBlur={() =>
+                          folderManager.handleSaveFolderName(updateFolder)
+                        }
                         onKeyDown={(e) => {
-                          if (e.key === 'Enter') handleSaveFolderName();
+                          if (e.key === 'Enter')
+                            folderManager.handleSaveFolderName(updateFolder);
                           if (e.key === 'Escape') {
-                            setEditingFolderId(null);
-                            setEditingFolderName('');
+                            folderManager.setEditingFolderId(null);
+                            folderManager.setEditingFolderName('');
                           }
                         }}
                         onClick={(e) => e.stopPropagation()}
@@ -373,7 +295,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleRenameFolder(folder.id, folder.name);
+                      folderManager.handleRenameFolder(folder.id, folder.name);
                     }}
                     className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 dark:hover:bg-gray-700 rounded"
                   >
@@ -387,8 +309,10 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                       <div
                         key={tone.id}
                         draggable
-                        onDragStart={(e) => handleDragStart(e, tone.id)}
-                        onDragEnd={() => setIsDragging(false)}
+                        onDragStart={(e) =>
+                          folderManager.handleDragStart(e, tone.id, 'toneId')
+                        }
+                        onDragEnd={() => folderManager.setIsDragging(false)}
                       >
                         <ToneItem
                           tone={tone}
@@ -396,13 +320,13 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                           isSelected={selectedToneId === tone.id}
                           onClick={() => setSelectedToneId(tone.id)}
                           onEdit={() => {
-                            setToneModalId(tone.id);
-                            setToneModalName(tone.name);
-                            setToneModalDescription(tone.description || '');
-                            setToneModalVoiceRules(tone.voiceRules);
-                            setToneModalExamples(tone.examples || '');
-                            setToneModalTags(tone.tags || []);
-                            setIsToneModalOpen(true);
+                            toneModal.openEdit(tone.id, {
+                              name: tone.name,
+                              description: tone.description || '',
+                              voiceRules: tone.voiceRules,
+                              examples: tone.examples || '',
+                              tags: tone.tags || [],
+                            });
                           }}
                           onDelete={(e) => handleDeleteTone(tone.id, e)}
                           onMoveToFolder={handleMoveToFolder}
@@ -419,17 +343,21 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
           {/* Unfolder tones */}
           {unfolderTones.length > 0 && (
             <div
-              className={`space-y-1 ${dragOverFolderId === null && isDragging ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2' : ''}`}
-              onDrop={(e) => handleDrop(e, null)}
-              onDragOver={(e) => handleDragOver(e, null)}
-              onDragLeave={handleDragLeave}
+              className={`space-y-1 ${folderManager.dragOverFolderId === null && folderManager.isDragging ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2' : ''}`}
+              onDrop={(e) =>
+                folderManager.handleDrop(e, null, handleMoveToFolder, 'toneId')
+              }
+              onDragOver={(e) => folderManager.handleDragOver(e, null)}
+              onDragLeave={folderManager.handleDragLeave}
             >
               {unfolderTones.map((tone) => (
                 <div
                   key={tone.id}
                   draggable
-                  onDragStart={(e) => handleDragStart(e, tone.id)}
-                  onDragEnd={() => setIsDragging(false)}
+                  onDragStart={(e) =>
+                    folderManager.handleDragStart(e, tone.id, 'toneId')
+                  }
+                  onDragEnd={() => folderManager.setIsDragging(false)}
                 >
                   <ToneItem
                     tone={tone}
@@ -437,13 +365,13 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                     isSelected={selectedToneId === tone.id}
                     onClick={() => setSelectedToneId(tone.id)}
                     onEdit={() => {
-                      setToneModalId(tone.id);
-                      setToneModalName(tone.name);
-                      setToneModalDescription(tone.description || '');
-                      setToneModalVoiceRules(tone.voiceRules);
-                      setToneModalExamples(tone.examples || '');
-                      setToneModalTags(tone.tags || []);
-                      setIsToneModalOpen(true);
+                      toneModal.openEdit(tone.id, {
+                        name: tone.name,
+                        description: tone.description || '',
+                        voiceRules: tone.voiceRules,
+                        examples: tone.examples || '',
+                        tags: tone.tags || [],
+                      });
                     }}
                     onDelete={(e) => handleDeleteTone(tone.id, e)}
                     onMoveToFolder={handleMoveToFolder}
@@ -607,13 +535,13 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
             <div className="flex gap-2">
               <button
                 onClick={() => {
-                  setToneModalId(selectedTone.id);
-                  setToneModalName(selectedTone.name);
-                  setToneModalDescription(selectedTone.description || '');
-                  setToneModalVoiceRules(selectedTone.voiceRules);
-                  setToneModalExamples(selectedTone.examples || '');
-                  setToneModalTags(selectedTone.tags || []);
-                  setIsToneModalOpen(true);
+                  toneModal.openEdit(selectedTone.id, {
+                    name: selectedTone.name,
+                    description: selectedTone.description || '',
+                    voiceRules: selectedTone.voiceRules,
+                    examples: selectedTone.examples || '',
+                    tags: selectedTone.tags || [],
+                  });
                 }}
                 className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
               >
@@ -639,8 +567,8 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
 
       {/* Tone Editor Modal */}
       <ToneDashboard
-        isOpen={isToneModalOpen}
-        onClose={() => setIsToneModalOpen(false)}
+        isOpen={toneModal.isOpen}
+        onClose={() => toneModal.close()}
         onSave={(
           name: string,
           description: string,
@@ -648,9 +576,9 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
           examples: string,
           tags: string[],
         ) => {
-          if (toneModalId) {
+          if (toneModal.itemId) {
             // Update existing tone
-            updateTone(toneModalId, {
+            updateTone(toneModal.itemId, {
               name,
               description,
               voiceRules,
@@ -672,13 +600,13 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
             };
             addTone(newTone);
           }
-          setIsToneModalOpen(false);
+          toneModal.close();
         }}
-        initialName={toneModalName}
-        initialDescription={toneModalDescription}
-        initialVoiceRules={toneModalVoiceRules}
-        initialExamples={toneModalExamples}
-        initialTags={toneModalTags}
+        initialName={toneModal.formData.name}
+        initialDescription={toneModal.formData.description}
+        initialVoiceRules={toneModal.formData.voiceRules}
+        initialExamples={toneModal.formData.examples}
+        initialTags={toneModal.formData.tags}
       />
     </div>
   );

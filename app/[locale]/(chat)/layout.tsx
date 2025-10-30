@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation';
-import { AppProviders } from '@/components/providers/AppProviders';
+
+import { AppProviders } from '@/components/Providers/AppProviders';
+
 import { auth } from '@/auth';
 
 /**
