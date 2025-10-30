@@ -1,7 +1,7 @@
 import { makeRequest } from '@/lib/services/chat/frontendChatService';
 
-import { extractCitationsFromContent } from '@/lib/utils/app/citation';
 import { parseMetadataFromContent } from '@/lib/utils/app/metadata';
+import { extractCitationsFromContent } from '@/lib/utils/app/stream/citation';
 
 import { Conversation, Message, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
@@ -28,7 +28,7 @@ vi.mock('@/lib/stores/settingsStore', () => ({
   },
 }));
 
-vi.mock('@/lib/utils/app/citation', () => ({
+vi.mock('@/lib/utils/app/stream/citation', () => ({
   extractCitationsFromContent: vi.fn(),
 }));
 

@@ -1,7 +1,9 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { RefObject } from 'react';
-import useEnhancedOutsideClick from '@/lib/hooks/useEnhancedOutsideClick';
+
+import useEnhancedOutsideClick from '@/lib/hooks/ui/useEnhancedOutsideClick';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useEnhancedOutsideClick', () => {
   let onOutsideClick: ReturnType<typeof vi.fn>;
@@ -129,8 +131,9 @@ describe('useEnhancedOutsideClick', () => {
     it('starts listening when isActive becomes true', () => {
       vi.useFakeTimers();
       const { rerender } = renderHook(
-        ({ isActive }) => useEnhancedOutsideClick(ref, onOutsideClick, isActive),
-        { initialProps: { isActive: false } }
+        ({ isActive }) =>
+          useEnhancedOutsideClick(ref, onOutsideClick, isActive),
+        { initialProps: { isActive: false } },
       );
 
       vi.advanceTimersByTime(20);
@@ -180,8 +183,9 @@ describe('useEnhancedOutsideClick', () => {
     it('stops listening when isActive becomes false', () => {
       vi.useFakeTimers();
       const { rerender } = renderHook(
-        ({ isActive }) => useEnhancedOutsideClick(ref, onOutsideClick, isActive),
-        { initialProps: { isActive: true } }
+        ({ isActive }) =>
+          useEnhancedOutsideClick(ref, onOutsideClick, isActive),
+        { initialProps: { isActive: true } },
       );
 
       // Deactivate
@@ -215,7 +219,9 @@ describe('useEnhancedOutsideClick', () => {
       const stopPropagationSpy = vi.fn();
 
       vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true, false));
+      renderHook(() =>
+        useEnhancedOutsideClick(ref, onOutsideClick, true, false),
+      );
 
       vi.advanceTimersByTime(20);
 
@@ -247,7 +253,9 @@ describe('useEnhancedOutsideClick', () => {
       const stopPropagationSpy = vi.fn();
 
       vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true, true));
+      renderHook(() =>
+        useEnhancedOutsideClick(ref, onOutsideClick, true, true),
+      );
 
       vi.advanceTimersByTime(20);
 
@@ -343,7 +351,9 @@ describe('useEnhancedOutsideClick', () => {
   describe('Cleanup', () => {
     it('removes event listener on unmount', () => {
       vi.useFakeTimers();
-      const { unmount } = renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
+      const { unmount } = renderHook(() =>
+        useEnhancedOutsideClick(ref, onOutsideClick, true),
+      );
 
       vi.advanceTimersByTime(20);
 
@@ -373,7 +383,9 @@ describe('useEnhancedOutsideClick', () => {
     it('clears timeout on unmount', () => {
       vi.useFakeTimers();
 
-      const { unmount } = renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
+      const { unmount } = renderHook(() =>
+        useEnhancedOutsideClick(ref, onOutsideClick, true),
+      );
 
       unmount();
 
@@ -407,7 +419,7 @@ describe('useEnhancedOutsideClick', () => {
       vi.useFakeTimers();
       const { rerender } = renderHook(
         ({ callback }) => useEnhancedOutsideClick(ref, callback, true),
-        { initialProps: { callback: onOutsideClick } }
+        { initialProps: { callback: onOutsideClick } },
       );
 
       vi.advanceTimersByTime(20);
@@ -471,7 +483,9 @@ describe('useEnhancedOutsideClick', () => {
       const dynamicRef: RefObject<HTMLDivElement | null> = { current: null };
 
       vi.useFakeTimers();
-      const { rerender } = renderHook(() => useEnhancedOutsideClick(dynamicRef, onOutsideClick, true));
+      const { rerender } = renderHook(() =>
+        useEnhancedOutsideClick(dynamicRef, onOutsideClick, true),
+      );
 
       // Set ref to actual element
       const element = document.createElement('div');

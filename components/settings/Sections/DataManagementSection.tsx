@@ -3,9 +3,10 @@ import { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
-import { formatBytes } from '@/lib/utils/app/storageUtils';
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
+
+import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
+import { formatBytes } from '@/lib/utils/app/storage/storageUtils';
 
 import { SidebarButton } from '../../Sidebar/SidebarButton';
 import { ClearConversations } from '../ClearConversations';
@@ -74,8 +75,8 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
                   storageData.percentUsed > 85
                     ? 'bg-red-600'
                     : storageData.percentUsed > 70
-                    ? 'bg-yellow-500'
-                    : 'bg-green-500'
+                      ? 'bg-yellow-500'
+                      : 'bg-green-500'
                 }`}
                 style={{ width: `${Math.min(storageData.percentUsed, 100)}%` }}
               ></div>

@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 
-import { suggestedPrompts } from '@/components/Chat/prompts';
+import { suggestedPrompts } from '@/lib/data/prompts';
 
 interface SuggestedPromptsProps {
   onSelectPrompt?: (prompt: string) => void;

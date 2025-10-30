@@ -1,6 +1,8 @@
 import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import useModal from '@/lib/hooks/useModal';
+
+import useModal from '@/lib/hooks/ui/useModal';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useModal', () => {
   let onClose: ReturnType<typeof vi.fn>;
@@ -218,7 +220,7 @@ describe('useModal', () => {
 
       const { rerender, unmount } = renderHook(
         ({ isOpen }) => useModal(isOpen, onClose),
-        { initialProps: { isOpen: true } }
+        { initialProps: { isOpen: true } },
       );
 
       expect(document.body.style.overflow).toBe('hidden');
@@ -296,7 +298,7 @@ describe('useModal', () => {
     it('updates behavior when isOpen changes', () => {
       const { rerender } = renderHook(
         ({ isOpen }) => useModal(isOpen, onClose),
-        { initialProps: { isOpen: false } }
+        { initialProps: { isOpen: false } },
       );
 
       // Initially closed, Escape should not work
@@ -326,7 +328,7 @@ describe('useModal', () => {
 
       const { rerender } = renderHook(
         ({ callback }) => useModal(true, callback),
-        { initialProps: { callback: onClose } }
+        { initialProps: { callback: onClose } },
       );
 
       // Update the callback
@@ -348,7 +350,7 @@ describe('useModal', () => {
     it('handles rapid open/close cycles', () => {
       const { rerender } = renderHook(
         ({ isOpen }) => useModal(isOpen, onClose),
-        { initialProps: { isOpen: true } }
+        { initialProps: { isOpen: true } },
       );
 
       rerender({ isOpen: false });

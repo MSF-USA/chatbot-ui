@@ -11,7 +11,7 @@ import {
   ImageMessageContent,
 } from '@/types/chat';
 
-import { isChangeEvent } from '@/components/Chat/ChatInputEventHandlers/common';
+import { isChangeEvent } from '@/lib/handlers/chatInput/common';
 
 export const onImageUpload = async (
   event: React.ChangeEvent<any> | Event | File,

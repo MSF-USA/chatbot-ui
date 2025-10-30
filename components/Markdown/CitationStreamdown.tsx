@@ -4,7 +4,7 @@ import type { Components } from 'react-markdown';
 
 import Link from 'next/link';
 
-import { extractCitationsFromContent } from '@/lib/utils/app/citation';
+import { extractCitationsFromContent } from '@/lib/utils/app/stream/citation';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';

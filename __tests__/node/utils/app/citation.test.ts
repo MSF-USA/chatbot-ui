@@ -1,4 +1,4 @@
-import { extractCitationsFromContent } from '@/lib/utils/app/citation';
+import { extractCitationsFromContent } from '@/lib/utils/app/stream/citation';
 
 import { describe, expect, it, vi } from 'vitest';
 

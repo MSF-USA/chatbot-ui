@@ -16,7 +16,7 @@ import {
   exportSingleCustomAgent,
   importCustomAgents,
   validateCustomAgentImport,
-} from '@/lib/utils/app/customAgentExport';
+} from '@/lib/utils/app/export/customAgentExport';
 
 import { OpenAIModels } from '@/types/openai';
 

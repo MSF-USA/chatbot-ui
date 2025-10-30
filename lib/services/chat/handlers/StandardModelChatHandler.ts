@@ -1,6 +1,6 @@
 import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
-import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
+import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 
 import { ChatContext } from './ChatContext';
 import { ChatRequestHandler } from './ChatRequestHandler';

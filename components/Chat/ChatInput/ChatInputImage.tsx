@@ -8,12 +8,13 @@ import React, {
 
 import {
   ChatInputSubmitTypes,
-  FilePreview,
   FileFieldValue,
+  FilePreview,
 } from '@/types/chat';
 
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import ImageIcon from '@/components/Icons/image';
+
+import { onFileUpload } from '@/lib/handlers/chatInput/file-upload';
 
 const onImageUploadButtonClick = (
   event: React.ChangeEvent<any>,

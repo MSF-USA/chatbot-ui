@@ -3,14 +3,22 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
+import { MAX_API_FILE_SIZE } from '@/lib/utils/app/const';
 import Hasher from '@/lib/utils/app/hash';
-import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { getUserIdFromSession } from '@/lib/utils/app/user/session';
+import {
+  badRequestResponse,
+  errorResponse,
+  payloadTooLargeResponse,
+  successResponse,
+} from '@/lib/utils/server/apiResponse';
 import { BlobStorage } from '@/lib/utils/server/blob';
+import {
+  getContentType,
+  validateFileNotExecutable,
+} from '@/lib/utils/server/mimeTypes';
 
 import { auth } from '@/auth';
-
-// Maximum file size: 50MB
-const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
@@ -19,73 +27,16 @@ export async function POST(request: NextRequest) {
   const mimeType: string | null = searchParams.get('mime');
 
   if (!filename) {
-    return NextResponse.json(
-      { error: 'Filename is required' },
-      { status: 400 },
-    );
+    return badRequestResponse('Filename is required');
   }
 
+  // Validate file is not executable
   if (filetype) {
-    const extension = filename.split('.').pop()?.toLowerCase();
-    const executableExtensions = [
-      'exe',
-      'bat',
-      'cmd',
-      'sh',
-      'dll',
-      'msi',
-      'jar',
-      'app',
-    ];
-
-    if (extension && executableExtensions.includes(extension)) {
-      return NextResponse.json(
-        { error: 'Executable files are not allowed' },
-        { status: 400 },
-      );
-    }
-
-    if (mimeType) {
-      const executableMimeTypes = [
-        'application/x-msdownload',
-        'application/x-msdos-program',
-        'application/x-executable',
-        'application/x-sharedlib',
-        'application/java-archive',
-        'application/x-apple-diskimage',
-      ];
-
-      if (executableMimeTypes.includes(mimeType)) {
-        return NextResponse.json(
-          { error: 'Invalid file type submitted' },
-          { status: 400 },
-        );
-      }
+    const validation = validateFileNotExecutable(filename, mimeType);
+    if (!validation.isValid) {
+      return badRequestResponse(validation.error!);
     }
   }
-
-  const MIME_TYPE_MAP: Record<string, string> = {
-    jpg: 'image/jpeg',
-    jpeg: 'image/jpeg',
-    png: 'image/png',
-    gif: 'image/gif',
-    pdf: 'application/pdf',
-    doc: 'application/msword',
-    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    xls: 'application/vnd.ms-excel',
-    xlsx: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    ppt: 'application/vnd.ms-powerpoint',
-    pptx: 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
-    txt: 'text/plain',
-    md: 'text/markdown',
-  };
-
-  const getContentType = (extension: string): string => {
-    return (
-      MIME_TYPE_MAP[extension.toLowerCase().trim()] ||
-      'application/octet-stream'
-    );
-  };
 
   const uploadFileToBlobStorage = async (data: string) => {
     const session: Session | null = await auth();
@@ -129,25 +80,18 @@ export async function POST(request: NextRequest) {
 
     // Check file size
     const fileSize = Buffer.byteLength(fileData);
-    if (fileSize > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        {
-          error: `File size exceeds maximum limit of ${MAX_FILE_SIZE / (1024 * 1024)}MB`,
-        },
-        { status: 413 },
-      );
+    if (fileSize > MAX_API_FILE_SIZE) {
+      return payloadTooLargeResponse(`${MAX_API_FILE_SIZE / (1024 * 1024)}MB`);
     }
 
     const fileURI: string = await uploadFileToBlobStorage(fileData);
-    return NextResponse.json({ message: 'File uploaded', uri: fileURI });
+    return successResponse({ uri: fileURI }, 'File uploaded successfully');
   } catch (error) {
     console.error('Error uploading file:', error);
-    return NextResponse.json(
-      {
-        error: 'Failed to upload file',
-        details: error instanceof Error ? error.message : String(error),
-      },
-      { status: 500 },
+    return errorResponse(
+      'Failed to upload file',
+      500,
+      error instanceof Error ? error.message : String(error),
     );
   }
 }

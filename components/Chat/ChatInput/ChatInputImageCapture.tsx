@@ -15,12 +15,13 @@ import { isMobile } from '@/lib/utils/app/env';
 
 import {
   ChatInputSubmitTypes,
-  FilePreview,
   FileFieldValue,
+  FilePreview,
 } from '@/types/chat';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
+
+import { onFileUpload } from '@/lib/handlers/chatInput/file-upload';
 
 const onImageUploadButtonClick = async (
   event: React.MouseEvent<HTMLButtonElement> | MouseEvent,

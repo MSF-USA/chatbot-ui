@@ -3,8 +3,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
-import { getUserIdFromSession } from '@/lib/utils/app/session';
+import {
+  API_TIMEOUTS,
+  DEFAULT_ANALYSIS_MAX_TOKENS,
+  DEFAULT_ANALYSIS_MODEL,
+} from '@/lib/utils/app/const';
+import { getUserIdFromSession } from '@/lib/utils/app/user/session';
+import {
+  badRequestResponse,
+  handleApiError,
+  unauthorizedResponse,
+} from '@/lib/utils/server/apiResponse';
 import { loadDocument } from '@/lib/utils/server/file-handling';
+import { getContentType } from '@/lib/utils/server/mimeTypes';
 
 import { auth } from '@/auth';
 import {
@@ -19,7 +30,7 @@ import { promisify } from 'util';
 
 const unlinkAsync = promisify(fs.unlink);
 
-export const maxDuration = 60;
+export const maxDuration = API_TIMEOUTS.DEFAULT;
 
 const TONE_ANALYSIS_SYSTEM_PROMPT = `You are an expert linguist and writing style analyst specializing in voice profiling. Your role is to deeply analyze writing samples and create comprehensive, replicable voice profiles.
 
@@ -130,7 +141,7 @@ export async function POST(req: NextRequest) {
     // Check authentication
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     // Parse request body
@@ -196,12 +207,8 @@ export async function POST(req: NextRequest) {
 
     // Validate required fields
     if (!combinedContent || combinedContent.trim().length === 0) {
-      return NextResponse.json(
-        {
-          error:
-            'Sample content is required. Please upload files or describe the tone.',
-        },
-        { status: 400 },
+      return badRequestResponse(
+        'Sample content is required. Please upload files or describe the tone.',
       );
     }
 
@@ -228,14 +235,14 @@ export async function POST(req: NextRequest) {
     userMessage += `\n**Sample Content to Analyze:**\n${combinedContent}\n`;
 
     // Call Azure OpenAI with structured output
+    // Note: GPT-5 is a reasoning model and doesn't support custom temperature
     const response = await client.chat.completions.create({
-      model: 'gpt-4o',
+      model: DEFAULT_ANALYSIS_MODEL,
       messages: [
         { role: 'system', content: TONE_ANALYSIS_SYSTEM_PROMPT },
         { role: 'user', content: userMessage },
       ],
-      temperature: 0.7,
-      max_tokens: 2000,
+      max_tokens: DEFAULT_ANALYSIS_MAX_TOKENS,
       response_format: {
         type: 'json_schema',
         json_schema: {
@@ -317,27 +324,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(result);
   } catch (error) {
     console.error('[Tone Analysis API] Error:', error);
-
-    const errorMessage =
-      error instanceof Error ? error.message : 'Failed to analyze tone';
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleApiError(error, 'Failed to analyze tone');
   }
-}
-
-function getContentType(filename: string): string {
-  const ext = filename.split('.').pop()?.toLowerCase();
-  const mimeTypes: Record<string, string> = {
-    pdf: 'application/pdf',
-    doc: 'application/msword',
-    docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    txt: 'text/plain',
-    md: 'text/markdown',
-    mp3: 'audio/mpeg',
-    mp4: 'video/mp4',
-    wav: 'audio/wav',
-    webm: 'video/webm',
-    m4a: 'audio/m4a',
-  };
-  return mimeTypes[ext || ''] || 'application/octet-stream';
 }

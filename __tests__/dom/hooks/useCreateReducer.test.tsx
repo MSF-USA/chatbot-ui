@@ -1,6 +1,8 @@
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+
+import { ActionType, useCreateReducer } from '@/lib/hooks/ui/useCreateReducer';
+
 import { describe, expect, it } from 'vitest';
-import { useCreateReducer, ActionType } from '@/lib/hooks/useCreateReducer';
 
 describe('useCreateReducer', () => {
   interface TestState {
@@ -30,7 +32,9 @@ describe('useCreateReducer', () => {
     });
 
     it('returns memoized values', () => {
-      const { result, rerender } = renderHook(() => useCreateReducer({ initialState }));
+      const { result, rerender } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
 
       const firstState = result.current.state;
       const firstDispatch = result.current.dispatch;
@@ -123,15 +127,23 @@ describe('useCreateReducer', () => {
       const { result } = renderHook(() => useCreateReducer({ initialState }));
 
       act(() => {
-        result.current.dispatch({ type: 'change', field: 'name', value: 'Charlie' });
+        result.current.dispatch({
+          type: 'change',
+          field: 'name',
+          value: 'Charlie',
+        });
       });
 
       expect(result.current.state.name).toBe('Charlie');
     });
 
     it('behaves same as implicit change', () => {
-      const { result: result1 } = renderHook(() => useCreateReducer({ initialState }));
-      const { result: result2 } = renderHook(() => useCreateReducer({ initialState }));
+      const { result: result1 } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
+      const { result: result2 } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
 
       act(() => {
         result1.current.dispatch({ field: 'age', value: 35 });
@@ -191,7 +203,9 @@ describe('useCreateReducer', () => {
 
       // Deep equality check
       expect(result.current.state).toEqual(initialState);
-      expect(JSON.stringify(result.current.state)).toBe(JSON.stringify(initialState));
+      expect(JSON.stringify(result.current.state)).toBe(
+        JSON.stringify(initialState),
+      );
     });
   });
 
@@ -221,7 +235,9 @@ describe('useCreateReducer', () => {
     };
 
     it('handles nested object changes', () => {
-      const { result } = renderHook(() => useCreateReducer({ initialState: complexInitial }));
+      const { result } = renderHook(() =>
+        useCreateReducer({ initialState: complexInitial }),
+      );
 
       act(() => {
         result.current.dispatch({
@@ -236,7 +252,9 @@ describe('useCreateReducer', () => {
     });
 
     it('resets complex state correctly', () => {
-      const { result } = renderHook(() => useCreateReducer({ initialState: complexInitial }));
+      const { result } = renderHook(() =>
+        useCreateReducer({ initialState: complexInitial }),
+      );
 
       act(() => {
         result.current.dispatch({
@@ -275,7 +293,9 @@ describe('useCreateReducer', () => {
   describe('Edge Cases', () => {
     it('handles empty initial state', () => {
       const emptyState = {};
-      const { result } = renderHook(() => useCreateReducer({ initialState: emptyState }));
+      const { result } = renderHook(() =>
+        useCreateReducer({ initialState: emptyState }),
+      );
 
       expect(result.current.state).toEqual({});
     });
@@ -289,7 +309,9 @@ describe('useCreateReducer', () => {
         value: null,
       };
 
-      const { result } = renderHook(() => useCreateReducer({ initialState: nullableInitial }));
+      const { result } = renderHook(() =>
+        useCreateReducer({ initialState: nullableInitial }),
+      );
 
       expect(result.current.state.value).toBeNull();
 
@@ -315,7 +337,9 @@ describe('useCreateReducer', () => {
         value: undefined,
       };
 
-      const { result } = renderHook(() => useCreateReducer({ initialState: undefinedInitial }));
+      const { result } = renderHook(() =>
+        useCreateReducer({ initialState: undefinedInitial }),
+      );
 
       expect(result.current.state.value).toBeUndefined();
 
@@ -335,7 +359,9 @@ describe('useCreateReducer', () => {
         items: ['a', 'b', 'c'],
       };
 
-      const { result } = renderHook(() => useCreateReducer({ initialState: arrayInitial }));
+      const { result } = renderHook(() =>
+        useCreateReducer({ initialState: arrayInitial }),
+      );
 
       act(() => {
         result.current.dispatch({ field: 'items', value: ['x', 'y', 'z'] });
@@ -411,8 +437,12 @@ describe('useCreateReducer', () => {
 
   describe('Multiple Instances', () => {
     it('maintains separate state for multiple instances', () => {
-      const { result: result1 } = renderHook(() => useCreateReducer({ initialState }));
-      const { result: result2 } = renderHook(() => useCreateReducer({ initialState }));
+      const { result: result1 } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
+      const { result: result2 } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
 
       act(() => {
         result1.current.dispatch({ field: 'name', value: 'Instance 1' });
@@ -424,8 +454,12 @@ describe('useCreateReducer', () => {
     });
 
     it('does not interfere with each other', () => {
-      const { result: result1 } = renderHook(() => useCreateReducer({ initialState }));
-      const { result: result2 } = renderHook(() => useCreateReducer({ initialState }));
+      const { result: result1 } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
+      const { result: result2 } = renderHook(() =>
+        useCreateReducer({ initialState }),
+      );
 
       act(() => {
         result1.current.dispatch({ field: 'age', value: 100 });

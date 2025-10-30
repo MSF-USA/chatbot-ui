@@ -16,8 +16,9 @@ import {
   FilePreview,
 } from '@/types/chat';
 
-import { onFileUpload } from '@/components/Chat/ChatInputEventHandlers/file-upload';
 import Modal from '@/components/UI/Modal';
+
+import { onFileUpload } from '@/lib/handlers/chatInput/file-upload';
 
 const onTakePhotoButtonClick = (
   videoRef: MutableRefObject<HTMLVideoElement | null>,

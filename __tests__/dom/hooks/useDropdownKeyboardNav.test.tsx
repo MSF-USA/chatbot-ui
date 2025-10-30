@@ -4,7 +4,7 @@ import React from 'react';
 import {
   KeyboardNavItem,
   useDropdownKeyboardNav,
-} from '@/lib/hooks/useDropdownKeyboardNav';
+} from '@/lib/hooks/ui/useDropdownKeyboardNav';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

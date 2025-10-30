@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 import { TranscriptionServiceFactory } from '@/lib/services/transcriptionService';
 
-import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 
 import { auth } from '@/auth';
 import fs from 'fs';

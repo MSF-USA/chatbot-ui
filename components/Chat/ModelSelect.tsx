@@ -30,7 +30,7 @@ import {
   OpenAIIcon,
   XAIIcon,
 } from '../Icons/providers';
-import { TemperatureSlider } from '../settings/Temperature';
+import { TemperatureSlider } from '../Settings/Temperature';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
 

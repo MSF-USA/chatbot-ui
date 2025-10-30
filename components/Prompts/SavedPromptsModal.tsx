@@ -26,12 +26,12 @@ import {
   exportPrompts,
   handlePromptFileImport,
   importPrompts,
-} from '@/lib/utils/app/promptExport';
+} from '@/lib/utils/app/export/promptExport';
 import {
   exportTones,
   handleToneFileImport,
   importTones,
-} from '@/lib/utils/app/toneExport';
+} from '@/lib/utils/app/export/toneExport';
 
 import { FolderInterface } from '@/types/folder';
 import { Prompt } from '@/types/prompt';

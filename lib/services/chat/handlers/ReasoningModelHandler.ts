@@ -79,7 +79,7 @@ export class ReasoningModelHandler implements ChatRequestHandler {
 
     // Process the stream
     const { createAzureOpenAIStreamProcessor } = await import(
-      '@/lib/utils/app/streamProcessor'
+      '@/lib/utils/app/stream/streamProcessor'
     );
     const processedStream = createAzureOpenAIStreamProcessor(
       response as AsyncIterable<any>,

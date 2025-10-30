@@ -2,10 +2,10 @@ import { Session } from 'next-auth';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
-import { parseAndQueryFileOpenAI } from '@/lib/utils/app/documentSummary';
 import { appendMetadataToStream } from '@/lib/utils/app/metadata';
 import { retryAsync, retryWithExponentialBackoff } from '@/lib/utils/app/retry';
-import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
+import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import { BlobProperty } from '@/lib/utils/server/blob';
 
 import { FileMessageContent, Message, TextMessageContent } from '@/types/chat';

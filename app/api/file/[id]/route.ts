@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
-import { getUserIdFromSession } from '@/lib/utils/app/session';
+import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import { BlobProperty, getBlobBase64String } from '@/lib/utils/server/blob';
 
 import { auth } from '@/auth';

@@ -29,7 +29,7 @@ export function parseThinkingContent(text: string): ParsedMessage {
   }
 
   // Extract all thinking blocks
-  const thinkingBlocks = matches.map(match => match[1].trim());
+  const thinkingBlocks = matches.map((match) => match[1].trim());
 
   // Combine multiple thinking blocks with separators
   const thinking = thinkingBlocks.join('\n\n---\n\n');

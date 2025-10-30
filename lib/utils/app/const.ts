@@ -34,3 +34,24 @@ export const FILE_SIZE_LIMITS_MB = {
   AUDIO_VIDEO: 25,
   FILE: 10,
 } as const;
+
+// Maximum file upload size for API endpoints (in bytes)
+export const MAX_API_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+
+// Default model for AI analysis operations (tone analysis, prompt revision, etc.)
+// Uses 'gpt-5' - reasoning model with advanced analysis capabilities
+export const DEFAULT_ANALYSIS_MODEL = 'gpt-5';
+
+// Default max tokens for AI analysis operations
+export const DEFAULT_ANALYSIS_MAX_TOKENS = 2000;
+
+// Note: GPT-5 is a reasoning model and does not support custom temperature
+// Temperature is automatically set to 1 by the model
+
+// API route timeouts (in seconds)
+export const API_TIMEOUTS = {
+  DEFAULT: 60,
+  CHAT: 300,
+  FILE_PROCESSING: 120,
+  TRANSCRIPTION: 180,
+} as const;

@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { splitIntoChunks } from '@/lib/utils/app/documentSummary';
+import { splitIntoChunks } from '@/lib/utils/app/stream/documentSummary';
+
+import { describe, expect, it } from 'vitest';
 
 describe('Document Summary Utilities', () => {
   describe('splitIntoChunks', () => {
@@ -53,7 +54,7 @@ describe('Document Summary Utilities', () => {
 
       expect(chunks.length).toBeGreaterThan(0);
       // Verify all chunks are within size limit
-      chunks.forEach(chunk => {
+      chunks.forEach((chunk) => {
         expect(chunk.length).toBeLessThanOrEqual(5000);
       });
     });

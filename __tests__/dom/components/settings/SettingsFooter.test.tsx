@@ -27,7 +27,7 @@ vi.mock('next-auth/react', () => ({
 }));
 
 // Mock userAuth utility
-vi.mock('@/lib/utils/app/userAuth', () => ({
+vi.mock('@/lib/utils/app/user/userAuth', () => ({
   isUSBased: (email: string) => email.includes('@us.'),
 }));
 

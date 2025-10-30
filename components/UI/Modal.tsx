@@ -2,7 +2,7 @@ import { IconX } from '@tabler/icons-react';
 import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import useModal from '@/lib/hooks/useModal';
+import useModal from '@/lib/hooks/ui/useModal';
 
 interface ModalProps {
   isOpen: boolean;

@@ -11,6 +11,7 @@
  * Updated for Zustand persist middleware
  */
 import { Conversation } from '@/types/chat';
+
 import { useConversationStore } from '@/lib/stores/conversationStore';
 
 // Constants
@@ -248,11 +249,14 @@ export const getSortedConversations = (): Conversation[] => {
 
   try {
     // Read from Zustand persist structure: {state: {conversations: [...]}, version: 1}
-    const conversationStorageJson = localStorage.getItem(ZUSTAND_STORAGE_KEYS.CONVERSATIONS);
+    const conversationStorageJson = localStorage.getItem(
+      ZUSTAND_STORAGE_KEYS.CONVERSATIONS,
+    );
     if (!conversationStorageJson) return [];
 
     const persistedData = JSON.parse(conversationStorageJson);
-    const conversations: Conversation[] = persistedData?.state?.conversations || [];
+    const conversations: Conversation[] =
+      persistedData?.state?.conversations || [];
 
     // Separate conversations with and without dates
     const conversationsWithDates: Conversation[] = [];
@@ -273,15 +277,15 @@ export const getSortedConversations = (): Conversation[] => {
         a.messages.length > 0 && a.updatedAt
           ? new Date(a.updatedAt).getTime()
           : a.createdAt
-          ? new Date(a.createdAt).getTime()
-          : 0;
+            ? new Date(a.createdAt).getTime()
+            : 0;
 
       const dateB =
         b.messages.length > 0 && b.updatedAt
           ? new Date(b.updatedAt).getTime()
           : b.createdAt
-          ? new Date(b.createdAt).getTime()
-          : 0;
+            ? new Date(b.createdAt).getTime()
+            : 0;
 
       return dateB - dateA;
     });
@@ -320,7 +324,7 @@ export const calculateSpaceFreed = (
     const keptConversations = sortedConversations.slice(0, keepCount);
     const keptPersistStructure = {
       state: { conversations: keptConversations },
-      version: 1
+      version: 1,
     };
     const keptSize = getStringSizeInBytes(JSON.stringify(keptPersistStructure));
 
@@ -363,7 +367,8 @@ export const clearOlderConversations = (keepCount: number): boolean => {
 
     // Use Zustand store to update conversations
     const conversationStore = useConversationStore.getState();
-    const { selectedConversationId, selectConversation, setConversations } = conversationStore;
+    const { selectedConversationId, selectConversation, setConversations } =
+      conversationStore;
 
     // Update conversations in the store (this will auto-persist via Zustand persist)
     setConversations(keptConversations);

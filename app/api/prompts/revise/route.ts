@@ -1,5 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import {
+  API_TIMEOUTS,
+  DEFAULT_ANALYSIS_MAX_TOKENS,
+  DEFAULT_ANALYSIS_MODEL,
+} from '@/lib/utils/app/const';
+import {
+  badRequestResponse,
+  handleApiError,
+  unauthorizedResponse,
+} from '@/lib/utils/server/apiResponse';
+
 import { auth } from '@/auth';
 import {
   DefaultAzureCredential,
@@ -7,7 +18,7 @@ import {
 } from '@azure/identity';
 import { AzureOpenAI } from 'openai';
 
-export const maxDuration = 60;
+export const maxDuration = API_TIMEOUTS.DEFAULT;
 
 const PROMPT_GENERATION_SYSTEM_PROMPT = `You are an expert at crafting effective AI prompts. Your role is to help users create prompts from scratch based on their requirements.
 
@@ -94,7 +105,7 @@ export async function POST(req: NextRequest) {
     // Check authentication
     const session = await auth();
     if (!session?.user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return unauthorizedResponse();
     }
 
     // Parse request body
@@ -111,18 +122,14 @@ export async function POST(req: NextRequest) {
     // For generation, we need either a revision goal or description
     if (generateNew) {
       if (!revisionGoal && !promptDescription) {
-        return NextResponse.json(
-          { error: 'Description or goal is required for prompt generation' },
-          { status: 400 },
+        return badRequestResponse(
+          'Description or goal is required for prompt generation',
         );
       }
     } else {
       // For revision, we need prompt content
       if (!promptContent || promptContent.trim().length === 0) {
-        return NextResponse.json(
-          { error: 'Prompt content is required' },
-          { status: 400 },
-        );
+        return badRequestResponse('Prompt content is required');
       }
     }
 
@@ -170,14 +177,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Call Azure OpenAI with structured output
+    // Note: GPT-5 is a reasoning model and doesn't support custom temperature
     const response = await client.chat.completions.create({
-      model: 'gpt-4o',
+      model: DEFAULT_ANALYSIS_MODEL,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage },
       ],
-      temperature: 0.7,
-      max_tokens: 2000,
+      max_tokens: DEFAULT_ANALYSIS_MAX_TOKENS,
       response_format: {
         type: 'json_schema',
         json_schema: {
@@ -241,10 +248,6 @@ export async function POST(req: NextRequest) {
     });
   } catch (error) {
     console.error('[Prompt Revision API] Error:', error);
-
-    const errorMessage =
-      error instanceof Error ? error.message : 'Failed to revise prompt';
-
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return handleApiError(error, 'Failed to revise prompt');
   }
 }

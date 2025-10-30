@@ -1,5 +1,6 @@
+import { formatBytes } from '@/lib/utils/app/storage/storageUtils';
+
 import { describe, expect, it } from 'vitest';
-import { formatBytes } from '@/lib/utils/app/storageUtils';
 
 describe('storageUtils', () => {
   describe('formatBytes', () => {

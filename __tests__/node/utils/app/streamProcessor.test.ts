@@ -1,6 +1,6 @@
 import { RAGService } from '@/lib/services/ragService';
 
-import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
+import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 
 import { Citation } from '@/types/rag';
 

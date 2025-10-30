@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { UserFileHandler } from '@/lib/utils/app/user/userFile';
+
 import fs from 'fs/promises';
-import {UserFileHandler} from "@/lib/utils/app/userFile";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('UserFileHandler', () => {
   const validFileTypes = {
@@ -13,7 +14,10 @@ describe('UserFileHandler', () => {
     it('should create an instance with local file data', () => {
       const fileData = new Blob(['test'], { type: 'text/plain' });
       // @ts-ignore
-      const fileHandler = new UserFileHandler(fileData, {...validFileTypes, plain: true});
+      const fileHandler = new UserFileHandler(fileData, {
+        ...validFileTypes,
+        plain: true,
+      });
       expect(fileHandler).toBeInstanceOf(UserFileHandler);
       expect(fileHandler['fileLocation']).toBe('local');
       expect(fileHandler['fileType']).toBe('plain');
@@ -31,14 +35,18 @@ describe('UserFileHandler', () => {
     it('should throw an error for unsupported file type', () => {
       const fileData = 'test.unsupported';
       // @ts-ignore
-      expect(() => new UserFileHandler(fileData, validFileTypes)).toThrowError('Unsupported file type: unsupported');
+      expect(() => new UserFileHandler(fileData, validFileTypes)).toThrowError(
+        'Unsupported file type: unsupported',
+      );
     });
   });
 
   describe('extractText', () => {
     it('should extract text from a local txt file', async () => {
       const fileData = 'path/to/test.txt';
-      const mockReadFile = vi.spyOn(fs, 'readFile').mockResolvedValue('Test content');
+      const mockReadFile = vi
+        .spyOn(fs, 'readFile')
+        .mockResolvedValue('Test content');
       //@ts-ignore
       const fileHandler = new UserFileHandler(fileData, validFileTypes);
 
@@ -52,7 +60,10 @@ describe('UserFileHandler', () => {
     it('should extract text from a local Blob', async () => {
       const fileData = new Blob(['Test content'], { type: 'text/plain' });
       //@ts-ignore
-      const fileHandler = new UserFileHandler(fileData, {...validFileTypes, plain: true});
+      const fileHandler = new UserFileHandler(fileData, {
+        ...validFileTypes,
+        plain: true,
+      });
 
       const result = await fileHandler.extractText();
 
@@ -62,7 +73,11 @@ describe('UserFileHandler', () => {
     it('should extract text from a remote txt file', async () => {
       const fileData = 'https://example.com/test.txt';
       const mockFetch = vi.fn().mockResolvedValue({
-        blob: vi.fn().mockResolvedValue(new Blob(['Test content'], { type: 'text/plain' })),
+        blob: vi
+          .fn()
+          .mockResolvedValue(
+            new Blob(['Test content'], { type: 'text/plain' }),
+          ),
       });
       global.fetch = mockFetch;
       // @ts-ignore

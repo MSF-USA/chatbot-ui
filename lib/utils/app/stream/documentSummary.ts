@@ -3,7 +3,7 @@ import { Session } from 'next-auth';
 import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
-import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
+import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { loadDocument } from '@/lib/utils/server/file-handling';
 
 import {

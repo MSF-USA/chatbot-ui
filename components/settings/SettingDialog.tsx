@@ -8,11 +8,11 @@ import { useTranslations } from 'next-intl';
 
 import { useConversations } from '@/lib/hooks/conversation/useConversations';
 import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useCreateReducer } from '@/lib/hooks/ui/useCreateReducer';
 import { useUI } from '@/lib/hooks/ui/useUI';
-import { useCreateReducer } from '@/lib/hooks/useCreateReducer';
 
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
-import { getStorageUsage } from '@/lib/utils/app/storageMonitor';
+import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 
 import { Settings } from '@/types/settings';
 

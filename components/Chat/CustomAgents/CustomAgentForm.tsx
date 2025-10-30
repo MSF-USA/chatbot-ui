@@ -13,7 +13,7 @@ import { FC, useRef, useState } from 'react';
 import {
   importCustomAgents,
   validateCustomAgentImport,
-} from '@/lib/utils/app/customAgentExport';
+} from '@/lib/utils/app/export/customAgentExport';
 
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 

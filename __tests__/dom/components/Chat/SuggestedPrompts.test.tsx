@@ -2,8 +2,8 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 import { SuggestedPrompts } from '@/components/Chat/EmptyState/SuggestedPrompts';
-import { suggestedPrompts } from '@/components/Chat/prompts';
 
+import { suggestedPrompts } from '@/lib/data/prompts';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 

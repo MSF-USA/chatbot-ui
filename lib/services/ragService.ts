@@ -1,6 +1,6 @@
 import { Session } from 'next-auth';
 
-import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/streamProcessor';
+import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 
 import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';

@@ -9,7 +9,7 @@ import {
   isExportFormatV3,
   isExportFormatV4,
   isLatestExportFormat,
-} from '@/lib/utils/app/importExport';
+} from '@/lib/utils/app/export/importExport';
 
 import { ExportFormatV1, ExportFormatV2, ExportFormatV4 } from '@/types/export';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';

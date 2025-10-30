@@ -4,7 +4,7 @@ import {
   appendMetadataToStream,
   createStreamEncoder,
 } from '@/lib/utils/app/metadata';
-import { parseThinkingContent } from '@/lib/utils/app/thinking';
+import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
 import OpenAI from 'openai';
 

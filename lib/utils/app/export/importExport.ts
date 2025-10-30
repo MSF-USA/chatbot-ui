@@ -11,7 +11,7 @@ import {
 import { FolderInterface } from '@/types/folder';
 import { Prompt } from '@/types/prompt';
 
-import { cleanConversationHistory } from './clean';
+import { cleanConversationHistory } from '../clean';
 
 export function isExportFormatV1(obj: any): obj is ExportFormatV1 {
   return Array.isArray(obj);

@@ -8,7 +8,7 @@ import {
   TermsData,
   fetchTermsData,
   saveUserAcceptance,
-} from '@/lib/utils/app/termsAcceptance';
+} from '@/lib/utils/app/user/termsAcceptance';
 
 import { Streamdown } from 'streamdown';
 

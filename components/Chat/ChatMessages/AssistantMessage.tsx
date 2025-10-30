@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
-import { parseThinkingContent } from '@/lib/utils/app/thinking';
+import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';

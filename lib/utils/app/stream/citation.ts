@@ -1,6 +1,6 @@
 import { Citation } from '@/types/rag';
 
-import { parseMetadataFromContent } from './metadata';
+import { parseMetadataFromContent } from '../metadata';
 
 /**
  * Extracts citations from content using both marker and legacy formats

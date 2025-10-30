@@ -28,7 +28,7 @@ import {
   exportPrompts,
   handlePromptFileImport,
   importPrompts,
-} from '@/lib/utils/app/promptExport';
+} from '@/lib/utils/app/export/promptExport';
 
 import { FolderInterface } from '@/types/folder';
 import { Prompt } from '@/types/prompt';

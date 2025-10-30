@@ -28,7 +28,7 @@ import {
   exportTones,
   handleToneFileImport,
   importTones,
-} from '@/lib/utils/app/toneExport';
+} from '@/lib/utils/app/export/toneExport';
 
 import { FolderInterface } from '@/types/folder';
 import { Tone } from '@/types/tone';
