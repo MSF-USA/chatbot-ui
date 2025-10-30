@@ -28,10 +28,11 @@ import { useUI } from '@/lib/hooks/ui/useUI';
 
 import { Conversation } from '@/types/chat';
 
-import { CustomizationsModal } from '@/components/Customizations/CustomizationsModal';
+import { CustomizationsModal } from '@/components/QuickActions/CustomizationsModal';
 import Modal from '@/components/UI/Modal';
 
 import { ConversationItem } from './ConversationItem';
+import { UserMenu } from './UserMenu';
 
 import lightTextLogo from '@/public/international_logo_black.png';
 import darkTextLogo from '@/public/international_logo_white.png';
@@ -65,8 +66,6 @@ export function Sidebar() {
   const [isCustomizationsOpen, setIsCustomizationsOpen] = useState(false);
   const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null);
   const [isLoadingPhoto, setIsLoadingPhoto] = useState(true);
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Determine which conversations to display (search results or all)
   const displayConversations = searchTerm
@@ -117,25 +116,6 @@ export function Sidebar() {
     fetchUserPhoto();
   }, [session?.user?.id]);
 
-  // Close user menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowUserMenu(false);
-      }
-    };
-
-    if (showUserMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }
-  }, [showUserMenu]);
-
   // Keyboard shortcut for search (⌘K / Ctrl+K)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -176,19 +156,6 @@ export function Sidebar() {
 
     addConversation(newConversation);
     selectConversation(newConversation.id);
-  };
-
-  const getInitials = (name: string) => {
-    const cleanName = name
-      .replace(/\(.*?\)/g, '')
-      .replace(/[^a-zA-Z\s]/g, '')
-      .replace(/\s+/g, ' ')
-      .trim();
-    const names = cleanName.split(' ');
-    const firstInitial = names[0] ? names[0][0].toUpperCase() : '';
-    const lastInitial =
-      names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
-    return firstInitial + lastInitial;
   };
 
   const handleSelectConversation = (conversationId: string) => {
@@ -526,89 +493,13 @@ export function Sidebar() {
         </div>
 
         {/* Footer with user menu */}
-        <div
-          ref={userMenuRef}
-          className={`border-t transition-all duration-300 relative ${showChatbar ? 'border-neutral-300 dark:border-neutral-700' : 'border-transparent'}`}
-        >
-          <button
-            className={`flex w-full items-center p-3 text-sm text-neutral-700 transition-all duration-300 hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800 ${showChatbar ? 'gap-3' : 'justify-center'}`}
-            onClick={() => {
-              if (showChatbar) {
-                setShowUserMenu(!showUserMenu);
-              } else {
-                setIsSettingsOpen(true);
-              }
-            }}
-            title={session?.user?.displayName || t('Settings')}
-          >
-            {isLoadingPhoto ? (
-              <div
-                className={`rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center shrink-0 animate-pulse transition-all duration-300 ${showChatbar ? 'h-10 w-10' : 'h-8 w-8'}`}
-              >
-                <div
-                  className={`border-2 border-gray-400 dark:border-gray-500 border-t-transparent rounded-full animate-spin ${showChatbar ? 'w-5 h-5' : 'w-4 h-4'}`}
-                />
-              </div>
-            ) : userPhotoUrl ? (
-              <div
-                className={`relative rounded-full shrink-0 transition-all duration-300 ${showChatbar ? 'h-10 w-10' : 'h-8 w-8'}`}
-              >
-                <Image
-                  src={userPhotoUrl}
-                  alt={session?.user?.displayName || 'User'}
-                  fill
-                  className="rounded-full object-cover"
-                />
-              </div>
-            ) : session?.user?.displayName ? (
-              <div
-                className={`rounded-full bg-[#D7211E] flex items-center justify-center text-white font-semibold shrink-0 transition-all duration-300 ${showChatbar ? 'h-10 w-10' : 'h-8 w-8'}`}
-                style={{ fontSize: showChatbar ? '16px' : '14px' }}
-              >
-                {getInitials(session.user.displayName)}
-              </div>
-            ) : (
-              <IconSettings size={18} />
-            )}
-            <span
-              className={`whitespace-nowrap transition-all duration-300 flex-1 text-left truncate ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
-            >
-              {session?.user?.displayName || t('Settings')}
-            </span>
-            {showChatbar && (
-              <IconChevronDown
-                size={16}
-                className={`transition-transform shrink-0 ${showUserMenu ? 'rotate-180' : ''}`}
-              />
-            )}
-          </button>
-
-          {/* User dropdown menu */}
-          {showUserMenu && showChatbar && (
-            <div className="absolute bottom-full left-0 right-0 mb-1 mx-2 rounded-lg border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121] overflow-hidden">
-              <button
-                className="w-full text-left px-4 py-3 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 flex items-center gap-3"
-                onClick={() => {
-                  setShowUserMenu(false);
-                  setIsSettingsOpen(true);
-                }}
-              >
-                <IconSettings size={18} className="shrink-0" />
-                <span>{t('Settings')}</span>
-              </button>
-              <button
-                className="w-full text-left px-4 py-3 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 flex items-center gap-3"
-                onClick={() => {
-                  setShowUserMenu(false);
-                  signOut();
-                }}
-              >
-                <IconLogout size={18} className="shrink-0" />
-                <span>{t('Sign Out')}</span>
-              </button>
-            </div>
-          )}
-        </div>
+        <UserMenu
+          showChatbar={showChatbar}
+          onSettingsClick={() => setIsSettingsOpen(true)}
+          t={t}
+          userPhotoUrl={userPhotoUrl}
+          isLoadingPhoto={isLoadingPhoto}
+        />
 
         {/* Search Modal */}
         <Modal

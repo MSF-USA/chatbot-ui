@@ -1,8 +1,6 @@
 # MSF AI Assistant
 
-banana
-
-An enterprise AI chatbot interface built for Médecins Sans Frontières (MSF), powered by Azure OpenAI and Next.js 15.
+An enterprise AI chatbot interface built for Médecins Sans Frontières (MSF), powered by Azure OpenAI and Next.js 16.
 
 ## Overview
 
@@ -79,28 +77,38 @@ For a complete feature list, see [docs/FEATURES.md](./docs/FEATURES.md).
 
 ```
 /app              # Next.js App Router pages and API routes
+  /[locale]       # Internationalized pages
+  /api            # API routes
 /components       # React components
+  /Chat           # Chat interface
+  /QuickActions   # Prompts and tones management
+  /Providers      # Context providers
+  /Settings       # Settings UI
+  /Sidebar        # Conversation sidebar
+  /UI             # Reusable UI components
 /lib              # Shared libraries and utilities
-  /data           # Static data files
   /hooks          # Custom React hooks
-  /services       # Business logic services
+  /services       # Business logic
   /stores         # Zustand state stores
   /utils          # Utility functions
 /messages         # i18n translation files
 /types            # TypeScript type definitions
 /config           # Configuration files
 /docs             # Documentation
+/__tests__        # Test suite
 ```
 
 ### Tech Stack
 
-- **Framework:** Next.js 15 (App Router)
-- **Language:** TypeScript
-- **Styling:** Tailwind CSS
-- **State Management:** Zustand
-- **Authentication:** NextAuth.js v5 with Azure AD
-- **i18n:** next-intl
-- **AI:** Azure OpenAI API
+- **Framework:** Next.js 16 (App Router with Turbopack)
+- **Language:** TypeScript 5.7
+- **UI Library:** React 19
+- **Styling:** Tailwind CSS 3.4
+- **State Management:** Zustand 5.0
+- **Authentication:** NextAuth.js v5 (beta) with Azure AD
+- **i18n:** next-intl (33 languages)
+- **AI:** Azure OpenAI API + Azure AI Foundry
+- **Testing:** Vitest + Testing Library
 
 ### Available Scripts
 

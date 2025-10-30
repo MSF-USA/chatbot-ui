@@ -1,9 +1,11 @@
 # Migration Testing Guide
 
 ## Overview
+
 This guide provides comprehensive testing procedures for the localStorage → Zustand migration feature.
 
 ## Migration Strategy
+
 - **Safe Copy-Only**: Old data is copied to new format, never deleted
 - **Automatic**: Runs silently in background on app initialization
 - **Idempotent**: Can run multiple times safely
@@ -15,8 +17,15 @@ This guide provides comprehensive testing procedures for the localStorage → Zu
 ## Automated Tests
 
 Run the test suite:
+
 ```bash
-npm test __tests__/node/services/migration.test.ts
+npm run test:node migration
+```
+
+Or run the specific test file:
+
+```bash
+npx vitest --run __tests__/node/services/migration.test.ts --config ./vitest.config.node.mts
 ```
 
 ---
@@ -24,6 +33,7 @@ npm test __tests__/node/services/migration.test.ts
 ## Manual Testing Scenarios
 
 ### Prerequisites
+
 1. Open browser DevTools (F12)
 2. Go to Application → Local Storage
 3. Keep Console tab open to see migration logs
@@ -31,15 +41,18 @@ npm test __tests__/node/services/migration.test.ts
 ---
 
 ### Test 1: Fresh Install (No Migration Needed)
+
 **Purpose**: Verify new users work normally
 
 **Steps**:
+
 1. Clear all localStorage: `localStorage.clear()`
 2. Reload page
 3. Create a conversation
 4. Check localStorage
 
 **Expected**:
+
 - ✅ No migration runs (no "🔄 Starting migration" log)
 - ✅ New stores exist: `settings-storage`, `conversation-storage`, `ui-storage`
 - ✅ No migration flag set yet
@@ -48,26 +61,31 @@ npm test __tests__/node/services/migration.test.ts
 ---
 
 ### Test 2: Basic Settings Migration
+
 **Purpose**: Verify settings migrate correctly
 
 **Steps**:
+
 1. Clear all localStorage
 2. Set old format in Console:
+
 ```javascript
 localStorage.setItem('temperature', '0.8');
 localStorage.setItem('systemPrompt', 'You are a helpful assistant');
 localStorage.setItem('theme', 'light');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Console shows: "🔄 Starting automatic data migration..."
 - ✅ Console shows: "✓ Backup created"
 - ✅ Console shows: "✓ Settings migrated"
 - ✅ Console shows: "✅ Migration complete!"
 - ✅ `settings-storage` exists with correct data:
   ```javascript
-  JSON.parse(localStorage.getItem('settings-storage'))
+  JSON.parse(localStorage.getItem('settings-storage'));
   // Should show: { state: { temperature: 0.8, systemPrompt: "You are...", ... }, version: 1 }
   ```
 - ✅ OLD data still exists: `localStorage.getItem('temperature')` → `"0.8"`
@@ -77,11 +95,14 @@ localStorage.setItem('theme', 'light');
 ---
 
 ### Test 3: Conversation Migration
+
 **Purpose**: Verify conversations and folders migrate
 
 **Steps**:
+
 1. Clear localStorage
 2. Set old conversations:
+
 ```javascript
 const conversations = [
   {
@@ -90,27 +111,27 @@ const conversations = [
     model: { id: 'gpt-4' },
     messages: [
       { role: 'user', content: 'Hello' },
-      { role: 'assistant', content: 'Hi there!' }
+      { role: 'assistant', content: 'Hi there!' },
     ],
-    folderId: 'folder1'
-  }
+    folderId: 'folder1',
+  },
 ];
 
-const folders = [
-  { id: 'folder1', name: 'Work', type: 'chat' }
-];
+const folders = [{ id: 'folder1', name: 'Work', type: 'chat' }];
 
 localStorage.setItem('conversations', JSON.stringify(conversations));
 localStorage.setItem('folders', JSON.stringify(folders));
 localStorage.setItem('selectedConversationId', 'conv1');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Console shows: "✓ Migrated 1 conversations"
 - ✅ `conversation-storage` contains the data:
   ```javascript
-  JSON.parse(localStorage.getItem('conversation-storage'))
+  JSON.parse(localStorage.getItem('conversation-storage'));
   // Should show conversations array, folders array, selectedConversationId
   ```
 - ✅ Conversations appear in UI sidebar
@@ -120,18 +141,23 @@ localStorage.setItem('selectedConversationId', 'conv1');
 ---
 
 ### Test 4: Alternate Key Migration (conversationHistory)
+
 **Purpose**: Verify legacy alternate key works
 
 **Steps**:
+
 1. Clear localStorage
 2. Use old alternate key:
+
 ```javascript
 const convs = [{ id: '1', name: 'Chat', messages: [] }];
 localStorage.setItem('conversationHistory', JSON.stringify(convs));
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Migration succeeds
 - ✅ Conversations appear in UI
 - ✅ Both old keys preserved: `conversationHistory` and `conversation-storage`
@@ -139,18 +165,23 @@ localStorage.setItem('conversationHistory', JSON.stringify(convs));
 ---
 
 ### Test 5: Skip If Already Migrated
+
 **Purpose**: Verify migration doesn't re-run
 
 **Steps**:
+
 1. Clear localStorage
 2. Set migration flag manually:
+
 ```javascript
 localStorage.setItem('data_migration_v2_complete', 'true');
 localStorage.setItem('temperature', '0.7');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ NO migration logs appear
 - ✅ App works normally
 - ✅ Old data remains untouched
@@ -158,23 +189,28 @@ localStorage.setItem('temperature', '0.7');
 ---
 
 ### Test 6: Skip If New Format Already Exists
+
 **Purpose**: Verify existing data isn't overwritten
 
 **Steps**:
+
 1. Clear localStorage
 2. Create new format manually:
+
 ```javascript
 const newSettings = {
   state: { temperature: 0.9, systemPrompt: 'New', prompts: [] },
-  version: 1
+  version: 1,
 };
 localStorage.setItem('settings-storage', JSON.stringify(newSettings));
 // Also add old format
 localStorage.setItem('temperature', '0.5');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Console shows: "✓ Settings already in new format, skipping"
 - ✅ New format temperature remains 0.9 (NOT overwritten to 0.5)
 - ✅ Migration completes successfully
@@ -182,11 +218,14 @@ localStorage.setItem('temperature', '0.5');
 ---
 
 ### Test 7: Partial Migration (Mixed Data)
+
 **Purpose**: Verify each store migrates independently
 
 **Steps**:
+
 1. Clear localStorage
 2. Set mixed old/new format:
+
 ```javascript
 // Old settings
 localStorage.setItem('temperature', '0.7');
@@ -194,16 +233,18 @@ localStorage.setItem('temperature', '0.7');
 // NEW conversations (already migrated)
 const convData = {
   state: { conversations: [{ id: '1', name: 'Existing' }], folders: [] },
-  version: 1
+  version: 1,
 };
 localStorage.setItem('conversation-storage', JSON.stringify(convData));
 
 // Old theme
 localStorage.setItem('theme', 'dark');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Settings migrate: "✓ Settings migrated"
 - ✅ Conversations skip: "✓ Conversations already in new format, skipping"
 - ✅ UI migrates: "✓ UI settings migrated"
@@ -212,19 +253,24 @@ localStorage.setItem('theme', 'dark');
 ---
 
 ### Test 8: Empty Values
+
 **Purpose**: Verify handling of empty/null data
 
 **Steps**:
+
 1. Clear localStorage
 2. Set empty values:
+
 ```javascript
 localStorage.setItem('conversations', '[]');
 localStorage.setItem('prompts', '[]');
 localStorage.setItem('selectedConversationId', 'null');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Migration succeeds
 - ✅ Empty arrays preserved: `[]`
 - ✅ Null values preserved: `null`
@@ -233,11 +279,14 @@ localStorage.setItem('selectedConversationId', 'null');
 ---
 
 ### Test 9: Large Dataset
+
 **Purpose**: Verify performance with many conversations
 
 **Steps**:
+
 1. Clear localStorage
 2. Create 100 conversations:
+
 ```javascript
 const manyConvs = [];
 for (let i = 0; i < 100; i++) {
@@ -247,15 +296,17 @@ for (let i = 0; i < 100; i++) {
     model: { id: 'gpt-4' },
     messages: [
       { role: 'user', content: `Message ${i}` },
-      { role: 'assistant', content: `Response ${i}` }
-    ]
+      { role: 'assistant', content: `Response ${i}` },
+    ],
   });
 }
 localStorage.setItem('conversations', JSON.stringify(manyConvs));
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Console shows: "✓ Migrated 100 conversations"
 - ✅ Migration completes in < 1 second
 - ✅ All conversations appear in UI
@@ -264,13 +315,16 @@ localStorage.setItem('conversations', JSON.stringify(manyConvs));
 ---
 
 ### Test 10: Backup Verification
+
 **Purpose**: Verify backup contains correct data
 
 **Steps**:
+
 1. Clear localStorage
 2. Set various old data
 3. Reload and migrate
 4. Check backup:
+
 ```javascript
 const backup = JSON.parse(localStorage.getItem('data_migration_backup'));
 console.log('Backup timestamp:', new Date(backup.timestamp));
@@ -278,6 +332,7 @@ console.log('Backup data:', backup.data);
 ```
 
 **Expected**:
+
 - ✅ Backup exists
 - ✅ Contains `timestamp` (number)
 - ✅ Contains `date` (ISO string)
@@ -287,14 +342,17 @@ console.log('Backup data:', backup.data);
 ---
 
 ### Test 11: Multiple Page Reloads
+
 **Purpose**: Verify idempotency
 
 **Steps**:
+
 1. Complete a migration (any test above)
 2. Reload page 5 times
 3. Check console each time
 
 **Expected**:
+
 - ✅ First load: Full migration runs
 - ✅ Subsequent loads: NO migration (skipped)
 - ✅ Data remains consistent
@@ -303,15 +361,18 @@ console.log('Backup data:', backup.data);
 ---
 
 ### Test 12: Concurrent Tabs
+
 **Purpose**: Verify behavior with multiple tabs
 
 **Steps**:
+
 1. Clear localStorage
 2. Set old data
 3. Open 3 tabs simultaneously
 4. Reload all tabs at once
 
 **Expected**:
+
 - ✅ First tab to load migrates
 - ✅ Other tabs skip (see flag set)
 - ✅ All tabs work correctly
@@ -320,9 +381,11 @@ console.log('Backup data:', backup.data);
 ---
 
 ### Test 13: App Functionality After Migration
+
 **Purpose**: Verify app works correctly post-migration
 
 **Steps**:
+
 1. Complete migration with conversations
 2. Test all features:
    - Create new conversation
@@ -335,6 +398,7 @@ console.log('Backup data:', backup.data);
    - Export data
 
 **Expected**:
+
 - ✅ All features work normally
 - ✅ New data saves to Zustand stores
 - ✅ Old localStorage keys remain untouched
@@ -343,18 +407,23 @@ console.log('Backup data:', backup.data);
 ---
 
 ### Test 14: Error Handling (Corrupted Data)
+
 **Purpose**: Verify graceful failure
 
 **Steps**:
+
 1. Clear localStorage
 2. Set invalid JSON:
+
 ```javascript
 localStorage.setItem('conversations', 'INVALID_JSON{not valid}');
 localStorage.setItem('temperature', '0.7');
 ```
+
 3. Reload page
 
 **Expected**:
+
 - ✅ Console shows: "Conversation migration error: ..."
 - ✅ Other stores still migrate successfully
 - ✅ App continues to work
@@ -363,15 +432,18 @@ localStorage.setItem('temperature', '0.7');
 ---
 
 ### Test 15: Browser Compatibility
+
 **Purpose**: Verify works across browsers
 
 **Repeat Tests 2, 3, 4 in**:
+
 - Chrome
 - Firefox
 - Safari
 - Edge
 
 **Expected**:
+
 - ✅ Same behavior in all browsers
 - ✅ No browser-specific errors
 
@@ -397,14 +469,18 @@ After running tests, verify:
 ## Common Issues & Debugging
 
 ### Issue: Migration doesn't run
+
 **Check**:
+
 ```javascript
-localStorage.getItem('data_migration_v2_complete') // Should be null or missing
-LocalStorageService.hasLegacyData() // Should return true
+localStorage.getItem('data_migration_v2_complete'); // Should be null or missing
+LocalStorageService.hasLegacyData(); // Should return true
 ```
 
 ### Issue: Data not appearing after migration
+
 **Check**:
+
 ```javascript
 // Verify new format exists and is valid
 const settings = JSON.parse(localStorage.getItem('settings-storage'));
@@ -413,12 +489,15 @@ console.log(settings.state); // Should contain data
 ```
 
 ### Issue: Migration runs every time
+
 **Check**:
+
 ```javascript
-localStorage.getItem('data_migration_v2_complete') // Should be "true"
+localStorage.getItem('data_migration_v2_complete'); // Should be "true"
 ```
 
 ### Clear Everything and Start Fresh
+
 ```javascript
 localStorage.clear();
 location.reload();
@@ -429,6 +508,7 @@ location.reload();
 ## Success Criteria
 
 Migration is considered successful when:
+
 1. ✅ All automated tests pass
 2. ✅ All manual test scenarios pass
 3. ✅ No console errors during migration

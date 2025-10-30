@@ -1,6 +1,5 @@
 import {
   IconAlertTriangle,
-  IconCheck,
   IconChevronDown,
   IconChevronUp,
   IconCode,
@@ -31,8 +30,10 @@ import {
   XAIIcon,
 } from '../Icons/providers';
 import { TemperatureSlider } from '../Settings/Temperature';
+import { TabNavigation } from '../UI/TabNavigation';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
+import { ModelCard } from './ModelCard';
 
 import { CustomAgent } from '@/lib/stores/settingsStore';
 
@@ -227,63 +228,28 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   return (
     <div className="w-full h-full flex flex-col">
-      {/* Tab Navigation with Close Button */}
-      <div className="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 mb-6">
-        <div className="flex relative">
-          <button
-            onClick={() => setActiveTab('models')}
-            className={`px-4 py-2 text-sm font-medium transition-colors duration-200 flex items-center gap-2 ${
-              activeTab === 'models'
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-            }`}
-            style={{ width: '110px' }}
-          >
-            <IconCpu size={20} />
-            Models
-          </button>
-          <button
-            onClick={() => setActiveTab('agents')}
-            className={`px-4 py-2 text-sm font-medium transition-colors duration-200 flex items-center gap-2 ${
-              activeTab === 'agents'
-                ? 'text-blue-600 dark:text-blue-400'
-                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
-            }`}
-            style={{ width: customAgents.length > 0 ? '145px' : '115px' }}
-          >
-            <RiRobot2Line size={20} />
-            Agents
-            {customAgents.length > 0 && (
-              <span className="inline-flex items-center justify-center w-5 h-5 text-xs font-bold text-white bg-blue-600 rounded-full">
-                {customAgents.length}
-              </span>
-            )}
-          </button>
-          {/* Single sliding indicator */}
-          <div
-            className="absolute bottom-0 h-0.5 bg-blue-600 dark:bg-blue-400 transition-transform duration-300 ease-out"
-            style={{
-              width:
-                activeTab === 'models'
-                  ? '110px'
-                  : customAgents.length > 0
-                    ? '145px'
-                    : '115px',
-              transform:
-                activeTab === 'models' ? 'translateX(0)' : 'translateX(110px)',
-              transition: 'transform 0.3s ease-out, width 0.3s ease-out',
-            }}
-          />
-        </div>
-        {onClose && (
-          <button
-            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-            onClick={onClose}
-          >
-            <IconX size={20} />
-          </button>
-        )}
-      </div>
+      {/* Tab Navigation */}
+      <TabNavigation
+        tabs={[
+          {
+            id: 'models',
+            label: 'Models',
+            icon: <IconCpu size={20} />,
+            width: '110px',
+          },
+          {
+            id: 'agents',
+            label: 'Agents',
+            icon: <RiRobot2Line size={20} />,
+            badge: customAgents.length,
+            width: customAgents.length > 0 ? '145px' : '115px',
+          },
+        ]}
+        activeTab={activeTab}
+        onTabChange={(tab) => setActiveTab(tab as 'models' | 'agents')}
+        onClose={onClose}
+        closeIcon={<IconX size={20} />}
+      />
 
       {/* Models Tab Content */}
       {activeTab === 'models' && (
@@ -306,39 +272,15 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                       const isSelected = selectedModelId === model.id;
 
                       return (
-                        <button
+                        <ModelCard
                           key={model.id}
+                          id={model.id}
+                          name={model.name}
+                          isSelected={isSelected}
                           onClick={() => handleModelSelect(model)}
-                          className={`
-                        w-full text-left p-3 rounded-lg transition-all duration-150
-                        ${
-                          isSelected
-                            ? 'bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-300 dark:border-blue-600'
-                            : 'bg-white dark:bg-[#212121] border-2 border-transparent hover:border-gray-200 dark:hover:border-gray-700'
-                        }
-                      `}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2">
-                              {getProviderIcon(config?.provider)}
-                              <span className="font-medium text-sm text-gray-900 dark:text-white">
-                                {model.name}
-                              </span>
-                              {config?.agentId && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                                  <IconTool size={10} className="mr-0.5" />
-                                  Tools
-                                </span>
-                              )}
-                            </div>
-                            {isSelected && (
-                              <IconCheck
-                                size={16}
-                                className="text-blue-600 dark:text-blue-400"
-                              />
-                            )}
-                          </div>
-                        </button>
+                          icon={getProviderIcon(config?.provider)}
+                          hasTools={!!config?.agentId}
+                        />
                       );
                     })}
                   </div>
