@@ -7,4 +7,5 @@ export interface Prompt {
   content: string;
   model: OpenAIModel;
   folderId: string | null;
+  toneId?: string | null; // Optional tone to apply with this prompt
 }

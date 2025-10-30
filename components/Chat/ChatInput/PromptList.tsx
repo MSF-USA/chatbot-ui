@@ -80,9 +80,9 @@ const CommandItem: FC<CommandItemProps> = ({
     <li
       className={`group relative cursor-pointer px-3 py-2.5 text-sm transition-all duration-150 ${
         isExecuting
-          ? 'bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30 border-l-2 border-green-500'
+          ? 'bg-green-50 dark:bg-green-900/30 border-l-2 border-green-500'
           : isActive
-            ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-l-2 border-blue-500'
+            ? 'bg-blue-50 dark:bg-blue-900/30 border-l-2 border-blue-500'
             : 'hover:bg-gray-50 dark:hover:bg-[#2a2a2a] border-l-2 border-transparent'
       }`}
       onClick={async (e) => {
@@ -103,19 +103,12 @@ const CommandItem: FC<CommandItemProps> = ({
       onMouseEnter={onMouseEnter}
     >
       <div className="flex items-start gap-3">
-        {isActive && !isExecuting && (
-          <div className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 animate-scale-in">
-            <div className="h-2 w-2 rounded-full bg-white" />
-          </div>
-        )}
         {isExecuting && (
           <div className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-green-500 animate-scale-in">
             <IconCheck size={12} className="text-white" />
           </div>
         )}
-        <div
-          className={`flex-shrink-0 mt-0.5 ${isActive || isExecuting ? '' : 'ml-7'}`}
-        >
+        <div className={`flex-shrink-0 mt-0.5 ${isExecuting ? '' : ''}`}>
           {getCommandIcon(command.type)}
         </div>
         <div className="flex-1 min-w-0">
@@ -174,7 +167,7 @@ const PromptItem: FC<PromptItemProps> = ({
     <li
       className={`group relative cursor-pointer px-3 py-2.5 text-sm transition-all duration-150 ${
         isActive
-          ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30 border-l-2 border-blue-500'
+          ? 'bg-blue-50 dark:bg-blue-900/30 border-l-2 border-blue-500'
           : 'hover:bg-gray-50 dark:hover:bg-[#2a2a2a] border-l-2 border-transparent'
       }`}
       onClick={(e) => {
@@ -185,12 +178,7 @@ const PromptItem: FC<PromptItemProps> = ({
       onMouseEnter={onMouseEnter}
     >
       <div className="flex items-start gap-2">
-        {isActive && (
-          <div className="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-blue-500 animate-scale-in">
-            <div className="h-2 w-2 rounded-full bg-white" />
-          </div>
-        )}
-        <div className={`flex-1 min-w-0 ${isActive ? '' : 'ml-7'}`}>
+        <div className={`flex-1 min-w-0`}>
           <div
             className={`font-medium truncate transition-colors ${
               isActive

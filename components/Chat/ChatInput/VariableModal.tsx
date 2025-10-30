@@ -1,9 +1,4 @@
-import {
-  IconBraces,
-  IconCheck,
-  IconSparkles,
-  IconX,
-} from '@tabler/icons-react';
+import { IconBraces, IconCheck, IconX } from '@tabler/icons-react';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 
 import { Prompt } from '@/types/prompt';
@@ -11,7 +6,10 @@ import { Prompt } from '@/types/prompt';
 interface Props {
   prompt: Prompt;
   variables: string[];
-  onSubmit: (updatedVariables: string[]) => void;
+  onSubmit: (
+    updatedVariables: string[],
+    variableMap: { [key: string]: string },
+  ) => void;
   onClose: () => void;
 }
 
@@ -49,7 +47,16 @@ export const VariableModal: FC<Props> = ({
       return;
     }
 
-    onSubmit(updatedVariables.map((variable) => variable.value));
+    // Create a map of variable keys to values
+    const variableMap: { [key: string]: string } = {};
+    updatedVariables.forEach((variable) => {
+      variableMap[variable.key] = variable.value;
+    });
+
+    onSubmit(
+      updatedVariables.map((variable) => variable.value),
+      variableMap,
+    );
     onClose();
   };
 
@@ -93,7 +100,7 @@ export const VariableModal: FC<Props> = ({
         role="dialog"
       >
         {/* Header */}
-        <div className="relative border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-5 dark:border-gray-700 dark:from-blue-900/20 dark:to-purple-900/20">
+        <div className="relative border-b border-gray-200 bg-blue-50 px-6 py-5 dark:border-gray-700 dark:bg-blue-900/20">
           <button
             onClick={onClose}
             className="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-white/50 dark:hover:bg-black/30"
@@ -103,9 +110,6 @@ export const VariableModal: FC<Props> = ({
           </button>
 
           <div className="flex items-start gap-3 pr-8">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 shadow-lg">
-              <IconSparkles size={20} className="text-white" />
-            </div>
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
                 {prompt.name}
@@ -152,16 +156,7 @@ export const VariableModal: FC<Props> = ({
 
         {/* Footer */}
         <div className="border-t border-gray-200 bg-gray-50 px-6 py-4 dark:border-gray-700 dark:bg-[#1a1a1a]">
-          <div className="flex items-center justify-between gap-3">
-            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-              <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs dark:border-gray-600 dark:bg-gray-800">
-                <span>⏎</span> Submit
-              </kbd>
-              <kbd className="hidden sm:inline-flex items-center gap-1 rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs dark:border-gray-600 dark:bg-gray-800">
-                <span>Esc</span> Cancel
-              </kbd>
-            </div>
-
+          <div className="flex items-center justify-end gap-3">
             <div className="flex gap-2">
               <button
                 onClick={onClose}
@@ -171,10 +166,10 @@ export const VariableModal: FC<Props> = ({
               </button>
               <button
                 onClick={handleSubmit}
-                className="inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:from-blue-700 hover:to-purple-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-md transition-all hover:bg-blue-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               >
                 <IconCheck size={16} />
-                <span>Apply Variables</span>
+                <span>Apply</span>
               </button>
             </div>
           </div>

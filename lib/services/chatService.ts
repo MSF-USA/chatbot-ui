@@ -226,7 +226,36 @@ export default class ChatService {
       // Determine stream and temperature settings
       const streamResponse = this.shouldStream(model.id, stream);
       const temperatureToUse = this.getTemperature(model.id, temperature);
-      const promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
+      let promptToSend = prompt || DEFAULT_SYSTEM_PROMPT;
+
+      // Apply tone if specified in the latest user message
+      const latestUserMessage = messages.filter((m) => m.role === 'user').pop();
+      if (latestUserMessage?.toneId) {
+        try {
+          // Load tone from user's settings
+          const settingsPath = path.join(
+            process.cwd(),
+            'data',
+            'users',
+            user.id,
+            'settings.json',
+          );
+          if (fs.existsSync(settingsPath)) {
+            const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+            const tone = settings.tones?.find(
+              (t: any) => t.id === latestUserMessage.toneId,
+            );
+            if (tone && tone.voiceRules) {
+              // Append tone voice rules to system prompt
+              promptToSend = `${promptToSend}\n\n# Writing Style\n${tone.voiceRules}`;
+              console.log('[ChatService] Applied tone:', tone.name);
+            }
+          }
+        } catch (error) {
+          console.error('[ChatService] Failed to apply tone:', error);
+          // Continue without tone if there's an error
+        }
+      }
 
       // Handle image model upgrades
       const needsToHandleImages: boolean = isImageConversation(messages);

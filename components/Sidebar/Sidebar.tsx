@@ -1,10 +1,10 @@
 'use client';
 
 import {
+  IconBolt,
   IconCheck,
   IconChevronDown,
   IconChevronRight,
-  IconDeviceFloppy,
   IconDots,
   IconEdit,
   IconFolder,
@@ -30,10 +30,8 @@ import { useSettings } from '@/lib/hooks/settings/useSettings';
 import { useUI } from '@/lib/hooks/ui/useUI';
 
 import { Conversation } from '@/types/chat';
-import { Prompt } from '@/types/prompt';
 
-import { PromptDashboard } from '@/components/Prompts/PromptDashboard';
-import { SavedPromptsModal } from '@/components/Prompts/SavedPromptsModal';
+import { CustomizationsModal } from '@/components/Customizations/CustomizationsModal';
 import Modal from '@/components/UI/Modal';
 
 import lightTextLogo from '@/public/international_logo_black.png';
@@ -288,33 +286,15 @@ export function Sidebar() {
     updateFolder,
     deleteFolder,
   } = useConversations();
-  const {
-    defaultModelId,
-    models,
-    temperature,
-    systemPrompt,
-    prompts,
-    addPrompt,
-    updatePrompt,
-    deletePrompt,
-  } = useSettings();
-
+  const { defaultModelId, models, temperature, systemPrompt } = useSettings();
   const [collapsedFolders, setCollapsedFolders] = useState<Set<string>>(
     new Set(),
   );
   const [editingFolderId, setEditingFolderId] = useState<string | null>(null);
   const [editingFolderName, setEditingFolderName] = useState('');
-  const [editingPromptId, setEditingPromptId] = useState<string | null>(null);
-  const [editingPromptName, setEditingPromptName] = useState('');
-  const [editingPromptContent, setEditingPromptContent] = useState('');
   const [dragOverFolderId, setDragOverFolderId] = useState<string | null>(null);
-  const [isPromptModalOpen, setIsPromptModalOpen] = useState(false);
-  const [promptModalName, setPromptModalName] = useState('');
-  const [promptModalDescription, setPromptModalDescription] = useState('');
-  const [promptModalContent, setPromptModalContent] = useState('');
-  const [promptModalId, setPromptModalId] = useState<string | null>(null);
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
-  const [isPromptsListOpen, setIsPromptsListOpen] = useState(false);
+  const [isCustomizationsOpen, setIsCustomizationsOpen] = useState(false);
   const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null);
   const [isLoadingPhoto, setIsLoadingPhoto] = useState(true);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -431,77 +411,6 @@ export function Sidebar() {
     const lastInitial =
       names.length > 1 ? names[names.length - 1][0].toUpperCase() : '';
     return firstInitial + lastInitial;
-  };
-
-  const handleNewPrompt = () => {
-    setPromptModalId(null);
-    setPromptModalName('');
-    setPromptModalDescription('');
-    setPromptModalContent('');
-    setIsPromptModalOpen(true);
-  };
-
-  const handleSavePromptModal = (
-    name: string,
-    description: string,
-    content: string,
-  ) => {
-    const defaultModel =
-      models.find((m) => m.id === defaultModelId) || models[0];
-    if (!defaultModel) return;
-
-    if (promptModalId) {
-      // Update existing prompt
-      updatePrompt(promptModalId, {
-        name: name || t('New Prompt'),
-        description: description,
-        content: content,
-      });
-    } else {
-      // Create new prompt
-      const newPrompt: Prompt = {
-        id: uuidv4(),
-        name: name || t('New Prompt'),
-        description: description,
-        content: content,
-        model: defaultModel,
-        folderId: null,
-      };
-      addPrompt(newPrompt);
-    }
-
-    setIsPromptModalOpen(false);
-    setIsPromptsListOpen(true);
-    setPromptModalId(null);
-    setPromptModalName('');
-    setPromptModalDescription('');
-    setPromptModalContent('');
-  };
-
-  const handleDeletePrompt = (promptId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (window.confirm(t('Are you sure you want to delete this prompt?'))) {
-      deletePrompt(promptId);
-    }
-  };
-
-  const handleMovePromptToFolder = (
-    promptId: string,
-    folderId: string | null,
-  ) => {
-    updatePrompt(promptId, { folderId });
-  };
-
-  const handleSavePrompt = () => {
-    if (editingPromptId && editingPromptName.trim()) {
-      updatePrompt(editingPromptId, {
-        name: editingPromptName.trim(),
-        content: editingPromptContent,
-      });
-    }
-    setEditingPromptId(null);
-    setEditingPromptName('');
-    setEditingPromptContent('');
   };
 
   const handleSelectConversation = (conversationId: string) => {
@@ -701,11 +610,11 @@ export function Sidebar() {
             </button>
             <button
               className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-              onClick={() => setIsPromptsListOpen(true)}
-              title={t('Saved Prompts')}
+              onClick={() => setIsCustomizationsOpen(true)}
+              title="Quick Actions"
             >
-              <IconDeviceFloppy size={16} />
-              <span className="whitespace-nowrap">{t('Saved Prompts')}</span>
+              <IconBolt size={16} />
+              <span className="whitespace-nowrap">Quick Actions</span>
             </button>
             <button
               className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
@@ -768,7 +677,8 @@ export function Sidebar() {
                         size={16}
                         className="shrink-0 text-neutral-600 dark:text-neutral-400"
                       />
-                      {editingFolderId === folder.id && !isPromptsListOpen ? (
+                      {editingFolderId === folder.id &&
+                      !isCustomizationsOpen ? (
                         <input
                           type="text"
                           value={editingFolderName}
@@ -1027,59 +937,10 @@ export function Sidebar() {
         </Modal>
       </div>
 
-      {/* Prompt Dashboard */}
-      <PromptDashboard
-        isOpen={isPromptModalOpen}
-        onClose={() => {
-          setIsPromptModalOpen(false);
-          setIsPromptsListOpen(true);
-        }}
-        onSave={handleSavePromptModal}
-        initialName={promptModalName}
-        initialDescription={promptModalDescription}
-        initialContent={promptModalContent}
-      />
-
-      {/* Prompts List Modal */}
-      <SavedPromptsModal
-        isOpen={isPromptsListOpen}
-        onClose={() => setIsPromptsListOpen(false)}
-        prompts={prompts}
-        folders={folders}
-        collapsedFolders={collapsedFolders}
-        onToggleFolder={toggleFolder}
-        onCreateFolder={handleCreatePromptFolder}
-        onRenameFolder={handleRenameFolder}
-        onDeleteFolder={handleDeleteFolder}
-        onEditPrompt={(prompt: Prompt) => {
-          setPromptModalId(prompt.id);
-          setPromptModalName(prompt.name);
-          setPromptModalDescription(prompt.description || '');
-          setPromptModalContent(prompt.content);
-          setIsPromptsListOpen(false);
-          setIsPromptModalOpen(true);
-        }}
-        onDeletePrompt={handleDeletePrompt}
-        onMovePromptToFolder={handleMovePromptToFolder}
-        onCreatePrompt={() => {
-          setPromptModalId(null);
-          setPromptModalName('');
-          setPromptModalDescription('');
-          setPromptModalContent('');
-          setIsPromptsListOpen(false);
-          setIsPromptModalOpen(true);
-        }}
-        onImportPrompts={(newPrompts: Prompt[]) => {
-          newPrompts.forEach((prompt) => addPrompt(prompt));
-        }}
-        editingFolderId={editingFolderId}
-        editingFolderName={editingFolderName}
-        onEditingFolderNameChange={setEditingFolderName}
-        onSaveFolderName={handleSaveFolderName}
-        onCancelEditFolder={() => {
-          setEditingFolderId(null);
-          setEditingFolderName('');
-        }}
+      {/* Customizations Modal */}
+      <CustomizationsModal
+        isOpen={isCustomizationsOpen}
+        onClose={() => setIsCustomizationsOpen(false)}
       />
     </>
   );

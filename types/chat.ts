@@ -96,6 +96,9 @@ export interface Message {
   thinking?: string;
   transcript?: TranscriptMetadata;
   error?: boolean; // Indicates if the message generation failed
+  toneId?: string | null; // Custom tone/voice profile to apply
+  promptId?: string | null; // Saved prompt that was used
+  promptVariables?: { [key: string]: string }; // Variable values used in the prompt
 }
 
 export type Role = 'system' | 'assistant' | 'user';

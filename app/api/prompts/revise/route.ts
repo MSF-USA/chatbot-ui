@@ -169,7 +169,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    // Call Azure OpenAI
+    // Call Azure OpenAI with structured output
     const response = await client.chat.completions.create({
       model: 'gpt-4o',
       messages: [
@@ -178,7 +178,49 @@ export async function POST(req: NextRequest) {
       ],
       temperature: 0.7,
       max_tokens: 2000,
-      response_format: { type: 'json_object' },
+      response_format: {
+        type: 'json_schema',
+        json_schema: {
+          name: 'prompt_revision',
+          strict: true,
+          schema: {
+            type: 'object',
+            properties: {
+              revisedPrompt: {
+                type: 'string',
+                description: 'The improved or generated prompt',
+              },
+              improvements: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    category: {
+                      type: 'string',
+                      description:
+                        'Category like Clarity, Structure, Context, Variables, Examples, or Constraints',
+                    },
+                    description: {
+                      type: 'string',
+                      description: 'What was improved and why',
+                    },
+                  },
+                  required: ['category', 'description'],
+                  additionalProperties: false,
+                },
+              },
+              suggestions: {
+                type: 'array',
+                items: { type: 'string' },
+                description:
+                  'Additional tips for using this prompt effectively',
+              },
+            },
+            required: ['revisedPrompt', 'improvements', 'suggestions'],
+            additionalProperties: false,
+          },
+        },
+      },
     });
 
     const content = response.choices[0]?.message?.content;

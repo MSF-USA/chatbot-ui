@@ -1,5 +1,6 @@
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
+import { Tone } from '@/types/tone';
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
@@ -20,6 +21,7 @@ interface SettingsStore {
   defaultModelId: OpenAIModelID | undefined;
   models: OpenAIModel[];
   prompts: Prompt[];
+  tones: Tone[];
   customAgents: CustomAgent[];
 
   // Actions
@@ -31,6 +33,12 @@ interface SettingsStore {
   addPrompt: (prompt: Prompt) => void;
   updatePrompt: (id: string, updates: Partial<Prompt>) => void;
   deletePrompt: (id: string) => void;
+
+  // Tone Actions
+  setTones: (tones: Tone[]) => void;
+  addTone: (tone: Tone) => void;
+  updateTone: (id: string, updates: Partial<Tone>) => void;
+  deleteTone: (id: string) => void;
 
   // Custom Agent Actions
   setCustomAgents: (agents: CustomAgent[]) => void;
@@ -54,6 +62,7 @@ export const useSettingsStore = create<SettingsStore>()(
       defaultModelId: undefined,
       models: [],
       prompts: [],
+      tones: [],
       customAgents: [],
 
       // Actions
@@ -84,6 +93,26 @@ export const useSettingsStore = create<SettingsStore>()(
           prompts: state.prompts.filter((p) => p.id !== id),
         })),
 
+      // Tone Actions
+      setTones: (tones) => set({ tones }),
+
+      addTone: (tone) =>
+        set((state) => ({
+          tones: [...state.tones, tone],
+        })),
+
+      updateTone: (id, updates) =>
+        set((state) => ({
+          tones: state.tones.map((t) =>
+            t.id === id ? { ...t, ...updates } : t,
+          ),
+        })),
+
+      deleteTone: (id) =>
+        set((state) => ({
+          tones: state.tones.filter((t) => t.id !== id),
+        })),
+
       // Custom Agent Actions
       setCustomAgents: (agents) => set({ customAgents: agents }),
 
@@ -109,6 +138,7 @@ export const useSettingsStore = create<SettingsStore>()(
           temperature: DEFAULT_TEMPERATURE,
           systemPrompt: DEFAULT_SYSTEM_PROMPT,
           prompts: [],
+          tones: [],
           customAgents: [],
         }),
     }),
@@ -121,6 +151,7 @@ export const useSettingsStore = create<SettingsStore>()(
         systemPrompt: state.systemPrompt,
         defaultModelId: state.defaultModelId,
         prompts: state.prompts,
+        tones: state.tones,
         customAgents: state.customAgents,
       }),
     },

@@ -1,8 +1,12 @@
 import {
+  IconBraces,
+  IconChevronDown,
+  IconChevronUp,
   IconDeviceFloppy,
   IconEdit,
   IconRefresh,
   IconTrash,
+  IconVolume,
 } from '@tabler/icons-react';
 import {
   Dispatch,
@@ -16,6 +20,9 @@ import {
 } from 'react';
 
 import { useTranslations } from 'next-intl';
+
+import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useTones } from '@/lib/hooks/settings/useTones';
 
 import { Conversation, Message } from '@/types/chat';
 
@@ -59,10 +66,17 @@ export const UserMessage: FC<UserMessageProps> = ({
   children,
 }) => {
   const t = useTranslations();
-  const { role, content, messageType } = message;
+  const { tones } = useTones();
+  const { prompts } = useSettings();
+  const { role, content, messageType, toneId, promptId, promptVariables } =
+    message;
   const [localMessageContent, setLocalMessageContent] = useState<string>(
     content as string,
   );
+  const [isPromptExpanded, setIsPromptExpanded] = useState(false);
+
+  // Find the used prompt
+  const usedPrompt = promptId ? prompts.find((p) => p.id === promptId) : null;
 
   const handleEditMessage = () => {
     if (localMessageContent !== content) {
@@ -133,15 +147,103 @@ export const UserMessage: FC<UserMessageProps> = ({
             </div>
           ) : (
             <>
-              {children || (
-                <div className="prose prose-invert prose-p:my-2 text-white max-w-none">
-                  <Streamdown
-                    controls={true}
-                    shikiTheme={['github-light', 'github-dark']}
-                  >
-                    {localMessageContent}
-                  </Streamdown>
+              {promptId && usedPrompt ? (
+                <div className="py-1">
+                  {/* Collapsed view - show by default */}
+                  {!isPromptExpanded ? (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <IconBraces size={16} className="text-blue-400" />
+                        <span className="font-medium">{usedPrompt.name}</span>
+                      </div>
+
+                      {promptVariables &&
+                        Object.keys(promptVariables).length > 0 && (
+                          <div className="space-y-1.5 mb-3">
+                            {Object.entries(promptVariables).map(
+                              ([key, value]) => (
+                                <div key={key} className="text-sm">
+                                  <span className="text-blue-300/70 font-mono text-xs">
+                                    {key}:
+                                  </span>{' '}
+                                  <span className="text-white/90">{value}</span>
+                                </div>
+                              ),
+                            )}
+                          </div>
+                        )}
+
+                      <button
+                        onClick={() => setIsPromptExpanded(true)}
+                        className="text-xs text-white/50 hover:text-white/80 underline"
+                      >
+                        Show full message
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <IconBraces size={16} className="text-blue-400" />
+                        <span className="font-medium">{usedPrompt.name}</span>
+                      </div>
+
+                      <div className="prose prose-invert prose-p:my-2 text-white max-w-none mb-2">
+                        <Streamdown
+                          controls={true}
+                          shikiTheme={['github-light', 'github-dark']}
+                        >
+                          {localMessageContent}
+                        </Streamdown>
+                      </div>
+
+                      <button
+                        onClick={() => setIsPromptExpanded(false)}
+                        className="text-xs text-white/50 hover:text-white/80 underline"
+                      >
+                        Collapse
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Tone Badge */}
+                  {toneId && (
+                    <div className="flex items-center gap-1.5 mt-3 pt-2 pb-1 border-t border-white/20">
+                      <IconVolume
+                        size={14}
+                        className="text-purple-400 flex-shrink-0"
+                      />
+                      <span className="text-xs text-white/70">
+                        {tones.find((t) => t.id === toneId)?.name ||
+                          'Custom Tone'}
+                      </span>
+                    </div>
+                  )}
                 </div>
+              ) : (
+                <>
+                  {children || (
+                    <div className="prose prose-invert prose-p:my-2 text-white max-w-none">
+                      <Streamdown
+                        controls={true}
+                        shikiTheme={['github-light', 'github-dark']}
+                      >
+                        {localMessageContent}
+                      </Streamdown>
+                    </div>
+                  )}
+                  {toneId && (
+                    <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-white/20">
+                      <IconVolume
+                        size={14}
+                        className="text-purple-400 flex-shrink-0"
+                      />
+                      <span className="text-xs text-white/70">
+                        {tones.find((t) => t.id === toneId)?.name ||
+                          'Custom Tone'}
+                      </span>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

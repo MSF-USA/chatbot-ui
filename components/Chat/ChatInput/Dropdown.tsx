@@ -7,6 +7,7 @@ import {
   IconLink,
   IconPaperclip,
   IconSearch,
+  IconVolume,
   IconWorld,
 } from '@tabler/icons-react';
 import React, {
@@ -16,6 +17,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import { useTranslations } from 'next-intl';
 
@@ -28,6 +30,7 @@ import {
   FilePreview,
   Message,
 } from '@/types/chat';
+import { Tone } from '@/types/tone';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
@@ -58,6 +61,9 @@ interface DropdownProps {
   webSearchMode: boolean;
   setWebSearchMode: Dispatch<SetStateAction<boolean>>;
   setTranscriptionStatus: Dispatch<SetStateAction<string | null>>;
+  selectedToneId: string | null;
+  setSelectedToneId: Dispatch<SetStateAction<string | null>>;
+  tones: Tone[];
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
@@ -75,11 +81,15 @@ const Dropdown: React.FC<DropdownProps> = ({
   webSearchMode,
   setWebSearchMode,
   setTranscriptionStatus,
+  selectedToneId,
+  setSelectedToneId,
+  tones,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
+  const [isToneOpen, setIsToneOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [hasCameraSupport, setHasCameraSupport] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -137,6 +147,28 @@ const Dropdown: React.FC<DropdownProps> = ({
       category: 'web',
     },
     {
+      id: 'tone',
+      icon: (
+        <IconVolume
+          size={18}
+          className={`flex-shrink-0 ${tones.length === 0 ? 'text-gray-400' : 'text-purple-500'}`}
+        />
+      ),
+      label: selectedToneId
+        ? `✓ Tone: ${tones.find((t) => t.id === selectedToneId)?.name || 'Selected'}`
+        : 'Tone',
+      infoTooltip:
+        tones.length === 0
+          ? 'No tones available.\n\nCreate tones in Quick Actions to control writing style, formality, and personality.'
+          : 'Apply a custom voice profile to your messages.\n\nSelect a tone to control writing style, formality, and personality.\n\nStays active until changed or removed.',
+      onClick: () => {
+        setIsToneOpen(true);
+        closeDropdown();
+      },
+      category: 'web',
+      disabled: tones.length === 0,
+    },
+    {
       id: 'attach',
       icon: (
         <IconPaperclip
@@ -191,6 +223,7 @@ const Dropdown: React.FC<DropdownProps> = ({
     onCloseModals: () => {
       setIsTranslateOpen(false);
       setIsImageOpen(false);
+      setIsToneOpen(false);
     },
   });
 
@@ -268,6 +301,99 @@ const Dropdown: React.FC<DropdownProps> = ({
           simulateClick={true}
         />
       )}
+
+      {/* Tone Selector Modal */}
+      {isToneOpen &&
+        typeof window !== 'undefined' &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+            onClick={() => setIsToneOpen(false)}
+          >
+            <div
+              className="relative w-full max-w-md bg-white dark:bg-[#212121] rounded-xl shadow-2xl overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Select Tone
+                </h3>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  Choose a voice profile for your messages
+                </p>
+              </div>
+
+              <div className="max-h-96 overflow-y-auto p-4">
+                <button
+                  onClick={() => {
+                    setSelectedToneId(null);
+                    setIsToneOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all mb-2 ${
+                    !selectedToneId
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  }`}
+                >
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    No Tone (Default)
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    Use default writing style
+                  </div>
+                </button>
+
+                {tones.map((tone) => (
+                  <button
+                    key={tone.id}
+                    onClick={() => {
+                      setSelectedToneId(tone.id);
+                      setIsToneOpen(false);
+                    }}
+                    className={`w-full text-left px-4 py-3 rounded-lg border-2 transition-all mb-2 ${
+                      selectedToneId === tone.id
+                        ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
+                        : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    }`}
+                  >
+                    <div className="font-medium text-gray-900 dark:text-white flex items-center gap-2">
+                      <IconVolume size={16} className="text-purple-500" />
+                      {tone.name}
+                    </div>
+                    {tone.description && (
+                      <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                        {tone.description}
+                      </div>
+                    )}
+                    {tone.tags && tone.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {tone.tags.slice(0, 3).map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="text-xs px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </button>
+                ))}
+
+                {tones.length === 0 && (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <IconVolume size={48} className="mx-auto mb-3 opacity-50" />
+                    <p className="text-sm">No tones created yet</p>
+                    <p className="text-xs mt-1">
+                      Create tones in Quick Actions
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>,
+          document.body,
+        )}
 
       {/* Chat Input Image Component (hidden) */}
       <ChatInputImage

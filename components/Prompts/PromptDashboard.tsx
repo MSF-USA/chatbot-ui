@@ -8,22 +8,31 @@ import {
   IconFileText,
   IconInfoCircle,
   IconLoader2,
-  IconPhoto,
+  IconMusic,
   IconSparkles,
   IconUpload,
+  IconVideo,
   IconX,
 } from '@tabler/icons-react';
 import { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { useTones } from '@/lib/hooks/settings/useTones';
+
 interface PromptDashboardProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (name: string, description: string, content: string) => void;
+  onSave: (
+    name: string,
+    description: string,
+    content: string,
+    toneId?: string | null,
+  ) => void;
   initialName?: string;
   initialDescription?: string;
   initialContent?: string;
+  initialToneId?: string | null;
 }
 
 interface Improvement {
@@ -46,11 +55,16 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
   initialName = '',
   initialDescription = '',
   initialContent = '',
+  initialToneId = null,
 }) => {
   const t = useTranslations();
+  const { tones } = useTones();
   const [name, setName] = useState(initialName);
   const [description, setDescription] = useState(initialDescription);
   const [content, setContent] = useState(initialContent);
+  const [selectedToneId, setSelectedToneId] = useState<string | null>(
+    initialToneId,
+  );
   const [revisionGoal, setRevisionGoal] = useState('');
   const [isRevising, setIsRevising] = useState(false);
   const [revisionResult, setRevisionResult] = useState<RevisionResponse | null>(
@@ -66,15 +80,16 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
       setName(initialName);
       setDescription(initialDescription);
       setContent(initialContent);
+      setSelectedToneId(initialToneId);
       setRevisionGoal('');
       setRevisionResult(null);
       setShowVariableHelp(false);
     }
-  }, [isOpen, initialName, initialDescription, initialContent]);
+  }, [isOpen, initialName, initialDescription, initialContent, initialToneId]);
 
   const handleSave = () => {
     if (!name.trim()) return;
-    onSave(name.trim(), description.trim(), content);
+    onSave(name.trim(), description.trim(), content, selectedToneId);
     handleClose();
   };
 
@@ -82,6 +97,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
     setName('');
     setDescription('');
     setContent('');
+    setSelectedToneId(null);
     setRevisionGoal('');
     setRevisionResult(null);
     setShowVariableHelp(false);
@@ -107,9 +123,12 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
         // Text files - read directly
         const text = await file.text();
         extractedContent += `\n\n=== ${file.name} ===\n${text}`;
-      } else if (file.type.startsWith('image/')) {
-        // Images - will be processed by backend
-        extractedContent += `\n\n[Image: ${file.name}]`;
+      } else if (
+        file.type.startsWith('audio/') ||
+        file.type.startsWith('video/')
+      ) {
+        // Audio/Video - will be transcribed by backend
+        extractedContent += `\n\n[Transcribe: ${file.name}]`;
       }
     }
 
@@ -300,6 +319,33 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                 />
               </div>
 
+              {/* Tone Selection */}
+              <div>
+                <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white">
+                  {t('Tone')}{' '}
+                  <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">
+                    ({t('Optional')})
+                  </span>
+                </label>
+                <select
+                  value={selectedToneId || ''}
+                  onChange={(e) => setSelectedToneId(e.target.value || null)}
+                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100"
+                >
+                  <option value="">No tone (use default)</option>
+                  {tones.map((tone) => (
+                    <option key={tone.id} value={tone.id}>
+                      {tone.name}
+                    </option>
+                  ))}
+                </select>
+                {selectedToneId && (
+                  <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
+                    {tones.find((t) => t.id === selectedToneId)?.description}
+                  </p>
+                )}
+              </div>
+
               {/* Prompt Content */}
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -414,12 +460,12 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                       className="text-gray-500 dark:text-gray-400"
                     />
                     <span className="text-xs text-gray-600 dark:text-gray-400">
-                      Upload files (images, text, docs)
+                      Upload files (audio, video, text, docs)
                     </span>
                     <input
                       type="file"
                       multiple
-                      accept="image/*,text/*,.txt,.md,.pdf,.doc,.docx"
+                      accept="audio/*,video/*,text/*,.txt,.md,.pdf,.doc,.docx"
                       onChange={handleFileUpload}
                       className="hidden"
                       disabled={isRevising}
@@ -434,8 +480,13 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                           className="flex items-center justify-between p-2 bg-white dark:bg-[#2a2a2a] border border-gray-200 dark:border-gray-700 rounded-lg"
                         >
                           <div className="flex items-center gap-2 flex-1 min-w-0">
-                            {file.type.startsWith('image/') ? (
-                              <IconPhoto
+                            {file.type.startsWith('audio/') ? (
+                              <IconMusic
+                                size={14}
+                                className="text-purple-500 flex-shrink-0"
+                              />
+                            ) : file.type.startsWith('video/') ? (
+                              <IconVideo
                                 size={14}
                                 className="text-blue-500 flex-shrink-0"
                               />
