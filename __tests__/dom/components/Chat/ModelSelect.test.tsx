@@ -91,12 +91,10 @@ describe('ModelSelect', () => {
     it('displays agent badge for models with agent capabilities', () => {
       render(<ModelSelect />);
 
-      // GPT-5 has agent capabilities
-      const gpt5Items = screen.getAllByText(/GPT-5/);
-      // Find the one with Agent badge nearby
-      const agentBadges = screen.getAllByText('Agent');
+      // GPT-4.1 has agent capabilities and shows "Tools" badge
+      const toolsBadges = screen.getAllByText('Tools');
 
-      expect(agentBadges.length).toBeGreaterThan(0);
+      expect(toolsBadges.length).toBeGreaterThan(0);
     });
 
     it('displays provider icons for each model', () => {
@@ -193,7 +191,7 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.getByText('Enable AI Agent')).toBeInTheDocument();
+      expect(screen.getByText('Enable AI Tools')).toBeInTheDocument();
     });
 
     it('does not display agent toggle for models without agent capabilities', () => {
@@ -209,7 +207,7 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      expect(screen.queryByText('Enable AI Agent')).not.toBeInTheDocument();
+      expect(screen.queryByText('Enable AI Tools')).not.toBeInTheDocument();
     });
 
     it('shows notice for models without agent support', () => {
@@ -226,7 +224,7 @@ describe('ModelSelect', () => {
       render(<ModelSelect />);
 
       expect(
-        screen.getByText(/Agent services.*not yet available/),
+        screen.getByText(/Tool services.*not yet available/),
       ).toBeInTheDocument();
     });
   });
@@ -374,19 +372,35 @@ describe('ModelSelect', () => {
     });
 
     it('expands advanced section when clicked', async () => {
+      // Select a conversation with a model that supports advanced options
+      mockUseConversations.selectedConversation = {
+        id: 'conv-1',
+        name: 'Test',
+        messages: [],
+        model: OpenAIModels[OpenAIModelID.GPT_5],
+        prompt: '',
+        temperature: 0.7,
+        folderId: null,
+      };
+
       render(<ModelSelect />);
 
-      const advancedButton = screen.getByText('Advanced').closest('button');
+      const advancedButton = screen
+        .getByText('Advanced Options')
+        .closest('button');
       expect(advancedButton).not.toBeNull();
 
       fireEvent.click(advancedButton!);
 
+      // Check if advanced content is shown (GPT-5 shows temp notice, not slider)
       await waitFor(() => {
-        expect(screen.getByText('Add Custom Agent')).toBeInTheDocument();
+        expect(
+          screen.getByText(/This model uses fixed temperature values/),
+        ).toBeInTheDocument();
       });
     });
 
-    it('displays custom agents in advanced section when present', () => {
+    it('displays custom agents in agents tab when present', () => {
       mockUseCustomAgents.customAgents = [
         {
           id: 'agent-1',
@@ -400,11 +414,11 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      // Expand advanced section
-      const advancedButton = screen.getByText('Advanced').closest('button');
-      fireEvent.click(advancedButton!);
+      // Click on Agents tab
+      const agentsTab = screen.getByText('Agents').closest('button');
+      fireEvent.click(agentsTab!);
 
-      // Custom agent should be visible
+      // Custom agent should be visible in the agents tab
       waitFor(() => {
         expect(screen.getByText('My Custom Agent')).toBeInTheDocument();
       });
@@ -465,21 +479,17 @@ describe('ModelSelect', () => {
   describe('Close Button', () => {
     it('calls onClose when close button is clicked', () => {
       const onClose = vi.fn();
-      render(<ModelSelect onClose={onClose} />);
+      const { container } = render(<ModelSelect onClose={onClose} />);
 
-      const closeButtons = screen
-        .getAllByRole('button')
-        .filter(
-          (button) =>
-            button.getAttribute('aria-label') === 'Close' ||
-            button.querySelector('svg'),
-        );
+      // Find the close button (it's in the header next to the tabs)
+      // It should have the IconX component
+      const closeButton = container.querySelector(
+        'button.text-gray-500.hover\\:text-gray-700',
+      );
 
-      // Click the X button
-      if (closeButtons.length > 0) {
-        fireEvent.click(closeButtons[0]);
-        expect(onClose).toHaveBeenCalled();
-      }
+      expect(closeButton).not.toBeNull();
+      fireEvent.click(closeButton!);
+      expect(onClose).toHaveBeenCalled();
     });
 
     it('does not render close button when onClose is not provided', () => {
