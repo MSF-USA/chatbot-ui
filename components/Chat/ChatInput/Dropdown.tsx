@@ -249,7 +249,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           aria-label="Toggle dropdown menu"
           className="focus:outline-none flex"
         >
-          <IconCirclePlus className="w-6 h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
+          <IconCirclePlus className="w-7 h-7 md:w-6 md:h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />
           <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
             Expand Actions
           </div>

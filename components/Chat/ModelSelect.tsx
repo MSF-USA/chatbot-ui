@@ -1,6 +1,7 @@
 import {
   IconAlertTriangle,
   IconChevronDown,
+  IconChevronLeft,
   IconChevronUp,
   IconCode,
   IconCpu,
@@ -53,6 +54,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const [showAgentForm, setShowAgentForm] = useState(false);
   const [editingAgent, setEditingAgent] = useState<CustomAgent | undefined>();
   const [showModelAdvanced, setShowModelAdvanced] = useState(false);
+  const [mobileView, setMobileView] = useState<'list' | 'details'>('list');
+  const [showAgentWarning, setShowAgentWarning] = useState(false);
 
   // Helper function to get provider icon
   const getProviderIcon = (provider?: string, size: 'sm' | 'lg' = 'sm') => {
@@ -141,6 +144,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       console.error('Selected model not found in available models:', model.id);
       return;
     }
+
+    // Switch to details view on mobile when a model is selected
+    setMobileView('details');
 
     // Set as default model for future conversations
     setDefaultModelId(model.id as OpenAIModelID);
@@ -257,9 +263,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           className="flex-1 flex flex-col overflow-hidden animate-fade-in-fast"
           key="models-tab"
         >
-          <div className="flex-1 flex gap-6 overflow-hidden">
+          <div className="flex-1 flex flex-col md:flex-row gap-4 md:gap-6 overflow-hidden p-4 md:p-0">
             {/* Left: Model List */}
-            <div className="w-80 flex-shrink-0 overflow-y-auto border-r border-gray-200 dark:border-gray-700 pr-4">
+            <div
+              className={`${
+                mobileView === 'details' ? 'hidden md:block' : 'block'
+              } w-full md:w-80 flex-shrink-0 overflow-y-auto md:border-r border-gray-200 dark:border-gray-700 md:pr-4`}
+            >
               <div className="space-y-4">
                 {/* Base Models */}
                 <div>
@@ -289,21 +299,34 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             </div>
 
             {/* Right: Model Details */}
-            <div className="flex-1 overflow-y-auto">
+            <div
+              className={`${
+                mobileView === 'list' ? 'hidden md:block' : 'block'
+              } flex-1 overflow-y-auto`}
+            >
               {selectedModel && (modelConfig || isCustomAgent) && (
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
+                  {/* Mobile Back Button */}
+                  <button
+                    onClick={() => setMobileView('list')}
+                    className="md:hidden flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4"
+                  >
+                    <IconChevronLeft size={16} />
+                    Back to Models
+                  </button>
+
                   {/* Model Header */}
                   <div>
-                    <div className="flex items-center gap-3 mb-3">
+                    <div className="flex items-center gap-2 md:gap-3 mb-3">
                       {getProviderIcon(
                         selectedModel.provider || modelConfig?.provider,
                         'lg',
                       )}
-                      <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
+                      <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
                         {selectedModel.name}
                       </h2>
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400 mb-3">
+                    <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-3">
                       {selectedModel.description || modelConfig?.description}
                     </p>
 
@@ -709,10 +732,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           key="agents-tab"
         >
           {/* Description */}
-          <div className="mb-6">
+          <div className="mb-6 p-4 md:p-0">
             <div className="flex items-center gap-2 mb-3">
               <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-                Experimental
+                Advanced Feature
               </span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
@@ -720,25 +743,47 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               These agents run on the MSF AI Assistant Foundry instance.
             </p>
 
-            {/* Info Banner */}
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <div className="flex items-start gap-3">
+            {/* Collapsible Warning */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 overflow-hidden">
+              <button
+                onClick={() => setShowAgentWarning(!showAgentWarning)}
+                className="w-full p-4 flex items-start gap-3 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+              >
                 <IconInfoCircle
                   size={18}
                   className="flex-shrink-0 text-blue-600 dark:text-blue-400 mt-0.5"
                 />
-                <div className="text-sm text-blue-700 dark:text-blue-300">
-                  <strong>Instance Restriction:</strong> Custom agents only work
-                  with the <strong>MSF AI Assistant Foundry instance</strong>.
-                  Agent IDs must be created by an administrator in this specific
-                  instance and shared with you.
+                <div className="flex-1 text-left">
+                  <div className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                    Advanced Feature - Requires Coordination with AI Assistant
+                    Technical Team
+                  </div>
                 </div>
-              </div>
+                {showAgentWarning ? (
+                  <IconChevronUp
+                    size={18}
+                    className="flex-shrink-0 text-blue-600 dark:text-blue-400"
+                  />
+                ) : (
+                  <IconChevronDown
+                    size={18}
+                    className="flex-shrink-0 text-blue-600 dark:text-blue-400"
+                  />
+                )}
+              </button>
+              {showAgentWarning && (
+                <div className="px-4 pb-4 text-sm text-blue-700 dark:text-blue-300">
+                  Custom agents only work with the{' '}
+                  <strong>MSF AI Assistant Foundry instance</strong>. Agent IDs
+                  must be created by the AI Assistant technical team in this
+                  specific instance and coordinated with you before use.
+                </div>
+              )}
             </div>
           </div>
 
           {/* Add Agent Button */}
-          <div className="mb-6">
+          <div className="mb-6 px-4 md:px-0">
             <button
               onClick={() => setShowAgentForm(true)}
               className="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all flex items-center justify-center gap-2"
@@ -749,7 +794,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           </div>
 
           {/* Custom Agents List */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto px-4 md:px-0">
             {customAgents.length > 0 ? (
               <CustomAgentList
                 agents={customAgents}

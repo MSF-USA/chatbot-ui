@@ -250,7 +250,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = React.memo(
         ) : (
           <div className="group relative">
             <button
-              className="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 hover:bg-gray-100/50 dark:text-gray-400 dark:hover:bg-gray-800/50 transition-colors duration-200"
+              className="flex items-center justify-center w-11 h-11 md:w-10 md:h-10 rounded-full text-gray-600 hover:bg-gray-100/50 dark:text-gray-400 dark:hover:bg-gray-800/50 transition-colors duration-200"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -258,7 +258,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = React.memo(
               }}
               aria-label="Start voice recording"
             >
-              <MicIcon className="h-5 w-5" />
+              <MicIcon className="h-5 w-5 md:h-4 md:w-4" />
             </button>
             <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md whitespace-nowrap z-50">
               Voice Input

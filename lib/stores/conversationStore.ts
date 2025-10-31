@@ -1,7 +1,10 @@
-import { create } from 'zustand';
-import { persist, createJSONStorage } from 'zustand/middleware';
+'use client';
+
 import { Conversation } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
+
+import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface ConversationStore {
   // State
@@ -35,76 +38,78 @@ interface ConversationStore {
 export const useConversationStore = create<ConversationStore>()(
   persist(
     (set, get) => ({
-  // Initial state
-  conversations: [],
-  selectedConversationId: null,
-  folders: [],
-  searchTerm: '',
-  isLoaded: false,
-
-  // Conversation actions
-  setConversations: (conversations) => set({ conversations }),
-
-  addConversation: (conversation) => {
-    set((state) => ({
-      conversations: [...state.conversations, conversation],
-      selectedConversationId: conversation.id,
-    }));
-  },
-
-  updateConversation: (id, updates) =>
-    set((state) => ({
-      conversations: state.conversations.map((c) =>
-        c.id === id
-          ? { ...c, ...updates, updatedAt: new Date().toISOString() }
-          : c
-      ),
-    })),
-
-  deleteConversation: (id) =>
-    set((state) => ({
-      conversations: state.conversations.filter((c) => c.id !== id),
-      selectedConversationId:
-        state.selectedConversationId === id ? null : state.selectedConversationId,
-    })),
-
-  selectConversation: (id) => set({ selectedConversationId: id }),
-
-  setIsLoaded: (isLoaded) => set({ isLoaded }),
-
-  // Folder actions
-  setFolders: (folders) => set({ folders }),
-
-  addFolder: (folder) =>
-    set((state) => ({
-      folders: [...state.folders, folder],
-    })),
-
-  updateFolder: (id, name) =>
-    set((state) => ({
-      folders: state.folders.map((f) => (f.id === id ? { ...f, name } : f)),
-    })),
-
-  deleteFolder: (id) =>
-    set((state) => ({
-      folders: state.folders.filter((f) => f.id !== id),
-      // Remove folder from conversations
-      conversations: state.conversations.map((c) =>
-        c.folderId === id ? { ...c, folderId: null } : c
-      ),
-    })),
-
-  // Search
-  setSearchTerm: (term) => set({ searchTerm: term }),
-
-  // Bulk operations
-  clearAll: () =>
-    set({
+      // Initial state
       conversations: [],
       selectedConversationId: null,
       folders: [],
       searchTerm: '',
-    }),
+      isLoaded: false,
+
+      // Conversation actions
+      setConversations: (conversations) => set({ conversations }),
+
+      addConversation: (conversation) => {
+        set((state) => ({
+          conversations: [...state.conversations, conversation],
+          selectedConversationId: conversation.id,
+        }));
+      },
+
+      updateConversation: (id, updates) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) =>
+            c.id === id
+              ? { ...c, ...updates, updatedAt: new Date().toISOString() }
+              : c,
+          ),
+        })),
+
+      deleteConversation: (id) =>
+        set((state) => ({
+          conversations: state.conversations.filter((c) => c.id !== id),
+          selectedConversationId:
+            state.selectedConversationId === id
+              ? null
+              : state.selectedConversationId,
+        })),
+
+      selectConversation: (id) => set({ selectedConversationId: id }),
+
+      setIsLoaded: (isLoaded) => set({ isLoaded }),
+
+      // Folder actions
+      setFolders: (folders) => set({ folders }),
+
+      addFolder: (folder) =>
+        set((state) => ({
+          folders: [...state.folders, folder],
+        })),
+
+      updateFolder: (id, name) =>
+        set((state) => ({
+          folders: state.folders.map((f) => (f.id === id ? { ...f, name } : f)),
+        })),
+
+      deleteFolder: (id) =>
+        set((state) => ({
+          folders: state.folders.filter((f) => f.id !== id),
+          // Remove folder from conversations
+          conversations: state.conversations.map((c) =>
+            c.folderId === id ? { ...c, folderId: null } : c,
+          ),
+        })),
+
+      // Search
+      setSearchTerm: (term) => set({ searchTerm: term }),
+
+      // Bulk operations
+      clearAll: () =>
+        set({
+          conversations: [],
+          selectedConversationId: null,
+          folders: [],
+          searchTerm: '',
+        }),
     }),
     {
       name: 'conversation-storage',
@@ -121,6 +126,6 @@ export const useConversationStore = create<ConversationStore>()(
           state.isLoaded = true;
         }
       },
-    }
-  )
+    },
+  ),
 );

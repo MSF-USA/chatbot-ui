@@ -1,3 +1,5 @@
+'use client';
+
 import { makeRequest } from '@/lib/services/chat/frontendChatService';
 
 import {

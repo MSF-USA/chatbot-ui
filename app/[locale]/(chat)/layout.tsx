@@ -2,11 +2,14 @@ import { redirect } from 'next/navigation';
 
 import { AppProviders } from '@/components/Providers/AppProviders';
 
+import { ChatShell } from './ChatShell';
+
 import { auth } from '@/auth';
 
 /**
  * Layout for authenticated chat pages
- * Provides session, providers, and global state
+ * Server component that handles auth and provides session/providers
+ * ChatShell is the client component that manages the UI structure
  */
 export default async function ChatLayout({
   children,
@@ -34,7 +37,7 @@ export default async function ChatLayout({
         companyName: session.user?.companyName,
       }}
     >
-      {children}
+      <ChatShell>{children}</ChatShell>
     </AppProviders>
   );
 }

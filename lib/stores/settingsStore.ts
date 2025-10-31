@@ -1,3 +1,5 @@
+'use client';
+
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { Tone } from '@/types/tone';

@@ -215,7 +215,7 @@ describe('SettingsFooter', () => {
       const { container } = render(<SettingsFooter {...defaultProps} />);
 
       const contentDiv = container.querySelector(
-        '.flex.flex-col.md\\:flex-row',
+        '.flex.flex-row.justify-between',
       );
       expect(contentDiv).toBeInTheDocument();
     });

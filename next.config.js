@@ -63,7 +63,7 @@ const nextConfig = {
               "default-src 'self'; " +
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://login.microsoftonline.com; " +
               "style-src 'self' 'unsafe-inline'; " +
-              "img-src 'self' data: https:; " +
+              "img-src 'self' data: https: blob:; " +
               "font-src 'self' data:; " +
               "connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://*.ai.msfusa.org; " +
               "frame-ancestors 'none';",

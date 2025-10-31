@@ -85,6 +85,7 @@ export function Chat({
   const [savePromptName, setSavePromptName] = useState('');
   const [savePromptDescription, setSavePromptDescription] = useState('');
   const hasInitializedRef = useRef(false);
+  const previousMessageCountRef = useRef<number>(0);
 
   const [isModelSelectOpen, setIsModelSelectOpen] = useModalState(
     mobileModelSelectOpen,
@@ -109,6 +110,8 @@ export function Chat({
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const stopConversationRef = useRef<boolean>(false);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
+  const isInitialRenderRef = useRef(true);
 
   // Create default conversation if none exists
   useEffect(() => {
@@ -134,24 +137,104 @@ export function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoaded, models.length]);
 
-  // Auto-scroll to bottom on new messages
+  // Reset scroll state when conversation changes
   useEffect(() => {
-    scrollToBottom(messagesEndRef, 'smooth');
-  }, [selectedConversation?.messages, streamingContent]);
+    isInitialRenderRef.current = true;
+    previousMessageCountRef.current = 0;
+  }, [selectedConversation?.id]);
+
+  // Auto-scroll behavior: Scroll to bottom on initial load, scroll to top of new message on send
+  useEffect(() => {
+    const messages = selectedConversation?.messages || [];
+    const currentMessageCount = messages.length;
+    const previousCount = previousMessageCountRef.current;
+
+    console.log('[Chat Scroll Effect]', {
+      currentMessageCount,
+      previousCount,
+      isInitialRender: isInitialRenderRef.current,
+      hasLastMessageRef: !!lastMessageRef.current,
+      hasChatContainerRef: !!chatContainerRef.current,
+    });
+
+    // On initial render/load: scroll to bottom to show latest messages
+    if (isInitialRenderRef.current) {
+      isInitialRenderRef.current = false;
+      previousMessageCountRef.current = currentMessageCount;
+
+      // Scroll to bottom to show latest messages on initial load
+      if (currentMessageCount > 0 && chatContainerRef.current) {
+        setTimeout(() => {
+          if (chatContainerRef.current) {
+            chatContainerRef.current.scrollTop =
+              chatContainerRef.current.scrollHeight;
+            console.log('[Chat Scroll] Initial load - scrolled to bottom');
+          }
+        }, 0);
+      }
+      return;
+    }
+
+    // When message count increases, check if it's a USER message before scrolling
+    // We only want to scroll to top when the USER sends a message, not when assistant responds
+    if (previousCount > 0 && currentMessageCount > previousCount) {
+      const lastMessage = messages[messages.length - 1];
+
+      console.log('[Chat Scroll] Message count increased', {
+        lastMessageRole: lastMessage?.role,
+        willScroll: lastMessage?.role === 'user',
+      });
+
+      // Only scroll if the last message is from the user
+      if (lastMessage?.role === 'user') {
+        // Use setTimeout to ensure DOM has fully updated and rendered
+        setTimeout(() => {
+          if (lastMessageRef.current) {
+            // Use scrollIntoView API - much more reliable than manual pixel calculations
+            // block: 'start' positions the element at the TOP of the scrollable container
+            lastMessageRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+            });
+
+            console.log('[Chat Scroll] Scrolled user message into view at top');
+          } else {
+            console.log('[Chat Scroll] Missing lastMessageRef');
+          }
+        }, 50);
+      }
+    }
+
+    // During streaming: do NOT auto-scroll - let user freely scroll
+    // The scroll button will appear if they're not at the bottom
+
+    previousMessageCountRef.current = currentMessageCount;
+  }, [selectedConversation?.messages]);
 
   // Handle scroll detection for scroll-down button
   useEffect(() => {
     const handleScroll = () => {
-      const shouldShow = shouldShowScrollButton(chatContainerRef.current, 100);
-      setShowScrollDownButton(shouldShow);
+      const container = chatContainerRef.current;
+      if (!container) return;
+
+      const isAtBottom =
+        container.scrollHeight - container.scrollTop - container.clientHeight <
+        100;
+
+      // Show button if not at bottom and there's content
+      const hasContent =
+        (selectedConversation?.messages?.length || 0) > 0 || streamingContent;
+      setShowScrollDownButton(!isAtBottom && hasContent);
     };
 
     const container = chatContainerRef.current;
     if (container) {
       container.addEventListener('scroll', handleScroll);
+      // Check initial state
+      handleScroll();
       return () => container.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [selectedConversation?.messages, streamingContent]);
 
   const handleClearAll = () => {
     const state = useConversationStore.getState();
@@ -268,7 +351,9 @@ export function Chat({
     [handleSend],
   );
 
-  const handleScrollDown = () => scrollToBottom(messagesEndRef, 'smooth');
+  const handleScrollDown = () => {
+    scrollToBottom(messagesEndRef, 'smooth');
+  };
 
   const handleRegenerate = () => {
     // Get the latest conversation state to avoid stale closures
@@ -375,19 +460,33 @@ export function Chat({
       ) : (
         <>
           {/* Messages */}
-          <div ref={chatContainerRef} className="flex-1 overflow-auto">
-            <div className="mx-auto max-w-3xl pb-[100px]">
-              {messages.map((message, index) => (
-                <MemoizedChatMessage
-                  key={index}
-                  message={message}
-                  messageIndex={index}
-                  onEdit={handleEditMessage}
-                  onQuestionClick={handleSelectPrompt}
-                  onRegenerate={handleRegenerate}
-                  onSaveAsPrompt={handleOpenSavePromptModal}
-                />
-              ))}
+          <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
+            <div className="mx-auto max-w-3xl pb-[60vh]">
+              {messages.map((message, index) => {
+                const isLastMessage = index === messages.length - 1;
+                return isLastMessage ? (
+                  <div key={index} ref={lastMessageRef}>
+                    <MemoizedChatMessage
+                      message={message}
+                      messageIndex={index}
+                      onEdit={handleEditMessage}
+                      onQuestionClick={handleSelectPrompt}
+                      onRegenerate={handleRegenerate}
+                      onSaveAsPrompt={handleOpenSavePromptModal}
+                    />
+                  </div>
+                ) : (
+                  <MemoizedChatMessage
+                    key={index}
+                    message={message}
+                    messageIndex={index}
+                    onEdit={handleEditMessage}
+                    onQuestionClick={handleSelectPrompt}
+                    onRegenerate={handleRegenerate}
+                    onSaveAsPrompt={handleOpenSavePromptModal}
+                  />
+                );
+              })}
               {/* Show transcription status indicator */}
               {transcriptionStatus && (
                 <div className="relative flex p-4 text-base md:py-6 lg:px-0 w-full">

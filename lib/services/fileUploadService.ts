@@ -200,7 +200,8 @@ export class FileUploadService {
               if (uploadedBytes < file.size) {
                 uploadChunk();
               } else {
-                const resp = await response.json();
+                const response_data = await response.json();
+                const resp = response_data.data || response_data;
                 resolve({
                   url: resp.uri ?? resp.filename ?? '',
                   originalFilename: file.name,
@@ -304,7 +305,8 @@ async function uploadImageToAPI(
 
   if (onProgress) onProgress(100);
 
-  const data = await response.json();
+  const response_data = await response.json();
+  const data = response_data.data || response_data;
 
   // Cache the image for offline use
   try {

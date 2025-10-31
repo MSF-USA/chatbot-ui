@@ -59,6 +59,7 @@ export function Sidebar() {
     addFolder,
     updateFolder,
     deleteFolder,
+    isLoaded,
   } = useConversations();
   const { defaultModelId, models, temperature, systemPrompt } = useSettings();
 
@@ -304,7 +305,9 @@ export function Sidebar() {
             <div className="p-4 text-center text-sm text-neutral-500">
               {searchTerm
                 ? t('No conversations found')
-                : t('No conversations yet')}
+                : isLoaded
+                  ? t('No conversations yet')
+                  : null}
             </div>
           ) : (
             <div className="space-y-1 p-2">

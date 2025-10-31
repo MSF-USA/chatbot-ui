@@ -115,6 +115,8 @@ export const ChatInput = ({
 
   const [textFieldValue, setTextFieldValue] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [isMultiline, setIsMultiline] = useState<boolean>(false);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedPromptForModal, setSelectedPromptForModal] =
@@ -333,6 +335,10 @@ export const ChatInput = ({
       textareaRef.current.style.overflow = `${
         textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
       }`;
+
+      // Check if textarea is multiline - single line is typically ~44px or less
+      // Only consider it multiline if scrollHeight exceeds 60px to avoid false positives
+      setIsMultiline(textareaRef.current.scrollHeight > 60);
     }
   }, [textFieldValue, textareaRef]);
 
@@ -489,14 +495,14 @@ export const ChatInput = ({
 
           <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
             <div
-              className={`relative flex w-full flex-col rounded-3xl border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 transition-[min-height] duration-200 ${webSearchMode || selectedToneId ? 'min-h-[120px]' : ''}`}
+              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 transition-all duration-200 ${webSearchMode || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && !webSearchMode && !selectedToneId ? '!rounded-2xl' : ''}`}
             >
               <textarea
                 ref={textareaRef}
                 className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 focus:border-0 ${
                   webSearchMode || selectedToneId
                     ? 'pt-3 pb-[88px] pl-3'
-                    : 'py-2 pl-10 md:py-3 md:pl-10'
+                    : 'py-3.5 pl-10 md:py-3 md:pl-10'
                 }`}
                 style={{
                   resize: 'none',
@@ -522,13 +528,15 @@ export const ChatInput = ({
                 onCompositionEnd={() => setIsTyping(false)}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
                 disabled={preventSubmission()}
               />
 
               {/* Bottom row with all buttons and search badge */}
               <div
                 className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  webSearchMode || selectedToneId
+                  webSearchMode || selectedToneId || isMultiline
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
                 }`}
@@ -613,7 +621,7 @@ export const ChatInput = ({
 
               <div
                 className={`absolute right-2.5 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  webSearchMode || selectedToneId
+                  webSearchMode || selectedToneId || isMultiline
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
                 }`}
@@ -631,16 +639,24 @@ export const ChatInput = ({
                 />
               </div>
 
-              {showScrollDownButton && (
-                <div className="absolute bottom-12 right-0 lg:bottom-0 lg:-right-10">
-                  <button
-                    className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-neutral-200"
-                    onClick={onScrollDownClick}
-                  >
-                    <IconArrowDown size={18} />
-                  </button>
-                </div>
-              )}
+              <div
+                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-4 md:left-auto md:right-3 md:translate-x-0 transition-all duration-200 ease-in-out ${
+                  showScrollDownButton && !isFocused
+                    ? 'opacity-100 scale-100 pointer-events-auto'
+                    : 'opacity-0 scale-90 pointer-events-none'
+                }`}
+              >
+                <button
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none dark:bg-gray-700 dark:text-neutral-200 transition-shadow"
+                  onClick={(e) => {
+                    onScrollDownClick();
+                    e.currentTarget.blur(); // Remove focus after click
+                  }}
+                  aria-label="Scroll to bottom"
+                >
+                  <IconArrowDown size={18} />
+                </button>
+              </div>
 
               {showPromptList && filteredPrompts.length > 0 && (
                 <div className="absolute bottom-12 w-full">

@@ -19,7 +19,7 @@ const isValidSha256Hash = (id: string | string[] | undefined): boolean => {
   if (idParts.length > 2) return false;
 
   const [idHash, idExtension] = idParts;
-  if (idExtension.length > 4) return false;
+  if (idExtension && idExtension.length > 4) return false;
 
   const SHA256_HASH_LENGTH: number = 64;
   const VALID_HASH_REGEX: RegExp = /^[0-9a-f]{64}$/;

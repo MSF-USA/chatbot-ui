@@ -29,9 +29,10 @@ interface MobileHeaderProps {
  */
 export function MobileChatHeader({ onModelSelectChange }: MobileHeaderProps) {
   const { toggleChatbar } = useUI();
-  const { selectedConversation, updateConversation } = useConversations();
+  const { selectedConversation, updateConversation, isLoaded } =
+    useConversations();
 
-  const displayModelName = selectedConversation?.model?.name || 'Chat';
+  const displayModelName = selectedConversation?.model?.name || '';
   const hasMessages = (selectedConversation?.messages?.length || 0) > 0;
   const agentEnabled = selectedConversation?.model?.agentEnabled || false;
   const modelProvider =
@@ -39,7 +40,7 @@ export function MobileChatHeader({ onModelSelectChange }: MobileHeaderProps) {
 
   // Helper function to get provider icon
   const getProviderIcon = (provider?: string) => {
-    const iconProps = { className: 'w-3.5 h-3.5 flex-shrink-0' };
+    const iconProps = { className: 'w-4 h-4 flex-shrink-0' };
     switch (provider) {
       case 'openai':
         return <OpenAIIcon {...iconProps} />;
@@ -75,28 +76,30 @@ export function MobileChatHeader({ onModelSelectChange }: MobileHeaderProps) {
           <IconMenu2 size={24} />
         </button>
 
-        {/* Model selection button */}
-        <button
-          onClick={() => onModelSelectChange(true)}
-          className="ml-2 flex items-center px-2 py-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors min-w-0"
-          aria-label="Select Model"
-        >
-          {getProviderIcon(modelProvider)}
-          <span className="font-semibold text-neutral-900 dark:text-white truncate text-sm ml-1.5">
-            {displayModelName}
-          </span>
-          {agentEnabled && (
-            <IconTool
-              size={12}
-              className="ml-1 text-gray-600 dark:text-gray-400 shrink-0"
-              title="Agent Tools Enabled"
+        {/* Model selection button - only show when data is loaded */}
+        {isLoaded && (
+          <button
+            onClick={() => onModelSelectChange(true)}
+            className="ml-2 flex items-center px-2 py-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors min-w-0"
+            aria-label="Select Model"
+          >
+            {getProviderIcon(modelProvider)}
+            <span className="font-semibold text-neutral-900 dark:text-white truncate text-base ml-1.5">
+              {displayModelName || 'Select Model'}
+            </span>
+            {agentEnabled && (
+              <IconTool
+                size={12}
+                className="ml-1 text-gray-600 dark:text-gray-400 shrink-0"
+                title="Agent Tools Enabled"
+              />
+            )}
+            <IconChevronDown
+              size={14}
+              className="ml-1 opacity-60 text-black dark:text-white shrink-0"
             />
-          )}
-          <IconChevronDown
-            size={14}
-            className="ml-1 opacity-60 text-black dark:text-white shrink-0"
-          />
-        </button>
+          </button>
+        )}
       </div>
 
       {/* Clear button */}

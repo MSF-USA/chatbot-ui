@@ -1,11 +1,14 @@
 'use client';
 
-import { ReactNode } from 'react';
-import { SessionProvider } from 'next-auth/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Toaster } from 'react-hot-toast';
 import { LDProvider } from 'launchdarkly-react-client-sdk';
+import { SessionProvider } from 'next-auth/react';
+import { ReactNode } from 'react';
+import { Toaster } from 'react-hot-toast';
+
 import { Session } from 'next-auth';
+
+import { UIPreferencesProvider } from '@/components/Providers/UIPreferencesProvider';
 import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
 
 const queryClient = new QueryClient({
@@ -50,36 +53,38 @@ export function AppProviders({
       refetchOnWindowFocus={true}
     >
       <QueryClientProvider client={queryClient}>
-        {launchDarklyClientId ? (
-          <LDProvider
-            clientSideID={launchDarklyClientId}
-            options={{
-              bootstrap: 'localStorage',
-              sendEvents: true,
-            }}
-            context={{
-              kind: 'user',
-              key: userContext?.id || 'anonymous-user',
-              email: userContext?.email,
-              givenName: userContext?.givenName,
-              surName: userContext?.surname,
-              displayName: userContext?.displayName,
-              jobTitle: userContext?.jobTitle,
-              department: userContext?.department,
-              companyName: userContext?.companyName,
-            }}
-          >
+        <UIPreferencesProvider>
+          {launchDarklyClientId ? (
+            <LDProvider
+              clientSideID={launchDarklyClientId}
+              options={{
+                bootstrap: 'localStorage',
+                sendEvents: true,
+              }}
+              context={{
+                kind: 'user',
+                key: userContext?.id || 'anonymous-user',
+                email: userContext?.email,
+                givenName: userContext?.givenName,
+                surName: userContext?.surname,
+                displayName: userContext?.displayName,
+                jobTitle: userContext?.jobTitle,
+                department: userContext?.department,
+                companyName: userContext?.companyName,
+              }}
+            >
+              <TermsAcceptanceProvider>
+                <Toaster position="top-center" />
+                {children}
+              </TermsAcceptanceProvider>
+            </LDProvider>
+          ) : (
             <TermsAcceptanceProvider>
               <Toaster position="top-center" />
               {children}
             </TermsAcceptanceProvider>
-          </LDProvider>
-        ) : (
-          <TermsAcceptanceProvider>
-            <Toaster position="top-center" />
-            {children}
-          </TermsAcceptanceProvider>
-        )}
+          )}
+        </UIPreferencesProvider>
       </QueryClientProvider>
     </SessionProvider>
   );

@@ -1,579 +1,428 @@
 import { renderHook } from '@testing-library/react';
-import { RefObject } from 'react';
+import { useRef } from 'react';
 
 import useEnhancedOutsideClick from '@/lib/hooks/ui/useEnhancedOutsideClick';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('useEnhancedOutsideClick', () => {
-  let onOutsideClick: ReturnType<typeof vi.fn>;
-  let ref: RefObject<HTMLDivElement>;
+  let targetElement: HTMLDivElement;
+  let outsideElement: HTMLDivElement;
 
   beforeEach(() => {
-    onOutsideClick = vi.fn();
-    ref = { current: document.createElement('div') };
-    document.body.appendChild(ref.current!);
+    vi.useFakeTimers();
+
+    // Create DOM elements
+    targetElement = document.createElement('div');
+    targetElement.id = 'target';
+    document.body.appendChild(targetElement);
+
+    outsideElement = document.createElement('div');
+    outsideElement.id = 'outside';
+    document.body.appendChild(outsideElement);
   });
 
   afterEach(() => {
-    if (ref.current && document.body.contains(ref.current)) {
-      document.body.removeChild(ref.current);
-    }
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
+    document.body.removeChild(targetElement);
+    document.body.removeChild(outsideElement);
   });
 
-  describe('Basic Functionality', () => {
-    it('calls onOutsideClick when clicking outside the element', () => {
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
+  describe('Outside Click Detection', () => {
+    it('calls callback when clicking outside element', () => {
+      const onOutsideClick = vi.fn();
 
-      vi.advanceTimersByTime(20);
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
+
+      // Advance timers to register the event listener
+      vi.advanceTimersByTime(15);
 
       // Click outside
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
 
       expect(onOutsideClick).toHaveBeenCalledTimes(1);
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
     });
 
-    it('does not call onOutsideClick when clicking inside the element', () => {
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
+    it('does not call callback when clicking inside element', () => {
+      const onOutsideClick = vi.fn();
 
-      vi.advanceTimersByTime(20);
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
+
+      vi.advanceTimersByTime(15);
 
       // Click inside
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: ref.current,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      targetElement.dispatchEvent(event);
 
       expect(onOutsideClick).not.toHaveBeenCalled();
-
-      vi.useRealTimers();
     });
 
-    it('handles clicks on child elements', () => {
+    it('detects clicks on child elements as inside', () => {
+      const onOutsideClick = vi.fn();
       const childElement = document.createElement('span');
-      ref.current!.appendChild(childElement);
+      targetElement.appendChild(childElement);
 
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
 
-      vi.advanceTimersByTime(20);
+      vi.advanceTimersByTime(15);
 
       // Click on child
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: childElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      childElement.dispatchEvent(event);
 
       expect(onOutsideClick).not.toHaveBeenCalled();
+    });
 
-      vi.useRealTimers();
+    it('handles document clicks', () => {
+      const onOutsideClick = vi.fn();
+
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
+
+      vi.advanceTimersByTime(15);
+
+      // Click on document
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      document.dispatchEvent(event);
+
+      expect(onOutsideClick).toHaveBeenCalledTimes(1);
     });
   });
 
-  describe('isActive Parameter', () => {
-    it('does not listen when isActive is false', () => {
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, false));
+  describe('isActive Flag', () => {
+    it('does not call callback when isActive is false', () => {
+      const onOutsideClick = vi.fn();
 
-      vi.advanceTimersByTime(20);
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, false);
+      });
+
+      vi.advanceTimersByTime(15);
 
       // Click outside
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
 
       expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
     });
 
-    it('starts listening when isActive becomes true', () => {
-      vi.useFakeTimers();
+    it('can toggle active state', () => {
+      const onOutsideClick = vi.fn();
+      let isActive = false;
+
       const { rerender } = renderHook(
-        ({ isActive }) =>
-          useEnhancedOutsideClick(ref, onOutsideClick, isActive),
-        { initialProps: { isActive: false } },
+        ({ active }) => {
+          const ref = useRef<HTMLElement>(targetElement);
+          useEnhancedOutsideClick(ref, onOutsideClick, active);
+        },
+        { initialProps: { active: isActive } },
       );
 
-      vi.advanceTimersByTime(20);
+      vi.advanceTimersByTime(15);
 
-      // Click outside while inactive
-      let outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      let mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
+      // Click while inactive
+      let event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
       expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
 
       // Activate
-      rerender({ isActive: true });
-      vi.advanceTimersByTime(20);
+      isActive = true;
+      rerender({ active: isActive });
+      vi.advanceTimersByTime(15);
 
-      // Click outside while active
-      outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
+      // Click while active
+      event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
       expect(onOutsideClick).toHaveBeenCalledTimes(1);
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
     });
 
-    it('stops listening when isActive becomes false', () => {
-      vi.useFakeTimers();
-      const { rerender } = renderHook(
-        ({ isActive }) =>
-          useEnhancedOutsideClick(ref, onOutsideClick, isActive),
-        { initialProps: { isActive: true } },
+    it('defaults to active when isActive not provided', () => {
+      const onOutsideClick = vi.fn();
+
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        // Not passing isActive, should default to true
+        useEnhancedOutsideClick(ref, onOutsideClick);
+      });
+
+      vi.advanceTimersByTime(15);
+
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
+
+      expect(onOutsideClick).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('useCapture Flag', () => {
+    it('uses bubble phase by default', () => {
+      const onOutsideClick = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
+
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
+
+      vi.advanceTimersByTime(15);
+
+      // Check that addEventListener was called with useCapture = false
+      expect(addEventListenerSpy).toHaveBeenCalledWith(
+        'mousedown',
+        expect.any(Function),
+        false,
       );
+    });
 
-      // Deactivate
-      rerender({ isActive: false });
-      vi.advanceTimersByTime(20);
+    it('uses capture phase when useCapture is true', () => {
+      const onOutsideClick = vi.fn();
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener');
 
-      // Click outside while inactive
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true, true);
       });
 
-      document.dispatchEvent(mouseDownEvent);
+      vi.advanceTimersByTime(15);
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith(
+        'mousedown',
+        expect.any(Function),
+        true,
+      );
+    });
+
+    it('stops propagation when useCapture is true and clicking outside', () => {
+      const onOutsideClick = vi.fn();
+
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true, true);
+      });
+
+      vi.advanceTimersByTime(15);
+
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
+
+      outsideElement.dispatchEvent(event);
+
+      expect(stopPropagationSpy).toHaveBeenCalled();
+      expect(onOutsideClick).toHaveBeenCalled();
+    });
+
+    it('does not stop propagation when useCapture is false', () => {
+      const onOutsideClick = vi.fn();
+
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true, false);
+      });
+
+      vi.advanceTimersByTime(15);
+
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      const stopPropagationSpy = vi.spyOn(event, 'stopPropagation');
+
+      outsideElement.dispatchEvent(event);
+
+      expect(stopPropagationSpy).not.toHaveBeenCalled();
+      expect(onOutsideClick).toHaveBeenCalled();
+    });
+  });
+
+  describe('Timeout Behavior', () => {
+    it('delays event listener registration by 10ms', () => {
+      const onOutsideClick = vi.fn();
+
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
+
+      // Click immediately (before timeout)
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
 
       expect(onOutsideClick).not.toHaveBeenCalled();
 
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
-    });
-  });
+      // Advance timers
+      vi.advanceTimersByTime(10);
 
-  describe('useCapture Parameter', () => {
-    it('uses bubble phase by default (useCapture false)', () => {
-      const stopPropagationSpy = vi.fn();
+      // Click after timeout
+      outsideElement.dispatchEvent(event);
 
-      vi.useFakeTimers();
-      renderHook(() =>
-        useEnhancedOutsideClick(ref, onOutsideClick, true, false),
-      );
-
-      vi.advanceTimersByTime(20);
-
-      // Click outside
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-      mouseDownEvent.stopPropagation = stopPropagationSpy;
-
-      document.dispatchEvent(mouseDownEvent);
-
-      expect(onOutsideClick).toHaveBeenCalled();
-      // stopPropagation should not be called when useCapture is false
-      expect(stopPropagationSpy).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
+      expect(onOutsideClick).toHaveBeenCalledTimes(1);
     });
 
-    it('stops propagation when useCapture is true', () => {
-      const stopPropagationSpy = vi.fn();
+    it('prevents immediate triggering on mount', () => {
+      const onOutsideClick = vi.fn();
 
-      vi.useFakeTimers();
-      renderHook(() =>
-        useEnhancedOutsideClick(ref, onOutsideClick, true, true),
-      );
-
-      vi.advanceTimersByTime(20);
-
-      // Click outside
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-      mouseDownEvent.stopPropagation = stopPropagationSpy;
-
-      document.dispatchEvent(mouseDownEvent);
-
-      expect(onOutsideClick).toHaveBeenCalled();
-      expect(stopPropagationSpy).toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
-    });
-  });
-
-  describe('Delayed Event Listener', () => {
-    it('delays adding event listener by 10ms', () => {
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
-
-      // Click immediately (before timeout)
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
       });
 
-      document.dispatchEvent(mouseDownEvent);
+      // Simulate a click that happens during component mount
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
 
       // Should not be called yet
       expect(onOutsideClick).not.toHaveBeenCalled();
 
-      // Advance past the delay
+      // After timeout completes
       vi.advanceTimersByTime(15);
+      outsideElement.dispatchEvent(event);
 
-      // Click again
-      document.dispatchEvent(mouseDownEvent);
-
-      // Should be called now
+      // Now it should be called
       expect(onOutsideClick).toHaveBeenCalledTimes(1);
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
-    });
-
-    it('prevents immediate triggering on mount', () => {
-      // Simulate a click event happening right when the hook is mounted
-      vi.useFakeTimers();
-
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
-
-      // Try to trigger event before delay
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
-
-      // Should not trigger because timeout hasn't completed
-      expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
     });
   });
 
   describe('Cleanup', () => {
     it('removes event listener on unmount', () => {
-      vi.useFakeTimers();
-      const { unmount } = renderHook(() =>
-        useEnhancedOutsideClick(ref, onOutsideClick, true),
-      );
+      const onOutsideClick = vi.fn();
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener');
 
-      vi.advanceTimersByTime(20);
+      const { unmount } = renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
 
+      vi.advanceTimersByTime(15);
       unmount();
 
-      // Click outside after unmount
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
-
-      expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'mousedown',
+        expect.any(Function),
+        false,
+      );
     });
 
     it('clears timeout on unmount', () => {
-      vi.useFakeTimers();
+      const onOutsideClick = vi.fn();
+      const clearTimeoutSpy = vi.spyOn(global, 'clearTimeout');
 
-      const { unmount } = renderHook(() =>
-        useEnhancedOutsideClick(ref, onOutsideClick, true),
-      );
+      const { unmount } = renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
+      });
 
       unmount();
 
-      // Try to advance timer after unmount
-      vi.advanceTimersByTime(20);
-
-      // Click should not trigger anything
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
-
-      expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
+      expect(clearTimeoutSpy).toHaveBeenCalled();
     });
 
-    it('cleans up when dependencies change', () => {
-      const newCallback = vi.fn();
+    it('does not trigger callback after unmount', () => {
+      const onOutsideClick = vi.fn();
 
-      vi.useFakeTimers();
-      const { rerender } = renderHook(
-        ({ callback }) => useEnhancedOutsideClick(ref, callback, true),
-        { initialProps: { callback: onOutsideClick } },
-      );
-
-      vi.advanceTimersByTime(20);
-
-      // Change callback
-      rerender({ callback: newCallback });
-      vi.advanceTimersByTime(20);
-
-      // Click outside
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: outsideElement,
-        enumerable: true,
+      const { unmount } = renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
       });
 
-      document.dispatchEvent(mouseDownEvent);
+      vi.advanceTimersByTime(15);
+      unmount();
 
-      // New callback should be called, not old one
-      expect(newCallback).toHaveBeenCalled();
+      // Click after unmount
+      const event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
+
       expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
     });
   });
 
-  describe('Edge Cases', () => {
-    it('handles null ref gracefully', () => {
-      const nullRef: RefObject<HTMLDivElement | null> = { current: null };
+  describe('Ref Changes', () => {
+    it('handles null ref', () => {
+      const onOutsideClick = vi.fn();
 
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(nullRef, onOutsideClick, true));
-
-      vi.advanceTimersByTime(20);
-
-      // Click anywhere
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: document.body,
-        enumerable: true,
+      renderHook(() => {
+        const ref = useRef<HTMLElement>(null);
+        useEnhancedOutsideClick(ref, onOutsideClick, true);
       });
 
-      document.dispatchEvent(mouseDownEvent);
+      vi.advanceTimersByTime(15);
 
-      // Should NOT call onOutsideClick since ref is null (no element means no action)
+      const event = new MouseEvent('mousedown', { bubbles: true });
+
+      expect(() => {
+        document.dispatchEvent(event);
+      }).not.toThrow();
+
+      // With null ref, every click is "outside" (ref.current check fails)
       expect(onOutsideClick).not.toHaveBeenCalled();
-
-      vi.useRealTimers();
     });
 
-    it('handles ref changing from null to element', () => {
-      const dynamicRef: RefObject<HTMLDivElement | null> = { current: null };
+    it('handles ref with different elements', () => {
+      const onOutsideClick = vi.fn();
+      const element1 = targetElement;
+      const element2 = document.createElement('div');
+      document.body.appendChild(element2);
 
-      vi.useFakeTimers();
-      const { rerender } = renderHook(() =>
-        useEnhancedOutsideClick(dynamicRef, onOutsideClick, true),
-      );
+      const ref = { current: element1 };
 
-      // Set ref to actual element
-      const element = document.createElement('div');
-      document.body.appendChild(element);
-      dynamicRef.current = element;
+      renderHook(() => {
+        useEnhancedOutsideClick(ref as any, onOutsideClick, true);
+      });
 
+      vi.advanceTimersByTime(15);
+
+      // Click on element2 (outside of element1)
+      let event = new MouseEvent('mousedown', { bubbles: true });
+      element2.dispatchEvent(event);
+      expect(onOutsideClick).toHaveBeenCalledTimes(1);
+
+      // Click on element1 (inside)
+      event = new MouseEvent('mousedown', { bubbles: true });
+      element1.dispatchEvent(event);
+      expect(onOutsideClick).toHaveBeenCalledTimes(1); // Still 1
+
+      document.body.removeChild(element2);
+    });
+  });
+
+  describe('Callback Changes', () => {
+    it('uses updated callback', () => {
+      const callback1 = vi.fn();
+      const callback2 = vi.fn();
+      let currentCallback = callback1;
+
+      const { rerender } = renderHook(() => {
+        const ref = useRef<HTMLElement>(targetElement);
+        useEnhancedOutsideClick(ref, currentCallback, true);
+      });
+
+      vi.advanceTimersByTime(15);
+
+      // Click with first callback
+      let event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
+      expect(callback1).toHaveBeenCalledTimes(1);
+      expect(callback2).not.toHaveBeenCalled();
+
+      // Change callback
+      currentCallback = callback2;
       rerender();
-      vi.advanceTimersByTime(20);
+      vi.advanceTimersByTime(15);
 
-      // Click on the element
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: element,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
-
-      // Should not call onOutsideClick since we clicked inside
-      expect(onOutsideClick).not.toHaveBeenCalled();
-
-      document.body.removeChild(element);
-      vi.useRealTimers();
-    });
-
-    it('handles multiple rapid clicks', () => {
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
-
-      vi.advanceTimersByTime(20);
-
-      const outsideElement = document.createElement('div');
-      document.body.appendChild(outsideElement);
-
-      // Click multiple times rapidly
-      for (let i = 0; i < 5; i++) {
-        const mouseDownEvent = new MouseEvent('mousedown', {
-          bubbles: true,
-          cancelable: true,
-        });
-        Object.defineProperty(mouseDownEvent, 'target', {
-          value: outsideElement,
-          enumerable: true,
-        });
-
-        document.dispatchEvent(mouseDownEvent);
-      }
-
-      // Should be called 5 times
-      expect(onOutsideClick).toHaveBeenCalledTimes(5);
-
-      document.body.removeChild(outsideElement);
-      vi.useRealTimers();
-    });
-
-    it('works with deeply nested child elements', () => {
-      const level1 = document.createElement('div');
-      const level2 = document.createElement('div');
-      const level3 = document.createElement('span');
-
-      ref.current!.appendChild(level1);
-      level1.appendChild(level2);
-      level2.appendChild(level3);
-
-      vi.useFakeTimers();
-      renderHook(() => useEnhancedOutsideClick(ref, onOutsideClick, true));
-
-      vi.advanceTimersByTime(20);
-
-      // Click on deeply nested child
-      const mouseDownEvent = new MouseEvent('mousedown', {
-        bubbles: true,
-        cancelable: true,
-      });
-      Object.defineProperty(mouseDownEvent, 'target', {
-        value: level3,
-        enumerable: true,
-      });
-
-      document.dispatchEvent(mouseDownEvent);
-
-      // Should not call onOutsideClick
-      expect(onOutsideClick).not.toHaveBeenCalled();
-
-      vi.useRealTimers();
+      // Click with second callback
+      event = new MouseEvent('mousedown', { bubbles: true });
+      outsideElement.dispatchEvent(event);
+      expect(callback1).toHaveBeenCalledTimes(1);
+      expect(callback2).toHaveBeenCalledTimes(1);
     });
   });
 });

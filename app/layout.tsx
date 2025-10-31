@@ -1,8 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 
-import { ThemeProvider } from '@/components/Providers/ThemeProvider';
-
 import './globals.css';
 
 import 'katex/dist/katex.min.css';
@@ -59,17 +57,30 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  // Zustand persist stores data as: {state: {...}, version: 0}
-                  var uiStorage = localStorage.getItem('ui-storage');
-                  var parsedStorage = uiStorage ? JSON.parse(uiStorage) : null;
-                  var theme = parsedStorage?.state?.theme || 'dark';
+                  // Read UI preferences from localStorage (simple JSON format)
+                  var prefs = localStorage.getItem('ui-preferences');
+                  var parsed = prefs ? JSON.parse(prefs) : null;
+
+                  // Apply theme before hydration to prevent flash
+                  var theme = parsed?.theme || 'dark';
                   if (theme === 'dark') {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
+
+                  // Set sidebar state (default to collapsed)
+                  var showChatbar = parsed?.showChatbar ?? false;
+                  document.documentElement.setAttribute('data-sidebar-state', showChatbar ? 'expanded' : 'collapsed');
+
+                  // Set promptbar state (default to expanded)
+                  var showPromptbar = parsed?.showPromptbar ?? true;
+                  document.documentElement.setAttribute('data-promptbar-state', showPromptbar ? 'expanded' : 'collapsed');
                 } catch (e) {
+                  // Fallback to defaults on error
                   document.documentElement.classList.add('dark');
+                  document.documentElement.setAttribute('data-sidebar-state', 'collapsed');
+                  document.documentElement.setAttribute('data-promptbar-state', 'expanded');
                 }
               })();
             `,
@@ -77,7 +88,7 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
   );

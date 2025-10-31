@@ -30,7 +30,7 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
 
   return (
     <div className="p-4">
-      <h2 className="text-xl font-bold mb-6 text-black dark:text-white">
+      <h2 className="hidden md:block text-xl font-bold mb-6 text-black dark:text-white">
         {t('General')}
       </h2>
 

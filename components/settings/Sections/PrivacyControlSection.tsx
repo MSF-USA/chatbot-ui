@@ -159,7 +159,7 @@ export const PrivacyControlSection: React.FC<PrivacyControlSectionProps> = ({
       <div className="mb-6">
         <div className="flex justify-between items-start mb-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h2 className="hidden md:block text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               {currentLocale === 'fr'
                 ? 'Politique de confidentialité'
                 : 'Privacy Policy'}

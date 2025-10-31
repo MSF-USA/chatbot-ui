@@ -2,7 +2,6 @@
 
 import { useSession } from 'next-auth/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useSwipeable } from 'react-swipeable';
 
 import { useTranslations } from 'next-intl';
 
@@ -17,7 +16,6 @@ import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 import { Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
-import { MobileNavigation } from './MobileNavigation';
 import { MobileSettingsHeader } from './MobileSettingsHeader';
 import { AccountSection } from './Sections/AccountSection';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
@@ -179,26 +177,6 @@ export function SettingDialog() {
     };
   }, [isSettingsOpen, setIsSettingsOpen]);
 
-  // Swipe handlers for mobile
-  const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      const sections = Object.values(SettingsSection);
-      const currentIndex = sections.indexOf(activeSection);
-      if (currentIndex < sections.length - 1) {
-        setActiveSection(sections[currentIndex + 1]);
-      }
-    },
-    onSwipedRight: () => {
-      const sections = Object.values(SettingsSection);
-      const currentIndex = sections.indexOf(activeSection);
-      if (currentIndex > 0) {
-        setActiveSection(sections[currentIndex - 1]);
-      }
-    },
-    preventScrollOnSwipe: true,
-    trackMouse: false,
-  });
-
   const handleSave = () => {
     setTheme(state.theme);
     setTemperature(state.temperature);
@@ -293,13 +271,13 @@ export function SettingDialog() {
               />
 
               {/* Content area */}
-              <div
-                className="flex-grow overflow-y-auto relative"
-                {...swipeHandlers}
-              >
+              <div className="flex-grow overflow-y-auto relative">
                 {/* Mobile header */}
                 {isMobileView && (
-                  <MobileSettingsHeader activeSection={activeSection} />
+                  <MobileSettingsHeader
+                    activeSection={activeSection}
+                    setActiveSection={setActiveSection}
+                  />
                 )}
 
                 {/* Section content */}
@@ -354,14 +332,6 @@ export function SettingDialog() {
 
                 {activeSection === SettingsSection.HELP_SUPPORT && (
                   <HelpSupportSection faqData={faqData} />
-                )}
-
-                {/* Mobile navigation */}
-                {isMobileView && (
-                  <MobileNavigation
-                    activeSection={activeSection}
-                    setActiveSection={setActiveSection}
-                  />
                 )}
               </div>
             </div>

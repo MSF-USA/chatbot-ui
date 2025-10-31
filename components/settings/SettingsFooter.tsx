@@ -27,7 +27,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
   const { data: session } = useSession();
 
   return (
-    <div className="flex flex-col px-4 py-3 border-t border-gray-300 dark:border-neutral-700">
+    <div className="flex flex-col px-4 py-3 border-t border-gray-300 dark:border-neutral-700 rounded-b-lg">
       {/* Reset settings button - only visible on mobile */}
       {handleReset && onClose && (
         <button
@@ -42,7 +42,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
       )}
 
       {/* Footer content */}
-      <div className="flex flex-col md:flex-row md:justify-between">
+      <div className="flex flex-row justify-between items-center w-full">
         <div className="text-gray-500 text-sm">
           v{version}.{build}.{env}
         </div>
@@ -50,7 +50,7 @@ export const SettingsFooter: FC<SettingsFooterProps> = ({
           href={`mailto:${
             session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
           }`}
-          className="flex items-center mt-2 md:mt-0 text-black dark:text-white text-sm"
+          className="flex items-center text-black dark:text-white text-sm hover:underline"
         >
           <IconExternalLink
             size={16}
