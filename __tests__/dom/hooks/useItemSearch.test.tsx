@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useItemSearch } from '@/lib/hooks/ui/useItemSearch';
+import { useItemSearch } from '@/client/hooks/ui/useItemSearch';
 
 import { describe, expect, it } from 'vitest';
 

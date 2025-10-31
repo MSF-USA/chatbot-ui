@@ -1,7 +1,7 @@
 import { renderHook } from '@testing-library/react';
 import { useRef } from 'react';
 
-import useEnhancedOutsideClick from '@/lib/hooks/ui/useEnhancedOutsideClick';
+import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

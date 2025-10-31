@@ -1,7 +1,7 @@
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 
-import { CustomAgent, useSettingsStore } from '@/lib/stores/settingsStore';
+import { CustomAgent, useSettingsStore } from '@/client/stores/settingsStore';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('settingsStore', () => {

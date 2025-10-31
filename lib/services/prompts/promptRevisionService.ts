@@ -1,3 +1,5 @@
+import { apiClient } from '@/client/services';
+
 /**
  * Interface for prompt revision/generation requests
  */
@@ -49,21 +51,10 @@ export interface PromptRevisionResponse {
 export const revisePrompt = async (
   request: PromptRevisionRequest,
 ): Promise<PromptRevisionResponse> => {
-  const response = await fetch('/api/prompts/revise', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(request),
-  });
-
-  const data: PromptRevisionResponse = await response.json();
-
-  if (!response.ok) {
-    throw new Error(data.error || 'Failed to revise prompt');
-  }
-
-  return data;
+  return apiClient.post<PromptRevisionResponse>(
+    '/api/chat/prompts/revise',
+    request,
+  );
 };
 
 /**

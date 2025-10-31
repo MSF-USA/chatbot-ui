@@ -1,13 +1,13 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useUploadState } from '@/lib/hooks/ui/useUploadState';
+import { useUploadState } from '@/client/hooks/ui/useUploadState';
 
 import { FilePreview } from '@/types/chat';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the file upload handler
-vi.mock('@/lib/handlers/chatInput/file-upload', () => ({
+vi.mock('@/client/handlers/chatInput/file-upload', () => ({
   onFileUpload: vi.fn(),
 }));
 
@@ -180,7 +180,7 @@ describe('useUploadState', () => {
 
     it('calls onFileUpload with correct arguments', async () => {
       const { onFileUpload } = await import(
-        '@/lib/handlers/chatInput/file-upload'
+        '@/client/handlers/chatInput/file-upload'
       );
       const { result } = renderHook(() => useUploadState());
 

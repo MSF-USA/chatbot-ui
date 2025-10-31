@@ -5,11 +5,12 @@ import {
   IconClearAll,
   IconMenu2,
   IconTool,
+  IconWorld,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useUI } from '@/client/hooks/ui/useUI';
 
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -34,7 +35,9 @@ export function MobileChatHeader({ onModelSelectChange }: MobileHeaderProps) {
 
   const displayModelName = selectedConversation?.model?.name || '';
   const hasMessages = (selectedConversation?.messages?.length || 0) > 0;
-  const agentEnabled = selectedConversation?.model?.agentEnabled || false;
+  const azureAgentMode = selectedConversation?.model?.azureAgentMode || false;
+  const searchModeEnabled =
+    selectedConversation?.model?.searchModeEnabled ?? true;
   const modelProvider =
     OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]?.provider;
 
@@ -87,11 +90,18 @@ export function MobileChatHeader({ onModelSelectChange }: MobileHeaderProps) {
             <span className="font-semibold text-neutral-900 dark:text-white truncate text-base ml-1.5">
               {displayModelName || 'Select Model'}
             </span>
-            {agentEnabled && (
+            {azureAgentMode && (
               <IconTool
                 size={12}
-                className="ml-1 text-gray-600 dark:text-gray-400 shrink-0"
-                title="Agent Tools Enabled"
+                className="ml-1 text-blue-600 dark:text-blue-400 shrink-0"
+                title="Azure Agent Mode"
+              />
+            )}
+            {searchModeEnabled && !azureAgentMode && (
+              <IconWorld
+                size={12}
+                className="ml-1 text-green-600 dark:text-green-400 shrink-0"
+                title="Search Mode"
               />
             )}
             <IconChevronDown

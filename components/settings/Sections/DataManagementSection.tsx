@@ -3,7 +3,7 @@ import { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
 
 import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 import { formatBytes } from '@/lib/utils/app/storage/storageUtils';

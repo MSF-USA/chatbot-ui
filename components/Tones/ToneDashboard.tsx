@@ -19,6 +19,8 @@ import {
   FileUploadSection,
 } from '@/components/UI/FileUploadSection';
 
+import { ApiError, apiClient } from '@/client/services';
+
 interface ToneDashboardProps {
   isOpen: boolean;
   onClose: () => void;
@@ -270,30 +272,27 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
         combinedContent = fileContents || analysisGoal;
       }
 
-      const response = await fetch('/api/tones/analyze', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const data: ToneAnalysisResponse = await apiClient.post(
+        '/api/chat/tones/analyze',
+        {
           toneName: name || 'Untitled Tone',
           toneDescription: description,
           sampleContent: combinedContent,
           analysisGoal: analysisGoal || undefined,
-          fileUrls: fileUrls.length > 0 ? fileUrls : undefined, // Pass file URLs for server-side processing
-        }),
-      });
-
-      const data: ToneAnalysisResponse = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to analyze tone');
-      }
+          fileUrls: fileUrls.length > 0 ? fileUrls : undefined,
+        },
+      );
 
       setAnalysisResult(data);
     } catch (error) {
       console.error('Analysis error:', error);
-      alert(error instanceof Error ? error.message : 'Failed to analyze tone');
+      const message =
+        error instanceof ApiError
+          ? error.getUserMessage()
+          : error instanceof Error
+            ? error.message
+            : 'Failed to analyze tone';
+      alert(message);
     } finally {
       setIsAnalyzing(false);
     }

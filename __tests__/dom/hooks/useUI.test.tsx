@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useUI } from '@/client/hooks/ui/useUI';
 
 import * as UIPreferencesProvider from '@/components/Providers/UIPreferencesProvider';
 
-import { useUIStore } from '@/lib/stores/uiStore';
+import { useUIStore } from '@/client/stores/uiStore';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the UIPreferencesProvider module

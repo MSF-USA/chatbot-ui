@@ -3,7 +3,7 @@ import { FolderInterface } from './folder';
 import { OpenAIModel } from './openai';
 import { Prompt } from './prompt';
 
-import { CustomAgent } from '@/lib/stores/settingsStore';
+import { CustomAgent } from '@/client/stores/settingsStore';
 
 export type SupportedExportFormats =
   | ExportFormatV1

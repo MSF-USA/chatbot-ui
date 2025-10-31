@@ -6,7 +6,7 @@
 import {
   LocalStorageService,
   StorageKeys,
-} from '@/lib/services/storage/localStorageService';
+} from '@/client/services/storage/localStorageService';
 
 // Mock localStorage
 const localStorageMock = (() => {

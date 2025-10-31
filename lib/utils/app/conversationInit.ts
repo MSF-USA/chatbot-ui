@@ -28,21 +28,19 @@ export const createDefaultConversation = (
 ): Conversation => {
   const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
 
-  // Enable agent mode by default if the model has agentId
-  const modelWithAgent =
-    defaultModel?.id === 'gpt-4o' && defaultModel.agentId
-      ? {
-          ...defaultModel,
-          agentEnabled: true,
-          agentId: defaultModel.agentId,
-        }
-      : defaultModel;
+  // Set default mode configuration
+  const modelWithDefaults = {
+    ...defaultModel,
+    azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
+    searchModeEnabled: true, // Search Mode ON by default
+    ...(defaultModel.agentId && { agentId: defaultModel.agentId }),
+  };
 
   return {
     id: uuidv4(),
     name: 'New Conversation',
     messages: [],
-    model: modelWithAgent,
+    model: modelWithDefaults,
     prompt: systemPrompt || '',
     temperature: temperature || 0.5,
     folderId: null,

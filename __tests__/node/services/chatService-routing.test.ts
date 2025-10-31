@@ -52,40 +52,59 @@ describe('ChatService SDK Routing', () => {
   });
 
   describe('Agent Routing', () => {
-    it('should route agent-enabled models to agent handler', () => {
+    it('should route Azure Agent Mode to agent handler', () => {
       const agentConfig = {
-        agentEnabled: true,
+        azureAgentMode: true,
         agentId: 'asst_DHpJVkpNlBiaGgglkvvFALMI',
       };
 
       // Agent routing check
-      expect(agentConfig.agentEnabled).toBe(true);
+      expect(agentConfig.azureAgentMode).toBe(true);
       expect(agentConfig.agentId).toBeDefined();
       expect(agentConfig.agentId).toMatch(/^asst_[A-Za-z0-9]+$/);
     });
 
-    it('should not route models without agent config to agent handler', () => {
+    it('should route Search Mode to tool-aware handler', () => {
+      const searchConfig = {
+        azureAgentMode: false,
+        searchModeEnabled: true,
+      };
+
+      expect(searchConfig.azureAgentMode).toBe(false);
+      expect(searchConfig.searchModeEnabled).toBe(true);
+    });
+
+    it('should not route models without agent or search config to special handlers', () => {
       const regularConfig = {
-        agentEnabled: false,
+        azureAgentMode: false,
+        searchModeEnabled: false,
         agentId: undefined,
       };
 
-      expect(regularConfig.agentEnabled).toBe(false);
+      expect(regularConfig.azureAgentMode).toBe(false);
+      expect(regularConfig.searchModeEnabled).toBe(false);
       expect(regularConfig.agentId).toBeUndefined();
     });
 
-    it('should prioritize agent routing over SDK routing', () => {
-      // Agent routing should happen before SDK routing
+    it('should prioritize Azure Agent Mode and Search Mode routing over SDK routing', () => {
+      // Routing priority order
       const priorities = [
-        { name: 'bot', priority: 1 }, // RAG/Bot flow
-        { name: 'agent', priority: 2 }, // AI Foundry Agent flow
-        { name: 'sdk', priority: 3 }, // SDK routing
-        { name: 'reasoning', priority: 4 }, // Reasoning model flow
+        { name: 'audio', priority: 1 }, // Audio/video files
+        { name: 'bot', priority: 2 }, // RAG/Bot flow
+        { name: 'azureAgent', priority: 3 }, // Azure Agent Mode (direct AI Foundry)
+        { name: 'searchMode', priority: 4 }, // Search Mode (tool-aware)
         { name: 'standard', priority: 5 }, // Standard chat flow
       ];
 
-      expect(priorities.find((p) => p.name === 'agent')?.priority).toBeLessThan(
-        priorities.find((p) => p.name === 'sdk')?.priority || 0,
+      expect(
+        priorities.find((p) => p.name === 'azureAgent')?.priority,
+      ).toBeLessThan(
+        priorities.find((p) => p.name === 'searchMode')?.priority || 0,
+      );
+      expect(
+        priorities.find((p) => p.name === 'searchMode')?.priority,
+      ).toBeLessThan(
+        priorities.find((p) => p.name === 'standard')?.priority || 0,
       );
     });
   });

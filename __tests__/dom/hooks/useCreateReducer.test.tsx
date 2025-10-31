@@ -1,6 +1,9 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { ActionType, useCreateReducer } from '@/lib/hooks/ui/useCreateReducer';
+import {
+  ActionType,
+  useCreateReducer,
+} from '@/client/hooks/ui/useCreateReducer';
 
 import { describe, expect, it } from 'vitest';
 

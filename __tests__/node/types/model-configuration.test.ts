@@ -63,7 +63,8 @@ describe('Model Configuration', () => {
         'asst_Puf3ldskHlYHmW5z9aQy5fZL',
       );
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].isAgent).toBe(true);
-      expect(OpenAIModels[OpenAIModelID.GPT_4_1].agentEnabled).toBe(true);
+      expect(OpenAIModels[OpenAIModelID.GPT_4_1].azureAgentMode).toBe(false); // Azure Agent Mode OFF by default (privacy-first)
+      expect(OpenAIModels[OpenAIModelID.GPT_4_1].searchModeEnabled).toBe(true); // Search Mode ON by default
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].modelType).toBe('agent');
     });
 
@@ -178,6 +179,7 @@ describe('Model Configuration', () => {
         expect(model.knowledgeCutoff).toBeDefined();
         expect(model.sdk).toBeDefined();
         expect(model.supportsTemperature).toBeDefined();
+        expect(typeof model.searchModeEnabled).toBe('boolean'); // All models should have searchModeEnabled
       });
     });
 

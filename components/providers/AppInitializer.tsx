@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useConversationStore } from '@/lib/stores/conversationStore';
-import { useSettingsStore } from '@/lib/stores/settingsStore';
+
+import { LocalStorageService } from '@/client/services/storage/localStorageService';
+
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+
+import { useConversationStore } from '@/client/stores/conversationStore';
+import { useSettingsStore } from '@/client/stores/settingsStore';
 import { getDefaultModel, isModelDisabled } from '@/config/models';
-import { LocalStorageService } from '@/lib/services/storage/localStorageService';
 
 /**
  * AppInitializer - Handles app initialization logic
@@ -40,26 +43,36 @@ export function AppInitializer() {
 
       // Continue with normal initialization
       // Access stores directly for one-time initialization
-      const { setModels, defaultModelId, setDefaultModelId } = useSettingsStore.getState();
-      const { conversations, selectedConversationId, selectConversation, setIsLoaded } = useConversationStore.getState();
+      const { setModels, defaultModelId, setDefaultModelId } =
+        useSettingsStore.getState();
+      const {
+        conversations,
+        selectedConversationId,
+        selectConversation,
+        setIsLoaded,
+      } = useConversationStore.getState();
 
       // 1. Initialize models list (filtered by environment)
       const models: OpenAIModel[] = Object.values(OpenAIModels).filter(
-        m => !m.isLegacy && !isModelDisabled(m.id)
+        (m) => !m.isLegacy && !isModelDisabled(m.id),
       );
       setModels(models);
 
       // 2. Set default model if not already persisted
       if (!defaultModelId && models.length > 0) {
         const envDefaultModelId = getDefaultModel();
-        const defaultModel = models.find(m => m.id === envDefaultModelId) || models[0];
+        const defaultModel =
+          models.find((m) => m.id === envDefaultModelId) || models[0];
         if (defaultModel) {
           setDefaultModelId(defaultModel.id as OpenAIModelID);
         }
       }
 
       // 3. Validate selected conversation exists
-      if (selectedConversationId && !conversations.find(c => c.id === selectedConversationId)) {
+      if (
+        selectedConversationId &&
+        !conversations.find((c) => c.id === selectedConversationId)
+      ) {
         // Selected conversation no longer exists, select first available
         if (conversations.length > 0) {
           selectConversation(conversations[0].id);

@@ -6,12 +6,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useChat } from '@/lib/hooks/chat/useChat';
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useAutoDismissError } from '@/lib/hooks/ui/useAutoDismissError';
-import { useModalState } from '@/lib/hooks/ui/useModalSync';
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useChat } from '@/client/hooks/chat/useChat';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useAutoDismissError } from '@/client/hooks/ui/useAutoDismissError';
+import { useModalState } from '@/client/hooks/ui/useModalSync';
+import { useUI } from '@/client/hooks/ui/useUI';
 
 import {
   canInitializeConversation,
@@ -37,7 +37,7 @@ import { LoadingScreen } from './LoadingScreen';
 import { MemoizedChatMessage } from './MemoizedChatMessage';
 import { ModelSelect } from './ModelSelect';
 
-import { useConversationStore } from '@/lib/stores/conversationStore';
+import { useConversationStore } from '@/client/stores/conversationStore';
 
 interface ChatProps {
   mobileModelSelectOpen?: boolean;
@@ -189,17 +189,44 @@ export function Chat({
       if (lastMessage?.role === 'user') {
         // Use setTimeout to ensure DOM has fully updated and rendered
         setTimeout(() => {
-          if (lastMessageRef.current) {
-            // Use scrollIntoView API - much more reliable than manual pixel calculations
-            // block: 'start' positions the element at the TOP of the scrollable container
-            lastMessageRef.current.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start',
+          if (lastMessageRef.current && chatContainerRef.current) {
+            const container = chatContainerRef.current;
+            const messageElement = lastMessageRef.current;
+
+            // Get the previous message to calculate how much to scroll past it
+            const messageElements = container.querySelectorAll(
+              'div[class*="mx-auto"] > div, div[class*="mx-auto"] > [class]',
+            );
+            const messageIndex =
+              Array.from(messageElements).indexOf(messageElement);
+            const previousElement =
+              messageIndex > 0 ? messageElements[messageIndex - 1] : null;
+
+            let scrollTarget;
+            if (previousElement) {
+              // Scroll to just past the previous element to completely hide it
+              const prevElement = previousElement as HTMLElement;
+              scrollTarget =
+                prevElement.offsetTop + prevElement.offsetHeight + 20; // 20px gap
+            } else {
+              // No previous message, scroll to top
+              scrollTarget = messageElement.offsetTop;
+            }
+
+            console.log('[Chat Scroll] Scrolling to position:', {
+              messageOffsetTop: messageElement.offsetTop,
+              scrollTarget,
+              hasPreviousElement: !!previousElement,
             });
 
-            console.log('[Chat Scroll] Scrolled user message into view at top');
+            container.scrollTo({
+              top: scrollTarget,
+              behavior: 'smooth',
+            });
+
+            console.log('[Chat Scroll] Scrolled user message into view');
           } else {
-            console.log('[Chat Scroll] Missing lastMessageRef');
+            console.log('[Chat Scroll] Missing refs');
           }
         }, 50);
       }
@@ -420,7 +447,10 @@ export function Chat({
           onModelClick={() => setIsModelSelectOpen(true)}
           onClearAll={handleClearAll}
           hasMessages={hasMessages}
-          agentEnabled={selectedConversation?.model?.agentEnabled || false}
+          azureAgentMode={selectedConversation?.model?.azureAgentMode || false}
+          searchModeEnabled={
+            selectedConversation?.model?.searchModeEnabled ?? true
+          }
           showChatbar={showChatbar}
         />
       </div>

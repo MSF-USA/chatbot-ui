@@ -5,10 +5,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useCreateReducer } from '@/lib/hooks/ui/useCreateReducer';
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useCreateReducer } from '@/client/hooks/ui/useCreateReducer';
+import { useUI } from '@/client/hooks/ui/useUI';
 
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';

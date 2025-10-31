@@ -14,7 +14,7 @@ import {
 
 import ImageIcon from '@/components/Icons/image';
 
-import { onFileUpload } from '@/lib/handlers/chatInput/file-upload';
+import { onFileUpload } from '@/client/handlers/chatInput/file-upload';
 
 const onImageUploadButtonClick = (
   event: React.ChangeEvent<any>,

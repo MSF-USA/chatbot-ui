@@ -21,10 +21,10 @@ import { PiSidebarSimple } from 'react-icons/pi';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useFolderManagement } from '@/lib/hooks/ui/useFolderManagement';
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useFolderManagement } from '@/client/hooks/ui/useFolderManagement';
+import { useUI } from '@/client/hooks/ui/useUI';
 
 import { Conversation } from '@/types/chat';
 
@@ -135,21 +135,19 @@ export function Sidebar() {
       models.find((m) => m.id === defaultModelId) || models[0];
     if (!defaultModel) return;
 
-    // Enable agent mode by default if the model has agentId
-    const modelWithAgent =
-      defaultModel?.id === 'gpt-4o' && defaultModel.agentId
-        ? {
-            ...defaultModel,
-            agentEnabled: true,
-            agentId: defaultModel.agentId,
-          }
-        : defaultModel;
+    // Set default mode configuration
+    const modelWithDefaults = {
+      ...defaultModel,
+      azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
+      searchModeEnabled: true, // Search Mode ON by default
+      ...(defaultModel.agentId && { agentId: defaultModel.agentId }),
+    };
 
     const newConversation: Conversation = {
       id: uuidv4(),
       name: t('New Conversation'),
       messages: [],
-      model: modelWithAgent,
+      model: modelWithDefaults,
       prompt: systemPrompt || '',
       temperature: temperature || 0.5,
       folderId: null,

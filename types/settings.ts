@@ -3,4 +3,5 @@ export interface Settings {
   temperature: number;
   systemPrompt: string;
   advancedMode: boolean;
+  minimizeAIFoundryUse: boolean;
 }

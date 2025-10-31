@@ -20,7 +20,7 @@ import {
 
 import { OpenAIModels } from '@/types/openai';
 
-import { CustomAgent } from '@/lib/stores/settingsStore';
+import { CustomAgent } from '@/client/stores/settingsStore';
 
 interface CustomAgentListProps {
   agents: CustomAgent[];

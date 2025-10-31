@@ -21,8 +21,8 @@ import {
 
 import { useTranslations } from 'next-intl';
 
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useTones } from '@/lib/hooks/settings/useTones';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useTones } from '@/client/hooks/settings/useTones';
 
 import { Conversation, Message } from '@/types/chat';
 

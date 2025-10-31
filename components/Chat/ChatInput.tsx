@@ -19,12 +19,12 @@ import { useDropzone } from 'react-dropzone';
 
 import { useTranslations } from 'next-intl';
 
-import { useChat } from '@/lib/hooks/chat/useChat';
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useTones } from '@/lib/hooks/settings/useTones';
-import { usePromptSelection } from '@/lib/hooks/ui/usePromptSelection';
-import { useUploadState } from '@/lib/hooks/ui/useUploadState';
+import { useChat } from '@/client/hooks/chat/useChat';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useTones } from '@/client/hooks/settings/useTones';
+import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
+import { useUploadState } from '@/client/hooks/ui/useUploadState';
 
 import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
 import { buildMessageContent } from '@/lib/utils/chat/contentBuilder';
@@ -640,7 +640,7 @@ export const ChatInput = ({
               </div>
 
               <div
-                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-4 md:left-auto md:right-3 md:translate-x-0 transition-all duration-200 ease-in-out ${
+                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-4 md:left-auto md:right-3 md:translate-x-0 z-[9999] transition-all duration-200 ease-in-out ${
                   showScrollDownButton && !isFocused
                     ? 'opacity-100 scale-100 pointer-events-auto'
                     : 'opacity-0 scale-90 pointer-events-none'

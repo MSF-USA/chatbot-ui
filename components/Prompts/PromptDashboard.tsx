@@ -13,7 +13,7 @@ import { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useTones } from '@/lib/hooks/settings/useTones';
+import { useTones } from '@/client/hooks/settings/useTones';
 
 import {
   PromptRevisionResponse,

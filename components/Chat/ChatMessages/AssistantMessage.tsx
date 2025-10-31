@@ -18,6 +18,7 @@ import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 
+import { ApiError } from '@/client/services';
 import type { MermaidConfig } from 'mermaid';
 
 interface AssistantMessageProps {
@@ -165,7 +166,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       setIsGeneratingAudio(true);
       setLoadingMessage('Generating audio...');
 
-      const response = await fetch('/api/tts', {
+      const response = await fetch('/api/chat/tts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -174,7 +175,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error('TTS conversion failed');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'TTS conversion failed');
       }
 
       setLoadingMessage('Processing audio...');
@@ -186,8 +188,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     } catch (error) {
       console.error('Error in TTS:', error);
       setIsGeneratingAudio(false);
-      setLoadingMessage('Error generating audio. Please try again.');
-      setTimeout(() => setLoadingMessage(null), 3000); // Clear error message after 3 seconds
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'Error generating audio. Please try again.';
+      setLoadingMessage(message);
+      setTimeout(() => setLoadingMessage(null), 3000);
     }
   };
 

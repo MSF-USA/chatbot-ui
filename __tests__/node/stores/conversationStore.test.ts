@@ -1,7 +1,8 @@
-import { describe, expect, it, beforeEach } from 'vitest';
-import { useConversationStore } from '@/lib/stores/conversationStore';
 import { Conversation } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
+
+import { useConversationStore } from '@/client/stores/conversationStore';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('conversationStore', () => {
   beforeEach(() => {
@@ -28,7 +29,10 @@ describe('conversationStore', () => {
   });
 
   describe('Conversation Management', () => {
-    const createMockConversation = (id: string, name: string): Conversation => ({
+    const createMockConversation = (
+      id: string,
+      name: string,
+    ): Conversation => ({
       id,
       name,
       messages: [],
@@ -47,7 +51,9 @@ describe('conversationStore', () => {
 
         useConversationStore.getState().setConversations(conversations);
 
-        expect(useConversationStore.getState().conversations).toEqual(conversations);
+        expect(useConversationStore.getState().conversations).toEqual(
+          conversations,
+        );
       });
 
       it('replaces existing conversations', () => {
@@ -61,7 +67,9 @@ describe('conversationStore', () => {
       });
 
       it('can set empty array', () => {
-        useConversationStore.getState().setConversations([createMockConversation('1', 'Test')]);
+        useConversationStore
+          .getState()
+          .setConversations([createMockConversation('1', 'Test')]);
         useConversationStore.getState().setConversations([]);
 
         expect(useConversationStore.getState().conversations).toEqual([]);
@@ -75,7 +83,9 @@ describe('conversationStore', () => {
         useConversationStore.getState().addConversation(conversation);
 
         expect(useConversationStore.getState().conversations).toHaveLength(1);
-        expect(useConversationStore.getState().conversations[0]).toEqual(conversation);
+        expect(useConversationStore.getState().conversations[0]).toEqual(
+          conversation,
+        );
       });
 
       it('adds conversation to existing list', () => {
@@ -86,7 +96,10 @@ describe('conversationStore', () => {
         useConversationStore.getState().addConversation(second);
 
         expect(useConversationStore.getState().conversations).toHaveLength(2);
-        expect(useConversationStore.getState().conversations).toEqual([first, second]);
+        expect(useConversationStore.getState().conversations).toEqual([
+          first,
+          second,
+        ]);
       });
 
       it('auto-selects newly added conversation', () => {
@@ -94,7 +107,9 @@ describe('conversationStore', () => {
 
         useConversationStore.getState().addConversation(conversation);
 
-        expect(useConversationStore.getState().selectedConversationId).toBe('1');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '1',
+        );
       });
 
       it('updates selection when adding multiple conversations', () => {
@@ -102,10 +117,14 @@ describe('conversationStore', () => {
         const second = createMockConversation('2', 'Second');
 
         useConversationStore.getState().addConversation(first);
-        expect(useConversationStore.getState().selectedConversationId).toBe('1');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '1',
+        );
 
         useConversationStore.getState().addConversation(second);
-        expect(useConversationStore.getState().selectedConversationId).toBe('2');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '2',
+        );
       });
     });
 
@@ -114,7 +133,9 @@ describe('conversationStore', () => {
         const conversation = createMockConversation('1', 'Original');
         useConversationStore.getState().setConversations([conversation]);
 
-        useConversationStore.getState().updateConversation('1', { name: 'Updated' });
+        useConversationStore
+          .getState()
+          .updateConversation('1', { name: 'Updated' });
 
         const updated = useConversationStore.getState().conversations[0];
         expect(updated.name).toBe('Updated');
@@ -124,8 +145,12 @@ describe('conversationStore', () => {
         const conversation = createMockConversation('1', 'Test');
         useConversationStore.getState().setConversations([conversation]);
 
-        const newMessages = [{ role: 'user' as const, content: 'Hello', messageType: undefined }];
-        useConversationStore.getState().updateConversation('1', { messages: newMessages });
+        const newMessages = [
+          { role: 'user' as const, content: 'Hello', messageType: undefined },
+        ];
+        useConversationStore
+          .getState()
+          .updateConversation('1', { messages: newMessages });
 
         const updated = useConversationStore.getState().conversations[0];
         expect(updated.messages).toEqual(newMessages);
@@ -136,7 +161,9 @@ describe('conversationStore', () => {
         useConversationStore.getState().setConversations([conversation]);
 
         const before = Date.now();
-        useConversationStore.getState().updateConversation('1', { name: 'Updated' });
+        useConversationStore
+          .getState()
+          .updateConversation('1', { name: 'Updated' });
         const after = Date.now();
 
         const updated = useConversationStore.getState().conversations[0];
@@ -155,7 +182,9 @@ describe('conversationStore', () => {
         ];
         useConversationStore.getState().setConversations(conversations);
 
-        useConversationStore.getState().updateConversation('2', { name: 'Updated' });
+        useConversationStore
+          .getState()
+          .updateConversation('2', { name: 'Updated' });
 
         const all = useConversationStore.getState().conversations;
         expect(all[0].name).toBe('First');
@@ -167,9 +196,13 @@ describe('conversationStore', () => {
         const conversation = createMockConversation('1', 'Test');
         useConversationStore.getState().setConversations([conversation]);
 
-        useConversationStore.getState().updateConversation('999', { name: 'Updated' });
+        useConversationStore
+          .getState()
+          .updateConversation('999', { name: 'Updated' });
 
-        expect(useConversationStore.getState().conversations[0].name).toBe('Test');
+        expect(useConversationStore.getState().conversations[0].name).toBe(
+          'Test',
+        );
       });
 
       it('updates multiple fields at once', () => {
@@ -211,7 +244,9 @@ describe('conversationStore', () => {
 
         useConversationStore.getState().deleteConversation('1');
 
-        expect(useConversationStore.getState().selectedConversationId).toBeNull();
+        expect(
+          useConversationStore.getState().selectedConversationId,
+        ).toBeNull();
       });
 
       it('preserves selection if deleting different conversation', () => {
@@ -224,7 +259,9 @@ describe('conversationStore', () => {
 
         useConversationStore.getState().deleteConversation('2');
 
-        expect(useConversationStore.getState().selectedConversationId).toBe('1');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '1',
+        );
       });
 
       it('handles deleting non-existent conversation', () => {
@@ -250,22 +287,30 @@ describe('conversationStore', () => {
       it('sets selected conversation ID', () => {
         useConversationStore.getState().selectConversation('123');
 
-        expect(useConversationStore.getState().selectedConversationId).toBe('123');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '123',
+        );
       });
 
       it('can change selection', () => {
         useConversationStore.getState().selectConversation('1');
-        expect(useConversationStore.getState().selectedConversationId).toBe('1');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '1',
+        );
 
         useConversationStore.getState().selectConversation('2');
-        expect(useConversationStore.getState().selectedConversationId).toBe('2');
+        expect(useConversationStore.getState().selectedConversationId).toBe(
+          '2',
+        );
       });
 
       it('can clear selection with null', () => {
         useConversationStore.getState().selectConversation('1');
         useConversationStore.getState().selectConversation(null);
 
-        expect(useConversationStore.getState().selectedConversationId).toBeNull();
+        expect(
+          useConversationStore.getState().selectedConversationId,
+        ).toBeNull();
       });
     });
 
@@ -286,7 +331,10 @@ describe('conversationStore', () => {
   });
 
   describe('Folder Management', () => {
-    const createMockConversation = (id: string, name: string): Conversation => ({
+    const createMockConversation = (
+      id: string,
+      name: string,
+    ): Conversation => ({
       id,
       name,
       messages: [],
@@ -343,7 +391,10 @@ describe('conversationStore', () => {
         useConversationStore.getState().addFolder(second);
 
         expect(useConversationStore.getState().folders).toHaveLength(2);
-        expect(useConversationStore.getState().folders).toEqual([first, second]);
+        expect(useConversationStore.getState().folders).toEqual([
+          first,
+          second,
+        ]);
       });
     });
 
@@ -405,7 +456,9 @@ describe('conversationStore', () => {
         ];
 
         useConversationStore.getState().setFolders([folder]);
-        useConversationStore.getState().setConversations(conversations as Conversation[]);
+        useConversationStore
+          .getState()
+          .setConversations(conversations as Conversation[]);
 
         useConversationStore.getState().deleteFolder('folder-1');
 
@@ -426,7 +479,9 @@ describe('conversationStore', () => {
         ];
 
         useConversationStore.getState().setFolders(folders);
-        useConversationStore.getState().setConversations(conversations as Conversation[]);
+        useConversationStore
+          .getState()
+          .setConversations(conversations as Conversation[]);
 
         useConversationStore.getState().deleteFolder('folder-1');
 

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useFolderManagement } from '@/lib/hooks/ui/useFolderManagement';
+import { useFolderManagement } from '@/client/hooks/ui/useFolderManagement';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

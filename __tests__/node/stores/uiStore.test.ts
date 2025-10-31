@@ -1,4 +1,4 @@
-import { useUIStore } from '@/lib/stores/uiStore';
+import { useUIStore } from '@/client/stores/uiStore';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('uiStore', () => {

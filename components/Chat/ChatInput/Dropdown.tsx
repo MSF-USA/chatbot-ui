@@ -21,8 +21,8 @@ import { createPortal } from 'react-dom';
 
 import { useTranslations } from 'next-intl';
 
-import { useDropdownKeyboardNav } from '@/lib/hooks/ui/useDropdownKeyboardNav';
-import useEnhancedOutsideClick from '@/lib/hooks/ui/useEnhancedOutsideClick';
+import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
+import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
 import {
   ChatInputSubmitTypes,

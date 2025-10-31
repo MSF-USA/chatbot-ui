@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useDragAndDrop } from '@/lib/hooks/ui/useDragAndDrop';
+import { useDragAndDrop } from '@/client/hooks/ui/useDragAndDrop';
 
 import { describe, expect, it, vi } from 'vitest';
 

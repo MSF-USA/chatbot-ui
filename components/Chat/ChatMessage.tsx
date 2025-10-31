@@ -2,8 +2,8 @@ import { FC, useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useChat } from '@/lib/hooks/chat/useChat';
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useChat } from '@/client/hooks/chat/useChat';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
 
 import {
   FileMessageContent,

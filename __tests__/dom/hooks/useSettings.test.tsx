@@ -1,8 +1,8 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useSettings } from '@/client/hooks/settings/useSettings';
 
-import { useSettingsStore } from '@/lib/stores/settingsStore';
+import { useSettingsStore } from '@/client/stores/settingsStore';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('useSettings', () => {

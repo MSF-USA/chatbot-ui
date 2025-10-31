@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { useAutoDismissError } from '@/lib/hooks/ui/useAutoDismissError';
+import { useAutoDismissError } from '@/client/hooks/ui/useAutoDismissError';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

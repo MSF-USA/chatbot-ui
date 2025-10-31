@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { usePromptSelection } from '@/lib/hooks/ui/usePromptSelection';
+import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
 
 import * as promptMatching from '@/lib/utils/chat/promptMatching';
 import * as variables from '@/lib/utils/chat/variables';

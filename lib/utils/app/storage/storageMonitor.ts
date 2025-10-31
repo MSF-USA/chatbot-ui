@@ -12,7 +12,7 @@
  */
 import { Conversation } from '@/types/chat';
 
-import { useConversationStore } from '@/lib/stores/conversationStore';
+import { useConversationStore } from '@/client/stores/conversationStore';
 
 // Constants
 export const STORAGE_THRESHOLDS = {

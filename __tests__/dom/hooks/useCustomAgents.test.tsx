@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useCustomAgents } from '@/lib/hooks/settings/useCustomAgents';
+import { useCustomAgents } from '@/client/hooks/settings/useCustomAgents';
 
 import type { OpenAIModelID } from '@/lib/types/openai';
 
-import { useSettingsStore } from '@/lib/stores/settingsStore';
-import type { CustomAgent } from '@/lib/stores/settingsStore';
+import { useSettingsStore } from '@/client/stores/settingsStore';
+import type { CustomAgent } from '@/client/stores/settingsStore';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('useCustomAgents', () => {

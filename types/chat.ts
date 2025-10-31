@@ -156,3 +156,17 @@ export interface FilePreview {
   status: UploadStatus;
   previewUrl: string;
 }
+
+// Tool Router Types
+export type ToolType = 'web_search';
+
+export interface ToolRouterResponse {
+  tools: ToolType[];
+  searchQuery?: string;
+  reasoning?: string; // Optional reasoning for debugging
+}
+
+export interface ToolRouterRequest {
+  messages: Message[];
+  currentMessage: string;
+}

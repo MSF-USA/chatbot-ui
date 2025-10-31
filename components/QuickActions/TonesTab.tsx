@@ -18,11 +18,11 @@ import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useTones } from '@/lib/hooks/settings/useTones';
-import { useFolderManagement } from '@/lib/hooks/ui/useFolderManagement';
-import { useItemSearch } from '@/lib/hooks/ui/useItemSearch';
-import { useModalForm } from '@/lib/hooks/ui/useModalForm';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useTones } from '@/client/hooks/settings/useTones';
+import { useFolderManagement } from '@/client/hooks/ui/useFolderManagement';
+import { useItemSearch } from '@/client/hooks/ui/useItemSearch';
+import { useModalForm } from '@/client/hooks/ui/useModalForm';
 
 import {
   exportTones,

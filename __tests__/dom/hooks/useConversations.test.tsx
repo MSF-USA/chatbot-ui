@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
 
 import type { Conversation } from '@/types/chat';
 import type { FolderInterface } from '@/types/folder';
 
-import { useConversationStore } from '@/lib/stores/conversationStore';
+import { useConversationStore } from '@/client/stores/conversationStore';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('useConversations', () => {

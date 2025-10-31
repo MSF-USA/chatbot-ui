@@ -18,13 +18,15 @@ import { RiRobot2Line } from 'react-icons/ri';
 
 import { useTranslations } from 'next-intl';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useCustomAgents } from '@/lib/hooks/settings/useCustomAgents';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useCustomAgents } from '@/client/hooks/settings/useCustomAgents';
+import { useSettings } from '@/client/hooks/settings/useSettings';
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import {
+  AzureAIIcon,
+  AzureOpenAIIcon,
   DeepSeekIcon,
   MetaIcon,
   OpenAIIcon,
@@ -36,7 +38,7 @@ import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
 import { ModelCard } from './ModelCard';
 
-import { CustomAgent } from '@/lib/stores/settingsStore';
+import { CustomAgent } from '@/client/stores/settingsStore';
 
 interface ModelSelectProps {
   onClose?: () => void;
@@ -110,7 +112,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         id: `custom-${agent.id}`,
         name: agent.name,
         agentId: agent.agentId,
-        agentEnabled: true,
+        azureAgentMode: true,
+        searchModeEnabled: false,
         description:
           agent.description || `Custom agent based on ${baseModel.name}`,
         modelType: 'agent' as const,
@@ -131,7 +134,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const isCustomAgent = selectedModel?.id?.startsWith('custom-');
   const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5;
   const agentAvailable = modelConfig?.agentId !== undefined;
-  const useAgent = selectedConversation?.model?.agentEnabled || isCustomAgent;
+  const useAzureAgent =
+    selectedConversation?.model?.azureAgentMode || isCustomAgent;
+  const searchModeEnabled =
+    selectedConversation?.model?.searchModeEnabled ?? true;
 
   const handleModelSelect = (model: OpenAIModel) => {
     if (!selectedConversation) {
@@ -151,16 +157,14 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     // Set as default model for future conversations
     setDefaultModelId(model.id as OpenAIModelID);
 
-    // When selecting a model, use agent mode by default if available
-    const shouldUseAgent =
-      OpenAIModels[model.id as OpenAIModelID]?.agentId !== undefined;
-    const modelToUse = shouldUseAgent
-      ? {
-          ...model,
-          agentEnabled: true,
-          agentId: OpenAIModels[model.id as OpenAIModelID]?.agentId,
-        }
-      : model;
+    // When selecting a model, set defaults: azureAgentMode OFF, searchModeEnabled ON
+    const modelConfig = OpenAIModels[model.id as OpenAIModelID];
+    const modelToUse = {
+      ...model,
+      azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
+      searchModeEnabled: true, // Search Mode ON by default
+      ...(modelConfig?.agentId && { agentId: modelConfig.agentId }),
+    };
 
     // Only update the model field to avoid overwriting other conversation properties
     updateConversation(selectedConversation.id, {
@@ -168,21 +172,38 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     });
   };
 
-  const handleToggleAgent = () => {
+  const handleToggleAzureAgent = () => {
     if (!selectedConversation || !selectedModel) return;
 
-    const currentlyHasAgent = selectedConversation.model?.agentEnabled;
+    const currentlyEnabled = selectedConversation.model?.azureAgentMode;
     const modelConfig = OpenAIModels[selectedModel.id as OpenAIModelID];
 
-    const modelToUse = currentlyHasAgent
-      ? { ...selectedModel, agentEnabled: false }
-      : modelConfig?.agentId
-        ? {
-            ...selectedModel,
-            agentEnabled: true,
-            agentId: modelConfig.agentId,
-          }
-        : selectedModel;
+    const modelToUse = {
+      ...selectedModel,
+      azureAgentMode: !currentlyEnabled,
+      // Search mode stays ON, we're just changing the routing method
+      searchModeEnabled: true,
+      ...(modelConfig?.agentId && { agentId: modelConfig.agentId }),
+    };
+
+    // Only update the model field to avoid overwriting other conversation properties
+    updateConversation(selectedConversation.id, {
+      model: modelToUse,
+    });
+  };
+
+  const handleToggleSearchMode = () => {
+    if (!selectedConversation || !selectedModel) return;
+
+    const currentlyEnabled =
+      selectedConversation.model?.searchModeEnabled ?? true;
+
+    const modelToUse = {
+      ...selectedModel,
+      searchModeEnabled: !currentlyEnabled,
+      // If turning off search mode, also turn off Azure Agent Mode
+      azureAgentMode: currentlyEnabled ? false : selectedModel.azureAgentMode,
+    };
 
     // Only update the model field to avoid overwriting other conversation properties
     updateConversation(selectedConversation.id, {
@@ -240,13 +261,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           {
             id: 'models',
             label: 'Models',
-            icon: <IconCpu size={20} />,
+            icon: <AzureOpenAIIcon className="w-5 h-5" />,
             width: '110px',
           },
           {
             id: 'agents',
             label: 'Agents',
-            icon: <RiRobot2Line size={20} />,
+            icon: <AzureAIIcon className="w-5 h-5" />,
             badge: customAgents.length,
             width: customAgents.length > 0 ? '145px' : '115px',
           },
@@ -289,7 +310,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           isSelected={isSelected}
                           onClick={() => handleModelSelect(model)}
                           icon={getProviderIcon(config?.provider)}
-                          hasTools={!!config?.agentId}
                         />
                       );
                     })}
@@ -343,9 +363,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                 : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
                         }`}
                       >
-                        {modelConfig?.modelType === 'agent'
-                          ? 'tools'
-                          : modelConfig?.modelType || 'foundational'}
+                        {modelConfig?.modelType || 'foundational'}
                       </span>
                       {modelConfig?.knowledgeCutoff && (
                         <span className="text-xs text-gray-600 dark:text-gray-400">
@@ -359,10 +377,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   {isCustomAgent && (
                     <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
                       <div className="flex items-start mb-3">
-                        <RiRobot2Line
-                          size={18}
-                          className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
-                        />
+                        <AzureAIIcon className="w-[18px] h-[18px] mr-2 mt-0.5 flex-shrink-0" />
                         <div className="text-sm text-blue-700 dark:text-blue-300">
                           <strong>Custom Agent:</strong> This agent runs on the
                           MSF AI Assistant Foundry instance with tools always
@@ -384,90 +399,119 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                     </div>
                   )}
 
-                  {/* No Tools Notice for models without tool support */}
-                  {!agentAvailable && !isCustomAgent && (
-                    <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-                      <div className="flex items-start">
-                        <IconAlertTriangle
-                          size={18}
-                          className="mr-2 mt-0.5 flex-shrink-0 text-amber-600 dark:text-amber-400"
-                        />
-                        <div className="text-sm text-amber-700 dark:text-amber-300">
-                          <strong>Note:</strong> Tool services (web search, code
-                          interpreter) are not yet available for this model
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Tools Toggle (only for non-custom agents) */}
-                  {agentAvailable && modelConfig?.agentId && !isCustomAgent && (
+                  {/* Search Mode Toggle (for all models) */}
+                  {!isCustomAgent && (
                     <div className="p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700">
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-2">
-                          <IconTool
+                          <IconWorld
                             size={20}
                             className="text-gray-600 dark:text-gray-400"
                           />
                           <div>
                             <div className="font-medium text-gray-900 dark:text-white">
-                              Enable AI Tools
+                              Search Mode
                             </div>
                             <div className="text-xs text-gray-600 dark:text-gray-400">
-                              Web search & code interpreter
+                              Will use web search when needed
                             </div>
                           </div>
                         </div>
                         <button
-                          onClick={handleToggleAgent}
+                          onClick={handleToggleSearchMode}
                           className="flex items-center"
                         >
                           <div
                             className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                              useAgent
+                              searchModeEnabled
                                 ? 'bg-blue-600'
                                 : 'bg-gray-300 dark:bg-gray-600'
                             }`}
                           >
                             <span
                               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                useAgent ? 'translate-x-6' : 'translate-x-1'
+                                searchModeEnabled
+                                  ? 'translate-x-6'
+                                  : 'translate-x-1'
                               }`}
                             />
                           </div>
                         </button>
                       </div>
 
-                      {/* Show agent capabilities when enabled */}
-                      {useAgent && (
-                        <div className="space-y-2 pt-3 border-t border-gray-200 dark:border-gray-700">
-                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                            <IconWorld
-                              size={16}
-                              className="mr-2 text-gray-600 dark:text-gray-400"
+                      {/* Show search mode routing options when enabled */}
+                      {searchModeEnabled && (
+                        <div className="space-y-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                          <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Search Routing:
+                          </div>
+
+                          {/* Privacy-Focused Option */}
+                          <label className="flex items-start gap-3 p-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors bg-white dark:bg-gray-900/50">
+                            <input
+                              type="radio"
+                              name="searchRouting"
+                              checked={!useAzureAgent}
+                              onChange={() => {
+                                if (useAzureAgent) {
+                                  handleToggleAzureAgent();
+                                }
+                              }}
+                              className="mt-0.5 w-4 h-4 text-blue-600 focus:ring-blue-500"
                             />
-                            <span>Real-time web search</span>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
-                            <IconCode
-                              size={16}
-                              className="mr-2 text-gray-600 dark:text-gray-400"
-                            />
-                            <span>Code interpreter & file analysis</span>
-                          </div>
-                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-500">
-                            <IconInfoCircle size={16} className="mr-2" />
-                            <span>
-                              Fixed configuration, no temperature control
-                            </span>
-                          </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <IconWorld
+                                  size={16}
+                                  className="text-gray-600 dark:text-gray-400"
+                                />
+                                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                  Privacy-Focused (default)
+                                </span>
+                              </div>
+                              <div className="text-xs text-gray-600 dark:text-gray-400">
+                                Slower but will use web search when needed
+                              </div>
+                            </div>
+                          </label>
+
+                          {/* Azure AI Foundry Mode Option (only for GPT-4.1) */}
+                          {agentAvailable && modelConfig?.agentId && (
+                            <label
+                              className={`flex items-start gap-3 p-3 rounded-lg border-2 ${useAzureAgent ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
+                            >
+                              <input
+                                type="radio"
+                                name="searchRouting"
+                                checked={useAzureAgent}
+                                onChange={() => {
+                                  if (!useAzureAgent) {
+                                    handleToggleAzureAgent();
+                                  }
+                                }}
+                                className="mt-0.5 w-4 h-4 text-blue-600 focus:ring-blue-500"
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <AzureAIIcon className="w-4 h-4 flex-shrink-0" />
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white">
+                                    Azure AI Foundry Mode
+                                  </span>
+                                </div>
+                                <div className="text-xs text-gray-600 dark:text-gray-400">
+                                  Faster responses with full context (less
+                                  private)
+                                </div>
+                              </div>
+                            </label>
+                          )}
                         </div>
                       )}
                     </div>
                   )}
 
                   {/* Advanced Options for Model */}
-                  {!useAgent &&
+                  {!useAzureAgent &&
                     selectedConversation &&
                     (modelConfig?.supportsTemperature !== false ||
                       modelConfig?.supportsReasoningEffort ||
@@ -715,9 +759,10 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
               <IconInfoCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
               <div>
                 <p>
-                  <strong>Tools Mode:</strong> Automatically uses tools like web
-                  search and code interpreter when needed. Temperature and other
-                  settings remain fixed for optimal tool performance.
+                  <strong>Azure Agent Mode:</strong> Direct AI Foundry routing
+                  with full conversation context and tools.
+                  <strong className="ml-2">Search Mode:</strong> Privacy-focused
+                  routing where only search queries are sent to AI Foundry.
                 </p>
               </div>
             </div>
@@ -805,7 +850,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                  <RiRobot2Line size={32} className="text-gray-400" />
+                  <AzureAIIcon className="w-8 h-8" />
                 </div>
                 <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                   No Custom Agents Yet

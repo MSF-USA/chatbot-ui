@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useDropdownKeyboardNav } from '@/lib/hooks/ui/useDropdownKeyboardNav';
-import type { KeyboardNavItem } from '@/lib/hooks/ui/useDropdownKeyboardNav';
+import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
+import type { KeyboardNavItem } from '@/client/hooks/ui/useDropdownKeyboardNav';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

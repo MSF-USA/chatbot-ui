@@ -1,10 +1,10 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useTones } from '@/lib/hooks/settings/useTones';
+import { useTones } from '@/client/hooks/settings/useTones';
 
 import type { Tone } from '@/types/tone';
 
-import { useSettingsStore } from '@/lib/stores/settingsStore';
+import { useSettingsStore } from '@/client/stores/settingsStore';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('useTones', () => {

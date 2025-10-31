@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import useModal from '@/lib/hooks/ui/useModal';
+import useModal from '@/client/hooks/ui/useModal';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 

@@ -17,7 +17,8 @@ import {
 
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
-import { CustomAgent } from '@/lib/stores/settingsStore';
+import { ApiError, apiClient } from '@/client/services';
+import { CustomAgent } from '@/client/stores/settingsStore';
 
 interface CustomAgentFormProps {
   onSave: (agent: CustomAgent) => void;
@@ -134,25 +135,20 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
     setValidationSuccess(false);
 
     try {
-      const response = await fetch('/api/agents/validate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ agentId: agentId.trim() }),
+      await apiClient.post('/api/chat/agents/validate', {
+        agentId: agentId.trim(),
       });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        setError(data.details || data.error || 'Validation failed');
-        return false;
-      }
 
       setValidationSuccess(true);
       return true;
-    } catch (err: any) {
-      setError(err.message || 'Network error during validation');
+    } catch (err) {
+      const message =
+        err instanceof ApiError
+          ? err.response?.details || err.message
+          : err instanceof Error
+            ? err.message
+            : 'Validation failed';
+      setError(message);
       return false;
     } finally {
       setIsValidating(false);

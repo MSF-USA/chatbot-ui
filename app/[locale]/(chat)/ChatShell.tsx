@@ -1,6 +1,6 @@
 'use client';
 
-import { useUI } from '@/lib/hooks/ui/useUI';
+import { useUI } from '@/client/hooks/ui/useUI';
 
 import { AppInitializer } from '@/components/Providers/AppInitializer';
 import { SettingDialog } from '@/components/Settings/SettingDialog';

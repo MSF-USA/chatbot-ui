@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 
-import { useModalForm } from '@/lib/hooks/ui/useModalForm';
+import { useModalForm } from '@/client/hooks/ui/useModalForm';
 
 import { describe, expect, it } from 'vitest';
 

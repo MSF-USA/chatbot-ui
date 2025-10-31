@@ -7,7 +7,6 @@ interface ModelCardProps {
   isSelected: boolean;
   onClick: () => void;
   icon?: ReactNode;
-  hasTools?: boolean;
   badge?: ReactNode;
 }
 
@@ -21,7 +20,6 @@ export const ModelCard: FC<ModelCardProps> = ({
   isSelected,
   onClick,
   icon,
-  hasTools,
   badge,
 }) => {
   return (
@@ -43,12 +41,6 @@ export const ModelCard: FC<ModelCardProps> = ({
           <span className="font-medium text-sm text-gray-900 dark:text-white">
             {name}
           </span>
-          {hasTools && (
-            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-              <IconTool size={10} className="mr-0.5" />
-              Tools
-            </span>
-          )}
           {badge}
         </div>
         {isSelected && (

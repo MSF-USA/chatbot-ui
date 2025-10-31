@@ -1,6 +1,6 @@
 import { CustomAgentExport } from '@/types/export';
 
-import { CustomAgent } from '@/lib/stores/settingsStore';
+import { CustomAgent } from '@/client/stores/settingsStore';
 
 /**
  * Exports custom agents to a JSON file

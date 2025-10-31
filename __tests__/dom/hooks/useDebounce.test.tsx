@@ -1,6 +1,6 @@
 import { renderHook, waitFor } from '@testing-library/react';
 
-import { useDebounce } from '@/lib/hooks/ui/useDebounce';
+import { useDebounce } from '@/client/hooks/ui/useDebounce';
 
 import { describe, expect, it, vi } from 'vitest';
 

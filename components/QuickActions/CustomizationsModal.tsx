@@ -5,9 +5,9 @@ import { useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { useConversations } from '@/lib/hooks/conversation/useConversations';
-import { useSettings } from '@/lib/hooks/settings/useSettings';
-import { useTones } from '@/lib/hooks/settings/useTones';
+import { useConversations } from '@/client/hooks/conversation/useConversations';
+import { useSettings } from '@/client/hooks/settings/useSettings';
+import { useTones } from '@/client/hooks/settings/useTones';
 
 import { TabNavigation } from '@/components/UI/TabNavigation';
 
