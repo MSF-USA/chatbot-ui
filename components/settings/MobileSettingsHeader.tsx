@@ -5,7 +5,6 @@ import {
   IconHelp,
   IconMenu2,
   IconMessage,
-  IconShield,
   IconUser,
   IconX,
 } from '@tabler/icons-react';
@@ -38,11 +37,6 @@ export const MobileSettingsHeader: FC<MobileSettingsHeaderProps> = ({
       section: SettingsSection.CHAT_SETTINGS,
       label: t('Chat Settings'),
       icon: <IconMessage size={20} />,
-    },
-    {
-      section: SettingsSection.PRIVACY_CONTROL,
-      label: t('Privacy & Security'),
-      icon: <IconShield size={20} />,
     },
     {
       section: SettingsSection.DATA_MANAGEMENT,

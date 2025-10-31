@@ -2,18 +2,12 @@ import {
   IconChevronDown,
   IconClearAll,
   IconDots,
-  IconExternalLink,
-  IconHelp,
-  IconSettings,
   IconTool,
   IconWorld,
 } from '@tabler/icons-react';
-import { useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
-
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 import {
   DeepSeekIcon,
@@ -56,7 +50,6 @@ export const ChatTopbar = ({
   showChatbar = false,
 }: Props) => {
   const t = useTranslations();
-  const { data: session } = useSession();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -159,42 +152,23 @@ export const ChatTopbar = ({
             </button>
 
             {/* Dropdown menu */}
-            {showMenu && (
+            {showMenu && hasMessages && (
               <div className="absolute right-0 top-full mt-1 z-10 w-48 rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
                 <div className="p-1">
                   {/* Clear option */}
-                  {hasMessages && (
-                    <button
-                      className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
-                      onClick={() => {
-                        onClearAll?.();
-                        setShowMenu(false);
-                      }}
-                    >
-                      <IconClearAll
-                        size={16}
-                        className="text-neutral-600 dark:text-neutral-400 shrink-0"
-                      />
-                      Clear
-                    </button>
-                  )}
-
-                  {/* Request Support option */}
-                  <a
-                    href={`mailto:${
-                      session?.user?.region === 'US'
-                        ? US_FEEDBACK_EMAIL
-                        : FEEDBACK_EMAIL
-                    }`}
+                  <button
                     className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
-                    onClick={() => setShowMenu(false)}
+                    onClick={() => {
+                      onClearAll?.();
+                      setShowMenu(false);
+                    }}
                   >
-                    <IconExternalLink
+                    <IconClearAll
                       size={16}
                       className="text-neutral-600 dark:text-neutral-400 shrink-0"
                     />
-                    Request Support
-                  </a>
+                    Clear
+                  </button>
                 </div>
               </div>
             )}

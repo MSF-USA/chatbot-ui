@@ -2,21 +2,17 @@ import {
   IconDatabase,
   IconDeviceDesktop,
   IconDeviceMobile,
-  IconExternalLink,
   IconHelp,
   IconMessage,
   IconRefresh,
   IconRobot,
   IconSettings,
-  IconShield,
   IconUser,
 } from '@tabler/icons-react';
-import { useSession } from 'next-auth/react';
 import { FC, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 import { Settings } from '@/types/settings';
 
 import { SidebarButton } from '../Sidebar/SidebarButton';
@@ -46,7 +42,6 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
   dispatch,
 }) => {
   const t = useTranslations();
-  const { data: session } = useSession();
   const [showResetConfirmation, setShowResetConfirmation] = useState(false);
 
   const confirmReset = () => {
@@ -94,14 +89,6 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
             icon={<IconRobot size={18} />}
             onClick={setActiveSection}
           /> */}
-
-          <NavigationItem
-            section={SettingsSection.PRIVACY_CONTROL}
-            activeSection={activeSection}
-            label={t('Privacy & Security')}
-            icon={<IconShield size={18} />}
-            onClick={setActiveSection}
-          />
 
           <NavigationItem
             section={SettingsSection.DATA_MANAGEMENT}
@@ -168,21 +155,6 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
             />
           </div>
         </div>
-
-        {/* Feedback link - styled similar to ChatTopbar */}
-        <a
-          href={`mailto:${
-            session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL
-          }`}
-          className="flex items-center px-2 py-1 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors text-black/50 dark:text-white/50 text-sm"
-          title={t('sendFeedback')}
-        >
-          <IconExternalLink
-            size={16}
-            className="mr-2 text-black dark:text-white/50"
-          />
-          <span>{t('sendFeedback')}</span>
-        </a>
 
         {/* Reset settings button - made more distinct */}
         <button

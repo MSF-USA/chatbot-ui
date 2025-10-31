@@ -23,7 +23,6 @@ import { DataManagementSection } from './Sections/DataManagementSection';
 import { GeneralSection } from './Sections/GeneralSection';
 import { HelpSupportSection } from './Sections/HelpSupportSection';
 import { MobileAppSection } from './Sections/MobileAppSection';
-import { PrivacyControlSection } from './Sections/PrivacyControlSection';
 import { SettingsFooter } from './SettingsFooter';
 import { SettingsSidebar } from './SettingsSidebar';
 import { SettingsSection } from './types';
@@ -302,12 +301,6 @@ export function SettingDialog() {
                   />
                 )}
 
-                {activeSection === SettingsSection.PRIVACY_CONTROL && (
-                  <PrivacyControlSection
-                    onClose={() => setIsSettingsOpen(false)}
-                  />
-                )}
-
                 {activeSection === SettingsSection.DATA_MANAGEMENT && (
                   <DataManagementSection
                     handleClearConversations={handleClearConversations}
@@ -331,7 +324,7 @@ export function SettingDialog() {
                 )}
 
                 {activeSection === SettingsSection.HELP_SUPPORT && (
-                  <HelpSupportSection faqData={faqData} />
+                  <HelpSupportSection />
                 )}
               </div>
             </div>

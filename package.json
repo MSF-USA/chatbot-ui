@@ -34,6 +34,7 @@
     "@testing-library/user-event": "^14.6.1",
     "katex": "^0.16.25",
     "launchdarkly-react-client-sdk": "^3.6.1",
+    "mermaid": "^11.12.1",
     "microsoft-cognitiveservices-speech-sdk": "^1.46.0",
     "mime-types": "^2.1.35",
     "next": "16.0.1",

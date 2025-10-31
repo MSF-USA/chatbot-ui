@@ -442,8 +442,19 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                       {/* Show search mode routing options when enabled */}
                       {searchModeEnabled && (
                         <div className="space-y-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                          <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Search Routing:
+                          <div className="flex items-center justify-between mb-2">
+                            <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                              Search Routing:
+                            </div>
+                            <a
+                              href="/info/search-mode"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-xs text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1"
+                            >
+                              What's the difference?
+                              <IconInfoCircle size={12} />
+                            </a>
                           </div>
 
                           {/* Privacy-Focused Option */}
@@ -470,7 +481,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                 </span>
                               </div>
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                Slower but will use web search when needed
+                                Slower responses, but uses web search when
+                                needed
                               </div>
                             </div>
                           </label>
@@ -504,6 +516,36 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                 </div>
                               </div>
                             </label>
+                          )}
+
+                          {/* Privacy Warning when Azure AI Foundry Mode is selected */}
+                          {useAzureAgent && (
+                            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                              <div className="flex items-start gap-2">
+                                <IconAlertTriangle
+                                  size={16}
+                                  className="text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5"
+                                />
+                                <div className="flex-1">
+                                  <div className="text-xs font-medium text-amber-800 dark:text-amber-200 mb-1">
+                                    Important Privacy Information
+                                  </div>
+                                  <div className="text-xs text-amber-700 dark:text-amber-300 mb-2">
+                                    Your full conversation will be stored in
+                                    Azure AI Foundry.
+                                  </div>
+                                  <a
+                                    href="/info/search-mode"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-xs text-amber-800 dark:text-amber-200 hover:underline font-medium flex items-center gap-1"
+                                  >
+                                    Learn more about data storage
+                                    <IconInfoCircle size={12} />
+                                  </a>
+                                </div>
+                              </div>
+                            </div>
                           )}
                         </div>
                       )}
@@ -750,21 +792,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                     )}
                 </div>
               )}
-            </div>
-          </div>
-
-          {/* Info Footer for Models Tab */}
-          <div className="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <div className="flex items-start text-xs text-gray-600 dark:text-gray-400">
-              <IconInfoCircle size={16} className="mr-2 mt-0.5 flex-shrink-0" />
-              <div>
-                <p>
-                  <strong>Azure Agent Mode:</strong> Direct AI Foundry routing
-                  with full conversation context and tools.
-                  <strong className="ml-2">Search Mode:</strong> Privacy-focused
-                  routing where only search queries are sent to AI Foundry.
-                </p>
-              </div>
             </div>
           </div>
         </div>
