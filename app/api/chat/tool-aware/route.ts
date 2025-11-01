@@ -124,8 +124,8 @@ export async function POST(req: NextRequest): Promise<Response> {
     const agentHandler = new AIFoundryAgentHandler(azureMonitorLogger);
     const agentChatService = new AgentChatService(agentHandler, logger);
 
-    // Use GPT-4.1 as the tool router model (fast and cheap)
-    const routerModel = OpenAIModels[OpenAIModelID.GPT_4_1];
+    // Use GPT-5-mini as the tool router model (fast, cheap, and intelligent)
+    const routerModel = OpenAIModels[OpenAIModelID.GPT_5_MINI];
     const toolRouterService = new ToolRouterService(
       azureOpenAIClient,
       routerModel,

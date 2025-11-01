@@ -100,6 +100,9 @@ export const useChatStore = create<ChatStore>((set) => ({
     forceStandardChat,
     forcedAgentType,
   ) => {
+    // Declare timeout outside try block so it's accessible in catch
+    let showLoadingTimeout: NodeJS.Timeout | null = null;
+
     try {
       // Determine loading message based on message type
       let loadingMessage = 'Thinking...';
@@ -147,14 +150,27 @@ export const useChatStore = create<ChatStore>((set) => ({
         }
       }
 
+      // Set streaming state but delay showing loading message
+      // Only show loading indicator if response takes longer than 400ms
       set({
         isStreaming: true,
         streamingContent: '',
         streamingConversationId: conversation.id,
         error: null,
         citations: [],
-        loadingMessage,
+        loadingMessage: null, // Start with null, will be set after delay
       });
+
+      // Delay showing loading message - only if response is slow
+      const loadingDelay = 400; // milliseconds
+
+      showLoadingTimeout = setTimeout(() => {
+        // Only set loading message if still streaming and no content yet
+        const currentState = get();
+        if (currentState.isStreaming && !currentState.streamingContent) {
+          set({ loadingMessage });
+        }
+      }, loadingDelay);
 
       // Get settings from settings store
       const settings = useSettingsStore.getState();
@@ -203,6 +219,7 @@ export const useChatStore = create<ChatStore>((set) => ({
       let extractedCitations: Citation[] = [];
       let extractedThreadId: string | undefined;
       let extractedTranscript: any | undefined;
+      let hasReceivedContent = false;
 
       // All responses from chatService are streams
       const reader = stream.getReader();
@@ -235,11 +252,27 @@ export const useChatStore = create<ChatStore>((set) => ({
           extractedTranscript = parsed.transcript;
         }
 
-        // Update streaming content and clear loading message on first chunk
+        // Update action message if found (keeps loadingMessage updated while waiting)
+        // This allows showing "Searching the web..." instead of just "Thinking..."
+        if (parsed.action && !hasReceivedContent) {
+          set({ loadingMessage: parsed.action });
+        }
+
+        // Check if we've received actual content (not just metadata)
+        if (displayText && displayText.trim().length > 0) {
+          hasReceivedContent = true;
+          // Clear the loading delay timeout since content has arrived
+          if (showLoadingTimeout) {
+            clearTimeout(showLoadingTimeout);
+            showLoadingTimeout = null;
+          }
+        }
+
+        // Update streaming content and clear loading message once content arrives
         set({
           streamingContent: displayText,
           citations: extractedCitations,
-          loadingMessage: null,
+          loadingMessage: hasReceivedContent ? null : get().loadingMessage,
         });
 
         // Update text for final message
@@ -307,6 +340,11 @@ export const useChatStore = create<ChatStore>((set) => ({
 
       conversationStore.updateConversation(conversation.id, updates);
 
+      // Clear loading timeout if still pending
+      if (showLoadingTimeout) {
+        clearTimeout(showLoadingTimeout);
+      }
+
       set({
         isStreaming: false,
         streamingContent: '',
@@ -315,6 +353,11 @@ export const useChatStore = create<ChatStore>((set) => ({
       });
     } catch (error) {
       console.error('sendMessage error:', error);
+
+      // Clear loading timeout if still pending
+      if (showLoadingTimeout) {
+        clearTimeout(showLoadingTimeout);
+      }
 
       let errorMessage = 'Failed to send message';
       if (error instanceof ApiError) {

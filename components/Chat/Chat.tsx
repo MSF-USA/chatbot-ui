@@ -187,48 +187,28 @@ export function Chat({
 
       // Only scroll if the last message is from the user
       if (lastMessage?.role === 'user') {
-        // Use setTimeout to ensure DOM has fully updated and rendered
-        setTimeout(() => {
-          if (lastMessageRef.current && chatContainerRef.current) {
-            const container = chatContainerRef.current;
-            const messageElement = lastMessageRef.current;
+        // Use requestAnimationFrame + setTimeout to wait for layout to fully settle
+        requestAnimationFrame(() => {
+          setTimeout(() => {
+            if (chatContainerRef.current) {
+              const container = chatContainerRef.current;
 
-            // Get the previous message to calculate how much to scroll past it
-            const messageElements = container.querySelectorAll(
-              'div[class*="mx-auto"] > div, div[class*="mx-auto"] > [class]',
-            );
-            const messageIndex =
-              Array.from(messageElements).indexOf(messageElement);
-            const previousElement =
-              messageIndex > 0 ? messageElements[messageIndex - 1] : null;
+              // Scroll to the very bottom
+              // With 70vh bottom padding, this positions the new message at the top with blank space below
+              const scrollTarget = container.scrollHeight;
 
-            let scrollTarget;
-            if (previousElement) {
-              // Scroll to just past the previous element to completely hide it
-              const prevElement = previousElement as HTMLElement;
-              scrollTarget =
-                prevElement.offsetTop + prevElement.offsetHeight + 20; // 20px gap
-            } else {
-              // No previous message, scroll to top
-              scrollTarget = messageElement.offsetTop;
+              console.log(
+                '[Chat Scroll] Scrolling to bottom. scrollHeight:',
+                container.scrollHeight,
+              );
+
+              container.scrollTo({
+                top: scrollTarget,
+                behavior: 'smooth',
+              });
             }
-
-            console.log('[Chat Scroll] Scrolling to position:', {
-              messageOffsetTop: messageElement.offsetTop,
-              scrollTarget,
-              hasPreviousElement: !!previousElement,
-            });
-
-            container.scrollTo({
-              top: scrollTarget,
-              behavior: 'smooth',
-            });
-
-            console.log('[Chat Scroll] Scrolled user message into view');
-          } else {
-            console.log('[Chat Scroll] Missing refs');
-          }
-        }, 50);
+          }, 100);
+        });
       }
     }
 
@@ -250,7 +230,7 @@ export function Chat({
 
       // Show button if not at bottom and there's content
       const hasContent =
-        (selectedConversation?.messages?.length || 0) > 0 || streamingContent;
+        (selectedConversation?.messages?.length || 0) > 0 || !!streamingContent;
       setShowScrollDownButton(!isAtBottom && hasContent);
     };
 
@@ -491,11 +471,11 @@ export function Chat({
         <>
           {/* Messages */}
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl pb-[60vh]">
+            <div className="mx-auto max-w-3xl pb-[70vh]">
               {messages.map((message, index) => {
                 const isLastMessage = index === messages.length - 1;
                 return isLastMessage ? (
-                  <div key={index} ref={lastMessageRef}>
+                  <div key={index} ref={lastMessageRef} className="mb-8">
                     <MemoizedChatMessage
                       message={message}
                       messageIndex={index}
@@ -506,15 +486,16 @@ export function Chat({
                     />
                   </div>
                 ) : (
-                  <MemoizedChatMessage
-                    key={index}
-                    message={message}
-                    messageIndex={index}
-                    onEdit={handleEditMessage}
-                    onQuestionClick={handleSelectPrompt}
-                    onRegenerate={handleRegenerate}
-                    onSaveAsPrompt={handleOpenSavePromptModal}
-                  />
+                  <div key={index} className="mb-8">
+                    <MemoizedChatMessage
+                      message={message}
+                      messageIndex={index}
+                      onEdit={handleEditMessage}
+                      onQuestionClick={handleSelectPrompt}
+                      onRegenerate={handleRegenerate}
+                      onSaveAsPrompt={handleOpenSavePromptModal}
+                    />
+                  </div>
                 );
               })}
               {/* Show transcription status indicator */}

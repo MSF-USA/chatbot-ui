@@ -495,7 +495,7 @@ export const ChatInput = ({
 
           <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
             <div
-              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 transition-all duration-200 ${webSearchMode || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && !webSearchMode && !selectedToneId ? '!rounded-2xl' : ''}`}
+              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${webSearchMode || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && !webSearchMode && !selectedToneId ? '!rounded-2xl' : ''}`}
             >
               <textarea
                 ref={textareaRef}
@@ -640,7 +640,7 @@ export const ChatInput = ({
               </div>
 
               <div
-                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-4 md:left-auto md:right-3 md:translate-x-0 z-[9999] transition-all duration-200 ease-in-out ${
+                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-16 md:left-auto md:right-3 md:translate-x-0 z-[9999] transition-all duration-200 ease-in-out ${
                   showScrollDownButton && !isFocused
                     ? 'opacity-100 scale-100 pointer-events-auto'
                     : 'opacity-0 scale-90 pointer-events-none'

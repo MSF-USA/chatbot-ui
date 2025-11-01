@@ -4,7 +4,8 @@ const STORAGE_KEY = 'settings';
 
 const getDefaultSettings = (): Settings => {
   const userDefaultThemeIsDark =
-    typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-color-scheme: dark)').matches;
 
   return {
     theme: userDefaultThemeIsDark ? 'dark' : 'light',
@@ -13,13 +14,17 @@ const getDefaultSettings = (): Settings => {
       process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
       "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     advancedMode: false,
+    minimizeAIFoundryUse: true, // Privacy-focused by default
   };
 };
 
 export const getSettings = (): Settings => {
   const defaultSettings = getDefaultSettings();
 
-  const settingsJson = typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null;
+  const settingsJson =
+    typeof localStorage !== 'undefined'
+      ? localStorage.getItem(STORAGE_KEY)
+      : null;
   if (!settingsJson) {
     return defaultSettings;
   }

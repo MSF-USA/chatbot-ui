@@ -33,6 +33,7 @@ export interface OpenAIModel {
 export enum OpenAIModelID {
   GPT_4_1 = 'gpt-4.1',
   GPT_5 = 'gpt-5',
+  GPT_5_MINI = 'gpt-5-mini',
   GPT_5_CHAT = 'gpt-5-chat',
   GPT_o3 = 'o3',
   LLAMA_4_MAVERICK = 'Llama-4-Maverick-17B-128E-Instruct-FP8',
@@ -44,6 +45,7 @@ export enum OpenAIModelID {
 export enum OpenAIVisionModelID {
   GPT_4_1 = 'gpt-4.1',
   GPT_5 = 'gpt-5',
+  GPT_5_MINI = 'gpt-5-mini',
   GPT_5_CHAT = 'gpt-5-chat',
   GROK_3 = 'grok-3',
 }
@@ -92,6 +94,26 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     supportsMinimalReasoning: true, // GPT-5 uniquely supports 'minimal' effort
     verbosity: 'medium',
     supportsVerbosity: true,
+  },
+  [OpenAIModelID.GPT_5_MINI]: {
+    id: OpenAIModelID.GPT_5_MINI,
+    name: 'GPT-5 Mini',
+    maxLength: 128000,
+    tokenLimit: 16000,
+    modelType: 'omni',
+    description:
+      'Faster and more cost-effective variant of GPT-5, optimized for speed while maintaining high quality. Perfect for everyday tasks, quick queries, tool routing, and applications requiring fast response times. Excellent balance of performance and efficiency.',
+    isLegacy: false,
+    searchModeEnabled: true,
+    provider: 'openai',
+    knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
+    sdk: 'azure-openai',
+    supportsTemperature: false,
+    reasoningEffort: 'low',
+    supportsReasoningEffort: true,
+    supportsMinimalReasoning: true,
+    verbosity: 'low',
+    supportsVerbosity: false,
   },
   [OpenAIModelID.GPT_5_CHAT]: {
     id: OpenAIModelID.GPT_5_CHAT,
@@ -196,6 +218,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     description:
       'Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.',
     isLegacy: true, // Disabled temporarily
+    searchModeEnabled: true,
     provider: 'xai',
     knowledgeCutoff: 'May 13, 2025 12:16 AM',
     sdk: 'openai',
@@ -245,6 +268,26 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     supportsMinimalReasoning: true,
     verbosity: 'medium',
     supportsVerbosity: true,
+  },
+  [OpenAIModelID.GPT_5_MINI]: {
+    id: OpenAIModelID.GPT_5_MINI,
+    name: 'GPT-5 Mini',
+    maxLength: 128000,
+    tokenLimit: 16000,
+    modelType: 'omni',
+    description:
+      'Faster and more cost-effective variant of GPT-5, optimized for speed while maintaining high quality. Perfect for everyday tasks, quick queries, tool routing, and applications requiring fast response times. Excellent balance of performance and efficiency.',
+    isLegacy: false,
+    searchModeEnabled: true,
+    provider: 'openai',
+    knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
+    sdk: 'azure-openai',
+    supportsTemperature: false,
+    reasoningEffort: 'low',
+    supportsReasoningEffort: true,
+    supportsMinimalReasoning: true,
+    verbosity: 'low',
+    supportsVerbosity: false,
   },
   [OpenAIModelID.GPT_5_CHAT]: {
     id: OpenAIModelID.GPT_5_CHAT,
@@ -349,6 +392,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     description:
       'Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.',
     isLegacy: true,
+    searchModeEnabled: true,
     provider: 'xai',
     knowledgeCutoff: 'May 13, 2025 12:16 AM',
     sdk: 'openai',

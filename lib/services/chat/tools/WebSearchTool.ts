@@ -1,5 +1,5 @@
 import { AgentChatService } from '../AgentChatService';
-import { Tool, WebSearchToolParams } from './Tool';
+import { Tool, ToolResult, WebSearchToolParams } from './Tool';
 
 /**
  * WebSearchTool
@@ -20,9 +20,9 @@ export class WebSearchTool implements Tool {
    * Executes a web search.
    *
    * @param params - Web search parameters including query and model
-   * @returns Search results as formatted text
+   * @returns Search results with text and citations
    */
-  async execute(params: WebSearchToolParams): Promise<string> {
+  async execute(params: WebSearchToolParams): Promise<ToolResult> {
     try {
       console.log(`[WebSearchTool] Executing search: "${params.searchQuery}"`);
 
@@ -33,13 +33,16 @@ export class WebSearchTool implements Tool {
       });
 
       console.log(
-        `[WebSearchTool] Search completed, ${searchResults.length} characters`,
+        `[WebSearchTool] Search completed, ${searchResults.text.length} characters, ${searchResults.citations.length} citations`,
       );
 
-      return searchResults;
+      return {
+        text: searchResults.text,
+        citations: searchResults.citations,
+      };
     } catch (error) {
       console.error('[WebSearchTool] Search failed:', error);
-      return ''; // Fail gracefully
+      return { text: '', citations: [] }; // Fail gracefully
     }
   }
 }

@@ -1,15 +1,18 @@
 import {
   IconArrowLeft,
-  IconPalette,
-  IconRocket,
-  IconShield,
+  IconBolt,
+  IconCheck,
+  IconCirclePlus,
+  IconDeviceMobile,
+  IconLanguage,
   IconSparkles,
+  IconVolume,
   IconWorld,
 } from '@tabler/icons-react';
 
 import Link from 'next/link';
 
-import { AzureAIIcon, AzureOpenAIIcon } from '@/components/Icons/providers';
+import { AzureAIIcon } from '@/components/Icons/providers/AzureAIIcon';
 
 export default function WelcomeV2Page() {
   return (
@@ -24,531 +27,435 @@ export default function WelcomeV2Page() {
       </Link>
 
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center gap-3 mb-3">
-          <IconSparkles
-            size={32}
-            className="text-blue-600 dark:text-blue-400"
-          />
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Welcome to AI Assistant V2
-          </h1>
-        </div>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          A major upgrade with new features, improved performance, and better
-          privacy controls
-        </p>
-      </div>
-
-      {/* What's New Overview */}
-      <div className="mb-12 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-          What's New in V2?
-        </h2>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">
-          A complete redesign with powerful new features for customization,
-          better mobile experience, and smarter AI capabilities.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
-          <div className="flex items-start gap-2">
+      <div className="mb-12 text-center">
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <div className="p-3 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl border border-blue-200 dark:border-blue-800 shadow-lg">
             <IconSparkles
-              size={20}
-              className="text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0"
+              size={40}
+              className="text-blue-600 dark:text-blue-400"
             />
-            <div>
-              <div className="font-medium text-gray-900 dark:text-white text-sm">
-                Quick Actions
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                Prompts & Tones with AI assist
-              </div>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <IconWorld
-              size={20}
-              className="text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0"
-            />
-            <div>
-              <div className="font-medium text-gray-900 dark:text-white text-sm">
-                Web Search
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                Privacy-focused & faster modes
-              </div>
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <IconRocket
-              size={20}
-              className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
-            />
-            <div>
-              <div className="font-medium text-gray-900 dark:text-white text-sm">
-                Mobile PWA
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                Install as native app
-              </div>
-            </div>
           </div>
         </div>
+        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">
+          Welcome to AI Assistant V2
+        </h1>
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+          A complete redesign with powerful new features
+        </p>
       </div>
 
-      {/* Feature 1: Quick Actions (Prompts & Tones) */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <IconSparkles
-            size={28}
-            className="text-purple-600 dark:text-purple-400"
-          />
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Quick Actions: Prompts & Tones
-          </h2>
-          <span className="px-2 py-1 text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300 rounded">
-            NEW
-          </span>
-        </div>
-
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-            What is it?
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-3">
-            Access your custom prompts and tones instantly by typing{' '}
-            <span className="font-mono bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded">
-              /
-            </span>{' '}
-            in the chat. Create, organize, and manage your favorite prompts with
-            folders and AI-powered suggestions.
-          </p>
-
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <IconSparkles
-                size={18}
-                className="text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0"
+      {/* What's New */}
+      <div className="space-y-8">
+        {/* Web Search Mode */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-xl shrink-0">
+              <IconWorld
+                size={28}
+                className="text-blue-600 dark:text-blue-400"
               />
-              <div>
-                <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                  Saved Prompts with AI Assist
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Save your frequently used prompts, organize them in folders,
-                  and let AI help you refine them. Quick access via{' '}
-                  <span className="font-mono">/</span> in chat.
-                </div>
-              </div>
             </div>
-
-            <div className="flex items-start gap-3 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <IconPalette
-                size={18}
-                className="text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0"
-              />
-              <div>
-                <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                  Writing Tones
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Define custom writing styles and voice guidelines. Apply tones
-                  to your messages for consistent communication. Use AI to
-                  analyze and suggest tone improvements.
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <IconSparkles
-                size={18}
-                className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
-              />
-              <div>
-                <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                  AI-Powered Generation
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Both prompts and tones feature AI assistance to help you
-                  create, refine, and improve your content with smart
-                  suggestions.
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Feature 2: Web Search Mode */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <IconWorld size={28} className="text-blue-600 dark:text-blue-400" />
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Web Search Mode
-          </h2>
-          <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 rounded">
-            ON by default
-          </span>
-        </div>
-
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-            What is it?
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-3">
-            Give AI access to web search for up-to-date information. Choose
-            between privacy-focused routing or faster Azure AI Foundry Mode.
-          </p>
-
-          <div className="space-y-3">
-            <div className="flex items-start gap-3 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <IconShield
-                size={18}
-                className="text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0"
-              />
-              <div>
-                <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                  Privacy-Focused (Default)
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Only search queries sent to Azure AI Foundry, not your full
-                  conversation. Maximum privacy, slightly slower.
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-3 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <AzureAIIcon className="w-[18px] h-[18px] mt-0.5 flex-shrink-0" />
-              <div>
-                <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                  Azure AI Foundry Mode (GPT-4.1 only)
-                </div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">
-                  Full conversation sent for faster processing with complete
-                  context. Better performance, less private.
-                </div>
-              </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">
+                Web Search Mode
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Give AI access to real-time web search with privacy-focused
+                options
+              </p>
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                Quick access:
+              </p>
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <IconCirclePlus size={16} />
+                <span>
+                  Click the + button next to chat input → Select "Web Search"
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                Set as default:
+              </p>
+              <p className="text-gray-600 dark:text-gray-400 mb-2">
+                Open model settings and enable Web Search Mode toggle. Choose
+                between:
+              </p>
+              <ul className="space-y-2 ml-4">
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">•</span>
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Privacy-Focused (default)
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {' '}
+                      - Only search query sent externally
+                    </span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">•</span>
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Azure AI Foundry Mode
+                    </span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {' '}
+                      - Faster, but full conversation stored externally
+                    </span>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
             <Link
               href="/info/search-mode"
-              className="inline-flex items-center gap-1 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="inline-block text-blue-600 dark:text-blue-400 hover:underline"
             >
-              Learn more about Search Mode with data flow diagrams →
+              Learn more about search modes →
             </Link>
           </div>
         </div>
-      </div>
 
-      {/* Feature 3: Progressive Web App (PWA) */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <IconRocket
-            size={28}
-            className="text-green-600 dark:text-green-400"
-          />
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Install as Mobile App
-          </h2>
-          <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 rounded">
-            PWA
-          </span>
-        </div>
+        {/* Tones */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-2.5 bg-purple-100 dark:bg-purple-900/30 rounded-xl shrink-0">
+              <IconVolume
+                size={28}
+                className="text-purple-600 dark:text-purple-400"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">
+                Tones (Voice Profiles)
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Control AI writing style, formality, and personality
+              </p>
+            </div>
+          </div>
 
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-            What is it?
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-3">
-            AI Assistant is now a Progressive Web App (PWA). Install it on your
-            phone or tablet for a native app experience without needing an app
-            store.
-          </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="flex items-start gap-2 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <span className="text-green-600 dark:text-green-400 mt-0.5">
-                ✓
-              </span>
-              <div className="text-xs">
-                <div className="font-medium text-gray-900 dark:text-white mb-0.5">
-                  Home Screen Access
-                </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  Launch directly from your device's home screen
-                </div>
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                1. Create tones:
+              </p>
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <IconBolt size={16} />
+                <span>Quick Actions in sidebar → Tones tab</span>
               </div>
             </div>
 
-            <div className="flex items-start gap-2 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <span className="text-green-600 dark:text-green-400 mt-0.5">
-                ✓
-              </span>
-              <div className="text-xs">
-                <div className="font-medium text-gray-900 dark:text-white mb-0.5">
-                  Offline Support
-                </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  Access cached conversations without internet
-                </div>
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                2. Use tones:
+              </p>
+              <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 mb-3">
+                <IconVolume size={16} className="text-purple-500" />
+                <span>Click tone dropdown next to chat input</span>
               </div>
-            </div>
-
-            <div className="flex items-start gap-2 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <span className="text-green-600 dark:text-green-400 mt-0.5">
-                ✓
-              </span>
-              <div className="text-xs">
-                <div className="font-medium text-gray-900 dark:text-white mb-0.5">
-                  Faster Loading
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2 border-2 border-purple-500 bg-purple-50 dark:bg-purple-900/20 rounded">
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    Professional
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-400">
+                    Formal, business tone
+                  </div>
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  Better performance with cached resources
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-2 p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <span className="text-green-600 dark:text-green-400 mt-0.5">
-                ✓
-              </span>
-              <div className="text-xs">
-                <div className="font-medium text-gray-900 dark:text-white mb-0.5">
-                  Native Feel
-                </div>
-                <div className="text-gray-600 dark:text-gray-400">
-                  Full-screen app-like experience on mobile
+                <div className="p-2 border border-gray-200 dark:border-gray-700 rounded">
+                  <div className="font-medium text-gray-900 dark:text-white">
+                    Casual
+                  </div>
+                  <div className="text-gray-600 dark:text-gray-400">
+                    Friendly, conversational
+                  </div>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-xs text-gray-600 dark:text-gray-400">
-              Check Settings → Mobile App for QR code and installation
-              instructions for iOS and Android.
-            </p>
+        {/* AI Assist */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-2.5 bg-pink-100 dark:bg-pink-900/30 rounded-xl shrink-0">
+              <IconSparkles
+                size={28}
+                className="text-pink-600 dark:text-pink-400"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">
+                AI Assist for Prompts & Tones
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Let AI help you create better prompts and tones faster
+              </p>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Feature 4: Enhanced Transcription */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <IconPalette
-            size={28}
-            className="text-orange-600 dark:text-orange-400"
-          />
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Improved Audio/Video Transcription
-          </h2>
-        </div>
+          <div className="space-y-4 text-sm">
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+              <span>1.</span>
+              <IconBolt size={16} />
+              <span>Open Quick Actions in sidebar</span>
+            </div>
 
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-            What's new?
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300 mb-3">
-            Transcription viewer now includes powerful tools to work with your
-            audio and video transcripts.
-          </p>
-
-          <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-            <li className="flex items-start gap-2">
-              <span className="text-orange-600 dark:text-orange-400 mt-0.5">
-                •
-              </span>
+            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
               <span>
-                <strong>Copy to clipboard:</strong> Quick one-click copy of
-                entire transcript
+                2. Navigate to{' '}
+                <strong className="text-gray-900 dark:text-white">
+                  Prompts
+                </strong>{' '}
+                or{' '}
+                <strong className="text-gray-900 dark:text-white">Tones</strong>{' '}
+                tab
               </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-orange-600 dark:text-orange-400 mt-0.5">
-                •
-              </span>
-              <span>
-                <strong>Download as text:</strong> Save transcripts as .txt
-                files for offline use
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-orange-600 dark:text-orange-400 mt-0.5">
-                •
-              </span>
-              <span>
-                <strong>Translate transcripts:</strong> Convert transcriptions
-                to 13+ languages including Spanish, French, German, Arabic,
-                Chinese, Japanese, and more
-              </span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-orange-600 dark:text-orange-400 mt-0.5">
-                •
-              </span>
-              <span>
-                <strong>Better formatting:</strong> Transcripts are
-                automatically formatted with proper line breaks at sentence
-                boundaries
-              </span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      {/* Feature 5: Improved Mobile Experience */}
-      <div className="mb-12">
-        <div className="flex items-center gap-3 mb-4">
-          <IconPalette
-            size={28}
-            className="text-purple-600 dark:text-purple-400"
-          />
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Better Mobile & UI/UX
-          </h2>
-        </div>
-
-        <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-          <h3 className="font-medium text-gray-900 dark:text-white mb-3">
-            What's improved?
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                Mobile-First Design
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                Optimized mobile navigation, touch-friendly controls, and
-                responsive layouts
-              </div>
             </div>
 
-            <div className="p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                Cleaner Interface
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                Streamlined controls, better visual hierarchy, and reduced
-                clutter
-              </div>
-            </div>
-
-            <div className="p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                Provider Icons
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400 mb-2">
-                Colorful icons for each AI provider (OpenAI, DeepSeek, xAI,
-                Azure)
-              </div>
-              <div className="flex items-center gap-2">
-                <AzureOpenAIIcon className="w-3 h-3" />
-                <AzureAIIcon className="w-3 h-3" />
-              </div>
-            </div>
-
-            <div className="p-3 bg-white dark:bg-gray-900/50 rounded border border-gray-200 dark:border-gray-700">
-              <div className="font-medium text-sm text-gray-900 dark:text-white mb-1">
-                Settings Redesign
-              </div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">
-                Organized into clear sections with better mobile navigation
-              </div>
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="font-medium text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                <IconSparkles
+                  size={16}
+                  className="text-pink-600 dark:text-pink-400"
+                />
+                3. Look for the AI Assistant panel
+              </p>
+              <ul className="space-y-2 ml-4">
+                <li className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
+                  <span className="text-pink-500 mt-1">✨</span>
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Get suggestions
+                    </span>
+                    <span>
+                      {' '}
+                      - AI analyzes your draft and offers improvements
+                    </span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
+                  <span className="text-pink-500 mt-1">✨</span>
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Build from files
+                    </span>
+                    <span> - Upload documents to generate prompts/tones</span>
+                  </div>
+                </li>
+                <li className="flex items-start gap-2 text-gray-600 dark:text-gray-400">
+                  <span className="text-pink-500 mt-1">✨</span>
+                  <div>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      Test before saving
+                    </span>
+                    <span> - Try out prompts/tones in a live chat preview</span>
+                  </div>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Getting Started */}
-      <div className="mb-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-          Getting Started with V2
-        </h2>
-        <div className="space-y-3 text-sm text-gray-700 dark:text-gray-300">
-          <div className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 font-bold">
-              1.
-            </span>
-            <div>
-              <strong>Try Quick Actions:</strong> Type{' '}
-              <span className="font-mono bg-gray-200 dark:bg-gray-700 px-1.5 py-0.5 rounded">
-                /
-              </span>{' '}
-              in the chat to access prompts. Create your first custom prompt or
-              tone.
+        {/* Custom Agents - ADVANCED FEATURE */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-2.5 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-xl shrink-0">
+              <AzureAIIcon className="w-7 h-7" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <h3 className="font-bold text-xl text-gray-900 dark:text-white">
+                  Custom Agents
+                </h3>
+                <span className="px-2 py-0.5 text-xs font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300 rounded-md border border-amber-300 dark:border-amber-700">
+                  ADVANCED
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Specialized AI agents with enhanced capabilities like web search
+                and code interpretation
+              </p>
             </div>
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 font-bold">
-              2.
-            </span>
-            <div>
-              <strong>Install on mobile:</strong> Go to Settings → Mobile App to
-              get the QR code and install AI Assistant as a Progressive Web App
-              on your phone.
+
+          <div className="space-y-4 text-sm">
+            <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+              <div className="flex items-start gap-2 text-amber-900 dark:text-amber-200">
+                <span className="text-lg">⚠️</span>
+                <div>
+                  <p className="font-semibold mb-1">Advanced Feature</p>
+                  <p className="text-xs">
+                    Custom Agents run on Azure AI Foundry with specialized
+                    tools. Requires coordination with the AI Assistant technical
+                    team to create agent IDs.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 font-bold">
-              3.
-            </span>
+
             <div>
-              <strong>Explore search modes:</strong> Check out the{' '}
-              <Link
-                href="/info/search-mode"
-                className="text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                Search Mode guide
-              </Link>{' '}
-              to understand privacy-focused vs. Azure AI Foundry routing.
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                How to access:
+              </p>
+              <p className="text-gray-600 dark:text-gray-400">
+                Settings → Models → <strong>Agents</strong> tab
+              </p>
             </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 font-bold">
-              4.
-            </span>
-            <div>
-              <strong>Upload audio/video:</strong> Try the improved
-              transcription with translation support for multilingual content.
-            </div>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-blue-600 dark:text-blue-400 font-bold">
-              5.
-            </span>
-            <div>
-              <strong>Your data is safe:</strong> All existing conversations
-              have been migrated automatically. Nothing was lost in the upgrade.
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                What you can do:
+              </p>
+              <ul className="space-y-1.5 ml-4 text-gray-600 dark:text-gray-400">
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">•</span>
+                  <span>Configure agents with specialized capabilities</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">•</span>
+                  <span>Import/export agent configurations</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-blue-500 mt-1">•</span>
+                  <span>Select custom agents from model dropdown</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Footer */}
-      <div className="text-center text-sm text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700 pt-6">
-        <p className="mb-2 font-medium text-gray-900 dark:text-white">
-          Welcome to AI Assistant V2!
-        </p>
-        <p className="mb-4">
-          A complete redesign focused on customization, transparency, and mobile
-          experience.
-        </p>
-        <div className="flex items-center justify-center gap-4 text-xs">
-          <Link
-            href="/"
-            className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
-          >
-            Start Chatting
-          </Link>
-          <span className="text-gray-400">•</span>
-          <Link
-            href="/info/search-mode"
-            className="text-blue-600 dark:text-blue-400 hover:underline"
-          >
-            Search Mode Guide
-          </Link>
+        {/* Translation */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-2.5 bg-green-100 dark:bg-green-900/30 rounded-xl shrink-0">
+              <IconLanguage
+                size={28}
+                className="text-green-600 dark:text-green-400"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">
+                Audio Transcription with Translation
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Automatically translate audio transcripts to 13+ languages
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                How to use:
+              </p>
+              <ol className="space-y-1.5 ml-4 text-gray-600 dark:text-gray-400">
+                <li>1. Upload an audio or video file</li>
+                <li>
+                  2. Click the language dropdown in transcription interface
+                </li>
+                <li>3. Select your target language</li>
+              </ol>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                Available languages:
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  'Spanish',
+                  'French',
+                  'Arabic',
+                  'Chinese',
+                  'Swahili',
+                  'Portuguese',
+                ].map((lang) => (
+                  <span
+                    key={lang}
+                    className="px-2.5 py-1 text-xs bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-md border border-green-200 dark:border-green-800"
+                  >
+                    {lang}
+                  </span>
+                ))}
+                <span className="px-2.5 py-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded-md">
+                  +7 more
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* PWA */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
+          <div className="flex items-start gap-4 mb-6">
+            <div className="p-2.5 bg-purple-100 dark:bg-purple-900/30 rounded-xl shrink-0">
+              <IconDeviceMobile
+                size={28}
+                className="text-purple-600 dark:text-purple-400"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2">
+                Install as Mobile App
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Progressive Web App with native experience
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-4 text-sm">
+            <div>
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                How to install:
+              </p>
+              <ol className="space-y-1.5 ml-4 text-gray-600 dark:text-gray-400">
+                <li>1. Open on mobile device</li>
+                <li>2. Tap browser menu (⋮ or ⚙️)</li>
+                <li>3. Look for "Add to Home Screen" or "Install App"</li>
+                <li>4. Follow prompts to install</li>
+              </ol>
+            </div>
+
+            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+              <p className="font-medium text-gray-900 dark:text-white mb-2">
+                Benefits:
+              </p>
+              <ul className="space-y-1.5 ml-4">
+                <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <IconCheck
+                    size={16}
+                    className="text-purple-600 dark:text-purple-400 flex-shrink-0"
+                  />
+                  <span>Launch like a native app from home screen</span>
+                </li>
+                <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <IconCheck
+                    size={16}
+                    className="text-purple-600 dark:text-purple-400 flex-shrink-0"
+                  />
+                  <span>Full-screen without browser UI</span>
+                </li>
+                <li className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                  <IconCheck
+                    size={16}
+                    className="text-purple-600 dark:text-purple-400 flex-shrink-0"
+                  />
+                  <span>Offline access to saved conversations</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
     </div>

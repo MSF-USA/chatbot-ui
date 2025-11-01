@@ -197,13 +197,16 @@ export function HelpPageClient({
           {activeTab === 'faq' && (
             <div className="space-y-3">
               {filteredFaqs.length === 0 ? (
-                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                   <IconSearch
-                    className="mx-auto mb-4 text-gray-400"
-                    size={48}
+                    className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                    size={56}
                   />
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
                     No FAQs match your search
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-2">
+                    Try a different search term
                   </p>
                 </div>
               ) : (
@@ -213,24 +216,24 @@ export function HelpPageClient({
                   return (
                     <div
                       key={index}
-                      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+                      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition-all"
                     >
                       <button
                         onClick={() => toggleItem(itemId)}
-                        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                       >
-                        <span className="font-medium text-left text-gray-900 dark:text-white pr-4 text-sm">
+                        <span className="font-semibold text-left text-gray-900 dark:text-white pr-4 text-sm">
                           {faq.question}
                         </span>
                         <IconChevronDown
-                          size={18}
-                          className={`text-gray-500 dark:text-gray-400 transition-transform flex-shrink-0 ${
+                          size={20}
+                          className={`text-blue-600 dark:text-blue-400 transition-transform flex-shrink-0 ${
                             isOpen ? 'rotate-180' : ''
                           }`}
                         />
                       </button>
                       {isOpen && (
-                        <div className="px-4 pb-3 pt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line border-t border-gray-200 dark:border-gray-700">
+                        <div className="px-5 pb-4 pt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                           {faq.answer}
                         </div>
                       )}
@@ -245,26 +248,31 @@ export function HelpPageClient({
           {activeTab === 'privacy' && (
             <div className="space-y-3">
               {filteredPrivacy.length === 0 ? (
-                <div className="text-center py-12 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
                   <IconSearch
-                    className="mx-auto mb-4 text-gray-400"
-                    size={48}
+                    className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                    size={56}
                   />
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
+                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
                     No privacy information matches your search
+                  </p>
+                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-2">
+                    Try a different search term
                   </p>
                 </div>
               ) : (
                 <>
                   {/* Privacy Notice */}
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800 p-4 mb-4">
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/30 rounded-lg border border-green-200 dark:border-green-800 p-5 mb-4 shadow-sm">
                     <div className="flex items-start gap-3">
-                      <IconShield
-                        className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5"
-                        size={24}
-                      />
+                      <div className="p-2 bg-green-600 dark:bg-green-700 rounded-lg shadow-sm">
+                        <IconShield
+                          className="text-white flex-shrink-0"
+                          size={24}
+                        />
+                      </div>
                       <div>
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
+                        <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">
                           Your Privacy Matters
                         </h3>
                         <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
@@ -272,36 +280,36 @@ export function HelpPageClient({
                           Data processing happens within MSF systems using Azure
                           infrastructure.
                         </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
                           <div className="flex items-center gap-2">
-                            <span className="text-green-600 dark:text-green-400">
+                            <span className="text-green-600 dark:text-green-400 font-bold">
                               ✓
                             </span>
-                            <span className="text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">
                               Local storage only
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-green-600 dark:text-green-400">
+                            <span className="text-green-600 dark:text-green-400 font-bold">
                               ✓
                             </span>
-                            <span className="text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">
                               MSF-controlled infrastructure
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-red-600 dark:text-red-400">
+                            <span className="text-red-600 dark:text-red-400 font-bold">
                               ✗
                             </span>
-                            <span className="text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">
                               No personal data
                             </span>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className="text-red-600 dark:text-red-400">
+                            <span className="text-red-600 dark:text-red-400 font-bold">
                               ✗
                             </span>
-                            <span className="text-gray-700 dark:text-gray-300">
+                            <span className="text-gray-700 dark:text-gray-300 font-medium">
                               No sensitive operations
                             </span>
                           </div>
@@ -315,24 +323,24 @@ export function HelpPageClient({
                     return (
                       <div
                         key={item.id}
-                        className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-gray-300 dark:hover:border-gray-600 transition-colors"
+                        className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-green-300 dark:hover:border-green-700 hover:shadow-sm transition-all"
                       >
                         <button
                           onClick={() => toggleItem(item.id)}
-                          className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                          className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                         >
-                          <span className="font-medium text-left text-gray-900 dark:text-white pr-4 text-sm">
+                          <span className="font-semibold text-left text-gray-900 dark:text-white pr-4 text-sm">
                             {item.question}
                           </span>
                           <IconChevronDown
-                            size={18}
-                            className={`text-gray-500 dark:text-gray-400 transition-transform flex-shrink-0 ${
+                            size={20}
+                            className={`text-green-600 dark:text-green-400 transition-transform flex-shrink-0 ${
                               isOpen ? 'rotate-180' : ''
                             }`}
                           />
                         </button>
                         {isOpen && (
-                          <div className="px-4 pb-3 pt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line border-t border-gray-200 dark:border-gray-700">
+                          <div className="px-5 pb-4 pt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
                             {item.answer}
                           </div>
                         )}
@@ -347,13 +355,15 @@ export function HelpPageClient({
           {/* Terms Tab */}
           {activeTab === 'terms' && !isUSUser && (
             <div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
                 <div className="max-w-none">
-                  <div className="flex items-center gap-3 mb-4">
-                    <IconFileText
-                      size={24}
-                      className="text-blue-600 dark:text-blue-400"
-                    />
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                      <IconFileText
+                        size={24}
+                        className="text-blue-600 dark:text-blue-400"
+                      />
+                    </div>
                     <h2 className="text-xl font-bold text-gray-900 dark:text-white">
                       ai.msf.org Terms of Use
                     </h2>
@@ -366,15 +376,15 @@ export function HelpPageClient({
                     and control.
                   </p>
 
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-5">
                     By using ai.msf.org, you agree with the following terms and
                     conditions:
                   </p>
 
-                  <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-4 border border-blue-200 dark:border-blue-800">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-lg p-4 mb-4 border border-blue-200 dark:border-blue-800 shadow-sm">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
                       <IconAlertCircle
-                        size={18}
+                        size={20}
                         className="text-blue-600 dark:text-blue-400"
                       />
                       Responsible Use
@@ -424,8 +434,8 @@ export function HelpPageClient({
                     </ul>
                   </div>
 
-                  <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-4 mb-4 border border-red-200 dark:border-red-800">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
+                  <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 rounded-lg p-4 mb-4 border border-red-200 dark:border-red-800 shadow-sm">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3">
                       Prohibited Uses
                     </h3>
 
@@ -489,8 +499,8 @@ export function HelpPageClient({
                     </ul>
                   </div>
 
-                  <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-4 mb-4 border border-amber-200 dark:border-amber-800">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-3">
+                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-900/30 rounded-lg p-4 mb-4 border border-amber-200 dark:border-amber-800 shadow-sm">
+                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3">
                       Data Privacy
                     </h3>
 
@@ -522,7 +532,7 @@ export function HelpPageClient({
                     </ul>
                   </div>
 
-                  <div className="text-xs text-gray-600 dark:text-gray-400 italic bg-gray-50 dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+                  <div className="text-xs text-gray-600 dark:text-gray-400 italic bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
                     <p className="mb-2">
                       These terms can be modified at any time by MSF. We'll
                       provide notice to you if we change them.
@@ -539,36 +549,33 @@ export function HelpPageClient({
         </div>
 
         {/* Contact Support Card */}
-        <div className="mt-8 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
-          <div className="flex items-start gap-3">
-            <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
-              <IconMail
-                className="text-blue-600 dark:text-blue-400"
-                size={24}
-              />
+        <div className="mt-8 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-800 p-6 shadow-md">
+          <div className="flex items-start gap-4">
+            <div className="p-3 bg-blue-600 dark:bg-blue-700 rounded-xl shadow-sm">
+              <IconMail className="text-white" size={28} />
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 Need More Help?
               </h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+              <p className="text-sm text-gray-700 dark:text-gray-300 mb-5">
                 Our support team is here to assist you with any questions or
                 concerns.
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <a
                   href={`mailto:${supportEmail}`}
-                  className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors group"
+                  className="flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all group"
                 >
                   <IconMail
                     className="text-blue-600 dark:text-blue-400 flex-shrink-0"
-                    size={18}
+                    size={20}
                   />
                   <div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-0.5">
                       General Support
                     </div>
-                    <div className="text-sm text-gray-900 dark:text-white font-medium">
+                    <div className="text-sm text-gray-900 dark:text-white font-semibold">
                       {supportEmail}
                     </div>
                   </div>
@@ -576,17 +583,17 @@ export function HelpPageClient({
                 {!isUSUser && (
                   <a
                     href="mailto:ai.team@amsterdam.msf.org"
-                    className="flex items-center gap-2 px-4 py-3 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors group"
+                    className="flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 hover:shadow-sm transition-all group"
                   >
                     <IconShield
                       className="text-green-600 dark:text-green-400 flex-shrink-0"
-                      size={18}
+                      size={20}
                     />
                     <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-0.5">
                         Privacy & Incidents
                       </div>
-                      <div className="text-sm text-gray-900 dark:text-white font-medium">
+                      <div className="text-sm text-gray-900 dark:text-white font-semibold">
                         ai.team@amsterdam.msf.org
                       </div>
                     </div>

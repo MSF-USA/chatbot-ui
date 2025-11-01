@@ -168,7 +168,11 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
         </div>
       </div>
 
-      {isExpanded && (
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isExpanded ? 'max-h-[200px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
         <div
           ref={scrollContainerRef}
           className="flex w-full overflow-x-auto gap-4 no-scrollbar pt-5"
@@ -177,12 +181,15 @@ export const CitationList: FC<{ citations: Citation[] }> = ({ citations }) => {
           onMouseLeave={handleReactMouseLeave}
         >
           {uniqueCitations.map((citation, index) => (
-            <div key={citation.number || citation.url || index} className="flex-shrink-0">
+            <div
+              key={citation.number || citation.url || index}
+              className="flex-shrink-0"
+            >
               <CitationItem citation={citation} />
             </div>
           ))}
         </div>
-      )}
+      </div>
     </div>
   );
 };

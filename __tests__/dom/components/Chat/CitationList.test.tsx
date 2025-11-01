@@ -1,17 +1,17 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { describe, expect, it, vi } from 'vitest';
-import '@testing-library/jest-dom';
+
+import { Citation } from '@/types/rag';
 
 import { CitationList } from '@/components/Chat/Citations/CitationList';
-import { Citation } from '@/types/rag';
+
+import '@testing-library/jest-dom';
+import { describe, expect, it, vi } from 'vitest';
 
 // Mock CitationItem component
 vi.mock('@/components/Chat/Citations/CitationItem', () => ({
   CitationItem: ({ citation }: { citation: Citation }) => (
-    <div data-testid={`citation-${citation.number}`}>
-      {citation.title}
-    </div>
+    <div data-testid={`citation-${citation.number}`}>{citation.title}</div>
   ),
 }));
 
@@ -79,20 +79,27 @@ describe('CitationList', () => {
 
   describe('Expand/Collapse', () => {
     it('starts in collapsed state', () => {
-      render(<CitationList citations={mockCitations} />);
+      const { container } = render(<CitationList citations={mockCitations} />);
 
-      expect(screen.queryByTestId('citation-1')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('citation-2')).not.toBeInTheDocument();
-      expect(screen.queryByTestId('citation-3')).not.toBeInTheDocument();
+      // With CSS animation, elements are in DOM but hidden
+      // Check for max-h-0 class which indicates collapsed state
+      const citationsContainer = container.querySelector('.overflow-hidden');
+      expect(citationsContainer).toHaveClass('max-h-0');
+      expect(citationsContainer).toHaveClass('opacity-0');
     });
 
     it('expands when clicked', async () => {
-      render(<CitationList citations={mockCitations} />);
+      const { container } = render(<CitationList citations={mockCitations} />);
 
       const header = screen.getByText('Sources').closest('div');
       fireEvent.click(header!);
 
       await waitFor(() => {
+        const citationsContainer = container.querySelector('.overflow-hidden');
+        // Should have expanded classes
+        expect(citationsContainer).toHaveClass('opacity-100');
+        expect(citationsContainer).not.toHaveClass('max-h-0');
+        // Citations should be visible
         expect(screen.getByTestId('citation-1')).toBeInTheDocument();
         expect(screen.getByTestId('citation-2')).toBeInTheDocument();
         expect(screen.getByTestId('citation-3')).toBeInTheDocument();
@@ -100,21 +107,29 @@ describe('CitationList', () => {
     });
 
     it('collapses when clicked again', async () => {
-      render(<CitationList citations={mockCitations} />);
+      const { container } = render(<CitationList citations={mockCitations} />);
 
       const header = screen.getByText('Sources').closest('div');
 
       // Expand
       fireEvent.click(header!);
       await waitFor(() => {
-        expect(screen.getByTestId('citation-1')).toBeInTheDocument();
+        const citationsContainer = container.querySelector('.overflow-hidden');
+        expect(citationsContainer).toHaveClass('opacity-100');
       });
 
       // Collapse
       fireEvent.click(header!);
-      await waitFor(() => {
-        expect(screen.queryByTestId('citation-1')).not.toBeInTheDocument();
-      });
+      await waitFor(
+        () => {
+          const citationsContainer =
+            container.querySelector('.overflow-hidden');
+          // Should be collapsed with CSS classes
+          expect(citationsContainer).toHaveClass('max-h-0');
+          expect(citationsContainer).toHaveClass('opacity-0');
+        },
+        { timeout: 500 }, // Wait for 300ms animation to complete
+      );
     });
 
     it('shows chevron down when collapsed', () => {
@@ -143,8 +158,18 @@ describe('CitationList', () => {
   describe('Deduplication', () => {
     it('deduplicates citations by URL', () => {
       const duplicateCitations: Citation[] = [
-        { title: 'Article', url: 'https://example.com/1', date: '2024-01-01', number: 1 },
-        { title: 'Same Article', url: 'https://example.com/1', date: '2024-01-01', number: 2 },
+        {
+          title: 'Article',
+          url: 'https://example.com/1',
+          date: '2024-01-01',
+          number: 1,
+        },
+        {
+          title: 'Same Article',
+          url: 'https://example.com/1',
+          date: '2024-01-01',
+          number: 2,
+        },
       ];
 
       render(<CitationList citations={duplicateCitations} />);
@@ -155,8 +180,18 @@ describe('CitationList', () => {
 
     it('deduplicates citations by title', () => {
       const duplicateCitations: Citation[] = [
-        { title: 'Same Title', url: 'https://example.com/1', date: '2024-01-01', number: 1 },
-        { title: 'Same Title', url: 'https://example.com/2', date: '2024-01-02', number: 2 },
+        {
+          title: 'Same Title',
+          url: 'https://example.com/1',
+          date: '2024-01-01',
+          number: 1,
+        },
+        {
+          title: 'Same Title',
+          url: 'https://example.com/2',
+          date: '2024-01-02',
+          number: 2,
+        },
       ];
 
       render(<CitationList citations={duplicateCitations} />);
@@ -275,8 +310,18 @@ describe('CitationList', () => {
 
     it('handles citations without numbers', async () => {
       const citationsWithoutNumbers: Citation[] = [
-        { title: 'Article 1', url: 'https://example.com/1', date: '2024-01-01', number: 1 },
-        { title: 'Article 2', url: 'https://example.com/2', date: '2024-01-02', number: 2 },
+        {
+          title: 'Article 1',
+          url: 'https://example.com/1',
+          date: '2024-01-01',
+          number: 1,
+        },
+        {
+          title: 'Article 2',
+          url: 'https://example.com/2',
+          date: '2024-01-02',
+          number: 2,
+        },
       ];
 
       render(<CitationList citations={citationsWithoutNumbers} />);

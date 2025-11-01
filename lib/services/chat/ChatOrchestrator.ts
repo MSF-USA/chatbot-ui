@@ -96,8 +96,17 @@ export class ChatOrchestrator {
         `[ChatOrchestrator] Executing ${toolResponse.tools.length} tool(s): ${toolResponse.tools.join(', ')}`,
       );
 
+      // Determine action message to show in frontend
+      const actionMessage = toolResponse.tools.includes('web_search')
+        ? 'Searching the web...'
+        : 'Processing...';
+
       // Execute each tool and collect results
-      const toolResults: Array<{ tool: string; result: string }> = [];
+      const toolResults: Array<{
+        tool: string;
+        text: string;
+        citations?: any[];
+      }> = [];
 
       for (const toolType of toolResponse.tools) {
         const tool = this.toolRegistry.getTool(toolType);
@@ -110,7 +119,7 @@ export class ChatOrchestrator {
         console.log(`[ChatOrchestrator] Executing tool: ${tool.name}`);
 
         try {
-          let result: string;
+          let result;
 
           // Execute tool with appropriate parameters
           if (toolType === 'web_search' && toolResponse.searchQuery) {
@@ -134,10 +143,11 @@ export class ChatOrchestrator {
             continue;
           }
 
-          if (result) {
+          if (result && result.text) {
             toolResults.push({
               tool: tool.name,
-              result,
+              text: result.text,
+              citations: result.citations,
             });
           }
         } catch (error) {
@@ -155,10 +165,19 @@ export class ChatOrchestrator {
           `[ChatOrchestrator] Adding ${toolResults.length} tool result(s) to context`,
         );
 
+        // Collect all citations from tools
+        const allCitations =
+          toolResults.flatMap((tr) => tr.citations || []) || [];
+
         // Create system messages for tool results
+        // Build citation reference list for the LLM
+        const citationReferences = allCitations
+          .map((c, idx) => `[${idx + 1}] ${c.title || c.url}`)
+          .join('\n');
+
         const toolContextMessages: Message[] = toolResults.map((tr) => ({
           role: 'system' as const,
-          content: `${tr.tool} results:\n\n${tr.result}\n\nUse these results to answer the user's question. Cite sources when appropriate.`,
+          content: `${tr.tool} results:\n\n${tr.text}\n\nAvailable sources:\n${citationReferences}\n\nIMPORTANT: When referencing these sources in your response, use ONLY citation markers like [1], [2], etc. Do NOT include source information (URLs, titles, or dates) in your response text. The citation details will be displayed separately to the user.`,
           messageType: undefined,
         }));
 
@@ -170,16 +189,59 @@ export class ChatOrchestrator {
         ];
 
         // Continue with standard chat using tool-enhanced context
-        return this.standardChatService.handleChat({
+        // We need to pass citations through to the response
+        const response = await this.standardChatService.handleChat({
           messages: messagesWithTools,
           model: request.model,
           user: request.user,
-          systemPrompt: request.systemPrompt,
+          systemPrompt: request.systemPrompt || '',
           temperature: request.temperature,
           stream: request.stream,
           botId: request.botId,
           reasoningEffort: request.reasoningEffort,
           verbosity: request.verbosity,
+        });
+
+        // Transform stream to add action metadata at the beginning and citations at the end
+        const originalBody = response.body;
+        if (!originalBody) return response;
+
+        const { appendMetadataToStream } = await import(
+          '@/lib/utils/app/metadata'
+        );
+
+        const transformedStream = new ReadableStream({
+          async start(controller) {
+            const reader = originalBody.getReader();
+
+            try {
+              // PREPEND action metadata at the beginning for immediate feedback
+              appendMetadataToStream(controller, { action: actionMessage });
+
+              // Pass through all content from original stream
+              while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                controller.enqueue(value);
+              }
+
+              // APPEND citations metadata at the end (if any)
+              if (allCitations.length > 0) {
+                console.log(
+                  `[ChatOrchestrator] Appending ${allCitations.length} citations to response`,
+                );
+                appendMetadataToStream(controller, { citations: allCitations });
+              }
+
+              controller.close();
+            } catch (error) {
+              controller.error(error);
+            }
+          },
+        });
+
+        return new Response(transformedStream, {
+          headers: response.headers,
         });
       }
     }
@@ -192,7 +254,7 @@ export class ChatOrchestrator {
       messages: request.messages,
       model: request.model,
       user: request.user,
-      systemPrompt: request.systemPrompt,
+      systemPrompt: request.systemPrompt || '',
       temperature: request.temperature,
       stream: request.stream,
       botId: request.botId,

@@ -216,10 +216,10 @@ export function Sidebar() {
 
       {/* Sidebar - hidden on mobile by default, overlay when open */}
       <div
-        className={`fixed left-0 top-0 z-50 h-full flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out overflow-hidden w-[260px] ${
+        className={`fixed left-0 top-0 z-50 h-full flex flex-col border-r border-neutral-300 bg-white dark:border-neutral-700 dark:bg-[#171717] transition-all duration-300 ease-in-out w-[260px] ${
           showChatbar
-            ? 'translate-x-0'
-            : '-translate-x-full md:translate-x-0 md:w-14'
+            ? 'translate-x-0 overflow-hidden'
+            : '-translate-x-full md:translate-x-0 md:w-14 overflow-visible'
         }`}
       >
         {/* Header */}
@@ -248,10 +248,10 @@ export function Sidebar() {
 
         {/* Action buttons */}
         <div
-          className={`py-2 space-y-1 border-b transition-all duration-300 ${showChatbar ? 'px-3 border-neutral-300 dark:border-neutral-700' : 'px-0 border-transparent'}`}
+          className={`border-b transition-all duration-300 ${showChatbar ? 'py-2 px-3 space-y-1 border-neutral-300 dark:border-neutral-700 overflow-hidden' : 'py-3 px-0 space-y-2 border-transparent overflow-visible'}`}
         >
           <button
-            className={`flex items-center w-full rounded-lg text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-3 py-4'}`}
+            className={`group relative flex items-center w-full rounded-lg text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
             onClick={handleNewConversation}
             title={t('New chat')}
           >
@@ -261,29 +261,60 @@ export function Sidebar() {
             >
               {t('New chat')}
             </span>
+            {!showChatbar && (
+              <span className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100] transition-opacity shadow-lg">
+                {t('New chat')}
+              </span>
+            )}
           </button>
-          <div
-            className={`transition-all duration-300 space-y-1 ${showChatbar ? 'opacity-100 max-h-[500px]' : 'opacity-0 max-h-0 overflow-hidden'}`}
+
+          {/* Search button - visible in both states */}
+          <button
+            className={`group relative flex items-center w-full rounded-lg text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
+            onClick={() => setIsSearchModalOpen(true)}
+            title={t('Search chats')}
           >
-            <button
-              className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-              onClick={() => setIsSearchModalOpen(true)}
-              title={t('Search chats')}
+            <IconSearch size={showChatbar ? 16 : 20} className="shrink-0" />
+            <span
+              className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
             >
-              <IconSearch size={16} />
-              <span className="whitespace-nowrap">{t('Search chats')}</span>
+              {t('Search chats')}
+            </span>
+            {showChatbar && (
               <span className="ml-auto text-xs text-neutral-500 dark:text-neutral-400 whitespace-nowrap">
                 ⌘K
               </span>
-            </button>
-            <button
-              className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-              onClick={() => setIsCustomizationsOpen(true)}
-              title="Quick Actions"
+            )}
+            {!showChatbar && (
+              <span className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100] transition-opacity shadow-lg">
+                {t('Search chats')}
+              </span>
+            )}
+          </button>
+
+          {/* Quick Actions button - visible in both states */}
+          <button
+            className={`group relative flex items-center w-full rounded-lg text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
+            onClick={() => setIsCustomizationsOpen(true)}
+            title="Quick Actions"
+          >
+            <IconBolt size={showChatbar ? 16 : 20} className="shrink-0" />
+            <span
+              className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
             >
-              <IconBolt size={16} />
-              <span className="whitespace-nowrap">Quick Actions</span>
-            </button>
+              Quick Actions
+            </span>
+            {!showChatbar && (
+              <span className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100] transition-opacity shadow-lg">
+                Quick Actions
+              </span>
+            )}
+          </button>
+
+          {/* New folder button - only in expanded state */}
+          <div
+            className={`transition-all duration-300 ${showChatbar ? 'opacity-100 max-h-[100px]' : 'opacity-0 max-h-0 overflow-hidden'}`}
+          >
             <button
               className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
               onClick={handleCreateFolder}

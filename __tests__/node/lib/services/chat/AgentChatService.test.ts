@@ -259,9 +259,9 @@ describe('AgentChatService', () => {
         user: testUser,
       });
 
-      // Verify displayName was logged
+      // Verify model name was logged
       expect(consoleSpy).toHaveBeenCalledWith(
-        expect.stringContaining('Test Agent Model'),
+        expect.stringContaining('Test Agent'),
       );
 
       consoleSpy.mockRestore();

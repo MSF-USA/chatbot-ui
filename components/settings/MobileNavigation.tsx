@@ -39,11 +39,6 @@ export const MobileNavigation: FC<MobileNavigationProps> = ({
       icon: <IconMessage size={20} />,
     },
     {
-      section: SettingsSection.PRIVACY_CONTROL,
-      label: t('Privacy & Security'),
-      icon: <IconShield size={20} />,
-    },
-    {
       section: SettingsSection.DATA_MANAGEMENT,
       label: t('Data Management'),
       icon: <IconDatabase size={20} />,

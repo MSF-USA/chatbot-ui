@@ -12,15 +12,15 @@ export interface EnvironmentConfig {
 
 const modelConfigs: Record<Environment, EnvironmentConfig> = {
   localhost: {
-    defaultModel: 'gpt-4.1',
+    defaultModel: 'gpt-5-chat',
     // All models available in localhost
   },
   dev: {
-    defaultModel: 'gpt-4.1',
+    defaultModel: 'gpt-5-chat',
     // All models available in dev
   },
   prod: {
-    defaultModel: 'gpt-4.1',
+    defaultModel: 'gpt-5-chat',
     disabledModels: [], // All current models available in production
   },
 };

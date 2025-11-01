@@ -194,9 +194,7 @@ describe('ModelSelect', () => {
       expect(screen.getByText('Search Mode')).toBeInTheDocument();
       // Azure Agent Mode toggle should be nested inside Search Mode when search is enabled
       // Note: Azure AI Foundry Mode only appears when Search Mode is enabled
-      expect(
-        screen.getByText(/Azure AI Foundry Mode|Search Mode/),
-      ).toBeInTheDocument();
+      expect(screen.getByText('Azure AI Foundry Mode')).toBeInTheDocument();
     });
 
     it('displays Search Mode toggle for all models', () => {
@@ -231,7 +229,9 @@ describe('ModelSelect', () => {
 
       // Should show Search Mode with description
       expect(screen.getByText('Search Mode')).toBeInTheDocument();
-      expect(screen.getByText(/Includes internet search/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Will use web search when needed/),
+      ).toBeInTheDocument();
     });
   });
 

@@ -274,17 +274,17 @@ describe('NavigationItem', () => {
       expect(screen.getByText('Chat Settings')).toBeInTheDocument();
     });
 
-    it('works with PRIVACY_CONTROL section', () => {
+    it('works with DATA_MANAGEMENT section', () => {
       render(
         <NavigationItem
-          section={SettingsSection.PRIVACY_CONTROL}
-          activeSection={SettingsSection.PRIVACY_CONTROL}
-          label="Privacy Control"
+          section={SettingsSection.DATA_MANAGEMENT}
+          activeSection={SettingsSection.DATA_MANAGEMENT}
+          label="Data Management"
           onClick={mockOnClick}
         />,
       );
 
-      expect(screen.getByText('Privacy Control')).toBeInTheDocument();
+      expect(screen.getByText('Data Management')).toBeInTheDocument();
     });
 
     it('works with ACCOUNT section', () => {

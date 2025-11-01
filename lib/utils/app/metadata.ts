@@ -17,6 +17,7 @@ export interface StreamMetadata {
   threadId?: string;
   thinking?: string;
   transcript?: TranscriptMetadata;
+  action?: string; // Current action being performed (e.g., "searching_web", "processing")
 }
 
 /**
@@ -28,6 +29,7 @@ export interface ParsedMetadata {
   threadId?: string;
   thinking?: string;
   transcript?: TranscriptMetadata;
+  action?: string;
   extractionMethod: 'metadata' | 'none';
 }
 
@@ -44,6 +46,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
   let threadId: string | undefined;
   let thinking: string | undefined;
   let transcript: TranscriptMetadata | undefined;
+  let action: string | undefined;
   let extractionMethod: ParsedMetadata['extractionMethod'] = 'none';
 
   // Check for metadata format
@@ -71,6 +74,9 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
       if (parsedData.transcript) {
         transcript = parsedData.transcript;
       }
+      if (parsedData.action) {
+        action = parsedData.action;
+      }
     } catch (error) {
       console.error('Error parsing metadata JSON:', error);
     }
@@ -82,6 +88,7 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
     threadId,
     thinking,
     transcript,
+    action,
     extractionMethod,
   };
 }
@@ -106,6 +113,7 @@ export function appendMetadataToStream(
   if (metadata.threadId) cleanMetadata.threadId = metadata.threadId;
   if (metadata.thinking) cleanMetadata.thinking = metadata.thinking;
   if (metadata.transcript) cleanMetadata.transcript = metadata.transcript;
+  if (metadata.action) cleanMetadata.action = metadata.action;
 
   // Only append if we have actual metadata
   if (Object.keys(cleanMetadata).length > 0) {

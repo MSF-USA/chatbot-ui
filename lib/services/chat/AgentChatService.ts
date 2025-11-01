@@ -69,7 +69,7 @@ export class AgentChatService {
       }
 
       console.log(
-        `[AgentChatService] Using agent: ${request.model.displayName || request.model.id}`,
+        `[AgentChatService] Using agent: ${request.model.name || request.model.id}`,
       );
 
       // Delegate to agent handler
@@ -86,7 +86,7 @@ export class AgentChatService {
       // Log completion
       const duration = Date.now() - startTime;
       console.log(
-        `[AgentChatService] Agent completion in ${duration}ms for ${request.model.displayName || request.model.id}`,
+        `[AgentChatService] Agent completion in ${duration}ms for ${request.model.name || request.model.id}`,
       );
 
       return response;
@@ -112,11 +112,12 @@ export class AgentChatService {
    * goes to AI Foundry, not the conversation history.
    *
    * @param request - Web search tool request
-   * @returns Search results as text
+   * @returns Search results with text and citations
    */
-  public async executeWebSearchTool(
-    request: WebSearchToolRequest,
-  ): Promise<string> {
+  public async executeWebSearchTool(request: WebSearchToolRequest): Promise<{
+    text: string;
+    citations: any[];
+  }> {
     const startTime = Date.now();
 
     try {
@@ -165,16 +166,25 @@ export class AgentChatService {
         searchResults += decoder.decode(value, { stream: true });
       }
 
+      // Parse metadata from search results
+      const { parseMetadataFromContent } = await import(
+        '@/lib/utils/app/metadata'
+      );
+      const parsed = parseMetadataFromContent(searchResults);
+
       const duration = Date.now() - startTime;
       console.log(
-        `[AgentChatService] Web search completed in ${duration}ms, results length: ${searchResults.length}`,
+        `[AgentChatService] Web search completed in ${duration}ms, results length: ${parsed.content.length}, citations: ${parsed.citations.length}`,
       );
 
-      return searchResults;
+      return {
+        text: parsed.content,
+        citations: parsed.citations,
+      };
     } catch (error) {
       console.error('[AgentChatService] Web search tool error:', error);
       // Return empty results rather than breaking the conversation
-      return '';
+      return { text: '', citations: [] };
     }
   }
 

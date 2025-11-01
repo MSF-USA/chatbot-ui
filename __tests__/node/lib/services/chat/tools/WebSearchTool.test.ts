@@ -46,7 +46,10 @@ describe('WebSearchTool', () => {
   describe('execute', () => {
     it('should execute web search successfully', async () => {
       const searchQuery = 'latest TypeScript features';
-      const mockResults = 'TypeScript 5.3 released with... [search results]';
+      const mockResults = {
+        text: 'TypeScript 5.3 released with... [search results]',
+        citations: [],
+      };
 
       vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
         mockResults,
@@ -58,7 +61,7 @@ describe('WebSearchTool', () => {
         user: testUser,
       });
 
-      expect(result).toBe(mockResults);
+      expect(result).toEqual(mockResults);
       expect(mockAgentChatService.executeWebSearchTool).toHaveBeenCalledWith({
         searchQuery,
         model: testModel,
@@ -69,9 +72,10 @@ describe('WebSearchTool', () => {
     it('should pass search query to agent service', async () => {
       const searchQuery = 'artificial intelligence news 2024';
 
-      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
-        'AI news results...',
-      );
+      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue({
+        text: 'AI news results...',
+        citations: [],
+      });
 
       await tool.execute({
         searchQuery,
@@ -87,9 +91,10 @@ describe('WebSearchTool', () => {
     });
 
     it('should pass model to agent service', async () => {
-      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
-        'Search results...',
-      );
+      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue({
+        text: 'Search results...',
+        citations: [],
+      });
 
       await tool.execute({
         searchQuery: 'test query',
@@ -105,9 +110,10 @@ describe('WebSearchTool', () => {
     });
 
     it('should pass user to agent service', async () => {
-      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
-        'Search results...',
-      );
+      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue({
+        text: 'Search results...',
+        citations: [],
+      });
 
       await tool.execute({
         searchQuery: 'test query',
@@ -123,14 +129,22 @@ describe('WebSearchTool', () => {
     });
 
     it('should return search results', async () => {
-      const expectedResults = `
-Web Search Results:
+      const expectedResults = {
+        text: `Web Search Results:
 1. TypeScript 5.3 Released - Official Blog
    TypeScript 5.3 brings new features including...
 
 2. What's New in TypeScript - Microsoft Docs
-   Latest features and improvements...
-      `.trim();
+   Latest features and improvements...`,
+        citations: [
+          {
+            number: 1,
+            title: 'TypeScript 5.3 Released - Official Blog',
+            url: 'https://example.com/ts-5.3',
+            date: '',
+          },
+        ],
+      };
 
       vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
         expectedResults,
@@ -142,7 +156,7 @@ Web Search Results:
         user: testUser,
       });
 
-      expect(result).toBe(expectedResults);
+      expect(result).toEqual(expectedResults);
     });
 
     it('should handle agent service errors gracefully', async () => {
@@ -160,17 +174,18 @@ Web Search Results:
         user: testUser,
       });
 
-      // Should return empty string on error (fail gracefully)
-      expect(result).toBe('');
+      // Should return empty result on error (fail gracefully)
+      expect(result).toEqual({ text: '', citations: [] });
       expect(consoleErrorSpy).toHaveBeenCalled();
 
       consoleErrorSpy.mockRestore();
     });
 
     it('should handle empty search results', async () => {
-      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
-        '',
-      );
+      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue({
+        text: '',
+        citations: [],
+      });
 
       const result = await tool.execute({
         searchQuery: 'test query',
@@ -178,7 +193,7 @@ Web Search Results:
         user: testUser,
       });
 
-      expect(result).toBe('');
+      expect(result).toEqual({ text: '', citations: [] });
     });
 
     it('should log search execution', async () => {
@@ -186,9 +201,10 @@ Web Search Results:
         .spyOn(console, 'log')
         .mockImplementation(() => {});
 
-      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
-        'Results...',
-      );
+      vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue({
+        text: 'Results...',
+        citations: [],
+      });
 
       await tool.execute({
         searchQuery: 'test query',
@@ -216,9 +232,10 @@ Web Search Results:
       ];
 
       for (const query of queries) {
-        vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue(
-          `Results for: ${query}`,
-        );
+        vi.mocked(mockAgentChatService.executeWebSearchTool).mockResolvedValue({
+          text: `Results for: ${query}`,
+          citations: [],
+        });
 
         const result = await tool.execute({
           searchQuery: query,
@@ -226,7 +243,7 @@ Web Search Results:
           user: testUser,
         });
 
-        expect(result).toContain(query);
+        expect(result.text).toContain(query);
       }
     });
   });

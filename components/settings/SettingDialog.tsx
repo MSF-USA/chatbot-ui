@@ -55,6 +55,7 @@ export function SettingDialog() {
       temperature: 0.5,
       systemPrompt: '',
       advancedMode: false,
+      minimizeAIFoundryUse: true, // Privacy-focused by default
     },
   });
 
@@ -194,6 +195,7 @@ export function SettingDialog() {
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       advancedMode: false,
+      minimizeAIFoundryUse: true, // Privacy-focused by default
     };
     setTheme(defaultTheme);
     setTemperature(0.5);

@@ -187,6 +187,7 @@ describe('HandlerFactory', () => {
       const expectedHandlers: Record<OpenAIModelID, string> = {
         [OpenAIModelID.GPT_4_1]: 'AzureOpenAIHandler',
         [OpenAIModelID.GPT_5]: 'AzureOpenAIHandler',
+        [OpenAIModelID.GPT_5_MINI]: 'AzureOpenAIHandler',
         [OpenAIModelID.GPT_5_CHAT]: 'AzureOpenAIHandler',
         [OpenAIModelID.GPT_o3]: 'AzureOpenAIHandler',
         [OpenAIModelID.DEEPSEEK_R1]: 'DeepSeekHandler',

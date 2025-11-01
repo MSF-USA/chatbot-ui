@@ -9,6 +9,8 @@ import { extractCitationsFromContent } from '@/lib/utils/app/stream/citation';
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
+import { CitationItem } from '../Chat/Citations/CitationItem';
+
 import { Streamdown } from 'streamdown';
 import type { StreamdownProps } from 'streamdown';
 
@@ -53,15 +55,22 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
         let mainContent = props.children?.toString() || '';
         let citationsData: Citation[] = [];
 
-        // Process citations only if conversation has a bot associated with it
-        const shouldProcessCitations = !!conversation?.bot;
+        // Check if we should process citations:
+        // - If conversation has a bot (RAG/bot conversations)
+        // - If model has search mode enabled (privacy-focused search)
+        const modelConfig = conversation?.model as any;
+        const shouldProcessCitations =
+          !!conversation?.bot || !!modelConfig?.searchModeEnabled;
+
+        if (!shouldProcessCitations) {
+          setDisplayContent(mainContent);
+          setExtractedCitations([]);
+          citationsProcessed.current = true;
+          return;
+        }
 
         // Priority 1: Use citations from the message object
-        if (
-          shouldProcessCitations &&
-          message?.citations &&
-          message.citations.length > 0
-        ) {
+        if (message?.citations && message.citations.length > 0) {
           citationsData = [...message.citations];
 
           // Clean content from citation data
@@ -70,12 +79,12 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
             mainContent = text;
           }
         }
-        // Priority 2: Use provided citations prop
-        else if (shouldProcessCitations && citations && citations.length > 0) {
+        // Priority 2: Use provided citations prop (for privacy-focused search mode)
+        else if (citations && citations.length > 0) {
           citationsData = [...citations];
         }
-        // Priority 3: Parse the content to extract citations
-        else if (shouldProcessCitations) {
+        // Priority 3: Parse the content to extract citations (for bot conversations)
+        else if (conversation?.bot) {
           const { text, citations: extractedCits } =
             extractCitationsFromContent(mainContent);
           if (extractedCits.length > 0) {
@@ -90,7 +99,13 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
       };
 
       processContent();
-    }, [props.children, message, citations, conversation?.bot]);
+    }, [
+      props.children,
+      message,
+      citations,
+      conversation?.bot,
+      conversation?.model,
+    ]);
 
     // Global mouse tracking for citation tooltips
     React.useEffect(() => {
@@ -147,7 +162,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
 
       return (
         <div
-          className="citation-tooltip fixed z-50 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-3 max-w-sm"
+          className="citation-tooltip fixed z-50"
           style={{
             top: `${tooltipPosition.top}px`,
             left: `${tooltipPosition.left}px`,
@@ -158,26 +173,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
             }
           }}
         >
-          <div className="text-sm">
-            <div className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-              {citation.title || citation.url}
-            </div>
-            {citation.date && (
-              <div className="text-gray-600 dark:text-gray-400 text-xs">
-                {citation.date}
-              </div>
-            )}
-            {citation.url && (
-              <Link
-                href={citation.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 text-xs mt-1 inline-block"
-              >
-                View source →
-              </Link>
-            )}
-          </div>
+          <CitationItem citation={citation} />
         </div>
       );
     }, [hoveredCitation, tooltipPosition, extractedCitations]);
@@ -251,7 +247,7 @@ function processTextWithCitations(
       parts.push(
         <sup
           key={citationKey}
-          className="citation-number cursor-pointer text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 font-semibold mx-0.5"
+          className="citation-number cursor-pointer text-xs text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 hover:underline font-semibold mx-0.5"
           onMouseEnter={(e) =>
             onHover(citationNumber, citationKey, e.currentTarget)
           }

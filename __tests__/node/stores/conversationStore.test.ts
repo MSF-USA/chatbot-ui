@@ -328,6 +328,265 @@ describe('conversationStore', () => {
         expect(useConversationStore.getState().isLoaded).toBe(false);
       });
     });
+
+    describe('Model Switching Scenarios', () => {
+      it('updates conversation model', () => {
+        const conversation = createMockConversation('1', 'Test');
+        useConversationStore.getState().setConversations([conversation]);
+
+        const newModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: newModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.id).toBe('gpt-5');
+        expect(updated.model.name).toBe('GPT-5');
+      });
+
+      it('preserves messages when switching models', () => {
+        const conversation = createMockConversation('1', 'Test');
+        const messages = [
+          { role: 'user' as const, content: 'Hello', messageType: undefined },
+          {
+            role: 'assistant' as const,
+            content: 'Hi there!',
+            messageType: undefined,
+          },
+        ];
+        conversation.messages = messages;
+        useConversationStore.getState().setConversations([conversation]);
+
+        const newModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: newModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.messages).toEqual(messages);
+        expect(updated.model.id).toBe('gpt-5');
+      });
+
+      it('switches from standard model to search-enabled model', () => {
+        const conversation = createMockConversation('1', 'Test');
+        useConversationStore.getState().setConversations([conversation]);
+
+        const searchModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+          searchModeEnabled: true,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: searchModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.searchModeEnabled).toBe(true);
+      });
+
+      it('switches from search model to agent model', () => {
+        const conversation = {
+          ...createMockConversation('1', 'Test'),
+          model: {
+            id: 'gpt-5',
+            name: 'GPT-5',
+            maxLength: 128000,
+            tokenLimit: 16000,
+            searchModeEnabled: true,
+          },
+        };
+        useConversationStore.getState().setConversations([conversation]);
+
+        const agentModel = {
+          id: 'gpt-4.1',
+          name: 'GPT-4.1',
+          maxLength: 128000,
+          tokenLimit: 16000,
+          azureAgentMode: true,
+          agentId: 'agent-123',
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: agentModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.azureAgentMode).toBe(true);
+        expect(updated.model.agentId).toBe('agent-123');
+        expect(updated.model.searchModeEnabled).toBeUndefined();
+      });
+
+      it('switches from agent model to standard model', () => {
+        const conversation = {
+          ...createMockConversation('1', 'Test'),
+          model: {
+            id: 'gpt-4.1',
+            name: 'GPT-4.1',
+            maxLength: 128000,
+            tokenLimit: 16000,
+            azureAgentMode: true,
+            agentId: 'agent-123',
+          },
+        };
+        useConversationStore.getState().setConversations([conversation]);
+
+        const standardModel = {
+          id: 'grok-3',
+          name: 'Grok 3',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: standardModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.id).toBe('grok-3');
+        expect(updated.model.azureAgentMode).toBeUndefined();
+        expect(updated.model.agentId).toBeUndefined();
+      });
+
+      it('updates model-specific properties', () => {
+        const conversation = createMockConversation('1', 'Test');
+        useConversationStore.getState().setConversations([conversation]);
+
+        const modelWithSpecialProps = {
+          id: 'o3',
+          name: 'o3',
+          maxLength: 128000,
+          tokenLimit: 16000,
+          reasoningEffort: 'high',
+          verbosity: 'medium',
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: modelWithSpecialProps });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.reasoningEffort).toBe('high');
+        expect(updated.model.verbosity).toBe('medium');
+      });
+
+      it('preserves conversation settings when switching models', () => {
+        const conversation = {
+          ...createMockConversation('1', 'Test'),
+          temperature: 0.8,
+          folderId: 'folder-1',
+          prompt: 'Custom system prompt',
+        };
+        useConversationStore.getState().setConversations([conversation]);
+
+        const newModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: newModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.temperature).toBe(0.8);
+        expect(updated.folderId).toBe('folder-1');
+        expect(updated.prompt).toBe('Custom system prompt');
+        expect(updated.model.id).toBe('gpt-5');
+      });
+
+      it('handles multiple rapid model switches', () => {
+        const conversation = createMockConversation('1', 'Test');
+        useConversationStore.getState().setConversations([conversation]);
+
+        const model1 = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        const model2 = {
+          id: 'gpt-4.1',
+          name: 'GPT-4.1',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        const model3 = {
+          id: 'o3',
+          name: 'o3',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: model1 });
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: model2 });
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: model3 });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.id).toBe('o3');
+      });
+
+      it('switches models while preserving bot/RAG configuration', () => {
+        const conversation = {
+          ...createMockConversation('1', 'Test'),
+          bot: 'bot-123',
+          threadId: 'thread-abc',
+        };
+        useConversationStore.getState().setConversations([conversation]);
+
+        const newModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: newModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.bot).toBe('bot-123');
+        expect(updated.threadId).toBe('thread-abc');
+        expect(updated.model.id).toBe('gpt-5');
+      });
+
+      it('can update model and other fields simultaneously', () => {
+        const conversation = createMockConversation('1', 'Test');
+        useConversationStore.getState().setConversations([conversation]);
+
+        const newModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore.getState().updateConversation('1', {
+          model: newModel,
+          name: 'Updated Name',
+          temperature: 0.9,
+        });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.id).toBe('gpt-5');
+        expect(updated.name).toBe('Updated Name');
+        expect(updated.temperature).toBe(0.9);
+      });
+    });
   });
 
   describe('Folder Management', () => {
