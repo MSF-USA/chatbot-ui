@@ -47,7 +47,7 @@ interface ChatStore {
   ) => Promise<void>;
 }
 
-export const useChatStore = create<ChatStore>((set) => ({
+export const useChatStore = create<ChatStore>((set, get) => ({
   // Initial state
   currentMessage: undefined,
   isStreaming: false,

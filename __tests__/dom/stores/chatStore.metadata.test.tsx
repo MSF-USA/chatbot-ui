@@ -45,14 +45,14 @@ describe('ChatStore - Action Metadata Flow', () => {
           // Send action metadata first
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{"action":"Searching the web..."}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{"action":"Searching the web..."}<<<METADATA_END>>>',
             ),
           );
-          // Then content
+          // Then content (delayed longer to give test time to check loading message)
           setTimeout(() => {
             controller.enqueue(new TextEncoder().encode('Here is the result'));
             controller.close();
-          }, 50);
+          }, 200);
         },
       });
 
@@ -99,13 +99,13 @@ describe('ChatStore - Action Metadata Flow', () => {
         start(controller) {
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{"action":"Processing..."}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{"action":"Processing..."}<<<METADATA_END>>>',
             ),
           );
           setTimeout(() => {
             controller.enqueue(new TextEncoder().encode('Content'));
             controller.close();
-          }, 50);
+          }, 200);
         },
       });
 
@@ -147,7 +147,7 @@ describe('ChatStore - Action Metadata Flow', () => {
           // Action first
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{"action":"Loading..."}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{"action":"Loading..."}<<<METADATA_END>>>',
             ),
           );
           // Then content
@@ -290,7 +290,7 @@ describe('ChatStore - Action Metadata Flow', () => {
           controller.enqueue(new TextEncoder().encode('Content'));
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{"citations":[{"number":1,"url":"https://example.com","title":"Test"}]}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{"citations":[{"number":1,"url":"https://example.com","title":"Test"}]}<<<METADATA_END>>>',
             ),
           );
           controller.close();
@@ -333,7 +333,7 @@ describe('ChatStore - Action Metadata Flow', () => {
           controller.enqueue(new TextEncoder().encode('Content'));
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{"citations":[{"number":1,"url":"https://a.com","title":"A"},{"number":2,"url":"https://b.com","title":"B"}]}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{"citations":[{"number":1,"url":"https://a.com","title":"A"},{"number":2,"url":"https://b.com","title":"B"}]}<<<METADATA_END>>>',
             ),
           );
           controller.close();
@@ -408,7 +408,7 @@ describe('ChatStore - Action Metadata Flow', () => {
           // Invalid JSON
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{invalid}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{invalid}<<<METADATA_END>>>',
             ),
           );
           controller.enqueue(
@@ -454,7 +454,7 @@ describe('ChatStore - Action Metadata Flow', () => {
         start(controller) {
           controller.enqueue(
             new TextEncoder().encode(
-              '<<<METADATA_START>>>{"action":"Processing"}<<<METADATA_END>>>',
+              '\n\n<<<METADATA_START>>>{"action":"Processing"}<<<METADATA_END>>>',
             ),
           );
           controller.enqueue(

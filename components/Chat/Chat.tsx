@@ -187,28 +187,24 @@ export function Chat({
 
       // Only scroll if the last message is from the user
       if (lastMessage?.role === 'user') {
-        // Use requestAnimationFrame + setTimeout to wait for layout to fully settle
-        requestAnimationFrame(() => {
-          setTimeout(() => {
-            if (chatContainerRef.current) {
-              const container = chatContainerRef.current;
+        // Position message at comfortable reading height (20% from top of viewport)
+        // This keeps some context above and blank space below for the response
+        setTimeout(() => {
+          if (lastMessageRef.current && chatContainerRef.current) {
+            const container = chatContainerRef.current;
+            const messageElement = lastMessageRef.current;
 
-              // Scroll to the very bottom
-              // With 70vh bottom padding, this positions the new message at the top with blank space below
-              const scrollTarget = container.scrollHeight;
+            // Scroll to show message at 20% from top of viewport
+            const viewportOffset = container.clientHeight * 0.2;
+            const scrollTarget = messageElement.offsetTop - viewportOffset;
 
-              console.log(
-                '[Chat Scroll] Scrolling to bottom. scrollHeight:',
-                container.scrollHeight,
-              );
-
-              container.scrollTo({
-                top: scrollTarget,
-                behavior: 'smooth',
-              });
-            }
-          }, 100);
-        });
+            container.scrollTo({
+              top: scrollTarget,
+              behavior: 'smooth',
+            });
+            console.log('[Chat Scroll] Positioned message at reading height');
+          }
+        }, 50);
       }
     }
 
@@ -471,11 +467,11 @@ export function Chat({
         <>
           {/* Messages */}
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl pb-[70vh]">
+            <div className="mx-auto max-w-3xl pb-[80vh]">
               {messages.map((message, index) => {
                 const isLastMessage = index === messages.length - 1;
                 return isLastMessage ? (
-                  <div key={index} ref={lastMessageRef} className="mb-8">
+                  <div key={index} ref={lastMessageRef} className="mb-2">
                     <MemoizedChatMessage
                       message={message}
                       messageIndex={index}
@@ -486,7 +482,7 @@ export function Chat({
                     />
                   </div>
                 ) : (
-                  <div key={index} className="mb-8">
+                  <div key={index} className="mb-2">
                     <MemoizedChatMessage
                       message={message}
                       messageIndex={index}

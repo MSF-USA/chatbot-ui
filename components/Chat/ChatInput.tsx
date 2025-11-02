@@ -640,7 +640,7 @@ export const ChatInput = ({
               </div>
 
               <div
-                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-16 md:left-auto md:right-3 md:translate-x-0 z-[9999] transition-all duration-200 ease-in-out ${
+                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-16 z-[9999] transition-all duration-200 ease-in-out ${
                   showScrollDownButton && !isFocused
                     ? 'opacity-100 scale-100 pointer-events-auto'
                     : 'opacity-0 scale-90 pointer-events-none'
