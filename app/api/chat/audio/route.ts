@@ -5,6 +5,8 @@ import { AudioChatService } from '@/lib/services/chat';
 import { FileConversationHandler } from '@/lib/services/chat/FileConversationHandler';
 import { ChatLogger } from '@/lib/services/shared';
 
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+
 import { ChatBody } from '@/types/chat';
 
 import { auth } from '@/auth';
@@ -82,7 +84,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       botId,
     });
   } catch (error) {
-    console.error('[POST /api/chat/audio] Error:', error);
+    console.error('[POST /api/chat/audio] Error:', sanitizeForLog(error));
 
     return new Response(
       JSON.stringify({

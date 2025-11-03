@@ -1,6 +1,7 @@
 import { Session } from 'next-auth';
 
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';
@@ -183,7 +184,7 @@ export class RAGService {
         return completion;
       }
     } catch (error) {
-      console.error('Error in augmentMessages:', error);
+      console.error('Error in augmentMessages:', sanitizeForLog(error));
       throw error;
     }
   }
@@ -249,12 +250,12 @@ export class RAGService {
       const expandedQuery =
         completion.choices[0]?.message?.content?.trim() || originalQuery;
 
-      console.log(`Original query: "${originalQuery}"`);
-      console.log(`Expanded query: "${expandedQuery}"`);
+      console.log(`Original query: "${sanitizeForLog(originalQuery)}"`);
+      console.log(`Expanded query: "${sanitizeForLog(expandedQuery)}"`);
 
       return expandedQuery;
     } catch (error) {
-      console.error('Error reformulating query:', error);
+      console.error('Error reformulating query:', sanitizeForLog(error));
       // Fall back to the original query if reformulation fails
       return this.extractQuery(messages);
     }

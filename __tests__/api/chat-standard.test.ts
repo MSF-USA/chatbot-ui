@@ -590,7 +590,7 @@ describe('/api/chat/standard', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '[POST /api/chat/standard] Error:',
-        expect.any(Error),
+        expect.stringContaining('Test error'),
       );
 
       consoleErrorSpy.mockRestore();

@@ -1,5 +1,7 @@
 import { Session } from 'next-auth';
 
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
@@ -69,7 +71,7 @@ export class AgentChatService {
       }
 
       console.log(
-        `[AgentChatService] Using agent: ${request.model.name || request.model.id}`,
+        `[AgentChatService] Using agent: ${sanitizeForLog(request.model.name || request.model.id)}`,
       );
 
       // Delegate to agent handler
@@ -86,7 +88,7 @@ export class AgentChatService {
       // Log completion
       const duration = Date.now() - startTime;
       console.log(
-        `[AgentChatService] Agent completion in ${duration}ms for ${request.model.name || request.model.id}`,
+        `[AgentChatService] Agent completion in ${duration}ms for ${sanitizeForLog(request.model.name || request.model.id)}`,
       );
 
       return response;

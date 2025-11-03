@@ -7,6 +7,7 @@ import { retryAsync, retryWithExponentialBackoff } from '@/lib/utils/app/retry';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
 import { BlobProperty } from '@/lib/utils/server/blob';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { FileMessageContent, Message, TextMessageContent } from '@/types/chat';
 
@@ -97,9 +98,12 @@ export class FileConversationHandler {
       if (!filename) throw new Error('Filename is required');
 
       try {
-        console.log('[FileHandler] Processing file:', filename);
-        console.log('[FileHandler] Prompt:', prompt);
-        console.log('[FileHandler] Stream response:', streamResponse);
+        console.log('[FileHandler] Processing file:', sanitizeForLog(filename));
+        console.log('[FileHandler] Prompt:', sanitizeForLog(prompt));
+        console.log(
+          '[FileHandler] Stream response:',
+          sanitizeForLog(streamResponse),
+        );
 
         await this.downloadFile(fileUrl, filePath, user);
         console.log('[FileHandler] File downloaded successfully.');
@@ -129,7 +133,7 @@ export class FileConversationHandler {
           if (prompt && prompt.trim().length > 0) {
             console.log(
               '[FileHandler] User provided instructions for transcript:',
-              prompt,
+              sanitizeForLog(prompt),
             );
 
             // Create a text file with the transcript content (not the audio binary!)
@@ -151,7 +155,7 @@ export class FileConversationHandler {
 
             console.log(
               '[FileHandler] Transcript processed with user instructions. Streaming:',
-              streamResponse,
+              sanitizeForLog(streamResponse),
             );
 
             // Return processed content with transcript metadata
@@ -226,7 +230,7 @@ export class FileConversationHandler {
             // No additional instructions - return empty content with transcript metadata
             console.log(
               '[FileHandler] No instructions provided, returning transcript via metadata. Streaming:',
-              streamResponse,
+              sanitizeForLog(streamResponse),
             );
 
             if (streamResponse) {

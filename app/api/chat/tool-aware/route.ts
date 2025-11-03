@@ -19,6 +19,7 @@ import {
   DEFAULT_SYSTEM_PROMPT,
   OPENAI_API_VERSION,
 } from '@/lib/utils/app/const';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { ChatBody } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
@@ -162,7 +163,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       botId,
     });
   } catch (error) {
-    console.error('[POST /api/chat/tool-aware] Error:', error);
+    console.error('[POST /api/chat/tool-aware] Error:', sanitizeForLog(error));
 
     return new Response(
       JSON.stringify({

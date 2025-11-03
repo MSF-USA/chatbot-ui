@@ -443,7 +443,7 @@ describe('/api/chat/audio', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '[POST /api/chat/audio] Error:',
-        expect.any(Error),
+        expect.stringContaining('Test error'),
       );
 
       consoleErrorSpy.mockRestore();

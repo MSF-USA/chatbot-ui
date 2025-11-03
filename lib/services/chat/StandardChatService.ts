@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { Message } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
@@ -123,7 +124,7 @@ export class StandardChatService {
       );
 
       console.log(
-        `[StandardChatService] Using ${HandlerFactory.getHandlerName(modelConfig)} for model: ${modelId}`,
+        `[StandardChatService] Using ${HandlerFactory.getHandlerName(modelConfig)} for model: ${sanitizeForLog(modelId)}`,
       );
 
       // Prepare messages using handler-specific logic

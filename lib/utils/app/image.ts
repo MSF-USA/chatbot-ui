@@ -1,3 +1,5 @@
+import isPrivateIp from 'private-ip';
+
 /**
  * This function fetches an image from a given URL and converts it to a Base64 string.
  *
@@ -18,25 +20,47 @@
  * const imageBase64 = await getBase64FromImageURL('https://example.com/image.jpg');
  * console.log(imageBase64);
  */
-export const getBase64FromImageURL = async (imageUrl: string, init?: RequestInit | undefined): Promise<string> => {
-    try {
-        const response = await fetch(imageUrl, init);
+export const getBase64FromImageURL = async (
+  imageUrl: string,
+  init?: RequestInit | undefined,
+): Promise<string> => {
+  // Validate URL to prevent SSRF attacks using private-ip package
+  let url: URL;
+  try {
+    url = new URL(imageUrl);
+  } catch {
+    throw new Error('Invalid URL format');
+  }
 
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+  // Only allow HTTP and HTTPS protocols
+  if (!['http:', 'https:'].includes(url.protocol)) {
+    throw new Error('Only HTTP and HTTPS protocols are allowed');
+  }
 
-        try {
-            // More efficient server-side method
-            const buffer = Buffer.from(await response.arrayBuffer());
-            return buffer.toString();
-        } catch (bufferError) {
-            // less efficient, client-side compatible method
-            const arrayBuffer = await response.arrayBuffer();
-            // @ts-ignore
-            return String.fromCharCode(...new Uint8Array(arrayBuffer));
-        }
-    } catch (error) {
-        throw new Error(`Error fetching the image: ${error}`);
+  // Use private-ip package to check for private/internal IPs
+  // This blocks localhost, 127.0.0.1, private ranges (10.x, 192.168.x, etc.), link-local, etc.
+  if (isPrivateIp(url.hostname)) {
+    throw new Error('Access to private IP addresses is not allowed');
+  }
+
+  try {
+    const response = await fetch(imageUrl, init);
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-}
+
+    try {
+      // More efficient server-side method
+      const buffer = Buffer.from(await response.arrayBuffer());
+      return buffer.toString();
+    } catch (bufferError) {
+      // less efficient, client-side compatible method
+      const arrayBuffer = await response.arrayBuffer();
+      // @ts-ignore
+      return String.fromCharCode(...new Uint8Array(arrayBuffer));
+    }
+  } catch (error) {
+    throw new Error(`Error fetching the image: ${error}`);
+  }
+};

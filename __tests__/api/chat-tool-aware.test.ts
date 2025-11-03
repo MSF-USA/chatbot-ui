@@ -555,7 +555,7 @@ describe('/api/chat/tool-aware', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '[POST /api/chat/tool-aware] Error:',
-        expect.any(Error),
+        expect.stringContaining('Test error'),
       );
 
       consoleErrorSpy.mockRestore();

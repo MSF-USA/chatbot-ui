@@ -15,6 +15,7 @@ import {
   unauthorizedResponse,
 } from '@/lib/utils/server/apiResponse';
 import { loadDocument } from '@/lib/utils/server/file-handling';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 import { getContentType } from '@/lib/utils/server/mimeTypes';
 
 import { auth } from '@/auth';
@@ -194,8 +195,10 @@ export async function POST(req: NextRequest) {
           await unlinkAsync(tmpFilePath);
           await blockBlobClient.delete();
         } catch (error) {
-          console.error(`Error processing file ${fileUrl}:`, error);
-          fileContent += `\n\n[Error processing file: ${fileUrl}]`;
+          const safeFileUrl = sanitizeForLog(fileUrl);
+          const safeError = sanitizeForLog(error);
+          console.error(`Error processing file ${safeFileUrl}: ${safeError}`);
+          fileContent += `\n\n[Error processing file: ${safeFileUrl}]`;
         }
       }
     }

@@ -1,5 +1,7 @@
 import { Session } from 'next-auth';
 
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+
 import { Message, ToolRouterRequest } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
@@ -53,7 +55,7 @@ export class ChatOrchestrator {
    */
   async handleChat(request: ChatOrchestratorRequest): Promise<Response> {
     console.log(
-      `[ChatOrchestrator] minimizeAIFoundryUse: ${request.minimizeAIFoundryUse}`,
+      `[ChatOrchestrator] minimizeAIFoundryUse: ${sanitizeForLog(request.minimizeAIFoundryUse)}`,
     );
 
     // If minimize AI Foundry is OFF, use standard routing (agent service directly)

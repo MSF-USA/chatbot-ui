@@ -6,6 +6,7 @@ import { RAGService } from '@/lib/services/ragService';
 import { ChatLogger } from '@/lib/services/shared';
 
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { bots } from '@/types/bots';
 import { ChatBody } from '@/types/chat';
@@ -111,7 +112,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       stream,
     });
   } catch (error) {
-    console.error('[POST /api/chat/rag] Error:', error);
+    console.error('[POST /api/chat/rag] Error:', sanitizeForLog(error));
 
     return new Response(
       JSON.stringify({

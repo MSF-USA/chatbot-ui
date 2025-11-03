@@ -1,3 +1,5 @@
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
@@ -41,8 +43,8 @@ export function cleanUpFiles(filePaths: string[]): Promise<void[]> {
     await fs.promises
       .access(filePath)
       .then(() => unlinkAsync(filePath))
-      .then(() => console.log(`Deleted file: ${filePath}`))
-      .catch(() => console.log(`File not found: ${filePath}`));
+      .then(() => console.log(`Deleted file: ${sanitizeForLog(filePath)}`))
+      .catch(() => console.log(`File not found: ${sanitizeForLog(filePath)}`));
   });
   console.timeEnd('cleanUpFiles');
   return Promise.all(unlinkPromises);

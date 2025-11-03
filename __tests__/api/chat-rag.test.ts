@@ -485,7 +485,7 @@ describe('/api/chat/rag', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '[POST /api/chat/rag] Error:',
-        expect.any(Error),
+        expect.stringContaining('Test error'),
       );
 
       consoleErrorSpy.mockRestore();

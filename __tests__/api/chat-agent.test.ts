@@ -431,7 +431,7 @@ describe('/api/chat/agent', () => {
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '[POST /api/chat/agent] Error:',
-        expect.any(Error),
+        expect.stringContaining('Test error'),
       );
 
       consoleErrorSpy.mockRestore();

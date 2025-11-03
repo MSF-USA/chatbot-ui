@@ -4,6 +4,7 @@ import {
   isImageConversation,
 } from '@/lib/utils/app/chat';
 import { DEFAULT_MODEL } from '@/lib/utils/app/const';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { Message } from '@/types/chat';
 import {
@@ -60,7 +61,7 @@ export class ModelSelector {
     else if (modelId == null || !isValidModel) {
       modelId = DEFAULT_MODEL;
       console.log(
-        `[ModelSelector] Invalid model ${requestedModel.id} - falling back to ${modelId}`,
+        `[ModelSelector] Invalid model ${sanitizeForLog(requestedModel.id)} - falling back to ${sanitizeForLog(modelId)}`,
       );
     }
 

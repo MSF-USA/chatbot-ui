@@ -13,6 +13,7 @@ import {
   DEFAULT_SYSTEM_PROMPT,
   OPENAI_API_VERSION,
 } from '@/lib/utils/app/const';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { ChatBody } from '@/types/chat';
 
@@ -121,7 +122,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       botId,
     });
   } catch (error) {
-    console.error('[POST /api/chat/standard] Error:', error);
+    console.error('[POST /api/chat/standard] Error:', sanitizeForLog(error));
 
     return new Response(
       JSON.stringify({

@@ -5,6 +5,8 @@ import { AgentChatService } from '@/lib/services/chat';
 import { AIFoundryAgentHandler } from '@/lib/services/chat/AIFoundryAgentHandler';
 import { ChatLogger } from '@/lib/services/shared';
 
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+
 import { ChatBody } from '@/types/chat';
 
 import { auth } from '@/auth';
@@ -83,7 +85,7 @@ export async function POST(req: NextRequest): Promise<Response> {
       botId,
     });
   } catch (error) {
-    console.error('[POST /api/chat/agent] Error:', error);
+    console.error('[POST /api/chat/agent] Error:', sanitizeForLog(error));
 
     return new Response(
       JSON.stringify({

@@ -5,6 +5,7 @@ import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { loadDocument } from '@/lib/utils/server/file-handling';
+import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import {
   DefaultAzureCredential,
@@ -88,13 +89,16 @@ export async function parseAndQueryFileOpenAI({
   const startTime = Date.now();
   console.log(
     '[parseAndQueryFileOpenAI] Starting with file:',
-    file.name,
+    sanitizeForLog(file.name),
     'size:',
-    file.size,
+    sanitizeForLog(file.size),
     'stream:',
-    stream,
+    sanitizeForLog(stream),
   );
-  console.log('[parseAndQueryFileOpenAI] Prompt length:', prompt.length);
+  console.log(
+    '[parseAndQueryFileOpenAI] Prompt length:',
+    sanitizeForLog(prompt.length),
+  );
 
   const fileContent = await loadDocument(file);
   console.log(
@@ -185,7 +189,7 @@ export async function parseAndQueryFileOpenAI({
   try {
     console.log(
       '[parseAndQueryFileOpenAI] Creating chat completion, botId:',
-      botId,
+      sanitizeForLog(botId),
     );
     let response;
     if (botId) {
@@ -212,7 +216,10 @@ export async function parseAndQueryFileOpenAI({
       response = await client.chat.completions.create(commonParams);
     }
 
-    console.log('[parseAndQueryFileOpenAI] Got response, stream:', stream);
+    console.log(
+      '[parseAndQueryFileOpenAI] Got response, stream:',
+      sanitizeForLog(stream),
+    );
 
     if (stream) {
       await loggingService.logFileSuccess(
