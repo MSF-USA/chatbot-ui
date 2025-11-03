@@ -60,6 +60,7 @@ export class ModelSelector {
     // Fallback to default model if invalid
     else if (modelId == null || !isValidModel) {
       modelId = DEFAULT_MODEL;
+      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(
         `[ModelSelector] Invalid model ${sanitizeForLog(requestedModel.id)} - falling back to ${sanitizeForLog(modelId)}`,
       );

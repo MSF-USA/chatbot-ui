@@ -54,6 +54,7 @@ export class ChatOrchestrator {
    * @returns Response with streaming content
    */
   async handleChat(request: ChatOrchestratorRequest): Promise<Response> {
+    // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
     console.log(
       `[ChatOrchestrator] minimizeAIFoundryUse: ${sanitizeForLog(request.minimizeAIFoundryUse)}`,
     );

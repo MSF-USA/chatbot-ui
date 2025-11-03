@@ -18,7 +18,7 @@ import {
 } from '@azure/identity';
 import { AzureOpenAI } from 'openai';
 
-export const maxDuration = API_TIMEOUTS.DEFAULT;
+export const maxDuration = 60;
 
 const PROMPT_GENERATION_SYSTEM_PROMPT = `You are an expert at crafting effective AI prompts. Your role is to help users create prompts from scratch based on their requirements.
 

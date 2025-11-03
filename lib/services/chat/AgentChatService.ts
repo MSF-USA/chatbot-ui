@@ -70,6 +70,7 @@ export class AgentChatService {
         );
       }
 
+      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(
         `[AgentChatService] Using agent: ${sanitizeForLog(request.model.name || request.model.id)}`,
       );
@@ -87,6 +88,7 @@ export class AgentChatService {
 
       // Log completion
       const duration = Date.now() - startTime;
+      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(
         `[AgentChatService] Agent completion in ${duration}ms for ${sanitizeForLog(request.model.name || request.model.id)}`,
       );

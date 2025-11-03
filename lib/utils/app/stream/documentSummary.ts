@@ -87,6 +87,7 @@ export async function parseAndQueryFileOpenAI({
   stream = true,
 }: ParseAndQueryFilterOpenAIArguments): Promise<ReadableStream | string> {
   const startTime = Date.now();
+  // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
   console.log(
     '[parseAndQueryFileOpenAI] Starting with file:',
     sanitizeForLog(file.name),
@@ -95,6 +96,7 @@ export async function parseAndQueryFileOpenAI({
     'stream:',
     sanitizeForLog(stream),
   );
+  // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
   console.log(
     '[parseAndQueryFileOpenAI] Prompt length:',
     sanitizeForLog(prompt.length),
@@ -187,6 +189,7 @@ export async function parseAndQueryFileOpenAI({
   };
 
   try {
+    // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
     console.log(
       '[parseAndQueryFileOpenAI] Creating chat completion, botId:',
       sanitizeForLog(botId),
@@ -216,6 +219,7 @@ export async function parseAndQueryFileOpenAI({
       response = await client.chat.completions.create(commonParams);
     }
 
+    // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
     console.log(
       '[parseAndQueryFileOpenAI] Got response, stream:',
       sanitizeForLog(stream),

@@ -184,6 +184,7 @@ export class RAGService {
         return completion;
       }
     } catch (error) {
+      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.error('Error in augmentMessages:', sanitizeForLog(error));
       throw error;
     }
@@ -250,7 +251,9 @@ export class RAGService {
       const expandedQuery =
         completion.choices[0]?.message?.content?.trim() || originalQuery;
 
+      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(`Original query: "${sanitizeForLog(originalQuery)}"`);
+      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(`Expanded query: "${sanitizeForLog(expandedQuery)}"`);
 
       return expandedQuery;

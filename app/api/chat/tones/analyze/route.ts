@@ -31,7 +31,7 @@ import { promisify } from 'util';
 
 const unlinkAsync = promisify(fs.unlink);
 
-export const maxDuration = API_TIMEOUTS.DEFAULT;
+export const maxDuration = 60;
 
 const TONE_ANALYSIS_SYSTEM_PROMPT = `You are an expert linguist and writing style analyst specializing in voice profiling. Your role is to deeply analyze writing samples and create comprehensive, replicable voice profiles.
 
@@ -197,6 +197,7 @@ export async function POST(req: NextRequest) {
         } catch (error) {
           const safeFileUrl = sanitizeForLog(fileUrl);
           const safeError = sanitizeForLog(error);
+          // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
           console.error(`Error processing file ${safeFileUrl}: ${safeError}`);
           fileContent += `\n\n[Error processing file: ${safeFileUrl}]`;
         }
