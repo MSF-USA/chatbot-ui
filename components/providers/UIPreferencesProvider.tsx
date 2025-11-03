@@ -10,7 +10,7 @@ interface UIPreferences {
   theme: ThemeMode;
 }
 
-interface UIPreferencesContext extends UIPreferences {
+interface UIPreferencesContextValue extends UIPreferences {
   setShowChatbar: (show: boolean) => void;
   toggleChatbar: () => void;
   setShowPromptbar: (show: boolean) => void;
@@ -19,7 +19,9 @@ interface UIPreferencesContext extends UIPreferences {
   toggleTheme: () => void;
 }
 
-const UIPreferencesContext = createContext<UIPreferencesContext | null>(null);
+const UIPreferencesContext = createContext<UIPreferencesContextValue | null>(
+  null,
+);
 
 const STORAGE_KEY = 'ui-preferences';
 const DEFAULT_PREFERENCES: UIPreferences = {
@@ -81,7 +83,7 @@ export function UIPreferencesProvider({
     }
   };
 
-  const value: UIPreferencesContext = {
+  const value: UIPreferencesContextValue = {
     ...preferences,
     setShowChatbar: (show: boolean) => updatePreferences({ showChatbar: show }),
     toggleChatbar: () =>

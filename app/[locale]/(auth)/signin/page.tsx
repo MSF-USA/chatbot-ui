@@ -47,10 +47,12 @@ export default function SignInPage() {
         CredentialsSignin: 'Sign in failed. Please check your credentials.',
         SessionRequired: 'Please sign in to access this page.',
       };
-      setError(
-        errorMessages[urlError] ||
-          'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
-      );
+      setTimeout(() => {
+        setError(
+          errorMessages[urlError] ||
+            'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
+        );
+      }, 0);
     }
   }, [searchParams]);
 

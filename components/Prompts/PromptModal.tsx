@@ -33,10 +33,12 @@ export const PromptModal: FC<PromptModalProps> = ({
   // Sync with initial values when modal opens or props change
   useEffect(() => {
     if (isOpen) {
-      setName(initialName);
-      setDescription(initialDescription);
-      setContent(initialContent);
-      setShowInfo(false);
+      setTimeout(() => {
+        setName(initialName);
+        setDescription(initialDescription);
+        setContent(initialContent);
+        setShowInfo(false);
+      }, 0);
     }
   }, [isOpen, initialName, initialDescription, initialContent]);
 

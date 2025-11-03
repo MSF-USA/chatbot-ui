@@ -471,7 +471,7 @@ describe('conversationStore', () => {
         };
         useConversationStore
           .getState()
-          .updateConversation('1', { model: modelWithSpecialProps });
+          .updateConversation('1', { model: modelWithSpecialProps as any });
 
         const updated = useConversationStore.getState().conversations[0];
         expect(updated.model.reasoningEffort).toBe('high');

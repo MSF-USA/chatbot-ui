@@ -185,16 +185,14 @@ describe('Mid-Conversation Model Switching', () => {
       const updated = useConversationStore.getState().conversations[0];
 
       // Send new message
-      await useChatStore
-        .getState()
-        .sendMessage(
-          {
-            role: 'user',
-            content: 'What is the weather?',
-            messageType: MessageType.TEXT,
-          },
-          updated,
-        );
+      await useChatStore.getState().sendMessage(
+        {
+          role: 'user',
+          content: 'What is the weather?',
+          messageType: MessageType.TEXT,
+        },
+        updated,
+      );
 
       // Should route to tool-aware endpoint
       expect(global.fetch).toHaveBeenCalledWith(
@@ -546,7 +544,12 @@ describe('Mid-Conversation Model Switching', () => {
             content: 'Result',
             messageType: MessageType.TEXT,
             citations: [
-              { number: 1, url: 'https://example.com', title: 'Example' },
+              {
+                number: 1,
+                url: 'https://example.com',
+                title: 'Example',
+                date: '2024-01-01',
+              },
             ],
           },
         ],
@@ -586,8 +589,8 @@ describe('Mid-Conversation Model Switching', () => {
             content: 'Response',
             messageType: MessageType.TEXT,
             transcript: {
-              text: 'Transcribed text',
-              duration: 10,
+              transcript: 'Transcribed text',
+              filename: 'audio.mp3',
             },
           },
         ],
@@ -608,7 +611,9 @@ describe('Mid-Conversation Model Switching', () => {
 
       // Transcript should be preserved
       expect(updated.messages[1].transcript).toBeDefined();
-      expect(updated.messages[1].transcript!.text).toBe('Transcribed text');
+      expect(updated.messages[1].transcript!.transcript).toBe(
+        'Transcribed text',
+      );
     });
 
     it('allows updating model-specific parameters during switch', () => {

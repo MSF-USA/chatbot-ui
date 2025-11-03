@@ -153,7 +153,7 @@ describe('/api/chat/standard', () => {
 
   describe('Authentication', () => {
     it('returns 500 when session is not found', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createChatRequest({});
       const response = await POST(request);
@@ -542,7 +542,7 @@ describe('/api/chat/standard', () => {
     });
 
     it('handles authentication errors', async () => {
-      vi.mocked(auth).mockRejectedValue(new Error('Auth failed'));
+      (vi.mocked(auth) as any).mockRejectedValue(new Error('Auth failed'));
 
       const request = createChatRequest({});
       const response = await POST(request);

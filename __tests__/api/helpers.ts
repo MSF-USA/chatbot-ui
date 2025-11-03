@@ -33,7 +33,7 @@ export function createMockRequest(options: {
     requestInit.body = JSON.stringify(body);
   }
 
-  const request = new NextRequest(url, requestInit);
+  const request = new NextRequest(url, requestInit as any);
 
   // Add cookies if provided
   Object.entries(cookies).forEach(([key, value]) => {

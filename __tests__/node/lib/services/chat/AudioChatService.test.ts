@@ -16,6 +16,7 @@ describe('AudioChatService', () => {
     id: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
+    displayName: 'Test User',
   };
 
   beforeEach(() => {
@@ -53,6 +54,7 @@ describe('AudioChatService', () => {
               originalFilename: 'recording.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -98,6 +100,7 @@ describe('AudioChatService', () => {
               originalFilename: 'meeting.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -143,6 +146,7 @@ describe('AudioChatService', () => {
               originalFilename: 'audio.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -184,6 +188,7 @@ describe('AudioChatService', () => {
               originalFilename: 'audio.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
       const botId = 'bot-123';
@@ -226,6 +231,7 @@ describe('AudioChatService', () => {
               originalFilename: 'audio.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
       const error = new Error('File handler failed');
@@ -269,6 +275,7 @@ describe('AudioChatService', () => {
               originalFilename: 'recording.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -287,6 +294,7 @@ describe('AudioChatService', () => {
               originalFilename: 'video.mp4',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -305,6 +313,7 @@ describe('AudioChatService', () => {
               originalFilename: 'audio.wav',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -323,6 +332,7 @@ describe('AudioChatService', () => {
               originalFilename: 'podcast.m4a',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -341,6 +351,7 @@ describe('AudioChatService', () => {
               originalFilename: 'recording.webm',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -359,6 +370,7 @@ describe('AudioChatService', () => {
               originalFilename: 'document.pdf',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -371,6 +383,7 @@ describe('AudioChatService', () => {
         {
           role: 'user',
           content: 'Hello world',
+          messageType: undefined,
         },
       ];
 
@@ -396,6 +409,7 @@ describe('AudioChatService', () => {
               originalFilename: 'RECORDING.MP3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -408,10 +422,12 @@ describe('AudioChatService', () => {
         {
           role: 'user',
           content: 'Text message',
+          messageType: undefined,
         },
         {
           role: 'assistant',
           content: 'Response',
+          messageType: undefined,
         },
         {
           role: 'user',
@@ -422,6 +438,7 @@ describe('AudioChatService', () => {
               originalFilename: 'audio.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -447,6 +464,7 @@ describe('AudioChatService', () => {
               originalFilename: 'team-meeting.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -486,6 +504,7 @@ describe('AudioChatService', () => {
               originalFilename: 'presentation.mp4',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 
@@ -520,10 +539,12 @@ describe('AudioChatService', () => {
               originalFilename: 'part1.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
         {
           role: 'assistant',
           content: 'Transcribed part 1...',
+          messageType: undefined,
         },
         {
           role: 'user',
@@ -534,6 +555,7 @@ describe('AudioChatService', () => {
               originalFilename: 'part2.mp3',
             } as FileMessageContent,
           ],
+          messageType: undefined,
         },
       ];
 

@@ -30,6 +30,7 @@ describe('ToneService', () => {
         {
           role: 'user',
           content: 'Hello',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -58,6 +59,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Hello',
           toneId: 'professional',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -96,15 +98,18 @@ describe('ToneService', () => {
           role: 'user',
           content: 'First message',
           toneId: 'casual',
+          messageType: undefined,
         },
         {
           role: 'assistant',
           content: 'Response',
+          messageType: undefined,
         },
         {
           role: 'user',
           content: 'Latest message',
           toneId: 'professional',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -134,6 +139,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Hello',
           toneId: 'empty-tone',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -151,6 +157,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Hello',
           toneId: 'nonexistent',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -179,6 +186,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Hello',
           toneId: 'nonexistent-tone',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -197,6 +205,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Hello',
           toneId: 'some-tone',
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -225,11 +234,13 @@ describe('ToneService', () => {
           role: 'user',
           content: 'First',
           toneId: 'professional',
+          messageType: undefined,
         },
         {
           role: 'assistant',
           content: 'Response',
           toneId: 'should-be-ignored' as any,
+          messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
@@ -341,6 +352,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Write an email to my manager',
           toneId: 'professional',
+          messageType: undefined,
         },
       ];
       const systemPrompt =
@@ -385,6 +397,7 @@ describe('ToneService', () => {
           role: 'user',
           content: 'Draft a business proposal',
           toneId: 'professional',
+          messageType: undefined,
         },
       ];
 
@@ -397,11 +410,13 @@ describe('ToneService', () => {
         {
           role: 'assistant',
           content: 'Here is your proposal...',
+          messageType: undefined,
         },
         {
           role: 'user',
           content: 'Now write a casual email to a friend',
           toneId: 'casual',
+          messageType: undefined,
         },
       ];
 

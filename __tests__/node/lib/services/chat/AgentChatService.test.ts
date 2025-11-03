@@ -16,6 +16,7 @@ describe('AgentChatService', () => {
     id: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
+    displayName: 'Test User',
   };
 
   const testAgentModel: OpenAIModel = {
@@ -52,7 +53,11 @@ describe('AgentChatService', () => {
   describe('handleChat', () => {
     it('should handle agent chat request successfully', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Search for the latest TypeScript news' },
+        {
+          role: 'user',
+          content: 'Search for the latest TypeScript news',
+          messageType: undefined,
+        },
       ];
 
       // Mock agent handler response
@@ -87,7 +92,9 @@ describe('AgentChatService', () => {
     });
 
     it('should throw error when model does not have agentId', async () => {
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Execute with non-agent model
       await expect(
@@ -114,7 +121,9 @@ describe('AgentChatService', () => {
     });
 
     it('should use default temperature of 1 when not specified', async () => {
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Mock agent handler response
       const mockResponse = new Response('Response', {
@@ -145,7 +154,9 @@ describe('AgentChatService', () => {
     });
 
     it('should pass botId to agent handler', async () => {
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const botId = 'bot-123';
 
       // Mock agent handler response
@@ -178,7 +189,11 @@ describe('AgentChatService', () => {
 
     it('should pass threadId to agent handler for continuing conversation', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Continue the conversation' },
+        {
+          role: 'user',
+          content: 'Continue the conversation',
+          messageType: undefined,
+        },
       ];
       const threadId = 'thread-123';
 
@@ -211,7 +226,9 @@ describe('AgentChatService', () => {
     });
 
     it('should handle errors from agent handler', async () => {
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const error = new Error('Agent handler failed');
 
       // Mock agent handler to throw error
@@ -239,7 +256,9 @@ describe('AgentChatService', () => {
     });
 
     it('should use model displayName in logs when available', async () => {
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Mock console.log
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -269,7 +288,11 @@ describe('AgentChatService', () => {
 
     it('should pass all request parameters correctly', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Search for TypeScript' },
+        {
+          role: 'user',
+          content: 'Search for TypeScript',
+          messageType: undefined,
+        },
       ];
       const botId = 'bot-456';
       const threadId = 'thread-789';
@@ -341,7 +364,11 @@ describe('AgentChatService', () => {
   describe('integration scenarios', () => {
     it('should handle complete agent workflow with Bing grounding', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'What are the latest developments in AI?' },
+        {
+          role: 'user',
+          content: 'What are the latest developments in AI?',
+          messageType: undefined,
+        },
       ];
 
       // Mock agent handler response with Bing grounding
@@ -369,12 +396,21 @@ describe('AgentChatService', () => {
 
     it('should handle multi-turn agent conversation with thread', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'What is TypeScript?' },
+        {
+          role: 'user',
+          content: 'What is TypeScript?',
+          messageType: undefined,
+        },
         {
           role: 'assistant',
           content: 'TypeScript is a typed superset of JavaScript.',
+          messageType: undefined,
         },
-        { role: 'user', content: 'Can you search for its latest version?' },
+        {
+          role: 'user',
+          content: 'Can you search for its latest version?',
+          messageType: undefined,
+        },
       ];
       const threadId = 'thread-existing';
 
@@ -411,7 +447,11 @@ describe('AgentChatService', () => {
 
     it('should handle agent with custom temperature', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Generate creative content' },
+        {
+          role: 'user',
+          content: 'Generate creative content',
+          messageType: undefined,
+        },
       ];
       const temperature = 1.5;
 
@@ -445,7 +485,11 @@ describe('AgentChatService', () => {
 
     it('should handle agent with bot association', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Help with this task' },
+        {
+          role: 'user',
+          content: 'Help with this task',
+          messageType: undefined,
+        },
       ];
       const botId = 'specialized-bot';
 

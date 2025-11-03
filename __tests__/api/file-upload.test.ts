@@ -306,7 +306,7 @@ describe('/api/file/upload', () => {
 
   describe('Authentication', () => {
     it('requires authentication', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest({
         filename: 'test.txt',
@@ -371,7 +371,7 @@ describe('/api/file/upload', () => {
     });
 
     it('returns 500 when session retrieval fails', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest({
         filename: 'test.txt',

@@ -1,5 +1,11 @@
 import { IconX } from '@tabler/icons-react';
-import React, { ReactNode, useEffect, useMemo, useState } from 'react';
+import React, {
+  ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { createPortal } from 'react-dom';
 
 import useModal from '@/client/hooks/ui/useModal';
@@ -65,8 +71,10 @@ const Modal: React.FC<ModalProps> = ({
   );
 
   // Track if component is mounted to avoid SSR hydration issues
-  useEffect(() => {
-    setMounted(true);
+  // This is a valid use case for setting state in an effect - we need to detect client-side mounting
+  // before rendering the portal to prevent SSR hydration mismatches
+  useLayoutEffect(() => {
+    setMounted(true); // eslint-disable-line
   }, []);
 
   // Set focus on the specified element when the modal opens

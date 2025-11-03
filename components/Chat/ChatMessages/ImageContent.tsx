@@ -58,23 +58,27 @@ export const ImageContent: FC<ImageContentProps> = ({ images }) => {
 
   useEffect(() => {
     if (images.length > 0) {
-      setIsLoading(true);
-      setLoadError(false);
+      setTimeout(() => {
+        setIsLoading(true);
+        setLoadError(false);
 
-      Promise.all(images.map((img) => fetchImageBase64FromMessageContent(img)))
-        .then((base64Strings) => {
-          if (base64Strings.every((str) => str.length > 0)) {
-            setImageBase64s(base64Strings);
-          } else {
+        Promise.all(
+          images.map((img) => fetchImageBase64FromMessageContent(img)),
+        )
+          .then((base64Strings) => {
+            if (base64Strings.every((str) => str.length > 0)) {
+              setImageBase64s(base64Strings);
+            } else {
+              setLoadError(true);
+            }
+          })
+          .catch(() => {
             setLoadError(true);
-          }
-        })
-        .catch(() => {
-          setLoadError(true);
-        })
-        .finally(() => {
-          setIsLoading(false);
-        });
+          })
+          .finally(() => {
+            setIsLoading(false);
+          });
+      }, 0);
     }
   }, [images]);
 

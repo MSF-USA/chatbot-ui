@@ -51,15 +51,19 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = ({
 
   useEffect(() => {
     if (isReadyToSend) {
-      setIsReadyToSend(false); // Reset the flag
-      handleSend();
-      setParentModalIsOpen(false);
+      setTimeout(() => {
+        setIsReadyToSend(false); // Reset the flag
+        handleSend();
+        setParentModalIsOpen(false);
+      }, 0);
     }
   }, [isReadyToSend, handleSend, setParentModalIsOpen]);
 
   useEffect(() => {
     if (simulateClick && openModalButtonRef.current) {
-      openModalButtonRef.current.click();
+      setTimeout(() => {
+        openModalButtonRef.current?.click();
+      }, 0);
     }
   }, [simulateClick]);
 

@@ -332,7 +332,7 @@ export class FileConversationHandler {
           ) {
             console.warn('File not found, but this is acceptable.');
           } else {
-            throw fileUnlinkError;
+            console.error('Error unlinking file:', fileUnlinkError);
           }
         }
       }

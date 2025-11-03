@@ -18,23 +18,25 @@ const FileImagePreview: FC<{ image: ImageMessageContent }> = ({ image }) => {
   const [loadError, setLoadError] = useState<boolean>(false);
 
   useEffect(() => {
-    setIsLoading(true);
-    setLoadError(false);
+    setTimeout(() => {
+      setIsLoading(true);
+      setLoadError(false);
 
-    fetchImageBase64FromMessageContent(image)
-      .then((imageBase64String) => {
-        if (imageBase64String.length > 0) {
-          setImageSrc(imageBase64String);
-        } else {
+      fetchImageBase64FromMessageContent(image)
+        .then((imageBase64String) => {
+          if (imageBase64String.length > 0) {
+            setImageSrc(imageBase64String);
+          } else {
+            setLoadError(true);
+          }
+        })
+        .catch(() => {
           setLoadError(true);
-        }
-      })
-      .catch(() => {
-        setLoadError(true);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
+    }, 0);
   }, [image]);
 
   const handleImageClick = () => {

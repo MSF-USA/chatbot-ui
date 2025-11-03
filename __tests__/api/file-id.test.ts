@@ -182,7 +182,7 @@ describe('/api/file/[id]', () => {
 
   describe('Authentication', () => {
     it('requires authentication', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest(validSha256);
       const response = await GET(request, {
@@ -476,7 +476,7 @@ describe('/api/file/[id]', () => {
     });
 
     it('validates ID before checking authentication', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest('invalid-id');
       const response = await GET(request, {

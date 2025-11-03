@@ -21,6 +21,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'Hello',
+          messageType: undefined,
         },
       ];
 
@@ -37,7 +38,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          images: ['data:image/png;base64,...'],
+          messageType: 'image',
         },
       ];
 
@@ -56,7 +57,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          images: ['data:image/png;base64,...'],
+          messageType: 'image',
         },
       ];
 
@@ -75,6 +76,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'Hello',
+          messageType: undefined,
         },
       ];
 
@@ -93,6 +95,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'Hello',
+          messageType: undefined,
         },
       ];
 
@@ -115,7 +118,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          images: ['data:image/png;base64,...'],
+          messageType: 'image',
         },
       ];
 
@@ -139,6 +142,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'Hello',
+          messageType: undefined,
         },
       ];
 
@@ -213,9 +217,9 @@ describe('ModelSelector', () => {
     it('should handle standard chat without images', () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const messages: Message[] = [
-        { role: 'user', content: 'Hello' },
-        { role: 'assistant', content: 'Hi there!' },
-        { role: 'user', content: 'How are you?' },
+        { role: 'user', content: 'Hello', messageType: undefined },
+        { role: 'assistant', content: 'Hi there!', messageType: undefined },
+        { role: 'user', content: 'How are you?', messageType: undefined },
       ];
 
       const result = selector.selectModel(model, messages);
@@ -229,11 +233,11 @@ describe('ModelSelector', () => {
       // Use a third-party model with images
       const model = OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK];
       const messages: Message[] = [
-        { role: 'user', content: 'Hello' },
+        { role: 'user', content: 'Hello', messageType: undefined },
         {
           role: 'user',
           content: 'What is this?',
-          images: ['data:image/png;base64,iVBORw0KGgoAAAANS...'],
+          messageType: 'text',
         },
       ];
 
@@ -260,7 +264,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'Analyze this',
-          images: ['data:image/png;base64,...'],
+          messageType: 'image',
         },
       ];
 
@@ -276,7 +280,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          images: ['data:image/jpeg;base64,...'],
+          messageType: 'image',
         },
       ];
 

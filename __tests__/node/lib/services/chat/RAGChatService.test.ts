@@ -19,6 +19,7 @@ describe('RAGChatService', () => {
     id: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
+    displayName: 'Test User',
   };
 
   const testBot: Bot = {
@@ -26,10 +27,8 @@ describe('RAGChatService', () => {
     name: 'Test Bot',
     description: 'Test bot description',
     prompt: 'You are a helpful assistant.',
-    userId: testUser.id,
-    knowledgeBaseId: 'kb-123',
-    createdAt: new Date('2025-01-01'),
-    updatedAt: new Date('2025-01-01'),
+    icon: {} as any,
+    color: 'blue',
   };
 
   const testBots: Bot[] = [testBot];
@@ -59,7 +58,11 @@ describe('RAGChatService', () => {
     it('should handle RAG chat request successfully (non-streaming)', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const messages: Message[] = [
-        { role: 'user', content: 'What is TypeScript?' },
+        {
+          role: 'user',
+          content: 'What is TypeScript?',
+          messageType: undefined,
+        },
       ];
 
       // Mock RAG service response
@@ -107,7 +110,9 @@ describe('RAGChatService', () => {
 
     it('should handle streaming RAG chat request successfully', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Explain RAG' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Explain RAG', messageType: undefined },
+      ];
 
       // Mock streaming response
       const mockStream = new ReadableStream();
@@ -146,7 +151,9 @@ describe('RAGChatService', () => {
 
     it('should throw error when bot is not found', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Execute with non-existent bot ID
       await expect(
@@ -177,7 +184,9 @@ describe('RAGChatService', () => {
 
     it('should handle errors from RAG service', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const error = new Error('RAG service failed');
 
       // Mock RAG service to throw error
@@ -209,7 +218,9 @@ describe('RAGChatService', () => {
 
     it('should use default stream value of true when not specified', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Mock streaming response
       const mockStream = new ReadableStream();
@@ -240,17 +251,17 @@ describe('RAGChatService', () => {
 
     it('should select correct bot from multiple bots', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       const bot1: Bot = {
         id: 'bot-1',
         name: 'Bot 1',
         description: 'First bot',
         prompt: 'Prompt 1',
-        userId: testUser.id,
-        knowledgeBaseId: 'kb-1',
-        createdAt: new Date('2025-01-01'),
-        updatedAt: new Date('2025-01-01'),
+        icon: {} as any,
+        color: 'blue',
       };
 
       const bot2: Bot = {
@@ -258,10 +269,8 @@ describe('RAGChatService', () => {
         name: 'Bot 2',
         description: 'Second bot',
         prompt: 'Prompt 2',
-        userId: testUser.id,
-        knowledgeBaseId: 'kb-2',
-        createdAt: new Date('2025-01-02'),
-        updatedAt: new Date('2025-01-02'),
+        icon: {} as any,
+        color: 'green',
       };
 
       const multipleBots = [bot1, bot2];
@@ -294,7 +303,9 @@ describe('RAGChatService', () => {
 
     it('should pass model ID to RAG service', async () => {
       const model = OpenAIModels[OpenAIModelID.GROK_3];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Mock RAG service response
       vi.mocked(mockRagService.augmentMessages).mockResolvedValue({
@@ -324,7 +335,9 @@ describe('RAGChatService', () => {
 
     it('should handle empty response content gracefully', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       // Mock RAG service response with no content
       vi.mocked(mockRagService.augmentMessages).mockResolvedValue({
@@ -355,6 +368,7 @@ describe('RAGChatService', () => {
         {
           role: 'user',
           content: 'What is in the knowledge base about TypeScript?',
+          messageType: undefined,
         },
       ];
 
@@ -400,12 +414,21 @@ describe('RAGChatService', () => {
     it('should handle RAG with conversation history', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const messages: Message[] = [
-        { role: 'user', content: 'What is TypeScript?' },
+        {
+          role: 'user',
+          content: 'What is TypeScript?',
+          messageType: undefined,
+        },
         {
           role: 'assistant',
           content: 'TypeScript is a typed superset of JavaScript.',
+          messageType: undefined,
         },
-        { role: 'user', content: 'Can you tell me more about its features?' },
+        {
+          role: 'user',
+          content: 'Can you tell me more about its features?',
+          messageType: undefined,
+        },
       ];
 
       // Mock RAG service response
@@ -443,17 +466,17 @@ describe('RAGChatService', () => {
 
     it('should handle different bot configurations', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
 
       const specializedBot: Bot = {
         id: 'specialized-bot',
         name: 'Specialized Bot',
         description: 'Specialized for technical queries',
         prompt: 'You are a technical expert.',
-        userId: testUser.id,
-        knowledgeBaseId: 'specialized-kb',
-        createdAt: new Date('2025-01-01'),
-        updatedAt: new Date('2025-01-01'),
+        icon: {} as any,
+        color: 'purple',
       };
 
       // Mock RAG service response

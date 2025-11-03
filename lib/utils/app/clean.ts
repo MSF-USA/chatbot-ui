@@ -61,7 +61,7 @@ export const cleanMarkdown = (text: string): string => {
   // Remove inline code backticks
   text = text.replace(/`([^`]+)`/g, '$1');
   // Remove links, keeping only the text
-  text = text.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
+  text = text.replace(/\[([^\]]+)\]\([^)]+\)/g, '$1');
   // Remove horizontal rules
   text = text.replace(/^(-{3,}|\*{3,})$/gm, '');
   // Remove blockquotes

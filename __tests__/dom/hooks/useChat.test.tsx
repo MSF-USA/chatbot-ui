@@ -68,7 +68,12 @@ describe('useChat', () => {
 
     it('exposes citations from store', () => {
       const citations = [
-        { number: 1, url: 'https://example.com', title: 'Example' },
+        {
+          number: 1,
+          url: 'https://example.com',
+          title: 'Example',
+          date: '2024-01-01',
+        },
       ];
 
       useChatStore.setState({ citations });
@@ -163,7 +168,14 @@ describe('useChat', () => {
     it('exposes setCitations action', () => {
       const { result } = renderHook(() => useChat());
 
-      const citations = [{ number: 1, url: 'https://test.com', title: 'Test' }];
+      const citations = [
+        {
+          number: 1,
+          url: 'https://test.com',
+          title: 'Test',
+          date: '2024-01-01',
+        },
+      ];
 
       act(() => {
         result.current.setCitations(citations);

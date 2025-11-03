@@ -267,8 +267,8 @@ describe('ToolRouterService', () => {
       const callArgs = vi.mocked(mockClient.chat.completions.create).mock
         .calls[0][0];
       const userMessage = callArgs.messages.find((m: any) => m.role === 'user');
-      expect(userMessage.content).toContain('Tell me about TypeScript');
-      expect(userMessage.content).toContain('What is the latest version?');
+      expect(userMessage!.content).toContain('Tell me about TypeScript');
+      expect(userMessage!.content).toContain('What is the latest version?');
     });
 
     it('should handle malformed JSON response gracefully', async () => {
@@ -454,8 +454,8 @@ describe('ToolRouterService', () => {
         (m: any) => m.role === 'system',
       );
       expect(systemMessage).toBeDefined();
-      expect(systemMessage.content).toContain('tool router');
-      expect(systemMessage.content).toContain('web_search');
+      expect(systemMessage!.content).toContain('tool router');
+      expect(systemMessage!.content).toContain('web_search');
     });
   });
 });

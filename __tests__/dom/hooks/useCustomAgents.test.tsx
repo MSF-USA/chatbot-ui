@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useCustomAgents } from '@/client/hooks/settings/useCustomAgents';
 
-import type { OpenAIModelID } from '@/lib/types/openai';
+import type { OpenAIModelID } from '@/types/openai';
 
 import { useSettingsStore } from '@/client/stores/settingsStore';
 import type { CustomAgent } from '@/client/stores/settingsStore';

@@ -26,7 +26,7 @@ describe('GET /api/user/profile', () => {
   describe('Authentication', () => {
     it('returns 401 when no session', async () => {
       const { auth } = await import('@/auth');
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createMockRequest();
       const response = await GET(request);

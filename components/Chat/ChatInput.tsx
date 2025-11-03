@@ -132,6 +132,7 @@ export const ChatInput = ({
   const [usedPromptVariables, setUsedPromptVariables] = useState<{
     [key: string]: string;
   } | null>(null);
+  const [textareaScrollHeight, setTextareaScrollHeight] = useState(0);
 
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
@@ -336,6 +337,9 @@ export const ChatInput = ({
         textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
       }`;
 
+      // Store scroll height in state for use in render
+      setTextareaScrollHeight(textareaRef.current.scrollHeight);
+
       // Check if textarea is multiline - single line is typically ~44px or less
       // Only consider it multiline if scrollHeight exceeds 60px to avoid false positives
       setIsMultiline(textareaRef.current.scrollHeight > 60);
@@ -360,7 +364,9 @@ export const ChatInput = ({
   }, []);
 
   useEffect(() => {
-    setPlaceholderText('Ask Anything');
+    setTimeout(() => {
+      setPlaceholderText('Ask Anything');
+    }, 0);
   }, [t]);
 
   // Update placeholder when audio/video files are attached
@@ -379,21 +385,25 @@ export const ChatInput = ({
 
   // Clear file attachments when switching conversations
   useEffect(() => {
-    setFilePreviews([]);
-    setFileFieldValue(null);
-    setImageFieldValue(null);
-    setUploadProgress({});
-    setSubmitType('text');
+    setTimeout(() => {
+      setFilePreviews([]);
+      setFileFieldValue(null);
+      setImageFieldValue(null);
+      setUploadProgress({});
+      setSubmitType('text');
+    }, 0);
   }, [selectedConversation?.id, setFilePreviews]);
 
   // Auto-disable web search when audio/video files are attached (they need transcription)
   // Images and documents can work with web search mode
   useEffect(() => {
     if (hasAudioVideoFiles && webSearchMode) {
-      setWebSearchMode(false);
-      console.log(
-        'Web search auto-disabled: audio/video files need transcription',
-      );
+      setTimeout(() => {
+        setWebSearchMode(false);
+        console.log(
+          'Web search auto-disabled: audio/video files need transcription',
+        );
+      }, 0);
     }
   }, [hasAudioVideoFiles, webSearchMode, setWebSearchMode]);
 
@@ -506,14 +516,9 @@ export const ChatInput = ({
                 }`}
                 style={{
                   resize: 'none',
-                  bottom: `${textareaRef?.current?.scrollHeight}px`,
+                  bottom: `${textareaScrollHeight}px`,
                   maxHeight: '400px',
-                  overflow: `${
-                    textareaRef.current &&
-                    textareaRef.current.scrollHeight > 400
-                      ? 'auto'
-                      : 'hidden'
-                  }`,
+                  overflow: `${textareaScrollHeight > 400 ? 'auto' : 'hidden'}`,
                 }}
                 placeholder={
                   isTranscribing

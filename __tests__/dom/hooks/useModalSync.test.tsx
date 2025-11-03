@@ -37,7 +37,7 @@ describe('useControlledState', () => {
     it('calls onChange when value changes', () => {
       const onChange = vi.fn();
       const { result } = renderHook(() =>
-        useControlledState(undefined, 'initial', onChange),
+        useControlledState<string>(undefined, 'initial', onChange),
       );
 
       act(() => {
@@ -83,14 +83,14 @@ describe('useControlledState', () => {
 
     it('does not update internal state when setValue is called', () => {
       const { result } = renderHook(() =>
-        useControlledState('controlled', 'default'),
+        useControlledState<string>('controlled', 'default'),
       );
 
       // Internal state should not change
       const initialValue = result.current[0];
 
       act(() => {
-        result.current[1]('attempted change');
+        result.current[1]('attempted change' as any);
       });
 
       // Value remains the same (controlled by external prop)
@@ -100,11 +100,11 @@ describe('useControlledState', () => {
     it('calls onChange to notify parent of state changes', () => {
       const onChange = vi.fn();
       const { result } = renderHook(() =>
-        useControlledState('controlled', 'default', onChange),
+        useControlledState<string>('controlled', 'default', onChange),
       );
 
       act(() => {
-        result.current[1]('new value');
+        result.current[1]('new value' as any);
       });
 
       expect(onChange).toHaveBeenCalledWith('new value');
@@ -131,10 +131,12 @@ describe('useControlledState', () => {
 
     it('supports function updates with onChange', () => {
       const onChange = vi.fn();
-      const { result } = renderHook(() => useControlledState(10, 0, onChange));
+      const { result } = renderHook(() =>
+        useControlledState<number>(10, 0, onChange),
+      );
 
       act(() => {
-        result.current[1]((prev) => prev * 2);
+        result.current[1](((prev: number) => prev * 2) as any);
       });
 
       expect(onChange).toHaveBeenCalledWith(20);
@@ -162,7 +164,7 @@ describe('useControlledState', () => {
 
       // Switch to controlled
       externalValue = 'controlled value';
-      rerender({ value: externalValue });
+      rerender({ value: externalValue as any });
 
       expect(result.current[0]).toBe('controlled value');
     });
@@ -170,9 +172,9 @@ describe('useControlledState', () => {
     it('switches from controlled to uncontrolled', () => {
       let externalValue: string | undefined = 'controlled';
       const { result, rerender } = renderHook(
-        ({ value }) => useControlledState(value, 'default'),
+        ({ value }) => useControlledState<string>(value, 'default'),
         {
-          initialProps: { value: externalValue },
+          initialProps: { value: externalValue as string },
         },
       );
 
@@ -181,7 +183,7 @@ describe('useControlledState', () => {
 
       // Switch to uncontrolled
       externalValue = undefined;
-      rerender({ value: externalValue });
+      rerender({ value: externalValue as any });
 
       // Uses default value
       expect(result.current[0]).toBe('default');
@@ -204,11 +206,11 @@ describe('useControlledState', () => {
     it('receives resolved value from function updates', () => {
       const onChange = vi.fn();
       const { result } = renderHook(() =>
-        useControlledState(undefined, 100, onChange),
+        useControlledState<number>(undefined, 100, onChange),
       );
 
       act(() => {
-        result.current[1]((prev) => prev / 2);
+        result.current[1](((prev: number) => prev / 2) as any);
       });
 
       expect(onChange).toHaveBeenCalledWith(50);
@@ -217,11 +219,11 @@ describe('useControlledState', () => {
     it('is called even when controlled', () => {
       const onChange = vi.fn();
       const { result } = renderHook(() =>
-        useControlledState('controlled', 'default', onChange),
+        useControlledState<string>('controlled', 'default', onChange),
       );
 
       act(() => {
-        result.current[1]('new value');
+        result.current[1]('new value' as any);
       });
 
       expect(onChange).toHaveBeenCalledWith('new value');

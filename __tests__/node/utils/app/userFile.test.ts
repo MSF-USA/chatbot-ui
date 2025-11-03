@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('UserFileHandler', () => {
   const validFileTypes = {
+    plain: true,
     txt: true,
     pdf: true,
     docx: true,
@@ -16,7 +17,7 @@ describe('UserFileHandler', () => {
       // @ts-ignore
       const fileHandler = new UserFileHandler(fileData, {
         ...validFileTypes,
-        plain: true,
+        txt: true,
       });
       expect(fileHandler).toBeInstanceOf(UserFileHandler);
       expect(fileHandler['fileLocation']).toBe('local');
@@ -62,7 +63,7 @@ describe('UserFileHandler', () => {
       //@ts-ignore
       const fileHandler = new UserFileHandler(fileData, {
         ...validFileTypes,
-        plain: true,
+        txt: true,
       });
 
       const result = await fileHandler.extractText();

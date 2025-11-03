@@ -29,7 +29,9 @@ export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
+    setTimeout(() => {
+      setIsMounted(true);
+    }, 0);
   }, []);
 
   useEffect(() => {
@@ -42,8 +44,10 @@ export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
     // Check if user has already dismissed the banner
     const hasDismissed = hasUserDismissedWelcomeBanner(userId);
     const visible = !hasDismissed;
-    setIsVisible(visible);
-    onVisibilityChange?.(visible);
+    setTimeout(() => {
+      setIsVisible(visible);
+      onVisibilityChange?.(visible);
+    }, 0);
   }, [session, status, onVisibilityChange]);
 
   const handleDismiss = () => {

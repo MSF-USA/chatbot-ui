@@ -61,7 +61,7 @@ describe('/api/transcription/queue', () => {
     } as any);
     mockAzureBlobStorage.getQueueClient.mockReturnValue(mockQueueClient as any);
     mockQueueClient.exists.mockResolvedValue(true);
-    vi.mocked(uuidv4).mockReturnValue('test-uuid-123');
+    vi.mocked(uuidv4).mockReturnValue('test-uuid-123' as any);
   });
 
   describe('GET - Check Queue Position', () => {
@@ -255,7 +255,7 @@ describe('/api/transcription/queue', () => {
     });
 
     it('returns 500 when not authenticated', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createGetRequest('msg-123', 'transcription');
       const response = await GET(request);
@@ -364,7 +364,7 @@ describe('/api/transcription/queue', () => {
     });
 
     it('generates UUID for message', async () => {
-      vi.mocked(uuidv4).mockReturnValue('generated-uuid');
+      vi.mocked(uuidv4).mockReturnValue('generated-uuid' as any);
       mockAzureBlobStorage.addMessage.mockResolvedValue({
         messageId: 'azure-msg-id',
         insertedOn: new Date(),
@@ -473,7 +473,7 @@ describe('/api/transcription/queue', () => {
     });
 
     it('returns 500 when not authenticated', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createPostRequest({
         message: 'Test',
@@ -679,7 +679,7 @@ describe('/api/transcription/queue', () => {
     });
 
     it('returns 500 when not authenticated', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createPatchRequest({
         messageId: 'msg-123',
@@ -809,7 +809,7 @@ describe('/api/transcription/queue', () => {
     });
 
     it('returns 500 when not authenticated', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createDeleteRequest('msg-123', 'transcription');
       const response = await DELETE(request);

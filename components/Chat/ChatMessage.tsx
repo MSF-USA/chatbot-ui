@@ -122,7 +122,9 @@ export const ChatMessage: FC<Props> = ({
   };
 
   useEffect(() => {
-    setMessageContent(message.content);
+    setTimeout(() => {
+      setMessageContent(message.content);
+    }, 0);
   }, [message.content]);
 
   useEffect(() => {

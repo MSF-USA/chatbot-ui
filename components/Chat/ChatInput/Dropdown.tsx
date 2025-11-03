@@ -13,7 +13,9 @@ import {
 import React, {
   Dispatch,
   SetStateAction,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -103,21 +105,27 @@ const Dropdown: React.FC<DropdownProps> = ({
             (device) => device.kind === 'videoinput',
           );
           // console.log('Camera support detected:', hasCamera, devices);
-          setHasCameraSupport(hasCamera);
+          setTimeout(() => {
+            setHasCameraSupport(hasCamera);
+          }, 0);
         } else {
           console.error('MediaDevices API not supported');
-          setHasCameraSupport(false);
+          setTimeout(() => {
+            setHasCameraSupport(false);
+          }, 0);
         }
       } catch (error) {
         console.error('Error checking camera support:', error);
-        setHasCameraSupport(false);
+        setTimeout(() => {
+          setHasCameraSupport(false);
+        }, 0);
       }
     };
 
     checkCameraSupport();
   }, []);
 
-  const closeDropdown = () => {
+  const closeDropdown = useCallback(() => {
     setIsClosing(true);
     // Wait for slide-down animation to complete before removing from DOM
     setTimeout(() => {
@@ -125,93 +133,112 @@ const Dropdown: React.FC<DropdownProps> = ({
       setIsClosing(false);
       setSelectedIndex(-1);
     }, 200); // Match animation duration
-  };
+  }, []);
 
   const t = useTranslations();
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Define menu items
-  const menuItems: MenuItem[] = [
-    {
-      id: 'search',
-      icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
-      label: webSearchMode ? '✓ Web Search' : 'Web Search',
-      infoTooltip:
-        'Routes your query to a specialized search model with real-time Bing web access.\n\nStays active across multiple messages until toggled off.\n\nNote: Uses search model instead of your selected model.',
-      onClick: () => {
-        setWebSearchMode(!webSearchMode);
-        closeDropdown();
+  // Handler for file attach that doesn't access ref during render
+  const handleAttachClick = useCallback(() => {
+    closeDropdown();
+    fileInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Define menu items - memoized to avoid ref access issues during render
+  const menuItems: MenuItem[] = useMemo(
+    () => [
+      {
+        id: 'search',
+        icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
+        label: webSearchMode ? '✓ Web Search' : 'Web Search',
+        infoTooltip:
+          'Routes your query to a specialized search model with real-time Bing web access.\n\nStays active across multiple messages until toggled off.\n\nNote: Uses search model instead of your selected model.',
+        onClick: () => {
+          setWebSearchMode(!webSearchMode);
+          closeDropdown();
+        },
+        category: 'web',
       },
-      category: 'web',
-    },
-    {
-      id: 'tone',
-      icon: (
-        <IconVolume
-          size={18}
-          className={`flex-shrink-0 ${tones.length === 0 ? 'text-gray-400' : 'text-purple-500'}`}
-        />
-      ),
-      label: selectedToneId
-        ? `✓ Tone: ${tones.find((t) => t.id === selectedToneId)?.name || 'Selected'}`
-        : 'Tone',
-      infoTooltip:
-        tones.length === 0
-          ? 'No tones available.\n\nCreate tones in Quick Actions to control writing style, formality, and personality.'
-          : 'Apply a custom voice profile to your messages.\n\nSelect a tone to control writing style, formality, and personality.\n\nStays active until changed or removed.',
-      onClick: () => {
-        setIsToneOpen(true);
-        closeDropdown();
+      {
+        id: 'tone',
+        icon: (
+          <IconVolume
+            size={18}
+            className={`flex-shrink-0 ${tones.length === 0 ? 'text-gray-400' : 'text-purple-500'}`}
+          />
+        ),
+        label: selectedToneId
+          ? `✓ Tone: ${tones.find((t) => t.id === selectedToneId)?.name || 'Selected'}`
+          : 'Tone',
+        infoTooltip:
+          tones.length === 0
+            ? 'No tones available.\n\nCreate tones in Quick Actions to control writing style, formality, and personality.'
+            : 'Apply a custom voice profile to your messages.\n\nSelect a tone to control writing style, formality, and personality.\n\nStays active until changed or removed.',
+        onClick: () => {
+          setIsToneOpen(true);
+          closeDropdown();
+        },
+        category: 'web',
+        disabled: tones.length === 0,
       },
-      category: 'web',
-      disabled: tones.length === 0,
-    },
-    {
-      id: 'attach',
-      icon: (
-        <IconPaperclip
-          size={18}
-          className="text-gray-700 dark:text-gray-300 flex-shrink-0"
-        />
-      ),
-      label: 'Attach files',
-      infoTooltip:
-        'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n• Audio/Video: MP3, MP4, M4A, WAV, WEBM (25MB max)\n\nAudio/video files are automatically transcribed. Add optional instructions like "translate to Spanish" or "summarize key points."\n\nUpload up to 5 files at once.\n\nNote: Images and documents work with web search. Audio/video automatically disables web search for transcription.',
-      onClick: () => {
-        closeDropdown();
-        fileInputRef.current?.click();
+      {
+        id: 'attach',
+        icon: (
+          <IconPaperclip
+            size={18}
+            className="text-gray-700 dark:text-gray-300 flex-shrink-0"
+          />
+        ),
+        label: 'Attach files',
+        infoTooltip:
+          'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n• Audio/Video: MP3, MP4, M4A, WAV, WEBM (25MB max)\n\nAudio/video files are automatically transcribed. Add optional instructions like "translate to Spanish" or "summarize key points."\n\nUpload up to 5 files at once.\n\nNote: Images and documents work with web search. Audio/video automatically disables web search for transcription.',
+        onClick: handleAttachClick,
+        category: 'media',
       },
-      category: 'media',
-    },
-    {
-      id: 'translate',
-      icon: <IconLanguage size={18} className="text-teal-500 flex-shrink-0" />,
-      label: 'Translate Text',
-      onClick: () => {
-        setIsTranslateOpen(true);
-        closeDropdown();
+      {
+        id: 'translate',
+        icon: (
+          <IconLanguage size={18} className="text-teal-500 flex-shrink-0" />
+        ),
+        label: 'Translate Text',
+        onClick: () => {
+          setIsTranslateOpen(true);
+          closeDropdown();
+        },
+        category: 'transform',
       },
-      category: 'transform',
-    },
-    ...(hasCameraSupport
-      ? [
-          {
-            id: 'camera',
-            icon: (
-              <IconCamera size={18} className="text-red-500 flex-shrink-0" />
-            ),
-            label: 'Camera',
-            onClick: () => {
-              onCameraClick();
-              closeDropdown();
+      ...(hasCameraSupport
+        ? [
+            {
+              id: 'camera',
+              icon: (
+                <IconCamera size={18} className="text-red-500 flex-shrink-0" />
+              ),
+              label: 'Camera',
+              onClick: () => {
+                onCameraClick();
+                closeDropdown();
+              },
+              category: 'media' as 'web' | 'media' | 'transform',
             },
-            category: 'media' as 'web' | 'media' | 'transform',
-          },
-        ]
-      : []),
-  ];
+          ]
+        : []),
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    ],
+    [
+      webSearchMode,
+      selectedToneId,
+      tones,
+      hasCameraSupport,
+      closeDropdown,
+      setWebSearchMode,
+      setIsToneOpen,
+      setIsTranslateOpen,
+      onCameraClick,
+    ],
+  );
 
   // Use keyboard navigation hook
   const { handleKeyDown } = useDropdownKeyboardNav({

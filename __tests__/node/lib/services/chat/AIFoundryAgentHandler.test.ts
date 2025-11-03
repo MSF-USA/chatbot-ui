@@ -46,8 +46,8 @@ describe('AIFoundryAgentHandler', () => {
     // Setup mock user
     mockUser = {
       id: 'user-123',
-      email: 'test@example.com',
-      name: 'Test User',
+      mail: 'test@example.com',
+      displayName: 'Test User',
     };
 
     // Setup logging service mock
@@ -328,7 +328,7 @@ describe('AIFoundryAgentHandler', () => {
               type: 'file_url',
               file_url: { url: 'https://example.com/doc.pdf' },
               originalFilename: 'report.pdf',
-            },
+            } as any,
           ],
           messageType: MessageType.TEXT,
         },

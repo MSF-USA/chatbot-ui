@@ -192,12 +192,24 @@ describe('useConversations', () => {
         createMockConversation({
           id: 'conv-1',
           name: 'Chat 1',
-          messages: [{ role: 'user', content: 'Hello about Python' }],
+          messages: [
+            {
+              role: 'user',
+              content: 'Hello about Python',
+              messageType: undefined,
+            },
+          ],
         }),
         createMockConversation({
           id: 'conv-2',
           name: 'Chat 2',
-          messages: [{ role: 'user', content: 'Hello about JavaScript' }],
+          messages: [
+            {
+              role: 'user',
+              content: 'Hello about JavaScript',
+              messageType: undefined,
+            },
+          ],
         }),
       ];
       useConversationStore.setState({ conversations: convs });

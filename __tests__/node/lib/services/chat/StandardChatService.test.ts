@@ -63,6 +63,7 @@ describe('StandardChatService', () => {
     id: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
+    displayName: 'Test User',
   };
 
   beforeEach(() => {
@@ -120,7 +121,9 @@ describe('StandardChatService', () => {
   describe('handleChat', () => {
     it('should handle standard chat request successfully (non-streaming)', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const systemPrompt = 'You are a helpful assistant.';
 
       // Mock model selector
@@ -150,8 +153,8 @@ describe('StandardChatService', () => {
 
       // Mock handler methods
       const preparedMessages = [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ];
       vi.mocked(mockHandler.prepareMessages).mockReturnValue(
         preparedMessages as any,
@@ -227,7 +230,9 @@ describe('StandardChatService', () => {
 
     it('should handle streaming chat request successfully', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const systemPrompt = 'You are a helpful assistant.';
 
       // Mock model selector
@@ -257,8 +262,8 @@ describe('StandardChatService', () => {
 
       // Mock handler methods
       const preparedMessages = [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ];
       vi.mocked(mockHandler.prepareMessages).mockReturnValue(
         preparedMessages as any,
@@ -311,7 +316,12 @@ describe('StandardChatService', () => {
     it('should apply tone when toneId is specified', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const messages: Message[] = [
-        { role: 'user', content: 'Hello', toneId: 'professional' },
+        {
+          role: 'user',
+          content: 'Hello',
+          toneId: 'professional',
+          messageType: undefined,
+        },
       ];
       const systemPrompt = 'You are a helpful assistant.';
       const enhancedPrompt = `${systemPrompt}\n\n# Writing Style\nUse formal language.`;
@@ -341,8 +351,8 @@ describe('StandardChatService', () => {
         'AzureOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: enhancedPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: enhancedPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue('gpt-5');
       vi.mocked(mockHandler.buildRequestParams).mockReturnValue({} as any);
@@ -378,7 +388,7 @@ describe('StandardChatService', () => {
     it('should handle reasoning model with reasoningEffort parameter', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_o3];
       const messages: Message[] = [
-        { role: 'user', content: 'Solve this problem' },
+        { role: 'user', content: 'Solve this problem', messageType: undefined },
       ];
       const systemPrompt = 'You are a helpful assistant.';
 
@@ -407,8 +417,8 @@ describe('StandardChatService', () => {
         'AzureOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Solve this problem' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Solve this problem', messageType: undefined },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue('o3');
       vi.mocked(mockHandler.buildRequestParams).mockReturnValue({
@@ -444,7 +454,9 @@ describe('StandardChatService', () => {
 
     it('should handle errors and log them appropriately', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const systemPrompt = 'You are a helpful assistant.';
       const error = new Error('API request failed');
 
@@ -473,8 +485,8 @@ describe('StandardChatService', () => {
         'AzureOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue('gpt-5');
       vi.mocked(mockHandler.buildRequestParams).mockReturnValue({} as any);
@@ -509,7 +521,9 @@ describe('StandardChatService', () => {
 
     it('should use default stream value of true when not specified', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const systemPrompt = 'You are a helpful assistant.';
 
       // Mock model selector
@@ -537,8 +551,8 @@ describe('StandardChatService', () => {
         'AzureOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue('gpt-5');
       vi.mocked(mockHandler.buildRequestParams).mockReturnValue({} as any);
@@ -575,7 +589,9 @@ describe('StandardChatService', () => {
 
     it('should pass botId to logger when provided', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const systemPrompt = 'You are a helpful assistant.';
       const botId = 'bot-123';
 
@@ -598,8 +614,8 @@ describe('StandardChatService', () => {
         'AzureOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue('gpt-5');
       vi.mocked(mockHandler.buildRequestParams).mockReturnValue({} as any);
@@ -632,7 +648,11 @@ describe('StandardChatService', () => {
     it('should handle Azure OpenAI model (gpt-5) complete workflow', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const messages: Message[] = [
-        { role: 'user', content: 'What is TypeScript?' },
+        {
+          role: 'user',
+          content: 'What is TypeScript?',
+          messageType: undefined,
+        },
       ];
       const systemPrompt = 'You are a programming expert.';
 
@@ -655,8 +675,12 @@ describe('StandardChatService', () => {
         'AzureOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'What is TypeScript?' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        {
+          role: 'user',
+          content: 'What is TypeScript?',
+          messageType: undefined,
+        },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue('gpt-5');
       vi.mocked(mockHandler.buildRequestParams).mockReturnValue({} as any);
@@ -690,7 +714,9 @@ describe('StandardChatService', () => {
 
     it('should handle third-party model (Llama) workflow', async () => {
       const model = OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK];
-      const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello', messageType: undefined },
+      ];
       const systemPrompt = 'You are helpful.';
 
       // Setup mocks
@@ -712,8 +738,8 @@ describe('StandardChatService', () => {
         'StandardOpenAIHandler',
       );
       vi.mocked(mockHandler.prepareMessages).mockReturnValue([
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: 'Hello' },
+        { role: 'system', content: systemPrompt, messageType: undefined },
+        { role: 'user', content: 'Hello', messageType: undefined },
       ] as any);
       vi.mocked(mockHandler.getModelIdForRequest).mockReturnValue(
         'Llama-4-Maverick-17B-128E-Instruct-FP8',

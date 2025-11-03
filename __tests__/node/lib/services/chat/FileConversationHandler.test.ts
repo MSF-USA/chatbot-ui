@@ -82,8 +82,8 @@ describe('FileConversationHandler', () => {
     // Setup mock user
     mockUser = {
       id: 'user-123',
-      email: 'test@example.com',
-      name: 'Test User',
+      mail: 'test@example.com',
+      displayName: 'Test User',
     };
 
     // Setup logging service mock
@@ -103,7 +103,7 @@ describe('FileConversationHandler', () => {
 
     mockReadFileSync.mockReturnValue(Buffer.from('mock file content'));
     mockUnlinkSync.mockImplementation(() => {});
-    mockWriteFile.mockResolvedValue();
+    mockWriteFile.mockResolvedValue(undefined);
 
     mockTranscribe.mockResolvedValue('Mock transcript content');
     mockGetTranscriptionService.mockReturnValue({

@@ -14,12 +14,20 @@ vi.mock('@/lib/utils/chat/promptMatching');
 vi.mock('@/lib/utils/chat/variables');
 
 describe('usePromptSelection', () => {
+  const mockModel = {
+    id: 'gpt-4.1',
+    name: 'GPT-4.1',
+    maxLength: 128000,
+    tokenLimit: 16384,
+  };
+
   const mockPrompts: Prompt[] = [
     {
       id: 'prompt-1',
       name: 'Email Template',
       description: 'Professional email',
       content: 'Dear {{recipient}}, this is about {{topic}}.',
+      model: mockModel,
       folderId: null,
     },
     {
@@ -27,6 +35,7 @@ describe('usePromptSelection', () => {
       name: 'Code Review',
       description: 'Code review template',
       content: 'Review the following code: {{code}}',
+      model: mockModel,
       folderId: null,
     },
     {
@@ -34,6 +43,7 @@ describe('usePromptSelection', () => {
       name: 'Meeting Notes',
       description: 'Meeting notes template',
       content: 'Meeting on {{date}} about {{subject}}',
+      model: mockModel,
       folderId: null,
     },
   ];
@@ -419,6 +429,7 @@ describe('usePromptSelection', () => {
         name: 'Simple',
         description: 'Simple prompt',
         content: 'No variables here',
+        model: mockModel,
         folderId: null,
       };
 

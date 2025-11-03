@@ -13,6 +13,7 @@ describe('WebSearchTool', () => {
     id: 'user-123',
     email: 'test@example.com',
     name: 'Test User',
+    displayName: 'Test User',
   };
 
   const testModel: OpenAIModel = OpenAIModels[OpenAIModelID.GPT_4_1];

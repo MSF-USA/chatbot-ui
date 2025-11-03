@@ -100,7 +100,7 @@ describe('/api/file/[id]/transcribe', () => {
 
   describe('Authentication', () => {
     it('throws error when not authenticated', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest(fileId);
 
@@ -110,7 +110,7 @@ describe('/api/file/[id]/transcribe', () => {
     });
 
     it('requires valid session', async () => {
-      vi.mocked(auth).mockResolvedValue(null);
+      (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest(fileId);
 

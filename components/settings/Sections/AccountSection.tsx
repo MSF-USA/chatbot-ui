@@ -54,7 +54,9 @@ export const AccountSection: FC<AccountSectionProps> = ({
   // Update local state when prefetched profile becomes available
   useEffect(() => {
     if (prefetchedProfile) {
-      setFullProfile(prefetchedProfile);
+      setTimeout(() => {
+        setFullProfile(prefetchedProfile);
+      }, 0);
     }
   }, [prefetchedProfile]);
 

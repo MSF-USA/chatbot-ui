@@ -54,11 +54,10 @@ describe('useUploadState', () => {
 
       const mockPreviews: FilePreview[] = [
         {
-          id: '1',
           name: 'test.pdf',
-          size: 1024,
           type: 'application/pdf',
-          preview: 'base64string',
+          status: 'pending',
+          previewUrl: 'base64string',
         },
       ];
 
@@ -124,11 +123,10 @@ describe('useUploadState', () => {
       act(() => {
         result.current.setFilePreviews([
           {
-            id: '1',
             name: 'test.pdf',
-            size: 1024,
             type: 'application/pdf',
-            preview: 'base64',
+            status: 'pending',
+            previewUrl: 'base64',
           },
         ]);
         result.current.setFileFieldValue({ name: 'test.pdf' } as any);
@@ -258,25 +256,22 @@ describe('useUploadState', () => {
 
       const mockPreviews: FilePreview[] = [
         {
-          id: '1',
           name: 'file1.pdf',
-          size: 1024,
           type: 'application/pdf',
-          preview: 'base64-1',
+          status: 'pending',
+          previewUrl: 'base64-1',
         },
         {
-          id: '2',
           name: 'file2.pdf',
-          size: 2048,
           type: 'application/pdf',
-          preview: 'base64-2',
+          status: 'pending',
+          previewUrl: 'base64-2',
         },
         {
-          id: '3',
           name: 'file3.pdf',
-          size: 3072,
           type: 'application/pdf',
-          preview: 'base64-3',
+          status: 'pending',
+          previewUrl: 'base64-3',
         },
       ];
 
@@ -292,11 +287,10 @@ describe('useUploadState', () => {
       const { result } = renderHook(() => useUploadState());
 
       const preview1: FilePreview = {
-        id: '1',
         name: 'file1.pdf',
-        size: 1024,
         type: 'application/pdf',
-        preview: 'base64-1',
+        status: 'pending',
+        previewUrl: 'base64-1',
       };
 
       act(() => {
@@ -306,11 +300,10 @@ describe('useUploadState', () => {
       expect(result.current.filePreviews).toHaveLength(1);
 
       const preview2: FilePreview = {
-        id: '2',
         name: 'file2.pdf',
-        size: 2048,
         type: 'application/pdf',
-        preview: 'base64-2',
+        status: 'pending',
+        previewUrl: 'base64-2',
       };
 
       act(() => {

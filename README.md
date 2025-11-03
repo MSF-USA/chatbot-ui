@@ -131,15 +131,6 @@ docker build -t msf-ai-assistant .
 docker run -p 3000:3000 --env-file .env.local msf-ai-assistant
 ```
 
-### Vercel
-
-The application is optimized for deployment on Vercel:
-
-1. Push your code to GitHub
-2. Import project in Vercel
-3. Configure environment variables
-4. Deploy
-
 ## Configuration
 
 ### Environment Variables

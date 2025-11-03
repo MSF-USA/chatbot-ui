@@ -40,6 +40,7 @@ describe('ChatOrchestrator', () => {
       id: 'test-user-id',
       email: 'test@example.com',
       name: 'Test User',
+      displayName: 'Test User',
     };
 
     orchestrator = new ChatOrchestrator(
@@ -53,7 +54,11 @@ describe('ChatOrchestrator', () => {
   describe('Privacy Mode OFF (minimizeAIFoundryUse: false)', () => {
     it('should route directly to AgentChatService', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'What is the weather today?' },
+        {
+          role: 'user',
+          content: 'What is the weather today?',
+          messageType: undefined,
+        },
       ];
       const model = OpenAIModels[OpenAIModelID.GPT_5];
 
@@ -86,7 +91,9 @@ describe('ChatOrchestrator', () => {
     });
 
     it('should use agentModel parameter when provided', async () => {
-      const messages: Message[] = [{ role: 'user', content: 'Hello world' }];
+      const messages: Message[] = [
+        { role: 'user', content: 'Hello world', messageType: undefined },
+      ];
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const agentModel = OpenAIModels[OpenAIModelID.GPT_4_1];
 
@@ -118,7 +125,7 @@ describe('ChatOrchestrator', () => {
     describe('No tools needed', () => {
       it('should use StandardChatService when no tools are needed', async () => {
         const messages: Message[] = [
-          { role: 'user', content: 'What is 2 + 2?' },
+          { role: 'user', content: 'What is 2 + 2?', messageType: undefined },
         ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
 
@@ -167,7 +174,11 @@ describe('ChatOrchestrator', () => {
     describe('Web search tool needed', () => {
       it('should execute web search and enhance context', async () => {
         const messages: Message[] = [
-          { role: 'user', content: 'What is the latest news?' },
+          {
+            role: 'user',
+            content: 'What is the latest news?',
+            messageType: undefined,
+          },
         ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
         const agentModel = OpenAIModels[OpenAIModelID.GPT_4_1];
@@ -245,7 +256,11 @@ describe('ChatOrchestrator', () => {
 
       it('should prepend action metadata for immediate feedback', async () => {
         const messages: Message[] = [
-          { role: 'user', content: 'Search for TypeScript best practices' },
+          {
+            role: 'user',
+            content: 'Search for TypeScript best practices',
+            messageType: undefined,
+          },
         ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
         const agentModel = OpenAIModels[OpenAIModelID.GPT_4_1];
@@ -310,7 +325,9 @@ describe('ChatOrchestrator', () => {
       });
 
       it('should handle tool execution errors gracefully', async () => {
-        const messages: Message[] = [{ role: 'user', content: 'Search news' }];
+        const messages: Message[] = [
+          { role: 'user', content: 'Search news', messageType: undefined },
+        ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
 
         // Tool router says search
@@ -347,7 +364,9 @@ describe('ChatOrchestrator', () => {
       });
 
       it('should skip web search if no agentModel provided', async () => {
-        const messages: Message[] = [{ role: 'user', content: 'Latest news' }];
+        const messages: Message[] = [
+          { role: 'user', content: 'Latest news', messageType: undefined },
+        ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
 
         vi.mocked(mockToolRouterService.determineTool).mockResolvedValue({
@@ -386,7 +405,9 @@ describe('ChatOrchestrator', () => {
 
     describe('Tool router errors', () => {
       it('should fallback to standard chat if tool router fails', async () => {
-        const messages: Message[] = [{ role: 'user', content: 'Hello' }];
+        const messages: Message[] = [
+          { role: 'user', content: 'Hello', messageType: undefined },
+        ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
 
         // Tool router returns empty tools on error (it catches errors internally)
@@ -412,7 +433,9 @@ describe('ChatOrchestrator', () => {
       });
 
       it('should handle tool router returning no tools array', async () => {
-        const messages: Message[] = [{ role: 'user', content: 'Test' }];
+        const messages: Message[] = [
+          { role: 'user', content: 'Test', messageType: undefined },
+        ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
 
         // Tool router returns empty response
@@ -444,8 +467,12 @@ describe('ChatOrchestrator', () => {
             role: 'user',
             content: [
               { type: 'text', text: 'What is this image?' },
-              { type: 'image_url', image_url: { url: 'data:...' } },
+              {
+                type: 'image_url',
+                image_url: { url: 'data:...', detail: 'auto' },
+              },
             ],
+            messageType: 'text' as const,
           },
         ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
@@ -477,7 +504,13 @@ describe('ChatOrchestrator', () => {
         const messages: Message[] = [
           {
             role: 'user',
-            content: [{ type: 'image_url', image_url: { url: 'data:...' } }],
+            content: [
+              {
+                type: 'image_url',
+                image_url: { url: 'data:...', detail: 'auto' },
+              },
+            ],
+            messageType: 'image' as const,
           },
         ];
         const model = OpenAIModels[OpenAIModelID.GPT_5];
