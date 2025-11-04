@@ -105,6 +105,8 @@ export function Chat({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // setIsModelSelectOpen is a stable setState function and doesn't need to be a dependency
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModelSelectOpen]);
 
   useAutoDismissError(error, clearError, 10000);

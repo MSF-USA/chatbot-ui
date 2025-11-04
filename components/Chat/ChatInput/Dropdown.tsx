@@ -242,7 +242,6 @@ const Dropdown: React.FC<DropdownProps> = ({
       tones,
       hasCameraSupport,
       closeDropdown,
-      setSearchMode,
       setIsToneOpen,
       setIsTranslateOpen,
       onCameraClick,

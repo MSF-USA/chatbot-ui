@@ -137,7 +137,6 @@ export const ChatInput = ({
     // Only update if conversation ID changed (avoid cascading renders)
     if (prevConversationId.current !== selectedConversation?.id) {
       prevConversationId.current = selectedConversation?.id;
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSearchMode(selectedConversation?.defaultSearchMode ?? SearchMode.OFF);
     }
   }, [selectedConversation?.id, selectedConversation?.defaultSearchMode]);
@@ -371,6 +370,8 @@ export const ChatInput = ({
     return () => {
       window.removeEventListener('click', handleOutsideClick);
     };
+    // Refs and setState functions are stable and don't need to be dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -396,7 +397,9 @@ export const ChatInput = ({
       setUploadProgress({});
       setSubmitType('text');
     }, 0);
-  }, [selectedConversation?.id, setFilePreviews]);
+    // setState functions are stable and don't need to be dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedConversation?.id]);
 
   // File upload handler
   const handleFiles = (files: FileList | File[]) => {
