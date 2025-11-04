@@ -2,6 +2,7 @@
 
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { agentChatService } from './AgentChatService';
 import { audioChatService } from './AudioChatService';
@@ -14,9 +15,9 @@ import { standardChatService } from './StandardChatService';
  * Routes chat requests to the appropriate specialized service based on:
  * - Audio/video files → AudioChatService
  * - Bot ID present → RAGChatService
- * - Azure Agent Mode ON → AgentChatService (direct AI Foundry)
- * - Search Mode ON → Tool-Aware endpoint (privacy-focused)
- * - Otherwise → StandardChatService
+ * - SearchMode.AGENT → AgentChatService (direct AI Foundry - fast, less private)
+ * - SearchMode.INTELLIGENT/ALWAYS → Tool-Aware endpoint (privacy-focused)
+ * - SearchMode.OFF or default → StandardChatService
  *
  * This provides a unified interface while delegating to specialized implementations.
  */
@@ -40,7 +41,7 @@ export class ChatService {
       verbosity?: 'low' | 'medium' | 'high';
       botId?: string;
       threadId?: string;
-      forcedAgentType?: string;
+      searchMode?: SearchMode;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     // 1. Check for audio/video files FIRST (highest priority)
@@ -57,10 +58,10 @@ export class ChatService {
       return ragChatService.chat(model, messages, options.botId);
     }
 
-    // 3. Check for Azure Agent Mode (direct AI Foundry routing)
-    if (model.azureAgentMode && model.agentId) {
+    // 3. Check for AGENT search mode (direct AI Foundry agent - fast, less private)
+    if (options?.searchMode === SearchMode.AGENT) {
       console.log(
-        '[ChatService] Routing to AgentChatService (Azure Agent Mode ON)',
+        '[ChatService] Routing to AgentChatService (SearchMode.AGENT)',
       );
       return agentChatService.chat(model, messages, {
         temperature: options?.temperature,
@@ -69,10 +70,14 @@ export class ChatService {
       });
     }
 
-    // 4. Check for Search Mode (tool-aware routing)
-    if (model.searchModeEnabled || options?.forcedAgentType) {
+    // 4. Check for INTELLIGENT or ALWAYS search mode (privacy-focused tool routing)
+    // This uses tool-aware routing where only search queries go to AI Foundry
+    if (
+      options?.searchMode === SearchMode.INTELLIGENT ||
+      options?.searchMode === SearchMode.ALWAYS
+    ) {
       console.log(
-        '[ChatService] Routing to Tool-Aware endpoint (Search Mode ON)',
+        `[ChatService] Routing to Tool-Aware endpoint (SearchMode.${options.searchMode})`,
       );
       return this.toolAwareChat(model, messages, options);
     }
@@ -89,8 +94,9 @@ export class ChatService {
   }
 
   /**
-   * Sends chat request to tool-aware endpoint (search mode).
+   * Sends chat request to tool-aware endpoint (search mode with privacy).
    * Uses privacy-focused routing with intelligent tool determination.
+   * Only search queries are sent to AI Foundry, not the full conversation.
    *
    * @param model - The model to use
    * @param messages - The conversation messages
@@ -108,9 +114,13 @@ export class ChatService {
       verbosity?: 'low' | 'medium' | 'high';
       botId?: string;
       threadId?: string;
-      forcedAgentType?: string;
+      searchMode?: SearchMode;
     },
   ): Promise<ReadableStream<Uint8Array>> {
+    console.log(
+      `[ChatService] Tool-aware chat with SearchMode.${options?.searchMode}`,
+    );
+
     const response = await fetch('/api/chat/tool-aware', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -120,7 +130,7 @@ export class ChatService {
         prompt: options?.prompt,
         temperature: options?.temperature,
         stream: options?.stream ?? true,
-        minimizeAIFoundryUse: true, // Always use privacy mode for search
+        searchMode: options?.searchMode,
         reasoningEffort: options?.reasoningEffort,
         verbosity: options?.verbosity,
         botId: options?.botId,
@@ -149,9 +159,9 @@ export class ChatService {
     messages: Message[],
     options?: {
       botId?: string;
-      forcedAgentType?: string;
+      searchMode?: SearchMode;
     },
-  ): 'audio' | 'rag' | 'agent' | 'standard' {
+  ): 'audio' | 'rag' | 'agent' | 'tool-aware' | 'standard' {
     if (audioChatService.hasAudioVideoFiles(messages)) {
       return 'audio';
     }
@@ -160,9 +170,15 @@ export class ChatService {
       return 'rag';
     }
 
-    const modelConfig = model as unknown as Record<string, unknown>;
-    if (modelConfig.agentId || options?.forcedAgentType) {
+    if (options?.searchMode === SearchMode.AGENT) {
       return 'agent';
+    }
+
+    if (
+      options?.searchMode === SearchMode.INTELLIGENT ||
+      options?.searchMode === SearchMode.ALWAYS
+    ) {
+      return 'tool-aware';
     }
 
     return 'standard';

@@ -57,10 +57,12 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
 
         // Check if we should process citations:
         // - If conversation has a bot (RAG/bot conversations)
-        // - If model has search mode enabled (privacy-focused search)
-        const modelConfig = conversation?.model as any;
+        // - If citations are provided (from search results)
+        // - If message has citations
         const shouldProcessCitations =
-          !!conversation?.bot || !!modelConfig?.searchModeEnabled;
+          !!conversation?.bot ||
+          (citations && citations.length > 0) ||
+          (message?.citations && message.citations.length > 0);
 
         if (!shouldProcessCitations) {
           setDisplayContent(mainContent);
@@ -180,30 +182,56 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
 
     // Custom component for text nodes to handle citation markers
     // Memoize to prevent unnecessary re-renders
-    const enhancedComponents: Components = React.useMemo(
-      () => ({
+    const enhancedComponents: Components = React.useMemo(() => {
+      const processChildren = (children: any): any => {
+        return React.Children.map(children, (child) => {
+          if (typeof child === 'string') {
+            return processTextWithCitations(
+              child,
+              extractedCitations,
+              handleCitationHover,
+            );
+          }
+          return child;
+        });
+      };
+
+      return {
         ...components,
         p({ children, ...props }: any) {
-          const processedChildren = React.Children.map(children, (child) => {
-            if (typeof child === 'string') {
-              return processTextWithCitations(
-                child,
-                extractedCitations,
-                handleCitationHover,
-              );
-            }
-            return child;
-          });
-
+          const processedChildren = processChildren(children);
           const CustomP = components.p as any;
           if (CustomP) {
             return <CustomP {...props}>{processedChildren}</CustomP>;
           }
           return <p {...props}>{processedChildren}</p>;
         },
-      }),
-      [components, extractedCitations, handleCitationHover],
-    );
+        li({ children, ...props }: any) {
+          const processedChildren = processChildren(children);
+          const CustomLi = components.li as any;
+          if (CustomLi) {
+            return <CustomLi {...props}>{processedChildren}</CustomLi>;
+          }
+          return <li {...props}>{processedChildren}</li>;
+        },
+        strong({ children, ...props }: any) {
+          const processedChildren = processChildren(children);
+          const CustomStrong = components.strong as any;
+          if (CustomStrong) {
+            return <CustomStrong {...props}>{processedChildren}</CustomStrong>;
+          }
+          return <strong {...props}>{processedChildren}</strong>;
+        },
+        em({ children, ...props }: any) {
+          const processedChildren = processChildren(children);
+          const CustomEm = components.em as any;
+          if (CustomEm) {
+            return <CustomEm {...props}>{processedChildren}</CustomEm>;
+          }
+          return <em {...props}>{processedChildren}</em>;
+        },
+      };
+    }, [components, extractedCitations, handleCitationHover]);
 
     return (
       <>
@@ -247,10 +275,18 @@ function processTextWithCitations(
       parts.push(
         <sup
           key={citationKey}
-          className="citation-number cursor-pointer text-xs text-blue-500 dark:text-blue-400 hover:text-blue-600 dark:hover:text-blue-300 hover:underline font-semibold mx-0.5"
+          className="citation-number cursor-pointer text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:underline font-bold mx-0.5 transition-colors duration-150"
           onMouseEnter={(e) =>
             onHover(citationNumber, citationKey, e.currentTarget)
           }
+          style={{
+            textDecoration: 'none',
+            fontSize: '0.7em',
+            lineHeight: 0,
+            position: 'relative',
+            verticalAlign: 'baseline',
+            top: '-0.5em',
+          }}
         >
           [{citationNumber}]
         </sup>,

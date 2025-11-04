@@ -197,7 +197,6 @@ export async function POST(req: NextRequest) {
         } catch (error) {
           const safeFileUrl = sanitizeForLog(fileUrl);
           const safeError = sanitizeForLog(error);
-          // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
           console.error(`Error processing file ${safeFileUrl}: ${safeError}`);
           fileContent += `\n\n[Error processing file: ${safeFileUrl}]`;
         }
@@ -239,14 +238,14 @@ export async function POST(req: NextRequest) {
     userMessage += `\n**Sample Content to Analyze:**\n${combinedContent}\n`;
 
     // Call Azure OpenAI with structured output
-    // Note: GPT-5 is a reasoning model and doesn't support custom temperature
+    // GPT-5 supports json_schema
     const response = await client.chat.completions.create({
       model: DEFAULT_ANALYSIS_MODEL,
       messages: [
         { role: 'system', content: TONE_ANALYSIS_SYSTEM_PROMPT },
         { role: 'user', content: userMessage },
       ],
-      max_tokens: DEFAULT_ANALYSIS_MAX_TOKENS,
+      max_completion_tokens: DEFAULT_ANALYSIS_MAX_TOKENS,
       response_format: {
         type: 'json_schema',
         json_schema: {
@@ -304,9 +303,38 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    const content = response.choices[0]?.message?.content;
+    // Debug: Log the full response structure
+    console.log(
+      '[Tone Analysis] Full response:',
+      JSON.stringify(response, null, 2),
+    );
+
+    // Better error handling and logging
+    if (!response.choices || response.choices.length === 0) {
+      console.error('[Tone Analysis] No choices in response');
+      throw new Error('No choices returned from AI');
+    }
+
+    const choice = response.choices[0];
+    console.log(
+      '[Tone Analysis] Choice object:',
+      JSON.stringify(choice, null, 2),
+    );
+
+    // Check for refusal
+    if (choice.message?.refusal) {
+      console.error('[Tone Analysis] AI refused:', choice.message.refusal);
+      throw new Error(`AI refused: ${choice.message.refusal}`);
+    }
+
+    const content = choice.message?.content;
     if (!content) {
-      throw new Error('No response from AI');
+      console.error(
+        '[Tone Analysis] Empty content. Full message:',
+        JSON.stringify(choice.message, null, 2),
+      );
+      console.error('[Tone Analysis] Finish reason:', choice.finish_reason);
+      throw new Error('No content in AI response');
     }
 
     // Parse and validate response

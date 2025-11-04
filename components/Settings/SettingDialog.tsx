@@ -13,6 +13,7 @@ import { useUI } from '@/client/hooks/ui/useUI';
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 
+import { SearchMode } from '@/types/searchMode';
 import { Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
@@ -55,7 +56,7 @@ export function SettingDialog() {
       temperature: 0.5,
       systemPrompt: '',
       advancedMode: false,
-      minimizeAIFoundryUse: true, // Privacy-focused by default
+      defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
     },
   });
 
@@ -195,7 +196,7 @@ export function SettingDialog() {
       temperature: 0.5,
       systemPrompt: process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || '',
       advancedMode: false,
-      minimizeAIFoundryUse: true, // Privacy-focused by default
+      defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
     };
     setTheme(defaultTheme);
     setTemperature(0.5);

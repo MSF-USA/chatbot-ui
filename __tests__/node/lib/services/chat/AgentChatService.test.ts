@@ -1,6 +1,6 @@
 import { AIFoundryAgentHandler } from '@/lib/services/chat/AIFoundryAgentHandler';
 import { AgentChatService } from '@/lib/services/chat/AgentChatService';
-import { ChatLogger } from '@/lib/services/shared';
+import { ChatLogger, ToneService } from '@/lib/services/shared';
 
 import { Message } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
@@ -11,6 +11,7 @@ describe('AgentChatService', () => {
   let service: AgentChatService;
   let mockAgentHandler: AIFoundryAgentHandler;
   let mockLogger: ChatLogger;
+  let mockToneService: ToneService;
 
   const testUser = {
     id: 'user-123',
@@ -41,13 +42,23 @@ describe('AgentChatService', () => {
       logError: vi.fn().mockResolvedValue(undefined),
     } as any;
 
+    // Create mock tone service
+    mockToneService = {
+      loadTone: vi.fn().mockReturnValue(null),
+      applyTone: vi.fn((messages, prompt) => prompt),
+    } as any;
+
     // Create mock agent handler
     mockAgentHandler = {
       handleAgentChat: vi.fn(),
     } as any;
 
     // Create service instance
-    service = new AgentChatService(mockAgentHandler, mockLogger);
+    service = new AgentChatService(
+      mockAgentHandler,
+      mockLogger,
+      mockToneService,
+    );
   });
 
   describe('handleChat', () => {
@@ -519,6 +530,268 @@ describe('AgentChatService', () => {
         botId,
         undefined,
       );
+    });
+  });
+
+  describe('tone application', () => {
+    it('should inject tone instructions when toneId is present', async () => {
+      const testToneId = 'tone-professional';
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Hello',
+          messageType: 'text',
+          toneId: testToneId,
+        },
+      ];
+
+      // Mock tone service to return a tone
+      const mockTone = {
+        id: testToneId,
+        name: 'Professional',
+        description: 'Professional tone',
+        voiceRules: 'Be formal and professional',
+        createdAt: new Date().toISOString(),
+        folderId: null,
+      };
+      vi.mocked(mockToneService.loadTone).mockReturnValue(mockTone);
+
+      // Mock agent handler response
+      const mockResponse = new Response('Response', {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      vi.mocked(mockAgentHandler.handleAgentChat).mockResolvedValue(
+        mockResponse,
+      );
+
+      // Execute
+      await service.handleChat({
+        messages,
+        model: testAgentModel,
+        user: testUser,
+      });
+
+      // Verify tone service was called
+      expect(mockToneService.loadTone).toHaveBeenCalledWith(
+        testUser.id,
+        testToneId,
+      );
+
+      // Verify agent handler was called with modified messages
+      const callArgs = vi.mocked(mockAgentHandler.handleAgentChat).mock
+        .calls[0];
+      const sentMessages = callArgs[2];
+
+      // Should have 2 messages: tone instruction + original message
+      expect(sentMessages).toHaveLength(2);
+
+      // First message should be tone instruction
+      expect(sentMessages[0].role).toBe('user');
+      expect(sentMessages[0].content).toContain('writing style and tone');
+      expect(sentMessages[0].content).toContain('Be formal and professional');
+
+      // Second message should be the original
+      expect(sentMessages[1]).toBe(messages[0]);
+    });
+
+    it('should NOT inject tone when toneId is not present', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Hello',
+          messageType: 'text',
+          // No toneId
+        },
+      ];
+
+      // Mock agent handler response
+      const mockResponse = new Response('Response', {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      vi.mocked(mockAgentHandler.handleAgentChat).mockResolvedValue(
+        mockResponse,
+      );
+
+      // Execute
+      await service.handleChat({
+        messages,
+        model: testAgentModel,
+        user: testUser,
+      });
+
+      // Verify tone service was NOT called
+      expect(mockToneService.loadTone).not.toHaveBeenCalled();
+
+      // Verify agent handler was called with original messages
+      const callArgs = vi.mocked(mockAgentHandler.handleAgentChat).mock
+        .calls[0];
+      const sentMessages = callArgs[2];
+
+      // Should have only 1 message (original)
+      expect(sentMessages).toHaveLength(1);
+      expect(sentMessages[0]).toBe(messages[0]);
+    });
+
+    it('should NOT inject tone when tone has no voiceRules', async () => {
+      const testToneId = 'tone-empty';
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Hello',
+          messageType: 'text',
+          toneId: testToneId,
+        },
+      ];
+
+      // Mock tone service to return a tone without voiceRules
+      const mockTone = {
+        id: testToneId,
+        name: 'Empty Tone',
+        description: 'Empty tone',
+        voiceRules: '', // Empty voiceRules
+        createdAt: new Date().toISOString(),
+        folderId: null,
+      };
+      vi.mocked(mockToneService.loadTone).mockReturnValue(mockTone);
+
+      // Mock agent handler response
+      const mockResponse = new Response('Response', {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      vi.mocked(mockAgentHandler.handleAgentChat).mockResolvedValue(
+        mockResponse,
+      );
+
+      // Execute
+      await service.handleChat({
+        messages,
+        model: testAgentModel,
+        user: testUser,
+      });
+
+      // Verify tone service was called
+      expect(mockToneService.loadTone).toHaveBeenCalled();
+
+      // Verify agent handler was called with original messages (no injection)
+      const callArgs = vi.mocked(mockAgentHandler.handleAgentChat).mock
+        .calls[0];
+      const sentMessages = callArgs[2];
+
+      // Should have only 1 message (no tone injection)
+      expect(sentMessages).toHaveLength(1);
+      expect(sentMessages[0]).toBe(messages[0]);
+    });
+
+    it('should NOT inject tone when tone is not found', async () => {
+      const testToneId = 'tone-nonexistent';
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Hello',
+          messageType: 'text',
+          toneId: testToneId,
+        },
+      ];
+
+      // Mock tone service to return undefined (tone not found)
+      vi.mocked(mockToneService.loadTone).mockReturnValue(undefined);
+
+      // Mock agent handler response
+      const mockResponse = new Response('Response', {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      vi.mocked(mockAgentHandler.handleAgentChat).mockResolvedValue(
+        mockResponse,
+      );
+
+      // Execute
+      await service.handleChat({
+        messages,
+        model: testAgentModel,
+        user: testUser,
+      });
+
+      // Verify tone service was called
+      expect(mockToneService.loadTone).toHaveBeenCalledWith(
+        testUser.id,
+        testToneId,
+      );
+
+      // Verify agent handler was called with original messages
+      const callArgs = vi.mocked(mockAgentHandler.handleAgentChat).mock
+        .calls[0];
+      const sentMessages = callArgs[2];
+
+      // Should have only 1 message (no tone injection)
+      expect(sentMessages).toHaveLength(1);
+      expect(sentMessages[0]).toBe(messages[0]);
+    });
+
+    it('should inject tone with multi-message conversation', async () => {
+      const testToneId = 'tone-friendly';
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Hi',
+          messageType: 'text',
+        },
+        {
+          role: 'assistant',
+          content: 'Hello! How can I help?',
+          messageType: undefined,
+        },
+        {
+          role: 'user',
+          content: 'Tell me about TypeScript',
+          messageType: 'text',
+          toneId: testToneId,
+        },
+      ];
+
+      // Mock tone service to return a tone
+      const mockTone = {
+        id: testToneId,
+        name: 'Friendly',
+        description: 'Friendly tone',
+        voiceRules: 'Be warm and friendly',
+        createdAt: new Date().toISOString(),
+        folderId: null,
+      };
+      vi.mocked(mockToneService.loadTone).mockReturnValue(mockTone);
+
+      // Mock agent handler response
+      const mockResponse = new Response('Response', {
+        headers: { 'Content-Type': 'text/plain' },
+      });
+      vi.mocked(mockAgentHandler.handleAgentChat).mockResolvedValue(
+        mockResponse,
+      );
+
+      // Execute
+      await service.handleChat({
+        messages,
+        model: testAgentModel,
+        user: testUser,
+      });
+
+      // Verify agent handler was called with modified messages
+      const callArgs = vi.mocked(mockAgentHandler.handleAgentChat).mock
+        .calls[0];
+      const sentMessages = callArgs[2];
+
+      // Should have 4 messages: first 2 + tone instruction + last message
+      expect(sentMessages).toHaveLength(4);
+
+      // First two messages should be unchanged
+      expect(sentMessages[0]).toBe(messages[0]);
+      expect(sentMessages[1]).toBe(messages[1]);
+
+      // Third message should be tone instruction
+      expect(sentMessages[2].role).toBe('user');
+      expect(sentMessages[2].content).toContain('Be warm and friendly');
+
+      // Fourth message should be the original last message
+      expect(sentMessages[3]).toBe(messages[2]);
     });
   });
 });

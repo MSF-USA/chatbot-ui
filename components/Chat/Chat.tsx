@@ -26,6 +26,7 @@ import {
 import { AgentType } from '@/types/agent';
 import { Message } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { PromptModal } from '@/components/Prompts/PromptModal';
 
@@ -86,6 +87,8 @@ export function Chat({
   const [savePromptDescription, setSavePromptDescription] = useState('');
   const hasInitializedRef = useRef(false);
   const previousMessageCountRef = useRef<number>(0);
+  const wasStreamingRef = useRef(false);
+  const scrollPositionBeforeStreamEndRef = useRef<number | null>(null);
 
   const [isModelSelectOpen, setIsModelSelectOpen] = useModalState(
     mobileModelSelectOpen,
@@ -141,78 +144,153 @@ export function Chat({
   useEffect(() => {
     isInitialRenderRef.current = true;
     previousMessageCountRef.current = 0;
+    wasStreamingRef.current = false;
+    scrollPositionBeforeStreamEndRef.current = null;
   }, [selectedConversation?.id]);
 
-  // Auto-scroll behavior: Scroll to bottom on initial load, scroll to top of new message on send
+  // Capture scroll position when streaming ends
+  useEffect(() => {
+    if (!isStreaming && wasStreamingRef.current && chatContainerRef.current) {
+      // Streaming just ended - capture current scroll position
+      scrollPositionBeforeStreamEndRef.current =
+        chatContainerRef.current.scrollTop;
+      console.log(
+        '[Scroll] Captured scroll position at stream end:',
+        scrollPositionBeforeStreamEndRef.current,
+      );
+    }
+  }, [isStreaming]);
+
+  // Smooth scroll to bottom on new messages (but not when streaming just finished)
   useEffect(() => {
     const messages = selectedConversation?.messages || [];
     const currentMessageCount = messages.length;
     const previousCount = previousMessageCountRef.current;
 
-    console.log('[Chat Scroll Effect]', {
-      currentMessageCount,
-      previousCount,
-      isInitialRender: isInitialRenderRef.current,
-      hasLastMessageRef: !!lastMessageRef.current,
-      hasChatContainerRef: !!chatContainerRef.current,
-    });
+    // Detect if streaming just completed (was true last render, false now)
+    const streamingJustCompleted =
+      wasStreamingRef.current === true && !isStreaming;
 
-    // On initial render/load: scroll to bottom to show latest messages
-    if (isInitialRenderRef.current) {
-      isInitialRenderRef.current = false;
-      previousMessageCountRef.current = currentMessageCount;
-
-      // Scroll to bottom to show latest messages on initial load
-      if (currentMessageCount > 0 && chatContainerRef.current) {
-        setTimeout(() => {
-          if (chatContainerRef.current) {
-            chatContainerRef.current.scrollTop =
-              chatContainerRef.current.scrollHeight;
-            console.log('[Chat Scroll] Initial load - scrolled to bottom');
-          }
-        }, 0);
+    // Only scroll to bottom when:
+    // 1. Messages are added
+    // 2. We're not currently streaming
+    // 3. Streaming didn't just complete (to prevent scroll jump when message is saved)
+    if (
+      currentMessageCount > previousCount &&
+      !isStreaming &&
+      !streamingJustCompleted &&
+      chatContainerRef.current
+    ) {
+      console.log('[Scroll] Auto-scrolling to bottom for new message');
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTo({
+            top: chatContainerRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
+      }, 0);
+    } else if (
+      streamingJustCompleted &&
+      scrollPositionBeforeStreamEndRef.current !== null
+    ) {
+      // Restore the exact scroll position from before streaming ended
+      console.log(
+        '[Scroll] Restoring scroll position after streaming:',
+        scrollPositionBeforeStreamEndRef.current,
+      );
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTop =
+          scrollPositionBeforeStreamEndRef.current;
       }
+      scrollPositionBeforeStreamEndRef.current = null;
+    }
+
+    // Update refs AFTER checking
+    previousMessageCountRef.current = currentMessageCount;
+    wasStreamingRef.current = isStreaming;
+    isInitialRenderRef.current = false;
+  }, [selectedConversation?.messages, isStreaming]);
+
+  // Track if we should auto-scroll during streaming
+  const shouldAutoScrollRef = useRef(true);
+
+  // When streaming starts, assume we want to follow it
+  useEffect(() => {
+    if (isStreaming) {
+      shouldAutoScrollRef.current = true;
+    }
+  }, [isStreaming]);
+
+  // Detect manual scroll during streaming
+  useEffect(() => {
+    const handleScrollDuringStream = () => {
+      if (isStreaming && chatContainerRef.current) {
+        const container = chatContainerRef.current;
+        const distanceFromBottom =
+          container.scrollHeight - container.scrollTop - container.clientHeight;
+
+        // If user manually scrolls up more than 200px, stop auto-scrolling and show button
+        if (distanceFromBottom > 200) {
+          shouldAutoScrollRef.current = false;
+          setShowScrollDownButton(true);
+          console.log(
+            '[Scroll] User scrolled away during streaming, stopping auto-scroll',
+          );
+        }
+      }
+    };
+
+    const container = chatContainerRef.current;
+    if (container) {
+      container.addEventListener('wheel', handleScrollDuringStream, {
+        passive: true,
+      });
+      container.addEventListener('touchmove', handleScrollDuringStream, {
+        passive: true,
+      });
+      return () => {
+        container.removeEventListener('wheel', handleScrollDuringStream);
+        container.removeEventListener('touchmove', handleScrollDuringStream);
+      };
+    }
+  }, [isStreaming]);
+
+  // Smooth auto-scroll during streaming - runs continuously
+  useEffect(() => {
+    if (!isStreaming || !shouldAutoScrollRef.current) {
       return;
     }
 
-    // When message count increases, check if it's a USER message before scrolling
-    // We only want to scroll to top when the USER sends a message, not when assistant responds
-    if (previousCount > 0 && currentMessageCount > previousCount) {
-      const lastMessage = messages[messages.length - 1];
+    let animationFrameId: number;
 
-      console.log('[Chat Scroll] Message count increased', {
-        lastMessageRole: lastMessage?.role,
-        willScroll: lastMessage?.role === 'user',
-      });
+    const smoothScroll = () => {
+      const container = chatContainerRef.current;
+      if (!container || !shouldAutoScrollRef.current || !isStreaming) return;
 
-      // Only scroll if the last message is from the user
-      if (lastMessage?.role === 'user') {
-        // Position message at comfortable reading height (20% from top of viewport)
-        // This keeps some context above and blank space below for the response
-        setTimeout(() => {
-          if (lastMessageRef.current && chatContainerRef.current) {
-            const container = chatContainerRef.current;
-            const messageElement = lastMessageRef.current;
+      const targetScroll = container.scrollHeight - container.clientHeight;
+      const currentScroll = container.scrollTop;
+      const diff = targetScroll - currentScroll;
 
-            // Scroll to show message at 20% from top of viewport
-            const viewportOffset = container.clientHeight * 0.2;
-            const scrollTarget = messageElement.offsetTop - viewportOffset;
-
-            container.scrollTo({
-              top: scrollTarget,
-              behavior: 'smooth',
-            });
-            console.log('[Chat Scroll] Positioned message at reading height');
-          }
-        }, 50);
+      // Smooth scroll with easing - always keep animating while streaming
+      if (Math.abs(diff) > 0.5) {
+        container.scrollTop = currentScroll + diff * 0.2; // Slightly faster ease
+      } else {
+        container.scrollTop = targetScroll;
       }
-    }
 
-    // During streaming: do NOT auto-scroll - let user freely scroll
-    // The scroll button will appear if they're not at the bottom
+      // Keep animation loop running while streaming
+      animationFrameId = requestAnimationFrame(smoothScroll);
+    };
 
-    previousMessageCountRef.current = currentMessageCount;
-  }, [selectedConversation?.messages]);
+    animationFrameId = requestAnimationFrame(smoothScroll);
+
+    return () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+  }, [isStreaming]); // Only depend on isStreaming, not content
 
   // Handle scroll detection for scroll-down button
   useEffect(() => {
@@ -233,8 +311,8 @@ export function Chat({
     const container = chatContainerRef.current;
     if (container) {
       container.addEventListener('scroll', handleScroll);
-      // Check initial state
-      handleScroll();
+      // Don't check initial state immediately - let scroll events handle it
+      // This prevents the button from flashing when new messages are added
       return () => container.removeEventListener('scroll', handleScroll);
     }
   }, [selectedConversation?.messages, streamingContent]);
@@ -309,11 +387,7 @@ export function Chat({
   };
 
   const handleSend = useCallback(
-    (
-      message: Message,
-      forceStandardChat?: boolean,
-      forcedAgentType?: AgentType,
-    ) => {
+    (message: Message, searchMode?: SearchMode) => {
       // Get the latest conversation state at send time to avoid stale closures
       const state = useConversationStore.getState();
       const currentConversation = state.conversations.find(
@@ -333,12 +407,7 @@ export function Chat({
         ...currentConversation,
         messages: updatedMessages,
       };
-      sendMessage?.(
-        message,
-        updatedConversation,
-        forceStandardChat,
-        forcedAgentType,
-      );
+      sendMessage?.(message, updatedConversation, searchMode);
     },
     [updateConversation, sendMessage],
   );
@@ -423,10 +492,7 @@ export function Chat({
           onModelClick={() => setIsModelSelectOpen(true)}
           onClearAll={handleClearAll}
           hasMessages={hasMessages}
-          azureAgentMode={selectedConversation?.model?.azureAgentMode || false}
-          searchModeEnabled={
-            selectedConversation?.model?.searchModeEnabled ?? true
-          }
+          isAgent={selectedConversation?.model?.isAgent === true}
           showChatbar={showChatbar}
         />
       </div>
@@ -467,9 +533,10 @@ export function Chat({
         <>
           {/* Messages */}
           <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl pb-[80vh]">
+            <div className="mx-auto max-w-3xl pb-4">
               {messages.map((message, index) => {
                 const isLastMessage = index === messages.length - 1;
+
                 return isLastMessage ? (
                   <div key={index} ref={lastMessageRef} className="mb-2">
                     <MemoizedChatMessage

@@ -17,6 +17,7 @@ import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 
 import { MessageType } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import {
   createMockRequest,
@@ -275,7 +276,7 @@ describe('/api/chat/tool-aware', () => {
       );
     });
 
-    it('defaults minimizeAIFoundryUse to false when not provided', async () => {
+    it('defaults to SearchMode.INTELLIGENT when not provided', async () => {
       const request = createChatRequest({
         body: {
           model: OpenAIModels[OpenAIModelID.GPT_5],
@@ -293,12 +294,12 @@ describe('/api/chat/tool-aware', () => {
 
       expect(mockHandleChat).toHaveBeenCalledWith(
         expect.objectContaining({
-          minimizeAIFoundryUse: false,
+          searchMode: SearchMode.INTELLIGENT,
         }),
       );
     });
 
-    it('respects minimizeAIFoundryUse: true (privacy mode)', async () => {
+    it('respects searchMode: INTELLIGENT', async () => {
       const request = createChatRequest({
         body: {
           model: OpenAIModels[OpenAIModelID.GPT_5],
@@ -309,7 +310,7 @@ describe('/api/chat/tool-aware', () => {
               messageType: MessageType.TEXT,
             },
           ],
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         },
       });
 
@@ -317,7 +318,7 @@ describe('/api/chat/tool-aware', () => {
 
       expect(mockHandleChat).toHaveBeenCalledWith(
         expect.objectContaining({
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         }),
       );
     });
@@ -563,7 +564,7 @@ describe('/api/chat/tool-aware', () => {
   });
 
   describe('Privacy Modes', () => {
-    it('handles privacy mode enabled (minimizeAIFoundryUse: true)', async () => {
+    it('handles privacy mode enabled (searchMode: SearchMode.INTELLIGENT)', async () => {
       const request = createChatRequest({
         body: {
           model: OpenAIModels[OpenAIModelID.GPT_5_CHAT],
@@ -574,7 +575,7 @@ describe('/api/chat/tool-aware', () => {
               messageType: MessageType.TEXT,
             },
           ],
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         },
       });
 
@@ -583,23 +584,23 @@ describe('/api/chat/tool-aware', () => {
       expect(response.status).toBe(200);
       expect(mockHandleChat).toHaveBeenCalledWith(
         expect.objectContaining({
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         }),
       );
     });
 
-    it('handles privacy mode disabled (minimizeAIFoundryUse: false)', async () => {
+    it('handles SearchMode.ALWAYS (force web search)', async () => {
       const request = createChatRequest({
         body: {
           model: OpenAIModels[OpenAIModelID.GPT_5_CHAT],
           messages: [
             {
               role: 'user',
-              content: 'Search normally',
+              content: 'Search always',
               messageType: MessageType.TEXT,
             },
           ],
-          minimizeAIFoundryUse: false,
+          searchMode: SearchMode.ALWAYS,
         },
       });
 
@@ -608,7 +609,7 @@ describe('/api/chat/tool-aware', () => {
       expect(response.status).toBe(200);
       expect(mockHandleChat).toHaveBeenCalledWith(
         expect.objectContaining({
-          minimizeAIFoundryUse: false,
+          searchMode: SearchMode.ALWAYS,
         }),
       );
     });
@@ -630,7 +631,7 @@ describe('/api/chat/tool-aware', () => {
               messageType: MessageType.TEXT,
             },
           ],
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         },
       });
 
@@ -641,7 +642,7 @@ describe('/api/chat/tool-aware', () => {
         expect.objectContaining({
           modelId: OpenAIModels[OpenAIModelID.GPT_5].id,
           messageCount: 1,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
           stream: true,
         }),
       );
@@ -665,7 +666,7 @@ describe('/api/chat/tool-aware', () => {
           prompt: 'You are a research assistant',
           temperature: 0.7,
           stream: true,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
           reasoningEffort: 'medium',
           verbosity: 'high',
           botId: 'search-bot-123',
@@ -682,7 +683,7 @@ describe('/api/chat/tool-aware', () => {
         systemPrompt: 'You are a research assistant',
         temperature: 0.7,
         stream: true,
-        minimizeAIFoundryUse: true,
+        searchMode: SearchMode.INTELLIGENT,
         agentModel: OpenAIModels[OpenAIModelID.GPT_4_1],
         reasoningEffort: 'medium',
         verbosity: 'high',
@@ -714,7 +715,7 @@ describe('/api/chat/tool-aware', () => {
         systemPrompt: DEFAULT_SYSTEM_PROMPT,
         temperature: undefined,
         stream: true,
-        minimizeAIFoundryUse: false,
+        searchMode: SearchMode.INTELLIGENT,
         agentModel: OpenAIModels[OpenAIModelID.GPT_4_1],
         reasoningEffort: undefined,
         verbosity: undefined,
@@ -745,7 +746,7 @@ describe('/api/chat/tool-aware', () => {
         body: {
           model: OpenAIModels[OpenAIModelID.GPT_5_CHAT],
           messages,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         },
       });
 
@@ -755,7 +756,7 @@ describe('/api/chat/tool-aware', () => {
       expect(mockHandleChat).toHaveBeenCalledWith(
         expect.objectContaining({
           messages: expect.arrayContaining(messages),
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         }),
       );
     });

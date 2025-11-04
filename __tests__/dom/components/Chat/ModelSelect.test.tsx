@@ -3,6 +3,7 @@ import React from 'react';
 
 import { Conversation } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { ModelSelect } from '@/components/Chat/ModelSelect';
 
@@ -16,7 +17,7 @@ const mockUseConversations = {
 };
 
 const mockUseSettings = {
-  models: Object.values(OpenAIModels).filter((m) => !m.isLegacy),
+  models: Object.values(OpenAIModels).filter((m) => !m.isDisabled),
   defaultModelId: OpenAIModelID.GPT_5,
   setDefaultModelId: vi.fn(),
 };
@@ -155,7 +156,7 @@ describe('ModelSelect', () => {
       });
     });
 
-    it('sets default modes when selecting model with agent capabilities', async () => {
+    it('sets model with agent capabilities', async () => {
       render(<ModelSelect />);
 
       const gpt41Button = screen.getByRole('button', { name: /GPT-4\.1/i });
@@ -166,8 +167,6 @@ describe('ModelSelect', () => {
           'conv-1',
           expect.objectContaining({
             model: expect.objectContaining({
-              azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
-              searchModeEnabled: true, // Search Mode ON by default
               agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL',
             }),
           }),
@@ -176,25 +175,27 @@ describe('ModelSelect', () => {
     });
   });
 
-  describe('Agent Mode Toggle', () => {
-    it('displays Azure Agent Mode toggle for models with agent capabilities', () => {
+  describe('Search Mode Toggle', () => {
+    it('displays Search Mode toggle for models with agent capabilities', () => {
       mockUseConversations.selectedConversation = {
         id: 'conv-1',
         name: 'Test',
         messages: [],
-        model: OpenAIModels[OpenAIModelID.GPT_4_1],
+        model: {
+          ...OpenAIModels[OpenAIModelID.GPT_4_1],
+        },
         prompt: '',
         temperature: 0.7,
         folderId: null,
+        defaultSearchMode: SearchMode.INTELLIGENT, // INTELLIGENT mode
       };
 
       render(<ModelSelect />);
 
       // Should show Search Mode by default
       expect(screen.getByText('Search Mode')).toBeInTheDocument();
-      // Azure Agent Mode toggle should be nested inside Search Mode when search is enabled
-      // Note: Azure AI Foundry Mode only appears when Search Mode is enabled
-      expect(screen.getByText('Azure AI Foundry Mode')).toBeInTheDocument();
+      // Azure AI Agent Mode toggle should be nested inside Search Mode
+      expect(screen.getByText(/Azure AI Agent Mode/)).toBeInTheDocument();
     });
 
     it('displays Search Mode toggle for all models', () => {
@@ -298,14 +299,14 @@ describe('ModelSelect', () => {
       ).toBeInTheDocument();
     });
 
-    it('hides temperature slider when Azure Agent Mode is enabled', () => {
+    it('hides temperature slider when using agent model', () => {
       mockUseConversations.selectedConversation = {
         id: 'conv-1',
         name: 'Test',
         messages: [],
         model: {
           ...OpenAIModels[OpenAIModelID.GPT_5],
-          azureAgentMode: true,
+          isAgent: true,
         },
         prompt: '',
         temperature: 0.7,
@@ -314,7 +315,7 @@ describe('ModelSelect', () => {
 
       render(<ModelSelect />);
 
-      // Temperature control should not be visible when Azure Agent Mode is enabled
+      // Temperature control should not be visible when using agent model
       expect(screen.queryByText('Temperature Control')).not.toBeInTheDocument();
     });
   });

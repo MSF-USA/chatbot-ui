@@ -43,7 +43,7 @@ export const MAX_API_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 export const DEFAULT_ANALYSIS_MODEL = 'gpt-5';
 
 // Default max tokens for AI analysis operations
-export const DEFAULT_ANALYSIS_MAX_TOKENS = 2000;
+export const DEFAULT_ANALYSIS_MAX_TOKENS = 100000;
 
 // Note: GPT-5 is a reasoning model and does not support custom temperature
 // Temperature is automatically set to 1 by the model

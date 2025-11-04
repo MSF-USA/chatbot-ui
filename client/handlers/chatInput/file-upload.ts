@@ -41,6 +41,32 @@ export async function onFileUpload(
 
   const filesArray = Array.from(files);
 
+  // Reject audio/video files (they should use the transcription button)
+  const audioVideoExtensions = [
+    '.mp3',
+    '.mp4',
+    '.mpeg',
+    '.mpga',
+    '.m4a',
+    '.wav',
+    '.webm',
+  ];
+  const hasAudioVideo = filesArray.some((file) => {
+    const ext = '.' + file.name.split('.').pop()?.toLowerCase();
+    return (
+      audioVideoExtensions.includes(ext) ||
+      file.type.startsWith('audio/') ||
+      file.type.startsWith('video/')
+    );
+  });
+
+  if (hasAudioVideo) {
+    toast.error(
+      'Audio/video files cannot be attached. Use the "Transcribe Audio/Video" button in the dropdown menu instead.',
+    );
+    return;
+  }
+
   // Initialize all file previews at once before processing
   const allFilePreviews: FilePreview[] = filesArray.map((file) => ({
     name: file.name,
@@ -70,17 +96,24 @@ export async function onFileUpload(
         },
       };
 
-      setFileFieldValue((prevValue) => {
+      // Images go to imageFieldValue
+      setImageFieldValue((prevValue) => {
         if (prevValue && Array.isArray(prevValue)) {
-          setSubmitType('multi-file');
           return [...prevValue, imageMessage];
         } else if (prevValue) {
-          setSubmitType('multi-file');
           return [prevValue, imageMessage];
         } else {
-          setSubmitType('image');
-          return [imageMessage];
+          return imageMessage;
         }
+      });
+
+      // Update submit type based on whether we have files too
+      setSubmitType((prevType) => {
+        // If we already have files, use multi-file
+        if (prevType === 'file' || prevType === 'multi-file') {
+          return 'multi-file';
+        }
+        return 'image';
       });
     } else {
       const fileMessage: FileMessageContent = {
@@ -99,7 +132,15 @@ export async function onFileUpload(
           newFileArray = [fileMessage];
         }
 
-        setSubmitType(newFileArray.length > 1 ? 'multi-file' : 'file');
+        // Update submit type based on whether we have images too
+        setSubmitType((prevType) => {
+          // If we already have images, use multi-file
+          if (prevType === 'image') {
+            return 'multi-file';
+          }
+          return newFileArray.length > 1 ? 'multi-file' : 'file';
+        });
+
         return newFileArray;
       });
     }

@@ -6,6 +6,7 @@ import { standardChatService } from '@/client/services/chat/StandardChatService'
 
 import { Message, MessageType } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -126,110 +127,81 @@ describe('ChatService (Client)', () => {
     });
   });
 
-  describe('Azure Agent Mode routing (Priority 3)', () => {
-    it('should route to AgentChatService when azureAgentMode is ON', async () => {
+  describe('SearchMode routing (Priority 3)', () => {
+    it('should route to AgentChatService when SearchMode.AGENT', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
+        {
+          role: 'user',
+          content: 'What is the weather?',
+          messageType: MessageType.TEXT,
+        },
       ];
-
-      // Model with Azure Agent Mode enabled
-      const model = {
-        ...OpenAIModels[OpenAIModelID.GPT_4_1],
-        azureAgentMode: true,
-        agentId: 'asst_123',
-      };
+      const model = OpenAIModels[OpenAIModelID.GPT_4_1];
 
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
       vi.mocked(agentChatService.chat).mockResolvedValue(
         new ReadableStream() as any,
       );
 
-      await chatService.chat(model, messages, { temperature: 0.8 });
+      // Reset fetch mock
+      global.fetch = vi.fn();
 
+      await chatService.chat(model, messages, {
+        temperature: 0.8,
+        searchMode: SearchMode.AGENT,
+      });
+
+      // Should route to agent service (faster, less private)
       expect(agentChatService.chat).toHaveBeenCalledWith(model, messages, {
         temperature: 0.8,
         threadId: undefined,
         botId: undefined,
       });
+
+      // Should NOT call tool-aware or standard chat
       expect(standardChatService.chat).not.toHaveBeenCalled();
+      expect(global.fetch).not.toHaveBeenCalled();
     });
 
-    it('should NOT route to agent if no agentId', async () => {
+    it('should route to tool-aware when SearchMode.INTELLIGENT (privacy mode)', async () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Test', messageType: MessageType.TEXT },
+        {
+          role: 'user',
+          content: 'Latest AI news',
+          messageType: MessageType.TEXT,
+        },
       ];
-
-      const model = {
-        ...OpenAIModels[OpenAIModelID.GPT_5],
-        azureAgentMode: true,
-        agentId: undefined, // No agent ID
-      };
+      const model = OpenAIModels[OpenAIModelID.GPT_4_1];
 
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
 
-      // Mock fetch for tool-aware endpoint (falls through to search mode)
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        body: new ReadableStream(),
-      } as Response);
-
-      // Should fetch tool-aware endpoint since searchModeEnabled: true
-      await chatService.chat(model, messages);
-
-      // Should NOT call agent chat service
-      expect(agentChatService.chat).not.toHaveBeenCalled();
-
-      // Should call tool-aware endpoint instead
-      expect(global.fetch).toHaveBeenCalledWith(
-        '/api/chat/tool-aware',
-        expect.any(Object),
-      );
-    });
-  });
-
-  describe('Search Mode routing (Priority 4)', () => {
-    it('should route to tool-aware endpoint when searchModeEnabled', async () => {
-      const messages: Message[] = [
-        { role: 'user', content: 'Latest news', messageType: MessageType.TEXT },
-      ];
-      const model = OpenAIModels[OpenAIModelID.GPT_5]; // Has searchModeEnabled: true
-
-      vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
-
-      // Mock fetch for tool-aware endpoint
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       } as Response);
 
       await chatService.chat(model, messages, {
-        prompt: 'System prompt',
-        temperature: 0.7,
+        searchMode: SearchMode.INTELLIGENT,
       });
 
-      // Should call tool-aware endpoint
+      // Should route to tool-aware endpoint (privacy mode)
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/chat/tool-aware',
         expect.objectContaining({
           method: 'POST',
-          headers: expect.objectContaining({
-            'Content-Type': 'application/json',
-          }),
+          body: expect.stringContaining('searchMode'),
         }),
       );
 
+      // Should NOT call agent chat service directly
       expect(agentChatService.chat).not.toHaveBeenCalled();
-      expect(standardChatService.chat).not.toHaveBeenCalled();
     });
 
-    it('should route to tool-aware when forcedAgentType provided', async () => {
+    it('should route to tool-aware when SearchMode.ALWAYS (force search)', async () => {
       const messages: Message[] = [
         { role: 'user', content: 'Test', messageType: MessageType.TEXT },
       ];
-      const model = {
-        ...OpenAIModels[OpenAIModelID.GPT_5],
-        searchModeEnabled: false, // Disabled
-      };
+      const model = OpenAIModels[OpenAIModelID.GPT_5];
 
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
 
@@ -239,29 +211,51 @@ describe('ChatService (Client)', () => {
       } as Response);
 
       await chatService.chat(model, messages, {
-        forcedAgentType: 'web_search',
+        searchMode: SearchMode.ALWAYS,
       });
 
-      // Should still route to tool-aware
+      // Should route to tool-aware endpoint
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/chat/tool-aware',
         expect.any(Object),
       );
+      expect(agentChatService.chat).not.toHaveBeenCalled();
+    });
+
+    it('should route to standard chat when SearchMode.OFF', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Search query',
+          messageType: MessageType.TEXT,
+        },
+      ];
+      const model = OpenAIModels[OpenAIModelID.GPT_5];
+
+      vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
+      vi.mocked(standardChatService.chat).mockResolvedValue(
+        new ReadableStream() as any,
+      );
+
+      global.fetch = vi.fn();
+
+      await chatService.chat(model, messages, {
+        searchMode: SearchMode.OFF,
+      });
+
+      // Should route to standard chat (no search)
+      expect(standardChatService.chat).toHaveBeenCalled();
+      expect(global.fetch).not.toHaveBeenCalled();
+      expect(agentChatService.chat).not.toHaveBeenCalled();
     });
   });
 
-  describe('Standard routing (Default/Priority 5)', () => {
+  describe('Standard routing (Default/Priority 4)', () => {
     it('should route to StandardChatService as fallback', async () => {
       const messages: Message[] = [
         { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
       ];
-
-      // Model without any special flags
-      const model = {
-        ...OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK],
-        searchModeEnabled: false,
-        azureAgentMode: false,
-      };
+      const model = OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK];
 
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
       vi.mocked(standardChatService.chat).mockResolvedValue(
@@ -296,7 +290,6 @@ describe('ChatService (Client)', () => {
       ];
       const model = {
         ...OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK],
-        searchModeEnabled: false,
       };
 
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
@@ -324,9 +317,7 @@ describe('ChatService (Client)', () => {
     it('should respect priority: audio > bot > agent > search > standard', async () => {
       const model = {
         ...OpenAIModels[OpenAIModelID.GPT_4_1],
-        azureAgentMode: true,
         agentId: 'asst_123',
-        searchModeEnabled: true,
       };
 
       // Test priority 1: Audio files
@@ -377,7 +368,6 @@ describe('ChatService (Client)', () => {
       // First call with standard model
       const standardModel = {
         ...OpenAIModels[OpenAIModelID.GPT_5],
-        searchModeEnabled: false,
       };
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
       vi.mocked(standardChatService.chat).mockResolvedValue(
@@ -389,17 +379,15 @@ describe('ChatService (Client)', () => {
 
       vi.clearAllMocks();
 
-      // Second call with agent model
-      const agentModel = {
-        ...OpenAIModels[OpenAIModelID.GPT_4_1],
-        azureAgentMode: true,
-        agentId: 'asst_123',
-      };
+      // Second call with agent model and SearchMode.AGENT
+      const agentModel = OpenAIModels[OpenAIModelID.GPT_4_1];
       vi.mocked(agentChatService.chat).mockResolvedValue(
         new ReadableStream() as any,
       );
 
-      await chatService.chat(agentModel, messages);
+      await chatService.chat(agentModel, messages, {
+        searchMode: SearchMode.AGENT,
+      });
       expect(agentChatService.chat).toHaveBeenCalled();
       expect(standardChatService.chat).not.toHaveBeenCalled();
     });
@@ -408,16 +396,18 @@ describe('ChatService (Client)', () => {
       const messages: Message[] = [
         { role: 'user', content: 'Test', messageType: MessageType.TEXT },
       ];
+      const model = OpenAIModels[OpenAIModelID.GPT_5];
 
       // First with search mode
-      const searchModel = OpenAIModels[OpenAIModelID.GPT_5]; // searchModeEnabled: true
       vi.mocked(audioChatService.hasAudioVideoFiles).mockReturnValue(false);
       global.fetch = vi.fn().mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       } as Response);
 
-      await chatService.chat(searchModel, messages);
+      await chatService.chat(model, messages, {
+        searchMode: SearchMode.INTELLIGENT,
+      });
       expect(global.fetch).toHaveBeenCalled();
 
       vi.clearAllMocks();
@@ -425,7 +415,6 @@ describe('ChatService (Client)', () => {
       // Switch to standard (no search mode)
       const standardModel = {
         ...OpenAIModels[OpenAIModelID.LLAMA_4_MAVERICK],
-        searchModeEnabled: false,
       };
       vi.mocked(standardChatService.chat).mockResolvedValue(
         new ReadableStream() as any,

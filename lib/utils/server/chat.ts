@@ -18,7 +18,8 @@ export const getMessageContentType = (
     | string
     | TextMessageContent
     | (TextMessageContent | FileMessageContent)[]
-    | (TextMessageContent | ImageMessageContent)[],
+    | (TextMessageContent | ImageMessageContent)[]
+    | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
 ): ContentType => {
   if (typeof content === 'string') {
     return 'text';
@@ -104,13 +105,15 @@ export const getMessagesToSend = async (
 const processMessageContent = async (
   content:
     | (TextMessageContent | FileMessageContent)[]
-    | (TextMessageContent | ImageMessageContent)[],
+    | (TextMessageContent | ImageMessageContent)[]
+    | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
   conversationType: ContentType,
   isLastMessageInConversation: boolean,
   user: Session['user'],
 ): Promise<
   | (TextMessageContent | FileMessageContent)[]
   | (TextMessageContent | ImageMessageContent)[]
+  | (TextMessageContent | FileMessageContent | ImageMessageContent)[]
 > => {
   let allText: string = '';
 
@@ -206,7 +209,8 @@ const processImageUrl = async (
 const extractTextContent = (
   content:
     | (TextMessageContent | FileMessageContent)[]
-    | (TextMessageContent | ImageMessageContent)[],
+    | (TextMessageContent | ImageMessageContent)[]
+    | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
 ): string => {
   const textContent: TextMessageContent | undefined = (
     content as (TextMessageContent | ImageMessageContent | FileMessageContent)[]

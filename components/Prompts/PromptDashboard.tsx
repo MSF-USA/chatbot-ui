@@ -21,7 +21,7 @@ import {
   revisePrompt,
 } from '@/lib/services/prompts/promptRevisionService';
 
-import { extractVariables } from '@/lib/utils/chat/variables';
+import { getVariableDefinitions } from '@/lib/utils/chat/variables';
 
 import { DashboardModal } from '@/components/UI/DashboardModal';
 import {
@@ -224,7 +224,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
     }
   };
 
-  const variables = extractVariables(content);
+  const variableDefinitions = getVariableDefinitions(content);
 
   if (!isOpen) return null;
 
@@ -308,19 +308,47 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
         </div>
 
         {showVariableHelp && (
-          <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg text-xs text-gray-700 dark:text-gray-300">
-            <p className="mb-2">
-              <strong>Use variables</strong> to make your prompts dynamic. Wrap
-              variable names in double curly braces:
-            </p>
-            <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700 mb-2">
-              Write a professional email to {`{{recipient}}`} about{' '}
-              {`{{topic}}`} with a {`{{tone}}`} tone.
-            </code>
-            <p className="text-gray-600 dark:text-gray-400">
-              You&apos;ll be prompted to fill in these values when using the
-              prompt in chat.
-            </p>
+          <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg text-xs text-gray-700 dark:text-gray-300 space-y-3">
+            <div>
+              <p className="mb-2">
+                <strong>Use variables</strong> to make your prompts dynamic:
+              </p>
+
+              <div className="space-y-2">
+                <div>
+                  <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Required Variables (no default):
+                  </p>
+                  <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700">
+                    {`{{recipient}}`} or {`{{topic}}`}
+                  </code>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    User <strong>must</strong> provide a value
+                  </p>
+                </div>
+
+                <div>
+                  <p className="font-semibold text-gray-900 dark:text-white mb-1">
+                    Optional Variables (with default):
+                  </p>
+                  <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700">
+                    {`{{language:English}}`} or {`{{tone:professional}}`}
+                  </code>
+                  <p className="text-gray-600 dark:text-gray-400 mt-1">
+                    User <strong>can</strong> provide a value, or default is
+                    used
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-blue-200 dark:border-blue-800 pt-2">
+              <p className="font-semibold mb-1">Example:</p>
+              <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700 text-[10px] leading-relaxed">
+                Write a {`{{tone:professional}}`} email to {`{{recipient}}`}{' '}
+                about {`{{topic}}`} in {`{{language:English}}`}
+              </code>
+            </div>
           </div>
         )}
 
@@ -328,26 +356,43 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Enter your prompt here... Use {{variableName}} for dynamic placeholders."
+          placeholder="Enter your prompt here... Use {{variableName}} for required variables or {{variableName:defaultValue}} for optional ones."
           rows={12}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 resize-none font-mono"
         />
 
         {/* Variables Preview */}
-        {variables.length > 0 && (
+        {variableDefinitions.length > 0 && (
           <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
               <IconBraces size={14} />
-              <span>Detected Variables ({variables.length})</span>
+              <span>Detected Variables ({variableDefinitions.length})</span>
             </div>
             <div className="flex flex-wrap gap-2">
-              {variables.map((variable, index) => (
-                <span
+              {variableDefinitions.map((varDef, index) => (
+                <div
                   key={index}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-xs font-mono"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-xs"
                 >
-                  {`{{${variable}}}`}
-                </span>
+                  <span className="font-mono">
+                    {`{{${varDef.name}`}
+                    {varDef.defaultValue && (
+                      <span className="text-blue-600 dark:text-blue-400">
+                        :{varDef.defaultValue}
+                      </span>
+                    )}
+                    {`}}`}
+                  </span>
+                  {varDef.isOptional ? (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                      Optional
+                    </span>
+                  ) : (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-200 dark:bg-red-900/40 text-red-700 dark:text-red-400">
+                      Required
+                    </span>
+                  )}
+                </div>
               ))}
             </div>
           </div>

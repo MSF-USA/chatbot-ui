@@ -23,6 +23,7 @@ import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { ChatBody } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { auth } from '@/auth';
 import {
@@ -36,13 +37,15 @@ import OpenAI from 'openai';
  * POST /api/chat/tool-aware
  *
  * Handles tool-aware chat with privacy-focused tool routing.
- * When minimizeAIFoundryUse is enabled:
+ * Based on SearchMode:
+ * - INTELLIGENT: AI decides if web search is needed (privacy-focused)
+ * - ALWAYS: Force web search on every message (privacy-focused)
  * - Uses ToolRouterService to determine if web search is needed
  * - Executes web search as a tool (only query sent to AI Foundry)
  * - Continues with StandardChatService using search results
  *
  * Request body extends ChatBody with:
- * - minimizeAIFoundryUse: boolean - Privacy toggle
+ * - searchMode: SearchMode - Search mode configuration
  * - All standard ChatBody fields
  */
 export async function POST(req: NextRequest): Promise<Response> {
@@ -55,7 +58,7 @@ export async function POST(req: NextRequest): Promise<Response> {
 
     // Parse request
     const body = (await req.json()) as ChatBody & {
-      minimizeAIFoundryUse?: boolean;
+      searchMode?: SearchMode;
     };
     const {
       model,
@@ -68,13 +71,13 @@ export async function POST(req: NextRequest): Promise<Response> {
       botId,
     } = body;
 
-    // Get minimizeAIFoundryUse from request or default to false
-    const minimizeAIFoundryUse = body.minimizeAIFoundryUse ?? false;
+    // Get searchMode from request or default to INTELLIGENT
+    const searchMode = body.searchMode ?? SearchMode.INTELLIGENT;
 
     console.log('[POST /api/chat/tool-aware] Request:', {
       modelId: model.id,
       messageCount: messages.length,
-      minimizeAIFoundryUse,
+      searchMode,
       stream,
     });
 
@@ -123,7 +126,11 @@ export async function POST(req: NextRequest): Promise<Response> {
     );
 
     const agentHandler = new AIFoundryAgentHandler(azureMonitorLogger);
-    const agentChatService = new AgentChatService(agentHandler, logger);
+    const agentChatService = new AgentChatService(
+      agentHandler,
+      logger,
+      toneService,
+    );
 
     // Use GPT-5-mini as the tool router model (fast, cheap, and intelligent)
     const routerModel = OpenAIModels[OpenAIModelID.GPT_5_MINI];
@@ -156,14 +163,13 @@ export async function POST(req: NextRequest): Promise<Response> {
       systemPrompt: prompt || DEFAULT_SYSTEM_PROMPT,
       temperature,
       stream,
-      minimizeAIFoundryUse,
+      searchMode,
       agentModel,
       reasoningEffort,
       verbosity,
       botId,
     });
   } catch (error) {
-    // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
     console.error('[POST /api/chat/tool-aware] Error:', sanitizeForLog(error));
 
     return new Response(

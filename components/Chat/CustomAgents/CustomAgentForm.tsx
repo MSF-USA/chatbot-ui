@@ -51,11 +51,11 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
   const [showNotice, setShowNotice] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Available base models (excluding legacy models)
+  // Available base models (excluding disabled models)
   // Note: We allow models with isAgent=true because custom agents can be based on
   // agent-capable models like GPT-5. The baseModel provides configuration like
   // tokenLimit for message trimming, while the custom agentId determines behavior.
-  const baseModels = Object.values(OpenAIModels).filter((m) => !m.isLegacy);
+  const baseModels = Object.values(OpenAIModels).filter((m) => !m.isDisabled);
 
   const validateAgentId = (id: string): boolean => {
     // Azure AI Foundry agent IDs typically follow the pattern: asst_[alphanumeric]

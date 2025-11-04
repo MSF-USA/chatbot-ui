@@ -33,7 +33,8 @@ export const buildMessageContent = (
   | string
   | TextMessageContent
   | (TextMessageContent | FileMessageContent)[]
-  | (TextMessageContent | ImageMessageContent)[] => {
+  | (TextMessageContent | ImageMessageContent)[]
+  | (TextMessageContent | FileMessageContent | ImageMessageContent)[] => {
   if (submitType === 'text') {
     return textFieldValue;
   }
@@ -57,6 +58,13 @@ export const buildMessageContent = (
   }
 
   if (submitType === 'file' || submitType === 'multi-file') {
+    // For multi-file, we may have both images and files
+    const imageContents = imageFieldValue
+      ? wrapInArray(imageFieldValue).filter(
+          (item): item is ImageMessageContent => item !== null,
+        )
+      : [];
+
     const fileContents = fileFieldValue
       ? wrapInArray(fileFieldValue).filter(
           (item): item is FileMessageContent => item !== null,
@@ -68,9 +76,10 @@ export const buildMessageContent = (
       ? [{ type: 'text', text: textFieldValue } as TextMessageContent]
       : [];
 
-    return [...fileContents, ...textContent] as (
+    return [...imageContents, ...fileContents, ...textContent] as (
       | TextMessageContent
       | FileMessageContent
+      | ImageMessageContent
     )[];
   }
 

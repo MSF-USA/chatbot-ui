@@ -123,7 +123,6 @@ export class StandardChatService {
         this.logger,
       );
 
-      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(
         `[StandardChatService] Using ${HandlerFactory.getHandlerName(modelConfig)} for model: ${sanitizeForLog(modelId)}`,
       );

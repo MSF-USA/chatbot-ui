@@ -43,9 +43,7 @@ export function cleanUpFiles(filePaths: string[]): Promise<void[]> {
     await fs.promises
       .access(filePath)
       .then(() => unlinkAsync(filePath))
-      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       .then(() => console.log(`Deleted file: ${sanitizeForLog(filePath)}`))
-      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       .catch(() => console.log(`File not found: ${sanitizeForLog(filePath)}`));
   });
   console.timeEnd('cleanUpFiles');

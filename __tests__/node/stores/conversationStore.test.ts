@@ -96,9 +96,10 @@ describe('conversationStore', () => {
         useConversationStore.getState().addConversation(second);
 
         expect(useConversationStore.getState().conversations).toHaveLength(2);
+        // New conversations are prepended (added to the front)
         expect(useConversationStore.getState().conversations).toEqual([
-          first,
           second,
+          first,
         ]);
       });
 
@@ -377,36 +378,8 @@ describe('conversationStore', () => {
         expect(updated.model.id).toBe('gpt-5');
       });
 
-      it('switches from standard model to search-enabled model', () => {
+      it('switches from standard model to agent model', () => {
         const conversation = createMockConversation('1', 'Test');
-        useConversationStore.getState().setConversations([conversation]);
-
-        const searchModel = {
-          id: 'gpt-5',
-          name: 'GPT-5',
-          maxLength: 128000,
-          tokenLimit: 16000,
-          searchModeEnabled: true,
-        };
-        useConversationStore
-          .getState()
-          .updateConversation('1', { model: searchModel });
-
-        const updated = useConversationStore.getState().conversations[0];
-        expect(updated.model.searchModeEnabled).toBe(true);
-      });
-
-      it('switches from search model to agent model', () => {
-        const conversation = {
-          ...createMockConversation('1', 'Test'),
-          model: {
-            id: 'gpt-5',
-            name: 'GPT-5',
-            maxLength: 128000,
-            tokenLimit: 16000,
-            searchModeEnabled: true,
-          },
-        };
         useConversationStore.getState().setConversations([conversation]);
 
         const agentModel = {
@@ -414,7 +387,7 @@ describe('conversationStore', () => {
           name: 'GPT-4.1',
           maxLength: 128000,
           tokenLimit: 16000,
-          azureAgentMode: true,
+          isAgent: true,
           agentId: 'agent-123',
         };
         useConversationStore
@@ -422,9 +395,38 @@ describe('conversationStore', () => {
           .updateConversation('1', { model: agentModel });
 
         const updated = useConversationStore.getState().conversations[0];
-        expect(updated.model.azureAgentMode).toBe(true);
+        expect(updated.model.isAgent).toBe(true);
         expect(updated.model.agentId).toBe('agent-123');
-        expect(updated.model.searchModeEnabled).toBeUndefined();
+      });
+
+      it('switches from one agent model to another', () => {
+        const conversation = {
+          ...createMockConversation('1', 'Test'),
+          model: {
+            id: 'gpt-4.1',
+            name: 'GPT-4.1',
+            maxLength: 128000,
+            tokenLimit: 16000,
+            isAgent: true,
+            agentId: 'agent-123',
+          },
+        };
+        useConversationStore.getState().setConversations([conversation]);
+
+        const newModel = {
+          id: 'gpt-5',
+          name: 'GPT-5',
+          maxLength: 128000,
+          tokenLimit: 16000,
+        };
+        useConversationStore
+          .getState()
+          .updateConversation('1', { model: newModel });
+
+        const updated = useConversationStore.getState().conversations[0];
+        expect(updated.model.id).toBe('gpt-5');
+        expect(updated.model.isAgent).toBeUndefined();
+        expect(updated.model.agentId).toBeUndefined();
       });
 
       it('switches from agent model to standard model', () => {
@@ -435,7 +437,7 @@ describe('conversationStore', () => {
             name: 'GPT-4.1',
             maxLength: 128000,
             tokenLimit: 16000,
-            azureAgentMode: true,
+            isAgent: true,
             agentId: 'agent-123',
           },
         };
@@ -453,7 +455,7 @@ describe('conversationStore', () => {
 
         const updated = useConversationStore.getState().conversations[0];
         expect(updated.model.id).toBe('grok-3');
-        expect(updated.model.azureAgentMode).toBeUndefined();
+        expect(updated.model.isAgent).toBeUndefined();
         expect(updated.model.agentId).toBeUndefined();
       });
 

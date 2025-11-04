@@ -22,6 +22,7 @@ const mockAuth = vi.hoisted(() => vi.fn());
 const mockAgentChatService = vi.hoisted(() => vi.fn());
 const mockAIFoundryAgentHandler = vi.hoisted(() => vi.fn());
 const mockChatLogger = vi.hoisted(() => vi.fn());
+const mockToneService = vi.hoisted(() => vi.fn());
 
 // Mock dependencies
 vi.mock('@/auth', () => ({
@@ -38,6 +39,7 @@ vi.mock('@/lib/services/chat/AIFoundryAgentHandler', () => ({
 
 vi.mock('@/lib/services/shared', () => ({
   ChatLogger: mockChatLogger,
+  ToneService: mockToneService,
 }));
 
 /**
@@ -58,6 +60,13 @@ describe('/api/chat/agent', () => {
     // Setup service mocks as proper constructors
     mockChatLogger.mockImplementation(function (this: any) {
       return {};
+    });
+
+    mockToneService.mockImplementation(function (this: any) {
+      return {
+        loadTone: vi.fn().mockReturnValue(null),
+        applyTone: vi.fn((messages, prompt) => prompt),
+      };
     });
 
     mockAIFoundryAgentHandler.mockImplementation(function (this: any) {

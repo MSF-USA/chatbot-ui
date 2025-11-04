@@ -54,7 +54,7 @@ export function AppInitializer() {
 
       // 1. Initialize models list (filtered by environment)
       const models: OpenAIModel[] = Object.values(OpenAIModels).filter(
-        (m) => !m.isLegacy && !isModelDisabled(m.id),
+        (m) => !m.isDisabled && !isModelDisabled(m.id),
       );
       setModels(models);
 
@@ -64,8 +64,15 @@ export function AppInitializer() {
         const defaultModel =
           models.find((m) => m.id === envDefaultModelId) || models[0];
         if (defaultModel) {
+          console.log(
+            `[AppInitializer] No persisted defaultModelId found. Setting default to environment config: ${defaultModel.id}`,
+          );
           setDefaultModelId(defaultModel.id as OpenAIModelID);
         }
+      } else if (defaultModelId) {
+        console.log(
+          `[AppInitializer] Using persisted defaultModelId: ${defaultModelId}`,
+        );
       }
 
       // 3. Validate selected conversation exists

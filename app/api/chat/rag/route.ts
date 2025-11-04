@@ -112,7 +112,6 @@ export async function POST(req: NextRequest): Promise<Response> {
       stream,
     });
   } catch (error) {
-    // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
     console.error('[POST /api/chat/rag] Error:', sanitizeForLog(error));
 
     return new Response(

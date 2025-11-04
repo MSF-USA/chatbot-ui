@@ -5,7 +5,6 @@ import {
   IconClearAll,
   IconMenu2,
   IconTool,
-  IconWorld,
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
@@ -39,9 +38,7 @@ export function MobileChatHeader({
 
   const displayModelName = selectedConversation?.model?.name || '';
   const hasMessages = (selectedConversation?.messages?.length || 0) > 0;
-  const azureAgentMode = selectedConversation?.model?.azureAgentMode || false;
-  const searchModeEnabled =
-    selectedConversation?.model?.searchModeEnabled ?? true;
+  const isAgent = selectedConversation?.model?.isAgent === true;
   const modelProvider =
     OpenAIModels[selectedConversation?.model?.id as OpenAIModelID]?.provider;
 
@@ -96,18 +93,11 @@ export function MobileChatHeader({
             <span className="font-semibold text-neutral-900 dark:text-white truncate text-base ml-1.5">
               {displayModelName || 'Select Model'}
             </span>
-            {azureAgentMode && (
+            {isAgent && (
               <IconTool
                 size={12}
                 className="ml-1 text-blue-600 dark:text-blue-400 shrink-0"
-                title="Azure Agent Mode"
-              />
-            )}
-            {searchModeEnabled && !azureAgentMode && (
-              <IconWorld
-                size={12}
-                className="ml-1 text-green-600 dark:text-green-400 shrink-0"
-                title="Search Mode"
+                title="Azure AI Agent"
               />
             )}
             <IconChevronDown

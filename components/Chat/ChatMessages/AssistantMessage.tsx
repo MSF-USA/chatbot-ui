@@ -150,6 +150,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     const finalThinking =
       message?.thinking || metadataThinking || inlineThinking || '';
 
+    console.log(
+      `[AssistantMessage] Processing message with ${citationsData.length} citations:`,
+      {
+        messageCitations: message?.citations?.length || 0,
+        parsedCitations: citationsData.length,
+        citationsData: JSON.stringify(citationsData, null, 2),
+        contentLength: content.length,
+        hasMetadata: contentWithoutThinking.includes('<<<METADATA_START>>>'),
+      },
+    );
+
     setProcessedContent(mainContent);
     setThinking(finalThinking);
     setCitations(citationsData);
@@ -310,50 +321,68 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             )}
           </div>
 
-          {/* Action buttons at the bottom of the message */}
-          <div className="flex items-center gap-2 mt-1">
-            {/* Copy button */}
-            <button
-              className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-              onClick={copyOnClick}
-              aria-label={messageCopied ? 'Copied' : 'Copy message'}
-            >
-              {messageCopied ? <IconCheck size={18} /> : <IconCopy size={18} />}
-            </button>
+          {/* Citations - shown after content but before action buttons */}
+          {citations.length > 0 && <CitationList citations={citations} />}
 
-            {/* Listen button */}
-            <button
-              className={`transition-colors ${
-                isGeneratingAudio
-                  ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                  : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
-              }`}
-              onClick={audioUrl ? handleCloseAudio : handleTTS}
-              disabled={isGeneratingAudio || messageIsStreaming}
-              aria-label={
-                audioUrl
-                  ? 'Stop audio'
-                  : isGeneratingAudio
-                    ? 'Generating audio...'
-                    : 'Listen'
-              }
-            >
-              {isGeneratingAudio ? (
-                <IconLoader2 size={18} className="animate-spin" />
-              ) : audioUrl ? (
-                <IconVolumeOff size={18} />
-              ) : (
-                <IconVolume size={18} />
+          {/* Action buttons at the bottom of the message - only show when not streaming */}
+          {!messageIsStreaming && (
+            <div className="flex items-center gap-2 mt-1">
+              {/* Copy button */}
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                onClick={copyOnClick}
+                aria-label={messageCopied ? 'Copied' : 'Copy message'}
+              >
+                {messageCopied ? (
+                  <IconCheck size={18} />
+                ) : (
+                  <IconCopy size={18} />
+                )}
+              </button>
+
+              {/* Regenerate button */}
+              {onRegenerate && (
+                <button
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                  onClick={onRegenerate}
+                  aria-label="Regenerate response"
+                >
+                  <IconRefresh size={18} />
+                </button>
               )}
-            </button>
-          </div>
+
+              {/* Listen button */}
+              <button
+                className={`transition-colors ${
+                  isGeneratingAudio
+                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={audioUrl ? handleCloseAudio : handleTTS}
+                disabled={isGeneratingAudio}
+                aria-label={
+                  audioUrl
+                    ? 'Stop audio'
+                    : isGeneratingAudio
+                      ? 'Generating audio...'
+                      : 'Listen'
+                }
+              >
+                {isGeneratingAudio ? (
+                  <IconLoader2 size={18} className="animate-spin" />
+                ) : audioUrl ? (
+                  <IconVolumeOff size={18} />
+                ) : (
+                  <IconVolume size={18} />
+                )}
+              </button>
+            </div>
+          )}
 
           {audioUrl && (
             <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
           )}
         </div>
-
-        {citations.length > 0 && <CitationList citations={citations} />}
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ export const cleanConversationHistory = (history: any[]): Conversation[] => {
     try {
       if (
         !conversation.model ||
-        (conversation.model as OpenAIModel)?.isLegacy
+        (conversation.model as OpenAIModel)?.isDisabled
       ) {
         // TODO: Replace with environmentally set default model so fixing doesn't require code change
         conversation.model = OpenAIModels[OpenAIModelID.GPT_5];

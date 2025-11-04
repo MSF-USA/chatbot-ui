@@ -1,5 +1,6 @@
 import { Conversation } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -26,24 +27,24 @@ export const createDefaultConversation = (
   systemPrompt: string,
   temperature: number,
 ): Conversation => {
-  const defaultModel = models.find((m) => m.id === defaultModelId) || models[0];
+  // Use the persisted defaultModelId if available, otherwise fall back to first model
+  const defaultModel = defaultModelId
+    ? models.find((m) => m.id === defaultModelId) || models[0]
+    : models[0];
 
-  // Set default mode configuration
-  const modelWithDefaults = {
-    ...defaultModel,
-    azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
-    searchModeEnabled: true, // Search Mode ON by default
-    ...(defaultModel.agentId && { agentId: defaultModel.agentId }),
-  };
+  if (!defaultModel) {
+    throw new Error('No models available');
+  }
 
   return {
     id: uuidv4(),
     name: 'New Conversation',
     messages: [],
-    model: modelWithDefaults,
+    model: defaultModel,
     prompt: systemPrompt || '',
     temperature: temperature || 0.5,
     folderId: null,
+    defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
   };
 };
 

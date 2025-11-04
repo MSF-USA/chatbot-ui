@@ -1,5 +1,6 @@
 import { Conversation, Message, MessageType } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { useChatStore } from '@/client/stores/chatStore';
 import { useConversationStore } from '@/client/stores/conversationStore';
@@ -177,14 +178,14 @@ describe('Mid-Conversation Model Switching', () => {
         body: mockStream,
       } as any);
 
-      // Switch to search-enabled model
+      // Switch to GPT-5 model (can use search mode via options)
       useConversationStore.getState().updateConversation('conv-1', {
-        model: OpenAIModels[OpenAIModelID.GPT_5], // Has searchModeEnabled
+        model: OpenAIModels[OpenAIModelID.GPT_5],
       });
 
       const updated = useConversationStore.getState().conversations[0];
 
-      // Send new message
+      // Send new message with search mode enabled
       await useChatStore.getState().sendMessage(
         {
           role: 'user',
@@ -192,6 +193,7 @@ describe('Mid-Conversation Model Switching', () => {
           messageType: MessageType.TEXT,
         },
         updated,
+        SearchMode.INTELLIGENT, // Enable search mode
       );
 
       // Should route to tool-aware endpoint
@@ -233,20 +235,18 @@ describe('Mid-Conversation Model Switching', () => {
       useConversationStore.getState().updateConversation('conv-1', {
         model: {
           ...OpenAIModels[OpenAIModelID.GPT_4_1],
-          azureAgentMode: true,
           agentId: 'agent-123',
         },
       });
 
       const updated = useConversationStore.getState().conversations[0];
 
-      // Send new message
-      await useChatStore
-        .getState()
-        .sendMessage(
-          { role: 'user', content: 'Test', messageType: MessageType.TEXT },
-          updated,
-        );
+      // Send new message with agent search mode
+      await useChatStore.getState().sendMessage(
+        { role: 'user', content: 'Test', messageType: MessageType.TEXT },
+        updated,
+        SearchMode.AGENT, // Use direct agent mode
+      );
 
       // Should route to agent endpoint
       expect(global.fetch).toHaveBeenCalledWith(
@@ -291,7 +291,6 @@ describe('Mid-Conversation Model Switching', () => {
       useConversationStore.getState().updateConversation('conv-1', {
         model: {
           ...OpenAIModels[OpenAIModelID.DEEPSEEK_V3_1],
-          searchModeEnabled: false,
         },
       });
 
@@ -341,20 +340,17 @@ describe('Mid-Conversation Model Switching', () => {
 
       let updated = useConversationStore.getState().conversations[0];
       expect(updated.model.id).toBe(OpenAIModelID.GPT_5);
-      expect(updated.model.searchModeEnabled).toBe(true);
       expect(updated.messages).toHaveLength(2);
 
       // Search -> Agent
       useConversationStore.getState().updateConversation('conv-1', {
         model: {
           ...OpenAIModels[OpenAIModelID.GPT_4_1],
-          azureAgentMode: true,
           agentId: 'agent-123',
         },
       });
 
       updated = useConversationStore.getState().conversations[0];
-      expect(updated.model.azureAgentMode).toBe(true);
       expect(updated.model.agentId).toBe('agent-123');
       expect(updated.messages).toHaveLength(2);
 
@@ -365,7 +361,6 @@ describe('Mid-Conversation Model Switching', () => {
 
       updated = useConversationStore.getState().conversations[0];
       expect(updated.model.id).toBe(OpenAIModelID.DEEPSEEK_V3_1);
-      expect(updated.model.azureAgentMode).toBeUndefined();
       expect(updated.messages).toHaveLength(2);
     });
 

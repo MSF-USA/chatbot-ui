@@ -23,6 +23,7 @@ import { useCustomAgents } from '@/client/hooks/settings/useCustomAgents';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import {
   AzureAIIcon,
@@ -79,9 +80,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     }
   };
 
-  // Filter out legacy models
+  // Filter out disabled models
   const baseModels = models
-    .filter((m) => !OpenAIModels[m.id as OpenAIModelID]?.isLegacy)
+    .filter((m) => !OpenAIModels[m.id as OpenAIModelID]?.isDisabled)
     .sort((a, b) => {
       const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
       const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
@@ -112,8 +113,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         id: `custom-${agent.id}`,
         name: agent.name,
         agentId: agent.agentId,
-        azureAgentMode: true,
-        searchModeEnabled: false,
         description:
           agent.description || `Custom agent based on ${baseModel.name}`,
         modelType: 'agent' as const,
@@ -134,20 +133,26 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const isCustomAgent = selectedModel?.id?.startsWith('custom-');
   const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5;
   const agentAvailable = modelConfig?.agentId !== undefined;
-  const useAzureAgent =
-    selectedConversation?.model?.azureAgentMode || isCustomAgent;
-  const searchModeEnabled =
-    selectedConversation?.model?.searchModeEnabled ?? true;
+
+  // Get current search mode from conversation (default to INTELLIGENT for privacy)
+  const currentSearchMode =
+    selectedConversation?.defaultSearchMode ?? SearchMode.INTELLIGENT;
+  const searchModeEnabled = currentSearchMode !== SearchMode.OFF;
 
   const handleModelSelect = (model: OpenAIModel) => {
     if (!selectedConversation) {
-      console.warn('No conversation selected, cannot update model');
+      console.warn(
+        '[ModelSelect] No conversation selected, cannot update model',
+      );
       return;
     }
 
     // Validate that the model exists in available models
     if (!availableModels.find((m) => m.id === model.id)) {
-      console.error('Selected model not found in available models:', model.id);
+      console.error(
+        '[ModelSelect] Selected model not found in available models:',
+        model.id,
+      );
       return;
     }
 
@@ -155,59 +160,54 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     setMobileView('details');
 
     // Set as default model for future conversations
+    console.log(
+      `[ModelSelect] Setting default model to: ${model.id} (${model.name})`,
+    );
     setDefaultModelId(model.id as OpenAIModelID);
 
-    // When selecting a model, set defaults: azureAgentMode OFF, searchModeEnabled ON
-    const modelConfig = OpenAIModels[model.id as OpenAIModelID];
-    const modelToUse = {
-      ...model,
-      azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
-      searchModeEnabled: true, // Search Mode ON by default
-      ...(modelConfig?.agentId && { agentId: modelConfig.agentId }),
+    // Update conversation with selected model
+    // Initialize defaultSearchMode to INTELLIGENT (privacy-focused) if not already set
+    const updates: any = {
+      model: model,
     };
 
-    // Only update the model field to avoid overwriting other conversation properties
-    updateConversation(selectedConversation.id, {
-      model: modelToUse,
-    });
-  };
+    // Only set defaultSearchMode if it's not already set on the conversation
+    if (selectedConversation.defaultSearchMode === undefined) {
+      updates.defaultSearchMode = SearchMode.INTELLIGENT;
+      console.log(
+        `[ModelSelect] Initializing defaultSearchMode to INTELLIGENT`,
+      );
+    }
 
-  const handleToggleAzureAgent = () => {
-    if (!selectedConversation || !selectedModel) return;
-
-    const currentlyEnabled = selectedConversation.model?.azureAgentMode;
-    const modelConfig = OpenAIModels[selectedModel.id as OpenAIModelID];
-
-    const modelToUse = {
-      ...selectedModel,
-      azureAgentMode: !currentlyEnabled,
-      // Search mode stays ON, we're just changing the routing method
-      searchModeEnabled: true,
-      ...(modelConfig?.agentId && { agentId: modelConfig.agentId }),
-    };
-
-    // Only update the model field to avoid overwriting other conversation properties
-    updateConversation(selectedConversation.id, {
-      model: modelToUse,
-    });
+    console.log(
+      `[ModelSelect] Updating conversation ${selectedConversation.id} with model: ${model.id}`,
+    );
+    updateConversation(selectedConversation.id, updates);
   };
 
   const handleToggleSearchMode = () => {
-    if (!selectedConversation || !selectedModel) return;
+    if (!selectedConversation) return;
 
-    const currentlyEnabled =
-      selectedConversation.model?.searchModeEnabled ?? true;
+    const newMode = searchModeEnabled ? SearchMode.OFF : SearchMode.INTELLIGENT;
 
-    const modelToUse = {
-      ...selectedModel,
-      searchModeEnabled: !currentlyEnabled,
-      // If turning off search mode, also turn off Azure Agent Mode
-      azureAgentMode: currentlyEnabled ? false : selectedModel.azureAgentMode,
-    };
+    console.log(
+      `[ModelSelect] Toggling Search Mode: ${currentSearchMode} → ${newMode}`,
+    );
 
-    // Only update the model field to avoid overwriting other conversation properties
     updateConversation(selectedConversation.id, {
-      model: modelToUse,
+      defaultSearchMode: newMode,
+    });
+  };
+
+  const handleSetSearchMode = (mode: SearchMode) => {
+    if (!selectedConversation) return;
+
+    console.log(
+      `[ModelSelect] Setting Search Mode: ${currentSearchMode} → ${mode}`,
+    );
+
+    updateConversation(selectedConversation.id, {
+      defaultSearchMode: mode,
     });
   };
 
@@ -357,7 +357,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           modelConfig?.modelType === 'reasoning'
                             ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
                             : modelConfig?.modelType === 'omni'
-                              ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300'
+                              ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                               : modelConfig?.modelType === 'agent'
                                 ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'
                                 : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
@@ -457,17 +457,19 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                             </a>
                           </div>
 
-                          {/* Privacy-Focused Option */}
-                          <label className="flex items-start gap-3 p-3 rounded-lg border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors bg-white dark:bg-gray-900/50">
+                          {/* Privacy-Focused Option (INTELLIGENT) */}
+                          <label
+                            className={`flex items-start gap-3 p-3 rounded-lg border-2 ${currentSearchMode === SearchMode.INTELLIGENT ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
+                          >
                             <input
                               type="radio"
                               name="searchRouting"
-                              checked={!useAzureAgent}
-                              onChange={() => {
-                                if (useAzureAgent) {
-                                  handleToggleAzureAgent();
-                                }
-                              }}
+                              checked={
+                                currentSearchMode === SearchMode.INTELLIGENT
+                              }
+                              onChange={() =>
+                                handleSetSearchMode(SearchMode.INTELLIGENT)
+                              }
                               className="mt-0.5 w-4 h-4 text-blue-600 focus:ring-blue-500"
                             />
                             <div className="flex-1">
@@ -477,49 +479,47 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                   className="text-gray-600 dark:text-gray-400"
                                 />
                                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                  Privacy-Focused (default)
+                                  Privacy-Focused (Recommended)
                                 </span>
                               </div>
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                Slower responses, but uses web search when
-                                needed
+                                AI decides when to search. Only search queries
+                                sent to AI Foundry.
                               </div>
                             </div>
                           </label>
 
-                          {/* Azure AI Foundry Mode Option (only for GPT-4.1) */}
+                          {/* Azure AI Agent Mode Option (AGENT - only for models with agentId) */}
                           {agentAvailable && modelConfig?.agentId && (
                             <label
-                              className={`flex items-start gap-3 p-3 rounded-lg border-2 ${useAzureAgent ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
+                              className={`flex items-start gap-3 p-3 rounded-lg border-2 ${currentSearchMode === SearchMode.AGENT ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
                             >
                               <input
                                 type="radio"
                                 name="searchRouting"
-                                checked={useAzureAgent}
-                                onChange={() => {
-                                  if (!useAzureAgent) {
-                                    handleToggleAzureAgent();
-                                  }
-                                }}
+                                checked={currentSearchMode === SearchMode.AGENT}
+                                onChange={() =>
+                                  handleSetSearchMode(SearchMode.AGENT)
+                                }
                                 className="mt-0.5 w-4 h-4 text-blue-600 focus:ring-blue-500"
                               />
                               <div className="flex-1">
                                 <div className="flex items-center gap-2 mb-1">
                                   <AzureAIIcon className="w-4 h-4 flex-shrink-0" />
                                   <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                    Azure AI Foundry Mode
+                                    Azure AI Agent Mode (Faster)
                                   </span>
                                 </div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400">
-                                  Faster responses with full context (less
-                                  private)
+                                  Direct AI Foundry agent with real-time web
+                                  search
                                 </div>
                               </div>
                             </label>
                           )}
 
-                          {/* Privacy Warning when Azure AI Foundry Mode is selected */}
-                          {useAzureAgent && (
+                          {/* Privacy Warning when Azure AI Agent Mode is selected */}
+                          {currentSearchMode === SearchMode.AGENT && (
                             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                               <div className="flex items-start gap-2">
                                 <IconAlertTriangle
@@ -531,8 +531,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                     Important Privacy Information
                                   </div>
                                   <div className="text-xs text-amber-700 dark:text-amber-300 mb-2">
-                                    Your full conversation will be stored in
-                                    Azure AI Foundry.
+                                    Your full conversation will be sent to Azure
+                                    AI Foundry agent.
                                   </div>
                                   <a
                                     href="/info/search-mode"
@@ -553,7 +553,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   )}
 
                   {/* Advanced Options for Model */}
-                  {!useAzureAgent &&
+                  {currentSearchMode !== SearchMode.AGENT &&
                     selectedConversation &&
                     (modelConfig?.supportsTemperature !== false ||
                       modelConfig?.supportsReasoningEffort ||

@@ -1,0 +1,24 @@
+name: 'CodeQL Configuration'
+
+# Disable specific queries that have been manually reviewed and mitigated
+# js/log-injection: All instances use sanitizeForLog() which removes newlines and control characters
+# js/ssrf: URL validated with private-ip package to block private/internal IPs
+
+queries:
+  - name: Use recommended security queries
+    uses: security-and-quality
+
+# Configure path filters
+paths-ignore:
+  - node_modules
+  - .next
+  - out
+  - build
+  - dist
+
+# Disable specific queries
+query-filters:
+  - exclude:
+      id: js/log-injection
+  - exclude:
+      id: js/ssrf

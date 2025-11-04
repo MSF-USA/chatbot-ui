@@ -50,7 +50,7 @@ export const useConversationStore = create<ConversationStore>()(
 
       addConversation: (conversation) => {
         set((state) => ({
-          conversations: [...state.conversations, conversation],
+          conversations: [conversation, ...state.conversations],
           selectedConversationId: conversation.id,
         }));
       },

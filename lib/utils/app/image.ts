@@ -44,7 +44,6 @@ export const getBase64FromImageURL = async (
   }
 
   try {
-    // codeql[js/ssrf] - URL validated with private-ip package to block private IPs before fetch
     const response = await fetch(imageUrl, init);
 
     if (!response.ok) {

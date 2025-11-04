@@ -32,7 +32,10 @@ import {
   shouldPreventSubmission,
   validateMessageSubmission,
 } from '@/lib/utils/chat/validation';
-import { parseVariables, replaceVariables } from '@/lib/utils/chat/variables';
+import {
+  parseVariables,
+  replaceVariablesWithMap,
+} from '@/lib/utils/chat/variables';
 import { isMobileDevice } from '@/lib/utils/device/detection';
 
 import { AgentType } from '@/types/agent';
@@ -49,6 +52,7 @@ import {
   getChatMessageContent,
 } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
+import { SearchMode } from '@/types/searchMode';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
@@ -66,11 +70,7 @@ import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
 
 interface Props {
-  onSend: (
-    message: Message,
-    forceStandardChat?: boolean,
-    forcedAgentType?: AgentType,
-  ) => void;
+  onSend: (message: Message, searchMode?: SearchMode) => void;
   onRegenerate: () => void;
   onScrollDownClick: () => void;
   stopConversationRef: MutableRefObject<boolean>;
@@ -126,7 +126,21 @@ export const ChatInput = ({
     null,
   );
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
-  const [webSearchMode, setWebSearchMode] = useState<boolean>(false);
+  // Use conversation's defaultSearchMode if set, otherwise OFF
+  const [searchMode, setSearchMode] = useState<SearchMode>(
+    selectedConversation?.defaultSearchMode ?? SearchMode.OFF,
+  );
+
+  // Sync searchMode with conversation's defaultSearchMode when conversation changes
+  const prevConversationId = useRef<string | undefined>();
+  useEffect(() => {
+    // Only update if conversation ID changed (avoid cascading renders)
+    if (prevConversationId.current !== selectedConversation?.id) {
+      prevConversationId.current = selectedConversation?.id;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSearchMode(selectedConversation?.defaultSearchMode ?? SearchMode.OFF);
+    }
+  }, [selectedConversation?.id, selectedConversation?.defaultSearchMode]);
   const [selectedToneId, setSelectedToneId] = useState<string | null>(null);
   const [usedPromptId, setUsedPromptId] = useState<string | null>(null);
   const [usedPromptVariables, setUsedPromptVariables] = useState<{
@@ -232,9 +246,6 @@ export const ChatInput = ({
       JSON.stringify(content).substring(0, 200),
     );
 
-    // If web search mode is active, force the web search agent
-    const forcedAgentType = webSearchMode ? AgentType.WEB_SEARCH : undefined;
-
     onSend(
       {
         role: 'user',
@@ -244,8 +255,7 @@ export const ChatInput = ({
         promptId: usedPromptId,
         promptVariables: usedPromptVariables || undefined,
       },
-      undefined,
-      forcedAgentType,
+      searchMode, // Pass search mode directly
     );
 
     setTextFieldValue('');
@@ -307,10 +317,10 @@ export const ChatInput = ({
   ) => {
     if (!selectedPromptForModal) return;
 
-    const contentWithVariables = replaceVariables(
+    // Use variableMap for cleaner replacement with default value support
+    const contentWithVariables = replaceVariablesWithMap(
       selectedPromptForModal.content,
-      variables,
-      updatedVariables,
+      variableMap,
     );
 
     // Replace the /prompt text in the input with the filled-in content
@@ -369,14 +379,8 @@ export const ChatInput = ({
     }, 0);
   }, [t]);
 
-  // Update placeholder when audio/video files are attached
-  const hasAudioVideoFiles = filePreviews.some(
-    (preview) =>
-      preview.type.startsWith('audio/') || preview.type.startsWith('video/'),
-  );
-  const audioVideoPlaceholder = hasAudioVideoFiles
-    ? 'Optional: add instructions (e.g., translate, summarize)...'
-    : placeholderText;
+  // Placeholder text
+  const inputPlaceholder = placeholderText;
 
   // Notify parent when transcription status changes
   useEffect(() => {
@@ -393,19 +397,6 @@ export const ChatInput = ({
       setSubmitType('text');
     }, 0);
   }, [selectedConversation?.id, setFilePreviews]);
-
-  // Auto-disable web search when audio/video files are attached (they need transcription)
-  // Images and documents can work with web search mode
-  useEffect(() => {
-    if (hasAudioVideoFiles && webSearchMode) {
-      setTimeout(() => {
-        setWebSearchMode(false);
-        console.log(
-          'Web search auto-disabled: audio/video files need transcription',
-        );
-      }, 0);
-    }
-  }, [hasAudioVideoFiles, webSearchMode, setWebSearchMode]);
 
   // File upload handler
   const handleFiles = (files: FileList | File[]) => {
@@ -433,10 +424,8 @@ export const ChatInput = ({
         ['.pptx'],
       'text/plain': ['.txt'],
       'text/markdown': ['.md'],
-      'audio/*': ['.mp3', '.wav', '.m4a', '.webm'],
-      'video/*': ['.mp4', '.webm'],
     },
-    maxSize: FILE_SIZE_LIMITS.AUDIO_VIDEO_MAX_BYTES,
+    maxSize: FILE_SIZE_LIMITS.FILE_MAX_BYTES,
     maxFiles: 5,
     noClick: true, // Don't trigger file picker on click
     noKeyboard: true, // Don't trigger on keyboard
@@ -505,12 +494,12 @@ export const ChatInput = ({
 
           <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
             <div
-              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${webSearchMode || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && !webSearchMode && !selectedToneId ? '!rounded-2xl' : ''}`}
+              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode !== SearchMode.OFF || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode === SearchMode.OFF && !selectedToneId ? '!rounded-2xl' : ''}`}
             >
               <textarea
                 ref={textareaRef}
                 className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 focus:border-0 ${
-                  webSearchMode || selectedToneId
+                  searchMode !== SearchMode.OFF || selectedToneId
                     ? 'pt-3 pb-[88px] pl-3'
                     : 'py-3.5 pl-10 md:py-3 md:pl-10'
                 }`}
@@ -523,9 +512,9 @@ export const ChatInput = ({
                 placeholder={
                   isTranscribing
                     ? t('transcribingChatPlaceholder')
-                    : webSearchMode
+                    : searchMode !== SearchMode.OFF
                       ? 'Search the web'
-                      : audioVideoPlaceholder
+                      : inputPlaceholder
                 }
                 value={textFieldValue}
                 rows={1}
@@ -541,7 +530,7 @@ export const ChatInput = ({
               {/* Bottom row with all buttons and search badge */}
               <div
                 className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  webSearchMode || selectedToneId || isMultiline
+                  searchMode !== SearchMode.OFF || selectedToneId || isMultiline
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
                 }`}
@@ -560,20 +549,20 @@ export const ChatInput = ({
                     cameraRef.current?.triggerCamera();
                   }}
                   openDownward={!showDisclaimer}
-                  webSearchMode={webSearchMode}
-                  setWebSearchMode={setWebSearchMode}
+                  searchMode={searchMode}
+                  setSearchMode={setSearchMode}
                   setTranscriptionStatus={setTranscriptionStatus}
                   selectedToneId={selectedToneId}
                   setSelectedToneId={setSelectedToneId}
                   tones={tones}
                 />
 
-                {webSearchMode && (
+                {searchMode !== SearchMode.OFF && (
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium border border-gray-300 dark:border-gray-600">
                     <IconWorld className="w-5 h-5 text-blue-500" />
                     <span>Search</span>
                     <button
-                      onClick={() => setWebSearchMode(false)}
+                      onClick={() => setSearchMode(SearchMode.OFF)}
                       className="ml-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors"
                       aria-label="Disable web search"
                     >
@@ -626,7 +615,7 @@ export const ChatInput = ({
 
               <div
                 className={`absolute right-2.5 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  webSearchMode || selectedToneId || isMultiline
+                  searchMode !== SearchMode.OFF || selectedToneId || isMultiline
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
                 }`}

@@ -2,6 +2,7 @@ import { ChatOrchestrator } from '@/lib/services/chat/ChatOrchestrator';
 
 import { Message } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -51,77 +52,7 @@ describe('ChatOrchestrator', () => {
     );
   });
 
-  describe('Privacy Mode OFF (minimizeAIFoundryUse: false)', () => {
-    it('should route directly to AgentChatService', async () => {
-      const messages: Message[] = [
-        {
-          role: 'user',
-          content: 'What is the weather today?',
-          messageType: undefined,
-        },
-      ];
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
-
-      const mockResponse = new Response('test response');
-      vi.mocked(mockAgentChatService.handleChat).mockResolvedValue(
-        mockResponse,
-      );
-
-      const result = await orchestrator.handleChat({
-        messages,
-        model,
-        user: mockUser,
-        minimizeAIFoundryUse: false,
-        agentModel: model,
-      });
-
-      // Should call agent service directly
-      expect(mockAgentChatService.handleChat).toHaveBeenCalledWith({
-        messages,
-        model,
-        user: mockUser,
-        temperature: undefined,
-        botId: undefined,
-      });
-
-      // Should NOT call tool router
-      expect(mockToolRouterService.determineTool).not.toHaveBeenCalled();
-
-      expect(result).toBe(mockResponse);
-    });
-
-    it('should use agentModel parameter when provided', async () => {
-      const messages: Message[] = [
-        { role: 'user', content: 'Hello world', messageType: undefined },
-      ];
-      const model = OpenAIModels[OpenAIModelID.GPT_5];
-      const agentModel = OpenAIModels[OpenAIModelID.GPT_4_1];
-
-      const mockResponse = new Response('test response');
-      vi.mocked(mockAgentChatService.handleChat).mockResolvedValue(
-        mockResponse,
-      );
-
-      await orchestrator.handleChat({
-        messages,
-        model,
-        user: mockUser,
-        minimizeAIFoundryUse: false,
-        agentModel,
-      });
-
-      // Should use agentModel instead of model
-      expect(mockAgentChatService.handleChat).toHaveBeenCalledWith({
-        messages,
-        model: agentModel,
-        user: mockUser,
-        temperature: undefined,
-        botId: undefined,
-      });
-    });
-  });
-
-  describe('Privacy Mode ON (minimizeAIFoundryUse: true)', () => {
+  describe('SearchMode.INTELLIGENT (AI decides when to search)', () => {
     describe('No tools needed', () => {
       it('should use StandardChatService when no tools are needed', async () => {
         const messages: Message[] = [
@@ -145,13 +76,14 @@ describe('ChatOrchestrator', () => {
           model,
           user: mockUser,
           systemPrompt: 'You are a helpful assistant',
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         });
 
-        // Should call tool router
+        // Should call tool router with forceWebSearch disabled (AI decides)
         expect(mockToolRouterService.determineTool).toHaveBeenCalledWith({
           messages,
           currentMessage: 'What is 2 + 2?',
+          forceWebSearch: false,
         });
 
         // Should call standard chat service
@@ -220,7 +152,7 @@ describe('ChatOrchestrator', () => {
           model,
           user: mockUser,
           systemPrompt: 'You are helpful',
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
           agentModel,
         });
 
@@ -301,7 +233,7 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
           agentModel,
         });
 
@@ -354,13 +286,16 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
           agentModel: model,
         });
 
         // Should have called standard chat despite error
         expect(mockStandardChatService.handleChat).toHaveBeenCalled();
-        expect(result).toBe(mockResponse);
+
+        // Result should be a response (wrapped in stream when tools are involved)
+        expect(result).toBeInstanceOf(Response);
+        expect(result.status).toBe(200);
       });
 
       it('should skip web search if no agentModel provided', async () => {
@@ -391,7 +326,7 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
           // agentModel: undefined
         });
 
@@ -424,7 +359,7 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         });
 
         // Should use standard chat as fallback
@@ -452,7 +387,7 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         });
 
         expect(mockStandardChatService.handleChat).toHaveBeenCalled();
@@ -490,13 +425,14 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         });
 
         // Should extract text content for tool router
         expect(mockToolRouterService.determineTool).toHaveBeenCalledWith({
           messages,
           currentMessage: 'What is this image?',
+          forceWebSearch: false,
         });
       });
 
@@ -528,15 +464,54 @@ describe('ChatOrchestrator', () => {
           messages,
           model,
           user: mockUser,
-          minimizeAIFoundryUse: true,
+          searchMode: SearchMode.INTELLIGENT,
         });
 
         // Should handle gracefully
         expect(mockToolRouterService.determineTool).toHaveBeenCalledWith({
           messages,
           currentMessage: '[non-text content]',
+          forceWebSearch: false,
         });
       });
+    });
+  });
+
+  describe('SearchMode.ALWAYS (Force search on every message)', () => {
+    it('should pass forceWebSearch: true to tool router', async () => {
+      const messages: Message[] = [
+        { role: 'user', content: 'What is 2 + 2?', messageType: undefined },
+      ];
+      const model = OpenAIModels[OpenAIModelID.GPT_5];
+
+      // Tool router returns no tools
+      vi.mocked(mockToolRouterService.determineTool).mockResolvedValue({
+        tools: [],
+        reasoning: 'Math question, but force search mode is on',
+      });
+
+      const mockResponse = new Response('4');
+      vi.mocked(mockStandardChatService.handleChat).mockResolvedValue(
+        mockResponse,
+      );
+
+      await orchestrator.handleChat({
+        messages,
+        model,
+        user: mockUser,
+        systemPrompt: 'You are a helpful assistant',
+        searchMode: SearchMode.ALWAYS,
+      });
+
+      // Should call tool router with forceWebSearch enabled
+      expect(mockToolRouterService.determineTool).toHaveBeenCalledWith({
+        messages,
+        currentMessage: 'What is 2 + 2?',
+        forceWebSearch: true,
+      });
+
+      // Should call standard chat service
+      expect(mockStandardChatService.handleChat).toHaveBeenCalled();
     });
   });
 });

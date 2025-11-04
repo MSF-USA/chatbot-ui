@@ -9,6 +9,7 @@ import { AgentType } from '@/types/agent';
 import { Conversation, Message, MessageType } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { Citation } from '@/types/rag';
+import { SearchMode } from '@/types/searchMode';
 
 import { useConversationStore } from './conversationStore';
 import { useSettingsStore } from './settingsStore';
@@ -42,8 +43,7 @@ interface ChatStore {
   sendMessage: (
     message: Message,
     conversation: Conversation,
-    forceStandardChat?: boolean,
-    forcedAgentType?: AgentType,
+    searchMode?: SearchMode,
   ) => Promise<void>;
 }
 
@@ -94,12 +94,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       loadingMessage: null,
     }),
 
-  sendMessage: async (
-    message,
-    conversation,
-    forceStandardChat,
-    forcedAgentType,
-  ) => {
+  sendMessage: async (message, conversation, searchMode) => {
     // Declare timeout outside try block so it's accessible in catch
     let showLoadingTimeout: NodeJS.Timeout | null = null;
 
@@ -115,6 +110,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         const hasImageUrl = message.content.some(
           (item: any) => item.type === 'image_url',
         );
+
+        // Count files and images
+        const fileCount = message.content.filter(
+          (item: any) => item.type === 'file_url',
+        ).length;
+        const imageCount = message.content.filter(
+          (item: any) => item.type === 'image_url',
+        ).length;
 
         if (hasFileUrl) {
           // Check if it's an audio/video file for transcription
@@ -143,10 +146,18 @@ export const useChatStore = create<ChatStore>((set, get) => ({
               ? 'Transcribing and processing...'
               : 'Transcribing audio...';
           } else {
-            loadingMessage = 'Processing file...';
+            // Mixed content (images + documents) or just documents
+            if (hasImageUrl && fileCount > 0) {
+              loadingMessage = 'Analyzing files...';
+            } else if (fileCount > 1) {
+              loadingMessage = 'Analyzing documents...';
+            } else {
+              loadingMessage = 'Analyzing document...';
+            }
           }
         } else if (hasImageUrl) {
-          loadingMessage = 'Analyzing image...';
+          loadingMessage =
+            imageCount > 1 ? 'Analyzing images...' : 'Analyzing image...';
         }
       }
 
@@ -200,7 +211,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           reasoningEffort:
             conversation.reasoningEffort || modelToSend.reasoningEffort,
           verbosity: conversation.verbosity || modelToSend.verbosity,
-          forcedAgentType,
+          searchMode,
         },
       );
 
@@ -239,6 +250,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
         // Update citations if found
         if (parsed.citations.length > 0) {
+          console.log(
+            `[chatStore] Extracted ${parsed.citations.length} citations from stream:`,
+            JSON.stringify(parsed.citations, null, 2),
+          );
           extractedCitations = parsed.citations;
         }
 
@@ -288,6 +303,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           extractedCitations.length > 0 ? extractedCitations : undefined,
         transcript: extractedTranscript,
       };
+
+      console.log(
+        '[chatStore] Created assistant message with citations:',
+        assistantMessage.citations?.length || 0,
+        assistantMessage.citations,
+      );
 
       // Update conversation with assistant message
       const conversationStore = useConversationStore.getState();

@@ -1,5 +1,6 @@
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 
+import { SearchMode } from '@/types/searchMode';
 import { Settings } from '@/types/settings';
 
 import { Mock, beforeEach, describe, expect, it, vi } from 'vitest';
@@ -10,7 +11,7 @@ describe('Settings Manager', () => {
     temperature: 0.5,
     systemPrompt: '',
     advancedMode: false,
-    minimizeAIFoundryUse: false,
+    defaultSearchMode: SearchMode.OFF,
   };
 
   beforeEach(() => {

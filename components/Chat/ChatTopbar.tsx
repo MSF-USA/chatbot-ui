@@ -3,7 +3,6 @@ import {
   IconClearAll,
   IconDots,
   IconTool,
-  IconWorld,
 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
@@ -30,8 +29,7 @@ interface Props {
   onClearAll?: () => void;
   userEmail?: string;
   hasMessages?: boolean;
-  azureAgentMode?: boolean;
-  searchModeEnabled?: boolean;
+  isAgent?: boolean;
   showChatbar?: boolean;
 }
 
@@ -45,8 +43,7 @@ export const ChatTopbar = ({
   onClearAll,
   userEmail,
   hasMessages = false,
-  azureAgentMode = false,
-  searchModeEnabled = false,
+  isAgent = false,
   showChatbar = false,
 }: Props) => {
   const t = useTranslations();
@@ -117,18 +114,11 @@ export const ChatTopbar = ({
               >
                 {selectedModelName || 'Select Model'}
               </span>
-              {azureAgentMode && (
+              {isAgent && (
                 <IconTool
                   size={14}
                   className="ml-1.5 text-blue-600 dark:text-blue-400"
-                  title="Azure Agent Mode"
-                />
-              )}
-              {searchModeEnabled && !azureAgentMode && (
-                <IconWorld
-                  size={14}
-                  className="ml-1.5 text-green-600 dark:text-green-400"
-                  title="Search Mode"
+                  title="Azure AI Agent"
                 />
               )}
               <IconChevronDown

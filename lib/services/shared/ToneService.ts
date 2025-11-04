@@ -71,7 +71,7 @@ export class ToneService {
    * @param toneId - The tone ID to load
    * @returns The tone if found, undefined otherwise
    */
-  private loadTone(userId: string, toneId: string): Tone | undefined {
+  public loadTone(userId: string, toneId: string): Tone | undefined {
     const settingsPath = path.join(
       process.cwd(),
       'data',

@@ -131,15 +131,27 @@ export function Sidebar() {
   }, []);
 
   const handleNewConversation = () => {
-    const defaultModel =
-      models.find((m) => m.id === defaultModelId) || models[0];
+    // Get the most recently selected model from the current conversation if available,
+    // otherwise fall back to the default model from settings
+    const currentModel = selectedConversation?.model;
+
+    // Use current conversation's model if it exists, otherwise use defaultModelId
+    const modelToUse = currentModel
+      ? models.find((m) => m.id === currentModel.id)
+      : models.find((m) => m.id === defaultModelId);
+
+    const defaultModel = modelToUse || models[0];
     if (!defaultModel) return;
 
-    // Set default mode configuration
+    console.log(
+      `[Sidebar] Creating new conversation with model: ${defaultModel.id} (${defaultModel.name})`,
+      `\n  Source: ${currentModel ? 'current conversation' : 'default settings'}`,
+      `\n  defaultModelId: ${defaultModelId}`,
+    );
+
+    // Use the default model as-is (no need to override mode properties)
     const modelWithDefaults = {
       ...defaultModel,
-      azureAgentMode: false, // Azure Agent Mode OFF by default (privacy-first)
-      searchModeEnabled: true, // Search Mode ON by default
       ...(defaultModel.agentId && { agentId: defaultModel.agentId }),
     };
 
@@ -460,28 +472,19 @@ export function Sidebar() {
                     {/* Folder conversations */}
                     {!folderManager.collapsedFolders.has(folder.id) && (
                       <div className="ml-6 space-y-1 mt-1">
-                        {folderConversations
-                          .slice()
-                          .reverse()
-                          .map((conversation) => (
-                            <ConversationItem
-                              key={conversation.id}
-                              conversation={conversation}
-                              selectedConversation={selectedConversation}
-                              handleSelectConversation={
-                                handleSelectConversation
-                              }
-                              handleDeleteConversation={
-                                handleDeleteConversation
-                              }
-                              handleMoveToFolder={handleMoveToFolder}
-                              handleRenameConversation={
-                                handleRenameConversation
-                              }
-                              folders={folders}
-                              t={t}
-                            />
-                          ))}
+                        {folderConversations.map((conversation) => (
+                          <ConversationItem
+                            key={conversation.id}
+                            conversation={conversation}
+                            selectedConversation={selectedConversation}
+                            handleSelectConversation={handleSelectConversation}
+                            handleDeleteConversation={handleDeleteConversation}
+                            handleMoveToFolder={handleMoveToFolder}
+                            handleRenameConversation={handleRenameConversation}
+                            folders={folders}
+                            t={t}
+                          />
+                        ))}
                       </div>
                     )}
                   </div>
@@ -502,22 +505,19 @@ export function Sidebar() {
                   onDragOver={(e) => folderManager.handleDragOver(e, null)}
                   onDragLeave={folderManager.handleDragLeave}
                 >
-                  {conversationsWithoutFolder
-                    .slice()
-                    .reverse()
-                    .map((conversation) => (
-                      <ConversationItem
-                        key={conversation.id}
-                        conversation={conversation}
-                        selectedConversation={selectedConversation}
-                        handleSelectConversation={handleSelectConversation}
-                        handleDeleteConversation={handleDeleteConversation}
-                        handleMoveToFolder={handleMoveToFolder}
-                        handleRenameConversation={handleRenameConversation}
-                        folders={folders}
-                        t={t}
-                      />
-                    ))}
+                  {conversationsWithoutFolder.map((conversation) => (
+                    <ConversationItem
+                      key={conversation.id}
+                      conversation={conversation}
+                      selectedConversation={selectedConversation}
+                      handleSelectConversation={handleSelectConversation}
+                      handleDeleteConversation={handleDeleteConversation}
+                      handleMoveToFolder={handleMoveToFolder}
+                      handleRenameConversation={handleRenameConversation}
+                      folders={folders}
+                      t={t}
+                    />
+                  ))}
                 </div>
               )}
             </div>

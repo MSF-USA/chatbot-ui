@@ -5,7 +5,7 @@ import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
-import { ChatLogger } from '../shared';
+import { ChatLogger, ToneService } from '../shared';
 import { AIFoundryAgentHandler } from './AIFoundryAgentHandler';
 
 /**
@@ -45,10 +45,16 @@ export interface WebSearchToolRequest {
 export class AgentChatService {
   private agentHandler: AIFoundryAgentHandler;
   private logger: ChatLogger;
+  private toneService: ToneService;
 
-  constructor(agentHandler: AIFoundryAgentHandler, logger: ChatLogger) {
+  constructor(
+    agentHandler: AIFoundryAgentHandler,
+    logger: ChatLogger,
+    toneService: ToneService,
+  ) {
     this.agentHandler = agentHandler;
     this.logger = logger;
+    this.toneService = toneService;
   }
 
   /**
@@ -70,16 +76,51 @@ export class AgentChatService {
         );
       }
 
-      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(
         `[AgentChatService] Using agent: ${sanitizeForLog(request.model.name || request.model.id)}`,
       );
+
+      // Apply tone if specified on the last message
+      const lastMessage = request.messages[request.messages.length - 1];
+      let messagesToSend = request.messages;
+
+      if (lastMessage.toneId) {
+        console.log(
+          `[AgentChatService] Applying tone: ${sanitizeForLog(lastMessage.toneId)}`,
+        );
+
+        // Load tone and create instruction message
+        const tone = this.toneService.loadTone(
+          request.user.id,
+          lastMessage.toneId,
+        );
+
+        if (tone?.voiceRules) {
+          // Inject tone instructions as a system-style message before the user message
+          const toneInstructionMessage: Message = {
+            role: 'user',
+            content: `IMPORTANT: Please respond using the following writing style and tone:\n\n${tone.voiceRules}\n\nNow, please respond to my next message using this style.`,
+            messageType: 'text',
+          };
+
+          // Insert tone instruction before the last user message
+          messagesToSend = [
+            ...request.messages.slice(0, -1),
+            toneInstructionMessage,
+            lastMessage,
+          ];
+
+          console.log(
+            `[AgentChatService] Tone instructions injected for tone: ${tone.name}`,
+          );
+        }
+      }
 
       // Delegate to agent handler
       const response = await this.agentHandler.handleAgentChat(
         request.model.id,
         modelConfig,
-        request.messages,
+        messagesToSend,
         request.temperature ?? 1,
         request.user,
         request.botId,
@@ -88,7 +129,6 @@ export class AgentChatService {
 
       // Log completion
       const duration = Date.now() - startTime;
-      // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
       console.log(
         `[AgentChatService] Agent completion in ${duration}ms for ${sanitizeForLog(request.model.name || request.model.id)}`,
       );
@@ -179,6 +219,18 @@ export class AgentChatService {
       const duration = Date.now() - startTime;
       console.log(
         `[AgentChatService] Web search completed in ${duration}ms, results length: ${parsed.content.length}, citations: ${parsed.citations.length}`,
+      );
+      console.log(
+        '[AgentChatService] Extracted citations from search:',
+        JSON.stringify(parsed.citations, null, 2),
+      );
+      console.log(
+        '[AgentChatService] Raw search results (first 500 chars):',
+        searchResults.substring(0, 500),
+      );
+      console.log(
+        '[AgentChatService] Raw search results (last 500 chars):',
+        searchResults.substring(searchResults.length - 500),
       );
 
       return {

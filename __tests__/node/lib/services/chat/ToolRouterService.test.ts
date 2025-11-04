@@ -68,15 +68,23 @@ describe('ToolRouterService', () => {
       expect(result.searchQuery).toBe('latest AI developments 2024');
       expect(result.reasoning).toBeTruthy();
 
-      // Verify OpenAI was called with correct params
+      // Verify OpenAI was called with correct params (json_schema, no temperature for reasoning models)
       expect(mockClient.chat.completions.create).toHaveBeenCalledWith(
         expect.objectContaining({
           model: routerModel.id,
-          temperature: 0.1,
-          response_format: { type: 'json_object' },
-          max_tokens: 500,
+          response_format: expect.objectContaining({
+            type: 'json_schema',
+            json_schema: expect.objectContaining({
+              strict: true,
+            }),
+          }),
+          max_completion_tokens: 500,
         }),
       );
+      // Verify temperature is NOT set (reasoning models don't support it)
+      const callArgs = vi.mocked(mockClient.chat.completions.create).mock
+        .calls[0][0];
+      expect(callArgs.temperature).toBeUndefined();
     });
 
     it('should determine NO web search needed for general knowledge question', async () => {
@@ -218,6 +226,140 @@ describe('ToolRouterService', () => {
       expect(result.tools).toEqual([]);
     });
 
+    it('should NOT determine web search for general knowledge (how airplanes fly)', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'How do airplanes fly?',
+          messageType: 'text',
+        },
+      ];
+
+      const request: ToolRouterRequest = {
+        messages,
+        currentMessage: 'How do airplanes fly?',
+      };
+
+      // Mock OpenAI response - should not search
+      vi.mocked(mockClient.chat.completions.create).mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                tools: [],
+                reasoning: 'General physics knowledge, LLM can answer this',
+              }),
+            },
+          },
+        ],
+      } as any);
+
+      const result = await service.determineTool(request);
+
+      expect(result.tools).toEqual([]);
+    });
+
+    it('should NOT determine web search for scientific concepts (photosynthesis)', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'What is photosynthesis?',
+          messageType: 'text',
+        },
+      ];
+
+      const request: ToolRouterRequest = {
+        messages,
+        currentMessage: 'What is photosynthesis?',
+      };
+
+      // Mock OpenAI response - should not search
+      vi.mocked(mockClient.chat.completions.create).mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                tools: [],
+                reasoning:
+                  'Well-established scientific concept, no search needed',
+              }),
+            },
+          },
+        ],
+      } as any);
+
+      const result = await service.determineTool(request);
+
+      expect(result.tools).toEqual([]);
+    });
+
+    it('should NOT determine web search for historical events', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'When did World War II end?',
+          messageType: 'text',
+        },
+      ];
+
+      const request: ToolRouterRequest = {
+        messages,
+        currentMessage: 'When did World War II end?',
+      };
+
+      // Mock OpenAI response - should not search
+      vi.mocked(mockClient.chat.completions.create).mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                tools: [],
+                reasoning: 'Historical fact, well-known information',
+              }),
+            },
+          },
+        ],
+      } as any);
+
+      const result = await service.determineTool(request);
+
+      expect(result.tools).toEqual([]);
+    });
+
+    it('should NOT determine web search for explanations of concepts', async () => {
+      const messages: Message[] = [
+        {
+          role: 'user',
+          content: 'Explain how machine learning works',
+          messageType: 'text',
+        },
+      ];
+
+      const request: ToolRouterRequest = {
+        messages,
+        currentMessage: 'Explain how machine learning works',
+      };
+
+      // Mock OpenAI response - should not search
+      vi.mocked(mockClient.chat.completions.create).mockResolvedValue({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                tools: [],
+                reasoning:
+                  'Explanation of established concept, LLM has this knowledge',
+              }),
+            },
+          },
+        ],
+      } as any);
+
+      const result = await service.determineTool(request);
+
+      expect(result.tools).toEqual([]);
+    });
+
     it('should handle conversation context (multiple messages)', async () => {
       const messages: Message[] = [
         {
@@ -249,7 +391,7 @@ describe('ToolRouterService', () => {
             message: {
               content: JSON.stringify({
                 tools: ['web_search'],
-                searchQuery: 'latest TypeScript version 2024',
+                searchQuery: 'latest TypeScript version 2025',
                 reasoning:
                   'Follow-up question about latest version based on context',
               }),
@@ -379,7 +521,7 @@ describe('ToolRouterService', () => {
       consoleErrorSpy.mockRestore();
     });
 
-    it('should use low temperature (0.1) for consistent routing', async () => {
+    it('should not set temperature for reasoning model (GPT-5-mini)', async () => {
       const messages: Message[] = [
         {
           role: 'user',
@@ -409,12 +551,10 @@ describe('ToolRouterService', () => {
 
       await service.determineTool(request);
 
-      // Verify low temperature
-      expect(mockClient.chat.completions.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          temperature: 0.1,
-        }),
-      );
+      // Verify temperature is NOT set (reasoning models don't support it)
+      const callArgs = vi.mocked(mockClient.chat.completions.create).mock
+        .calls[0][0];
+      expect(callArgs.temperature).toBeUndefined();
     });
 
     it('should include system prompt with tool determination guidelines', async () => {
@@ -455,7 +595,7 @@ describe('ToolRouterService', () => {
       );
       expect(systemMessage).toBeDefined();
       expect(systemMessage!.content).toContain('tool router');
-      expect(systemMessage!.content).toContain('web_search');
+      expect(systemMessage!.content).toContain('web search');
     });
   });
 });

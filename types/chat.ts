@@ -57,23 +57,23 @@ export function getChatMessageContent(message: Message): string {
   } else if (Array.isArray(message.content)) {
     const imageContent = message.content.find(
       (contentItem): contentItem is ImageMessageContent =>
-        contentItem.type === 'image_url',
+        'type' in contentItem && contentItem.type === 'image_url',
     );
-    if (imageContent) {
+    if (imageContent && 'image_url' in imageContent) {
       return imageContent.image_url.url;
     }
     const fileContent = message.content.find(
       (contentItem): contentItem is FileMessageContent =>
-        contentItem.type === 'file_url',
+        'type' in contentItem && contentItem.type === 'file_url',
     );
-    if (fileContent) {
+    if (fileContent && 'url' in fileContent) {
       return fileContent.url;
     }
     const textContent = message.content.find(
       (contentItem): contentItem is TextMessageContent =>
-        contentItem.type === 'text',
+        'type' in contentItem && contentItem.type === 'text',
     );
-    if (textContent) {
+    if (textContent && 'text' in textContent) {
       return textContent.text;
     }
   } else if ((message.content as TextMessageContent).type === 'text') {
@@ -90,6 +90,7 @@ export interface Message {
     | string
     | Array<TextMessageContent | FileMessageContent>
     | Array<TextMessageContent | ImageMessageContent>
+    | Array<TextMessageContent | FileMessageContent | ImageMessageContent> // Support mixed content (images + files + text)
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
@@ -131,6 +132,7 @@ export interface Conversation {
   threadId?: string; // Azure AI Agent thread ID
   reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
   verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
+  defaultSearchMode?: import('./searchMode').SearchMode; // Default search mode for this conversation
 }
 
 export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
@@ -169,4 +171,5 @@ export interface ToolRouterResponse {
 export interface ToolRouterRequest {
   messages: Message[];
   currentMessage: string;
+  forceWebSearch?: boolean; // When true, always use web search (search mode enabled)
 }

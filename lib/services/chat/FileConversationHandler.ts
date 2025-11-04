@@ -98,11 +98,8 @@ export class FileConversationHandler {
       if (!filename) throw new Error('Filename is required');
 
       try {
-        // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
         console.log('[FileHandler] Processing file:', sanitizeForLog(filename));
-        // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
         console.log('[FileHandler] Prompt:', sanitizeForLog(prompt));
-        // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
         console.log(
           '[FileHandler] Stream response:',
           sanitizeForLog(streamResponse),
@@ -134,7 +131,6 @@ export class FileConversationHandler {
 
           // If user provided additional instructions, process the transcript accordingly
           if (prompt && prompt.trim().length > 0) {
-            // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
             console.log(
               '[FileHandler] User provided instructions for transcript:',
               sanitizeForLog(prompt),
@@ -157,7 +153,6 @@ export class FileConversationHandler {
               stream: streamResponse,
             });
 
-            // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
             console.log(
               '[FileHandler] Transcript processed with user instructions. Streaming:',
               sanitizeForLog(streamResponse),
@@ -233,7 +228,6 @@ export class FileConversationHandler {
             }
           } else {
             // No additional instructions - return empty content with transcript metadata
-            // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
             console.log(
               '[FileHandler] No instructions provided, returning transcript via metadata. Streaming:',
               sanitizeForLog(streamResponse),

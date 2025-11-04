@@ -32,6 +32,7 @@ import {
   FilePreview,
   Message,
 } from '@/types/chat';
+import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
@@ -60,8 +61,8 @@ interface DropdownProps {
   textFieldValue: string;
   onCameraClick: () => void;
   openDownward?: boolean;
-  webSearchMode: boolean;
-  setWebSearchMode: Dispatch<SetStateAction<boolean>>;
+  searchMode: SearchMode;
+  setSearchMode: Dispatch<SetStateAction<SearchMode>>;
   setTranscriptionStatus: Dispatch<SetStateAction<string | null>>;
   selectedToneId: string | null;
   setSelectedToneId: Dispatch<SetStateAction<string | null>>;
@@ -80,8 +81,8 @@ const Dropdown: React.FC<DropdownProps> = ({
   textFieldValue,
   onCameraClick,
   openDownward = false,
-  webSearchMode,
-  setWebSearchMode,
+  searchMode,
+  setSearchMode,
   setTranscriptionStatus,
   selectedToneId,
   setSelectedToneId,
@@ -146,17 +147,26 @@ const Dropdown: React.FC<DropdownProps> = ({
     fileInputRef.current?.click();
   }, [closeDropdown]);
 
+  // Helper function to toggle search mode (always sets to ALWAYS when enabled)
+  const toggleSearchMode = useCallback(() => {
+    if (searchMode === SearchMode.OFF) {
+      setSearchMode(SearchMode.ALWAYS);
+    } else {
+      setSearchMode(SearchMode.OFF);
+    }
+  }, [searchMode, setSearchMode]);
+
   // Define menu items - memoized to avoid ref access issues during render
   const menuItems: MenuItem[] = useMemo(
     () => [
       {
         id: 'search',
         icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
-        label: webSearchMode ? '✓ Web Search' : 'Web Search',
+        label: searchMode !== SearchMode.OFF ? '✓ Web Search' : 'Web Search',
         infoTooltip:
-          'Routes your query to a specialized search model with real-time Bing web access.\n\nStays active across multiple messages until toggled off.\n\nNote: Uses search model instead of your selected model.',
+          'Enable web search for every message.\n\nProvides up-to-date information using real-time Bing web access.',
         onClick: () => {
-          setWebSearchMode(!webSearchMode);
+          toggleSearchMode();
           closeDropdown();
         },
         category: 'web',
@@ -193,7 +203,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         ),
         label: 'Attach files',
         infoTooltip:
-          'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n• Audio/Video: MP3, MP4, M4A, WAV, WEBM (25MB max)\n\nAudio/video files are automatically transcribed. Add optional instructions like "translate to Spanish" or "summarize key points."\n\nUpload up to 5 files at once.\n\nNote: Images and documents work with web search. Audio/video automatically disables web search for transcription.',
+          'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n\nUpload up to 5 files at once.\n\nImages and documents work with web search mode.\n\nNote: For audio/video transcription, use the "Transcribe Audio/Video" option below.',
         onClick: handleAttachClick,
         category: 'media',
       },
@@ -225,18 +235,19 @@ const Dropdown: React.FC<DropdownProps> = ({
             },
           ]
         : []),
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     ],
     [
-      webSearchMode,
+      searchMode,
       selectedToneId,
       tones,
       hasCameraSupport,
       closeDropdown,
-      setWebSearchMode,
+      setSearchMode,
       setIsToneOpen,
       setIsTranslateOpen,
       onCameraClick,
+      handleAttachClick,
+      toggleSearchMode,
     ],
   );
 
@@ -295,6 +306,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           onKeyDown={handleKeyDown}
         >
           <div className="max-h-80 overflow-y-auto custom-scrollbar p-1">
+            {/* eslint-disable-next-line react-hooks/refs */}
             {menuItems.map((item, index) => (
               <DropdownMenuItem
                 key={item.id}
@@ -435,11 +447,11 @@ const Dropdown: React.FC<DropdownProps> = ({
         labelText=""
       />
 
-      {/* Hidden file input for all file uploads (including audio/video for transcription) */}
+      {/* Hidden file input for images and documents only (audio/video uses separate transcription button) */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,audio/*,video/*,.mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md"
         onChange={(e) =>
           onFileUpload(
             e,

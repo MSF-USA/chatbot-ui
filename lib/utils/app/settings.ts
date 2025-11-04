@@ -1,3 +1,4 @@
+import { SearchMode } from '@/types/searchMode';
 import { Settings } from '@/types/settings';
 
 const STORAGE_KEY = 'settings';
@@ -14,7 +15,7 @@ const getDefaultSettings = (): Settings => {
       process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
       "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     advancedMode: false,
-    minimizeAIFoundryUse: true, // Privacy-focused by default
+    defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
   };
 };
 

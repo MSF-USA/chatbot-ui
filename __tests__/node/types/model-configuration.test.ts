@@ -63,8 +63,6 @@ describe('Model Configuration', () => {
         'asst_Puf3ldskHlYHmW5z9aQy5fZL',
       );
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].isAgent).toBe(true);
-      expect(OpenAIModels[OpenAIModelID.GPT_4_1].azureAgentMode).toBe(false); // Azure Agent Mode OFF by default (privacy-first)
-      expect(OpenAIModels[OpenAIModelID.GPT_4_1].searchModeEnabled).toBe(true); // Search Mode ON by default
       expect(OpenAIModels[OpenAIModelID.GPT_4_1].modelType).toBe('agent');
     });
 
@@ -160,8 +158,8 @@ describe('Model Configuration', () => {
       Object.values(OpenAIModels).forEach((model) => {
         // isLegacy can be true (temporarily disabled), false, or undefined
         // Just verify it's a boolean or undefined
-        if (model.isLegacy !== undefined) {
-          expect(typeof model.isLegacy).toBe('boolean');
+        if (model.isDisabled !== undefined) {
+          expect(typeof model.isDisabled).toBe('boolean');
         }
       });
     });
@@ -179,7 +177,7 @@ describe('Model Configuration', () => {
         expect(model.knowledgeCutoff).toBeDefined();
         expect(model.sdk).toBeDefined();
         expect(model.supportsTemperature).toBeDefined();
-        expect(typeof model.searchModeEnabled).toBe('boolean'); // All models should have searchModeEnabled
+        // Note: searchMode is now controlled at request level via SearchMode enum, not model-level
       });
     });
 

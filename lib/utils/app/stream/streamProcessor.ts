@@ -9,6 +9,61 @@ import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 import OpenAI from 'openai';
 
 /**
+ * Creates a smooth buffering stream that releases characters at a controlled rate
+ * Simpler than word-based - just releases N characters every M milliseconds
+ */
+function createSmoothBuffer(
+  controller: ReadableStreamDefaultController,
+  encoder: TextEncoder,
+  charsPerChunk: number = 5,
+  delayMs: number = 20,
+) {
+  let buffer = '';
+  let sentChars = 0;
+  let isReleasing = false;
+
+  const releaseChars = async () => {
+    if (isReleasing) return;
+    isReleasing = true;
+
+    while (sentChars < buffer.length) {
+      const chunk = buffer.substring(sentChars, sentChars + charsPerChunk);
+
+      if (!chunk) break;
+
+      try {
+        controller.enqueue(encoder.encode(chunk));
+        sentChars += chunk.length;
+      } catch (error) {
+        // Controller might be closed
+        isReleasing = false;
+        return;
+      }
+
+      // Only delay if there's more to send
+      if (sentChars < buffer.length) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+    }
+
+    isReleasing = false;
+  };
+
+  return {
+    add: (content: string) => {
+      buffer += content;
+      releaseChars();
+    },
+    flush: async () => {
+      // Wait for any pending releases to complete
+      while (isReleasing) {
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+    },
+  };
+}
+
+/**
  * Creates a stream processor for Azure OpenAI completions that handles citation tracking.
  *
  * @param {AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>} response - The streaming response from OpenAI.
@@ -23,6 +78,7 @@ export function createAzureOpenAIStreamProcessor(
   return new ReadableStream({
     start: (controller) => {
       const encoder = createStreamEncoder();
+      const smoothBuffer = createSmoothBuffer(controller, encoder, 5, 20);
       let allContent = '';
       let controllerClosed = false;
 
@@ -57,9 +113,13 @@ export function createAzureOpenAIStreamProcessor(
                   ragService.processCitationInChunk(contentChunk);
               }
 
-              controller.enqueue(encoder.encode(processedChunk));
+              // Add to smooth buffer instead of direct enqueue
+              smoothBuffer.add(processedChunk);
             }
           }
+
+          // Wait for buffer to flush all remaining content
+          await smoothBuffer.flush();
 
           if (!controllerClosed) {
             // Parse thinking content from the accumulated content
@@ -75,7 +135,8 @@ export function createAzureOpenAIStreamProcessor(
                 uniqueCitations.length > 0 ? uniqueCitations : undefined;
             }
 
-            // Append metadata using utility function
+            // Append metadata directly to controller (bypass smooth buffer)
+            // Metadata should be sent immediately, not buffered
             appendMetadataToStream(controller, {
               citations,
               thinking,

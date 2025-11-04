@@ -324,6 +324,41 @@ describe('/api/chat/tones/analyze', () => {
       expect(AzureOpenAI).toHaveBeenCalled();
     });
 
+    it('uses max_completion_tokens for GPT-5 reasoning model', async () => {
+      const request = createAnalyzeRequest({});
+      await POST(request);
+
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          max_completion_tokens: expect.any(Number),
+        }),
+      );
+
+      // Ensure it does NOT use max_tokens (which is invalid for reasoning models)
+      const callArgs = mockCreate.mock.calls[0][0];
+      expect(callArgs.max_tokens).toBeUndefined();
+    });
+
+    it('uses correct model (gpt-5)', async () => {
+      const request = createAnalyzeRequest({});
+      await POST(request);
+
+      expect(mockCreate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          model: 'gpt-5',
+        }),
+      );
+    });
+
+    it('does not set temperature for reasoning model', async () => {
+      const request = createAnalyzeRequest({});
+      await POST(request);
+
+      // GPT-5 is a reasoning model and doesn't support custom temperature
+      const callArgs = mockCreate.mock.calls[0][0];
+      expect(callArgs.temperature).toBeUndefined();
+    });
+
     it('uses structured output with JSON schema', async () => {
       const request = createAnalyzeRequest({});
       await POST(request);

@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 
 import { AgentChatService } from '@/lib/services/chat';
 import { AIFoundryAgentHandler } from '@/lib/services/chat/AIFoundryAgentHandler';
-import { ChatLogger } from '@/lib/services/shared';
+import { ChatLogger, ToneService } from '@/lib/services/shared';
 
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
@@ -69,10 +69,11 @@ export async function POST(req: NextRequest): Promise<Response> {
       process.env.STREAM_NAME!,
     );
 
+    const toneService = new ToneService();
     const agentHandler = new AIFoundryAgentHandler(logger);
 
     // Create service instance with dependency injection
-    const chatService = new AgentChatService(agentHandler, logger);
+    const chatService = new AgentChatService(agentHandler, logger, toneService);
 
     // Handle chat
     return await chatService.handleChat({
@@ -85,7 +86,6 @@ export async function POST(req: NextRequest): Promise<Response> {
       botId,
     });
   } catch (error) {
-    // codeql[js/log-injection] - User input sanitized with sanitizeForLog() which removes newlines and control characters
     console.error('[POST /api/chat/agent] Error:', sanitizeForLog(error));
 
     return new Response(

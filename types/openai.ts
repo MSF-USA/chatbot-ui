@@ -7,11 +7,9 @@ export interface OpenAIModel {
   stream?: boolean;
   modelType?: 'foundational' | 'omni' | 'reasoning' | 'agent';
   description?: string;
-  isLegacy?: boolean;
+  isDisabled?: boolean;
   isAgent?: boolean;
   agentId?: string; // Azure AI Agent ID for this model
-  azureAgentMode?: boolean; // Whether Azure Agent Mode is enabled (direct AI Foundry routing)
-  searchModeEnabled?: boolean; // Whether search mode is enabled (tool-aware routing)
   provider?: 'openai' | 'deepseek' | 'xai' | 'meta'; // Model provider
   knowledgeCutoff?: string; // Knowledge cutoff date
   sdk?: 'azure-openai' | 'openai'; // Which SDK this model requires
@@ -63,11 +61,9 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'agent',
     description:
       'AI model powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
-    isLegacy: false,
+    isDisabled: false,
     isAgent: true,
     agentId: 'asst_Puf3ldskHlYHmW5z9aQy5fZL', // Dev agent ID
-    azureAgentMode: false, // Azure Agent Mode (direct AI Foundry) - off by default
-    searchModeEnabled: true, // Search mode enabled by default
     provider: 'openai',
     knowledgeCutoff: 'Real-time web search',
     sdk: 'azure-openai',
@@ -83,8 +79,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       "OpenAI's most advanced model, excelling at complex reasoning, code generation, and technical problem-solving. Best for analytical tasks, programming challenges, research, and detailed explanations. Supports adjustable reasoning effort and response verbosity.",
-    isLegacy: false,
-    searchModeEnabled: true, // Search mode enabled by default
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -103,8 +98,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Faster and more cost-effective variant of GPT-5, optimized for speed while maintaining high quality. Perfect for everyday tasks, quick queries, tool routing, and applications requiring fast response times. Excellent balance of performance and efficiency.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -123,8 +117,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Specialized variant of GPT-5 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Oct 1, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -142,8 +135,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'reasoning',
     description:
       "OpenAI's most advanced reasoning model with breakthrough problem-solving capabilities. Excels at complex mathematics, scientific reasoning, coding challenges, and multi-step logical tasks. Extended 200K context window. Supports reasoning effort control.",
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Apr 8, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -161,8 +153,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'foundational',
     description:
       'Fast and cost-effective model from Meta. Great for everyday tasks like writing, summarization, and basic coding help. Good balance of speed and quality for routine work.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'meta',
     knowledgeCutoff: 'May 7, 2025 7:11 AM',
     sdk: 'openai',
@@ -179,8 +170,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'reasoning',
     description:
       'Reasoning specialist that shows its work step-by-step. Excellent for math problems, logic puzzles, and understanding complex concepts. See how it thinks through problems in real-time.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'deepseek',
     knowledgeCutoff: 'Jan 20, 2025',
     sdk: 'openai',
@@ -198,8 +188,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'foundational',
     description:
       'Strong all-around model especially good at coding and technical writing. Great for debugging code, writing documentation, and explaining technical concepts. Fast and reliable for development work.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'deepseek',
     knowledgeCutoff: 'Apr 16, 2025 12:45 AM',
     sdk: 'openai',
@@ -217,8 +206,7 @@ const OpenAIModelsDev: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.',
-    isLegacy: true, // Disabled temporarily
-    searchModeEnabled: true,
+    isDisabled: true, // Disabled temporarily
     provider: 'xai',
     knowledgeCutoff: 'May 13, 2025 12:16 AM',
     sdk: 'openai',
@@ -237,11 +225,9 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'agent',
     description:
       'AI model powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.',
-    isLegacy: false,
+    isDisabled: false,
     isAgent: true,
     agentId: 'asst_PROD_AGENT_ID_PLACEHOLDER', // Production agent ID - set in Terraform
-    azureAgentMode: false, // Azure Agent Mode (direct AI Foundry) - off by default
-    searchModeEnabled: true, // Search mode enabled by default
     provider: 'openai',
     knowledgeCutoff: 'Real-time web search',
     sdk: 'azure-openai',
@@ -257,8 +243,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       "OpenAI's most advanced model, excelling at complex reasoning, code generation, and technical problem-solving. Best for analytical tasks, programming challenges, research, and detailed explanations. Supports adjustable reasoning effort and response verbosity.",
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -277,8 +262,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Faster and more cost-effective variant of GPT-5, optimized for speed while maintaining high quality. Perfect for everyday tasks, quick queries, tool routing, and applications requiring fast response times. Excellent balance of performance and efficiency.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Aug 6, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -297,8 +281,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Specialized variant of GPT-5 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Oct 1, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -316,8 +299,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'reasoning',
     description:
       "OpenAI's most advanced reasoning model with breakthrough problem-solving capabilities. Excels at complex mathematics, scientific reasoning, coding challenges, and multi-step logical tasks. Extended 200K context window. Supports reasoning effort control.",
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'openai',
     knowledgeCutoff: 'Apr 8, 2025 8:00 PM',
     sdk: 'azure-openai',
@@ -335,8 +317,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'foundational',
     description:
       'Fast and cost-effective model from Meta. Great for everyday tasks like writing, summarization, and basic coding help. Good balance of speed and quality for routine work.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'meta',
     knowledgeCutoff: 'May 7, 2025 7:11 AM',
     sdk: 'openai',
@@ -353,8 +334,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'reasoning',
     description:
       'Reasoning specialist that shows its work step-by-step. Excellent for math problems, logic puzzles, and understanding complex concepts. See how it thinks through problems in real-time.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'deepseek',
     knowledgeCutoff: 'Jan 20, 2025',
     sdk: 'openai',
@@ -372,8 +352,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'foundational',
     description:
       'Strong all-around model especially good at coding and technical writing. Great for debugging code, writing documentation, and explaining technical concepts. Fast and reliable for development work.',
-    isLegacy: false,
-    searchModeEnabled: true,
+    isDisabled: false,
     provider: 'deepseek',
     knowledgeCutoff: 'Apr 16, 2025 12:45 AM',
     sdk: 'openai',
@@ -391,8 +370,7 @@ const OpenAIModelsProd: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     description:
       'Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.',
-    isLegacy: true,
-    searchModeEnabled: true,
+    isDisabled: true,
     provider: 'xai',
     knowledgeCutoff: 'May 13, 2025 12:16 AM',
     sdk: 'openai',

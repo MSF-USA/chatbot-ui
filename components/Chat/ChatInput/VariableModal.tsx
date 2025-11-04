@@ -1,5 +1,15 @@
-import { IconBraces, IconCheck, IconX } from '@tabler/icons-react';
+import {
+  IconBraces,
+  IconCheck,
+  IconInfoCircle,
+  IconX,
+} from '@tabler/icons-react';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
+
+import {
+  VariableDefinition,
+  getVariableDefinitions,
+} from '@/lib/utils/chat/variables';
 
 import { Prompt } from '@/types/prompt';
 
@@ -19,15 +29,17 @@ export const VariableModal: FC<Props> = ({
   onSubmit,
   onClose,
 }) => {
+  // Get variable definitions with defaults from the prompt content
+  const variableDefinitions = getVariableDefinitions(prompt.content);
+
   const [updatedVariables, setUpdatedVariables] = useState<
-    { key: string; value: string }[]
+    { key: string; value: string; definition: VariableDefinition }[]
   >(
-    variables
-      .map((variable) => ({ key: variable, value: '' }))
-      .filter(
-        (item, index, array) =>
-          array.findIndex((t) => t.key === item.key) === index,
-      ),
+    variableDefinitions.map((varDef) => ({
+      key: varDef.name,
+      value: '',
+      definition: varDef,
+    })),
   );
 
   const modalRef = useRef<HTMLDivElement>(null);
@@ -42,8 +54,15 @@ export const VariableModal: FC<Props> = ({
   };
 
   const handleSubmit = () => {
-    if (updatedVariables.some((variable) => variable.value === '')) {
-      alert('Please fill out all variables');
+    // Only validate required variables (those without defaults)
+    const missingRequired = updatedVariables.filter(
+      (variable) => !variable.definition.isOptional && variable.value === '',
+    );
+
+    if (missingRequired.length > 0) {
+      alert(
+        `Please fill out all required variables: ${missingRequired.map((v) => v.key).join(', ')}`,
+      );
       return;
     }
 
@@ -139,13 +158,38 @@ export const VariableModal: FC<Props> = ({
                 <span className="font-mono text-blue-600 dark:text-blue-400">
                   {`{{${variable.key}}}`}
                 </span>
+                {variable.definition.isOptional ? (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">
+                    Optional
+                  </span>
+                ) : (
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400">
+                    Required
+                  </span>
+                )}
               </label>
+
+              {variable.definition.defaultValue && (
+                <div className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gray-400 bg-blue-50 dark:bg-blue-900/10 px-2.5 py-1.5 rounded border border-blue-100 dark:border-blue-900/30">
+                  <IconInfoCircle size={14} className="shrink-0 mt-0.5" />
+                  <span>
+                    Default:{' '}
+                    <span className="font-mono font-medium">
+                      {variable.definition.defaultValue}
+                    </span>
+                  </span>
+                </div>
+              )}
 
               <textarea
                 ref={index === 0 ? nameInputRef : undefined}
                 className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400/20"
                 style={{ resize: 'vertical', minHeight: '80px' }}
-                placeholder={`Enter value for ${variable.key}...`}
+                placeholder={
+                  variable.definition.defaultValue
+                    ? `${variable.definition.defaultValue} (default)`
+                    : `Enter value for ${variable.key}...`
+                }
                 value={variable.value}
                 onChange={(e) => handleChange(index, e.target.value)}
                 rows={3}
