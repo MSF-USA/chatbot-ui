@@ -132,7 +132,7 @@ export const ChatInput = ({
   );
 
   // Sync searchMode with conversation's defaultSearchMode when conversation changes
-  const prevConversationId = useRef<string | undefined>();
+  const prevConversationId = useRef<string | undefined>(undefined);
   useEffect(() => {
     // Only update if conversation ID changed (avoid cascading renders)
     if (prevConversationId.current !== selectedConversation?.id) {

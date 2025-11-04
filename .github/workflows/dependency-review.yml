@@ -33,8 +33,9 @@ jobs:
         uses: actions/dependency-review-action@v4
         # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
         with:
-          # Disable summary to avoid exceeding GitHub's 1024k limit
+          # Disable summaries to avoid exceeding GitHub's 1024k limit
           comment-summary-in-pr: never
+          summary-only: false
         #   fail-on-severity: moderate
         #   deny-licenses: GPL-1.0-or-later, LGPL-2.0-or-later
         #   retry-on-snapshot-warnings: true
