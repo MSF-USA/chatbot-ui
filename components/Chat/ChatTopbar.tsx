@@ -132,7 +132,9 @@ export const ChatTopbar = ({
               {(searchMode === SearchMode.AGENT || isCustomAgent) && (
                 <AzureAIIcon
                   className="ml-1.5 w-3.5 h-3.5 text-blue-600 dark:text-blue-400"
-                  title={isCustomAgent ? 'Custom Agent' : 'Azure AI Agent Mode'}
+                  aria-label={
+                    isCustomAgent ? 'Custom Agent' : 'Azure AI Agent Mode'
+                  }
                 />
               )}
               <IconChevronDown
