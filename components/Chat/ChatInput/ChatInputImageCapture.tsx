@@ -17,6 +17,7 @@ import {
   ChatInputSubmitTypes,
   FileFieldValue,
   FilePreview,
+  ImageFieldValue,
 } from '@/types/chat';
 
 import { CameraModal } from '@/components/Chat/ChatInput/CameraModal';
@@ -49,7 +50,8 @@ export interface ChatInputImageCaptureProps {
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
-  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   visible?: boolean;
   hasCameraSupport: boolean;
@@ -68,6 +70,7 @@ const ChatInputImageCapture = forwardRef<
       setSubmitType,
       prompt,
       setFilePreviews,
+      setFileFieldValue,
       setImageFieldValue,
       setUploadProgress,
       visible = true,
@@ -128,7 +131,7 @@ const ChatInputImageCapture = forwardRef<
               event,
               setSubmitType,
               setFilePreviews,
-              setImageFieldValue,
+              setFileFieldValue,
               setImageFieldValue,
               setUploadProgress,
             );
@@ -158,6 +161,7 @@ const ChatInputImageCapture = forwardRef<
           setIsCameraOpen={setIsCameraOpen}
           setFilePreviews={setFilePreviews}
           setSubmitType={setSubmitType}
+          setFileFieldValue={setFileFieldValue}
           setImageFieldValue={setImageFieldValue}
           setUploadProgress={setUploadProgress}
         />

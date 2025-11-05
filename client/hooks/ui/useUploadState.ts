@@ -4,6 +4,7 @@ import {
   ChatInputSubmitTypes,
   FileFieldValue,
   FilePreview,
+  ImageFieldValue,
 } from '@/types/chat';
 
 import { onFileUpload } from '@/client/handlers/chatInput/file-upload';
@@ -13,8 +14,8 @@ export interface UseUploadStateReturn {
   setFilePreviews: React.Dispatch<React.SetStateAction<FilePreview[]>>;
   fileFieldValue: FileFieldValue;
   setFileFieldValue: React.Dispatch<React.SetStateAction<FileFieldValue>>;
-  imageFieldValue: FileFieldValue;
-  setImageFieldValue: React.Dispatch<React.SetStateAction<FileFieldValue>>;
+  imageFieldValue: ImageFieldValue;
+  setImageFieldValue: React.Dispatch<React.SetStateAction<ImageFieldValue>>;
   uploadProgress: { [key: string]: number };
   setUploadProgress: React.Dispatch<
     React.SetStateAction<{ [key: string]: number }>
@@ -22,7 +23,7 @@ export interface UseUploadStateReturn {
   submitType: ChatInputSubmitTypes;
   setSubmitType: React.Dispatch<React.SetStateAction<ChatInputSubmitTypes>>;
   handleFileUpload: (
-    event: React.ChangeEvent<any> | FileList | File[],
+    event: React.ChangeEvent<HTMLInputElement> | FileList | File[],
   ) => Promise<void>;
   clearUploadState: () => void;
 }
@@ -30,7 +31,7 @@ export interface UseUploadStateReturn {
 export function useUploadState(): UseUploadStateReturn {
   const [filePreviews, setFilePreviews] = useState<FilePreview[]>([]);
   const [fileFieldValue, setFileFieldValue] = useState<FileFieldValue>(null);
-  const [imageFieldValue, setImageFieldValue] = useState<FileFieldValue>(null);
+  const [imageFieldValue, setImageFieldValue] = useState<ImageFieldValue>(null);
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
   }>({});

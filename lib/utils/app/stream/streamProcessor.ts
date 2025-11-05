@@ -6,6 +6,7 @@ import {
 } from '@/lib/utils/app/metadata';
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
+import { UI_CONSTANTS } from '@/lib/constants/ui';
 import OpenAI from 'openai';
 
 /**
@@ -15,8 +16,8 @@ import OpenAI from 'openai';
 function createSmoothBuffer(
   controller: ReadableStreamDefaultController,
   encoder: TextEncoder,
-  charsPerChunk: number = 5,
-  delayMs: number = 20,
+  charsPerChunk: number = UI_CONSTANTS.STREAMING.CHARS_PER_CHUNK,
+  delayMs: number = UI_CONSTANTS.STREAMING.DELAY_MS,
 ) {
   let buffer = '';
   let sentChars = 0;

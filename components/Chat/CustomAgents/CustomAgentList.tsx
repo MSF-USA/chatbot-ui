@@ -20,6 +20,13 @@ import {
 
 import { OpenAIModels } from '@/types/openai';
 
+import {
+  DeepSeekIcon,
+  MetaIcon,
+  OpenAIIcon,
+  XAIIcon,
+} from '@/components/Icons/providers';
+
 import { CustomAgent } from '@/client/stores/settingsStore';
 
 interface CustomAgentListProps {
@@ -43,6 +50,23 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Helper function to get provider icon
+  const getProviderIcon = (provider?: string) => {
+    const iconProps = { className: 'w-4 h-4 flex-shrink-0' };
+    switch (provider) {
+      case 'openai':
+        return <OpenAIIcon {...iconProps} />;
+      case 'deepseek':
+        return <DeepSeekIcon {...iconProps} />;
+      case 'xai':
+        return <XAIIcon {...iconProps} />;
+      case 'meta':
+        return <MetaIcon {...iconProps} />;
+      default:
+        return null;
+    }
+  };
 
   const handleDelete = (agentId: string) => {
     if (deleteConfirm === agentId) {
@@ -244,6 +268,7 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
+                    {getProviderIcon(baseModel?.provider)}
                     <h4 className="font-medium text-gray-900 dark:text-white">
                       {agent.name}
                     </h4>

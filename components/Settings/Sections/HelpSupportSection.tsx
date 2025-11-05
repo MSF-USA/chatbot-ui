@@ -7,25 +7,46 @@ import {
   IconQuestionMark,
 } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
-import faqData from '@/lib/data/faq.json';
-
 export const HelpSupportSection: FC = () => {
   const t = useTranslations();
+  const locale = useLocale();
   const { data: session } = useSession();
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
+  const [topFaqs, setTopFaqs] = useState<
+    Array<{ question: string; answer: string }>
+  >([]);
 
   const supportEmail =
     session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL;
 
-  // Get top 4 FAQs for quick reference
-  const topFaqs = faqData.faq.slice(0, 4);
+  // Load FAQs based on current locale
+  useEffect(() => {
+    const loadFaqs = async () => {
+      try {
+        // Try to load the locale-specific FAQ file
+        const faqData = await import(`@/lib/data/faq.${locale}.json`);
+        const faqs = faqData.default?.faq || faqData.faq;
+        setTopFaqs(faqs.slice(0, 4));
+      } catch (error) {
+        // Fallback to English if locale file doesn't exist
+        try {
+          const faqData = await import('@/lib/data/faq.en.json');
+          const faqs = faqData.default?.faq || faqData.faq;
+          setTopFaqs(faqs.slice(0, 4));
+        } catch {
+          console.error('Failed to load FAQ data');
+        }
+      }
+    };
+    loadFaqs();
+  }, [locale]);
 
   // Helper function to render text with clickable links
   const renderTextWithLinks = (text: string) => {

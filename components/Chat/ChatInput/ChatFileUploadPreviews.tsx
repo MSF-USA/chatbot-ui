@@ -249,9 +249,9 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                 </div>
               )}
               {(isAudio || isVideo) && status === 'completed' && (
-                <div className="flex items-center gap-1 text-xs mt-0.5 text-purple-600 dark:text-purple-400">
+                <div className="flex items-center gap-1 text-xs mt-0.5 text-blue-600 dark:text-blue-400">
                   <IconInfoCircle size={12} />
-                  <span>Will be transcribed</span>
+                  <span>Will be transcribed on send</span>
                 </div>
               )}
             </div>
@@ -260,7 +260,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
 
         {/* Remove button */}
         <button
-          className={`absolute top-2 right-2 rounded-full bg-white dark:bg-gray-800 shadow-lg ${
+          className={`absolute top-2 right-2 z-10 rounded-full bg-white dark:bg-gray-800 shadow-lg ${
             isHovered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
           } transition-all duration-200 hover:scale-110 hover:rotate-90 hover:bg-red-50 dark:hover:bg-red-900/30 active:scale-95`}
           onClick={(event) => removeFilePreview(event, filePreview)}
@@ -272,7 +272,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
 
         {/* Status indicator */}
         {status === 'failed' && (
-          <div className="absolute inset-0 bg-red-500/10 backdrop-blur-sm flex items-center justify-center">
+          <div className="absolute inset-0 bg-red-500/10 backdrop-blur-sm flex items-center justify-center pointer-events-none">
             <span className="text-red-600 dark:text-red-400 text-sm font-medium">
               Failed to upload
             </span>

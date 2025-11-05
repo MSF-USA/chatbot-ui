@@ -8,17 +8,18 @@ import {
   FileFieldValue,
   FileMessageContent,
   FilePreview,
+  ImageFieldValue,
   ImageMessageContent,
 } from '@/types/chat';
 
 import { isChangeEvent } from '@/client/handlers/chatInput/common';
 
 export async function onFileUpload(
-  event: React.ChangeEvent<any> | FileList | File[],
+  event: React.ChangeEvent<HTMLInputElement> | FileList | File[],
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
-  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
 ) {
   let files: FileList | File[];

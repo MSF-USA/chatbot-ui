@@ -11,7 +11,12 @@ import toast from 'react-hot-toast';
 
 import { useTranslations } from 'next-intl';
 
-import { ChatInputSubmitTypes } from '@/types/chat';
+import {
+  ChatInputSubmitTypes,
+  FileFieldValue,
+  FilePreview,
+  ImageFieldValue,
+} from '@/types/chat';
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
@@ -46,18 +51,18 @@ async function retryOperation<T>(
 interface ChatInputTranscribeProps {
   setTextFieldValue: Dispatch<SetStateAction<string>>;
   onFileUpload: (
-    event: React.ChangeEvent<any> | File[] | FileList,
+    event: React.ChangeEvent<HTMLInputElement> | File[] | FileList,
     setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setFilePreviews: Dispatch<SetStateAction<any>>,
-    setFileFieldValue: Dispatch<SetStateAction<any>>,
-    setImageFieldValue: Dispatch<SetStateAction<any>>,
+    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
+    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+    setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
     setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
   ) => Promise<void>;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setFilePreviews: Dispatch<SetStateAction<any>>;
-  setFileFieldValue: Dispatch<SetStateAction<any>>;
-  setImageFieldValue: Dispatch<SetStateAction<any>>;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
   simulateClick: boolean;
   setTranscriptionStatus: Dispatch<SetStateAction<string | null>>;
@@ -78,9 +83,11 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   const t = useTranslations();
   const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const hasClickedRef = useRef<boolean>(false);
 
   useEffect(() => {
-    if (simulateClick && fileInputRef.current) {
+    if (simulateClick && fileInputRef.current && !hasClickedRef.current) {
+      hasClickedRef.current = true;
       fileInputRef.current.click();
     }
   }, [simulateClick]);
@@ -102,8 +109,94 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         selectedFile.type.startsWith('audio/') ||
         selectedFile.type.startsWith('video/')
       ) {
-        // Immediately start transcription
-        await handleTranscribe(selectedFile);
+        // Create a file preview for the transcription file
+        const filePreview: FilePreview = {
+          name: selectedFile.name,
+          type: selectedFile.type,
+          status: 'uploading',
+          previewUrl: '',
+        };
+
+        // Add the preview to show the file being uploaded
+        setFilePreviews((prev) => [...prev, filePreview]);
+
+        // Upload the file (but don't transcribe yet - that happens on send)
+        try {
+          const filename = encodeURIComponent(selectedFile.name);
+          const mimeType = encodeURIComponent(selectedFile.type);
+
+          const base64Data = await new Promise<string>((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              const result = reader.result as string;
+              const base64 = result.split(',')[1];
+              resolve(base64);
+            };
+            reader.onerror = () => {
+              reject(new Error('Error reading file'));
+            };
+            reader.readAsDataURL(selectedFile);
+          });
+
+          const uploadResponse = await fetch(
+            `/api/file/upload?filename=${filename}&filetype=file&mime=${mimeType}`,
+            {
+              method: 'POST',
+              body: base64Data,
+              headers: {
+                'x-file-name': filename,
+              },
+            },
+          );
+
+          if (!uploadResponse.ok) {
+            throw new Error('Failed to upload file');
+          }
+
+          const uploadResult = await uploadResponse.json();
+          const fileURI = uploadResult.data?.uri;
+
+          if (!fileURI) {
+            throw new Error('Failed to get file URI from upload response');
+          }
+
+          // Store the file in fileFieldValue so it's included when sending
+          const fileMessage = {
+            type: 'file_url' as const,
+            url: fileURI,
+            originalFilename: selectedFile.name,
+          };
+
+          setFileFieldValue((prevValue) => {
+            if (prevValue && Array.isArray(prevValue)) {
+              return [...prevValue, fileMessage];
+            } else if (prevValue) {
+              return [prevValue, fileMessage];
+            } else {
+              return [fileMessage];
+            }
+          });
+
+          // Update preview to completed
+          setFilePreviews((prev) =>
+            prev.map((p) =>
+              p.name === selectedFile.name
+                ? { ...p, status: 'completed' as const }
+                : p,
+            ),
+          );
+        } catch (error) {
+          console.error('Error uploading file:', error);
+          // Update file preview to show error
+          setFilePreviews((prev) =>
+            prev.map((p) =>
+              p.name === selectedFile.name
+                ? { ...p, status: 'failed' as const }
+                : p,
+            ),
+          );
+          toast.error(t('Failed to upload file'));
+        }
       } else {
         toast.error(t('unsupportedFileType'));
       }
@@ -194,8 +287,20 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       }
 
       const uploadResult = await uploadResponse.json();
-      const fileURI = uploadResult.uri;
+      const fileURI = uploadResult.data?.uri;
+
+      if (!fileURI) {
+        throw new Error('Failed to get file URI from upload response');
+      }
+
       const fileID = encodeURIComponent(fileURI.split('/').pop());
+
+      // Update file preview to show it's uploaded and being transcribed
+      setFilePreviews((prev) =>
+        prev.map((p) =>
+          p.name === file.name ? { ...p, status: 'completed' as const } : p,
+        ),
+      );
 
       // Update status to transcribing
       setTranscriptionStatus(t('transcribingStatus'));
@@ -213,13 +318,26 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       const fileName = file.name;
       const formattedTranscript = `## Transcription from ${fileName}\n\n${transcript}`;
 
-      // Insert directly into chat input
-      setTextFieldValue(formattedTranscript);
+      // Append to existing text in chat input (or replace if empty)
+      setTextFieldValue((prevText) => {
+        if (prevText && prevText.trim()) {
+          // If there's existing text, append with spacing
+          return `${prevText}\n\n${formattedTranscript}`;
+        }
+        // Otherwise just use the transcription
+        return formattedTranscript;
+      });
 
       // Clear status (transcription complete)
       setTranscriptionStatus(null);
     } catch (error) {
       console.error('Error during transcription:', error);
+      // Update file preview to show error
+      setFilePreviews((prev) =>
+        prev.map((p) =>
+          p.name === file.name ? { ...p, status: 'failed' as const } : p,
+        ),
+      );
       setTranscriptionStatus(null);
       toast.error(t('transcriptionError'));
     } finally {

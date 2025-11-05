@@ -1,4 +1,4 @@
-import isPrivateIp from 'private-ip';
+import ssrfFilter from 'ssrf-req-filter';
 
 /**
  * This function fetches an image from a given URL and converts it to a Base64 string.
@@ -24,7 +24,7 @@ export const getBase64FromImageURL = async (
   imageUrl: string,
   init?: RequestInit | undefined,
 ): Promise<string> => {
-  // Validate URL to prevent SSRF attacks using private-ip package
+  // Validate URL format
   let url: URL;
   try {
     url = new URL(imageUrl);
@@ -37,14 +37,16 @@ export const getBase64FromImageURL = async (
     throw new Error('Only HTTP and HTTPS protocols are allowed');
   }
 
-  // Use private-ip package to check for private/internal IPs
-  // This blocks localhost, 127.0.0.1, private ranges (10.x, 192.168.x, etc.), link-local, etc.
-  if (isPrivateIp(url.hostname)) {
-    throw new Error('Access to private IP addresses is not allowed');
-  }
-
   try {
-    const response = await fetch(imageUrl, init);
+    // Use ssrf-req-filter to prevent SSRF attacks
+    // This blocks localhost, 127.0.0.1, private ranges (10.x, 192.168.x, etc.),
+    // link-local, multicast, and other dangerous IP ranges
+    const agent = ssrfFilter(imageUrl);
+    const response = await fetch(imageUrl, {
+      ...init,
+      // @ts-expect-error - agent is supported in Node.js fetch but not in browser types
+      agent,
+    });
 
     if (!response.ok) {
       throw new Error('Network response was not ok');

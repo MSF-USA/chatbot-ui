@@ -19,9 +19,12 @@ import { RiRobot2Line } from 'react-icons/ri';
 import { useTranslations } from 'next-intl';
 
 import { useConversations } from '@/client/hooks/conversation/useConversations';
-import { useCustomAgents } from '@/client/hooks/settings/useCustomAgents';
+import { useAgentManagement } from '@/client/hooks/settings/useAgentManagement';
+import { useModelSelectState } from '@/client/hooks/settings/useModelSelectState';
+import { useModelSelection } from '@/client/hooks/settings/useModelSelection';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 
+import { Conversation } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 
@@ -38,6 +41,7 @@ import { TabNavigation } from '../UI/TabNavigation';
 import { CustomAgentForm } from './CustomAgents/CustomAgentForm';
 import { CustomAgentList } from './CustomAgents/CustomAgentList';
 import { ModelCard } from './ModelCard';
+import { ModelProviderIcon } from './ModelSelect/ModelProviderIcon';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
 
@@ -50,39 +54,43 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const { selectedConversation, updateConversation, conversations } =
     useConversations();
   const { models, defaultModelId, setDefaultModelId } = useSettings();
-  const { customAgents, addCustomAgent, updateCustomAgent, deleteCustomAgent } =
-    useCustomAgents();
 
-  const [activeTab, setActiveTab] = useState<'models' | 'agents'>('models');
-  const [showAgentForm, setShowAgentForm] = useState(false);
-  const [editingAgent, setEditingAgent] = useState<CustomAgent | undefined>();
-  const [showModelAdvanced, setShowModelAdvanced] = useState(false);
-  const [mobileView, setMobileView] = useState<'list' | 'details'>('list');
-  const [showAgentWarning, setShowAgentWarning] = useState(false);
+  const selectedModelId = selectedConversation?.model?.id || defaultModelId;
 
-  // Helper function to get provider icon
-  const getProviderIcon = (provider?: string, size: 'sm' | 'lg' = 'sm') => {
-    const iconProps = {
-      className:
-        size === 'lg' ? 'w-6 h-6 flex-shrink-0' : 'w-4 h-4 flex-shrink-0',
-    };
-    switch (provider) {
-      case 'openai':
-        return <OpenAIIcon {...iconProps} />;
-      case 'deepseek':
-        return <DeepSeekIcon {...iconProps} />;
-      case 'xai':
-        return <XAIIcon {...iconProps} />;
-      case 'meta':
-        return <MetaIcon {...iconProps} />;
-      default:
-        return null;
-    }
-  };
+  // Check if the currently selected model is a custom agent
+  const isSelectedModelAgent = selectedModelId?.startsWith('custom-') ?? false;
 
-  // Filter out disabled models
+  // Custom hooks for state management
+  const {
+    activeTab,
+    setActiveTab,
+    showAgentForm,
+    editingAgent,
+    openAgentForm,
+    closeAgentForm,
+    showModelAdvanced,
+    setShowModelAdvanced,
+    mobileView,
+    setMobileView,
+    showAgentWarning,
+    setShowAgentWarning,
+  } = useModelSelectState(isSelectedModelAgent);
+
+  // Agent management
+  const {
+    customAgents,
+    handleSaveAgent: saveAgentToStore,
+    handleDeleteAgent: deleteAgentFromStore,
+  } = useAgentManagement();
+
+  // Filter out disabled models and custom agents (custom agents should only appear in Agents tab)
   const baseModels = models
-    .filter((m) => !OpenAIModels[m.id as OpenAIModelID]?.isDisabled)
+    .filter(
+      (m) =>
+        !OpenAIModels[m.id as OpenAIModelID]?.isDisabled &&
+        !m.id.startsWith('custom-') &&
+        !m.isCustomAgent,
+    )
     .sort((a, b) => {
       const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
       const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
@@ -123,8 +131,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   // Combine base models and custom agents
   const availableModels = [...baseModels, ...customAgentModels];
-
-  const selectedModelId = selectedConversation?.model?.id || defaultModelId;
 
   const selectedModel =
     availableModels.find((m) => m.id === selectedModelId) || availableModels[0];
@@ -212,7 +218,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
     // Update conversation with selected model
     // Initialize defaultSearchMode to INTELLIGENT (privacy-focused) if not already set
-    const updates: any = {
+    const updates: Partial<Conversation> = {
       model: model,
     };
 
@@ -280,28 +286,22 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   };
 
   const handleSaveAgent = (agent: CustomAgent) => {
-    if (editingAgent) {
-      updateCustomAgent(agent.id, agent);
-    } else {
-      addCustomAgent(agent);
-    }
-    setShowAgentForm(false);
-    setEditingAgent(undefined);
+    saveAgentToStore(agent);
+    closeAgentForm();
   };
 
   const handleEditAgent = (agent: CustomAgent) => {
-    setEditingAgent(agent);
-    setShowAgentForm(true);
+    openAgentForm(agent);
   };
 
   const handleImportAgents = (agents: CustomAgent[]) => {
     agents.forEach((agent) => {
-      addCustomAgent(agent);
+      saveAgentToStore(agent);
     });
   };
 
   const handleDeleteAgent = (agentId: string) => {
-    deleteCustomAgent(agentId);
+    deleteAgentFromStore(agentId);
 
     // If currently selected model is the deleted agent, switch to default
     if (
@@ -314,11 +314,6 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         model: defaultModel,
       });
     }
-  };
-
-  const handleCloseAgentForm = () => {
-    setShowAgentForm(false);
-    setEditingAgent(undefined);
   };
 
   return (
@@ -376,7 +371,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           name={model.name}
                           isSelected={isSelected}
                           onClick={() => handleModelSelect(model)}
-                          icon={getProviderIcon(config?.provider)}
+                          icon={
+                            <ModelProviderIcon provider={config?.provider} />
+                          }
                         />
                       );
                     })}
@@ -405,10 +402,12 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   {/* Model Header */}
                   <div>
                     <div className="flex items-center gap-2 md:gap-3 mb-3">
-                      {getProviderIcon(
-                        selectedModel.provider || modelConfig?.provider,
-                        'lg',
-                      )}
+                      <ModelProviderIcon
+                        provider={
+                          selectedModel.provider || modelConfig?.provider
+                        }
+                        size="lg"
+                      />
                       <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
                         {selectedModel.name}
                       </h2>
@@ -923,7 +922,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
           {/* Add Agent Button */}
           <div className="mb-6 px-4 md:px-0">
             <button
-              onClick={() => setShowAgentForm(true)}
+              onClick={() => openAgentForm()}
               className="w-full p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:border-blue-500 dark:hover:border-blue-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all flex items-center justify-center gap-2"
             >
               <IconPlus size={18} />
@@ -971,7 +970,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       {showAgentForm && (
         <CustomAgentForm
           onSave={handleSaveAgent}
-          onClose={handleCloseAgentForm}
+          onClose={closeAgentForm}
           existingAgent={editingAgent}
           existingAgents={customAgents}
         />

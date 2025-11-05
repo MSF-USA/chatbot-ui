@@ -8,6 +8,8 @@ import { Toaster } from 'react-hot-toast';
 
 import { Session } from 'next-auth';
 
+import { UIPreferences } from '@/types/ui';
+
 import { SessionErrorHandler } from '@/components/Auth/SessionErrorHandler';
 import { UIPreferencesProvider } from '@/components/Providers/UIPreferencesProvider';
 import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
@@ -35,6 +37,7 @@ interface AppProvidersProps {
     department?: string;
     companyName?: string;
   };
+  initialUIPreferences?: UIPreferences;
 }
 
 /**
@@ -46,6 +49,7 @@ export function AppProviders({
   session,
   launchDarklyClientId,
   userContext,
+  initialUIPreferences,
 }: AppProvidersProps) {
   return (
     <SessionProvider
@@ -55,7 +59,7 @@ export function AppProviders({
     >
       <SessionErrorHandler />
       <QueryClientProvider client={queryClient}>
-        <UIPreferencesProvider>
+        <UIPreferencesProvider initialPreferences={initialUIPreferences}>
           {launchDarklyClientId ? (
             <LDProvider
               clientSideID={launchDarklyClientId}

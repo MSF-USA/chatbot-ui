@@ -57,15 +57,18 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  // Read UI preferences from localStorage (simple JSON format)
-                  var prefs = localStorage.getItem('ui-preferences');
-                  var parsed = prefs ? JSON.parse(prefs) : null;
+                  // Read theme from cookie (single source of truth)
+                  var match = document.cookie.match(/ui-prefs=([^;]+)/);
+                  var theme = 'dark'; // default
 
-                  // Apply theme before hydration to prevent flash
-                  var theme = parsed?.theme || 'dark';
-
-                  // Store the actual theme preference in a data attribute
-                  document.documentElement.setAttribute('data-theme-preference', theme);
+                  if (match) {
+                    try {
+                      var prefs = JSON.parse(decodeURIComponent(match[1]));
+                      theme = prefs.theme || 'dark';
+                    } catch (e) {
+                      theme = 'dark';
+                    }
+                  }
 
                   // Determine if dark mode should be applied
                   var isDark = theme === 'dark' ||
@@ -76,20 +79,9 @@ export default function RootLayout({
                   } else {
                     document.documentElement.classList.remove('dark');
                   }
-
-                  // Set sidebar state (default to collapsed)
-                  var showChatbar = parsed?.showChatbar ?? false;
-                  document.documentElement.setAttribute('data-sidebar-state', showChatbar ? 'expanded' : 'collapsed');
-
-                  // Set promptbar state (default to expanded)
-                  var showPromptbar = parsed?.showPromptbar ?? true;
-                  document.documentElement.setAttribute('data-promptbar-state', showPromptbar ? 'expanded' : 'collapsed');
                 } catch (e) {
-                  // Fallback to defaults on error
+                  // Fallback to dark on error
                   document.documentElement.classList.add('dark');
-                  document.documentElement.setAttribute('data-theme-preference', 'dark');
-                  document.documentElement.setAttribute('data-sidebar-state', 'collapsed');
-                  document.documentElement.setAttribute('data-promptbar-state', 'expanded');
                 }
               })();
             `,

@@ -10,6 +10,7 @@ import {
   ChatInputSubmitTypes,
   FileFieldValue,
   FilePreview,
+  ImageFieldValue,
 } from '@/types/chat';
 
 import ImageIcon from '@/components/Icons/image';
@@ -17,11 +18,11 @@ import ImageIcon from '@/components/Icons/image';
 import { onFileUpload } from '@/client/handlers/chatInput/file-upload';
 
 const onImageUploadButtonClick = (
-  event: React.ChangeEvent<any>,
-  fileInputRef: MutableRefObject<any>,
+  event: React.MouseEvent<HTMLButtonElement>,
+  fileInputRef: MutableRefObject<HTMLInputElement | null>,
 ) => {
   event.preventDefault();
-  fileInputRef.current.click();
+  fileInputRef.current?.click();
 };
 
 export interface ChatInputImageProps {
@@ -29,6 +30,7 @@ export interface ChatInputImageProps {
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
   prompt: string;
   setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
   setParentModalIsOpen: Dispatch<SetStateAction<boolean>>;
   simulateClick?: boolean;
@@ -41,6 +43,7 @@ const ChatInputImage = ({
   prompt,
   setFilePreviews,
   setFileFieldValue,
+  setImageFieldValue,
   setUploadProgress,
   setParentModalIsOpen,
   labelText,
@@ -68,7 +71,7 @@ const ChatInputImage = ({
             setSubmitType,
             setFilePreviews,
             setFileFieldValue,
-            setFileFieldValue,
+            setImageFieldValue,
             setUploadProgress,
           );
           setParentModalIsOpen(false);
@@ -78,7 +81,7 @@ const ChatInputImage = ({
       <button
         style={{ display: 'none' }}
         onClick={(e) => {
-          onImageUploadButtonClick(e, imageInputRef as MutableRefObject<any>);
+          onImageUploadButtonClick(e, fileInputRef);
         }}
         ref={openModalButtonRef}
         className="flex items-center w-full text-right hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none"

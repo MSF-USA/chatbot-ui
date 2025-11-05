@@ -14,6 +14,7 @@ import {
   ChatInputSubmitTypes,
   FileFieldValue,
   FilePreview,
+  ImageFieldValue,
 } from '@/types/chat';
 
 import Modal from '@/components/UI/Modal';
@@ -27,7 +28,8 @@ const onTakePhotoButtonClick = (
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>,
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
   closeModal: () => void,
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>,
 ) => {
@@ -41,17 +43,12 @@ const onTakePhotoButtonClick = (
         const file = new File([blob], 'camera_image.png', {
           type: 'image/png',
         });
-        const dataTransfer = new DataTransfer();
-        dataTransfer.items.add(file);
-        fileInputRef.current!.files = dataTransfer.files;
-        const newEvent = new Event('change');
-        fileInputRef.current!.dispatchEvent(newEvent);
+        // Pass the file directly as an array instead of simulating a change event
         onFileUpload(
-          // @ts-ignore
-          newEvent,
+          [file],
           setSubmitType,
           setFilePreviews,
-          setImageFieldValue,
+          setFileFieldValue,
           setImageFieldValue,
           setUploadProgress,
         );
@@ -80,7 +77,8 @@ interface CameraModalProps {
   setIsCameraOpen: Dispatch<SetStateAction<boolean>>;
   setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
   setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setImageFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
+  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
   setUploadProgress: Dispatch<SetStateAction<{ [p: string]: number }>>;
 }
 
@@ -93,6 +91,7 @@ export const CameraModal: FC<CameraModalProps> = ({
   setIsCameraOpen,
   setFilePreviews,
   setSubmitType,
+  setFileFieldValue,
   setImageFieldValue,
   setUploadProgress,
 }) => {
@@ -206,6 +205,7 @@ export const CameraModal: FC<CameraModalProps> = ({
           setIsCameraOpen,
           setFilePreviews,
           setSubmitType,
+          setFileFieldValue,
           setImageFieldValue,
           closeModal,
           setUploadProgress,

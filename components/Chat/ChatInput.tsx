@@ -20,6 +20,8 @@ import { useDropzone } from 'react-dropzone';
 import { useTranslations } from 'next-intl';
 
 import { useChat } from '@/client/hooks/chat/useChat';
+import { useInputState } from '@/client/hooks/chat/useInputState';
+import { useMessageSender } from '@/client/hooks/chat/useMessageSender';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useTones } from '@/client/hooks/settings/useTones';
@@ -27,7 +29,6 @@ import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
 import { useUploadState } from '@/client/hooks/ui/useUploadState';
 
 import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
-import { buildMessageContent } from '@/lib/utils/chat/contentBuilder';
 import {
   shouldPreventSubmission,
   validateMessageSubmission,
@@ -56,18 +57,19 @@ import { SearchMode } from '@/types/searchMode';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
-import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
+import ChatInputImage from '@/components/Chat/ChatInput/ChatInputFile';
 import ChatInputImageCapture, {
   ChatInputImageCaptureRef,
 } from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import ChatInputSubmitButton from '@/components/Chat/ChatInput/ChatInputSubmitButton';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
-import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
-import ChatInputVoiceCapture from '@/components/Chat/ChatInput/ChatInputVoiceCapture';
-import ChatDropdown from '@/components/Chat/ChatInput/Dropdown';
+import { InputControlsBar } from '@/components/Chat/ChatInput/InputControlsBar';
+import { MessageTextarea } from '@/components/Chat/ChatInput/MessageTextarea';
+import { SearchModeBadge } from '@/components/Chat/ChatInput/SearchModeBadge';
+import { ToneBadge } from '@/components/Chat/ChatInput/ToneBadge';
 
 import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
+
+import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
   onSend: (message: Message, searchMode?: SearchMode) => void;
@@ -98,6 +100,31 @@ export const ChatInput = ({
   const { prompts } = useSettings();
   const { tones } = useTones();
 
+  // Custom hooks for state management
+  const {
+    textFieldValue,
+    setTextFieldValue,
+    placeholderText,
+    setPlaceholderText,
+    isTyping,
+    setIsTyping,
+    isMultiline,
+    setIsMultiline,
+    isFocused,
+    setIsFocused,
+    textareaScrollHeight,
+    setTextareaScrollHeight,
+    transcriptionStatus,
+    setTranscriptionStatus,
+    isTranscribing,
+    setIsTranscribing,
+    searchMode,
+    setSearchMode,
+    selectedToneId,
+    setSelectedToneId,
+    clearInput,
+  } = useInputState();
+
   // Upload state management
   const {
     filePreviews,
@@ -113,39 +140,34 @@ export const ChatInput = ({
     handleFileUpload,
   } = useUploadState();
 
-  const [textFieldValue, setTextFieldValue] = useState<string>('');
-  const [isTyping, setIsTyping] = useState<boolean>(false);
-  const [isMultiline, setIsMultiline] = useState<boolean>(false);
-  const [isFocused, setIsFocused] = useState<boolean>(false);
+  // Message sending logic
+  const {
+    handleSend: handleMessageSend,
+    usedPromptId,
+    setUsedPromptId,
+    usedPromptVariables,
+    setUsedPromptVariables,
+  } = useMessageSender({
+    textFieldValue,
+    submitType,
+    imageFieldValue,
+    fileFieldValue,
+    filePreviews,
+    uploadProgress,
+    selectedToneId,
+    searchMode,
+    onSend,
+    onClearInput: clearInput,
+    setSubmitType,
+    setImageFieldValue,
+    setFileFieldValue,
+    setFilePreviews,
+  });
+
   const [variables, setVariables] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [selectedPromptForModal, setSelectedPromptForModal] =
     useState<Prompt | null>(null);
-  const [placeholderText, setPlaceholderText] = useState('');
-  const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
-    null,
-  );
-  const [isTranscribing, setIsTranscribing] = useState<boolean>(false);
-  // Use conversation's defaultSearchMode if set, otherwise OFF
-  const [searchMode, setSearchMode] = useState<SearchMode>(
-    selectedConversation?.defaultSearchMode ?? SearchMode.OFF,
-  );
-
-  // Sync searchMode with conversation's defaultSearchMode when conversation changes
-  const prevConversationId = useRef<string | undefined>(undefined);
-  useEffect(() => {
-    // Only update if conversation ID changed (avoid cascading renders)
-    if (prevConversationId.current !== selectedConversation?.id) {
-      prevConversationId.current = selectedConversation?.id;
-      setSearchMode(selectedConversation?.defaultSearchMode ?? SearchMode.OFF);
-    }
-  }, [selectedConversation?.id, selectedConversation?.defaultSearchMode]);
-  const [selectedToneId, setSelectedToneId] = useState<string | null>(null);
-  const [usedPromptId, setUsedPromptId] = useState<string | null>(null);
-  const [usedPromptVariables, setUsedPromptVariables] = useState<{
-    [key: string]: string;
-  } | null>(null);
-  const [textareaScrollHeight, setTextareaScrollHeight] = useState(0);
 
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
 
@@ -207,14 +229,6 @@ export const ChatInput = ({
     updatePromptListVisibilityCallback(value);
   };
 
-  const buildContent = () =>
-    buildMessageContent(
-      submitType,
-      textFieldValue,
-      imageFieldValue,
-      fileFieldValue,
-    );
-
   const handleSend = () => {
     if (isStreaming) {
       if (filePreviews.length > 0) {
@@ -223,52 +237,12 @@ export const ChatInput = ({
       return;
     }
 
-    const validation = validateMessageSubmission(
-      textFieldValue,
-      filePreviews,
-      uploadProgress,
-    );
+    handleMessageSend();
 
-    if (!validation.valid) {
-      alert(t(validation.error || 'Cannot send message'));
-      return;
-    }
-
-    console.log('[ChatInput handleSend] submitType:', submitType);
-    console.log('[ChatInput handleSend] filePreviews:', filePreviews);
-    console.log('[ChatInput handleSend] fileFieldValue:', fileFieldValue);
-
-    const content = buildContent();
-
-    console.log(
-      '[ChatInput handleSend] built content:',
-      JSON.stringify(content).substring(0, 200),
-    );
-
-    onSend(
-      {
-        role: 'user',
-        content,
-        messageType: submitType ?? 'text',
-        toneId: selectedToneId,
-        promptId: usedPromptId,
-        promptVariables: usedPromptVariables || undefined,
-      },
-      searchMode, // Pass search mode directly
-    );
-
-    setTextFieldValue('');
-    setImageFieldValue(null);
-    setFileFieldValue(null);
-    setSubmitType('text');
-    setUsedPromptId(null); // Reset after sending
-    setUsedPromptVariables(null); // Reset after sending
-
-    if (filePreviews.length > 0) {
-      setFilePreviews([]);
-    }
-
-    if (window.innerWidth < 640 && textareaRef?.current) {
+    if (
+      window.innerWidth < UI_CONSTANTS.BREAKPOINTS.MOBILE &&
+      textareaRef?.current
+    ) {
       textareaRef.current.blur();
     }
   };
@@ -343,17 +317,22 @@ export const ChatInput = ({
       textareaRef.current.style.height = 'inherit';
       textareaRef.current.style.height = `${textareaRef.current?.scrollHeight}px`;
       textareaRef.current.style.overflow = `${
-        textareaRef?.current?.scrollHeight > 400 ? 'auto' : 'hidden'
+        textareaRef?.current?.scrollHeight > UI_CONSTANTS.TEXTAREA.MAX_HEIGHT
+          ? 'auto'
+          : 'hidden'
       }`;
 
       // Store scroll height in state for use in render
       setTextareaScrollHeight(textareaRef.current.scrollHeight);
 
       // Check if textarea is multiline - single line is typically ~44px or less
-      // Only consider it multiline if scrollHeight exceeds 60px to avoid false positives
-      setIsMultiline(textareaRef.current.scrollHeight > 60);
+      // Only consider it multiline if scrollHeight exceeds threshold to avoid false positives
+      setIsMultiline(
+        textareaRef.current.scrollHeight >
+          UI_CONSTANTS.TEXTAREA.MULTILINE_THRESHOLD,
+      );
     }
-  }, [textFieldValue, textareaRef]);
+  }, [textFieldValue, textareaRef, setTextareaScrollHeight, setIsMultiline]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -378,10 +357,7 @@ export const ChatInput = ({
     setTimeout(() => {
       setPlaceholderText('Ask Anything');
     }, 0);
-  }, [t]);
-
-  // Placeholder text
-  const inputPlaceholder = placeholderText;
+  }, [t, setPlaceholderText]);
 
   // Notify parent when transcription status changes
   useEffect(() => {
@@ -442,6 +418,12 @@ export const ChatInput = ({
       uploadProgress,
     );
 
+  const inputPlaceholder = isTranscribing
+    ? t('transcribingChatPlaceholder')
+    : searchMode === SearchMode.ALWAYS
+      ? 'Search the web'
+      : placeholderText;
+
   return (
     <div
       {...getRootProps()}
@@ -471,76 +453,66 @@ export const ChatInput = ({
         </div>
       )}
 
-      {filePreviews.length > 0 && (
-        <div className="max-h-52 overflow-y-auto">
-          <ChatFileUploadPreviews
-            filePreviews={filePreviews}
-            setFilePreviews={setFilePreviews}
-            setSubmitType={setSubmitType}
-            uploadProgress={uploadProgress}
-          />
-        </div>
-      )}
+      <div className="sticky bottom-0 bg-white dark:bg-[#212121]">
+        {filePreviews.length > 0 && (
+          <div className="max-h-52 overflow-y-auto">
+            <ChatFileUploadPreviews
+              filePreviews={filePreviews}
+              setFilePreviews={setFilePreviews}
+              setSubmitType={setSubmitType}
+              uploadProgress={uploadProgress}
+            />
+          </div>
+        )}
 
-      <div className="sticky bottom-0 items-center bg-white dark:bg-[#212121] pt-4">
-        <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
-          <ChatInputImageCapture
-            ref={cameraRef}
-            setSubmitType={setSubmitType}
-            prompt={textFieldValue}
-            setFilePreviews={setFilePreviews}
-            setImageFieldValue={setFileFieldValue}
-            setUploadProgress={setUploadProgress}
-            visible={false}
-            hasCameraSupport={true}
-          />
+        <div className="items-center pt-4">
+          <div className="flex justify-center items-center space-x-2 px-2 md:px-4">
+            <ChatInputImageCapture
+              ref={cameraRef}
+              setSubmitType={setSubmitType}
+              prompt={textFieldValue}
+              setFilePreviews={setFilePreviews}
+              setFileFieldValue={setFileFieldValue}
+              setImageFieldValue={setImageFieldValue}
+              setUploadProgress={setUploadProgress}
+              visible={false}
+              hasCameraSupport={true}
+            />
 
-          <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
-            <div
-              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode === SearchMode.ALWAYS || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode !== SearchMode.ALWAYS && !selectedToneId ? '!rounded-2xl' : ''}`}
-            >
-              <textarea
-                ref={textareaRef}
-                className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 focus:border-0 ${
-                  searchMode === SearchMode.ALWAYS || selectedToneId
-                    ? 'pt-3 pb-[88px] pl-3'
-                    : 'py-3.5 pl-10 md:py-3 md:pl-10'
-                }`}
-                style={{
-                  resize: 'none',
-                  bottom: `${textareaScrollHeight}px`,
-                  maxHeight: '400px',
-                  overflow: `${textareaScrollHeight > 400 ? 'auto' : 'hidden'}`,
-                }}
-                placeholder={
-                  isTranscribing
-                    ? t('transcribingChatPlaceholder')
-                    : searchMode === SearchMode.ALWAYS
-                      ? 'Search the web'
-                      : inputPlaceholder
-                }
-                value={textFieldValue}
-                rows={1}
-                onCompositionStart={() => setIsTyping(true)}
-                onCompositionEnd={() => setIsTyping(false)}
-                onChange={handleChange}
-                onKeyDown={handleKeyDown}
-                onFocus={() => setIsFocused(true)}
-                onBlur={() => setIsFocused(false)}
-                disabled={preventSubmission()}
-              />
-
-              {/* Bottom row with all buttons and search badge */}
+            <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
               <div
-                className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  searchMode === SearchMode.ALWAYS ||
-                  selectedToneId ||
-                  isMultiline
-                    ? 'bottom-2'
-                    : 'top-1/2 transform -translate-y-1/2'
-                }`}
+                className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode === SearchMode.ALWAYS || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode !== SearchMode.ALWAYS && !selectedToneId ? '!rounded-2xl' : ''}`}
               >
-                <ChatDropdown
+                <MessageTextarea
+                  textareaRef={textareaRef}
+                  value={textFieldValue}
+                  placeholder={inputPlaceholder}
+                  disabled={preventSubmission()}
+                  searchMode={searchMode}
+                  selectedToneId={selectedToneId}
+                  textareaScrollHeight={textareaScrollHeight}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  onCompositionStart={() => setIsTyping(true)}
+                  onCompositionEnd={() => setIsTyping(false)}
+                />
+
+                {/* Bottom row with badges and controls */}
+                <div
+                  className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
+                    searchMode === SearchMode.ALWAYS ||
+                    selectedToneId ||
+                    isMultiline
+                      ? 'bottom-2'
+                      : 'top-1/2 transform -translate-y-1/2'
+                  }`}
+                >
+                  {/* Note: ChatDropdown is now part of InputControlsBar - kept here for consistency */}
+                </div>
+
+                <InputControlsBar
                   onFileUpload={handleFileUpload}
                   setSubmitType={setSubmitType}
                   setFilePreviews={setFilePreviews}
@@ -553,143 +525,98 @@ export const ChatInput = ({
                   onCameraClick={() => {
                     cameraRef.current?.triggerCamera();
                   }}
-                  openDownward={!showDisclaimer}
+                  showDisclaimer={showDisclaimer}
                   searchMode={searchMode}
                   setSearchMode={setSearchMode}
                   setTranscriptionStatus={setTranscriptionStatus}
                   selectedToneId={selectedToneId}
                   setSelectedToneId={setSelectedToneId}
                   tones={tones}
+                  filePreviews={filePreviews}
+                  setIsTranscribing={setIsTranscribing}
+                  isStreaming={isStreaming}
+                  isTranscribing={isTranscribing}
+                  handleStopConversation={handleStopConversation}
+                  preventSubmission={preventSubmission}
+                  isMultiline={isMultiline}
                 />
 
-                {searchMode === SearchMode.ALWAYS && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium border border-gray-300 dark:border-gray-600">
-                    <IconWorld className="w-5 h-5 text-blue-500" />
-                    <span>Search</span>
-                    <button
-                      onClick={() =>
+                {/* Badges displayed after dropdown */}
+                <div
+                  className={`absolute left-14 flex items-center gap-2 z-[10000] transition-all duration-200 ${
+                    searchMode === SearchMode.ALWAYS ||
+                    selectedToneId ||
+                    isMultiline
+                      ? 'bottom-2'
+                      : 'top-1/2 transform -translate-y-1/2'
+                  }`}
+                >
+                  {searchMode === SearchMode.ALWAYS && (
+                    <SearchModeBadge
+                      onRemove={() =>
                         setSearchMode(
                           selectedConversation?.defaultSearchMode ??
                             SearchMode.OFF,
                         )
                       }
-                      className="ml-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors"
-                      aria-label="Disable web search"
-                    >
-                      <svg
-                        className="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                )}
+                    />
+                  )}
 
-                {selectedToneId && (
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium border border-gray-300 dark:border-gray-600">
-                    <IconVolume className="w-5 h-5 text-purple-500" />
-                    <span>
-                      {tones.find((t) => t.id === selectedToneId)?.name ||
-                        'Tone'}
-                    </span>
-                    <button
-                      onClick={() => setSelectedToneId(null)}
-                      className="ml-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors"
-                      aria-label="Remove tone"
-                    >
-                      <svg
-                        className="w-3.5 h-3.5"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div
-                className={`absolute right-2.5 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  searchMode === SearchMode.ALWAYS ||
-                  selectedToneId ||
-                  isMultiline
-                    ? 'bottom-2'
-                    : 'top-1/2 transform -translate-y-1/2'
-                }`}
-              >
-                <ChatInputVoiceCapture
-                  setTextFieldValue={setTextFieldValue}
-                  setIsTranscribing={setIsTranscribing}
-                />
-                <ChatInputSubmitButton
-                  isStreaming={isStreaming}
-                  isTranscribing={isTranscribing}
-                  handleSend={handleSend}
-                  handleStopConversation={handleStopConversation}
-                  preventSubmission={preventSubmission}
-                />
-              </div>
-
-              <div
-                className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-16 z-[9999] transition-all duration-200 ease-in-out ${
-                  showScrollDownButton && !isFocused
-                    ? 'opacity-100 scale-100 pointer-events-auto'
-                    : 'opacity-0 scale-90 pointer-events-none'
-                }`}
-              >
-                <button
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none dark:bg-gray-700 dark:text-neutral-200 transition-shadow"
-                  onClick={(e) => {
-                    onScrollDownClick();
-                    e.currentTarget.blur(); // Remove focus after click
-                  }}
-                  aria-label="Scroll to bottom"
-                >
-                  <IconArrowDown size={18} />
-                </button>
-              </div>
-
-              {showPromptList && filteredPrompts.length > 0 && (
-                <div className="absolute bottom-12 w-full">
-                  <PromptList
-                    activePromptIndex={activePromptIndex}
-                    prompts={filteredPrompts}
-                    onSelect={handleInitModal}
-                    onMouseOver={setActivePromptIndex}
-                    promptListRef={promptListRef}
-                    folders={folders}
-                  />
+                  {selectedToneId && (
+                    <ToneBadge
+                      toneId={selectedToneId}
+                      tones={tones}
+                      onRemove={() => setSelectedToneId(null)}
+                    />
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
 
-          {isModalVisible && selectedPromptForModal && (
-            <VariableModal
-              prompt={selectedPromptForModal}
-              variables={variables}
-              onSubmit={handleSubmit}
-              onClose={() => {
-                setIsModalVisible(false);
-                setSelectedPromptForModal(null);
-              }}
-            />
-          )}
+                <div
+                  className={`absolute bottom-20 left-1/2 -translate-x-1/2 md:bottom-16 z-[9999] transition-all duration-200 ease-in-out ${
+                    showScrollDownButton && !isFocused
+                      ? 'opacity-100 scale-100 pointer-events-auto'
+                      : 'opacity-0 scale-90 pointer-events-none'
+                  }`}
+                >
+                  <button
+                    className="flex h-9 w-9 items-center justify-center rounded-full bg-neutral-300 text-gray-800 shadow-md hover:shadow-lg focus:outline-none dark:bg-gray-700 dark:text-neutral-200 transition-shadow"
+                    onClick={(e) => {
+                      onScrollDownClick();
+                      e.currentTarget.blur(); // Remove focus after click
+                    }}
+                    aria-label="Scroll to bottom"
+                  >
+                    <IconArrowDown size={18} />
+                  </button>
+                </div>
+
+                {showPromptList && filteredPrompts.length > 0 && (
+                  <div className="absolute bottom-12 w-full">
+                    <PromptList
+                      activePromptIndex={activePromptIndex}
+                      prompts={filteredPrompts}
+                      onSelect={handleInitModal}
+                      onMouseOver={setActivePromptIndex}
+                      promptListRef={promptListRef}
+                      folders={folders}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {isModalVisible && selectedPromptForModal && (
+              <VariableModal
+                prompt={selectedPromptForModal}
+                variables={variables}
+                onSubmit={handleSubmit}
+                onClose={() => {
+                  setIsModalVisible(false);
+                  setSelectedPromptForModal(null);
+                }}
+              />
+            )}
+          </div>
         </div>
       </div>
       {showDisclaimer && (

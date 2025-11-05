@@ -48,8 +48,7 @@ export async function POST(req: NextRequest): Promise<Response> {
     });
 
     // Validate model has agentId
-    const modelConfig = model as unknown as Record<string, unknown>;
-    if (!modelConfig.agentId) {
+    if (!model.agentId) {
       return new Response(
         JSON.stringify({
           error: 'Bad Request',

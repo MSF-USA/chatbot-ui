@@ -31,7 +31,7 @@ export const ClearConversations: FC<Props> = ({ onClearConversations }) => {
         <IconCheck
           className="ml-auto mr-1 min-w-[20px] text-neutral-400 hover:text-neutral-100"
           size={18}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             handleClearConversations();
           }}
@@ -40,7 +40,7 @@ export const ClearConversations: FC<Props> = ({ onClearConversations }) => {
         <IconX
           className="ml-auto min-w-[20px] text-neutral-400 hover:text-neutral-100"
           size={18}
-          onClick={(e) => {
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             setIsConfirming(false);
           }}

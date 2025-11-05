@@ -11,7 +11,14 @@ import {
   TextMessageContent,
 } from '@/types/chat';
 
+import { Tiktoken } from '@dqbd/tiktoken/lite/init';
+
 type ContentType = 'text' | 'image' | 'file';
+
+type ContentItem =
+  | TextMessageContent
+  | FileMessageContent
+  | ImageMessageContent;
 
 export const getMessageContentType = (
   content:
@@ -38,8 +45,10 @@ export const getMessageContentType = (
           return 'image';
         case 'text':
           return 'text';
-        default:
-          throw new Error(`Invalid content type: ${(content[0] as any).type}`);
+        default: {
+          const invalidItem = content[0] as { type: string };
+          throw new Error(`Invalid content type: ${invalidItem.type}`);
+        }
       }
     } else {
       throw new Error(
@@ -53,7 +62,7 @@ export const getMessageContentType = (
 
 export const getMessagesToSend = async (
   messages: Message[],
-  encoding: any,
+  encoding: Tiktoken,
   promptLength: number,
   tokenLimit: number,
   user: Session['user'],
@@ -118,15 +127,16 @@ const processMessageContent = async (
   let allText: string = '';
 
   let processedContent:
-    | TextMessageContent[]
-    | (TextMessageContent | ImageMessageContent)[] = (content as any[]).filter(
-    (contentSection) => {
-      if (!isLastMessageInConversation && contentSection.type === 'file_url') {
-        return false; // Remove file_url content sections for non-last messages
-      }
-      return true;
-    },
-  );
+    | (TextMessageContent | FileMessageContent)[]
+    | (TextMessageContent | ImageMessageContent)[]
+    | (TextMessageContent | FileMessageContent | ImageMessageContent)[] = (
+    content as ContentItem[]
+  ).filter((contentSection) => {
+    if (!isLastMessageInConversation && contentSection.type === 'file_url') {
+      return false; // Remove file_url content sections for non-last messages
+    }
+    return true;
+  });
 
   for (let contentSection of processedContent) {
     if (conversationType === 'image' && contentSection.type === 'text') {
@@ -213,13 +223,16 @@ const extractTextContent = (
     | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
 ): string => {
   const textContent: TextMessageContent | undefined = (
-    content as (TextMessageContent | ImageMessageContent | FileMessageContent)[]
-  ).find((contentItem) => contentItem.type === 'text') as TextMessageContent;
-  if (!textContent)
+    content as ContentItem[]
+  ).find((contentItem) => contentItem.type === 'text') as
+    | TextMessageContent
+    | undefined;
+
+  if (!textContent) {
     throw new Error(
       `Couldn't find text content type in ${JSON.stringify(content)}`,
     );
+  }
 
-  // @ts-ignore
   return textContent.text ?? '';
 };

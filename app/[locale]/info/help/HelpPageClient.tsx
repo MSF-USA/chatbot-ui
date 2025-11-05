@@ -8,11 +8,12 @@ import {
   IconExternalLink,
   IconFileText,
   IconHelp,
+  IconLanguage,
   IconMail,
   IconSearch,
   IconShield,
 } from '@tabler/icons-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaGithub } from 'react-icons/fa';
 
 import Image from 'next/image';
@@ -30,13 +31,17 @@ interface FAQItem {
 interface HelpPageClientProps {
   isUSUser: boolean;
   supportEmail: string;
-  faqData: FAQItem[];
+  faqTranslations: Record<string, FAQItem[]>;
+  initialLocale: string;
+  availableLocales: string[];
 }
 
 export function HelpPageClient({
   isUSUser,
   supportEmail,
-  faqData,
+  faqTranslations,
+  initialLocale,
+  availableLocales,
 }: HelpPageClientProps) {
   const [expandedSection, setExpandedSection] = useState<SectionType>('faq');
   const [searchQuery, setSearchQuery] = useState('');
@@ -44,9 +49,44 @@ export function HelpPageClient({
   const [openPrivacyItems, setOpenPrivacyItems] = useState<Set<string>>(
     new Set(),
   );
+  const [currentLocale, setCurrentLocale] = useState<string>(initialLocale);
 
-  const faqs = faqData;
+  const faqs = faqTranslations[currentLocale] || faqTranslations['en'] || [];
   const privacyItems = privacyData.items;
+
+  // Debug log on mount
+  useEffect(() => {
+    console.log('[FAQ Client] Mounted with:', {
+      initialLocale,
+      currentLocale,
+      availableTranslations: Object.keys(faqTranslations),
+      currentFaqCount: faqs.length,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only log on mount
+
+  // Get localized language names
+  const getLanguageName = (locale: string): string => {
+    const localeNames: Record<string, string> = {
+      en: 'English',
+      fr: 'Français',
+      es: 'Español',
+    };
+    return localeNames[locale] || locale;
+  };
+
+  // Handle locale change
+  const handleLocaleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newLocale = e.target.value;
+    console.log('[FAQ] Changing locale from', currentLocale, 'to', newLocale);
+    console.log('[FAQ] Available translations:', Object.keys(faqTranslations));
+    console.log(
+      '[FAQ] New FAQs count:',
+      faqTranslations[newLocale]?.length || 0,
+    );
+    setCurrentLocale(newLocale);
+    setSearchQuery(''); // Clear search when changing language
+  };
 
   // Helper function to render text with clickable links
   const renderTextWithLinks = (text: string) => {
@@ -138,20 +178,45 @@ export function HelpPageClient({
             Back to Chat
           </Link>
 
-          <div className="flex items-center gap-4 mb-2">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
-              <IconBook
-                size={32}
-                className="text-blue-600 dark:text-blue-400"
-              />
+          <div className="flex items-center justify-between gap-4 mb-2">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+                <IconBook
+                  size={32}
+                  className="text-blue-600 dark:text-blue-400"
+                />
+              </div>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+                  Help Center
+                </h1>
+                <p className="text-gray-600 dark:text-gray-400 mt-1">
+                  Find answers, learn about privacy, and get support
+                </p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-                Help Center
-              </h1>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Find answers, learn about privacy, and get support
-              </p>
+
+            {/* Language selector */}
+            <div className="flex items-center gap-2 text-sm">
+              <IconLanguage
+                size={20}
+                className="text-gray-600 dark:text-gray-300"
+              />
+              <select
+                value={currentLocale}
+                onChange={handleLocaleChange}
+                className="bg-white dark:bg-gray-800 text-gray-800 dark:text-white text-sm font-medium cursor-pointer focus:outline-none border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1.5"
+              >
+                {availableLocales.map((locale) => (
+                  <option
+                    key={locale}
+                    value={locale}
+                    className="bg-white dark:bg-gray-800"
+                  >
+                    {getLanguageName(locale)}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         </div>

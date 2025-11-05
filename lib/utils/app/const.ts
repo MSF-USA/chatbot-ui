@@ -14,9 +14,6 @@ export const OPENAI_API_VERSION =
 
 export const DEFAULT_MODEL = process.env.DEFAULT_MODEL || 'gpt-4.1';
 
-export const APIM_MANAGEMENT_ENDPONT =
-  process.env.APIM_MANAGEMENT_ENDPONT || 'localhostmgmt';
-
 export const FORCE_LOGOUT_ON_REFRESH_FAILURE =
   process.env.FORCE_LOGOUT_ON_REFRESH_FAILURE || 'true';
 

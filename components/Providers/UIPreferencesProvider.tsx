@@ -2,13 +2,9 @@
 
 import { createContext, useContext, useState } from 'react';
 
-type ThemeMode = 'light' | 'dark' | 'system';
+import { CookieService } from '@/lib/services/cookieService';
 
-interface UIPreferences {
-  showChatbar: boolean;
-  showPromptbar: boolean;
-  theme: ThemeMode;
-}
+import { DEFAULT_UI_PREFERENCES, ThemeMode, UIPreferences } from '@/types/ui';
 
 interface UIPreferencesContextValue extends UIPreferences {
   setShowChatbar: (show: boolean) => void;
@@ -23,64 +19,35 @@ const UIPreferencesContext = createContext<UIPreferencesContextValue | null>(
   null,
 );
 
-const STORAGE_KEY = 'ui-preferences';
-const DEFAULT_PREFERENCES: UIPreferences = {
-  showChatbar: false,
-  showPromptbar: true,
-  theme: 'dark',
-};
-
 /**
- * Simple provider for UI preferences using direct localStorage
- * No Zustand, no hydration complexity - reads from data attributes set by blocking script
+ * Provider for UI preferences using cookies as single source of truth
+ * Server reads cookies for SSR, client updates cookies when preferences change
  */
 export function UIPreferencesProvider({
   children,
+  initialPreferences = DEFAULT_UI_PREFERENCES,
 }: {
   children: React.ReactNode;
+  initialPreferences?: UIPreferences;
 }) {
-  // Read initial state from data attributes (set by blocking script before hydration)
-  // The blocking script already read from localStorage, so we don't need to read it again
-  const [preferences, setPreferences] = useState<UIPreferences>(() => {
-    if (typeof window === 'undefined') {
-      return DEFAULT_PREFERENCES;
-    }
+  // Use server-provided initial preferences (from cookie)
+  const [preferences, setPreferences] =
+    useState<UIPreferences>(initialPreferences);
 
-    const sidebarState =
-      document.documentElement.getAttribute('data-sidebar-state');
-    const promptbarState = document.documentElement.getAttribute(
-      'data-promptbar-state',
-    );
-    const themePreference = document.documentElement.getAttribute(
-      'data-theme-preference',
-    ) as ThemeMode | null;
-
-    return {
-      showChatbar: sidebarState === 'expanded',
-      showPromptbar: promptbarState !== 'collapsed', // default to true
-      theme: themePreference || 'dark',
-    };
-  });
-
-  // Save to localStorage whenever preferences change
+  // Save to cookie whenever preferences change
   const updatePreferences = (updates: Partial<UIPreferences>) => {
     const newPreferences = { ...preferences, ...updates };
     setPreferences(newPreferences);
 
+    // Write to cookie (single source of truth)
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newPreferences));
+      CookieService.setJSONCookie('ui-prefs', newPreferences);
     } catch (e) {
-      console.error('Failed to save UI preferences:', e);
+      console.error('Failed to save UI preferences to cookie:', e);
     }
 
     // Update DOM for theme
     if (updates.theme !== undefined) {
-      // Store the theme preference
-      document.documentElement.setAttribute(
-        'data-theme-preference',
-        updates.theme,
-      );
-
       // Apply dark mode based on theme preference
       const isDark =
         updates.theme === 'dark' ||

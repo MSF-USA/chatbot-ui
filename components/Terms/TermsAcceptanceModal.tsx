@@ -114,7 +114,7 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
     const localeNames: Record<string, string> = {
       en: 'English',
       fr: 'Français',
-      // Add more as needed
+      es: 'Español',
     };
     return localeNames[locale] || locale;
   };

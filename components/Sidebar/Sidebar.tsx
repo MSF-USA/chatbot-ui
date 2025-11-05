@@ -424,7 +424,9 @@ export function Sidebar() {
         <div
           className={`flex items-center px-3 py-2 border-b transition-all duration-300 ${showChatbar ? 'justify-between border-neutral-300 dark:border-neutral-700' : 'justify-center border-transparent'}`}
         >
-          {showChatbar && (
+          <div
+            className={`transition-all duration-300 overflow-hidden ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
+          >
             <Image
               src={theme === 'dark' ? darkTextLogo : lightTextLogo}
               alt="MSF Logo"
@@ -434,7 +436,7 @@ export function Sidebar() {
                 height: 'auto',
               }}
             />
-          )}
+          </div>
           <button
             className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-black dark:text-white"
             onClick={toggleChatbar}

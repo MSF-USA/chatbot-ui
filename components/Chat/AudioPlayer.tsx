@@ -1,10 +1,10 @@
 import { IconDownload, IconX } from '@tabler/icons-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { PlaybackButton } from './Audio/PlaybackButton';
 import { AudioTimeDisplay } from './Audio/AudioTimeDisplay';
-import { SpeedControl } from './Audio/SpeedControl';
+import { PlaybackButton } from './Audio/PlaybackButton';
 import { ProgressBar } from './Audio/ProgressBar';
+import { SpeedControl } from './Audio/SpeedControl';
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -32,13 +32,14 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
       // This ensures UI updates even if autoplay is blocked
       startAnimationLoop();
 
-      audioRef.current.play()
-          .then(() => {
-            setIsPlaying(true);
-          })
-          .catch(err => {
-            console.error('Failed to autoplay audio:', err);
-          });
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((err) => {
+          console.error('Failed to autoplay audio:', err);
+        });
     }
 
     return () => {
@@ -74,8 +75,6 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
 
     // Start the animation loop immediately
     animationFrameRef.current = requestAnimationFrame(animate);
-
-    // console.log("Animation loop started", new Date().toISOString());
   };
 
   // Stop animation loop
@@ -110,12 +109,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     if (isPlaying) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play()
+      audioRef.current
+        .play()
         .then(() => {
           // Explicit restart of animation loop on play
           startAnimationLoop();
         })
-        .catch(err => {
+        .catch((err) => {
           console.error('Failed to play audio:', err);
         });
     }
@@ -167,7 +167,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
     let animationFrameId: number;
     const updateProgress = () => {
       if (audioRef.current) {
-        setAudioProgress(prev => {
+        setAudioProgress((prev) => {
           const currentTime = audioRef.current?.currentTime || 0;
           const duration = audioRef.current?.duration || 1;
           const exactProgress = (currentTime / duration) * 100;
@@ -219,78 +219,78 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
   };
 
   return (
-      <div className="mb-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
-        {/* Hidden native audio element for functionality */}
-        <audio
-            ref={audioRef}
-            src={audioUrl}
-            onPlay={() => {
-              setIsPlaying(true);
-              startAnimationLoop();
-            }}
-            onPause={() => {
-              setIsPlaying(false);
-              stopAnimationLoop();
-            }}
-            onEnded={handleAudioEnd}
-            onLoadedMetadata={handleAudioLoad}
-            onSeeked={() => {
-              // Ensure animation continues after seeking
-              if (isPlaying) {
-                stopAnimationLoop();
-                startAnimationLoop();
-              }
-            }}
-            className="hidden"
-        />
+    <div className="mb-4 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 p-3">
+      {/* Hidden native audio element for functionality */}
+      <audio
+        ref={audioRef}
+        src={audioUrl}
+        onPlay={() => {
+          setIsPlaying(true);
+          startAnimationLoop();
+        }}
+        onPause={() => {
+          setIsPlaying(false);
+          stopAnimationLoop();
+        }}
+        onEnded={handleAudioEnd}
+        onLoadedMetadata={handleAudioLoad}
+        onSeeked={() => {
+          // Ensure animation continues after seeking
+          if (isPlaying) {
+            stopAnimationLoop();
+            startAnimationLoop();
+          }
+        }}
+        className="hidden"
+      />
 
-        {/* Custom audio player UI */}
-        <div className="flex flex-col">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <PlaybackButton isPlaying={isPlaying} onToggle={togglePlayback} />
-              <AudioTimeDisplay
-                currentTime={audioRef.current?.currentTime || 0}
-                duration={audioDuration}
-                playbackSpeed={playbackSpeed}
-              />
-            </div>
-
-            <div className="flex items-center">
-              <SpeedControl
-                playbackSpeed={playbackSpeed}
-                speeds={speeds}
-                showDropdown={showSpeedDropdown}
-                onToggleDropdown={toggleSpeedDropdown}
-                onChangeSpeed={changePlaybackSpeed}
-                onClickOutside={() => setShowSpeedDropdown(false)}
-              />
-
-              {/* Download button */}
-              <button
-                  onClick={handleDownload}
-                  className="mx-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
-                  aria-label="Download audio"
-                  title="Download audio"
-              >
-                <IconDownload size={18} />
-              </button>
-
-              {/* Close button */}
-              <button
-                  onClick={onClose}
-                  className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
-                  aria-label="Close audio player"
-                  title="Close audio player"
-              >
-                <IconX size={18} />
-              </button>
-            </div>
+      {/* Custom audio player UI */}
+      <div className="flex flex-col">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center">
+            <PlaybackButton isPlaying={isPlaying} onToggle={togglePlayback} />
+            <AudioTimeDisplay
+              currentTime={audioRef.current?.currentTime || 0}
+              duration={audioDuration}
+              playbackSpeed={playbackSpeed}
+            />
           </div>
 
-          <ProgressBar progress={audioProgress} onSeek={handleSeek} />
+          <div className="flex items-center">
+            <SpeedControl
+              playbackSpeed={playbackSpeed}
+              speeds={speeds}
+              showDropdown={showSpeedDropdown}
+              onToggleDropdown={toggleSpeedDropdown}
+              onChangeSpeed={changePlaybackSpeed}
+              onClickOutside={() => setShowSpeedDropdown(false)}
+            />
+
+            {/* Download button */}
+            <button
+              onClick={handleDownload}
+              className="mx-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+              aria-label="Download audio"
+              title="Download audio"
+            >
+              <IconDownload size={18} />
+            </button>
+
+            {/* Close button */}
+            <button
+              onClick={onClose}
+              className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
+              aria-label="Close audio player"
+              title="Close audio player"
+            >
+              <IconX size={18} />
+            </button>
+          </div>
         </div>
+
+        <ProgressBar progress={audioProgress} onSeek={handleSeek} />
       </div>
+    </div>
   );
 };
 

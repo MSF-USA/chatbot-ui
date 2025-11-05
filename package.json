@@ -40,7 +40,6 @@
     "next": "16.0.1",
     "next-auth": "^5.0.0-beta.30",
     "openai": "^6.7.0",
-    "private-ip": "^3.0.2",
     "qrcode.react": "^4.2.0",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -53,6 +52,7 @@
     "ssrf-req-filter": "^1.1.1",
     "streamdown": "^1.4.0",
     "uuid": "^13.0.0",
+    "zod": "^4.1.12",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

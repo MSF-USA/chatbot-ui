@@ -11,7 +11,7 @@ export default function NotFound() {
       <div className="relative rounded-xl bg-white dark:bg-[#171717] p-8 shadow-xl border border-gray-200 dark:border-gray-700 w-full max-w-xl">
         {/* Dog Image */}
         <div className="flex justify-center mb-6">
-          <div className="relative w-48 h-48">
+          <div className="relative w-32 h-32">
             <Image
               src="/dog-404.png"
               alt="Lost dog"

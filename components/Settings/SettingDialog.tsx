@@ -27,8 +27,6 @@ import { MobileAppSection } from './Sections/MobileAppSection';
 import { SettingsSidebar } from './SettingsSidebar';
 import { SettingsSection } from './types';
 
-import faqData from '@/lib/data/faq.json';
-
 const version = packageJson.version;
 const build = process.env.NEXT_PUBLIC_BUILD || 'Unknown';
 const env = process.env.NEXT_PUBLIC_ENV || 'development';

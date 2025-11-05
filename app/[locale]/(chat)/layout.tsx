@@ -1,4 +1,7 @@
+import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+
+import { DEFAULT_UI_PREFERENCES, validateUIPreferences } from '@/types/ui';
 
 import { AppProviders } from '@/components/Providers/AppProviders';
 
@@ -22,6 +25,22 @@ export default async function ChatLayout({
     redirect('/signin');
   }
 
+  // Read UI preferences from cookie for SSR
+  const cookieStore = await cookies();
+  const uiPrefsCookie = cookieStore.get('ui-prefs');
+
+  let initialUIPreferences = DEFAULT_UI_PREFERENCES;
+  if (uiPrefsCookie?.value) {
+    try {
+      const parsed = JSON.parse(decodeURIComponent(uiPrefsCookie.value));
+      // Validate and ensure correct shape
+      initialUIPreferences = validateUIPreferences(parsed);
+    } catch (e) {
+      // Fall back to defaults on parse error
+      console.error('Failed to parse ui-prefs cookie:', e);
+    }
+  }
+
   return (
     <AppProviders
       session={session}
@@ -36,6 +55,7 @@ export default async function ChatLayout({
         department: session.user?.department,
         companyName: session.user?.companyName,
       }}
+      initialUIPreferences={initialUIPreferences}
     >
       <ChatShell>{children}</ChatShell>
     </AppProviders>
