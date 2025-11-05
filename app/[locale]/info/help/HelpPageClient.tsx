@@ -1,63 +1,110 @@
 'use client';
 
 import {
-  IconAlertCircle,
   IconArrowLeft,
+  IconBook,
   IconChevronDown,
+  IconChevronRight,
+  IconExternalLink,
   IconFileText,
   IconHelp,
   IconMail,
   IconSearch,
   IconShield,
 } from '@tabler/icons-react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import { FaGithub } from 'react-icons/fa';
 
-import Link from 'next/link';
+import Image from 'next/image';
 
-import faqData from '@/lib/data/faq.json';
 import privacyData from '@/lib/data/privacyPolicy.json';
+import { Link } from '@/lib/navigation';
 
-type TabType = 'faq' | 'privacy' | 'terms';
+type SectionType = 'faq' | 'privacy' | 'contact' | null;
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
 
 interface HelpPageClientProps {
   isUSUser: boolean;
   supportEmail: string;
+  faqData: FAQItem[];
 }
 
 export function HelpPageClient({
   isUSUser,
   supportEmail,
+  faqData,
 }: HelpPageClientProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('faq');
+  const [expandedSection, setExpandedSection] = useState<SectionType>('faq');
   const [searchQuery, setSearchQuery] = useState('');
-  const [openItems, setOpenItems] = useState<Set<string>>(new Set());
+  const [openFaqItems, setOpenFaqItems] = useState<Set<number>>(new Set());
+  const [openPrivacyItems, setOpenPrivacyItems] = useState<Set<string>>(
+    new Set(),
+  );
 
-  const faqs = faqData.faq;
+  const faqs = faqData;
   const privacyItems = privacyData.items;
 
-  // Filter content based on search
-  const filteredFaqs = useMemo(() => {
-    if (!searchQuery) return faqs;
-    const query = searchQuery.toLowerCase();
-    return faqs.filter(
-      (faq) =>
-        faq.question.toLowerCase().includes(query) ||
-        faq.answer.toLowerCase().includes(query),
-    );
-  }, [searchQuery, faqs]);
+  // Helper function to render text with clickable links
+  const renderTextWithLinks = (text: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const parts = text.split(urlRegex);
 
-  const filteredPrivacy = useMemo(() => {
-    if (!searchQuery) return privacyItems;
-    const query = searchQuery.toLowerCase();
-    return privacyItems.filter(
-      (item) =>
-        item.question.toLowerCase().includes(query) ||
-        item.answer.toLowerCase().includes(query),
-    );
-  }, [searchQuery, privacyItems]);
+    return parts.map((part, index) => {
+      if (part.match(urlRegex)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
 
-  const toggleItem = (id: string) => {
-    setOpenItems((prev) => {
+  // Filter FAQs based on search
+  const filteredFaqs =
+    searchQuery && expandedSection === 'faq'
+      ? faqs.filter(
+          (faq) =>
+            faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            faq.answer.toLowerCase().includes(searchQuery.toLowerCase()),
+        )
+      : faqs;
+
+  // Filter Privacy items based on search
+  const filteredPrivacy =
+    searchQuery && expandedSection === 'privacy'
+      ? privacyItems.filter(
+          (item) =>
+            item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            item.answer.toLowerCase().includes(searchQuery.toLowerCase()),
+        )
+      : privacyItems;
+
+  const toggleFaqItem = (index: number) => {
+    setOpenFaqItems((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      return next;
+    });
+  };
+
+  const togglePrivacyItem = (id: string) => {
+    setOpenPrivacyItems((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -68,553 +115,503 @@ export function HelpPageClient({
     });
   };
 
-  const tabs = [
-    {
-      id: 'faq' as TabType,
-      label: 'FAQs',
-      icon: IconHelp,
-      count: filteredFaqs.length,
-    },
-    {
-      id: 'privacy' as TabType,
-      label: 'Privacy & Data',
-      icon: IconShield,
-      count: filteredPrivacy.length,
-    },
-    ...(isUSUser
-      ? []
-      : [
-          { id: 'terms' as TabType, label: 'Terms of Use', icon: IconFileText },
-        ]),
-  ];
+  const toggleSection = (section: SectionType) => {
+    if (expandedSection === section) {
+      setExpandedSection(null);
+      setSearchQuery('');
+    } else {
+      setExpandedSection(section);
+      setSearchQuery('');
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-[#212121] p-4 md:p-8">
-      <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-black">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 md:px-8 py-6">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 transition-colors mb-6"
+            className="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
             <IconArrowLeft size={18} />
             Back to Chat
           </Link>
 
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-              <IconHelp
-                size={28}
+          <div className="flex items-center gap-4 mb-2">
+            <div className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl">
+              <IconBook
+                size={32}
                 className="text-blue-600 dark:text-blue-400"
               />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
                 Help Center
               </h1>
-              <p className="text-gray-600 dark:text-gray-400 text-sm">
-                Everything you need to know about AI Assistant
+              <p className="text-gray-600 dark:text-gray-400 mt-1">
+                Find answers, learn about privacy, and get support
               </p>
-            </div>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative">
-            <IconSearch
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-              size={18}
-            />
-            <input
-              type="text"
-              placeholder="Search for answers..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-600 focus:border-transparent transition-all text-sm shadow-sm"
-            />
-          </div>
-
-          {/* Search Results Indicator */}
-          {searchQuery && (
-            <div className="mt-3 text-sm text-gray-600 dark:text-gray-400">
-              {activeTab === 'faq' && (
-                <span>
-                  Found {filteredFaqs.length}{' '}
-                  {filteredFaqs.length === 1 ? 'result' : 'results'}
-                </span>
-              )}
-              {activeTab === 'privacy' && (
-                <span>
-                  Found {filteredPrivacy.length}{' '}
-                  {filteredPrivacy.length === 1 ? 'result' : 'results'}
-                </span>
-              )}
-            </div>
-          )}
-        </div>
-        {/* Tab Navigation */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-1 mb-6 shadow-sm">
-          <div className="flex gap-1 overflow-x-auto scrollbar-hide">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => {
-                    setActiveTab(tab.id);
-                    setSearchQuery(''); // Clear search when switching tabs
-                  }}
-                  className={`
-                    flex items-center gap-2 px-4 py-2.5 rounded-md font-medium transition-all whitespace-nowrap text-sm
-                    ${
-                      isActive
-                        ? 'bg-blue-600 dark:bg-blue-700 text-white shadow-sm'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }
-                  `}
-                >
-                  <Icon size={18} />
-                  <span>{tab.label}</span>
-                  {tab.count !== undefined && (
-                    <span
-                      className={`
-                      px-2 py-0.5 rounded-full text-xs font-semibold
-                      ${isActive ? 'bg-blue-500 dark:bg-blue-600 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300'}
-                    `}
-                    >
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="space-y-4">
-          {/* FAQ Tab */}
-          {activeTab === 'faq' && (
-            <div className="space-y-3">
-              {filteredFaqs.length === 0 ? (
-                <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                  <IconSearch
-                    className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
-                    size={56}
-                  />
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
-                    No FAQs match your search
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-2">
-                    Try a different search term
-                  </p>
-                </div>
-              ) : (
-                filteredFaqs.map((faq, index) => {
-                  const itemId = `faq-${index}`;
-                  const isOpen = openItems.has(itemId);
-                  return (
-                    <div
-                      key={index}
-                      className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-sm transition-all"
-                    >
-                      <button
-                        onClick={() => toggleItem(itemId)}
-                        className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        <span className="font-semibold text-left text-gray-900 dark:text-white pr-4 text-sm">
-                          {faq.question}
-                        </span>
-                        <IconChevronDown
-                          size={20}
-                          className={`text-blue-600 dark:text-blue-400 transition-transform flex-shrink-0 ${
-                            isOpen ? 'rotate-180' : ''
-                          }`}
-                        />
-                      </button>
-                      {isOpen && (
-                        <div className="px-5 pb-4 pt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                          {faq.answer}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })
-              )}
-            </div>
-          )}
-
-          {/* Privacy Tab */}
-          {activeTab === 'privacy' && (
-            <div className="space-y-3">
-              {filteredPrivacy.length === 0 ? (
-                <div className="text-center py-16 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-                  <IconSearch
-                    className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
-                    size={56}
-                  />
-                  <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">
-                    No privacy information matches your search
-                  </p>
-                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-2">
-                    Try a different search term
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* Privacy Notice */}
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/30 rounded-lg border border-green-200 dark:border-green-800 p-5 mb-4 shadow-sm">
-                    <div className="flex items-start gap-3">
-                      <div className="p-2 bg-green-600 dark:bg-green-700 rounded-lg shadow-sm">
-                        <IconShield
-                          className="text-white flex-shrink-0"
-                          size={24}
-                        />
-                      </div>
-                      <div>
-                        <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">
-                          Your Privacy Matters
-                        </h3>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                          All conversations are stored locally on your device.
-                          Data processing happens within MSF systems using Azure
-                          infrastructure.
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-xs">
-                          <div className="flex items-center gap-2">
-                            <span className="text-green-600 dark:text-green-400 font-bold">
-                              ✓
-                            </span>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">
-                              Local storage only
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-green-600 dark:text-green-400 font-bold">
-                              ✓
-                            </span>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">
-                              MSF-controlled infrastructure
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-red-600 dark:text-red-400 font-bold">
-                              ✗
-                            </span>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">
-                              No personal data
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-red-600 dark:text-red-400 font-bold">
-                              ✗
-                            </span>
-                            <span className="text-gray-700 dark:text-gray-300 font-medium">
-                              No sensitive operations
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {filteredPrivacy.map((item) => {
-                    const isOpen = openItems.has(item.id);
-                    return (
-                      <div
-                        key={item.id}
-                        className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:border-green-300 dark:hover:border-green-700 hover:shadow-sm transition-all"
-                      >
-                        <button
-                          onClick={() => toggleItem(item.id)}
-                          className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                        >
-                          <span className="font-semibold text-left text-gray-900 dark:text-white pr-4 text-sm">
-                            {item.question}
-                          </span>
-                          <IconChevronDown
-                            size={20}
-                            className={`text-green-600 dark:text-green-400 transition-transform flex-shrink-0 ${
-                              isOpen ? 'rotate-180' : ''
-                            }`}
-                          />
-                        </button>
-                        {isOpen && (
-                          <div className="px-5 pb-4 pt-2 text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
-                            {item.answer}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
-                </>
-              )}
-            </div>
-          )}
-
-          {/* Terms Tab */}
-          {activeTab === 'terms' && !isUSUser && (
-            <div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 shadow-sm">
-                <div className="max-w-none">
-                  <div className="flex items-center gap-3 mb-5">
-                    <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                      <IconFileText
-                        size={24}
-                        className="text-blue-600 dark:text-blue-400"
-                      />
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                      ai.msf.org Terms of Use
-                    </h2>
-                  </div>
-
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                    The MSF AI Assistant is an internal AI chatbot developed for
-                    MSF staff. It uses Microsoft Azure's Open AI large language
-                    models while keeping all data within MSF, ensuring privacy
-                    and control.
-                  </p>
-
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-5">
-                    By using ai.msf.org, you agree with the following terms and
-                    conditions:
-                  </p>
-
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-lg p-4 mb-4 border border-blue-200 dark:border-blue-800 shadow-sm">
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3 flex items-center gap-2">
-                      <IconAlertCircle
-                        size={20}
-                        className="text-blue-600 dark:text-blue-400"
-                      />
-                      Responsible Use
-                    </h3>
-
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                      You agree you will use ai.msf.org responsibly. You will:
-                    </p>
-
-                    <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-0.5">
-                          •
-                        </span>
-                        <span>
-                          Use it in accordance with your MSF entities'
-                          applicable ICT, AI and other policies
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-0.5">
-                          •
-                        </span>
-                        <span>
-                          Always check outputs for accuracy, inclusivity and
-                          bias
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-0.5">
-                          •
-                        </span>
-                        <span>
-                          Check outputs don't infringe third party intellectual
-                          property rights
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-0.5">
-                          •
-                        </span>
-                        <span>
-                          Be transparent about your AI use and mark outputs as
-                          AI-generated
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-900/30 rounded-lg p-4 mb-4 border border-red-200 dark:border-red-800 shadow-sm">
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3">
-                      Prohibited Uses
-                    </h3>
-
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">
-                      You will NOT use ai.msf.org for:
-                    </p>
-
-                    <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
-                      <li className="flex items-start gap-2">
-                        <span className="text-red-600 dark:text-red-400 mt-0.5">
-                          ✗
-                        </span>
-                        <span>
-                          <strong>Health care</strong> (to provide healthcare or
-                          answer health-related questions)
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-red-600 dark:text-red-400 mt-0.5">
-                          ✗
-                        </span>
-                        <span>
-                          <strong>Surveillance or monitoring</strong> of MSF
-                          patients or communities
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-red-600 dark:text-red-400 mt-0.5">
-                          ✗
-                        </span>
-                        <span>
-                          <strong>Employment-related decisions</strong>
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-red-600 dark:text-red-400 mt-0.5">
-                          ✗
-                        </span>
-                        <span>
-                          <strong>Automated decision-making</strong> that could
-                          harm individuals or communities
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-red-600 dark:text-red-400 mt-0.5">
-                          ✗
-                        </span>
-                        <span>
-                          <strong>Creating media content</strong> for external
-                          communications on matters of public interest
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-red-600 dark:text-red-400 mt-0.5">
-                          ✗
-                        </span>
-                        <span>
-                          <strong>Illegal or harmful activities</strong>
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-900/30 rounded-lg p-4 mb-4 border border-amber-200 dark:border-amber-800 shadow-sm">
-                    <h3 className="text-base font-bold text-gray-900 dark:text-white mb-3">
-                      Data Privacy
-                    </h3>
-
-                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-2 font-medium">
-                      You will NOT put into ai.msf.org:
-                    </p>
-
-                    <ul className="space-y-1.5 text-xs text-gray-700 dark:text-gray-300">
-                      <li className="flex items-start gap-2">
-                        <span className="text-amber-600 dark:text-amber-400 mt-0.5">
-                          !
-                        </span>
-                        <span>
-                          <strong>Personal data</strong> (names, phone numbers,
-                          CVs, testimonies; anything which can directly or
-                          indirectly identify an individual)
-                        </span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-amber-600 dark:text-amber-400 mt-0.5">
-                          !
-                        </span>
-                        <span>
-                          <strong>Highly sensitive data</strong> (data that can
-                          be used to harm individuals, communities, MSF or its
-                          staff)
-                        </span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="text-xs text-gray-600 dark:text-gray-400 italic bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700 shadow-sm">
-                    <p className="mb-2">
-                      These terms can be modified at any time by MSF. We'll
-                      provide notice to you if we change them.
-                    </p>
-                    <p>
-                      Your continued use of ai.msf.org constitutes acceptance of
-                      any changes.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Contact Support Card */}
-        <div className="mt-8 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/30 rounded-xl border border-blue-200 dark:border-blue-800 p-6 shadow-md">
-          <div className="flex items-start gap-4">
-            <div className="p-3 bg-blue-600 dark:bg-blue-700 rounded-xl shadow-sm">
-              <IconMail className="text-white" size={28} />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                Need More Help?
-              </h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300 mb-5">
-                Our support team is here to assist you with any questions or
-                concerns.
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <a
-                  href={`mailto:${supportEmail}`}
-                  className="flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-sm transition-all group"
-                >
-                  <IconMail
-                    className="text-blue-600 dark:text-blue-400 flex-shrink-0"
-                    size={20}
-                  />
-                  <div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mb-0.5">
-                      General Support
-                    </div>
-                    <div className="text-sm text-gray-900 dark:text-white font-semibold">
-                      {supportEmail}
-                    </div>
-                  </div>
-                </a>
-                {!isUSUser && (
-                  <a
-                    href="mailto:ai.team@amsterdam.msf.org"
-                    className="flex items-center gap-3 px-4 py-3.5 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600 hover:shadow-sm transition-all group"
-                  >
-                    <IconShield
-                      className="text-green-600 dark:text-green-400 flex-shrink-0"
-                      size={20}
-                    />
-                    <div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400 mb-0.5">
-                        Privacy & Incidents
-                      </div>
-                      <div className="text-sm text-gray-900 dark:text-white font-semibold">
-                        ai.team@amsterdam.msf.org
-                      </div>
-                    </div>
-                  </a>
-                )}
-              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <style jsx global>{`
-        .scrollbar-hide::-webkit-scrollbar {
-          display: none;
-        }
+      {/* Main Content */}
+      <div className="max-w-6xl mx-auto px-4 md:px-8 py-8">
+        {/* Section Tiles */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          {/* FAQ Tile */}
+          <button
+            onClick={() => toggleSection('faq')}
+            className={`group relative p-6 rounded-xl border-2 transition-all text-left ${
+              expandedSection === 'faq'
+                ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20 shadow-lg scale-[1.02]'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className={`p-3 rounded-lg transition-colors ${
+                  expandedSection === 'faq'
+                    ? 'bg-blue-600 dark:bg-blue-700'
+                    : 'bg-blue-100 dark:bg-blue-900/30 group-hover:bg-blue-200 dark:group-hover:bg-blue-900/50'
+                }`}
+              >
+                <IconHelp
+                  size={24}
+                  className={
+                    expandedSection === 'faq'
+                      ? 'text-white'
+                      : 'text-blue-600 dark:text-blue-400'
+                  }
+                />
+              </div>
+              <IconChevronRight
+                size={20}
+                className={`text-gray-400 transition-transform ${
+                  expandedSection === 'faq' ? 'rotate-90' : ''
+                }`}
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Frequently Asked Questions
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              Find answers to common questions about using the AI Assistant
+            </p>
+            <div className="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
+              <span>{faqs.length} articles</span>
+            </div>
+          </button>
 
-        .scrollbar-hide {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
-      `}</style>
+          {/* Privacy Tile */}
+          <button
+            onClick={() => toggleSection('privacy')}
+            className={`group relative p-6 rounded-xl border-2 transition-all text-left ${
+              expandedSection === 'privacy'
+                ? 'border-green-500 dark:border-green-400 bg-green-50 dark:bg-green-900/20 shadow-lg scale-[1.02]'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-green-300 dark:hover:border-green-600 hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className={`p-3 rounded-lg transition-colors ${
+                  expandedSection === 'privacy'
+                    ? 'bg-green-600 dark:bg-green-700'
+                    : 'bg-green-100 dark:bg-green-900/30 group-hover:bg-green-200 dark:group-hover:bg-green-900/50'
+                }`}
+              >
+                <IconShield
+                  size={24}
+                  className={
+                    expandedSection === 'privacy'
+                      ? 'text-white'
+                      : 'text-green-600 dark:text-green-400'
+                  }
+                />
+              </div>
+              <IconChevronRight
+                size={20}
+                className={`text-gray-400 transition-transform ${
+                  expandedSection === 'privacy' ? 'rotate-90' : ''
+                }`}
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Privacy & Data
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              Learn how your data is stored and protected
+            </p>
+            <div className="flex items-center gap-2 text-xs font-medium text-green-600 dark:text-green-400">
+              <span>{privacyItems.length} topics</span>
+            </div>
+          </button>
+
+          {/* Contact & Support Tile */}
+          <button
+            onClick={() => toggleSection('contact')}
+            className={`group relative p-6 rounded-xl border-2 transition-all text-left ${
+              expandedSection === 'contact'
+                ? 'border-purple-500 dark:border-purple-400 bg-purple-50 dark:bg-purple-900/20 shadow-lg scale-[1.02]'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-purple-300 dark:hover:border-purple-600 hover:shadow-md'
+            }`}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div
+                className={`p-3 rounded-lg transition-colors ${
+                  expandedSection === 'contact'
+                    ? 'bg-purple-600 dark:bg-purple-700'
+                    : 'bg-purple-100 dark:bg-purple-900/30 group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50'
+                }`}
+              >
+                <IconMail
+                  size={24}
+                  className={
+                    expandedSection === 'contact'
+                      ? 'text-white'
+                      : 'text-purple-600 dark:text-purple-400'
+                  }
+                />
+              </div>
+              <IconChevronRight
+                size={20}
+                className={`text-gray-400 transition-transform ${
+                  expandedSection === 'contact' ? 'rotate-90' : ''
+                }`}
+              />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+              Contact & Resources
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+              Get in touch with our team and access helpful links
+            </p>
+            <div className="flex items-center gap-2 text-xs font-medium text-purple-600 dark:text-purple-400">
+              <span>Support available</span>
+            </div>
+          </button>
+        </div>
+
+        {/* Expanded Content */}
+        {expandedSection && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-lg p-6 animate-fade-in">
+            {/* Search Bar (for FAQ and Privacy) */}
+            {(expandedSection === 'faq' || expandedSection === 'privacy') && (
+              <div className="mb-6">
+                <div className="relative">
+                  <IconSearch
+                    size={20}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+                  />
+                  <input
+                    type="text"
+                    placeholder={`Search ${expandedSection === 'faq' ? 'FAQs' : 'privacy topics'}...`}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* FAQ Content */}
+            {expandedSection === 'faq' && (
+              <div className="space-y-3">
+                {filteredFaqs.length === 0 ? (
+                  <div className="text-center py-12">
+                    <IconSearch
+                      size={48}
+                      className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                    />
+                    <p className="text-gray-600 dark:text-gray-400 font-medium">
+                      No FAQs match your search
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                      Try a different search term
+                    </p>
+                  </div>
+                ) : (
+                  filteredFaqs.map((faq, index) => {
+                    const isOpen = openFaqItems.has(index);
+                    return (
+                      <div
+                        key={index}
+                        className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+                      >
+                        <button
+                          onClick={() => toggleFaqItem(index)}
+                          className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
+                        >
+                          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {faq.question}
+                          </span>
+                          <IconChevronDown
+                            size={20}
+                            className={`text-gray-400 flex-shrink-0 transition-transform ${
+                              isOpen ? 'rotate-180' : ''
+                            }`}
+                          />
+                        </button>
+                        {isOpen && (
+                          <div className="px-4 pb-4 pt-2 text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                            {renderTextWithLinks(faq.answer)}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
+            )}
+
+            {/* Privacy Content */}
+            {expandedSection === 'privacy' && (
+              <div className="space-y-4">
+                {/* Privacy Notice Banner */}
+                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-900/30 rounded-lg border border-green-200 dark:border-green-800 p-5 mb-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-green-600 dark:bg-green-700 rounded-lg">
+                      <IconShield className="text-white" size={24} />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">
+                        Your Privacy Matters
+                      </h3>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
+                        All conversations are stored locally on your device.
+                        Data processing happens within MSF systems using Azure
+                        infrastructure.
+                      </p>
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600 dark:text-green-400 font-bold">
+                            ✓
+                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            Local storage only
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-green-600 dark:text-green-400 font-bold">
+                            ✓
+                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            MSF-controlled
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600 dark:text-red-400 font-bold">
+                            ✗
+                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            No personal data
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-red-600 dark:text-red-400 font-bold">
+                            ✗
+                          </span>
+                          <span className="text-gray-700 dark:text-gray-300">
+                            No sensitive ops
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Privacy Items */}
+                <div className="space-y-3">
+                  {filteredPrivacy.length === 0 ? (
+                    <div className="text-center py-12">
+                      <IconSearch
+                        size={48}
+                        className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
+                      />
+                      <p className="text-gray-600 dark:text-gray-400 font-medium">
+                        No privacy topics match your search
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                        Try a different search term
+                      </p>
+                    </div>
+                  ) : (
+                    filteredPrivacy.map((item) => {
+                      const isOpen = openPrivacyItems.has(item.id);
+                      return (
+                        <div
+                          key={item.id}
+                          className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-green-300 dark:hover:border-green-600 transition-colors"
+                        >
+                          <button
+                            onClick={() => togglePrivacyItem(item.id)}
+                            className="w-full flex items-center justify-between gap-3 p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-900/50 transition-colors"
+                          >
+                            <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                              {item.question}
+                            </span>
+                            <IconChevronDown
+                              size={20}
+                              className={`text-gray-400 flex-shrink-0 transition-transform ${
+                                isOpen ? 'rotate-180' : ''
+                              }`}
+                            />
+                          </button>
+                          {isOpen && (
+                            <div className="px-4 pb-4 pt-2 text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                              {renderTextWithLinks(item.answer)}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Contact Content */}
+            {expandedSection === 'contact' && (
+              <div className="space-y-6">
+                {/* Contact Support */}
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 bg-purple-600 dark:bg-purple-700 rounded-lg flex-shrink-0">
+                      <IconMail size={24} className="text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
+                        Contact Support
+                      </h3>
+                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                        Our team is here to help with questions, feedback, and
+                        technical issues.
+                      </p>
+                      <a
+                        href={`mailto:${supportEmail}`}
+                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 dark:bg-purple-700 text-white rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors font-medium text-sm"
+                      >
+                        <IconMail size={16} />
+                        {supportEmail}
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Helpful Resources */}
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                    Helpful Resources
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Project Portal */}
+                    <a
+                      href="https://msfintl.sharepoint.com/sites/PamojaPortal_AIAccelerator"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-teal-500 dark:hover:border-teal-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-10 h-10">
+                          <Image
+                            src="/sharepoint-logo.svg"
+                            alt="SharePoint"
+                            width={40}
+                            height={40}
+                            className="w-full h-full"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                              AI Accelerator Portal
+                            </h4>
+                            <IconExternalLink
+                              size={14}
+                              className="text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors flex-shrink-0"
+                            />
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                            Documentation, project updates, and training
+                            materials
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+
+                    {/* GitHub Repository */}
+                    <a
+                      href="https://github.com/Medecins-Sans-Frontieres-Collaborate/ai-assistant-app"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-gray-900 dark:hover:border-gray-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                          <FaGithub
+                            size={40}
+                            className="text-gray-900 dark:text-white"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                              Open Source Repository
+                            </h4>
+                            <IconExternalLink
+                              size={14}
+                              className="text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors flex-shrink-0"
+                            />
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                            View the codebase, report issues, and contribute on
+                            GitHub
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+
+                    {/* Terms of Use (if not US user) */}
+                    {!isUSUser && (
+                      <Link
+                        href="https://msf.org/terms-of-use"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
+                      >
+                        <div className="flex items-start gap-4">
+                          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg group-hover:bg-gray-200 dark:group-hover:bg-gray-700 transition-colors flex-shrink-0">
+                            <IconFileText
+                              size={24}
+                              className="text-gray-600 dark:text-gray-400"
+                            />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                                Terms of Use
+                              </h4>
+                              <IconExternalLink
+                                size={14}
+                                className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors flex-shrink-0"
+                              />
+                            </div>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                              MSF website terms and conditions
+                            </p>
+                          </div>
+                        </div>
+                      </Link>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

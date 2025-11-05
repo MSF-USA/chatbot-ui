@@ -135,7 +135,10 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
       if (conflicts.length > 0) {
         const conflictNames = conflicts.map((c) => c.imported.name).join(', ');
         const proceed = confirm(
-          `${conflicts.length} tone(s) with similar names already exist: ${conflictNames}. Import anyway?`,
+          t('tones_conflict_message', {
+            count: conflicts.length,
+            names: conflictNames,
+          }),
         );
         if (!proceed) {
           e.target.value = '';
@@ -144,10 +147,16 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
       }
 
       newTones.forEach((tone) => addTone(tone));
-      alert(`Successfully imported ${newTones.length} tone(s)`);
+      alert(
+        t('tones_import_success', {
+          count: newTones.length,
+        }),
+      );
     } catch (error) {
       alert(
-        `Failed to import: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        t('import_error', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }),
       );
     }
 
@@ -245,7 +254,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-lg"
                   >
                     <IconSparkles size={18} />
-                    Create Your First Tone
+                    {t('Create Your First Tone')}
                   </button>
                 </div>
               </div>
@@ -273,7 +282,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search tones..."
+                  placeholder={t('Search tones...')}
                   className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -290,14 +299,14 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                 <button
                   onClick={handleImportClick}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
-                  title="Import"
+                  title={t('Import')}
                 >
                   <IconUpload size={18} />
                 </button>
                 <button
                   onClick={handleExportAll}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
-                  title="Export all"
+                  title={t('Export all')}
                 >
                   <IconFileExport size={18} />
                 </button>
@@ -311,7 +320,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                     )
                   }
                   className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
-                  title="New folder"
+                  title={t('New folder')}
                 >
                   <IconFolderPlus size={18} />
                 </button>
@@ -320,7 +329,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                   className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                 >
                   <IconPlus size={16} />
-                  New
+                  {t('New')}
                 </button>
               </div>
             </div>
@@ -535,7 +544,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
               {/* Voice Rules */}
               <div className="mb-6">
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                  Voice Guidelines
+                  {t('Voice Guidelines')}
                 </h3>
                 <div className="p-4 bg-gray-50 dark:bg-[#2a2a2a] rounded-lg border border-gray-200 dark:border-gray-700">
                   <pre className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-sans">
@@ -548,7 +557,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
               {selectedTone.examples && (
                 <div className="mb-6">
                   <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                    Examples
+                    {t('Examples')}
                   </h3>
                   <div className="p-4 bg-gray-50 dark:bg-[#2a2a2a] rounded-lg border border-gray-200 dark:border-gray-700">
                     <pre className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-sans">
@@ -571,13 +580,13 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
                   }}
                   className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
                 >
-                  Edit
+                  {t('Edit')}
                 </button>
                 <button
                   onClick={(e) => handleDeleteTone(selectedTone.id, e)}
                   className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                 >
-                  Delete
+                  {t('Delete')}
                 </button>
               </div>
             </div>
@@ -585,7 +594,7 @@ export function TonesTab({ tones, folders, onClose }: TonesTabProps) {
             <div className="flex-1 flex items-center justify-center text-gray-400 dark:text-gray-600">
               <div className="text-center">
                 <IconVolume size={48} className="mx-auto mb-3 opacity-50" />
-                <p>Select a tone to view details</p>
+                <p>{t('Select a tone to view details')}</p>
               </div>
             </div>
           )}

@@ -46,6 +46,8 @@ export default function SignInPage() {
         EmailSignin: 'Unable to send sign-in email.',
         CredentialsSignin: 'Sign in failed. Please check your credentials.',
         SessionRequired: 'Please sign in to access this page.',
+        SessionExpired:
+          'Your session has expired. Please sign in again to continue.',
       };
       setTimeout(() => {
         setError(

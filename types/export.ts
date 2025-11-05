@@ -2,6 +2,7 @@ import { Conversation, Message } from './chat';
 import { FolderInterface } from './folder';
 import { OpenAIModel } from './openai';
 import { Prompt } from './prompt';
+import { Tone } from './tone';
 
 import { CustomAgent } from '@/client/stores/settingsStore';
 
@@ -52,11 +53,23 @@ export interface ExportFormatV5 {
   history: Conversation[];
   folders: FolderInterface[];
   prompts: Prompt[];
+  tones: Tone[];
   customAgents: CustomAgent[];
 }
 
 export interface CustomAgentExport {
   version: 1;
   customAgents: CustomAgent[];
+  exportedAt: string;
+}
+
+export interface TeamTemplateExport {
+  version: 1;
+  name: string;
+  description?: string;
+  prompts: Prompt[];
+  tones: Tone[];
+  folders: FolderInterface[];
+  customAgents?: CustomAgent[];
   exportedAt: string;
 }

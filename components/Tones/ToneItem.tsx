@@ -7,6 +7,7 @@ import {
   IconEdit,
   IconFolder,
   IconTrash,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import { FC, useEffect, useRef, useState } from 'react';
 
@@ -82,16 +83,26 @@ export const ToneItem: FC<ToneItemProps> = ({
             {tone.description}
           </div>
         )}
-        {tone.tags && tone.tags.length > 0 && (
+        {(tone.templateName || (tone.tags && tone.tags.length > 0)) && (
           <div className="flex gap-1 mt-1 flex-wrap">
-            {tone.tags.slice(0, 3).map((tag) => (
+            {tone.templateName && (
               <span
-                key={tag}
-                className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-medium"
+                title={`From template: ${tone.templateName}`}
               >
-                {tag}
+                <IconUsersGroup size={12} />
+                {tone.templateName}
               </span>
-            ))}
+            )}
+            {tone.tags &&
+              tone.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
+                >
+                  {tag}
+                </span>
+              ))}
           </div>
         )}
       </div>

@@ -22,7 +22,7 @@ export const SignInSignOut = () => {
   return (
     <button
       type="button"
-      className="w-[120px] flex items-center justify-center px-4 py-2 border rounded-lg shadow border-neutral-500 text-neutral-900 hover:bg-neutral-100 focus:outline-none dark:border-neutral-800 dark:border-opacity-50 dark:bg-white dark:text-black dark:hover:bg-neutral-300 text-sm"
+      className="w-[120px] flex items-center justify-center px-4 py-2 border rounded-lg shadow border-red-300 dark:border-red-800 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 focus:outline-none transition-colors text-sm font-medium"
       onClick={() => signOut()}
     >
       <IconLogin size={18} className="mr-2" />

@@ -8,6 +8,7 @@ import { Toaster } from 'react-hot-toast';
 
 import { Session } from 'next-auth';
 
+import { SessionErrorHandler } from '@/components/Auth/SessionErrorHandler';
 import { UIPreferencesProvider } from '@/components/Providers/UIPreferencesProvider';
 import TermsAcceptanceProvider from '@/components/Terms/TermsAcceptanceProvider';
 
@@ -52,6 +53,7 @@ export function AppProviders({
       refetchInterval={5 * 60 * 1000}
       refetchOnWindowFocus={true}
     >
+      <SessionErrorHandler />
       <QueryClientProvider client={queryClient}>
         <UIPreferencesProvider>
           {launchDarklyClientId ? (

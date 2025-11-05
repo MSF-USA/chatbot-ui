@@ -24,15 +24,8 @@ const authMiddleware = auth((req) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  const response = handleI18nRouting(req as unknown as NextRequest);
-
-  // If i18n is trying to redirect (307/308), just continue instead
-  // This prevents redirect loops when localePrefix is 'never'
-  if (response && (response.status === 307 || response.status === 308)) {
-    return NextResponse.next();
-  }
-
-  return response;
+  // Let i18n middleware handle routing and redirects properly
+  return handleI18nRouting(req as unknown as NextRequest);
 });
 
 export default function proxy(req: NextRequest) {

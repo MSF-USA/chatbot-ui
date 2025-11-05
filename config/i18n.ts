@@ -1,5 +1,6 @@
-import { getSupportedLocales } from '@/lib/utils/app/locales';
 import { defineRouting } from 'next-intl/routing';
+
+import { getSupportedLocales } from '@/lib/utils/app/locales';
 
 export const locales = getSupportedLocales();
 export const defaultLocale = 'en';
@@ -7,6 +8,8 @@ export const defaultLocale = 'en';
 export const routing = defineRouting({
   locales,
   defaultLocale,
-  // Don't use locale prefixes in the URL (/en/..., /es/...)
+  // Never show locale prefixes in the URL - handled via cookies
+  // The [locale] folder structure is still needed for routing,
+  // but next-intl rewrites URLs to hide the locale from users
   localePrefix: 'never',
 });

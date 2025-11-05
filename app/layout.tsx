@@ -63,7 +63,15 @@ export default function RootLayout({
 
                   // Apply theme before hydration to prevent flash
                   var theme = parsed?.theme || 'dark';
-                  if (theme === 'dark') {
+
+                  // Store the actual theme preference in a data attribute
+                  document.documentElement.setAttribute('data-theme-preference', theme);
+
+                  // Determine if dark mode should be applied
+                  var isDark = theme === 'dark' ||
+                    (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+                  if (isDark) {
                     document.documentElement.classList.add('dark');
                   } else {
                     document.documentElement.classList.remove('dark');
@@ -79,6 +87,7 @@ export default function RootLayout({
                 } catch (e) {
                   // Fallback to defaults on error
                   document.documentElement.classList.add('dark');
+                  document.documentElement.setAttribute('data-theme-preference', 'dark');
                   document.documentElement.setAttribute('data-sidebar-state', 'collapsed');
                   document.documentElement.setAttribute('data-promptbar-state', 'expanded');
                 }

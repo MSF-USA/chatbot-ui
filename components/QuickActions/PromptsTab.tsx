@@ -58,12 +58,14 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
     description: string;
     content: string;
     toneId: string | null;
+    tags: string[];
   }>({
     initialState: {
       name: '',
       description: '',
       content: '',
       toneId: null,
+      tags: [],
     },
   });
 
@@ -134,7 +136,10 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
       if (conflicts.length > 0) {
         const conflictNames = conflicts.map((c) => c.imported.name).join(', ');
         const proceed = confirm(
-          `${conflicts.length} prompt(s) with similar names already exist: ${conflictNames}. Import anyway?`,
+          t('prompts_conflict_message', {
+            count: conflicts.length,
+            names: conflictNames,
+          }),
         );
         if (!proceed) {
           e.target.value = '';
@@ -143,10 +148,16 @@ export function PromptsTab({ prompts, folders, onClose }: PromptsTabProps) {
       }
 
       newPrompts.forEach((prompt) => addPrompt(prompt));
-      alert(`Successfully imported ${newPrompts.length} prompt(s)`);
+      alert(
+        t('prompts_import_success', {
+          count: newPrompts.length,
+        }),
+      );
     } catch (error) {
       alert(
-        `Failed to import: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        t('import_error', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        }),
       );
     }
 
@@ -225,7 +236,7 @@ Include:
                     className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium shadow-lg"
                   >
                     <IconSparkles size={18} />
-                    Create Your First Prompt
+                    {t('Create Your First Prompt')}
                   </button>
                 </div>
               </div>
@@ -253,7 +264,7 @@ Include:
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search prompts..."
+                  placeholder={t('Search prompts...')}
                   className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -270,14 +281,14 @@ Include:
                 <button
                   onClick={handleImportClick}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
-                  title="Import"
+                  title={t('Import')}
                 >
                   <IconUpload size={18} />
                 </button>
                 <button
                   onClick={handleExportAll}
                   className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
-                  title="Export all"
+                  title={t('Export all')}
                 >
                   <IconFileExport size={18} />
                 </button>
@@ -291,7 +302,7 @@ Include:
                     )
                   }
                   className="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg"
-                  title="New folder"
+                  title={t('New folder')}
                 >
                   <IconFolderPlus size={18} />
                 </button>
@@ -300,7 +311,7 @@ Include:
                   className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
                 >
                   <IconPlus size={16} />
-                  New
+                  {t('New')}
                 </button>
               </div>
             </div>
@@ -416,6 +427,7 @@ Include:
                                 description: prompt.description || '',
                                 content: prompt.content,
                                 toneId: prompt.toneId || null,
+                                tags: prompt.tags || [],
                               });
                             }}
                             onDelete={(e) => handleDeletePrompt(prompt.id, e)}
@@ -465,6 +477,7 @@ Include:
                           description: prompt.description || '',
                           content: prompt.content,
                           toneId: prompt.toneId || null,
+                          tags: prompt.tags || [],
                         });
                       }}
                       onDelete={(e) => handleDeletePrompt(prompt.id, e)}
@@ -500,7 +513,7 @@ Include:
 
               <div>
                 <h3 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-                  Content
+                  {t('Content')}
                 </h3>
                 <div className="p-4 bg-gray-50 dark:bg-[#2a2a2a] rounded-lg border border-gray-200 dark:border-gray-700">
                   <pre className="text-sm text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
@@ -517,17 +530,18 @@ Include:
                       description: selectedPrompt.description || '',
                       content: selectedPrompt.content,
                       toneId: selectedPrompt.toneId || null,
+                      tags: selectedPrompt.tags || [],
                     });
                   }}
                   className="px-4 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
                 >
-                  Edit
+                  {t('Edit')}
                 </button>
                 <button
                   onClick={(e) => handleDeletePrompt(selectedPrompt.id, e)}
                   className="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg"
                 >
-                  Delete
+                  {t('Delete')}
                 </button>
               </div>
             </div>
@@ -535,7 +549,7 @@ Include:
             <div className="flex-1 flex items-center justify-center text-gray-400 dark:text-gray-600">
               <div className="text-center">
                 <IconSearch size={48} className="mx-auto mb-3 opacity-50" />
-                <p>Select a prompt to view details</p>
+                <p>{t('Select a prompt to view details')}</p>
               </div>
             </div>
           )}
@@ -550,6 +564,7 @@ Include:
             description: string,
             content: string,
             toneId?: string | null,
+            tags?: string[],
           ) => {
             if (promptModal.itemId) {
               // Update existing prompt
@@ -558,6 +573,7 @@ Include:
                 description,
                 content,
                 toneId,
+                tags,
               });
             } else {
               // Create new prompt
@@ -571,6 +587,7 @@ Include:
                 model: defaultModel,
                 folderId: null,
                 toneId,
+                tags,
               };
               addPrompt(newPrompt);
             }
@@ -580,6 +597,7 @@ Include:
           initialDescription={promptModal.formData.description}
           initialContent={promptModal.formData.content}
           initialToneId={promptModal.formData.toneId}
+          initialTags={promptModal.formData.tags}
         />
       </div>
     );
@@ -598,6 +616,7 @@ Include:
           description: string,
           content: string,
           toneId?: string | null,
+          tags?: string[],
         ) => {
           if (promptModal.itemId) {
             // Update existing prompt
@@ -606,6 +625,7 @@ Include:
               description,
               content,
               toneId,
+              tags,
             });
           } else {
             // Create new prompt
@@ -619,6 +639,7 @@ Include:
               model: defaultModel,
               folderId: null,
               toneId,
+              tags,
             };
             addPrompt(newPrompt);
           }
@@ -628,6 +649,7 @@ Include:
         initialDescription={promptModal.formData.description}
         initialContent={promptModal.formData.content}
         initialToneId={promptModal.formData.toneId}
+        initialTags={promptModal.formData.tags}
       />
     </>
   );

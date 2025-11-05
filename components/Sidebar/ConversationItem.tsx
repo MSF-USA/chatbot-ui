@@ -5,6 +5,7 @@ import {
   IconChevronDown,
   IconChevronRight,
   IconDots,
+  IconDownload,
   IconEdit,
   IconFolder,
   IconTrash,
@@ -20,6 +21,7 @@ interface ConversationItemProps {
   handleDeleteConversation: (id: string, e: React.MouseEvent) => void;
   handleMoveToFolder: (conversationId: string, folderId: string | null) => void;
   handleRenameConversation: (id: string, currentName: string) => void;
+  handleExportConversation: (conversation: Conversation) => void;
   folders: any[];
   t: any;
 }
@@ -31,6 +33,7 @@ export function ConversationItem({
   handleDeleteConversation,
   handleMoveToFolder,
   handleRenameConversation,
+  handleExportConversation,
   folders,
   t,
 }: ConversationItemProps) {
@@ -217,6 +220,22 @@ export function ConversationItem({
                   </div>
                 )}
               </div>
+
+              {/* Export option */}
+              <button
+                className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowMenu(false);
+                  handleExportConversation(conversation);
+                }}
+              >
+                <IconDownload
+                  size={14}
+                  className="text-neutral-600 dark:text-neutral-400"
+                />
+                {t('Export')}
+              </button>
 
               {/* Delete option */}
               <button

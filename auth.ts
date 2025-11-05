@@ -129,8 +129,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   trustHost: true,
   session: {
     strategy: 'jwt',
-    maxAge: 12 * 60 * 60, // 12 hours (reduced from default 30 days)
-    updateAge: 60 * 60, // Update session every 1 hour
+    maxAge: 30 * 24 * 60 * 60, // 30 days - allows refresh token to keep session alive
+    updateAge: 24 * 60 * 60, // Update session every 24 hours
   },
   providers: [
     MicrosoftEntraID({
@@ -208,9 +208,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
       }
 
-      // For JWT strategy, we don't need to refresh tokens here
-      // They'll be refreshed on-demand when needed
-      return token;
+      // Return token as-is if not expired (check with 5 minute buffer)
+      if (Date.now() < token.accessTokenExpires - 5 * 60 * 1000) {
+        return token;
+      }
+
+      // Token is expired or about to expire - refresh it
+      console.log('Access token expired or expiring soon, refreshing...');
+      return refreshAccessToken(token);
     },
     async session({ session, token }): Promise<Session> {
       // Pass through full user profile from JWT

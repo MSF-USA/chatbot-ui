@@ -10,6 +10,7 @@ import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useCreateReducer } from '@/client/hooks/ui/useCreateReducer';
 import { useUI } from '@/client/hooks/ui/useUI';
 
+import { exportData, importData } from '@/lib/utils/app/export/importExport';
 import { getSettings, saveSettings } from '@/lib/utils/app/settings';
 import { getStorageUsage } from '@/lib/utils/app/storage/storageMonitor';
 
@@ -18,13 +19,11 @@ import { Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
 import { MobileSettingsHeader } from './MobileSettingsHeader';
-import { AccountSection } from './Sections/AccountSection';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
 import { GeneralSection } from './Sections/GeneralSection';
 import { HelpSupportSection } from './Sections/HelpSupportSection';
 import { MobileAppSection } from './Sections/MobileAppSection';
-import { SettingsFooter } from './SettingsFooter';
 import { SettingsSidebar } from './SettingsSidebar';
 import { SettingsSection } from './types';
 
@@ -209,26 +208,26 @@ export function SettingDialog() {
   };
 
   const handleExportData = () => {
-    const dataToExport = {
-      version: 4,
-      history: conversations,
-      prompts: prompts,
-    };
-
-    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
-      type: 'application/json',
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `chatbot_data_${new Date().toISOString()}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
+    // Use the proper exportData function which includes all data:
+    // conversations, folders, prompts, tones, and custom agents
+    exportData();
   };
 
   const handleImportConversations = (data: any) => {
-    // TODO: Implement import functionality with Zustand
-    console.log('Import not yet implemented for Zustand', data);
+    try {
+      // Use the proper importData function which handles all data types:
+      // conversations, folders, prompts, tones, and custom agents
+      const result = importData(data);
+
+      // The importData function automatically updates localStorage
+      // Force a page reload to ensure all stores pick up the new data
+      window.location.reload();
+    } catch (error) {
+      console.error('Failed to import data:', error);
+      alert(
+        `Failed to import data: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
+    }
   };
 
   const checkStorage = useCallback(() => {
@@ -257,10 +256,10 @@ export function SettingDialog() {
 
           <div
             ref={modalRef}
-            className="dark:border-netural-400 inline-block transform rounded-lg border border-gray-300 bg-white text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 w-full md:max-w-[700px] lg:max-w-[800px] xl:max-w-[900px] sm:align-middle animate-modal-in"
+            className="dark:border-netural-400 inline-block transform rounded-lg border border-gray-300 bg-white text-left align-bottom shadow-xl transition-all dark:bg-[#171717] sm:my-8 w-full md:max-w-[800px] lg:max-w-[900px] xl:max-w-[1000px] sm:align-middle animate-modal-in"
             role="dialog"
           >
-            <div className="flex flex-col md:flex-row h-[500px] md:h-[600px]">
+            <div className="flex flex-col md:flex-row h-[550px] md:h-[700px]">
               {/* Navigation sidebar - hidden on mobile */}
               <SettingsSidebar
                 activeSection={activeSection}
@@ -290,6 +289,7 @@ export function SettingDialog() {
                     user={session?.user}
                     onSave={handleSave}
                     onClose={() => setIsSettingsOpen(false)}
+                    prefetchedProfile={fullProfile}
                   />
                 )}
 
@@ -315,13 +315,6 @@ export function SettingDialog() {
                   />
                 )}
 
-                {activeSection === SettingsSection.ACCOUNT && (
-                  <AccountSection
-                    user={session?.user}
-                    prefetchedProfile={fullProfile}
-                  />
-                )}
-
                 {activeSection === SettingsSection.MOBILE_APP && (
                   <MobileAppSection />
                 )}
@@ -331,14 +324,6 @@ export function SettingDialog() {
                 )}
               </div>
             </div>
-
-            {/* Footer */}
-            <SettingsFooter
-              version={version}
-              build={build}
-              env={env}
-              userEmail={session?.user?.mail}
-            />
           </div>
         </div>
       </div>

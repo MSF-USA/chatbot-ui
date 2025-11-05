@@ -22,7 +22,7 @@
     },
     {
       "question": "Can I use the MSF AI Assistant on my phone?",
-      "answer": "Yes! The MSF AI Assistant works as a Progressive Web App (PWA). On mobile:\n1. Open ai.msf.org in your browser\n2. Tap 'Add to Home Screen' (iOS Safari) or 'Install' (Android Chrome)\n3. The app will work like a native app with offline support and faster loading\n\nYou can also install it on desktop browsers for a better experience."
+      "answer": "Yes! The MSF AI Assistant works as a Progressive Web App (PWA). On mobile:\n1. Open ai.msf.org in your browser and sign in\n2. Navigate to Settings > Mobile App for detailed instructions\n3. Tap 'Add to Home Screen' (iOS Safari) or 'Install' (Android Chrome)\n4. The app will work like a native app with offline support and faster loading\n\nImportant: Install after signing in to preserve your authentication. You can also install it on desktop browsers for a better experience."
     },
     {
       "question": "Where is my conversation data stored?",
@@ -47,6 +47,14 @@
     {
       "question": "Where should I go with questions or feedback?",
       "answer": "Contact support:\n- US users: ai@newyork.msf.org\n- Non-US users: ai.team@amsterdam.msf.org\n\nYou can also access the Help Center anytime from Settings > Help & Support."
+    },
+    {
+      "question": "Where can I learn more about the AI Assistant project?",
+      "answer": "Visit the AI Accelerator portal on Pamoja for project documentation, updates, and resources:\nhttps://msfintl.sharepoint.com/sites/PamojaPortal_AIAccelerator\n\nThis portal includes information about the project roadmap, training materials, and ways to get involved."
+    },
+    {
+      "question": "Is the MSF AI Assistant open source?",
+      "answer": "Yes! The MSF AI Assistant is open source and available on GitHub. You can view the codebase, contribute improvements, or learn from the implementation:\nhttps://github.com/Medecins-Sans-Frontieres-Collaborate/ai-assistant-app\n\nThe project is built with Next.js, React, and integrates with multiple AI providers. Contributions and feedback are welcome!"
     }
   ]
 }

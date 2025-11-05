@@ -116,6 +116,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         description:
           agent.description || `Custom agent based on ${baseModel.name}`,
         modelType: 'agent' as const,
+        isCustomAgent: true,
       };
     });
   }, [customAgents]);
@@ -130,7 +131,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const modelConfig = selectedModel
     ? OpenAIModels[selectedModel.id as OpenAIModelID]
     : null;
-  const isCustomAgent = selectedModel?.id?.startsWith('custom-');
+  const isCustomAgent = selectedModel?.isCustomAgent === true;
   const isGpt5 = selectedModel?.id === OpenAIModelID.GPT_5;
   const agentAvailable = modelConfig?.agentId !== undefined;
 
@@ -146,9 +147,24 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       : currentSearchMode;
 
   // Automatically fix invalid state when conversation loads with AGENT mode on non-agent model
+  // Also ensure custom agents always have search mode OFF
   useEffect(() => {
+    if (!selectedConversation) return;
+
+    // Custom agents should always have search mode OFF
+    if (isCustomAgent && currentSearchMode !== SearchMode.OFF) {
+      console.log(
+        '[ModelSelect] Auto-fixing custom agent to have search mode OFF',
+      );
+      updateConversation(selectedConversation.id, {
+        defaultSearchMode: SearchMode.OFF,
+      });
+      return;
+    }
+
+    // Fix invalid AGENT mode on non-agent models
     if (
-      selectedConversation &&
+      !isCustomAgent &&
       currentSearchMode === SearchMode.AGENT &&
       !agentAvailable
     ) {
@@ -163,6 +179,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     selectedConversation?.id,
     currentSearchMode,
     agentAvailable,
+    isCustomAgent,
     selectedConversation,
     updateConversation,
   ]);
@@ -199,27 +216,35 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       model: model,
     };
 
-    // Check if the new model supports agents
-    const newModelConfig = OpenAIModels[model.id as OpenAIModelID];
-    const newModelHasAgent = newModelConfig?.agentId !== undefined;
-
-    // If switching to a model without agent support and current mode is AGENT, reset to INTELLIGENT
-    if (
-      !newModelHasAgent &&
-      selectedConversation.defaultSearchMode === SearchMode.AGENT
-    ) {
-      updates.defaultSearchMode = SearchMode.INTELLIGENT;
+    // Custom agents always have search mode OFF
+    if (model.isCustomAgent) {
+      updates.defaultSearchMode = SearchMode.OFF;
       console.log(
-        `[ModelSelect] Resetting AGENT mode to INTELLIGENT for non-agent model`,
+        `[ModelSelect] Setting search mode to OFF for custom agent: ${model.id}`,
       );
-    }
+    } else {
+      // Check if the new model supports agents
+      const newModelConfig = OpenAIModels[model.id as OpenAIModelID];
+      const newModelHasAgent = newModelConfig?.agentId !== undefined;
 
-    // Only set defaultSearchMode if it's not already set on the conversation
-    if (selectedConversation.defaultSearchMode === undefined) {
-      updates.defaultSearchMode = SearchMode.INTELLIGENT;
-      console.log(
-        `[ModelSelect] Initializing defaultSearchMode to INTELLIGENT`,
-      );
+      // If switching to a model without agent support and current mode is AGENT, reset to INTELLIGENT
+      if (
+        !newModelHasAgent &&
+        selectedConversation.defaultSearchMode === SearchMode.AGENT
+      ) {
+        updates.defaultSearchMode = SearchMode.INTELLIGENT;
+        console.log(
+          `[ModelSelect] Resetting AGENT mode to INTELLIGENT for non-agent model`,
+        );
+      }
+
+      // Only set defaultSearchMode if it's not already set on the conversation
+      if (selectedConversation.defaultSearchMode === undefined) {
+        updates.defaultSearchMode = SearchMode.INTELLIGENT;
+        console.log(
+          `[ModelSelect] Initializing defaultSearchMode to INTELLIGENT`,
+        );
+      }
     }
 
     console.log(
@@ -311,8 +336,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             id: 'agents',
             label: 'Agents',
             icon: <AzureAIIcon className="w-5 h-5" />,
-            badge: customAgents.length,
-            width: customAgents.length > 0 ? '145px' : '115px',
+            width: '115px',
           },
         ]}
         activeTab={activeTab}
@@ -915,6 +939,15 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                 onEdit={handleEditAgent}
                 onDelete={handleDeleteAgent}
                 onImport={handleImportAgents}
+                onSelect={(agent) => {
+                  const agentModel = customAgentModels.find(
+                    (m) => m.id === `custom-${agent.id}`,
+                  );
+                  if (agentModel) {
+                    handleModelSelect(agentModel);
+                  }
+                }}
+                selectedModelId={selectedModelId}
               />
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">

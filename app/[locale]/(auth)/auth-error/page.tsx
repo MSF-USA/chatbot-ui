@@ -3,9 +3,9 @@
 import { IconAlertCircle, IconMail } from '@tabler/icons-react';
 
 import Image from 'next/image';
-import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
+import { Link } from '@/lib/navigation';
 import packageJson from '@/package.json';
 import logo from '@/public/logo_light.png';
 

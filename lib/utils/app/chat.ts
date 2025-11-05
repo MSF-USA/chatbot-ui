@@ -117,7 +117,8 @@ export const isFileConversation = (messages: Message[]): boolean => {
 };
 
 /**
- * Checks if a model ID represents a custom agent
+ * Checks if a model ID represents a custom agent.
+ * Prefer using model.isCustomAgent when the full model object is available.
  */
 export const isCustomAgentModel = (modelId: string | undefined): boolean => {
   if (!modelId) return false;

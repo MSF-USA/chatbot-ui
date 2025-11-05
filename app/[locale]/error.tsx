@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { ErrorDisplay } from '@/components/ErrorBoundary/ErrorDisplay';
+
 export default function Error({
   error,
   reset,
@@ -10,25 +12,17 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error(error);
+    console.error('Page error:', error);
   }, [error]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-white dark:bg-[#212121]">
-      <div className="rounded-lg bg-white dark:bg-[#171717] p-8 shadow-lg border border-gray-200 dark:border-gray-700 max-w-md mx-4">
-        <h2 className="mb-4 text-2xl font-bold text-red-600 dark:text-red-400">
-          Something went wrong!
-        </h2>
-        <p className="mb-6 text-gray-700 dark:text-gray-300">
-          {error.message || 'An unexpected error occurred'}
-        </p>
-        <button
-          onClick={reset}
-          className="w-full rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
-        >
-          Try again
-        </button>
-      </div>
-    </div>
+    <ErrorDisplay
+      error={error}
+      title="Something went wrong"
+      description="An unexpected error occurred"
+      onRetry={reset}
+      retryLabel="Try again"
+      showSupportInfo={true}
+    />
   );
 }

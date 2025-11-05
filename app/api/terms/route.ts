@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+
 import crypto from 'crypto';
 
 // English terms
@@ -81,27 +82,77 @@ En utilisant ai.msf.org, vous acceptez les conditions générales suivantes :
 
 ## Utilisation responsable
 
-Vous acceptez d’utiliser ai.msf.org de manière responsable. Vous:
+Vous acceptez d'utiliser ai.msf.org de manière responsable. Vous:
 
-• Utilisez le MSF AI Assistant conformément aux politiques applicables de vos entités MSF en matière de ICT (Information and Communication Technology), d'IA et autres. 
+• Utilisez le MSF AI Assistant conformément aux politiques applicables de vos entités MSF en matière de ICT (Information and Communication Technology), d'IA et autres.
 
 • Vérifiez toujours l'exactitude, l'inclusivité et le biais des réponses. ai.msf.org utilise une technologie expérimentale – elle ne garantit pas que les résultats seront exacts. De plus, la technologie n'a pas été entraînée à l'aide de données représentatives des patients et des communautés de MSF. Les résultats de l'IA peuvent perpétuer les préjugés, la discrimination et les stéréotypes. Vous êtes responsable de la vérification des réponses produites.
 
-• Vérifiez que les réponses n'enfreignent pas les droits de propriété intellectuelle de tiers, en particulier pour tout ce qui est utilisé publiquement. Comme d'autres systèmes d'IA générative, la technologie sous-jacente à ai.msf.org a été entraînée sur la propriété intellectuelle de tiers sans autorisations ni licences claires. 
+• Vérifiez que les réponses n'enfreignent pas les droits de propriété intellectuelle de tiers, en particulier pour tout ce qui est utilisé publiquement. Comme d'autres systèmes d'IA générative, la technologie sous-jacente à ai.msf.org a été entraînée sur la propriété intellectuelle de tiers sans autorisations ni licences claires.
 
 • Soyez transparent sur votre utilisation de l'IA. Dites aux gens si quelque chose que vous utilisez a été produit par l'IA et marquez les réponses comme générées par l'IA.
 
 ## Vie privée
 
-L'utilisation de ai.msf.org est un environnement plus sûr et plus sécurisé que l'utilisation d'autres outils d'IA externes gratuits, qui offrent très peu de garanties de confidentialité. Cependant, sachez qu'il y a toujours des limites et des mises en garde - consultez la politique d'utilisation pour plus de détails. 
+L'utilisation de ai.msf.org est un environnement plus sûr et plus sécurisé que l'utilisation d'autres outils d'IA externes gratuits, qui offrent très peu de garanties de confidentialité. Cependant, sachez qu'il y a toujours des limites et des mises en garde - consultez la politique d'utilisation pour plus de détails.
 
-À l'instar des autres produits Microsoft, vos informations de connexion seront traitées par MSF comme indiqué dans la politique de confidentialité de votre entité MSF. 
+À l'instar des autres produits Microsoft, vos informations de connexion seront traitées par MSF comme indiqué dans la politique de confidentialité de votre entité MSF.
 
 ## Infractions/commentaires
 
 Si vous avez des préoccupations ou si vous souhaitez signaler un incident, veuillez contacter votre responsable de la sécurité informatique, votre DPO ou votre responsible ICT (Information and Communication Technology) local. Pour OCA, vous pouvez [signaler une violation de données ou de sécurité via Elixir](https://msfintl.sharepoint.com/sites/oca-dept-control-gdpr/SitePages/Report-data-breach-incident.aspx?web=1).
 
 Ces conditions peuvent être modifiées à tout moment par MSF – nous vous en informerons si nous les modifions – votre utilisation continue de ai.msf.org constitue une acceptation de toute modification.
+`;
+
+// Spanish terms
+const termsTextEs: string = `# TÉRMINOS DE USO
+
+Al utilizar ai.msf.org, acepta los siguientes términos y condiciones:
+
+**NO utilizará ai.msf.org (MSF AI Assistant) para los siguientes propósitos:**
+
+• **Atención médica** (para proporcionar atención médica o responder preguntas relacionadas con la salud)
+
+• **Vigilancia o monitoreo de pacientes o comunidades de MSF o cualquier otro individuo**
+
+• **Decisiones relacionadas con el empleo** (para asistir o reemplazar decisiones relacionadas con el empleo)
+
+• **Toma de decisiones automatizada** (para tomar decisiones que podrían ser perjudiciales para un individuo o comunidad)
+
+• **Creación de contenido mediático para comunicaciones externas sobre asuntos de interés público**
+
+• **Actividades ilegales o dañinas**
+
+**NO ingresará en ai.msf.org (MSF AI Assistant) ni cargará la siguiente información:**
+
+• **Datos personales** (nombres, números de teléfono, CVs, testimonios, cualquier cosa que pueda identificar directa o indirectamente a un individuo, esto incluye una combinación de datos que juntos pueden hacer posible identificar a un individuo)
+
+• **Datos altamente sensibles** (datos que pueden ser utilizados intencional o no intencionalmente para dañar a individuos, comunidades, MSF o su personal; determinar la sensibilidad de los datos requiere incorporar análisis de contexto, por ejemplo, ubicaciones de proyectos sensibles o grupos en riesgo, incidentes de seguridad y otros detalles operacionales)
+
+## Uso responsable
+
+Acepta utilizar ai.msf.org de manera responsable. Usted:
+
+• Utilizará el MSF AI Assistant de acuerdo con las políticas aplicables de TIC (Tecnología de la Información y Comunicación), IA y otras políticas de sus entidades MSF.
+
+• Siempre verificará la precisión, inclusividad y sesgo de los resultados. ai.msf.org utiliza tecnología experimental; no garantiza que los resultados sean precisos. Además, la tecnología no ha sido entrenada utilizando datos representativos de los pacientes y comunidades de MSF. Los resultados de IA pueden perpetuar sesgos, discriminación y estereotipos. Usted es responsable de verificar los resultados producidos.
+
+• Verificará que los resultados no infrinjan los derechos de propiedad intelectual de terceros, especialmente para cualquier cosa utilizada públicamente. Como otros sistemas de IA generativa, la tecnología detrás de ai.msf.org ha sido entrenada con propiedad intelectual de terceros sin permisos y licencias claras.
+
+• Será transparente sobre su uso de IA. Informe a las personas si algo que utiliza ha sido producido por IA y marque los resultados como generados por IA.
+
+## Privacidad
+
+El uso de ai.msf.org es un entorno más seguro y protegido que el uso de otras herramientas de IA externas gratuitas, que ofrecen muy pocas garantías de privacidad. Sin embargo, tenga en cuenta que todavía hay límites y advertencias; consulte la política de uso para más detalles.
+
+Al igual que otros productos de Microsoft, su información de inicio de sesión será procesada por MSF como se describe en la política de privacidad de su entidad MSF.
+
+## Infracciones/comentarios
+
+Si tiene alguna preocupación o desea notificar un incidente, comuníquese con su responsable de seguridad informática, su DPO o su responsable de TIC (Tecnología de la Información y Comunicación) local. Para OCA, puede [reportar una violación de datos o seguridad a través de Elixir](https://msfintl.sharepoint.com/sites/oca-dept-control-gdpr/SitePages/Report-data-breach-incident.aspx?web=1).
+
+Estos términos pueden ser modificados en cualquier momento por MSF; le proporcionaremos un aviso si los cambiamos; su uso continuo de ai.msf.org constituye la aceptación de cualquier cambio.
 `;
 
 const calculateHash = (content: string): string => {
@@ -130,16 +181,20 @@ const termsData: TermsData = {
     localized: {
       en: {
         content: termsTextEn,
-        hash: calculateHash(termsTextEn)
+        hash: calculateHash(termsTextEn),
       },
       fr: {
         content: termsTextFr,
-        hash: calculateHash(termsTextFr)
-      }
+        hash: calculateHash(termsTextFr),
+      },
+      es: {
+        content: termsTextEs,
+        hash: calculateHash(termsTextEs),
+      },
     },
     version: '1.0.1',
-    required: true
-  }
+    required: true,
+  },
 };
 
 export async function GET() {
@@ -147,6 +202,9 @@ export async function GET() {
     return NextResponse.json(termsData);
   } catch (error) {
     console.error('Error fetching terms:', error);
-    return NextResponse.json({ error: 'Failed to fetch terms' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Failed to fetch terms' },
+      { status: 500 },
+    );
   }
 }

@@ -49,14 +49,10 @@ export function CustomizationsModal({
           <div className="flex items-center justify-between mb-3 md:mb-4">
             <div className="flex-1 min-w-0 mr-4">
               <h3 className="text-lg md:text-xl font-semibold text-gray-900 dark:text-white truncate">
-                Quick Actions
+                {t('Quick Actions')}
               </h3>
               <p className="hidden sm:block text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Type{' '}
-                <span className="font-mono bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded">
-                  /
-                </span>{' '}
-                in chat to access your prompts
+                {t('Type / in chat to access your prompts')}
               </p>
             </div>
             <button

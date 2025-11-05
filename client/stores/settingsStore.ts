@@ -14,6 +14,11 @@ export interface CustomAgent {
   baseModelId: OpenAIModelID;
   description?: string;
   createdAt: string;
+
+  // Team template metadata (optional)
+  templateId?: string; // Unique ID of the template this was imported from
+  templateName?: string; // Human-readable name of the template
+  importedAt?: string; // ISO timestamp when imported from template
 }
 
 interface SettingsStore {

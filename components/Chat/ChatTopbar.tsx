@@ -27,6 +27,7 @@ interface Props {
   selectedModelName: string | undefined;
   selectedModelProvider?: string;
   selectedModelId?: string;
+  isCustomAgent?: boolean;
   showSettings: boolean;
   onSettingsClick: () => void;
   onModelClick?: () => void;
@@ -42,6 +43,7 @@ export const ChatTopbar = ({
   selectedModelName,
   selectedModelProvider,
   selectedModelId,
+  isCustomAgent = false,
   showSettings,
   onSettingsClick,
   onModelClick,
@@ -54,9 +56,6 @@ export const ChatTopbar = ({
   const t = useTranslations();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-
-  // Check if this is a custom agent
-  const isCustomAgent = selectedModelId?.startsWith('custom-');
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -92,7 +91,7 @@ export const ChatTopbar = ({
   };
 
   return (
-    <div className="sticky top-0 z-20 border-b border-neutral-300 py-2 text-sm text-neutral-500 dark:border-none dark:text-neutral-200 transition-all duration-300 ease-in-out bg-white dark:bg-[#212121]">
+    <div className="sticky top-0 z-20 py-2 text-sm text-neutral-500 dark:text-neutral-200 transition-all duration-300 ease-in-out bg-white dark:bg-[#212121]">
       <div className="mr-8 px-2 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 transition-all duration-300">
         {/* Bot/Model Info */}
         <div className="flex items-center min-w-0 justify-center sm:justify-start">
@@ -122,19 +121,23 @@ export const ChatTopbar = ({
               >
                 {selectedModelName || 'Select Model'}
               </span>
-              {searchMode === SearchMode.INTELLIGENT && (
+              {!isCustomAgent && searchMode === SearchMode.INTELLIGENT && (
                 <IconWorld
                   size={14}
                   className="ml-1.5 text-blue-600 dark:text-blue-400"
                   title="Privacy-Focused Search"
                 />
               )}
-              {(searchMode === SearchMode.AGENT || isCustomAgent) && (
+              {!isCustomAgent && searchMode === SearchMode.AGENT && (
                 <AzureAIIcon
                   className="ml-1.5 w-3.5 h-3.5 text-blue-600 dark:text-blue-400"
-                  aria-label={
-                    isCustomAgent ? 'Custom Agent' : 'Azure AI Agent Mode'
-                  }
+                  aria-label="Azure AI Agent Mode"
+                />
+              )}
+              {isCustomAgent && (
+                <AzureAIIcon
+                  className="ml-1.5 w-3.5 h-3.5 text-blue-600 dark:text-blue-400"
+                  aria-label="Custom Agent"
                 />
               )}
               <IconChevronDown

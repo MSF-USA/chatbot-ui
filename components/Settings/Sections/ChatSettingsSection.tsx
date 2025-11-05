@@ -1,4 +1,5 @@
-import { FC } from 'react';
+import { IconChevronDown, IconMessage } from '@tabler/icons-react';
+import { FC, useState } from 'react';
 
 import { Session } from 'next-auth';
 import { useTranslations } from 'next-intl';
@@ -29,12 +30,17 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
   onClose,
 }) => {
   const t = useTranslations();
+  const [isAdvancedExpanded, setIsAdvancedExpanded] = useState(false);
 
   return (
     <div className="p-4">
-      <h2 className="hidden md:block text-xl font-bold mb-6 text-black dark:text-white">
-        {t('Chat Settings')}
-      </h2>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-6">
+        <IconMessage size={24} className="text-black dark:text-white" />
+        <h2 className="text-xl font-bold text-black dark:text-white">
+          {t('Chat Settings')}
+        </h2>
+      </div>
 
       <div className="space-y-8">
         {/* Model Response Settings Section */}
@@ -62,37 +68,45 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
           </div>
         </div>
 
-        {/* Advanced Settings Section */}
-        {state.advancedMode && (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <div className="flex items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
-              <h3 className="text-md font-bold text-black dark:text-white">
-                {t('Advanced Settings')}
-              </h3>
-              <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-800 dark:text-yellow-100 rounded-full">
-                {t('Advanced')}
-              </span>
-            </div>
+        {/* Advanced Settings Section - Collapsible */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+          <button
+            onClick={() => setIsAdvancedExpanded(!isAdvancedExpanded)}
+            className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+          >
+            <h3 className="text-sm font-bold text-black dark:text-white">
+              {t('Advanced Settings')}
+            </h3>
+            <IconChevronDown
+              size={18}
+              className={`text-gray-500 dark:text-gray-400 transition-transform ${
+                isAdvancedExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
 
-            {/* System Prompt */}
-            <div>
-              <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-                {t('Default System Prompt') + '*'}
+          {isAdvancedExpanded && (
+            <div className="px-4 pb-3 border-t border-gray-200 dark:border-gray-700">
+              {/* System Prompt */}
+              <div className="mt-3">
+                <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
+                  {t('Default System Prompt') + '*'}
+                </div>
+                <SystemPrompt
+                  prompts={homeState.prompts}
+                  systemPrompt={state.systemPrompt}
+                  user={user}
+                  onChangePrompt={(prompt) =>
+                    dispatch({
+                      field: 'systemPrompt',
+                      value: prompt,
+                    })
+                  }
+                />
               </div>
-              <SystemPrompt
-                prompts={homeState.prompts}
-                systemPrompt={state.systemPrompt}
-                user={user}
-                onChangePrompt={(prompt) =>
-                  dispatch({
-                    field: 'systemPrompt',
-                    value: prompt,
-                  })
-                }
-              />
             </div>
-          </div>
-        )}
+          )}
+        </div>
 
         <hr className="border-gray-300 dark:border-neutral-700" />
         <span className="block text-[12px] text-black/50 dark:text-white/50">

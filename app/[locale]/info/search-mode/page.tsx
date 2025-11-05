@@ -10,10 +10,10 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
-import Link from 'next/link';
-
 import { AzureAIIcon } from '@/components/Icons/providers';
 import { MermaidDiagram } from '@/components/UI/MermaidDiagram';
+
+import { Link } from '@/lib/navigation';
 
 export default function SearchModeInfoPage() {
   const [noSearchDiagramOpen, setNoSearchDiagramOpen] = useState(false);

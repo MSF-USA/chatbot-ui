@@ -7,6 +7,7 @@ import {
   IconInfoCircle,
   IconLoader2,
   IconSparkles,
+  IconTag,
   IconX,
 } from '@tabler/icons-react';
 import { FC, useEffect, useState } from 'react';
@@ -37,11 +38,13 @@ interface PromptDashboardProps {
     description: string,
     content: string,
     toneId?: string | null,
+    tags?: string[],
   ) => void;
   initialName?: string;
   initialDescription?: string;
   initialContent?: string;
   initialToneId?: string | null;
+  initialTags?: string[];
 }
 
 export const PromptDashboard: FC<PromptDashboardProps> = ({
@@ -52,6 +55,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
   initialDescription = '',
   initialContent = '',
   initialToneId = null,
+  initialTags = [],
 }) => {
   const t = useTranslations();
   const { tones } = useTones();
@@ -61,11 +65,14 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
   const [selectedToneId, setSelectedToneId] = useState<string | null>(
     initialToneId,
   );
+  const [tags, setTags] = useState<string[]>(initialTags);
+  const [tagInput, setTagInput] = useState('');
   const [revisionGoal, setRevisionGoal] = useState('');
   const [isRevising, setIsRevising] = useState(false);
   const [revisionResult, setRevisionResult] =
     useState<PromptRevisionResponse | null>(null);
   const [showVariableHelp, setShowVariableHelp] = useState(false);
+  const [showTagHelp, setShowTagHelp] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [fileContents, setFileContents] = useState<string>('');
   const [fileStatuses, setFileStatuses] = useState<{
@@ -79,15 +86,25 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
       setDescription(initialDescription);
       setContent(initialContent);
       setSelectedToneId(initialToneId);
+      setTags(initialTags);
+      setTagInput('');
       setRevisionGoal('');
       setRevisionResult(null);
       setShowVariableHelp(false);
+      setShowTagHelp(false);
     }
-  }, [isOpen, initialName, initialDescription, initialContent, initialToneId]);
+  }, [
+    isOpen,
+    initialName,
+    initialDescription,
+    initialContent,
+    initialToneId,
+    initialTags,
+  ]);
 
   const handleSave = () => {
     if (!name.trim()) return;
-    onSave(name.trim(), description.trim(), content, selectedToneId);
+    onSave(name.trim(), description.trim(), content, selectedToneId, tags);
     handleClose();
   };
 
@@ -96,9 +113,12 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
     setDescription('');
     setContent('');
     setSelectedToneId(null);
+    setTags([]);
+    setTagInput('');
     setRevisionGoal('');
     setRevisionResult(null);
     setShowVariableHelp(false);
+    setShowTagHelp(false);
     setUploadedFiles([]);
     setFileContents('');
     onClose();
@@ -179,6 +199,25 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
       );
     } finally {
       setIsRevising(false);
+    }
+  };
+
+  const handleAddTag = () => {
+    const trimmedTag = tagInput.trim().toLowerCase();
+    if (trimmedTag && !tags.includes(trimmedTag)) {
+      setTags([...tags, trimmedTag]);
+      setTagInput('');
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleTagInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddTag();
     }
   };
 
@@ -289,6 +328,85 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           <p className="mt-2 text-xs text-gray-600 dark:text-gray-400">
             {tones.find((t) => t.id === selectedToneId)?.description}
           </p>
+        )}
+      </div>
+
+      {/* Tags */}
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-sm font-semibold text-gray-900 dark:text-white">
+            {t('Tags')}{' '}
+            <span className="text-xs text-gray-500 dark:text-gray-400 font-normal">
+              ({t('Optional')})
+            </span>
+          </label>
+          <button
+            onClick={() => setShowTagHelp(!showTagHelp)}
+            className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+          >
+            <IconInfoCircle size={14} />
+            <span>Tag Help</span>
+          </button>
+        </div>
+
+        {showTagHelp && (
+          <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg text-xs text-gray-700 dark:text-gray-300">
+            <p className="mb-2">
+              <strong>Use tags</strong> to categorize and quickly find your
+              prompts. Examples:
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
+                email
+              </span>
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
+                marketing
+              </span>
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
+                technical
+              </span>
+              <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
+                customer-support
+              </span>
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-2 mb-2">
+          <input
+            type="text"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={handleTagInputKeyDown}
+            placeholder="Add a tag..."
+            className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500"
+          />
+          <button
+            onClick={handleAddTag}
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+          >
+            Add
+          </button>
+        </div>
+
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-md text-sm"
+              >
+                <IconTag size={14} />
+                {tag}
+                <button
+                  onClick={() => handleRemoveTag(tag)}
+                  className="ml-1 hover:text-blue-900 dark:hover:text-blue-100"
+                >
+                  <IconX size={14} />
+                </button>
+              </span>
+            ))}
+          </div>
         )}
       </div>
 

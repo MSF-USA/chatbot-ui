@@ -14,6 +14,7 @@ export function useSettings() {
     defaultModelId: store.defaultModelId,
     models: store.models,
     prompts: store.prompts,
+    customAgents: store.customAgents,
 
     // Actions
     setTemperature: store.setTemperature,
@@ -23,6 +24,9 @@ export function useSettings() {
     addPrompt: store.addPrompt,
     updatePrompt: store.updatePrompt,
     deletePrompt: store.deletePrompt,
+    addCustomAgent: store.addCustomAgent,
+    updateCustomAgent: store.updateCustomAgent,
+    deleteCustomAgent: store.deleteCustomAgent,
     resetSettings: store.resetSettings,
   };
 }

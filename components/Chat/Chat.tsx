@@ -490,6 +490,7 @@ export function Chat({
             models.find((m) => m.id === defaultModelId)?.provider
           }
           selectedModelId={selectedConversation?.model?.id}
+          isCustomAgent={selectedConversation?.model?.isCustomAgent}
           showSettings={isSettingsOpen}
           onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
           onModelClick={() => setIsModelSelectOpen(true)}

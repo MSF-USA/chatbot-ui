@@ -9,6 +9,7 @@ export interface OpenAIModel {
   description?: string;
   isDisabled?: boolean;
   isAgent?: boolean;
+  isCustomAgent?: boolean; // User-created custom agent (vs built-in agent)
   agentId?: string; // Azure AI Agent ID for this model
   provider?: 'openai' | 'deepseek' | 'xai' | 'meta'; // Model provider
   knowledgeCutoff?: string; // Knowledge cutoff date

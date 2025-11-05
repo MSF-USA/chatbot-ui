@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-type ThemeMode = 'light' | 'dark';
+type ThemeMode = 'light' | 'dark' | 'system';
 
 interface UIPreferences {
   showChatbar: boolean;
@@ -51,14 +51,14 @@ export function UIPreferencesProvider({
     const promptbarState = document.documentElement.getAttribute(
       'data-promptbar-state',
     );
-    const themeState = document.documentElement.classList.contains('dark')
-      ? 'dark'
-      : 'light';
+    const themePreference = document.documentElement.getAttribute(
+      'data-theme-preference',
+    ) as ThemeMode | null;
 
     return {
       showChatbar: sidebarState === 'expanded',
       showPromptbar: promptbarState !== 'collapsed', // default to true
-      theme: themeState,
+      theme: themePreference || 'dark',
     };
   });
 
@@ -75,7 +75,19 @@ export function UIPreferencesProvider({
 
     // Update DOM for theme
     if (updates.theme !== undefined) {
-      if (updates.theme === 'dark') {
+      // Store the theme preference
+      document.documentElement.setAttribute(
+        'data-theme-preference',
+        updates.theme,
+      );
+
+      // Apply dark mode based on theme preference
+      const isDark =
+        updates.theme === 'dark' ||
+        (updates.theme === 'system' &&
+          window.matchMedia('(prefers-color-scheme: dark)').matches);
+
+      if (isDark) {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');

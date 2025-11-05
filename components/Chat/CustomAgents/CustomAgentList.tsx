@@ -27,6 +27,8 @@ interface CustomAgentListProps {
   onEdit: (agent: CustomAgent) => void;
   onDelete: (agentId: string) => void;
   onImport: (agents: CustomAgent[]) => void;
+  onSelect: (agent: CustomAgent) => void;
+  selectedModelId?: string;
 }
 
 export const CustomAgentList: FC<CustomAgentListProps> = ({
@@ -34,6 +36,8 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
   onEdit,
   onDelete,
   onImport,
+  onSelect,
+  selectedModelId,
 }) => {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -225,11 +229,17 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
         {agents.map((agent) => {
           const baseModel = OpenAIModels[agent.baseModelId];
           const isDeleting = deleteConfirm === agent.id;
+          const isSelected = selectedModelId === `custom-${agent.id}`;
 
           return (
             <div
               key={agent.id}
-              className="p-4 bg-white dark:bg-[#2A2A2A] border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-300 dark:hover:border-blue-600 transition-colors"
+              onClick={() => onSelect(agent)}
+              className={`p-4 bg-white dark:bg-[#2A2A2A] border-2 rounded-lg transition-colors cursor-pointer ${
+                isSelected
+                  ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/10'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600'
+              }`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -237,10 +247,6 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
                     <h4 className="font-medium text-gray-900 dark:text-white">
                       {agent.name}
                     </h4>
-                    <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">
-                      <IconRobot size={12} className="mr-1" />
-                      Custom
-                    </span>
                   </div>
 
                   {agent.description && (
@@ -265,21 +271,30 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
 
                 <div className="flex items-center gap-2 ml-4">
                   <button
-                    onClick={() => handleExportSingle(agent)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleExportSingle(agent);
+                    }}
                     className="p-2 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
                     title="Export agent"
                   >
                     <IconDownload size={18} />
                   </button>
                   <button
-                    onClick={() => onEdit(agent)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onEdit(agent);
+                    }}
                     className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
                     title="Edit agent"
                   >
                     <IconEdit size={18} />
                   </button>
                   <button
-                    onClick={() => handleDelete(agent.id)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(agent.id);
+                    }}
                     className={`p-2 transition-colors ${
                       isDeleting
                         ? 'text-red-600 dark:text-red-400'

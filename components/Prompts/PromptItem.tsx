@@ -7,6 +7,7 @@ import {
   IconEdit,
   IconFolder,
   IconTrash,
+  IconUsersGroup,
 } from '@tabler/icons-react';
 import { FC, useEffect, useRef, useState } from 'react';
 
@@ -80,6 +81,29 @@ export const PromptItem: FC<PromptItemProps> = ({
             className={`text-neutral-500 dark:text-neutral-400 truncate mt-0.5 ${isExpanded ? 'text-base' : 'text-sm'}`}
           >
             {prompt.description}
+          </div>
+        )}
+        {prompt.templateName && (
+          <div className="flex gap-1 mt-1 flex-wrap">
+            <span
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 font-medium"
+              title={`From template: ${prompt.templateName}`}
+            >
+              <IconUsersGroup size={12} />
+              {prompt.templateName}
+            </span>
+          </div>
+        )}
+        {prompt.tags && prompt.tags.length > 0 && (
+          <div className="flex gap-1 mt-1 flex-wrap">
+            {prompt.tags.map((tag, index) => (
+              <span
+                key={index}
+                className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300"
+              >
+                {tag}
+              </span>
+            ))}
           </div>
         )}
       </div>

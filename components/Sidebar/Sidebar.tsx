@@ -4,6 +4,8 @@ import {
   IconBolt,
   IconChevronDown,
   IconChevronRight,
+  IconDots,
+  IconDownload,
   IconEdit,
   IconFolder,
   IconFolderPlus,
@@ -13,9 +15,11 @@ import {
   IconSearch,
   IconSettings,
   IconTrash,
+  IconUpload,
 } from '@tabler/icons-react';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useRef, useState } from 'react';
+import toast from 'react-hot-toast';
 import { PiSidebarSimple } from 'react-icons/pi';
 
 import { useTranslations } from 'next-intl';
@@ -25,6 +29,17 @@ import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useFolderManagement } from '@/client/hooks/ui/useFolderManagement';
 import { useUI } from '@/client/hooks/ui/useUI';
+
+import {
+  exportConversation,
+  readConversationFile,
+  validateAndPrepareImport,
+} from '@/lib/utils/app/export/conversationExport';
+import {
+  exportFolder,
+  readFolderFile,
+  validateAndPrepareFolderImport,
+} from '@/lib/utils/app/export/folderExport';
 
 import { Conversation } from '@/types/chat';
 
@@ -67,6 +82,15 @@ export function Sidebar() {
   const [isCustomizationsOpen, setIsCustomizationsOpen] = useState(false);
   const [userPhotoUrl, setUserPhotoUrl] = useState<string | null>(null);
   const [isLoadingPhoto, setIsLoadingPhoto] = useState(true);
+  const [showNewChatMenu, setShowNewChatMenu] = useState(false);
+  const [showNewFolderMenu, setShowNewFolderMenu] = useState(false);
+  const [showFolderMenuId, setShowFolderMenuId] = useState<string | null>(null);
+
+  // File input ref for importing conversations
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const newChatMenuRef = useRef<HTMLDivElement>(null);
+  const newFolderMenuRef = useRef<HTMLDivElement>(null);
+  const folderMenuRef = useRef<HTMLDivElement>(null);
 
   // Determine which conversations to display (search results or all)
   const displayConversations = searchTerm
@@ -130,7 +154,66 @@ export function Sidebar() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Close new chat menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        newChatMenuRef.current &&
+        !newChatMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowNewChatMenu(false);
+      }
+    };
+
+    if (showNewChatMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showNewChatMenu]);
+
+  // Close new folder menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        newFolderMenuRef.current &&
+        !newFolderMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowNewFolderMenu(false);
+      }
+    };
+
+    if (showNewFolderMenu) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showNewFolderMenu]);
+
+  // Close folder menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        folderMenuRef.current &&
+        !folderMenuRef.current.contains(event.target as Node)
+      ) {
+        setShowFolderMenuId(null);
+      }
+    };
+
+    if (showFolderMenuId) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [showFolderMenuId]);
+
   const handleNewConversation = () => {
+    setShowNewChatMenu(false); // Close menu when creating new conversation
+
     // Get the most recently selected model from the current conversation if available,
     // otherwise fall back to the default model from settings
     const currentModel = selectedConversation?.model;
@@ -207,6 +290,109 @@ export function Sidebar() {
     updateConversation(conversationId, { name: newName });
   };
 
+  const handleExportConversation = (conversation: Conversation) => {
+    try {
+      exportConversation(conversation);
+      toast.success(t('Conversation exported successfully'));
+    } catch (error) {
+      console.error('Error exporting conversation:', error);
+      toast.error(t('Failed to export conversation'));
+    }
+  };
+
+  const handleExportFolder = (folderId: string, folderName: string) => {
+    try {
+      const folder = folders.find((f) => f.id === folderId);
+      if (!folder) {
+        toast.error(t('Folder not found'));
+        return;
+      }
+
+      exportFolder(folder, conversations);
+      const folderConversations = conversations.filter(
+        (c) => c.folderId === folderId,
+      );
+      toast.success(
+        t('Folder exported with {count} conversations', {
+          count: folderConversations.length,
+        }),
+      );
+    } catch (error) {
+      console.error('Error exporting folder:', error);
+      toast.error(t('Failed to export folder'));
+    }
+  };
+
+  const handleImportClick = () => {
+    setShowNewChatMenu(false); // Close menu when opening file picker
+    setShowNewFolderMenu(false); // Close folder menu when opening file picker
+    fileInputRef.current?.click();
+  };
+
+  const handleImportConversation = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      // Read the file content
+      const fileContent = await file.text();
+      const data = JSON.parse(fileContent);
+
+      // Determine the type of import based on the data structure
+      if (data.type === 'folder-with-conversations') {
+        // Handle folder import
+        const result = validateAndPrepareFolderImport(
+          data,
+          folders,
+          conversations,
+        );
+
+        if (!result.isValid || !result.folder || !result.conversations) {
+          toast.error(result.error || t('Invalid folder file'));
+          return;
+        }
+
+        // Add the folder first
+        addFolder(result.folder);
+
+        // Then add all conversations
+        result.conversations.forEach((conv) => {
+          addConversation(conv);
+        });
+
+        toast.success(
+          t('Folder imported with {count} conversations', {
+            count: result.conversations.length,
+          }),
+        );
+      } else if (data.type === 'single-conversation') {
+        // Handle single conversation import
+        const result = validateAndPrepareImport(data, conversations);
+
+        if (!result.isValid || !result.conversation) {
+          toast.error(result.error || t('Invalid conversation file'));
+          return;
+        }
+
+        // Add the conversation to the store
+        addConversation(result.conversation);
+        toast.success(t('Conversation imported successfully'));
+      } else {
+        toast.error(t('Unrecognized file format'));
+      }
+    } catch (error) {
+      console.error('Error importing:', error);
+      toast.error(t('Failed to import file'));
+    } finally {
+      // Reset the file input so the same file can be imported again
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   // Group conversations by folder using the hook's grouped items
   const conversationsByFolder = folderManager.groupedItems.byFolder;
   const conversationsWithoutFolder = folderManager.groupedItems.unfolderedItems;
@@ -262,23 +448,57 @@ export function Sidebar() {
         <div
           className={`border-b transition-all duration-300 ${showChatbar ? 'py-2 px-3 space-y-1 border-neutral-300 dark:border-neutral-700 overflow-hidden' : 'py-3 px-0 space-y-2 border-transparent overflow-visible'}`}
         >
-          <button
-            className={`group relative flex items-center w-full rounded-lg text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
-            onClick={handleNewConversation}
-            title={t('New chat')}
-          >
-            <IconPlus size={20} stroke={2} className="shrink-0" />
-            <span
-              className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
+          {/* New chat with dropdown menu */}
+          <div ref={newChatMenuRef} className="relative">
+            <div
+              className={`group flex items-center w-full rounded-lg text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
             >
-              {t('New chat')}
-            </span>
-            {!showChatbar && (
-              <span className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100] transition-opacity shadow-lg">
-                {t('New chat')}
-              </span>
+              <button
+                className={`flex items-center ${showChatbar ? 'gap-2 flex-1' : ''}`}
+                onClick={handleNewConversation}
+                title={t('New chat')}
+              >
+                <IconPlus size={20} stroke={2} className="shrink-0" />
+                <span
+                  className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
+                >
+                  {t('New chat')}
+                </span>
+              </button>
+              {showChatbar && (
+                <button
+                  className="p-1 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowNewChatMenu(!showNewChatMenu);
+                  }}
+                  title={t('Options')}
+                >
+                  <IconDots size={16} className="shrink-0" />
+                </button>
+              )}
+              {!showChatbar && (
+                <span className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100] transition-opacity shadow-lg">
+                  {t('New chat')}
+                </span>
+              )}
+            </div>
+
+            {/* Dropdown menu */}
+            {showNewChatMenu && showChatbar && (
+              <div className="absolute left-0 top-full mt-1 z-50 w-full rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
+                <div className="p-1">
+                  <button
+                    className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                    onClick={handleImportClick}
+                  >
+                    <IconUpload size={14} />
+                    {t('Import conversation')}
+                  </button>
+                </div>
+              </div>
             )}
-          </button>
+          </div>
 
           {/* Search button - visible in both states */}
           <button
@@ -323,18 +543,47 @@ export function Sidebar() {
             )}
           </button>
 
-          {/* New folder button - only in expanded state */}
+          {/* New folder button with dropdown menu - only in expanded state */}
           <div
             className={`transition-all duration-300 ${showChatbar ? 'opacity-100 max-h-[100px]' : 'opacity-0 max-h-0 overflow-hidden'}`}
           >
-            <button
-              className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800"
-              onClick={handleCreateFolder}
-              title={t('New folder')}
-            >
-              <IconFolderPlus size={16} />
-              <span className="whitespace-nowrap">{t('New folder')}</span>
-            </button>
+            <div ref={newFolderMenuRef} className="relative">
+              <div className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800">
+                <button
+                  className="flex items-center gap-2 flex-1"
+                  onClick={handleCreateFolder}
+                  title={t('New folder')}
+                >
+                  <IconFolderPlus size={16} />
+                  <span className="whitespace-nowrap">{t('New folder')}</span>
+                </button>
+                <button
+                  className="p-1 rounded hover:bg-neutral-200 dark:hover:bg-neutral-700"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowNewFolderMenu(!showNewFolderMenu);
+                  }}
+                  title={t('Options')}
+                >
+                  <IconDots size={16} className="shrink-0" />
+                </button>
+              </div>
+
+              {/* Dropdown menu */}
+              {showNewFolderMenu && (
+                <div className="absolute left-0 top-full mt-1 z-50 w-full rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
+                  <div className="p-1">
+                    <button
+                      className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                      onClick={handleImportClick}
+                    >
+                      <IconUpload size={14} />
+                      {t('Import folder')}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -427,43 +676,101 @@ export function Sidebar() {
                           {folder.name} ({folderConversations.length})
                         </span>
                       )}
-                      <div className="shrink-0 flex gap-1 opacity-0 group-hover:opacity-100">
+                      <div
+                        ref={
+                          showFolderMenuId === folder.id
+                            ? folderMenuRef
+                            : undefined
+                        }
+                        className={`relative shrink-0 transition-opacity ${showFolderMenuId === folder.id ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                      >
                         {folderManager.editingFolderId !== folder.id && (
                           <>
                             <button
                               className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                              onClick={() =>
-                                folderManager.handleRenameFolder(
-                                  folder.id,
-                                  folder.name,
-                                )
-                              }
-                              title={t('Rename')}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setShowFolderMenuId(
+                                  showFolderMenuId === folder.id
+                                    ? null
+                                    : folder.id,
+                                );
+                              }}
+                              title={t('Options')}
                             >
-                              <IconEdit
+                              <IconDots
                                 size={14}
                                 className="text-neutral-600 dark:text-neutral-400"
                               />
                             </button>
-                            <button
-                              className="rounded p-1 hover:bg-neutral-200 dark:hover:bg-neutral-700"
-                              onClick={(e) =>
-                                folderManager.handleDeleteFolder(
-                                  folder.id,
-                                  e,
-                                  deleteFolder,
-                                  t(
-                                    'Are you sure you want to delete this folder?',
-                                  ),
-                                )
-                              }
-                              title={t('Delete')}
-                            >
-                              <IconTrash
-                                size={14}
-                                className="text-neutral-600 dark:text-neutral-400"
-                              />
-                            </button>
+
+                            {/* Dropdown menu */}
+                            {showFolderMenuId === folder.id && (
+                              <div
+                                className="absolute right-0 top-full mt-1 z-50 w-48 rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <div className="p-1">
+                                  {/* Rename option */}
+                                  <button
+                                    className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowFolderMenuId(null);
+                                      folderManager.handleRenameFolder(
+                                        folder.id,
+                                        folder.name,
+                                      );
+                                    }}
+                                  >
+                                    <IconEdit
+                                      size={14}
+                                      className="text-neutral-600 dark:text-neutral-400"
+                                    />
+                                    {t('Rename')}
+                                  </button>
+
+                                  {/* Export option */}
+                                  <button
+                                    className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowFolderMenuId(null);
+                                      handleExportFolder(
+                                        folder.id,
+                                        folder.name,
+                                      );
+                                    }}
+                                  >
+                                    <IconDownload
+                                      size={14}
+                                      className="text-neutral-600 dark:text-neutral-400"
+                                    />
+                                    {t('Export folder')}
+                                  </button>
+
+                                  {/* Delete option */}
+                                  <button
+                                    className="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-neutral-100 dark:text-red-400 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowFolderMenuId(null);
+                                      folderManager.handleDeleteFolder(
+                                        folder.id,
+                                        e,
+                                        deleteFolder,
+                                        t(
+                                          'Are you sure you want to delete this folder?',
+                                        ),
+                                      );
+                                    }}
+                                  >
+                                    <IconTrash size={14} />
+                                    {t('Delete')}
+                                  </button>
+                                </div>
+                              </div>
+                            )}
                           </>
                         )}
                       </div>
@@ -481,6 +788,7 @@ export function Sidebar() {
                             handleDeleteConversation={handleDeleteConversation}
                             handleMoveToFolder={handleMoveToFolder}
                             handleRenameConversation={handleRenameConversation}
+                            handleExportConversation={handleExportConversation}
                             folders={folders}
                             t={t}
                           />
@@ -514,6 +822,7 @@ export function Sidebar() {
                       handleDeleteConversation={handleDeleteConversation}
                       handleMoveToFolder={handleMoveToFolder}
                       handleRenameConversation={handleRenameConversation}
+                      handleExportConversation={handleExportConversation}
                       folders={folders}
                       t={t}
                     />
@@ -599,6 +908,15 @@ export function Sidebar() {
       <CustomizationsModal
         isOpen={isCustomizationsOpen}
         onClose={() => setIsCustomizationsOpen(false)}
+      />
+
+      {/* Hidden file input for importing conversations */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".json"
+        onChange={handleImportConversation}
+        style={{ display: 'none' }}
       />
     </>
   );

@@ -10,9 +10,9 @@ import {
   IconWorld,
 } from '@tabler/icons-react';
 
-import Link from 'next/link';
-
 import { AzureAIIcon } from '@/components/Icons/providers/AzureAIIcon';
+
+import { Link } from '@/lib/navigation';
 
 export default function WelcomeV2Page() {
   return (
@@ -415,15 +415,22 @@ export default function WelcomeV2Page() {
           </div>
 
           <div className="space-y-4 text-sm">
+            <div className="mb-3 p-2.5 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-md">
+              <p className="text-xs text-blue-800 dark:text-blue-200 font-semibold">
+                💡 Tip: Install after signing in to preserve your authentication
+                and have the best experience.
+              </p>
+            </div>
             <div>
               <p className="font-medium text-gray-900 dark:text-white mb-2">
                 How to install:
               </p>
               <ol className="space-y-1.5 ml-4 text-gray-600 dark:text-gray-400">
-                <li>1. Open on mobile device</li>
-                <li>2. Tap browser menu (⋮ or ⚙️)</li>
-                <li>3. Look for "Add to Home Screen" or "Install App"</li>
-                <li>4. Follow prompts to install</li>
+                <li>1. Sign in to your account</li>
+                <li>2. Open Settings → Mobile App for detailed instructions</li>
+                <li>3. On mobile: Tap browser menu (⋮ or ⚙️)</li>
+                <li>4. Look for "Add to Home Screen" or "Install App"</li>
+                <li>5. Follow prompts to install</li>
               </ol>
             </div>
 

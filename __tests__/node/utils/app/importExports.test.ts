@@ -111,6 +111,7 @@ describe('cleanData Functions', () => {
         ],
         folders: [],
         prompts: [],
+        tones: [],
         customAgents: [],
       });
     });
@@ -174,6 +175,7 @@ describe('cleanData Functions', () => {
           },
         ],
         prompts: [],
+        tones: [],
         customAgents: [],
       });
     });
@@ -263,6 +265,7 @@ describe('cleanData Functions', () => {
             folderId: null,
           },
         ],
+        tones: [],
         customAgents: [],
       });
     });
