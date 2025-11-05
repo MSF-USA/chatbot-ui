@@ -23,6 +23,7 @@ import { createPortal } from 'react-dom';
 
 import { useTranslations } from 'next-intl';
 
+import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
 import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
@@ -88,6 +89,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   setSelectedToneId,
   tones,
 }) => {
+  const { selectedConversation } = useConversations();
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
@@ -149,12 +151,14 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   // Helper function to toggle search mode (always sets to ALWAYS when enabled)
   const toggleSearchMode = useCallback(() => {
-    if (searchMode === SearchMode.OFF) {
-      setSearchMode(SearchMode.ALWAYS);
+    if (searchMode === SearchMode.ALWAYS) {
+      // If ALWAYS is active, turn it off (return to conversation's default or OFF)
+      setSearchMode(selectedConversation?.defaultSearchMode ?? SearchMode.OFF);
     } else {
-      setSearchMode(SearchMode.OFF);
+      // If OFF or INTELLIGENT, enable ALWAYS mode
+      setSearchMode(SearchMode.ALWAYS);
     }
-  }, [searchMode, setSearchMode]);
+  }, [searchMode, setSearchMode, selectedConversation?.defaultSearchMode]);
 
   // Define menu items - memoized to avoid ref access issues during render
   const menuItems: MenuItem[] = useMemo(
@@ -162,7 +166,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       {
         id: 'search',
         icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
-        label: searchMode !== SearchMode.OFF ? '✓ Web Search' : 'Web Search',
+        label: searchMode === SearchMode.ALWAYS ? '✓ Web Search' : 'Web Search',
         infoTooltip:
           'Enable web search for every message.\n\nProvides up-to-date information using real-time Bing web access.',
         onClick: () => {

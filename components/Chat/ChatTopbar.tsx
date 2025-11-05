@@ -2,13 +2,16 @@ import {
   IconChevronDown,
   IconClearAll,
   IconDots,
-  IconTool,
+  IconWorld,
 } from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { SearchMode } from '@/types/searchMode';
+
 import {
+  AzureAIIcon,
   DeepSeekIcon,
   MetaIcon,
   OpenAIIcon,
@@ -23,13 +26,14 @@ interface Props {
   } | null;
   selectedModelName: string | undefined;
   selectedModelProvider?: string;
+  selectedModelId?: string;
   showSettings: boolean;
   onSettingsClick: () => void;
   onModelClick?: () => void;
   onClearAll?: () => void;
   userEmail?: string;
   hasMessages?: boolean;
-  isAgent?: boolean;
+  searchMode?: SearchMode;
   showChatbar?: boolean;
 }
 
@@ -37,18 +41,22 @@ export const ChatTopbar = ({
   botInfo,
   selectedModelName,
   selectedModelProvider,
+  selectedModelId,
   showSettings,
   onSettingsClick,
   onModelClick,
   onClearAll,
   userEmail,
   hasMessages = false,
-  isAgent = false,
+  searchMode,
   showChatbar = false,
 }: Props) => {
   const t = useTranslations();
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  // Check if this is a custom agent
+  const isCustomAgent = selectedModelId?.startsWith('custom-');
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -114,11 +122,17 @@ export const ChatTopbar = ({
               >
                 {selectedModelName || 'Select Model'}
               </span>
-              {isAgent && (
-                <IconTool
+              {searchMode === SearchMode.INTELLIGENT && (
+                <IconWorld
                   size={14}
                   className="ml-1.5 text-blue-600 dark:text-blue-400"
-                  title="Azure AI Agent"
+                  title="Privacy-Focused Search"
+                />
+              )}
+              {(searchMode === SearchMode.AGENT || isCustomAgent) && (
+                <AzureAIIcon
+                  className="ml-1.5 w-3.5 h-3.5 text-blue-600 dark:text-blue-400"
+                  title={isCustomAgent ? 'Custom Agent' : 'Azure AI Agent Mode'}
                 />
               )}
               <IconChevronDown

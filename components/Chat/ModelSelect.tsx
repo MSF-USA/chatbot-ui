@@ -13,7 +13,7 @@ import {
   IconWorld,
   IconX,
 } from '@tabler/icons-react';
-import React, { FC, useMemo, useState } from 'react';
+import React, { FC, useEffect, useMemo, useState } from 'react';
 import { RiRobot2Line } from 'react-icons/ri';
 
 import { useTranslations } from 'next-intl';
@@ -139,6 +139,34 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     selectedConversation?.defaultSearchMode ?? SearchMode.INTELLIGENT;
   const searchModeEnabled = currentSearchMode !== SearchMode.OFF;
 
+  // For non-agent models, if AGENT mode is somehow set, display as INTELLIGENT in UI
+  const displaySearchMode =
+    currentSearchMode === SearchMode.AGENT && !agentAvailable
+      ? SearchMode.INTELLIGENT
+      : currentSearchMode;
+
+  // Automatically fix invalid state when conversation loads with AGENT mode on non-agent model
+  useEffect(() => {
+    if (
+      selectedConversation &&
+      currentSearchMode === SearchMode.AGENT &&
+      !agentAvailable
+    ) {
+      console.log(
+        '[ModelSelect] Auto-fixing invalid AGENT mode for non-agent model',
+      );
+      updateConversation(selectedConversation.id, {
+        defaultSearchMode: SearchMode.INTELLIGENT,
+      });
+    }
+  }, [
+    selectedConversation?.id,
+    currentSearchMode,
+    agentAvailable,
+    selectedConversation,
+    updateConversation,
+  ]);
+
   const handleModelSelect = (model: OpenAIModel) => {
     if (!selectedConversation) {
       console.warn(
@@ -170,6 +198,21 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     const updates: any = {
       model: model,
     };
+
+    // Check if the new model supports agents
+    const newModelConfig = OpenAIModels[model.id as OpenAIModelID];
+    const newModelHasAgent = newModelConfig?.agentId !== undefined;
+
+    // If switching to a model without agent support and current mode is AGENT, reset to INTELLIGENT
+    if (
+      !newModelHasAgent &&
+      selectedConversation.defaultSearchMode === SearchMode.AGENT
+    ) {
+      updates.defaultSearchMode = SearchMode.INTELLIGENT;
+      console.log(
+        `[ModelSelect] Resetting AGENT mode to INTELLIGENT for non-agent model`,
+      );
+    }
 
     // Only set defaultSearchMode if it's not already set on the conversation
     if (selectedConversation.defaultSearchMode === undefined) {
@@ -459,13 +502,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
                           {/* Privacy-Focused Option (INTELLIGENT) */}
                           <label
-                            className={`flex items-start gap-3 p-3 rounded-lg border-2 ${currentSearchMode === SearchMode.INTELLIGENT ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
+                            className={`flex items-start gap-3 p-3 rounded-lg border-2 ${displaySearchMode === SearchMode.INTELLIGENT ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
                           >
                             <input
                               type="radio"
                               name="searchRouting"
                               checked={
-                                currentSearchMode === SearchMode.INTELLIGENT
+                                displaySearchMode === SearchMode.INTELLIGENT
                               }
                               onChange={() =>
                                 handleSetSearchMode(SearchMode.INTELLIGENT)
@@ -479,12 +522,11 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                   className="text-gray-600 dark:text-gray-400"
                                 />
                                 <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                  Privacy-Focused (Recommended)
+                                  Privacy-Focused (Default)
                                 </span>
                               </div>
                               <div className="text-xs text-gray-600 dark:text-gray-400">
-                                AI decides when to search. Only search queries
-                                sent to AI Foundry.
+                                Slower but more private
                               </div>
                             </div>
                           </label>
@@ -492,12 +534,12 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                           {/* Azure AI Agent Mode Option (AGENT - only for models with agentId) */}
                           {agentAvailable && modelConfig?.agentId && (
                             <label
-                              className={`flex items-start gap-3 p-3 rounded-lg border-2 ${currentSearchMode === SearchMode.AGENT ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
+                              className={`flex items-start gap-3 p-3 rounded-lg border-2 ${displaySearchMode === SearchMode.AGENT ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50'} hover:border-blue-300 dark:hover:border-blue-600 cursor-pointer transition-colors`}
                             >
                               <input
                                 type="radio"
                                 name="searchRouting"
-                                checked={currentSearchMode === SearchMode.AGENT}
+                                checked={displaySearchMode === SearchMode.AGENT}
                                 onChange={() =>
                                   handleSetSearchMode(SearchMode.AGENT)
                                 }
@@ -507,19 +549,19 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                                 <div className="flex items-center gap-2 mb-1">
                                   <AzureAIIcon className="w-4 h-4 flex-shrink-0" />
                                   <span className="text-sm font-medium text-gray-900 dark:text-white">
-                                    Azure AI Agent Mode (Faster)
+                                    Azure AI Agent Mode
                                   </span>
                                 </div>
                                 <div className="text-xs text-gray-600 dark:text-gray-400">
-                                  Direct AI Foundry agent with real-time web
-                                  search
+                                  Faster but stores conversation data in the
+                                  cloud
                                 </div>
                               </div>
                             </label>
                           )}
 
                           {/* Privacy Warning when Azure AI Agent Mode is selected */}
-                          {currentSearchMode === SearchMode.AGENT && (
+                          {displaySearchMode === SearchMode.AGENT && (
                             <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                               <div className="flex items-start gap-2">
                                 <IconAlertTriangle
@@ -553,7 +595,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                   )}
 
                   {/* Advanced Options for Model */}
-                  {currentSearchMode !== SearchMode.AGENT &&
+                  {displaySearchMode !== SearchMode.AGENT &&
                     selectedConversation &&
                     (modelConfig?.supportsTemperature !== false ||
                       modelConfig?.supportsReasoningEffort ||

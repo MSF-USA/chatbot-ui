@@ -497,12 +497,12 @@ export const ChatInput = ({
 
           <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
             <div
-              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode !== SearchMode.OFF || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode === SearchMode.OFF && !selectedToneId ? '!rounded-2xl' : ''}`}
+              className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode === SearchMode.ALWAYS || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode !== SearchMode.ALWAYS && !selectedToneId ? '!rounded-2xl' : ''}`}
             >
               <textarea
                 ref={textareaRef}
                 className={`m-0 w-full resize-none border-0 bg-transparent p-0 pr-24 text-black dark:bg-transparent dark:text-white focus:outline-none focus:ring-0 focus:border-0 ${
-                  searchMode !== SearchMode.OFF || selectedToneId
+                  searchMode === SearchMode.ALWAYS || selectedToneId
                     ? 'pt-3 pb-[88px] pl-3'
                     : 'py-3.5 pl-10 md:py-3 md:pl-10'
                 }`}
@@ -515,7 +515,7 @@ export const ChatInput = ({
                 placeholder={
                   isTranscribing
                     ? t('transcribingChatPlaceholder')
-                    : searchMode !== SearchMode.OFF
+                    : searchMode === SearchMode.ALWAYS
                       ? 'Search the web'
                       : inputPlaceholder
                 }
@@ -533,7 +533,9 @@ export const ChatInput = ({
               {/* Bottom row with all buttons and search badge */}
               <div
                 className={`absolute left-2 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  searchMode !== SearchMode.OFF || selectedToneId || isMultiline
+                  searchMode === SearchMode.ALWAYS ||
+                  selectedToneId ||
+                  isMultiline
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
                 }`}
@@ -560,12 +562,17 @@ export const ChatInput = ({
                   tones={tones}
                 />
 
-                {searchMode !== SearchMode.OFF && (
+                {searchMode === SearchMode.ALWAYS && (
                   <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full text-sm font-medium border border-gray-300 dark:border-gray-600">
                     <IconWorld className="w-5 h-5 text-blue-500" />
                     <span>Search</span>
                     <button
-                      onClick={() => setSearchMode(SearchMode.OFF)}
+                      onClick={() =>
+                        setSearchMode(
+                          selectedConversation?.defaultSearchMode ??
+                            SearchMode.OFF,
+                        )
+                      }
                       className="ml-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors"
                       aria-label="Disable web search"
                     >
@@ -618,7 +625,9 @@ export const ChatInput = ({
 
               <div
                 className={`absolute right-2.5 flex items-center gap-2 z-[10001] transition-all duration-200 ${
-                  searchMode !== SearchMode.OFF || selectedToneId || isMultiline
+                  searchMode === SearchMode.ALWAYS ||
+                  selectedToneId ||
+                  isMultiline
                     ? 'bottom-2'
                     : 'top-1/2 transform -translate-y-1/2'
                 }`}

@@ -5,14 +5,14 @@ import { FC } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
+import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
+
 export const HelpSupportSection: FC = () => {
   const t = useTranslations();
   const { data: session } = useSession();
 
   const supportEmail =
-    session?.user?.region === 'US'
-      ? 'ai@newyork.msf.org'
-      : 'ai.team@amsterdam.msf.org';
+    session?.user?.region === 'US' ? US_FEEDBACK_EMAIL : FEEDBACK_EMAIL;
 
   return (
     <div className="p-4">

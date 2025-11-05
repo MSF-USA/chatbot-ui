@@ -489,12 +489,13 @@ export function Chat({
               ?.provider ||
             models.find((m) => m.id === defaultModelId)?.provider
           }
+          selectedModelId={selectedConversation?.model?.id}
           showSettings={isSettingsOpen}
           onSettingsClick={() => setIsSettingsOpen(!isSettingsOpen)}
           onModelClick={() => setIsModelSelectOpen(true)}
           onClearAll={handleClearAll}
           hasMessages={hasMessages}
-          isAgent={selectedConversation?.model?.isAgent === true}
+          searchMode={selectedConversation?.defaultSearchMode}
           showChatbar={showChatbar}
         />
       </div>
