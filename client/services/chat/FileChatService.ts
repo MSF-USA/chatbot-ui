@@ -4,55 +4,55 @@ import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
 import { apiClient } from '../api';
-import { AudioChatApiRequest, ChatApiResponse } from '../api/types';
+import { ChatApiResponse, StandardChatApiRequest } from '../api/types';
 
 /**
- * Frontend service for audio/video file chat completions with Whisper transcription.
+ * Frontend service for document file chat completions.
  *
- * Calls: POST /api/chat/audio
+ * Calls: POST /api/chat/file
  *
  * Handles:
- * - Audio/video file chat requests
- * - Whisper transcription
+ * - Document file chat requests (non-audio/video)
+ * - File analysis and summarization
  * - Streaming responses
  * - Non-streaming responses
  */
-export class AudioChatService {
+export class FileChatService {
   /**
-   * Sends an audio/video chat request and returns a streaming response.
+   * Sends a document file chat request and returns a streaming response.
    *
-   * @param request - The audio chat request
+   * @param request - The file chat request
    * @returns ReadableStream for processing response chunks
    */
   public async sendStreamingChat(
-    request: Omit<AudioChatApiRequest, 'stream'>,
+    request: Omit<StandardChatApiRequest, 'stream'>,
   ): Promise<ReadableStream<Uint8Array>> {
-    return apiClient.postStream('/api/chat/audio', {
+    return apiClient.postStream('/api/chat/file', {
       ...request,
       stream: true,
     });
   }
 
   /**
-   * Sends an audio/video chat request and returns a complete response.
+   * Sends a document file chat request and returns a complete response.
    *
-   * @param request - The audio chat request
+   * @param request - The file chat request
    * @returns The complete chat response
    */
   public async sendChat(
-    request: Omit<AudioChatApiRequest, 'stream'>,
+    request: Omit<StandardChatApiRequest, 'stream'>,
   ): Promise<ChatApiResponse> {
-    return apiClient.post<ChatApiResponse>('/api/chat/audio', {
+    return apiClient.post<ChatApiResponse>('/api/chat/file', {
       ...request,
       stream: false,
     });
   }
 
   /**
-   * Convenience method for audio/video chat requests.
+   * Convenience method for document file chat requests.
    *
    * @param model - The model to use
-   * @param messages - The conversation messages (must contain audio/video file)
+   * @param messages - The conversation messages (must contain document file)
    * @param options - Optional parameters
    * @returns ReadableStream for processing response chunks
    */
@@ -71,12 +71,22 @@ export class AudioChatService {
   }
 
   /**
-   * Checks if messages contain audio/video files.
+   * Checks if messages contain document files (non-audio/video).
    *
    * @param messages - The conversation messages
-   * @returns true if audio/video detected, false otherwise
+   * @returns true if document files detected, false otherwise
    */
-  public hasAudioVideoFiles(messages: Message[]): boolean {
+  public hasDocumentFiles(messages: Message[]): boolean {
+    const audioVideoExtensions = [
+      '.mp3',
+      '.mp4',
+      '.mpeg',
+      '.mpga',
+      '.m4a',
+      '.wav',
+      '.webm',
+    ];
+
     return messages.some((message) => {
       if (!Array.isArray(message.content)) return false;
 
@@ -86,26 +96,16 @@ export class AudioChatService {
         const filename = content.originalFilename || content.url || '';
         if (!filename) {
           console.warn(
-            '[AudioChatService] No filename found for file_url content:',
+            '[FileChatService] No filename found for file_url content:',
             content,
           );
           return false;
         }
 
-        const audioVideoExtensions = [
-          '.mp3',
-          '.mp4',
-          '.mpeg',
-          '.mpga',
-          '.m4a',
-          '.wav',
-          '.webm',
-        ];
-
         const parts = filename.split('.');
         if (parts.length < 2) {
           console.warn(
-            '[AudioChatService] No extension found in filename:',
+            '[FileChatService] No extension found in filename:',
             filename,
           );
           return false;
@@ -115,14 +115,15 @@ export class AudioChatService {
         const isAudioVideo = audioVideoExtensions.includes(ext);
 
         console.log(
-          `[AudioChatService.hasAudioVideoFiles] File: "${filename}", ext: "${ext}", result: ${isAudioVideo}`,
+          `[FileChatService.hasDocumentFiles] File: "${filename}", ext: "${ext}", isAudioVideo: ${isAudioVideo}, result: ${!isAudioVideo}`,
         );
 
-        return isAudioVideo;
+        // Return true if it's a file but NOT an audio/video file
+        return !isAudioVideo;
       });
     });
   }
 }
 
 // Export singleton instance
-export const audioChatService = new AudioChatService();
+export const fileChatService = new FileChatService();

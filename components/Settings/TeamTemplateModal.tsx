@@ -339,7 +339,7 @@ export function TeamTemplateModal({ isOpen, onClose }: TeamTemplateModalProps) {
                   type="text"
                   value={templateName}
                   onChange={(e) => setTemplateName(e.target.value)}
-                  placeholder={t('e.g., Marketing Team, Engineering Workflows')}
+                  placeholder={t('exampleMarketingTeamEngineering')}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>

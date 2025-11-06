@@ -6,6 +6,7 @@ import { SearchMode } from '@/types/searchMode';
 
 import { agentChatService } from './AgentChatService';
 import { audioChatService } from './AudioChatService';
+import { fileChatService } from './FileChatService';
 import { ragChatService } from './RAGChatService';
 import { standardChatService } from './StandardChatService';
 
@@ -13,6 +14,7 @@ import { standardChatService } from './StandardChatService';
  * Main chat service orchestrator.
  *
  * Routes chat requests to the appropriate specialized service based on:
+ * - Document files → FileChatService
  * - Audio/video files → AudioChatService
  * - Bot ID present → RAGChatService
  * - SearchMode.AGENT → AgentChatService (direct AI Foundry - fast, less private)
@@ -44,7 +46,15 @@ export class ChatService {
       searchMode?: SearchMode;
     },
   ): Promise<ReadableStream<Uint8Array>> {
-    // 1. Check for audio/video files FIRST (highest priority)
+    // 1. Check for document files FIRST (highest priority)
+    if (fileChatService.hasDocumentFiles(messages)) {
+      console.log('[ChatService] Routing to FileChatService');
+      return fileChatService.chat(model, messages, {
+        botId: options?.botId,
+      });
+    }
+
+    // 2. Check for audio/video files
     if (audioChatService.hasAudioVideoFiles(messages)) {
       console.log('[ChatService] Routing to AudioChatService');
       return audioChatService.chat(model, messages, {
@@ -52,13 +62,13 @@ export class ChatService {
       });
     }
 
-    // 2. Check for RAG/bot requests
+    // 3. Check for RAG/bot requests
     if (options?.botId) {
       console.log('[ChatService] Routing to RAGChatService');
       return ragChatService.chat(model, messages, options.botId);
     }
 
-    // 3. Check for AGENT search mode (direct AI Foundry agent - fast, less private)
+    // 4. Check for AGENT search mode (direct AI Foundry agent - fast, less private)
     if (options?.searchMode === SearchMode.AGENT) {
       console.log(
         '[ChatService] Routing to AgentChatService (SearchMode.AGENT)',
@@ -70,7 +80,7 @@ export class ChatService {
       });
     }
 
-    // 4. Check for INTELLIGENT or ALWAYS search mode (privacy-focused tool routing)
+    // 5. Check for INTELLIGENT or ALWAYS search mode (privacy-focused tool routing)
     // This uses tool-aware routing where only search queries go to AI Foundry
     if (
       options?.searchMode === SearchMode.INTELLIGENT ||
@@ -82,7 +92,7 @@ export class ChatService {
       return this.toolAwareChat(model, messages, options);
     }
 
-    // 5. Default to standard chat
+    // 6. Default to standard chat
     console.log('[ChatService] Routing to StandardChatService');
     return standardChatService.chat(model, messages, {
       prompt: options?.prompt,
@@ -161,7 +171,11 @@ export class ChatService {
       botId?: string;
       searchMode?: SearchMode;
     },
-  ): 'audio' | 'rag' | 'agent' | 'tool-aware' | 'standard' {
+  ): 'file' | 'audio' | 'rag' | 'agent' | 'tool-aware' | 'standard' {
+    if (fileChatService.hasDocumentFiles(messages)) {
+      return 'file';
+    }
+
     if (audioChatService.hasAudioVideoFiles(messages)) {
       return 'audio';
     }
