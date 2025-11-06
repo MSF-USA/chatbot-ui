@@ -55,7 +55,8 @@ describe('EmptyState', () => {
     const heading = screen.getByRole('heading');
     expect(heading).toHaveClass('text-2xl');
     expect(heading).toHaveClass('font-light');
-    expect(heading).toHaveClass('text-gray-400');
-    expect(heading).toHaveClass('dark:text-gray-500');
+    expect(heading).toHaveClass('bg-gradient-to-r');
+    expect(heading).toHaveClass('bg-clip-text');
+    expect(heading).toHaveClass('text-transparent');
   });
 });
