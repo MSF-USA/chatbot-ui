@@ -12,7 +12,7 @@ const publicPages = ['/signin', '/auth-error'];
 
 // Regex to match public pages with optional locale prefix
 const publicPathnameRegex = RegExp(
-  `^(/(${locales.join('|')})?)?(${publicPages.map((p) => p.replace('/', '\\/')).join('|')}|/api)/?$`,
+  `^(/(${locales.join('|')})?)?(${publicPages.map((p) => p.replace('/', '\\/')).join('|')})/?$`,
   'i',
 );
 
@@ -24,8 +24,15 @@ const authMiddleware = auth((req) => {
     return NextResponse.redirect(signInUrl);
   }
 
-  // Let i18n middleware handle routing and redirects properly
-  return handleI18nRouting(req as unknown as NextRequest);
+  const response = handleI18nRouting(req as unknown as NextRequest);
+
+  // If i18n is trying to redirect (307/308), just continue instead
+  // This prevents redirect loops when localePrefix is 'never'
+  if (response && (response.status === 307 || response.status === 308)) {
+    return NextResponse.next();
+  }
+
+  return response;
 });
 
 export default function proxy(req: NextRequest) {

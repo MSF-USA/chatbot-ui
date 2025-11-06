@@ -1,6 +1,10 @@
 import { HelpPageClient } from './HelpPageClient';
 
 import { auth } from '@/auth';
+// Import FAQ translations statically at build time
+import faqEn from '@/lib/data/faq.en.json';
+import faqEs from '@/lib/data/faq.es.json';
+import faqFr from '@/lib/data/faq.fr.json';
 
 interface PageProps {
   params: Promise<{
@@ -9,7 +13,14 @@ interface PageProps {
 }
 
 // Define available FAQ locales
-const AVAILABLE_FAQ_LOCALES = ['en', 'fr', 'es'];
+const AVAILABLE_FAQ_LOCALES = ['en', 'fr', 'es'] as const;
+
+// Pre-bundle all FAQ translations
+const faqTranslations: Record<string, any> = {
+  en: faqEn.faq || faqEn,
+  fr: faqFr.faq || faqFr,
+  es: faqEs.faq || faqEs,
+};
 
 export default async function HelpPage({ params }: PageProps) {
   const session = await auth();
@@ -19,27 +30,10 @@ export default async function HelpPage({ params }: PageProps) {
     ? 'ai@newyork.msf.org'
     : 'ai.team@amsterdam.msf.org';
 
-  // Load all available FAQ translations
-  const faqTranslations: Record<string, any> = {};
-  for (const loc of AVAILABLE_FAQ_LOCALES) {
-    try {
-      const data = await import(`@/lib/data/faq.${loc}.json`);
-      // Handle both default export and direct faq property
-      faqTranslations[loc] = data.default?.faq || data.faq;
-      console.log(
-        `[FAQ Page] Loaded ${loc} FAQ with ${faqTranslations[loc]?.length || 0} items`,
-      );
-    } catch (error) {
-      console.error(`Failed to load FAQ for locale ${loc}:`, error);
-      // Skip if translation doesn't exist
-    }
-  }
-
   // Determine initial locale - use user's locale if available, otherwise English
-  const initialLocale = AVAILABLE_FAQ_LOCALES.includes(locale) ? locale : 'en';
-  console.log(
-    `[FAQ Page] User locale: ${locale}, Initial locale: ${initialLocale}`,
-  );
+  const initialLocale = AVAILABLE_FAQ_LOCALES.includes(locale as any)
+    ? locale
+    : 'en';
 
   return (
     <HelpPageClient
@@ -47,7 +41,7 @@ export default async function HelpPage({ params }: PageProps) {
       supportEmail={supportEmail}
       faqTranslations={faqTranslations}
       initialLocale={initialLocale}
-      availableLocales={AVAILABLE_FAQ_LOCALES}
+      availableLocales={[...AVAILABLE_FAQ_LOCALES]}
     />
   );
 }

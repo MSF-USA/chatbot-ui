@@ -1,25 +1,18 @@
-'use client';
-
 import {
   IconAlertCircle,
   IconArrowLeft,
-  IconChevronDown,
   IconInfoCircle,
   IconShield,
   IconWorld,
 } from '@tabler/icons-react';
-import { useState } from 'react';
 
 import { AzureAIIcon } from '@/components/Icons/providers';
-import { MermaidDiagram } from '@/components/UI/MermaidDiagram';
+
+import { CollapsibleDiagram } from './CollapsibleDiagram';
 
 import { Link } from '@/lib/navigation';
 
 export default function SearchModeInfoPage() {
-  const [noSearchDiagramOpen, setNoSearchDiagramOpen] = useState(false);
-  const [privacyDiagramOpen, setPrivacyDiagramOpen] = useState(false);
-  const [foundryDiagramOpen, setFoundryDiagramOpen] = useState(false);
-
   // Mermaid diagram for No Search Mode
   const noSearchModeDiagram = `
     flowchart TB
@@ -278,33 +271,11 @@ export default function SearchModeInfoPage() {
         </div>
 
         {/* Collapsible Diagram */}
-        <button
-          onClick={() => setNoSearchDiagramOpen(!noSearchDiagramOpen)}
-          className="w-full bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
-            View Technical Flow Diagram
-          </span>
-          <IconChevronDown
-            size={20}
-            className={`text-gray-600 dark:text-gray-400 transition-transform ${
-              noSearchDiagramOpen ? 'rotate-180' : ''
-            }`}
-          />
-        </button>
-
-        {noSearchDiagramOpen && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4 overflow-x-auto">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              <strong>Legend:</strong> 🟢 Your Browser (local storage) | 🔵 AI
-              Assistant Server | 🟣 Azure OpenAI (stateless)
-            </p>
-            <MermaidDiagram
-              chart={noSearchModeDiagram}
-              className="flex justify-center"
-            />
-          </div>
-        )}
+        <CollapsibleDiagram
+          title="View Technical Flow Diagram"
+          diagram={noSearchModeDiagram}
+          legend="🟢 Your Browser (local storage) | 🔵 AI Assistant Server | 🟣 Azure OpenAI (stateless)"
+        />
       </div>
 
       {/* Privacy-Focused Mode */}
@@ -334,34 +305,11 @@ export default function SearchModeInfoPage() {
         </div>
 
         {/* Collapsible Diagram */}
-        <button
-          onClick={() => setPrivacyDiagramOpen(!privacyDiagramOpen)}
-          className="w-full bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
-            View Technical Flow Diagram
-          </span>
-          <IconChevronDown
-            size={20}
-            className={`text-gray-600 dark:text-gray-400 transition-transform ${
-              privacyDiagramOpen ? 'rotate-180' : ''
-            }`}
-          />
-        </button>
-
-        {privacyDiagramOpen && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4 overflow-x-auto">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              <strong>Legend:</strong> 🟢 Your Browser (local storage) | 🔵 AI
-              Assistant Server | 🟡 Azure AI Foundry (search queries only) | 🟣
-              Azure OpenAI (stateless)
-            </p>
-            <MermaidDiagram
-              chart={privacyModeDiagram}
-              className="flex justify-center"
-            />
-          </div>
-        )}
+        <CollapsibleDiagram
+          title="View Technical Flow Diagram"
+          diagram={privacyModeDiagram}
+          legend="🟢 Your Browser (local storage) | 🔵 AI Assistant Server | 🟡 Azure AI Foundry (search queries only) | 🟣 Azure OpenAI (stateless)"
+        />
       </div>
 
       {/* Azure AI Foundry Mode */}
@@ -388,34 +336,11 @@ export default function SearchModeInfoPage() {
         </div>
 
         {/* Collapsible Diagram */}
-        <button
-          onClick={() => setFoundryDiagramOpen(!foundryDiagramOpen)}
-          className="w-full bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-4 mb-4 flex items-center justify-between hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-        >
-          <span className="text-sm font-medium text-gray-900 dark:text-white">
-            View Technical Flow Diagram
-          </span>
-          <IconChevronDown
-            size={20}
-            className={`text-gray-600 dark:text-gray-400 transition-transform ${
-              foundryDiagramOpen ? 'rotate-180' : ''
-            }`}
-          />
-        </button>
-
-        {foundryDiagramOpen && (
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4 overflow-x-auto">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              <strong>Legend:</strong> 🟢 Your Browser (local storage) | 🔵 AI
-              Assistant Server | 🔴 Azure AI Foundry Agent (stores full
-              conversation)
-            </p>
-            <MermaidDiagram
-              chart={foundryModeDiagram}
-              className="flex justify-center"
-            />
-          </div>
-        )}
+        <CollapsibleDiagram
+          title="View Technical Flow Diagram"
+          diagram={foundryModeDiagram}
+          legend="🟢 Your Browser (local storage) | 🔵 AI Assistant Server | 🔴 Azure AI Foundry Agent (stores full conversation)"
+        />
       </div>
 
       {/* Background Info - Moved to Bottom */}
