@@ -211,8 +211,7 @@ const processImageUrl = async (
       url,
       detail: 'auto',
     };
-    // return url;
-    throw new Error(`Failed to pull image from image url: ${contentSection}`);
+    return url;
   }
 };
 
