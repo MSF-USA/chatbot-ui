@@ -131,6 +131,7 @@ describe('useConversationInitialization', () => {
         'gpt-4',
         'You are a helpful assistant',
         0.8,
+        undefined,
       );
       expect(mockAddConversation).toHaveBeenCalledWith(mockConversation);
     });
@@ -155,6 +156,7 @@ describe('useConversationInitialization', () => {
         undefined,
         '',
         0.5,
+        undefined,
       );
     });
 
@@ -178,6 +180,7 @@ describe('useConversationInitialization', () => {
         undefined,
         '',
         0.5,
+        undefined,
       );
     });
   });

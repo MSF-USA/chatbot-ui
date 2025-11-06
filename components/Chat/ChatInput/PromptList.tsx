@@ -55,16 +55,18 @@ const CommandItem: FC<CommandItemProps> = ({
     }
   };
 
+  const t = useTranslations();
+
   const getCommandTypeLabel = (type: CommandType) => {
     switch (type) {
       case CommandType.AGENT:
-        return 'Agent';
+        return t('Agent');
       case CommandType.SETTINGS:
-        return 'Settings';
+        return t('Settings');
       case CommandType.UTILITY:
-        return 'Utility';
+        return t('Utility');
       default:
-        return 'Command';
+        return t('Command');
     }
   };
 
@@ -138,7 +140,9 @@ const CommandItem: FC<CommandItemProps> = ({
               </div>
               {command.examples.length > 0 && (
                 <div className="text-xs text-gray-500 dark:text-gray-500">
-                  <span className="text-gray-400">e.g. </span>
+                  <span className="text-gray-400">
+                    {t('example_abbreviation')}
+                  </span>
                   <span className="font-mono">{command.examples[0]}</span>
                 </div>
               )}
@@ -210,7 +214,7 @@ export const PromptList: FC<Props> = ({
   onImmediateCommandExecution,
   folders = [],
 }) => {
-  const t = useTranslations();
+  const tList = useTranslations();
 
   // Filter prompt folders only
   const promptFolders = folders.filter((f) => f.type === 'prompt');
@@ -368,7 +372,7 @@ export const PromptList: FC<Props> = ({
 
       {totalItems === 0 && (
         <li className="px-3 py-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-          {t('No commands or prompts found')}
+          {tList('No commands or prompts found')}
         </li>
       )}
     </ul>

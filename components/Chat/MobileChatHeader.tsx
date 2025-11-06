@@ -8,6 +8,8 @@ import {
 } from '@tabler/icons-react';
 import { useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useUI } from '@/client/hooks/ui/useUI';
 
@@ -32,6 +34,7 @@ export function MobileChatHeader({
   onModelSelectChange,
   bannerVisible = false,
 }: MobileHeaderProps) {
+  const t = useTranslations();
   const { toggleChatbar } = useUI();
   const { selectedConversation, updateConversation, isLoaded } =
     useConversations();
@@ -60,7 +63,7 @@ export function MobileChatHeader({
   const handleClearAll = () => {
     if (
       selectedConversation &&
-      window.confirm('Are you sure you want to clear this conversation?')
+      window.confirm(t('chat.clearConversationConfirm'))
     ) {
       updateConversation(selectedConversation.id, {
         ...selectedConversation,
@@ -87,17 +90,17 @@ export function MobileChatHeader({
           <button
             onClick={() => onModelSelectChange(true)}
             className="ml-2 flex items-center px-2 py-1 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors min-w-0"
-            aria-label="Select Model"
+            aria-label={t('chat.selectModel')}
           >
             {getProviderIcon(modelProvider)}
             <span className="font-semibold text-neutral-900 dark:text-white truncate text-base ml-1.5">
-              {displayModelName || 'Select Model'}
+              {displayModelName || t('chat.selectModel')}
             </span>
             {isAgent && (
               <IconTool
                 size={12}
                 className="ml-1 text-blue-600 dark:text-blue-400 shrink-0"
-                title="Azure AI Agent"
+                title={t('chat.azureAIAgent')}
               />
             )}
             <IconChevronDown
@@ -113,8 +116,8 @@ export function MobileChatHeader({
         <button
           onClick={handleClearAll}
           className="p-2 rounded-md hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors shrink-0"
-          aria-label="Clear Conversation"
-          title="Clear Conversation"
+          aria-label={t('chat.clearConversation')}
+          title={t('chat.clearConversation')}
         >
           <IconClearAll size={20} className="text-black dark:text-white" />
         </button>

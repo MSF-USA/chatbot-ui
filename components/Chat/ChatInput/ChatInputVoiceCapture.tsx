@@ -8,6 +8,8 @@ import React, {
   useState,
 } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import MicIcon from '@/components/Icons/mic';
 
 interface ChatInputVoiceCaptureProps {
@@ -20,6 +22,7 @@ const MAX_SILENT_DURATION = 6000; // in milliseconds
 
 const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = React.memo(
   ({ setTextFieldValue, setIsTranscribing }) => {
+    const t = useTranslations();
     const [hasMicrophone, setHasMicrophone] = useState(false);
     const [isRecording, setIsRecording] = useState(false);
 
@@ -240,7 +243,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = React.memo(
               e.stopPropagation();
               stopRecording();
             }}
-            title="Click to stop recording"
+            title={t('chat.clickToStopRecording')}
           >
             <IconPlayerRecordFilled className="h-5 w-5 animate-pulse text-red-500" />
             <span className="text-sm font-medium text-red-600 dark:text-red-400 whitespace-nowrap">
@@ -256,7 +259,7 @@ const ChatInputVoiceCapture: FC<ChatInputVoiceCaptureProps> = React.memo(
                 e.stopPropagation();
                 startRecording();
               }}
-              aria-label="Start voice recording"
+              aria-label={t('chat.startVoiceRecording')}
             >
               <MicIcon className="h-5 w-5 md:h-4 md:w-4" />
             </button>

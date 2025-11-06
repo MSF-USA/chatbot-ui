@@ -62,8 +62,14 @@ export function Chat({
     loadingMessage,
   } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, showChatbar } = useUI();
-  const { models, defaultModelId, systemPrompt, temperature, addPrompt } =
-    useSettings();
+  const {
+    models,
+    defaultModelId,
+    systemPrompt,
+    temperature,
+    defaultSearchMode,
+    addPrompt,
+  } = useSettings();
 
   // Transcription state (local to Chat component)
   const [transcriptionStatus, setTranscriptionStatus] = useState<string | null>(
@@ -126,6 +132,7 @@ export function Chat({
     defaultModelId,
     systemPrompt: systemPrompt || '',
     temperature: temperature || 0.5,
+    defaultSearchMode,
     addConversation,
     selectConversation,
   });

@@ -195,7 +195,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       const latestModelConfig =
         OpenAIModels[conversation.model.id as OpenAIModelID];
       const modelToSend = latestModelConfig
-        ? { ...latestModelConfig, ...conversation.model }
+        ? { ...conversation.model, ...latestModelConfig }
         : conversation.model;
 
       // Make the API request using new chatService
@@ -239,9 +239,17 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       while (true) {
         const { done, value } = await reader.read();
 
-        if (done) break;
+        if (done) {
+          // Final decode to flush any remaining bytes in the decoder buffer
+          const finalChunk = decoder.decode();
+          if (finalChunk) {
+            text += finalChunk;
+          }
+          break;
+        }
 
-        const chunk = decoder.decode(value);
+        // IMPORTANT: stream: true preserves multi-byte UTF-8 chars across chunk boundaries
+        const chunk = decoder.decode(value, { stream: true });
         text += chunk;
 
         // Extract metadata using utility function
@@ -250,10 +258,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
         // Update citations if found
         if (parsed.citations.length > 0) {
-          console.log(
-            `[chatStore] Extracted ${parsed.citations.length} citations from stream:`,
-            JSON.stringify(parsed.citations, null, 2),
-          );
           extractedCitations = parsed.citations;
         }
 
@@ -303,12 +307,6 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           extractedCitations.length > 0 ? extractedCitations : undefined,
         transcript: extractedTranscript,
       };
-
-      console.log(
-        '[chatStore] Created assistant message with citations:',
-        assistantMessage.citations?.length || 0,
-        assistantMessage.citations,
-      );
 
       // Update conversation with assistant message
       const conversationStore = useConversationStore.getState();

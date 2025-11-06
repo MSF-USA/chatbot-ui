@@ -4,6 +4,8 @@ import { IconAlertTriangle, IconCopy, IconRefresh } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { FEEDBACK_EMAIL, US_FEEDBACK_EMAIL } from '@/types/contact';
 
 interface ErrorDisplayProps {
@@ -17,12 +19,13 @@ interface ErrorDisplayProps {
 
 export function ErrorDisplay({
   error,
-  title = 'Something went wrong',
-  description = 'An error occurred',
+  title,
+  description,
   onRetry,
-  retryLabel = 'Try again',
+  retryLabel,
   showSupportInfo = true,
 }: ErrorDisplayProps) {
+  const t = useTranslations();
   const { data: session } = useSession();
   const [copied, setCopied] = useState(false);
 
@@ -50,10 +53,10 @@ export function ErrorDisplay({
           </div>
           <div className="flex-1 min-w-0">
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">
-              {title}
+              {title || t('errors.somethingWentWrong')}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {description}
+              {description || t('errors.anErrorOccurred')}
             </p>
           </div>
         </div>
@@ -67,7 +70,7 @@ export function ErrorDisplay({
             <button
               onClick={copyErrorToClipboard}
               className="flex-shrink-0 p-1.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
-              title="Copy error message"
+              title={t('errors.copyErrorMessage')}
             >
               {copied ? (
                 <span className="text-xs text-green-600 dark:text-green-400 font-medium">
@@ -98,7 +101,7 @@ export function ErrorDisplay({
               size={16}
               className="group-hover:rotate-180 transition-transform duration-500"
             />
-            {retryLabel}
+            {retryLabel || t('common.tryAgain')}
           </button>
         )}
 
@@ -106,7 +109,7 @@ export function ErrorDisplay({
         {showSupportInfo && (
           <div className="text-center">
             <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-              If this issue persists, please contact support at{' '}
+              {t('errors.contactSupport')}{' '}
               <a
                 href={`mailto:${supportEmail}`}
                 className="text-blue-600 dark:text-blue-400 hover:underline font-medium"

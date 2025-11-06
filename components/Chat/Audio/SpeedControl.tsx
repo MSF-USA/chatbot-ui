@@ -1,5 +1,7 @@
-import React, { useRef, useEffect } from 'react';
 import { IconChevronDown } from '@tabler/icons-react';
+import React, { useEffect, useRef } from 'react';
+
+import { useTranslations } from 'next-intl';
 
 interface SpeedControlProps {
   playbackSpeed: number;
@@ -21,11 +23,15 @@ export const SpeedControl: React.FC<SpeedControlProps> = ({
   onChangeSpeed,
   onClickOutside,
 }) => {
+  const t = useTranslations();
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         onClickOutside();
       }
     };
@@ -41,8 +47,8 @@ export const SpeedControl: React.FC<SpeedControlProps> = ({
       <button
         onClick={onToggleDropdown}
         className="mx-1 px-2 py-1 text-xs rounded flex items-center bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 focus:outline-none"
-        aria-label="Change playback speed"
-        title="Change playback speed"
+        aria-label={t('chat.changePlaybackSpeed')}
+        title={t('chat.changePlaybackSpeed')}
       >
         {playbackSpeed}x <IconChevronDown size={14} className="ml-1" />
       </button>
@@ -54,7 +60,9 @@ export const SpeedControl: React.FC<SpeedControlProps> = ({
               key={speed}
               onClick={() => onChangeSpeed(speed)}
               className={`block w-full text-left px-3 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-700 ${
-                speed === playbackSpeed ? 'bg-gray-100 dark:bg-gray-700 font-semibold' : ''
+                speed === playbackSpeed
+                  ? 'bg-gray-100 dark:bg-gray-700 font-semibold'
+                  : ''
               }`}
             >
               {speed}x

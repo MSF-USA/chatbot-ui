@@ -11,6 +11,7 @@ import { v4 as uuidv4 } from 'uuid';
  * @param defaultModelId - ID of the default model to use (optional)
  * @param systemPrompt - System prompt to initialize with
  * @param temperature - Temperature setting for the conversation
+ * @param defaultSearchMode - Default search mode for the conversation (optional, defaults to INTELLIGENT)
  * @returns A new conversation object
  *
  * @example
@@ -18,7 +19,8 @@ import { v4 as uuidv4 } from 'uuid';
  *   models,
  *   'gpt-4o',
  *   'You are a helpful assistant',
- *   0.5
+ *   0.5,
+ *   SearchMode.INTELLIGENT
  * );
  */
 export const createDefaultConversation = (
@@ -26,6 +28,7 @@ export const createDefaultConversation = (
   defaultModelId: string | undefined,
   systemPrompt: string,
   temperature: number,
+  defaultSearchMode?: SearchMode,
 ): Conversation => {
   // Use the persisted defaultModelId if available, otherwise fall back to first model
   const defaultModel = defaultModelId
@@ -44,7 +47,7 @@ export const createDefaultConversation = (
     prompt: systemPrompt || '',
     temperature: temperature || 0.5,
     folderId: null,
-    defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+    defaultSearchMode: defaultSearchMode ?? SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
   };
 };
 

@@ -83,7 +83,8 @@ export function parseMetadataFromContent(content: string): ParsedMetadata {
   }
 
   // Clean up trailing citation lists (e.g., "[1] [2] [3] [4]" at the end)
-  mainContent = mainContent.replace(/\n*\s*(?:\[\d+\]\s*)+\s*$/g, '').trim();
+  // Note: Don't use .trim() here as it removes newlines needed for markdown formatting
+  mainContent = mainContent.replace(/\n*\s*(?:\[\d+\]\s*)+\s*$/g, '');
 
   return {
     content: mainContent,

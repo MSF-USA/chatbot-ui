@@ -77,7 +77,13 @@ export function Sidebar() {
     deleteFolder,
     isLoaded,
   } = useConversations();
-  const { defaultModelId, models, temperature, systemPrompt } = useSettings();
+  const {
+    defaultModelId,
+    models,
+    temperature,
+    systemPrompt,
+    defaultSearchMode,
+  } = useSettings();
 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isCustomizationsOpen, setIsCustomizationsOpen] = useState(false);
@@ -209,6 +215,7 @@ export function Sidebar() {
       prompt: systemPrompt || '',
       temperature: temperature || 0.5,
       folderId: null,
+      defaultSearchMode: defaultSearchMode, // Use default search mode from settings
     };
 
     addConversation(newConversation);
@@ -392,7 +399,7 @@ export function Sidebar() {
           >
             <Image
               src={theme === 'light' ? lightTextLogo : darkTextLogo}
-              alt="MSF Logo"
+              alt={t('common.msfLogo')}
               priority
               style={{
                 maxWidth: '75px',
@@ -403,7 +410,11 @@ export function Sidebar() {
           <button
             className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-black dark:text-white"
             onClick={toggleChatbar}
-            title={showChatbar ? 'Collapse sidebar' : 'Expand sidebar'}
+            title={
+              showChatbar
+                ? t('sidebar.collapseSidebar')
+                : t('sidebar.expandSidebar')
+            }
           >
             <PiSidebarSimple size={22} />
           </button>
@@ -497,17 +508,17 @@ export function Sidebar() {
           <button
             className={`group relative flex items-center w-full rounded-lg text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
             onClick={() => setIsCustomizationsOpen(true)}
-            title="Quick Actions"
+            title={t('sidebar.quickActionsTitle')}
           >
             <IconBolt size={showChatbar ? 16 : 20} className="shrink-0" />
             <span
               className={`whitespace-nowrap transition-all duration-300 ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'}`}
             >
-              Quick Actions
+              {t('sidebar.quickActions')}
             </span>
             {!showChatbar && (
               <span className="absolute left-full ml-2 px-2 py-1 bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-xs rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-[100] transition-opacity shadow-lg">
-                Quick Actions
+                {t('sidebar.quickActions')}
               </span>
             )}
           </button>

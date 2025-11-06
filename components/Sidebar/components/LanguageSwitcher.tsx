@@ -1,27 +1,24 @@
 'use client';
 
-import React, { ChangeEvent, FC } from 'react';
+import { ChangeEvent, FC } from 'react';
+
 import { useLocale } from 'next-intl';
-import { usePathname, useRouter } from '@/lib/navigation';
-import { useParams } from 'next/navigation';
+
 import { getAutonym, getSupportedLocales } from '@/lib/utils/app/locales';
 
 const LanguageSwitcher: FC = () => {
   const locale = useLocale();
-  const pathname = usePathname();
-  const router = useRouter();
-  const params = useParams();
   const locales = getSupportedLocales();
 
   const handleLocaleChange = (event: ChangeEvent<HTMLSelectElement>) => {
     const newLocale = event.target.value;
-    router.replace(
-      // @ts-expect-error -- TypeScript will validate that only known `params`
-      // are used in combination with a given `pathname`. Since the two will
-      // always match for the current route, we can skip runtime checks.
-      { pathname, params },
-      { locale: newLocale }
-    );
+
+    // With localePrefix: 'never', we need to set a cookie and reload
+    // The next-intl middleware will read the cookie and serve the correct locale
+    document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
+
+    // Force a full page reload to pick up the new locale
+    window.location.reload();
   };
 
   return (

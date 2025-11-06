@@ -6,6 +6,8 @@ import {
 } from '@tabler/icons-react';
 import { FC, KeyboardEvent, useEffect, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import {
   VariableDefinition,
   getVariableDefinitions,
@@ -29,6 +31,8 @@ export const VariableModal: FC<Props> = ({
   onSubmit,
   onClose,
 }) => {
+  const t = useTranslations();
+
   // Get variable definitions with defaults from the prompt content
   const variableDefinitions = getVariableDefinitions(prompt.content);
 
@@ -123,7 +127,7 @@ export const VariableModal: FC<Props> = ({
           <button
             onClick={onClose}
             className="absolute right-4 top-4 p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors rounded-lg hover:bg-white/50 dark:hover:bg-black/30"
-            aria-label="Close"
+            aria-label={t('common.close')}
           >
             <IconX size={20} />
           </button>

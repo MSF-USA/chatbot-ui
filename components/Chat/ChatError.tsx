@@ -1,6 +1,8 @@
 import { IconX } from '@tabler/icons-react';
 import React from 'react';
 
+import { useTranslations } from 'next-intl';
+
 interface ChatErrorProps {
   error: string | null;
   onClearError: () => void;
@@ -14,6 +16,8 @@ export const ChatError: React.FC<ChatErrorProps> = ({
   error,
   onClearError,
 }) => {
+  const t = useTranslations();
+
   if (!error) return null;
 
   return (
@@ -23,7 +27,7 @@ export const ChatError: React.FC<ChatErrorProps> = ({
         <button
           onClick={onClearError}
           className="ml-4 text-red-800 dark:text-red-200 hover:text-red-600 dark:hover:text-red-100 transition-colors flex-shrink-0"
-          aria-label="Dismiss error"
+          aria-label={t('errors.dismissError')}
         >
           <IconX size={20} />
         </button>

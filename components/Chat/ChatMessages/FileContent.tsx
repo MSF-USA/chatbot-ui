@@ -69,7 +69,7 @@ const FileImagePreview: FC<{ image: ImageMessageContent }> = ({ image }) => {
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={imageSrc}
-              alt="Image Content"
+              alt={t('chat.imageContent')}
               className="h-12 w-auto max-w-[calc(100%-80px)] object-cover cursor-pointer rounded"
               onClick={handleImageClick}
               onLoad={() => setIsLoading(false)}
@@ -94,7 +94,7 @@ const FileImagePreview: FC<{ image: ImageMessageContent }> = ({ image }) => {
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageSrc}
-            alt="Full size preview"
+            alt={t('chat.fullSizePreview')}
             className="max-w-[90vw] max-h-[90vh] object-contain"
             onClick={(e) => e.stopPropagation()}
           />

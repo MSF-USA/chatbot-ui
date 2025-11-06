@@ -1,6 +1,8 @@
 import { IconX } from '@tabler/icons-react';
 import React, { FC, useEffect, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
 
 import { ImageMessageContent } from '@/types/chat';
@@ -14,6 +16,8 @@ interface LightboxProps {
 }
 
 const Lightbox: FC<LightboxProps> = ({ imageUrl, onClose }) => {
+  const t = useTranslations();
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
@@ -22,14 +26,14 @@ const Lightbox: FC<LightboxProps> = ({ imageUrl, onClose }) => {
       <button
         className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
         onClick={onClose}
-        aria-label="Close"
+        aria-label={t('common.close')}
       >
         <IconX size={32} />
       </button>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageUrl}
-        alt="Full size preview"
+        alt={t('chat.fullSizePreview')}
         className="max-w-[90vw] max-h-[90vh] object-contain"
         onClick={(e) => e.stopPropagation()}
       />

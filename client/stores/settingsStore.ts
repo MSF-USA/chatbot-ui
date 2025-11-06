@@ -2,6 +2,7 @@
 
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
+import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
 
 import { create } from 'zustand';
@@ -26,6 +27,7 @@ interface SettingsStore {
   temperature: number;
   systemPrompt: string;
   defaultModelId: OpenAIModelID | undefined;
+  defaultSearchMode: SearchMode;
   models: OpenAIModel[];
   prompts: Prompt[];
   tones: Tone[];
@@ -35,6 +37,7 @@ interface SettingsStore {
   setTemperature: (temperature: number) => void;
   setSystemPrompt: (prompt: string) => void;
   setDefaultModelId: (id: OpenAIModelID | undefined) => void;
+  setDefaultSearchMode: (mode: SearchMode) => void;
   setModels: (models: OpenAIModel[]) => void;
   setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Prompt) => void;
@@ -67,6 +70,7 @@ export const useSettingsStore = create<SettingsStore>()(
       temperature: DEFAULT_TEMPERATURE,
       systemPrompt: DEFAULT_SYSTEM_PROMPT,
       defaultModelId: undefined,
+      defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
       models: [],
       prompts: [],
       tones: [],
@@ -78,6 +82,8 @@ export const useSettingsStore = create<SettingsStore>()(
       setSystemPrompt: (prompt) => set({ systemPrompt: prompt }),
 
       setDefaultModelId: (id) => set({ defaultModelId: id }),
+
+      setDefaultSearchMode: (mode) => set({ defaultSearchMode: mode }),
 
       setModels: (models) => set({ models }),
 
@@ -144,6 +150,7 @@ export const useSettingsStore = create<SettingsStore>()(
         set({
           temperature: DEFAULT_TEMPERATURE,
           systemPrompt: DEFAULT_SYSTEM_PROMPT,
+          defaultSearchMode: SearchMode.INTELLIGENT,
           prompts: [],
           tones: [],
           customAgents: [],
@@ -151,12 +158,13 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 1, // Increment this when schema changes to trigger migrations
+      version: 2, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
         systemPrompt: state.systemPrompt,
         defaultModelId: state.defaultModelId,
+        defaultSearchMode: state.defaultSearchMode,
         prompts: state.prompts,
         tones: state.tones,
         customAgents: state.customAgents,

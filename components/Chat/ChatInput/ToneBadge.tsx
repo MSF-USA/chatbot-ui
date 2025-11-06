@@ -1,6 +1,8 @@
 import { IconVolume } from '@tabler/icons-react';
 import React from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { Tone } from '@/types/tone';
 
 interface ToneBadgeProps {
@@ -18,6 +20,7 @@ export const ToneBadge: React.FC<ToneBadgeProps> = ({
   tones,
   onRemove,
 }) => {
+  const t = useTranslations();
   const toneName = tones.find((t) => t.id === toneId)?.name || 'Tone';
 
   return (
@@ -27,7 +30,7 @@ export const ToneBadge: React.FC<ToneBadgeProps> = ({
       <button
         onClick={onRemove}
         className="ml-0.5 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-full p-0.5 transition-colors"
-        aria-label="Remove tone"
+        aria-label={t('chat.removeTone')}
       >
         <svg
           className="w-3.5 h-3.5"

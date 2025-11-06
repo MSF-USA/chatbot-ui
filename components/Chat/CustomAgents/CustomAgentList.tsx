@@ -11,6 +11,8 @@ import {
 } from '@tabler/icons-react';
 import { FC, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import {
   exportCustomAgents,
   exportSingleCustomAgent,
@@ -46,6 +48,7 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
   onSelect,
   selectedModelId,
 }) => {
+  const t = useTranslations();
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [importSuccess, setImportSuccess] = useState<string | null>(null);

@@ -6,6 +6,8 @@ import {
 } from '@tabler/icons-react';
 import React, { FC } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 interface ChatInputSubmitButtonProps {
   isStreaming: boolean;
   isTranscribing: boolean;
@@ -21,6 +23,8 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
   isTranscribing,
   preventSubmission,
 }) => {
+  const t = useTranslations();
+
   return (
     <>
       {preventSubmission() ? (
@@ -31,7 +35,7 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
                       transition-colors duration-200"
             onClick={handleStopConversation}
             disabled={!isStreaming}
-            aria-label="Stop generation"
+            aria-label={t('chat.stopGeneration')}
           >
             <IconPlayerStop size={18} className="md:w-4 md:h-4" />
           </button>
@@ -46,7 +50,7 @@ const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
           className="flex items-center justify-center w-10 h-10 md:w-9 md:h-9 rounded-full
                     bg-gray-300 text-black hover:bg-gray-400 dark:bg-[#171717] dark:text-white dark:hover:bg-[#252525]
                     transition-colors duration-200"
-          aria-label="Send message"
+          aria-label={t('chat.sendMessage')}
         >
           <IconArrowUp size={18} className="md:hidden" />
           <IconSend2 size={16} className="hidden md:block ml-0.5" />

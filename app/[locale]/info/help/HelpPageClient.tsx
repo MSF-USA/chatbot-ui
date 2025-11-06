@@ -540,84 +540,122 @@ export function HelpPageClient({
 
             {/* Contact Content */}
             {expandedSection === 'contact' && (
-              <div className="space-y-6">
-                {/* Contact Form */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900/50">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                    Submit a Request
-                  </h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-                    Fill out the form below to submit a support request, provide
-                    feedback, or report an issue. Our team will get back to you
-                    as soon as possible.
-                  </p>
-                  <div className="space-y-4">
-                    {/* Iframe Container */}
-                    <div className="w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
-                      <iframe
-                        src={EXTERNAL_LINKS.SUPPORT_FORM_EMBED}
-                        width="100%"
-                        height="600"
-                        frameBorder="0"
-                        marginHeight={0}
-                        marginWidth={0}
-                        className="w-full min-h-[600px]"
-                        style={{ border: 'none' }}
-                        title="Support Request Form"
-                      />
+              <div className="space-y-8">
+                {/* Submit a Request */}
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/40 dark:to-purple-900/40 border-2 border-purple-200 dark:border-purple-800/50 p-5 shadow-lg">
+                  {/* Background Pattern */}
+                  <div className="absolute inset-0 opacity-5 dark:opacity-10">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(139,92,246,0.3),transparent)]" />
+                  </div>
+
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-purple-600 dark:bg-purple-700 rounded-lg shadow-md">
+                        <IconFileText size={24} className="text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                          Submit a Support Request
+                        </h3>
+                        <p className="text-purple-700 dark:text-purple-300 text-sm">
+                          Get help from our team
+                        </p>
+                      </div>
                     </div>
-                    {/* Fallback Link */}
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                        Having trouble with the form?
-                      </p>
-                      <a
-                        href={EXTERNAL_LINKS.SUPPORT_FORM}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:underline"
-                      >
-                        <IconExternalLink size={16} />
-                        Open form in new window
-                      </a>
-                    </div>
+
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+                      Need help or want to provide feedback? Click below to open
+                      our support form.
+                    </p>
+
+                    <a
+                      href={EXTERNAL_LINKS.SUPPORT_FORM}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                    >
+                      <IconExternalLink size={18} />
+                      Open Support Form
+                    </a>
                   </div>
                 </div>
 
-                {/* Helpful Resources */}
+                {/* Quick Contact Options */}
                 <div>
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
-                    Helpful Resources
-                  </h3>
+                  <div className="flex items-center gap-2 mb-5">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      Other Ways to Reach Us
+                    </h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4">
+                    {/* Email Support */}
+                    <a
+                      href={`mailto:${supportEmail}`}
+                      className="group relative overflow-hidden border-2 border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:border-purple-400 dark:hover:border-purple-500 hover:shadow-lg transition-all bg-white dark:bg-gray-900/50"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="flex-shrink-0 p-2.5 bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-900/40 dark:to-purple-800/40 rounded-lg group-hover:scale-110 transition-transform">
+                          <IconMail
+                            size={24}
+                            className="text-purple-600 dark:text-purple-400"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-base font-bold text-gray-900 dark:text-white mb-1">
+                            Email Support
+                          </h4>
+                          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1.5">
+                            Send us an email for questions, feedback, or
+                            technical issues
+                          </p>
+                          <span className="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400">
+                            {supportEmail}
+                            <IconExternalLink size={14} />
+                          </span>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+
+                {/* Additional Resources */}
+                <div>
+                  <div className="flex items-center gap-2 mb-5">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+                      Additional Resources
+                    </h3>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Project Portal */}
                     <a
                       href={EXTERNAL_LINKS.SHAREPOINT_PORTAL}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-teal-500 dark:hover:border-teal-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
+                      className="group relative overflow-hidden border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-teal-400 dark:hover:border-teal-500 hover:shadow-lg transition-all bg-white dark:bg-gray-900/50"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 w-10 h-10">
+                        <div className="flex-shrink-0 p-3 bg-gradient-to-br from-teal-100 to-teal-200 dark:from-teal-900/40 dark:to-teal-800/40 rounded-lg group-hover:scale-110 transition-transform">
                           <Image
                             src="/sharepoint-logo.svg"
                             alt="SharePoint"
-                            width={40}
-                            height={40}
-                            className="w-full h-full"
+                            width={32}
+                            height={32}
+                            className="w-8 h-8"
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="text-base font-bold text-gray-900 dark:text-white">
                               AI Accelerator Portal
                             </h4>
                             <IconExternalLink
-                              size={14}
-                              className="text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors flex-shrink-0"
+                              size={16}
+                              className="text-gray-400 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors"
                             />
                           </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
                             Documentation, project updates, and training
                             materials
                           </p>
@@ -630,58 +668,28 @@ export function HelpPageClient({
                       href={EXTERNAL_LINKS.GITHUB_REPOSITORY}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-gray-900 dark:hover:border-gray-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
+                      className="group relative overflow-hidden border-2 border-gray-200 dark:border-gray-700 rounded-xl p-6 hover:border-gray-800 dark:hover:border-gray-400 hover:shadow-lg transition-all bg-white dark:bg-gray-900/50"
                     >
                       <div className="flex items-start gap-4">
-                        <div className="flex-shrink-0 w-10 h-10 flex items-center justify-center">
+                        <div className="flex-shrink-0 p-3 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 rounded-lg group-hover:scale-110 transition-transform">
                           <FaGithub
-                            size={40}
+                            size={32}
                             className="text-gray-900 dark:text-white"
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h4 className="text-base font-bold text-gray-900 dark:text-white">
                               Open Source Repository
                             </h4>
                             <IconExternalLink
-                              size={14}
-                              className="text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors flex-shrink-0"
+                              size={16}
+                              className="text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors"
                             />
                           </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                            View the codebase, report issues, and contribute on
-                            GitHub
+                          <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                            View code, report issues, and contribute on GitHub
                           </p>
-                        </div>
-                      </div>
-                    </a>
-
-                    {/* Email Support */}
-                    <a
-                      href={`mailto:${supportEmail}`}
-                      className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-purple-500 dark:hover:border-purple-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
-                    >
-                      <div className="flex items-start gap-4">
-                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors flex-shrink-0">
-                          <IconMail
-                            size={24}
-                            className="text-purple-600 dark:text-purple-400"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                              Email Support
-                            </h4>
-                          </div>
-                          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
-                            Get help with questions, feedback, and technical
-                            issues
-                          </p>
-                          <span className="text-xs font-medium text-purple-600 dark:text-purple-400">
-                            {supportEmail}
-                          </span>
                         </div>
                       </div>
                     </a>

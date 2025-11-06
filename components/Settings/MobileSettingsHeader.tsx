@@ -74,7 +74,7 @@ export const MobileSettingsHeader: FC<MobileSettingsHeaderProps> = ({
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-neutral-700 text-black dark:text-white"
-            aria-label="Toggle menu"
+            aria-label={t('common.toggleMenu')}
           >
             {isMenuOpen ? <IconX size={20} /> : <IconMenu2 size={20} />}
           </button>

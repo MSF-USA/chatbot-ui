@@ -1,5 +1,6 @@
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
+import { SearchMode } from '@/types/searchMode';
 
 import { CustomAgent, useSettingsStore } from '@/client/stores/settingsStore';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -11,6 +12,7 @@ describe('settingsStore', () => {
       temperature: 0.5,
       systemPrompt: '',
       defaultModelId: undefined,
+      defaultSearchMode: SearchMode.INTELLIGENT,
       models: [],
       prompts: [],
       customAgents: [],
@@ -24,6 +26,7 @@ describe('settingsStore', () => {
       expect(state.temperature).toBe(0.5);
       expect(state.systemPrompt).toBe('');
       expect(state.defaultModelId).toBeUndefined();
+      expect(state.defaultSearchMode).toBe(SearchMode.INTELLIGENT);
       expect(state.models).toEqual([]);
       expect(state.prompts).toEqual([]);
       expect(state.customAgents).toEqual([]);
@@ -122,6 +125,52 @@ You should be concise.`;
         useSettingsStore.getState().setDefaultModelId(undefined);
 
         expect(useSettingsStore.getState().defaultModelId).toBeUndefined();
+      });
+    });
+  });
+
+  describe('Default Search Mode', () => {
+    describe('setDefaultSearchMode', () => {
+      it('sets default search mode', () => {
+        useSettingsStore.getState().setDefaultSearchMode(SearchMode.AGENT);
+
+        expect(useSettingsStore.getState().defaultSearchMode).toBe(
+          SearchMode.AGENT,
+        );
+      });
+
+      it('updates default search mode', () => {
+        useSettingsStore.getState().setDefaultSearchMode(SearchMode.OFF);
+        useSettingsStore.getState().setDefaultSearchMode(SearchMode.ALWAYS);
+
+        expect(useSettingsStore.getState().defaultSearchMode).toBe(
+          SearchMode.ALWAYS,
+        );
+      });
+
+      it('can set to INTELLIGENT (default)', () => {
+        useSettingsStore.getState().setDefaultSearchMode(SearchMode.OFF);
+        useSettingsStore
+          .getState()
+          .setDefaultSearchMode(SearchMode.INTELLIGENT);
+
+        expect(useSettingsStore.getState().defaultSearchMode).toBe(
+          SearchMode.INTELLIGENT,
+        );
+      });
+
+      it('persists all search mode values', () => {
+        const modes = [
+          SearchMode.OFF,
+          SearchMode.INTELLIGENT,
+          SearchMode.ALWAYS,
+          SearchMode.AGENT,
+        ];
+
+        modes.forEach((mode) => {
+          useSettingsStore.getState().setDefaultSearchMode(mode);
+          expect(useSettingsStore.getState().defaultSearchMode).toBe(mode);
+        });
       });
     });
   });
@@ -498,6 +547,7 @@ You should be concise.`;
         temperature: 0.9,
         systemPrompt: 'Custom prompt',
         defaultModelId: 'gpt-4' as OpenAIModelID,
+        defaultSearchMode: SearchMode.OFF,
         models: [
           {
             id: 'gpt-4' as OpenAIModelID,
@@ -537,6 +587,7 @@ You should be concise.`;
       const state = useSettingsStore.getState();
       expect(state.temperature).toBe(0.5);
       expect(state.systemPrompt).toBe('');
+      expect(state.defaultSearchMode).toBe(SearchMode.INTELLIGENT);
       expect(state.prompts).toEqual([]);
       expect(state.customAgents).toEqual([]);
     });
@@ -582,6 +633,7 @@ You should be concise.`;
         temperature: 0.5,
         systemPrompt: '',
         defaultModelId: undefined,
+        defaultSearchMode: SearchMode.INTELLIGENT,
         models: [],
         prompts: [],
         customAgents: [],
@@ -590,6 +642,7 @@ You should be concise.`;
       const state = useSettingsStore.getState();
       expect(state.temperature).toBe(0.5);
       expect(state.systemPrompt).toBe('');
+      expect(state.defaultSearchMode).toBe(SearchMode.INTELLIGENT);
     });
   });
 });

@@ -53,7 +53,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
   const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } =
     useConversations();
-  const { models, defaultModelId, setDefaultModelId } = useSettings();
+  const { models, defaultModelId, setDefaultModelId, setDefaultSearchMode } =
+    useSettings();
 
   const selectedModelId = selectedConversation?.model?.id || defaultModelId;
 
@@ -154,11 +155,14 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
 
   // Automatically fix invalid state when conversation loads with AGENT mode on non-agent model
   // Also ensure custom agents always have search mode OFF
+  // NOTE: This should ONLY run when conversation or model changes, NOT when search mode changes
   useEffect(() => {
     if (!selectedConversation) return;
 
+    const searchMode = selectedConversation.defaultSearchMode;
+
     // Custom agents should always have search mode OFF
-    if (isCustomAgent && currentSearchMode !== SearchMode.OFF) {
+    if (isCustomAgent && searchMode !== SearchMode.OFF) {
       console.log(
         '[ModelSelect] Auto-fixing custom agent to have search mode OFF',
       );
@@ -169,11 +173,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     }
 
     // Fix invalid AGENT mode on non-agent models
-    if (
-      !isCustomAgent &&
-      currentSearchMode === SearchMode.AGENT &&
-      !agentAvailable
-    ) {
+    if (!isCustomAgent && searchMode === SearchMode.AGENT && !agentAvailable) {
       console.log(
         '[ModelSelect] Auto-fixing invalid AGENT mode for non-agent model',
       );
@@ -181,14 +181,9 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         defaultSearchMode: SearchMode.INTELLIGENT,
       });
     }
-  }, [
-    selectedConversation?.id,
-    currentSearchMode,
-    agentAvailable,
-    isCustomAgent,
-    selectedConversation,
-    updateConversation,
-  ]);
+    // Only depend on conversation ID, model type changes, and agent availability
+    // Do NOT depend on currentSearchMode to avoid overriding user changes
+  }, [selectedConversation?.id, agentAvailable, isCustomAgent]);
 
   const handleModelSelect = (model: OpenAIModel) => {
     if (!selectedConversation) {
@@ -268,9 +263,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       `[ModelSelect] Toggling Search Mode: ${currentSearchMode} → ${newMode}`,
     );
 
+    // Update current conversation
     updateConversation(selectedConversation.id, {
       defaultSearchMode: newMode,
     });
+
+    // Set as default search mode for future conversations
+    setDefaultSearchMode(newMode);
   };
 
   const handleSetSearchMode = (mode: SearchMode) => {
@@ -280,9 +279,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       `[ModelSelect] Setting Search Mode: ${currentSearchMode} → ${mode}`,
     );
 
+    // Update current conversation
     updateConversation(selectedConversation.id, {
       defaultSearchMode: mode,
     });
+
+    // Set as default search mode for future conversations
+    setDefaultSearchMode(mode);
   };
 
   const handleSaveAgent = (agent: CustomAgent) => {

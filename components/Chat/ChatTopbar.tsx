@@ -111,33 +111,33 @@ export const ChatTopbar = ({
             <button
               className="flex items-center justify-center rounded-md transition-colors px-2 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-700 border border-transparent hover:border-neutral-300 dark:hover:border-neutral-600"
               onClick={onModelClick || onSettingsClick}
-              aria-label="Select Model"
-              title="Select Model"
+              aria-label={t('chat.selectModel')}
+              title={t('chat.selectModel')}
             >
               {getProviderIcon(selectedModelProvider)}
               <span
                 className="truncate font-bold dark:text-blue-50 text-gray-800 text-base ml-2"
                 title={selectedModelName}
               >
-                {selectedModelName || 'Select Model'}
+                {selectedModelName || t('chat.selectModel')}
               </span>
               {!isCustomAgent && searchMode === SearchMode.INTELLIGENT && (
                 <IconWorld
                   size={14}
                   className="ml-1.5 text-blue-600 dark:text-blue-400"
-                  title="Privacy-Focused Search"
+                  title={t('chat.privacyFocusedSearch')}
                 />
               )}
               {!isCustomAgent && searchMode === SearchMode.AGENT && (
                 <AzureAIIcon
                   className="ml-1.5 w-3.5 h-3.5 text-blue-600 dark:text-blue-400"
-                  aria-label="Azure AI Agent Mode"
+                  aria-label={t('chat.azureAIAgentMode')}
                 />
               )}
               {isCustomAgent && (
                 <AzureAIIcon
                   className="ml-1.5 w-3.5 h-3.5 text-blue-600 dark:text-blue-400"
-                  aria-label="Custom Agent"
+                  aria-label={t('chat.customAgent')}
                 />
               )}
               <IconChevronDown
@@ -154,8 +154,8 @@ export const ChatTopbar = ({
             <button
               className="p-1.5 rounded-md hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
               onClick={() => setShowMenu(!showMenu)}
-              aria-label="Menu"
-              title="Menu"
+              aria-label={t('common.menu')}
+              title={t('common.menu')}
             >
               <IconDots size={20} className="text-black dark:text-white" />
             </button>

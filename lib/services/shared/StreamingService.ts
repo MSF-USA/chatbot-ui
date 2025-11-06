@@ -14,18 +14,20 @@ export class StreamingService {
   /**
    * Determines if streaming should be used for a given model.
    *
-   * Reasoning models (o1, o1-mini, o3-mini, etc.) do not support streaming.
+   * Some models (like o3) do not support streaming due to API limitations.
    *
    * @param modelId - The model ID to check
    * @param requestedStream - Whether the client requested streaming
+   * @param modelConfig - Optional model configuration to check stream support
    * @returns true if streaming should be used, false otherwise
    */
   public shouldStream(
     modelId: OpenAIModelID | string,
     requestedStream: boolean,
+    modelConfig?: { stream?: boolean },
   ): boolean {
-    // Reasoning models don't support streaming
-    if (isReasoningModel(modelId)) {
+    // Check if model explicitly disables streaming (e.g., o3)
+    if (modelConfig && modelConfig.stream === false) {
       return false;
     }
 
@@ -73,15 +75,17 @@ export class StreamingService {
    * @param modelId - The model ID
    * @param requestedStream - Whether streaming was requested
    * @param requestedTemperature - The requested temperature (optional)
+   * @param modelConfig - Optional model configuration to check stream support
    * @returns Object with stream and temperature settings
    */
   public getStreamConfig(
     modelId: OpenAIModelID | string,
     requestedStream: boolean,
     requestedTemperature?: number,
+    modelConfig?: { stream?: boolean },
   ): { stream: boolean; temperature: number } {
     return {
-      stream: this.shouldStream(modelId, requestedStream),
+      stream: this.shouldStream(modelId, requestedStream, modelConfig),
       temperature: this.getTemperature(modelId, requestedTemperature),
     };
   }

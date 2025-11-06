@@ -175,7 +175,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
   const handleGeneratePrompt = async () => {
     if (!revisionGoal.trim() && !description.trim()) {
       alert(
-        'Please provide either a description or goal for prompt generation',
+        t('Please provide either a description or goal for prompt generation'),
       );
       return;
     }
@@ -185,7 +185,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
 
     try {
       const data = await generatePrompt({
-        promptName: name || 'Untitled Prompt',
+        promptName: name || t('Untitled Prompt'),
         promptDescription: description,
         revisionGoal: revisionGoal || description,
         additionalContext: fileContents || undefined,
@@ -195,7 +195,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
     } catch (error) {
       console.error('Generation error:', error);
       alert(
-        error instanceof Error ? error.message : 'Failed to generate prompt',
+        error instanceof Error ? error.message : t('Failed to generate prompt'),
       );
     } finally {
       setIsRevising(false);
@@ -223,7 +223,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
 
   const handleRevisePrompt = async () => {
     if (!content.trim()) {
-      alert('Please enter prompt content first');
+      alert(t('Please enter prompt content first'));
       return;
     }
 
@@ -232,7 +232,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
 
     try {
       const data = await revisePrompt({
-        promptName: name || 'Untitled Prompt',
+        promptName: name || t('Untitled Prompt'),
         promptDescription: description,
         promptContent: content,
         revisionGoal: revisionGoal || undefined,
@@ -243,7 +243,9 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
       setRevisionResult(data);
     } catch (error) {
       console.error('Revision error:', error);
-      alert(error instanceof Error ? error.message : 'Failed to revise prompt');
+      alert(
+        error instanceof Error ? error.message : t('Failed to revise prompt'),
+      );
     } finally {
       setIsRevising(false);
     }
@@ -280,7 +282,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="e.g., Email Response Template"
+          placeholder={t('enterPromptNamePlaceholder')}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500"
           autoFocus
         />
@@ -298,7 +300,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Brief description of what this prompt does..."
+          placeholder={t('enterPromptDescriptionPlaceholder')}
           rows={3}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 resize-none"
         />
@@ -474,7 +476,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Enter your prompt here... Use {{variableName}} for required variables or {{variableName:defaultValue}} for optional ones."
+          placeholder={t('enterPromptContentPlaceholder')}
           rows={12}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 resize-none font-mono"
         />

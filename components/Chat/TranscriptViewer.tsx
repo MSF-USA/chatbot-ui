@@ -109,7 +109,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
             <button
               onClick={handleCopy}
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-              title="Copy to clipboard"
+              title={t('common.copyToClipboard')}
             >
               <IconCopy size={14} />
               {copied ? 'Copied!' : 'Copy'}
@@ -117,7 +117,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
             <button
               onClick={handleDownload}
               className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-              title="Download transcript"
+              title={t('chat.downloadTranscript')}
             >
               <IconDownload size={14} />
               Download
@@ -128,7 +128,7 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
                   <button
                     onClick={() => setShowLanguageSelector(true)}
                     className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 rounded transition-colors"
-                    title="Translate transcript"
+                    title={t('chat.translateTranscript')}
                   >
                     <IconLanguage size={14} />
                     Translate

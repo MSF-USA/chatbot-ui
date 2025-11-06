@@ -101,6 +101,7 @@ export class StandardChatService {
         modelId,
         request.stream ?? true,
         request.temperature,
+        modelConfig,
       );
 
       // Prepare messages with token limit filtering

@@ -29,10 +29,18 @@ export function useInputState() {
 
   // Sync searchMode with conversation's defaultSearchMode when conversation changes
   const prevConversationId = useRef<string | undefined>(undefined);
+  const prevDefaultSearchMode = useRef<SearchMode | undefined>(undefined);
   useEffect(() => {
-    // Only update if conversation ID changed (avoid cascading renders)
-    if (prevConversationId.current !== selectedConversation?.id) {
+    const conversationIdChanged =
+      prevConversationId.current !== selectedConversation?.id;
+    const searchModeChanged =
+      prevDefaultSearchMode.current !== selectedConversation?.defaultSearchMode;
+
+    // Update if conversation ID or defaultSearchMode changed
+    if (conversationIdChanged || searchModeChanged) {
       prevConversationId.current = selectedConversation?.id;
+      prevDefaultSearchMode.current = selectedConversation?.defaultSearchMode;
+
       // Schedule state update to avoid synchronous setState in effect
       setTimeout(() => {
         setSearchMode(

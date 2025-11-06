@@ -4,6 +4,7 @@ import { IconSparkles, IconX } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 import { useUI } from '@/client/hooks/ui/useUI';
@@ -23,6 +24,7 @@ interface WelcomeBannerProps {
  * Renders at the top on desktop, above mobile header on mobile
  */
 export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
+  const t = useTranslations();
   const { data: session, status } = useSession();
   const { showChatbar } = useUI();
   const [isVisible, setIsVisible] = useState(false);
@@ -121,7 +123,7 @@ export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
                     <button
                       onClick={handleDismiss}
                       className="p-0.5 md:p-1 hover:bg-gray-200/50 dark:hover:bg-gray-700/50 rounded transition-colors text-gray-700 dark:text-gray-300"
-                      aria-label="Dismiss banner"
+                      aria-label={t('common.dismissBanner')}
                     >
                       <IconX size={14} className="md:w-4 md:h-4" />
                     </button>

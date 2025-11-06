@@ -38,11 +38,21 @@ export class DeepSeekHandler extends ModelHandler {
     // DeepSeek models work better WITHOUT system prompts
     // Merge system prompt into first user message instead
 
+    // Clarify ambiguous instructions for DeepSeek
+    // "Respond using markdown" is interpreted too literally by DeepSeek
+    let modifiedSystemPrompt = systemPrompt;
+    if (systemPrompt) {
+      modifiedSystemPrompt = systemPrompt.replace(
+        'Respond using markdown.',
+        'Use markdown formatting in your responses (headers, lists, bold, code blocks where appropriate).',
+      );
+    }
+
     // Deep copy messages to avoid mutation
     const messagesToUse = messages.map(
       (msg, index): OpenAI.Chat.Completions.ChatCompletionMessageParam => {
         // Don't modify messages until we find the first user message
-        if (!systemPrompt || msg.role !== 'user') {
+        if (!modifiedSystemPrompt || msg.role !== 'user') {
           return { role: msg.role, content: msg.content as any };
         }
 
@@ -57,7 +67,7 @@ export class DeepSeekHandler extends ModelHandler {
         if (typeof content === 'string') {
           return {
             role: msg.role,
-            content: `${systemPrompt}\n\n${content}`,
+            content: `${modifiedSystemPrompt}\n\n${content}`,
           } as OpenAI.Chat.Completions.ChatCompletionMessageParam;
         } else if (Array.isArray(content)) {
           // Deep copy the content array and modify the text item
@@ -65,7 +75,7 @@ export class DeepSeekHandler extends ModelHandler {
             if (item.type === 'text' && 'text' in item) {
               return {
                 ...item,
-                text: `${systemPrompt}\n\n${item.text}`,
+                text: `${modifiedSystemPrompt}\n\n${item.text}`,
               };
             }
             return { ...item };

@@ -32,7 +32,6 @@ export function useChatScrolling({
   // Tracking refs
   const previousMessageCountRef = useRef<number>(0);
   const wasStreamingRef = useRef(false);
-  const scrollPositionBeforeStreamEndRef = useRef<number | null>(null);
   const isInitialRenderRef = useRef(true);
   const shouldAutoScrollRef = useRef(true);
 
@@ -41,22 +40,9 @@ export function useChatScrolling({
     isInitialRenderRef.current = true;
     previousMessageCountRef.current = 0;
     wasStreamingRef.current = false;
-    scrollPositionBeforeStreamEndRef.current = null;
   }, [selectedConversationId]);
 
-  // Capture scroll position when streaming ends
-  useEffect(() => {
-    if (!isStreaming && wasStreamingRef.current && chatContainerRef.current) {
-      scrollPositionBeforeStreamEndRef.current =
-        chatContainerRef.current.scrollTop;
-      console.log(
-        '[Scroll] Captured scroll position at stream end:',
-        scrollPositionBeforeStreamEndRef.current,
-      );
-    }
-  }, [isStreaming]);
-
-  // Smooth scroll to bottom on new messages (but not when streaming just finished)
+  // Smooth scroll to bottom on new messages (NOT during or after streaming)
   useEffect(() => {
     const currentMessageCount = messageCount;
     const previousCount = previousMessageCountRef.current;
@@ -64,13 +50,18 @@ export function useChatScrolling({
     const streamingJustCompleted =
       wasStreamingRef.current === true && !isStreaming;
 
+    // Only scroll to bottom for new messages when:
+    // 1. Message count increased (new message added)
+    // 2. Not currently streaming
+    // 3. Streaming didn't just complete (let it stay where it is)
+    // 4. Should auto scroll (user hasn't manually scrolled away)
     if (
       currentMessageCount > previousCount &&
       !isStreaming &&
       !streamingJustCompleted &&
+      shouldAutoScrollRef.current &&
       chatContainerRef.current
     ) {
-      console.log('[Scroll] Auto-scrolling to bottom for new message');
       setTimeout(() => {
         if (chatContainerRef.current) {
           chatContainerRef.current.scrollTo({
@@ -79,19 +70,6 @@ export function useChatScrolling({
           });
         }
       }, 0);
-    } else if (
-      streamingJustCompleted &&
-      scrollPositionBeforeStreamEndRef.current !== null
-    ) {
-      console.log(
-        '[Scroll] Restoring scroll position after streaming:',
-        scrollPositionBeforeStreamEndRef.current,
-      );
-      if (chatContainerRef.current) {
-        chatContainerRef.current.scrollTop =
-          scrollPositionBeforeStreamEndRef.current;
-      }
-      scrollPositionBeforeStreamEndRef.current = null;
     }
 
     previousMessageCountRef.current = currentMessageCount;
@@ -117,9 +95,6 @@ export function useChatScrolling({
         if (distanceFromBottom > UI_CONSTANTS.SCROLL.AUTO_SCROLL_THRESHOLD) {
           shouldAutoScrollRef.current = false;
           setShowScrollDownButton(true);
-          console.log(
-            '[Scroll] User scrolled away during streaming, stopping auto-scroll',
-          );
         }
       }
     };
@@ -139,7 +114,7 @@ export function useChatScrolling({
     }
   }, [isStreaming]);
 
-  // Smooth auto-scroll during streaming
+  // Smooth auto-scroll during streaming - stops when streaming ends
   useEffect(() => {
     if (!isStreaming || !shouldAutoScrollRef.current) {
       return;

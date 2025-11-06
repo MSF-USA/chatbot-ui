@@ -8,6 +8,7 @@ import {
 
 import { Conversation } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
+import { SearchMode } from '@/types/searchMode';
 
 interface UseConversationInitializationProps {
   isLoaded: boolean;
@@ -17,6 +18,7 @@ interface UseConversationInitializationProps {
   defaultModelId?: string;
   systemPrompt?: string;
   temperature?: number;
+  defaultSearchMode?: SearchMode;
   addConversation: (conversation: Conversation) => void;
   selectConversation: (id: string) => void;
 }
@@ -33,6 +35,7 @@ export function useConversationInitialization({
   defaultModelId,
   systemPrompt,
   temperature,
+  defaultSearchMode,
   addConversation,
   selectConversation,
 }: UseConversationInitializationProps) {
@@ -51,6 +54,7 @@ export function useConversationInitialization({
         defaultModelId,
         systemPrompt || '',
         temperature || 0.5,
+        defaultSearchMode,
       );
       addConversation(newConversation);
     } else if (!selectedConversation) {

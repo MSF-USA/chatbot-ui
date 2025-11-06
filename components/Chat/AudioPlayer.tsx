@@ -1,6 +1,8 @@
 import { IconDownload, IconX } from '@tabler/icons-react';
 import React, { useEffect, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { AudioTimeDisplay } from './Audio/AudioTimeDisplay';
 import { PlaybackButton } from './Audio/PlaybackButton';
 import { ProgressBar } from './Audio/ProgressBar';
@@ -12,6 +14,7 @@ interface AudioPlayerProps {
 }
 
 const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
+  const t = useTranslations();
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [audioDuration, setAudioDuration] = useState<number>(0);
   const [audioProgress, setAudioProgress] = useState<number>(0);
@@ -270,8 +273,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             <button
               onClick={handleDownload}
               className="mx-1 p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
-              aria-label="Download audio"
-              title="Download audio"
+              aria-label={t('chat.downloadAudio')}
+              title={t('chat.downloadAudio')}
             >
               <IconDownload size={18} />
             </button>
@@ -280,8 +283,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ audioUrl, onClose }) => {
             <button
               onClick={onClose}
               className="p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 focus:outline-none"
-              aria-label="Close audio player"
-              title="Close audio player"
+              aria-label={t('chat.closeAudioPlayer')}
+              title={t('chat.closeAudioPlayer')}
             >
               <IconX size={18} />
             </button>

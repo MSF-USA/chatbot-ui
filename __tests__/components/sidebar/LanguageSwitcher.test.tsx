@@ -12,21 +12,6 @@ vi.mock('next-intl', () => ({
   useLocale: () => mockUseLocale(),
 }));
 
-// Mock navigation
-const mockReplace = vi.fn();
-const mockUsePathname = vi.fn();
-const mockUseParams = vi.fn();
-const mockUseRouter = vi.fn();
-
-vi.mock('@/lib/navigation', () => ({
-  usePathname: () => mockUsePathname(),
-  useRouter: () => mockUseRouter(),
-}));
-
-vi.mock('next/navigation', () => ({
-  useParams: () => mockUseParams(),
-}));
-
 // Mock locales utility
 vi.mock('@/lib/utils/app/locales', () => ({
   getSupportedLocales: () => ['en', 'fr', 'es', 'de'],
@@ -42,12 +27,28 @@ vi.mock('@/lib/utils/app/locales', () => ({
 }));
 
 describe('LanguageSwitcher', () => {
+  let mockReload: ReturnType<typeof vi.fn>;
+  let originalLocation: Location;
+
   beforeEach(() => {
     mockUseLocale.mockReturnValue('en');
-    mockUsePathname.mockReturnValue('/chat');
-    mockUseParams.mockReturnValue({});
-    mockUseRouter.mockReturnValue({ replace: mockReplace });
-    mockReplace.mockClear();
+
+    // Mock window.location.reload
+    mockReload = vi.fn();
+    originalLocation = window.location;
+    delete (window as any).location;
+    window.location = { ...originalLocation, reload: mockReload } as any;
+
+    // Mock document.cookie
+    Object.defineProperty(document, 'cookie', {
+      writable: true,
+      value: '',
+    });
+  });
+
+  afterEach(() => {
+    window.location = originalLocation;
+    mockReload.mockClear();
   });
 
   describe('Rendering', () => {
@@ -84,51 +85,46 @@ describe('LanguageSwitcher', () => {
   });
 
   describe('Locale Change', () => {
-    it('calls router.replace when locale is changed', () => {
+    it('sets NEXT_LOCALE cookie when locale is changed', () => {
       render(<LanguageSwitcher />);
 
       const select = screen.getByRole('combobox');
       fireEvent.change(select, { target: { value: 'es' } });
 
-      expect(mockReplace).toHaveBeenCalledTimes(1);
+      expect(document.cookie).toContain('NEXT_LOCALE=es');
     });
 
-    it('passes correct pathname to router.replace', () => {
-      mockUsePathname.mockReturnValue('/settings');
+    it('calls window.location.reload when locale is changed', () => {
+      render(<LanguageSwitcher />);
+
+      const select = screen.getByRole('combobox');
+      fireEvent.change(select, { target: { value: 'es' } });
+
+      expect(mockReload).toHaveBeenCalledTimes(1);
+    });
+
+    it('sets correct cookie attributes', () => {
       render(<LanguageSwitcher />);
 
       const select = screen.getByRole('combobox');
       fireEvent.change(select, { target: { value: 'de' } });
 
-      expect(mockReplace).toHaveBeenCalledWith(
-        { pathname: '/settings', params: {} },
-        { locale: 'de' },
-      );
+      const cookie = document.cookie;
+      expect(cookie).toContain('path=/');
+      expect(cookie).toContain('max-age=31536000');
+      expect(cookie).toContain('SameSite=Lax');
     });
 
-    it('passes correct params to router.replace', () => {
-      mockUseParams.mockReturnValue({ id: '123' });
+    it('updates cookie for different locales', () => {
       render(<LanguageSwitcher />);
 
       const select = screen.getByRole('combobox');
+
       fireEvent.change(select, { target: { value: 'fr' } });
+      expect(document.cookie).toContain('NEXT_LOCALE=fr');
 
-      expect(mockReplace).toHaveBeenCalledWith(
-        { pathname: '/chat', params: { id: '123' } },
-        { locale: 'fr' },
-      );
-    });
-
-    it('updates to selected locale', () => {
-      render(<LanguageSwitcher />);
-
-      const select = screen.getByRole('combobox');
-      fireEvent.change(select, { target: { value: 'es' } });
-
-      expect(mockReplace).toHaveBeenCalledWith(
-        { pathname: '/chat', params: {} },
-        { locale: 'es' },
-      );
+      fireEvent.change(select, { target: { value: 'de' } });
+      expect(document.cookie).toContain('NEXT_LOCALE=de');
     });
   });
 

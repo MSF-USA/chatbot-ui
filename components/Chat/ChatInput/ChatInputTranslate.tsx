@@ -162,8 +162,8 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = ({
             setTargetLanguage(temp);
           }}
           className="flex items-center justify-center p-2 rounded-md text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all"
-          title="Swap languages"
-          aria-label="Swap languages"
+          title={t('chat.swapLanguages')}
+          aria-label={t('chat.swapLanguages')}
         >
           <IconArrowsExchange size={20} />
         </button>
@@ -183,7 +183,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = ({
         ) : (
           <input
             type="text"
-            placeholder="Type a language"
+            placeholder={t('chat.typeLanguagePlaceholder')}
             className="flex-1 pl-4 pr-10 py-3 text-base bg-white dark:bg-[#2D3748] border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-lg transition-all"
             value={targetLanguage}
             onChange={(e) => setTargetLanguage(e.target.value)}
@@ -196,7 +196,7 @@ const ChatInputTranslate: FC<ChatInputTranslateProps> = ({
           id="input-text"
           ref={inputTextRef}
           rows={6}
-          label="Enter text to translate"
+          label={t('chat.enterTextToTranslate')}
           placeholder={t('translatorTextToTranslatePlaceholder')}
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}

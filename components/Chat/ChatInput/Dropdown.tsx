@@ -177,7 +177,10 @@ const Dropdown: React.FC<DropdownProps> = ({
       {
         id: 'search',
         icon: <IconWorld size={18} className="text-blue-500 flex-shrink-0" />,
-        label: searchMode === SearchMode.ALWAYS ? '✓ Web Search' : 'Web Search',
+        label:
+          searchMode === SearchMode.ALWAYS
+            ? `✓ ${t('webSearchDropdown')}`
+            : t('webSearchDropdown'),
         infoTooltip:
           'Enable web search for every message.\n\nProvides up-to-date information using real-time Bing web access.',
         onClick: () => {
@@ -195,12 +198,12 @@ const Dropdown: React.FC<DropdownProps> = ({
           />
         ),
         label: selectedToneId
-          ? `✓ Tone: ${tones.find((t) => t.id === selectedToneId)?.name || 'Selected'}`
-          : 'Tone',
+          ? `✓ ${t('toneDropdown')}: ${tones.find((tone) => tone.id === selectedToneId)?.name || 'Selected'}`
+          : t('toneDropdown'),
         infoTooltip:
           tones.length === 0
-            ? 'No tones available.\n\nCreate tones in Quick Actions to control writing style, formality, and personality.'
-            : 'Apply a custom voice profile to your messages.\n\nSelect a tone to control writing style, formality, and personality.\n\nStays active until changed or removed.',
+            ? t('noTonesAvailable')
+            : t('applyCustomVoiceProfile'),
         onClick: () => {
           setIsToneOpen(true);
           closeDropdown();
@@ -216,7 +219,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             className={`flex-shrink-0 ${hasAudioVideoFile ? 'text-gray-400' : 'text-gray-700 dark:text-gray-300'}`}
           />
         ),
-        label: 'Attach files',
+        label: t('attachFilesDropdown'),
         infoTooltip: hasAudioVideoFile
           ? 'Cannot attach files while transcribing audio/video.\n\nRemove the audio/video file first.'
           : 'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n\nUpload up to 5 files at once.\n\nImages and documents work with web search mode.',
@@ -232,7 +235,7 @@ const Dropdown: React.FC<DropdownProps> = ({
             className={`flex-shrink-0 ${hasAudioVideoFile ? 'text-gray-400' : 'text-orange-500'}`}
           />
         ),
-        label: 'Transcribe Audio/Video',
+        label: t('transcribeAudioVideoDropdown'),
         infoTooltip: hasAudioVideoFile
           ? 'Already transcribing a file.\n\nOnly one audio/video file can be transcribed at a time.'
           : 'Upload and transcribe audio or video files.\n\nSupported formats:\n• Audio: MP3, WAV, M4A\n• Video: MP4, WebM, MPEG, MPG\n\nTranscription will appear in the chat input.',
@@ -250,7 +253,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         icon: (
           <IconLanguage size={18} className="text-teal-500 flex-shrink-0" />
         ),
-        label: 'Translate Text',
+        label: t('translateTextDropdown'),
         onClick: () => {
           setIsTranslateOpen(true);
           closeDropdown();
@@ -264,7 +267,7 @@ const Dropdown: React.FC<DropdownProps> = ({
               icon: (
                 <IconCamera size={18} className="text-red-500 flex-shrink-0" />
               ),
-              label: 'Camera',
+              label: t('cameraDropdown'),
               onClick: () => {
                 onCameraClick();
                 closeDropdown();
@@ -324,7 +327,7 @@ const Dropdown: React.FC<DropdownProps> = ({
           }}
           aria-haspopup="true"
           aria-expanded={isOpen}
-          aria-label="Toggle dropdown menu"
+          aria-label={t('common.toggleDropdownMenu')}
           className="focus:outline-none flex"
         >
           <IconCirclePlus className="w-7 h-7 md:w-6 md:h-6 mr-2 text-black dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700 rounded-full transition-colors duration-200" />

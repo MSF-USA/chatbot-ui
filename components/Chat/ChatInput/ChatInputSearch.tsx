@@ -176,11 +176,7 @@ const ChatInputSearch = ({
       setUrlQuestionInput('');
     } catch (error: any) {
       console.error(error);
-      setUrlError(
-        error.message ||
-          t('errorOccurredFetchingUrl') ||
-          'An error occurred while fetching the URL content',
-      );
+      setUrlError(error.message || t('chat.errorFetchingUrl'));
     } finally {
       setUrlStatusMessage(null);
       setIsUrlSubmitting(false);
@@ -217,11 +213,7 @@ const ChatInputSearch = ({
       setSearchInput('');
     } catch (error: any) {
       console.error(error);
-      setSearchError(
-        error.message ||
-          t('errorOccurredFetchingSearchResults') ||
-          'An error occurred while initiating web search',
-      );
+      setSearchError(error.message || t('chat.errorInitiatingSearch'));
     } finally {
       setSearchStatusMessage(null);
       setIsSearchSubmitting(false);
@@ -338,7 +330,7 @@ const ChatInputSearch = ({
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Enter your search query or question..."
+              placeholder={t('chat.enterSearchQueryPlaceholder')}
               disabled={isSubmitting}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white bg-white dark:bg-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
             />

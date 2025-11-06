@@ -146,7 +146,7 @@ export class ToolRouterService {
                 searchQuery: {
                   type: 'string',
                   description:
-                    'Optimized search query if web_search is in tools',
+                    'Optimized search query if web_search is in tools. Empty string if no search needed.',
                 },
                 reasoning: {
                   type: 'string',
@@ -154,7 +154,7 @@ export class ToolRouterService {
                     'Brief explanation of why these tools were chosen',
                 },
               },
-              required: ['tools', 'reasoning'],
+              required: ['tools', 'searchQuery', 'reasoning'],
               additionalProperties: false,
             },
           },
@@ -297,6 +297,11 @@ EXAMPLES:
 ✅ SEARCH: "Latest AI developments this week" - Current events
 
 DECISION RULE: When in doubt, DON'T search. The LLM can answer most questions without internet access.
+
+RESPONSE FORMAT:
+- tools: Include "web_search" if search is needed, otherwise empty array []
+- searchQuery: If tools includes "web_search", provide an optimized search query (3-7 words). If NO search needed, provide empty string ""
+- reasoning: Brief explanation of your decision
 
 When creating searchQuery (only if search IS needed):
 - Make it concise and specific (3-7 words)

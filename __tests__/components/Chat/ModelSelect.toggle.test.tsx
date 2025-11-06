@@ -25,6 +25,7 @@ const mockUseSettings = {
   models: Object.values(OpenAIModels).filter((m) => !m.isDisabled),
   defaultModelId: OpenAIModelID.GPT_4_1,
   setDefaultModelId: vi.fn(),
+  setDefaultSearchMode: vi.fn(),
 };
 
 const mockUseCustomAgents = {

@@ -108,6 +108,7 @@ describe('ToolRouterService', () => {
             message: {
               content: JSON.stringify({
                 tools: [],
+                searchQuery: '', // Empty string when no search is needed (schema requires it)
                 reasoning:
                   'General algorithm explanation, no current info needed',
               }),
@@ -119,7 +120,7 @@ describe('ToolRouterService', () => {
       const result = await service.determineTool(request);
 
       expect(result.tools).toEqual([]);
-      expect(result.searchQuery).toBeUndefined();
+      expect(result.searchQuery).toBe('');
     });
 
     it('should determine web search needed for "latest version" question', async () => {

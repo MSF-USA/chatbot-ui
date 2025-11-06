@@ -7,6 +7,8 @@ import React, {
   useState,
 } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { ChatInputSubmitTypes, FilePreview } from '@/types/chat';
 
 import { XIcon } from '@/components/Icons/cancel';
@@ -21,6 +23,8 @@ interface LightboxProps {
 }
 
 const Lightbox: FC<LightboxProps> = ({ imageUrl, onClose }) => {
+  const t = useTranslations();
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
@@ -29,14 +33,14 @@ const Lightbox: FC<LightboxProps> = ({ imageUrl, onClose }) => {
       <button
         className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors"
         onClick={onClose}
-        aria-label="Close"
+        aria-label={t('common.close')}
       >
         <IconX size={32} />
       </button>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageUrl}
-        alt="Full size preview"
+        alt={t('chat.fullSizePreview')}
         className="max-w-[90vw] max-h-[90vh] object-contain"
         onClick={(e) => e.stopPropagation()}
       />
@@ -64,6 +68,8 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   setSubmitType,
   progress,
 }) => {
+  const t = useTranslations();
+
   if (!filePreview) {
     throw new Error('Empty filePreview found');
   }
@@ -264,10 +270,10 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
             isHovered ? 'opacity-100' : 'opacity-0 md:group-hover:opacity-100'
           } transition-all duration-200 hover:scale-110 hover:rotate-90 hover:bg-red-50 dark:hover:bg-red-900/30 active:scale-95`}
           onClick={(event) => removeFilePreview(event, filePreview)}
-          aria-label="Remove"
+          aria-label={t('common.remove')}
         >
           <XIcon className="w-5 h-5 text-gray-700 dark:text-gray-300 transition-colors hover:text-red-600 dark:hover:text-red-400" />
-          <span className="sr-only">Remove</span>
+          <span className="sr-only">{t('common.remove')}</span>
         </button>
 
         {/* Status indicator */}

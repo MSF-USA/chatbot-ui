@@ -255,7 +255,7 @@ export const UserMessage: FC<UserMessageProps> = ({
               <button
                 className="visible md:invisible md:group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
                 onClick={onRegenerate}
-                aria-label="Retry message"
+                aria-label={t('chat.retryMessage')}
               >
                 <IconRefresh size={18} />
               </button>
@@ -273,14 +273,14 @@ export const UserMessage: FC<UserMessageProps> = ({
             <button
               className="visible md:invisible md:group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
               onClick={toggleEditing}
-              aria-label="Edit message"
+              aria-label={t('chat.editMessage')}
             >
               <IconEdit size={18} />
             </button>
             <button
               className="visible md:invisible md:group-hover:visible focus:visible text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
               onClick={handleDeleteMessage}
-              aria-label="Delete message"
+              aria-label={t('chat.deleteMessage')}
             >
               <IconTrash size={18} />
             </button>

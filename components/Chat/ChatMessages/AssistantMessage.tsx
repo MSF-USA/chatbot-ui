@@ -8,6 +8,8 @@ import {
 } from '@tabler/icons-react';
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
+import { useSmoothStreaming } from '@/client/hooks/chat/useSmoothStreaming';
+
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
 import { Conversation, Message } from '@/types/chat';
@@ -51,6 +53,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+
+  // Apply smooth streaming to make chunky tokens appear character-by-character
+  const smoothContent = useSmoothStreaming({
+    isStreaming: messageIsStreaming,
+    content: processedContent,
+    charsPerFrame: 6,
+    frameDelay: 10,
+    enabled: true,
+  });
 
   // Detect dark mode
   useEffect(() => {
@@ -121,9 +132,8 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       else if (!messageIsStreaming) {
         const jsonMatch = contentWithoutThinking.match(/(\{[\s\S]*\})$/);
         if (jsonMatch && isValidJSON(jsonMatch[1])) {
-          mainContent = contentWithoutThinking
-            .slice(0, -jsonMatch[1].length)
-            .trim();
+          // Don't use .trim() - it removes newlines needed for markdown
+          mainContent = contentWithoutThinking.slice(0, -jsonMatch[1].length);
           try {
             const parsedData = JSON.parse(jsonMatch[1].trim());
             if (parsedData.citations) {
@@ -149,17 +159,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     // Determine final thinking content (priority: message > metadata > inline)
     const finalThinking =
       message?.thinking || metadataThinking || inlineThinking || '';
-
-    console.log(
-      `[AssistantMessage] Processing message with ${citationsData.length} citations:`,
-      {
-        messageCitations: message?.citations?.length || 0,
-        parsedCitations: citationsData.length,
-        citationsData: JSON.stringify(citationsData, null, 2),
-        contentLength: content.length,
-        hasMetadata: contentWithoutThinking.includes('<<<METADATA_START>>>'),
-      },
-    );
 
     setProcessedContent(mainContent);
     setThinking(finalThinking);
@@ -291,7 +290,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               <button
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white font-medium transition-colors"
                 onClick={onRegenerate}
-                aria-label="Try again"
+                aria-label={t('common.tryAgain')}
               >
                 <IconRefresh size={18} />
                 Try Again
@@ -315,7 +314,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   shikiTheme={['github-light', 'github-dark']}
                   mermaidConfig={mermaidConfig}
                 >
-                  {processedContent}
+                  {smoothContent}
                 </CitationStreamdown>
               </div>
             )}
@@ -345,7 +344,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 <button
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
                   onClick={onRegenerate}
-                  aria-label="Regenerate response"
+                  aria-label={t('chat.regenerateResponse')}
                 >
                   <IconRefresh size={18} />
                 </button>

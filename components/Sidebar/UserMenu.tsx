@@ -155,7 +155,7 @@ export const UserMenu: FC<UserMenuProps> = ({
             onClick={() => setShowUserMenu(false)}
           >
             <IconHelp size={18} className="shrink-0" />
-            <span>Help Center</span>
+            <span>{t('Help Center')}</span>
           </Link>
           <button
             className="w-full text-left px-4 py-3 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 flex items-center gap-3 border-t border-neutral-200 dark:border-neutral-700"

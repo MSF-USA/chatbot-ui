@@ -2,6 +2,8 @@ import { StreamingService } from '@/lib/services/shared/StreamingService';
 
 import { DEFAULT_TEMPERATURE } from '@/lib/utils/app/const';
 
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+
 import { describe, expect, it } from 'vitest';
 
 describe('StreamingService', () => {
@@ -24,12 +26,25 @@ describe('StreamingService', () => {
       expect(service.shouldStream('gpt-5', false)).toBe(false);
     });
 
-    it('should return false for reasoning models even when streaming is requested', () => {
-      expect(service.shouldStream('o3', true)).toBe(false);
-      expect(service.shouldStream('DeepSeek-R1', true)).toBe(false);
+    it('should return false for models with stream: false when streaming is requested', () => {
+      // o3 has stream: false in config, so it should not stream
+      expect(
+        service.shouldStream('o3', true, OpenAIModels[OpenAIModelID.GPT_o3]),
+      ).toBe(false);
     });
 
-    it('should return false for reasoning models when streaming is not requested', () => {
+    it('should return true for DeepSeek-R1 when streaming is requested', () => {
+      // DeepSeek-R1 doesn't have stream: false, so it CAN stream
+      expect(
+        service.shouldStream(
+          'DeepSeek-R1',
+          true,
+          OpenAIModels[OpenAIModelID.DEEPSEEK_R1],
+        ),
+      ).toBe(true);
+    });
+
+    it('should return false for models when streaming is not requested', () => {
       expect(service.shouldStream('o3', false)).toBe(false);
       expect(service.shouldStream('DeepSeek-R1', false)).toBe(false);
     });
@@ -97,18 +112,29 @@ describe('StreamingService', () => {
       expect(config.temperature).toBe(0.8);
     });
 
-    it('should return correct config for reasoning model with requested streaming', () => {
-      const config = service.getStreamConfig('o3', true, 0.5);
+    it('should return correct config for o3 with requested streaming (but disabled due to config)', () => {
+      const config = service.getStreamConfig(
+        'o3',
+        true,
+        0.5,
+        OpenAIModels[OpenAIModelID.GPT_o3],
+      );
 
-      // Reasoning models: no streaming, fixed temp of 1
+      // o3 has stream: false, fixed temp of 1
       expect(config.stream).toBe(false);
       expect(config.temperature).toBe(1);
     });
 
-    it('should return correct config for reasoning model without requested streaming', () => {
-      const config = service.getStreamConfig('DeepSeek-R1', false, 0.7);
+    it('should return correct config for DeepSeek-R1 with streaming enabled', () => {
+      const config = service.getStreamConfig(
+        'DeepSeek-R1',
+        true,
+        0.7,
+        OpenAIModels[OpenAIModelID.DEEPSEEK_R1],
+      );
 
-      expect(config.stream).toBe(false);
+      // DeepSeek-R1 can stream, fixed temp of 1
+      expect(config.stream).toBe(true);
       expect(config.temperature).toBe(1);
     });
 
@@ -120,7 +146,12 @@ describe('StreamingService', () => {
     });
 
     it('should use temperature 1 for reasoning models even when not specified', () => {
-      const config = service.getStreamConfig('o3', true);
+      const config = service.getStreamConfig(
+        'o3',
+        true,
+        undefined,
+        OpenAIModels[OpenAIModelID.GPT_o3],
+      );
 
       expect(config.stream).toBe(false);
       expect(config.temperature).toBe(1);
@@ -138,7 +169,12 @@ describe('StreamingService', () => {
     });
 
     it('should handle o3 reasoning without streaming', () => {
-      const config = service.getStreamConfig('o3', true, 0.5);
+      const config = service.getStreamConfig(
+        'o3',
+        true,
+        0.5,
+        OpenAIModels[OpenAIModelID.GPT_o3],
+      );
 
       expect(config).toEqual({
         stream: false,
@@ -146,11 +182,17 @@ describe('StreamingService', () => {
       });
     });
 
-    it('should handle DeepSeek-R1 reasoning model', () => {
-      const config = service.getStreamConfig('DeepSeek-R1', true, 0.6);
+    it('should handle DeepSeek-R1 reasoning model with streaming', () => {
+      const config = service.getStreamConfig(
+        'DeepSeek-R1',
+        true,
+        0.6,
+        OpenAIModels[OpenAIModelID.DEEPSEEK_R1],
+      );
 
+      // DeepSeek-R1 CAN stream (no stream: false in config)
       expect(config).toEqual({
-        stream: false,
+        stream: true,
         temperature: 1,
       });
     });

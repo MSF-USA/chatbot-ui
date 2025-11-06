@@ -584,7 +584,7 @@ export const ChatInput = ({
                       onScrollDownClick();
                       e.currentTarget.blur(); // Remove focus after click
                     }}
-                    aria-label="Scroll to bottom"
+                    aria-label={t('chat.scrollToBottom')}
                   >
                     <IconArrowDown size={18} />
                   </button>

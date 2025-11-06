@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import { createPortal } from 'react-dom';
 
+import { useTranslations } from 'next-intl';
+
 import useModal from '@/client/hooks/ui/useModal';
 
 interface ModalProps {
@@ -62,6 +64,7 @@ const Modal: React.FC<ModalProps> = ({
   closeWithButton = true,
   verticalAlign = 'center',
 }) => {
+  const t = useTranslations();
   const [mounted, setMounted] = useState(false);
   const modalContentRef = useModal(
     isOpen,
@@ -140,7 +143,7 @@ const Modal: React.FC<ModalProps> = ({
                 ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-neutral-700 rounded-full'
                 : 'absolute top-4 right-4'
             }`}
-            aria-label="Close modal"
+            aria-label={t('common.closeModal')}
           >
             {closeWithButton ? (
               <svg
@@ -187,7 +190,7 @@ const Modal: React.FC<ModalProps> = ({
               <button
                 onClick={onClose}
                 className={`text-gray-600 dark:text-neutral-300 hover:text-gray-900 dark:hover:text-white transition-colors ${closeWithButton ? 'absolute -top-4 -right-4 p-1 bg-gray-200 dark:bg-neutral-700 rounded-full' : ''}`}
-                aria-label="Close modal"
+                aria-label={t('common.closeModal')}
               >
                 {closeWithButton ? (
                   <svg

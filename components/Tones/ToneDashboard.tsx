@@ -196,7 +196,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
 
           if (!uploadResponse.ok) {
             const errorData = await uploadResponse.json().catch(() => ({}));
-            throw new Error(errorData.error || 'File upload failed');
+            throw new Error(errorData.error || t('File upload failed'));
           }
 
           const uploadData = await uploadResponse.json();
@@ -256,7 +256,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
 
   const handleAnalyzeTone = async () => {
     if (!fileContents.trim() && !analysisGoal.trim() && fileUrls.length === 0) {
-      alert('Please upload some content or describe the tone you want');
+      alert(t('Please upload some content or describe the tone you want'));
       return;
     }
 
@@ -275,7 +275,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
       const data: ToneAnalysisResponse = await apiClient.post(
         '/api/chat/tones/analyze',
         {
-          toneName: name || 'Untitled Tone',
+          toneName: name || t('Untitled Tone'),
           toneDescription: description,
           sampleContent: combinedContent,
           analysisGoal: analysisGoal || undefined,
@@ -291,7 +291,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
           ? error.getUserMessage()
           : error instanceof Error
             ? error.message
-            : 'Failed to analyze tone';
+            : t('Failed to analyze tone');
       alert(message);
     } finally {
       setIsAnalyzing(false);
@@ -339,7 +339,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="e.g., Professional Business, Friendly Support, Technical Expert"
+          placeholder={t('enterNamePlaceholder')}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500"
           autoFocus
         />
@@ -357,7 +357,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Brief description of when to use this tone..."
+          placeholder={t('enterDescriptionPlaceholder')}
           rows={3}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 resize-none"
         />
@@ -372,7 +372,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
           value={voiceRules}
           onChange={(e) => setVoiceRules(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Describe the writing style, tone, vocabulary, sentence structure, etc.&#10;&#10;Example:&#10;- Use clear, concise language&#10;- Maintain a professional but approachable tone&#10;- Avoid jargon unless technical accuracy requires it&#10;- Use active voice&#10;- Keep sentences under 20 words when possible"
+          placeholder={t('enterVoiceGuidelinesPlaceholder')}
           rows={12}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 resize-none font-mono"
         />
@@ -390,7 +390,7 @@ export const ToneDashboard: FC<ToneDashboardProps> = ({
           value={examples}
           onChange={(e) => setExamples(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Provide example sentences or paragraphs that demonstrate this tone..."
+          placeholder={t('enterExamplesPlaceholder')}
           rows={6}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500 resize-none"
         />
