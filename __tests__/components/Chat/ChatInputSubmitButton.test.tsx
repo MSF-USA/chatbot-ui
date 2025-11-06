@@ -1,10 +1,10 @@
-import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 import ChatInputSubmitButton from '@/components/Chat/ChatInput/ChatInputSubmitButton';
 
+import { fireEvent, render, screen } from '@/__tests__/testUtils';
 import '@testing-library/jest-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('ChatInputSubmitButton', () => {
   const mockHandleSend = vi.fn();

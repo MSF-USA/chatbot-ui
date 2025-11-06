@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
 
-import { useSmoothStreaming } from '@/client/hooks/chat/useSmoothStreaming';
+import { useTranslations } from 'next-intl';
 
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
@@ -46,6 +46,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   onRegenerate,
   children,
 }) => {
+  const t = useTranslations();
   const [processedContent, setProcessedContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [thinking, setThinking] = useState<string>('');
@@ -53,15 +54,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
-
-  // Apply smooth streaming to make chunky tokens appear character-by-character
-  const smoothContent = useSmoothStreaming({
-    isStreaming: messageIsStreaming,
-    content: processedContent,
-    charsPerFrame: 6,
-    frameDelay: 10,
-    enabled: true,
-  });
 
   // Detect dark mode
   useEffect(() => {
@@ -314,7 +306,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   shikiTheme={['github-light', 'github-dark']}
                   mermaidConfig={mermaidConfig}
                 >
-                  {smoothContent}
+                  {processedContent}
                 </CitationStreamdown>
               </div>
             )}

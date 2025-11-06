@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { scrollToBottom } from '@/lib/utils/app/scrolling';
 
@@ -28,12 +28,14 @@ export function useChatScrolling({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
+  const scrollPositionBeforeStreamEndRef = useRef<number>(0);
 
   // Tracking refs
   const previousMessageCountRef = useRef<number>(0);
   const wasStreamingRef = useRef(false);
   const isInitialRenderRef = useRef(true);
   const shouldAutoScrollRef = useRef(true);
+  const hasScrolledToContentRef = useRef(false);
 
   // Reset scroll state when conversation changes
   useEffect(() => {
@@ -77,12 +79,38 @@ export function useChatScrolling({
     isInitialRenderRef.current = false;
   }, [messageCount, isStreaming]);
 
-  // When streaming starts, assume we want to follow it
+  // When streaming starts, scroll to bottom and enable auto-scroll
   useEffect(() => {
     if (isStreaming) {
       shouldAutoScrollRef.current = true;
+      hasScrolledToContentRef.current = false;
+
+      // Immediately scroll to bottom when streaming starts
+      if (chatContainerRef.current) {
+        chatContainerRef.current.scrollTo({
+          top: chatContainerRef.current.scrollHeight,
+          behavior: 'instant',
+        });
+      }
     }
   }, [isStreaming]);
+
+  // Scroll immediately when streaming content first appears (one time only)
+  useEffect(() => {
+    if (
+      isStreaming &&
+      streamingContent &&
+      !hasScrolledToContentRef.current &&
+      shouldAutoScrollRef.current &&
+      chatContainerRef.current
+    ) {
+      hasScrolledToContentRef.current = true;
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'instant',
+      });
+    }
+  }, [isStreaming, streamingContent]);
 
   // Detect manual scroll during streaming
   useEffect(() => {
@@ -114,6 +142,21 @@ export function useChatScrolling({
     }
   }, [isStreaming]);
 
+  // Capture scroll position before streaming ends
+  useEffect(() => {
+    if (isStreaming && chatContainerRef.current) {
+      // Continuously save scroll position during streaming
+      const interval = setInterval(() => {
+        if (chatContainerRef.current) {
+          scrollPositionBeforeStreamEndRef.current =
+            chatContainerRef.current.scrollTop;
+        }
+      }, 100);
+
+      return () => clearInterval(interval);
+    }
+  }, [isStreaming]);
+
   // Smooth auto-scroll during streaming - stops when streaming ends
   useEffect(() => {
     if (!isStreaming || !shouldAutoScrollRef.current) {
@@ -121,6 +164,7 @@ export function useChatScrolling({
     }
 
     let animationFrameId: number;
+    let lastScrollHeight = 0;
 
     const smoothScroll = () => {
       const container = chatContainerRef.current;
@@ -128,12 +172,17 @@ export function useChatScrolling({
 
       const targetScroll = container.scrollHeight - container.clientHeight;
       const currentScroll = container.scrollTop;
-      const diff = targetScroll - currentScroll;
 
-      if (Math.abs(diff) > 0.5) {
-        container.scrollTop = currentScroll + diff * 0.2;
-      } else {
-        container.scrollTop = targetScroll;
+      // Only scroll if content actually grew
+      if (container.scrollHeight > lastScrollHeight) {
+        lastScrollHeight = container.scrollHeight;
+        const diff = targetScroll - currentScroll;
+
+        if (Math.abs(diff) > 0.5) {
+          container.scrollTop = currentScroll + diff * 0.2;
+        } else {
+          container.scrollTop = targetScroll;
+        }
       }
 
       animationFrameId = requestAnimationFrame(smoothScroll);
@@ -147,6 +196,38 @@ export function useChatScrolling({
       }
     };
   }, [isStreaming]);
+
+  // Restore scroll position after streaming ends - use layoutEffect to prevent flash
+  useLayoutEffect(() => {
+    if (isStreaming) return;
+
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    // Restore immediately (runs before browser paint)
+    if (scrollPositionBeforeStreamEndRef.current > 0) {
+      container.scrollTop = scrollPositionBeforeStreamEndRef.current;
+    }
+  }, [isStreaming, messageCount, streamingContent]);
+
+  // Additional restore after paint to catch any async updates
+  useEffect(() => {
+    if (isStreaming) return;
+
+    const container = chatContainerRef.current;
+    if (!container) return;
+
+    // Double-check scroll position after paint
+    requestAnimationFrame(() => {
+      if (
+        container &&
+        scrollPositionBeforeStreamEndRef.current > 0 &&
+        container.scrollTop === 0
+      ) {
+        container.scrollTop = scrollPositionBeforeStreamEndRef.current;
+      }
+    });
+  }, [isStreaming, messageCount]);
 
   // Handle scroll detection for scroll-down button
   useEffect(() => {

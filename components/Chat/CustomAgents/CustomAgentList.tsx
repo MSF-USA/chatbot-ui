@@ -304,7 +304,7 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
                       handleExportSingle(agent);
                     }}
                     className="p-2 text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
-                    title="Export agent"
+                    title={t('agents.exportAgent')}
                   >
                     <IconDownload size={18} />
                   </button>
@@ -314,7 +314,7 @@ export const CustomAgentList: FC<CustomAgentListProps> = ({
                       onEdit(agent);
                     }}
                     className="p-2 text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-                    title="Edit agent"
+                    title={t('agents.editAgent')}
                   >
                     <IconEdit size={18} />
                   </button>

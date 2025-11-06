@@ -77,7 +77,7 @@ export const HelpSupportSection: FC = () => {
       <div className="flex items-center gap-2 mb-6">
         <IconHelp size={24} className="text-black dark:text-white" />
         <h2 className="text-xl font-bold text-black dark:text-white">
-          {t('Help & Support')}
+          {t('settings.Help & Support')}
         </h2>
       </div>
 
@@ -99,7 +99,7 @@ export const HelpSupportSection: FC = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                    {t('Help Center')}
+                    {t('settings.Help Center')}
                   </h3>
                   <IconExternalLink
                     size={14}
@@ -107,7 +107,7 @@ export const HelpSupportSection: FC = () => {
                   />
                 </div>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
-                  {t('FAQs, privacy policy, and guides')}
+                  {t('settings.FAQs, privacy policy, and guides')}
                 </p>
               </div>
             </div>
@@ -127,7 +127,7 @@ export const HelpSupportSection: FC = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-                  {t('Contact Support')}
+                  {t('settings.Contact Support')}
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
                   {supportEmail}
@@ -141,7 +141,7 @@ export const HelpSupportSection: FC = () => {
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 flex items-center gap-2">
             <IconQuestionMark size={18} />
-            {t('Popular Questions')}
+            {t('settings.Popular Questions')}
           </h3>
 
           <div className="space-y-2">
@@ -182,7 +182,7 @@ export const HelpSupportSection: FC = () => {
             href="/info/help"
             className="mt-4 flex items-center justify-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline font-medium"
           >
-            {t('View all FAQs')}
+            {t('settings.View all FAQs')}
             <IconExternalLink size={14} />
           </Link>
         </div>

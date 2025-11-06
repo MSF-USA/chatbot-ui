@@ -4,6 +4,7 @@ import { IconAlertCircle, IconHelp, IconMail } from '@tabler/icons-react';
 import { signIn } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 
@@ -15,6 +16,7 @@ import microsoftLogo from '@/public/microsoft-logo.svg';
  * Modern sign-in page with glassmorphism and micro-interactions
  */
 export default function SignInPage() {
+  const t = useTranslations();
   const [isLoading, setIsLoading] = useState(false);
   const [showAccessInfo, setShowAccessInfo] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,33 +32,25 @@ export default function SignInPage() {
     const urlError = searchParams.get('error');
     if (urlError) {
       const errorMessages: Record<string, string> = {
-        Configuration:
-          'There is a problem with the authentication server configuration.',
-        AccessDenied: 'Access was denied. Please check your permissions.',
-        Verification:
-          'The verification token has expired or has already been used.',
-        OAuthSignin:
-          'Unable to connect to authentication service. Please try again.',
-        OAuthCallback: 'Unable to complete authentication. Please try again.',
-        OAuthCreateAccount: 'Unable to create account. Please contact support.',
-        EmailCreateAccount: 'Unable to create account. Please contact support.',
-        Callback: 'Authentication callback failed. Please try again.',
-        OAuthAccountNotLinked:
-          'This account is already linked to another user.',
-        EmailSignin: 'Unable to send sign-in email.',
-        CredentialsSignin: 'Sign in failed. Please check your credentials.',
-        SessionRequired: 'Please sign in to access this page.',
-        SessionExpired:
-          'Your session has expired. Please sign in again to continue.',
+        Configuration: t('auth.errorConfigurationServer'),
+        AccessDenied: t('auth.errorAccessDeniedPermissions'),
+        Verification: t('auth.errorVerification'),
+        OAuthSignin: t('auth.errorOAuthSignin'),
+        OAuthCallback: t('auth.errorOAuthCallback'),
+        OAuthCreateAccount: t('auth.errorOAuthCreateAccount'),
+        EmailCreateAccount: t('auth.errorEmailCreateAccount'),
+        Callback: t('auth.errorCallback'),
+        OAuthAccountNotLinked: t('auth.errorOAuthAccountNotLinked'),
+        EmailSignin: t('auth.errorEmailSignin'),
+        CredentialsSignin: t('auth.errorCredentialsSignin'),
+        SessionRequired: t('auth.errorSessionRequired'),
+        SessionExpired: t('auth.errorSessionExpired'),
       };
       setTimeout(() => {
-        setError(
-          errorMessages[urlError] ||
-            'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
-        );
+        setError(errorMessages[urlError] || t('auth.errorFallback'));
       }, 0);
     }
-  }, [searchParams]);
+  }, [searchParams, t]);
 
   const handleSignIn = async () => {
     try {
@@ -70,9 +64,7 @@ export default function SignInPage() {
 
       // If sign in didn't redirect and returned an error
       if (result?.error) {
-        setError(
-          'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
-        );
+        setError(t('auth.errorFallback'));
         setIsLoading(false);
       } else if (result?.ok) {
         // Successful sign in, redirect
@@ -80,9 +72,7 @@ export default function SignInPage() {
       }
     } catch (err) {
       console.error('Sign in error:', err);
-      setError(
-        'Unable to connect to authentication service. Please try again or contact support if the issue persists.',
-      );
+      setError(t('auth.errorFallback'));
       setIsLoading(false);
     }
   };
@@ -114,7 +104,7 @@ export default function SignInPage() {
             <div className="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3">
               <Image
                 src={logo}
-                alt="MSF Logo"
+                alt={t('common.msfLogo')}
                 className="h-10 md:h-12 w-auto opacity-95"
               />
               <h1 className="text-2xl md:text-3xl font-light tracking-wide text-white/95">
@@ -147,10 +137,10 @@ export default function SignInPage() {
               <div className="mb-6 md:mb-8 text-center">
                 <div className="space-y-2 md:space-y-3">
                   <h2 className="text-2xl md:text-3xl font-medium text-white/95">
-                    Welcome back
+                    {t('auth.welcomeBack')}
                   </h2>
                   <p className="text-gray-300/70 text-sm md:text-base font-light">
-                    Sign in to continue
+                    {t('auth.signInToContinue')}
                   </p>
                 </div>
               </div>
@@ -164,18 +154,18 @@ export default function SignInPage() {
                 {isLoading ? (
                   <>
                     <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-300 border-t-gray-900" />
-                    <span>Signing in...</span>
+                    <span>{t('auth.signingIn')}</span>
                   </>
                 ) : (
                   <>
                     <Image
                       src={microsoftLogo}
-                      alt="Microsoft"
+                      alt={t('auth.microsoft')}
                       width={20}
                       height={20}
                       className="transition-transform group-hover:scale-110"
                     />
-                    <span>Sign in with your msf.org account</span>
+                    <span>{t('auth.signInWithMsfAccount')}</span>
                   </>
                 )}
               </button>
@@ -195,7 +185,7 @@ export default function SignInPage() {
                           disabled={isLoading}
                           className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-200 hover:text-red-100 border border-red-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                          Try Again
+                          {t('auth.tryAgain')}
                         </button>
                         {email && (
                           <a
@@ -203,7 +193,7 @@ export default function SignInPage() {
                             className="inline-flex items-center gap-1.5 text-xs text-red-300 hover:text-red-100 underline underline-offset-2 transition-colors"
                           >
                             <IconMail className="h-3 w-3" />
-                            Contact support
+                            {t('auth.contactSupport')}
                           </a>
                         )}
                       </div>
@@ -216,7 +206,7 @@ export default function SignInPage() {
               <div className="my-6 md:my-8 flex items-center gap-3 md:gap-4">
                 <div className="h-px flex-1 bg-white/[0.12]" />
                 <span className="text-[10px] md:text-xs text-gray-400/70 uppercase tracking-widest font-light">
-                  Secure SSO
+                  {t('auth.secureSso')}
                 </span>
                 <div className="h-px flex-1 bg-white/[0.12]" />
               </div>
@@ -227,18 +217,17 @@ export default function SignInPage() {
                 className="w-full flex items-center justify-center gap-2 text-xs md:text-sm text-gray-300/80 hover:text-white/90 transition-colors duration-200 group"
               >
                 <IconHelp className="h-3.5 w-3.5 md:h-4 md:w-4 transition-transform group-hover:scale-110 opacity-70 group-hover:opacity-100" />
-                <span className="font-normal">How do I get access?</span>
+                <span className="font-normal">{t('auth.howToGetAccess')}</span>
               </button>
 
               {/* Access Info Panel - Animated */}
               {showAccessInfo && (
                 <div className="mt-6 md:mt-8 rounded-xl bg-white/[0.06] border border-white/[0.08] p-4 md:p-6 animate-fade-in">
                   <p className="text-xs md:text-sm text-gray-300/90 leading-relaxed">
-                    Currently MSF AI Assistant is only available to USA and
-                    Amsterdam staff.
+                    {t('auth.accessLimitedText')}
                   </p>
                   <p className="text-xs md:text-sm text-gray-400/80 mt-3 md:mt-4">
-                    We hope to expand access soon!
+                    {t('auth.expandAccessSoon')}
                   </p>
                 </div>
               )}
@@ -262,7 +251,7 @@ export default function SignInPage() {
               className="flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1.5 rounded-lg bg-white/[0.08] hover:bg-white/[0.15] border border-white/[0.15] text-[10px] md:text-xs text-gray-400 hover:text-gray-200 transition-all duration-200 group"
             >
               <IconMail className="h-3 w-3 md:h-3.5 md:w-3.5" />
-              <span>Contact</span>
+              <span>{t('common.contact')}</span>
             </a>
           )}
         </div>

@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { ErrorDisplay } from '@/components/ErrorBoundary/ErrorDisplay';
 
 export default function GlobalError({
@@ -11,6 +13,8 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations();
+
   useEffect(() => {
     console.error('Global error:', error);
   }, [error]);
@@ -20,10 +24,10 @@ export default function GlobalError({
       <body>
         <ErrorDisplay
           error={error}
-          title="Application Error"
-          description="A critical error occurred. Please reload the page."
+          title={t('errors.applicationError')}
+          description={t('errors.criticalErrorReload')}
           onRetry={() => window.location.reload()}
-          retryLabel="Reload page"
+          retryLabel={t('errors.reloadPage')}
           showSupportInfo={true}
         />
       </body>

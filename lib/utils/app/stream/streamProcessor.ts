@@ -27,6 +27,25 @@ export function createAzureOpenAIStreamProcessor(
       const encoder = createStreamEncoder();
       let allContent = '';
       let controllerClosed = false;
+      let buffer = '';
+
+      // Background task to stream buffered content character by character
+      const streamBuffer = async () => {
+        while (!controllerClosed) {
+          if (buffer.length > 0) {
+            // Send 3 characters at a time for smoother streaming
+            const charsToSend = Math.min(3, buffer.length);
+            const toSend = buffer.slice(0, charsToSend);
+            buffer = buffer.slice(charsToSend);
+            controller.enqueue(encoder.encode(toSend));
+          }
+          // Wait 8ms between sends for smoother streaming
+          await new Promise((resolve) => setTimeout(resolve, 8));
+        }
+      };
+
+      // Start the buffer streaming task
+      streamBuffer();
 
       (async function () {
         try {
@@ -59,9 +78,14 @@ export function createAzureOpenAIStreamProcessor(
                   ragService.processCitationInChunk(contentChunk);
               }
 
-              // Send directly to client without buffering
-              controller.enqueue(encoder.encode(processedChunk));
+              // Add to buffer for smooth streaming
+              buffer += processedChunk;
             }
+          }
+
+          // Wait for buffer to drain
+          while (buffer.length > 0 && !controllerClosed) {
+            await new Promise((resolve) => setTimeout(resolve, 10));
           }
 
           if (!controllerClosed) {

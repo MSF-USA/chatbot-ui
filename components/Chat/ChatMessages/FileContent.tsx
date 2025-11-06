@@ -1,6 +1,8 @@
 import { IconDownload } from '@tabler/icons-react';
 import React, { FC, useEffect, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
 
 import { FileMessageContent, ImageMessageContent } from '@/types/chat';
@@ -12,6 +14,7 @@ import ImageIcon from '@/components/Icons/image';
  * Component to display image files
  */
 const FileImagePreview: FC<{ image: ImageMessageContent }> = ({ image }) => {
+  const t = useTranslations();
   const [imageSrc, setImageSrc] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);

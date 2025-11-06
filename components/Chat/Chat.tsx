@@ -191,76 +191,77 @@ export function Chat({
         />
       </div>
 
-      {/* Empty state with centered input */}
-      {!hasMessages ? (
-        <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-          <div className="w-full flex flex-col items-center justify-center gap-6 -translate-y-12">
-            {/* Logo and Heading */}
-            <EmptyState
-              userName={
-                session?.user?.givenName ||
-                session?.user?.displayName?.split(' ')[0]
-              }
+      {/* Messages container - always mounted to prevent scroll reset */}
+      <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
+        {!hasMessages ? (
+          /* Empty state with centered input */
+          <div className="h-full flex flex-col items-center justify-center px-4 py-8">
+            <div className="w-full flex flex-col items-center justify-center gap-6 -translate-y-12">
+              {/* Logo and Heading */}
+              <EmptyState
+                userName={
+                  session?.user?.givenName ||
+                  session?.user?.displayName?.split(' ')[0]
+                }
+              />
+
+              {/* Centered Chat Input */}
+              <div className="w-full max-w-3xl relative z-50">
+                <ChatInput
+                  onSend={handleSend}
+                  onRegenerate={handleRegenerate}
+                  onScrollDownClick={handleScrollDown}
+                  stopConversationRef={stopConversationRef}
+                  textareaRef={textareaRef}
+                  showScrollDownButton={false}
+                  showDisclaimer={false}
+                  onTranscriptionStatusChange={setTranscriptionStatus}
+                />
+              </div>
+
+              {/* Suggested Prompts below input */}
+              <div className="relative z-10">
+                <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* Messages */
+          <div className="mx-auto max-w-3xl pb-4">
+            <ChatMessages
+              messages={messages}
+              isStreaming={isStreaming}
+              streamingConversationId={streamingConversationId}
+              selectedConversationId={selectedConversation?.id}
+              streamingContent={streamingContent}
+              citations={citations}
+              loadingMessage={loadingMessage}
+              transcriptionStatus={transcriptionStatus}
+              lastMessageRef={lastMessageRef}
+              messagesEndRef={messagesEndRef}
+              onEditMessage={handleEditMessage}
+              onSelectPrompt={handleSelectPrompt}
+              onRegenerate={handleRegenerate}
+              onSaveAsPrompt={handleOpenSavePromptModal}
             />
-
-            {/* Centered Chat Input */}
-            <div className="w-full max-w-3xl relative z-50">
-              <ChatInput
-                onSend={handleSend}
-                onRegenerate={handleRegenerate}
-                onScrollDownClick={handleScrollDown}
-                stopConversationRef={stopConversationRef}
-                textareaRef={textareaRef}
-                showScrollDownButton={false}
-                showDisclaimer={false}
-                onTranscriptionStatusChange={setTranscriptionStatus}
-              />
-            </div>
-
-            {/* Suggested Prompts below input */}
-            <div className="relative z-10">
-              <SuggestedPrompts onSelectPrompt={handleSelectPrompt} />
-            </div>
           </div>
-        </div>
-      ) : (
-        <>
-          {/* Messages */}
-          <div ref={chatContainerRef} className="flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-3xl pb-4">
-              <ChatMessages
-                messages={messages}
-                isStreaming={isStreaming}
-                streamingConversationId={streamingConversationId}
-                selectedConversationId={selectedConversation?.id}
-                streamingContent={streamingContent}
-                citations={citations}
-                loadingMessage={loadingMessage}
-                transcriptionStatus={transcriptionStatus}
-                lastMessageRef={lastMessageRef}
-                messagesEndRef={messagesEndRef}
-                onEditMessage={handleEditMessage}
-                onSelectPrompt={handleSelectPrompt}
-                onRegenerate={handleRegenerate}
-                onSaveAsPrompt={handleOpenSavePromptModal}
-              />
-            </div>
-          </div>
+        )}
+      </div>
 
-          {/* Error Display */}
-          <ChatError error={error} onClearError={clearError} />
+      {/* Error Display */}
+      <ChatError error={error} onClearError={clearError} />
 
-          {/* Chat Input - Bottom position */}
-          <ChatInput
-            onSend={handleSend}
-            onRegenerate={handleRegenerate}
-            onScrollDownClick={handleScrollDown}
-            stopConversationRef={stopConversationRef}
-            textareaRef={textareaRef}
-            showScrollDownButton={showScrollDownButton}
-            onTranscriptionStatusChange={setTranscriptionStatus}
-          />
-        </>
+      {/* Chat Input - Bottom position (hidden in empty state) */}
+      {hasMessages && (
+        <ChatInput
+          onSend={handleSend}
+          onRegenerate={handleRegenerate}
+          onScrollDownClick={handleScrollDown}
+          stopConversationRef={stopConversationRef}
+          textareaRef={textareaRef}
+          showScrollDownButton={showScrollDownButton}
+          onTranscriptionStatusChange={setTranscriptionStatus}
+        />
       )}
 
       {/* Model Selection Modal */}

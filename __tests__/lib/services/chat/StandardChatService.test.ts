@@ -206,6 +206,7 @@ describe('StandardChatService', () => {
         'gpt-5',
         false,
         0.7,
+        model,
       );
 
       // Verify handler calls
@@ -584,6 +585,7 @@ describe('StandardChatService', () => {
         'gpt-5',
         true,
         undefined,
+        model,
       );
     });
 

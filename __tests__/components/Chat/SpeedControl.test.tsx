@@ -1,8 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 
 import { SpeedControl } from '@/components/Chat/Audio/SpeedControl';
 
+import { fireEvent, render, screen } from '@/__tests__/testUtils';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 

@@ -38,7 +38,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
       <div className="flex items-center gap-2 mb-6">
         <IconMessage size={24} className="text-black dark:text-white" />
         <h2 className="text-xl font-bold text-black dark:text-white">
-          {t('Chat Settings')}
+          {t('settings.Chat Settings')}
         </h2>
       </div>
 
@@ -46,7 +46,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
         {/* Model Response Settings Section */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-            {t('Model Response Settings')}
+            {t('settings.Model Response Settings')}
           </h3>
 
           {/* Temperature Setting */}
@@ -75,7 +75,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
             className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
           >
             <h3 className="text-sm font-bold text-black dark:text-white">
-              {t('Advanced Settings')}
+              {t('settings.Advanced Settings')}
             </h3>
             <IconChevronDown
               size={18}
@@ -90,7 +90,7 @@ export const ChatSettingsSection: FC<ChatSettingsSectionProps> = ({
               {/* System Prompt */}
               <div className="mt-3">
                 <div className="text-sm font-bold mb-3 text-black dark:text-neutral-200">
-                  {t('Default System Prompt') + '*'}
+                  {t('settings.Default System Prompt') + '*'}
                 </div>
                 <SystemPrompt
                   prompts={homeState.prompts}

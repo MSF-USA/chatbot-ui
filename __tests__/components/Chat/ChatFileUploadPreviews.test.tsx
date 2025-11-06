@@ -1,10 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { FilePreview } from '@/types/chat';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 
+import { fireEvent, render, screen, waitFor } from '@/__tests__/testUtils';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 

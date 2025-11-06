@@ -507,6 +507,7 @@ describe('AIFoundryAgentHandler', () => {
                     annotations: [
                       {
                         type: 'url_citation',
+                        text: '【1:0†source】',
                         urlCitation: {
                           title: 'Source Title',
                           url: 'https://example.com',
@@ -555,7 +556,7 @@ describe('AIFoundryAgentHandler', () => {
                 content: [
                   {
                     type: 'text',
-                    text: { value: 'Response text' },
+                    text: { value: 'Response text 【0:0†source】' },
                   },
                 ],
               },
@@ -570,6 +571,7 @@ describe('AIFoundryAgentHandler', () => {
                     annotations: [
                       {
                         type: 'url_citation',
+                        text: '【0:0†source】',
                         urlCitation: {
                           title: 'Article Title',
                           url: 'https://source.com/article',

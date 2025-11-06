@@ -278,6 +278,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         : []),
     ],
     [
+      t,
       searchMode,
       selectedToneId,
       tones,

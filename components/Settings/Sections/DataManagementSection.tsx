@@ -61,7 +61,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
       <div className="flex items-center gap-2 mb-6">
         <IconDatabase size={24} className="text-black dark:text-white" />
         <h2 className="text-xl font-bold text-black dark:text-white">
-          {t('Data Management')}
+          {t('settings.Data Management')}
         </h2>
       </div>
 
@@ -69,11 +69,13 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
         {/* Storage Usage Information */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-            {t('Storage Information')}
+            {t('settings.Storage Information')}
           </h3>
           <div className="space-y-3">
             <div className="text-sm text-black dark:text-neutral-300">
-              <span className="font-medium">{t('Storage Usage')}:</span>{' '}
+              <span className="font-medium">
+                {t('settings.Storage Usage')}:
+              </span>{' '}
               {formatBytes(storageData.currentUsage)} /{' '}
               {formatBytes(storageData.maxUsage)} (
               {storageData.percentUsed.toFixed(1)}%)
@@ -95,16 +97,14 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
             <div className="text-xs text-gray-600 dark:text-gray-400">
               {storageData.percentUsed > 85 ? (
                 <span className="text-red-600 dark:text-red-400 font-medium">
-                  {t(
-                    'Storage almost full! Consider clearing old conversations.',
-                  )}
+                  {t('settings.storageAlmostFull')}
                 </span>
               ) : storageData.percentUsed > 70 ? (
                 <span className="text-yellow-600 dark:text-yellow-400 font-medium">
-                  {t('Storage usage is getting high.')}
+                  {t('settings.storageUsageHigh')}
                 </span>
               ) : (
-                <span>{t('Storage usage is normal')}</span>
+                <span>{t('settings.storageUsageNormal')}</span>
               )}
             </div>
           </div>
@@ -113,16 +113,14 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
         {/* Backup & Restore */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-            {t('Backup & Restore')}
+            {t('settings.Backup & Restore')}
           </h3>
           <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-            {t(
-              'Create a complete backup of all your data including conversations, prompts, tones, folders, and settings.',
-            )}
+            {t('settings.backupDescription')}
           </p>
           <div className="flex flex-col space-y-2">
             <SidebarButton
-              text={t('Export Full Backup')}
+              text={t('settings.Export Full Backup')}
               icon={<IconFileExport size={18} />}
               onClick={() => handleExportData()}
             />
@@ -142,12 +140,10 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
         {conversations && conversations.length > 0 && (
           <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <h3 className="text-md font-bold mb-4 text-black dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">
-              {t('Clear Data')}
+              {t('settings.Clear Data')}
             </h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-              {t(
-                'Delete all conversation history from local storage. This cannot be undone.',
-              )}
+              {t('settings.clearDataWarning')}
             </p>
             <ClearConversations
               onClearConversations={() => {
@@ -165,19 +161,17 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
           <div className="flex items-center mb-4 border-b border-gray-200 dark:border-gray-700 pb-2">
             <h3 className="text-md font-bold text-black dark:text-white">
-              {t('Team Templates')}
+              {t('settings.Team Templates')}
             </h3>
             <span className="ml-2 px-2 py-0.5 text-xs font-semibold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-400 rounded">
-              {t('Experimental')}
+              {t('settings.Experimental')}
             </span>
           </div>
           <p className="text-xs text-gray-600 dark:text-gray-400 mb-3">
-            {t(
-              'Package your prompts, tones, folders, and custom agents into a shareable file that other team members can import.',
-            )}
+            {t('settings.teamTemplatesDescription')}
           </p>
           <SidebarButton
-            text={t('Manage Team Templates')}
+            text={t('settings.Manage Team Templates')}
             icon={<IconUsersGroup size={18} />}
             onClick={() => setIsTeamTemplateModalOpen(true)}
           />

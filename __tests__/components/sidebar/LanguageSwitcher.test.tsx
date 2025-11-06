@@ -4,7 +4,7 @@ import React from 'react';
 import LanguageSwitcher from '@/components/Sidebar/components/LanguageSwitcher';
 
 import '@testing-library/jest-dom';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock next-intl
 const mockUseLocale = vi.fn();
@@ -28,7 +28,7 @@ vi.mock('@/lib/utils/app/locales', () => ({
 
 describe('LanguageSwitcher', () => {
   let mockReload: ReturnType<typeof vi.fn>;
-  let originalLocation: Location;
+  let originalLocation: typeof window.location;
 
   beforeEach(() => {
     mockUseLocale.mockReturnValue('en');
@@ -47,7 +47,7 @@ describe('LanguageSwitcher', () => {
   });
 
   afterEach(() => {
-    window.location = originalLocation;
+    window.location = originalLocation as any;
     mockReload.mockClear();
   });
 

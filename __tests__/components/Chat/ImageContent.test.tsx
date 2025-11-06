@@ -1,4 +1,3 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
@@ -7,6 +6,7 @@ import { ImageMessageContent } from '@/types/chat';
 
 import { ImageContent } from '@/components/Chat/ChatMessages/ImageContent';
 
+import { fireEvent, render, screen, waitFor } from '@/__tests__/testUtils';
 import '@testing-library/jest-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

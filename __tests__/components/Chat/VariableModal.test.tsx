@@ -1,10 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 
 import { Prompt } from '@/types/prompt';
 
 import { VariableModal } from '@/components/Chat/ChatInput/VariableModal';
 
+import { fireEvent, render, screen, waitFor } from '@/__tests__/testUtils';
 import '@testing-library/jest-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

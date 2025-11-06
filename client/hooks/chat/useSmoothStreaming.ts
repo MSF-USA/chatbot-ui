@@ -24,62 +24,63 @@ export const useSmoothStreaming = ({
   const contentRef = useRef<string>('');
   const animationFrameRef = useRef<number | null>(null);
   const lastTimestampRef = useRef<number>(0);
+  const charsPerFrameRef = useRef(charsPerFrame);
+  const frameDelayRef = useRef(frameDelay);
+
+  // Update refs when props change
+  useEffect(() => {
+    contentRef.current = content;
+  }, [content]);
 
   useEffect(() => {
-    // Content ref stores the latest content from the props
-    contentRef.current = content;
+    charsPerFrameRef.current = charsPerFrame;
+    frameDelayRef.current = frameDelay;
+  }, [charsPerFrame, frameDelay]);
 
-    // If we're behind in showing content, start/continue the animation
-    if (displayedContent.length < content.length) {
-      const animateText = (timestamp: number) => {
-        // Only update based on frameDelay
-        if (timestamp - lastTimestampRef.current < frameDelay) {
-          animationFrameRef.current = requestAnimationFrame(animateText);
-          return;
-        }
-
-        // Update the timestamp reference
-        lastTimestampRef.current = timestamp;
-
-        setDisplayedContent((prev) => {
-          // If the animation has caught up, stop
-          if (prev.length >= contentRef.current.length) {
-            return contentRef.current;
-          }
-
-          // Calculate how many characters to add in this frame
-          const nextCharsCount = Math.min(
-            charsPerFrame,
-            contentRef.current.length - prev.length,
-          );
-
-          // Add the next set of characters from the content
-          return (
-            prev +
-            contentRef.current.slice(prev.length, prev.length + nextCharsCount)
-          );
-        });
-
-        // Continue animation if not caught up
-        if (displayedContent.length < contentRef.current.length) {
-          animationFrameRef.current = requestAnimationFrame(animateText);
-        }
-      };
-
-      // Start the animation
-      if (animationFrameRef.current === null) {
+  // Single animation loop - runs once on mount, continues until unmount
+  useEffect(() => {
+    const animateText = (timestamp: number) => {
+      // Only update based on frameDelay
+      if (timestamp - lastTimestampRef.current < frameDelayRef.current) {
         animationFrameRef.current = requestAnimationFrame(animateText);
+        return;
       }
-    }
 
-    // Clean up animation frame on unmount
+      lastTimestampRef.current = timestamp;
+
+      setDisplayedContent((prev) => {
+        // If caught up, just return current content
+        if (prev.length >= contentRef.current.length) {
+          animationFrameRef.current = requestAnimationFrame(animateText);
+          return prev;
+        }
+
+        // Calculate how many characters to add
+        const nextCharsCount = Math.min(
+          charsPerFrameRef.current,
+          contentRef.current.length - prev.length,
+        );
+
+        // Add characters and continue animation
+        animationFrameRef.current = requestAnimationFrame(animateText);
+        return (
+          prev +
+          contentRef.current.slice(prev.length, prev.length + nextCharsCount)
+        );
+      });
+    };
+
+    // Start the single continuous animation loop
+    animationFrameRef.current = requestAnimationFrame(animateText);
+
+    // Only clean up on unmount
     return () => {
       if (animationFrameRef.current !== null) {
         cancelAnimationFrame(animationFrameRef.current);
         animationFrameRef.current = null;
       }
     };
-  }, [content, displayedContent, frameDelay, charsPerFrame]);
+  }, []); // Empty deps - runs once on mount
 
   // If smooth streaming is disabled, simply return the full content
   if (!enabled) {

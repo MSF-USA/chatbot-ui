@@ -183,7 +183,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
     }
     // Only depend on conversation ID, model type changes, and agent availability
     // Do NOT depend on currentSearchMode to avoid overriding user changes
-  }, [selectedConversation?.id, agentAvailable, isCustomAgent]);
+  }, [
+    selectedConversation?.id,
+    selectedConversation,
+    agentAvailable,
+    isCustomAgent,
+    updateConversation,
+  ]);
 
   const handleModelSelect = (model: OpenAIModel) => {
     if (!selectedConversation) {

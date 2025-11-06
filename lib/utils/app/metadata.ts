@@ -141,3 +141,34 @@ export function createStreamEncoder(): TextEncoder {
 export function createStreamDecoder(): TextDecoder {
   return new TextDecoder();
 }
+
+/**
+ * Deduplicates citations by URL or title
+ *
+ * @param citations - Array of citations to deduplicate
+ * @returns Deduplicated citations with sequential numbering starting from 1
+ */
+export function deduplicateCitations(citations: Citation[]): Citation[] {
+  const uniqueCitationsMap = new Map<string, Citation>();
+
+  for (const citation of citations) {
+    const key = citation.url || citation.title;
+    if (!key) continue;
+
+    if (!uniqueCitationsMap.has(key)) {
+      uniqueCitationsMap.set(key, citation);
+    }
+  }
+
+  // Renumber sequentially
+  const dedupedCitations: Citation[] = [];
+  let number = 1;
+  for (const citation of uniqueCitationsMap.values()) {
+    dedupedCitations.push({
+      ...citation,
+      number: number++,
+    });
+  }
+
+  return dedupedCitations;
+}

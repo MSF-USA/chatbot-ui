@@ -12,4 +12,7 @@ export const routing = defineRouting({
   // The [locale] folder structure is still needed for routing,
   // but next-intl rewrites URLs to hide the locale from users
   localePrefix: 'never',
+  // Enable automatic locale detection from browser Accept-Language header
+  // Falls back to defaultLocale if browser language is not supported
+  localeDetection: true,
 });

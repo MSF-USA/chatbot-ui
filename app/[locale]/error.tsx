@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import { ErrorDisplay } from '@/components/ErrorBoundary/ErrorDisplay';
 
 export default function Error({
@@ -11,6 +13,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations();
+
   useEffect(() => {
     console.error('Page error:', error);
   }, [error]);
@@ -18,10 +22,10 @@ export default function Error({
   return (
     <ErrorDisplay
       error={error}
-      title="Something went wrong"
-      description="An unexpected error occurred"
+      title={t('errors.somethingWentWrong')}
+      description={t('errors.unexpectedErrorOccurred')}
       onRetry={reset}
-      retryLabel="Try again"
+      retryLabel={t('common.tryAgain')}
       showSupportInfo={true}
     />
   );

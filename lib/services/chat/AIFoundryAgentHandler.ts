@@ -3,6 +3,7 @@ import { Session } from 'next-auth';
 import {
   appendMetadataToStream,
   createStreamEncoder,
+  deduplicateCitations,
 } from '@/lib/utils/app/metadata';
 
 import {
@@ -240,6 +241,9 @@ export class AIFoundryAgentHandler {
                           (match: string) => {
                             if (!citationMap.has(match)) {
                               citationMap.set(match, citationIndex);
+                              console.log(
+                                `[AIFoundryAgentHandler] New citation marker: ${match} -> [${citationIndex}]`,
+                              );
                               citationIndex++;
                             }
                             return `[${citationMap.get(match)}]`;
@@ -253,12 +257,19 @@ export class AIFoundryAgentHandler {
                 }
               } else if (eventMessage.event === 'thread.message.completed') {
                 hasCompletedMessage = true;
+
+                console.log(
+                  '[AIFoundryAgentHandler] Final citationMap (inline markers to numbers):',
+                  Array.from(citationMap.entries()),
+                );
+
                 // Extract citations from annotations
                 const messageData = eventMessage.data as {
                   content?: Array<{
                     text?: {
                       annotations?: Array<{
                         type: string;
+                        text?: string;
                         urlCitation?: { title?: string; url?: string };
                       }>;
                     };
@@ -266,32 +277,64 @@ export class AIFoundryAgentHandler {
                 };
                 if (messageData?.content?.[0]?.text?.annotations) {
                   const annotations = messageData.content[0].text.annotations;
-                  citations = [];
-                  citationIndex = 1;
 
+                  console.log(
+                    '[AIFoundryAgentHandler] Raw annotations from agent:',
+                    JSON.stringify(annotations, null, 2),
+                  );
+
+                  // Build a map from citation marker to annotation
+                  const markerToAnnotation = new Map<
+                    string,
+                    { title?: string; url?: string }
+                  >();
                   annotations.forEach(
                     (annotation: {
                       type: string;
+                      text?: string;
                       urlCitation?: { title?: string; url?: string };
                     }) => {
                       if (
                         annotation.type === 'url_citation' &&
+                        annotation.text &&
                         annotation.urlCitation
                       ) {
-                        citations.push({
-                          number: citationIndex++,
-                          title:
-                            annotation.urlCitation.title ||
-                            `Source ${citationIndex}`,
-                          url: annotation.urlCitation.url || '',
-                          date: '', // Agent citations don't have publication dates
-                        });
+                        markerToAnnotation.set(
+                          annotation.text,
+                          annotation.urlCitation,
+                        );
                       }
                     },
+                  );
+
+                  // Build citations list based on citationMap order
+                  // This ensures inline numbers match the citation list
+                  citations = [];
+                  for (const [marker, number] of citationMap.entries()) {
+                    const urlCitation = markerToAnnotation.get(marker);
+                    // Always add citation even if annotation is missing
+                    citations.push({
+                      number: number,
+                      title: urlCitation?.title || `Source ${number}`,
+                      url: urlCitation?.url || '',
+                      date: '',
+                    });
+
+                    if (!urlCitation) {
+                      console.log(
+                        `[AIFoundryAgentHandler] Warning: No annotation found for marker ${marker}, using placeholder`,
+                      );
+                    }
+                  }
+
+                  console.log(
+                    '[AIFoundryAgentHandler] Processed citations (matched to citationMap):',
+                    JSON.stringify(citations, null, 2),
                   );
                 }
               } else if (eventMessage.event === 'thread.run.completed') {
                 // Append metadata at the very end using utility function
+                // No need to deduplicate - citationMap already ensured uniqueness
                 appendMetadataToStream(controller, {
                   citations: citations.length > 0 ? citations : undefined,
                   threadId: isNewThread ? thread.id : undefined,

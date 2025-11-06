@@ -60,14 +60,14 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
     <div className="hidden md:block md:w-64 md:min-w-64 md:border-r border-gray-300 dark:border-neutral-700 p-4 overflow-y-auto flex flex-col h-full">
       <div className="flex-grow">
         <h2 className="text-lg font-bold mb-4 text-black dark:text-white">
-          {t('Settings')}
+          {t('settings.Settings')}
         </h2>
 
         <div className="space-y-1">
           <NavigationItem
             section={SettingsSection.GENERAL}
             activeSection={activeSection}
-            label={t('General')}
+            label={t('settings.General')}
             icon={<IconSettings size={18} />}
             onClick={setActiveSection}
           />
@@ -75,7 +75,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           <NavigationItem
             section={SettingsSection.CHAT_SETTINGS}
             activeSection={activeSection}
-            label={t('Chat Settings')}
+            label={t('settings.Chat Settings')}
             icon={<IconMessage size={18} />}
             onClick={setActiveSection}
           />
@@ -91,7 +91,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           <NavigationItem
             section={SettingsSection.DATA_MANAGEMENT}
             activeSection={activeSection}
-            label={t('Data Management')}
+            label={t('settings.Data Management')}
             icon={<IconDatabase size={18} />}
             onClick={setActiveSection}
           />
@@ -99,7 +99,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           <NavigationItem
             section={SettingsSection.MOBILE_APP}
             activeSection={activeSection}
-            label={t('Mobile App')}
+            label={t('settings.Mobile App')}
             icon={<IconDeviceMobile size={18} />}
             onClick={setActiveSection}
           />
@@ -107,7 +107,7 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
           <NavigationItem
             section={SettingsSection.HELP_SUPPORT}
             activeSection={activeSection}
-            label={t('Help & Support')}
+            label={t('settings.Help & Support')}
             icon={<IconHelp size={18} />}
             onClick={setActiveSection}
           />
@@ -123,11 +123,11 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
         <button
           className="flex items-center w-full px-2 py-1.5 rounded-md bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/30 transition-colors text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800/50"
           onClick={confirmReset}
-          aria-label={t('Reset Settings')}
-          title={t('Reset Settings')}
+          aria-label={t('settings.Reset Settings')}
+          title={t('settings.Reset Settings')}
         >
           <IconRefresh size={18} className="mr-2" />
-          <span className="font-medium">{t('Reset Settings')}</span>
+          <span className="font-medium">{t('settings.Reset Settings')}</span>
         </button>
       </div>
 
@@ -136,10 +136,10 @@ export const SettingsSidebar: FC<SettingsSidebarProps> = ({
         <div className="fixed inset-0 bg-black/50 dark:bg-black/70 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-neutral-800 rounded-lg p-6 max-w-md mx-4 shadow-xl">
             <h3 className="text-lg font-bold mb-3 text-black dark:text-white">
-              {t('Confirm Reset')}
+              {t('settings.Confirm Reset')}
             </h3>
             <p className="text-neutral-700 dark:text-neutral-300 mb-4">
-              {t('Reset Confirmation Message')}
+              {t('settings.Reset Confirmation Message')}
             </p>
             <div className="flex justify-end space-x-3">
               <button

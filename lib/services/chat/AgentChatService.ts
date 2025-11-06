@@ -216,13 +216,17 @@ export class AgentChatService {
       );
       const parsed = parseMetadataFromContent(searchResults);
 
+      // Deduplicate and renumber citations (similar to RAGService)
+      const { dedupedCitations, contentWithRenumberedCitations } =
+        this.deduplicateAndRenumberCitations(parsed.citations, parsed.content);
+
       const duration = Date.now() - startTime;
       console.log(
-        `[AgentChatService] Web search completed in ${duration}ms, results length: ${parsed.content.length}, citations: ${parsed.citations.length}`,
+        `[AgentChatService] Web search completed in ${duration}ms, results length: ${contentWithRenumberedCitations.length}, citations: ${dedupedCitations.length}`,
       );
       console.log(
         '[AgentChatService] Extracted citations from search:',
-        JSON.stringify(parsed.citations, null, 2),
+        JSON.stringify(dedupedCitations, null, 2),
       );
       console.log(
         '[AgentChatService] Raw search results (first 500 chars):',
@@ -234,8 +238,8 @@ export class AgentChatService {
       );
 
       return {
-        text: parsed.content,
-        citations: parsed.citations,
+        text: contentWithRenumberedCitations,
+        citations: dedupedCitations,
       };
     } catch (error) {
       console.error('[AgentChatService] Web search tool error:', error);
@@ -253,5 +257,102 @@ export class AgentChatService {
   public isAgentModel(model: OpenAIModel): boolean {
     const modelConfig = model as unknown as Record<string, unknown>;
     return !!modelConfig.agentId;
+  }
+
+  /**
+   * Deduplicates citations and renumbers both the citation list and inline citations in content.
+   * Similar to RAGService citation processing.
+   *
+   * @param citations - Array of citations to deduplicate
+   * @param content - Content with inline citation markers
+   * @returns Object with deduplicated citations and content with renumbered inline citations
+   */
+  private deduplicateAndRenumberCitations(
+    citations: any[],
+    content: string,
+  ): {
+    dedupedCitations: any[];
+    contentWithRenumberedCitations: string;
+  } {
+    console.log('[AgentChatService] deduplicateAndRenumberCitations input:', {
+      citationsCount: citations.length,
+      citations: citations,
+      contentLength: content.length,
+      contentPreview: content.substring(0, 200),
+    });
+
+    // Import the shared deduplication utility
+    const { deduplicateCitations } = require('@/lib/utils/app/metadata');
+
+    // Build old-to-new number mapping for inline citation renumbering
+    // Track ALL citation numbers that point to the same URL
+    const urlToNumbers = new Map<string, number[]>(); // key -> [old numbers]
+    const oldToNewNumberMap = new Map<number, number>();
+
+    // First pass: group all citation numbers by URL
+    for (const citation of citations) {
+      const key = citation.url || citation.title;
+      if (!key) continue;
+
+      if (!urlToNumbers.has(key)) {
+        urlToNumbers.set(key, []);
+      }
+      urlToNumbers.get(key)!.push(citation.number);
+    }
+
+    // Second pass: map all old numbers for the same URL to the same new number
+    let newNumber = 1;
+    for (const numbers of urlToNumbers.values()) {
+      for (const oldNum of numbers) {
+        oldToNewNumberMap.set(oldNum, newNumber);
+      }
+      newNumber++;
+    }
+
+    console.log(
+      '[AgentChatService] oldToNewNumberMap:',
+      Array.from(oldToNewNumberMap.entries()),
+    );
+
+    // Deduplicate using shared utility
+    const dedupedCitations = deduplicateCitations(citations);
+
+    // Replace inline citation numbers in content
+    // Use temporary placeholders to avoid collisions during replacement
+    let updatedContent = content;
+
+    // First pass: Replace with temporary placeholders
+    for (const [oldNum, newNum] of oldToNewNumberMap.entries()) {
+      const oldCitationRegex = new RegExp(`\\[${oldNum}\\]`, 'g');
+      const replacementCount = (updatedContent.match(oldCitationRegex) || [])
+        .length;
+      console.log(
+        `[AgentChatService] Replacing [${oldNum}] with temporary placeholder, found ${replacementCount} occurrences`,
+      );
+      // Use temporary placeholder that won't collide: [[CITE_oldNum]]
+      updatedContent = updatedContent.replace(
+        oldCitationRegex,
+        `[[CITE_${oldNum}]]`,
+      );
+    }
+
+    // Second pass: Replace placeholders with final numbers
+    for (const [oldNum, newNum] of oldToNewNumberMap.entries()) {
+      const placeholderRegex = new RegExp(`\\[\\[CITE_${oldNum}\\]\\]`, 'g');
+      console.log(
+        `[AgentChatService] Replacing placeholder for [${oldNum}] with [${newNum}]`,
+      );
+      updatedContent = updatedContent.replace(placeholderRegex, `[${newNum}]`);
+    }
+
+    console.log('[AgentChatService] deduplicateAndRenumberCitations output:', {
+      dedupedCitationsCount: dedupedCitations.length,
+      contentPreview: updatedContent.substring(0, 200),
+    });
+
+    return {
+      dedupedCitations,
+      contentWithRenumberedCitations: updatedContent,
+    };
   }
 }

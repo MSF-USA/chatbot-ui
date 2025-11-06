@@ -99,7 +99,7 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
         <div className="flex items-center gap-2 mb-2">
           <IconSettings size={24} className="text-black dark:text-white" />
           <h2 className="text-xl font-bold text-black dark:text-white">
-            {t('General')}
+            {t('settings.General')}
           </h2>
         </div>
 
@@ -142,7 +142,7 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
               {fullProfile?.jobTitle && (
                 <div className="col-span-2 sm:col-span-1 mt-2">
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('Job Title')}
+                    {t('settings.Job Title')}
                   </div>
                   <div className="text-sm font-medium text-black dark:text-white">
                     {fullProfile.jobTitle}
@@ -152,7 +152,7 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
               {fullProfile?.department && (
                 <div className="col-span-2 sm:col-span-1 mt-2">
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('Department')}
+                    {t('settings.Department')}
                   </div>
                   <div className="text-sm font-medium text-black dark:text-white">
                     {fullProfile.department}
@@ -162,7 +162,7 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
               {(user?.mail || fullProfile?.mail) && (
                 <div className="col-span-2 mt-2">
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {t('Email')}
+                    {t('settings.Email')}
                   </div>
                   <div className="text-sm font-medium text-black dark:text-white">
                     {user?.mail || fullProfile?.mail}
@@ -181,7 +181,7 @@ export const GeneralSection: FC<GeneralSectionProps> = ({
         {/* App Settings Header */}
         <div>
           <h3 className="text-base font-bold text-black dark:text-white mb-6 pb-2 border-b border-gray-200 dark:border-gray-700">
-            {t('App Settings')}
+            {t('settings.App Settings')}
           </h3>
 
           <div className="space-y-5">

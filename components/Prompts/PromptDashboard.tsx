@@ -380,7 +380,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={handleTagInputKeyDown}
-            placeholder="Add a tag..."
+            placeholder={t('common.addTagEllipsis')}
             className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 shadow-sm transition-all placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 dark:placeholder:text-gray-500"
           />
           <button
@@ -719,7 +719,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
       isOpen={isOpen}
       onClose={handleClose}
       title={initialName ? t('Edit Prompt') : t('Create Prompt')}
-      subtitle="Build reusable prompts with AI assistance"
+      subtitle={t('prompts.buildReusablePrompts')}
       leftPanel={leftPanel}
       rightPanel={rightPanel}
       footer={footer}

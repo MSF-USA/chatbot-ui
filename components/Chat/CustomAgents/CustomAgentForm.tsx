@@ -10,6 +10,8 @@ import {
 } from '@tabler/icons-react';
 import { FC, useRef, useState } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 import {
   importCustomAgents,
   validateCustomAgentImport,
@@ -33,6 +35,7 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
   existingAgent,
   existingAgents = [],
 }) => {
+  const t = useTranslations();
   const [mode, setMode] = useState<'create' | 'import'>(
     existingAgent ? 'create' : 'create',
   );
@@ -318,7 +321,7 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
                   className="text-amber-600 dark:text-amber-400 flex-shrink-0"
                 />
                 <span className="text-xs font-medium text-amber-700 dark:text-amber-300">
-                  Important Information
+                  {t('common.importantInformation')}
                 </span>
               </div>
               <IconX
@@ -330,11 +333,7 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
             {showNotice && (
               <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 -mt-1">
                 <p className="text-xs text-amber-700 dark:text-amber-300">
-                  Custom agents only work with the{' '}
-                  <strong>MSF AI Assistant Foundry instance</strong>. Agents
-                  must be created by an administrator and the Agent ID shared
-                  with you. External or personal Azure AI Foundry instances are
-                  not supported.
+                  {t('agents.importantInfo')}
                 </p>
               </div>
             )}
@@ -378,20 +377,21 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Agent Name <span className="text-red-500">*</span>
+                    {t('agents.agentName')}{' '}
+                    <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="My Research Assistant"
+                    placeholder={t('agents.myResearchAssistant')}
                     className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                    Base Model
+                    {t('agents.baseModel')}
                   </label>
                   <select
                     value={baseModelId}
@@ -411,28 +411,28 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Agent ID <span className="text-red-500">*</span>
+                  {t('agents.agentId')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={agentId}
                   onChange={(e) => setAgentId(e.target.value)}
-                  placeholder="asst_abc123def456"
+                  placeholder={t('agents.agentIdExample')}
                   className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                 />
                 <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  Format: asst_xxxxx (from MSF AI Assistant Foundry)
+                  {t('agents.formatDescription')}
                 </p>
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Description (optional)
+                  {t('agents.descriptionOptional')}
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Specialized agent for research tasks..."
+                  placeholder={t('agents.descriptionPlaceholder')}
                   rows={2}
                   className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-[#2A2A2A] text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 />
@@ -450,7 +450,7 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
                     className="text-amber-600 dark:text-amber-400 flex-shrink-0"
                   />
                   <span className="text-xs font-medium text-amber-700 dark:text-amber-300">
-                    Important Information
+                    {t('common.importantInformation')}
                   </span>
                 </div>
                 <IconX
@@ -462,11 +462,7 @@ export const CustomAgentForm: FC<CustomAgentFormProps> = ({
               {showNotice && (
                 <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded border border-amber-200 dark:border-amber-800 -mt-1">
                   <p className="text-xs text-amber-700 dark:text-amber-300">
-                    Custom agents only work with the{' '}
-                    <strong>MSF AI Assistant Foundry instance</strong>. Agents
-                    must be created by an administrator and the Agent ID shared
-                    with you. External or personal Azure AI Foundry instances
-                    are not supported.
+                    {t('agents.importantInfo')}
                   </p>
                 </div>
               )}
