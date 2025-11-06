@@ -47,10 +47,27 @@ export function useChatActions({
 
       if (!currentConversation) return;
 
+      // Find the message to edit by matching properties (excluding content)
+      // The editedMessage is a copy of the original with changed content
+      const messageIndex = currentConversation.messages.findIndex(
+        (msg) =>
+          msg.role === editedMessage.role &&
+          msg.messageType === editedMessage.messageType &&
+          // Match citations if present
+          JSON.stringify(msg.citations) ===
+            JSON.stringify(editedMessage.citations) &&
+          // Match thinking if present
+          msg.thinking === editedMessage.thinking &&
+          // Match other metadata
+          msg.error === editedMessage.error &&
+          msg.toneId === editedMessage.toneId &&
+          msg.promptId === editedMessage.promptId,
+      );
+
+      if (messageIndex === -1) return;
+
       const updatedMessages = currentConversation.messages.map((msg, idx) =>
-        idx === currentConversation.messages.indexOf(editedMessage)
-          ? editedMessage
-          : msg,
+        idx === messageIndex ? editedMessage : msg,
       );
 
       updateConversation(currentConversation.id, {
@@ -116,10 +133,11 @@ export function useChatActions({
     });
 
     const lastUserMessage = currentConversation.messages[lastUserMessageIndex];
-    sendMessage?.(lastUserMessage, {
+    const updatedConversation = {
       ...currentConversation,
       messages: messagesUpToLastUser,
-    });
+    };
+    sendMessage?.(lastUserMessage, updatedConversation, undefined);
   }, [updateConversation, sendMessage]);
 
   return {

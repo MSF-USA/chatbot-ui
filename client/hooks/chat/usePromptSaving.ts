@@ -9,6 +9,9 @@ interface UsePromptSavingProps {
   addPrompt: (prompt: Prompt) => void;
 }
 
+// Counter to ensure unique IDs even when Date.now() returns the same value
+let idCounter = 0;
+
 /**
  * Custom hook to manage prompt saving modal state and logic
  * Handles opening modal, saving prompts, and resetting state
@@ -36,8 +39,10 @@ export function usePromptSaving({
       const defaultModel =
         models.find((m) => m.id === defaultModelId) || models[0];
 
+      // Generate unique ID using timestamp and counter
+      idCounter += 1;
       const newPrompt = {
-        id: `prompt-${Date.now()}`,
+        id: `prompt-${Date.now()}-${idCounter}`,
         name: name || 'Untitled prompt',
         description: description,
         content: content,

@@ -7,13 +7,16 @@ export default defineConfig({
   },
   test: {
     globals: true,
-    include: ['__tests__/dom/**/*.test.tsx'],
+    include: [
+      '__tests__/components/**/*.test.tsx',
+      '__tests__/client/**/*.test.tsx',
+    ],
     environment: 'jsdom',
     setupFiles: ['./vitest.setup.dom.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      include: ['components/**/*.tsx', 'lib/**/*.tsx'],
+      include: ['components/**/*.tsx', 'client/**/*.tsx', 'lib/**/*.tsx'],
       exclude: ['node_modules', '__tests__', '**/*.test.tsx', '**/*.spec.tsx'],
     },
   },

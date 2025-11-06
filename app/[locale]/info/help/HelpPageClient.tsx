@@ -18,6 +18,7 @@ import { FaGithub } from 'react-icons/fa';
 
 import Image from 'next/image';
 
+import { EXTERNAL_LINKS } from '@/lib/constants/externalLinks';
 import privacyData from '@/lib/data/privacyPolicy.json';
 import { Link } from '@/lib/navigation';
 
@@ -540,26 +541,44 @@ export function HelpPageClient({
             {/* Contact Content */}
             {expandedSection === 'contact' && (
               <div className="space-y-6">
-                {/* Contact Support */}
-                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/30">
-                  <div className="flex items-start gap-4">
-                    <div className="p-3 bg-purple-600 dark:bg-purple-700 rounded-lg flex-shrink-0">
-                      <IconMail size={24} className="text-white" />
+                {/* Contact Form */}
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 bg-white dark:bg-gray-900/50">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
+                    Submit a Request
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                    Fill out the form below to submit a support request, provide
+                    feedback, or report an issue. Our team will get back to you
+                    as soon as possible.
+                  </p>
+                  <div className="space-y-4">
+                    {/* Iframe Container */}
+                    <div className="w-full overflow-hidden rounded-lg border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800">
+                      <iframe
+                        src={EXTERNAL_LINKS.SUPPORT_FORM_EMBED}
+                        width="100%"
+                        height="600"
+                        frameBorder="0"
+                        marginHeight={0}
+                        marginWidth={0}
+                        className="w-full min-h-[600px]"
+                        style={{ border: 'none' }}
+                        title="Support Request Form"
+                      />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                        Contact Support
-                      </h3>
-                      <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
-                        Our team is here to help with questions, feedback, and
-                        technical issues.
+                    {/* Fallback Link */}
+                    <div className="text-center">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                        Having trouble with the form?
                       </p>
                       <a
-                        href={`mailto:${supportEmail}`}
-                        className="inline-flex items-center gap-2 px-4 py-2.5 bg-purple-600 dark:bg-purple-700 text-white rounded-lg hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors font-medium text-sm"
+                        href={EXTERNAL_LINKS.SUPPORT_FORM}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 hover:underline"
                       >
-                        <IconMail size={16} />
-                        {supportEmail}
+                        <IconExternalLink size={16} />
+                        Open form in new window
                       </a>
                     </div>
                   </div>
@@ -573,7 +592,7 @@ export function HelpPageClient({
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Project Portal */}
                     <a
-                      href="https://msfintl.sharepoint.com/sites/PamojaPortal_AIAccelerator"
+                      href={EXTERNAL_LINKS.SHAREPOINT_PORTAL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-teal-500 dark:hover:border-teal-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
@@ -608,7 +627,7 @@ export function HelpPageClient({
 
                     {/* GitHub Repository */}
                     <a
-                      href="https://github.com/Medecins-Sans-Frontieres-Collaborate/ai-assistant-app"
+                      href={EXTERNAL_LINKS.GITHUB_REPOSITORY}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-gray-900 dark:hover:border-gray-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
@@ -638,38 +657,34 @@ export function HelpPageClient({
                       </div>
                     </a>
 
-                    {/* Terms of Use (if not US user) */}
-                    {!isUSUser && (
-                      <Link
-                        href="https://msf.org/terms-of-use"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
-                      >
-                        <div className="flex items-start gap-4">
-                          <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg group-hover:bg-gray-200 dark:group-hover:bg-gray-700 transition-colors flex-shrink-0">
-                            <IconFileText
-                              size={24}
-                              className="text-gray-600 dark:text-gray-400"
-                            />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                                Terms of Use
-                              </h4>
-                              <IconExternalLink
-                                size={14}
-                                className="text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors flex-shrink-0"
-                              />
-                            </div>
-                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-                              MSF website terms and conditions
-                            </p>
-                          </div>
+                    {/* Email Support */}
+                    <a
+                      href={`mailto:${supportEmail}`}
+                      className="group border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-purple-500 dark:hover:border-purple-400 hover:shadow-md transition-all bg-white dark:bg-gray-900/50"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg group-hover:bg-purple-200 dark:group-hover:bg-purple-900/50 transition-colors flex-shrink-0">
+                          <IconMail
+                            size={24}
+                            className="text-purple-600 dark:text-purple-400"
+                          />
                         </div>
-                      </Link>
-                    )}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
+                              Email Support
+                            </h4>
+                          </div>
+                          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-2">
+                            Get help with questions, feedback, and technical
+                            issues
+                          </p>
+                          <span className="text-xs font-medium text-purple-600 dark:text-purple-400">
+                            {supportEmail}
+                          </span>
+                        </div>
+                      </div>
+                    </a>
                   </div>
                 </div>
               </div>

@@ -44,6 +44,7 @@ import {
 import { Conversation } from '@/types/chat';
 
 import { CustomizationsModal } from '@/components/QuickActions/CustomizationsModal';
+import { DropdownPortal } from '@/components/UI/DropdownPortal';
 import Modal from '@/components/UI/Modal';
 
 import { ConversationItem } from './ConversationItem';
@@ -88,8 +89,8 @@ export function Sidebar() {
 
   // File input ref for importing conversations
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const newChatMenuRef = useRef<HTMLDivElement>(null);
-  const newFolderMenuRef = useRef<HTMLDivElement>(null);
+  const newChatButtonRef = useRef<HTMLDivElement>(null);
+  const newFolderButtonRef = useRef<HTMLDivElement>(null);
   const folderMenuRef = useRef<HTMLDivElement>(null);
 
   // Determine which conversations to display (search results or all)
@@ -153,44 +154,6 @@ export function Sidebar() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
-
-  // Close new chat menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        newChatMenuRef.current &&
-        !newChatMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowNewChatMenu(false);
-      }
-    };
-
-    if (showNewChatMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }
-  }, [showNewChatMenu]);
-
-  // Close new folder menu when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        newFolderMenuRef.current &&
-        !newFolderMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowNewFolderMenu(false);
-      }
-    };
-
-    if (showNewFolderMenu) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => {
-        document.removeEventListener('mousedown', handleClickOutside);
-      };
-    }
-  }, [showNewFolderMenu]);
 
   // Close folder menu when clicking outside
   useEffect(() => {
@@ -428,7 +391,7 @@ export function Sidebar() {
             className={`transition-all duration-300 overflow-hidden ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
           >
             <Image
-              src={theme === 'dark' ? darkTextLogo : lightTextLogo}
+              src={theme === 'light' ? lightTextLogo : darkTextLogo}
               alt="MSF Logo"
               priority
               style={{
@@ -451,7 +414,7 @@ export function Sidebar() {
           className={`border-b transition-all duration-300 ${showChatbar ? 'py-2 px-3 space-y-1 border-neutral-300 dark:border-neutral-700 overflow-hidden' : 'py-3 px-0 space-y-2 border-transparent overflow-visible'}`}
         >
           {/* New chat with dropdown menu */}
-          <div ref={newChatMenuRef} className="relative">
+          <div ref={newChatButtonRef} className="relative">
             <div
               className={`group flex items-center w-full rounded-lg text-sm font-medium text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800 transition-all duration-300 ${showChatbar ? 'gap-2 px-3 py-2' : 'justify-center px-2 py-3'}`}
             >
@@ -485,22 +448,26 @@ export function Sidebar() {
                 </span>
               )}
             </div>
-
-            {/* Dropdown menu */}
-            {showNewChatMenu && showChatbar && (
-              <div className="absolute left-0 top-full mt-1 z-50 w-full rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
-                <div className="p-1">
-                  <button
-                    className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
-                    onClick={handleImportClick}
-                  >
-                    <IconUpload size={14} />
-                    {t('Import conversation')}
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
+
+          {/* Dropdown menu via Portal */}
+          <DropdownPortal
+            triggerRef={newChatButtonRef}
+            isOpen={showNewChatMenu && showChatbar}
+            onClose={() => setShowNewChatMenu(false)}
+          >
+            <div className="rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
+              <div className="p-1">
+                <button
+                  className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                  onClick={handleImportClick}
+                >
+                  <IconUpload size={14} />
+                  {t('Import conversation')}
+                </button>
+              </div>
+            </div>
+          </DropdownPortal>
 
           {/* Search button - visible in both states */}
           <button
@@ -549,7 +516,7 @@ export function Sidebar() {
           <div
             className={`transition-all duration-300 ${showChatbar ? 'opacity-100 max-h-[100px]' : 'opacity-0 max-h-0 overflow-hidden'}`}
           >
-            <div ref={newFolderMenuRef} className="relative">
+            <div ref={newFolderButtonRef} className="relative">
               <div className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-white dark:hover:bg-neutral-800">
                 <button
                   className="flex items-center gap-2 flex-1"
@@ -570,23 +537,27 @@ export function Sidebar() {
                   <IconDots size={16} className="shrink-0" />
                 </button>
               </div>
-
-              {/* Dropdown menu */}
-              {showNewFolderMenu && (
-                <div className="absolute left-0 top-full mt-1 z-50 w-full rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
-                  <div className="p-1">
-                    <button
-                      className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
-                      onClick={handleImportClick}
-                    >
-                      <IconUpload size={14} />
-                      {t('Import folder')}
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
+
+          {/* New folder dropdown menu via Portal */}
+          <DropdownPortal
+            triggerRef={newFolderButtonRef}
+            isOpen={showNewFolderMenu && showChatbar}
+            onClose={() => setShowNewFolderMenu(false)}
+          >
+            <div className="rounded-md border border-neutral-300 bg-white shadow-lg dark:border-neutral-600 dark:bg-[#212121]">
+              <div className="p-1">
+                <button
+                  className="w-full text-left px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-100 dark:text-neutral-100 dark:hover:bg-neutral-800 rounded flex items-center gap-2"
+                  onClick={handleImportClick}
+                >
+                  <IconUpload size={14} />
+                  {t('Import folder')}
+                </button>
+              </div>
+            </div>
+          </DropdownPortal>
         </div>
 
         {/* Content */}

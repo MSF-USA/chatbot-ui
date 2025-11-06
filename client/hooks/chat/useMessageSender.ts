@@ -121,7 +121,6 @@ export function useMessageSender({
     uploadProgress,
     submitType,
     fileFieldValue,
-    imageFieldValue,
     selectedToneId,
     searchMode,
     usedPromptId,

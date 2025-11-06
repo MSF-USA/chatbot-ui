@@ -66,6 +66,7 @@ const nextConfig = {
               "img-src 'self' data: https: blob:; " +
               "font-src 'self' data:; " +
               "connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://*.ai.msfusa.org; " +
+              "frame-src 'self' https://forms.office.com; " +
               "frame-ancestors 'none';",
           },
           {
