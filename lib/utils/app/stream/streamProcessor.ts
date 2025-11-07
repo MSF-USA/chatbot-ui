@@ -7,6 +7,8 @@ import {
 } from '@/lib/utils/app/metadata';
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
+import { Citation } from '@/types/rag';
+
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 import OpenAI from 'openai';
 
@@ -17,6 +19,7 @@ import OpenAI from 'openai';
  * @param {RAGService} [ragService] - Optional RAG service for citation processing.
  * @param {object} [stopConversationRef] - Reference to stop conversation flag.
  * @param {TranscriptMetadata} [transcript] - Optional transcript metadata for audio/video transcriptions.
+ * @param {Citation[]} [webSearchCitations] - Optional citations from web search (intelligent search mode).
  * @returns {ReadableStream} A processed stream with citation data appended.
  */
 export function createAzureOpenAIStreamProcessor(
@@ -24,6 +27,7 @@ export function createAzureOpenAIStreamProcessor(
   ragService?: RAGService,
   stopConversationRef?: { current: boolean },
   transcript?: TranscriptMetadata,
+  webSearchCitations?: Citation[],
 ): ReadableStream {
   return new ReadableStream({
     start: (controller) => {
@@ -96,14 +100,26 @@ export function createAzureOpenAIStreamProcessor(
             const { thinking, content } = parseThinkingContent(allContent);
 
             // Get citations if available
-            let citations;
+            let citations: Citation[] | undefined;
+
+            // Merge citations from both RAG and web search
+            const allCitations: Citation[] = [];
+
+            // Add RAG citations if available
             if (ragService) {
               const rawCitations = ragService.getCurrentCitations();
               const uniqueCitations =
                 ragService.deduplicateCitations(rawCitations);
-              citations =
-                uniqueCitations.length > 0 ? uniqueCitations : undefined;
+              allCitations.push(...uniqueCitations);
             }
+
+            // Add web search citations if available
+            if (webSearchCitations && webSearchCitations.length > 0) {
+              allCitations.push(...webSearchCitations);
+            }
+
+            // Only set citations if we have any
+            citations = allCitations.length > 0 ? allCitations : undefined;
 
             // Build transcript metadata with LLM's processed content
             let transcriptMetadata: TranscriptMetadata | undefined;

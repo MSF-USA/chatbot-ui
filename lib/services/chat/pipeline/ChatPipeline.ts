@@ -1,5 +1,7 @@
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
+import { ErrorSeverity, PipelineError } from '@/lib/types/errors';
+
 import { ChatContext } from './ChatContext';
 import { PipelineStage } from './PipelineStage';
 
@@ -49,7 +51,8 @@ export class ChatPipeline {
     const startTime = Date.now();
     let context: ChatContext = {
       ...initialContext,
-      metrics: {
+      // Respect existing metrics from middleware, don't overwrite
+      metrics: initialContext.metrics || {
         startTime,
         stageTimings: new Map(),
       },
@@ -76,8 +79,10 @@ export class ChatPipeline {
 
         // Check for critical errors that should stop the pipeline
         if (context.errors && context.errors.length > 0) {
-          const criticalError = context.errors.find((e) =>
-            e.message.includes('CRITICAL'),
+          const criticalError = context.errors.find(
+            (e) =>
+              e instanceof PipelineError &&
+              e.severity === ErrorSeverity.CRITICAL,
           );
           if (criticalError) {
             console.error(

@@ -28,7 +28,7 @@ export {
   buildChatContext,
   authMiddleware,
   loggingMiddleware,
-  rateLimitMiddleware,
+  createRateLimitMiddleware,
   requestParsingMiddleware,
   createContentAnalysisMiddleware,
   createModelSelectionMiddleware,

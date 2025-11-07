@@ -121,11 +121,13 @@ export const ChatMessage: FC<Props> = ({
     }
   };
 
+  // Use JSON.stringify for stable comparison of message content
+  const messageContentKey = JSON.stringify(message.content);
+
   useEffect(() => {
-    setTimeout(() => {
-      setMessageContent(message.content);
-    }, 0);
-  }, [message.content]);
+    setMessageContent(message.content);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messageContentKey]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -331,11 +333,8 @@ export const ChatMessage: FC<Props> = ({
   }
 
   // Render text-only messages
-  if (
-    (message.messageType === MessageType.TEXT ||
-      message.messageType === undefined) &&
-    typeof message.content === 'string'
-  ) {
+  // Note: messageType is optional UI metadata, so we primarily check content type
+  if (typeof message.content === 'string') {
     return (
       <ChatMessageText
         message={message}

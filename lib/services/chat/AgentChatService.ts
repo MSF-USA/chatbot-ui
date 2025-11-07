@@ -128,11 +128,11 @@ export class AgentChatService {
 
         const chunk = decoder.decode(value, { stream: true });
 
-        // Check if this chunk contains metadata
-        if (chunk.includes('__METADATA__')) {
+        // Check if this chunk contains metadata using the correct format
+        if (chunk.includes('<<<METADATA_START>>>')) {
           // Extract metadata
           const metadataMatch = chunk.match(
-            /__METADATA__:(.+?)(?=__METADATA__|$)/s,
+            /<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s,
           );
           if (metadataMatch) {
             try {
@@ -146,7 +146,10 @@ export class AgentChatService {
           }
 
           // Remove metadata from text
-          fullText += chunk.replace(/__METADATA__:.+?(?=__METADATA__|$)/gs, '');
+          fullText += chunk.replace(
+            /\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/gs,
+            '',
+          );
         } else {
           fullText += chunk;
         }

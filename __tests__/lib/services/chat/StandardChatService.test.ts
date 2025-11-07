@@ -311,7 +311,13 @@ describe('StandardChatService', () => {
         'text/plain; charset=utf-8',
       );
       expect(response.headers.get('Cache-Control')).toBe('no-cache');
-      expect(createAzureOpenAIStreamProcessor).toHaveBeenCalledWith(mockStream);
+      expect(createAzureOpenAIStreamProcessor).toHaveBeenCalledWith(
+        mockStream,
+        undefined, // ragService
+        undefined, // stopConversationRef
+        undefined, // transcript (not provided in this test)
+        undefined, // citations (not provided in this test)
+      );
     });
 
     it('should apply tone when toneId is specified', async () => {

@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { Message } from '@/types/chat';
+import { Message, MessageType } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
 import { useConversationStore } from '@/client/stores/conversationStore';
@@ -104,7 +104,7 @@ export function useChatActions({
       handleSend({
         role: 'user',
         content: prompt,
-        messageType: 'text',
+        messageType: MessageType.TEXT,
       });
     },
     [handleSend],

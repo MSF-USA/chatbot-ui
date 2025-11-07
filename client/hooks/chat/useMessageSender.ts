@@ -11,8 +11,11 @@ import {
   FilePreview,
   ImageFieldValue,
   Message,
+  MessageType,
 } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
+
+import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
 
 interface UseMessageSenderProps {
   textFieldValue: string;
@@ -30,6 +33,21 @@ interface UseMessageSenderProps {
   setFileFieldValue: React.Dispatch<React.SetStateAction<FileFieldValue>>;
   setFilePreviews: React.Dispatch<React.SetStateAction<FilePreview[]>>;
 }
+
+/**
+ * Maps ChatInputSubmitTypes to MessageType enum
+ */
+const mapSubmitTypeToMessageType = (
+  submitType: ChatInputSubmitTypes,
+): MessageType => {
+  const mapping: Record<ChatInputSubmitTypes, MessageType> = {
+    text: MessageType.TEXT,
+    image: MessageType.IMAGE,
+    file: MessageType.FILE,
+    'multi-file': MessageType.FILE, // Multi-file also maps to FILE
+  };
+  return mapping[submitType];
+};
 
 /**
  * Custom hook to manage message sending logic
@@ -52,22 +70,24 @@ export function useMessageSender({
   setFilePreviews,
 }: UseMessageSenderProps) {
   const t = useTranslations();
+  const { getArtifactContext } = useCodeEditorStore();
 
   const [usedPromptId, setUsedPromptId] = useState<string | null>(null);
   const [usedPromptVariables, setUsedPromptVariables] = useState<{
     [key: string]: string;
   } | null>(null);
 
-  const buildContent = useCallback(
-    () =>
-      buildMessageContent(
-        submitType,
-        textFieldValue,
-        imageFieldValue,
-        fileFieldValue,
-      ),
-    [submitType, textFieldValue, imageFieldValue, fileFieldValue],
-  );
+  const buildContent = useCallback(() => {
+    // Don't prepend artifact context to content anymore
+    // It will be attached as metadata
+    return buildMessageContent(
+      submitType,
+      textFieldValue,
+      imageFieldValue,
+      fileFieldValue,
+      null, // No longer prepending artifact context
+    );
+  }, [submitType, textFieldValue, imageFieldValue, fileFieldValue]);
 
   const handleSend = useCallback(() => {
     const validation = validateMessageSubmission(
@@ -92,14 +112,18 @@ export function useMessageSender({
       JSON.stringify(content).substring(0, 200),
     );
 
+    // Get artifact context if editor is open
+    const artifactContext = getArtifactContext();
+
     onSend(
       {
         role: 'user',
         content,
-        messageType: submitType ?? 'text',
+        messageType: mapSubmitTypeToMessageType(submitType ?? 'text'),
         toneId: selectedToneId,
         promptId: usedPromptId,
         promptVariables: usedPromptVariables || undefined,
+        artifactContext: artifactContext || undefined,
       },
       searchMode,
     );
@@ -133,6 +157,7 @@ export function useMessageSender({
     setFileFieldValue,
     setSubmitType,
     setFilePreviews,
+    getArtifactContext,
   ]);
 
   return {

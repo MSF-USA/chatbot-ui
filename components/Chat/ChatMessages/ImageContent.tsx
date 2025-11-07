@@ -60,31 +60,31 @@ export const ImageContent: FC<ImageContentProps> = ({ images }) => {
   const [loadError, setLoadError] = useState<boolean>(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
 
+  // Use JSON.stringify for stable comparison of array contents
+  const imagesKey = JSON.stringify(images);
+
   useEffect(() => {
     if (images.length > 0) {
-      setTimeout(() => {
-        setIsLoading(true);
-        setLoadError(false);
+      setIsLoading(true);
+      setLoadError(false);
 
-        Promise.all(
-          images.map((img) => fetchImageBase64FromMessageContent(img)),
-        )
-          .then((base64Strings) => {
-            if (base64Strings.every((str) => str.length > 0)) {
-              setImageBase64s(base64Strings);
-            } else {
-              setLoadError(true);
-            }
-          })
-          .catch(() => {
+      Promise.all(images.map((img) => fetchImageBase64FromMessageContent(img)))
+        .then((base64Strings) => {
+          if (base64Strings.every((str) => str.length > 0)) {
+            setImageBase64s(base64Strings);
+          } else {
             setLoadError(true);
-          })
-          .finally(() => {
-            setIsLoading(false);
-          });
-      }, 0);
+          }
+        })
+        .catch(() => {
+          setLoadError(true);
+        })
+        .finally(() => {
+          setIsLoading(false);
+        });
     }
-  }, [images]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imagesKey]);
 
   const openLightbox = (imageUrl: string) => {
     setLightboxImage(imageUrl);

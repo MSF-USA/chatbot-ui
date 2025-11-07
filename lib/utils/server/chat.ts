@@ -122,6 +122,28 @@ export const getMessagesToSend = async (
     delete message.messageType;
     const isLastMessage: boolean = messages.length - 1 === i;
 
+    // Inject artifact context for user messages
+    if (message.role === 'user' && message.artifactContext) {
+      const artifactPrefix = `Currently editing: ${message.artifactContext.fileName} (${message.artifactContext.language})\n\`\`\`${message.artifactContext.language}\n${message.artifactContext.code}\n\`\`\`\n\n`;
+
+      if (typeof message.content === 'string') {
+        message.content = artifactPrefix + message.content;
+      } else if (Array.isArray(message.content)) {
+        // Find text content and prepend
+        const textIndex = message.content.findIndex((c) => c.type === 'text');
+        if (textIndex !== -1) {
+          const textContent = message.content[textIndex] as TextMessageContent;
+          message.content[textIndex] = {
+            ...textContent,
+            text: artifactPrefix + textContent.text,
+          };
+        }
+      }
+
+      // Remove artifactContext after processing to avoid sending to AI
+      delete message.artifactContext;
+    }
+
     if (Array.isArray(message.content)) {
       message.content = await processMessageContent(
         message.content,

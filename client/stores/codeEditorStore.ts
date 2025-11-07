@@ -9,32 +9,28 @@ interface CodeEditorStore {
   modifiedCode: string;
   language: string;
   fileName: string;
-  filePath: string;
-  isDirty: boolean;
   isLoading: boolean;
   error: string | null;
-  isSaving: boolean;
   isEditorOpen: boolean; // Track if editor is visible
   isArtifactOpen: boolean; // Track if artifact overlay is visible
 
   // Actions
-  setOriginalCode: (code: string) => void;
   setModifiedCode: (code: string) => void;
   setLanguage: (language: string) => void;
   setFileName: (fileName: string) => void;
-  setFilePath: (filePath: string) => void;
-  setIsDirty: (isDirty: boolean) => void;
   setIsLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   clearError: () => void;
   resetEditor: () => void;
-  applyAIChanges: (newCode: string) => void;
   downloadFile: () => void;
-  acceptChanges: () => void;
-  rejectChanges: () => void;
   setIsEditorOpen: (isOpen: boolean) => void;
   openArtifact: (code: string, language?: string, fileName?: string) => void;
   closeArtifact: () => void;
+  getArtifactContext: () => {
+    fileName: string;
+    language: string;
+    code: string;
+  } | null; // Get artifact metadata for including in messages
 }
 
 export const useCodeEditorStore = create<CodeEditorStore>()(
@@ -45,25 +41,17 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
       modifiedCode: '',
       language: 'typescript',
       fileName: 'untitled.ts',
-      filePath: '',
-      isDirty: false,
       isLoading: false,
       error: null,
-      isSaving: false,
+      isEditorOpen: false,
+      isArtifactOpen: false,
 
       // Actions
-      setOriginalCode: (code) =>
-        set({
-          originalCode: code,
-          modifiedCode: code,
-          isDirty: false,
-        }),
-
       setModifiedCode: (code) => {
-        const { originalCode } = get();
+        // User edits update immediately
         set({
           modifiedCode: code,
-          isDirty: code !== originalCode,
+          originalCode: code, // Keep in sync
         });
       },
 
@@ -138,10 +126,6 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
         });
       },
 
-      setFilePath: (filePath) => set({ filePath }),
-
-      setIsDirty: (isDirty) => set({ isDirty }),
-
       setIsLoading: (isLoading) => set({ isLoading }),
 
       setError: (error) => set({ error }),
@@ -154,35 +138,9 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
           modifiedCode: '',
           language: 'typescript',
           fileName: 'untitled.ts',
-          filePath: '',
-          isDirty: false,
           isLoading: false,
           error: null,
-          isSaving: false,
         }),
-
-      applyAIChanges: (newCode) => {
-        set({
-          modifiedCode: newCode,
-          isDirty: true,
-        });
-      },
-
-      acceptChanges: () => {
-        const { modifiedCode } = get();
-        set({
-          originalCode: modifiedCode,
-          isDirty: false,
-        });
-      },
-
-      rejectChanges: () => {
-        const { originalCode } = get();
-        set({
-          modifiedCode: originalCode,
-          isDirty: false,
-        });
-      },
 
       downloadFile: () => {
         const { modifiedCode, fileName } = get();
@@ -208,8 +166,6 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
       },
 
       setIsEditorOpen: (isOpen) => set({ isEditorOpen: isOpen }),
-
-      isArtifactOpen: false,
 
       openArtifact: (code, language = 'typescript', fileName?) => {
         // Auto-generate fileName based on language if not provided
@@ -240,12 +196,16 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
         const ext = extensionMap[language] || 'txt';
         const defaultFileName = `untitled.${ext}`;
 
+        console.log(
+          `[CodeEditorStore] Opening artifact: ${defaultFileName} (${language})`,
+        );
+
+        // Opening a new artifact replaces the current one
         set({
           originalCode: code,
           modifiedCode: code,
           language,
           fileName: fileName || defaultFileName,
-          isDirty: false,
           isArtifactOpen: true,
           isEditorOpen: true,
         });
@@ -257,6 +217,18 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
           isEditorOpen: false,
         });
       },
+
+      getArtifactContext: () => {
+        const state = get();
+        if (!state.isArtifactOpen) return null;
+
+        // Return artifact metadata for including in messages
+        return {
+          fileName: state.fileName,
+          language: state.language,
+          code: state.modifiedCode,
+        };
+      },
     }),
     {
       name: 'code-editor-storage',
@@ -266,7 +238,6 @@ export const useCodeEditorStore = create<CodeEditorStore>()(
         modifiedCode: state.modifiedCode,
         language: state.language,
         fileName: state.fileName,
-        filePath: state.filePath,
       }),
     },
   ),

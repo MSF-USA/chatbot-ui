@@ -21,6 +21,7 @@ const wrapInArray = <T>(value: T | T[]): T[] => {
  * @param textFieldValue - The text content of the message
  * @param imageFieldValue - Image field value (single or array)
  * @param fileFieldValue - File field value (single or array)
+ * @param artifactContext - Optional artifact context to prepend to message
  * @returns The constructed message content
  * @throws Error if submitType is invalid
  */
@@ -29,14 +30,20 @@ export const buildMessageContent = (
   textFieldValue: string,
   imageFieldValue: FileFieldValue,
   fileFieldValue: FileFieldValue,
+  artifactContext?: string | null,
 ):
   | string
   | TextMessageContent
   | (TextMessageContent | FileMessageContent)[]
   | (TextMessageContent | ImageMessageContent)[]
   | (TextMessageContent | FileMessageContent | ImageMessageContent)[] => {
+  // Prepend artifact context if provided
+  const enhancedTextValue = artifactContext
+    ? `${artifactContext}\n\n${textFieldValue}`
+    : textFieldValue;
+
   if (submitType === 'text') {
-    return textFieldValue;
+    return enhancedTextValue;
   }
 
   if (submitType === 'image') {
@@ -53,7 +60,7 @@ export const buildMessageContent = (
       ...imageContents.filter(
         (item): item is ImageMessageContent => item !== null,
       ),
-      { type: 'text', text: textFieldValue } as TextMessageContent,
+      { type: 'text', text: enhancedTextValue } as TextMessageContent,
     ] as (TextMessageContent | ImageMessageContent)[];
   }
 
@@ -72,8 +79,8 @@ export const buildMessageContent = (
       : [];
 
     // Only include text content if text is not empty (for audio/video transcription without instructions)
-    const textContent = textFieldValue.trim()
-      ? [{ type: 'text', text: textFieldValue } as TextMessageContent]
+    const textContent = enhancedTextValue.trim()
+      ? [{ type: 'text', text: enhancedTextValue } as TextMessageContent]
       : [];
 
     return [...imageContents, ...fileContents, ...textContent] as (

@@ -62,7 +62,14 @@ export async function POST(request: NextRequest) {
 
     const isImage =
       (mimeType && mimeType.startsWith('image/')) || filetype === 'image';
-    const decodedData = isImage ? data : Buffer.from(data, 'base64');
+
+    let decodedData;
+    try {
+      decodedData = isImage ? data : Buffer.from(data, 'base64');
+    } catch (decodeError) {
+      console.error('Error decoding file data:', decodeError);
+      throw new Error('Invalid file data format - expected base64 encoding');
+    }
 
     return await blobStorageClient.upload(
       `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,

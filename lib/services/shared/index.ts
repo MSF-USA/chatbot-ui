@@ -13,6 +13,7 @@
 export { ModelSelector } from './ModelSelector';
 export { ToneService } from './ToneService';
 export { StreamingService } from './StreamingService';
+export { RateLimiter } from './RateLimiter';
 
 // Re-export logging service as ChatLogger for clarity
 export { AzureMonitorLoggingService as ChatLogger } from '../loggingService';

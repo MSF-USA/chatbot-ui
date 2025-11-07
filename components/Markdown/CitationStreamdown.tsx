@@ -49,6 +49,17 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
     const activeElementRef = useRef<HTMLElement | null>(null);
     const citationsProcessed = useRef(false);
 
+    // Create stable keys for dependency comparison
+    const messageKey = React.useMemo(() => JSON.stringify(message), [message]);
+    const citationsKey = React.useMemo(
+      () => JSON.stringify(citations),
+      [citations],
+    );
+    const conversationBotKey = React.useMemo(
+      () => conversation?.bot || '',
+      [conversation?.bot],
+    );
+
     // Process content to extract citations
     React.useEffect(() => {
       const processContent = () => {
@@ -101,13 +112,8 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
       };
 
       processContent();
-    }, [
-      props.children,
-      message,
-      citations,
-      conversation?.bot,
-      conversation?.model,
-    ]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [props.children, messageKey, citationsKey, conversationBotKey]);
 
     // Global mouse tracking for citation tooltips
     React.useEffect(() => {

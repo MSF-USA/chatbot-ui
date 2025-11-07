@@ -328,7 +328,7 @@ describe('FileContent', () => {
         .getByText('document.pdf')
         .closest('.cursor-pointer');
       expect(fileContainer).toHaveClass('cursor-pointer');
-      expect(fileContainer).toHaveClass('hover:bg-gray-50');
+      expect(fileContainer).toHaveClass('hover:shadow-lg');
     });
 
     it('displays download icon for files', () => {
@@ -389,7 +389,8 @@ describe('FileContent', () => {
 
       await waitFor(() => {
         const img = screen.getByAltText('Image Content');
-        expect(img).toHaveClass('cursor-pointer');
+        const imageContainer = img.closest('.cursor-pointer');
+        expect(imageContainer).toHaveClass('cursor-pointer');
       });
     });
   });

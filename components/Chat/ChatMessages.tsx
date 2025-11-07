@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Message } from '@/types/chat';
+import { Message, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
 import { MemoizedChatMessage } from './MemoizedChatMessage';
@@ -139,7 +139,7 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
               message={{
                 role: 'assistant',
                 content: streamingContent,
-                messageType: 'text',
+                messageType: MessageType.TEXT,
                 citations,
               }}
               messageIndex={messages.length}

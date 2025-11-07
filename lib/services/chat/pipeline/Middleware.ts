@@ -1,11 +1,13 @@
 import { Session } from 'next-auth';
 import { NextRequest } from 'next/server';
 
-import { ChatLogger, ModelSelector } from '@/lib/services/shared';
+import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
+import { ChatLogger, ModelSelector, RateLimiter } from '@/lib/services/shared';
 
 import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 import { getMessageContentTypes } from '@/lib/utils/server/chat';
 
+import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { ChatBody } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
@@ -56,7 +58,10 @@ export const authMiddleware: Middleware = async (req) => {
   const session: Session | null = await auth();
 
   if (!session) {
-    throw new Error('Unauthorized: No valid session found');
+    throw PipelineError.critical(
+      ErrorCode.AUTH_FAILED,
+      'Unauthorized: No valid session found',
+    );
   }
 
   return {
@@ -80,28 +85,56 @@ export const loggingMiddleware: Middleware = async (req) => {
 };
 
 /**
- * Rate limiting middleware.
+ * Rate limiting middleware factory.
  * Checks if the user has exceeded their rate limit.
  *
- * TODO: Implement actual rate limiting logic
+ * Requires session to be set by authMiddleware.
  */
-export const rateLimitMiddleware: Middleware = async (req) => {
-  // TODO: Implement rate limiting
-  // For now, just a placeholder
-  return {};
+export const createRateLimitMiddleware = (
+  context: Partial<ChatContext>,
+): Partial<ChatContext> => {
+  if (!context.user?.id) {
+    throw PipelineError.critical(
+      ErrorCode.AUTH_FAILED,
+      'Rate limiting requires authenticated user',
+    );
+  }
+
+  // Get rate limiter instance (100 requests per minute by default)
+  const rateLimiter = RateLimiter.getInstance(100, 1);
+
+  // Enforce rate limit (throws if exceeded)
+  const rateLimitResult = rateLimiter.enforceLimit(context.user.id);
+
+  console.log(
+    `[RateLimitMiddleware] User ${context.user.id}: ${rateLimitResult.remaining}/${rateLimitResult.limit} remaining`,
+  );
+
+  return {
+    // Store rate limit info in context for potential use in response headers
+    rateLimitInfo: rateLimitResult,
+  };
 };
 
 /**
  * Request parsing middleware.
- * Parses the request body and validates it.
+ * Parses the request body and validates it using InputValidator.
  */
 export const requestParsingMiddleware: Middleware = async (req) => {
   try {
-    const body = (await req.json()) as ChatBody & {
-      searchMode?: SearchMode;
-      threadId?: string;
-      forcedAgentType?: string;
-    };
+    const rawBody = await req.json();
+
+    // Validate request size (10MB for JSON body - actual files uploaded separately)
+    const validator = new InputValidator();
+    if (!validator.validateRequestSize(rawBody)) {
+      throw PipelineError.critical(
+        ErrorCode.VALIDATION_FAILED,
+        'Request body too large (max 10MB)',
+      );
+    }
+
+    // Validate and parse body
+    const body = validator.validateChatRequest(rawBody);
 
     const {
       model,
@@ -117,14 +150,6 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       forcedAgentType,
     } = body;
 
-    // Validate required fields
-    if (!model) {
-      throw new Error('Bad Request: model is required');
-    }
-    if (!messages || messages.length === 0) {
-      throw new Error('Bad Request: messages are required');
-    }
-
     return {
       model,
       messages,
@@ -137,13 +162,25 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       searchMode,
       threadId,
       forcedAgentType,
-      agentMode: searchMode === SearchMode.AGENT,
     };
   } catch (error) {
-    if (error instanceof SyntaxError) {
-      throw new Error('Bad Request: Invalid JSON in request body');
+    if (error instanceof PipelineError) {
+      throw error;
     }
-    throw error;
+    if (error instanceof SyntaxError) {
+      throw PipelineError.critical(
+        ErrorCode.VALIDATION_FAILED,
+        'Invalid JSON in request body',
+        { originalError: error.message },
+        error,
+      );
+    }
+    throw PipelineError.critical(
+      ErrorCode.VALIDATION_FAILED,
+      'Failed to parse request body',
+      { originalError: error instanceof Error ? error.message : String(error) },
+      error instanceof Error ? error : undefined,
+    );
   }
 };
 
@@ -194,10 +231,17 @@ export const createModelSelectionMiddleware = (
     context.messages,
   );
 
+  // Determine if we're in agent mode based on search mode or model config
+  const agentMode =
+    context.searchMode === SearchMode.AGENT ||
+    modelConfig.isCustomAgent === true ||
+    !!modelConfig.agentId;
+
   return {
     modelSelector,
     modelId,
     model: modelConfig,
+    agentMode,
   };
 };
 
@@ -210,11 +254,15 @@ export async function buildChatContext(req: NextRequest): Promise<ChatContext> {
   let context = await applyMiddleware(req, [
     authMiddleware,
     loggingMiddleware,
-    rateLimitMiddleware,
     requestParsingMiddleware,
   ]);
 
   // Apply middleware that depends on previous middleware
+  context = {
+    ...context,
+    ...createRateLimitMiddleware(context),
+  };
+
   context = {
     ...context,
     ...createContentAnalysisMiddleware(context),

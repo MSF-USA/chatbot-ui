@@ -2,7 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useChatActions } from '@/client/hooks/chat/useChatActions';
 
-import { Conversation, Message } from '@/types/chat';
+import { Conversation, Message, MessageType } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -38,8 +38,8 @@ describe('useChatActions', () => {
         id: 'conv-1',
         name: 'Test Conversation',
         messages: [
-          { role: 'user', content: 'Hello', messageType: 'text' },
-          { role: 'assistant', content: 'Hi', messageType: 'text' },
+          { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
+          { role: 'assistant', content: 'Hi', messageType: MessageType.TEXT },
         ],
         model: { id: 'gpt-4', name: 'GPT-4' } as any,
         prompt: '',
@@ -75,7 +75,9 @@ describe('useChatActions', () => {
       const conversation: Conversation = {
         id: 'conv-1',
         name: 'Test Conversation',
-        messages: [{ role: 'user', content: 'Hello', messageType: 'text' }],
+        messages: [
+          { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
+        ],
         model: { id: 'gpt-4', name: 'GPT-4' } as any,
         prompt: '',
         temperature: 0.7,
@@ -103,8 +105,12 @@ describe('useChatActions', () => {
   describe('handleEditMessage', () => {
     it('should update the edited message', () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Original', messageType: 'text' },
-        { role: 'assistant', content: 'Response', messageType: 'text' },
+        { role: 'user', content: 'Original', messageType: MessageType.TEXT },
+        {
+          role: 'assistant',
+          content: 'Response',
+          messageType: MessageType.TEXT,
+        },
       ];
 
       const conversation: Conversation = {
@@ -167,7 +173,7 @@ describe('useChatActions', () => {
       const newMessage: Message = {
         role: 'user',
         content: 'Hello AI',
-        messageType: 'text',
+        messageType: MessageType.TEXT,
       };
 
       act(() => {
@@ -202,7 +208,7 @@ describe('useChatActions', () => {
       const newMessage: Message = {
         role: 'user',
         content: 'Hello',
-        messageType: 'text',
+        messageType: MessageType.TEXT,
       };
 
       act(() => {
@@ -245,7 +251,7 @@ describe('useChatActions', () => {
         expect.objectContaining({
           role: 'user',
           content: 'Write a story about a robot',
-          messageType: 'text',
+          messageType: MessageType.TEXT,
         }),
         expect.any(Object),
         undefined,
@@ -256,10 +262,18 @@ describe('useChatActions', () => {
   describe('handleRegenerate', () => {
     it('should remove messages after last user message and resend', () => {
       const messages: Message[] = [
-        { role: 'user', content: 'Question 1', messageType: 'text' },
-        { role: 'assistant', content: 'Answer 1', messageType: 'text' },
-        { role: 'user', content: 'Question 2', messageType: 'text' },
-        { role: 'assistant', content: 'Answer 2', messageType: 'text' },
+        { role: 'user', content: 'Question 1', messageType: MessageType.TEXT },
+        {
+          role: 'assistant',
+          content: 'Answer 1',
+          messageType: MessageType.TEXT,
+        },
+        { role: 'user', content: 'Question 2', messageType: MessageType.TEXT },
+        {
+          role: 'assistant',
+          content: 'Answer 2',
+          messageType: MessageType.TEXT,
+        },
       ];
 
       const conversation: Conversation = {

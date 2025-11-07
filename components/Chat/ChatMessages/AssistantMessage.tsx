@@ -26,9 +26,10 @@ import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
-import { CodeBlockWrapper } from '@/components/Markdown/CodeBlockWrapper';
+import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
 
 import { ApiError } from '@/client/services';
+import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
 import type { MermaidConfig } from 'mermaid';
 
 interface AssistantMessageProps {
@@ -303,7 +304,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="prose dark:prose-invert max-w-none w-full"
                 style={{ maxWidth: 'none' }}
               >
-                <CodeBlockWrapper>
+                <StreamdownWithCodeButtons>
                   <CitationStreamdown
                     conversation={selectedConversation}
                     message={message}
@@ -316,7 +317,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                   >
                     {processedContent}
                   </CitationStreamdown>
-                </CodeBlockWrapper>
+                </StreamdownWithCodeButtons>
               </div>
             )}
           </div>

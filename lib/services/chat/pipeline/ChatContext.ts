@@ -150,4 +150,14 @@ export interface ChatContext {
     endTime?: number;
     stageTimings?: Map<string, number>;
   };
+
+  /** Rate limit information (for response headers) */
+  rateLimitInfo?: {
+    allowed: boolean;
+    count: number;
+    limit: number;
+    remaining: number;
+    resetTime: number;
+    retryAfter?: number;
+  };
 }

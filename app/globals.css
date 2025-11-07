@@ -5,6 +5,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Override prose max-width to prevent text wrapping in message bubbles */
+.prose.max-w-none,
+.prose.max-w-none > *,
+.prose.max-w-none p,
+.prose-invert.max-w-none,
+.prose-invert.max-w-none > *,
+.prose-invert.max-w-none p {
+  width: auto !important;
+  max-width: none !important;
+}
+
 /* Streamdown styles - @source directive requires Tailwind v4 */
 /* Uncomment when upgrading to Tailwind v4:
 @source "../node_modules/streamdown/dist/index.js";

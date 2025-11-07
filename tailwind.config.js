@@ -29,6 +29,7 @@ module.exports = {
       typography: {
         DEFAULT: {
           css: {
+            maxWidth: 'none', // Remove default prose max-width constraint
             fontFamily: [
               'system-ui',
               '-apple-system',

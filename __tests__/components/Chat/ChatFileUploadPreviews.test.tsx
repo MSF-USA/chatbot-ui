@@ -145,7 +145,7 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(screen.getByText('Text extraction only')).toBeInTheDocument();
+      expect(screen.getByText('Text extraction')).toBeInTheDocument();
     });
 
     it('does not show PDF info message for non-PDF files', () => {
@@ -161,9 +161,7 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(
-        screen.queryByText('Text extraction only'),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText('Text extraction')).not.toBeInTheDocument();
     });
 
     it('does not show PDF info message when status is not completed', () => {
@@ -179,9 +177,7 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      expect(
-        screen.queryByText('Text extraction only'),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText('Text extraction')).not.toBeInTheDocument();
     });
 
     it('truncates long filenames', () => {
@@ -256,7 +252,7 @@ describe('ChatFileUploadPreviews', () => {
 
       const progressText = screen.getByText('75%');
       expect(progressText).toHaveClass('text-xs');
-      expect(progressText).toHaveClass('font-medium');
+      expect(progressText).toHaveClass('font-semibold');
     });
   });
 
@@ -553,7 +549,7 @@ describe('ChatFileUploadPreviews', () => {
         />,
       );
 
-      const infoMessage = screen.getByText('Text extraction only');
+      const infoMessage = screen.getByText('Text extraction');
       expect(infoMessage).toBeInTheDocument();
     });
   });

@@ -232,6 +232,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       let extractedTranscript: any | undefined;
       let hasReceivedContent = false;
 
+      // Track previous values to avoid unnecessary state updates
+      let prevDisplayText = '';
+      let prevCitationsStr = '[]';
+      let citationsChanged = false;
+
       // All responses from chatService are streams
       const reader = stream.getReader();
       const decoder = createStreamDecoder();
@@ -256,9 +261,16 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         const parsed = parseMetadataFromContent(text);
         const displayText = parsed.content;
 
-        // Update citations if found
-        if (parsed.citations.length > 0) {
+        // Update citations if found (only if different from previous)
+        const currentCitationsStr = JSON.stringify(parsed.citations);
+        citationsChanged = false;
+        if (
+          parsed.citations.length > 0 &&
+          currentCitationsStr !== prevCitationsStr
+        ) {
           extractedCitations = parsed.citations;
+          prevCitationsStr = currentCitationsStr;
+          citationsChanged = true;
         }
 
         // Update threadId if found (only once)
@@ -287,15 +299,49 @@ export const useChatStore = create<ChatStore>((set, get) => ({
           }
         }
 
-        // Update streaming content and clear loading message once content arrives
-        set({
-          streamingContent: displayText,
-          citations: extractedCitations,
-          loadingMessage: hasReceivedContent ? null : get().loadingMessage,
-        });
+        // Only update state if something actually changed
+        const currentState = get();
+        const contentChanged = displayText !== prevDisplayText;
+        const shouldClearLoading =
+          hasReceivedContent && currentState.loadingMessage !== null;
+
+        if (contentChanged || citationsChanged || shouldClearLoading) {
+          // Build update object dynamically to avoid passing same array reference
+          const update: {
+            streamingContent: string;
+            citations?: Citation[];
+            loadingMessage: string | null;
+          } = {
+            streamingContent: displayText,
+            loadingMessage: hasReceivedContent
+              ? null
+              : currentState.loadingMessage,
+          };
+
+          // Only include citations if they changed
+          if (citationsChanged) {
+            update.citations = extractedCitations;
+          }
+
+          set(update);
+          prevDisplayText = displayText;
+        }
 
         // Update text for final message
         text = displayText;
+      }
+
+      // Handle non-streaming JSON responses (like o3)
+      // Non-streaming models return {"text":"..."} format
+      if (text.trim().startsWith('{') && text.trim().endsWith('}')) {
+        try {
+          const jsonResponse = JSON.parse(text);
+          if (jsonResponse.text) {
+            text = jsonResponse.text;
+          }
+        } catch (e) {
+          // Not JSON or parsing failed, use text as-is
+        }
       }
 
       // Create assistant message

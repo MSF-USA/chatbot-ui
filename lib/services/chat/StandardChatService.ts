@@ -4,9 +4,11 @@ import { TranscriptMetadata } from '@/lib/utils/app/metadata';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
+import { getGlobalTiktoken } from '@/lib/utils/server/tiktokenCache';
 
 import { Message } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
+import { Citation } from '@/types/rag';
 
 import {
   ChatLogger,
@@ -16,11 +18,7 @@ import {
 } from '../shared';
 import { HandlerFactory } from './handlers/HandlerFactory';
 
-import tiktokenModel from '@dqbd/tiktoken/encoders/cl100k_base.json';
-import { Tiktoken, init } from '@dqbd/tiktoken/lite/init';
-import fs from 'fs';
 import OpenAI, { AzureOpenAI } from 'openai';
-import path from 'path';
 
 /**
  * Request parameters for standard chat.
@@ -36,6 +34,7 @@ export interface StandardChatRequest {
   verbosity?: 'low' | 'medium' | 'high';
   botId?: string;
   transcript?: TranscriptMetadata;
+  citations?: Citation[]; // Web search citations to include in response
 }
 
 /**
@@ -107,7 +106,8 @@ export class StandardChatService {
       );
 
       // Prepare messages with token limit filtering
-      const encoding = await this.initTiktoken();
+      // Use cached Tiktoken instance for better performance
+      const encoding = await getGlobalTiktoken();
       const promptTokens = encoding.encode(enhancedPrompt);
       const messagesToSend = await getMessagesToSend(
         request.messages,
@@ -116,7 +116,7 @@ export class StandardChatService {
         modelConfig.tokenLimit,
         request.user,
       );
-      encoding.free();
+      // Don't free() - encoding is shared across requests
 
       // Get appropriate handler for this model
       const handler = HandlerFactory.getHandler(
@@ -169,6 +169,7 @@ export class StandardChatService {
           undefined, // ragService
           undefined, // stopConversationRef
           request.transcript, // transcript metadata
+          request.citations, // web search citations
         );
 
         return new Response(processedStream, {
@@ -200,21 +201,5 @@ export class StandardChatService {
 
       throw error;
     }
-  }
-
-  /**
-   * Initializes the Tiktoken tokenizer.
-   */
-  private async initTiktoken(): Promise<Tiktoken> {
-    const wasmPath = path.resolve(
-      './node_modules/@dqbd/tiktoken/lite/tiktoken_bg.wasm',
-    );
-    const wasmBuffer = fs.readFileSync(wasmPath);
-    await init((imports) => WebAssembly.instantiate(wasmBuffer, imports));
-    return new Tiktoken(
-      tiktokenModel.bpe_ranks,
-      tiktokenModel.special_tokens,
-      tiktokenModel.pat_str,
-    );
   }
 }

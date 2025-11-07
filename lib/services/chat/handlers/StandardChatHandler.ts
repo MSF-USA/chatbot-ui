@@ -62,10 +62,21 @@ export class StandardChatHandler extends BasePipelineStage {
         }
       : undefined;
 
+    // Extract citations from web search results
+    const citations = context.processedContent?.metadata?.citations;
+
     if (transcript) {
       console.log(
         '[StandardChatHandler] Including transcript metadata:',
         sanitizeForLog(transcript.filename),
+      );
+    }
+
+    if (citations) {
+      console.log(
+        '[StandardChatHandler] Including search citations:',
+        sanitizeForLog(citations.length),
+        'citations',
       );
     }
 
@@ -81,6 +92,7 @@ export class StandardChatHandler extends BasePipelineStage {
       verbosity: context.verbosity,
       botId: ragConfig?.botId,
       transcript,
+      citations,
     });
 
     console.log('[StandardChatHandler] Chat execution completed');

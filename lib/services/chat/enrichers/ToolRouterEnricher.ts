@@ -1,6 +1,7 @@
 import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
 import { Message, MessageType, ToolRouterRequest } from '@/types/chat';
+import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 
 import { AgentChatService } from '../AgentChatService';
@@ -210,13 +211,21 @@ export class ToolRouterEnricher extends BasePipelineStage {
 
   /**
    * Gets a model with agentId for search (fallback if context model doesn't have one).
+   * Uses GPT-4.1 as the default search agent.
    */
   private getAgentModelForSearch(): any {
-    // This is a fallback - in production, you'd want to configure a default search agent
-    // For now, return null and the search will be skipped
-    console.warn(
-      '[ToolRouterEnricher] No default search agent configured, search will be skipped',
+    const defaultSearchModel = OpenAIModels[OpenAIModelID.GPT_4_1];
+
+    if (!defaultSearchModel || !defaultSearchModel.agentId) {
+      console.warn(
+        '[ToolRouterEnricher] Default search agent (GPT-4.1) not available or missing agentId',
+      );
+      return null;
+    }
+
+    console.log(
+      `[ToolRouterEnricher] Using default search agent: ${defaultSearchModel.name} (${defaultSearchModel.agentId})`,
     );
-    return null;
+    return defaultSearchModel;
   }
 }

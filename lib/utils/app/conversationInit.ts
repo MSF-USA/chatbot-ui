@@ -39,6 +39,15 @@ export const createDefaultConversation = (
     throw new Error('No models available');
   }
 
+  // Determine appropriate search mode based on model capabilities
+  // If the model is an agent (has agentId), use the provided search mode
+  // Otherwise, ensure we don't use AGENT mode on non-agent models
+  let searchMode = defaultSearchMode ?? SearchMode.INTELLIGENT;
+  if (searchMode === SearchMode.AGENT && !defaultModel.agentId) {
+    // Auto-fix: If default is AGENT but model doesn't support it, use INTELLIGENT instead
+    searchMode = SearchMode.INTELLIGENT;
+  }
+
   return {
     id: uuidv4(),
     name: 'New Conversation',
@@ -47,7 +56,7 @@ export const createDefaultConversation = (
     prompt: systemPrompt || '',
     temperature: temperature || 0.5,
     folderId: null,
-    defaultSearchMode: defaultSearchMode ?? SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+    defaultSearchMode: searchMode, // Privacy-focused intelligent search by default, model-appropriate
   };
 };
 

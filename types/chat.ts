@@ -4,11 +4,11 @@ import { OpenAIModel } from './openai';
 import { Citation } from './rag';
 
 export enum MessageType {
-  TEXT = 'text',
-  IMAGE = 'image',
-  AUDIO = 'audio',
-  VIDEO = 'video',
-  FILE = 'file',
+  TEXT = 'TEXT',
+  IMAGE = 'IMAGE',
+  AUDIO = 'AUDIO',
+  VIDEO = 'VIDEO',
+  FILE = 'FILE',
 }
 
 export interface ImageMessageContent {
@@ -100,6 +100,12 @@ export interface Message {
   toneId?: string | null; // Custom tone/voice profile to apply
   promptId?: string | null; // Saved prompt that was used
   promptVariables?: { [key: string]: string }; // Variable values used in the prompt
+  artifactContext?: {
+    // Artifact being edited when message was sent
+    fileName: string;
+    language: string;
+    code: string;
+  };
 }
 
 export type Role = 'system' | 'assistant' | 'user';

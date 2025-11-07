@@ -52,7 +52,11 @@ Web search is NOT needed for:
 - Mathematical calculations
 - Creative writing, brainstorming
 - Personal advice, opinions
-- Questions about uploaded files or images`;
+- Questions about uploaded files or images
+
+IMPORTANT: Always provide searchQuery in your response:
+- If needsWebSearch is true, provide an optimized search query
+- If needsWebSearch is false, provide an empty string`;
 
       // Use gpt-5-mini for efficient tool routing decisions
       // This works with any OpenAI-compatible endpoint
@@ -78,14 +82,14 @@ Web search is NOT needed for:
                 searchQuery: {
                   type: 'string',
                   description:
-                    'Optimized search query (required if needsWebSearch is true)',
+                    'Optimized search query if web search is needed, empty string otherwise',
                 },
                 reasoning: {
                   type: 'string',
                   description: 'Brief explanation of the decision',
                 },
               },
-              required: ['needsWebSearch', 'reasoning'],
+              required: ['needsWebSearch', 'searchQuery', 'reasoning'],
               additionalProperties: false,
             },
           },

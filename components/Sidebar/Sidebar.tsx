@@ -46,6 +46,7 @@ import {
 } from '@/lib/utils/app/export/folderExport';
 
 import { Conversation } from '@/types/chat';
+import { SearchMode } from '@/types/searchMode';
 
 import { CustomizationsModal } from '@/components/QuickActions/CustomizationsModal';
 import { DropdownPortal } from '@/components/UI/DropdownPortal';
@@ -193,9 +194,10 @@ export function Sidebar() {
     // otherwise fall back to the default model from settings
     const currentModel = selectedConversation?.model;
 
-    // Use current conversation's model if it exists, otherwise use defaultModelId
+    // Use current conversation's model directly if it exists (preserves custom agents),
+    // otherwise look up the default model from settings
     const modelToUse = currentModel
-      ? models.find((m) => m.id === currentModel.id)
+      ? currentModel // Use current model directly (includes custom agents)
       : models.find((m) => m.id === defaultModelId);
 
     const defaultModel = modelToUse || models[0];
@@ -207,11 +209,19 @@ export function Sidebar() {
       `\n  defaultModelId: ${defaultModelId}`,
     );
 
-    // Use the default model as-is (no need to override mode properties)
+    // Use the model as-is (preserves all properties including custom agent fields)
     const modelWithDefaults = {
       ...defaultModel,
-      ...(defaultModel.agentId && { agentId: defaultModel.agentId }),
     };
+
+    // Determine appropriate search mode based on model capabilities
+    // If the model is an agent (has agentId), use the default search mode from settings
+    // Otherwise, ensure we don't use AGENT mode on non-agent models
+    let searchMode = defaultSearchMode;
+    if (searchMode === SearchMode.AGENT && !defaultModel.agentId) {
+      // Auto-fix: If default is AGENT but model doesn't support it, use INTELLIGENT instead
+      searchMode = SearchMode.INTELLIGENT;
+    }
 
     const newConversation: Conversation = {
       id: uuidv4(),
@@ -221,7 +231,7 @@ export function Sidebar() {
       prompt: systemPrompt || '',
       temperature: temperature || 0.5,
       folderId: null,
-      defaultSearchMode: defaultSearchMode, // Use default search mode from settings
+      defaultSearchMode: searchMode, // Use model-appropriate search mode
     };
 
     addConversation(newConversation);
