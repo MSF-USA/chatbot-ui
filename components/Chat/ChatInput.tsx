@@ -55,6 +55,7 @@ import {
 import { Prompt } from '@/types/prompt';
 import { SearchMode } from '@/types/searchMode';
 
+import { ArtifactContextBar } from '@/components/Chat/ChatInput/ArtifactContextBar';
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputFile';
@@ -69,6 +70,7 @@ import { ToneBadge } from '@/components/Chat/ChatInput/ToneBadge';
 import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
 
+import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
@@ -99,6 +101,8 @@ export const ChatInput = ({
   const { isStreaming, setIsStreaming } = useChat();
   const { prompts } = useSettings();
   const { tones } = useTones();
+  const { isArtifactOpen, fileName, language, closeArtifact } =
+    useCodeEditorStore();
 
   // Custom hooks for state management
   const {
@@ -463,6 +467,15 @@ export const ChatInput = ({
               uploadProgress={uploadProgress}
             />
           </div>
+        )}
+
+        {/* Artifact Context Bar - Shows when code editor is open */}
+        {isArtifactOpen && (
+          <ArtifactContextBar
+            fileName={fileName}
+            language={language}
+            onClose={closeArtifact}
+          />
         )}
 
         <div className="items-center pt-4">
