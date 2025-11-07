@@ -57,7 +57,37 @@ export class ToolRouterEnricher extends BasePipelineStage {
 
     // Extract the last message text for tool routing decision
     const lastMessage = baseMessages[baseMessages.length - 1];
-    const currentMessage = this.extractTextFromContent(lastMessage.content);
+    let currentMessage = this.extractTextFromContent(lastMessage.content);
+
+    // IMPORTANT: Include processed file summaries and transcripts in the analysis
+    // This ensures the tool router can see the full context when deciding if web search is needed
+    if (context.processedContent) {
+      const additionalContext: string[] = [];
+
+      // Add file summaries
+      if (context.processedContent.fileSummaries) {
+        const summaries = context.processedContent.fileSummaries
+          .map((f) => `[File: ${f.filename}]\n${f.summary}`)
+          .join('\n\n');
+        additionalContext.push(summaries);
+      }
+
+      // Add transcripts
+      if (context.processedContent.transcripts) {
+        const transcripts = context.processedContent.transcripts
+          .map((t) => `[Audio/Video: ${t.filename}]\n${t.transcript}`)
+          .join('\n\n');
+        additionalContext.push(transcripts);
+      }
+
+      // Merge with user's message
+      if (additionalContext.length > 0) {
+        currentMessage = `${currentMessage}\n\n${additionalContext.join('\n\n')}`;
+        console.log(
+          `[ToolRouterEnricher] Including processed content: ${context.processedContent.fileSummaries?.length || 0} files, ${context.processedContent.transcripts?.length || 0} transcripts`,
+        );
+      }
+    }
 
     console.log(
       `[ToolRouterEnricher] Analyzing message for tool needs: "${currentMessage.substring(0, 100)}..."`,

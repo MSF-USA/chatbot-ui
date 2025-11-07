@@ -1,5 +1,6 @@
 import { Session } from 'next-auth';
 
+import { TranscriptMetadata } from '@/lib/utils/app/metadata';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
@@ -34,6 +35,7 @@ export interface StandardChatRequest {
   reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
   verbosity?: 'low' | 'medium' | 'high';
   botId?: string;
+  transcript?: TranscriptMetadata;
 }
 
 /**
@@ -164,6 +166,9 @@ export class StandardChatService {
       if (stream) {
         const processedStream = createAzureOpenAIStreamProcessor(
           response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+          undefined, // ragService
+          undefined, // stopConversationRef
+          request.transcript, // transcript metadata
         );
 
         return new Response(processedStream, {

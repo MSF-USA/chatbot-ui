@@ -53,6 +53,22 @@ export class StandardChatHandler extends BasePipelineStage {
     // Check if RAG is enabled
     const ragConfig = context.processedContent?.metadata?.ragConfig;
 
+    // Extract transcript metadata if available (for audio/video transcriptions)
+    const transcript = context.processedContent?.transcripts?.[0]
+      ? {
+          filename: context.processedContent.transcripts[0].filename,
+          transcript: context.processedContent.transcripts[0].transcript,
+          processedContent: undefined, // Will be filled by LLM response
+        }
+      : undefined;
+
+    if (transcript) {
+      console.log(
+        '[StandardChatHandler] Including transcript metadata:',
+        sanitizeForLog(transcript.filename),
+      );
+    }
+
     // Execute chat
     const response = await this.standardChatService.handleChat({
       messages: messagesToSend,
@@ -64,6 +80,7 @@ export class StandardChatHandler extends BasePipelineStage {
       reasoningEffort: context.reasoningEffort,
       verbosity: context.verbosity,
       botId: ragConfig?.botId,
+      transcript,
     });
 
     console.log('[StandardChatHandler] Chat execution completed');

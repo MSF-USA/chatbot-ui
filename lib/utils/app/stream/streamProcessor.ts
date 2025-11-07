@@ -1,6 +1,7 @@
 import { RAGService } from '@/lib/services/ragService';
 
 import {
+  TranscriptMetadata,
   appendMetadataToStream,
   createStreamEncoder,
 } from '@/lib/utils/app/metadata';
@@ -15,12 +16,14 @@ import OpenAI from 'openai';
  * @param {AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>} response - The streaming response from OpenAI.
  * @param {RAGService} [ragService] - Optional RAG service for citation processing.
  * @param {object} [stopConversationRef] - Reference to stop conversation flag.
+ * @param {TranscriptMetadata} [transcript] - Optional transcript metadata for audio/video transcriptions.
  * @returns {ReadableStream} A processed stream with citation data appended.
  */
 export function createAzureOpenAIStreamProcessor(
   response: AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
   ragService?: RAGService,
   stopConversationRef?: { current: boolean },
+  transcript?: TranscriptMetadata,
 ): ReadableStream {
   return new ReadableStream({
     start: (controller) => {
@@ -102,11 +105,22 @@ export function createAzureOpenAIStreamProcessor(
                 uniqueCitations.length > 0 ? uniqueCitations : undefined;
             }
 
+            // Build transcript metadata with LLM's processed content
+            let transcriptMetadata: TranscriptMetadata | undefined;
+            if (transcript) {
+              transcriptMetadata = {
+                filename: transcript.filename,
+                transcript: transcript.transcript,
+                processedContent: allContent, // The LLM's response about the transcript
+              };
+            }
+
             // Append metadata directly to controller (bypass smooth buffer)
             // Metadata should be sent immediately, not buffered
             appendMetadataToStream(controller, {
               citations,
               thinking,
+              transcript: transcriptMetadata,
             });
           }
 

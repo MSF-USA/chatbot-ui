@@ -61,6 +61,7 @@ export class ChatService {
       threadId?: string;
       searchMode?: SearchMode;
       forcedAgentType?: string;
+      isEditorOpen?: boolean;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     console.log('[ChatService] Sending request to unified /api/chat endpoint', {
@@ -83,6 +84,7 @@ export class ChatService {
       threadId: options?.threadId,
       searchMode: options?.searchMode,
       forcedAgentType: options?.forcedAgentType,
+      isEditorOpen: options?.isEditorOpen,
     });
   }
 

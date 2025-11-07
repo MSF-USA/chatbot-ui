@@ -116,6 +116,7 @@ export interface ChatBody {
   reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
   verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
   forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
+  isEditorOpen?: boolean; // Indicates if code editor is currently open
 }
 
 export interface Conversation {

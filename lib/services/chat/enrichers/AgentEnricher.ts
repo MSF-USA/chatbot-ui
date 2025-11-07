@@ -1,3 +1,5 @@
+import { SearchMode } from '@/types/searchMode';
+
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 
@@ -36,11 +38,18 @@ export class AgentEnricher extends BasePipelineStage {
     }
 
     // If files or images are present, agent mode may not support them yet
+    // Fall back to intelligent search mode to maintain search capability
     if (context.hasFiles || context.hasImages) {
       console.warn(
-        '[AgentEnricher] Agent mode with files/images not yet supported, will use standard execution',
+        '[AgentEnricher] Agent mode with files/images not yet supported, falling back to intelligent search with standard execution',
       );
-      return context;
+      // Switch to INTELLIGENT search mode to enable ToolRouterEnricher
+      // This ensures users still get web search capability with files
+      return {
+        ...context,
+        searchMode: SearchMode.INTELLIGENT, // Enable intelligent search for files
+        // Don't set executionStrategy='agent' - let StandardChatHandler run instead
+      };
     }
 
     // Set execution strategy to agent

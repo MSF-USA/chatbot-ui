@@ -267,6 +267,14 @@ const extractTextContent = (
     | (TextMessageContent | ImageMessageContent)[]
     | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
 ): string => {
+  // Handle empty content arrays gracefully
+  if (!Array.isArray(content) || content.length === 0) {
+    console.warn(
+      '[extractTextContent] Received empty or invalid content array, returning empty string',
+    );
+    return '';
+  }
+
   const textContent: TextMessageContent | undefined = (
     content as ContentItem[]
   ).find((contentItem) => contentItem.type === 'text') as
@@ -274,9 +282,11 @@ const extractTextContent = (
     | undefined;
 
   if (!textContent) {
-    throw new Error(
-      `Couldn't find text content type in ${JSON.stringify(content)}`,
+    console.warn(
+      `[extractTextContent] No text content found in array with ${content.length} items:`,
+      content.map((c) => c.type).join(', '),
     );
+    return '';
   }
 
   return textContent.text ?? '';

@@ -6,7 +6,14 @@ import {
   IconVolume,
   IconVolumeOff,
 } from '@tabler/icons-react';
-import { FC, MouseEvent, ReactNode, useEffect, useRef, useState } from 'react';
+import React, {
+  FC,
+  MouseEvent,
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { useTranslations } from 'next-intl';
 
@@ -19,6 +26,7 @@ import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
+import { CodeBlockWrapper } from '@/components/Markdown/CodeBlockWrapper';
 
 import { ApiError } from '@/client/services';
 import type { MermaidConfig } from 'mermaid';
@@ -209,7 +217,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
 
   // Custom components for Streamdown
   // Note: Streamdown handles code highlighting (Shiki), Mermaid, and math (KaTeX) built-in
-  // We don't override the code component - let Streamdown handle it
   const customMarkdownComponents = {};
 
   // Mermaid configuration with dark mode support
@@ -296,18 +303,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="prose dark:prose-invert max-w-none w-full"
                 style={{ maxWidth: 'none' }}
               >
-                <CitationStreamdown
-                  conversation={selectedConversation}
-                  message={message}
-                  citations={citations}
-                  components={customMarkdownComponents}
-                  isAnimating={messageIsStreaming}
-                  controls={true}
-                  shikiTheme={['github-light', 'github-dark']}
-                  mermaidConfig={mermaidConfig}
-                >
-                  {processedContent}
-                </CitationStreamdown>
+                <CodeBlockWrapper>
+                  <CitationStreamdown
+                    conversation={selectedConversation}
+                    message={message}
+                    citations={citations}
+                    components={customMarkdownComponents}
+                    isAnimating={messageIsStreaming}
+                    controls={true}
+                    shikiTheme={['github-light', 'github-dark']}
+                    mermaidConfig={mermaidConfig}
+                  >
+                    {processedContent}
+                  </CitationStreamdown>
+                </CodeBlockWrapper>
               </div>
             )}
           </div>

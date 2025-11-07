@@ -100,6 +100,12 @@ export class WhisperTranscriptionService implements ITranscriptionService {
       const transcription = await this.client.audio.transcriptions.create({
         file: fs.createReadStream(segmentPath),
         model: this.deployment,
+        // Optional: Uncomment to specify language for better accuracy
+        // language: 'en', // ISO-639-1 format (e.g., 'en', 'es', 'fr')
+        // Optional: Uncomment to provide context for better accuracy with technical terms
+        // prompt: 'This is a transcription of a conversation about...',
+        // Optional: Temperature for sampling (0-1). Lower = more deterministic
+        temperature: 0, // Most deterministic transcription
       });
 
       return transcription.text || '';

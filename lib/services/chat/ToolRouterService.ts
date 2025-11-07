@@ -39,13 +39,6 @@ export class ToolRouterService {
 
 Analyze the user's message and determine if it requires current, real-time information from the web.
 
-Respond with a JSON object:
-{
-  "needsWebSearch": true/false,
-  "searchQuery": "optimized search query" (only if needsWebSearch is true),
-  "reasoning": "brief explanation"
-}
-
 Web search is needed for:
 - Current events, news, recent developments
 - Real-time data (weather, stock prices, scores)
@@ -63,14 +56,40 @@ Web search is NOT needed for:
 
       // Use gpt-5-mini for efficient tool routing decisions
       // This works with any OpenAI-compatible endpoint
+      // Note: gpt-5-mini only supports default temperature (1), custom values not allowed
       const response = await this.openAIClient.chat.completions.create({
         model: 'gpt-5-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: currentMessage },
         ],
-        temperature: 0.3,
-        response_format: { type: 'json_object' },
+        response_format: {
+          type: 'json_schema',
+          json_schema: {
+            name: 'tool_router_response',
+            strict: true,
+            schema: {
+              type: 'object',
+              properties: {
+                needsWebSearch: {
+                  type: 'boolean',
+                  description: 'Whether web search is needed for this query',
+                },
+                searchQuery: {
+                  type: 'string',
+                  description:
+                    'Optimized search query (required if needsWebSearch is true)',
+                },
+                reasoning: {
+                  type: 'string',
+                  description: 'Brief explanation of the decision',
+                },
+              },
+              required: ['needsWebSearch', 'reasoning'],
+              additionalProperties: false,
+            },
+          },
+        },
       });
 
       const result = JSON.parse(response.choices[0].message.content || '{}');

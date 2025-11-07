@@ -61,11 +61,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value:
               "default-src 'self'; " +
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://login.microsoftonline.com; " +
-              "style-src 'self' 'unsafe-inline'; " +
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://login.microsoftonline.com https://cdn.jsdelivr.net; " +
+              "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; " +
               "img-src 'self' data: https: blob:; " +
               "font-src 'self' data:; " +
               "connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://*.ai.msfusa.org; " +
+              "worker-src 'self' blob:; " +
               "frame-src 'self'; " +
               "frame-ancestors 'none';",
           },
@@ -83,6 +84,14 @@ const nextConfig = {
       asyncWebAssembly: true,
       layers: true,
     };
+
+    // Copy Monaco Editor files to public directory
+    if (!isServer) {
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        'monaco-editor': require.resolve('monaco-editor'),
+      };
+    }
 
     return config;
   },

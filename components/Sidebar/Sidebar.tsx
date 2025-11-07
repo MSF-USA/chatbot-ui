@@ -4,9 +4,11 @@ import {
   IconBolt,
   IconChevronDown,
   IconChevronRight,
+  IconCode,
   IconDots,
   IconDownload,
   IconEdit,
+  IconFileText,
   IconFolder,
   IconFolderPlus,
   IconLogout,
@@ -24,6 +26,8 @@ import { PiSidebarSimple } from 'react-icons/pi';
 
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
@@ -59,6 +63,8 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export function Sidebar() {
   const t = useTranslations();
+  const params = useParams();
+  const locale = params?.locale || 'en';
   const { data: session } = useSession();
   const { showChatbar, toggleChatbar, setIsSettingsOpen, theme } = useUI();
   const {
