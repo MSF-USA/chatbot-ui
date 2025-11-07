@@ -211,7 +211,7 @@ export const createContentAnalysisMiddleware = (
     contentTypes,
     hasFiles: contentTypes.has('file'),
     hasImages: contentTypes.has('image'),
-    hasAudio: contentTypes.has('file'), // TODO: Distinguish audio from files
+    hasAudio: contentTypes.has('audio'), // Audio files detected separately by analyzer
   };
 };
 

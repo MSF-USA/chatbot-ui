@@ -34,6 +34,72 @@ export class StandardChatHandler extends BasePipelineStage {
   protected async executeStage(context: ChatContext): Promise<ChatContext> {
     console.log('[StandardChatHandler] Executing chat request');
 
+    // Extract transcript metadata if available (for audio/video transcriptions)
+    const transcript = context.processedContent?.transcripts?.[0]
+      ? {
+          filename: context.processedContent.transcripts[0].filename,
+          transcript: context.processedContent.transcripts[0].transcript,
+          processedContent: undefined, // Will be filled by LLM response
+        }
+      : undefined;
+
+    // Check if we have a transcript with no user message (just transcription request)
+    if (transcript) {
+      const lastMessage = context.messages[context.messages.length - 1];
+      let userText = '';
+
+      // Extract user text from message content
+      if (typeof lastMessage.content === 'string') {
+        userText = lastMessage.content.trim();
+      } else if (Array.isArray(lastMessage.content)) {
+        const textContent = lastMessage.content.find((c) => c.type === 'text');
+        if (textContent && 'text' in textContent) {
+          userText = textContent.text.trim();
+        }
+      }
+
+      // If user text is empty or just a filename pattern, skip LLM and return transcription only
+      const isEmptyOrFilename =
+        !userText ||
+        /^(?:\[Audio\/Video:\s*[^\]]+\]|\[[^\]]+\])?$/i.test(userText);
+
+      if (isEmptyOrFilename) {
+        console.log(
+          '[StandardChatHandler] No user message detected, returning transcription only',
+        );
+
+        // Create a minimal response that just returns the transcript
+        const encoder = new TextEncoder();
+        const stream = new ReadableStream({
+          start(controller) {
+            // Send metadata with transcript only (no LLM processing)
+            const metadata = {
+              transcript: {
+                filename: transcript.filename,
+                transcript: transcript.transcript,
+                processedContent: undefined, // No LLM processing
+              },
+            };
+
+            const metadataStr = `\n\n<<<METADATA_START>>>${JSON.stringify(metadata)}<<<METADATA_END>>>`;
+            controller.enqueue(encoder.encode(metadataStr));
+            controller.close();
+          },
+        });
+
+        return {
+          ...context,
+          response: new Response(stream, {
+            headers: {
+              'Content-Type': 'text/plain; charset=utf-8',
+              'Cache-Control': 'no-cache',
+              Connection: 'keep-alive',
+            },
+          }),
+        };
+      }
+    }
+
     // Build final messages from enriched messages or processed content
     const messagesToSend = this.buildFinalMessages(context);
 
@@ -52,15 +118,6 @@ export class StandardChatHandler extends BasePipelineStage {
 
     // Check if RAG is enabled
     const ragConfig = context.processedContent?.metadata?.ragConfig;
-
-    // Extract transcript metadata if available (for audio/video transcriptions)
-    const transcript = context.processedContent?.transcripts?.[0]
-      ? {
-          filename: context.processedContent.transcripts[0].filename,
-          transcript: context.processedContent.transcripts[0].transcript,
-          processedContent: undefined, // Will be filled by LLM response
-        }
-      : undefined;
 
     // Extract citations from web search results
     const citations = context.processedContent?.metadata?.citations;

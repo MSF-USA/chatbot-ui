@@ -2,9 +2,9 @@
 
 import { Editor, loader } from '@monaco-editor/react';
 import { IconLoader2 } from '@tabler/icons-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 // Configure Monaco to load from local node_modules instead of CDN
 if (typeof window !== 'undefined') {
@@ -20,7 +20,7 @@ interface CodeEditorProps {
 }
 
 export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
-  const { modifiedCode, language, setModifiedCode } = useCodeEditorStore();
+  const { modifiedCode, language, setModifiedCode } = useArtifactStore();
 
   const [isLoading, setIsLoading] = useState(true);
   const editorRef = useRef<any>(null);
@@ -29,13 +29,32 @@ export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
     console.log('Editor mounted', editor);
     editorRef.current = editor;
     setIsLoading(false);
-
-    // Listen to changes
-    editor.onDidChangeModelContent(() => {
-      const newValue = editor.getValue();
-      setModifiedCode(newValue);
-    });
   };
+
+  // Update editor content when modifiedCode or language changes
+  useEffect(() => {
+    if (editorRef.current && modifiedCode !== undefined) {
+      const currentValue = editorRef.current.getValue();
+      if (currentValue !== modifiedCode) {
+        console.log('[CodeEditor] Updating editor content');
+        editorRef.current.setValue(modifiedCode);
+      }
+    }
+  }, [modifiedCode]);
+
+  // Update editor language model when language changes
+  useEffect(() => {
+    if (editorRef.current && language) {
+      const model = editorRef.current.getModel();
+      if (model) {
+        const currentLanguage = model.getLanguageId();
+        if (currentLanguage !== language) {
+          console.log(`[CodeEditor] Updating language to ${language}`);
+          window.monaco?.editor.setModelLanguage(model, language);
+        }
+      }
+    }
+  }, [language]);
 
   // Use vs-dark for dark theme, vs for light theme
   const monacoTheme = theme === 'dark' ? 'vs-dark' : 'vs';

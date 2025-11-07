@@ -44,7 +44,7 @@ describe('useUploadState', () => {
     it('initializes with text submit type', () => {
       const { result } = renderHook(() => useUploadState());
 
-      expect(result.current.submitType).toBe('text');
+      expect(result.current.submitType).toBe('TEXT');
     });
   });
 
@@ -108,10 +108,10 @@ describe('useUploadState', () => {
       const { result } = renderHook(() => useUploadState());
 
       act(() => {
-        result.current.setSubmitType('file');
+        result.current.setSubmitType('FILE');
       });
 
-      expect(result.current.submitType).toBe('file');
+      expect(result.current.submitType).toBe('FILE');
     });
   });
 
@@ -132,7 +132,7 @@ describe('useUploadState', () => {
         result.current.setFileFieldValue({ name: 'test.pdf' } as any);
         result.current.setImageFieldValue({ name: 'image.png' } as any);
         result.current.setUploadProgress({ 'file-1': 50 });
-        result.current.setSubmitType('file');
+        result.current.setSubmitType('FILE');
       });
 
       // Verify state is set
@@ -140,7 +140,7 @@ describe('useUploadState', () => {
       expect(result.current.fileFieldValue).not.toBeNull();
       expect(result.current.imageFieldValue).not.toBeNull();
       expect(Object.keys(result.current.uploadProgress).length).toBe(1);
-      expect(result.current.submitType).toBe('file');
+      expect(result.current.submitType).toBe('FILE');
 
       // Clear state
       act(() => {
@@ -152,7 +152,7 @@ describe('useUploadState', () => {
       expect(result.current.fileFieldValue).toBeNull();
       expect(result.current.imageFieldValue).toBeNull();
       expect(result.current.uploadProgress).toEqual({});
-      expect(result.current.submitType).toBe('text');
+      expect(result.current.submitType).toBe('TEXT');
     });
 
     it('can be called multiple times safely', () => {
@@ -165,7 +165,7 @@ describe('useUploadState', () => {
       });
 
       expect(result.current.filePreviews).toEqual([]);
-      expect(result.current.submitType).toBe('text');
+      expect(result.current.submitType).toBe('TEXT');
     });
   });
 
@@ -362,10 +362,10 @@ describe('useUploadState', () => {
     it('handles all submit types', () => {
       const { result } = renderHook(() => useUploadState());
 
-      const submitTypes: Array<'text' | 'file' | 'image'> = [
-        'text',
-        'file',
-        'image',
+      const submitTypes: Array<'TEXT' | 'FILE' | 'IMAGE'> = [
+        'TEXT',
+        'FILE',
+        'IMAGE',
       ];
 
       submitTypes.forEach((type) => {

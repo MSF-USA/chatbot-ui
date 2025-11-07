@@ -50,7 +50,6 @@ import {
   Message,
   MessageType,
   TextMessageContent,
-  getChatMessageContent,
 } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
 import { SearchMode } from '@/types/searchMode';
@@ -70,7 +69,7 @@ import { ToneBadge } from '@/components/Chat/ChatInput/ToneBadge';
 import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
@@ -102,7 +101,7 @@ export const ChatInput = ({
   const { prompts } = useSettings();
   const { tones } = useTones();
   const { isArtifactOpen, fileName, language, closeArtifact } =
-    useCodeEditorStore();
+    useArtifactStore();
 
   // Custom hooks for state management
   const {
@@ -205,8 +204,8 @@ export const ChatInput = ({
       }
     },
     onResetInputState: () => {
-      if (submitType !== 'text') {
-        setSubmitType('text');
+      if (submitType !== 'TEXT') {
+        setSubmitType('TEXT');
       }
       if (filePreviews.length > 0) {
         setFilePreviews([]);
@@ -271,8 +270,8 @@ export const ChatInput = ({
     ) {
       event.preventDefault();
       handleSend();
-      if (submitType !== 'text') {
-        setSubmitType('text');
+      if (submitType !== 'TEXT') {
+        setSubmitType('TEXT');
       }
       if (filePreviews.length > 0) {
         setFilePreviews([]);
@@ -375,7 +374,7 @@ export const ChatInput = ({
       setFileFieldValue(null);
       setImageFieldValue(null);
       setUploadProgress({});
-      setSubmitType('text');
+      setSubmitType('TEXT');
     }, 0);
     // setState functions are stable and don't need to be dependencies
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -492,7 +491,7 @@ export const ChatInput = ({
               hasCameraSupport={true}
             />
 
-            <div className="relative mx-2 max-w-[900px] w-full flex-grow sm:mx-4">
+            <div className="relative mx-auto w-full max-w-3xl flex-grow px-2 sm:px-4">
               <div
                 className={`relative flex w-full flex-col rounded-full border border-gray-300 bg-white dark:border-0 dark:bg-[#40414F] dark:text-white focus-within:outline-none focus-within:ring-0 z-0 ${searchMode === SearchMode.ALWAYS || selectedToneId ? 'min-h-[80px] !rounded-3xl' : ''} ${isMultiline && searchMode !== SearchMode.ALWAYS && !selectedToneId ? '!rounded-2xl' : ''}`}
               >

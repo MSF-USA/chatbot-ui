@@ -15,7 +15,7 @@ import {
 } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 interface UseMessageSenderProps {
   textFieldValue: string;
@@ -41,10 +41,10 @@ const mapSubmitTypeToMessageType = (
   submitType: ChatInputSubmitTypes,
 ): MessageType => {
   const mapping: Record<ChatInputSubmitTypes, MessageType> = {
-    text: MessageType.TEXT,
-    image: MessageType.IMAGE,
-    file: MessageType.FILE,
-    'multi-file': MessageType.FILE, // Multi-file also maps to FILE
+    TEXT: MessageType.TEXT,
+    IMAGE: MessageType.IMAGE,
+    FILE: MessageType.FILE,
+    MULTI_FILE: MessageType.FILE, // Multi-file also maps to FILE
   };
   return mapping[submitType];
 };
@@ -70,7 +70,7 @@ export function useMessageSender({
   setFilePreviews,
 }: UseMessageSenderProps) {
   const t = useTranslations();
-  const { getArtifactContext } = useCodeEditorStore();
+  const { getArtifactContext } = useArtifactStore();
 
   const [usedPromptId, setUsedPromptId] = useState<string | null>(null);
   const [usedPromptVariables, setUsedPromptVariables] = useState<{
@@ -105,21 +105,64 @@ export function useMessageSender({
     console.log('[MessageSender handleSend] filePreviews:', filePreviews);
     console.log('[MessageSender handleSend] fileFieldValue:', fileFieldValue);
 
-    const content = buildContent();
+    // Get artifact context if editor is open
+    const artifactContext = getArtifactContext();
+
+    console.log('[MessageSender] Artifact context:', artifactContext);
+
+    // If we have an artifact context, remove any uploaded file that matches the artifact fileName
+    // This prevents sending both the original upload AND the edited version
+    let filteredFileFieldValue = fileFieldValue;
+    if (artifactContext && fileFieldValue) {
+      const fileArray = Array.isArray(fileFieldValue)
+        ? fileFieldValue
+        : [fileFieldValue];
+      const filtered = fileArray.filter((file) => {
+        if (
+          file.type === 'file_url' &&
+          file.originalFilename === artifactContext.fileName
+        ) {
+          console.log(
+            '[MessageSender] Removing duplicate file upload (editing in artifact):',
+            file.originalFilename,
+          );
+          return false; // Remove this file - we'll use artifact context instead
+        }
+        return true;
+      });
+
+      filteredFileFieldValue =
+        filtered.length > 0
+          ? filtered.length === 1
+            ? filtered[0]
+            : filtered
+          : null;
+
+      console.log(
+        '[MessageSender] Filtered fileFieldValue:',
+        filteredFileFieldValue,
+      );
+    }
+
+    // Build content with filtered file field value (if artifact is being edited)
+    const content = buildMessageContent(
+      submitType,
+      textFieldValue,
+      imageFieldValue,
+      filteredFileFieldValue,
+      null,
+    );
 
     console.log(
       '[MessageSender handleSend] built content:',
       JSON.stringify(content).substring(0, 200),
     );
 
-    // Get artifact context if editor is open
-    const artifactContext = getArtifactContext();
-
     onSend(
       {
         role: 'user',
         content,
-        messageType: mapSubmitTypeToMessageType(submitType ?? 'text'),
+        messageType: mapSubmitTypeToMessageType(submitType ?? 'TEXT'),
         toneId: selectedToneId,
         promptId: usedPromptId,
         promptVariables: usedPromptVariables || undefined,
@@ -132,7 +175,7 @@ export function useMessageSender({
     onClearInput();
     setImageFieldValue(null);
     setFileFieldValue(null);
-    setSubmitType('text');
+    setSubmitType('TEXT');
     setUsedPromptId(null);
     setUsedPromptVariables(null);
 
@@ -145,12 +188,12 @@ export function useMessageSender({
     uploadProgress,
     submitType,
     fileFieldValue,
+    imageFieldValue,
     selectedToneId,
     searchMode,
     usedPromptId,
     usedPromptVariables,
     t,
-    buildContent,
     onSend,
     onClearInput,
     setImageFieldValue,

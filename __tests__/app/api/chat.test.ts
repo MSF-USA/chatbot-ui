@@ -4,6 +4,7 @@ import { ServiceContainer } from '@/lib/services/ServiceContainer';
 import { RateLimiter } from '@/lib/services/shared/RateLimiter';
 
 import { ErrorCode, PipelineError } from '@/lib/types/errors';
+import { MessageType } from '@/types/chat';
 
 import { POST } from '@/app/api/chat/route';
 import { auth } from '@/auth';
@@ -147,7 +148,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello, how are you?',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         prompt: 'You are a helpful assistant.',
@@ -173,7 +174,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Tell me a joke',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: true,
@@ -197,17 +198,17 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'What is 2+2?',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
           {
             role: 'assistant',
             content: '4',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
           {
             role: 'user',
             content: 'What about 3+3?',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: false,
@@ -231,7 +232,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
       });
@@ -253,7 +254,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: false,
@@ -278,7 +279,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: false,
@@ -305,7 +306,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
       });
@@ -338,7 +339,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         temperature: 5.0, // Invalid: max is 2
@@ -361,7 +362,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: largeContent,
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
       });
@@ -381,7 +382,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'invalid_role', // Invalid role
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
       });
@@ -410,7 +411,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: false,
@@ -435,7 +436,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: false,
@@ -463,7 +464,7 @@ describe('/api/chat - Integration Tests', () => {
           {
             role: 'user',
             content: 'Hello',
-            messageType: 'TEXT',
+            messageType: MessageType.TEXT,
           },
         ],
         stream: false,

@@ -16,6 +16,19 @@
   max-width: none !important;
 }
 
+/* Ensure prose code blocks don't overflow */
+.prose pre,
+.prose-invert pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Ensure prose tables are responsive */
+.prose table,
+.prose-invert table {
+  max-width: 100%;
+}
+
 /* Streamdown styles - @source directive requires Tailwind v4 */
 /* Uncomment when upgrading to Tailwind v4:
 @source "../node_modules/streamdown/dist/index.js";
@@ -89,6 +102,12 @@ body {
   position: fixed;
   width: 100%;
   height: 100%;
+}
+
+/* Code block overflow handling for responsive layouts */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 @media (max-width: 720px) {

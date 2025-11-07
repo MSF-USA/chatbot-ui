@@ -58,6 +58,7 @@ export interface BlobStorage {
   ): Promise<string | Blob | Buffer>;
   blobExists(blobName: string): Promise<boolean>;
   getBlockBlobClient(blobName: string): BlockBlobClient;
+  getBlobSize(blobName: string): Promise<number>;
 }
 
 export interface QueueStorage {
@@ -221,6 +222,15 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
     );
     const blockBlobClient = containerClient.getBlockBlobClient(blobName);
     return blockBlobClient.exists();
+  }
+
+  async getBlobSize(blobName: string): Promise<number> {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      this.containerName as string,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+    const properties = await blockBlobClient.getProperties();
+    return properties.contentLength || 0;
   }
 
   async createContainer(containerName: string): Promise<void> {

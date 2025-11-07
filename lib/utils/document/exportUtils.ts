@@ -1,0 +1,130 @@
+import html2pdf from 'html2pdf.js';
+import TurndownService from 'turndown';
+
+/**
+ * Export utilities for document editor
+ */
+
+/**
+ * Convert HTML to Markdown
+ */
+export function htmlToMarkdown(html: string): string {
+  const turndownService = new TurndownService({
+    headingStyle: 'atx', // Use # for headings
+    codeBlockStyle: 'fenced', // Use ``` for code blocks
+    bulletListMarker: '-', // Use - for bullet lists
+  });
+
+  // Add custom rules for better conversion
+  turndownService.addRule('strikethrough', {
+    filter: ['s', 'strike', 'del'],
+    replacement: (content) => `~~${content}~~`,
+  });
+
+  return turndownService.turndown(html);
+}
+
+/**
+ * Convert HTML to plain text
+ */
+export function htmlToPlainText(html: string): string {
+  // Create a temporary div to parse HTML
+  if (typeof window === 'undefined') {
+    // Server-side: basic regex stripping
+    return html
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<\/p>/gi, '\n\n')
+      .replace(/<[^>]+>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .trim();
+  }
+
+  // Client-side: use DOM parser
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  return temp.textContent || temp.innerText || '';
+}
+
+/**
+ * Export HTML as PDF (simple wrapper using html2pdf.js)
+ */
+export async function exportToPDF(
+  html: string,
+  fileName: string,
+): Promise<void> {
+  try {
+    const options = {
+      margin: 10,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    };
+
+    await html2pdf().set(options).from(html).save();
+  } catch (error) {
+    console.error('Error exporting to PDF:', error);
+    throw new Error('Failed to export PDF. Please try again.');
+  }
+}
+
+/**
+ * Export HTML as DOCX using server-side API
+ */
+export async function exportToDOCX(
+  html: string,
+  fileName: string,
+): Promise<void> {
+  try {
+    const response = await fetch('/api/export/docx', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ html }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to convert to DOCX');
+    }
+
+    // Get the DOCX blob from response
+    const blob = await response.blob();
+
+    // Download the DOCX file
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Error exporting to DOCX:', error);
+    throw new Error('Failed to export DOCX. Please try again.');
+  }
+}
+
+/**
+ * Download content as a file
+ */
+export function downloadFile(
+  content: string,
+  fileName: string,
+  mimeType: string,
+): void {
+  const blob = new Blob([content], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

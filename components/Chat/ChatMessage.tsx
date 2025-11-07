@@ -5,13 +5,14 @@ import { useTranslations } from 'next-intl';
 import { useChat } from '@/client/hooks/chat/useChat';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 
+import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
+
 import {
   FileMessageContent,
   ImageMessageContent,
   Message,
   MessageType,
   TextMessageContent,
-  getChatMessageContent,
 } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
@@ -105,7 +106,8 @@ export const ChatMessage: FC<Props> = ({
   const copyOnClick = () => {
     if (!navigator.clipboard) return;
 
-    const content = getChatMessageContent(message);
+    const analyzer = new MessageContentAnalyzer(message);
+    const content = analyzer.extractText();
     navigator.clipboard.writeText(content).then(() => {
       setMessageCopied(true);
       setTimeout(() => {
@@ -115,7 +117,8 @@ export const ChatMessage: FC<Props> = ({
   };
 
   const handleSaveAsPromptClick = () => {
-    const content = getChatMessageContent(message);
+    const analyzer = new MessageContentAnalyzer(message);
+    const content = analyzer.extractText();
     if (onSaveAsPrompt) {
       onSaveAsPrompt(content);
     }
@@ -136,28 +139,19 @@ export const ChatMessage: FC<Props> = ({
     }
   }, [isEditing]);
 
-  // Check if message has images or files
-  const hasImages =
-    Array.isArray(message.content) &&
-    message.content.some((content) => content.type === 'image_url');
-  const hasFiles =
-    Array.isArray(message.content) &&
-    message.content.some((content) => content.type === 'file_url');
+  // Use MessageContentAnalyzer for content detection and extraction
+  const analyzer = new MessageContentAnalyzer(message);
+  const hasImages = analyzer.hasImages();
+  const hasFiles = analyzer.hasFiles();
 
   // Extract content by type
   const getContentByType = () => {
-    if (!Array.isArray(message.content))
-      return { images: [], files: [], text: null };
-
-    const images = message.content.filter(
-      (c) => c.type === 'image_url',
-    ) as ImageMessageContent[];
-    const files = message.content.filter(
-      (c) => c.type === 'file_url',
-    ) as FileMessageContent[];
-    const text = message.content.find((c) => c.type === 'text') as
-      | TextMessageContent
-      | undefined;
+    const images = analyzer.extractImageUrls();
+    const files = analyzer.extractFileUrls();
+    const textString = analyzer.extractText();
+    const text = textString
+      ? ({ type: 'text', text: textString } as TextMessageContent)
+      : undefined;
 
     return { images, files, text };
   };
@@ -205,11 +199,6 @@ export const ChatMessage: FC<Props> = ({
           messageCopied={messagedCopied}
           onRegenerate={onRegenerate}
         >
-          {message.transcript.processedContent && (
-            <div className="prose dark:prose-invert max-w-none mb-4">
-              {message.transcript.processedContent}
-            </div>
-          )}
           <TranscriptViewer
             filename={message.transcript.filename}
             transcript={message.transcript.transcript}
@@ -369,7 +358,7 @@ export const ChatMessage: FC<Props> = ({
             : 'border-b border-black/10 bg-white text-gray-800 dark:border-gray-900/50 dark:bg-[#2f2f2f] dark:text-gray-100'
         }`}
       >
-        <div className="relative m-auto flex p-4 text-base md:max-w-2xl md:gap-6 md:py-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
+        <div className="relative flex p-4 text-base md:gap-6 md:py-6 lg:px-0 w-full">
           <div className="prose mt-[-2px] w-full dark:prose-invert">
             Error rendering message: Unsupported message type
           </div>

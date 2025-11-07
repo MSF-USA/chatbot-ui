@@ -1,9 +1,33 @@
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
-import { ErrorSeverity, PipelineError } from '@/lib/types/errors';
+import { ErrorCode, ErrorSeverity, PipelineError } from '@/lib/types/errors';
 
 import { ChatContext } from './ChatContext';
 import { PipelineStage } from './PipelineStage';
+
+/**
+ * Timeout configuration for pipeline stages (in milliseconds).
+ * Per-stage timeouts prevent one slow stage from consuming all available time.
+ *
+ * If a stage exceeds its timeout:
+ * - A warning is added to context.errors
+ * - The stage is skipped gracefully
+ * - Pipeline continues with next stage
+ */
+const STAGE_TIMEOUTS: Record<string, number> = {
+  FileProcessor: 30000, // 30s for file download/processing
+  ImageProcessor: 5000, // 5s for image validation
+  RAGEnricher: 10000, // 10s for knowledge base search
+  ToolRouterEnricher: 15000, // 15s for web search
+  AgentEnricher: 5000, // 5s for agent selection
+  StandardChatHandler: 30000, // 30s for LLM response
+  AgentChatHandler: 60000, // 60s for agent execution
+};
+
+/**
+ * Default timeout for stages not explicitly configured.
+ */
+const DEFAULT_STAGE_TIMEOUT = 30000; // 30s
 
 /**
  * ChatPipeline orchestrates the execution of pipeline stages.
@@ -11,6 +35,7 @@ import { PipelineStage } from './PipelineStage';
  * Responsibilities:
  * - Executes stages in order
  * - Skips stages that shouldn't run
+ * - Enforces per-stage timeouts (prevents timeout starvation)
  * - Handles errors gracefully
  * - Tracks performance metrics
  * - Provides debugging information
@@ -27,7 +52,10 @@ import { PipelineStage } from './PipelineStage';
  * ```
  */
 export class ChatPipeline {
-  constructor(private stages: PipelineStage[]) {}
+  constructor(
+    private stages: PipelineStage[],
+    private stageTimeouts: Record<string, number> = STAGE_TIMEOUTS,
+  ) {}
 
   /**
    * Executes all pipeline stages in order.
@@ -73,9 +101,41 @@ export class ChatPipeline {
           continue;
         }
 
-        // Execute stage
-        console.log(`[Pipeline] Running stage: ${stage.name}`);
-        context = await stage.execute(context);
+        // Get timeout for this stage
+        const timeout = this.stageTimeouts[stage.name] || DEFAULT_STAGE_TIMEOUT;
+
+        // Execute stage with timeout
+        console.log(
+          `[Pipeline] Running stage: ${stage.name} (timeout: ${timeout}ms)`,
+        );
+
+        try {
+          context = await Promise.race([
+            stage.execute(context),
+            this.createTimeoutPromise(timeout, stage.name),
+          ]);
+        } catch (error) {
+          // Check if this is a timeout error
+          if (
+            error instanceof PipelineError &&
+            error.code === ErrorCode.PIPELINE_TIMEOUT
+          ) {
+            console.warn(
+              `[Pipeline] Stage ${stage.name} timed out after ${timeout}ms, skipping gracefully`,
+            );
+
+            // Add timeout warning to errors
+            const errors = context.errors || [];
+            errors.push(error);
+            context = { ...context, errors };
+
+            // Continue to next stage (graceful degradation)
+            continue;
+          }
+
+          // Re-throw non-timeout errors
+          throw error;
+        }
 
         // Check for critical errors that should stop the pipeline
         if (context.errors && context.errors.length > 0) {
@@ -144,5 +204,33 @@ export class ChatPipeline {
    */
   getStageNames(): string[] {
     return this.stages.map((s) => s.name);
+  }
+
+  /**
+   * Creates a timeout promise that rejects after the specified duration.
+   * Used to enforce per-stage timeouts.
+   *
+   * @param timeoutMs - Timeout duration in milliseconds
+   * @param stageName - Name of the stage (for error messaging)
+   * @returns Promise that rejects with PipelineError after timeout
+   */
+  private createTimeoutPromise(
+    timeoutMs: number,
+    stageName: string,
+  ): Promise<never> {
+    return new Promise((_, reject) => {
+      setTimeout(() => {
+        reject(
+          PipelineError.warning(
+            ErrorCode.PIPELINE_TIMEOUT,
+            `Stage ${stageName} exceeded timeout of ${timeoutMs}ms`,
+            {
+              stageName,
+              timeoutMs,
+            },
+          ),
+        );
+      }, timeoutMs);
+    });
   }
 }

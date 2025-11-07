@@ -4,7 +4,7 @@ import {
   validateAndPrepareFolderImport,
 } from '@/lib/utils/app/export/folderExport';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, MessageType } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
@@ -21,8 +21,12 @@ describe('folderExport', () => {
     id: 'conv-1',
     name: 'Test Conversation',
     messages: [
-      { role: 'user', content: 'Hello', messageType: 'text' },
-      { role: 'assistant', content: 'Hi there!', messageType: 'text' },
+      { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
+      {
+        role: 'assistant',
+        content: 'Hi there!',
+        messageType: MessageType.TEXT,
+      },
     ],
     model: OpenAIModels['gpt-4o' as keyof typeof OpenAIModels],
     prompt: 'You are a helpful assistant',

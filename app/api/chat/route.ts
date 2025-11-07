@@ -9,6 +9,7 @@ import { StandardChatHandler } from '@/lib/services/chat/handlers/StandardChatHa
 import { ChatPipeline, buildChatContext } from '@/lib/services/chat/pipeline';
 import { FileProcessor } from '@/lib/services/chat/processors/FileProcessor';
 import { ImageProcessor } from '@/lib/services/chat/processors/ImageProcessor';
+import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
@@ -106,9 +107,14 @@ export async function POST(req: NextRequest): Promise<Response> {
 
       // 3. Build pipeline
       console.log('[Unified Chat] Building pipeline...');
+      const inputValidator = new InputValidator();
       const pipeline = new ChatPipeline([
         // Content processors
-        new FileProcessor(fileProcessingService, azureMonitorLogger),
+        new FileProcessor(
+          fileProcessingService,
+          azureMonitorLogger,
+          inputValidator,
+        ),
         new ImageProcessor(),
 
         // Feature enrichers

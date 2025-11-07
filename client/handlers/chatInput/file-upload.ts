@@ -106,6 +106,7 @@ export async function onFileUpload(
     type: file.type,
     status: 'uploading',
     previewUrl: file.type.startsWith('image/') ? URL.createObjectURL(file) : '',
+    file: file, // Store the File object for local operations
   }));
 
   setFilePreviews((prevState) => [...prevState, ...allFilePreviews]);
@@ -143,10 +144,10 @@ export async function onFileUpload(
       // Update submit type based on whether we have files too
       setSubmitType((prevType) => {
         // If we already have files, use multi-file
-        if (prevType === 'file' || prevType === 'multi-file') {
-          return 'multi-file';
+        if (prevType === 'FILE' || prevType === 'MULTI_FILE') {
+          return 'MULTI_FILE';
         }
-        return 'image';
+        return 'IMAGE';
       });
     } else {
       const fileMessage: FileMessageContent = {
@@ -168,10 +169,10 @@ export async function onFileUpload(
         // Update submit type based on whether we have images too
         setSubmitType((prevType) => {
           // If we already have images, use multi-file
-          if (prevType === 'image') {
-            return 'multi-file';
+          if (prevType === 'IMAGE') {
+            return 'MULTI_FILE';
           }
-          return newFileArray.length > 1 ? 'multi-file' : 'file';
+          return newFileArray.length > 1 ? 'MULTI_FILE' : 'FILE';
         });
 
         return newFileArray;

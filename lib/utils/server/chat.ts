@@ -2,6 +2,10 @@ import { Session } from 'next-auth';
 
 import { isFileConversation, isImageConversation } from '@/lib/utils/app/chat';
 import { getBase64FromImageURL } from '@/lib/utils/app/image';
+import {
+  ContentType,
+  MessageContentAnalyzer,
+} from '@/lib/utils/chat/messageContentAnalyzer';
 import { getBlobBase64String } from '@/lib/utils/server/blob';
 
 import {
@@ -13,8 +17,6 @@ import {
 
 import { Tiktoken } from '@dqbd/tiktoken/lite/init';
 
-type ContentType = 'text' | 'image' | 'file';
-
 type ContentItem =
   | TextMessageContent
   | FileMessageContent
@@ -24,8 +26,7 @@ type ContentItem =
  * Detects ALL content types present in a message.
  * Returns a Set to properly handle mixed content (e.g., file + image).
  *
- * Use this for routing decisions where you need to know about multiple content types.
- * Use getMessageContentType() for backwards-compatible single-type detection.
+ * Now uses MessageContentAnalyzer for centralized logic.
  */
 export const getMessageContentTypes = (
   content:
@@ -35,36 +36,15 @@ export const getMessageContentTypes = (
     | (TextMessageContent | ImageMessageContent)[]
     | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
 ): Set<ContentType> => {
-  const types = new Set<ContentType>();
-
-  if (typeof content === 'string') {
-    types.add('text');
-  } else if (Array.isArray(content)) {
-    content.forEach((contentItem) => {
-      if (contentItem.type === 'file_url') {
-        types.add('file');
-      } else if (contentItem.type === 'image_url') {
-        types.add('image');
-      } else if (contentItem.type === 'text') {
-        types.add('text');
-      }
-    });
-  } else if ('type' in content) {
-    if (content.type === 'text') types.add('text');
-    else if (content.type === 'file_url') types.add('file');
-    else if (content.type === 'image_url') types.add('image');
-  }
-
-  return types;
+  const analyzer = new MessageContentAnalyzer(content);
+  return analyzer.getContentTypes();
 };
 
 /**
- * Legacy function that returns a single content type.
- * For mixed content, returns the first type found (priority: file > image > text).
- *
- * @deprecated Use getMessageContentTypes() for mixed content detection.
+ * Get primary content type for a message (for backward compatibility)
+ * For mixed content, returns priority: file > audio > image > text
  */
-export const getMessageContentType = (
+const getPrimaryContentType = (
   content:
     | string
     | TextMessageContent
@@ -72,36 +52,15 @@ export const getMessageContentType = (
     | (TextMessageContent | ImageMessageContent)[]
     | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
 ): ContentType => {
-  if (typeof content === 'string') {
-    return 'text';
-  } else if (Array.isArray(content)) {
-    if (content.some((contentItem) => contentItem.type === 'file_url')) {
-      return 'file';
-    } else if (
-      content.some((contentItem) => contentItem.type === 'image_url')
-    ) {
-      return 'image';
-    } else if (content.length === 1) {
-      switch (content[0].type) {
-        case 'file_url':
-          return 'file';
-        case 'image_url':
-          return 'image';
-        case 'text':
-          return 'text';
-        default: {
-          const invalidItem = content[0] as { type: string };
-          throw new Error(`Invalid content type: ${invalidItem.type}`);
-        }
-      }
-    } else {
-      throw new Error(
-        'Invalid content type or structure: ' + JSON.stringify(content),
-      );
-    }
-  } else {
-    throw new Error('Invalid content type ' + JSON.stringify(content));
-  }
+  const types = getMessageContentTypes(content);
+
+  // Priority: file > audio > image > text
+  if (types.has('file')) return 'file';
+  if (types.has('audio')) return 'audio';
+  if (types.has('image')) return 'image';
+  if (types.has('text')) return 'text';
+
+  throw new Error('Invalid content type or structure');
 };
 
 export const getMessagesToSend = async (
@@ -111,7 +70,7 @@ export const getMessagesToSend = async (
   tokenLimit: number,
   user: Session['user'],
 ): Promise<Message[]> => {
-  const conversationType: ContentType = getMessageContentType(
+  const conversationType: ContentType = getPrimaryContentType(
     messages[messages.length - 1].content,
   );
   const fileConversation: boolean = isFileConversation(messages);
@@ -124,6 +83,12 @@ export const getMessagesToSend = async (
 
     // Inject artifact context for user messages
     if (message.role === 'user' && message.artifactContext) {
+      console.log('[Chat Utils] Processing artifact context:', {
+        fileName: message.artifactContext.fileName,
+        language: message.artifactContext.language,
+        codeLength: message.artifactContext.code.length,
+      });
+
       const artifactPrefix = `Currently editing: ${message.artifactContext.fileName} (${message.artifactContext.language})\n\`\`\`${message.artifactContext.language}\n${message.artifactContext.code}\n\`\`\`\n\n`;
 
       if (typeof message.content === 'string') {

@@ -17,7 +17,7 @@ const wrapInArray = <T>(value: T | T[]): T[] => {
  * Builds message content based on submit type and field values
  * Extracted from ChatInput to improve testability and reusability
  *
- * @param submitType - The type of message being submitted (text, image, file, multi-file)
+ * @param submitType - The type of message being submitted (TEXT, IMAGE, FILE, MULTI_FILE)
  * @param textFieldValue - The text content of the message
  * @param imageFieldValue - Image field value (single or array)
  * @param fileFieldValue - File field value (single or array)
@@ -42,11 +42,11 @@ export const buildMessageContent = (
     ? `${artifactContext}\n\n${textFieldValue}`
     : textFieldValue;
 
-  if (submitType === 'text') {
+  if (submitType === 'TEXT') {
     return enhancedTextValue;
   }
 
-  if (submitType === 'image') {
+  if (submitType === 'IMAGE') {
     const imageContents = imageFieldValue
       ? [
           ...wrapInArray(imageFieldValue),
@@ -64,7 +64,7 @@ export const buildMessageContent = (
     ] as (TextMessageContent | ImageMessageContent)[];
   }
 
-  if (submitType === 'file' || submitType === 'multi-file') {
+  if (submitType === 'FILE' || submitType === 'MULTI_FILE') {
     // For multi-file, we may have both images and files
     const imageContents = imageFieldValue
       ? wrapInArray(imageFieldValue).filter(

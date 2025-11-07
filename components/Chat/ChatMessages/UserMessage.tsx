@@ -27,7 +27,7 @@ import { useTones } from '@/client/hooks/settings/useTones';
 
 import { Conversation, Message } from '@/types/chat';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 import { Streamdown } from 'streamdown';
 
 interface UserMessageProps {
@@ -70,7 +70,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   const t = useTranslations();
   const { tones } = useTones();
   const { prompts } = useSettings();
-  const { openArtifact } = useCodeEditorStore();
+  const { openArtifact } = useArtifactStore();
   const {
     role,
     content,
@@ -118,7 +118,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   return (
     <div className="relative flex flex-col items-end px-4 py-1 text-base lg:px-0 w-full">
       <div
-        className={`${hasAttachments ? 'w-full max-w-3xl' : 'inline-block max-w-[85%]'} bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base`}
+        className={`${hasAttachments ? 'w-full max-w-2xl' : 'inline-block max-w-[85%]'} bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base`}
       >
         {isEditing ? (
           <div className="flex flex-col">

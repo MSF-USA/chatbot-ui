@@ -21,8 +21,8 @@ export const ChatError: React.FC<ChatErrorProps> = ({
   if (!error) return null;
 
   return (
-    <div className="absolute bottom-[160px] left-0 right-0 mx-auto w-full max-w-3xl px-4 py-2">
-      <div className="rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-start justify-between">
+    <div className="absolute bottom-[160px] left-0 right-0 px-4 py-2">
+      <div className="mx-auto max-w-3xl rounded-lg bg-red-100 p-4 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-start justify-between">
         <span className="flex-1">{error}</span>
         <button
           onClick={onClearError}

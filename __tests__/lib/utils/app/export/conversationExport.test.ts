@@ -4,7 +4,7 @@ import {
   validateAndPrepareImport,
 } from '@/lib/utils/app/export/conversationExport';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, MessageType } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import { describe, expect, it } from 'vitest';
@@ -14,8 +14,12 @@ describe('conversationExport', () => {
     id: 'conv-1',
     name: 'Test Conversation',
     messages: [
-      { role: 'user', content: 'Hello', messageType: 'text' },
-      { role: 'assistant', content: 'Hi there!', messageType: 'text' },
+      { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
+      {
+        role: 'assistant',
+        content: 'Hi there!',
+        messageType: MessageType.TEXT,
+      },
     ],
     model: OpenAIModels['gpt-4o' as keyof typeof OpenAIModels],
     prompt: 'You are a helpful assistant',
@@ -363,8 +367,8 @@ describe('conversationExport', () => {
       const complexConversation: Conversation = {
         ...mockConversation,
         messages: [
-          { role: 'user', content: 'Hello', messageType: 'text' },
-          { role: 'assistant', content: 'Hi!', messageType: 'text' },
+          { role: 'user', content: 'Hello', messageType: MessageType.TEXT },
+          { role: 'assistant', content: 'Hi!', messageType: MessageType.TEXT },
           {
             role: 'user',
             content: [
@@ -374,7 +378,7 @@ describe('conversationExport', () => {
                 image_url: { url: 'data:image/png;base64,...', detail: 'auto' },
               },
             ],
-            messageType: 'image' as any,
+            messageType: MessageType.IMAGE as any,
           },
         ],
       };

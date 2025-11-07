@@ -35,7 +35,7 @@ export function useUploadState(): UseUploadStateReturn {
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
   }>({});
-  const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('text');
+  const [submitType, setSubmitType] = useState<ChatInputSubmitTypes>('TEXT');
 
   const handleFileUpload = useCallback(
     async (event: React.ChangeEvent<any> | FileList | File[]) => {
@@ -56,7 +56,7 @@ export function useUploadState(): UseUploadStateReturn {
     setFileFieldValue(null);
     setImageFieldValue(null);
     setUploadProgress({});
-    setSubmitType('text');
+    setSubmitType('TEXT');
   }, []);
 
   return {

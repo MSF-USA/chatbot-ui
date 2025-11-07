@@ -133,6 +133,18 @@ module.exports = {
           '0%': { transform: 'translateY(-0.5rem)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        'slide-in-right': {
+          '0%': { transform: 'translateX(100%)', opacity: '0' },
+          '100%': { transform: 'translateX(0)', opacity: '1' },
+        },
+        'slide-out-right': {
+          '0%': { transform: 'translateX(0)', opacity: '1' },
+          '100%': { transform: 'translateX(100%)', opacity: '0' },
+        },
+        'fade-out': {
+          '0%': { opacity: '1' },
+          '100%': { opacity: '0' },
+        },
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
@@ -157,6 +169,11 @@ module.exports = {
         'slide-up': 'slide-up 0.2s ease-out',
         'slide-down': 'slide-down 0.2s ease-in',
         'slide-down-reverse': 'slide-down-reverse 0.2s ease-out',
+        'slide-in-right':
+          'slide-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+        'slide-out-right':
+          'slide-out-right 0.2s cubic-bezier(0.4, 0, 1, 1) forwards',
+        'fade-out': 'fade-out 0.2s ease-out forwards',
         shimmer: 'shimmer 4s linear infinite',
       },
     },

@@ -1,3 +1,5 @@
+import { Session } from 'next-auth';
+
 import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { ChatBody, Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
@@ -235,6 +237,63 @@ export class InputValidator {
       return true;
     } catch {
       return false;
+    }
+  }
+
+  /**
+   * Validates file size before downloading.
+   * Prevents OOM crashes from large files being loaded into memory.
+   *
+   * This validation happens BEFORE downloading the file from blob storage,
+   * so we only fetch metadata (Content-Length) without downloading the actual content.
+   *
+   * @param fileUrl - The blob storage URL
+   * @param user - User session for authentication
+   * @param getFileSizeFn - Function to get file size (dependency injection for testing)
+   * @param maxSize - Maximum allowed file size in bytes (default: 100MB)
+   * @throws PipelineError.critical if file exceeds size limit
+   */
+  public async validateFileSize(
+    fileUrl: string,
+    user: Session['user'],
+    getFileSizeFn: (url: string, user: Session['user']) => Promise<number>,
+    maxSize: number = 100 * 1024 * 1024, // 100MB default
+  ): Promise<void> {
+    try {
+      const fileSize = await getFileSizeFn(fileUrl, user);
+
+      if (fileSize > maxSize) {
+        const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+        const maxSizeMB = (maxSize / (1024 * 1024)).toFixed(2);
+
+        throw PipelineError.critical(
+          ErrorCode.VALIDATION_FAILED,
+          `File size ${fileSizeMB}MB exceeds maximum allowed size of ${maxSizeMB}MB`,
+          {
+            fileUrl,
+            fileSize,
+            maxSize,
+          },
+        );
+      }
+
+      console.log(
+        `[InputValidator] File size validation passed: ${(fileSize / (1024 * 1024)).toFixed(2)}MB`,
+      );
+    } catch (error) {
+      if (error instanceof PipelineError) {
+        throw error;
+      }
+
+      throw PipelineError.critical(
+        ErrorCode.VALIDATION_FAILED,
+        'Failed to validate file size',
+        {
+          fileUrl,
+          originalError: error instanceof Error ? error.message : String(error),
+        },
+        error instanceof Error ? error : undefined,
+      );
     }
   }
 }

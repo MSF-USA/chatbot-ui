@@ -1,6 +1,11 @@
 'use client';
 
-import { IconDownload, IconX } from '@tabler/icons-react';
+import {
+  IconCode,
+  IconDownload,
+  IconFileText,
+  IconX,
+} from '@tabler/icons-react';
 import { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -8,10 +13,11 @@ import { useTheme } from '@/client/hooks/ui/useTheme';
 
 import CodeEditor from './CodeEditor';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 interface CodeArtifactProps {
   onClose: () => void;
+  onSwitchToDocument?: () => void;
 }
 
 /**
@@ -21,7 +27,10 @@ interface CodeArtifactProps {
  * Allows viewing and editing code with Monaco editor.
  * User edits update immediately. AI responses can be opened as new artifacts.
  */
-export default function CodeArtifact({ onClose }: CodeArtifactProps) {
+export default function CodeArtifact({
+  onClose,
+  onSwitchToDocument,
+}: CodeArtifactProps) {
   const theme = useTheme();
   const {
     fileName,
@@ -30,7 +39,7 @@ export default function CodeArtifact({ onClose }: CodeArtifactProps) {
     downloadFile,
     setFileName,
     setIsEditorOpen,
-  } = useCodeEditorStore();
+  } = useArtifactStore();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -50,11 +59,11 @@ export default function CodeArtifact({ onClose }: CodeArtifactProps) {
   };
 
   return (
-    <div className="flex flex-col h-full w-full">
+    <div className="flex flex-col h-full w-full min-w-0">
       {/* Toolbar */}
-      <div className="relative flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 flex-shrink-0">
+      <div className="relative flex items-center justify-between px-4 py-3 border-b border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 flex-shrink-0 min-w-0">
         {/* Left: Filename and Language */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
           {isEditing ? (
             <input
               type="text"
@@ -68,25 +77,28 @@ export default function CodeArtifact({ onClose }: CodeArtifactProps) {
           ) : (
             <button
               onClick={() => setIsEditing(true)}
-              className="text-sm font-medium bg-neutral-100 dark:bg-neutral-900/50 rounded px-2 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-900 transition-colors dark:text-white"
+              className="text-sm font-medium bg-neutral-100 dark:bg-neutral-900/50 rounded px-2 py-1 hover:bg-neutral-200 dark:hover:bg-neutral-900 transition-colors dark:text-white truncate"
             >
               {fileName}
             </button>
           )}
-          <span className="text-xs text-neutral-500 dark:text-neutral-400">
+          <span className="text-xs text-neutral-500 dark:text-neutral-400 flex-shrink-0">
             {language}
           </span>
         </div>
 
-        {/* Center: Experimental Badge */}
-        <div className="absolute left-1/2 transform -translate-x-1/2">
-          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
-            Experimental
-          </span>
-        </div>
-
         {/* Right: Action Buttons */}
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {onSwitchToDocument && (
+            <button
+              onClick={onSwitchToDocument}
+              className="p-2 rounded-lg text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors"
+              title="Switch to Document Editor"
+            >
+              <IconFileText size={18} />
+            </button>
+          )}
+
           <button
             onClick={handleDownload}
             disabled={!modifiedCode}
@@ -111,6 +123,13 @@ export default function CodeArtifact({ onClose }: CodeArtifactProps) {
       {/* Code Editor */}
       <div className="flex-1 overflow-hidden min-h-0">
         <CodeEditor theme={theme} />
+      </div>
+
+      {/* Disclaimer Footer */}
+      <div className="px-4 py-2 border-t border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800 flex-shrink-0">
+        <p className="text-xs text-center text-neutral-500 dark:text-neutral-400">
+          Edits are not saved. Send via message or download to save any edits.
+        </p>
       </div>
     </div>
   );

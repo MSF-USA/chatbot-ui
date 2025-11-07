@@ -45,8 +45,9 @@ export class ImageProcessor extends BasePipelineStage {
 
     console.log(`[ImageProcessor] Found ${images.length} image(s)`);
 
-    // TODO: Optionally validate that image URLs are accessible
-    // For now, just pass through
+    // Note: Image URL validation is not performed here.
+    // OpenAI's API will handle invalid URLs gracefully with error responses.
+    // Future enhancement: Pre-validate URLs to fail fast, but not required.
 
     return {
       ...context,

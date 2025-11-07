@@ -1,6 +1,7 @@
 import {
   IconCheck,
   IconCopy,
+  IconFileText,
   IconLoader2,
   IconRefresh,
   IconVolume,
@@ -29,7 +30,7 @@ import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
 
 import { ApiError } from '@/client/services';
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 import type { MermaidConfig } from 'mermaid';
 
 interface AssistantMessageProps {
@@ -56,6 +57,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   children,
 }) => {
   const t = useTranslations();
+  const { openDocument } = useArtifactStore();
   const [processedContent, setProcessedContent] = useState('');
   const [citations, setCitations] = useState<Citation[]>([]);
   const [thinking, setThinking] = useState<string>('');
@@ -374,6 +376,23 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 ) : (
                   <IconVolume size={18} />
                 )}
+              </button>
+
+              {/* Open as document button */}
+              <button
+                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+                onClick={() => {
+                  openDocument(
+                    processedContent,
+                    'md',
+                    'message.md',
+                    'document',
+                  );
+                }}
+                aria-label="Open as document"
+                title="Open as document"
+              >
+                <IconFileText size={18} />
               </button>
             </div>
           )}

@@ -6,6 +6,7 @@ import { TranscriptionServiceFactory } from '../../transcriptionService';
 import { FileProcessingService } from '../FileProcessingService';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
+import { InputValidator } from '../validators/InputValidator';
 
 import { isAudioVideoFile } from '@/lib/constants/fileTypes';
 
@@ -13,6 +14,7 @@ import { isAudioVideoFile } from '@/lib/constants/fileTypes';
  * FileProcessor handles file content processing in the pipeline.
  *
  * Responsibilities:
+ * - Validates file sizes before download (prevents OOM)
  * - Downloads files from blob storage
  * - Extracts and processes file content
  * - Handles audio/video transcription
@@ -30,6 +32,7 @@ export class FileProcessor extends BasePipelineStage {
   constructor(
     private fileProcessingService: FileProcessingService,
     private loggingService: AzureMonitorLoggingService,
+    private inputValidator: InputValidator,
   ) {
     super();
   }
@@ -81,14 +84,29 @@ export class FileProcessor extends BasePipelineStage {
       `[FileProcessor] Processing ${files.length} file(s), ${images.length} image(s)`,
     );
 
-    // Process each file
-    for (const file of files) {
-      const [blobId, filePath] = this.fileProcessingService.getTempFilePath(
-        file.url,
-      );
-      const filename = file.originalFilename || blobId;
+    // STEP 1: Validate all file sizes in parallel (I/O bound)
+    console.log(`[FileProcessor] Validating file sizes...`);
+    await Promise.all(
+      files.map((file) =>
+        this.inputValidator.validateFileSize(
+          file.url,
+          context.user,
+          (url, user) => this.fileProcessingService.getFileSize(url, user),
+        ),
+      ),
+    );
 
-      try {
+    // STEP 2: Download all files in parallel (I/O bound)
+    console.log(
+      `[FileProcessor] Downloading ${files.length} file(s) in parallel...`,
+    );
+    const downloadedFiles = await Promise.all(
+      files.map(async (file) => {
+        const [blobId, filePath] = this.fileProcessingService.getTempFilePath(
+          file.url,
+        );
+        const filename = file.originalFilename || blobId;
+
         // Download file
         await this.fileProcessingService.downloadFile(
           file.url,
@@ -97,9 +115,22 @@ export class FileProcessor extends BasePipelineStage {
         );
         console.log(`[FileProcessor] Downloaded: ${sanitizeForLog(filename)}`);
 
-        // Read file
+        // Read file into buffer
         const fileBuffer = await this.fileProcessingService.readFile(filePath);
 
+        return {
+          file,
+          filename,
+          filePath,
+          fileBuffer,
+        };
+      }),
+    );
+
+    // STEP 3: Process files sequentially (CPU/API bound - avoid rate limiting)
+    console.log(`[FileProcessor] Processing files sequentially...`);
+    for (const { file, filename, filePath, fileBuffer } of downloadedFiles) {
+      try {
         // Check if audio/video
         if (isAudioVideoFile(filename)) {
           console.log(
@@ -158,11 +189,26 @@ export class FileProcessor extends BasePipelineStage {
             `[FileProcessor] Document processed: ${sanitizeForLog(filename)}`,
           );
         }
-      } finally {
-        // Cleanup temp file
-        await this.fileProcessingService.cleanupFile(filePath);
+      } catch (error) {
+        // Log processing error but continue with other files
+        console.error(
+          `[FileProcessor] Error processing ${sanitizeForLog(filename)}:`,
+          error,
+        );
+        // Re-throw to be caught by BasePipelineStage error handling
+        throw error;
       }
     }
+
+    // STEP 4: Cleanup all temp files in parallel (I/O bound)
+    console.log(
+      `[FileProcessor] Cleaning up ${downloadedFiles.length} temp file(s)...`,
+    );
+    await Promise.all(
+      downloadedFiles.map(({ filePath }) =>
+        this.fileProcessingService.cleanupFile(filePath),
+      ),
+    );
 
     // Return context with processed content
     return {

@@ -1,4 +1,4 @@
-import { IconInfoCircle, IconX } from '@tabler/icons-react';
+import { IconCode, IconInfoCircle, IconX } from '@tabler/icons-react';
 import React, {
   Dispatch,
   FC,
@@ -13,6 +13,8 @@ import { ChatInputSubmitTypes, FilePreview } from '@/types/chat';
 
 import { XIcon } from '@/components/Icons/cancel';
 import FileIcon from '@/components/Icons/file';
+
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 /**
  * Lightbox modal for full-screen image viewing
@@ -62,6 +64,51 @@ interface ChatFileUploadPreviewProps {
   progress?: number;
 }
 
+/**
+ * Helper function to check if a file is a code file based on extension
+ */
+const isCodeFile = (extension: string): boolean => {
+  const codeExtensions = [
+    'py',
+    'js',
+    'jsx',
+    'ts',
+    'tsx',
+    'java',
+    'c',
+    'cpp',
+    'cs',
+    'go',
+    'rb',
+    'php',
+    'swift',
+    'kt',
+    'rs',
+    'scala',
+    'sh',
+    'bash',
+    'ps1',
+    'r',
+    'sql',
+    'html',
+    'css',
+    'scss',
+    'sass',
+    'less',
+    'json',
+    'xml',
+    'yaml',
+    'yml',
+    'md',
+    'txt',
+    'env',
+    'config',
+    'ini',
+    'toml',
+  ];
+  return codeExtensions.includes(extension.toLowerCase());
+};
+
 const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   filePreview,
   setFilePreviews,
@@ -69,6 +116,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   progress,
 }) => {
   const t = useTranslations();
+  const { openArtifact } = useArtifactStore();
 
   if (!filePreview) {
     throw new Error('Empty filePreview found');
@@ -77,6 +125,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [lightboxImage, setLightboxImage] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
+  const [isOpeningInEditor, setIsOpeningInEditor] = useState(false);
 
   const removeFilePreview = (
     event: MouseEvent<HTMLButtonElement>,
@@ -91,7 +140,7 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
         const newPreviews = prevPreviews.filter(
           (prevPreview) => prevPreview !== filePreview,
         );
-        if (newPreviews.length === 0) setSubmitType('text');
+        if (newPreviews.length === 0) setSubmitType('TEXT');
         return newPreviews;
       });
     }, 200); // Match the animation duration
@@ -104,6 +153,74 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
       !filePreview.type.startsWith('video/')
     ) {
       setLightboxImage(imageUrl);
+    }
+  };
+
+  const openInCodeEditor = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!filePreview.file) {
+      alert('File not available for editing');
+      return;
+    }
+
+    try {
+      setIsOpeningInEditor(true);
+
+      // Read file content from local File object
+      const text = await filePreview.file.text();
+
+      // Detect language from file extension
+      const extension =
+        filePreview.name.split('.').pop()?.toLowerCase() || 'txt';
+      const languageMap: Record<string, string> = {
+        ts: 'typescript',
+        tsx: 'typescript',
+        js: 'javascript',
+        jsx: 'javascript',
+        py: 'python',
+        java: 'java',
+        cs: 'csharp',
+        go: 'go',
+        rs: 'rust',
+        cpp: 'cpp',
+        c: 'c',
+        html: 'html',
+        css: 'css',
+        scss: 'scss',
+        sass: 'sass',
+        less: 'less',
+        json: 'json',
+        md: 'markdown',
+        sql: 'sql',
+        sh: 'shell',
+        bash: 'shell',
+        yml: 'yaml',
+        yaml: 'yaml',
+        rb: 'ruby',
+        php: 'php',
+        swift: 'swift',
+        kt: 'kotlin',
+        scala: 'scala',
+        r: 'r',
+        txt: 'plaintext',
+        xml: 'xml',
+        env: 'plaintext',
+        config: 'plaintext',
+        ini: 'plaintext',
+        toml: 'toml',
+      };
+
+      const language = languageMap[extension] || 'plaintext';
+
+      // Open in code editor
+      openArtifact(text, language, filePreview.name);
+    } catch (error) {
+      console.error('Error opening file in code editor:', error);
+      alert('Failed to open file in code editor. Please try again.');
+    } finally {
+      setIsOpeningInEditor(false);
     }
   };
 
@@ -325,6 +442,22 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
                   <IconInfoCircle size={12} className="flex-shrink-0" />
                   <span>Transcribes on send</span>
                 </div>
+              )}
+              {isCodeFile(extension) && filePreview.file && (
+                <button
+                  onClick={openInCodeEditor}
+                  disabled={isOpeningInEditor}
+                  className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Open in Code Editor"
+                >
+                  <IconCode
+                    size={12}
+                    className={isOpeningInEditor ? 'animate-pulse' : ''}
+                  />
+                  <span>
+                    {isOpeningInEditor ? 'Opening...' : 'Open in Editor'}
+                  </span>
+                </button>
               )}
             </div>
           </div>

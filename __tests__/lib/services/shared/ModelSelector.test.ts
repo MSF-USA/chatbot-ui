@@ -2,7 +2,7 @@ import { ModelSelector } from '@/lib/services/shared/ModelSelector';
 
 import { DEFAULT_MODEL } from '@/lib/utils/app/const';
 
-import { Message } from '@/types/chat';
+import { Message, MessageType } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -38,7 +38,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          messageType: 'image',
+          messageType: MessageType.IMAGE,
         },
       ];
 
@@ -57,7 +57,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          messageType: 'image',
+          messageType: MessageType.IMAGE,
         },
       ];
 
@@ -118,7 +118,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          messageType: 'image',
+          messageType: MessageType.IMAGE,
         },
       ];
 
@@ -237,7 +237,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is this?',
-          messageType: 'text',
+          messageType: MessageType.TEXT,
         },
       ];
 
@@ -264,7 +264,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'Analyze this',
-          messageType: 'image',
+          messageType: MessageType.IMAGE,
         },
       ];
 
@@ -280,7 +280,7 @@ describe('ModelSelector', () => {
         {
           role: 'user',
           content: 'What is in this image?',
-          messageType: 'image',
+          messageType: MessageType.IMAGE,
         },
       ];
 

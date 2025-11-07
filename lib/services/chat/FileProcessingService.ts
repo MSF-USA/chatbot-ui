@@ -18,6 +18,26 @@ import fs from 'fs';
  */
 export class FileProcessingService {
   /**
+   * Gets the file size from blob storage without downloading it.
+   * Used for validation to prevent OOM on large files.
+   *
+   * @param fileUrl - The blob storage URL of the file
+   * @param user - User session for authentication
+   * @returns File size in bytes
+   */
+  async getFileSize(fileUrl: string, user: Session['user']): Promise<number> {
+    const session: Session = { user, expires: '' } as Session;
+    const userId = getUserIdFromSession(session);
+    const remoteFilepath = `${userId}/uploads/files`;
+    const id: string | undefined = fileUrl.split('/').pop();
+
+    if (!id) throw new Error(`Could not find file id from URL: ${fileUrl}`);
+
+    const blobStorage = createBlobStorageClient(session);
+    return await blobStorage.getBlobSize(`${remoteFilepath}/${id}`);
+  }
+
+  /**
    * Downloads a file from blob storage to local filesystem.
    *
    * @param fileUrl - The blob storage URL of the file

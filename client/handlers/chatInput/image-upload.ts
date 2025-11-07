@@ -30,7 +30,7 @@ export const onImageUpload = async (
   }
 
   if (!file) {
-    setSubmitType('text');
+    setSubmitType('TEXT');
     return;
   }
 
@@ -57,19 +57,19 @@ export const onImageUpload = async (
 
     setFileFieldValue((prevValue) => {
       if (prevValue && Array.isArray(prevValue)) {
-        setSubmitType('multi-file');
+        setSubmitType('MULTI_FILE');
         return [...prevValue, imageMessage] as (
           | FileMessageContent
           | ImageMessageContent
         )[];
       } else if (prevValue) {
-        setSubmitType('multi-file');
+        setSubmitType('MULTI_FILE');
         return [prevValue, imageMessage] as (
           | FileMessageContent
           | ImageMessageContent
         )[];
       } else {
-        setSubmitType('image');
+        setSubmitType('IMAGE');
         return [imageMessage];
       }
     });

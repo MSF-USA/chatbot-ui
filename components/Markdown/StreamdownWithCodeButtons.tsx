@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 interface CodeBlockWrapperProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export const StreamdownWithCodeButtons: React.FC<CodeBlockWrapperProps> = ({
   children,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { openArtifact } = useCodeEditorStore();
+  const { openArtifact } = useArtifactStore();
 
   useEffect(() => {
     if (!containerRef.current) return;

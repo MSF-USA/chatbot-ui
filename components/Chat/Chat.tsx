@@ -30,10 +30,17 @@ import { SuggestedPrompts } from './EmptyState/SuggestedPrompts';
 import { LoadingScreen } from './LoadingScreen';
 import { ModelSelect } from './ModelSelect';
 
-import { useCodeEditorStore } from '@/client/stores/codeEditorStore';
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 const CodeArtifact = dynamic(
   () => import('@/components/CodeEditor/CodeArtifact'),
+  {
+    ssr: false,
+  },
+);
+
+const DocumentArtifact = dynamic(
+  () => import('@/components/DocumentEditor/DocumentArtifact'),
   {
     ssr: false,
   },
@@ -80,7 +87,13 @@ export function Chat({
     defaultSearchMode,
     addPrompt,
   } = useSettings();
-  const { isArtifactOpen, closeArtifact } = useCodeEditorStore();
+  const {
+    isArtifactOpen,
+    editorMode,
+    closeArtifact,
+    setEditorMode,
+    canSwitchToDocumentMode,
+  } = useArtifactStore();
 
   // Split view state for code editor
   const [editorWidth, setEditorWidth] = useState(50); // Percentage
@@ -106,13 +119,20 @@ export function Chat({
     (e: MouseEvent) => {
       if (!isResizing) return;
 
-      const windowWidth = window.innerWidth;
-      const newEditorWidth = ((windowWidth - e.clientX) / windowWidth) * 100;
+      // Get the chat container element to calculate relative to it, not window
+      const chatContainer = document.querySelector('.chat-split-container');
+      if (!chatContainer) return;
+
+      const rect = chatContainer.getBoundingClientRect();
+      const containerWidth = rect.width;
+      const mouseX = e.clientX - rect.left;
+
+      // Calculate editor width as percentage of container
+      const newEditorWidth = ((containerWidth - mouseX) / containerWidth) * 100;
 
       // Constrain between 30% and 70%
-      if (newEditorWidth >= 30 && newEditorWidth <= 70) {
-        setEditorWidth(newEditorWidth);
-      }
+      const constrainedWidth = Math.max(30, Math.min(70, newEditorWidth));
+      setEditorWidth(constrainedWidth);
     },
     [isResizing],
   );
@@ -218,12 +238,14 @@ export function Chat({
   }
 
   return (
-    <div className="relative flex h-full w-full overflow-x-hidden bg-white dark:bg-[#212121] transition-all">
+    <div className="chat-split-container relative flex h-full w-full overflow-hidden bg-white dark:bg-[#212121]">
       {/* Main chat area */}
       <div
-        className="flex flex-col h-full transition-all"
+        className="flex flex-col h-full overflow-hidden"
         style={{
           width: isArtifactOpen ? `${100 - editorWidth}%` : '100%',
+          minWidth: isArtifactOpen ? '30%' : undefined,
+          maxWidth: isArtifactOpen ? '70%' : undefined,
         }}
       >
         {/* Header - Hidden on mobile, shown on desktop */}
@@ -267,7 +289,7 @@ export function Chat({
                 />
 
                 {/* Centered Chat Input */}
-                <div className="w-full max-w-3xl relative z-50">
+                <div className="w-full max-w-3xl mx-auto relative z-50">
                   <ChatInput
                     onSend={handleSend}
                     onRegenerate={handleRegenerate}
@@ -288,7 +310,11 @@ export function Chat({
             </div>
           ) : (
             /* Messages */
-            <div className="mx-auto max-w-3xl pb-4">
+            <div
+              className={
+                isArtifactOpen ? 'w-full px-4 pb-4' : 'mx-auto max-w-3xl pb-4'
+              }
+            >
               <ChatMessages
                 messages={messages}
                 isStreaming={isStreaming}
@@ -357,19 +383,43 @@ export function Chat({
         <>
           <div
             onMouseDown={handleMouseDown}
-            className={`w-1 bg-neutral-300 dark:bg-neutral-700 hover:bg-blue-500 cursor-col-resize transition-colors ${
-              isResizing ? 'bg-blue-500' : ''
+            className={`relative w-1.5 bg-neutral-300 dark:bg-neutral-700 hover:bg-blue-500 dark:hover:bg-blue-500 cursor-col-resize transition-colors ${
+              isResizing ? 'bg-blue-500 dark:bg-blue-500' : ''
             }`}
-          />
+            style={{ flexShrink: 0 }}
+          >
+            {/* Drag Handle */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col gap-1 pointer-events-none">
+              <div className="w-1 h-1 rounded-full bg-neutral-500 dark:bg-neutral-400"></div>
+              <div className="w-1 h-1 rounded-full bg-neutral-500 dark:bg-neutral-400"></div>
+              <div className="w-1 h-1 rounded-full bg-neutral-500 dark:bg-neutral-400"></div>
+            </div>
+          </div>
 
-          {/* Code Editor Panel */}
+          {/* Code/Document Editor Panel */}
           <div
-            className="flex flex-col bg-white dark:bg-neutral-900 border-l border-neutral-200 dark:border-neutral-700 h-full"
+            className="flex flex-col bg-white dark:bg-neutral-900 h-full overflow-hidden animate-slide-in-right"
             style={{
               width: `${editorWidth}%`,
+              minWidth: '30%',
+              maxWidth: '70%',
             }}
           >
-            <CodeArtifact onClose={closeArtifact} />
+            {editorMode === 'code' ? (
+              <CodeArtifact
+                onClose={closeArtifact}
+                onSwitchToDocument={
+                  canSwitchToDocumentMode()
+                    ? () => setEditorMode('document')
+                    : undefined
+                }
+              />
+            ) : (
+              <DocumentArtifact
+                onClose={closeArtifact}
+                onSwitchToCode={() => setEditorMode('code')}
+              />
+            )}
           </div>
         </>
       )}

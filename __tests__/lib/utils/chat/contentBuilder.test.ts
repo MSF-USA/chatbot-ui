@@ -14,7 +14,7 @@ describe('contentBuilder', () => {
     describe('text submit type', () => {
       it('should return plain text for text-only message', () => {
         const result = buildMessageContent(
-          'text',
+          'TEXT',
           'Hello world',
           null as any,
           null,
@@ -25,14 +25,14 @@ describe('contentBuilder', () => {
       });
 
       it('should handle empty text', () => {
-        const result = buildMessageContent('text', '', null as any, null);
+        const result = buildMessageContent('TEXT', '', null as any, null);
 
         expect(result).toBe('');
       });
 
       it('should handle text with whitespace', () => {
         const result = buildMessageContent(
-          'text',
+          'TEXT',
           '  Hello  \n  World  ',
           null,
           null,
@@ -52,7 +52,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'text',
+          'TEXT',
           'Just text',
           imageField,
           fileField,
@@ -70,7 +70,7 @@ describe('contentBuilder', () => {
 
       it('should build content array with single image', () => {
         const result = buildMessageContent(
-          'image',
+          'IMAGE',
           'Describe this',
           imageContent,
           null,
@@ -90,7 +90,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'image',
+          'IMAGE',
           'Compare these',
           [imageContent, image2],
           null,
@@ -110,7 +110,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'image',
+          'IMAGE',
           'Analyze these',
           imageContent,
           fileContent,
@@ -129,7 +129,7 @@ describe('contentBuilder', () => {
 
       it('should filter out null images', () => {
         const result = buildMessageContent(
-          'image',
+          'IMAGE',
           'Test',
           [imageContent, null as any],
           null,
@@ -148,7 +148,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'image',
+          'IMAGE',
           'Check this',
           null,
           fileContent,
@@ -161,7 +161,7 @@ describe('contentBuilder', () => {
       });
 
       it('should handle empty text with image', () => {
-        const result = buildMessageContent('image', '', imageContent, null);
+        const result = buildMessageContent('IMAGE', '', imageContent, null);
 
         const arr = result as (TextMessageContent | ImageMessageContent)[];
         expect(arr).toHaveLength(2);
@@ -177,7 +177,7 @@ describe('contentBuilder', () => {
 
       it('should build content array with single file', () => {
         const result = buildMessageContent(
-          'file',
+          'FILE',
           'Summarize this',
           null,
           fileContent,
@@ -197,7 +197,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'file',
+          'FILE',
           'Compare these documents',
           null,
           [fileContent, file2],
@@ -215,7 +215,7 @@ describe('contentBuilder', () => {
 
       it('should omit text content if text is empty', () => {
         const result = buildMessageContent(
-          'file',
+          'FILE',
           '',
           null as any,
           fileContent,
@@ -228,7 +228,7 @@ describe('contentBuilder', () => {
 
       it('should omit text content if text is only whitespace', () => {
         const result = buildMessageContent(
-          'file',
+          'FILE',
           '   \n\t  ',
           null,
           fileContent,
@@ -241,7 +241,7 @@ describe('contentBuilder', () => {
 
       it('should include text if not empty', () => {
         const result = buildMessageContent(
-          'file',
+          'FILE',
           'Process this',
           null,
           fileContent,
@@ -258,7 +258,7 @@ describe('contentBuilder', () => {
           url: 'https://example.com/file2.pdf',
         };
 
-        const result = buildMessageContent('file', 'Check these', null as any, [
+        const result = buildMessageContent('FILE', 'Check these', null as any, [
           fileContent,
           null as any,
           file2,
@@ -285,7 +285,7 @@ describe('contentBuilder', () => {
 
       it('should combine images and files', () => {
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           'Analyze both',
           imageContent,
           fileContent,
@@ -313,7 +313,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           'Process all',
           [imageContent, image2],
           [fileContent, file2],
@@ -334,7 +334,7 @@ describe('contentBuilder', () => {
 
       it('should omit text if empty', () => {
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           '',
           imageContent,
           fileContent,
@@ -352,7 +352,7 @@ describe('contentBuilder', () => {
 
       it('should handle only images without files', () => {
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           'Describe',
           imageContent,
           null,
@@ -366,7 +366,7 @@ describe('contentBuilder', () => {
 
       it('should handle only files without images', () => {
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           'Summarize',
           null,
           fileContent,
@@ -385,7 +385,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           'Check',
           [imageContent, null as any, image2],
           [fileContent, null as any],
@@ -431,7 +431,7 @@ describe('contentBuilder', () => {
     describe('edge cases', () => {
       it('should handle very long text', () => {
         const longText = 'a'.repeat(10000);
-        const result = buildMessageContent('text', longText, null as any, null);
+        const result = buildMessageContent('TEXT', longText, null as any, null);
 
         expect(result).toBe(longText);
         expect((result as string).length).toBe(10000);
@@ -440,7 +440,7 @@ describe('contentBuilder', () => {
       it('should handle special characters in text', () => {
         const specialText = 'Hello\n\tWorld\r\n"Test" <>&';
         const result = buildMessageContent(
-          'text',
+          'TEXT',
           specialText,
           null as any,
           null,
@@ -452,7 +452,7 @@ describe('contentBuilder', () => {
       it('should handle unicode characters', () => {
         const unicodeText = 'Hello 世界 🌍 Ñoño';
         const result = buildMessageContent(
-          'text',
+          'TEXT',
           unicodeText,
           null as any,
           null,
@@ -462,7 +462,7 @@ describe('contentBuilder', () => {
       });
 
       it('should handle empty arrays', () => {
-        const result = buildMessageContent('multi-file', 'Test', [], []);
+        const result = buildMessageContent('MULTI_FILE', 'Test', [], []);
 
         const arr = result as TextMessageContent[];
         expect(arr).toHaveLength(1);
@@ -476,7 +476,7 @@ describe('contentBuilder', () => {
         };
 
         const result = buildMessageContent(
-          'multi-file',
+          'MULTI_FILE',
           'Test',
           [null as any, imageContent, null as any],
           [null as any, null as any],

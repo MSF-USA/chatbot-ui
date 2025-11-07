@@ -1,14 +1,21 @@
-import { IconDownload } from '@tabler/icons-react';
+import { IconCode, IconDownload, IconFileText } from '@tabler/icons-react';
 import React, { FC, useEffect, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
 import { fetchImageBase64FromMessageContent } from '@/lib/services/imageService';
 
+import {
+  autoConvertToHtml,
+  detectFormat,
+} from '@/lib/utils/document/formatConverter';
+
 import { FileMessageContent, ImageMessageContent } from '@/types/chat';
 
 import FileIcon from '@/components/Icons/file';
 import ImageIcon from '@/components/Icons/image';
+
+import { useArtifactStore } from '@/client/stores/artifactStore';
 
 /**
  * Component to display image files
@@ -125,17 +132,205 @@ interface FileContentProps {
 }
 
 /**
+ * Helper function to check if a file is a code file based on extension
+ */
+const isCodeFile = (extension: string): boolean => {
+  const codeExtensions = [
+    'py',
+    'js',
+    'jsx',
+    'ts',
+    'tsx',
+    'java',
+    'c',
+    'cpp',
+    'cs',
+    'go',
+    'rb',
+    'php',
+    'swift',
+    'kt',
+    'rs',
+    'scala',
+    'sh',
+    'bash',
+    'ps1',
+    'r',
+    'sql',
+    'html',
+    'css',
+    'scss',
+    'sass',
+    'less',
+    'json',
+    'xml',
+    'yaml',
+    'yml',
+    'md',
+    'txt',
+    'env',
+    'config',
+    'ini',
+    'toml',
+  ];
+  return codeExtensions.includes(extension.toLowerCase());
+};
+
+/**
+ * Helper function to check if a file is a document file (can be opened in document editor)
+ */
+const isDocumentFile = (extension: string): boolean => {
+  const documentExtensions = ['md', 'markdown', 'txt', 'html', 'htm', 'pdf'];
+  return documentExtensions.includes(extension.toLowerCase());
+};
+
+/**
  * FileContent Component
  *
  * Renders file attachments with download functionality and image previews.
  */
 export const FileContent: FC<FileContentProps> = ({ files, images }) => {
+  const { openArtifact, openDocument } = useArtifactStore();
+  const [isLoadingFile, setIsLoadingFile] = useState<string | null>(null);
+
   const downloadFile = (event: React.MouseEvent, fileUrl: string) => {
     event.preventDefault();
+    event.stopPropagation();
     if (fileUrl) {
       const filename = fileUrl.split('/').pop();
       const downloadUrl = `/api/file/${filename}`;
       window.open(downloadUrl, '_blank');
+    }
+  };
+
+  const openInCodeEditor = async (
+    event: React.MouseEvent,
+    fileUrl: string,
+    filename: string,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    try {
+      setIsLoadingFile(fileUrl);
+      const fileId = fileUrl.split('/').pop();
+      const response = await fetch(`/api/file/${fileId}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch file content');
+      }
+
+      const blob = await response.blob();
+      const text = await blob.text();
+
+      // Detect language from file extension
+      const extension = filename.split('.').pop()?.toLowerCase() || 'txt';
+      const languageMap: Record<string, string> = {
+        ts: 'typescript',
+        tsx: 'typescript',
+        js: 'javascript',
+        jsx: 'javascript',
+        py: 'python',
+        java: 'java',
+        cs: 'csharp',
+        go: 'go',
+        rs: 'rust',
+        cpp: 'cpp',
+        c: 'c',
+        html: 'html',
+        css: 'css',
+        json: 'json',
+        md: 'markdown',
+        sql: 'sql',
+        sh: 'shell',
+        bash: 'shell',
+        yml: 'yaml',
+        yaml: 'yaml',
+        rb: 'ruby',
+        php: 'php',
+        swift: 'swift',
+        kt: 'kotlin',
+        scala: 'scala',
+        r: 'r',
+        txt: 'plaintext',
+      };
+
+      const language = languageMap[extension] || 'plaintext';
+
+      // Open in code editor
+      openArtifact(text, language, filename);
+    } catch (error) {
+      console.error('Error opening file in code editor:', error);
+      alert('Failed to open file in code editor. Please try again.');
+    } finally {
+      setIsLoadingFile(null);
+    }
+  };
+
+  const openInDocumentEditor = async (
+    event: React.MouseEvent,
+    fileUrl: string,
+    filename: string,
+  ) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    try {
+      setIsLoadingFile(fileUrl);
+      const fileId = fileUrl.split('/').pop();
+      const response = await fetch(`/api/file/${fileId}`);
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch file content');
+      }
+
+      const blob = await response.blob();
+      const extension = filename.split('.').pop()?.toLowerCase();
+
+      let content: string;
+      let sourceFormat:
+        | 'md'
+        | 'markdown'
+        | 'txt'
+        | 'html'
+        | 'htm'
+        | 'pdf'
+        | null = null;
+
+      // Handle PDF files specially (they need ArrayBuffer)
+      if (extension === 'pdf') {
+        const { pdfToHtml } = await import(
+          '@/lib/utils/document/formatConverter'
+        );
+        const arrayBuffer = await blob.arrayBuffer();
+        content = await pdfToHtml(arrayBuffer);
+        sourceFormat = 'pdf';
+      } else {
+        const text = await blob.text();
+        content = text; // Store original source content
+
+        // Determine source format
+        const formatMap: Record<
+          string,
+          'md' | 'markdown' | 'txt' | 'html' | 'htm'
+        > = {
+          md: 'md',
+          markdown: 'markdown',
+          txt: 'txt',
+          html: 'html',
+          htm: 'htm',
+        };
+        sourceFormat = extension ? formatMap[extension] || null : null;
+      }
+
+      // Open in document editor with source content
+      // User can switch to document mode to see rendered version
+      openDocument(content, sourceFormat, filename);
+    } catch (error) {
+      console.error('Error opening file in document editor:', error);
+      alert('Failed to open file in document editor. Please try again.');
+    } finally {
+      setIsLoadingFile(null);
     }
   };
 
@@ -203,7 +398,7 @@ export const FileContent: FC<FileContentProps> = ({ files, images }) => {
               return 'bg-blue-600 text-white';
             case 'js':
             case 'jsx':
-              return 'bg-yellow-400 text-black';
+              return 'bg-yellow-400 text-gray-900 dark:text-yellow-900';
             case 'ts':
             case 'tsx':
               return 'bg-blue-500 text-white';
@@ -251,12 +446,14 @@ export const FileContent: FC<FileContentProps> = ({ files, images }) => {
 
         // Determine if filename is long
         const isLongFilename = filename.length > 30;
+        const isCode = isCodeFile(extension);
+        const isDocument = isDocumentFile(extension);
+        const isLoading = isLoadingFile === file.url;
 
         return (
           <div
             key={`file-${index}`}
-            onClick={(event) => downloadFile(event, file.url)}
-            className="relative flex flex-col p-3 rounded-lg border border-gray-300 dark:border-gray-700 cursor-pointer hover:shadow-lg hover:border-gray-400 dark:hover:border-gray-600 transition-all bg-white dark:bg-gray-900 group"
+            className="relative flex flex-col p-3 rounded-lg border border-gray-300 dark:border-gray-700 hover:shadow-lg hover:border-gray-400 dark:hover:border-gray-600 transition-all bg-white dark:bg-gray-900 group"
             style={{
               width: 'calc(50% - 0.25rem)',
               maxWidth: '280px',
@@ -270,8 +467,53 @@ export const FileContent: FC<FileContentProps> = ({ files, images }) => {
               >
                 {extension.toUpperCase()}
               </div>
-              <div className="p-1 rounded group-hover:bg-gray-100 dark:group-hover:bg-gray-800 transition-colors">
-                <IconDownload className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+              <div className="flex items-center gap-1">
+                {/* Open as Document button (for document files) */}
+                {isDocument && (
+                  <button
+                    onClick={(event) =>
+                      openInDocumentEditor(event, file.url, filename)
+                    }
+                    disabled={isLoading}
+                    className="p-1 rounded hover:bg-green-100 dark:hover:bg-green-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Open as Document"
+                  >
+                    <IconFileText
+                      className={`w-4 h-4 ${
+                        isLoading
+                          ? 'text-gray-400 animate-pulse'
+                          : 'text-green-600 dark:text-green-400'
+                      }`}
+                    />
+                  </button>
+                )}
+                {/* Open in Code Editor button (only for code files) */}
+                {isCode && (
+                  <button
+                    onClick={(event) =>
+                      openInCodeEditor(event, file.url, filename)
+                    }
+                    disabled={isLoading}
+                    className="p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Open in Code Editor"
+                  >
+                    <IconCode
+                      className={`w-4 h-4 ${
+                        isLoading
+                          ? 'text-gray-400 animate-pulse'
+                          : 'text-blue-600 dark:text-blue-400'
+                      }`}
+                    />
+                  </button>
+                )}
+                {/* Download button */}
+                <button
+                  onClick={(event) => downloadFile(event, file.url)}
+                  className="p-1 rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  title="Download"
+                >
+                  <IconDownload className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                </button>
               </div>
             </div>
             <div className="min-w-0 flex-1">

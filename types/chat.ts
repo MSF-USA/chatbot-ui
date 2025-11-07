@@ -51,39 +51,6 @@ export interface ThinkingContent {
   thinking: string;
 }
 
-export function getChatMessageContent(message: Message): string {
-  if (typeof message.content === 'string') {
-    return message.content;
-  } else if (Array.isArray(message.content)) {
-    const imageContent = message.content.find(
-      (contentItem): contentItem is ImageMessageContent =>
-        'type' in contentItem && contentItem.type === 'image_url',
-    );
-    if (imageContent && 'image_url' in imageContent) {
-      return imageContent.image_url.url;
-    }
-    const fileContent = message.content.find(
-      (contentItem): contentItem is FileMessageContent =>
-        'type' in contentItem && contentItem.type === 'file_url',
-    );
-    if (fileContent && 'url' in fileContent) {
-      return fileContent.url;
-    }
-    const textContent = message.content.find(
-      (contentItem): contentItem is TextMessageContent =>
-        'type' in contentItem && contentItem.type === 'text',
-    );
-    if (textContent && 'text' in textContent) {
-      return textContent.text;
-    }
-  } else if ((message.content as TextMessageContent).type === 'text') {
-    return (message.content as TextMessageContent).text;
-  }
-  throw new Error(
-    `Invalid message type or structure: ${JSON.stringify(message)}`,
-  );
-}
-
 export interface Message {
   role: Role;
   content:
@@ -142,7 +109,7 @@ export interface Conversation {
   defaultSearchMode?: import('./searchMode').SearchMode; // Default search mode for this conversation
 }
 
-export type ChatInputSubmitTypes = 'text' | 'image' | 'file' | 'multi-file';
+export type ChatInputSubmitTypes = 'TEXT' | 'IMAGE' | 'FILE' | 'MULTI_FILE';
 
 export type FileFieldValue =
   | FileMessageContent
@@ -164,6 +131,7 @@ export interface FilePreview {
   type: string;
   status: UploadStatus;
   previewUrl: string;
+  file?: File; // Optional: Store the original File object for local operations (e.g., opening in code editor)
 }
 
 // Tool Router Types
