@@ -12,6 +12,7 @@ import {
   Message,
   TextMessageContent,
 } from '@/types/chat';
+import { OpenAIModel } from '@/types/openai';
 
 import { AzureMonitorLoggingService } from '../loggingService';
 
@@ -35,7 +36,7 @@ export class AIFoundryAgentHandler {
    */
   async handleAgentChat(
     modelId: string,
-    modelConfig: Record<string, unknown>,
+    modelConfig: OpenAIModel,
     messages: Message[],
     temperature: number,
     user: Session['user'],

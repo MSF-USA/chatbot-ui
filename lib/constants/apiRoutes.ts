@@ -8,10 +8,14 @@ export const API_ROUTES = {
    * Chat-related endpoints
    */
   CHAT: {
-    STANDARD: '/api/chat/standard',
-    AGENT: '/api/chat/agent',
-    RAG: '/api/chat/rag',
-    TOOL_AWARE: '/api/chat/tool-aware',
+    /** Unified chat endpoint (handles all chat types) */
+    UNIFIED: '/api/chat',
+    /** Agent validation endpoint */
+    VALIDATE_AGENT: '/api/chat/agents/validate',
+    /** Prompt revision endpoint */
+    REVISE_PROMPT: '/api/chat/prompts/revise',
+    /** Tone analysis endpoint */
+    ANALYZE_TONE: '/api/chat/tones/analyze',
   },
 
   /**

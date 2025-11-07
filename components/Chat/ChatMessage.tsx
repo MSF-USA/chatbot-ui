@@ -219,62 +219,8 @@ export const ChatMessage: FC<Props> = ({
     );
   }
 
-  // Render image messages with composition
-  if (hasImages) {
-    const { images, text } = getContentByType();
-    const textContent = text?.text || '';
-
-    if (message.role === 'user') {
-      return (
-        <UserMessage
-          message={message}
-          messageContent={textContent}
-          setMessageContent={setMessageContent}
-          isEditing={isEditing}
-          textareaRef={textareaRef}
-          handleInputChange={handleInputChange}
-          handlePressEnter={handlePressEnter}
-          setIsTyping={setIsTyping}
-          setIsEditing={setIsEditing}
-          toggleEditing={toggleEditing}
-          handleDeleteMessage={handleDeleteMessage}
-          onEdit={onEdit || (() => {})}
-          selectedConversation={selectedConversation}
-          onRegenerate={onRegenerate}
-          onSaveAsPrompt={handleSaveAsPromptClick}
-        >
-          <ImageContent images={images} />
-          {text && (
-            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
-              {text.text}
-            </div>
-          )}
-        </UserMessage>
-      );
-    } else {
-      return (
-        <div className="group text-gray-800 dark:text-gray-100">
-          <AssistantMessage
-            content={textContent}
-            message={message}
-            copyOnClick={copyOnClick}
-            messageIsStreaming={messageIsStreaming}
-            messageIndex={messageIndex}
-            selectedConversation={selectedConversation}
-            messageCopied={messagedCopied}
-            onRegenerate={onRegenerate}
-          >
-            <div className="mb-3">
-              <ImageContent images={images} />
-            </div>
-            {text && <div className="prose dark:prose-invert">{text.text}</div>}
-          </AssistantMessage>
-        </div>
-      );
-    }
-  }
-
-  // Render file messages with composition
+  // Render file messages with composition (handles both files AND images together)
+  // Check hasFiles first because FileContent can render both files and images
   if (hasFiles) {
     const { images, files, text } = getContentByType();
     const textContent = text?.text || '';
@@ -321,6 +267,61 @@ export const ChatMessage: FC<Props> = ({
           >
             <div className="mb-3">
               <FileContent files={files} images={images} />
+            </div>
+            {text && <div className="prose dark:prose-invert">{text.text}</div>}
+          </AssistantMessage>
+        </div>
+      );
+    }
+  }
+
+  // Render image-only messages (no files, just images)
+  if (hasImages) {
+    const { images, text } = getContentByType();
+    const textContent = text?.text || '';
+
+    if (message.role === 'user') {
+      return (
+        <UserMessage
+          message={message}
+          messageContent={textContent}
+          setMessageContent={setMessageContent}
+          isEditing={isEditing}
+          textareaRef={textareaRef}
+          handleInputChange={handleInputChange}
+          handlePressEnter={handlePressEnter}
+          setIsTyping={setIsTyping}
+          setIsEditing={setIsEditing}
+          toggleEditing={toggleEditing}
+          handleDeleteMessage={handleDeleteMessage}
+          onEdit={onEdit || (() => {})}
+          selectedConversation={selectedConversation}
+          onRegenerate={onRegenerate}
+          onSaveAsPrompt={handleSaveAsPromptClick}
+        >
+          <ImageContent images={images} />
+          {text && (
+            <div className="prose prose-invert prose-p:my-2 text-white max-w-none mt-2">
+              {text.text}
+            </div>
+          )}
+        </UserMessage>
+      );
+    } else {
+      return (
+        <div className="group text-gray-800 dark:text-gray-100">
+          <AssistantMessage
+            content={textContent}
+            message={message}
+            copyOnClick={copyOnClick}
+            messageIsStreaming={messageIsStreaming}
+            messageIndex={messageIndex}
+            selectedConversation={selectedConversation}
+            messageCopied={messagedCopied}
+            onRegenerate={onRegenerate}
+          >
+            <div className="mb-3">
+              <ImageContent images={images} />
             </div>
             {text && <div className="prose dark:prose-invert">{text.text}</div>}
           </AssistantMessage>

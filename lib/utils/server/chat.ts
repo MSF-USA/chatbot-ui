@@ -20,6 +20,50 @@ type ContentItem =
   | FileMessageContent
   | ImageMessageContent;
 
+/**
+ * Detects ALL content types present in a message.
+ * Returns a Set to properly handle mixed content (e.g., file + image).
+ *
+ * Use this for routing decisions where you need to know about multiple content types.
+ * Use getMessageContentType() for backwards-compatible single-type detection.
+ */
+export const getMessageContentTypes = (
+  content:
+    | string
+    | TextMessageContent
+    | (TextMessageContent | FileMessageContent)[]
+    | (TextMessageContent | ImageMessageContent)[]
+    | (TextMessageContent | FileMessageContent | ImageMessageContent)[],
+): Set<ContentType> => {
+  const types = new Set<ContentType>();
+
+  if (typeof content === 'string') {
+    types.add('text');
+  } else if (Array.isArray(content)) {
+    content.forEach((contentItem) => {
+      if (contentItem.type === 'file_url') {
+        types.add('file');
+      } else if (contentItem.type === 'image_url') {
+        types.add('image');
+      } else if (contentItem.type === 'text') {
+        types.add('text');
+      }
+    });
+  } else if ('type' in content) {
+    if (content.type === 'text') types.add('text');
+    else if (content.type === 'file_url') types.add('file');
+    else if (content.type === 'image_url') types.add('image');
+  }
+
+  return types;
+};
+
+/**
+ * Legacy function that returns a single content type.
+ * For mixed content, returns the first type found (priority: file > image > text).
+ *
+ * @deprecated Use getMessageContentTypes() for mixed content detection.
+ */
 export const getMessageContentType = (
   content:
     | string
@@ -164,7 +208,9 @@ const processMessageContent = async (
   }
 
   return processedContent.map((contentSection) =>
-    contentSection.type === 'image_url' && !(conversationType === 'image')
+    contentSection.type === 'image_url' &&
+    !(conversationType === 'image') &&
+    !(conversationType === 'file') // Don't convert images to text for file conversations
       ? ({
           type: 'text',
           text: 'THE USER UPLOADED AN IMAGE',

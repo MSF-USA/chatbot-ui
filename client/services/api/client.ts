@@ -15,7 +15,7 @@ import { ApiRequestConfig } from './types';
  *
  * Usage:
  * ```ts
- * const response = await apiClient.post<ChatApiResponse>('/api/chat/standard', {
+ * const response = await apiClient.post<ChatApiResponse>('/api/chat', {
  *   model,
  *   messages,
  * });

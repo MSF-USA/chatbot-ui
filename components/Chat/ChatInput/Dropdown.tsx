@@ -39,7 +39,6 @@ import { Tone } from '@/types/tone';
 
 import ChatInputImage from '@/components/Chat/ChatInput/ChatInputImage';
 import ChatInputImageCapture from '@/components/Chat/ChatInput/ChatInputImageCapture';
-import ChatInputTranscribe from '@/components/Chat/ChatInput/ChatInputTranscribe';
 import ChatInputTranslate from '@/components/Chat/ChatInput/ChatInputTranslate';
 import ImageIcon from '@/components/Icons/image';
 
@@ -95,15 +94,9 @@ const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const { selectedConversation } = useConversations();
 
-  // Check if there's an audio/video file being transcribed
-  const hasAudioVideoFile = filePreviews.some(
-    (preview) =>
-      preview.type.startsWith('audio/') || preview.type.startsWith('video/'),
-  );
   const [isOpen, setIsOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [isTranslateOpen, setIsTranslateOpen] = useState(false);
-  const [isTranscribeOpen, setIsTranscribeOpen] = useState(false);
   const [isImageOpen, setIsImageOpen] = useState(false);
   const [isToneOpen, setIsToneOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -216,37 +209,14 @@ const Dropdown: React.FC<DropdownProps> = ({
         icon: (
           <IconPaperclip
             size={18}
-            className={`flex-shrink-0 ${hasAudioVideoFile ? 'text-gray-400' : 'text-gray-700 dark:text-gray-300'}`}
+            className="flex-shrink-0 text-gray-700 dark:text-gray-300"
           />
         ),
         label: t('attachFilesDropdown'),
-        infoTooltip: hasAudioVideoFile
-          ? 'Cannot attach files while transcribing audio/video.\n\nRemove the audio/video file first.'
-          : 'Supported formats:\n\n• Images: JPEG, PNG, GIF (5MB max)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max)\n\nUpload up to 5 files at once.\n\nImages and documents work with web search mode.',
-        onClick: hasAudioVideoFile ? () => {} : handleAttachClick,
+        infoTooltip:
+          'Attach files, images, or audio/video.\n\nSupported formats:\n• Images: JPEG, PNG, GIF, WebP (5MB max, up to 10)\n• Documents: PDF, DOCX, XLSX, PPTX, TXT, MD (10MB max, up to 3)\n• Data: CSV, JSON, XML, YAML (10MB max, up to 3)\n• Code: PY, JS, TS, JAVA, C, CPP, GO, etc. (10MB max, up to 3)\n• Audio/Video: MP3, WAV, MP4, WebM (25MB max, 1 file)\n\nTotal: 10 files, 50MB max',
+        onClick: handleAttachClick,
         category: 'media',
-        disabled: hasAudioVideoFile,
-      },
-      {
-        id: 'transcribe',
-        icon: (
-          <IconFileMusic
-            size={18}
-            className={`flex-shrink-0 ${hasAudioVideoFile ? 'text-gray-400' : 'text-orange-500'}`}
-          />
-        ),
-        label: t('transcribeAudioVideoDropdown'),
-        infoTooltip: hasAudioVideoFile
-          ? 'Already transcribing a file.\n\nOnly one audio/video file can be transcribed at a time.'
-          : 'Upload and transcribe audio or video files.\n\nSupported formats:\n• Audio: MP3, WAV, M4A\n• Video: MP4, WebM, MPEG, MPG\n\nTranscription will appear in the chat input.',
-        onClick: hasAudioVideoFile
-          ? () => {}
-          : () => {
-              setIsTranscribeOpen(true);
-              closeDropdown();
-            },
-        category: 'media',
-        disabled: hasAudioVideoFile,
       },
       {
         id: 'translate',
@@ -283,11 +253,9 @@ const Dropdown: React.FC<DropdownProps> = ({
       selectedToneId,
       tones,
       hasCameraSupport,
-      hasAudioVideoFile,
       closeDropdown,
       setIsToneOpen,
       setIsTranslateOpen,
-      setIsTranscribeOpen,
       onCameraClick,
       handleAttachClick,
       toggleSearchMode,
@@ -303,7 +271,6 @@ const Dropdown: React.FC<DropdownProps> = ({
     closeDropdown,
     onCloseModals: () => {
       setIsTranslateOpen(false);
-      setIsTranscribeOpen(false);
       setIsImageOpen(false);
       setIsToneOpen(false);
     },
@@ -383,22 +350,6 @@ const Dropdown: React.FC<DropdownProps> = ({
           handleSend={handleSend}
           setParentModalIsOpen={setIsTranslateOpen}
           simulateClick={true}
-        />
-      )}
-
-      {/* Chat Input Transcribe Modal */}
-      {isTranscribeOpen && (
-        <ChatInputTranscribe
-          setTextFieldValue={setTextFieldValue}
-          onFileUpload={onFileUpload}
-          setParentModalIsOpen={setIsTranscribeOpen}
-          setSubmitType={setSubmitType}
-          setFilePreviews={setFilePreviews}
-          setFileFieldValue={setFileFieldValue}
-          setImageFieldValue={setImageFieldValue}
-          setUploadProgress={setUploadProgress}
-          simulateClick={true}
-          setTranscriptionStatus={setTranscriptionStatus}
         />
       )}
 
@@ -509,11 +460,11 @@ const Dropdown: React.FC<DropdownProps> = ({
         labelText=""
       />
 
-      {/* Hidden file input for images and documents only (audio/video uses separate transcription button) */}
+      {/* Hidden file input for all file types: images, documents, data, code, audio, and video */}
       <input
         ref={fileInputRef}
         type="file"
-        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md"
+        accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.json,.xml,.yaml,.yml,.py,.js,.ts,.jsx,.tsx,.java,.c,.cpp,.cs,.go,.rb,.php,.sql,.sh,.bash,.ps1,.r,.swift,.kt,.rs,.scala,.env,.config,.ini,.toml,.mp3,.mp4,.wav,.webm,.m4a,.mpeg,.mpga"
         onChange={(e) =>
           onFileUpload(
             e,

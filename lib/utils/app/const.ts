@@ -32,6 +32,15 @@ export const FILE_SIZE_LIMITS_MB = {
   FILE: 10,
 } as const;
 
+// File upload count limits per message
+export const FILE_COUNT_LIMITS = {
+  MAX_IMAGES: 10, // OpenAI vision models support up to 10 images
+  MAX_DOCUMENTS: 3, // Document summarization is expensive
+  MAX_AUDIO_VIDEO: 1, // Transcription is expensive (time + cost)
+  MAX_TOTAL_FILES: 10, // Total attachments (any type)
+  MAX_TOTAL_SIZE: 50 * 1024 * 1024, // 50MB total per message
+} as const;
+
 // Maximum file upload size for API endpoints (in bytes)
 export const MAX_API_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 

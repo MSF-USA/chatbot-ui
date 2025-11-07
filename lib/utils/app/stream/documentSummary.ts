@@ -7,6 +7,8 @@ import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamP
 import { loadDocument } from '@/lib/utils/server/file-handling';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
+import { ImageMessageContent } from '@/types/chat';
+
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -24,6 +26,7 @@ interface ParseAndQueryFilterOpenAIArguments {
   botId?: string;
   loggingService: AzureMonitorLoggingService;
   stream?: boolean;
+  images?: ImageMessageContent[];
 }
 
 async function summarizeChunk(
@@ -85,6 +88,7 @@ export async function parseAndQueryFileOpenAI({
   botId,
   loggingService,
   stream = true,
+  images = [],
 }: ParseAndQueryFilterOpenAIArguments): Promise<ReadableStream | string> {
   const startTime = Date.now();
   console.log(
@@ -167,6 +171,23 @@ export async function parseAndQueryFileOpenAI({
 
   const finalPrompt: string = `${combinedSummary}\n\nUser prompt: ${prompt}`;
 
+  // Build user message content - include images if present
+  const userMessageContent:
+    | string
+    | OpenAI.Chat.Completions.ChatCompletionContentPart[] =
+    images.length > 0
+      ? [
+          ...images.map((img) => ({
+            type: 'image_url' as const,
+            image_url: img.image_url,
+          })),
+          {
+            type: 'text' as const,
+            text: finalPrompt,
+          },
+        ]
+      : finalPrompt;
+
   const commonParams = {
     model: modelId,
     messages: [
@@ -177,7 +198,7 @@ export async function parseAndQueryFileOpenAI({
       },
       {
         role: 'user',
-        content: finalPrompt,
+        content: userMessageContent,
       },
     ] as OpenAI.Chat.Completions.ChatCompletionMessageParam[],
     temperature: 0.1,

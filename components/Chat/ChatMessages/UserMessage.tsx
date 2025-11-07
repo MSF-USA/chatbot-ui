@@ -102,10 +102,15 @@ export const UserMessage: FC<UserMessageProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [message.content, messageContent]);
 
+  // Check if message has attachments
+  const hasAttachments = !!children;
+
   return (
     <div className="relative flex justify-end px-4 py-1 text-base lg:px-0 w-full">
       <div className="flex flex-col items-end max-w-full">
-        <div className="inline-block bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base">
+        <div
+          className={`${hasAttachments ? 'w-full max-w-3xl' : 'inline-block max-w-[85%]'} bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base`}
+        >
           {isEditing ? (
             <div className="flex flex-col">
               <textarea

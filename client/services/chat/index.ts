@@ -1,37 +1,19 @@
 /**
- * Frontend chat services.
+ * Frontend chat service.
  *
- * Provides:
- * - ChatService: Main orchestrator (routes to specialized services)
- * - StandardChatService: Standard chat completions
- * - RAGChatService: RAG-augmented chat with knowledge bases
- * - AgentChatService: Agent-based chat with Bing grounding
- * - FileChatService: Document file chat with analysis
- * - AudioChatService: Audio/video file chat with transcription
- *
- * All services use the centralized ApiClient for HTTP requests.
+ * Unified chat service that routes ALL requests to /api/chat.
+ * The server-side pipeline handles all routing and feature composition.
  *
  * Usage:
  * ```ts
  * import { chatService } from '@/client/services/chat';
  *
- * const stream = await chatService.chat(model, messages, options);
- * ```
- *
- * Or use specialized services directly:
- * ```ts
- * import { standardChatService } from '@/client/services/chat';
- *
- * const stream = await standardChatService.chat(model, messages);
+ * const stream = await chatService.chat(model, messages, {
+ *   botId: 'my-bot',           // Enable RAG
+ *   searchMode: 'intelligent',  // Enable search
+ *   temperature: 0.7,
+ * });
  * ```
  */
 
 export { ChatService, chatService } from './ChatService';
-export {
-  StandardChatService,
-  standardChatService,
-} from './StandardChatService';
-export { RAGChatService, ragChatService } from './RAGChatService';
-export { AgentChatService, agentChatService } from './AgentChatService';
-export { FileChatService, fileChatService } from './FileChatService';
-export { AudioChatService, audioChatService } from './AudioChatService';

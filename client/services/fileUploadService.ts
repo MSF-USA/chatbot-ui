@@ -198,8 +198,10 @@ export class FileUploadService {
               if (onProgress) onProgress(progress);
 
               if (uploadedBytes < file.size) {
+                // More chunks to upload - don't read response body yet
                 uploadChunk();
               } else {
+                // Last chunk - now read the response
                 const response_data = await response.json();
                 const resp = response_data.data || response_data;
                 resolve({
@@ -209,7 +211,11 @@ export class FileUploadService {
                 });
               }
             } else {
-              reject(new Error(`File upload failed: ${file.name}`));
+              // Read error response
+              const errorText = await response.text();
+              reject(
+                new Error(`File upload failed: ${file.name} - ${errorText}`),
+              );
             }
           } catch (error) {
             reject(error);

@@ -11,7 +11,7 @@
  * import { apiClient, ApiError } from '@/client/services/api';
  *
  * try {
- *   const response = await apiClient.post('/api/chat/standard', requestData);
+ *   const response = await apiClient.post('/api/chat', requestData);
  * } catch (error) {
  *   if (error instanceof ApiError) {
  *     console.error('API error:', error.getUserMessage());

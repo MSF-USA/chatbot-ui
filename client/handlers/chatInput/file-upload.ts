@@ -3,6 +3,8 @@ import toast from 'react-hot-toast';
 
 import { FileUploadService } from '@/client/services/fileUploadService';
 
+import { FILE_COUNT_LIMITS } from '@/lib/utils/app/const';
+
 import {
   ChatInputSubmitTypes,
   FileFieldValue,
@@ -13,6 +15,7 @@ import {
 } from '@/types/chat';
 
 import { isChangeEvent } from '@/client/handlers/chatInput/common';
+import { isAudioVideoFileByTypeOrName } from '@/lib/constants/fileTypes';
 
 export async function onFileUpload(
   event: React.ChangeEvent<HTMLInputElement> | FileList | File[],
@@ -35,37 +38,66 @@ export async function onFileUpload(
     return;
   }
 
-  if (files.length > 5) {
-    toast.error('You can upload a maximum of 5 files at a time.');
+  const filesArray = Array.from(files);
+
+  // Categorize files by type
+  const images = filesArray.filter((file) => file.type.startsWith('image/'));
+  const audioVideo = filesArray.filter((file) =>
+    isAudioVideoFileByTypeOrName(file.name, file.type),
+  );
+  const documents = filesArray.filter(
+    (file) =>
+      !file.type.startsWith('image/') &&
+      !isAudioVideoFileByTypeOrName(file.name, file.type),
+  );
+
+  // Validate count limits
+  if (filesArray.length > FILE_COUNT_LIMITS.MAX_TOTAL_FILES) {
+    toast.error(
+      `Maximum ${FILE_COUNT_LIMITS.MAX_TOTAL_FILES} files allowed (you selected ${filesArray.length})`,
+    );
     return;
   }
 
-  const filesArray = Array.from(files);
-
-  // Reject audio/video files (they should use the transcription button)
-  const audioVideoExtensions = [
-    '.mp3',
-    '.mp4',
-    '.mpeg',
-    '.mpga',
-    '.m4a',
-    '.wav',
-    '.webm',
-  ];
-  const hasAudioVideo = filesArray.some((file) => {
-    const ext = '.' + file.name.split('.').pop()?.toLowerCase();
-    return (
-      audioVideoExtensions.includes(ext) ||
-      file.type.startsWith('audio/') ||
-      file.type.startsWith('video/')
-    );
-  });
-
-  if (hasAudioVideo) {
+  if (images.length > FILE_COUNT_LIMITS.MAX_IMAGES) {
     toast.error(
-      'Audio/video files cannot be attached. Use the "Transcribe Audio/Video" button in the dropdown menu instead.',
+      `Maximum ${FILE_COUNT_LIMITS.MAX_IMAGES} images allowed (you selected ${images.length})`,
     );
     return;
+  }
+
+  if (documents.length > FILE_COUNT_LIMITS.MAX_DOCUMENTS) {
+    toast.error(
+      `Maximum ${FILE_COUNT_LIMITS.MAX_DOCUMENTS} documents allowed (you selected ${documents.length})`,
+    );
+    return;
+  }
+
+  if (audioVideo.length > FILE_COUNT_LIMITS.MAX_AUDIO_VIDEO) {
+    toast.error(
+      `Maximum ${FILE_COUNT_LIMITS.MAX_AUDIO_VIDEO} audio/video file allowed (you selected ${audioVideo.length})`,
+    );
+    return;
+  }
+
+  // Validate total size
+  const totalSize = filesArray.reduce((sum, file) => sum + file.size, 0);
+  if (totalSize > FILE_COUNT_LIMITS.MAX_TOTAL_SIZE) {
+    const totalSizeMB = (totalSize / (1024 * 1024)).toFixed(1);
+    const maxSizeMB = (
+      FILE_COUNT_LIMITS.MAX_TOTAL_SIZE /
+      (1024 * 1024)
+    ).toFixed(0);
+    toast.error(`Total size ${totalSizeMB}MB exceeds ${maxSizeMB}MB limit`);
+    return;
+  }
+
+  // Show warning for slow processing
+  if (audioVideo.length > 0 && documents.length > 1) {
+    toast('Processing audio + multiple documents may take 1-2 minutes', {
+      icon: '⏱️',
+      duration: 5000,
+    });
   }
 
   // Initialize all file previews at once before processing

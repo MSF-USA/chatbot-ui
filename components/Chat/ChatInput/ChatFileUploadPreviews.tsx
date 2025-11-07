@@ -123,7 +123,9 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   const getFileTypeColor = (ext: string, fileType: string) => {
     if (fileType.startsWith('audio/')) return 'bg-purple-500 text-white';
     if (fileType.startsWith('video/')) return 'bg-pink-500 text-white';
+
     switch (ext) {
+      // Documents
       case 'pdf':
         return 'bg-red-500 text-white';
       case 'doc':
@@ -135,9 +137,69 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
       case 'ppt':
       case 'pptx':
         return 'bg-orange-500 text-white';
+
+      // Text
       case 'txt':
       case 'md':
         return 'bg-gray-500 text-white';
+
+      // Data
+      case 'csv':
+        return 'bg-emerald-500 text-white';
+      case 'json':
+        return 'bg-yellow-500 text-white';
+      case 'xml':
+        return 'bg-amber-600 text-white';
+      case 'yaml':
+      case 'yml':
+        return 'bg-violet-500 text-white';
+
+      // Code - Programming Languages
+      case 'py':
+        return 'bg-blue-600 text-white';
+      case 'js':
+      case 'jsx':
+        return 'bg-yellow-400 text-black';
+      case 'ts':
+      case 'tsx':
+        return 'bg-blue-500 text-white';
+      case 'java':
+        return 'bg-red-600 text-white';
+      case 'c':
+      case 'cpp':
+      case 'cs':
+        return 'bg-purple-600 text-white';
+      case 'go':
+        return 'bg-cyan-500 text-white';
+      case 'rb':
+        return 'bg-red-500 text-white';
+      case 'php':
+        return 'bg-indigo-500 text-white';
+      case 'swift':
+        return 'bg-orange-600 text-white';
+      case 'kt':
+        return 'bg-purple-500 text-white';
+      case 'rs':
+        return 'bg-orange-700 text-white';
+      case 'scala':
+        return 'bg-red-700 text-white';
+
+      // Scripts & Config
+      case 'sql':
+        return 'bg-blue-700 text-white';
+      case 'sh':
+      case 'bash':
+        return 'bg-gray-700 text-white';
+      case 'ps1':
+        return 'bg-blue-800 text-white';
+      case 'r':
+        return 'bg-blue-400 text-white';
+      case 'env':
+      case 'config':
+      case 'ini':
+      case 'toml':
+        return 'bg-slate-600 text-white';
+
       default:
         return 'bg-gray-500 text-white';
     }
@@ -178,12 +240,11 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
           isRemoving
             ? 'opacity-0 scale-90 translate-x-2 translate-y-2'
             : 'opacity-100 scale-100 translate-x-0 translate-y-0'
-        } hover:scale-[1.02] hover:shadow-lg`}
+        } hover:scale-[1.02] hover:shadow-lg ${isImage ? 'h-[150px]' : 'min-h-[90px]'}`}
         style={{
           width: 'calc(50% - 0.25rem)',
           maxWidth: '280px',
           minWidth: '200px',
-          height: isImage ? '150px' : 'auto',
           animation: isRemoving ? 'none' : 'slideInScale 0.3s ease-out',
         }}
         onMouseEnter={() => setIsHovered(true)}
@@ -231,33 +292,38 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
             )}
           </div>
         ) : (
-          <div className="flex flex-col p-2.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
-            <div className="flex items-center gap-2 mb-1.5">
+          <div className="flex flex-col p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg h-full justify-between">
+            <div className="flex items-center gap-2 mb-2">
               <div
-                className={`px-1.5 py-0.5 rounded text-xs font-semibold ${badgeColor}`}
+                className={`px-2 py-1 rounded text-xs font-bold ${badgeColor} flex-shrink-0`}
               >
                 {badgeText}
               </div>
               {status === 'uploading' && progress !== undefined && (
-                <div className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                <div className="text-xs font-semibold text-gray-600 dark:text-gray-400 flex-shrink-0">
                   {Math.round(progress)}%
                 </div>
               )}
             </div>
-            <div className="min-w-0">
-              <div className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">
+            <div className="min-w-0 flex-grow">
+              <div
+                className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate"
+                title={filename}
+              >
                 {filename}
               </div>
+            </div>
+            <div className="mt-1.5">
               {isPdf && status === 'completed' && (
-                <div className="flex items-center gap-1 text-xs mt-0.5 text-gray-600 dark:text-gray-400">
-                  <IconInfoCircle size={12} />
-                  <span>Text extraction only</span>
+                <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+                  <IconInfoCircle size={12} className="flex-shrink-0" />
+                  <span>Text extraction</span>
                 </div>
               )}
               {(isAudio || isVideo) && status === 'completed' && (
-                <div className="flex items-center gap-1 text-xs mt-0.5 text-blue-600 dark:text-blue-400">
-                  <IconInfoCircle size={12} />
-                  <span>Will be transcribed on send</span>
+                <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                  <IconInfoCircle size={12} className="flex-shrink-0" />
+                  <span>Transcribes on send</span>
                 </div>
               )}
             </div>

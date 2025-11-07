@@ -1,60 +1,40 @@
 import { Session } from 'next-auth';
 
-import { Message, ToolType } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
-import { Citation } from '@/types/rag';
 
 /**
- * Result from tool execution
- */
-export interface ToolResult {
-  text: string;
-  citations?: Citation[];
-}
-
-/**
- * Base interface for all tools.
- * Tools are discrete capabilities that can be used during a conversation
- * without sending the full conversation to AI Foundry.
+ * Tool interface for all tools that can be executed by the chat system.
  */
 export interface Tool {
-  /**
-   * The type of tool (used for routing and identification)
-   */
-  readonly type: ToolType;
-
-  /**
-   * Human-readable name of the tool
-   */
+  readonly type: string;
   readonly name: string;
-
-  /**
-   * Description of what this tool does
-   */
   readonly description: string;
 
   /**
    * Executes the tool with the given parameters.
-   *
-   * @param params - Tool-specific parameters
-   * @returns Tool execution result with text and optional citations
    */
-  execute(params: ToolExecutionParams): Promise<ToolResult>;
+  execute(params: any): Promise<ToolResult>;
 }
 
 /**
- * Base parameters for tool execution
+ * Result returned by tool execution.
  */
-export interface ToolExecutionParams {
-  user: Session['user'];
-  model?: OpenAIModel;
-  [key: string]: any; // Allow tool-specific parameters
+export interface ToolResult {
+  text: string;
+  citations?: Array<{
+    number: number;
+    title: string;
+    url: string;
+    date: string;
+  }>;
+  metadata?: Record<string, any>;
 }
 
 /**
- * Web search tool parameters
+ * Parameters for web search tool.
  */
-export interface WebSearchToolParams extends ToolExecutionParams {
+export interface WebSearchToolParams {
   searchQuery: string;
-  model: OpenAIModel; // Required for web search
+  model: OpenAIModel;
+  user: Session['user'];
 }

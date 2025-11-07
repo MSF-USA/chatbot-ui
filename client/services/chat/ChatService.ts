@@ -4,28 +4,44 @@ import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
 
-import { agentChatService } from './AgentChatService';
-import { audioChatService } from './AudioChatService';
-import { fileChatService } from './FileChatService';
-import { ragChatService } from './RAGChatService';
-import { standardChatService } from './StandardChatService';
+import { apiClient } from '../api';
 
 /**
- * Main chat service orchestrator.
+ * Unified Chat Service
  *
- * Routes chat requests to the appropriate specialized service based on:
- * - Document files → FileChatService
- * - Audio/video files → AudioChatService
- * - Bot ID present → RAGChatService
- * - SearchMode.AGENT → AgentChatService (direct AI Foundry - fast, less private)
- * - SearchMode.INTELLIGENT/ALWAYS → Tool-Aware endpoint (privacy-focused)
- * - SearchMode.OFF or default → StandardChatService
+ * Simple client-side service that routes ALL chat requests to the unified
+ * /api/chat endpoint. The server pipeline handles all routing decisions.
  *
- * This provides a unified interface while delegating to specialized implementations.
+ * Features supported (through server-side pipeline):
+ * - Text conversations
+ * - Image conversations (vision models)
+ * - File analysis (documents)
+ * - Audio/video transcription
+ * - Mixed content (files + images)
+ * - RAG with knowledge bases
+ * - Intelligent search (tool routing)
+ * - AI Foundry agents
+ * - ANY combination of the above
+ *
+ * Usage:
+ * ```typescript
+ * const stream = await chatService.chat(model, messages, {
+ *   botId: 'my-bot',        // Enable RAG
+ *   searchMode: 'intelligent', // Enable search
+ *   temperature: 0.7,
+ * });
+ * ```
  */
 export class ChatService {
   /**
-   * Sends a chat request using the appropriate specialized service.
+   * Sends a chat request to the unified endpoint.
+   *
+   * The server pipeline automatically:
+   * - Detects content types (files, images, audio)
+   * - Processes content (download, extract, transcribe)
+   * - Applies features (RAG, search, agents)
+   * - Executes with the right model
+   * - Returns streaming or non-streaming response
    *
    * @param model - The model to use
    * @param messages - The conversation messages
@@ -44,158 +60,71 @@ export class ChatService {
       botId?: string;
       threadId?: string;
       searchMode?: SearchMode;
+      forcedAgentType?: string;
     },
   ): Promise<ReadableStream<Uint8Array>> {
-    // 1. Check for document files FIRST (highest priority)
-    if (fileChatService.hasDocumentFiles(messages)) {
-      console.log('[ChatService] Routing to FileChatService');
-      return fileChatService.chat(model, messages, {
-        botId: options?.botId,
-      });
-    }
+    console.log('[ChatService] Sending request to unified /api/chat endpoint', {
+      modelId: model.id,
+      messageCount: messages.length,
+      hasOptions: !!options,
+      botId: options?.botId,
+      searchMode: options?.searchMode,
+    });
 
-    // 2. Check for audio/video files
-    if (audioChatService.hasAudioVideoFiles(messages)) {
-      console.log('[ChatService] Routing to AudioChatService');
-      return audioChatService.chat(model, messages, {
-        botId: options?.botId,
-      });
-    }
-
-    // 3. Check for RAG/bot requests
-    if (options?.botId) {
-      console.log('[ChatService] Routing to RAGChatService');
-      return ragChatService.chat(model, messages, options.botId);
-    }
-
-    // 4. Check for AGENT search mode (direct AI Foundry agent - fast, less private)
-    if (options?.searchMode === SearchMode.AGENT) {
-      console.log(
-        '[ChatService] Routing to AgentChatService (SearchMode.AGENT)',
-      );
-      return agentChatService.chat(model, messages, {
-        temperature: options?.temperature,
-        threadId: options?.threadId,
-        botId: options?.botId,
-      });
-    }
-
-    // 5. Check for INTELLIGENT or ALWAYS search mode (privacy-focused tool routing)
-    // This uses tool-aware routing where only search queries go to AI Foundry
-    if (
-      options?.searchMode === SearchMode.INTELLIGENT ||
-      options?.searchMode === SearchMode.ALWAYS
-    ) {
-      console.log(
-        `[ChatService] Routing to Tool-Aware endpoint (SearchMode.${options.searchMode})`,
-      );
-      return this.toolAwareChat(model, messages, options);
-    }
-
-    // 6. Default to standard chat
-    console.log('[ChatService] Routing to StandardChatService');
-    return standardChatService.chat(model, messages, {
+    return apiClient.postStream('/api/chat', {
+      model,
+      messages,
       prompt: options?.prompt,
       temperature: options?.temperature,
+      stream: options?.stream ?? true,
       reasoningEffort: options?.reasoningEffort,
       verbosity: options?.verbosity,
       botId: options?.botId,
+      threadId: options?.threadId,
+      searchMode: options?.searchMode,
+      forcedAgentType: options?.forcedAgentType,
     });
   }
 
   /**
-   * Sends chat request to tool-aware endpoint (search mode with privacy).
-   * Uses privacy-focused routing with intelligent tool determination.
-   * Only search queries are sent to AI Foundry, not the full conversation.
+   * Sends a non-streaming chat request.
    *
    * @param model - The model to use
    * @param messages - The conversation messages
    * @param options - Optional parameters
-   * @returns ReadableStream for processing response chunks
+   * @returns Complete chat response
    */
-  private async toolAwareChat(
+  public async chatNonStreaming(
     model: OpenAIModel,
     messages: Message[],
     options?: {
       prompt?: string;
       temperature?: number;
-      stream?: boolean;
       reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
       verbosity?: 'low' | 'medium' | 'high';
       botId?: string;
       threadId?: string;
       searchMode?: SearchMode;
+      forcedAgentType?: string;
     },
-  ): Promise<ReadableStream<Uint8Array>> {
+  ): Promise<{ text: string; metadata?: any }> {
     console.log(
-      `[ChatService] Tool-aware chat with SearchMode.${options?.searchMode}`,
+      '[ChatService] Sending non-streaming request to unified /api/chat endpoint',
     );
 
-    const response = await fetch('/api/chat/tool-aware', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model,
-        messages,
-        prompt: options?.prompt,
-        temperature: options?.temperature,
-        stream: options?.stream ?? true,
-        searchMode: options?.searchMode,
-        reasoningEffort: options?.reasoningEffort,
-        verbosity: options?.verbosity,
-        botId: options?.botId,
-      }),
+    return apiClient.post('/api/chat', {
+      model,
+      messages,
+      prompt: options?.prompt,
+      temperature: options?.temperature,
+      stream: false,
+      reasoningEffort: options?.reasoningEffort,
+      verbosity: options?.verbosity,
+      botId: options?.botId,
+      threadId: options?.threadId,
+      searchMode: options?.searchMode,
+      forcedAgentType: options?.forcedAgentType,
     });
-
-    if (!response.ok || !response.body) {
-      throw new Error(`Tool-aware chat request failed: ${response.statusText}`);
-    }
-
-    return response.body;
-  }
-
-  /**
-   * Determines which service would handle a given request.
-   *
-   * Useful for debugging and testing.
-   *
-   * @param model - The model to use
-   * @param messages - The conversation messages
-   * @param options - Optional parameters
-   * @returns The service name that would handle this request
-   */
-  public getServiceForRequest(
-    model: OpenAIModel,
-    messages: Message[],
-    options?: {
-      botId?: string;
-      searchMode?: SearchMode;
-    },
-  ): 'file' | 'audio' | 'rag' | 'agent' | 'tool-aware' | 'standard' {
-    if (fileChatService.hasDocumentFiles(messages)) {
-      return 'file';
-    }
-
-    if (audioChatService.hasAudioVideoFiles(messages)) {
-      return 'audio';
-    }
-
-    if (options?.botId) {
-      return 'rag';
-    }
-
-    if (options?.searchMode === SearchMode.AGENT) {
-      return 'agent';
-    }
-
-    if (
-      options?.searchMode === SearchMode.INTELLIGENT ||
-      options?.searchMode === SearchMode.ALWAYS
-    ) {
-      return 'tool-aware';
-    }
-
-    return 'standard';
   }
 }
 
