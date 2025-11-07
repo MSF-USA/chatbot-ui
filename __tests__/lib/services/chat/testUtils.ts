@@ -5,8 +5,7 @@
 import { Session } from 'next-auth';
 
 import { ChatContext } from '@/lib/services/chat/pipeline/ChatContext';
-import { ChatLogger } from '@/lib/services/shared/ChatLogger';
-import { ModelSelector } from '@/lib/services/shared/ModelSelector';
+import { ChatLogger, ModelSelector } from '@/lib/services/shared';
 
 import { DEFAULT_MODEL, DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 
@@ -102,9 +101,6 @@ export interface TestChatContextOptions {
   // Processed data
   processedContent?: any;
   enrichedMessages?: Message[];
-
-  // Metadata
-  correlationId?: string;
 }
 
 /**
@@ -168,7 +164,6 @@ export function createTestChatContext(
       startTime: Date.now(),
       stageTimings: new Map(),
     },
-    correlationId: options.correlationId || 'test-correlation-id',
   };
 }
 
@@ -283,10 +278,10 @@ export function createMixedContext(): ChatContext {
  */
 export function createTestError(
   code: ErrorCode = ErrorCode.INTERNAL_ERROR,
-  message: string = 'Test error',
   severity: ErrorSeverity = ErrorSeverity.ERROR,
+  message: string = 'Test error',
 ): PipelineError {
-  return new PipelineError(code, message, severity);
+  return new PipelineError(code, severity, message);
 }
 
 /**
@@ -296,7 +291,10 @@ export function expectContextErrors(
   context: ChatContext,
   expectedCodes: ErrorCode[],
 ): void {
-  const actualCodes = context.errors.map((e) => e.code);
+  const actualCodes =
+    context.errors
+      ?.filter((e): e is PipelineError => e instanceof PipelineError)
+      .map((e) => e.code) ?? [];
   expect(actualCodes).toEqual(expectedCodes);
 }
 
@@ -304,7 +302,7 @@ export function expectContextErrors(
  * Asserts that a context has no errors
  */
 export function expectNoErrors(context: ChatContext): void {
-  expect(context.errors).toHaveLength(0);
+  expect(context.errors ?? []).toHaveLength(0);
 }
 
 /**

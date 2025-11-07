@@ -39,7 +39,7 @@ const mockEditor = {
     setContent: vi.fn(),
   },
   chain: vi.fn(() => createChainableMock()),
-  isActive: vi.fn((type: string) => false),
+  isActive: vi.fn((type: string, attrs?: any) => false),
   can: vi.fn(() => ({
     undo: vi.fn(() => true),
     redo: vi.fn(() => true),
@@ -452,8 +452,8 @@ describe('DocumentEditor', () => {
   describe('Undo/Redo State', () => {
     it('should disable undo button when undo is not available', () => {
       mockEditor.can.mockReturnValue({
-        undo: () => false,
-        redo: () => true,
+        undo: vi.fn(() => false),
+        redo: vi.fn(() => true),
       });
 
       render(<DocumentEditor />);
@@ -464,8 +464,8 @@ describe('DocumentEditor', () => {
 
     it('should disable redo button when redo is not available', () => {
       mockEditor.can.mockReturnValue({
-        undo: () => true,
-        redo: () => false,
+        undo: vi.fn(() => true),
+        redo: vi.fn(() => false),
       });
 
       render(<DocumentEditor />);
@@ -476,8 +476,8 @@ describe('DocumentEditor', () => {
 
     it('should enable both buttons when both actions are available', () => {
       mockEditor.can.mockReturnValue({
-        undo: () => true,
-        redo: () => true,
+        undo: vi.fn(() => true),
+        redo: vi.fn(() => true),
       });
 
       render(<DocumentEditor />);

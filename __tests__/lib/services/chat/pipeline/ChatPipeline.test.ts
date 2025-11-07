@@ -17,7 +17,7 @@ describe('ChatPipeline', () => {
         shouldRun: () => true,
         execute: async (context) => {
           await new Promise((resolve) => setTimeout(resolve, 10));
-          return { ...context, processedContent: { fast: true } };
+          return { ...context, processedContent: { metadata: { fast: true } } };
         },
       };
 
@@ -26,7 +26,7 @@ describe('ChatPipeline', () => {
 
       const result = await pipeline.execute(context);
 
-      expect(result.processedContent?.fast).toBe(true);
+      expect(result.processedContent?.metadata?.fast).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
@@ -37,7 +37,7 @@ describe('ChatPipeline', () => {
         shouldRun: () => true,
         execute: async (context) => {
           await new Promise((resolve) => setTimeout(resolve, 200));
-          return { ...context, processedContent: { slow: true } };
+          return { ...context, processedContent: { metadata: { slow: true } } };
         },
       };
 
@@ -48,7 +48,10 @@ describe('ChatPipeline', () => {
         execute: async (context) => {
           return {
             ...context,
-            processedContent: { ...context.processedContent, fast: true },
+            processedContent: {
+              ...context.processedContent,
+              metadata: { ...context.processedContent?.metadata, fast: true },
+            },
           };
         },
       };
@@ -61,10 +64,10 @@ describe('ChatPipeline', () => {
       const result = await pipeline.execute(context);
 
       // SlowStage should have timed out (not set slow: true)
-      expect(result.processedContent?.slow).toBeUndefined();
+      expect(result.processedContent?.metadata?.slow).toBeUndefined();
 
       // FastStage should have run successfully
-      expect(result.processedContent?.fast).toBe(true);
+      expect(result.processedContent?.metadata?.fast).toBe(true);
 
       // Should have exactly one timeout warning
       expect(result.errors).toHaveLength(1);
@@ -83,7 +86,10 @@ describe('ChatPipeline', () => {
         shouldRun: () => true,
         execute: async (context) => {
           await new Promise((resolve) => setTimeout(resolve, 10));
-          return { ...context, processedContent: { custom: true } };
+          return {
+            ...context,
+            processedContent: { metadata: { custom: true } },
+          };
         },
       };
 
@@ -93,7 +99,7 @@ describe('ChatPipeline', () => {
 
       const result = await pipeline.execute(context);
 
-      expect(result.processedContent?.custom).toBe(true);
+      expect(result.processedContent?.metadata?.custom).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
 
@@ -103,7 +109,10 @@ describe('ChatPipeline', () => {
         shouldRun: () => true,
         execute: async (context) => {
           await new Promise((resolve) => setTimeout(resolve, 30));
-          return { ...context, processedContent: { stage1: true } };
+          return {
+            ...context,
+            processedContent: { metadata: { stage1: true } },
+          };
         },
       };
 
@@ -114,7 +123,10 @@ describe('ChatPipeline', () => {
           await new Promise((resolve) => setTimeout(resolve, 100));
           return {
             ...context,
-            processedContent: { ...context.processedContent, stage2: true },
+            processedContent: {
+              ...context.processedContent,
+              metadata: { ...context.processedContent?.metadata, stage2: true },
+            },
           };
         },
       };
@@ -125,7 +137,10 @@ describe('ChatPipeline', () => {
         execute: async (context) => {
           return {
             ...context,
-            processedContent: { ...context.processedContent, stage3: true },
+            processedContent: {
+              ...context.processedContent,
+              metadata: { ...context.processedContent?.metadata, stage3: true },
+            },
           };
         },
       };
@@ -139,9 +154,9 @@ describe('ChatPipeline', () => {
 
       const result = await pipeline.execute(context);
 
-      expect(result.processedContent?.stage1).toBe(true);
-      expect(result.processedContent?.stage2).toBeUndefined(); // Timed out
-      expect(result.processedContent?.stage3).toBe(true);
+      expect(result.processedContent?.metadata?.stage1).toBe(true);
+      expect(result.processedContent?.metadata?.stage2).toBeUndefined(); // Timed out
+      expect(result.processedContent?.metadata?.stage3).toBe(true);
 
       // Should have one timeout error for Stage2
       expect(result.errors).toHaveLength(1);
@@ -216,7 +231,7 @@ describe('ChatPipeline', () => {
         name: 'NextStage',
         shouldRun: () => true,
         execute: async (context) => {
-          return { ...context, processedContent: { next: true } };
+          return { ...context, processedContent: { metadata: { next: true } } };
         },
       };
 
@@ -226,7 +241,7 @@ describe('ChatPipeline', () => {
       const result = await pipeline.execute(context);
 
       // NextStage should not have run due to critical error
-      expect(result.processedContent?.next).toBeUndefined();
+      expect(result.processedContent?.metadata?.next).toBeUndefined();
       expect(result.errors).toHaveLength(1);
     });
   });

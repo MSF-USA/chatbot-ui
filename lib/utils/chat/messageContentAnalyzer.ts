@@ -222,7 +222,7 @@ export class MessageContentAnalyzer {
 
     const textContent = this.content.find(
       (item): item is TextMessageContent => item.type === 'text',
-    );
+    ) as TextMessageContent | undefined;
     return textContent?.text ?? '';
   }
 
@@ -233,7 +233,7 @@ export class MessageContentAnalyzer {
     if (!Array.isArray(this.content)) return [];
     return this.content.filter(
       (item): item is FileMessageContent => item.type === 'file_url',
-    );
+    ) as FileMessageContent[];
   }
 
   /**
@@ -243,7 +243,7 @@ export class MessageContentAnalyzer {
     if (!Array.isArray(this.content)) return [];
     return this.content.filter(
       (item): item is ImageMessageContent => item.type === 'image_url',
-    );
+    ) as ImageMessageContent[];
   }
 
   /**

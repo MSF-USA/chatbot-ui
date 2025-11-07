@@ -106,7 +106,7 @@ export interface ChatContext {
   // CONTENT ANALYSIS (Populated by middleware)
   // ========================================
   /** All content types present in messages */
-  contentTypes: Set<'text' | 'image' | 'file' | 'audio'>;
+  contentTypes: Set<'text' | 'image' | 'file' | 'audio' | 'video'>;
 
   /** Whether files are present */
   hasFiles: boolean;
