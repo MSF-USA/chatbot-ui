@@ -306,8 +306,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               >
                 <StreamdownWithCodeButtons>
                   <CitationStreamdown
-                    conversation={selectedConversation}
-                    message={message}
                     citations={citations}
                     components={customMarkdownComponents}
                     isAnimating={messageIsStreaming}

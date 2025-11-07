@@ -231,11 +231,13 @@ export const createModelSelectionMiddleware = (
     context.messages,
   );
 
-  // Determine if we're in agent mode based on search mode or model config
+  // Determine if we're in agent mode based on search mode or custom agent flag
+  // Note: We don't check agentId or isAgent here because those are model capabilities,
+  // not user intent. Only route to agent mode if user explicitly requested it via
+  // searchMode or if it's a custom agent.
   const agentMode =
     context.searchMode === SearchMode.AGENT ||
-    modelConfig.isCustomAgent === true ||
-    !!modelConfig.agentId;
+    modelConfig.isCustomAgent === true;
 
   return {
     modelSelector,

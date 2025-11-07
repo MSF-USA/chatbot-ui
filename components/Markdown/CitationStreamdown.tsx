@@ -2,11 +2,6 @@
 import React, { FC, memo, useCallback, useRef, useState } from 'react';
 import type { Components } from 'react-markdown';
 
-import Link from 'next/link';
-
-import { extractCitationsFromContent } from '@/lib/utils/app/stream/citation';
-
-import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
 import { CitationItem } from '../Chat/Citations/CitationItem';
@@ -15,8 +10,6 @@ import { Streamdown } from 'streamdown';
 import type { StreamdownProps } from 'streamdown';
 
 interface CitationStreamdownProps extends Omit<StreamdownProps, 'components'> {
-  message?: Message;
-  conversation?: Conversation | null;
   citations?: Citation[];
   components?: Components;
 }
@@ -26,20 +19,17 @@ type HoverState = {
   key: string;
 } | null;
 
+/**
+ * Pure presentation component for rendering markdown with citation tooltips.
+ * Expects pre-processed content (children) and citations - does NOT perform data transformation.
+ *
+ * Architecture:
+ * - Data processing happens upstream (in chatStore, AssistantMessage)
+ * - This component only handles rendering and UI interactions (hover tooltips)
+ */
 export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
-  ({
-    message,
-    conversation,
-    citations = [],
-    components = {},
-    isAnimating = false,
-    ...props
-  }) => {
-    const [displayContent, setDisplayContent] = useState('');
+  ({ citations = [], components = {}, isAnimating = false, ...props }) => {
     const [hoveredCitation, setHoveredCitation] = useState<HoverState>(null);
-    const [extractedCitations, setExtractedCitations] = useState<Citation[]>(
-      [],
-    );
     const [tooltipPosition, setTooltipPosition] = useState<{
       top: number;
       left: number;
@@ -47,73 +37,6 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
 
     const hoverTimeoutRef = useRef<number | null>(null);
     const activeElementRef = useRef<HTMLElement | null>(null);
-    const citationsProcessed = useRef(false);
-
-    // Create stable keys for dependency comparison
-    const messageKey = React.useMemo(() => JSON.stringify(message), [message]);
-    const citationsKey = React.useMemo(
-      () => JSON.stringify(citations),
-      [citations],
-    );
-    const conversationBotKey = React.useMemo(
-      () => conversation?.bot || '',
-      [conversation?.bot],
-    );
-
-    // Process content to extract citations
-    React.useEffect(() => {
-      const processContent = () => {
-        let mainContent = props.children?.toString() || '';
-        let citationsData: Citation[] = [];
-
-        // Check if we should process citations:
-        // - If conversation has a bot (RAG/bot conversations)
-        // - If citations are provided (from search results)
-        // - If message has citations
-        const shouldProcessCitations =
-          !!conversation?.bot ||
-          (citations && citations.length > 0) ||
-          (message?.citations && message.citations.length > 0);
-
-        if (!shouldProcessCitations) {
-          setDisplayContent(mainContent);
-          setExtractedCitations([]);
-          citationsProcessed.current = true;
-          return;
-        }
-
-        // Priority 1: Use citations from the message object
-        if (message?.citations && message.citations.length > 0) {
-          citationsData = [...message.citations];
-
-          // Clean content from citation data
-          if (mainContent) {
-            const { text } = extractCitationsFromContent(mainContent);
-            mainContent = text;
-          }
-        }
-        // Priority 2: Use provided citations prop (for privacy-focused search mode)
-        else if (citations && citations.length > 0) {
-          citationsData = [...citations];
-        }
-        // Priority 3: Parse the content to extract citations (for bot conversations)
-        else if (conversation?.bot) {
-          const { text, citations: extractedCits } =
-            extractCitationsFromContent(mainContent);
-          if (extractedCits.length > 0) {
-            mainContent = text;
-            citationsData = extractedCits;
-          }
-        }
-
-        setDisplayContent(mainContent);
-        setExtractedCitations(citationsData);
-        citationsProcessed.current = true;
-      };
-
-      processContent();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [props.children, messageKey, citationsKey, conversationBotKey]);
 
     // Global mouse tracking for citation tooltips
     React.useEffect(() => {
@@ -165,7 +88,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
     const renderTooltip = useCallback(() => {
       if (!hoveredCitation || !tooltipPosition) return null;
 
-      const citation = extractedCitations[hoveredCitation.number - 1];
+      const citation = citations[hoveredCitation.number - 1];
       if (!citation) return null;
 
       return (
@@ -184,7 +107,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
           <CitationItem citation={citation} />
         </div>
       );
-    }, [hoveredCitation, tooltipPosition, extractedCitations]);
+    }, [hoveredCitation, tooltipPosition, citations]);
 
     // Custom component for text nodes to handle citation markers
     // Memoize to prevent unnecessary re-renders
@@ -194,7 +117,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
           if (typeof child === 'string') {
             return processTextWithCitations(
               child,
-              extractedCitations,
+              citations,
               handleCitationHover,
             );
           }
@@ -237,7 +160,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
           return <em {...props}>{processedChildren}</em>;
         },
       };
-    }, [components, extractedCitations, handleCitationHover]);
+    }, [components, citations, handleCitationHover]);
 
     return (
       <>
@@ -246,7 +169,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
           isAnimating={isAnimating}
           {...props}
         >
-          {displayContent}
+          {props.children}
         </Streamdown>
         {renderTooltip()}
       </>
@@ -256,7 +179,7 @@ export const CitationStreamdown: FC<CitationStreamdownProps> = memo(
 
 CitationStreamdown.displayName = 'CitationStreamdown';
 
-// Helper function to process text and replace citation markers
+// Helper function to process text and replace citation markers with interactive elements
 function processTextWithCitations(
   text: string,
   citations: Citation[],
