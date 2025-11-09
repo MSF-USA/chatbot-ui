@@ -21,6 +21,10 @@ vi.mock('@tabler/icons-react', () => ({
     React.createElement('div', { 'data-testid': 'download-icon', className }),
   IconX: ({ className }: any) =>
     React.createElement('div', { 'data-testid': 'close-icon', className }),
+  IconFileText: ({ className }: any) =>
+    React.createElement('div', { 'data-testid': 'file-text-icon', className }),
+  IconCode: ({ className }: any) =>
+    React.createElement('div', { 'data-testid': 'code-icon', className }),
 }));
 
 describe('FileContent', () => {
@@ -95,17 +99,15 @@ describe('FileContent', () => {
   });
 
   describe('File Download Functionality', () => {
-    it('opens download link when file is clicked', () => {
+    it('opens download link when download button is clicked', () => {
       const files = [
         createFileContent('https://example.com/doc.pdf', 'document.pdf'),
       ];
 
       render(<FileContent files={files} images={[]} />);
 
-      const fileElement = screen.getByText('document.pdf').closest('div');
-      if (fileElement) {
-        fireEvent.click(fileElement);
-      }
+      const downloadButton = screen.getByTitle('Download');
+      fireEvent.click(downloadButton);
 
       expect(mockWindowOpen).toHaveBeenCalledWith(
         '/api/file/doc.pdf',
@@ -120,10 +122,8 @@ describe('FileContent', () => {
 
       render(<FileContent files={files} images={[]} />);
 
-      const fileElement = screen.getByText('file.xlsx').closest('div');
-      if (fileElement) {
-        fireEvent.click(fileElement);
-      }
+      const downloadButton = screen.getByTitle('Download');
+      fireEvent.click(downloadButton);
 
       expect(mockWindowOpen).toHaveBeenCalledWith(
         '/api/file/file.xlsx',
@@ -322,12 +322,12 @@ describe('FileContent', () => {
         createFileContent('https://example.com/doc.pdf', 'document.pdf'),
       ];
 
-      const { container } = render(<FileContent files={files} images={[]} />);
+      render(<FileContent files={files} images={[]} />);
 
       const fileContainer = screen
         .getByText('document.pdf')
-        .closest('.cursor-pointer');
-      expect(fileContainer).toHaveClass('cursor-pointer');
+        .closest('div[class*="hover:shadow-lg"]');
+      expect(fileContainer).toBeInTheDocument();
       expect(fileContainer).toHaveClass('hover:shadow-lg');
     });
 
@@ -367,17 +367,17 @@ describe('FileContent', () => {
       });
     });
 
-    it('files are keyboard accessible (clickable divs)', () => {
+    it('files have accessible action buttons', () => {
       const files = [
         createFileContent('https://example.com/doc.pdf', 'document.pdf'),
       ];
 
       render(<FileContent files={files} images={[]} />);
 
-      const fileContainer = screen
-        .getByText('document.pdf')
-        .closest('.cursor-pointer');
-      expect(fileContainer).toHaveClass('cursor-pointer');
+      // Check that the download button is accessible
+      const downloadButton = screen.getByTitle('Download');
+      expect(downloadButton).toBeInTheDocument();
+      expect(downloadButton.tagName.toLowerCase()).toBe('button');
     });
 
     it('image thumbnails are clickable', async () => {

@@ -1,5 +1,3 @@
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { Message, MessageType, ToolRouterRequest } from '@/types/chat';
 import { OpenAIModelID, OpenAIModels } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';

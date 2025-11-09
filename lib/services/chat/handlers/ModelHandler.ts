@@ -1,7 +1,5 @@
 import { Session } from 'next-auth';
 
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
@@ -28,10 +26,8 @@ export type ChatCompletionResponse =
  * their specific message preparation and parameter handling logic.
  */
 export abstract class ModelHandler {
-  protected loggingService?: AzureMonitorLoggingService;
-
-  constructor(loggingService?: AzureMonitorLoggingService) {
-    this.loggingService = loggingService;
+  constructor() {
+    // Base class for model-specific handlers
   }
 
   /**

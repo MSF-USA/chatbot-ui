@@ -7,8 +7,6 @@ import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';
 import { Citation, SearchResult } from '@/types/rag';
 
-import { AzureMonitorLoggingService } from './loggingService';
-
 import { AzureKeyCredential, SearchClient } from '@azure/search-documents';
 import { AzureOpenAI } from 'openai';
 import OpenAI from 'openai';
@@ -20,7 +18,6 @@ import { ChatCompletion } from 'openai/resources';
  */
 export class RAGService {
   private searchClient: SearchClient<SearchResult>;
-  private loggingService: AzureMonitorLoggingService;
   private openAIClient: AzureOpenAI;
   private searchIndex: string;
   public searchDocs: SearchResult[] = [];
@@ -40,14 +37,12 @@ export class RAGService {
    * @param {string} searchEndpoint - The endpoint URL for the Azure Search service.
    * @param {string} searchIndex - The name of the search index to query.
    * @param {string} searchApiKey - The API key for authenticating with Azure Search.
-   * @param {AzureMonitorLoggingService} loggingService - Service for logging operations.
    * @param {AzureOpenAI} openAIClient - Client for making OpenAI API calls.
    */
   constructor(
     searchEndpoint: string,
     searchIndex: string,
     searchApiKey: string,
-    loggingService: AzureMonitorLoggingService,
     openAIClient: AzureOpenAI,
   ) {
     this.searchClient = new SearchClient<SearchResult>(
@@ -55,7 +50,6 @@ export class RAGService {
       searchIndex,
       new AzureKeyCredential(searchApiKey),
     );
-    this.loggingService = loggingService;
     this.openAIClient = openAIClient;
     this.searchIndex = searchIndex;
   }
@@ -132,15 +126,14 @@ export class RAGService {
           this,
         );
 
-        // Log after stream is created but before returning
-        await this.loggingService.logChatCompletion(
-          startTime,
+        // Log completion
+        console.log('[RAGService] Chat completion (streaming):', {
+          duration: Date.now() - startTime,
           modelId,
-          messages.length,
-          0.5,
-          user,
+          messageCount: messages.length,
           botId,
-        );
+          userId: user?.id,
+        });
 
         return processedStream;
       } else {
@@ -171,15 +164,14 @@ export class RAGService {
         // Update the completion with the enhanced content
         completion.choices[0].message.content = content + metadataSection;
 
-        // Log after processing is complete
-        await this.loggingService.logChatCompletion(
-          startTime,
+        // Log completion
+        console.log('[RAGService] Chat completion (non-streaming):', {
+          duration: Date.now() - startTime,
           modelId,
-          messages.length,
-          0.5,
-          user,
+          messageCount: messages.length,
           botId,
-        );
+          userId: user?.id,
+        });
 
         return completion;
       }
@@ -350,14 +342,13 @@ export class RAGService {
       };
 
       // Log successful search
-      await this.loggingService.logSearch(
-        startTime,
+      console.log('[RAGService] Search completed:', {
+        duration: Date.now() - startTime,
         botId,
-        searchDocs.length,
-        searchMetadata.dateRange.oldest || undefined,
-        searchMetadata.dateRange.newest || undefined,
-        user,
-      );
+        resultsCount: searchDocs.length,
+        dateRange: searchMetadata.dateRange,
+        userId: user?.id,
+      });
 
       return {
         searchDocs: this.deduplicateResults(searchDocs), // Still deduplicate results from the current search
@@ -365,7 +356,12 @@ export class RAGService {
       };
     } catch (error) {
       // Log search error
-      await this.loggingService.logSearchError(startTime, error, botId, user);
+      console.error('[RAGService] Search error:', {
+        duration: Date.now() - startTime,
+        error: error instanceof Error ? error.message : String(error),
+        botId,
+        userId: user?.id,
+      });
       throw error;
     }
   }

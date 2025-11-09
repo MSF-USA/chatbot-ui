@@ -18,13 +18,13 @@ vi.mock('@monaco-editor/react', () => ({
 
     // Call onMount immediately to avoid async issues in tests
     if (onMount) {
-      window.queueMicrotask(() => {
+      setTimeout(() => {
         try {
           onMount(mockEditor);
         } catch (error) {
           // Silently catch errors if component is unmounted
         }
-      });
+      }, 0);
     }
 
     return (

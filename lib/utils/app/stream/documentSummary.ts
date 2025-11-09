@@ -192,59 +192,55 @@ export async function parseAndQueryFileOpenAI({
     user: JSON.stringify(user),
   };
 
-  try {
-    console.log(
-      '[parseAndQueryFileOpenAI] Creating chat completion, botId:',
-      sanitizeForLog(botId),
-    );
-    let response;
-    if (botId) {
-      console.log('[parseAndQueryFileOpenAI] Using bot with data sources');
-      response = await client.chat.completions.create({
-        ...commonParams,
-        //@ts-ignore
-        data_sources: [
-          {
-            type: 'azure_search',
-            parameters: {
-              endpoint: env.SEARCH_ENDPOINT,
-              index_name: env.SEARCH_INDEX,
-              authentication: {
-                type: 'api_key',
-                key: env.SEARCH_ENDPOINT_API_KEY,
-              },
+  console.log(
+    '[parseAndQueryFileOpenAI] Creating chat completion, botId:',
+    sanitizeForLog(botId),
+  );
+  let response;
+  if (botId) {
+    console.log('[parseAndQueryFileOpenAI] Using bot with data sources');
+    response = await client.chat.completions.create({
+      ...commonParams,
+      //@ts-ignore
+      data_sources: [
+        {
+          type: 'azure_search',
+          parameters: {
+            endpoint: env.SEARCH_ENDPOINT,
+            index_name: env.SEARCH_INDEX,
+            authentication: {
+              type: 'api_key',
+              key: env.SEARCH_ENDPOINT_API_KEY,
             },
           },
-        ],
-      });
-    } else {
-      console.log('[parseAndQueryFileOpenAI] Using standard chat completion');
-      response = await client.chat.completions.create(commonParams);
-    }
+        },
+      ],
+    });
+  } else {
+    console.log('[parseAndQueryFileOpenAI] Using standard chat completion');
+    response = await client.chat.completions.create(commonParams);
+  }
 
-    console.log(
-      '[parseAndQueryFileOpenAI] Got response, stream:',
-      sanitizeForLog(stream),
+  console.log(
+    '[parseAndQueryFileOpenAI] Got response, stream:',
+    sanitizeForLog(stream),
+  );
+
+  if (stream) {
+    return createAzureOpenAIStreamProcessor(
+      response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
     );
-
-    if (stream) {
-      return createAzureOpenAIStreamProcessor(
-        response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+  } else {
+    const completionText =
+      (response as ChatCompletion)?.choices?.[0]?.message?.content?.trim() ??
+      '';
+    if (!completionText) {
+      throw new Error(
+        `Empty response returned from API! ${JSON.stringify(response)}`,
       );
-    } else {
-      const completionText =
-        (response as ChatCompletion)?.choices?.[0]?.message?.content?.trim() ??
-        '';
-      if (!completionText) {
-        throw new Error(
-          `Empty response returned from API! ${JSON.stringify(response)}`,
-        );
-      }
-
-      return completionText;
     }
-  } catch (error) {
-    throw error;
+
+    return completionText;
   }
 }
 

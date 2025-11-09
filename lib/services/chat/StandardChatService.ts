@@ -75,101 +75,97 @@ export class StandardChatService {
   public async handleChat(request: StandardChatRequest): Promise<Response> {
     const startTime = Date.now();
 
-    try {
-      // Select appropriate model (may upgrade for images, validate, etc.)
-      const { modelId, modelConfig } = this.modelSelector.selectModel(
-        request.model,
-        request.messages,
+    // Select appropriate model (may upgrade for images, validate, etc.)
+    const { modelId, modelConfig } = this.modelSelector.selectModel(
+      request.model,
+      request.messages,
+    );
+
+    // Apply tone to system prompt if specified
+    const enhancedPrompt = this.toneService.applyTone(
+      request.messages,
+      request.systemPrompt,
+      request.user.id,
+    );
+
+    // Determine streaming and temperature based on model
+    const { stream, temperature } = this.streamingService.getStreamConfig(
+      modelId,
+      request.stream ?? true,
+      request.temperature,
+      modelConfig,
+    );
+
+    // Prepare messages with token limit filtering
+    // Use cached Tiktoken instance for better performance
+    const encoding = await getGlobalTiktoken();
+    const promptTokens = encoding.encode(enhancedPrompt);
+    const messagesToSend = await getMessagesToSend(
+      request.messages,
+      encoding,
+      promptTokens.length,
+      modelConfig.tokenLimit,
+      request.user,
+    );
+    // Don't free() - encoding is shared across requests
+
+    // Get appropriate handler for this model
+    const handler = HandlerFactory.getHandler(
+      modelConfig,
+      this.azureOpenAIClient,
+      this.openAIClient,
+    );
+
+    console.log(
+      `[StandardChatService] Using ${HandlerFactory.getHandlerName(modelConfig)} for model: ${sanitizeForLog(modelId)}`,
+    );
+
+    // Prepare messages using handler-specific logic
+    const preparedMessages = handler.prepareMessages(
+      messagesToSend,
+      enhancedPrompt,
+      modelConfig,
+    );
+
+    // Build request parameters
+    const requestParams = handler.buildRequestParams(
+      handler.getModelIdForRequest(modelId, modelConfig),
+      preparedMessages,
+      temperature,
+      request.user,
+      stream,
+      modelConfig,
+      request.reasoningEffort,
+      request.verbosity,
+    );
+
+    // Execute request
+    const response = await handler.executeRequest(requestParams, stream);
+
+    // Return appropriate response format
+    if (stream) {
+      const processedStream = createAzureOpenAIStreamProcessor(
+        response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
+        undefined, // ragService
+        undefined, // stopConversationRef
+        request.transcript, // transcript metadata
+        request.citations, // web search citations
       );
 
-      // Apply tone to system prompt if specified
-      const enhancedPrompt = this.toneService.applyTone(
-        request.messages,
-        request.systemPrompt,
-        request.user.id,
+      return new Response(processedStream, {
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Cache-Control': 'no-cache',
+          Connection: 'keep-alive',
+        },
+      });
+    } else {
+      const completion = response as OpenAI.Chat.Completions.ChatCompletion;
+
+      return new Response(
+        JSON.stringify({ text: completion.choices[0]?.message?.content }),
+        { headers: { 'Content-Type': 'application/json' } },
       );
-
-      // Determine streaming and temperature based on model
-      const { stream, temperature } = this.streamingService.getStreamConfig(
-        modelId,
-        request.stream ?? true,
-        request.temperature,
-        modelConfig,
-      );
-
-      // Prepare messages with token limit filtering
-      // Use cached Tiktoken instance for better performance
-      const encoding = await getGlobalTiktoken();
-      const promptTokens = encoding.encode(enhancedPrompt);
-      const messagesToSend = await getMessagesToSend(
-        request.messages,
-        encoding,
-        promptTokens.length,
-        modelConfig.tokenLimit,
-        request.user,
-      );
-      // Don't free() - encoding is shared across requests
-
-      // Get appropriate handler for this model
-      const handler = HandlerFactory.getHandler(
-        modelConfig,
-        this.azureOpenAIClient,
-        this.openAIClient,
-      );
-
-      console.log(
-        `[StandardChatService] Using ${HandlerFactory.getHandlerName(modelConfig)} for model: ${sanitizeForLog(modelId)}`,
-      );
-
-      // Prepare messages using handler-specific logic
-      const preparedMessages = handler.prepareMessages(
-        messagesToSend,
-        enhancedPrompt,
-        modelConfig,
-      );
-
-      // Build request parameters
-      const requestParams = handler.buildRequestParams(
-        handler.getModelIdForRequest(modelId, modelConfig),
-        preparedMessages,
-        temperature,
-        request.user,
-        stream,
-        modelConfig,
-        request.reasoningEffort,
-        request.verbosity,
-      );
-
-      // Execute request
-      const response = await handler.executeRequest(requestParams, stream);
-
-      // Return appropriate response format
-      if (stream) {
-        const processedStream = createAzureOpenAIStreamProcessor(
-          response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
-          undefined, // ragService
-          undefined, // stopConversationRef
-          request.transcript, // transcript metadata
-          request.citations, // web search citations
-        );
-
-        return new Response(processedStream, {
-          headers: {
-            'Content-Type': 'text/plain; charset=utf-8',
-            'Cache-Control': 'no-cache',
-            Connection: 'keep-alive',
-          },
-        });
-      } else {
-        const completion = response as OpenAI.Chat.Completions.ChatCompletion;
-
-        return new Response(
-          JSON.stringify({ text: completion.choices[0]?.message?.content }),
-          { headers: { 'Content-Type': 'application/json' } },
-        );
-      }
-    } catch (error) {
-      throw error;
     }
   }
 }
