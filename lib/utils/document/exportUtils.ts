@@ -1,3 +1,4 @@
+import { decode } from 'he';
 import html2pdf from 'html2pdf.js';
 import DOMPurify from 'isomorphic-dompurify';
 import TurndownService from 'turndown';
@@ -36,16 +37,9 @@ export function htmlToPlainText(html: string): string {
   });
 
   if (typeof window === 'undefined') {
-    // Server-side: convert common HTML entities
-    // Note: DOMPurify has already stripped tags and sanitized
-    return cleanHtml
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .trim();
+    // Server-side: use 'he' library for safe HTML entity decoding
+    // This avoids double-unescaping issues that manual replacements can cause
+    return decode(cleanHtml).trim();
   }
 
   // Client-side: use DOM parser for proper entity decoding
