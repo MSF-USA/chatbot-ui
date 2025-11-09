@@ -83,14 +83,12 @@ describe('Azure OpenAI Stream Processor', () => {
       }),
     };
 
-    const mockLoggingService = {};
     const mockOpenAIClient = {};
 
     mockRAGService = new RAGService(
       'test-endpoint',
       'test-index',
       'test-api-key',
-      mockLoggingService as any,
       mockOpenAIClient as any,
     );
 

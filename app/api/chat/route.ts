@@ -144,13 +144,31 @@ export async function POST(req: NextRequest): Promise<Response> {
         // If no response was generated, return error
         if (!result.response) {
           const firstError = result.errors[0];
+          const errorCode =
+            firstError instanceof PipelineError
+              ? firstError.code
+              : ErrorCode.INTERNAL_ERROR;
+
+          // Map error codes to appropriate HTTP status codes
+          const getStatusCodeForPipelineError = (code: ErrorCode): number => {
+            switch (code) {
+              case ErrorCode.AUTH_FAILED:
+              case ErrorCode.RATE_LIMIT_EXCEEDED:
+                return 401;
+              case ErrorCode.VALIDATION_FAILED:
+                return 400;
+              case ErrorCode.REQUEST_TIMEOUT:
+              case ErrorCode.PIPELINE_TIMEOUT:
+                return 408;
+              default:
+                return 500;
+            }
+          };
+
           return new Response(
             JSON.stringify({
               error: 'Internal Server Error',
-              code:
-                firstError instanceof PipelineError
-                  ? firstError.code
-                  : ErrorCode.INTERNAL_ERROR,
+              code: errorCode,
               message: firstError.message,
               details: result.errors.map((e) =>
                 e instanceof PipelineError
@@ -159,7 +177,7 @@ export async function POST(req: NextRequest): Promise<Response> {
               ),
             }),
             {
-              status: 500,
+              status: getStatusCodeForPipelineError(errorCode),
               headers: { 'Content-Type': 'application/json' },
             },
           );
@@ -200,6 +218,7 @@ export async function POST(req: NextRequest): Promise<Response> {
           case ErrorCode.VALIDATION_FAILED:
             return 400;
           case ErrorCode.REQUEST_TIMEOUT:
+          case ErrorCode.PIPELINE_TIMEOUT:
             return 408;
           default:
             return 500;

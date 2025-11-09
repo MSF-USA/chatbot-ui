@@ -9,6 +9,13 @@ import { auth } from '@/auth';
 import { v4 as uuidv4 } from 'uuid';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+// Hoist mocks
+const mockEnv = vi.hoisted(() => ({
+  AZURE_BLOB_STORAGE_NAME: 'test-storage',
+  AZURE_BLOB_STORAGE_KEY: 'test-key',
+  AZURE_BLOB_STORAGE_CONTAINER: 'messages',
+}));
+
 // Mock dependencies
 vi.mock('@/auth', () => ({
   auth: vi.fn(),
@@ -20,6 +27,10 @@ vi.mock('@/lib/utils/server/blob', () => ({
 
 vi.mock('uuid', () => ({
   v4: vi.fn(),
+}));
+
+vi.mock('@/config/environment', () => ({
+  env: mockEnv,
 }));
 
 describe('/api/transcription/queue', () => {

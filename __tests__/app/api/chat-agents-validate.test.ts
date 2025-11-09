@@ -15,6 +15,9 @@ const mockAuth = vi.hoisted(() => vi.fn());
 const mockDefaultAzureCredential = vi.hoisted(() => vi.fn());
 const mockAgentsClient = vi.hoisted(() => vi.fn());
 const mockGetAgent = vi.hoisted(() => vi.fn());
+const mockEnv = vi.hoisted(() => ({
+  AZURE_AI_FOUNDRY_ENDPOINT: 'https://test-foundry.services.ai.azure.com',
+}));
 
 // Mock dependencies
 vi.mock('@/auth', () => ({
@@ -27,6 +30,10 @@ vi.mock('@azure/identity', () => ({
 
 vi.mock('@azure/ai-agents', () => ({
   AgentsClient: mockAgentsClient,
+}));
+
+vi.mock('@/config/environment', () => ({
+  env: mockEnv,
 }));
 
 /**
@@ -107,6 +114,11 @@ describe('/api/chat/agents/validate', () => {
     it('allows authenticated requests', async () => {
       const request = createValidateRequest({});
       const response = await POST(request);
+
+      if (response.status !== 200) {
+        const data = await parseJsonResponse(response);
+        console.log('Response data:', data);
+      }
 
       expect(response.status).toBe(200);
     });
@@ -221,7 +233,9 @@ describe('/api/chat/agents/validate', () => {
 
   describe('Environment Configuration', () => {
     it('returns 500 when AZURE_AI_FOUNDRY_ENDPOINT is not configured', async () => {
-      delete process.env.AZURE_AI_FOUNDRY_ENDPOINT;
+      // Temporarily remove the endpoint from mock
+      const originalEndpoint = mockEnv.AZURE_AI_FOUNDRY_ENDPOINT;
+      mockEnv.AZURE_AI_FOUNDRY_ENDPOINT = undefined as any;
 
       const request = createValidateRequest({});
       const response = await POST(request);
@@ -232,8 +246,7 @@ describe('/api/chat/agents/validate', () => {
       expect(data.details).toContain('Server configuration error');
 
       // Restore for other tests
-      process.env.AZURE_AI_FOUNDRY_ENDPOINT =
-        'https://test-foundry.services.ai.azure.com';
+      mockEnv.AZURE_AI_FOUNDRY_ENDPOINT = originalEndpoint;
     });
   });
 

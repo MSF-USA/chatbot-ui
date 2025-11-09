@@ -1,3 +1,4 @@
+import DOMPurify from 'isomorphic-dompurify';
 import { marked } from 'marked';
 
 /**
@@ -104,13 +105,47 @@ export async function pdfToHtml(pdfData: ArrayBuffer): Promise<string> {
 }
 
 /**
- * Sanitize HTML (basic - for security)
+ * Sanitize HTML using DOMPurify for security
  */
 export function sanitizeHtml(html: string): string {
-  // Basic sanitization - remove script tags
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/on\w+="[^"]*"/gi, ''); // Remove inline event handlers
+  // Use DOMPurify for comprehensive sanitization
+  return DOMPurify.sanitize(html, {
+    // Allow common safe tags
+    ALLOWED_TAGS: [
+      'p',
+      'br',
+      'strong',
+      'em',
+      'u',
+      's',
+      'ul',
+      'ol',
+      'li',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'blockquote',
+      'code',
+      'pre',
+      'a',
+      'img',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'div',
+      'span',
+    ],
+    ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'id'],
+    // Remove all scripts and event handlers
+    FORBID_TAGS: ['script', 'style', 'iframe', 'object', 'embed'],
+    FORBID_ATTR: ['onerror', 'onload', 'onclick', 'onmouseover'],
+  });
 }
 
 /**

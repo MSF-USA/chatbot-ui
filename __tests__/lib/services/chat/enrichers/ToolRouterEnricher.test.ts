@@ -276,10 +276,12 @@ describe('ToolRouter Enricher', () => {
           messages: [createTestMessage({ content: 'Test' })],
         });
 
-        // Should throw the error (not caught in executeStage)
-        await expect(enricher.execute(context)).rejects.toThrow(
-          'Tool router failed',
-        );
+        // Should catch the error and add it to context.errors
+        const result = await enricher.execute(context);
+
+        expect(result.errors).toBeDefined();
+        expect(result.errors).toHaveLength(1);
+        expect(result.errors![0].message).toContain('Tool router failed');
       });
     });
 

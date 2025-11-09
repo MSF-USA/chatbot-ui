@@ -1,6 +1,10 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { act, renderHook, waitFor } from '@testing-library/react';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
+import DOMPurify from 'isomorphic-dompurify';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the format converter
@@ -18,10 +22,18 @@ vi.mock('@/lib/utils/document/formatConverter', () => ({
 
 vi.mock('@/lib/utils/document/exportUtils', () => ({
   htmlToMarkdown: vi.fn((html: string) => {
-    return html.replace(/<[^>]*>/g, '');
+    // Use DOMPurify to safely strip HTML tags
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: [],
+      KEEP_CONTENT: true,
+    });
   }),
   htmlToPlainText: vi.fn((html: string) => {
-    return html.replace(/<[^>]*>/g, '');
+    // Use DOMPurify to safely strip HTML tags
+    return DOMPurify.sanitize(html, {
+      ALLOWED_TAGS: [],
+      KEEP_CONTENT: true,
+    });
   }),
 }));
 

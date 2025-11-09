@@ -5,7 +5,7 @@
 import { Session } from 'next-auth';
 
 import { ChatContext } from '@/lib/services/chat/pipeline/ChatContext';
-import { ChatLogger, ModelSelector } from '@/lib/services/shared';
+import { ModelSelector } from '@/lib/services/shared';
 
 import { DEFAULT_MODEL, DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 
@@ -17,20 +17,9 @@ import { SearchMode } from '@/types/searchMode';
 import { vi } from 'vitest';
 
 /**
- * Creates a mock ChatLogger for testing
- */
-export function createMockLogger(): ChatLogger {
-  return {
-    logCompletion: vi.fn(),
-    logError: vi.fn(),
-    logAgentExecution: vi.fn(),
-  } as unknown as ChatLogger;
-}
-
-/**
  * Creates a mock ModelSelector for testing
  */
-export function createMockModelSelector(): ModelSelector {
+function createMockModelSelector(): ModelSelector {
   return {
     selectModel: vi.fn((model: OpenAIModel) => ({
       modelId: model.id,
@@ -144,7 +133,6 @@ export function createTestChatContext(
     hasAudio: options.hasAudio ?? false,
 
     // Services
-    logger: createMockLogger(),
     modelSelector: createMockModelSelector(),
 
     // Features

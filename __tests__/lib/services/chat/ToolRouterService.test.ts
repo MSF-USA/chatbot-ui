@@ -286,7 +286,7 @@ describe('ToolRouterService', () => {
 
         // Create 10 messages (should only use last 6 + system prompt)
         const manyMessages: Message[] = Array.from({ length: 10 }, (_, i) => ({
-          role: (i % 2 === 0 ? 'user' : 'assistant') as const,
+          role: i % 2 === 0 ? ('user' as const) : ('assistant' as const),
           content: `Message ${i}`,
           messageType: MessageType.TEXT,
         }));
@@ -330,9 +330,9 @@ describe('ToolRouterService', () => {
             {
               role: 'user' as const,
               content: [
-                { type: 'text', text: 'Analyze this image' },
+                { type: 'text' as const, text: 'Analyze this image' },
                 {
-                  type: 'image_url',
+                  type: 'image_url' as const,
                   image_url: {
                     url: 'http://example.com/img.jpg',
                     detail: 'auto' as const,
@@ -377,8 +377,8 @@ describe('ToolRouterService', () => {
             {
               role: 'user' as const,
               content: [
-                { type: 'text', text: 'Part 1' },
-                { type: 'text', text: 'Part 2' },
+                { type: 'text' as const, text: 'Part 1' },
+                { type: 'text' as const, text: 'Part 2' },
               ],
               messageType: MessageType.TEXT,
             },
@@ -727,9 +727,9 @@ describe('ToolRouterService', () => {
             {
               role: 'user' as const,
               content: [
-                { type: 'text', text: 'Summarize this document' },
+                { type: 'text' as const, text: 'Summarize this document' },
                 {
-                  type: 'file_url',
+                  type: 'file_url' as const,
                   url: 'https://example.com/doc.pdf',
                   originalFilename: 'doc.pdf',
                 },

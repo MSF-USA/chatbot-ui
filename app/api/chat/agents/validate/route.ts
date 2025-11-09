@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
 import { env } from '@/config/environment';
+import { AgentsClient } from '@azure/ai-agents';
+import { DefaultAzureCredential } from '@azure/identity';
 
 /**
  * Validates that an Azure AI Foundry agent ID is accessible
@@ -50,13 +52,7 @@ export async function POST(req: NextRequest) {
 
     // Test connection to the agent
     try {
-      const aiAgents = await import('@azure/ai-agents');
-      const { DefaultAzureCredential } = await import('@azure/identity');
-
-      const client = new aiAgents.AgentsClient(
-        endpoint,
-        new DefaultAzureCredential(),
-      );
+      const client = new AgentsClient(endpoint, new DefaultAzureCredential());
 
       // Try to retrieve the agent to verify it exists and is accessible
       const agent = await client.getAgent(agentId);

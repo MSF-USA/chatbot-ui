@@ -24,7 +24,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -41,7 +40,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -60,7 +58,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -81,7 +78,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={true}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -98,7 +94,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={true}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -117,7 +112,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -140,7 +134,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={true}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -161,7 +154,6 @@ describe('ChatInputSubmitButton', () => {
       const { container } = render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -178,7 +170,6 @@ describe('ChatInputSubmitButton', () => {
       const { container } = render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -195,7 +186,6 @@ describe('ChatInputSubmitButton', () => {
       const { container } = render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -216,7 +206,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={true}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -236,7 +225,6 @@ describe('ChatInputSubmitButton', () => {
       const { container } = render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -254,7 +242,6 @@ describe('ChatInputSubmitButton', () => {
       const { container } = render(
         <ChatInputSubmitButton
           isStreaming={true}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -274,7 +261,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={false}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}
@@ -291,7 +277,6 @@ describe('ChatInputSubmitButton', () => {
       render(
         <ChatInputSubmitButton
           isStreaming={true}
-          isTranscribing={false}
           handleSend={mockHandleSend}
           handleStopConversation={mockHandleStopConversation}
           preventSubmission={mockPreventSubmission}

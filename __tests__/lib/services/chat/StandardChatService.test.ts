@@ -2,7 +2,6 @@ import { StandardChatService } from '@/lib/services/chat/StandardChatService';
 import { HandlerFactory } from '@/lib/services/chat/handlers/HandlerFactory';
 import { ModelHandler } from '@/lib/services/chat/handlers/ModelHandler';
 import {
-  ChatLogger,
   ModelSelector,
   StreamingService,
   ToneService,
@@ -53,7 +52,6 @@ describe('StandardChatService', () => {
   let service: StandardChatService;
   let mockAzureClient: AzureOpenAI;
   let mockOpenAIClient: OpenAI;
-  let mockLogger: ChatLogger;
   let mockModelSelector: ModelSelector;
   let mockToneService: ToneService;
   let mockStreamingService: StreamingService;
@@ -74,11 +72,6 @@ describe('StandardChatService', () => {
     mockOpenAIClient = {} as OpenAI;
 
     // Create mock services with vi.fn() for methods we need to spy on
-    mockLogger = {
-      logChatCompletion: vi.fn().mockResolvedValue(undefined),
-      logError: vi.fn().mockResolvedValue(undefined),
-    } as any;
-
     mockModelSelector = {
       selectModel: vi.fn(),
       isValidModel: vi.fn(),
@@ -111,7 +104,6 @@ describe('StandardChatService', () => {
     service = new StandardChatService(
       mockAzureClient,
       mockOpenAIClient,
-      mockLogger,
       mockModelSelector,
       mockToneService,
       mockStreamingService,
@@ -214,14 +206,10 @@ describe('StandardChatService', () => {
         model,
         mockAzureClient,
         mockOpenAIClient,
-        mockLogger,
       );
       expect(mockHandler.prepareMessages).toHaveBeenCalled();
       expect(mockHandler.buildRequestParams).toHaveBeenCalled();
       expect(mockHandler.executeRequest).toHaveBeenCalled();
-
-      // Verify logging
-      expect(mockLogger.logChatCompletion).toHaveBeenCalled();
 
       // Verify response
       expect(response).toBeInstanceOf(Response);
@@ -510,20 +498,6 @@ describe('StandardChatService', () => {
           stream: false,
         }),
       ).rejects.toThrow('API request failed');
-
-      // Verify error was logged
-      expect(mockLogger.logError).toHaveBeenCalledWith(
-        expect.any(Number),
-        error,
-        'gpt-5',
-        messages.length,
-        0.7,
-        testUser,
-        undefined,
-      );
-
-      // Verify success logging was NOT called
-      expect(mockLogger.logChatCompletion).not.toHaveBeenCalled();
     });
 
     it('should use default stream value of true when not specified', async () => {
@@ -639,16 +613,6 @@ describe('StandardChatService', () => {
         systemPrompt,
         botId,
       });
-
-      // Verify botId was passed to logger
-      expect(mockLogger.logChatCompletion).toHaveBeenCalledWith(
-        expect.any(Number),
-        'gpt-5',
-        messages.length,
-        expect.any(Number),
-        testUser,
-        botId,
-      );
     });
   });
 
@@ -714,9 +678,7 @@ describe('StandardChatService', () => {
         model,
         mockAzureClient,
         mockOpenAIClient,
-        mockLogger,
       );
-      expect(mockLogger.logChatCompletion).toHaveBeenCalled();
       expect(response).toBeInstanceOf(Response);
     });
 

@@ -1,4 +1,5 @@
 import html2pdf from 'html2pdf.js';
+import DOMPurify from 'isomorphic-dompurify';
 import TurndownService from 'turndown';
 
 /**
@@ -28,24 +29,28 @@ export function htmlToMarkdown(html: string): string {
  * Convert HTML to plain text
  */
 export function htmlToPlainText(html: string): string {
-  // Create a temporary div to parse HTML
+  // Sanitize HTML first to prevent any injection attacks
+  const cleanHtml = DOMPurify.sanitize(html, {
+    ALLOWED_TAGS: [], // Strip all tags
+    KEEP_CONTENT: true, // Keep text content
+  });
+
   if (typeof window === 'undefined') {
-    // Server-side: basic regex stripping
-    return html
-      .replace(/<br\s*\/?>/gi, '\n')
-      .replace(/<\/p>/gi, '\n\n')
-      .replace(/<[^>]+>/g, '')
+    // Server-side: convert common HTML entities
+    // Note: DOMPurify has already stripped tags and sanitized
+    return cleanHtml
       .replace(/&nbsp;/g, ' ')
       .replace(/&amp;/g, '&')
       .replace(/&lt;/g, '<')
       .replace(/&gt;/g, '>')
       .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
       .trim();
   }
 
-  // Client-side: use DOM parser
+  // Client-side: use DOM parser for proper entity decoding
   const temp = document.createElement('div');
-  temp.innerHTML = html;
+  temp.innerHTML = cleanHtml;
   return temp.textContent || temp.innerText || '';
 }
 
