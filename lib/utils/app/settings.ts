@@ -1,6 +1,8 @@
 import { SearchMode } from '@/types/searchMode';
 import { Settings } from '@/types/settings';
 
+import { env } from '@/config/environment';
+
 const STORAGE_KEY = 'settings';
 
 const getDefaultSettings = (): Settings => {
@@ -12,7 +14,7 @@ const getDefaultSettings = (): Settings => {
     theme: userDefaultThemeIsDark ? 'dark' : 'light',
     temperature: 0.5,
     systemPrompt:
-      process.env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
+      env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
       "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
     advancedMode: false,
     defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default

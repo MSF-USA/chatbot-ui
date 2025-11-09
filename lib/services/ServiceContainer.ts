@@ -5,14 +5,9 @@ import { AgentChatService } from './chat/AgentChatService';
 import { FileProcessingService } from './chat/FileProcessingService';
 import { StandardChatService } from './chat/StandardChatService';
 import { ToolRouterService } from './chat/ToolRouterService';
-import { AzureMonitorLoggingService } from './loggingService';
-import {
-  ChatLogger,
-  ModelSelector,
-  StreamingService,
-  ToneService,
-} from './shared';
+import { ModelSelector, StreamingService, ToneService } from './shared';
 
+import { env } from '@/config/environment';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -42,7 +37,6 @@ export class ServiceContainer {
   // Azure clients (expensive to create, should be reused)
   private azureOpenAIClient!: AzureOpenAI;
   private openAIClient!: OpenAI;
-  private azureMonitorLogger!: AzureMonitorLoggingService;
 
   // Core services (stateless, safe to reuse)
   private modelSelector!: ModelSelector;
@@ -92,44 +86,26 @@ export class ServiceContainer {
 
     this.openAIClient = new OpenAI({
       baseURL:
-        process.env.AZURE_AI_FOUNDRY_OPENAI_ENDPOINT ||
-        `${process.env.AZURE_AI_FOUNDRY_ENDPOINT?.replace('/api/projects/default', '')}/openai/v1/`,
-      apiKey: process.env.OPENAI_API_KEY,
+        env.AZURE_AI_FOUNDRY_OPENAI_ENDPOINT ||
+        `${env.AZURE_AI_FOUNDRY_ENDPOINT?.replace('/api/projects/default', '')}/openai/v1/`,
+      apiKey: env.OPENAI_API_KEY,
     });
 
-    // 2. Initialize logging
-    this.azureMonitorLogger = new AzureMonitorLoggingService(
-      process.env.LOGS_INJESTION_ENDPOINT!,
-      process.env.DATA_COLLECTION_RULE_ID!,
-      process.env.STREAM_NAME!,
-    );
-
-    // 3. Initialize stateless services
+    // 2. Initialize stateless services
     this.modelSelector = new ModelSelector();
     this.toneService = new ToneService();
     this.streamingService = new StreamingService();
     this.fileProcessingService = new FileProcessingService();
 
-    // 4. Initialize services that depend on clients
+    // 3. Initialize services that depend on clients
     this.toolRouterService = new ToolRouterService(this.openAIClient);
-    this.agentChatService = new AgentChatService(this.azureMonitorLogger);
-    this.aiFoundryAgentHandler = new AIFoundryAgentHandler(
-      this.azureMonitorLogger,
-    );
+    this.agentChatService = new AgentChatService();
+    this.aiFoundryAgentHandler = new AIFoundryAgentHandler();
 
-    // 5. Initialize chat service (uses multiple dependencies)
-    // Note: We create a temporary logger here; actual per-request loggers
-    // will be created in middleware to capture user context
-    const tempLogger = new ChatLogger(
-      process.env.LOGS_INJESTION_ENDPOINT!,
-      process.env.DATA_COLLECTION_RULE_ID!,
-      process.env.STREAM_NAME!,
-    );
-
+    // 4. Initialize chat service (uses multiple dependencies)
     this.standardChatService = new StandardChatService(
       this.azureOpenAIClient,
       this.openAIClient,
-      tempLogger,
       this.modelSelector,
       this.toneService,
       this.streamingService,
@@ -154,10 +130,6 @@ export class ServiceContainer {
 
   public getOpenAIClient(): OpenAI {
     return this.openAIClient;
-  }
-
-  public getAzureMonitorLogger(): AzureMonitorLoggingService {
-    return this.azureMonitorLogger;
   }
 
   public getModelSelector(): ModelSelector {
@@ -190,17 +162,5 @@ export class ServiceContainer {
 
   public getStandardChatService(): StandardChatService {
     return this.standardChatService;
-  }
-
-  /**
-   * Creates a new ChatLogger for a specific request.
-   * Loggers should be per-request to capture proper user context.
-   */
-  public createChatLogger(): ChatLogger {
-    return new ChatLogger(
-      process.env.LOGS_INJESTION_ENDPOINT!,
-      process.env.DATA_COLLECTION_RULE_ID!,
-      process.env.STREAM_NAME!,
-    );
   }
 }

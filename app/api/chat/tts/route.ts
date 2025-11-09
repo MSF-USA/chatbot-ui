@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cleanMarkdown } from '@/lib/utils/app/clean';
 
 import { auth } from '@/auth';
+import { env } from '@/config/environment';
 import * as sdk from 'microsoft-cognitiveservices-speech-sdk';
 import { Readable } from 'stream';
 
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Azure Speech Services configuration
     const region = 'eastus2';
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = env.OPENAI_API_KEY;
 
     if (!apiKey) {
       throw new Error('OPENAI_API_KEY is not configured');

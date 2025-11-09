@@ -10,12 +10,7 @@ import { Message } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Citation } from '@/types/rag';
 
-import {
-  ChatLogger,
-  ModelSelector,
-  StreamingService,
-  ToneService,
-} from '../shared';
+import { ModelSelector, StreamingService, ToneService } from '../shared';
 import { HandlerFactory } from './handlers/HandlerFactory';
 
 import OpenAI, { AzureOpenAI } from 'openai';
@@ -53,7 +48,6 @@ export interface StandardChatRequest {
 export class StandardChatService {
   private azureOpenAIClient: AzureOpenAI;
   private openAIClient: OpenAI;
-  private logger: ChatLogger;
   private modelSelector: ModelSelector;
   private toneService: ToneService;
   private streamingService: StreamingService;
@@ -61,14 +55,12 @@ export class StandardChatService {
   constructor(
     azureOpenAIClient: AzureOpenAI,
     openAIClient: OpenAI,
-    logger: ChatLogger,
     modelSelector: ModelSelector,
     toneService: ToneService,
     streamingService: StreamingService,
   ) {
     this.azureOpenAIClient = azureOpenAIClient;
     this.openAIClient = openAIClient;
-    this.logger = logger;
     this.modelSelector = modelSelector;
     this.toneService = toneService;
     this.streamingService = streamingService;
@@ -123,7 +115,6 @@ export class StandardChatService {
         modelConfig,
         this.azureOpenAIClient,
         this.openAIClient,
-        this.logger,
       );
 
       console.log(
@@ -152,16 +143,6 @@ export class StandardChatService {
       // Execute request
       const response = await handler.executeRequest(requestParams, stream);
 
-      // Log chat completion
-      await this.logger.logChatCompletion(
-        startTime,
-        modelId,
-        messagesToSend.length,
-        temperature,
-        request.user,
-        request.botId,
-      );
-
       // Return appropriate response format
       if (stream) {
         const processedStream = createAzureOpenAIStreamProcessor(
@@ -188,17 +169,6 @@ export class StandardChatService {
         );
       }
     } catch (error) {
-      // Log error
-      await this.logger.logError(
-        startTime,
-        error,
-        request.model.id,
-        request.messages.length,
-        request.temperature ?? 1,
-        request.user,
-        request.botId,
-      );
-
       throw error;
     }
   }

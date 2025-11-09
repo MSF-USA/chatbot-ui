@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { auth } from '@/auth';
+import { env } from '@/config/environment';
 
 /**
  * GET /api/user/profile
@@ -24,14 +25,14 @@ export async function GET(req: NextRequest) {
     let accessToken: string;
     try {
       const tokenResponse = await fetch(
-        `https://login.microsoftonline.com/${process.env.AZURE_TENANT_ID}/oauth2/v2.0/token`,
+        `https://login.microsoftonline.com/${env.AZURE_TENANT_ID}/oauth2/v2.0/token`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: new URLSearchParams({
             grant_type: 'refresh_token',
-            client_id: process.env.AZURE_CLIENT_ID || '',
-            client_secret: process.env.AZURE_CLIENT_SECRET || '',
+            client_id: env.AZURE_CLIENT_ID || '',
+            client_secret: env.AZURE_CLIENT_SECRET || '',
             refresh_token: session.refreshToken,
             scope: 'openid User.Read User.ReadBasic.all offline_access',
           }).toString(),

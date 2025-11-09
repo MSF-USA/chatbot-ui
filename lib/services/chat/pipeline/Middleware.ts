@@ -2,7 +2,7 @@ import { Session } from 'next-auth';
 import { NextRequest } from 'next/server';
 
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
-import { ChatLogger, ModelSelector, RateLimiter } from '@/lib/services/shared';
+import { ModelSelector, RateLimiter } from '@/lib/services/shared';
 
 import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 import { getMessageContentTypes } from '@/lib/utils/server/chat';
@@ -14,6 +14,7 @@ import { SearchMode } from '@/types/searchMode';
 import { ChatContext } from './ChatContext';
 
 import { auth } from '@/auth';
+import { env } from '@/config/environment';
 
 /**
  * Middleware function that processes a request and returns partial ChatContext.
@@ -41,7 +42,6 @@ export async function applyMiddleware(
   // Validate required fields
   if (!context.session)
     throw new Error('Authentication middleware did not set session');
-  if (!context.logger) throw new Error('Logging middleware did not set logger');
   if (!context.model)
     throw new Error('Request parsing middleware did not set model');
   if (!context.messages)
@@ -68,20 +68,6 @@ export const authMiddleware: Middleware = async (req) => {
     session,
     user: session.user,
   };
-};
-
-/**
- * Logging middleware.
- * Creates a logger instance and adds it to context.
- */
-export const loggingMiddleware: Middleware = async (req) => {
-  const logger = new ChatLogger(
-    process.env.LOGS_INJESTION_ENDPOINT!,
-    process.env.DATA_COLLECTION_RULE_ID!,
-    process.env.STREAM_NAME!,
-  );
-
-  return { logger };
 };
 
 /**
@@ -255,7 +241,6 @@ export async function buildChatContext(req: NextRequest): Promise<ChatContext> {
   // Apply initial middleware
   let context = await applyMiddleware(req, [
     authMiddleware,
-    loggingMiddleware,
     requestParsingMiddleware,
   ]);
 

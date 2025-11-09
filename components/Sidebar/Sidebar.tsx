@@ -48,6 +48,8 @@ import {
 import { Conversation } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
+import { SearchModal } from './components/SearchModal';
+import { SidebarHeader } from './components/SidebarHeader';
 import { CustomizationsModal } from '@/components/QuickActions/CustomizationsModal';
 import { DropdownPortal } from '@/components/UI/DropdownPortal';
 import Modal from '@/components/UI/Modal';
@@ -55,8 +57,6 @@ import Modal from '@/components/UI/Modal';
 import { ConversationItem } from './ConversationItem';
 import { UserMenu } from './UserMenu';
 
-import lightTextLogo from '@/public/international_logo_black.png';
-import darkTextLogo from '@/public/international_logo_white.png';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -406,35 +406,12 @@ export function Sidebar() {
             : '-translate-x-full md:translate-x-0 md:w-14 overflow-visible'
         }`}
       >
-        {/* Header */}
-        <div
-          className={`flex items-center px-3 py-2 border-b transition-all duration-300 ${showChatbar ? 'justify-between border-neutral-300 dark:border-neutral-700' : 'justify-center border-transparent'}`}
-        >
-          <div
-            className={`transition-all duration-300 overflow-hidden ${showChatbar ? 'opacity-100 w-auto' : 'opacity-0 w-0'}`}
-          >
-            <Image
-              src={theme === 'light' ? lightTextLogo : darkTextLogo}
-              alt={t('common.msfLogo')}
-              priority
-              style={{
-                maxWidth: '75px',
-                height: 'auto',
-              }}
-            />
-          </div>
-          <button
-            className="p-1 hover:bg-neutral-100 dark:hover:bg-neutral-800 rounded text-black dark:text-white"
-            onClick={toggleChatbar}
-            title={
-              showChatbar
-                ? t('sidebar.collapseSidebar')
-                : t('sidebar.expandSidebar')
-            }
-          >
-            <PiSidebarSimple size={22} />
-          </button>
-        </div>
+        <SidebarHeader
+          showChatbar={showChatbar}
+          toggleChatbar={toggleChatbar}
+          theme={theme}
+          t={t}
+        />
 
         {/* Action buttons */}
         <div
@@ -842,66 +819,15 @@ export function Sidebar() {
           isLoadingPhoto={isLoadingPhoto}
         />
 
-        {/* Search Modal */}
-        <Modal
+        <SearchModal
           isOpen={isSearchModalOpen}
-          onClose={() => {
-            setIsSearchModalOpen(false);
-            setSearchTerm('');
-          }}
-          className="z-[100]"
-          closeWithButton={false}
-          size="lg"
-          contentClassName="-m-6"
-        >
-          {/* Search input */}
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-neutral-300 dark:border-neutral-700">
-            <IconSearch
-              size={20}
-              className="text-neutral-500 dark:text-neutral-400"
-            />
-            <input
-              type="text"
-              placeholder={t('Search_ellipsis')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              autoFocus
-              className="flex-1 bg-transparent text-neutral-900 dark:text-white placeholder-neutral-500 dark:placeholder-neutral-400 focus:outline-none"
-            />
-          </div>
-
-          {/* Results */}
-          <div className="max-h-[60vh] overflow-y-auto">
-            {filteredConversations.length === 0 && searchTerm && (
-              <div className="p-8 text-center text-neutral-500 dark:text-neutral-400">
-                {t('No conversations found')}
-              </div>
-            )}
-            {filteredConversations.length > 0 && (
-              <div className="py-2">
-                {filteredConversations.map((conversation) => (
-                  <button
-                    key={conversation.id}
-                    className="w-full flex items-center gap-3 px-6 py-3 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors text-left"
-                    onClick={() => {
-                      selectConversation(conversation.id);
-                      setIsSearchModalOpen(false);
-                      setSearchTerm('');
-                    }}
-                  >
-                    <IconMessage
-                      size={16}
-                      className="text-neutral-600 dark:text-neutral-400 shrink-0"
-                    />
-                    <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
-                      {conversation.name}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </Modal>
+          onClose={() => setIsSearchModalOpen(false)}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          filteredConversations={filteredConversations}
+          selectConversation={selectConversation}
+          t={t}
+        />
       </div>
 
       {/* Customizations Modal */}

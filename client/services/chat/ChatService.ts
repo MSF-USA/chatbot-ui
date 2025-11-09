@@ -64,14 +64,6 @@ export class ChatService {
       isEditorOpen?: boolean;
     },
   ): Promise<ReadableStream<Uint8Array>> {
-    console.log('[ChatService] Sending request to unified /api/chat endpoint', {
-      modelId: model.id,
-      messageCount: messages.length,
-      hasOptions: !!options,
-      botId: options?.botId,
-      searchMode: options?.searchMode,
-    });
-
     return apiClient.postStream('/api/chat', {
       model,
       messages,
@@ -110,10 +102,6 @@ export class ChatService {
       forcedAgentType?: string;
     },
   ): Promise<{ text: string; metadata?: any }> {
-    console.log(
-      '[ChatService] Sending non-streaming request to unified /api/chat endpoint',
-    );
-
     return apiClient.post('/api/chat', {
       model,
       messages,

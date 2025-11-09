@@ -3,6 +3,8 @@ import { Session } from 'next-auth';
 import { getEnvVariable } from '@/lib/utils/app/env';
 import { AzureBlobStorage, BlobStorage } from '@/lib/utils/server/blob';
 
+import { env } from '@/config/environment';
+
 /**
  * Creates an Azure Blob Storage client with consistent configuration
  * Eliminates duplication of blob storage initialization across API routes
@@ -20,7 +22,7 @@ export function createBlobStorageClient(
     getEnvVariable({
       name: 'AZURE_BLOB_STORAGE_CONTAINER',
       throwErrorOnFail: false,
-      defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+      defaultValue: env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
       user: session.user,
     });
 

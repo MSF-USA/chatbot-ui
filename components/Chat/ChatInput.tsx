@@ -20,13 +20,11 @@ import { useDropzone } from 'react-dropzone';
 import { useTranslations } from 'next-intl';
 
 import { useChat } from '@/client/hooks/chat/useChat';
-import { useInputState } from '@/client/hooks/chat/useInputState';
 import { useMessageSender } from '@/client/hooks/chat/useMessageSender';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useSettings } from '@/client/hooks/settings/useSettings';
 import { useTones } from '@/client/hooks/settings/useTones';
 import { usePromptSelection } from '@/client/hooks/ui/usePromptSelection';
-import { useUploadState } from '@/client/hooks/ui/useUploadState';
 
 import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
 import {
@@ -57,7 +55,6 @@ import { SearchMode } from '@/types/searchMode';
 import { ArtifactContextBar } from '@/components/Chat/ChatInput/ArtifactContextBar';
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import ChatInputFile from '@/components/Chat/ChatInput/ChatInputFile';
-import ChatInputImage from '@/components/Chat/ChatInput/ChatInputFile';
 import ChatInputImageCapture, {
   ChatInputImageCaptureRef,
 } from '@/components/Chat/ChatInput/ChatInputImageCapture';
@@ -70,6 +67,7 @@ import { PromptList } from './ChatInput/PromptList';
 import { VariableModal } from './ChatInput/VariableModal';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
+import { useChatInputStore } from '@/client/stores/chatInputStore';
 import { UI_CONSTANTS } from '@/lib/constants/ui';
 
 interface Props {
@@ -103,54 +101,75 @@ export const ChatInput = ({
   const { isArtifactOpen, fileName, language, closeArtifact } =
     useArtifactStore();
 
-  // Custom hooks for state management
-  const {
-    textFieldValue,
-    setTextFieldValue,
-    placeholderText,
-    setPlaceholderText,
-    isTyping,
-    setIsTyping,
-    isMultiline,
-    setIsMultiline,
-    isFocused,
-    setIsFocused,
-    textareaScrollHeight,
-    setTextareaScrollHeight,
-    transcriptionStatus,
-    setTranscriptionStatus,
-    isTranscribing,
-    setIsTranscribing,
-    searchMode,
-    setSearchMode,
-    selectedToneId,
-    setSelectedToneId,
-    clearInput,
-  } = useInputState();
-
-  // Upload state management
-  const {
-    filePreviews,
-    setFilePreviews,
-    fileFieldValue,
-    setFileFieldValue,
-    imageFieldValue,
-    setImageFieldValue,
-    uploadProgress,
-    setUploadProgress,
-    submitType,
-    setSubmitType,
-    handleFileUpload,
-  } = useUploadState();
+  // Chat input store
+  const textFieldValue = useChatInputStore((state) => state.textFieldValue);
+  const setTextFieldValue = useChatInputStore(
+    (state) => state.setTextFieldValue,
+  );
+  const placeholderText = useChatInputStore((state) => state.placeholderText);
+  const setPlaceholderText = useChatInputStore(
+    (state) => state.setPlaceholderText,
+  );
+  const isTyping = useChatInputStore((state) => state.isTyping);
+  const setIsTyping = useChatInputStore((state) => state.setIsTyping);
+  const isMultiline = useChatInputStore((state) => state.isMultiline);
+  const setIsMultiline = useChatInputStore((state) => state.setIsMultiline);
+  const isFocused = useChatInputStore((state) => state.isFocused);
+  const setIsFocused = useChatInputStore((state) => state.setIsFocused);
+  const textareaScrollHeight = useChatInputStore(
+    (state) => state.textareaScrollHeight,
+  );
+  const setTextareaScrollHeight = useChatInputStore(
+    (state) => state.setTextareaScrollHeight,
+  );
+  const transcriptionStatus = useChatInputStore(
+    (state) => state.transcriptionStatus,
+  );
+  const setTranscriptionStatus = useChatInputStore(
+    (state) => state.setTranscriptionStatus,
+  );
+  const isTranscribing = useChatInputStore((state) => state.isTranscribing);
+  const setIsTranscribing = useChatInputStore(
+    (state) => state.setIsTranscribing,
+  );
+  const searchMode = useChatInputStore((state) => state.searchMode);
+  const setSearchMode = useChatInputStore((state) => state.setSearchMode);
+  const selectedToneId = useChatInputStore((state) => state.selectedToneId);
+  const setSelectedToneId = useChatInputStore(
+    (state) => state.setSelectedToneId,
+  );
+  const clearInput = useChatInputStore((state) => state.clearInput);
+  const filePreviews = useChatInputStore((state) => state.filePreviews);
+  const setFilePreviews = useChatInputStore((state) => state.setFilePreviews);
+  const fileFieldValue = useChatInputStore((state) => state.fileFieldValue);
+  const setFileFieldValue = useChatInputStore(
+    (state) => state.setFileFieldValue,
+  );
+  const imageFieldValue = useChatInputStore((state) => state.imageFieldValue);
+  const setImageFieldValue = useChatInputStore(
+    (state) => state.setImageFieldValue,
+  );
+  const uploadProgress = useChatInputStore((state) => state.uploadProgress);
+  const setUploadProgress = useChatInputStore(
+    (state) => state.setUploadProgress,
+  );
+  const submitType = useChatInputStore((state) => state.submitType);
+  const setSubmitType = useChatInputStore((state) => state.setSubmitType);
+  const handleFileUpload = useChatInputStore((state) => state.handleFileUpload);
+  const usedPromptId = useChatInputStore((state) => state.usedPromptId);
+  const setUsedPromptId = useChatInputStore((state) => state.setUsedPromptId);
+  const usedPromptVariables = useChatInputStore(
+    (state) => state.usedPromptVariables,
+  );
+  const setUsedPromptVariables = useChatInputStore(
+    (state) => state.setUsedPromptVariables,
+  );
+  const resetForNewConversation = useChatInputStore(
+    (state) => state.resetForNewConversation,
+  );
 
   // Message sending logic
-  const {
-    handleSend: handleMessageSend,
-    usedPromptId,
-    setUsedPromptId,
-    usedPromptVariables,
-    setUsedPromptVariables,
-  } = useMessageSender({
+  const { handleSend: handleMessageSend } = useMessageSender({
     textFieldValue,
     submitType,
     imageFieldValue,
@@ -173,6 +192,15 @@ export const ChatInput = ({
     useState<Prompt | null>(null);
 
   const cameraRef = useRef<ChatInputImageCaptureRef>(null);
+
+  // Reset input when conversation changes
+  useEffect(() => {
+    resetForNewConversation(selectedConversation?.defaultSearchMode);
+  }, [
+    selectedConversation?.id,
+    selectedConversation?.defaultSearchMode,
+    resetForNewConversation,
+  ]);
 
   const {
     showPromptList,
@@ -525,32 +553,15 @@ export const ChatInput = ({
                 </div>
 
                 <InputControlsBar
-                  onFileUpload={handleFileUpload}
-                  setSubmitType={setSubmitType}
-                  setFilePreviews={setFilePreviews}
-                  setFileFieldValue={setFileFieldValue}
-                  setImageFieldValue={setImageFieldValue}
-                  setUploadProgress={setUploadProgress}
-                  setTextFieldValue={setTextFieldValue}
-                  handleSend={handleSend}
-                  textFieldValue={textFieldValue}
                   onCameraClick={() => {
                     cameraRef.current?.triggerCamera();
                   }}
                   showDisclaimer={showDisclaimer}
-                  searchMode={searchMode}
-                  setSearchMode={setSearchMode}
-                  setTranscriptionStatus={setTranscriptionStatus}
-                  selectedToneId={selectedToneId}
-                  setSelectedToneId={setSelectedToneId}
                   tones={tones}
-                  filePreviews={filePreviews}
-                  setIsTranscribing={setIsTranscribing}
                   isStreaming={isStreaming}
-                  isTranscribing={isTranscribing}
                   handleStopConversation={handleStopConversation}
                   preventSubmission={preventSubmission}
-                  isMultiline={isMultiline}
+                  handleSend={handleSend}
                 />
 
                 {/* Badges displayed after dropdown */}

@@ -1,5 +1,3 @@
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { OpenAIModel } from '@/types/openai';
 
 import { AzureOpenAIHandler } from './AzureOpenAIHandler';
@@ -25,7 +23,6 @@ export class HandlerFactory {
     model: OpenAIModel | null | undefined,
     azureClient: AzureOpenAI,
     openAIClient: OpenAI,
-    loggingService?: AzureMonitorLoggingService,
   ): ModelHandler {
     // Validate model input
     if (!model) {
@@ -34,16 +31,16 @@ export class HandlerFactory {
 
     // Azure OpenAI models (GPT-5, o3, GPT-4.1 non-agent)
     if (model.sdk === 'azure-openai') {
-      return new AzureOpenAIHandler(azureClient, loggingService);
+      return new AzureOpenAIHandler(azureClient);
     }
 
     // DeepSeek models (special system prompt handling)
     if (model.avoidSystemPrompt === true) {
-      return new DeepSeekHandler(openAIClient, loggingService);
+      return new DeepSeekHandler(openAIClient);
     }
 
     // Standard OpenAI API models (Grok, Llama, etc.)
-    return new StandardOpenAIHandler(openAIClient, loggingService);
+    return new StandardOpenAIHandler(openAIClient);
   }
 
   /**

@@ -101,14 +101,8 @@ export function useMessageSender({
       return;
     }
 
-    console.log('[MessageSender handleSend] submitType:', submitType);
-    console.log('[MessageSender handleSend] filePreviews:', filePreviews);
-    console.log('[MessageSender handleSend] fileFieldValue:', fileFieldValue);
-
     // Get artifact context if editor is open
     const artifactContext = getArtifactContext();
-
-    console.log('[MessageSender] Artifact context:', artifactContext);
 
     // If we have an artifact context, remove any uploaded file that matches the artifact fileName
     // This prevents sending both the original upload AND the edited version
@@ -122,10 +116,6 @@ export function useMessageSender({
           file.type === 'file_url' &&
           file.originalFilename === artifactContext.fileName
         ) {
-          console.log(
-            '[MessageSender] Removing duplicate file upload (editing in artifact):',
-            file.originalFilename,
-          );
           return false; // Remove this file - we'll use artifact context instead
         }
         return true;
@@ -137,11 +127,6 @@ export function useMessageSender({
             ? filtered[0]
             : filtered
           : null;
-
-      console.log(
-        '[MessageSender] Filtered fileFieldValue:',
-        filteredFileFieldValue,
-      );
     }
 
     // Build content with filtered file field value (if artifact is being edited)
@@ -151,11 +136,6 @@ export function useMessageSender({
       imageFieldValue,
       filteredFileFieldValue,
       null,
-    );
-
-    console.log(
-      '[MessageSender handleSend] built content:',
-      JSON.stringify(content).substring(0, 200),
     );
 
     onSend(

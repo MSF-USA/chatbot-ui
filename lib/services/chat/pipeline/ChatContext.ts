@@ -1,6 +1,6 @@
 import { Session } from 'next-auth';
 
-import { ChatLogger, ModelSelector } from '@/lib/services/shared';
+import { ModelSelector } from '@/lib/services/shared';
 
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
@@ -120,9 +120,6 @@ export interface ChatContext {
   // ========================================
   // INJECTED SERVICES
   // ========================================
-  /** Logger instance */
-  logger: ChatLogger;
-
   /** Model selector instance */
   modelSelector: ModelSelector;
 

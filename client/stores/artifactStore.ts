@@ -249,10 +249,6 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
     const ext = extensionMap[language] || 'txt';
     const defaultFileName = `untitled.${ext}`;
 
-    console.log(
-      `[CodeEditorStore] Opening artifact: ${defaultFileName} (${language})`,
-    );
-
     // Opening a new artifact replaces the current one
     set({
       originalCode: code,
@@ -322,34 +318,19 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
 
   getArtifactContext: () => {
     const state = get();
-    console.log('[CodeEditorStore] getArtifactContext called:', {
-      isArtifactOpen: state.isArtifactOpen,
-      isEditorOpen: state.isEditorOpen,
-      fileName: state.fileName,
-      codeLength: state.modifiedCode?.length || 0,
-    });
 
     // Check if editor is open AND has content (not just isArtifactOpen)
     // This ensures we include context whenever the editor is visible with code
     if (!state.isEditorOpen || !state.modifiedCode) {
-      console.log(
-        '[CodeEditorStore] Editor not open or no code, returning null',
-      );
       return null;
     }
 
     // Return artifact metadata for including in messages
-    const context = {
+    return {
       fileName: state.fileName,
       language: state.language,
       code: state.modifiedCode,
     };
-    console.log('[CodeEditorStore] Returning context:', {
-      fileName: context.fileName,
-      language: context.language,
-      codeLength: context.code?.length || 0,
-    });
-    return context;
   },
 
   canSwitchToDocumentMode: () => {

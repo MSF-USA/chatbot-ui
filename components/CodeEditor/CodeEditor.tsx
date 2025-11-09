@@ -26,7 +26,6 @@ export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
   const editorRef = useRef<any>(null);
 
   const handleEditorDidMount = (editor: any) => {
-    console.log('Editor mounted', editor);
     editorRef.current = editor;
     setIsLoading(false);
   };
@@ -36,7 +35,6 @@ export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
     if (editorRef.current && modifiedCode !== undefined) {
       const currentValue = editorRef.current.getValue();
       if (currentValue !== modifiedCode) {
-        console.log('[CodeEditor] Updating editor content');
         editorRef.current.setValue(modifiedCode);
       }
     }
@@ -49,7 +47,6 @@ export default function CodeEditor({ theme = 'light' }: CodeEditorProps) {
       if (model) {
         const currentLanguage = model.getLanguageId();
         if (currentLanguage !== language) {
-          console.log(`[CodeEditor] Updating language to ${language}`);
           window.monaco?.editor.setModelLanguage(model, language);
         }
       }

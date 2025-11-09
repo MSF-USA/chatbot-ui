@@ -15,6 +15,8 @@ import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { ErrorCode, PipelineError } from '@/lib/types/errors';
 
+import { env } from '@/config/environment';
+
 /**
  * POST /api/chat
  *
@@ -98,7 +100,6 @@ export async function POST(req: NextRequest): Promise<Response> {
       console.log('[Unified Chat] Getting services from container...');
       const container = ServiceContainer.getInstance();
 
-      const azureMonitorLogger = container.getAzureMonitorLogger();
       const fileProcessingService = container.getFileProcessingService();
       const toolRouterService = container.getToolRouterService();
       const agentChatService = container.getAgentChatService();
@@ -110,24 +111,20 @@ export async function POST(req: NextRequest): Promise<Response> {
       const inputValidator = new InputValidator();
       const pipeline = new ChatPipeline([
         // Content processors
-        new FileProcessor(
-          fileProcessingService,
-          azureMonitorLogger,
-          inputValidator,
-        ),
+        new FileProcessor(fileProcessingService, inputValidator),
         new ImageProcessor(),
 
         // Feature enrichers
         new RAGEnricher(
-          process.env.SEARCH_ENDPOINT!,
-          process.env.SEARCH_INDEX!,
-          process.env.SEARCH_ENDPOINT_API_KEY!,
+          env.SEARCH_ENDPOINT!,
+          env.SEARCH_INDEX!,
+          env.SEARCH_ENDPOINT_API_KEY!,
         ),
         new ToolRouterEnricher(toolRouterService, agentChatService),
         new AgentEnricher(),
 
         // Execution handlers (AgentChatHandler runs first, StandardChatHandler as fallback)
-        new AgentChatHandler(aiFoundryAgentHandler, azureMonitorLogger),
+        new AgentChatHandler(aiFoundryAgentHandler),
         new StandardChatHandler(standardChatService),
       ]);
 

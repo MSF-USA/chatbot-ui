@@ -27,13 +27,6 @@ import { useConversations } from '@/client/hooks/conversation/useConversations';
 import { useDropdownKeyboardNav } from '@/client/hooks/ui/useDropdownKeyboardNav';
 import useEnhancedOutsideClick from '@/client/hooks/ui/useEnhancedOutsideClick';
 
-import {
-  ChatInputSubmitTypes,
-  FileFieldValue,
-  FilePreview,
-  ImageFieldValue,
-  Message,
-} from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 import { Tone } from '@/types/tone';
 
@@ -44,54 +37,47 @@ import ImageIcon from '@/components/Icons/image';
 
 import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
 
+import { useChatInputStore } from '@/client/stores/chatInputStore';
+
 interface DropdownProps {
-  onFileUpload: (
-    event: React.ChangeEvent<HTMLInputElement> | File[] | FileList,
-    setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>,
-    setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>,
-    setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>,
-    setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>,
-    setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>,
-  ) => Promise<void>;
-  setSubmitType: Dispatch<SetStateAction<ChatInputSubmitTypes>>;
-  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
-  setFileFieldValue: Dispatch<SetStateAction<FileFieldValue>>;
-  setImageFieldValue: Dispatch<SetStateAction<ImageFieldValue>>;
-  setUploadProgress: Dispatch<SetStateAction<{ [key: string]: number }>>;
-  setTextFieldValue: Dispatch<SetStateAction<string>>;
-  handleSend: () => void;
-  textFieldValue: string;
   onCameraClick: () => void;
   openDownward?: boolean;
-  searchMode: SearchMode;
-  setSearchMode: Dispatch<SetStateAction<SearchMode>>;
-  setTranscriptionStatus: Dispatch<SetStateAction<string | null>>;
-  selectedToneId: string | null;
-  setSelectedToneId: Dispatch<SetStateAction<string | null>>;
   tones: Tone[];
-  filePreviews: FilePreview[];
+  handleSend: () => void;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({
-  setFileFieldValue,
-  onFileUpload,
-  setFilePreviews,
-  setTextFieldValue,
-  setImageFieldValue,
-  setUploadProgress,
-  setSubmitType,
-  handleSend,
-  textFieldValue,
   onCameraClick,
   openDownward = false,
-  searchMode,
-  setSearchMode,
-  setTranscriptionStatus,
-  selectedToneId,
-  setSelectedToneId,
   tones,
-  filePreviews,
+  handleSend,
 }) => {
+  const setFileFieldValue = useChatInputStore(
+    (state) => state.setFileFieldValue,
+  );
+  const handleFileUpload = useChatInputStore((state) => state.handleFileUpload);
+  const setFilePreviews = useChatInputStore((state) => state.setFilePreviews);
+  const setTextFieldValue = useChatInputStore(
+    (state) => state.setTextFieldValue,
+  );
+  const setImageFieldValue = useChatInputStore(
+    (state) => state.setImageFieldValue,
+  );
+  const setUploadProgress = useChatInputStore(
+    (state) => state.setUploadProgress,
+  );
+  const setSubmitType = useChatInputStore((state) => state.setSubmitType);
+  const textFieldValue = useChatInputStore((state) => state.textFieldValue);
+  const searchMode = useChatInputStore((state) => state.searchMode);
+  const setSearchMode = useChatInputStore((state) => state.setSearchMode);
+  const setTranscriptionStatus = useChatInputStore(
+    (state) => state.setTranscriptionStatus,
+  );
+  const selectedToneId = useChatInputStore((state) => state.selectedToneId);
+  const setSelectedToneId = useChatInputStore(
+    (state) => state.setSelectedToneId,
+  );
+  const filePreviews = useChatInputStore((state) => state.filePreviews);
   const { selectedConversation } = useConversations();
 
   const [isOpen, setIsOpen] = useState(false);
@@ -465,16 +451,11 @@ const Dropdown: React.FC<DropdownProps> = ({
         ref={fileInputRef}
         type="file"
         accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.md,.csv,.json,.xml,.yaml,.yml,.py,.js,.ts,.jsx,.tsx,.java,.c,.cpp,.cs,.go,.rb,.php,.sql,.sh,.bash,.ps1,.r,.swift,.kt,.rs,.scala,.env,.config,.ini,.toml,.mp3,.mp4,.wav,.webm,.m4a,.mpeg,.mpga"
-        onChange={(e) =>
-          onFileUpload(
-            e,
-            setSubmitType,
-            setFilePreviews,
-            setFileFieldValue,
-            setImageFieldValue,
-            setUploadProgress,
-          )
-        }
+        onChange={async (e) => {
+          if (e.target.files) {
+            await handleFileUpload(Array.from(e.target.files));
+          }
+        }}
         className="hidden"
         multiple
       />

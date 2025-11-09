@@ -1,7 +1,5 @@
 import { Session } from 'next-auth';
 
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { OPENAI_API_VERSION } from '@/lib/utils/app/const';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { loadDocument } from '@/lib/utils/server/file-handling';
@@ -9,6 +7,7 @@ import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { ImageMessageContent } from '@/types/chat';
 
+import { env } from '@/config/environment';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -24,7 +23,6 @@ interface ParseAndQueryFilterOpenAIArguments {
   maxLength?: number;
   user: Session['user'];
   botId?: string;
-  loggingService: AzureMonitorLoggingService;
   stream?: boolean;
   images?: ImageMessageContent[];
 }
@@ -35,7 +33,6 @@ async function summarizeChunk(
   prompt: string,
   chunk: string,
   user: Session['user'],
-  loggingService: AzureMonitorLoggingService,
   startTimeChunk: number,
   filename?: string,
   fileSize?: number,
@@ -64,16 +61,6 @@ async function summarizeChunk(
 
     return chunkSummary?.choices?.[0]?.message?.content?.trim() ?? '';
   } catch (error: any) {
-    await loggingService.logFileError(
-      startTimeChunk,
-      error,
-      modelId,
-      user,
-      filename,
-      fileSize,
-      undefined,
-      'chunkSummarization',
-    );
     console.error('Error summarizing chunk:', error);
     return null;
   }
@@ -86,7 +73,6 @@ export async function parseAndQueryFileOpenAI({
   maxLength = 6000,
   user,
   botId,
-  loggingService,
   stream = true,
   images = [],
 }: ParseAndQueryFilterOpenAIArguments): Promise<ReadableStream | string> {
@@ -142,7 +128,6 @@ export async function parseAndQueryFileOpenAI({
         prompt,
         chunk,
         user,
-        loggingService,
         Date.now(),
         file.name,
         file.size,
@@ -222,11 +207,11 @@ export async function parseAndQueryFileOpenAI({
           {
             type: 'azure_search',
             parameters: {
-              endpoint: process.env.SEARCH_ENDPOINT,
-              index_name: process.env.SEARCH_INDEX,
+              endpoint: env.SEARCH_ENDPOINT,
+              index_name: env.SEARCH_INDEX,
               authentication: {
                 type: 'api_key',
-                key: process.env.SEARCH_ENDPOINT_API_KEY,
+                key: env.SEARCH_ENDPOINT_API_KEY,
               },
             },
           },
@@ -243,20 +228,6 @@ export async function parseAndQueryFileOpenAI({
     );
 
     if (stream) {
-      await loggingService.logFileSuccess(
-        startTime,
-        modelId,
-        user,
-        file.name,
-        file.size,
-        botId,
-        'documentSummary',
-        totalChunkCount,
-        processedChunkCount,
-        totalChunkCount - processedChunkCount,
-        true,
-      );
-
       return createAzureOpenAIStreamProcessor(
         response as AsyncIterable<OpenAI.Chat.Completions.ChatCompletionChunk>,
       );
@@ -270,33 +241,9 @@ export async function parseAndQueryFileOpenAI({
         );
       }
 
-      await loggingService.logFileSuccess(
-        startTime,
-        modelId,
-        user,
-        file.name,
-        file.size,
-        botId,
-        'documentSummary',
-        totalChunkCount,
-        processedChunkCount,
-        totalChunkCount - processedChunkCount,
-        false,
-      );
-
       return completionText;
     }
   } catch (error) {
-    await loggingService.logFileError(
-      startTime,
-      error,
-      modelId,
-      user,
-      file.name,
-      file.size,
-      botId,
-      'documentSummary',
-    );
     throw error;
   }
 }

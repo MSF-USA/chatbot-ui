@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { AzureBlobStorage } from '@/lib/utils/server/blob';
 
 import { auth } from '@/auth';
+import { env } from '@/config/environment';
 import { DequeuedMessageItem } from '@azure/storage-queue';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -22,9 +23,9 @@ async function initializeBlobStorage(req: NextRequest) {
 
   const user = session.user;
 
-  const storageAccountName = process.env.AZURE_BLOB_STORAGE_NAME;
-  const storageAccountAccessKey = process.env.AZURE_BLOB_STORAGE_KEY; // Optional - uses Entra ID if not set
-  const containerName = process.env.AZURE_BLOB_STORAGE_CONTAINER || 'messages';
+  const storageAccountName = env.AZURE_BLOB_STORAGE_NAME;
+  const storageAccountAccessKey = env.AZURE_BLOB_STORAGE_KEY; // Optional - uses Entra ID if not set
+  const containerName = env.AZURE_BLOB_STORAGE_CONTAINER || 'messages';
 
   if (!storageAccountName) {
     throw new Error('Storage account name is not set.');

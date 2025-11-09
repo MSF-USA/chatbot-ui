@@ -2,6 +2,7 @@ import { Session } from 'next-auth';
 
 import { getEnvVariable } from '@/lib/utils/app/env';
 
+import { env } from '@/config/environment';
 import { DefaultAzureCredential } from '@azure/identity';
 import {
   BlobServiceClient,
@@ -107,7 +108,7 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
       this.containerName = getEnvVariable({
         name: 'AZURE_BLOB_STORAGE_CONTAINER',
         throwErrorOnFail: false,
-        defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+        defaultValue: env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
         user,
       });
     }
@@ -384,7 +385,7 @@ export const getBlobBase64String = async (
     getEnvVariable({
       name: 'AZURE_BLOB_STORAGE_CONTAINER',
       throwErrorOnFail: false,
-      defaultValue: process.env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
+      defaultValue: env.AZURE_BLOB_STORAGE_IMAGE_CONTAINER ?? '',
       user,
     }),
     user,

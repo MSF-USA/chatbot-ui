@@ -6,6 +6,7 @@ import {
 
 import { ITranscriptionService } from '@/types/transcription';
 
+import { env } from '@/config/environment';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -19,10 +20,10 @@ export class WhisperTranscriptionService implements ITranscriptionService {
   private client: AzureOpenAI;
 
   constructor() {
-    const apiKey = process.env.OPENAI_API_KEY;
-    const azureEndpoint = process.env.AZURE_OPENAI_ENDPOINT;
+    const apiKey = env.OPENAI_API_KEY;
+    const azureEndpoint = env.AZURE_OPENAI_ENDPOINT;
     const deployment = 'whisper';
-    const apiVersion = process.env.OPENAI_API_VERSION || '2025-04-01-preview';
+    const apiVersion = env.OPENAI_API_VERSION;
 
     if (!azureEndpoint) {
       throw new Error('AZURE_OPENAI_ENDPOINT is not set.');

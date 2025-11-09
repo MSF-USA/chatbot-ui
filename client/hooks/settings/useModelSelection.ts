@@ -16,15 +16,8 @@ export function useModelSelection() {
   const handleModelSelect = useCallback(
     (model: OpenAIModel) => {
       if (!selectedConversation) {
-        console.log(
-          '[ModelSelection] No selectedConversation, cannot select model',
-        );
         return;
       }
-
-      console.log(
-        `[ModelSelection] Selecting model ${model.id} (was: ${selectedConversation.model?.id})`,
-      );
 
       // Build update object
       // Update conversation with selected model
@@ -38,9 +31,6 @@ export function useModelSelection() {
         selectedConversation.defaultSearchMode === undefined ||
         selectedConversation.defaultSearchMode === null
       ) {
-        console.log(
-          '[ModelSelection] No defaultSearchMode found, setting to INTELLIGENT (privacy-focused)',
-        );
         updates.defaultSearchMode = SearchMode.INTELLIGENT;
       }
 
@@ -51,9 +41,6 @@ export function useModelSelection() {
 
   const handleToggleSearchMode = useCallback(() => {
     if (!selectedConversation) {
-      console.log(
-        '[ModelSelection] No selectedConversation, cannot toggle search mode',
-      );
       return;
     }
 
@@ -70,9 +57,6 @@ export function useModelSelection() {
   const handleSetSearchMode = useCallback(
     (mode: SearchMode) => {
       if (!selectedConversation) {
-        console.log(
-          '[ModelSelection] No selectedConversation, cannot set search mode',
-        );
         return;
       }
 

@@ -1,7 +1,5 @@
 import { Session } from 'next-auth';
 
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 
 import { Message } from '@/types/chat';
@@ -23,11 +21,8 @@ import OpenAI, { AzureOpenAI } from 'openai';
 export class AzureOpenAIHandler extends ModelHandler {
   private client: AzureOpenAI;
 
-  constructor(
-    client: AzureOpenAI,
-    loggingService?: AzureMonitorLoggingService,
-  ) {
-    super(loggingService);
+  constructor(client: AzureOpenAI) {
+    super();
     this.client = client;
   }
 

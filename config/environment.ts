@@ -39,8 +39,12 @@ const serverEnvSchema = z.object({
 
   // Azure AI Foundry
   AZURE_AI_FOUNDRY_ENDPOINT: z.string().url().optional(),
+  AZURE_AI_FOUNDRY_OPENAI_ENDPOINT: z.string().url().optional(),
 
   // Azure Blob Storage
+  AZURE_BLOB_STORAGE_NAME: z.string().optional(),
+  AZURE_BLOB_STORAGE_KEY: z.string().optional(),
+  AZURE_BLOB_STORAGE_CONTAINER: z.string().optional(),
   AZURE_BLOB_STORAGE_IMAGE_CONTAINER: z.string().optional(),
   STORAGE_RESOURCE_ID: z.string().optional(),
   STORAGE_DATA_SOURCE_CONTAINER: z.string().optional(),
@@ -65,9 +69,22 @@ const serverEnvSchema = z.object({
     .transform((val) => val === 'true'),
   FORCE_LOGOUT_ON_REFRESH_FAILURE: z.string().default('true'),
 
+  // NextAuth
+  AUTH_SECRET: z.string().optional(),
+  NEXTAUTH_SECRET: z.string().optional(),
+  NEXTAUTH_URL: z.string().url().optional(),
+
+  // Application Insights (OpenTelemetry)
+  APPLICATIONINSIGHTS_CONNECTION_STRING: z.string().optional(),
+
+  // LaunchDarkly
+  LAUNCHDARKLY_SDK_KEY: z.string().optional(),
+  LAUNCHDARKLY_CLIENT_ID: z.string().optional(),
+
   // Build Information
   GITHUB_SHA: z.string().optional(),
   BUILD_ID: z.string().optional(),
+  NEXT_PUBLIC_EMAIL: z.string().email().optional(),
 
   // System Prompt Configuration
   NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT: z.string().optional(),
@@ -92,6 +109,8 @@ const clientEnvSchema = z.object({
   NEXT_PUBLIC_BUILD: z.string().optional(),
   NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT: z.string().optional(),
   NEXT_PUBLIC_DEFAULT_TEMPERATURE: z.string().default('0.5'),
+  NEXT_PUBLIC_EMAIL: z.string().email().optional(),
+  LAUNCHDARKLY_CLIENT_ID: z.string().optional(),
 });
 
 /**
@@ -131,7 +150,7 @@ function validateEnv() {
  *
  * Use this object instead of process.env for type safety
  */
-export const env = validateEnv();
+export const env = validateEnv() as ServerEnv & ClientEnv;
 
 /**
  * Type exports

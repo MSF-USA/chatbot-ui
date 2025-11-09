@@ -46,6 +46,26 @@ const MessageSchema = z.object({
   content: MessageContentSchema,
   // messageType is optional metadata for frontend UI hints - not validated
   messageType: z.string().optional(),
+  // Optional metadata fields
+  toneId: z.string().nullable().optional(),
+  promptId: z.string().nullable().optional(),
+  promptVariables: z.record(z.string(), z.string()).optional(),
+  // Artifact context for code editor
+  artifactContext: z
+    .object({
+      fileName: z.string(),
+      language: z.string(),
+      code: z.string().max(100000, 'Artifact code too long'),
+    })
+    .optional(),
+  // Citations from web search
+  citations: z.array(z.any()).optional(),
+  // Thinking content for reasoning models
+  thinking: z.string().optional(),
+  // Transcript metadata for audio/video
+  transcript: z.any().optional(),
+  // Error flag
+  error: z.boolean().optional(),
 });
 
 /**

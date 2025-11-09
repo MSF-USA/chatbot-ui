@@ -1,7 +1,5 @@
 import { Session } from 'next-auth';
 
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
@@ -21,8 +19,8 @@ import OpenAI from 'openai';
 export class DeepSeekHandler extends ModelHandler {
   private client: OpenAI;
 
-  constructor(client: OpenAI, loggingService?: AzureMonitorLoggingService) {
-    super(loggingService);
+  constructor(client: OpenAI) {
+    super();
     this.client = client;
   }
 

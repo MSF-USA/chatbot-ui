@@ -1,7 +1,6 @@
 import { FileProcessingService } from '@/lib/services/chat/FileProcessingService';
 import { FileProcessor } from '@/lib/services/chat/processors/FileProcessor';
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
 
 import { MessageType } from '@/types/chat';
 
@@ -13,7 +12,6 @@ describe('FileProcessor', () => {
   describe('Parallel file operations', () => {
     let fileProcessor: FileProcessor;
     let mockFileService: any;
-    let mockLogger: any;
     let mockValidator: any;
 
     beforeEach(() => {
@@ -29,19 +27,12 @@ describe('FileProcessor', () => {
         cleanupFile: vi.fn(async () => {}),
       };
 
-      mockLogger = {
-        logCompletion: vi.fn(),
-        logError: vi.fn(),
-        logAgentExecution: vi.fn(),
-      };
-
       mockValidator = {
         validateFileSize: vi.fn(async () => {}),
       };
 
       fileProcessor = new FileProcessor(
         mockFileService as any,
-        mockLogger as any,
         mockValidator as any,
       );
     });

@@ -1,5 +1,3 @@
-import { AzureMonitorLoggingService } from '@/lib/services/loggingService';
-
 import { AIFoundryAgentHandler } from '../AIFoundryAgentHandler';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
@@ -21,10 +19,7 @@ import { BasePipelineStage } from '../pipeline/PipelineStage';
 export class AgentChatHandler extends BasePipelineStage {
   readonly name = 'AgentChatHandler';
 
-  constructor(
-    private aiFoundryAgentHandler: AIFoundryAgentHandler,
-    private azureMonitorLogger: AzureMonitorLoggingService,
-  ) {
+  constructor(private aiFoundryAgentHandler: AIFoundryAgentHandler) {
     super();
   }
 

@@ -8,21 +8,22 @@ import React, { FC } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { useChatInputStore } from '@/client/stores/chatInputStore';
+
 interface ChatInputSubmitButtonProps {
   isStreaming: boolean;
-  isTranscribing: boolean;
-  handleSend: () => void;
   handleStopConversation: () => void;
   preventSubmission: () => boolean;
+  handleSend: () => void;
 }
 
 const ChatInputSubmitButton: FC<ChatInputSubmitButtonProps> = ({
   isStreaming,
-  handleSend,
   handleStopConversation,
-  isTranscribing,
   preventSubmission,
+  handleSend,
 }) => {
+  const isTranscribing = useChatInputStore((state) => state.isTranscribing);
   const t = useTranslations();
 
   return (
