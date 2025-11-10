@@ -70,7 +70,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   const t = useTranslations();
   const { tones } = useTones();
   const { prompts } = useSettings();
-  const { openArtifact } = useArtifactStore();
+  const { openArtifact, openDocument } = useArtifactStore();
   const {
     role,
     content,
@@ -177,11 +177,47 @@ export const UserMessage: FC<UserMessageProps> = ({
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      openArtifact(
-                        artifactContext.code,
-                        artifactContext.language,
-                        artifactContext.fileName,
-                      );
+
+                      // Detect if this is a document type file
+                      const ext = artifactContext.fileName
+                        .split('.')
+                        .pop()
+                        ?.toLowerCase();
+                      const documentExtensions = [
+                        'md',
+                        'markdown',
+                        'txt',
+                        'html',
+                        'htm',
+                      ];
+
+                      if (ext && documentExtensions.includes(ext)) {
+                        // Open as document with proper source format
+                        const sourceFormatMap: Record<
+                          string,
+                          'md' | 'markdown' | 'txt' | 'html' | 'htm'
+                        > = {
+                          md: 'md',
+                          markdown: 'markdown',
+                          txt: 'txt',
+                          html: 'html',
+                          htm: 'htm',
+                        };
+                        const sourceFormat = sourceFormatMap[ext] || 'txt';
+                        openDocument(
+                          artifactContext.code,
+                          sourceFormat,
+                          artifactContext.fileName,
+                          'document', // Start in document mode by default
+                        );
+                      } else {
+                        // Open as code artifact
+                        openArtifact(
+                          artifactContext.code,
+                          artifactContext.language,
+                          artifactContext.fileName,
+                        );
+                      }
                     }}
                     className="flex items-center gap-1.5 px-2 py-1 text-xs font-medium text-blue-400 hover:text-blue-300 hover:bg-blue-950/30 rounded transition-colors"
                     title="Open in editor"

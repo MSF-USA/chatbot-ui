@@ -1,5 +1,10 @@
 'use client';
 
+import {
+  htmlToMarkdown,
+  htmlToPlainText,
+} from '@/lib/utils/document/exportUtils';
+
 import { create } from 'zustand';
 
 type EditorMode = 'code' | 'document';
@@ -325,11 +330,36 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       return null;
     }
 
+    let codeToSend = state.modifiedCode;
+
+    // If in document mode, convert HTML back to original format
+    // This ensures chat receives content in the format user expects (markdown, text, etc.)
+    if (state.editorMode === 'document' && state.sourceFormat) {
+      if (state.sourceFormat === 'md' || state.sourceFormat === 'markdown') {
+        codeToSend = htmlToMarkdown(state.modifiedCode);
+        console.log(
+          '[ArtifactStore] Converted HTML to Markdown for chat context',
+        );
+      } else if (state.sourceFormat === 'txt') {
+        codeToSend = htmlToPlainText(state.modifiedCode);
+        console.log(
+          '[ArtifactStore] Converted HTML to plain text for chat context',
+        );
+      } else if (
+        state.sourceFormat === 'html' ||
+        state.sourceFormat === 'htm'
+      ) {
+        // HTML stays as-is
+        codeToSend = state.modifiedCode;
+        console.log('[ArtifactStore] Keeping HTML format for chat context');
+      }
+    }
+
     // Return artifact metadata for including in messages
     return {
       fileName: state.fileName,
       language: state.language,
-      code: state.modifiedCode,
+      code: codeToSend,
     };
   },
 

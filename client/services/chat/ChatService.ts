@@ -3,6 +3,7 @@
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
+import { Tone } from '@/types/tone';
 
 import { apiClient } from '../api';
 
@@ -62,6 +63,7 @@ export class ChatService {
       searchMode?: SearchMode;
       forcedAgentType?: string;
       isEditorOpen?: boolean;
+      tone?: Tone;
     },
   ): Promise<ReadableStream<Uint8Array>> {
     return apiClient.postStream('/api/chat', {
@@ -77,6 +79,7 @@ export class ChatService {
       searchMode: options?.searchMode,
       forcedAgentType: options?.forcedAgentType,
       isEditorOpen: options?.isEditorOpen,
+      tone: options?.tone,
     });
   }
 
@@ -100,6 +103,7 @@ export class ChatService {
       threadId?: string;
       searchMode?: SearchMode;
       forcedAgentType?: string;
+      tone?: Tone;
     },
   ): Promise<{ text: string; metadata?: any }> {
     return apiClient.post('/api/chat', {
@@ -114,6 +118,7 @@ export class ChatService {
       threadId: options?.threadId,
       searchMode: options?.searchMode,
       forcedAgentType: options?.forcedAgentType,
+      tone: options?.tone,
     });
   }
 }

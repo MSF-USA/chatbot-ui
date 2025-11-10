@@ -91,6 +91,7 @@ jobs:
             ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:pr-${{ github.event.number }}-${{ github.sha }}
           build-args: |
             BUILD=${{ github.run_number }}
+            ENV=dev
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

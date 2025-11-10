@@ -363,7 +363,14 @@ export const ChatInput = ({
           UI_CONSTANTS.TEXTAREA.MULTILINE_THRESHOLD,
       );
     }
-  }, [textFieldValue, textareaRef, setTextareaScrollHeight, setIsMultiline]);
+  }, [
+    textFieldValue,
+    searchMode,
+    selectedToneId,
+    textareaRef,
+    setTextareaScrollHeight,
+    setIsMultiline,
+  ]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {

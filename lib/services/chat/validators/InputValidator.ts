@@ -4,6 +4,7 @@ import { ErrorCode, PipelineError } from '@/lib/types/errors';
 import { ChatBody, Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
+import { Tone } from '@/types/tone';
 
 import { z } from 'zod';
 
@@ -85,6 +86,25 @@ const OpenAIModelSchema = z.object({
 }) as z.ZodType<OpenAIModel>;
 
 /**
+ * Zod schema for Tone configuration.
+ */
+const ToneSchema = z.object({
+  id: z.string().min(1, 'Tone ID is required'),
+  name: z.string().min(1, 'Tone name is required'),
+  description: z.string(),
+  voiceRules: z.string().max(10000, 'Voice rules too long (max 10,000 chars)'),
+  examples: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  createdAt: z.string(),
+  updatedAt: z.string().optional(),
+  folderId: z.string().nullable(),
+  model: OpenAIModelSchema.optional(),
+  templateId: z.string().optional(),
+  templateName: z.string().optional(),
+  importedAt: z.string().optional(),
+});
+
+/**
  * Zod schema for the main chat request body.
  */
 const ChatBodySchema = z
@@ -110,6 +130,7 @@ const ChatBodySchema = z
     searchMode: z.nativeEnum(SearchMode).optional(),
     threadId: z.string().max(100, 'Thread ID too long').optional(),
     forcedAgentType: z.string().max(50, 'Agent type too long').optional(),
+    tone: ToneSchema.optional(), // Full tone object from client
   })
   .strict(); // Reject unknown properties
 
@@ -135,6 +156,7 @@ export class InputValidator {
     searchMode?: SearchMode;
     threadId?: string;
     forcedAgentType?: string;
+    tone?: Tone;
   } {
     try {
       const result = ChatBodySchema.safeParse(body);

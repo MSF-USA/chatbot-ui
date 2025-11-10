@@ -178,6 +178,7 @@ export class StandardChatHandler extends BasePipelineStage {
             botId: ragConfig?.botId,
             transcript,
             citations,
+            tone: context.tone,
           });
 
           console.log('[StandardChatHandler] Chat execution completed');

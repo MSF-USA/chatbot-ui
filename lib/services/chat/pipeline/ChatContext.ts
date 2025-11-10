@@ -5,6 +5,7 @@ import { ModelSelector } from '@/lib/services/shared';
 import { Message } from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 import { SearchMode } from '@/types/searchMode';
+import { Tone } from '@/types/tone';
 
 /**
  * Processed content from content processors.
@@ -101,6 +102,9 @@ export interface ChatContext {
 
   /** Forced agent type */
   forcedAgentType?: string;
+
+  /** Tone configuration (voice/writing style) */
+  tone?: Tone;
 
   // ========================================
   // CONTENT ANALYSIS (Populated by middleware)

@@ -117,6 +117,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }),
 
   sendMessage: async (message, conversation, searchMode) => {
+    console.log('[chatStore.sendMessage] Message toneId:', message.toneId);
+    console.log(
+      '[chatStore.sendMessage] All messages:',
+      conversation.messages.map((m) => ({ role: m.role, toneId: m.toneId })),
+    );
+
     let showLoadingTimeout: NodeJS.Timeout | null = null;
 
     try {
@@ -206,6 +212,22 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       ? { ...conversation.model, ...latestModelConfig }
       : conversation.model;
 
+    // Get the toneId from the latest user message and look up the full tone object
+    const latestUserMessage = conversation.messages
+      .filter((m) => m.role === 'user')
+      .pop();
+    const tone = latestUserMessage?.toneId
+      ? settings.tones.find((t) => t.id === latestUserMessage.toneId)
+      : undefined;
+
+    if (latestUserMessage?.toneId && tone) {
+      console.log('[chatStore.sendChatRequest] Sending full tone object:', {
+        id: tone.id,
+        name: tone.name,
+        hasVoiceRules: !!tone.voiceRules,
+      });
+    }
+
     return await chatService.chat(modelToSend, conversation.messages, {
       prompt: settings.systemPrompt,
       temperature: settings.temperature,
@@ -216,6 +238,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         conversation.reasoningEffort || modelToSend.reasoningEffort,
       verbosity: conversation.verbosity || modelToSend.verbosity,
       searchMode,
+      tone, // Pass the full tone object
     });
   },
 

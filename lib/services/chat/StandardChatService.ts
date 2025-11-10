@@ -9,6 +9,7 @@ import { getGlobalTiktoken } from '@/lib/utils/server/tiktokenCache';
 import { Message } from '@/types/chat';
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Citation } from '@/types/rag';
+import { Tone } from '@/types/tone';
 
 import { ModelSelector, StreamingService, ToneService } from '../shared';
 import { HandlerFactory } from './handlers/HandlerFactory';
@@ -30,6 +31,7 @@ export interface StandardChatRequest {
   botId?: string;
   transcript?: TranscriptMetadata;
   citations?: Citation[]; // Web search citations to include in response
+  tone?: Tone; // Full tone object from client
 }
 
 /**
@@ -83,10 +85,18 @@ export class StandardChatService {
 
     // Apply tone to system prompt if specified
     const enhancedPrompt = this.toneService.applyTone(
-      request.messages,
+      request.tone,
       request.systemPrompt,
-      request.user.id,
     );
+    if (request.tone) {
+      console.log('[StandardChatService] Applied tone:', request.tone.name);
+      console.log(
+        '[StandardChatService] Enhanced prompt length:',
+        enhancedPrompt.length,
+        'Original:',
+        request.systemPrompt.length,
+      );
+    }
 
     // Determine streaming and temperature based on model
     const { stream, temperature } = this.streamingService.getStreamConfig(

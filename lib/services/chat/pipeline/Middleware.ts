@@ -134,7 +134,16 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       searchMode,
       threadId,
       forcedAgentType,
+      tone,
     } = body;
+
+    if (tone) {
+      console.log('[Middleware] Received tone from client:', {
+        id: tone.id,
+        name: tone.name,
+        hasVoiceRules: !!tone.voiceRules,
+      });
+    }
 
     return {
       model,
@@ -148,6 +157,7 @@ export const requestParsingMiddleware: Middleware = async (req) => {
       searchMode,
       threadId,
       forcedAgentType,
+      tone,
     };
   } catch (error) {
     if (error instanceof PipelineError) {

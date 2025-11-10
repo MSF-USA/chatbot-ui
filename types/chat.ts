@@ -2,6 +2,7 @@ import { TranscriptMetadata } from '@/lib/utils/app/metadata';
 
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
+import { Tone } from './tone';
 
 export enum MessageType {
   TEXT = 'TEXT',
@@ -90,6 +91,7 @@ export interface ChatBody {
   verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
   forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
   isEditorOpen?: boolean; // Indicates if code editor is currently open
+  tone?: Tone; // Full tone object (if tone is selected)
 }
 
 export interface Conversation {
