@@ -9,13 +9,7 @@ import { z } from 'zod';
 /**
  * Environment enum
  */
-const EnvironmentEnum = z.enum([
-  'localhost',
-  'development',
-  'staging',
-  'beta',
-  'production',
-]);
+const EnvironmentEnum = z.enum(['localhost', 'dev', 'staging', 'beta', 'prod']);
 
 /**
  * Server-side environment schema (includes secrets)
@@ -162,9 +156,9 @@ export type Environment = z.infer<typeof EnvironmentEnum>;
 /**
  * Helper functions
  */
-export const isProduction = () => env.NEXT_PUBLIC_ENV === 'production';
+export const isProduction = () => env.NEXT_PUBLIC_ENV === 'prod';
 export const isDevelopment = () =>
-  env.NEXT_PUBLIC_ENV === 'localhost' || env.NEXT_PUBLIC_ENV === 'development';
+  env.NEXT_PUBLIC_ENV === 'localhost' || env.NEXT_PUBLIC_ENV === 'dev';
 export const isStaging = () => env.NEXT_PUBLIC_ENV === 'staging';
 export const isBeta = () => env.NEXT_PUBLIC_ENV === 'beta';
 
