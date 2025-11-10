@@ -1,5 +1,4 @@
 import { decode } from 'he';
-import html2pdf from 'html2pdf.js';
 import DOMPurify from 'isomorphic-dompurify';
 import TurndownService from 'turndown';
 
@@ -56,6 +55,9 @@ export async function exportToPDF(
   fileName: string,
 ): Promise<void> {
   try {
+    // Dynamically import html2pdf only when needed (client-side only)
+    const html2pdf = (await import('html2pdf.js')).default;
+
     const options = {
       margin: 10,
       filename: fileName,

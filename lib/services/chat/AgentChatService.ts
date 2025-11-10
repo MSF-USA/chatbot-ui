@@ -103,6 +103,10 @@ export class AgentChatService {
           console.log(
             `[AgentChatService] Web search completed: ${text.length} chars, ${citations.length} citations`,
           );
+          console.log(
+            `[AgentChatService] Web search response text:`,
+            text.substring(0, 200),
+          );
 
           span.setAttribute('search.result_length', text.length);
           span.setAttribute('search.citations_count', citations.length);

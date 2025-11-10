@@ -18,7 +18,7 @@ const STAGE_TIMEOUTS: Record<string, number> = {
   FileProcessor: 30000, // 30s for file download/processing
   ImageProcessor: 5000, // 5s for image validation
   RAGEnricher: 10000, // 10s for knowledge base search
-  ToolRouterEnricher: 15000, // 15s for web search
+  ToolRouterEnricher: 45000, // 45s for web search (AI agent + Bing search + result processing)
   AgentEnricher: 5000, // 5s for agent selection
   StandardChatHandler: 30000, // 30s for LLM response
   AgentChatHandler: 60000, // 60s for agent execution

@@ -5,6 +5,9 @@ import { useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
+import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
+
 interface TranscriptViewerProps {
   filename: string;
   transcript: string;
@@ -94,7 +97,16 @@ export const TranscriptViewer: React.FC<TranscriptViewerProps> = ({
       {/* Processed Content (if provided) */}
       {processedContent && (
         <div className="mb-4 prose dark:prose-invert max-w-none">
-          {processedContent}
+          <StreamdownWithCodeButtons>
+            <CitationStreamdown
+              citations={[]}
+              isAnimating={false}
+              controls={true}
+              shikiTheme={['github-light', 'github-dark']}
+            >
+              {processedContent}
+            </CitationStreamdown>
+          </StreamdownWithCodeButtons>
         </div>
       )}
 

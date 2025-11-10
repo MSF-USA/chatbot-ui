@@ -120,6 +120,17 @@ export class FileProcessor extends BasePipelineStage {
                 this.fileProcessingService.getTempFilePath(file.url);
               const filename = file.originalFilename || blobId;
 
+              console.log(
+                `[FileProcessor] File data:`,
+                JSON.stringify({
+                  url: file.url,
+                  originalFilename: file.originalFilename,
+                  hasOriginalFilename: !!file.originalFilename,
+                  blobId,
+                  finalFilename: filename,
+                }),
+              );
+
               // Download file
               await this.fileProcessingService.downloadFile(
                 file.url,
