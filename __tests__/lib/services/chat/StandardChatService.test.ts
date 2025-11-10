@@ -190,9 +190,8 @@ describe('StandardChatService', () => {
         messages,
       );
       expect(mockToneService.applyTone).toHaveBeenCalledWith(
-        messages,
+        undefined, // tone object (not provided in this test)
         systemPrompt,
-        testUser.id,
       );
       expect(mockStreamingService.getStreamConfig).toHaveBeenCalledWith(
         'gpt-5',
@@ -308,18 +307,25 @@ describe('StandardChatService', () => {
       );
     });
 
-    it('should apply tone when toneId is specified', async () => {
+    it('should apply tone when tone is specified', async () => {
       const model = OpenAIModels[OpenAIModelID.GPT_5];
       const messages: Message[] = [
         {
           role: 'user',
           content: 'Hello',
-          toneId: 'professional',
           messageType: undefined,
         },
       ];
       const systemPrompt = 'You are a helpful assistant.';
       const enhancedPrompt = `${systemPrompt}\n\n# Writing Style\nUse formal language.`;
+      const tone = {
+        id: 'professional',
+        name: 'Professional',
+        description: 'Formal and professional tone',
+        voiceRules: 'Use formal language.',
+        createdAt: new Date().toISOString(),
+        folderId: null,
+      };
 
       // Mock model selector
       vi.mocked(mockModelSelector.selectModel).mockReturnValue({
@@ -363,13 +369,13 @@ describe('StandardChatService', () => {
         systemPrompt,
         temperature: 0.7,
         stream: false,
+        tone,
       });
 
       // Verify tone service was called
       expect(mockToneService.applyTone).toHaveBeenCalledWith(
-        messages,
+        tone,
         systemPrompt,
-        testUser.id,
       );
 
       // Verify enhanced prompt was used
