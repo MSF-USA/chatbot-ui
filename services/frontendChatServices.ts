@@ -46,6 +46,7 @@ export const createChatBody = (
   temperature: conversation.temperature || temperature,
   botId,
   stream,
+  threadId: conversation.threadId,
   ...(forceStandardChat && { forceStandardChat }),
   ...(agentSettings && { agentSettings }),
   ...(forcedAgentType && { forceAgentType: forcedAgentType }),
