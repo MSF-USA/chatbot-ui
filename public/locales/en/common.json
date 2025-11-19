@@ -6,7 +6,5 @@
   "Privacy Policy": "Privacy Policy",
   "Version": "Version",
   "I accept the": "I accept the",
-  "Accept and Continue": "Accept and Continue",
-  "Terms Updated": "Terms of Service Updated",
-  "Terms Updated Message": "Our Terms of Service have been updated from version {{oldVersion}} to {{newVersion}}. Please review and accept the updated terms to continue."
+  "Accept and Continue": "Accept and Continue"
 }
