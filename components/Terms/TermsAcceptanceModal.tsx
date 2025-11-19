@@ -10,6 +10,7 @@ import {
   TermsData,
   TermsDocument,
   fetchTermsData,
+  getUserAcceptance,
   hasUserAcceptedAllRequiredDocuments,
   saveUserAcceptance,
 } from '@/utils/app/termsAcceptance';
@@ -38,6 +39,8 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   const [currentLocale, setCurrentLocale] = useState<string>(userLocale);
   const [availableLocales, setAvailableLocales] = useState<string[]>(['en']);
   const [allAccepted, setAllAccepted] = useState<boolean>(false);
+  const [previousVersion, setPreviousVersion] = useState<string | null>(null);
+  const [showUpdateNotice, setShowUpdateNotice] = useState<boolean>(false);
 
   // Get user ID
   const userId = user?.id || user?.mail || '';
@@ -65,6 +68,23 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
           // Set initial locale - use user's locale if available, otherwise English
           const userLocaleAvailable = locales.includes(userLocale);
           setCurrentLocale(userLocaleAvailable ? userLocale : 'en');
+        }
+
+        // Check if user previously accepted terms and if version has changed
+        if (userId) {
+          const prevAcceptance = getUserAcceptance(userId);
+          if (prevAcceptance) {
+            const platformAcceptance = prevAcceptance.acceptedDocuments.find(
+              (doc) => doc.documentType === 'platformTerms',
+            );
+            if (
+              platformAcceptance &&
+              platformAcceptance.version !== data.platformTerms?.version
+            ) {
+              setPreviousVersion(platformAcceptance.version);
+              setShowUpdateNotice(true);
+            }
+          }
         }
 
         setLoading(false);
@@ -189,6 +209,21 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 backdrop-blur-sm">
       <div className="bg-white dark:bg-[#202123] p-6 rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+        {/* Terms Update Notification Banner */}
+        {showUpdateNotice && previousVersion && (
+          <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700 rounded-lg">
+            <p className="text-blue-900 dark:text-blue-100 font-semibold mb-1">
+              {t('Terms Updated')}
+            </p>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
+              {t('Terms Updated Message', {
+                oldVersion: previousVersion,
+                newVersion: termsData.platformTerms?.version,
+              })}
+            </p>
+          </div>
+        )}
+
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800 dark:text-white">
             {t('Terms and Conditions')}
