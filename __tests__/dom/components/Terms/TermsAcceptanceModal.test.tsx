@@ -32,13 +32,7 @@ vi.mock('@/utils/app/termsAcceptance', () => ({
 
 vi.mock('next-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, options?: any) => {
-      // Handle interpolation for Terms Updated Message
-      if (key === 'Terms Updated Message' && options) {
-        return `Our Terms of Service have been updated from version ${options.oldVersion} to ${options.newVersion}. Please review and accept the updated terms to continue.`;
-      }
-      return key; // Return the key as the translation for other keys
-    },
+    t: (key: string) => key, // Return the key as the translation
     i18n: {
       language: 'en',
     },
@@ -325,10 +319,14 @@ describe('TermsAcceptanceModal', () => {
       ).not.toBeInTheDocument();
     });
 
-    // Check that the update notification banner appears
-    expect(screen.getByText('Terms Updated')).toBeInTheDocument();
+    // Check that the update notification banner appears with English text
     expect(
-      screen.getByText(/from version 1.0.1 to 2.0.1/),
+      screen.getByText('Terms of Service Updated'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Our Terms of Service have been updated from version 1\.0\.1 to 2\.0\.1/,
+      ),
     ).toBeInTheDocument();
   });
 
@@ -346,7 +344,9 @@ describe('TermsAcceptanceModal', () => {
     });
 
     // Verify that the update notification does not appear
-    expect(screen.queryByText('Terms Updated')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Terms of Service Updated'),
+    ).not.toBeInTheDocument();
   });
 
   it('should render notification banner with correct structure', async () => {
@@ -379,7 +379,7 @@ describe('TermsAcceptanceModal', () => {
 
     // Verify the banner has the correct CSS classes for blue informational styling
     const banner = screen
-      .getByText('Terms Updated')
+      .getByText('Terms of Service Updated')
       .closest('div') as HTMLElement;
     expect(banner).toHaveClass('bg-blue-50');
     expect(banner).toHaveClass('dark:bg-blue-900/50');
