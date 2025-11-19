@@ -1,35 +1,56 @@
 {
-  "title": "Terms of Service",
-  "description": "Please review and accept our Terms of Service to continue.",
+  "title": "Terms of Use",
+  "description": "Please review and accept our Terms of Use to continue.",
   "accept": "Accept",
   "decline": "Decline",
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
   "and": "and",
   "byAccepting": "By accepting, you agree to our",
+  "version": "2.0.1",
   "content": {
-    "title": "Terms of Service Agreement",
-    "introduction": "Welcome to our application. By accessing or using our service, you agree to be bound by these Terms of Service.",
-    "section1": {
-      "title": "1. User Responsibilities",
-      "content": "Users are responsible for maintaining the confidentiality of their account information and for all activities that occur under their account."
+    "title": "*ai.msf.org* Terms of Use",
+    "introduction": "The MSF AI Assistant is an internal AI chatbot developed for MSF staff. It uses large language models within Microsoft Azure Foundry while keeping all data within MSF, ensuring privacy and control.\n\nThe AI Assistant can help you with everyday tasks such as writing text, summarizing documents, translating languages, and drafting emails or reports. It can also help with data analysis, brainstorming ideas, and finding quick answers to questions, making it a useful tool for daily work activities.\n\nBy using ai.msf.org, you agree with the following terms and conditions:",
+    "responsibleUse": {
+      "title": "Responsible use:",
+      "intro": "You agree you will use ai.msf.org responsibly. You will:",
+      "items": [
+        "Use it in accordance with your MSF entities' applicable ICT, AI and other policies.",
+        "Always check outputs for accuracy, inclusivity and bias. Ai.msf.org uses experimental technology -- it gives no guarantee the outputs will be accurate. In addition, the technology has not been trained using data representative of MSF patients and communities. AI outputs can perpetuate bias, discrimination and stereotypes. You are responsible for checking the outputs produced.",
+        "Check outputs don't infringe third party intellectual property rights -- especially for anything used publicly. Like other generative AI systems, the technology behind ai.msf.org has been trained on third party intellectual property without clear permissions and licenses.",
+        "Be transparent about your AI use. Tell people if something you use has been produced by AI, and mark outputs as AI-generated."
+      ]
     },
-    "section2": {
-      "title": "2. Acceptable Use",
-      "content": "You agree not to use the service for any illegal or unauthorized purpose. You must not violate any laws in your jurisdiction."
+    "prohibitedUses": {
+      "title": "You will NOT use ai.msf.org for any of the following purposes:",
+      "items": [
+        "Health care (to provide healthcare or answer health-related questions)",
+        "Surveillance or monitoring of MSF patients or communities or any other individual(s)",
+        "Employment-related decisions (to assist or replace employment-related decisions)",
+        "Automated decision-making (to make decisions that could be detrimental to an individual or community)",
+        "Creating media content for external communications on matters of public interest",
+        "Illegal or harmful activities"
+      ]
     },
-    "section3": {
-      "title": "3. Intellectual Property",
-      "content": "All content included on this service, such as text, graphics, logos, and software, is the property of our company or its content suppliers and is protected by copyright laws."
+    "privacy": {
+      "title": "Privacy:",
+      "intro": "Using ai.msf.org is a safer and more secure environment than using other external free AI tools, which offer very little privacy guarantees. However, be aware there are still limits and caveats -- look at the usage policy for further details.\n\nLike other Microsoft products, your login information will be processed by MSF as outlined in your MSF entity's privacy policy.",
+      "prohibitedData": {
+        "title": "You will NOT put into ai.msf.org prompts/ upload into it any the following information:",
+        "items": [
+          "Sensitive Personal data (this includes: Racial or Ethnic Origin, Sexual Orientation, Genetic Data or Biometric Data, Personal Financial information, Personal Health information, Political Opinions, Trade Union Membership, or Religious or Philosophical Beliefs.) Non-sensitive personal data, such as a name or email address, may be used in a prompt for general use, such as rewriting an email.",
+          "Highly sensitive data (data that can be intentionally or unintentionally used to harm individuals, communities, MSF or its staff -- determining the sensitivity of data requires incorporating context analysis e.g. locations of sensitive projects or at-risk groups, security incidents, and other operational details)"
+        ]
+      },
+      "guidance": [
+        "If you plan to use personal data in the MSF AI Assistant as part of an existing business process, contact your DPO first.",
+        "If you wish to use an AI solution for support in managing or processing sensitive personal data or medical data, please contact the AI Team for advice."
+      ]
     },
-    "section4": {
-      "title": "4. Limitation of Liability",
-      "content": "Our company shall not be liable for any indirect, incidental, special, or consequential damages resulting from the use or inability to use the service."
+    "breaches": {
+      "title": "Breaches / feedback",
+      "content": "If you have any concerns, or want to notify an incident, please contact: ai.team@amsterdam.msf.org"
     },
-    "section5": {
-      "title": "5. Changes to Terms",
-      "content": "We reserve the right to modify these terms at any time. Your continued use of the service following the posting of changes constitutes your acceptance of those changes."
-    },
-    "conclusion": "Thank you for using our service. If you have any questions about these terms, please contact us."
+    "changes": "These terms may be modified at any time by MSF -- we'll provide notice to you if we change them -- your continued use of ai.msf.org constitutes acceptance of any changes."
   }
 }

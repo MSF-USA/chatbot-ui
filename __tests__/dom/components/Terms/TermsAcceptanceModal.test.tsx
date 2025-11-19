@@ -26,6 +26,7 @@ vi.mock('next/router', () => ({
 vi.mock('@/utils/app/termsAcceptance', () => ({
   fetchTermsData: vi.fn(),
   saveUserAcceptance: vi.fn(),
+  getUserAcceptance: vi.fn(),
   hasUserAcceptedAllRequiredDocuments: vi.fn(),
 }));
 
@@ -66,7 +67,7 @@ describe('TermsAcceptanceModal', () => {
           hash: 'xyz789',
         },
       },
-      version: '1.0.1',
+      version: '2.0.1',
       required: true,
     },
   };
@@ -74,6 +75,7 @@ describe('TermsAcceptanceModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(termsAcceptance.fetchTermsData).mockResolvedValue(mockTermsData);
+    vi.mocked(termsAcceptance.getUserAcceptance).mockReturnValue(null); // Default: first-time user
   });
 
   it('should render loading state initially', () => {
@@ -131,7 +133,7 @@ describe('TermsAcceptanceModal', () => {
       ).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText('Version: 1.0.1')).toBeInTheDocument();
+    expect(screen.getByText('Version: 2.0.1')).toBeInTheDocument();
   });
 
   it('should toggle acceptance checkbox when clicked', async () => {
@@ -210,7 +212,7 @@ describe('TermsAcceptanceModal', () => {
     expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledWith(
       'user123',
       'platformTerms',
-      '1.0.1',
+      '2.0.1',
       'abc123',
       'en',
     );
@@ -287,5 +289,101 @@ describe('TermsAcceptanceModal', () => {
 
     // onAcceptance should not be called
     expect(mockOnAcceptance).not.toHaveBeenCalled();
+  });
+
+  it('should show update notification when user previously accepted different version', async () => {
+    // Mock previous acceptance with old version
+    const mockPreviousAcceptance = {
+      userId: 'user123',
+      acceptedDocuments: [
+        {
+          documentType: 'platformTerms',
+          version: '1.0.1',
+          hash: 'oldHash123',
+          acceptedAt: 1234567890,
+        },
+      ],
+    };
+    vi.mocked(termsAcceptance.getUserAcceptance).mockReturnValue(
+      mockPreviousAcceptance,
+    );
+
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
+
+    // Wait for the terms to load
+    await waitFor(() => {
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
+    });
+
+    // Check that the update notification banner appears with English text
+    expect(
+      screen.getByText('Terms of Service Updated'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Our Terms of Service have been updated from version 1\.0\.1 to 2\.0\.1/,
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('should not show update notification for first-time users', async () => {
+    // getUserAcceptance returns null by default (set in beforeEach)
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
+
+    // Wait for the terms to load
+    await waitFor(() => {
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
+    });
+
+    // Verify that the update notification does not appear
+    expect(
+      screen.queryByText('Terms of Service Updated'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('should render notification banner with correct structure', async () => {
+    // Mock previous acceptance with old version
+    const mockPreviousAcceptance = {
+      userId: 'user123',
+      acceptedDocuments: [
+        {
+          documentType: 'platformTerms',
+          version: '1.0.1',
+          hash: 'oldHash123',
+          acceptedAt: 1234567890,
+        },
+      ],
+    };
+    vi.mocked(termsAcceptance.getUserAcceptance).mockReturnValue(
+      mockPreviousAcceptance,
+    );
+
+    render(
+      <TermsAcceptanceModal user={mockUser} onAcceptance={mockOnAcceptance} />,
+    );
+
+    // Wait for the terms to load
+    await waitFor(() => {
+      expect(
+        screen.queryByText('Loading terms and conditions...'),
+      ).not.toBeInTheDocument();
+    });
+
+    // Verify the banner has the correct CSS classes for blue informational styling
+    const banner = screen
+      .getByText('Terms of Service Updated')
+      .closest('div') as HTMLElement;
+    expect(banner).toHaveClass('bg-blue-50');
+    expect(banner).toHaveClass('dark:bg-blue-900/50');
+    expect(banner).toHaveClass('border-blue-200');
+    expect(banner).toHaveClass('dark:border-blue-700');
   });
 });
