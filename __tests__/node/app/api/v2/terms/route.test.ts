@@ -78,4 +78,36 @@ describe('Terms API Route', () => {
     // expect(data.privacyPolicy.content).toContain('Data Security');
     // expect(data.privacyPolicy.content).toContain('Changes to This Policy');
   });
+
+  it('should return version 2.0.1', async () => {
+    const request = new NextRequest('http://localhost:3000/api/v2/terms');
+
+    const response = await GET(request);
+
+    const data = await response.json();
+
+    expect(data.platformTerms.version).toBe('2.0.1');
+  });
+
+  it('should contain localized content for EN and FR', async () => {
+    const request = new NextRequest('http://localhost:3000/api/v2/terms');
+
+    const response = await GET(request);
+
+    const data = await response.json();
+
+    // Check for English content
+    expect(data.platformTerms.localized.en).toHaveProperty('content');
+    expect(data.platformTerms.localized.en).toHaveProperty('hash');
+    expect(data.platformTerms.localized.en.content).toContain(
+      'Microsoft Azure Foundry',
+    );
+
+    // Check for French content
+    expect(data.platformTerms.localized.fr).toHaveProperty('content');
+    expect(data.platformTerms.localized.fr).toHaveProperty('hash');
+    expect(data.platformTerms.localized.fr.content).toContain(
+      'Microsoft Azure Foundry',
+    );
+  });
 });
