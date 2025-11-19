@@ -40,13 +40,13 @@ describe('termsAcceptance utility', () => {
   const mockTermsData: TermsData = {
     platformTerms: {
       content: 'Platform Terms Content',
-      version: '1.0.0',
+      version: '2.0.1',
       hash: 'abc123',
       required: true,
     },
     privacyPolicy: {
       content: 'Privacy Policy Content',
-      version: '1.0.0',
+      version: '2.0.1',
       hash: 'def456',
       required: true,
     },
@@ -113,7 +113,7 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'platformTerms',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'abc123',
             acceptedAt: 1234567890,
           },
@@ -215,7 +215,7 @@ describe('termsAcceptance utility', () => {
       const result = hasUserAcceptedDocument(
         mockUserId,
         'platformTerms',
-        '1.0.0',
+        '2.0.1',
         'abc123',
       );
       expect(result).toBe(false);
@@ -227,7 +227,7 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'privacyPolicy',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'def456',
             acceptedAt: 1234567890,
           },
@@ -240,7 +240,7 @@ describe('termsAcceptance utility', () => {
       const result = hasUserAcceptedDocument(
         mockUserId,
         'platformTerms',
-        '1.0.0',
+        '2.0.1',
         'abc123',
       );
       expect(result).toBe(false);
@@ -265,7 +265,7 @@ describe('termsAcceptance utility', () => {
       const result = hasUserAcceptedDocument(
         mockUserId,
         'platformTerms',
-        '1.0.0',
+        '2.0.1',
         'abc123',
       );
       expect(result).toBe(false);
@@ -277,7 +277,7 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'platformTerms',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'differentHash', // Different hash
             acceptedAt: 1234567890,
           },
@@ -290,7 +290,7 @@ describe('termsAcceptance utility', () => {
       const result = hasUserAcceptedDocument(
         mockUserId,
         'platformTerms',
-        '1.0.0',
+        '2.0.1',
         'abc123',
       );
       expect(result).toBe(false);
@@ -302,7 +302,7 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'platformTerms',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'abc123',
             acceptedAt: 1234567890,
           },
@@ -315,7 +315,7 @@ describe('termsAcceptance utility', () => {
       const result = hasUserAcceptedDocument(
         mockUserId,
         'platformTerms',
-        '1.0.0',
+        '2.0.1',
         'abc123',
       );
       // expect(result).toBe(true);
@@ -326,13 +326,13 @@ describe('termsAcceptance utility', () => {
     const mockTermsData: TermsData = {
       platformTerms: {
         content: 'Platform Terms Content',
-        version: '1.0.0',
+        version: '2.0.1',
         hash: 'abc123',
         required: true,
       },
       privacyPolicy: {
         content: 'Privacy Policy Content',
-        version: '1.0.0',
+        version: '2.0.1',
         hash: 'def456',
         required: true,
       },
@@ -358,7 +358,7 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'platformTerms',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'abc123',
             acceptedAt: 1234567890,
           },
@@ -378,13 +378,13 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'platformTerms',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'abc123',
             acceptedAt: 1234567890,
           },
           {
             documentType: 'privacyPolicy',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'def456',
             acceptedAt: 1234567890,
           },
@@ -407,13 +407,13 @@ describe('termsAcceptance utility', () => {
         acceptedDocuments: [
           {
             documentType: 'platformTerms',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'abc123',
             acceptedAt: 1234567890,
           },
           {
             documentType: 'privacyPolicy',
-            version: '1.0.0',
+            version: '2.0.1',
             hash: 'def456',
             acceptedAt: 1234567890,
           },
