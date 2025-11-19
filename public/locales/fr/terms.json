@@ -7,29 +7,50 @@
   "termsOfService": "Conditions d'utilisation",
   "and": "et",
   "byAccepting": "En acceptant, vous acceptez nos",
+  "version": "2.0.1",
   "content": {
-    "title": "Contrat de conditions d'utilisation",
-    "introduction": "Bienvenue sur notre application. En accédant à notre service ou en l'utilisant, vous acceptez d'être lié par ces Conditions d'utilisation.",
-    "section1": {
-      "title": "1. Responsabilités de l'utilisateur",
-      "content": "Les utilisateurs sont responsables de maintenir la confidentialité des informations de leur compte et de toutes les activités qui se déroulent sous leur compte."
+    "title": "ai.msf.org Conditions d'utilisation",
+    "introduction": "L'Assistant IA MSF est un chatbot IA interne développé pour le personnel de MSF. Il utilise des modèles de langage avancés hébergés sur Microsoft Azure Foundry tout en gardant toutes les données au sein de MSF, garantissant ainsi confidentialité et contrôle.\n\nL'Assistant IA peut vous aider dans vos tâches quotidiennes telles que la rédaction de textes, la synthèse de documents, la traduction de langues, ainsi que la rédaction d'e-mails ou de rapports. Il peut également vous assister dans l'analyse de données, la génération d'idées et la recherche de réponses rapides à vos questions, ce qui en fait un outil utile pour les activités professionnelles de tous les jours.\n\nEn utilisant ai.msf.org, vous acceptez les conditions suivantes :",
+    "responsibleUse": {
+      "title": "Utilisation responsable:",
+      "intro": "Vous acceptez d'utiliser ai.msf.org de manière responsable. Vous vous engagez à :",
+      "items": [
+        "L'utiliser conformément aux politiques de securité de l'information, IA et autres politiques applicables de votre entité MSF.",
+        "Vérifier systématiquement l'exactitude, l'inclusivité et l'absence de biais des résultats. Ai.msf.org utilise une technologie expérimentale --- il n'y a aucune garantie que les résultats seront exacts. De plus, la technologie n'a pas été entraînée avec des données représentatives des patients et communautés MSF. Les résultats générés par l'IA peuvent contenir des biais, des discriminations ou des stéréotypes. Vous êtes responsable de la vérification des résultats produits.",
+        "Vérifier que les résultats ne portent pas atteinte aux droits de propriété intellectuelle de tiers --- en particulier pour tout usage public. Comme d'autres systèmes d'IA générative, la technologie derrière ai.msf.org a été entraînée sur des contenus tiers sans autorisations ou licences claires.",
+        "Être transparent sur votre utilisation de l'IA. Informez les personnes si un contenu que vous utilisez a été produit par l'IA, et identifiez les résultats comme générés par l'IA."
+      ]
     },
-    "section2": {
-      "title": "2. Utilisation acceptable",
-      "content": "Vous vous engagez à ne pas utiliser le service à des fins illégales ou non autorisées. Vous ne devez pas violer les lois de votre juridiction."
+    "prohibitedUses": {
+      "title": "Vous ne devez PAS utiliser ai.msf.org pour l'un des usages suivants:",
+      "items": [
+        "Soins de santé (pour fournir des soins ou répondre à des questions médicales)",
+        "Surveillance ou suivi des patients, communautés MSF ou toute autre personne",
+        "Décisions liées à l'emploi (pour assister ou remplacer des décisions liées à l'emploi)",
+        "Prise de décision automatisée (pour prendre des décisions susceptibles de nuire à une personne ou une communauté)",
+        "Création de contenus médiatiques pour la communication externe sur des sujets d'intérêt public",
+        "Activités illégales ou préjudiciables"
+      ]
     },
-    "section3": {
-      "title": "3. Propriété intellectuelle",
-      "content": "Tout le contenu inclus dans ce service, tel que texte, graphiques, logos et logiciels, est la propriété de notre société ou de ses fournisseurs de contenu et est protégé par les lois sur les droits d'auteur."
+    "privacy": {
+      "title": "Confidentialité:",
+      "intro": "L'utilisation de ai.msf.org offre un environnement plus sûr et sécurisé que d'autres outils IA gratuits externes, qui offrent très peu de garanties en matière de confidentialité. Cependant, il existe encore des limites et mises en garde --- veuillez consulter la politique d'utilisation pour plus de détails.\n\nComme pour d'autres produits Microsoft, vos informations de connexion seront traitées par MSF conformément à la politique de confidentialité de votre entité MSF.",
+      "prohibitedData": {
+        "title": "Vous ne devez PAS saisir ou télécharger dans ai.msf.org les informations suivantes :",
+        "items": [
+          "Données personnelles sensibles (cela inclut : origine raciale ou ethnique, orientation sexuelle, données génétiques ou biométriques, informations financières personnelles, informations de santé personnelle, opinions politiques, appartenance syndicale, croyances religieuses ou philosophiques). Les données personnelles non sensibles, telles qu'un nom ou une adresse e-mail, peuvent être utilisées dans une requête pour un usage général, comme la réécriture d'un e-mail.",
+          "Données hautement sensibles (données pouvant être utilisées intentionnellement ou non pour nuire à des individus, communautés, à MSF ou à son personnel --- la sensibilité des données doit être déterminée en analysant le contexte, par exemple : localisation de projets sensibles ou de groupes à risque, incidents de sécurité, et autres détails opérationnels)."
+        ]
+      },
+      "guidance": [
+        "Si vous prévoyez d'utiliser des données personnelles dans l'Assistant IA MSF dans le cadre d'un processus métier existant, contactez d'abord votre DPO.",
+        "Si vous souhaitez utiliser une solution IA pour vous aider à gérer ou traiter des données personnelles sensibles ou des données médicales, veuillez contacter l'équipe IA pour obtenir des conseils."
+      ]
     },
-    "section4": {
-      "title": "4. Limitation de responsabilité",
-      "content": "Notre société ne sera pas responsable des dommages indirects, accessoires, spéciaux ou consécutifs résultant de l'utilisation ou de l'impossibilité d'utiliser le service."
+    "breaches": {
+      "title": "Violations / retours",
+      "content": "Si vous avez des préoccupations ou souhaitez signaler un incident, veuillez contacter : ai.team@amsterdam.msf.org"
     },
-    "section5": {
-      "title": "5. Modifications des conditions",
-      "content": "Nous nous réservons le droit de modifier ces conditions à tout moment. Votre utilisation continue du service après la publication des modifications constitue votre acceptation de ces modifications."
-    },
-    "conclusion": "Merci d'utiliser notre service. Si vous avez des questions concernant ces conditions, veuillez nous contacter."
+    "changes": "Ces conditions peuvent être modifiées à tout moment par MSF --- nous vous en informerons en cas de changement --- votre utilisation continue de ai.msf.org vaut acceptation de toute modification."
   }
 }
