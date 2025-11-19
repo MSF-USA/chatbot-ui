@@ -66,7 +66,7 @@ describe('TermsAcceptanceModal', () => {
           hash: 'xyz789',
         },
       },
-      version: '1.0.1',
+      version: '2.0.1',
       required: true,
     },
   };
@@ -131,7 +131,7 @@ describe('TermsAcceptanceModal', () => {
       ).not.toBeInTheDocument();
     });
 
-    expect(screen.getByText('Version: 1.0.1')).toBeInTheDocument();
+    expect(screen.getByText('Version: 2.0.1')).toBeInTheDocument();
   });
 
   it('should toggle acceptance checkbox when clicked', async () => {
@@ -210,7 +210,7 @@ describe('TermsAcceptanceModal', () => {
     expect(termsAcceptance.saveUserAcceptance).toHaveBeenCalledWith(
       'user123',
       'platformTerms',
-      '1.0.1',
+      '2.0.1',
       'abc123',
       'en',
     );
