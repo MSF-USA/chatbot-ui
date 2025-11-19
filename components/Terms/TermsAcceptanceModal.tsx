@@ -213,13 +213,14 @@ export const TermsAcceptanceModal: FC<TermsAcceptanceModalProps> = ({
         {showUpdateNotice && previousVersion && (
           <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/50 border border-blue-200 dark:border-blue-700 rounded-lg">
             <p className="text-blue-900 dark:text-blue-100 font-semibold mb-1">
-              {t('Terms Updated')}
+              {currentLocale === 'fr'
+                ? "Conditions d'utilisation mises à jour"
+                : 'Terms of Service Updated'}
             </p>
             <p className="text-blue-800 dark:text-blue-200 text-sm">
-              {t('Terms Updated Message', {
-                oldVersion: previousVersion,
-                newVersion: termsData.platformTerms?.version,
-              })}
+              {currentLocale === 'fr'
+                ? `Nos Conditions d'utilisation ont été mises à jour de la version ${previousVersion} à la version ${termsData.platformTerms?.version}. Veuillez examiner et accepter les conditions mises à jour pour continuer.`
+                : `Our Terms of Service have been updated from version ${previousVersion} to ${termsData.platformTerms?.version}. Please review and accept the updated terms to continue.`}
             </p>
           </div>
         )}
