@@ -1,5 +1,9 @@
 import { Transition } from '@headlessui/react';
-import { IconInfoCircle, IconSettings } from '@tabler/icons-react';
+import {
+  IconInfoCircle,
+  IconSettings,
+  IconX,
+} from '@tabler/icons-react';
 import {
   MutableRefObject,
   memo,
@@ -43,6 +47,7 @@ import {
 } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
+import { OpenAIModels, OpenAIModelID } from '@/types/openai';
 
 import HomeContext from '@/pages/api/home/home.context';
 
@@ -232,11 +237,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     let text = '';
     let updatedConversationCopy = { ...updatedConversation };
     let extractedCitations: Citation[] = [];
+    let extractedThreadId: string | undefined = undefined;
     let processedEnhancedResponse = false;
 
     const checkStopInterval = setInterval(() => {
       if (stopConversationRef.current) {
-        console.log('Stop detected in handleNormalChatBackendStreaming');
         done = true;
         clearInterval(checkStopInterval);
       }
@@ -245,7 +250,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
     while (!done) {
       // Check if a stop was requested before reading more data
       if (stopConversationRef.current) {
-        console.log('Stop detected in streaming loop - breaking');
         break;
       }
 
@@ -315,8 +319,28 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             break;
           }
 
-          // Extract citations (skip if enhanced response already processed them)
-          if (!isEnhancedResponse) {
+          // Extract metadata using the new format (Azure AI Agents)
+          const metadataMatch = text.match(/\n\n<<<METADATA_START>>>(.*?)<<<METADATA_END>>>/s);
+          if (metadataMatch) {
+            const cleanedText = text.replace(/\n\n<<<METADATA_START>>>.*?<<<METADATA_END>>>/s, '');
+            try {
+              const metadata = JSON.parse(metadataMatch[1]);
+
+              // Extract citations if present
+              if (metadata.citations && metadata.citations.length > 0) {
+                text = cleanedText;
+                extractedCitations = metadata.citations;
+              }
+
+              // Extract thread ID if present and not already set
+              if (metadata.threadId && !extractedThreadId) {
+                extractedThreadId = metadata.threadId;
+              }
+            } catch (error) {
+              // Silently ignore parsing errors during streaming
+            }
+          } else if (!isEnhancedResponse && extractedCitations.length === 0) {
+            // Fallback to legacy citation extraction (skip if enhanced response already processed them)
             const {
               text: cleanedText,
               citations,
@@ -327,9 +351,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               // Use the clean text and extracted citations
               text = cleanedText;
               extractedCitations = citations;
-              console.log(
-                `Extracted ${citations.length} citations using ${extractionMethod} format`,
-              );
             }
           }
 
@@ -354,6 +375,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       : [],
                 },
               ],
+              // Store the thread ID if we extracted one
+              ...(extractedThreadId ? { threadId: extractedThreadId } : {}),
             };
           } else {
             // Update the existing assistant message
@@ -375,6 +398,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             updatedConversationCopy = {
               ...updatedConversationCopy,
               messages: updatedMessages,
+              // Store the thread ID if we extracted one
+              ...(extractedThreadId ? { threadId: extractedThreadId } : {}),
             };
           }
 
@@ -404,9 +429,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       if (citations.length > 0) {
         text = cleanedText;
         extractedCitations = citations;
-        console.log(
-          `Final extraction - ${citations.length} citations using ${extractionMethod} format`,
-        );
 
         // If we found citations in the final check, update the conversation again
         const updatedMessages = [
@@ -422,6 +444,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         updatedConversationCopy = {
           ...updatedConversationCopy,
           messages: updatedMessages,
+          // Store the thread ID if we extracted one
+          ...(extractedThreadId ? { threadId: extractedThreadId } : {}),
         };
 
         // Update state one last time
@@ -477,7 +501,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           // Sets up a manual check for the stop button being pressed
           const abortCheckInterval = setInterval(() => {
             if (stopConversationRef.current) {
-              console.log('Stop requested - updating UI state');
               homeDispatch({ field: 'loading', value: false });
               homeDispatch({ field: 'messageIsStreaming', value: false });
               setRequestStatusMessage(null);
@@ -569,7 +592,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
           if (hasComplexContent) {
             // Handle complex content case
-            console.log('Message contains complex content');
             // Add your logic here
           }
 
@@ -589,6 +611,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             );
             return;
           }
+          
+          
           const data = response.body;
 
           if (!data) {
@@ -618,14 +642,13 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
             if (streaming) {
               const stream = new ReadableStream({
                 start(controller) {
+                  // Set loading to false when streaming actually starts
+                  homeDispatch({ field: 'loading', value: false });
                   const reader = data.getReader();
 
                   function push() {
                     // Check if stop was requested before reading more data
                     if (stopConversationRef.current) {
-                      console.log(
-                        'Stopping stream in ReadableStream - user requested stop',
-                      );
                       controller.close();
                       return;
                     }
@@ -702,6 +725,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               });
               saveConversations(updatedConversations);
               homeDispatch({ field: 'messageIsStreaming', value: false });
+              homeDispatch({ field: 'loading', value: false });
             } else {
               const reader = data.getReader();
               let updatedConversations = await handleNormalChatBackendStreaming(
@@ -753,6 +777,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
               });
               saveConversations(updatedConversations);
               homeDispatch({ field: 'messageIsStreaming', value: false });
+              homeDispatch({ field: 'loading', value: false });
               setRequestStatusMessage(null);
               setRequestStatusSecondLine(null);
             }
@@ -973,6 +998,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                         selectedModelName={selectedConversation?.model?.name}
                         showSettings={showSettings}
                         onSettingsClick={handleSettings}
+                        agentEnabled={selectedConversation?.model?.id === 'agent-default' || selectedConversation?.model?.agentEnabled}
                         userEmail={user?.mail}
                       />
 
@@ -994,27 +1020,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                             <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
                             <div
                               ref={modalRef}
-                              className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
+                              className="relative p-6 bg-white dark:bg-[#212121] rounded-xl shadow-xl z-10 w-full max-w-5xl max-h-[90vh] overflow-y-auto"
                             >
-                              <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                                {t('modelSelectionDialogue')}
-                                <ModelSelect />
-                              </div>
-                              <div className="text-black dark:text-white">
-                                {t('Temperature')}
-                              </div>
-                              <TemperatureSlider
-                                temperature={selectedConversation.temperature}
-                                onChangeTemperature={(temperature) =>
-                                  handleUpdateConversation(
-                                    selectedConversation,
-                                    {
-                                      key: 'temperature',
-                                      value: temperature,
-                                    },
-                                  )
-                                }
-                              />
+                              <ModelSelect onClose={() => setShowSettings(false)} />
                             </div>
                           </div>
                         </Transition>
@@ -1127,6 +1135,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   selectedModelName={selectedConversation?.model?.name}
                   showSettings={showSettings}
                   onSettingsClick={handleSettings}
+                  agentEnabled={selectedConversation?.model?.id === 'agent-default' || selectedConversation?.model?.agentEnabled}
                   onClearAll={onClearAll}
                   userEmail={user?.mail}
                   hasMessages={true}
@@ -1149,28 +1158,9 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                       <div className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm" />
                       <div
                         ref={modalRef}
-                        className="relative p-6 bg-white dark:bg-[#212121] rounded-lg shadow-lg z-10 max-w-lg"
+                        className="relative p-6 bg-white dark:bg-[#212121] rounded-xl shadow-xl z-10 w-full max-w-5xl max-h-[90vh] overflow-y-auto"
                       >
-                        <div className="flex justify-between items-center mb-5 text-black dark:text-white">
-                          {t('AI Model Selection:')}
-                          <ModelSelect />
-                        </div>
-                        <div className="text-black dark:text-white">
-                          {selectedConversation ? t('Temperature') : ''}
-                        </div>
-                        {selectedConversation ? (
-                          <TemperatureSlider
-                            temperature={selectedConversation?.temperature}
-                            onChangeTemperature={(temperature) =>
-                              handleUpdateConversation(selectedConversation, {
-                                key: 'temperature',
-                                value: temperature,
-                              })
-                            }
-                          />
-                        ) : (
-                          <></>
-                        )}
+                        <ModelSelect onClose={() => setShowSettings(false)} />
                       </div>
                     </div>
                   </Transition>
@@ -1192,7 +1182,8 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   />
                 ))}
 
-                {loading && (
+                {loading && messageIsStreaming && 
+                 selectedConversation?.messages[selectedConversation.messages.length - 1]?.role !== 'assistant' && (
                   <ChatLoader
                     requestStatusMessage={requestStatusMessage}
                     requestStatusSecondLine={requestStatusSecondLine}

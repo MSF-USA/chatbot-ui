@@ -5,9 +5,12 @@ export interface OpenAIModel {
   tokenLimit: number;
   temperature?: number;
   stream?: boolean;
-  modelType?: 'foundational' | 'omni' | 'reasoning';
+  modelType?: 'foundational' | 'omni' | 'reasoning' | 'agent';
   description?: string;
   isLegacy?: boolean;
+  isAgent?: boolean;
+  agentId?: string; // Azure AI Agent ID for this model
+  agentEnabled?: boolean; // Whether agent mode is currently enabled
   deployment?: string;
 }
 
@@ -27,6 +30,7 @@ export enum OpenAIModelID {
 export enum OpenAIVisionModelID {
   GPT_4o = 'gpt-4o',
   GPT_4_VISION = 'gpt-4-vision-preview',
+  GPT_5 = 'gpt-5',
 }
 
 // in case the `DEFAULT_MODEL` environment variable is not set or set to an unsupported model
@@ -40,6 +44,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 4000,
     modelType: 'foundational',
     isLegacy: true,
+    agentId: 'asst_gpt35_agent',
   },
   [OpenAIModelID.GPT_4]: {
     id: OpenAIModelID.GPT_4,
@@ -48,6 +53,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     modelType: 'foundational',
     isLegacy: true,
+    agentId: 'asst_gpt4_agent',
   },
   [OpenAIModelID.GPT_4o]: {
     id: OpenAIModelID.GPT_4o,
@@ -56,6 +62,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     modelType: 'omni',
     isLegacy: false,
+    agentId: process.env.AZURE_AI_AGENT_ID || 'asst_YE2WCgckdGgcD2nGtiWOhKhM',
   },
   [OpenAIModelID.GPT_4o_mini]: {
     id: OpenAIModelID.GPT_4o_mini,
@@ -64,6 +71,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     modelType: 'omni',
     isLegacy: false,
+    agentId: 'asst_gpt4omini_agent',
   },
   [OpenAIModelID.GPT_41]: {
     id: OpenAIModelID.GPT_41,
@@ -72,6 +80,7 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     modelType: 'foundational',
     isLegacy: false,
+    agentId: 'asst_gpt41_agent',
   },
   [OpenAIModelID.GPT_45]: {
     id: OpenAIModelID.GPT_45,
@@ -80,25 +89,27 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     tokenLimit: 8000,
     modelType: 'foundational',
     isLegacy: true,
+    agentId: 'asst_gpt45_agent',
   },
   [OpenAIModelID.GPT_5]: {
     id: OpenAIModelID.GPT_5,
-    name: 'gpt-5',
-    maxLength: 80000,
-    tokenLimit: 8000,
-    modelType: 'reasoning',
-    isLegacy: false
+    name: 'GPT-5',
+    maxLength: 128000,
+    tokenLimit: 16000,
+    modelType: 'omni',
+    isLegacy: false,
+    agentId: 'asst_gpt5_agent',
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
-    name: 'gpt-o1',
+    name: 'o1',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
     isLegacy: false,
-    deployment: 'gpt-o1',
+    deployment: 'o1',
   },
   [OpenAIModelID.GPT_o1_mini]: {
     id: OpenAIModelID.GPT_o1_mini,
