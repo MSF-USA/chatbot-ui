@@ -18,9 +18,20 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
   try {
     const { text } = await request.json();
-    const cleanedText = cleanMarkdown(text);
-    if (!cleanedText) {
+
+    // Validate input before processing - check raw input, not processed output
+    if (typeof text !== 'string' || text.trim().length === 0) {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
+    }
+
+    const cleanedText = cleanMarkdown(text);
+
+    // Additional safety check after sanitization
+    if (!cleanedText || cleanedText.trim().length === 0) {
+      return NextResponse.json(
+        { error: 'Text could not be processed' },
+        { status: 400 },
+      );
     }
 
     // Azure Speech Services configuration - using managed identity (Entra ID)
