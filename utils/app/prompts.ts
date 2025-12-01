@@ -1,5 +1,5 @@
+import { ImageMessageContent, TextMessageContent } from '@/types/chat';
 import { Prompt } from '@/types/prompt';
-import {ImageMessageContent, TextMessageContent} from "@/types/chat";
 
 export const updatePrompt = (updatedPrompt: Prompt, allPrompts: Prompt[]) => {
   const updatedPrompts = allPrompts.map((c) => {
@@ -23,22 +23,20 @@ export const savePrompts = (prompts: Prompt[]) => {
 };
 
 export const getFullMessageFromPromptAndContent = (
-    prompt: Prompt, content: string | Array<TextMessageContent | ImageMessageContent>
+  prompt: Prompt,
+  content: string | Array<TextMessageContent | ImageMessageContent>,
 ): string | Array<TextMessageContent | ImageMessageContent> => {
   if (Array.isArray(content)) {
-    return content.map(contentMessage => {
-      return contentMessage.type === "text"
-          ? ({
-        type: "text",
-        text: contentMessage?.text?.replace(/\/\w*$/, prompt.content)
-    }) as TextMessageContent
-          : contentMessage
-    })
+    return content.map((contentMessage) => {
+      return contentMessage.type === 'text'
+        ? ({
+            type: 'text',
+            text: contentMessage?.text?.replace(/\/\w*$/, prompt.content),
+          } as TextMessageContent)
+        : contentMessage;
+    });
   } else {
-    const newContent = content?.replace(
-        /\/\w*$/,
-        prompt.content,
-    );
+    const newContent = content?.replace(/\/\w*$/, prompt.content);
     return newContent;
   }
-}
+};

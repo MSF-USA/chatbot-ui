@@ -2,19 +2,20 @@ import { Dispatch, SetStateAction } from 'react';
 
 import { getEndpoint } from '@/utils/app/api';
 
+import { AgentType } from '@/types/agent';
 import {
   ChatBody,
+  ChatRequestResult,
   Conversation,
   FileMessageContent,
   ImageMessageContent,
   Message,
-  TextMessageContent,
   RequestResult,
-  ChatRequestResult,
+  TextMessageContent,
 } from '@/types/chat';
 import { Plugin, PluginID } from '@/types/plugin';
 
-const isComplexContent = (
+export const isComplexContent = (
   content: (TextMessageContent | ImageMessageContent | FileMessageContent)[],
 ): boolean => {
   const contentTypes = content.map((section) => section.type);
@@ -26,7 +27,7 @@ const isComplexContent = (
   );
 };
 
-const createChatBody = (
+export const createChatBody = (
   conversation: Conversation,
   messages: Message[],
   apiKey: string,
@@ -34,6 +35,9 @@ const createChatBody = (
   temperature: number,
   botId: string | undefined,
   stream: boolean,
+  forceStandardChat?: boolean,
+  agentSettings?: { enabled: boolean; enabledAgentTypes: any[] },
+  forcedAgentType?: AgentType,
 ): ChatBody => ({
   model: conversation.model,
   messages,
@@ -42,9 +46,12 @@ const createChatBody = (
   temperature: conversation.temperature || temperature,
   botId,
   stream,
+  ...(forceStandardChat && { forceStandardChat }),
+  ...(agentSettings && { agentSettings }),
+  ...(forcedAgentType && { forceAgentType: forcedAgentType }),
 });
 
-const appendPluginKeys = (
+export const appendPluginKeys = (
   chatBody: ChatBody,
   pluginKeys: { pluginId: PluginID; requiredKeys: any[] }[],
 ) => ({
@@ -59,7 +66,11 @@ const appendPluginKeys = (
 
 let checkStopInterval: NodeJS.Timeout | null = null;
 
-const sendRequest = async (endpoint: string, body: string, stopConversationRef?: { current: boolean }): Promise<RequestResult> => {
+const sendRequest = async (
+  endpoint: string,
+  body: string,
+  stopConversationRef?: { current: boolean },
+): Promise<RequestResult> => {
   const controller = new AbortController();
   try {
     if (stopConversationRef) {
@@ -72,7 +83,7 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
         }
       }, 100);
     }
-    
+
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
@@ -82,37 +93,40 @@ const sendRequest = async (endpoint: string, body: string, stopConversationRef?:
       body,
       mode: 'cors',
     });
-    
+
     // Clears the interval upon successful completion
     if (checkStopInterval) {
       clearInterval(checkStopInterval);
       checkStopInterval = null;
     }
-    
+
     if (!response.ok) {
       const errorText = await response.text();
       throw new Error(
         `Request failed with status ${response.status}: ${errorText}`,
       );
     }
-    
+
     return { controller, body, response };
   } catch (error: any) {
     if (checkStopInterval) {
       clearInterval(checkStopInterval);
     }
-    
+
     if (error.name === 'AbortError') {
       console.log('Request was aborted by user');
-      const emptyResponse = new Response(new ReadableStream({
-        start(controller) {
-          controller.close();
-        }
-      }), {
-        status: 200,
-        statusText: 'OK',
-      });
-      
+      const emptyResponse = new Response(
+        new ReadableStream({
+          start(controller) {
+            controller.close();
+          },
+        }),
+        {
+          status: 200,
+          statusText: 'OK',
+        },
+      );
+
       return { controller, body, response: emptyResponse };
     }
 
@@ -129,7 +143,10 @@ export const makeRequest = async (
   temperature: number,
   stream: boolean = true,
   setProgress: Dispatch<SetStateAction<number | null>>,
-  stopConversationRef?: { current: boolean }
+  stopConversationRef?: { current: boolean },
+  forceStandardChat?: boolean,
+  agentSettings?: { enabled: boolean; enabledAgentTypes: any[] },
+  forcedAgentType?: AgentType,
 ): Promise<ChatRequestResult> => {
   const lastMessage: Message =
     updatedConversation.messages[updatedConversation.messages.length - 1];
@@ -193,6 +210,9 @@ Document metadata: ${filename}
         temperature,
         updatedConversation.bot,
         false, // Don't stream intermediate steps
+        forceStandardChat,
+        agentSettings,
+        forcedAgentType,
       );
       const endpoint = getEndpoint(null);
       const requestBody = JSON.stringify(chatBody, null, 2);
@@ -207,12 +227,12 @@ Document metadata: ${filename}
       if (content.type === 'file_url') {
         fileSummaries.push({
           filename: content.originalFilename,
-          summary: responseData.text ?? '',
+          summary: responseData.data?.text ?? responseData.text ?? '',
         });
       } else {
         fileSummaries.push({
           filename: `Image: ${content.image_url.url.split('/').pop()}`,
-          summary: responseData.text ?? '',
+          summary: responseData.data?.text ?? responseData.text ?? '',
         });
       }
 
@@ -255,6 +275,9 @@ Provide a detailed comparison.
       temperature,
       updatedConversation.bot,
       stream, // Stream the final comparison response
+      forceStandardChat,
+      agentSettings,
+      forcedAgentType,
     );
 
     const endpoint = getEndpoint(plugin);
@@ -271,11 +294,10 @@ Provide a detailed comparison.
     );
 
     let onAbort: (() => void) | null = null;
-    
+
     if (stopConversationRef) {
       const handleStopRequest = () => {
         if (stopConversationRef.current && !controller.signal.aborted) {
-          
           if (onAbort) {
             onAbort();
           }
@@ -283,7 +305,6 @@ Provide a detailed comparison.
       };
       setTimeout(handleStopRequest, 100);
     }
-
 
     setRequestStatusMessage(null);
     setProgress(null);
@@ -294,9 +315,8 @@ Provide a detailed comparison.
       response,
       hasComplexContent,
       setOnAbort: (callback: () => void) => {
-      onAbort = callback;
-      }
-
+        onAbort = callback;
+      },
     };
   } else {
     const chatBody = createChatBody(
@@ -307,6 +327,9 @@ Provide a detailed comparison.
       temperature,
       updatedConversation.bot,
       stream,
+      forceStandardChat,
+      agentSettings,
+      forcedAgentType,
     );
     const endpoint = getEndpoint(plugin);
 
@@ -316,16 +339,16 @@ Provide a detailed comparison.
     const { controller, body, response } = await sendRequest(
       endpoint,
       requestBody,
-      stopConversationRef
+      stopConversationRef,
     );
 
     let onAbort: (() => void) | null = null;
-    
+
     if (stopConversationRef) {
       const handleStopRequest = () => {
         if (stopConversationRef.current && !controller.signal.aborted) {
           console.log('Stop requested');
-          
+
           if (onAbort) {
             onAbort();
           }
@@ -334,15 +357,14 @@ Provide a detailed comparison.
       setTimeout(handleStopRequest, 100);
     }
 
-
     return {
       controller,
       body,
       response,
       hasComplexContent,
       setOnAbort: (callback: () => void) => {
-      onAbort = callback;
-      }
+        onAbort = callback;
+      },
     };
   }
 };

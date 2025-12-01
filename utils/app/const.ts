@@ -24,8 +24,66 @@ export const DEFAULT_USE_KNOWLEDGE_BASE =
 
 export const OPENAI_API_TYPE = process.env.OPENAI_API_TYPE || 'azure';
 
-export const OPENAI_API_VERSION =
-  process.env.OPENAI_API_VERSION || '2024-03-01-preview';
+/**
+ * Helper function to parse Azure API version dates
+ * Expected format: YYYY-MM-DD or YYYY-MM-DD-preview
+ */
+export function parseApiVersionDate(version: string | undefined): Date | null {
+  if (!version) return null;
+  
+  // Extract date part from version string (handles both YYYY-MM-DD and YYYY-MM-DD-preview)
+  const dateMatch = version.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!dateMatch) return null;
+  
+  const [, year, month, day] = dateMatch;
+  const date = new Date(`${year}-${month}-${day}`);
+  
+  // Check if the date is valid
+  if (isNaN(date.getTime())) return null;
+  
+  return date;
+}
+
+/**
+ * Determines the OPENAI_API_VERSION to use based on:
+ * 1. If FORCE_OPENAI_API_VERSION is 'true', uses env var with fallback (original logic)
+ * 2. Otherwise, compares dates and uses the more recent one
+ * 3. Falls back to original logic if date parsing fails
+ */
+export function determineApiVersion(): string {
+  const envVersion = process.env.OPENAI_API_VERSION;
+  const fallbackVersion = '2025-03-01-preview';
+  const forceEnvVersion = process.env.FORCE_OPENAI_API_VERSION === 'true';
+  
+  // If forced, use original logic
+  if (forceEnvVersion) {
+    return envVersion || fallbackVersion;
+  }
+  
+  // Try to parse and compare dates
+  try {
+    const envDate = parseApiVersionDate(envVersion);
+    const fallbackDate = parseApiVersionDate(fallbackVersion);
+    
+    // If both dates parsed successfully, use the more recent one
+    if (envDate && fallbackDate && envVersion) {
+      return envDate >= fallbackDate ? envVersion : fallbackVersion;
+    }
+    
+    // If only one date parsed, use the one with valid date
+    if (envDate && !fallbackDate && envVersion) return envVersion;
+    if (!envDate && fallbackDate) return fallbackVersion;
+    
+    // If neither parsed, fall back to original logic
+    return envVersion || fallbackVersion;
+  } catch (error) {
+    // On any error, fall back to original logic
+    console.warn('Error parsing API version dates, using fallback logic:', error);
+    return envVersion || fallbackVersion;
+  }
+}
+
+export const OPENAI_API_VERSION = determineApiVersion();
 
 export const OPENAI_ORGANIZATION = process.env.OPENAI_ORGANIZATION || '';
 
@@ -42,6 +100,29 @@ export const FORCE_LOGOUT_ON_REFRESH_FAILURE =
   process.env.FORCE_LOGOUT_ON_REFRESH_FAILURE || 'true';
 
 export const OPENAI_API_HOST_TYPE = process.env.OPEN_AI_HOST_TYPE || 'apim';
+
+// Feature Flag Configuration
+export const LAUNCHDARKLY_SDK_KEY = process.env.LAUNCHDARKLY_SDK_KEY || '';
+export const LAUNCHDARKLY_CLIENT_ID = process.env.LAUNCHDARKLY_CLIENT_ID || '';
+
+// Agent Routing Configuration
+export const AGENT_ROUTING_ENABLED =
+  process.env.AGENT_ROUTING_ENABLED === 'true' || false;
+export const DEFAULT_AGENT_TIMEOUT = parseInt(
+  process.env.DEFAULT_AGENT_TIMEOUT || '30000',
+);
+export const AGENT_POOL_SIZE = parseInt(process.env.AGENT_POOL_SIZE || '10');
+
+// Azure Bing Grounding Configuration
+export const AZURE_GROUNDING_CONNECTION_ID =
+  process.env.AZURE_GROUNDING_CONNECTION_ID || '';
+export const BING_CONNECTION_NAME = process.env.BING_CONNECTION_NAME || '';
+export const PROJECT_ENDPOINT =
+  process.env.AZURE_AI_FOUNDRY_ENDPOINT || process.env.PROJECT_ENDPOINT || '';
+export const MODEL_DEPLOYMENT_NAME =
+  process.env.MODEL_DEPLOYMENT_NAME ||
+  process.env.AZURE_DEPLOYMENT_ID ||
+  'gpt-4o';
 
 const COMMON_CONFIGURATION: any = {
   OPENAI_API_VERSION: OPENAI_API_VERSION,

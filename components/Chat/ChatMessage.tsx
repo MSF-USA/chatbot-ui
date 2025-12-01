@@ -100,10 +100,16 @@ export const ChatMessage: FC<Props> = memo(
       }
     };
 
-    const copyOnClick = () => {
+    /**
+     * Copies message content to clipboard and shows a temporary confirmation message
+     * @param {string} [contentToCopy] - Optional content to copy. If not provided, gets content from message
+     * @returns {void} Returns early if clipboard API is not available
+     * @throws {Error} Clipboard API errors are caught internally and don't propagate
+     */
+    const copyOnClick = (contentToCopy?: string) => {
       if (!navigator.clipboard) return;
 
-      const content = getChatMessageContent(message);
+      const content: string = contentToCopy ?? getChatMessageContent(message);
       navigator.clipboard.writeText(content).then(() => {
         setMessageCopied(true);
         setTimeout(() => {
@@ -128,11 +134,12 @@ export const ChatMessage: FC<Props> = memo(
       (Array.isArray(message.content) &&
         message.content.some((content) => content.type === 'image_url'));
     const isFileMessage =
-      (message.messageType === MessageType.FILE ||
-        (Array.isArray(message.content) &&
-          message.content.some((content) => content.type === 'file_url')));
+      message.messageType === MessageType.FILE ||
+      (Array.isArray(message.content) &&
+        message.content.some((content) => content.type === 'file_url'));
 
-    if (isFileMessage) { // has priority b/c it handles files and images in case of mixed content
+    if (isFileMessage) {
+      // has priority b/c it handles files and images in case of mixed content
       return (
         <ChatMessageFile
           message={message}
@@ -149,21 +156,21 @@ export const ChatMessage: FC<Props> = memo(
         />
       );
     } else if (isImageMessage) {
-        return (
-            <ChatMessageImage
-                message={message}
-                handleDeleteMessage={handleDeleteMessage}
-                onEdit={onEdit as any}
-                handleEditMessage={handleEditMessage}
-                handleInputChange={handleInputChange}
-                handlePressEnter={handlePressEnter}
-                setIsTyping={setIsTyping}
-                isEditing={isEditing}
-                setIsEditing={setIsEditing}
-                toggleEditing={toggleEditing}
-                textareaRef={textareaRef}
-            />
-        );
+      return (
+        <ChatMessageImage
+          message={message}
+          handleDeleteMessage={handleDeleteMessage}
+          onEdit={onEdit as any}
+          handleEditMessage={handleEditMessage}
+          handleInputChange={handleInputChange}
+          handlePressEnter={handlePressEnter}
+          setIsTyping={setIsTyping}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          toggleEditing={toggleEditing}
+          textareaRef={textareaRef}
+        />
+      );
     } else if (
       (message.messageType === MessageType.TEXT ||
         message.messageType === undefined) &&

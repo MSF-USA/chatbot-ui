@@ -1,7 +1,8 @@
 // components/FAQ.tsx
-import { useState, FC } from 'react';
-import { FAQData } from '@/types/faq';
 import { IconArrowRight } from '@tabler/icons-react';
+import { FC, useState } from 'react';
+
+import { FAQData } from '@/types/faq';
 
 type FAQProps = {
   faq: FAQData['faq'];
@@ -19,9 +20,10 @@ export const FAQ: FC<FAQProps> = ({ faq }) => {
     setSearchQuery(event.target.value);
   };
 
-  const filteredFAQ = faq.filter(item =>
-    item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.answer.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredFAQ = faq.filter(
+    (item) =>
+      item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.answer.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (

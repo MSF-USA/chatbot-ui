@@ -286,17 +286,16 @@ describe('RAGService', () => {
         'test query',
         expect.objectContaining({
           select: ['chunk', 'title', 'date', 'url'],
-          top: 10,
-          queryType: 'semantic',
-          semanticSearchOptions: expect.objectContaining({
-            configurationName: 'test-index-semantic-configuration',
-          }),
+          top: 15,
+          queryType: 'simple',
+          scoringProfile: 'dateScore',
           vectorSearchOptions: expect.objectContaining({
             queries: expect.arrayContaining([
               expect.objectContaining({
                 kind: 'text',
                 text: 'test query',
                 fields: ['text_vector'],
+                kNearestNeighborsCount: 15,
               }),
             ]),
           }),

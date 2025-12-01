@@ -132,7 +132,7 @@ export class RAGService {
         );
 
         // Log after stream is created but before returning
-        await this.loggingService.logChatCompletion(
+        void this.loggingService.logChatCompletion(
           startTime,
           modelId,
           messages.length,
@@ -171,7 +171,7 @@ export class RAGService {
         completion.choices[0].message.content = content + metadataSection;
 
         // Log after processing is complete
-        await this.loggingService.logChatCompletion(
+        void this.loggingService.logChatCompletion(
           startTime,
           modelId,
           messages.length,
@@ -284,45 +284,28 @@ export class RAGService {
       const bot = bots.find((b) => b.id === botId);
       if (!bot) throw new Error(`Bot ${botId} not found`);
 
-      // Use query reformulation for follow-up questions
       const isFollowUpQuestion =
         messages.filter((m) => m.role === 'user').length > 1;
       let query;
 
       if (isFollowUpQuestion) {
-        // Reformulate the query for better context in follow-up questions
         query = await this.reformulateQuery(messages);
       } else {
-        // Use the original query for the first question
         query = this.extractQuery(messages);
       }
 
-      const semanticConfigName = `${this.searchIndex}-semantic-configuration`;
-
-      // Perform the search
       const searchResults = await this.searchClient.search(query, {
         select: ['chunk', 'title', 'date', 'url'],
-        top: 10,
-        queryType: 'semantic' as any,
-        semanticSearchOptions: {
-          configurationName: semanticConfigName,
-          captions: {
-            captionType: 'extractive',
-            highlight: true,
-          },
-          answers: {
-            answerType: 'extractive',
-            count: 10,
-            threshold: 0.7,
-          },
-        },
+        top: 15,
+        queryType: 'simple',
+        scoringProfile: 'dateScore',
         vectorSearchOptions: {
           queries: [
             {
               kind: 'text',
               text: query,
               fields: ['text_vector'] as any,
-              kNearestNeighborsCount: 10,
+              kNearestNeighborsCount: 15,
             },
           ],
         },
@@ -332,12 +315,22 @@ export class RAGService {
       let newestDate: Date | null = null;
       let oldestDate: Date | null = null;
 
+      const ONE_YEAR_AGO = new Date();
+      ONE_YEAR_AGO.setFullYear(ONE_YEAR_AGO.getFullYear() - 1);
+
       for await (const result of searchResults.results) {
         const doc = result.document;
-        searchDocs.push(doc);
         const docDate = new Date(doc.date);
+
+        if (docDate < ONE_YEAR_AGO && result.score < 0.7) {
+          continue;
+        }
+
+        searchDocs.push(doc);
         if (!newestDate || docDate > newestDate) newestDate = docDate;
         if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
+
+        if (searchDocs.length >= 10) break;
       }
 
       const searchMetadata = {
@@ -348,8 +341,7 @@ export class RAGService {
         resultCount: searchDocs.length,
       };
 
-      // Log successful search
-      await this.loggingService.logSearch(
+      void this.loggingService.logSearch(
         startTime,
         botId,
         searchDocs.length,
@@ -359,12 +351,11 @@ export class RAGService {
       );
 
       return {
-        searchDocs: this.deduplicateResults(searchDocs), // Still deduplicate results from the current search
+        searchDocs: this.deduplicateResults(searchDocs),
         searchMetadata,
       };
     } catch (error) {
-      // Log search error
-      await this.loggingService.logSearchError(startTime, error, botId, user);
+      void this.loggingService.logSearchError(startTime, error, botId, user);
       throw error;
     }
   }

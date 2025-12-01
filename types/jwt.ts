@@ -1,3 +1,1 @@
-export interface CustomJWT {
-
-}
+export interface CustomJWT {}

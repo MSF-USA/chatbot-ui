@@ -6,23 +6,18 @@ interface Props {
   tooltipText: string;
 }
 
-const SidebarActionButton = ({
-   handleClick,
-   children,
-   tooltipText,
- }: Props
-) => (
-    <div className="group">
-      <button
-          className="relative min-w-[20px] p-1 text-gray-700 hover:text-black dark:text-neutral-400 dark:hover:text-neutral-100"
-          onClick={handleClick}
-      >
-        {children}
-        <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
-          {tooltipText}
-        </div>
-      </button>
-    </div>
+const SidebarActionButton = ({ handleClick, children, tooltipText }: Props) => (
+  <div className="group">
+    <button
+      className="relative min-w-[20px] p-1 text-gray-700 hover:text-black dark:text-neutral-400 dark:hover:text-neutral-100"
+      onClick={handleClick}
+    >
+      {children}
+      <div className="absolute transform -translate-x-1/2 top-full mb-2 hidden group-hover:block bg-black text-white text-xs py-1 px-2 rounded shadow-md">
+        {tooltipText}
+      </div>
+    </button>
+  </div>
 );
 
 export default SidebarActionButton;

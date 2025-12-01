@@ -1,4 +1,3 @@
-
 export interface OpenAIModel {
   id: string;
   name: string;
@@ -9,6 +8,7 @@ export interface OpenAIModel {
   modelType?: 'foundational' | 'omni' | 'reasoning';
   description?: string;
   isLegacy?: boolean;
+  deployment?: string;
 }
 
 export enum OpenAIModelID {
@@ -16,14 +16,16 @@ export enum OpenAIModelID {
   GPT_4o = 'gpt-4o',
   GPT_4o_mini = 'gpt-4o-mini',
   GPT_4 = 'gpt-4',
+  GPT_41 = 'gpt-4.1',
   GPT_45 = 'gpt-45',
-  GPT_o1 = 'gpt-o1',
+  GPT_5 = 'gpt-5',
+  GPT_o1 = 'o1',
   GPT_o1_mini = 'gpt-o1-mini',
   GPT_o3_mini = 'o3-mini',
 }
 
 export enum OpenAIVisionModelID {
-  GPT_4o = "gpt-4o",
+  GPT_4o = 'gpt-4o',
   GPT_4_VISION = 'gpt-4-vision-preview',
 }
 
@@ -63,27 +65,44 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     modelType: 'omni',
     isLegacy: false,
   },
+  [OpenAIModelID.GPT_41]: {
+    id: OpenAIModelID.GPT_41,
+    name: 'GPT-4.1',
+    maxLength: 80000,
+    tokenLimit: 8000,
+    modelType: 'foundational',
+    isLegacy: false,
+  },
   [OpenAIModelID.GPT_45]: {
     id: OpenAIModelID.GPT_45,
     name: 'gpt-4.5-preview',
     maxLength: 80000,
     tokenLimit: 8000,
     modelType: 'foundational',
-    isLegacy: false,
+    isLegacy: true,
+  },
+  [OpenAIModelID.GPT_5]: {
+    id: OpenAIModelID.GPT_5,
+    name: 'gpt-5',
+    maxLength: 80000,
+    tokenLimit: 8000,
+    modelType: 'reasoning',
+    isLegacy: false
   },
   [OpenAIModelID.GPT_o1]: {
     id: OpenAIModelID.GPT_o1,
-    name: 'o1',
+    name: 'gpt-o1',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,
     temperature: 1,
     modelType: 'reasoning',
     isLegacy: false,
+    deployment: 'gpt-o1',
   },
   [OpenAIModelID.GPT_o1_mini]: {
     id: OpenAIModelID.GPT_o1_mini,
-    name: 'o1-mini',
+    name: 'gpt-o1-mini',
     maxLength: 80000,
     tokenLimit: 8000,
     stream: false,
@@ -100,5 +119,5 @@ export const OpenAIModels: Record<OpenAIModelID, OpenAIModel> = {
     temperature: 1,
     modelType: 'reasoning',
     isLegacy: false,
-  }
+  },
 };

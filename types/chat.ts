@@ -1,3 +1,4 @@
+import { AgentResponse, AgentType } from './agent';
 import { OpenAIModel } from './openai';
 import { Citation } from './rag';
 
@@ -84,6 +85,7 @@ export interface Message {
     | TextMessageContent;
   messageType: MessageType | ChatInputSubmitTypes | undefined;
   citations?: Citation[];
+  agentResponse?: AgentResponse;
 }
 
 export type Role = 'system' | 'assistant' | 'user';
@@ -96,6 +98,10 @@ export interface ChatBody {
   temperature: number;
   botId: string | undefined;
   stream?: boolean;
+  agentSettings?: {
+    enabled: boolean;
+    enabledAgentTypes: AgentType[];
+  };
 }
 
 export interface Conversation {

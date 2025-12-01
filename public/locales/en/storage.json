@@ -1,0 +1,20 @@
+{
+  "Storage Warning": "Storage Warning",
+  "Your browser storage is almost full!": "Your browser storage is almost full!",
+  "Current usage": "Current usage",
+  "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.": "If your storage fills up completely, the application may stop working correctly and you could lose access to your conversations.",
+  "Options to free up space": "Options to free up space",
+  "1. Export your conversations": "1. Export your conversations",
+  "Save your conversations to your computer before clearing them.": "Save your conversations to your computer before clearing them.",
+  "Export All Data": "Export All Data",
+  "2. Clear older conversations": "2. Clear older conversations",
+  "Keep recent conversations": "Keep recent conversations",
+  "This will remove": "This will remove",
+  "older conversations": "older conversations",
+  "Space freed": "Space freed",
+  "Clear Older Conversations": "Clear Older Conversations",
+  "Close": "Close",
+  "Storage Usage": "Storage Usage",
+  "Used": "Used",
+  "Local storage is used to save your conversations, settings, and preferences.": "Local storage is used to save your conversations, settings, and preferences."
+}

@@ -1,0 +1,16 @@
+{
+  "Support": "Tuki",
+  "Choose Your Organization": "Valitse organisaatiosi",
+  "Select your organization to get the right support contact": "Valitse organisaatiosi saadaksesi oikean tukikontaktin",
+  "MSF USA": "MSF USA",
+  "MSF USA Description": "MSF USA:n henkilöstön jäsenille",
+  "OCA HQ": "OCA HQ",
+  "OCA HQ Description": "Amsterdamin operatiivisen keskuksen pääkonttorin henkilöstölle",
+  "OCG HQ": "OCG HQ",
+  "OCG HQ Description": "Geneven operatiivisen keskuksen pääkonttorin henkilöstölle",
+  "Field Staff / Other": "Kenttähenkilöstö / Muu",
+  "Field Staff Description": "Kenttähenkilöstölle ja muille MSF:n työntekijöille",
+  "Field Staff Message": "Kenttähenkilöstölle ja muille MSF:n työntekijöille:\n\n1. Ota ensin yhteyttä paikalliseen IT-tukeen\n2. Jos ongelmaa ei ratkaista, heidän tulee eskaloida se operatiivisen keskuksesi (OC) IT-osastolle\n3. Jos ongelmaa ei vieläkään ratkaista, OC:n IT-osasto voi eskaloida sen SITS:lle (Jaetut IT-palvelut)",
+  "Close": "Sulje",
+  "Contact Support": "Ota yhteyttä tukeen"
+}

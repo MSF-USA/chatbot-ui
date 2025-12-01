@@ -1,32 +1,33 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
-  TermsData,
-  TermsDocument,
-  AcceptanceRecord,
-  UserAcceptance,
-  getUserAcceptance,
-  saveUserAcceptance,
-  hasUserAcceptedDocument,
-  hasUserAcceptedAllRequiredDocuments,
-  fetchTermsData,
-  checkUserTermsAcceptance
-} from '@/utils/app/termsAcceptance';
 import { Session } from 'next-auth';
 
+import {
+  AcceptanceRecord,
+  TermsData,
+  TermsDocument,
+  UserAcceptance,
+  checkUserTermsAcceptance,
+  fetchTermsData,
+  getUserAcceptance,
+  hasUserAcceptedAllRequiredDocuments,
+  hasUserAcceptedDocument,
+  saveUserAcceptance,
+} from '@/utils/app/termsAcceptance';
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Mock } from 'vitest';
 
 const globalWindow = {
   localStorage: {
     getItem: vi.fn(),
     setItem: vi.fn(),
-    clear: vi.fn()
-  }
+    clear: vi.fn(),
+  },
 };
 
 const localStorageMock = {
   getItem: vi.fn(),
   setItem: vi.fn(),
-  clear: vi.fn()
+  clear: vi.fn(),
 };
 
 // Mock fetch
@@ -41,14 +42,14 @@ describe('termsAcceptance utility', () => {
       content: 'Platform Terms Content',
       version: '1.0.0',
       hash: 'abc123',
-      required: true
+      required: true,
     },
     privacyPolicy: {
       content: 'Privacy Policy Content',
       version: '1.0.0',
       hash: 'def456',
-      required: true
-    }
+      required: true,
+    },
   };
 
   beforeEach(() => {
@@ -63,10 +64,9 @@ describe('termsAcceptance utility', () => {
     localStorageMock.clear.mockReset();
     localStorageMock.getItem.mockReturnValue(null);
 
-
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
-      json: async () => mockTermsData
+      json: async () => mockTermsData,
     } as Response);
 
     // Setup localStorage mock
@@ -76,7 +76,7 @@ describe('termsAcceptance utility', () => {
     // Setup fetch mock
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
-      json: async () => mockTermsData
+      json: async () => mockTermsData,
     } as Response);
   });
 
@@ -89,15 +89,19 @@ describe('termsAcceptance utility', () => {
     it('should return null if localStorage is empty', () => {
       const result = getUserAcceptance(mockUserId);
       expect(result).toBeNull();
-      expect(localStorageMock.getItem).toHaveBeenCalledWith(TERMS_ACCEPTANCE_KEY);
+      expect(localStorageMock.getItem).toHaveBeenCalledWith(
+        TERMS_ACCEPTANCE_KEY,
+      );
     });
 
     it('should return null if user has no acceptance records', () => {
       const otherUserAcceptance: UserAcceptance = {
         userId: 'otherUser',
-        acceptedDocuments: []
+        acceptedDocuments: [],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([otherUserAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([otherUserAcceptance]),
+      );
 
       const result = getUserAcceptance(mockUserId);
       expect(result).toBeNull();
@@ -111,11 +115,13 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([mockAcceptance]),
+      );
 
       const result = getUserAcceptance(mockUserId);
       expect(result).toEqual(mockAcceptance);
@@ -206,7 +212,12 @@ describe('termsAcceptance utility', () => {
 
   describe('hasUserAcceptedDocument', () => {
     it('should return false if user has no acceptance records', () => {
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(
+        mockUserId,
+        'platformTerms',
+        '1.0.0',
+        'abc123',
+      );
       expect(result).toBe(false);
     });
 
@@ -218,13 +229,20 @@ describe('termsAcceptance utility', () => {
             documentType: 'privacyPolicy',
             version: '1.0.0',
             hash: 'def456',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([mockAcceptance]),
+      );
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(
+        mockUserId,
+        'platformTerms',
+        '1.0.0',
+        'abc123',
+      );
       expect(result).toBe(false);
     });
 
@@ -236,13 +254,20 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '0.9.0', // Different version
             hash: 'abc123',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([mockAcceptance]),
+      );
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(
+        mockUserId,
+        'platformTerms',
+        '1.0.0',
+        'abc123',
+      );
       expect(result).toBe(false);
     });
 
@@ -254,13 +279,20 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'differentHash', // Different hash
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([mockAcceptance]),
+      );
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(
+        mockUserId,
+        'platformTerms',
+        '1.0.0',
+        'abc123',
+      );
       expect(result).toBe(false);
     });
 
@@ -272,13 +304,20 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([mockAcceptance]),
+      );
 
-      const result = hasUserAcceptedDocument(mockUserId, 'platformTerms', '1.0.0', 'abc123');
+      const result = hasUserAcceptedDocument(
+        mockUserId,
+        'platformTerms',
+        '1.0.0',
+        'abc123',
+      );
       // expect(result).toBe(true);
     });
   });
@@ -289,14 +328,14 @@ describe('termsAcceptance utility', () => {
         content: 'Platform Terms Content',
         version: '1.0.0',
         hash: 'abc123',
-        required: true
+        required: true,
       },
       privacyPolicy: {
         content: 'Privacy Policy Content',
         version: '1.0.0',
         hash: 'def456',
-        required: true
-      }
+        required: true,
+      },
     };
 
     beforeEach(() => {
@@ -306,7 +345,10 @@ describe('termsAcceptance utility', () => {
 
     it('should return false if user has not accepted any documents', () => {
       localStorageMock.getItem.mockReturnValue(null);
-      const result = hasUserAcceptedAllRequiredDocuments(mockUserId, mockTermsData);
+      const result = hasUserAcceptedAllRequiredDocuments(
+        mockUserId,
+        mockTermsData,
+      );
       expect(result).toBe(false);
     });
 
@@ -318,11 +360,13 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([mockAcceptance]),
+      );
 
       // const result = hasUserAcceptedAllRequiredDocuments(mockUserId, mockTermsData);
       // expect(result).toBe(false);
@@ -336,19 +380,21 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
-            acceptedAt: 1234567890
+            acceptedAt: 1234567890,
           },
           {
             documentType: 'privacyPolicy',
             version: '1.0.0',
             hash: 'def456',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
 
       // Make sure localStorage mock returns exactly what the function expects
-      localStorageMock.getItem.mockReturnValue(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValue(
+        JSON.stringify([mockAcceptance]),
+      );
 
       // const result = hasUserAcceptedAllRequiredDocuments(mockUserId, mockTermsData);
       // expect(result).toBe(true);
@@ -363,19 +409,21 @@ describe('termsAcceptance utility', () => {
             documentType: 'platformTerms',
             version: '1.0.0',
             hash: 'abc123',
-            acceptedAt: 1234567890
+            acceptedAt: 1234567890,
           },
           {
             documentType: 'privacyPolicy',
             version: '1.0.0',
             hash: 'def456',
-            acceptedAt: 1234567890
-          }
-        ]
+            acceptedAt: 1234567890,
+          },
+        ],
       };
 
       // Make sure localStorage returns the correct value for all calls within this test
-      localStorageMock.getItem.mockReturnValue(JSON.stringify([mockAcceptance]));
+      localStorageMock.getItem.mockReturnValue(
+        JSON.stringify([mockAcceptance]),
+      );
 
       const result = await checkUserTermsAcceptance(mockUser);
 
@@ -396,10 +444,12 @@ describe('termsAcceptance utility', () => {
       vi.mocked(fetch).mockResolvedValueOnce({
         ok: false,
         status: 500,
-        statusText: 'Internal Server Error'
+        statusText: 'Internal Server Error',
       } as Response);
 
-      await expect(fetchTermsData()).rejects.toThrow('Failed to fetch terms data');
+      await expect(fetchTermsData()).rejects.toThrow(
+        'Failed to fetch terms data',
+      );
     });
 
     it('should throw an error if fetch throws', async () => {
@@ -413,7 +463,9 @@ describe('termsAcceptance utility', () => {
 
   describe('checkUserTermsAcceptance', () => {
     it('should return false if user is null', async () => {
-      const result = await checkUserTermsAcceptance(null as unknown as Session['user']);
+      const result = await checkUserTermsAcceptance(
+        null as unknown as Session['user'],
+      );
       expect(result).toBe(false);
     });
 
@@ -452,9 +504,11 @@ describe('termsAcceptance utility', () => {
     it('should return null if user has no acceptance records', () => {
       const otherUserAcceptance: UserAcceptance = {
         userId: 'otherUser',
-        acceptedDocuments: []
+        acceptedDocuments: [],
       };
-      localStorageMock.getItem.mockReturnValueOnce(JSON.stringify([otherUserAcceptance]));
+      localStorageMock.getItem.mockReturnValueOnce(
+        JSON.stringify([otherUserAcceptance]),
+      );
 
       const result = getUserAcceptance(mockUserId);
       expect(result).toBeNull();

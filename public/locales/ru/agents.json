@@ -1,0 +1,247 @@
+{
+  "common": {
+    "agentTypes": {
+      "web_search": "Веб-поиск",
+      "code_interpreter": "Интерпретатор кода",
+      "url_pull": "Анализ URL",
+      "local_knowledge": "База знаний",
+      "standard_chat": "Стандартный чат",
+      "foundry": "Foundry",
+      "third_party": "Сторонний"
+    },
+    "error": {
+      "title": "Ошибка агента",
+      "unknown": "Произошла неизвестная ошибка",
+      "retry": "Повторить",
+      "fallback": "Использовать альтернативу"
+    },
+    "metadata": {
+      "processingTime": "Время обработки",
+      "confidence": "Уверенность",
+      "tokens": "Использованные токены"
+    },
+    "resultsPanel": {
+      "placeholder": "Результаты агента будут отображены здесь"
+    }
+  },
+  "indicators": {
+    "descriptions": {
+      "web_search": "Веб-поиск - Ищет в интернете информацию в реальном времени",
+      "code_interpreter": "Интерпретатор кода - Выполняет и анализирует код на нескольких языках",
+      "url_pull": "Анализ URL - Анализирует и извлекает содержимое веб-страниц",
+      "local_knowledge": "База знаний - Ищет во внутренней базе знаний и документах",
+      "standard_chat": "Стандартный чат - Стандартный разговорный ИИ без инструментов",
+      "foundry": "Foundry - Использует Azure AI Foundry для расширенных возможностей",
+      "third_party": "Сторонний - Сторонний агент или интеграция пользовательского инструмента"
+    }
+  },
+  "webSearch": {
+    "resultsPanel": {
+      "placeholder": "Результаты веб-поиска будут отображены здесь",
+      "title": "Результаты поиска",
+      "noResults": "Результаты не найдены",
+      "noData": "Нет данных поиска",
+      "results": "результаты",
+      "confidence": "Релевантность",
+      "relevance": "Релевантность",
+      "source": "Источник",
+      "citations": "Цитаты",
+      "cite": "Цитировать",
+      "open": "Открыть",
+      "openLink": "Открыть ссылку в новой вкладке",
+      "filters": "Фильтры",
+      "sortBy": "Сортировать по",
+      "filterBy": "Фильтровать по",
+      "all": "Все",
+      "date": "Дата",
+      "query": "Запрос",
+      "searchTime": "Время поиска",
+      "cached": "В кеше",
+      "contentTypes": {
+        "webpage": "Веб-страницы",
+        "news": "Новости",
+        "academic": "Научные",
+        "image": "Изображения",
+        "video": "Видео"
+      }
+    },
+    "configuration": {
+      "resultsCount": "Количество результатов",
+      "safeSearch": "Безопасный поиск",
+      "market": "Поисковый рынок"
+    },
+    "status": {
+      "searching": "Поиск в интернете...",
+      "optimizing": "Оптимизация поискового запроса...",
+      "processing": "Обработка результатов поиска..."
+    }
+  },
+  "codeInterpreter": {
+    "resultsPanel": {
+      "placeholder": "Результаты выполнения кода будут отображены здесь",
+      "title": "Результаты выполнения",
+      "noData": "Нет данных о выполнении кода",
+      "output": "Вывод",
+      "errors": "Ошибки",
+      "logs": "Логи",
+      "executionTime": "Время выполнения",
+      "memoryUsage": "Использование памяти",
+      "cpuUsage": "Использование CPU",
+      "outputLines": "Строки вывода",
+      "executedCode": "Выполненный код",
+      "download": "Скачать",
+      "noOutput": "Вывод не сгенерирован",
+      "noFiles": "Файлы не сгенерированы",
+      "outputSize": "Размер вывода",
+      "unsupportedOutput": "Неподдерживаемый формат вывода",
+      "status": {
+        "success": "Успешно",
+        "error": "Ошибка",
+        "timeout": "Превышение времени",
+        "memory_limit": "Превышен лимит памяти",
+        "security_violation": "Нарушение безопасности",
+        "invalid_code": "Неверный код"
+      },
+      "outputTypes": {
+        "stdout": "Стандартный вывод",
+        "stderr": "Вывод ошибок",
+        "return_value": "Возвращаемое значение",
+        "exception": "Исключение"
+      },
+      "tabs": {
+        "output": "Вывод",
+        "code": "Код",
+        "files": "Файлы"
+      }
+    }
+  },
+  "urlPull": {
+    "resultsPanel": {
+      "title": "Результаты анализа URL",
+      "noData": "Нет данных анализа URL",
+      "summary": "Краткое содержание",
+      "metadata": "Информация о документе",
+      "processingTime": "Время обработки",
+      "preview": "Предварительный просмотр",
+      "view": "Посмотреть"
+    },
+    "configuration": {
+      "timeout": "Превышение времени запроса"
+    },
+    "status": {
+      "pulling": "Загрузка содержимого URL...",
+      "analyzing": "Анализ документа...",
+      "complete": "Анализ завершён"
+    }
+  },
+  "localKnowledge": {
+    "resultsPanel": {
+      "title": "Результаты базы знаний",
+      "noData": "Нет данных базы знаний",
+      "documents": "документы",
+      "insights": "Ключевые сведения",
+      "relevance": "Релевантность",
+      "suggestions": "Предложения"
+    },
+    "configuration": {
+      "searchMode": "Режим поиска",
+      "threshold": "Порог релевантности"
+    },
+    "status": {
+      "searching": "Поиск в базе знаний...",
+      "analyzing": "Анализ результатов..."
+    }
+  },
+  "documentAnalysis": {
+    "resultsPanel": {
+      "placeholder": "Результаты анализа документов будут отображены здесь",
+      "title": "Результаты анализа",
+      "noData": "Нет данных анализа документов",
+      "documents": "документы",
+      "noDocuments": "Документы не найдены",
+      "summary": "Краткое содержание",
+      "insights": "Ключевые сведения",
+      "metadata": "Информация о документе",
+      "processingTime": "Время обработки",
+      "searchTime": "Время поиска",
+      "relevance": "Релевантность",
+      "cached": "В кеше",
+      "preview": "Предварительный просмотр",
+      "view": "Посмотреть",
+      "open": "Открыть",
+      "bookmark": "Закладка",
+      "suggestions": "Предложения",
+      "tabs": {
+        "documents": "Документы",
+        "insights": "Сведения",
+        "failed": "Неудачно"
+      }
+    }
+  },
+  "ui": {
+    "loading": {
+      "default": "Загрузка...",
+      "searching": "Поиск...",
+      "processing": "Обработка...",
+      "analyzing": "Анализ..."
+    },
+    "buttons": {
+      "retry": "Повторить",
+      "cancel": "Отменить",
+      "expand": "Развернуть",
+      "collapse": "Свернуть",
+      "configure": "Конфигурировать",
+      "submit": "Отправить"
+    },
+    "labels": {
+      "priority": "Приоритет",
+      "estimatedTime": "Ориентировочное время",
+      "availability": "Доступность",
+      "configuration": "Конфигурация"
+    }
+  },
+  "errors": {
+    "common": {
+      "unknown": "Произошла неизвестная ошибка",
+      "network": "Ошибка сетевого соединения",
+      "timeout": "Превышено время ожидания запроса",
+      "unauthorized": "Доступ запрещён",
+      "rateLimit": "Превышен лимит скорости",
+      "serviceUnavailable": "Сервис временно недоступен"
+    },
+    "webSearch": {
+      "searchFailed": "Ошибка веб-поиска",
+      "invalidQuery": "Неверный поисковый запрос"
+    },
+    "codeInterpreter": {
+      "executionFailed": "Ошибка выполнения кода",
+      "invalidCode": "Неверный или небезопасный код"
+    },
+    "urlPull": {
+      "fetchFailed": "Не удалось загрузить содержимое URL",
+      "invalidUrl": "Неверный или недоступный URL"
+    },
+    "localKnowledge": {
+      "searchFailed": "Ошибка поиска в базе знаний",
+      "noAccess": "Нет доступа к базе знаний"
+    }
+  },
+  "settings": {
+    "autoSubmit": "Автоматическая отправка после обработки",
+    "advancedOptions": "Расширенные настройки",
+    "priority": {
+      "high": "Высокий",
+      "medium": "Средний",
+      "low": "Низкий"
+    },
+    "safeSearch": {
+      "off": "Отключено",
+      "moderate": "Умеренно",
+      "strict": "Строго"
+    },
+    "market": {
+      "any": "Любой регион",
+      "local": "Местный регион"
+    }
+  }
+}
