@@ -31,7 +31,6 @@ export class RAGEnricher extends BasePipelineStage {
   constructor(
     private searchEndpoint: string,
     private searchIndex: string,
-    private searchApiKey: string,
   ) {
     super();
   }
@@ -106,7 +105,7 @@ export class RAGEnricher extends BasePipelineStage {
           const result = {
             ...context,
             enrichedMessages,
-            // Store RAG config for later use
+            // Store RAG config for later use (no API key - using managed identity)
             processedContent: {
               ...context.processedContent,
               metadata: {
@@ -114,7 +113,6 @@ export class RAGEnricher extends BasePipelineStage {
                 ragConfig: {
                   searchEndpoint: this.searchEndpoint,
                   searchIndex: this.searchIndex,
-                  searchApiKey: this.searchApiKey,
                   botId: context.botId,
                 },
               },

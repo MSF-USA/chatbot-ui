@@ -40,8 +40,9 @@ describe('getEnvVariable', () => {
     expect(getEnvVariable({ name: 'TEST_VAR' })).toBe('test_value');
   });
 
-  it('should use EU variable for EU users', () => {
+  it('should use EU variable for EU users (amsterdam.msf.org)', () => {
     process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME = 'us_storage';
     // @ts-ignore
     const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
       mail: 'user@amsterdam.msf.org',
@@ -49,13 +50,44 @@ describe('getEnvVariable', () => {
     expect(result).toBe('eu_storage');
   });
 
-  it('should use non-EU variable for non-EU users', () => {
-    process.env.AZURE_BLOB_STORAGE_NAME = 'non_eu_storage';
+  it('should use non-EU variable for non-EU users (newyork.msf.org)', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'us_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
     // @ts-ignore
     const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
       mail: 'user@newyork.msf.org',
     });
-    expect(result).toBe('non_eu_storage');
+    expect(result).toBe('us_storage');
+  });
+
+  it('should fallback to US storage if EU storage not configured', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'us_storage';
+    // No EU variable set
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@amsterdam.msf.org',
+    });
+    expect(result).toBe('us_storage');
+  });
+
+  it('should use US storage for subdomain of newyork.msf.org', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME = 'us_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@subdomain.newyork.msf.org',
+    });
+    expect(result).toBe('us_storage');
+  });
+
+  it('should use EU storage for other MSF domains', () => {
+    process.env.AZURE_BLOB_STORAGE_NAME_EU = 'eu_storage';
+    process.env.AZURE_BLOB_STORAGE_NAME = 'us_storage';
+    // @ts-ignore
+    const result = getEnvVariable('AZURE_BLOB_STORAGE_NAME', false, '', {
+      mail: 'user@paris.msf.org',
+    });
+    expect(result).toBe('eu_storage');
   });
 
   it('should handle undefined user', () => {

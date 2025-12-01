@@ -7,7 +7,8 @@ import { Bot } from '@/types/bots';
 import { Message } from '@/types/chat';
 import { Citation, SearchResult } from '@/types/rag';
 
-import { AzureKeyCredential, SearchClient } from '@azure/search-documents';
+import { DefaultAzureCredential } from '@azure/identity';
+import { SearchClient } from '@azure/search-documents';
 import { AzureOpenAI } from 'openai';
 import OpenAI from 'openai';
 import { ChatCompletion } from 'openai/resources';
@@ -36,19 +37,18 @@ export class RAGService {
    * Creates a new instance of RAGService.
    * @param {string} searchEndpoint - The endpoint URL for the Azure Search service.
    * @param {string} searchIndex - The name of the search index to query.
-   * @param {string} searchApiKey - The API key for authenticating with Azure Search.
    * @param {AzureOpenAI} openAIClient - Client for making OpenAI API calls.
    */
   constructor(
     searchEndpoint: string,
     searchIndex: string,
-    searchApiKey: string,
     openAIClient: AzureOpenAI,
   ) {
+    // Use DefaultAzureCredential for managed identity authentication
     this.searchClient = new SearchClient<SearchResult>(
       searchEndpoint,
       searchIndex,
-      new AzureKeyCredential(searchApiKey),
+      new DefaultAzureCredential(),
     );
     this.openAIClient = openAIClient;
     this.searchIndex = searchIndex;

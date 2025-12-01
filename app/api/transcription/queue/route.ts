@@ -24,7 +24,6 @@ async function initializeBlobStorage(req: NextRequest) {
   const user = session.user;
 
   const storageAccountName = env.AZURE_BLOB_STORAGE_NAME;
-  const storageAccountAccessKey = env.AZURE_BLOB_STORAGE_KEY; // Optional - uses Entra ID if not set
   const containerName = env.AZURE_BLOB_STORAGE_CONTAINER || 'messages';
 
   if (!storageAccountName) {
@@ -34,7 +33,6 @@ async function initializeBlobStorage(req: NextRequest) {
   return {
     azureBlobStorage: new AzureBlobStorage(
       storageAccountName,
-      storageAccountAccessKey,
       containerName,
       user,
     ),

@@ -2,7 +2,6 @@ import { Session } from 'next-auth';
 
 const EUVariableMap: Record<string, string> = {
   AZURE_BLOB_STORAGE_NAME: 'AZURE_BLOB_STORAGE_NAME_EU',
-  AZURE_BLOB_STORAGE_KEY: 'AZURE_BLOB_STORAGE_KEY_EU',
 };
 
 interface EnvVariableOptions {

@@ -23,16 +23,25 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       return NextResponse.json({ error: 'No text provided' }, { status: 400 });
     }
 
-    // Azure Speech Services configuration
+    // Azure Speech Services configuration - using managed identity (Entra ID)
     const region = 'eastus2';
-    const apiKey = env.OPENAI_API_KEY;
 
-    if (!apiKey) {
-      throw new Error('OPENAI_API_KEY is not configured');
+    // Get token from DefaultAzureCredential for Cognitive Services
+    const { DefaultAzureCredential } = await import('@azure/identity');
+    const credential = new DefaultAzureCredential();
+    const tokenResponse = await credential.getToken(
+      'https://cognitiveservices.azure.com/.default',
+    );
+
+    if (!tokenResponse || !tokenResponse.token) {
+      throw new Error('Failed to get authentication token for Speech Services');
     }
 
-    // Create speech config with API key
-    const speechConfig = sdk.SpeechConfig.fromSubscription(apiKey, region);
+    // Create speech config with authorization token (managed identity)
+    const speechConfig = sdk.SpeechConfig.fromAuthorizationToken(
+      tokenResponse.token,
+      region,
+    );
     speechConfig.speechSynthesisOutputFormat =
       sdk.SpeechSynthesisOutputFormat.Audio16Khz32KBitRateMonoMp3;
 

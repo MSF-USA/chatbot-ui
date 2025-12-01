@@ -35,21 +35,21 @@ const serverEnvSchema = z.object({
   AZURE_AI_FOUNDRY_ENDPOINT: z.string().url().optional(),
   AZURE_AI_FOUNDRY_OPENAI_ENDPOINT: z.string().url().optional(),
 
-  // Azure Blob Storage
+  // Azure Blob Storage (uses Entra ID authentication via DefaultAzureCredential)
   AZURE_BLOB_STORAGE_NAME: z.string().optional(),
-  AZURE_BLOB_STORAGE_KEY: z.string().optional(),
+  AZURE_BLOB_STORAGE_NAME_EU: z.string().optional(),
   AZURE_BLOB_STORAGE_CONTAINER: z.string().optional(),
   AZURE_BLOB_STORAGE_IMAGE_CONTAINER: z.string().optional(),
   STORAGE_RESOURCE_ID: z.string().optional(),
   STORAGE_DATA_SOURCE_CONTAINER: z.string().optional(),
 
-  // Azure Search
+  // Azure Search (uses Entra ID authentication via DefaultAzureCredential)
   SEARCH_ENDPOINT: z.string().url().optional(),
-  SEARCH_ENDPOINT_API_KEY: z.string().optional(),
   SEARCH_INDEX: z.string().optional(),
   SEARCH_SKILLSET: z.string().default('rag-skillset'),
   SEARCH_DATASOURCE: z.string().optional(),
   SEARCH_INDEXER: z.string().optional(),
+  SEARCH_ENDPOINT_API_KEY: z.string().optional(), // Legacy: Used by OpenAI data_sources feature in documentSummary.ts
   ALLOW_INDEX_DOWNTIME: z
     .string()
     .default('false')

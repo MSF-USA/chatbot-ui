@@ -93,7 +93,6 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
 
   constructor(
     storageAccountName: string | undefined = undefined,
-    storageAccountAccessKey: string | undefined = undefined,
     private containerName: string | undefined = undefined,
     private user: Session['user'],
   ) {
@@ -342,19 +341,13 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
 export default class BlobStorageFactory {
   static createAzureBlobStorage(
     storageAccountName: string,
-    storageAccountAccessKey: string | undefined,
     containerName: string,
     type: BlobStorageType = BlobStorageType.AZURE,
     user: Session['user'],
   ): BlobStorage | AzureBlobStorage {
     switch (type) {
       case BlobStorageType.AZURE:
-        return new AzureBlobStorage(
-          storageAccountName,
-          storageAccountAccessKey,
-          containerName,
-          user,
-        );
+        return new AzureBlobStorage(storageAccountName, containerName, user);
       case BlobStorageType.AWS:
         throw new Error('AWS blob storage support not implemented.');
       default:
@@ -371,17 +364,8 @@ export const getBlobBase64String = async (
   blobType: BlobType = 'images',
   user: Session['user'],
 ): Promise<string> => {
-  // Uses DefaultAzureCredential (Entra ID), key is optional
-  const storageKey = getEnvVariable({
-    name: 'AZURE_BLOB_STORAGE_KEY',
-    throwErrorOnFail: false,
-    defaultValue: undefined,
-    user,
-  });
-
   const blobStorageClient: BlobStorage = new AzureBlobStorage(
     getEnvVariable({ name: 'AZURE_BLOB_STORAGE_NAME', user }),
-    storageKey,
     getEnvVariable({
       name: 'AZURE_BLOB_STORAGE_CONTAINER',
       throwErrorOnFail: false,

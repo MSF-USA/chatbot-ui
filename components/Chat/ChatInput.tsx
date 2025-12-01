@@ -95,7 +95,7 @@ export const ChatInput = ({
 
   // Zustand hooks
   const { selectedConversation, folders } = useConversations();
-  const { isStreaming, setIsStreaming } = useChat();
+  const { isStreaming, requestStop } = useChat();
   const { prompts } = useSettings();
   const { tones } = useTones();
   const { isArtifactOpen, fileName, language, closeArtifact } =
@@ -280,7 +280,7 @@ export const ChatInput = ({
 
   const handleStopConversation = () => {
     stopConversationRef.current = true;
-    setIsStreaming(false);
+    requestStop();
   };
 
   const isMobile = isMobileDevice;

@@ -84,11 +84,14 @@ export class ServiceContainer {
       apiVersion: OPENAI_API_VERSION,
     });
 
+    // OpenAI client for AI Foundry OpenAI-compatible endpoint (Grok, DeepSeek, etc.)
+    // Note: AI Foundry's OpenAI-compatible endpoint currently requires API key
+    // TODO: Investigate if token-based auth is supported
     this.openAIClient = new OpenAI({
       baseURL:
         env.AZURE_AI_FOUNDRY_OPENAI_ENDPOINT ||
         `${env.AZURE_AI_FOUNDRY_ENDPOINT?.replace('/api/projects/default', '')}/openai/v1/`,
-      apiKey: env.OPENAI_API_KEY,
+      apiKey: env.OPENAI_API_KEY || 'placeholder', // Required by SDK even if not used
     });
 
     // 2. Initialize stateless services

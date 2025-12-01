@@ -25,6 +25,7 @@ interface ChatStore {
   error: string | null;
   stopRequested: boolean;
   loadingMessage: string | null;
+  abortController: AbortController | null;
 
   // Actions
   setCurrentMessage: (message: Message | undefined) => void;
@@ -79,6 +80,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   error: null,
   stopRequested: false,
   loadingMessage: null,
+  abortController: null,
 
   // Actions
   setCurrentMessage: (message) => set({ currentMessage: message }),
@@ -98,7 +100,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   clearError: () => set({ error: null }),
 
-  requestStop: () => set({ stopRequested: true }),
+  requestStop: () => {
+    const { abortController } = get();
+    if (abortController) {
+      console.log('[chatStore] Aborting stream...');
+      abortController.abort();
+    }
+    set({ stopRequested: true });
+  },
 
   resetStop: () => set({ stopRequested: false }),
 
@@ -114,6 +123,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       error: null,
       stopRequested: false,
       loadingMessage: null,
+      abortController: null,
     }),
 
   sendMessage: async (message, conversation, searchMode) => {
@@ -178,6 +188,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     conversationId: string,
     loadingMessage: string,
   ) => {
+    // Create new AbortController for this request
+    const abortController = new AbortController();
+
     set({
       isStreaming: true,
       streamingContent: '',
@@ -185,6 +198,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       error: null,
       citations: [],
       loadingMessage: null, // Start with null, will be set after delay
+      stopRequested: false,
+      abortController,
     });
   },
 
@@ -228,6 +243,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       });
     }
 
+    // Get abort signal from store
+    const { abortController } = get();
+
     return await chatService.chat(modelToSend, conversation.messages, {
       prompt: settings.systemPrompt,
       temperature: settings.temperature,
@@ -239,6 +257,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       verbosity: conversation.verbosity || modelToSend.verbosity,
       searchMode,
       tone, // Pass the full tone object
+      signal: abortController?.signal, // Pass abort signal
     });
   },
 
@@ -359,10 +378,27 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       streamingContent: '',
       streamingConversationId: null,
       loadingMessage: null,
+      abortController: null,
+      stopRequested: false,
     });
   },
 
   handleSendError: (error: unknown) => {
+    // Check if this is an abort error (user clicked stop)
+    if (error instanceof Error && error.name === 'AbortError') {
+      console.log('[chatStore] Request was aborted by user');
+      set({
+        isStreaming: false,
+        streamingContent: '',
+        streamingConversationId: null,
+        loadingMessage: null,
+        abortController: null,
+        stopRequested: false,
+        error: null, // Don't show error for user-initiated stops
+      });
+      return;
+    }
+
     let errorMessage = 'Failed to send message';
     if (error instanceof ApiError) {
       errorMessage = error.getUserMessage();
@@ -380,6 +416,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       streamingContent: '',
       streamingConversationId: null,
       loadingMessage: null,
+      abortController: null,
+      stopRequested: false,
     });
   },
 }));

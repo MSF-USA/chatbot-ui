@@ -115,11 +115,7 @@ export async function POST(req: NextRequest): Promise<Response> {
         new ImageProcessor(),
 
         // Feature enrichers
-        new RAGEnricher(
-          env.SEARCH_ENDPOINT!,
-          env.SEARCH_INDEX!,
-          env.SEARCH_ENDPOINT_API_KEY!,
-        ),
+        new RAGEnricher(env.SEARCH_ENDPOINT!, env.SEARCH_INDEX!),
         new ToolRouterEnricher(toolRouterService, agentChatService),
         new AgentEnricher(),
 

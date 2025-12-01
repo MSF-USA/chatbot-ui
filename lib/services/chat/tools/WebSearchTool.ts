@@ -42,7 +42,14 @@ export class WebSearchTool implements Tool {
       };
     } catch (error) {
       console.error('[WebSearchTool] Search failed:', error);
-      return { text: '', citations: [] }; // Fail gracefully
+
+      // Return error message instead of failing silently
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown search error';
+      return {
+        text: `\n\n*Note: Web search encountered an issue: ${errorMessage}. Continuing without search results.*\n\n`,
+        citations: [],
+      };
     }
   }
 }

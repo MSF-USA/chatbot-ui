@@ -64,23 +64,30 @@ export class ChatService {
       forcedAgentType?: string;
       isEditorOpen?: boolean;
       tone?: Tone;
+      signal?: AbortSignal;
     },
   ): Promise<ReadableStream<Uint8Array>> {
-    return apiClient.postStream('/api/chat', {
-      model,
-      messages,
-      prompt: options?.prompt,
-      temperature: options?.temperature,
-      stream: options?.stream ?? true,
-      reasoningEffort: options?.reasoningEffort,
-      verbosity: options?.verbosity,
-      botId: options?.botId,
-      threadId: options?.threadId,
-      searchMode: options?.searchMode,
-      forcedAgentType: options?.forcedAgentType,
-      isEditorOpen: options?.isEditorOpen,
-      tone: options?.tone,
-    });
+    return apiClient.postStream(
+      '/api/chat',
+      {
+        model,
+        messages,
+        prompt: options?.prompt,
+        temperature: options?.temperature,
+        stream: options?.stream ?? true,
+        reasoningEffort: options?.reasoningEffort,
+        verbosity: options?.verbosity,
+        botId: options?.botId,
+        threadId: options?.threadId,
+        searchMode: options?.searchMode,
+        forcedAgentType: options?.forcedAgentType,
+        isEditorOpen: options?.isEditorOpen,
+        tone: options?.tone,
+      },
+      {
+        signal: options?.signal,
+      },
+    );
   }
 
   /**

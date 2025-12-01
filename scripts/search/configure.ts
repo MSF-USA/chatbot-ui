@@ -3,14 +3,11 @@ import { createOrUpdateIndex } from './components/create-index';
 import { createOrUpdateIndexer } from './components/create-indexer';
 import { createOrUpdateSkillset } from './components/create-skillset';
 
-import {
-  AzureKeyCredential, // SearchIndexClient,
-  SearchIndexerClient,
-} from '@azure/search-documents';
+import { DefaultAzureCredential } from '@azure/identity';
+import { SearchIndexerClient } from '@azure/search-documents';
 
 export interface SearchConfig {
   endpoint: string;
-  apiKey: string;
   indexName: string;
   skillsetName: string;
   dataSourceName: string;
@@ -25,14 +22,14 @@ export interface SearchConfig {
 
 export async function configureSearch(config: SearchConfig) {
   console.log('Starting Azure Search configuration for RAG system...');
+  console.log(
+    'Using managed identity (DefaultAzureCredential) for authentication',
+  );
 
   const apiVersion = '2024-11-01-preview';
 
-  const credential = new AzureKeyCredential(config.apiKey);
-
-  // const indexClient = new SearchIndexClient(config.endpoint, credential, {
-  //   apiVersion,
-  // });
+  // Use managed identity for authentication
+  const credential = new DefaultAzureCredential();
 
   const indexerClient = new SearchIndexerClient(config.endpoint, credential, {
     apiVersion,
@@ -49,7 +46,6 @@ export async function configureSearch(config: SearchConfig) {
       config.indexName,
       config.allowIndexDowntime,
       config.endpoint,
-      config.apiKey,
       config.openaiEndpoint,
       config.openaiEmbeddingDeployment,
     );
@@ -69,7 +65,6 @@ export async function configureSearch(config: SearchConfig) {
       config.skillsetName,
       config.indexName,
       config.endpoint,
-      config.apiKey,
       config.openaiEndpoint,
       config.openaiEmbeddingDeployment,
     );

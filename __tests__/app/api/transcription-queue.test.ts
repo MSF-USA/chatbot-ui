@@ -882,9 +882,9 @@ describe('/api/transcription/queue', () => {
       await POST(request);
 
       // AzureBlobStorage should be initialized with 'messages' as default container
+      // Note: No key parameter - uses Entra ID authentication
       expect(AzureBlobStorage).toHaveBeenCalledWith(
         'test-storage',
-        'test-key',
         'messages',
         mockSession.user,
       );

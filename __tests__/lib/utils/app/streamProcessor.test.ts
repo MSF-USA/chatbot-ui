@@ -88,7 +88,6 @@ describe('Azure OpenAI Stream Processor', () => {
     mockRAGService = new RAGService(
       'test-endpoint',
       'test-index',
-      'test-api-key',
       mockOpenAIClient as any,
     );
 
