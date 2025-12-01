@@ -188,11 +188,11 @@ jobs:
           cache-to: type=gha,mode=max
 
       - name: 🚀 Deploy Container App
-        uses: azure/container-apps-deploy-action@v2
-        with:
-          resourceGroup: ${{ vars.RESOURCE_GROUP }}
-          containerAppName: ${{ vars.CONTAINER_APP_NAME }}
-          imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
+        run: |
+          az containerapp update \
+            --name ${{ vars.CONTAINER_APP_NAME }} \
+            --resource-group ${{ vars.RESOURCE_GROUP }} \
+            --image ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.sha }}
 
   # JOB 4: Manual deployment to LIVE or BETA
   deploy_manual:
@@ -208,8 +208,8 @@ jobs:
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: 🚀 Deploy Container App
-        uses: azure/container-apps-deploy-action@v2
-        with:
-          resourceGroup: ${{ vars.RESOURCE_GROUP }}
-          containerAppName: ${{ vars.CONTAINER_APP_NAME }}
-          imageToDeploy: ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
+        run: |
+          az containerapp update \
+            --name ${{ vars.CONTAINER_APP_NAME }} \
+            --resource-group ${{ vars.RESOURCE_GROUP }} \
+            --image ${{ vars.ACR_NAME }}.azurecr.io/ai-assistant:${{ github.event.inputs.image_tag }}
