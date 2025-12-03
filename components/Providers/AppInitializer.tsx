@@ -15,10 +15,12 @@ import { getDefaultModel, isModelDisabled } from '@/config/models';
  *
  * With Zustand persist middleware, localStorage hydration is automatic.
  * This component handles:
- * 1. Automatic background data migration (from old localStorage format)
- * 2. Model filtering (based on environment config)
- * 3. Default model selection (from environment if not persisted)
- * 4. Selected conversation validation
+ * 1. Model filtering (based on environment config)
+ * 2. Default model selection (from environment if not persisted)
+ * 3. Selected conversation validation
+ *
+ * Note: Data migration from legacy localStorage is handled by MigrationDialog
+ * in ChatShell.tsx to provide user feedback during the migration process.
  */
 export function AppInitializer() {
   const hasLoadedRef = useRef(false);
