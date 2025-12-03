@@ -328,6 +328,12 @@ export function SettingDialog() {
           </div>
         </div>
       </div>
+
+      {/* Migration Dialog - opened from Data Management section */}
+      <MigrationDialog
+        isOpen={showMigrationDialog}
+        onComplete={() => setShowMigrationDialog(false)}
+      />
     </div>
   );
 }
