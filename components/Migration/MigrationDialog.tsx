@@ -4,11 +4,9 @@ import { FC, useCallback, useState } from 'react';
 
 import { useTranslations } from 'next-intl';
 
-import {
-  LocalStorageService,
-  MigrationResult,
-  MigrationStats,
-} from '@/client/services/storage/localStorageService';
+import { LocalStorageService } from '@/client/services/storage/localStorageService';
+
+import { MigrationResult, MigrationStats } from '@/types/storage';
 
 type MigrationStatus =
   | 'prompt'
