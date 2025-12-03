@@ -285,6 +285,28 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   {t('Your settings have been updated.')}
                 </p>
               )}
+
+              {/* Warnings section */}
+              {warnings.length > 0 && (
+                <div className="mt-3 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-3 border border-yellow-200 dark:border-yellow-800">
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400 font-medium mb-1">
+                    {t('Notes')}:
+                  </p>
+                  <ul className="text-xs text-yellow-600 dark:text-yellow-300 space-y-1">
+                    {warnings.slice(0, 3).map((warning, index) => (
+                      <li key={index} className="flex items-start gap-1.5">
+                        <span className="mt-0.5">-</span>
+                        <span>{warning}</span>
+                      </li>
+                    ))}
+                    {warnings.length > 3 && (
+                      <li className="text-yellow-500 dark:text-yellow-400">
+                        ...and {warnings.length - 3} more (see console)
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
