@@ -242,7 +242,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
         {/* Legacy Data Section - Only show if legacy data exists */}
         {breakdown?.legacy.hasLegacyData && (
           <div className="border border-yellow-300 dark:border-yellow-700 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 mb-2">
               <IconAlertTriangle
                 size={18}
                 className="text-yellow-600 dark:text-yellow-400"
@@ -251,7 +251,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
                 {t('settings.Legacy Data Detected')}
               </h3>
             </div>
-            <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-4">
+            <p className="text-xs text-yellow-700 dark:text-yellow-400 mb-3">
               {t('settings.legacyDataDescription', {
                 size: formatBytes(breakdown.legacy.total),
               })}
@@ -274,30 +274,46 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
               </div>
             )}
 
-            <div className="flex flex-col space-y-2">
-              {/* Migrate button */}
-              {onOpenMigration && (
-                <SidebarButton
-                  text={t('settings.Migrate to Current Format')}
-                  icon={<IconRefresh size={18} />}
-                  onClick={onOpenMigration}
-                />
+            {/* Expandable solutions section */}
+            <button
+              className="flex items-center gap-1 text-xs font-medium text-yellow-700 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-300 transition-colors"
+              onClick={() => setShowLegacyOptions(!showLegacyOptions)}
+            >
+              {showLegacyOptions ? (
+                <IconChevronDown size={16} />
+              ) : (
+                <IconChevronRight size={16} />
               )}
+              {t('settings.Explore solutions')}
+            </button>
 
-              {/* Export legacy button */}
-              <SidebarButton
-                text={t('settings.Export Legacy Data')}
-                icon={<IconFileExport size={18} />}
-                onClick={handleExportLegacy}
-              />
+            {/* Collapsible action buttons */}
+            {showLegacyOptions && (
+              <div className="flex flex-col space-y-2 mt-3 pl-5">
+                {/* Migrate button */}
+                {onOpenMigration && (
+                  <SidebarButton
+                    text={t('settings.Migrate to Current Format')}
+                    icon={<IconTransfer size={18} />}
+                    onClick={onOpenMigration}
+                  />
+                )}
 
-              {/* Delete legacy button */}
-              <SidebarButton
-                text={t('settings.Delete Legacy Data')}
-                icon={<IconTrash size={18} />}
-                onClick={handleDeleteLegacy}
-              />
-            </div>
+                {/* Export legacy button */}
+                <SidebarButton
+                  text={t('settings.Export Legacy Data')}
+                  icon={<IconFileExport size={18} />}
+                  onClick={handleExportLegacy}
+                />
+
+                {/* Delete legacy button */}
+                <SidebarButton
+                  text={t('settings.Delete Legacy Data')}
+                  icon={<IconTrash size={18} />}
+                  onClick={handleDeleteLegacy}
+                />
+              </div>
+            )}
 
             {/* Delete confirmation dialog */}
             {showDeleteConfirm && (
