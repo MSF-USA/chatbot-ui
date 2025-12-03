@@ -1,5 +1,6 @@
 import { IconFileImport } from '@tabler/icons-react';
 import { FC } from 'react';
+import toast from 'react-hot-toast';
 
 import { useTranslations } from 'next-intl';
 
@@ -31,10 +32,7 @@ export const Import: FC<Props> = ({ onImport }) => {
               const json = JSON.parse(e.target?.result as string);
               onImport(json);
             } catch (error) {
-              // TODO: use native toast or other notification systems rather than alerts
-              alert(
-                'Failed to parse import file. Please ensure it is valid JSON.',
-              );
+              toast.error(t('importBackupParseError'));
             }
           };
           reader.readAsText(file);
