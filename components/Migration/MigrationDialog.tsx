@@ -57,6 +57,14 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
   const [progress, setProgress] = useState<IncrementalProgress | null>(null);
   const [skippedItems, setSkippedItems] = useState<SkippedItem[]>([]);
 
+  // Legacy data cleanup option
+  // Default unchecked for dev/debug - change to true for production if desired
+  const DELETE_LEGACY_DEFAULT = false;
+  const [deleteAfterMigration, setDeleteAfterMigration] = useState(
+    DELETE_LEGACY_DEFAULT,
+  );
+  const [freedBytes, setFreedBytes] = useState(0);
+
   // Check quota on mount
   useEffect(() => {
     if (isOpen && status === 'checking') {
