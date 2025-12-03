@@ -210,31 +210,34 @@ function mergeConversations(
   const warnings: string[] = [];
 
   for (const legacyConv of legacy) {
-    const existingConv = existingMap.get(legacyConv.id);
+    // Validate and fix model before merging
+    const validatedConv = validateAndFixConversationModel(legacyConv, warnings);
+
+    const existingConv = existingMap.get(validatedConv.id);
 
     if (!existingConv) {
       // No collision - add as-is
-      result.push(legacyConv);
+      result.push(validatedConv);
       addedCount++;
-    } else if (conversationsAreSame(existingConv, legacyConv)) {
+    } else if (conversationsAreSame(existingConv, validatedConv)) {
       // Same content - keep longer one
       const existingLen = (existingConv.messages as unknown[]).length;
-      const legacyLen = (legacyConv.messages as unknown[]).length;
+      const legacyLen = (validatedConv.messages as unknown[]).length;
       if (legacyLen > existingLen) {
         const idx = result.findIndex((c) => c.id === existingConv.id);
-        result[idx] = legacyConv;
+        result[idx] = validatedConv;
         warnings.push(
-          `Replaced conversation "${legacyConv.name}" with longer version (${legacyLen} vs ${existingLen} messages)`,
+          `Replaced conversation "${validatedConv.name}" with longer version (${legacyLen} vs ${existingLen} messages)`,
         );
       }
       // Not incrementing addedCount - this is a replacement, not an addition
     } else {
       // Different content - rename legacy id and add both
-      const newId = `${legacyConv.id}-legacy`;
-      result.push({ ...legacyConv, id: newId });
+      const newId = `${validatedConv.id}-legacy`;
+      result.push({ ...validatedConv, id: newId });
       addedCount++;
       warnings.push(
-        `Conversation "${legacyConv.name}" had id collision - renamed to ${newId}`,
+        `Conversation "${validatedConv.name}" had id collision - renamed to ${newId}`,
       );
     }
   }
