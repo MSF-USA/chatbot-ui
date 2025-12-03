@@ -2,6 +2,7 @@
  * Type-safe localStorage wrapper with versioning and migration support
  */
 import {
+  LEGACY_STORAGE_KEYS,
   getItemSize,
   getStorageUsage,
   getStringSizeInBytes,
@@ -9,6 +10,7 @@ import {
 
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import {
+  DeleteLegacyResult,
   IncrementalMigrationResult,
   IncrementalProgress,
   LegacyConversation,
