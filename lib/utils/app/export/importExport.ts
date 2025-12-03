@@ -156,7 +156,7 @@ export const importData = (
   data: SupportedExportFormats,
 ): LatestExportFormat => {
   // Migrate any legacy data to Zustand format first
-  migrateLegacyToZustandStorage();
+  LocalStorageService.migrateFromLegacy();
 
   const { history, folders, prompts, tones, customAgents } = cleanData(data);
 
