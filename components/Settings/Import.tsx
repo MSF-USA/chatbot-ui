@@ -27,8 +27,15 @@ export const Import: FC<Props> = ({ onImport }) => {
           const file = e.target.files[0];
           const reader = new FileReader();
           reader.onload = (e) => {
-            let json = JSON.parse(e.target?.result as string);
-            onImport(json);
+            try {
+              const json = JSON.parse(e.target?.result as string);
+              onImport(json);
+            } catch (error) {
+              // TODO: use native toast or other notification systems rather than alerts
+              alert(
+                'Failed to parse import file. Please ensure it is valid JSON.',
+              );
+            }
           };
           reader.readAsText(file);
         }}
