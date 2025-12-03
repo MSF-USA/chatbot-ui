@@ -344,7 +344,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
               </button>
 
               {showAdvanced && (
-                <div className="mt-2 pl-5">
+                <div className="mt-2 pl-5 space-y-2">
                   <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
                     <input
                       type="checkbox"
@@ -355,6 +355,20 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                     {t('Use incremental mode')}
                     <span className="text-gray-400 dark:text-gray-500">
                       ({t('slower but safer')})
+                    </span>
+                  </label>
+                  <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={deleteAfterMigration}
+                      onChange={(e) =>
+                        setDeleteAfterMigration(e.target.checked)
+                      }
+                      className="rounded border-gray-300 dark:border-gray-600"
+                    />
+                    {t('Delete legacy data after migration')}
+                    <span className="text-gray-400 dark:text-gray-500">
+                      ({t('frees up storage space')})
                     </span>
                   </label>
                 </div>
