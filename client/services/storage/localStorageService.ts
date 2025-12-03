@@ -292,9 +292,22 @@ export class LocalStorageService {
         const existingConversations = localStorage.getItem(
           'conversation-storage',
         );
+        const existingConvData = existingConversations
+          ? JSON.parse(existingConversations)
+          : null;
 
-        if (existingConversations) {
-          console.log('✓ Conversations already in new format, skipping');
+        // Check if Zustand store has actual content (not just empty arrays)
+        const existingConvCount =
+          existingConvData?.state?.conversations?.length ?? 0;
+        const existingFoldersCount =
+          existingConvData?.state?.folders?.length ?? 0;
+        const hasExistingContent =
+          existingConvCount > 0 || existingFoldersCount > 0;
+
+        if (hasExistingContent) {
+          console.log(
+            `✓ Conversations already have content (${existingConvCount} conversations, ${existingFoldersCount} folders), skipping`,
+          );
         } else {
           // Read old format (try both possible keys)
           const oldConversations =
@@ -314,13 +327,19 @@ export class LocalStorageService {
             stats.conversations = oldConversations?.length ?? 0;
             stats.folders = oldFolders?.length ?? 0;
 
+            // Merge with existing Zustand data if it exists (preserves any other fields)
+            const baseState = existingConvData?.state ?? {};
+
             // Create new Zustand format with CORRECT version
             // IMPORTANT: Only include fields in partialize (conversations, folders, selectedConversationId)
             const conversationData = {
               state: {
-                conversations: oldConversations ?? [],
-                folders: oldFolders ?? [],
-                selectedConversationId: oldSelectedId ?? null,
+                ...baseState,
+                conversations:
+                  oldConversations ?? baseState.conversations ?? [],
+                folders: oldFolders ?? baseState.folders ?? [],
+                selectedConversationId:
+                  oldSelectedId ?? baseState.selectedConversationId ?? null,
               },
               version: 1, // CORRECT: Match Zustand persist version
             };
