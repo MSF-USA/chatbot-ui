@@ -630,6 +630,14 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                   </ul>
                 </div>
               )}
+
+              {/* Legacy data deleted message */}
+              {freedBytes > 0 && (
+                <div className="mt-3 text-xs text-green-600 dark:text-green-400 text-center">
+                  {t('Legacy data deleted')} - {formatBytes(freedBytes)}{' '}
+                  {t('freed')}
+                </div>
+              )}
             </div>
 
             <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700">
