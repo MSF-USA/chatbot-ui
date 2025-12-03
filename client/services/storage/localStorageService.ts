@@ -916,7 +916,8 @@ export class LocalStorageService {
         });
 
         const convSize = getStringSizeInBytes(JSON.stringify(conv));
-        const { availableSpace } = getStorageUsage();
+        const { currentUsage, maxUsage } = getStorageUsage();
+        const availableSpace = maxUsage - currentUsage;
 
         // Check if this conversation would fit
         // We need some buffer for the Zustand wrapper overhead
