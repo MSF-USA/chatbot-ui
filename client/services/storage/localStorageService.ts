@@ -2,54 +2,20 @@
  * Type-safe localStorage wrapper with versioning and migration support
  */
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+import {
+  LegacyConversation,
+  LegacyCustomAgent,
+  LegacyPrompt,
+  MigrationResult,
+  MigrationStats,
+  StorageKeys,
+} from '@/types/storage';
 
 import { getDefaultModel } from '@/config/models';
 
-/**
- * Statistics about what was migrated during data migration
- */
-export interface MigrationStats {
-  conversations: number;
-  folders: number;
-  prompts: number;
-  customAgents: number;
-}
-
-/**
- * Result of a migration operation
- */
-export interface MigrationResult {
-  success: boolean;
-  errors: string[];
-  warnings: string[];
-  skipped: boolean;
-  stats: MigrationStats;
-}
-
-// ============================================================================
-// Validation Functions
-// ============================================================================
-
-interface LegacyConversation {
-  id: string;
-  name: string;
-  messages: unknown[];
-  [key: string]: unknown;
-}
-
-interface LegacyPrompt {
-  id: string;
-  name: string;
-  content: string;
-  [key: string]: unknown;
-}
-
-interface LegacyCustomAgent {
-  id: string;
-  name: string;
-  agentId: string;
-  [key: string]: unknown;
-}
+// Re-export types for backwards compatibility
+export type { MigrationResult, MigrationStats } from '@/types/storage';
+export { StorageKeys } from '@/types/storage';
 
 /**
  * Validate legacy conversation structure.
@@ -259,21 +225,6 @@ function mergeById<T extends { id: string }>(
     merged: [...existing, ...newItems],
     addedCount: newItems.length,
   };
-}
-
-export enum StorageKeys {
-  CONVERSATIONS = 'conversations',
-  FOLDERS = 'folders',
-  SELECTED_CONVERSATION_ID = 'selectedConversationId',
-  TEMPERATURE = 'temperature',
-  SYSTEM_PROMPT = 'systemPrompt',
-  PROMPTS = 'prompts',
-  THEME = 'theme',
-  SHOW_CHATBAR = 'showChatbar',
-  SHOW_PROMPT_BAR = 'showPromptbar',
-  DEFAULT_MODEL_ID = 'defaultModelId',
-  MODELS = 'models',
-  CUSTOM_AGENTS = 'customAgents',
 }
 
 export class LocalStorageService {
