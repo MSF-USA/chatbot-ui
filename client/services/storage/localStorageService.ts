@@ -1,20 +1,35 @@
 /**
  * Type-safe localStorage wrapper with versioning and migration support
  */
+import {
+  getItemSize,
+  getStorageUsage,
+  getStringSizeInBytes,
+} from '@/lib/utils/app/storage/storageMonitor';
+
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 import {
+  IncrementalMigrationResult,
+  IncrementalProgress,
   LegacyConversation,
   LegacyCustomAgent,
   LegacyPrompt,
   MigrationResult,
   MigrationStats,
+  QuotaAnalysis,
+  SkippedItem,
   StorageKeys,
 } from '@/types/storage';
 
 import { getDefaultModel } from '@/config/models';
 
 // Re-export types for backwards compatibility
-export type { MigrationResult, MigrationStats } from '@/types/storage';
+export type {
+  IncrementalMigrationResult,
+  MigrationResult,
+  MigrationStats,
+  QuotaAnalysis,
+} from '@/types/storage';
 export { StorageKeys } from '@/types/storage';
 
 /**
