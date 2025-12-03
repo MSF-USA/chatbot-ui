@@ -131,6 +131,49 @@ function isValidLegacyCustomAgent(
 }
 
 // ============================================================================
+// Model Validation
+// ============================================================================
+
+/**
+ * Validate and fix conversation model if it's not available in the current application.
+ * If the model doesn't exist or is disabled, replace it with the default model.
+ * Also refreshes valid model objects to get latest properties.
+ */
+function validateAndFixConversationModel(
+  conv: LegacyConversation,
+  warnings: string[],
+): LegacyConversation {
+  const modelId = (conv.model as OpenAIModel | undefined)?.id;
+
+  // Check if model exists and is not disabled
+  const availableModel = modelId
+    ? OpenAIModels[modelId as OpenAIModelID]
+    : null;
+
+  if (!availableModel || availableModel.isDisabled) {
+    // Get default model
+    const defaultModelId = getDefaultModel();
+    const defaultModel = OpenAIModels[defaultModelId as OpenAIModelID];
+
+    if (defaultModel) {
+      warnings.push(
+        `Conversation "${conv.name}": model "${modelId || 'unknown'}" not available, switched to "${defaultModelId}"`,
+      );
+      return { ...conv, model: defaultModel };
+    }
+
+    // Fallback: if even default model is missing, log error but don't fail
+    console.error(
+      `Default model "${defaultModelId}" not found in OpenAIModels`,
+    );
+    return conv;
+  }
+
+  // Model is valid - refresh the model object to get latest properties
+  return { ...conv, model: availableModel };
+}
+
+// ============================================================================
 // Merge Functions
 // ============================================================================
 
