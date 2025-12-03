@@ -404,13 +404,15 @@ export class LocalStorageService {
     const migrationFlag = localStorage.getItem('data_migration_v2_complete');
     if (migrationFlag === 'true') return false;
 
-    // Check for any old keys
+    // Check for any old keys that need migration
+    // NOTE: THEME is not included because UI prefs are stored in cookies, not localStorage
     const oldKeys = [
       StorageKeys.CONVERSATIONS,
       'conversationHistory',
       StorageKeys.TEMPERATURE,
       StorageKeys.SYSTEM_PROMPT,
-      StorageKeys.THEME,
+      StorageKeys.PROMPTS,
+      StorageKeys.CUSTOM_AGENTS,
     ];
 
     return oldKeys.some((key) => this.has(key));
