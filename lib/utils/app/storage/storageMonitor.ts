@@ -11,6 +11,7 @@
  * Updated for Zustand persist middleware
  */
 import { Conversation } from '@/types/chat';
+import { StorageBreakdown } from '@/types/storage';
 
 import { useConversationStore } from '@/client/stores/conversationStore';
 
