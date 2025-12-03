@@ -1,6 +1,9 @@
 /**
  * Type-safe localStorage wrapper with versioning and migration support
  */
+import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
+
+import { getDefaultModel } from '@/config/models';
 
 /**
  * Statistics about what was migrated during data migration
