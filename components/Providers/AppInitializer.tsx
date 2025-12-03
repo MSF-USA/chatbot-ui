@@ -31,19 +31,6 @@ export function AppInitializer() {
     hasLoadedRef.current = true;
 
     try {
-      // Run automatic background migration first (if needed)
-      // This safely copies old data to new Zustand format without deleting anything
-      if (LocalStorageService.hasLegacyData()) {
-        const result = LocalStorageService.migrateFromLegacy();
-
-        if (!result.success) {
-          console.error('Migration failed:', result.errors);
-          // Continue anyway - stores will use defaults or partial data
-        }
-        // No reload needed - Zustand will use the newly created data
-      }
-
-      // Continue with normal initialization
       // Access stores directly for one-time initialization
       const { setModels, defaultModelId, setDefaultModelId } =
         useSettingsStore.getState();
