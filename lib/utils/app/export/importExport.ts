@@ -64,11 +64,25 @@ export function cleanData(data: SupportedExportFormats): LatestExportFormat {
   }
 
   if (isExportFormatV3(data)) {
-    return { ...data, version: 5, prompts: [], tones: [], customAgents: [] };
+    return {
+      version: 5,
+      history: cleanConversationHistory(data.history || []),
+      folders: data.folders || [],
+      prompts: [],
+      tones: [],
+      customAgents: [],
+    };
   }
 
   if (isExportFormatV4(data)) {
-    return { ...data, version: 5, tones: [], customAgents: [] };
+    return {
+      version: 5,
+      history: cleanConversationHistory(data.history || []),
+      folders: data.folders || [],
+      prompts: data.prompts || [],
+      tones: [],
+      customAgents: [],
+    };
   }
 
   if (isExportFormatV5(data)) {
