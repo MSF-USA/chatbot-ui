@@ -257,7 +257,7 @@ export class LocalStorageService {
             const baseState = existingSettingsData?.state ?? {};
 
             // Create new Zustand format with CORRECT version
-            // IMPORTANT: Only include fields in partialize
+            // IMPORTANT: Include ALL fields from settingsStore partialize
             // NOTE: models is NOT persisted - it's populated dynamically in AppInitializer
             const settingsData = {
               state: {
@@ -266,10 +266,12 @@ export class LocalStorageService {
                 systemPrompt: oldSystemPrompt ?? baseState.systemPrompt ?? '',
                 defaultModelId:
                   oldDefaultModelId ?? baseState.defaultModelId ?? undefined,
+                defaultSearchMode: baseState.defaultSearchMode ?? 'intelligent',
                 prompts: oldPrompts ?? baseState.prompts ?? [],
+                tones: baseState.tones ?? [],
                 customAgents: oldCustomAgents ?? baseState.customAgents ?? [],
               },
-              version: 1, // CORRECT: Match Zustand persist version
+              version: 2, // Match settingsStore persist version
             };
 
             localStorage.setItem(
