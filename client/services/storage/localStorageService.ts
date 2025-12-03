@@ -215,9 +215,22 @@ export class LocalStorageService {
       // Migrate Settings Store
       try {
         const existingSettings = localStorage.getItem('settings-storage');
+        const existingSettingsData = existingSettings
+          ? JSON.parse(existingSettings)
+          : null;
 
-        if (existingSettings) {
-          console.log('✓ Settings already in new format, skipping');
+        // Check if Zustand store has actual content (not just empty arrays)
+        const existingPromptsCount =
+          existingSettingsData?.state?.prompts?.length ?? 0;
+        const existingAgentsCount =
+          existingSettingsData?.state?.customAgents?.length ?? 0;
+        const hasExistingContent =
+          existingPromptsCount > 0 || existingAgentsCount > 0;
+
+        if (hasExistingContent) {
+          console.log(
+            `✓ Settings already have content (${existingPromptsCount} prompts, ${existingAgentsCount} agents), skipping`,
+          );
         } else {
           // Read old format
           const oldTemperature = this.get<number>(StorageKeys.TEMPERATURE);
@@ -240,16 +253,21 @@ export class LocalStorageService {
             stats.prompts = oldPrompts?.length ?? 0;
             stats.customAgents = oldCustomAgents?.length ?? 0;
 
+            // Merge with existing Zustand data if it exists (preserves any other fields)
+            const baseState = existingSettingsData?.state ?? {};
+
             // Create new Zustand format with CORRECT version
             // IMPORTANT: Only include fields in partialize
             // NOTE: models is NOT persisted - it's populated dynamically in AppInitializer
             const settingsData = {
               state: {
-                temperature: oldTemperature ?? 0.5,
-                systemPrompt: oldSystemPrompt ?? '',
-                defaultModelId: oldDefaultModelId ?? undefined,
-                prompts: oldPrompts ?? [],
-                customAgents: oldCustomAgents ?? [],
+                ...baseState,
+                temperature: oldTemperature ?? baseState.temperature ?? 0.5,
+                systemPrompt: oldSystemPrompt ?? baseState.systemPrompt ?? '',
+                defaultModelId:
+                  oldDefaultModelId ?? baseState.defaultModelId ?? undefined,
+                prompts: oldPrompts ?? baseState.prompts ?? [],
+                customAgents: oldCustomAgents ?? baseState.customAgents ?? [],
               },
               version: 1, // CORRECT: Match Zustand persist version
             };
