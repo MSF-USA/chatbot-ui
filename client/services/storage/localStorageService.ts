@@ -237,6 +237,9 @@ export class LocalStorageService {
             oldCustomAgents !== null;
 
           if (hasOldData) {
+            stats.prompts = oldPrompts?.length ?? 0;
+            stats.customAgents = oldCustomAgents?.length ?? 0;
+
             // Create new Zustand format with CORRECT version
             // IMPORTANT: Only include fields in partialize
             // NOTE: models is NOT persisted - it's populated dynamically in AppInitializer
@@ -290,6 +293,9 @@ export class LocalStorageService {
             oldSelectedId !== null;
 
           if (hasOldData) {
+            stats.conversations = oldConversations?.length ?? 0;
+            stats.folders = oldFolders?.length ?? 0;
+
             // Create new Zustand format with CORRECT version
             // IMPORTANT: Only include fields in partialize (conversations, folders, selectedConversationId)
             const conversationData = {
@@ -380,13 +386,13 @@ export class LocalStorageService {
         console.error('❌ Migration had errors. Will retry on next load.');
       }
 
-      return { success: errors.length === 0, errors };
+      return { success: errors.length === 0, errors, skipped: false, stats };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       errors.push(errorMessage);
       console.error('❌ Migration failed:', errorMessage);
-      return { success: false, errors };
+      return { success: false, errors, skipped: false, stats };
     }
   }
 
