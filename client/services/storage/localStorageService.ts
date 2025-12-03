@@ -163,23 +163,34 @@ export class LocalStorageService {
    * - Skips if already migrated
    * - Skips if target already has data (don't overwrite)
    * - Old data remains forever (zero risk of data loss)
+   *
+   * @returns MigrationResult with success status, errors, and stats of migrated items
    */
-  static migrateFromLegacy(): {
-    success: boolean;
-    errors: string[];
-    skipped?: boolean;
-  } {
+  static migrateFromLegacy(): MigrationResult {
+    const emptyStats: MigrationStats = {
+      conversations: 0,
+      folders: 0,
+      prompts: 0,
+      customAgents: 0,
+    };
+
     if (typeof window === 'undefined') {
-      return { success: false, errors: ['Cannot run migration on server'] };
+      return {
+        success: false,
+        errors: ['Cannot run migration on server'],
+        skipped: false,
+        stats: emptyStats,
+      };
     }
 
     const errors: string[] = [];
+    const stats: MigrationStats = { ...emptyStats };
 
     try {
       // Check if already migrated
       const migrationFlag = localStorage.getItem('data_migration_v2_complete');
       if (migrationFlag === 'true') {
-        return { success: true, errors: [], skipped: true };
+        return { success: true, errors: [], skipped: true, stats: emptyStats };
       }
 
       console.log('🔄 Starting automatic data migration...');
