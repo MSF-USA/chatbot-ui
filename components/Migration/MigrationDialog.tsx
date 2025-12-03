@@ -102,6 +102,11 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
         } else if (result.success) {
           setStats(result.stats);
           setWarnings(result.warnings || []);
+          // Delete legacy data if option enabled
+          if (deleteAfterMigration) {
+            const deleteResult = LocalStorageService.deleteLegacyData();
+            setFreedBytes(deleteResult.freedBytes);
+          }
           setStatus('complete');
         } else {
           setError(result.errors.join('\n') || 'Unknown error occurred');
@@ -115,6 +120,11 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
         if (result.success) {
           setStats(result.stats);
           setWarnings(result.warnings || []);
+          // Delete legacy data if option enabled
+          if (deleteAfterMigration) {
+            const deleteResult = LocalStorageService.deleteLegacyData();
+            setFreedBytes(deleteResult.freedBytes);
+          }
           setStatus('complete');
         } else {
           setError(result.errors.join('\n') || 'Unknown error occurred');
@@ -126,7 +136,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
       setError(err instanceof Error ? err.message : 'Unknown error');
       setStatus('error');
     }
-  }, [useIncrementalMode]);
+  }, [useIncrementalMode, deleteAfterMigration]);
 
   const handleSkip = useCallback(() => {
     // Mark as skipped in localStorage so we don't show again
@@ -466,18 +476,32 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
                 {t('Export Backup First')}
               </button>
 
-              <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={useIncrementalMode}
-                  onChange={(e) => setUseIncrementalMode(e.target.checked)}
-                  className="rounded border-gray-300 dark:border-gray-600"
-                />
-                {t('Use incremental mode')}
-                <span className="text-green-600 dark:text-green-400 font-medium">
-                  ({t('recommended')})
-                </span>
-              </label>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={useIncrementalMode}
+                    onChange={(e) => setUseIncrementalMode(e.target.checked)}
+                    className="rounded border-gray-300 dark:border-gray-600"
+                  />
+                  {t('Use incremental mode')}
+                  <span className="text-green-600 dark:text-green-400 font-medium">
+                    ({t('recommended')})
+                  </span>
+                </label>
+                <label className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={deleteAfterMigration}
+                    onChange={(e) => setDeleteAfterMigration(e.target.checked)}
+                    className="rounded border-gray-300 dark:border-gray-600"
+                  />
+                  {t('Delete legacy data after migration')}
+                  <span className="text-gray-400 dark:text-gray-500">
+                    ({t('frees up storage space')})
+                  </span>
+                </label>
+              </div>
             </div>
 
             <div className="px-6 py-4 border-t border-gray-200 dark:border-gray-700 flex gap-3">
