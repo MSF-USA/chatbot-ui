@@ -2,6 +2,26 @@
  * Type-safe localStorage wrapper with versioning and migration support
  */
 
+/**
+ * Statistics about what was migrated during data migration
+ */
+export interface MigrationStats {
+  conversations: number;
+  folders: number;
+  prompts: number;
+  customAgents: number;
+}
+
+/**
+ * Result of a migration operation
+ */
+export interface MigrationResult {
+  success: boolean;
+  errors: string[];
+  skipped: boolean;
+  stats: MigrationStats;
+}
+
 export enum StorageKeys {
   CONVERSATIONS = 'conversations',
   FOLDERS = 'folders',
