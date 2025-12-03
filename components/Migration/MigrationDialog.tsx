@@ -33,6 +33,7 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
   const t = useTranslations();
   const [status, setStatus] = useState<MigrationStatus>('prompt');
   const [stats, setStats] = useState<MigrationStats | null>(null);
+  const [warnings, setWarnings] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const handleMigrate = useCallback(async () => {
@@ -46,9 +47,11 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
 
       if (result.success) {
         setStats(result.stats);
+        setWarnings(result.warnings || []);
         setStatus('complete');
       } else {
-        setError(result.errors.join(', ') || 'Unknown error occurred');
+        setError(result.errors.join('\n') || 'Unknown error occurred');
+        setWarnings(result.warnings || []);
         setStatus('error');
       }
     } catch (err) {
