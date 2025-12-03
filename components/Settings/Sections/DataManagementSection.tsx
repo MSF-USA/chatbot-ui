@@ -128,7 +128,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
           </h3>
 
           {breakdown ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Total Usage */}
               <div className="text-sm text-black dark:text-neutral-300">
                 <span className="font-medium">
@@ -139,18 +139,79 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
                 {breakdown.percentUsed.toFixed(1)}%)
               </div>
 
-              {/* Main progress bar */}
-              <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-2.5">
-                <div
-                  className={`h-2.5 rounded-full transition-all ${
-                    breakdown.percentUsed > 85
-                      ? 'bg-red-600'
-                      : breakdown.percentUsed > 70
-                        ? 'bg-yellow-500'
-                        : 'bg-green-500'
-                  }`}
-                  style={{ width: `${Math.min(breakdown.percentUsed, 100)}%` }}
-                ></div>
+              {/* Stacked progress bar */}
+              <div className="w-full bg-gray-300 dark:bg-gray-700 rounded-full h-3 flex overflow-hidden">
+                {/* Conversations segment */}
+                {breakdown.zustand.conversations > 0 && (
+                  <div
+                    className="bg-blue-500 h-3 transition-all"
+                    style={{
+                      width: `${getPercentOfMax(breakdown.zustand.conversations)}%`,
+                    }}
+                  ></div>
+                )}
+                {/* Settings segment */}
+                {breakdown.zustand.settings > 0 && (
+                  <div
+                    className="bg-purple-500 h-3 transition-all"
+                    style={{
+                      width: `${getPercentOfMax(breakdown.zustand.settings)}%`,
+                    }}
+                  ></div>
+                )}
+                {/* Legacy segment */}
+                {breakdown.legacy.hasLegacyData && (
+                  <div
+                    className="bg-yellow-500 h-3 transition-all"
+                    style={{
+                      width: `${getPercentOfMax(breakdown.legacy.total)}%`,
+                    }}
+                  ></div>
+                )}
+                {/* Other segment */}
+                {breakdown.other > 0 && (
+                  <div
+                    className="bg-gray-400 h-3 transition-all"
+                    style={{
+                      width: `${getPercentOfMax(breakdown.other)}%`,
+                    }}
+                  ></div>
+                )}
+              </div>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                <div className="flex items-center gap-1">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-blue-500"></span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t('settings.Conversations')} (
+                    {formatBytes(breakdown.zustand.conversations)})
+                  </span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-purple-500"></span>
+                  <span className="text-gray-600 dark:text-gray-400">
+                    {t('settings.Settings')} (
+                    {formatBytes(breakdown.zustand.settings)})
+                  </span>
+                </div>
+                {breakdown.legacy.hasLegacyData && (
+                  <div className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-yellow-500"></span>
+                    <span className="text-yellow-600 dark:text-yellow-400">
+                      {t('settings.Legacy')} (
+                      {formatBytes(breakdown.legacy.total)})
+                    </span>
+                  </div>
+                )}
+                {breakdown.other > 0 && (
+                  <div className="flex items-center gap-1">
+                    <span className="w-2.5 h-2.5 rounded-sm bg-gray-400"></span>
+                    <span className="text-gray-600 dark:text-gray-400">
+                      {t('settings.Other')} ({formatBytes(breakdown.other)})
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Status message */}
@@ -166,90 +227,6 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
                 ) : (
                   <span>{t('settings.storageUsageNormal')}</span>
                 )}
-              </div>
-
-              {/* Breakdown by category */}
-              <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-                <div className="text-xs font-medium text-gray-500 dark:text-gray-400 mb-2">
-                  {t('settings.Breakdown')}:
-                </div>
-                <div className="space-y-2">
-                  {/* Conversations */}
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 text-xs text-gray-600 dark:text-gray-400">
-                      {t('settings.Conversations')}
-                    </div>
-                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                      <div
-                        className="bg-blue-500 h-1.5 rounded-full"
-                        style={{
-                          width: `${Math.min(getPercentOfTotal(breakdown.zustand.conversations), 100)}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <div className="w-20 text-xs text-right text-gray-600 dark:text-gray-400">
-                      {formatBytes(breakdown.zustand.conversations)}
-                    </div>
-                  </div>
-
-                  {/* Settings */}
-                  <div className="flex items-center gap-2">
-                    <div className="w-24 text-xs text-gray-600 dark:text-gray-400">
-                      {t('settings.Settings')}
-                    </div>
-                    <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                      <div
-                        className="bg-purple-500 h-1.5 rounded-full"
-                        style={{
-                          width: `${Math.min(getPercentOfTotal(breakdown.zustand.settings), 100)}%`,
-                        }}
-                      ></div>
-                    </div>
-                    <div className="w-20 text-xs text-right text-gray-600 dark:text-gray-400">
-                      {formatBytes(breakdown.zustand.settings)}
-                    </div>
-                  </div>
-
-                  {/* Legacy (if exists) */}
-                  {breakdown.legacy.hasLegacyData && (
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 text-xs text-yellow-600 dark:text-yellow-400">
-                        {t('settings.Legacy')}
-                      </div>
-                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                        <div
-                          className="bg-yellow-500 h-1.5 rounded-full"
-                          style={{
-                            width: `${Math.min(getPercentOfTotal(breakdown.legacy.total), 100)}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <div className="w-20 text-xs text-right text-yellow-600 dark:text-yellow-400">
-                        {formatBytes(breakdown.legacy.total)}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Other */}
-                  {breakdown.other > 0 && (
-                    <div className="flex items-center gap-2">
-                      <div className="w-24 text-xs text-gray-600 dark:text-gray-400">
-                        {t('settings.Other')}
-                      </div>
-                      <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                        <div
-                          className="bg-gray-400 h-1.5 rounded-full"
-                          style={{
-                            width: `${Math.min(getPercentOfTotal(breakdown.other), 100)}%`,
-                          }}
-                        ></div>
-                      </div>
-                      <div className="w-20 text-xs text-right text-gray-600 dark:text-gray-400">
-                        {formatBytes(breakdown.other)}
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           ) : (
