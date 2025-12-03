@@ -1184,4 +1184,110 @@ export class LocalStorageService {
 
     return { conversations, prompts, agents };
   }
+
+  // ==========================================================================
+  // Legacy Data Management
+  // ==========================================================================
+
+  /**
+   * Export only legacy data for backup before deletion.
+   * Downloads a JSON file containing all unmigrated legacy data.
+   *
+   * @throws Error if no legacy data exists
+   */
+  static exportLegacyData(): void {
+    if (typeof window === 'undefined') {
+      throw new Error('Cannot export in server environment');
+    }
+
+    const legacyData: Record<string, unknown> = {};
+
+    for (const key of LEGACY_STORAGE_KEYS) {
+      const value = localStorage.getItem(key);
+      if (value) {
+        try {
+          legacyData[key] = JSON.parse(value);
+        } catch {
+          // Store as string if not valid JSON
+          legacyData[key] = value;
+        }
+      }
+    }
+
+    if (Object.keys(legacyData).length === 0) {
+      throw new Error('No legacy data to export');
+    }
+
+    // Create and download the file
+    const blob = new Blob([JSON.stringify(legacyData, null, 2)], {
+      type: 'application/json',
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.download = `legacy_data_backup_${new Date().toISOString().slice(0, 10)}.json`;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
+  /**
+   * Delete only legacy storage keys, preserving Zustand stores.
+   * Use this to free up space after migration or to discard old data.
+   *
+   * @returns DeleteLegacyResult with list of deleted keys and bytes freed
+   */
+  static deleteLegacyData(): DeleteLegacyResult {
+    if (typeof window === 'undefined') {
+      return { deleted: [], freedBytes: 0 };
+    }
+
+    const deleted: string[] = [];
+    let freedBytes = 0;
+
+    for (const key of LEGACY_STORAGE_KEYS) {
+      const size = getItemSize(key);
+      if (size > 0) {
+        freedBytes += size;
+        localStorage.removeItem(key);
+        deleted.push(key);
+      }
+    }
+
+    // Also remove migration-related keys
+    const migrationKeys = [
+      'data_migration_v2_complete',
+      'data_migration_backup',
+    ];
+    for (const key of migrationKeys) {
+      const size = getItemSize(key);
+      if (size > 0) {
+        freedBytes += size;
+        localStorage.removeItem(key);
+        deleted.push(key);
+      }
+    }
+
+    console.log(
+      `🗑️ Deleted ${deleted.length} legacy keys, freed ${freedBytes} bytes`,
+    );
+
+    return { deleted, freedBytes };
+  }
+
+  /**
+   * Check if there is any legacy data that could be deleted or migrated.
+   * This is different from hasLegacyData() which also checks the migration flag.
+   *
+   * @returns true if any legacy storage keys have data
+   */
+  static hasAnyLegacyData(): boolean {
+    if (typeof window === 'undefined') return false;
+
+    for (const key of LEGACY_STORAGE_KEYS) {
+      if (localStorage.getItem(key)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }
