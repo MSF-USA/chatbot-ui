@@ -104,10 +104,10 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
     }
   };
 
-  // Calculate percentage of total for a category
-  const getPercentOfTotal = (size: number): number => {
-    if (!breakdown || breakdown.total === 0) return 0;
-    return (size / breakdown.total) * 100;
+  // Calculate percentage of max storage for a category (for stacked bar)
+  const getPercentOfMax = (size: number): number => {
+    if (!breakdown || breakdown.maxUsage === 0) return 0;
+    return (size / breakdown.maxUsage) * 100;
   };
 
   return (
