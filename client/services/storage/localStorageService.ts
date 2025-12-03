@@ -674,4 +674,511 @@ export class LocalStorageService {
 
     return oldKeys.some((key) => this.has(key));
   }
+
+  // ==========================================================================
+  // Quota Analysis and Incremental Migration
+  // ==========================================================================
+
+  /** Legacy keys that contain data to be migrated */
+  private static readonly LEGACY_KEYS = [
+    'conversationHistory',
+    StorageKeys.CONVERSATIONS,
+    StorageKeys.PROMPTS,
+    StorageKeys.CUSTOM_AGENTS,
+    StorageKeys.FOLDERS,
+    StorageKeys.TEMPERATURE,
+    StorageKeys.SYSTEM_PROMPT,
+    StorageKeys.DEFAULT_MODEL_ID,
+  ];
+
+  /**
+   * Analyze storage quota to determine if migration would exceed limits.
+   * Call this before migration to decide if incremental mode is needed.
+   *
+   * @returns QuotaAnalysis with current usage, estimated merged size, and deficit
+   */
+  static analyzeQuotaForMigration(): QuotaAnalysis {
+    if (typeof window === 'undefined') {
+      return {
+        currentUsage: 0,
+        maxUsage: 5 * 1024 * 1024,
+        legacySize: 0,
+        estimatedMergedSize: 0,
+        availableSpace: 5 * 1024 * 1024,
+        wouldExceedQuota: false,
+        deficit: 0,
+      };
+    }
+
+    const { currentUsage, maxUsage } = getStorageUsage();
+
+    // Calculate total size of legacy data
+    let legacySize = 0;
+    for (const key of this.LEGACY_KEYS) {
+      legacySize += getItemSize(key);
+    }
+
+    // Calculate size of existing Zustand stores
+    const conversationStorageSize = getItemSize('conversation-storage');
+    const settingsStorageSize = getItemSize('settings-storage');
+
+    // Estimate merged size: existing Zustand + legacy data
+    // This is a conservative estimate - actual merged size may be smaller
+    // due to deduplication, but we err on the side of caution
+    const estimatedMergedSize =
+      conversationStorageSize + settingsStorageSize + legacySize;
+
+    // Calculate available space and deficit
+    const availableSpace = maxUsage - currentUsage;
+    const wouldExceedQuota = estimatedMergedSize > maxUsage;
+    const deficit = Math.max(0, estimatedMergedSize - maxUsage);
+
+    return {
+      currentUsage,
+      maxUsage,
+      legacySize,
+      estimatedMergedSize,
+      availableSpace,
+      wouldExceedQuota,
+      deficit,
+    };
+  }
+
+  /**
+   * Remove a single conversation from legacy storage.
+   * Used during incremental migration after successful migration.
+   */
+  private static removeLegacyConversation(id: string): void {
+    // Try conversationHistory key first (primary legacy key)
+    const legacyConvs =
+      this.get<LegacyConversation[]>('conversationHistory') || [];
+    const filtered = legacyConvs.filter((c) => c.id !== id);
+
+    if (filtered.length === 0) {
+      this.remove('conversationHistory');
+    } else if (filtered.length < legacyConvs.length) {
+      this.set('conversationHistory', filtered);
+    }
+
+    // Also check the old conversations key
+    const oldConvs =
+      this.get<LegacyConversation[]>(StorageKeys.CONVERSATIONS) || [];
+    const filteredOld = oldConvs.filter((c) => c.id !== id);
+
+    if (filteredOld.length === 0) {
+      this.remove(StorageKeys.CONVERSATIONS);
+    } else if (filteredOld.length < oldConvs.length) {
+      this.set(StorageKeys.CONVERSATIONS, filteredOld);
+    }
+  }
+
+  /**
+   * Migrate a single conversation to Zustand storage.
+   * Handles merging with existing conversations.
+   */
+  private static migrateSingleConversation(
+    conv: LegacyConversation,
+    warnings: string[],
+  ): void {
+    // Read current Zustand state
+    const existingStorage = localStorage.getItem('conversation-storage');
+    const existingData = existingStorage ? JSON.parse(existingStorage) : null;
+    const existingConvs: LegacyConversation[] =
+      existingData?.state?.conversations ?? [];
+    const existingFolders = existingData?.state?.folders ?? [];
+
+    // Validate and fix model
+    const validatedConv = validateAndFixConversationModel(conv, warnings);
+
+    // Check for collision
+    const existingConv = existingConvs.find((c) => c.id === validatedConv.id);
+    let updatedConvs: LegacyConversation[];
+
+    if (!existingConv) {
+      // No collision - add as-is
+      updatedConvs = [...existingConvs, validatedConv];
+    } else if (conversationsAreSame(existingConv, validatedConv)) {
+      // Same content - keep longer one
+      const existingLen = (existingConv.messages as unknown[]).length;
+      const legacyLen = (validatedConv.messages as unknown[]).length;
+      if (legacyLen > existingLen) {
+        updatedConvs = existingConvs.map((c) =>
+          c.id === existingConv.id ? validatedConv : c,
+        );
+        warnings.push(
+          `Replaced "${validatedConv.name}" with longer version (${legacyLen} vs ${existingLen} messages)`,
+        );
+      } else {
+        updatedConvs = existingConvs; // Keep existing
+      }
+    } else {
+      // Different content - rename legacy id and add both
+      const newId = `${validatedConv.id}-legacy`;
+      updatedConvs = [...existingConvs, { ...validatedConv, id: newId }];
+      warnings.push(
+        `"${validatedConv.name}" renamed to ${newId} (id collision)`,
+      );
+    }
+
+    // Write back to Zustand storage
+    const conversationData = {
+      state: {
+        conversations: updatedConvs,
+        folders: existingFolders,
+        selectedConversationId: existingData?.state?.selectedConversationId,
+      },
+      version: 1,
+    };
+
+    localStorage.setItem(
+      'conversation-storage',
+      JSON.stringify(conversationData),
+    );
+  }
+
+  /**
+   * Migrate data incrementally, processing one item at a time.
+   * Deletes legacy data as it's migrated to free up space.
+   * Prioritizes newest conversations first.
+   *
+   * @param onProgress - Optional callback for progress updates
+   * @returns IncrementalMigrationResult with skipped items info
+   */
+  static migrateIncrementally(
+    onProgress?: (progress: IncrementalProgress) => void,
+  ): IncrementalMigrationResult {
+    const emptyStats: MigrationStats = {
+      conversations: 0,
+      folders: 0,
+      prompts: 0,
+      customAgents: 0,
+    };
+
+    if (typeof window === 'undefined') {
+      return {
+        success: false,
+        errors: ['Cannot run migration on server'],
+        warnings: [],
+        skipped: false,
+        stats: emptyStats,
+        skippedItems: [],
+        hasSkippedItems: false,
+      };
+    }
+
+    const errors: string[] = [];
+    const warnings: string[] = [];
+    const stats: MigrationStats = { ...emptyStats };
+    const skippedItems: SkippedItem[] = [];
+    let bytesFreed = 0;
+
+    console.log('🔄 Starting incremental migration...');
+
+    // ========================================================================
+    // Phase 1: Migrate Conversations (one at a time, newest first)
+    // ========================================================================
+    try {
+      const rawLegacyConvs =
+        this.get<LegacyConversation[]>('conversationHistory') ||
+        this.get<LegacyConversation[]>(StorageKeys.CONVERSATIONS) ||
+        [];
+
+      // Validate conversations
+      const validConvs: LegacyConversation[] = [];
+      for (let i = 0; i < rawLegacyConvs.length; i++) {
+        if (isValidLegacyConversation(rawLegacyConvs[i], i)) {
+          validConvs.push(rawLegacyConvs[i]);
+        } else {
+          errors.push(
+            `Invalid conversation at index ${i}: ${JSON.stringify(rawLegacyConvs[i]).slice(0, 100)}...`,
+          );
+        }
+      }
+
+      // Sort by date, NEWEST FIRST (descending)
+      const sortedConvs = [...validConvs].sort((a, b) => {
+        const dateA = new Date(
+          (a.updatedAt as string) || (a.createdAt as string) || 0,
+        ).getTime();
+        const dateB = new Date(
+          (b.updatedAt as string) || (b.createdAt as string) || 0,
+        ).getTime();
+        return dateB - dateA; // Descending - newest first
+      });
+
+      for (let i = 0; i < sortedConvs.length; i++) {
+        const conv = sortedConvs[i];
+        onProgress?.({
+          phase: 'conversations',
+          current: i + 1,
+          total: sortedConvs.length,
+          bytesFreed,
+        });
+
+        const convSize = getStringSizeInBytes(JSON.stringify(conv));
+        const { availableSpace } = getStorageUsage();
+
+        // Check if this conversation would fit
+        // We need some buffer for the Zustand wrapper overhead
+        const requiredSpace = convSize + 500; // 500 bytes buffer for wrapper
+
+        if (requiredSpace > availableSpace) {
+          skippedItems.push({
+            id: conv.id,
+            name: conv.name,
+            type: 'conversation',
+            size: convSize,
+            reason: 'too_large',
+          });
+          console.warn(
+            `⚠️ Skipping "${conv.name}" - too large (${convSize} bytes, only ${availableSpace} available)`,
+          );
+          continue;
+        }
+
+        // Try to migrate this conversation
+        try {
+          this.migrateSingleConversation(conv, warnings);
+          this.removeLegacyConversation(conv.id);
+          stats.conversations++;
+          bytesFreed += convSize;
+        } catch (e) {
+          // If write fails (quota), add to skipped
+          skippedItems.push({
+            id: conv.id,
+            name: conv.name,
+            type: 'conversation',
+            size: convSize,
+            reason: 'quota_exceeded',
+          });
+          console.error(`❌ Failed to migrate "${conv.name}":`, e);
+        }
+      }
+
+      console.log(`✓ Conversations: ${stats.conversations} migrated`);
+    } catch (error) {
+      const msg = `Conversation migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
+      errors.push(msg);
+      console.error(msg);
+    }
+
+    // ========================================================================
+    // Phase 2: Migrate Prompts (batch - they're small)
+    // ========================================================================
+    try {
+      onProgress?.({
+        phase: 'prompts',
+        current: 0,
+        total: 1,
+        bytesFreed,
+      });
+
+      const rawLegacyPrompts = this.get<unknown[]>(StorageKeys.PROMPTS) || [];
+      const validPrompts: LegacyPrompt[] = [];
+
+      for (let i = 0; i < rawLegacyPrompts.length; i++) {
+        if (isValidLegacyPrompt(rawLegacyPrompts[i], i)) {
+          validPrompts.push(rawLegacyPrompts[i] as LegacyPrompt);
+        }
+      }
+
+      if (validPrompts.length > 0) {
+        // Read existing settings
+        const existingStorage = localStorage.getItem('settings-storage');
+        const existingData = existingStorage
+          ? JSON.parse(existingStorage)
+          : null;
+        const existingPrompts: LegacyPrompt[] =
+          existingData?.state?.prompts ?? [];
+
+        // Merge prompts
+        const promptMerge = mergeById(existingPrompts, validPrompts);
+        stats.prompts = promptMerge.addedCount;
+
+        // Update settings storage
+        const settingsData = {
+          state: {
+            ...(existingData?.state ?? {}),
+            prompts: promptMerge.merged,
+          },
+          version: 2,
+        };
+        localStorage.setItem('settings-storage', JSON.stringify(settingsData));
+
+        // Remove legacy prompts
+        this.remove(StorageKeys.PROMPTS);
+        console.log(`✓ Prompts: ${stats.prompts} migrated`);
+      }
+    } catch (error) {
+      const msg = `Prompt migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
+      errors.push(msg);
+      console.error(msg);
+    }
+
+    // ========================================================================
+    // Phase 3: Migrate Custom Agents (batch - they're small)
+    // ========================================================================
+    try {
+      onProgress?.({
+        phase: 'agents',
+        current: 0,
+        total: 1,
+        bytesFreed,
+      });
+
+      const rawLegacyAgents =
+        this.get<unknown[]>(StorageKeys.CUSTOM_AGENTS) || [];
+      const validAgents: LegacyCustomAgent[] = [];
+
+      for (let i = 0; i < rawLegacyAgents.length; i++) {
+        if (isValidLegacyCustomAgent(rawLegacyAgents[i], i)) {
+          validAgents.push(rawLegacyAgents[i] as LegacyCustomAgent);
+        }
+      }
+
+      if (validAgents.length > 0) {
+        // Read existing settings
+        const existingStorage = localStorage.getItem('settings-storage');
+        const existingData = existingStorage
+          ? JSON.parse(existingStorage)
+          : null;
+        const existingAgents: LegacyCustomAgent[] =
+          existingData?.state?.customAgents ?? [];
+
+        // Merge agents
+        const agentMerge = mergeById(existingAgents, validAgents);
+        stats.customAgents = agentMerge.addedCount;
+
+        // Update settings storage
+        const settingsData = {
+          state: {
+            ...(existingData?.state ?? {}),
+            customAgents: agentMerge.merged,
+          },
+          version: 2,
+        };
+        localStorage.setItem('settings-storage', JSON.stringify(settingsData));
+
+        // Remove legacy agents
+        this.remove(StorageKeys.CUSTOM_AGENTS);
+        console.log(`✓ Custom agents: ${stats.customAgents} migrated`);
+      }
+    } catch (error) {
+      const msg = `Agent migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
+      errors.push(msg);
+      console.error(msg);
+    }
+
+    // ========================================================================
+    // Cleanup legacy settings keys
+    // ========================================================================
+    try {
+      const oldTemperature = this.get<number>(StorageKeys.TEMPERATURE);
+      const oldSystemPrompt = this.get<string>(StorageKeys.SYSTEM_PROMPT);
+      const oldDefaultModelId = this.get<string>(StorageKeys.DEFAULT_MODEL_ID);
+
+      if (
+        oldTemperature !== null ||
+        oldSystemPrompt !== null ||
+        oldDefaultModelId !== null
+      ) {
+        const existingStorage = localStorage.getItem('settings-storage');
+        const existingData = existingStorage
+          ? JSON.parse(existingStorage)
+          : null;
+        const baseState = existingData?.state ?? {};
+
+        const settingsData = {
+          state: {
+            ...baseState,
+            temperature: oldTemperature ?? baseState.temperature ?? 0.5,
+            systemPrompt: oldSystemPrompt ?? baseState.systemPrompt ?? '',
+            defaultModelId:
+              oldDefaultModelId ?? baseState.defaultModelId ?? undefined,
+            defaultSearchMode: baseState.defaultSearchMode ?? 'intelligent',
+            tones: baseState.tones ?? [],
+          },
+          version: 2,
+        };
+        localStorage.setItem('settings-storage', JSON.stringify(settingsData));
+
+        // Remove legacy keys
+        this.remove(StorageKeys.TEMPERATURE);
+        this.remove(StorageKeys.SYSTEM_PROMPT);
+        this.remove(StorageKeys.DEFAULT_MODEL_ID);
+      }
+    } catch (error) {
+      console.warn('Could not migrate legacy settings:', error);
+    }
+
+    // Final progress update
+    onProgress?.({
+      phase: 'complete',
+      current: 1,
+      total: 1,
+      bytesFreed,
+    });
+
+    // Mark migration complete only if no critical errors and no skipped items
+    const hasSkippedItems = skippedItems.length > 0;
+    if (errors.length === 0 && !hasSkippedItems) {
+      localStorage.setItem('data_migration_v2_complete', 'true');
+      console.log('✅ Incremental migration complete!');
+    } else if (hasSkippedItems) {
+      console.warn(
+        `⚠️ Migration partially complete - ${skippedItems.length} items skipped`,
+      );
+    } else {
+      console.error(`❌ Migration had ${errors.length} errors:`, errors);
+    }
+
+    return {
+      success: errors.length === 0 && !hasSkippedItems,
+      errors,
+      warnings,
+      skipped: false,
+      stats,
+      skippedItems,
+      hasSkippedItems,
+    };
+  }
+
+  /**
+   * Export only the skipped items that couldn't be migrated.
+   * Users can save these to import later after freeing space.
+   */
+  static exportSkippedItems(skippedItems: SkippedItem[]): {
+    conversations: LegacyConversation[];
+    prompts: LegacyPrompt[];
+    agents: LegacyCustomAgent[];
+  } {
+    const conversations: LegacyConversation[] = [];
+    const prompts: LegacyPrompt[] = [];
+    const agents: LegacyCustomAgent[] = [];
+
+    // Get legacy data
+    const legacyConvs =
+      this.get<LegacyConversation[]>('conversationHistory') ||
+      this.get<LegacyConversation[]>(StorageKeys.CONVERSATIONS) ||
+      [];
+    const legacyPrompts = this.get<LegacyPrompt[]>(StorageKeys.PROMPTS) || [];
+    const legacyAgents =
+      this.get<LegacyCustomAgent[]>(StorageKeys.CUSTOM_AGENTS) || [];
+
+    // Filter to only skipped items
+    for (const item of skippedItems) {
+      if (item.type === 'conversation') {
+        const conv = legacyConvs.find((c) => c.id === item.id);
+        if (conv) conversations.push(conv);
+      } else if (item.type === 'prompt') {
+        const prompt = legacyPrompts.find((p) => p.id === item.id);
+        if (prompt) prompts.push(prompt);
+      } else if (item.type === 'agent') {
+        const agent = legacyAgents.find((a) => a.id === item.id);
+        if (agent) agents.push(agent);
+      }
+    }
+
+    return { conversations, prompts, agents };
+  }
 }
