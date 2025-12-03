@@ -249,13 +249,24 @@ export const exportData = () => {
 export const importData = (
   data: SupportedExportFormats,
 ): LatestExportFormat => {
+  // Migrate any legacy data to Zustand format first
+  migrateLegacyToZustandStorage();
+
   const { history, folders, prompts, tones, customAgents } = cleanData(data);
 
-  const oldConversations = localStorage.getItem('conversationHistory');
-  const oldConversationsParsed = oldConversations
-    ? JSON.parse(oldConversations)
-    : [];
+  // Read existing data from Zustand conversation-storage
+  const conversationStorage = localStorage.getItem('conversation-storage');
+  const existingConvData = conversationStorage
+    ? JSON.parse(conversationStorage)
+    : {
+        state: { conversations: [], folders: [], selectedConversationId: null },
+        version: 1,
+      };
 
+  const oldConversationsParsed = existingConvData?.state?.conversations || [];
+  const oldFoldersParsed = existingConvData?.state?.folders || [];
+
+  // Merge conversations (dedupe by id)
   const newHistory: Conversation[] = [
     ...oldConversationsParsed,
     ...history,
@@ -263,18 +274,8 @@ export const importData = (
     (conversation, index, self) =>
       index === self.findIndex((c) => c.id === conversation.id),
   );
-  localStorage.setItem('conversationHistory', JSON.stringify(newHistory));
-  if (newHistory.length > 0) {
-    localStorage.setItem(
-      'selectedConversation',
-      JSON.stringify(newHistory[newHistory.length - 1]),
-    );
-  } else {
-    localStorage.removeItem('selectedConversation');
-  }
 
-  const oldFolders = localStorage.getItem('folders');
-  const oldFoldersParsed = oldFolders ? JSON.parse(oldFolders) : [];
+  // Merge folders (dedupe by id)
   const newFolders: FolderInterface[] = [
     ...oldFoldersParsed,
     ...folders,
@@ -282,34 +283,51 @@ export const importData = (
     (folder, index, self) =>
       index === self.findIndex((f) => f.id === folder.id),
   );
-  localStorage.setItem('folders', JSON.stringify(newFolders));
 
-  const oldPrompts = localStorage.getItem('prompts');
-  const oldPromptsParsed = oldPrompts ? JSON.parse(oldPrompts) : [];
+  // Write to Zustand conversation-storage
+  const newConversationData = {
+    state: {
+      conversations: newHistory,
+      folders: newFolders,
+      selectedConversationId:
+        newHistory.length > 0 ? newHistory[newHistory.length - 1].id : null,
+    },
+    version: 1,
+  };
+  localStorage.setItem(
+    'conversation-storage',
+    JSON.stringify(newConversationData),
+  );
+
+  // Read existing data from Zustand settings-storage
+  const settingsStorage = localStorage.getItem('settings-storage');
+  const settingsData = settingsStorage
+    ? JSON.parse(settingsStorage)
+    : { state: {}, version: 1 };
+
+  // Merge prompts (dedupe by id)
+  const oldPromptsParsed = settingsData?.state?.prompts || [];
   const newPrompts: Prompt[] = [...oldPromptsParsed, ...prompts].filter(
     (prompt, index, self) =>
       index === self.findIndex((p) => p.id === prompt.id),
   );
-  localStorage.setItem('prompts', JSON.stringify(newPrompts));
 
-  // Handle tones and custom agents - merge with existing settings-storage
-  const settingsStorage = localStorage.getItem('settings-storage');
-  const settingsData = settingsStorage
-    ? JSON.parse(settingsStorage)
-    : { state: {} };
-
+  // Merge tones (dedupe by id)
   const oldTones = settingsData?.state?.tones || [];
-  const newTones = [...oldTones, ...tones].filter(
+  const newTones: Tone[] = [...oldTones, ...tones].filter(
     (tone, index, self) => index === self.findIndex((t) => t.id === tone.id),
   );
 
+  // Merge custom agents (dedupe by id)
   const oldCustomAgents = settingsData?.state?.customAgents || [];
   const newCustomAgents = [...oldCustomAgents, ...customAgents].filter(
     (agent, index, self) => index === self.findIndex((a) => a.id === agent.id),
   );
 
+  // Write to Zustand settings-storage
   settingsData.state = {
     ...settingsData.state,
+    prompts: newPrompts,
     tones: newTones,
     customAgents: newCustomAgents,
   };
