@@ -54,6 +54,7 @@ export const DataManagementSection: FC<DataManagementSectionProps> = ({
     success: boolean;
     freedBytes: number;
   } | null>(null);
+  const [showLegacyOptions, setShowLegacyOptions] = useState(false);
 
   // Refresh storage breakdown
   const refreshBreakdown = useCallback(() => {
