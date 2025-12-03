@@ -1,3 +1,5 @@
+import { LocalStorageService } from '@/client/services/storage/localStorageService';
+
 import { Conversation } from '@/types/chat';
 import {
   ExportFormatV1,
@@ -99,105 +101,9 @@ function currentDate() {
   return `${month}-${day}`;
 }
 
-/**
- * Migrates data from legacy localStorage keys to Zustand storage format.
- * Merges with any existing Zustand data and removes legacy keys after migration.
- * Call this before any export/import operation for backwards compatibility.
- *
- * Legacy keys: conversationHistory, folders, prompts
- * Zustand keys: conversation-storage, settings-storage
- */
-function migrateLegacyToZustandStorage(): void {
-  // Migrate conversations and folders to conversation-storage
-  const legacyHistory = localStorage.getItem('conversationHistory');
-  const legacyFolders = localStorage.getItem('folders');
-
-  if (legacyHistory || legacyFolders) {
-    const conversationStorage = localStorage.getItem('conversation-storage');
-    const existingData = conversationStorage
-      ? JSON.parse(conversationStorage)
-      : {
-          state: {
-            conversations: [],
-            folders: [],
-            selectedConversationId: null,
-          },
-          version: 1,
-        };
-
-    const legacyConversations = legacyHistory ? JSON.parse(legacyHistory) : [];
-    const legacyFoldersParsed = legacyFolders ? JSON.parse(legacyFolders) : [];
-
-    // Merge legacy data with existing Zustand data (dedupe by id)
-    const mergedConversations = [
-      ...(existingData.state?.conversations || []),
-      ...legacyConversations,
-    ].filter(
-      (conv, index, self) => index === self.findIndex((c) => c.id === conv.id),
-    );
-
-    const mergedFolders = [
-      ...(existingData.state?.folders || []),
-      ...legacyFoldersParsed,
-    ].filter(
-      (folder, index, self) =>
-        index === self.findIndex((f) => f.id === folder.id),
-    );
-
-    // Write merged data to Zustand storage
-    const newConversationData = {
-      state: {
-        conversations: mergedConversations,
-        folders: mergedFolders,
-        selectedConversationId:
-          existingData.state?.selectedConversationId || null,
-      },
-      version: 1,
-    };
-    localStorage.setItem(
-      'conversation-storage',
-      JSON.stringify(newConversationData),
-    );
-
-    // Remove legacy keys after migration
-    localStorage.removeItem('conversationHistory');
-    localStorage.removeItem('folders');
-  }
-
-  // Migrate prompts to settings-storage
-  const legacyPrompts = localStorage.getItem('prompts');
-
-  if (legacyPrompts) {
-    const settingsStorage = localStorage.getItem('settings-storage');
-    const existingSettings = settingsStorage
-      ? JSON.parse(settingsStorage)
-      : { state: {}, version: 1 };
-
-    const legacyPromptsParsed = JSON.parse(legacyPrompts);
-
-    // Merge legacy prompts with existing
-    const mergedPrompts = [
-      ...(existingSettings.state?.prompts || []),
-      ...legacyPromptsParsed,
-    ].filter(
-      (prompt, index, self) =>
-        index === self.findIndex((p) => p.id === prompt.id),
-    );
-
-    existingSettings.state = {
-      ...existingSettings.state,
-      prompts: mergedPrompts,
-    };
-    localStorage.setItem('settings-storage', JSON.stringify(existingSettings));
-
-    // Remove legacy key after migration
-    localStorage.removeItem('prompts');
-  }
-}
-
 export const exportData = () => {
   // Migrate any legacy data to Zustand format first
-  migrateLegacyToZustandStorage();
+  LocalStorageService.migrateFromLegacy();
 
   // Read from Zustand storage keys
   const conversationStorage = localStorage.getItem('conversation-storage');
