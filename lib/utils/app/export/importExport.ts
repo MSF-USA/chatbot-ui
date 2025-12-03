@@ -196,37 +196,38 @@ function migrateLegacyToZustandStorage(): void {
 }
 
 export const exportData = () => {
-  let history = localStorage.getItem('conversationHistory');
-  let folders = localStorage.getItem('folders');
-  let prompts = localStorage.getItem('prompts');
-  let settingsStorage = localStorage.getItem('settings-storage');
+  // Migrate any legacy data to Zustand format first
+  migrateLegacyToZustandStorage();
 
-  if (history) {
-    history = JSON.parse(history);
+  // Read from Zustand storage keys
+  const conversationStorage = localStorage.getItem('conversation-storage');
+  const settingsStorage = localStorage.getItem('settings-storage');
+
+  // Extract conversations and folders from conversation-storage
+  let historyArray: Conversation[] = [];
+  let foldersArray: FolderInterface[] = [];
+  if (conversationStorage) {
+    const conversationData = JSON.parse(conversationStorage);
+    historyArray = conversationData?.state?.conversations || [];
+    foldersArray = conversationData?.state?.folders || [];
   }
 
-  if (folders) {
-    folders = JSON.parse(folders);
-  }
-
-  if (prompts) {
-    prompts = JSON.parse(prompts);
-  }
-
-  // Extract tones and customAgents from settings-storage
-  let tonesArray = [];
-  let customAgentsArray = [];
+  // Extract prompts, tones, and customAgents from settings-storage
+  let promptsArray: Prompt[] = [];
+  let tonesArray: Tone[] = [];
+  let customAgentsArray: any[] = [];
   if (settingsStorage) {
     const settingsData = JSON.parse(settingsStorage);
+    promptsArray = settingsData?.state?.prompts || [];
     tonesArray = settingsData?.state?.tones || [];
     customAgentsArray = settingsData?.state?.customAgents || [];
   }
 
   const data = {
     version: 5,
-    history: history || [],
-    folders: folders || [],
-    prompts: prompts || [],
+    history: historyArray,
+    folders: foldersArray,
+    prompts: promptsArray,
     tones: tonesArray,
     customAgents: customAgentsArray,
   } as LatestExportFormat;
