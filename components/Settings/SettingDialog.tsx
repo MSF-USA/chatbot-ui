@@ -83,6 +83,9 @@ export function SettingDialog() {
   // Close on click outside
   useEffect(() => {
     const handleMouseDown = (e: MouseEvent) => {
+      // Don't close if MigrationDialog is open - it's rendered outside modalRef
+      if (showMigrationDialog) return;
+
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
         window.addEventListener('mouseup', handleMouseUp);
       }
