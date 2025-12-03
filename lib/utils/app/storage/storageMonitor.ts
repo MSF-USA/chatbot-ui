@@ -139,6 +139,79 @@ export const getStorageUsage = () => {
 };
 
 /**
+ * Get a detailed breakdown of localStorage usage by category.
+ * Categorizes storage into: Zustand (conversations, settings, ui), Legacy, and Other.
+ *
+ * @returns Detailed breakdown of storage usage
+ */
+export const getStorageBreakdown = (): StorageBreakdown => {
+  requireBrowser();
+
+  try {
+    // Calculate Zustand storage sizes
+    const zustandConvs = getItemSize(ZUSTAND_STORAGE_KEYS.CONVERSATIONS);
+    const zustandSettings = getItemSize(ZUSTAND_STORAGE_KEYS.SETTINGS);
+    const zustandUI = getItemSize(ZUSTAND_STORAGE_KEYS.UI);
+    const zustandTotal = zustandConvs + zustandSettings + zustandUI;
+
+    // Calculate legacy storage sizes
+    const legacyItems: Array<{ key: string; size: number }> = [];
+    let legacyTotal = 0;
+    for (const key of LEGACY_STORAGE_KEYS) {
+      const size = getItemSize(key);
+      if (size > 0) {
+        legacyItems.push({ key, size });
+        legacyTotal += size;
+      }
+    }
+
+    // Get total usage
+    const { currentUsage, maxUsage } = getStorageUsage();
+
+    // Calculate "other" (anything not Zustand or legacy)
+    const other = Math.max(0, currentUsage - zustandTotal - legacyTotal);
+
+    return {
+      total: currentUsage,
+      maxUsage,
+      percentUsed: maxUsage > 0 ? (currentUsage / maxUsage) * 100 : 0,
+      zustand: {
+        conversations: zustandConvs,
+        settings: zustandSettings,
+        ui: zustandUI,
+        total: zustandTotal,
+      },
+      legacy: {
+        total: legacyTotal,
+        hasLegacyData: legacyTotal > 0,
+        keys: legacyItems,
+      },
+      other,
+    };
+  } catch (error) {
+    console.error('Error calculating storage breakdown:', error);
+    const maxUsage = 5 * 1024 * 1024;
+    return {
+      total: 0,
+      maxUsage,
+      percentUsed: 0,
+      zustand: {
+        conversations: 0,
+        settings: 0,
+        ui: 0,
+        total: 0,
+      },
+      legacy: {
+        total: 0,
+        hasLegacyData: false,
+        keys: [],
+      },
+      other: 0,
+    };
+  }
+};
+
+/**
  * Get the current storage threshold level
  * @returns The current threshold level or null if below all thresholds
  */
