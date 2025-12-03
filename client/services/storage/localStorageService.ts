@@ -368,49 +368,9 @@ export class LocalStorageService {
         console.error(msg);
       }
 
-      // Migrate UI Store
-      try {
-        const existingUI = localStorage.getItem('ui-storage');
-
-        if (existingUI) {
-          console.log('✓ UI settings already in new format, skipping');
-        } else {
-          // Read old format
-          const oldTheme = this.get<string>(StorageKeys.THEME);
-          const oldShowChatbar = this.get<boolean>(StorageKeys.SHOW_CHATBAR);
-          const oldShowPromptbar = this.get<boolean>(
-            StorageKeys.SHOW_PROMPT_BAR,
-          );
-
-          const hasOldData =
-            oldTheme !== null ||
-            oldShowChatbar !== null ||
-            oldShowPromptbar !== null;
-
-          if (hasOldData) {
-            // Create new Zustand format with CORRECT version
-            // IMPORTANT: Only include fields in partialize (theme, showChatbar, showPromptbar)
-            // Use correct defaults from uiStore.ts
-            const uiData = {
-              state: {
-                theme: oldTheme ?? 'dark', // Default from uiStore
-                showChatbar: oldShowChatbar ?? false, // Default from uiStore
-                showPromptbar: oldShowPromptbar ?? true, // Default from uiStore
-              },
-              version: 1, // CORRECT: Match Zustand persist version
-            };
-
-            localStorage.setItem('ui-storage', JSON.stringify(uiData));
-            console.log('✓ UI settings migrated');
-          } else {
-            console.log('✓ No old UI data to migrate');
-          }
-        }
-      } catch (error) {
-        const msg = `UI migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
-        errors.push(msg);
-        console.error(msg);
-      }
+      // NOTE: UI preferences (theme, showChatbar, showPromptbar) are stored in cookies
+      // via UIPreferencesProvider, NOT in localStorage. The useUIStore has no persist
+      // middleware - it's ephemeral. No migration needed for UI settings.
 
       // Mark migration as complete ONLY if successful
       if (errors.length === 0) {
