@@ -143,3 +143,55 @@ export interface IncrementalMigrationResult extends MigrationResult {
   /** Whether any items were skipped */
   hasSkippedItems: boolean;
 }
+
+// ============================================================================
+// Storage Breakdown Types
+// ============================================================================
+
+/**
+ * Detailed breakdown of localStorage usage by category.
+ * Used to show users where their storage is being used.
+ */
+export interface StorageBreakdown {
+  /** Total localStorage usage in bytes */
+  total: number;
+  /** Maximum localStorage capacity (typically 5MB) */
+  maxUsage: number;
+  /** Percentage of total capacity used */
+  percentUsed: number;
+
+  /** Zustand-managed storage breakdown */
+  zustand: {
+    /** Size of conversation-storage key in bytes */
+    conversations: number;
+    /** Size of settings-storage key in bytes */
+    settings: number;
+    /** Size of ui-storage key in bytes */
+    ui: number;
+    /** Total Zustand storage size in bytes */
+    total: number;
+  };
+
+  /** Legacy storage awaiting migration */
+  legacy: {
+    /** Total size of all legacy keys in bytes */
+    total: number;
+    /** Whether any legacy data exists */
+    hasLegacyData: boolean;
+    /** Individual legacy keys and their sizes */
+    keys: Array<{ key: string; size: number }>;
+  };
+
+  /** Other localStorage keys not managed by the app (in bytes) */
+  other: number;
+}
+
+/**
+ * Result of deleting legacy data.
+ */
+export interface DeleteLegacyResult {
+  /** List of keys that were deleted */
+  deleted: string[];
+  /** Total bytes freed by deletion */
+  freedBytes: number;
+}
