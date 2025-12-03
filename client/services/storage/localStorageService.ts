@@ -18,8 +18,198 @@ export interface MigrationStats {
 export interface MigrationResult {
   success: boolean;
   errors: string[];
+  warnings: string[];
   skipped: boolean;
   stats: MigrationStats;
+}
+
+// ============================================================================
+// Validation Functions
+// ============================================================================
+
+interface LegacyConversation {
+  id: string;
+  name: string;
+  messages: unknown[];
+  [key: string]: unknown;
+}
+
+interface LegacyPrompt {
+  id: string;
+  name: string;
+  content: string;
+  [key: string]: unknown;
+}
+
+interface LegacyCustomAgent {
+  id: string;
+  name: string;
+  agentId: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Validate legacy conversation structure.
+ * Logs specific validation failures for debugging.
+ */
+function isValidLegacyConversation(
+  obj: unknown,
+  index: number,
+): obj is LegacyConversation {
+  if (!obj || typeof obj !== 'object') {
+    console.warn(`Conversation[${index}]: not an object`);
+    return false;
+  }
+  const c = obj as Record<string, unknown>;
+  if (typeof c.id !== 'string') {
+    console.warn(`Conversation[${index}]: missing or invalid id`);
+    return false;
+  }
+  if (typeof c.name !== 'string') {
+    console.warn(`Conversation[${index}]: missing or invalid name`);
+    return false;
+  }
+  if (!Array.isArray(c.messages)) {
+    console.warn(`Conversation[${index}]: missing or invalid messages array`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Validate legacy prompt structure.
+ */
+function isValidLegacyPrompt(obj: unknown, index: number): obj is LegacyPrompt {
+  if (!obj || typeof obj !== 'object') {
+    console.warn(`Prompt[${index}]: not an object`);
+    return false;
+  }
+  const p = obj as Record<string, unknown>;
+  if (typeof p.id !== 'string') {
+    console.warn(`Prompt[${index}]: missing or invalid id`);
+    return false;
+  }
+  if (typeof p.name !== 'string') {
+    console.warn(`Prompt[${index}]: missing or invalid name`);
+    return false;
+  }
+  if (typeof p.content !== 'string') {
+    console.warn(`Prompt[${index}]: missing or invalid content`);
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Validate legacy custom agent structure.
+ */
+function isValidLegacyCustomAgent(
+  obj: unknown,
+  index: number,
+): obj is LegacyCustomAgent {
+  if (!obj || typeof obj !== 'object') {
+    console.warn(`CustomAgent[${index}]: not an object`);
+    return false;
+  }
+  const a = obj as Record<string, unknown>;
+  if (typeof a.id !== 'string') {
+    console.warn(`CustomAgent[${index}]: missing or invalid id`);
+    return false;
+  }
+  if (typeof a.name !== 'string') {
+    console.warn(`CustomAgent[${index}]: missing or invalid name`);
+    return false;
+  }
+  if (typeof a.agentId !== 'string') {
+    console.warn(`CustomAgent[${index}]: missing or invalid agentId`);
+    return false;
+  }
+  return true;
+}
+
+// ============================================================================
+// Merge Functions
+// ============================================================================
+
+/**
+ * Check if two conversations are "the same" based on name and first few messages.
+ */
+function conversationsAreSame(
+  a: LegacyConversation,
+  b: LegacyConversation,
+): boolean {
+  if (a.name !== b.name) return false;
+  const aMessages = a.messages as Array<{ content?: string }>;
+  const bMessages = b.messages as Array<{ content?: string }>;
+  const minLen = Math.min(aMessages.length, bMessages.length, 3);
+  for (let i = 0; i < minLen; i++) {
+    if (aMessages[i]?.content !== bMessages[i]?.content) return false;
+  }
+  return true;
+}
+
+/**
+ * Smart merge conversations: handles collisions by comparing content.
+ * - No collision: add legacy as-is
+ * - Same content: keep longer one
+ * - Different content: rename legacy id with '-legacy' suffix
+ */
+function mergeConversations(
+  existing: LegacyConversation[],
+  legacy: LegacyConversation[],
+): { merged: LegacyConversation[]; addedCount: number; warnings: string[] } {
+  const existingMap = new Map(existing.map((c) => [c.id, c]));
+  const result = [...existing];
+  let addedCount = 0;
+  const warnings: string[] = [];
+
+  for (const legacyConv of legacy) {
+    const existingConv = existingMap.get(legacyConv.id);
+
+    if (!existingConv) {
+      // No collision - add as-is
+      result.push(legacyConv);
+      addedCount++;
+    } else if (conversationsAreSame(existingConv, legacyConv)) {
+      // Same content - keep longer one
+      const existingLen = (existingConv.messages as unknown[]).length;
+      const legacyLen = (legacyConv.messages as unknown[]).length;
+      if (legacyLen > existingLen) {
+        const idx = result.findIndex((c) => c.id === existingConv.id);
+        result[idx] = legacyConv;
+        warnings.push(
+          `Replaced conversation "${legacyConv.name}" with longer version (${legacyLen} vs ${existingLen} messages)`,
+        );
+      }
+      // Not incrementing addedCount - this is a replacement, not an addition
+    } else {
+      // Different content - rename legacy id and add both
+      const newId = `${legacyConv.id}-legacy`;
+      result.push({ ...legacyConv, id: newId });
+      addedCount++;
+      warnings.push(
+        `Conversation "${legacyConv.name}" had id collision - renamed to ${newId}`,
+      );
+    }
+  }
+
+  return { merged: result, addedCount, warnings };
+}
+
+/**
+ * Smart merge for items with id (prompts, agents, folders).
+ * Simply deduplicates by id, keeping existing.
+ */
+function mergeById<T extends { id: string }>(
+  existing: T[],
+  legacy: T[],
+): { merged: T[]; addedCount: number } {
+  const existingIds = new Set(existing.map((item) => item.id));
+  const newItems = legacy.filter((item) => !existingIds.has(item.id));
+  return {
+    merged: [...existing, ...newItems],
+    addedCount: newItems.length,
+  };
 }
 
 export enum StorageKeys {
