@@ -18,6 +18,7 @@ import { SearchMode } from '@/types/searchMode';
 import { Settings } from '@/types/settings';
 
 import packageJson from '../../package.json';
+import { MigrationDialog } from '../Migration/MigrationDialog';
 import { MobileSettingsHeader } from './MobileSettingsHeader';
 import { ChatSettingsSection } from './Sections/ChatSettingsSection';
 import { DataManagementSection } from './Sections/DataManagementSection';
@@ -64,6 +65,7 @@ export function SettingDialog() {
     SettingsSection.GENERAL,
   );
   const [isMobileView, setIsMobileView] = useState<boolean>(false);
+  const [showMigrationDialog, setShowMigrationDialog] = useState(false);
 
   // Load settings and storage on client side only
   useEffect(() => {
@@ -310,6 +312,7 @@ export function SettingDialog() {
                     handleReset={handleReset}
                     onClose={() => setIsSettingsOpen(false)}
                     checkStorage={checkStorage}
+                    onOpenMigration={() => setShowMigrationDialog(true)}
                   />
                 )}
 
