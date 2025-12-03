@@ -103,7 +103,7 @@ export function SettingDialog() {
     return () => {
       window.removeEventListener('mousedown', handleMouseDown);
     };
-  }, [isSettingsOpen, setIsSettingsOpen]);
+  }, [isSettingsOpen, setIsSettingsOpen, showMigrationDialog]);
 
   // Update storage data when dialog opens
   useEffect(() => {
