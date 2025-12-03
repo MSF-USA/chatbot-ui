@@ -33,6 +33,25 @@ const ZUSTAND_STORAGE_KEYS = {
   UI: 'ui-storage', // Zustand persist key for uiStore
 };
 
+/**
+ * Legacy localStorage keys that may contain unmigrated data.
+ * Exported for use in migration and deletion functions.
+ */
+export const LEGACY_STORAGE_KEYS = [
+  'conversationHistory', // Old conversation storage key
+  'conversations', // Alternative legacy conversation key
+  'folders', // Legacy folders
+  'prompts', // Legacy prompts
+  'customAgents', // Legacy custom agents
+  'temperature', // Legacy temperature setting
+  'systemPrompt', // Legacy system prompt
+  'selectedConversationId', // Legacy selected conversation
+  'showChatbar', // Legacy UI setting
+  'showPromptbar', // Legacy UI setting
+  'defaultModelId', // Legacy model setting
+  'models', // Legacy models list
+] as const;
+
 // Helper to check if we're in a browser environment
 export const isBrowserEnv = () =>
   typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
