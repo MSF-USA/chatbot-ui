@@ -2,8 +2,6 @@
 
 import { useEffect, useRef } from 'react';
 
-import { LocalStorageService } from '@/client/services/storage/localStorageService';
-
 import { OpenAIModel, OpenAIModelID, OpenAIModels } from '@/types/openai';
 
 import { useConversationStore } from '@/client/stores/conversationStore';
