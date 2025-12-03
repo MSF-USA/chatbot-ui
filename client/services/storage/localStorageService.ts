@@ -347,14 +347,15 @@ export class LocalStorageService {
   /**
    * Migrate from legacy localStorage format to Zustand persist stores
    *
-   * SAFE MIGRATION STRATEGY:
-   * - Copies old data to new format (never deletes old data)
+   * SMART MIGRATION STRATEGY:
+   * - Validates legacy data structure before migration
+   * - Merges legacy data with existing Zustand data (deduplicates by id)
+   * - For conversations with id collision: keeps both if different, keeps longer if same
    * - Creates permanent backup
-   * - Skips if already migrated
-   * - Skips if target already has data (don't overwrite)
-   * - Old data remains forever (zero risk of data loss)
+   * - Reports accurate stats (only counts actually migrated items)
+   * - Surfaces errors and warnings for debugging
    *
-   * @returns MigrationResult with success status, errors, and stats of migrated items
+   * @returns MigrationResult with success status, errors, warnings, and stats
    */
   static migrateFromLegacy(): MigrationResult {
     const emptyStats: MigrationStats = {
@@ -364,26 +365,34 @@ export class LocalStorageService {
       customAgents: 0,
     };
 
+    const emptyResult = (
+      success: boolean,
+      errors: string[] = [],
+      skipped = false,
+    ): MigrationResult => ({
+      success,
+      errors,
+      warnings: [],
+      skipped,
+      stats: emptyStats,
+    });
+
     if (typeof window === 'undefined') {
-      return {
-        success: false,
-        errors: ['Cannot run migration on server'],
-        skipped: false,
-        stats: emptyStats,
-      };
+      return emptyResult(false, ['Cannot run migration on server']);
     }
 
     const errors: string[] = [];
+    const warnings: string[] = [];
     const stats: MigrationStats = { ...emptyStats };
 
     try {
       // Check if already migrated
       const migrationFlag = localStorage.getItem('data_migration_v2_complete');
       if (migrationFlag === 'true') {
-        return { success: true, errors: [], skipped: true, stats: emptyStats };
+        return { ...emptyResult(true, [], true) };
       }
 
-      console.log('🔄 Starting automatic data migration...');
+      console.log('🔄 Starting data migration...');
 
       // Create permanent backup before migration
       try {
@@ -398,159 +407,101 @@ export class LocalStorageService {
         );
         console.log('✓ Backup created');
       } catch (error) {
-        console.warn('Could not create backup:', error);
-        // Continue anyway - old data will remain untouched
+        warnings.push(
+          `Could not create backup: ${error instanceof Error ? error.message : 'Unknown'}`,
+        );
       }
 
-      // Migrate Settings Store
+      // ========================================================================
+      // Migrate Conversations
+      // ========================================================================
       try {
-        const existingSettings = localStorage.getItem('settings-storage');
-        const existingSettingsData = existingSettings
-          ? JSON.parse(existingSettings)
-          : null;
-
-        // Check if Zustand store has actual content (not just empty arrays)
-        const existingPromptsCount =
-          existingSettingsData?.state?.prompts?.length ?? 0;
-        const existingAgentsCount =
-          existingSettingsData?.state?.customAgents?.length ?? 0;
-        const hasExistingContent =
-          existingPromptsCount > 0 || existingAgentsCount > 0;
-
-        if (hasExistingContent) {
-          console.log(
-            `✓ Settings already have content (${existingPromptsCount} prompts, ${existingAgentsCount} agents), skipping`,
-          );
-        } else {
-          // Read old format
-          const oldTemperature = this.get<number>(StorageKeys.TEMPERATURE);
-          const oldSystemPrompt = this.get<string>(StorageKeys.SYSTEM_PROMPT);
-          const oldPrompts = this.get<any[]>(StorageKeys.PROMPTS);
-          const oldDefaultModelId = this.get<string>(
-            StorageKeys.DEFAULT_MODEL_ID,
-          );
-          const oldCustomAgents = this.get<any[]>(StorageKeys.CUSTOM_AGENTS);
-
-          // Check if there's anything to migrate
-          const hasOldData =
-            oldTemperature !== null ||
-            oldSystemPrompt !== null ||
-            oldPrompts !== null ||
-            oldDefaultModelId !== null ||
-            oldCustomAgents !== null;
-
-          if (hasOldData) {
-            stats.prompts = oldPrompts?.length ?? 0;
-            stats.customAgents = oldCustomAgents?.length ?? 0;
-
-            // Merge with existing Zustand data if it exists (preserves any other fields)
-            const baseState = existingSettingsData?.state ?? {};
-
-            // Create new Zustand format with CORRECT version
-            // IMPORTANT: Include ALL fields from settingsStore partialize
-            // NOTE: models is NOT persisted - it's populated dynamically in AppInitializer
-            const settingsData = {
-              state: {
-                ...baseState,
-                temperature: oldTemperature ?? baseState.temperature ?? 0.5,
-                systemPrompt: oldSystemPrompt ?? baseState.systemPrompt ?? '',
-                defaultModelId:
-                  oldDefaultModelId ?? baseState.defaultModelId ?? undefined,
-                defaultSearchMode: baseState.defaultSearchMode ?? 'intelligent',
-                prompts: oldPrompts ?? baseState.prompts ?? [],
-                tones: baseState.tones ?? [],
-                customAgents: oldCustomAgents ?? baseState.customAgents ?? [],
-              },
-              version: 2, // Match settingsStore persist version
-            };
-
-            localStorage.setItem(
-              'settings-storage',
-              JSON.stringify(settingsData),
-            );
-            console.log('✓ Settings migrated');
-          } else {
-            console.log('✓ No old settings data to migrate');
-          }
-        }
-      } catch (error) {
-        const msg = `Settings migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
-        errors.push(msg);
-        console.error(msg);
-      }
-
-      // Migrate Conversation Store
-      try {
-        const existingConversations = localStorage.getItem(
+        // Read existing Zustand data
+        const existingConvStorage = localStorage.getItem(
           'conversation-storage',
         );
-        const existingConvData = existingConversations
-          ? JSON.parse(existingConversations)
+        const existingConvData = existingConvStorage
+          ? JSON.parse(existingConvStorage)
           : null;
+        const existingConvs: LegacyConversation[] =
+          existingConvData?.state?.conversations ?? [];
+        const existingFolders: Array<{ id: string }> =
+          existingConvData?.state?.folders ?? [];
 
-        // Check if Zustand store has actual content (not just empty arrays)
-        const existingConvCount =
-          existingConvData?.state?.conversations?.length ?? 0;
-        const existingFoldersCount =
-          existingConvData?.state?.folders?.length ?? 0;
-        const hasExistingContent =
-          existingConvCount > 0 || existingFoldersCount > 0;
+        // Read legacy data (try both possible keys)
+        const rawLegacyConvs =
+          this.get<unknown[]>('conversationHistory') ||
+          this.get<unknown[]>(StorageKeys.CONVERSATIONS);
+        const rawLegacyFolders = this.get<unknown[]>(StorageKeys.FOLDERS);
+        const oldSelectedId = this.get<string>(
+          StorageKeys.SELECTED_CONVERSATION_ID,
+        );
 
-        if (hasExistingContent) {
-          console.log(
-            `✓ Conversations already have content (${existingConvCount} conversations, ${existingFoldersCount} folders), skipping`,
-          );
-        } else {
-          // Read old format (try both possible keys)
-          const oldConversations =
-            this.get<any[]>(StorageKeys.CONVERSATIONS) ||
-            this.get<any[]>('conversationHistory');
-          const oldFolders = this.get<any[]>(StorageKeys.FOLDERS);
-          const oldSelectedId = this.get<string>(
-            StorageKeys.SELECTED_CONVERSATION_ID,
-          );
-
-          const hasOldData =
-            oldConversations !== null ||
-            oldFolders !== null ||
-            oldSelectedId !== null;
-
-          if (hasOldData) {
-            stats.conversations = oldConversations?.length ?? 0;
-            stats.folders = oldFolders?.length ?? 0;
-
-            // Merge with existing Zustand data if it exists (preserves any other fields)
-            const baseState = existingConvData?.state ?? {};
-
-            // Create new Zustand format with CORRECT version
-            // IMPORTANT: Only include fields in partialize (conversations, folders, selectedConversationId)
-            const conversationData = {
-              state: {
-                ...baseState,
-                conversations:
-                  oldConversations ?? baseState.conversations ?? [],
-                folders: oldFolders ?? baseState.folders ?? [],
-                selectedConversationId:
-                  oldSelectedId ?? baseState.selectedConversationId ?? null,
-              },
-              version: 1, // CORRECT: Match Zustand persist version
-            };
-
-            localStorage.setItem(
-              'conversation-storage',
-              JSON.stringify(conversationData),
-            );
-
-            if (oldConversations && oldConversations.length > 0) {
-              console.log(
-                `✓ Migrated ${oldConversations.length} conversations`,
-              );
+        // Validate and filter legacy conversations
+        const validLegacyConvs: LegacyConversation[] = [];
+        if (rawLegacyConvs && Array.isArray(rawLegacyConvs)) {
+          for (let i = 0; i < rawLegacyConvs.length; i++) {
+            if (isValidLegacyConversation(rawLegacyConvs[i], i)) {
+              validLegacyConvs.push(rawLegacyConvs[i] as LegacyConversation);
             } else {
-              console.log('✓ Conversations migrated');
+              errors.push(
+                `Invalid conversation at index ${i}: ${JSON.stringify(rawLegacyConvs[i]).slice(0, 100)}...`,
+              );
             }
-          } else {
-            console.log('✓ No old conversation data to migrate');
           }
+        }
+
+        // Validate legacy folders
+        const validLegacyFolders: Array<{ id: string; name: string }> = [];
+        if (rawLegacyFolders && Array.isArray(rawLegacyFolders)) {
+          for (const folder of rawLegacyFolders) {
+            if (
+              folder &&
+              typeof folder === 'object' &&
+              typeof (folder as Record<string, unknown>).id === 'string'
+            ) {
+              validLegacyFolders.push(folder as { id: string; name: string });
+            }
+          }
+        }
+
+        // Smart merge conversations
+        if (validLegacyConvs.length > 0) {
+          const mergeResult = mergeConversations(
+            existingConvs,
+            validLegacyConvs,
+          );
+          stats.conversations = mergeResult.addedCount;
+          warnings.push(...mergeResult.warnings);
+
+          // Merge folders by id
+          const folderMerge = mergeById(existingFolders, validLegacyFolders);
+          stats.folders = folderMerge.addedCount;
+
+          // Write merged data
+          const conversationData = {
+            state: {
+              conversations: mergeResult.merged,
+              folders: folderMerge.merged,
+              selectedConversationId:
+                existingConvData?.state?.selectedConversationId ??
+                oldSelectedId ??
+                null,
+            },
+            version: 1,
+          };
+
+          localStorage.setItem(
+            'conversation-storage',
+            JSON.stringify(conversationData),
+          );
+          console.log(
+            `✓ Conversations: merged ${validLegacyConvs.length} legacy into ${existingConvs.length} existing (${stats.conversations} new)`,
+          );
+        } else if (rawLegacyConvs) {
+          warnings.push(
+            `Found ${rawLegacyConvs.length} legacy conversations but none were valid`,
+          );
         }
       } catch (error) {
         const msg = `Conversation migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
@@ -558,30 +509,131 @@ export class LocalStorageService {
         console.error(msg);
       }
 
-      // NOTE: UI preferences (theme, showChatbar, showPromptbar) are stored in cookies
-      // via UIPreferencesProvider, NOT in localStorage. The useUIStore has no persist
-      // middleware - it's ephemeral. No migration needed for UI settings.
+      // ========================================================================
+      // Migrate Settings (prompts, customAgents)
+      // ========================================================================
+      try {
+        // Read existing Zustand data
+        const existingSettingsStorage =
+          localStorage.getItem('settings-storage');
+        const existingSettingsData = existingSettingsStorage
+          ? JSON.parse(existingSettingsStorage)
+          : null;
+        const existingPrompts: LegacyPrompt[] =
+          existingSettingsData?.state?.prompts ?? [];
+        const existingAgents: LegacyCustomAgent[] =
+          existingSettingsData?.state?.customAgents ?? [];
 
-      // Mark migration as complete ONLY if successful
-      if (errors.length === 0) {
-        localStorage.setItem('data_migration_v2_complete', 'true');
-        console.log(
-          '✅ Migration complete! Old data preserved in localStorage.',
+        // Read legacy data
+        const oldTemperature = this.get<number>(StorageKeys.TEMPERATURE);
+        const oldSystemPrompt = this.get<string>(StorageKeys.SYSTEM_PROMPT);
+        const rawLegacyPrompts = this.get<unknown[]>(StorageKeys.PROMPTS);
+        const oldDefaultModelId = this.get<string>(
+          StorageKeys.DEFAULT_MODEL_ID,
         );
-        console.log(
-          '💡 Tip: Old data will remain for safety. You can manually clear it in Settings if desired.',
-        );
-      } else {
-        console.error('❌ Migration had errors. Will retry on next load.');
+        const rawLegacyAgents = this.get<unknown[]>(StorageKeys.CUSTOM_AGENTS);
+
+        // Validate legacy prompts
+        const validLegacyPrompts: LegacyPrompt[] = [];
+        if (rawLegacyPrompts && Array.isArray(rawLegacyPrompts)) {
+          for (let i = 0; i < rawLegacyPrompts.length; i++) {
+            if (isValidLegacyPrompt(rawLegacyPrompts[i], i)) {
+              validLegacyPrompts.push(rawLegacyPrompts[i] as LegacyPrompt);
+            } else {
+              errors.push(
+                `Invalid prompt at index ${i}: ${JSON.stringify(rawLegacyPrompts[i]).slice(0, 100)}...`,
+              );
+            }
+          }
+        }
+
+        // Validate legacy custom agents
+        const validLegacyAgents: LegacyCustomAgent[] = [];
+        if (rawLegacyAgents && Array.isArray(rawLegacyAgents)) {
+          for (let i = 0; i < rawLegacyAgents.length; i++) {
+            if (isValidLegacyCustomAgent(rawLegacyAgents[i], i)) {
+              validLegacyAgents.push(rawLegacyAgents[i] as LegacyCustomAgent);
+            } else {
+              errors.push(
+                `Invalid custom agent at index ${i}: ${JSON.stringify(rawLegacyAgents[i]).slice(0, 100)}...`,
+              );
+            }
+          }
+        }
+
+        // Merge prompts and agents
+        const promptMerge = mergeById(existingPrompts, validLegacyPrompts);
+        const agentMerge = mergeById(existingAgents, validLegacyAgents);
+        stats.prompts = promptMerge.addedCount;
+        stats.customAgents = agentMerge.addedCount;
+
+        // Check if we have anything to write
+        const hasLegacySettings =
+          oldTemperature !== null ||
+          oldSystemPrompt !== null ||
+          validLegacyPrompts.length > 0 ||
+          oldDefaultModelId !== null ||
+          validLegacyAgents.length > 0;
+
+        if (hasLegacySettings || existingSettingsData) {
+          const baseState = existingSettingsData?.state ?? {};
+          const settingsData = {
+            state: {
+              ...baseState,
+              temperature: oldTemperature ?? baseState.temperature ?? 0.5,
+              systemPrompt: oldSystemPrompt ?? baseState.systemPrompt ?? '',
+              defaultModelId:
+                oldDefaultModelId ?? baseState.defaultModelId ?? undefined,
+              defaultSearchMode: baseState.defaultSearchMode ?? 'intelligent',
+              prompts: promptMerge.merged,
+              tones: baseState.tones ?? [],
+              customAgents: agentMerge.merged,
+            },
+            version: 2,
+          };
+
+          localStorage.setItem(
+            'settings-storage',
+            JSON.stringify(settingsData),
+          );
+          console.log(
+            `✓ Settings: ${stats.prompts} prompts, ${stats.customAgents} agents migrated`,
+          );
+        }
+      } catch (error) {
+        const msg = `Settings migration error: ${error instanceof Error ? error.message : 'Unknown'}`;
+        errors.push(msg);
+        console.error(msg);
       }
 
-      return { success: errors.length === 0, errors, skipped: false, stats };
+      // NOTE: UI preferences are stored in cookies via UIPreferencesProvider,
+      // not in localStorage. No migration needed.
+
+      // Mark migration as complete ONLY if no critical errors
+      if (errors.length === 0) {
+        localStorage.setItem('data_migration_v2_complete', 'true');
+        console.log('✅ Migration complete!');
+      } else {
+        console.error(`❌ Migration had ${errors.length} errors:`, errors);
+      }
+
+      if (warnings.length > 0) {
+        console.warn(`⚠️ Migration warnings:`, warnings);
+      }
+
+      return {
+        success: errors.length === 0,
+        errors,
+        warnings,
+        skipped: false,
+        stats,
+      };
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
       errors.push(errorMessage);
       console.error('❌ Migration failed:', errorMessage);
-      return { success: false, errors, skipped: false, stats };
+      return { success: false, errors, warnings, skipped: false, stats };
     }
   }
 
