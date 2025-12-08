@@ -118,7 +118,7 @@ export const UserMessage: FC<UserMessageProps> = ({
   return (
     <div className="relative flex flex-col items-end px-4 py-1 text-base lg:px-0 w-full">
       <div
-        className={`${hasAttachments ? 'w-full max-w-2xl' : 'inline-block max-w-[85%]'} bg-gray-600 dark:bg-[#323537] rounded-3xl px-4 text-white text-base`}
+        className={`${hasAttachments ? 'w-full max-w-2xl' : 'inline-block max-w-[85%]'} bg-gray-200 dark:bg-[#323537] rounded-3xl px-4 text-gray-800 dark:text-white text-base`}
       >
         {isEditing ? (
           <div className="flex flex-col">
