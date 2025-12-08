@@ -124,7 +124,7 @@ export const UserMessage: FC<UserMessageProps> = ({
           <div className="flex flex-col">
             <textarea
               ref={textareaRef}
-              className="w-full resize-none whitespace-pre-wrap border-none bg-transparent text-white"
+              className="w-full resize-none whitespace-pre-wrap border-none bg-transparent text-gray-800 dark:text-white"
               value={localMessageContent}
               onChange={(event) => setLocalMessageContent(event.target.value)}
               onKeyDown={handlePressEnter}
