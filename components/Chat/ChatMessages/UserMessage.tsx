@@ -317,7 +317,7 @@ export const UserMessage: FC<UserMessageProps> = ({
             ) : (
               <>
                 {children || (
-                  <div className="prose prose-invert prose-p:my-2 text-white max-w-none">
+                  <div className="prose dark:prose-invert prose-p:my-2 text-gray-800 dark:text-white max-w-none">
                     <Streamdown
                       controls={true}
                       shikiTheme={['github-light', 'github-dark']}
@@ -327,12 +327,12 @@ export const UserMessage: FC<UserMessageProps> = ({
                   </div>
                 )}
                 {toneId && (
-                  <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-white/20">
+                  <div className="flex items-center gap-1.5 mt-2 pt-2 border-t border-gray-800/20 dark:border-white/20">
                     <IconVolume
                       size={14}
                       className="text-purple-400 flex-shrink-0"
                     />
-                    <span className="text-xs text-white/70">
+                    <span className="text-xs text-gray-800/70 dark:text-white/70">
                       {tones.find((t) => t.id === toneId)?.name ||
                         'Custom Tone'}
                     </span>
