@@ -146,9 +146,9 @@ export class AnthropicFoundryHandler {
     }
 
     // Add user metadata if available
-    if (user?.email) {
+    if (user?.mail) {
       params.metadata = {
-        user_id: user.email,
+        user_id: user.mail,
       };
     }
 
@@ -191,9 +191,9 @@ export class AnthropicFoundryHandler {
     }
 
     // Add user metadata if available
-    if (user?.email) {
+    if (user?.mail) {
       params.metadata = {
-        user_id: user.email,
+        user_id: user.mail,
       };
     }
 
