@@ -7,6 +7,18 @@ import { OpenAIModel } from '@/types/openai';
 
 import { AnthropicFoundry } from '@anthropic-ai/foundry-sdk';
 import Anthropic from '@anthropic-ai/sdk';
+import { createHash } from 'crypto';
+
+/**
+ * Creates a SHA-256 hash of an email address for use as user_id.
+ * Anthropic API requires user_id to be a UUID or hash, not an email.
+ *
+ * @param email - The email address to hash
+ * @returns A hex-encoded SHA-256 hash of the email
+ */
+function hashUserEmail(email: string): string {
+  return createHash('sha256').update(email.toLowerCase()).digest('hex');
+}
 
 /**
  * Handler for Anthropic Claude models via Azure AI Foundry.
@@ -145,10 +157,10 @@ export class AnthropicFoundryHandler {
       params.temperature = temperature;
     }
 
-    // Add user metadata if available
+    // Add user metadata if available (hash email for privacy compliance)
     if (user?.mail) {
       params.metadata = {
-        user_id: user.mail,
+        user_id: hashUserEmail(user.mail),
       };
     }
 
@@ -190,10 +202,10 @@ export class AnthropicFoundryHandler {
       params.temperature = temperature;
     }
 
-    // Add user metadata if available
+    // Add user metadata if available (hash email for privacy compliance)
     if (user?.mail) {
       params.metadata = {
-        user_id: user.mail,
+        user_id: hashUserEmail(user.mail),
       };
     }
 
