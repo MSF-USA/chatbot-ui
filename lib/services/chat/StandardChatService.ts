@@ -53,6 +53,7 @@ export interface StandardChatRequest {
 export class StandardChatService {
   private azureOpenAIClient: AzureOpenAI;
   private openAIClient: OpenAI;
+  private anthropicFoundryClient: AnthropicFoundry | undefined;
   private modelSelector: ModelSelector;
   private toneService: ToneService;
   private streamingService: StreamingService;
@@ -60,12 +61,14 @@ export class StandardChatService {
   constructor(
     azureOpenAIClient: AzureOpenAI,
     openAIClient: OpenAI,
+    anthropicFoundryClient: AnthropicFoundry | undefined,
     modelSelector: ModelSelector,
     toneService: ToneService,
     streamingService: StreamingService,
   ) {
     this.azureOpenAIClient = azureOpenAIClient;
     this.openAIClient = openAIClient;
+    this.anthropicFoundryClient = anthropicFoundryClient;
     this.modelSelector = modelSelector;
     this.toneService = toneService;
     this.streamingService = streamingService;
