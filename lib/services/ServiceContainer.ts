@@ -8,6 +8,7 @@ import { ToolRouterService } from './chat/ToolRouterService';
 import { ModelSelector, StreamingService, ToneService } from './shared';
 
 import { env } from '@/config/environment';
+import { AnthropicFoundry } from '@anthropic-ai/foundry-sdk';
 import {
   DefaultAzureCredential,
   getBearerTokenProvider,
@@ -37,6 +38,7 @@ export class ServiceContainer {
   // Azure clients (expensive to create, should be reused)
   private azureOpenAIClient!: AzureOpenAI;
   private openAIClient!: OpenAI;
+  private anthropicFoundryClient!: AnthropicFoundry;
 
   // Core services (stateless, safe to reuse)
   private modelSelector!: ModelSelector;
