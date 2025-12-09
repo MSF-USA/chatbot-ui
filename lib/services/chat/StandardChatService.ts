@@ -1,19 +1,22 @@
 import { Session } from 'next-auth';
 
 import { TranscriptMetadata } from '@/lib/utils/app/metadata';
+import { createAnthropicStreamProcessor } from '@/lib/utils/app/stream/anthropicStreamProcessor';
 import { createAzureOpenAIStreamProcessor } from '@/lib/utils/app/stream/streamProcessor';
 import { getMessagesToSend } from '@/lib/utils/server/chat';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 import { getGlobalTiktoken } from '@/lib/utils/server/tiktokenCache';
 
 import { Message } from '@/types/chat';
-import { OpenAIModel, OpenAIModelID } from '@/types/openai';
+import { OpenAIModel } from '@/types/openai';
 import { Citation } from '@/types/rag';
 import { Tone } from '@/types/tone';
 
 import { ModelSelector, StreamingService, ToneService } from '../shared';
+import { AnthropicFoundryHandler } from './handlers/AnthropicFoundryHandler';
 import { HandlerFactory } from './handlers/HandlerFactory';
 
+import { AnthropicFoundry } from '@anthropic-ai/foundry-sdk';
 import OpenAI, { AzureOpenAI } from 'openai';
 
 /**
