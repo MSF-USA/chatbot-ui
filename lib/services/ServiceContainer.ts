@@ -96,6 +96,15 @@ export class ServiceContainer {
       apiKey: env.OPENAI_API_KEY || 'placeholder', // Required by SDK even if not used
     });
 
+    // Anthropic Foundry client for Claude models via Azure AI Foundry
+    // Uses Entra ID authentication (same as Azure OpenAI)
+    if (env.AZURE_AI_FOUNDRY_ANTHROPIC_ENDPOINT) {
+      this.anthropicFoundryClient = new AnthropicFoundry({
+        azureADTokenProvider: async () => azureADTokenProvider(),
+        baseURL: env.AZURE_AI_FOUNDRY_ANTHROPIC_ENDPOINT,
+      });
+    }
+
     // 2. Initialize stateless services
     this.modelSelector = new ModelSelector();
     this.toneService = new ToneService();
