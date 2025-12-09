@@ -11,9 +11,9 @@ export interface OpenAIModel {
   isAgent?: boolean;
   isCustomAgent?: boolean; // User-created custom agent (vs built-in agent)
   agentId?: string; // Azure AI Agent ID for this model
-  provider?: 'openai' | 'deepseek' | 'xai' | 'meta'; // Model provider
+  provider?: 'openai' | 'deepseek' | 'xai' | 'meta' | 'anthropic'; // Model provider
   knowledgeCutoff?: string; // Knowledge cutoff date
-  sdk?: 'azure-openai' | 'openai'; // Which SDK this model requires
+  sdk?: 'azure-openai' | 'openai' | 'anthropic-foundry'; // Which SDK this model requires
   supportsTemperature?: boolean; // Whether this model supports custom temperature values
   deploymentName?: string; // Azure AI Foundry deployment name (for third-party models)
 
