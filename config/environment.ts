@@ -34,6 +34,8 @@ const serverEnvSchema = z.object({
   // Azure AI Foundry
   AZURE_AI_FOUNDRY_ENDPOINT: z.string().url().optional(),
   AZURE_AI_FOUNDRY_OPENAI_ENDPOINT: z.string().url().optional(),
+  // Anthropic endpoint: https://<resource-name>.services.ai.azure.com/anthropic
+  AZURE_AI_FOUNDRY_ANTHROPIC_ENDPOINT: z.string().url().optional(),
 
   // Azure Blob Storage (uses Entra ID authentication via DefaultAzureCredential)
   AZURE_BLOB_STORAGE_NAME: z.string().optional(),
