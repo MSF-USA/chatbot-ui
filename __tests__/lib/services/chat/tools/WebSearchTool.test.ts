@@ -50,7 +50,7 @@ describe('WebSearchTool', () => {
 
       expect(result.text).toBe('Search results about AI');
       expect(result.citations).toHaveLength(2);
-      expect(result.citations[0].url).toBe('https://example.com');
+      expect(result.citations![0].url).toBe('https://example.com');
     });
 
     it('should return error message when search fails', async () => {
