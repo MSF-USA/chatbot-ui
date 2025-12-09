@@ -59,8 +59,8 @@ jobs:
 
   # JOB 1: Handles the PR lifecycle: Build, Test, Push, and Deploy to a SHARED Preview Environment
   build_and_preview_pr:
-    # Only run when a PR is opened or updated
-    if: github.event_name == 'pull_request'
+    # Only run when a PR targeting main is opened or updated
+    if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main'
     needs: lint_and_typecheck
     runs-on: ubuntu-latest
     environment: dev
