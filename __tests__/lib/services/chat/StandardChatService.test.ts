@@ -100,10 +100,14 @@ describe('StandardChatService', () => {
       getClient: vi.fn(),
     } as any;
 
-    // Create service instance
+    // Mock HandlerFactory.isAnthropicModel to return false for all tests (non-Anthropic models)
+    vi.mocked(HandlerFactory.isAnthropicModel).mockReturnValue(false);
+
+    // Create service instance (with undefined for anthropicFoundryClient)
     service = new StandardChatService(
       mockAzureClient,
       mockOpenAIClient,
+      undefined, // anthropicFoundryClient - not used in tests
       mockModelSelector,
       mockToneService,
       mockStreamingService,
