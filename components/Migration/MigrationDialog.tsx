@@ -65,18 +65,21 @@ export const MigrationDialog: FC<MigrationDialogProps> = ({
   );
   const [freedBytes, setFreedBytes] = useState(0);
 
-  // Check quota on mount
+  // Check quota when dialog opens
   useEffect(() => {
     if (isOpen && status === 'checking') {
-      const analysis = LocalStorageService.analyzeQuotaForMigration();
-      setQuotaAnalysis(analysis);
+      // Defer state updates to avoid synchronous cascading renders
+      queueMicrotask(() => {
+        const analysis = LocalStorageService.analyzeQuotaForMigration();
+        setQuotaAnalysis(analysis);
 
-      if (analysis.wouldExceedQuota) {
-        setUseIncrementalMode(true); // Default ON when quota exceeded
-        setStatus('quota_warning');
-      } else {
-        setStatus('prompt');
-      }
+        if (analysis.wouldExceedQuota) {
+          setUseIncrementalMode(true); // Default ON when quota exceeded
+          setStatus('quota_warning');
+        } else {
+          setStatus('prompt');
+        }
+      });
     }
   }, [isOpen, status]);
 
