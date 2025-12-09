@@ -98,10 +98,15 @@ export class ServiceContainer {
 
     // Anthropic Foundry client for Claude models via Azure AI Foundry
     // Uses Entra ID authentication (same as Azure OpenAI)
-    if (env.AZURE_AI_FOUNDRY_ANTHROPIC_ENDPOINT) {
+    // Derives endpoint from AZURE_AI_FOUNDRY_ENDPOINT: https://<resource>.services.ai.azure.com/anthropic
+    const anthropicBaseUrl = env.AZURE_AI_FOUNDRY_ENDPOINT?.replace(
+      /\/api\/projects\/.*$/,
+      '',
+    );
+    if (anthropicBaseUrl) {
       this.anthropicFoundryClient = new AnthropicFoundry({
         azureADTokenProvider: async () => azureADTokenProvider(),
-        baseURL: env.AZURE_AI_FOUNDRY_ANTHROPIC_ENDPOINT,
+        baseURL: `${anthropicBaseUrl}/anthropic`,
       });
     }
 
