@@ -120,6 +120,7 @@ export class ServiceContainer {
     this.standardChatService = new StandardChatService(
       this.azureOpenAIClient,
       this.openAIClient,
+      this.anthropicFoundryClient,
       this.modelSelector,
       this.toneService,
       this.streamingService,
@@ -144,6 +145,10 @@ export class ServiceContainer {
 
   public getOpenAIClient(): OpenAI {
     return this.openAIClient;
+  }
+
+  public getAnthropicFoundryClient(): AnthropicFoundry {
+    return this.anthropicFoundryClient;
   }
 
   public getModelSelector(): ModelSelector {
