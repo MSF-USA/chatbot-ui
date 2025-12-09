@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { useUI } from '@/client/hooks/ui/useUI';
 
@@ -33,14 +33,10 @@ function shouldShowMigrationDialog(): boolean {
  */
 export function ChatShell({ children }: { children: React.ReactNode }) {
   const { showChatbar } = useUI();
-  const [showMigrationDialog, setShowMigrationDialog] = useState(false);
-
-  // Check for legacy data on mount
-  useEffect(() => {
-    if (shouldShowMigrationDialog()) {
-      setShowMigrationDialog(true);
-    }
-  }, []);
+  // Use lazy initialization to check for legacy data on first render
+  const [showMigrationDialog, setShowMigrationDialog] = useState(
+    shouldShowMigrationDialog,
+  );
 
   const handleMigrationComplete = () => {
     setShowMigrationDialog(false);
