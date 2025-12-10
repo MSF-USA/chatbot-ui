@@ -2,6 +2,7 @@ import {
   IconCheck,
   IconCopy,
   IconFileText,
+  IconLanguage,
   IconLoader2,
   IconRefresh,
   IconVolume,
@@ -11,25 +12,31 @@ import React, {
   FC,
   MouseEvent,
   ReactNode,
+  useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
 
 import { useTranslations } from 'next-intl';
 
+import { translateText } from '@/lib/services/translation';
+
+import { getAutonym } from '@/lib/utils/app/locales';
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
 import { Conversation, Message } from '@/types/chat';
 import { Citation } from '@/types/rag';
+import { MessageTranslationState } from '@/types/translation';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
+import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
 
-import { ApiError } from '@/client/services';
 import { useArtifactStore } from '@/client/stores/artifactStore';
 import type { MermaidConfig } from 'mermaid';
 
