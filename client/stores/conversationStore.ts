@@ -1,6 +1,15 @@
 'use client';
 
-import { Conversation } from '@/types/chat';
+import {
+  migrateLegacyMessages,
+  needsMigration,
+} from '@/lib/utils/chat/messageVersioning';
+
+import {
+  AssistantMessageVersion,
+  Conversation,
+  isAssistantMessageGroup,
+} from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 
 import { create } from 'zustand';
@@ -33,6 +42,23 @@ interface ConversationStore {
 
   // Bulk operations
   clearAll: () => void;
+
+  // Version navigation actions
+  setActiveVersion: (
+    conversationId: string,
+    messageIndex: number,
+    versionIndex: number,
+  ) => void;
+  navigateVersion: (
+    conversationId: string,
+    messageIndex: number,
+    direction: 'prev' | 'next',
+  ) => void;
+  addMessageVersion: (
+    conversationId: string,
+    messageIndex: number,
+    version: AssistantMessageVersion,
+  ) => void;
 }
 
 export const useConversationStore = create<ConversationStore>()(
