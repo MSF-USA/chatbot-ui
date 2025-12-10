@@ -211,6 +211,15 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
+  // Displayed content (original or translated) - must be declared before handlers that use it
+  const displayedContent = useMemo(() => {
+    const { currentLocale, translations } = translationState;
+    if (currentLocale && translations[currentLocale]) {
+      return translations[currentLocale].translatedText;
+    }
+    return processedContent;
+  }, [translationState, processedContent]);
+
   // Copy handler - uses displayed content (original or translated)
   const handleCopy = useCallback(() => {
     if (!navigator.clipboard) return;
@@ -337,15 +346,6 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     },
     [processedContent, translationState.translations],
   );
-
-  // Displayed content (original or translated)
-  const displayedContent = useMemo(() => {
-    const { currentLocale, translations } = translationState;
-    if (currentLocale && translations[currentLocale]) {
-      return translations[currentLocale].translatedText;
-    }
-    return processedContent;
-  }, [translationState, processedContent]);
 
   // Set of cached locale codes
   const cachedLocales = useMemo(() => {
