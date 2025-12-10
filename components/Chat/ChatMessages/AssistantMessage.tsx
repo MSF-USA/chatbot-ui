@@ -10,7 +10,6 @@ import {
 } from '@tabler/icons-react';
 import React, {
   FC,
-  MouseEvent,
   ReactNode,
   useCallback,
   useEffect,
@@ -49,11 +48,9 @@ import type { MermaidConfig } from 'mermaid';
 interface AssistantMessageProps {
   content: string;
   message?: Message;
-  copyOnClick: (event: MouseEvent<any>) => void;
   messageIsStreaming: boolean;
   messageIndex: number;
   selectedConversation: Conversation | null;
-  messageCopied: boolean;
   onRegenerate?: () => void;
   children?: ReactNode; // Allow custom content (images, files, etc.)
   // Version navigation props
@@ -65,11 +62,9 @@ interface AssistantMessageProps {
 export const AssistantMessage: FC<AssistantMessageProps> = ({
   content,
   message,
-  copyOnClick,
   messageIsStreaming,
   messageIndex,
   selectedConversation,
-  messageCopied,
   onRegenerate,
   children,
   versionInfo,
@@ -83,8 +78,12 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [thinking, setThinking] = useState<string>('');
   const [isGeneratingAudio, setIsGeneratingAudio] = useState<boolean>(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioSourceLocale, setAudioSourceLocale] = useState<string | null>(
+    null,
+  ); // Tracks which locale audio was generated for (null = original)
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [messageCopied, setMessageCopied] = useState(false);
 
   // Translation state
   const [translationState, setTranslationState] =
@@ -212,6 +211,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     selectedConversation?.messages,
   ]);
 
+  // Copy handler - uses displayed content (original or translated)
+  const handleCopy = useCallback(() => {
+    if (!navigator.clipboard) return;
+
+    navigator.clipboard.writeText(displayedContent).then(() => {
+      setMessageCopied(true);
+      setTimeout(() => {
+        setMessageCopied(false);
+      }, 2000);
+    });
+  }, [displayedContent]);
+
   const handleTTS = async () => {
     try {
       setIsGeneratingAudio(true);
@@ -222,7 +233,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: processedContent }),
+        body: JSON.stringify({ text: displayedContent }),
       });
 
       if (!response.ok) {
@@ -234,6 +245,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
       const blob = await response.blob();
       const url = URL.createObjectURL(blob);
       setAudioUrl(url);
+      setAudioSourceLocale(translationState.currentLocale); // Track which locale audio was generated for
       setIsGeneratingAudio(false);
       setLoadingMessage(null);
     } catch (error) {
@@ -490,7 +502,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
               {/* Copy button */}
               <button
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                onClick={copyOnClick}
+                onClick={handleCopy}
                 aria-label={messageCopied ? 'Copied' : 'Copy message'}
               >
                 {messageCopied ? (
@@ -566,7 +578,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
                 onClick={() => {
                   openDocument(
-                    processedContent,
+                    displayedContent,
                     'md',
                     'message.md',
                     'document',
@@ -581,7 +593,22 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           )}
 
           {audioUrl && (
-            <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+            <>
+              {/* Indicator when audio source doesn't match displayed content */}
+              {audioSourceLocale !== translationState.currentLocale && (
+                <div className="text-xs text-amber-600 dark:text-amber-400 mb-1 flex items-center gap-1">
+                  <IconVolume size={12} />
+                  <span>
+                    {audioSourceLocale
+                      ? t('chat.audioFromTranslation', {
+                          language: getAutonym(audioSourceLocale),
+                        })
+                      : t('chat.audioFromOriginal')}
+                  </span>
+                </div>
+              )}
+              <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
+            </>
           )}
 
           {/* Translation dropdown */}
