@@ -14,6 +14,8 @@ import {
   MessageType,
   TextMessageContent,
   VersionInfo,
+  isAssistantMessageGroup,
+  isLegacyMessage,
 } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
@@ -85,14 +87,21 @@ export const ChatMessage: FC<Props> = ({
     if (!selectedConversation) return;
 
     const messages = [...selectedConversation.messages];
-    const findIndex = messages.findIndex((elm) => elm === message);
+    // Find the message - only user messages can be deleted (which are legacy Messages)
+    const findIndex = messages.findIndex(
+      (elm) => isLegacyMessage(elm) && elm === message,
+    );
 
     if (findIndex < 0) return;
 
-    if (
+    // Check if next entry is an assistant message (group or legacy)
+    const nextEntry = messages[findIndex + 1];
+    const nextIsAssistant =
       findIndex < messages.length - 1 &&
-      messages[findIndex + 1].role === 'assistant'
-    ) {
+      (isAssistantMessageGroup(nextEntry) ||
+        (isLegacyMessage(nextEntry) && nextEntry.role === 'assistant'));
+
+    if (nextIsAssistant) {
       messages.splice(findIndex, 2);
     } else {
       messages.splice(findIndex, 1);
