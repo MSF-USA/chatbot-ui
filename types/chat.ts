@@ -78,53 +78,7 @@ export interface Message {
 
 export type Role = 'system' | 'assistant' | 'user';
 
-export interface ChatBody {
-  model: OpenAIModel;
-  messages: Message[];
-  key: string;
-  prompt: string;
-  temperature: number;
-  botId: string | undefined;
-  stream?: boolean;
-  threadId?: string; // Azure AI Agent thread ID
-  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
-  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
-  forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
-  isEditorOpen?: boolean; // Indicates if code editor is currently open
-  tone?: Tone; // Full tone object (if tone is selected)
-}
-
-export interface Conversation {
-  id: string;
-  name: string;
-  messages: Message[];
-  model: OpenAIModel;
-  prompt: string;
-  temperature: number;
-  folderId: string | null;
-  bot?: string;
-  createdAt?: string;
-  updatedAt?: string;
-  threadId?: string; // Azure AI Agent thread ID
-  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
-  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
-  defaultSearchMode?: import('./searchMode').SearchMode; // Default search mode for this conversation
-}
-
 export type ChatInputSubmitTypes = 'TEXT' | 'IMAGE' | 'FILE' | 'MULTI_FILE';
-
-export type FileFieldValue =
-  | FileMessageContent
-  | FileMessageContent[]
-  | ImageMessageContent
-  | ImageMessageContent[]
-  | (FileMessageContent | ImageMessageContent)[]
-  | null;
-
-export type ImageFieldValue =
-  | ImageMessageContent
-  | ImageMessageContent[]
-  | null;
 
 /**
  * Represents a single assistant message version.
@@ -190,6 +144,52 @@ export interface VersionInfo {
   total: number;
   hasMultiple: boolean;
 }
+
+export interface ChatBody {
+  model: OpenAIModel;
+  messages: Message[];
+  key: string;
+  prompt: string;
+  temperature: number;
+  botId: string | undefined;
+  stream?: boolean;
+  threadId?: string; // Azure AI Agent thread ID
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
+  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
+  forcedAgentType?: string; // Force routing to specific agent type (e.g., 'web_search')
+  isEditorOpen?: boolean; // Indicates if code editor is currently open
+  tone?: Tone; // Full tone object (if tone is selected)
+}
+
+export interface Conversation {
+  id: string;
+  name: string;
+  messages: ConversationEntry[];
+  model: OpenAIModel;
+  prompt: string;
+  temperature: number;
+  folderId: string | null;
+  bot?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  threadId?: string; // Azure AI Agent thread ID
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high'; // For GPT-5 and o3 models
+  verbosity?: 'low' | 'medium' | 'high'; // For GPT-5 models
+  defaultSearchMode?: import('./searchMode').SearchMode; // Default search mode for this conversation
+}
+
+export type FileFieldValue =
+  | FileMessageContent
+  | FileMessageContent[]
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | (FileMessageContent | ImageMessageContent)[]
+  | null;
+
+export type ImageFieldValue =
+  | ImageMessageContent
+  | ImageMessageContent[]
+  | null;
 
 type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
 
