@@ -32,6 +32,7 @@ import { ModelSelect } from './ModelSelect';
 import { ModelSwitchPrompt } from './ModelSwitchPrompt';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
+import { useConversationStore } from '@/client/stores/conversationStore';
 
 const CodeArtifact = dynamic(
   () => import('@/components/CodeEditor/CodeArtifact'),
@@ -189,6 +190,17 @@ export function Chat({
     updateConversation,
     sendMessage,
   });
+
+  // Version navigation callback for message versioning
+  const handleNavigateVersion = useCallback(
+    (messageIndex: number, direction: 'prev' | 'next') => {
+      if (!selectedConversation) return;
+      useConversationStore
+        .getState()
+        .navigateVersion(selectedConversation.id, messageIndex, direction);
+    },
+    [selectedConversation],
+  );
 
   const {
     isSavePromptModalOpen,
