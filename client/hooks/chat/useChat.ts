@@ -17,6 +17,13 @@ export function useChat() {
     stopRequested: store.stopRequested,
     loadingMessage: store.loadingMessage,
 
+    // Retry-related state
+    isRetrying: store.isRetrying,
+    retryWithFallback: store.retryWithFallback,
+    originalModelId: store.originalModelId,
+    showModelSwitchPrompt: store.showModelSwitchPrompt,
+    failedConversation: store.failedConversation,
+
     // Actions
     setCurrentMessage: store.setCurrentMessage,
     setIsStreaming: store.setIsStreaming,
@@ -30,5 +37,9 @@ export function useChat() {
     resetChat: store.resetChat,
     setLoadingMessage: store.setLoadingMessage,
     sendMessage: store.sendMessage,
+
+    // Retry-related actions
+    dismissModelSwitchPrompt: store.dismissModelSwitchPrompt,
+    acceptModelSwitch: store.acceptModelSwitch,
   };
 }
