@@ -126,6 +126,71 @@ export type ImageFieldValue =
   | ImageMessageContent[]
   | null;
 
+/**
+ * Represents a single assistant message version.
+ * Used when the user regenerates responses - each regeneration creates a new version.
+ */
+export interface AssistantMessageVersion {
+  content:
+    | string
+    | Array<TextMessageContent | FileMessageContent>
+    | Array<TextMessageContent | ImageMessageContent>
+    | Array<TextMessageContent | FileMessageContent | ImageMessageContent>
+    | TextMessageContent;
+  messageType: MessageType | ChatInputSubmitTypes | undefined;
+  citations?: Citation[];
+  thinking?: string;
+  transcript?: TranscriptMetadata;
+  error?: boolean;
+  createdAt: string; // ISO timestamp for when this version was generated
+}
+
+/**
+ * Groups multiple assistant response versions for a single user message.
+ * The activeIndex determines which version is currently displayed.
+ */
+export interface AssistantMessageGroup {
+  type: 'assistant_group';
+  activeIndex: number;
+  versions: AssistantMessageVersion[];
+}
+
+/**
+ * Union type for conversation message entries.
+ * Supports both legacy flat Message objects and new grouped assistant responses.
+ */
+export type ConversationEntry = Message | AssistantMessageGroup;
+
+/**
+ * Type guard to check if an entry is an AssistantMessageGroup.
+ */
+export function isAssistantMessageGroup(
+  entry: ConversationEntry,
+): entry is AssistantMessageGroup {
+  return (
+    typeof entry === 'object' &&
+    entry !== null &&
+    'type' in entry &&
+    (entry as AssistantMessageGroup).type === 'assistant_group'
+  );
+}
+
+/**
+ * Type guard to check if an entry is a legacy Message (not a group).
+ */
+export function isLegacyMessage(entry: ConversationEntry): entry is Message {
+  return !isAssistantMessageGroup(entry);
+}
+
+/**
+ * Version info for display in the UI.
+ */
+export interface VersionInfo {
+  current: number; // 1-indexed for display
+  total: number;
+  hasMultiple: boolean;
+}
+
 type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
 
 export interface FilePreview {
