@@ -109,6 +109,14 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   loadingMessage: null,
   abortController: null,
 
+  // Retry-related initial state
+  isRetrying: false,
+  retryWithFallback: false,
+  originalModelId: null,
+  showModelSwitchPrompt: false,
+  failedConversation: null,
+  failedSearchMode: undefined,
+
   // Actions
   setCurrentMessage: (message) => set({ currentMessage: message }),
 
@@ -151,6 +159,13 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       stopRequested: false,
       loadingMessage: null,
       abortController: null,
+      // Reset retry state
+      isRetrying: false,
+      retryWithFallback: false,
+      originalModelId: null,
+      showModelSwitchPrompt: false,
+      failedConversation: null,
+      failedSearchMode: undefined,
     }),
 
   sendMessage: async (message, conversation, searchMode) => {
@@ -205,7 +220,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         clearTimeout(showLoadingTimeout);
       }
 
-      get().handleSendError(error);
+      get().handleSendError(error, conversation, searchMode);
     }
   },
 
@@ -410,7 +425,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     });
   },
 
-  handleSendError: (error: unknown) => {
+  handleSendError: (
+    error: unknown,
+    conversation?: Conversation,
+    searchMode?: SearchMode,
+  ) => {
     // Check if this is an abort error (user clicked stop)
     if (error instanceof Error && error.name === 'AbortError') {
       console.log('[chatStore] Request was aborted by user');
@@ -422,10 +441,38 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         abortController: null,
         stopRequested: false,
         error: null, // Don't show error for user-initiated stops
+        isRetrying: false,
       });
       return;
     }
 
+    // Check if we should attempt auto-retry with fallback model
+    const { isRetrying } = get();
+    const isAuthError = error instanceof ApiError && error.isAuthError();
+    const isCustomAgent = conversation?.model?.id?.startsWith('custom-');
+    const isAlreadyOnFallback = conversation?.model?.id === fallbackModelID;
+    const canRetry =
+      !isAuthError &&
+      !isCustomAgent &&
+      !isAlreadyOnFallback &&
+      !isRetrying &&
+      conversation;
+
+    if (canRetry) {
+      console.log(
+        '[chatStore] Attempting auto-retry with fallback model:',
+        fallbackModelID,
+      );
+      // Store failed conversation for regenerate button
+      set({
+        failedConversation: conversation,
+        failedSearchMode: searchMode,
+      });
+      get().retryWithFallbackModel(conversation, searchMode);
+      return;
+    }
+
+    // Extract user-friendly error message
     let errorMessage = 'Failed to send message';
     if (error instanceof ApiError) {
       errorMessage = error.getUserMessage();
@@ -437,6 +484,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       errorMessage = error.message;
     }
 
+    // Show error and store conversation for regenerate
     set({
       error: errorMessage,
       isStreaming: false,
@@ -445,6 +493,178 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       loadingMessage: null,
       abortController: null,
       stopRequested: false,
+      isRetrying: false,
+      failedConversation: conversation || null,
+      failedSearchMode: searchMode,
+    });
+  },
+
+  retryWithFallbackModel: async (
+    conversation: Conversation,
+    searchMode?: SearchMode,
+  ) => {
+    const fallbackModel = OpenAIModels[fallbackModelID];
+    if (!fallbackModel) {
+      console.error('[chatStore] Fallback model not found:', fallbackModelID);
+      set({
+        error: 'Failed to send message. Please try again.',
+        isStreaming: false,
+        isRetrying: false,
+      });
+      return;
+    }
+
+    // Show toast notification
+    const toastId = toast.loading(`Retrying with ${fallbackModel.name}...`);
+
+    // Store original model for the switch prompt
+    const originalModelId = conversation.model.id;
+
+    // Create conversation with fallback model
+    const retryConversation: Conversation = {
+      ...conversation,
+      model: fallbackModel,
+    };
+
+    set({
+      isRetrying: true,
+      originalModelId,
+      error: null,
+    });
+
+    let showLoadingTimeout: NodeJS.Timeout | null = null;
+
+    try {
+      // Use analyzer to determine loading message (reusing existing pattern)
+      const lastUserMessage = conversation.messages
+        .filter((m) => m.role === 'user')
+        .pop();
+
+      if (!lastUserMessage) {
+        throw new Error('No user message found');
+      }
+
+      const analyzer = new MessageContentAnalyzer(lastUserMessage);
+      const loadingMessage = analyzer.getLoadingMessage();
+
+      // Initialize streaming state
+      get().initializeStreamingState(retryConversation.id, loadingMessage);
+
+      // Schedule loading message display
+      showLoadingTimeout = get().scheduleLoadingMessage(loadingMessage);
+
+      // Send request with fallback model
+      const stream = await get().sendChatRequest(retryConversation, searchMode);
+
+      // Process the stream
+      const streamParser = new StreamParser();
+      const { finalContent, threadId } = await get().processStream(
+        stream,
+        streamParser,
+        showLoadingTimeout,
+      );
+
+      // Create assistant message
+      const assistantMessage = streamParser.toMessage(finalContent);
+
+      // Finalize: update conversation with original model (not fallback)
+      // The message was generated with fallback but we keep the conversation model unchanged
+      await get().finalizeMessage(assistantMessage, conversation, threadId);
+
+      // Clear streaming state and show success
+      get().clearStreamingState();
+
+      // Dismiss loading toast and show success
+      toast.success(`Request completed with ${fallbackModel.name}`, {
+        id: toastId,
+      });
+
+      // Show model switch prompt
+      set({
+        isRetrying: false,
+        retryWithFallback: true,
+        showModelSwitchPrompt: true,
+        failedConversation: null,
+        failedSearchMode: undefined,
+      });
+
+      // Clean up timeout
+      if (showLoadingTimeout) {
+        clearTimeout(showLoadingTimeout);
+      }
+    } catch (retryError) {
+      console.error('[chatStore] Retry with fallback also failed:', retryError);
+
+      // Clean up timeout
+      if (showLoadingTimeout) {
+        clearTimeout(showLoadingTimeout);
+      }
+
+      // Dismiss loading toast
+      toast.error(`Retry with ${fallbackModel.name} also failed`, {
+        id: toastId,
+      });
+
+      // Extract error message
+      let errorMessage = 'Failed to send message';
+      if (retryError instanceof ApiError) {
+        errorMessage = retryError.getUserMessage();
+      } else if (retryError instanceof Error) {
+        errorMessage = retryError.message;
+      }
+
+      // Show error with regenerate option
+      set({
+        error: errorMessage,
+        isStreaming: false,
+        streamingContent: '',
+        streamingConversationId: null,
+        loadingMessage: null,
+        abortController: null,
+        stopRequested: false,
+        isRetrying: false,
+        retryWithFallback: false,
+        originalModelId: null,
+      });
+    }
+  },
+
+  dismissModelSwitchPrompt: () => {
+    set({
+      showModelSwitchPrompt: false,
+      originalModelId: null,
+      retryWithFallback: false,
+    });
+  },
+
+  acceptModelSwitch: (alwaysSwitch?: boolean) => {
+    const settings = useSettingsStore.getState();
+    const conversationStore = useConversationStore.getState();
+    const { failedConversation } = get();
+
+    // Set fallback as default model
+    settings.setDefaultModelId(fallbackModelID);
+
+    // If alwaysSwitch, persist the preference
+    if (alwaysSwitch) {
+      settings.setAutoSwitchOnFailure(true);
+    }
+
+    // Update current conversation model if we have one
+    if (failedConversation) {
+      const fallbackModel = OpenAIModels[fallbackModelID];
+      if (fallbackModel) {
+        conversationStore.updateConversation(failedConversation.id, {
+          model: fallbackModel,
+        });
+      }
+    }
+
+    set({
+      showModelSwitchPrompt: false,
+      originalModelId: null,
+      retryWithFallback: false,
+      failedConversation: null,
     });
   },
 }));
