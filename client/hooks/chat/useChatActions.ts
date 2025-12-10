@@ -1,8 +1,20 @@
 import { useCallback } from 'react';
 
-import { Message, MessageType } from '@/types/chat';
+import {
+  entryToDisplayMessage,
+  findPrecedingUserMessageIndex,
+  flattenEntriesForAPI,
+} from '@/lib/utils/chat/messageVersioning';
+
+import {
+  Message,
+  MessageType,
+  isAssistantMessageGroup,
+  isLegacyMessage,
+} from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
+import { useChatStore } from '@/client/stores/chatStore';
 import { useConversationStore } from '@/client/stores/conversationStore';
 
 interface UseChatActionsProps {
