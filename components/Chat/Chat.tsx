@@ -351,6 +351,7 @@ export function Chat({
                 onSelectPrompt={handleSelectPrompt}
                 onRegenerate={handleRegenerate}
                 onSaveAsPrompt={handleOpenSavePromptModal}
+                onNavigateVersion={handleNavigateVersion}
               />
             </div>
           )}
