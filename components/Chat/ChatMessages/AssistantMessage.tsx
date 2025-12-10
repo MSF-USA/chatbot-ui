@@ -26,13 +26,14 @@ import { translateText } from '@/lib/services/translation';
 import { getAutonym } from '@/lib/utils/app/locales';
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
-import { Conversation, Message } from '@/types/chat';
+import { Conversation, Message, VersionInfo } from '@/types/chat';
 import { Citation } from '@/types/rag';
 import { MessageTranslationState } from '@/types/translation';
 
 import AudioPlayer from '@/components/Chat/AudioPlayer';
 import { ThinkingBlock } from '@/components/Chat/ChatMessages/ThinkingBlock';
 import { TranslationDropdown } from '@/components/Chat/ChatMessages/TranslationDropdown';
+import { VersionNavigation } from '@/components/Chat/ChatMessages/VersionNavigation';
 import { CitationList } from '@/components/Chat/Citations/CitationList';
 import { CitationStreamdown } from '@/components/Markdown/CitationStreamdown';
 import { StreamdownWithCodeButtons } from '@/components/Markdown/StreamdownWithCodeButtons';
@@ -50,6 +51,10 @@ interface AssistantMessageProps {
   messageCopied: boolean;
   onRegenerate?: () => void;
   children?: ReactNode; // Allow custom content (images, files, etc.)
+  // Version navigation props
+  versionInfo?: VersionInfo | null;
+  onPreviousVersion?: () => void;
+  onNextVersion?: () => void;
 }
 
 export const AssistantMessage: FC<AssistantMessageProps> = ({
@@ -62,6 +67,9 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   messageCopied,
   onRegenerate,
   children,
+  versionInfo,
+  onPreviousVersion,
+  onNextVersion,
 }) => {
   const t = useTranslations();
   const { openDocument } = useArtifactStore();
@@ -455,6 +463,18 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           {/* Action buttons at the bottom of the message - only show when not streaming */}
           {!messageIsStreaming && (
             <div className="flex items-center gap-2 mt-1">
+              {/* Version navigation - placed before other actions */}
+              {versionInfo?.hasMultiple &&
+                onPreviousVersion &&
+                onNextVersion && (
+                  <VersionNavigation
+                    currentVersion={versionInfo.current}
+                    totalVersions={versionInfo.total}
+                    onPrevious={onPreviousVersion}
+                    onNext={onNextVersion}
+                  />
+                )}
+
               {/* Copy button */}
               <button
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
