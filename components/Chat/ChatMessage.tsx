@@ -364,6 +364,9 @@ export const ChatMessage: FC<Props> = ({
         onQuestionClick={onQuestionClick}
         onRegenerate={onRegenerate}
         onSaveAsPrompt={handleSaveAsPromptClick}
+        versionInfo={versionInfo}
+        onPreviousVersion={onPreviousVersion}
+        onNextVersion={onNextVersion}
       />
     );
   } else {
