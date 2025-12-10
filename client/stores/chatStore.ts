@@ -1,11 +1,18 @@
 'use client';
 
+import toast from 'react-hot-toast';
+
 import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
 import { StreamParser } from '@/lib/utils/chat/streamParser';
 
 import { AgentType } from '@/types/agent';
 import { Conversation, Message, MessageType } from '@/types/chat';
-import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import {
+  OpenAIModel,
+  OpenAIModelID,
+  OpenAIModels,
+  fallbackModelID,
+} from '@/types/openai';
 import { Citation } from '@/types/rag';
 import { SearchMode } from '@/types/searchMode';
 
@@ -26,6 +33,14 @@ interface ChatStore {
   stopRequested: boolean;
   loadingMessage: string | null;
   abortController: AbortController | null;
+
+  // Retry-related state
+  isRetrying: boolean;
+  retryWithFallback: boolean;
+  originalModelId: string | null;
+  showModelSwitchPrompt: boolean;
+  failedConversation: Conversation | null;
+  failedSearchMode: SearchMode | undefined;
 
   // Actions
   setCurrentMessage: (message: Message | undefined) => void;
@@ -67,7 +82,19 @@ interface ChatStore {
   ) => Promise<void>;
   generateConversationName: (firstUserMessage: Message) => string | null;
   clearStreamingState: () => void;
-  handleSendError: (error: unknown) => void;
+  handleSendError: (
+    error: unknown,
+    conversation?: Conversation,
+    searchMode?: SearchMode,
+  ) => void;
+
+  // Retry-related actions
+  retryWithFallbackModel: (
+    conversation: Conversation,
+    searchMode?: SearchMode,
+  ) => Promise<void>;
+  dismissModelSwitchPrompt: () => void;
+  acceptModelSwitch: (alwaysSwitch?: boolean) => void;
 }
 
 export const useChatStore = create<ChatStore>((set, get) => ({
