@@ -78,6 +78,11 @@ export function Chat({
     citations,
     clearError,
     loadingMessage,
+    isRetrying,
+    showModelSwitchPrompt,
+    originalModelId,
+    dismissModelSwitchPrompt,
+    acceptModelSwitch,
   } = useChat();
   const { isSettingsOpen, setIsSettingsOpen, showChatbar } = useUI();
   const {
@@ -225,7 +230,10 @@ export function Chat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isModelSelectOpen]);
 
-  useAutoDismissError(error, clearError, 10000);
+  // Only auto-dismiss errors that can't be regenerated (e.g., during retry)
+  // When regenerate is available, let the user decide when to dismiss
+  const canRegenerate = !!error && !isRetrying;
+  useAutoDismissError(canRegenerate ? null : error, clearError, 10000);
 
   const messages = selectedConversation?.messages || [];
   const hasMessages =
@@ -337,7 +345,27 @@ export function Chat({
         </div>
 
         {/* Error Display */}
-        <ChatError error={error} onClearError={clearError} />
+        <ChatError
+          error={error}
+          onClearError={clearError}
+          onRegenerate={handleRegenerate}
+          canRegenerate={canRegenerate}
+        />
+
+        {/* Model Switch Prompt (shown after successful retry) */}
+        {showModelSwitchPrompt && (
+          <ModelSwitchPrompt
+            originalModelName={
+              OpenAIModels[originalModelId as OpenAIModelID]?.name ||
+              originalModelId ||
+              'Unknown'
+            }
+            fallbackModelName={OpenAIModels[fallbackModelID]?.name || 'GPT-4.1'}
+            onKeepOriginal={dismissModelSwitchPrompt}
+            onSwitchModel={() => acceptModelSwitch(false)}
+            onAlwaysSwitch={() => acceptModelSwitch(true)}
+          />
+        )}
 
         {/* Chat Input - Bottom position (hidden in empty state) */}
         {hasMessages && (
