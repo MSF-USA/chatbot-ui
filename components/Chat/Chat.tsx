@@ -17,7 +17,7 @@ import { useAutoDismissError } from '@/client/hooks/ui/useAutoDismissError';
 import { useModalState } from '@/client/hooks/ui/useModalSync';
 import { useUI } from '@/client/hooks/ui/useUI';
 
-import { OpenAIModelID, OpenAIModels } from '@/types/openai';
+import { OpenAIModelID, OpenAIModels, fallbackModelID } from '@/types/openai';
 
 import { PromptModal } from '@/components/Prompts/PromptModal';
 
@@ -29,6 +29,7 @@ import { EmptyState } from './EmptyState/EmptyState';
 import { SuggestedPrompts } from './EmptyState/SuggestedPrompts';
 import { LoadingScreen } from './LoadingScreen';
 import { ModelSelect } from './ModelSelect';
+import { ModelSwitchPrompt } from './ModelSwitchPrompt';
 
 import { useArtifactStore } from '@/client/stores/artifactStore';
 
