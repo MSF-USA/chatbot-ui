@@ -534,7 +534,9 @@
     "showOriginal": "Show original",
     "translatedTo": "Translated to {language}",
     "searchLanguages": "Search languages...",
-    "selectLanguage": "Select language"
+    "selectLanguage": "Select language",
+    "audioFromOriginal": "Audio is from original text",
+    "audioFromTranslation": "Audio is from {language} translation"
   },
   "sidebar": {
     "collapseSidebar": "Collapse sidebar",
