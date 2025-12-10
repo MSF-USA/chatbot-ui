@@ -58,7 +58,6 @@ export const ChatMessage: FC<Props> = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [messageContent, setMessageContent] = useState(message.content);
-  const [messagedCopied, setMessageCopied] = useState(false);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -118,19 +117,6 @@ export const ChatMessage: FC<Props> = ({
       e.preventDefault();
       handleEditMessage();
     }
-  };
-
-  const copyOnClick = () => {
-    if (!navigator.clipboard) return;
-
-    const analyzer = new MessageContentAnalyzer(message);
-    const content = analyzer.extractText();
-    navigator.clipboard.writeText(content).then(() => {
-      setMessageCopied(true);
-      setTimeout(() => {
-        setMessageCopied(false);
-      }, 2000);
-    });
   };
 
   const handleSaveAsPromptClick = () => {
@@ -209,11 +195,9 @@ export const ChatMessage: FC<Props> = ({
         <AssistantMessage
           content={typeof message.content === 'string' ? message.content : ''}
           message={message}
-          copyOnClick={copyOnClick}
           messageIsStreaming={messageIsStreaming}
           messageIndex={messageIndex}
           selectedConversation={selectedConversation}
-          messageCopied={messagedCopied}
           onRegenerate={onRegenerate}
           versionInfo={versionInfo}
           onPreviousVersion={onPreviousVersion}
@@ -269,11 +253,9 @@ export const ChatMessage: FC<Props> = ({
           <AssistantMessage
             content={textContent}
             message={message}
-            copyOnClick={copyOnClick}
             messageIsStreaming={messageIsStreaming}
             messageIndex={messageIndex}
             selectedConversation={selectedConversation}
-            messageCopied={messagedCopied}
             onRegenerate={onRegenerate}
             versionInfo={versionInfo}
             onPreviousVersion={onPreviousVersion}
@@ -327,11 +309,9 @@ export const ChatMessage: FC<Props> = ({
           <AssistantMessage
             content={textContent}
             message={message}
-            copyOnClick={copyOnClick}
             messageIsStreaming={messageIsStreaming}
             messageIndex={messageIndex}
             selectedConversation={selectedConversation}
-            messageCopied={messagedCopied}
             onRegenerate={onRegenerate}
             versionInfo={versionInfo}
             onPreviousVersion={onPreviousVersion}
@@ -353,7 +333,6 @@ export const ChatMessage: FC<Props> = ({
     return (
       <ChatMessageText
         message={message}
-        copyOnClick={copyOnClick}
         isEditing={isEditing}
         setIsEditing={setIsEditing}
         setIsTyping={setIsTyping}
@@ -368,7 +347,6 @@ export const ChatMessage: FC<Props> = ({
         messageIsStreaming={messageIsStreaming}
         messageIndex={messageIndex}
         selectedConversation={selectedConversation}
-        messageCopied={messagedCopied}
         onEdit={onEdit}
         onQuestionClick={onQuestionClick}
         onRegenerate={onRegenerate}
