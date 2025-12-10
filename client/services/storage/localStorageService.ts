@@ -829,7 +829,7 @@ export class LocalStorageService {
         folders: existingFolders,
         selectedConversationId: existingData?.state?.selectedConversationId,
       },
-      version: 1,
+      version: 2, // Must match conversationStore persist version
     };
 
     localStorage.setItem(
