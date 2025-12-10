@@ -26,7 +26,12 @@ import { translateText } from '@/lib/services/translation';
 import { getAutonym } from '@/lib/utils/app/locales';
 import { parseThinkingContent } from '@/lib/utils/app/stream/thinking';
 
-import { Conversation, Message, VersionInfo } from '@/types/chat';
+import {
+  Conversation,
+  Message,
+  VersionInfo,
+  isAssistantMessageGroup,
+} from '@/types/chat';
 import { Citation } from '@/types/rag';
 import { MessageTranslationState } from '@/types/translation';
 
@@ -176,13 +181,20 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
 
     // Priority 4: Fallback to conversation-stored citations
-    if (
-      citationsData.length === 0 &&
-      selectedConversation?.messages?.[messageIndex]?.citations
-    ) {
-      citationsData = deduplicateCitations(
-        selectedConversation.messages[messageIndex].citations!,
-      );
+    // Handle both legacy messages and assistant message groups
+    if (citationsData.length === 0 && selectedConversation?.messages) {
+      const entry = selectedConversation.messages[messageIndex];
+      if (entry) {
+        let storedCitations: Citation[] | undefined;
+        if (isAssistantMessageGroup(entry)) {
+          storedCitations = entry.versions[entry.activeIndex]?.citations;
+        } else if ('citations' in entry) {
+          storedCitations = entry.citations;
+        }
+        if (storedCitations) {
+          citationsData = deduplicateCitations(storedCitations);
+        }
+      }
     }
 
     // Determine final thinking content (priority: message > metadata > inline)
