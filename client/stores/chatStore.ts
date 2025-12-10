@@ -5,6 +5,8 @@ import toast from 'react-hot-toast';
 import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
 import {
   createMessageGroup,
+  entryToDisplayMessage,
+  flattenEntriesForAPI,
   messageToVersion,
 } from '@/lib/utils/chat/messageVersioning';
 import { StreamParser } from '@/lib/utils/chat/streamParser';
@@ -188,9 +190,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   sendMessage: async (message, conversation, searchMode) => {
     console.log('[chatStore.sendMessage] Message toneId:', message.toneId);
+    // Log messages - convert entries to display messages for logging
+    const flatMessages = flattenEntriesForAPI(conversation.messages);
     console.log(
       '[chatStore.sendMessage] All messages:',
-      conversation.messages.map((m) => ({ role: m.role, toneId: m.toneId })),
+      flatMessages.map((m) => ({ role: m.role, toneId: m.toneId })),
     );
 
     let showLoadingTimeout: NodeJS.Timeout | null = null;
@@ -287,8 +291,11 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       ? { ...conversation.model, ...latestModelConfig }
       : conversation.model;
 
+    // Flatten messages for API call
+    const messagesForAPI = flattenEntriesForAPI(conversation.messages);
+
     // Get the toneId from the latest user message and look up the full tone object
-    const latestUserMessage = conversation.messages
+    const latestUserMessage = messagesForAPI
       .filter((m) => m.role === 'user')
       .pop();
     const tone = latestUserMessage?.toneId
@@ -306,7 +313,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     // Get abort signal from store
     const { abortController } = get();
 
-    return await chatService.chat(modelToSend, conversation.messages, {
+    return await chatService.chat(modelToSend, messagesForAPI, {
       prompt: settings.systemPrompt,
       temperature: settings.temperature,
       stream: modelSupportsStreaming,
@@ -417,9 +424,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         conversation.name === 'New Conversation' &&
         conversation.messages.length > 0
       ) {
-        const newName = get().generateConversationName(
-          conversation.messages[0],
-        );
+        const firstMessage = entryToDisplayMessage(conversation.messages[0]);
+        const newName = get().generateConversationName(firstMessage);
         if (newName) {
           updates.name = newName;
         }
@@ -572,7 +578,9 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     try {
       // Use analyzer to determine loading message (reusing existing pattern)
-      const lastUserMessage = conversation.messages
+      // Flatten messages to find user messages
+      const flatMessages = flattenEntriesForAPI(conversation.messages);
+      const lastUserMessage = flatMessages
         .filter((m) => m.role === 'user')
         .pop();
 
