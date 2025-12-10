@@ -41,6 +41,7 @@ interface ChatStore {
   showModelSwitchPrompt: boolean;
   failedConversation: Conversation | null;
   failedSearchMode: SearchMode | undefined;
+  successfulRetryConversationId: string | null;
 
   // Actions
   setCurrentMessage: (message: Message | undefined) => void;
@@ -116,6 +117,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   showModelSwitchPrompt: false,
   failedConversation: null,
   failedSearchMode: undefined,
+  successfulRetryConversationId: null,
 
   // Actions
   setCurrentMessage: (message) => set({ currentMessage: message }),
@@ -579,11 +581,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         id: toastId,
       });
 
-      // Show model switch prompt
+      // Show model switch prompt - store conversation ID for model switching
       set({
         isRetrying: false,
         retryWithFallback: true,
         showModelSwitchPrompt: true,
+        successfulRetryConversationId: conversation.id,
         failedConversation: null,
         failedSearchMode: undefined,
       });
@@ -640,21 +643,21 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   acceptModelSwitch: (alwaysSwitch?: boolean) => {
     const settings = useSettingsStore.getState();
     const conversationStore = useConversationStore.getState();
-    const { failedConversation } = get();
+    const { successfulRetryConversationId } = get();
 
-    // Set fallback as default model
+    // Set fallback as default model for new conversations
     settings.setDefaultModelId(fallbackModelID);
 
-    // If alwaysSwitch, persist the preference
+    // If alwaysSwitch, persist auto-switch preference for future failures
     if (alwaysSwitch) {
       settings.setAutoSwitchOnFailure(true);
     }
 
-    // Update current conversation model if we have one
-    if (failedConversation) {
+    // Update current conversation model using the stored ID
+    if (successfulRetryConversationId) {
       const fallbackModel = OpenAIModels[fallbackModelID];
       if (fallbackModel) {
-        conversationStore.updateConversation(failedConversation.id, {
+        conversationStore.updateConversation(successfulRetryConversationId, {
           model: fallbackModel,
         });
       }
@@ -664,7 +667,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       showModelSwitchPrompt: false,
       originalModelId: null,
       retryWithFallback: false,
-      failedConversation: null,
+      successfulRetryConversationId: null,
     });
   },
 }));
