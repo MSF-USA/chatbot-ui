@@ -168,6 +168,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       showModelSwitchPrompt: false,
       failedConversation: null,
       failedSearchMode: undefined,
+      successfulRetryConversationId: null,
     }),
 
   sendMessage: async (message, conversation, searchMode) => {
@@ -637,6 +638,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       showModelSwitchPrompt: false,
       originalModelId: null,
       retryWithFallback: false,
+      successfulRetryConversationId: null,
     });
   },
 
