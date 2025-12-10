@@ -3,7 +3,7 @@ import {
   needsMigration,
 } from '@/lib/utils/chat/messageVersioning';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 import { FolderInterface } from '@/types/folder';
 
 /**
@@ -145,8 +145,9 @@ export function validateAndPrepareFolderImport(
       : conv.id;
 
     // Migrate legacy messages if needed
+    // When importing from JSON, messages could be the old Message[] format
     const migratedMessages = needsMigration(conv.messages)
-      ? migrateLegacyMessages(conv.messages)
+      ? migrateLegacyMessages(conv.messages as Message[])
       : conv.messages;
 
     return {
