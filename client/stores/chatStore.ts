@@ -3,6 +3,10 @@
 import toast from 'react-hot-toast';
 
 import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
+import {
+  createMessageGroup,
+  messageToVersion,
+} from '@/lib/utils/chat/messageVersioning';
 import { StreamParser } from '@/lib/utils/chat/streamParser';
 
 import { AgentType } from '@/types/agent';
@@ -43,7 +47,11 @@ interface ChatStore {
   failedSearchMode: SearchMode | undefined;
   successfulRetryConversationId: string | null;
 
+  // Regeneration state for message versioning
+  regeneratingIndex: number | null;
+
   // Actions
+  setRegeneratingIndex: (index: number | null) => void;
   setCurrentMessage: (message: Message | undefined) => void;
   setIsStreaming: (isStreaming: boolean) => void;
   setStreamingContent: (content: string) => void;
@@ -119,7 +127,12 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   failedSearchMode: undefined,
   successfulRetryConversationId: null,
 
+  // Regeneration initial state
+  regeneratingIndex: null,
+
   // Actions
+  setRegeneratingIndex: (index) => set({ regeneratingIndex: index }),
+
   setCurrentMessage: (message) => set({ currentMessage: message }),
 
   setIsStreaming: (isStreaming) => set({ isStreaming }),
@@ -169,6 +182,8 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       failedConversation: null,
       failedSearchMode: undefined,
       successfulRetryConversationId: null,
+      // Reset regeneration state
+      regeneratingIndex: null,
     }),
 
   sendMessage: async (message, conversation, searchMode) => {
