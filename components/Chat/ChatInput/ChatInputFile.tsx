@@ -17,7 +17,7 @@ import {
   ImageMessageContent,
 } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 import FileIcon from '@/components/Icons/file';
 

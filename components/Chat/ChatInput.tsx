@@ -42,7 +42,7 @@ import { OpenAIModel } from '@/types/openai';
 import { Plugin, PluginID } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 import ChatFileUploadPreviews from '@/components/Chat/ChatInput/ChatFileUploadPreviews';
 import { ChatInputAgentToggle } from '@/components/Chat/ChatInput/ChatInputAgentToggle';
@@ -229,12 +229,12 @@ export const ChatInput = ({
       const bIsLegacy = (b as any).isLegacy || false;
       if (aIsLegacy && !bIsLegacy) return 1;
       if (!aIsLegacy && bIsLegacy) return -1;
-      
+
       // Secondary sort: Higher usage count first (within same legacy status)
       const aUsage = getModelUsageCount(a.id);
       const bUsage = getModelUsageCount(b.id);
       if (aUsage !== bUsage) return bUsage - aUsage;
-      
+
       // Tertiary sort: Preserve original order for equal usage
       return 0;
     });
@@ -504,7 +504,7 @@ export const ChatInput = ({
    */
   const handleDropdownItemSelection = (index: number) => {
     const commandsCount = commandMode ? filteredCommands.length : 0;
-    
+
     if (index < commandsCount) {
       // It's a command
       const command = filteredCommands[index];
@@ -526,7 +526,7 @@ export const ChatInput = ({
         handlePromptSelect(prompt);
       }
     }
-    
+
     setShowPromptList(false);
   };
 
@@ -706,7 +706,7 @@ export const ChatInput = ({
   const handlePromptSelect = (prompt: Prompt) => {
     // Track prompt usage for sorting
     incrementPromptUsage(prompt.id);
-    
+
     const parsedVariables = parseVariables(prompt.content);
     setVariables(parsedVariables);
 
@@ -725,7 +725,7 @@ export const ChatInput = ({
   const handleModelSelect = (model: OpenAIModel) => {
     // Track model usage for sorting
     incrementModelUsage(model.id);
-    
+
     // Hide the model list
     setShowModelList(false);
     setActiveModelIndex(0);

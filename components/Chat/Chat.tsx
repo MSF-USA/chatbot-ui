@@ -44,7 +44,7 @@ import {
 import { Plugin } from '@/types/plugin';
 import { Citation } from '@/types/rag';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 import lightTextLogo from '../../public/international_logo_black.png';
 import darkTextLogo from '../../public/international_logo_white.png';
