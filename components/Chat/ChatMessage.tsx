@@ -1,7 +1,5 @@
 import { FC, useEffect, useRef, useState } from 'react';
 
-import { useTranslations } from 'next-intl';
-
 import { useChat } from '@/client/hooks/chat/useChat';
 import { useConversations } from '@/client/hooks/conversation/useConversations';
 
@@ -50,7 +48,6 @@ export const ChatMessage: FC<Props> = ({
   onPreviousVersion,
   onNextVersion,
 }) => {
-  const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } =
     useConversations();
   const { isStreaming: messageIsStreaming } = useChat();
