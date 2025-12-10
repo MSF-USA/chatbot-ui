@@ -521,7 +521,12 @@
     "fullSizePreview": "Full size preview",
     "enterSearchQueryPlaceholder": "Enter your search query or question...",
     "errorFetchingUrl": "An error occurred while fetching the URL content",
-    "errorInitiatingSearch": "An error occurred while initiating web search"
+    "errorInitiatingSearch": "An error occurred while initiating web search",
+    "regenerate": "Regenerate",
+    "modelSwitchPrompt": "{original} failed but {fallback} succeeded. Would you like to switch models?",
+    "keepOriginalModel": "Keep {model}",
+    "switchToModel": "Use {model}",
+    "alwaysSwitchToModel": "Always use {model}"
   },
   "sidebar": {
     "collapseSidebar": "Collapse sidebar",
