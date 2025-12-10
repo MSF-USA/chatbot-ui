@@ -122,35 +122,76 @@ export function useChatActions({
     [handleSend],
   );
 
-  const handleRegenerate = useCallback(() => {
-    const state = useConversationStore.getState();
-    const currentConversation = state.conversations.find(
-      (c) => c.id === state.selectedConversationId,
-    );
+  /**
+   * Regenerates an assistant response, adding a new version instead of replacing.
+   * @param messageIndex - Optional index of the assistant message to regenerate.
+   *                       If not provided, regenerates the last assistant message.
+   */
+  const handleRegenerate = useCallback(
+    (messageIndex?: number) => {
+      const conversationState = useConversationStore.getState();
+      const chatState = useChatStore.getState();
+      const currentConversation = conversationState.conversations.find(
+        (c) => c.id === conversationState.selectedConversationId,
+      );
 
-    if (!currentConversation || currentConversation.messages.length === 0)
-      return;
+      if (!currentConversation || currentConversation.messages.length === 0)
+        return;
 
-    const lastUserMessageIndex = currentConversation.messages.findLastIndex(
-      (m) => m.role === 'user',
-    );
-    if (lastUserMessageIndex === -1) return;
+      // Determine which assistant message to regenerate
+      let targetIndex: number;
+      let userMessageIndex: number;
 
-    const messagesUpToLastUser = currentConversation.messages.slice(
-      0,
-      lastUserMessageIndex + 1,
-    );
-    updateConversation(currentConversation.id, {
-      messages: messagesUpToLastUser,
-    });
+      if (messageIndex !== undefined) {
+        // Regenerating a specific assistant message
+        targetIndex = messageIndex;
+        userMessageIndex = findPrecedingUserMessageIndex(
+          currentConversation.messages,
+          messageIndex,
+        );
+      } else {
+        // Regenerating the last assistant message
+        targetIndex = currentConversation.messages.length - 1;
+        // Find the last user message before the assistant message
+        userMessageIndex = findPrecedingUserMessageIndex(
+          currentConversation.messages,
+          targetIndex,
+        );
+      }
 
-    const lastUserMessage = currentConversation.messages[lastUserMessageIndex];
-    const updatedConversation = {
-      ...currentConversation,
-      messages: messagesUpToLastUser,
-    };
-    sendMessage?.(lastUserMessage, updatedConversation, undefined);
-  }, [updateConversation, sendMessage]);
+      if (userMessageIndex === -1) return;
+
+      // Verify the target is an assistant message group
+      const targetEntry = currentConversation.messages[targetIndex];
+      if (
+        !isAssistantMessageGroup(targetEntry) &&
+        !(isLegacyMessage(targetEntry) && targetEntry.role === 'assistant')
+      ) {
+        return;
+      }
+
+      // Get the user message to resend
+      const userMessageEntry = currentConversation.messages[userMessageIndex];
+      const userMessage = entryToDisplayMessage(userMessageEntry);
+
+      // Set the regenerating index in chat store
+      chatState.setRegeneratingIndex(targetIndex);
+
+      // Create a flattened conversation snapshot for the API call
+      // Only include messages up to and including the user message
+      const messagesForAPI = flattenEntriesForAPI(
+        currentConversation.messages.slice(0, userMessageIndex + 1),
+      );
+
+      const apiConversation = {
+        ...currentConversation,
+        messages: messagesForAPI,
+      };
+
+      sendMessage?.(userMessage, apiConversation, undefined);
+    },
+    [sendMessage],
+  );
 
   return {
     handleClearAll,
