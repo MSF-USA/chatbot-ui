@@ -1,3 +1,8 @@
+import {
+  migrateLegacyMessages,
+  needsMigration,
+} from '@/lib/utils/chat/messageVersioning';
+
 import { Conversation } from '@/types/chat';
 
 /**
@@ -105,6 +110,11 @@ export function validateAndPrepareImport(
 
   const conversation = data.conversation;
 
+  // Migrate legacy messages if needed
+  const migratedMessages = needsMigration(conversation.messages)
+    ? migrateLegacyMessages(conversation.messages)
+    : conversation.messages;
+
   // Check for ID conflicts
   const idExists = existingConversations.some((c) => c.id === conversation.id);
 
@@ -115,6 +125,7 @@ export function validateAndPrepareImport(
       ...conversation,
       id: newId,
       name: `${conversation.name} (imported)`,
+      messages: migratedMessages,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
@@ -128,6 +139,7 @@ export function validateAndPrepareImport(
   // Add timestamps if missing
   const updatedConversation: Conversation = {
     ...conversation,
+    messages: migratedMessages,
     createdAt: conversation.createdAt || new Date().toISOString(),
     updatedAt: conversation.updatedAt || new Date().toISOString(),
   };
