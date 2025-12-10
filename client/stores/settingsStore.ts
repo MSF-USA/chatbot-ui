@@ -28,6 +28,7 @@ interface SettingsStore {
   systemPrompt: string;
   defaultModelId: OpenAIModelID | undefined;
   defaultSearchMode: SearchMode;
+  autoSwitchOnFailure: boolean;
   models: OpenAIModel[];
   prompts: Prompt[];
   tones: Tone[];
@@ -38,6 +39,7 @@ interface SettingsStore {
   setSystemPrompt: (prompt: string) => void;
   setDefaultModelId: (id: OpenAIModelID | undefined) => void;
   setDefaultSearchMode: (mode: SearchMode) => void;
+  setAutoSwitchOnFailure: (enabled: boolean) => void;
   setModels: (models: OpenAIModel[]) => void;
   setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Prompt) => void;
@@ -71,6 +73,7 @@ export const useSettingsStore = create<SettingsStore>()(
       systemPrompt: DEFAULT_SYSTEM_PROMPT,
       defaultModelId: undefined,
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+      autoSwitchOnFailure: false,
       models: [],
       prompts: [],
       tones: [],
@@ -84,6 +87,9 @@ export const useSettingsStore = create<SettingsStore>()(
       setDefaultModelId: (id) => set({ defaultModelId: id }),
 
       setDefaultSearchMode: (mode) => set({ defaultSearchMode: mode }),
+
+      setAutoSwitchOnFailure: (enabled) =>
+        set({ autoSwitchOnFailure: enabled }),
 
       setModels: (models) => set({ models }),
 
