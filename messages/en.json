@@ -486,7 +486,8 @@
     "addTagEllipsis": "Add a tag...",
     "msfLogo": "MSF Logo",
     "importantInformation": "Important Information",
-    "contact": "Contact"
+    "contact": "Contact",
+    "noResults": "No results found"
   },
   "chat": {
     "downloadAudio": "Download audio",
@@ -526,7 +527,14 @@
     "modelSwitchPrompt": "{original} failed but {fallback} succeeded. Would you like to switch models?",
     "keepOriginalModel": "Keep {model}",
     "switchToModel": "Switch to {model}",
-    "alwaysSwitchToModel": "Always auto-switch"
+    "alwaysSwitchToModel": "Always auto-switch",
+    "translateMessage": "Translate message",
+    "translating": "Translating...",
+    "translationError": "Translation failed",
+    "showOriginal": "Show original",
+    "translatedTo": "Translated to {language}",
+    "searchLanguages": "Search languages...",
+    "selectLanguage": "Select language"
   },
   "sidebar": {
     "collapseSidebar": "Collapse sidebar",
