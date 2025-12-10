@@ -171,6 +171,7 @@ export const useSettingsStore = create<SettingsStore>()(
         systemPrompt: state.systemPrompt,
         defaultModelId: state.defaultModelId,
         defaultSearchMode: state.defaultSearchMode,
+        autoSwitchOnFailure: state.autoSwitchOnFailure,
         prompts: state.prompts,
         tones: state.tones,
         customAgents: state.customAgents,
