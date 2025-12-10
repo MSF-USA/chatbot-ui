@@ -1,9 +1,9 @@
 /**
  * LocalStorage Test Script for Storage Warning Modal
- * 
+ *
  * This script can be run in the browser console to populate localStorage
  * with realistic conversation data for testing the StorageWarningModal component.
- * 
+ *
  * Usage:
  * 1. Open your application in the browser
  * 2. Open the browser console (F12)
@@ -108,7 +108,7 @@
     if (role === 'user') {
       const promptIndex = index % SAMPLE_PROMPTS.length;
       const prompt = SAMPLE_PROMPTS[promptIndex];
-      
+
       // Sometimes make the message longer by repeating content
       const repeatCount = Math.random() > 0.7 ? Math.floor(Math.random() * 3) + 1 : 1;
       const fullPrompt = Array(repeatCount).fill(prompt).join(' Additionally, ');
@@ -119,9 +119,9 @@
           // Image content
           message.content = [
             { type: 'text', text: fullPrompt },
-            { 
-              type: 'image_url', 
-              image_url: { 
+            {
+              type: 'image_url',
+              image_url: {
                 url: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
                 detail: 'auto'
               }
@@ -132,8 +132,8 @@
           // File content
           message.content = [
             { type: 'text', text: fullPrompt },
-            { 
-              type: 'file_url', 
+            {
+              type: 'file_url',
               url: 'https://example.com/file.pdf',
               originalFilename: 'document_' + index + '.pdf'
             }
@@ -146,23 +146,23 @@
     } else {
       const responseIndex = index % SAMPLE_RESPONSES.length;
       let response = SAMPLE_RESPONSES[responseIndex];
-      
+
       // Make some responses much longer to increase storage usage
       const repeatCount = Math.random() > 0.6 ? Math.floor(Math.random() * 10) + 1 : 1;
       response = Array(repeatCount).fill(response).join('\n\n');
-      
+
       // Sometimes add code blocks to make responses longer
       if (Math.random() > 0.5) {
-        response += '\n\n```javascript\n' + 
+        response += '\n\n```javascript\n' +
           'function example() {\n' +
           '  // This is sample code to increase message size\n' +
           '  const data = ' + JSON.stringify(Array(50).fill({ key: 'value', nested: { deep: true } })) + ';\n' +
           '  return data;\n' +
           '}\n```';
       }
-      
+
       message.content = response;
-      
+
       // Occasionally add citations
       if (Math.random() > 0.85) {
         message.citations = [
@@ -184,7 +184,7 @@
   function generateConversation(index, messageCount = 10, daysAgo = 30, includeDates = true) {
     const conversationId = generateId() + '_' + index;
     const messages = [];
-    
+
     // Generate alternating user/assistant messages
     for (let i = 0; i < messageCount; i++) {
       const role = i % 2 === 0 ? 'user' : 'assistant';
@@ -232,10 +232,10 @@
         }
       }
     }
-    
+
     const maxSize = 5 * 1024 * 1024; // 5MB default
     const percentUsed = (totalSize / maxSize) * 100;
-    
+
     return {
       currentSize: totalSize,
       maxSize: maxSize,
@@ -257,47 +257,47 @@
   // Fill storage to a specific percentage (can exceed 100% for overfill testing)
   function fillStorageToPercentage(targetPercent, includeLegacy = false) {
     console.log(`Starting to fill storage to ${targetPercent}%...`);
-    
+
     // Clear existing conversations first
     clearTestData();
-    
+
     const targetSize = (targetPercent / 100) * 5 * 1024 * 1024; // Target size in bytes
     let currentSize = 0;
     const conversations = [];
     let conversationIndex = 0;
-    
+
     // Generate conversations until we reach the target size
     while (currentSize < targetSize) {
       const messageCount = Math.floor(Math.random() * 20) + 5; // 5-25 messages
       const daysAgo = Math.floor(Math.random() * 90) + 1; // 1-90 days ago
-      
+
       // If includeLegacy, make 40% of conversations legacy (without dates)
       const includeDates = includeLegacy ? Math.random() > 0.4 : true;
       const conversation = generateConversation(conversationIndex, messageCount, daysAgo, includeDates);
-      
+
       const conversationSize = JSON.stringify(conversation).length;
-      
+
       // For overfill scenarios (>100%), don't stop early
       if (targetPercent <= 100 && currentSize + conversationSize > targetSize && conversations.length > 5) {
         // Stop if adding this conversation would exceed target (unless we have very few conversations)
         break;
       }
-      
+
       conversations.push(conversation);
       currentSize += conversationSize;
       conversationIndex++;
-      
+
       // Safety check to prevent infinite loop
       if (conversationIndex > 1500) {
         console.warn('Safety limit reached: stopping at 1500 conversations');
         break;
       }
     }
-    
+
     // Save conversations to localStorage
     try {
       localStorage.setItem('conversations', JSON.stringify(conversations));
-      
+
       // Add some additional data to simulate real usage
       localStorage.setItem('settings', JSON.stringify({
         theme: 'dark',
@@ -305,12 +305,12 @@
         defaultModel: MODELS[0].id,
         temperature: 0.7
       }));
-      
+
       // Set a selected conversation
       if (conversations.length > 0) {
         localStorage.setItem('selectedConversation', JSON.stringify(conversations[0]));
       }
-      
+
       // Add some folders
       const folders = [
         { id: 'folder_0', name: 'Work Projects', type: 'chat' },
@@ -320,7 +320,7 @@
         { id: 'folder_4', name: 'Drafts', type: 'chat' }
       ];
       localStorage.setItem('folders', JSON.stringify(folders));
-      
+
       // Add some prompts
       const prompts = [
         { id: 'prompt_1', name: 'Code Review', content: 'Please review this code for best practices and potential improvements.' },
@@ -328,13 +328,13 @@
         { id: 'prompt_3', name: 'Debug Helper', content: 'Help me debug this issue. Here is the error message and relevant code.' }
       ];
       localStorage.setItem('prompts', JSON.stringify(prompts));
-      
+
       const info = getStorageInfo();
       console.log(`✅ Storage filled successfully!`);
       console.log(`   - Created ${conversations.length} conversations`);
       console.log(`   - Current usage: ${info.formattedSize} / ${info.formattedMax} (${info.percentUsed.toFixed(1)}%)`);
       console.log(`   - Target was: ${targetPercent}%`);
-      
+
       return true;
     } catch (error) {
       console.error('Failed to fill storage:', error);
@@ -359,17 +359,17 @@
       console.log('Filling storage to WARNING level (70%)...');
       return fillStorageToPercentage(72); // Slightly above 70% to ensure warning triggers
     },
-    
+
     fillToCritical: function() {
       console.log('Filling storage to CRITICAL level (85%)...');
       return fillStorageToPercentage(87); // Slightly above 85%
     },
-    
+
     fillToEmergency: function() {
       console.log('Filling storage to EMERGENCY level (95%)...');
       return fillStorageToPercentage(96); // Slightly above 95%
     },
-    
+
     fillToCustom: function(percent) {
       if (percent < 0) {
         console.error('Percentage must be positive');
@@ -378,7 +378,7 @@
       console.log(`Filling storage to ${percent}%...`);
       return fillStorageToPercentage(percent);
     },
-    
+
     // Overfill storage (exceed 100%)
     overfillStorage: function(percent) {
       if (!percent) percent = 105; // Default to 105%
@@ -389,53 +389,53 @@
       console.log(`⚠️ OVERFILLING storage to ${percent}% (exceeding capacity)...`);
       return fillStorageToPercentage(percent);
     },
-    
+
     // Fill with mixed legacy and modern data
     fillWithLegacyData: function(percent) {
       if (!percent) percent = 85; // Default to 85%
       console.log(`Filling storage to ${percent}% with mixed legacy/modern conversations...`);
       return fillStorageToPercentage(percent, true);
     },
-    
+
     // Add specific number of legacy conversations
     addLegacyConversations: function(count) {
       if (!count || count < 1) count = 5;
       const conversationsData = localStorage.getItem('conversations');
       const conversations = conversationsData ? JSON.parse(conversationsData) : [];
-      
+
       console.log(`Adding ${count} legacy conversations (without dates)...`);
-      
+
       for (let i = 0; i < count; i++) {
         const messageCount = Math.floor(Math.random() * 10) + 2; // 2-12 messages
         const legacyConv = generateConversation(conversations.length + i, messageCount, 60, false);
         conversations.push(legacyConv); // Add to end (will be sorted later)
       }
-      
+
       localStorage.setItem('conversations', JSON.stringify(conversations));
       const info = getStorageInfo();
       console.log(`Added ${count} legacy conversations. Storage now at ${info.percentUsed.toFixed(1)}%`);
       return info;
     },
-    
+
     // Utility functions
     clear: clearTestData,
-    
+
     info: function() {
       const info = getStorageInfo();
       console.log('📊 Current Storage Status:');
       console.log(`   - Usage: ${info.formattedSize} / ${info.formattedMax}`);
       console.log(`   - Percentage: ${info.percentUsed.toFixed(2)}%`);
-      
+
       const conversationsData = localStorage.getItem('conversations');
       if (conversationsData) {
         try {
           const conversations = JSON.parse(conversationsData);
           console.log(`   - Total Conversations: ${conversations.length}`);
-          
+
           // Count legacy vs modern conversations
           let legacyCount = 0;
           let modernCount = 0;
-          
+
           // Show distribution of conversation ages
           const now = new Date();
           const ageGroups = { recent: 0, week: 0, month: 0, older: 0 };
@@ -453,11 +453,11 @@
               legacyCount++;
             }
           });
-          
+
           console.log(`   - Type distribution:`);
           console.log(`     • Modern (with dates): ${modernCount}`);
           console.log(`     • Legacy (no dates): ${legacyCount}`);
-          
+
           if (modernCount > 0) {
             console.log(`   - Age distribution (modern only):`);
             console.log(`     • Last 24h: ${ageGroups.recent}`);
@@ -469,7 +469,7 @@
           console.error('Could not parse conversations data');
         }
       }
-      
+
       // Check which threshold level we're at
       const percent = info.percentUsed;
       if (percent > 100) {
@@ -483,32 +483,32 @@
       } else {
         console.log('   - ✅ Status: Normal');
       }
-      
+
       return info;
     },
-    
+
     // Add a single large conversation
     addLargeConversation: function() {
       const conversationsData = localStorage.getItem('conversations');
       const conversations = conversationsData ? JSON.parse(conversationsData) : [];
-      
+
       // Generate a conversation with many messages
       const largeConv = generateConversation(conversations.length, 50, 1);
       conversations.unshift(largeConv); // Add to beginning (most recent)
-      
+
       localStorage.setItem('conversations', JSON.stringify(conversations));
       const info = getStorageInfo();
       console.log(`Added large conversation. Storage now at ${info.percentUsed.toFixed(1)}%`);
       return info;
     },
-    
+
     // Simulate realistic growth over time
     simulateGrowth: function(daysToSimulate = 30, includeLegacy = false) {
       console.log(`Simulating ${daysToSimulate} days of conversation growth${includeLegacy ? ' (with legacy data)' : ''}...`);
       clearTestData();
-      
+
       const conversations = [];
-      
+
       // If including legacy, add some old conversations without dates first
       if (includeLegacy) {
         const legacyCount = Math.floor(Math.random() * 10) + 5; // 5-15 legacy conversations
@@ -518,20 +518,20 @@
           conversations.push(conv);
         }
       }
-      
+
       for (let day = daysToSimulate; day > 0; day--) {
         // Random number of conversations per day (0-3)
         const conversationsToday = Math.floor(Math.random() * 4);
-        
+
         for (let c = 0; c < conversationsToday; c++) {
           const messageCount = Math.floor(Math.random() * 15) + 2; // 2-17 messages
           const conv = generateConversation(conversations.length, messageCount, day);
           conversations.push(conv);
         }
       }
-      
+
       localStorage.setItem('conversations', JSON.stringify(conversations));
-      
+
       const info = getStorageInfo();
       console.log(`✅ Simulation complete!`);
       console.log(`   - Created ${conversations.length} conversations over ${daysToSimulate} days`);
