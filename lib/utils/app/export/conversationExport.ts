@@ -3,7 +3,7 @@ import {
   needsMigration,
 } from '@/lib/utils/chat/messageVersioning';
 
-import { Conversation } from '@/types/chat';
+import { Conversation, Message } from '@/types/chat';
 
 /**
  * Format for single conversation export
@@ -111,8 +111,10 @@ export function validateAndPrepareImport(
   const conversation = data.conversation;
 
   // Migrate legacy messages if needed
+  // When importing from JSON, messages could be the old Message[] format
+  // needsMigration checks if any assistant messages are not wrapped in groups
   const migratedMessages = needsMigration(conversation.messages)
-    ? migrateLegacyMessages(conversation.messages)
+    ? migrateLegacyMessages(conversation.messages as Message[])
     : conversation.messages;
 
   // Check for ID conflicts
