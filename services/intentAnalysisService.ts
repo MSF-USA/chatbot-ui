@@ -3,7 +3,7 @@
  *
  * Analyzes user messages to determine the best agent type for routing
  * and provides intent classification for enhanced chat experiences.
- * 
+ *
  * Now uses centralized agent configuration for keywords and intent classification.
  */
 
@@ -29,21 +29,21 @@ export class IntentAnalysisService {
    */
   async initialize(): Promise<void> {
     console.log('[INFO] Initializing Intent Analysis Service with centralized configuration');
-    
+
     // Load centralized intent classification configurations
     const processor = getConfigProcessor();
     const configBundle = processor.generateConfigBundle();
-    
+
     this.keywordsByCategory = configBundle.keywordsByCategory;
     this.agentScoringConfigs = configBundle.agentScoring;
     this.intentClassificationConfigs = configBundle.intentClassification;
-    
+
     console.log('[INFO] Loaded intent classification configurations:', {
       categories: Object.keys(this.keywordsByCategory),
       agentTypes: Object.keys(this.agentScoringConfigs),
       totalKeywords: Object.values(this.keywordsByCategory).reduce((sum, arr) => sum + arr.length, 0),
     });
-    
+
     this.initialized = true;
   }
 
@@ -65,7 +65,7 @@ export class IntentAnalysisService {
     const keywords: string[] = [];
 
     console.log('[IntentAnalysis] Normalized message:', lowerMessage);
-    console.log('[IntentAnalysis] Using centralized configuration with categories:', 
+    console.log('[IntentAnalysis] Using centralized configuration with categories:',
       Object.keys(this.keywordsByCategory));
 
     // Analyze intent using centralized agent configurations
@@ -79,7 +79,7 @@ export class IntentAnalysisService {
     for (const [agentType, scoringConfig] of Object.entries(this.agentScoringConfigs)) {
       const score = this.calculateKeywordScore(lowerMessage, scoringConfig.keywords);
       const foundKeywords = scoringConfig.keywords.filter((kw: string) => lowerMessage.includes(kw));
-      
+
       console.log(`[IntentAnalysis] ${agentType} analysis:`, {
         score,
         threshold: scoringConfig.threshold,

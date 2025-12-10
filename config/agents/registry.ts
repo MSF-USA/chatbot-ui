@@ -1,6 +1,6 @@
 /**
  * Centralized Agent Registry
- * 
+ *
  * This is the single source of truth for all agent configurations.
  * Instead of scattering configuration across 25+ files, all agent definitions
  * are centralized here and automatically processed throughout the application.
@@ -1768,7 +1768,7 @@ export function getEnabledAgents(): AgentDefinition[] {
  */
 export function getAvailableAgents(): AgentDefinition[] {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  return getEnabledAgents().filter(agent => 
+  return getEnabledAgents().filter(agent =>
     !agent.metadata.developmentOnly || isDevelopment
   );
 }
@@ -1786,7 +1786,7 @@ export function getAgentsWithCommands(): AgentDefinition[] {
 export function getAgentByCommand(command: string): AgentDefinition | undefined {
   return getAvailableAgents().find(agent => {
     if (!agent.commands) return false;
-    return agent.commands.primary === command || 
+    return agent.commands.primary === command ||
            agent.commands.aliases?.includes(command);
   });
 }

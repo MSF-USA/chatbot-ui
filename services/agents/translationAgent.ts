@@ -1,4 +1,4 @@
-import { 
+import {
   AgentConfig,
   AgentExecutionContext,
   AgentExecutionEnvironment,
@@ -46,7 +46,7 @@ export class TranslationAgent extends BaseAgent {
     try {
       // Validate configuration
       const translationConfig = this.config as TranslationAgentConfig;
-      
+
       this.logInfo('TranslationAgent initialized successfully', {
         agentId: this.config.id,
         enableLanguageDetection: translationConfig.enableLanguageDetection ?? true,
@@ -79,7 +79,7 @@ export class TranslationAgent extends BaseAgent {
 
             // Parse the translation request from the query
             const translationParams = self.parseTranslationQuery(context.query, context.locale);
-            
+
             // Check cache first if enabled
             const translationConfig = self.config as TranslationAgentConfig;
             if (translationConfig.enableCaching) {
@@ -106,7 +106,7 @@ export class TranslationAgent extends BaseAgent {
 
             // Format and stream the response
             const formattedResponse = self.formatTranslationResponse(translationResponse, translationParams);
-            
+
             // Cache the result if enabled
             if (translationConfig.enableCaching) {
               const cacheKey = self.generateCacheKey(translationParams);
@@ -160,9 +160,9 @@ export class TranslationAgent extends BaseAgent {
 
       // Parse the translation request from the query
       const translationParams = this.parseTranslationQuery(context.query, context.locale);
-      
+
       console.log('[TranslationAgent] executeInternal - Parsed parameters:', translationParams);
-      
+
       // Check cache first if enabled
       const translationConfig = this.config as TranslationAgentConfig;
       if (translationConfig.enableCaching) {
@@ -183,7 +183,7 @@ export class TranslationAgent extends BaseAgent {
         user: context.user,
         userLocale: context.locale,
       };
-      
+
       console.log('[TranslationAgent] executeInternal - Service request:', serviceRequest);
 
       const translationResponse = await this.translationService.translateText(serviceRequest);
@@ -196,7 +196,7 @@ export class TranslationAgent extends BaseAgent {
         formattedResponse = this.formatTranslationResponse(translationResponse, translationParams);
       } catch (formattingError) {
         console.error('[TranslationAgent] executeInternal - Formatting error:', formattingError);
-        
+
         // Create a fallback response with error information
         formattedResponse = `❌ **Translation Error**\n\n`;
         formattedResponse += `**Original Text:**\n> ${translationParams.text}\n\n`;
@@ -205,16 +205,16 @@ export class TranslationAgent extends BaseAgent {
         formattedResponse += `- Source Language: ${translationParams.sourceLanguage || 'auto-detect'}\n`;
         formattedResponse += `- Target Language: ${translationParams.targetLanguage}\n`;
         formattedResponse += `- Service Response: ${JSON.stringify(translationResponse, null, 2)}`;
-        
+
         // This will still be returned as a "successful" response, but with error content
         // The user will see the error details instead of empty content
       }
-      
+
       console.log('[TranslationAgent] executeInternal - Formatted response:', {
         length: formattedResponse.length,
         preview: formattedResponse.substring(0, 200),
       });
-      
+
       // Cache the result if enabled
       if (translationConfig.enableCaching) {
         const cacheKey = this.generateCacheKey(translationParams);
@@ -222,7 +222,7 @@ export class TranslationAgent extends BaseAgent {
       }
 
       const finalResponse = this.createSuccessResponse(formattedResponse, context, Date.now() - startTime);
-      
+
       console.log('[TranslationAgent] executeInternal - Final response:', {
         content: finalResponse.content,
         contentLength: finalResponse.content?.length,
@@ -232,7 +232,7 @@ export class TranslationAgent extends BaseAgent {
       return finalResponse;
     } catch (error) {
       const executionTime = Date.now() - startTime;
-      
+
       console.error('[TranslationAgent] executeInternal - Error:', {
         error: error instanceof Error ? error.message : String(error),
         stack: error instanceof Error ? error.stack : undefined,
@@ -240,7 +240,7 @@ export class TranslationAgent extends BaseAgent {
         query: context.query,
         executionTime,
       });
-      
+
       throw new AgentExecutionError(
         `Translation execution failed: ${
           error instanceof Error ? error.message : String(error)
@@ -288,7 +288,7 @@ export class TranslationAgent extends BaseAgent {
    * Parse translation query to extract parameters
    * Supports three formats:
    * 1. "/translate source_lang target_lang text"
-   * 2. "/translate target_lang text" 
+   * 2. "/translate target_lang text"
    * 3. "/translate text"
    */
   private parseTranslationQuery(query: string, defaultLocale: string): {
@@ -303,76 +303,76 @@ export class TranslationAgent extends BaseAgent {
 
     // Remove the /translate command prefix if present
     const cleanQuery = query.replace(/^\/translate\s*/, '').trim();
-    
+
     console.log('[TranslationAgent] parseTranslationQuery - After prefix removal:', {
       cleanQuery,
       originalQuery: query,
     });
-    
+
     if (!cleanQuery) {
       console.error('[TranslationAgent] parseTranslationQuery - No text provided');
       throw new Error('No text provided for translation');
     }
 
     const parts = cleanQuery.split(/\s+/);
-    
+
     console.log('[TranslationAgent] parseTranslationQuery - Parts:', {
       parts,
       partsLength: parts.length,
     });
-    
+
     // Pattern 1: source_lang target_lang text
     if (parts.length >= 3) {
       const firstIsLangCode = this.looksLikeLanguageCode(parts[0]);
       const secondIsLangCode = this.looksLikeLanguageCode(parts[1]);
-      
+
       console.log('[TranslationAgent] parseTranslationQuery - Pattern 1 check:', {
         firstPart: parts[0],
         firstIsLangCode,
-        secondPart: parts[1], 
+        secondPart: parts[1],
         secondIsLangCode,
         pattern1Match: firstIsLangCode && secondIsLangCode,
       });
-      
+
       if (firstIsLangCode && secondIsLangCode) {
         const result = {
           sourceLanguage: parts[0],
           targetLanguage: parts[1],
           text: parts.slice(2).join(' '),
         };
-        
+
         console.log('[TranslationAgent] parseTranslationQuery - Pattern 1 result:', result);
         return result;
       }
     }
-    
+
     // Pattern 2: target_lang text
     if (parts.length >= 2) {
       const firstIsLangCode = this.looksLikeLanguageCode(parts[0]);
-      
+
       console.log('[TranslationAgent] parseTranslationQuery - Pattern 2 check:', {
         firstPart: parts[0],
         firstIsLangCode,
         pattern2Match: firstIsLangCode,
       });
-      
+
       if (firstIsLangCode) {
         const result = {
           targetLanguage: parts[0],
           text: parts.slice(1).join(' '),
         };
-        
+
         console.log('[TranslationAgent] parseTranslationQuery - Pattern 2 result:', result);
         return result;
       }
     }
-    
+
     // Pattern 3: text (infer everything)
     const result = {
       targetLanguage: defaultLocale || 'en',
       text: cleanQuery,
     };
-    
+
     console.log('[TranslationAgent] parseTranslationQuery - Pattern 3 result:', result);
     return result;
   }
@@ -384,13 +384,13 @@ export class TranslationAgent extends BaseAgent {
   private looksLikeLanguageCode(str: string): boolean {
     // Allow 2-5 character codes, letters only, with optional dashes/underscores
     const result = /^[a-zA-Z]{2,5}([_-][a-zA-Z]{2,5})?$/.test(str);
-    
+
     console.log('[TranslationAgent] looksLikeLanguageCode:', {
       input: str,
       result,
       regex: '^[a-zA-Z]{2,5}([_-][a-zA-Z]{2,5})?$',
     });
-    
+
     return result;
   }
 
@@ -443,14 +443,14 @@ export class TranslationAgent extends BaseAgent {
     if (response.notes && response.notes.trim()) {
       result += `\n\n**Translation Notes:**\n*${response.notes}*`;
     }
-    
+
     console.log('[TranslationAgent] formatTranslationResponse - Result:', {
       resultLength: result.length,
       resultPreview: result.substring(0, 200) + '...',
       hasTranslatedText: !!response.translatedText,
       translatedTextLength: response.translatedText?.length,
     });
-    
+
     return result;
   }
 
@@ -473,17 +473,17 @@ export class TranslationAgent extends BaseAgent {
 
     // Calculate confidence based on content length and execution time
     let confidence = 0.8; // Default confidence for successful translation
-    
+
     if (content && content.length > 0) {
       // Higher confidence for longer content (assuming more substantial translation)
       if (content.length > 200) confidence = 0.9;
       else if (content.length > 100) confidence = 0.85;
       else confidence = 0.8;
-      
+
       // Adjust based on execution time (very fast might indicate cached/simple, very slow might indicate issues)
       if (executionTime < 500) confidence += 0.05; // Fast response bonus
       else if (executionTime > 5000) confidence -= 0.1; // Slow response penalty
-      
+
       // Ensure confidence is within valid range
       confidence = Math.max(0.1, Math.min(1.0, confidence));
     } else {
@@ -536,11 +536,11 @@ export class TranslationAgent extends BaseAgent {
     if (cached && Date.now() - cached.timestamp < this.CACHE_TTL) {
       return cached.response;
     }
-    
+
     if (cached) {
       this.translationCache.delete(cacheKey);
     }
-    
+
     return null;
   }
 
@@ -553,7 +553,7 @@ export class TranslationAgent extends BaseAgent {
       const oldestKey = this.translationCache.keys().next().value;
       this.translationCache.delete(oldestKey);
     }
-    
+
     this.translationCache.set(cacheKey, {
       response,
       timestamp: Date.now(),

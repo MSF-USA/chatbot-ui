@@ -12,7 +12,7 @@
       "keywords": ["privacy", "data protection", "internal", "secure", "MSF", "Azure", "AI Assistant", "chatbot", "data within MSF", "privacy guarantees", "safer", "external tools"]
     },
     {
-      "id": "privacy_002", 
+      "id": "privacy_002",
       "type": "privacy_policy",
       "category": "data_storage",
       "question": "Where is my data stored and processed?",
@@ -21,7 +21,7 @@
     },
     {
       "id": "privacy_003",
-      "type": "privacy_policy", 
+      "type": "privacy_policy",
       "category": "prohibited_data",
       "question": "What data should I NOT put into the MSF AI Assistant?",
       "answer": "You will NOT put into ai.msf.org prompts/upload into it any of the following information:\n- Personal data (names, phone numbers, CVs, testimonies; anything which can directly or indirectly identify an individual -- this includes a combination of data that together can make it possible to identify an individual)\n- Highly sensitive data (data that can be intentionally or unintentionally used to harm individuals, communities, MSF or its staff -- determining the sensitivity of data requires incorporating context analysis e.g. locations of sensitive projects or at-risk groups, security incidents, and other operational details)",

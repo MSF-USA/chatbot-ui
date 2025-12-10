@@ -883,7 +883,7 @@ export class AgentErrorHandlingService {
 
     return `I apologize, but I'm currently experiencing some technical difficulties with the ${
       request.agentType
-    } service. ${userFriendlyErrors[0]} 
+    } service. ${userFriendlyErrors[0]}
 
 I understand you were asking about: "${request.context.query.substring(
       0,

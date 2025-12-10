@@ -462,7 +462,7 @@ export class IntentAnalysisService {
     console.log('[IntentAnalysis] Checking each agent type against query');
     const centralizedService = getCentralizedIntentService();
     const agentTypes = Object.values(AgentType);
-    
+
     for (const agentType of agentTypes) {
       const guidance = centralizedService.getAgentGuidance(agentType);
       console.log(

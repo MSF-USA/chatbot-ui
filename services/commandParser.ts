@@ -147,7 +147,7 @@ export class CommandParser {
         if (!agentDef.commands) continue;
 
         const commands = agentDef.commands;
-        
+
         // Register primary command
         this.registerCommand({
           command: commands.primary,
@@ -172,7 +172,7 @@ export class CommandParser {
               type: CommandType.AGENT,
               description: `Alias for ${commands.primary} - ${agentDef.metadata.description}`,
               usage: commands.usage.replace(`/${commands.primary}`, `/${alias}`),
-              examples: commands.examples.map(ex => 
+              examples: commands.examples.map(ex =>
                 ex.replace(`/${commands.primary}`, `/${alias}`)
               ),
               hidden: commands.hidden || false,
@@ -233,7 +233,7 @@ export class CommandParser {
    */
   private initializeFallbackAgentCommands(): void {
     console.warn('[CommandParser] Using fallback agent command registration');
-    
+
     // Basic fallback commands for critical agents
     const fallbackCommands = [
       { command: 'search', agentType: AgentType.WEB_SEARCH, name: 'web search agent' },
@@ -410,7 +410,7 @@ export class CommandParser {
             error: 'No message to regenerate. Send a message first.',
           };
         }
-        
+
         return {
           success: true,
           utilityAction: 'regenerate_response',

@@ -174,14 +174,14 @@ export class CodeInterpreterService {
       );
     }
 
-    /* 
+    /*
     TODO: Actual Azure AI Agents implementation will look vaguely like this:
-    
+
     const client = new AgentsClient(this.projectEndpoint, new DefaultAzureCredential());
-    
+
     // Create code interpreter tool
     const codeInterpreterTool = ToolUtility.createCodeInterpreterTool();
-    
+
     // Create agent for code execution
     const agent = await client.createAgent(request.model || 'gpt-4o', {
       name: 'code-interpreter-agent',
@@ -189,7 +189,7 @@ export class CodeInterpreterService {
       tools: [codeInterpreterTool.definition],
       toolResources: codeInterpreterTool.resources,
     });
-    
+
     // Create thread and message
     const thread = await client.threads.create();
     const message = await client.messages.create(
@@ -197,21 +197,21 @@ export class CodeInterpreterService {
       'user',
       this.formatCodeForExecution(request)
     );
-    
+
     // Execute code
     let run = await client.runs.create(thread.id, agent.id);
     while (run.status === 'queued' || run.status === 'in_progress') {
       await new Promise(resolve => setTimeout(resolve, 1000));
       run = await client.runs.get(thread.id, run.id);
     }
-    
+
     // Process results
     const messages = client.messages.list(thread.id);
     const result = await this.processAgentResponse(messages, executionId);
-    
+
     // Cleanup
     await client.deleteAgent(agent.id);
-    
+
     return result;
     */
   }

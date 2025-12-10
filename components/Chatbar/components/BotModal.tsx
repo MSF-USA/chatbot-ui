@@ -15,7 +15,7 @@ import { useTranslation } from 'next-i18next';
 
 import { Bot, bots } from '@/types/bots';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 import BetaBadge from '@/components/Beta/Badge';
 

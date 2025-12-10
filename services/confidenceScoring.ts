@@ -651,7 +651,7 @@ export class ConfidenceScoringSystem {
       [AgentType.FOUNDRY]: ['complex', 'analyze', 'reasoning', 'sophisticated'],
       [AgentType.TRANSLATION]: [
         'translate',
-        'translation', 
+        'translation',
         'language',
         'convert',
         'interpret',
