@@ -13,6 +13,7 @@ import {
   Message,
   MessageType,
   TextMessageContent,
+  VersionInfo,
 } from '@/types/chat';
 
 import { AssistantMessage } from '@/components/Chat/ChatMessages/AssistantMessage';
@@ -30,6 +31,10 @@ export interface Props {
   onQuestionClick?: (question: string) => void;
   onRegenerate?: () => void;
   onSaveAsPrompt?: (content: string) => void;
+  // Version navigation props
+  versionInfo?: VersionInfo | null;
+  onPreviousVersion?: () => void;
+  onNextVersion?: () => void;
 }
 
 export const ChatMessage: FC<Props> = ({
@@ -39,6 +44,9 @@ export const ChatMessage: FC<Props> = ({
   onQuestionClick,
   onRegenerate,
   onSaveAsPrompt,
+  versionInfo,
+  onPreviousVersion,
+  onNextVersion,
 }) => {
   const t = useTranslations();
   const { selectedConversation, updateConversation, conversations } =
@@ -198,6 +206,9 @@ export const ChatMessage: FC<Props> = ({
           selectedConversation={selectedConversation}
           messageCopied={messagedCopied}
           onRegenerate={onRegenerate}
+          versionInfo={versionInfo}
+          onPreviousVersion={onPreviousVersion}
+          onNextVersion={onNextVersion}
         >
           <TranscriptViewer
             filename={message.transcript.filename}
@@ -255,6 +266,9 @@ export const ChatMessage: FC<Props> = ({
             selectedConversation={selectedConversation}
             messageCopied={messagedCopied}
             onRegenerate={onRegenerate}
+            versionInfo={versionInfo}
+            onPreviousVersion={onPreviousVersion}
+            onNextVersion={onNextVersion}
           >
             <div className="mb-3">
               <FileContent files={files} images={images} />
@@ -310,6 +324,9 @@ export const ChatMessage: FC<Props> = ({
             selectedConversation={selectedConversation}
             messageCopied={messagedCopied}
             onRegenerate={onRegenerate}
+            versionInfo={versionInfo}
+            onPreviousVersion={onPreviousVersion}
+            onNextVersion={onNextVersion}
           >
             <div className="mb-3">
               <ImageContent images={images} />
