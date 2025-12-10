@@ -64,7 +64,7 @@ describe('Conversation tests', () => {
       }),
     );
 
-    for (const result: Conversation in results) {
+    for (const result of results) {
       expect(result.model).toBe(OpenAIModels[OpenAIModelID.GPT_3_5]);
       expect(result.prompt).toBe(DEFAULT_SYSTEM_PROMPT);
       expect(result.temperature).toBe(DEFAULT_TEMPERATURE);

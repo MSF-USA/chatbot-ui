@@ -54,13 +54,13 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Compare these two files' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file1.pdf',
             originalFilename: 'document1.pdf'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file2.sql',
             originalFilename: 'query.sql'
           },
@@ -167,7 +167,7 @@ describe('frontendChatServices', () => {
       const finalRequestCall = mockFetch.mock.calls[2];
       const finalRequestBody = JSON.parse(finalRequestCall[1].body);
       const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
-      
+
       // Check that the comparison prompt includes both summaries
       expect(finalMessage.content[0].text).toContain('document1.pdf');
       expect(finalMessage.content[0].text).toContain('This is a summary of document1.pdf containing important information.');
@@ -186,13 +186,13 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Analyze this file' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/legacy.txt',
             originalFilename: 'legacy.txt'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/old.csv',
             originalFilename: 'old.csv'
           },
@@ -250,7 +250,7 @@ describe('frontendChatServices', () => {
       const finalRequestCall = mockFetch.mock.calls[2];
       const finalRequestBody = JSON.parse(finalRequestCall[1].body);
       const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
-      
+
       expect(finalMessage.content[0].text).toContain('Legacy format summary of legacy.txt file.');
       expect(finalMessage.content[0].text).toContain('Old format summary of old.csv data.');
     });
@@ -260,13 +260,13 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Compare files' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/new.pdf',
             originalFilename: 'new.pdf'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/old.txt',
             originalFilename: 'old.txt'
           },
@@ -326,7 +326,7 @@ describe('frontendChatServices', () => {
       const finalRequestCall = mockFetch.mock.calls[2];
       const finalRequestBody = JSON.parse(finalRequestCall[1].body);
       const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
-      
+
       // Both summaries should be included
       expect(finalMessage.content[0].text).toContain('New v2 format summary');
       expect(finalMessage.content[0].text).toContain('Old v1 format summary');
@@ -337,13 +337,13 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Analyze files' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/empty.pdf',
             originalFilename: 'empty.pdf'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/null.txt',
             originalFilename: 'null.txt'
           },
@@ -403,7 +403,7 @@ describe('frontendChatServices', () => {
       const finalRequestCall = mockFetch.mock.calls[2];
       const finalRequestBody = JSON.parse(finalRequestCall[1].body);
       const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
-      
+
       // Should have empty summaries but still include file names
       expect(finalMessage.content[0].text).toContain('empty.pdf');
       expect(finalMessage.content[0].text).toContain('null.txt');
@@ -417,13 +417,13 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Analyze these items' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/document.pdf',
             originalFilename: 'document.pdf'
           },
-          { 
-            type: 'image_url', 
+          {
+            type: 'image_url',
             image_url: { url: 'https://example.com/image.png' }
           },
         ],
@@ -486,7 +486,7 @@ describe('frontendChatServices', () => {
       const finalRequestCall = mockFetch.mock.calls[2];
       const finalRequestBody = JSON.parse(finalRequestCall[1].body);
       const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
-      
+
       expect(finalMessage.content[0].text).toContain('document.pdf');
       expect(finalMessage.content[0].text).toContain('Document summary');
       expect(finalMessage.content[0].text).toContain('Image: image.png');
@@ -498,18 +498,18 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Process files' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file1.pdf',
             originalFilename: 'file1.pdf'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file2.pdf',
             originalFilename: 'file2.pdf'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file3.pdf',
             originalFilename: 'file3.pdf'
           },
@@ -557,8 +557,8 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Analyze this file' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/single.pdf',
             originalFilename: 'single.pdf'
           },
@@ -597,43 +597,43 @@ describe('frontendChatServices', () => {
   describe('Helper functions', () => {
     it('should correctly identify complex content', async () => {
       // Import the helper function directly
-      const module = await vi.importActual('@/services/frontendChatServices') as any;
-      const isComplexContent = module.isComplexContent;
-      
+      const chatModule = await vi.importActual('@/services/frontendChatServices') as any;
+      const isComplexContent = chatModule.isComplexContent;
+
       // More than 2 content items
       expect(isComplexContent([
         { type: 'text', text: 'test' },
         { type: 'file_url', url: 'file1' },
         { type: 'file_url', url: 'file2' },
       ])).toBe(true);
-      
+
       // Multiple files
       expect(isComplexContent([
         { type: 'text', text: 'test' },
         { type: 'file_url', url: 'file1' },
         { type: 'file_url', url: 'file2' },
       ])).toBe(true);
-      
+
       // Multiple images
       expect(isComplexContent([
         { type: 'text', text: 'test' },
         { type: 'image_url', image_url: { url: 'img1' } },
         { type: 'image_url', image_url: { url: 'img2' } },
       ])).toBe(true);
-      
+
       // Mixed file and image
       expect(isComplexContent([
         { type: 'text', text: 'test' },
         { type: 'file_url', url: 'file' },
         { type: 'image_url', image_url: { url: 'img' } },
       ])).toBe(true);
-      
+
       // Not complex - single file
       expect(isComplexContent([
         { type: 'text', text: 'test' },
         { type: 'file_url', url: 'file' },
       ])).toBe(false);
-      
+
       // Not complex - single image
       expect(isComplexContent([
         { type: 'text', text: 'test' },
@@ -642,12 +642,12 @@ describe('frontendChatServices', () => {
     });
 
     it('should create chat body with correct parameters', async () => {
-      const module = await vi.importActual('@/services/frontendChatServices') as any;
-      const createChatBody = module.createChatBody;
-      
+      const chatModule = await vi.importActual('@/services/frontendChatServices') as any;
+      const createChatBody = chatModule.createChatBody;
+
       const conversation = createMockConversation([]);
       const messages: Message[] = [{ role: 'user', content: 'test' }];
-      
+
       // Basic chat body
       const chatBody = createChatBody(
         conversation,
@@ -658,7 +658,7 @@ describe('frontendChatServices', () => {
         'bot-123',
         true,
       );
-      
+
       expect(chatBody.model).toEqual(conversation.model);
       expect(chatBody.messages).toEqual(messages);
       expect(chatBody.key).toBe('api-key');
@@ -666,7 +666,7 @@ describe('frontendChatServices', () => {
       expect(chatBody.temperature).toBe(0.5); // Uses conversation temperature
       expect(chatBody.botId).toBe('bot-123');
       expect(chatBody.stream).toBe(true);
-      
+
       // With force standard chat
       const chatBodyForced = createChatBody(
         { ...conversation, prompt: null, temperature: null },
@@ -678,11 +678,11 @@ describe('frontendChatServices', () => {
         false,
         true,
       );
-      
+
       expect(chatBodyForced.prompt).toBe('system-prompt');
       expect(chatBodyForced.temperature).toBe(0.7);
       expect(chatBodyForced.forceStandardChat).toBe(true);
-      
+
       // With agent settings
       const agentSettings = { enabled: true, enabledAgentTypes: ['web_search'] };
       const chatBodyWithAgent = createChatBody(
@@ -697,15 +697,15 @@ describe('frontendChatServices', () => {
         agentSettings,
         'web_search' as AgentType,
       );
-      
+
       expect(chatBodyWithAgent.agentSettings).toEqual(agentSettings);
       expect(chatBodyWithAgent.forceAgentType).toBe('web_search');
     });
 
     it('should append plugin keys correctly', async () => {
-      const module = await vi.importActual('@/services/frontendChatServices') as any;
-      const appendPluginKeys = module.appendPluginKeys;
-      
+      const chatModule = await vi.importActual('@/services/frontendChatServices') as any;
+      const appendPluginKeys = chatModule.appendPluginKeys;
+
       const chatBody: ChatBody = {
         model: {} as any,
         messages: [],
@@ -713,7 +713,7 @@ describe('frontendChatServices', () => {
         prompt: 'test',
         temperature: 0.5,
       };
-      
+
       const pluginKeys = [
         {
           pluginId: PluginID.GOOGLE_SEARCH,
@@ -723,13 +723,13 @@ describe('frontendChatServices', () => {
           ],
         },
       ];
-      
+
       const result = appendPluginKeys(chatBody, pluginKeys);
-      
+
       expect(result.googleAPIKey).toBe('test-api-key');
       expect(result.googleCSEId).toBe('test-cse-id');
       expect(result.model).toEqual(chatBody.model);
-      
+
       // Test with empty plugin keys
       const resultEmpty = appendPluginKeys(chatBody, []);
       expect(resultEmpty.googleAPIKey).toBeUndefined();
@@ -743,9 +743,9 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'What is the weather today?',
       };
-      
+
       const conversation = createMockConversation([textMessage]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream({
@@ -755,7 +755,7 @@ describe('frontendChatServices', () => {
           },
         }),
       });
-      
+
       const result = await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -767,11 +767,11 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       expect(result.hasComplexContent).toBe(false);
       expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(mockSetRequestStatusMessage).not.toHaveBeenCalledWith('Handling multi-file processing. Please wait...');
-      
+
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(requestBody.messages).toHaveLength(1);
       expect(requestBody.stream).toBe(true);
@@ -786,14 +786,14 @@ describe('frontendChatServices', () => {
         ],
         messageType: 'text',
       };
-      
+
       const conversation = createMockConversation([imageMessage]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       const result = await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -805,7 +805,7 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       expect(result.hasComplexContent).toBe(false);
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -815,17 +815,17 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'Hello bot',
       };
-      
+
       const conversation = {
         ...createMockConversation([message]),
         bot: 'bot-123',
       };
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -837,7 +837,7 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(requestBody.botId).toBe('bot-123');
     });
@@ -854,14 +854,14 @@ describe('frontendChatServices', () => {
         { role: 'assistant', content: 'Response 4' },
         { role: 'user', content: 'Current message' },
       ];
-      
+
       const conversation = createMockConversation(messages);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -873,7 +873,7 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       // Should include last 6 messages (slice(-6))
       expect(requestBody.messages).toHaveLength(6);
@@ -888,15 +888,15 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'Search for latest news',
       };
-      
+
       const conversation = createMockConversation([message]);
-      
+
       const plugin: Plugin = {
         id: PluginID.GOOGLE_SEARCH,
         name: 'Google Search',
         requiredKeys: [],
       };
-      
+
       const pluginKeys = [
         {
           pluginId: PluginID.GOOGLE_SEARCH,
@@ -906,12 +906,12 @@ describe('frontendChatServices', () => {
           ],
         },
       ];
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       // Mock getEndpoint to throw for Google plugin
       const getEndpointMock = vi.mocked(getEndpoint);
       getEndpointMock.mockImplementation((plugin) => {
@@ -920,7 +920,7 @@ describe('frontendChatServices', () => {
         }
         return 'api/v2/chat';
       });
-      
+
       await expect(
         makeRequest(
           plugin,
@@ -943,24 +943,24 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'Long running query',
       };
-      
+
       const conversation = createMockConversation([message]);
       const stopConversationRef = { current: false };
-      
+
       let fetchResolve: any;
       const fetchPromise = new Promise((resolve) => {
         fetchResolve = resolve;
       });
-      
+
       mockFetch.mockImplementation(() => {
         // Simulate stop being triggered during request
         setTimeout(() => {
           stopConversationRef.current = true;
         }, 50);
-        
+
         return fetchPromise;
       });
-      
+
       const requestPromise = makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -973,18 +973,18 @@ describe('frontendChatServices', () => {
         mockSetProgress,
         stopConversationRef,
       );
-      
+
       // Wait for abort to be triggered
       await new Promise(resolve => setTimeout(resolve, 150));
-      
+
       // Resolve the fetch to complete the test
       fetchResolve({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       await requestPromise;
-      
+
       // Verify abort was logged
       expect(console.log).toHaveBeenCalledWith('Aborting due to stop request');
     });
@@ -994,12 +994,12 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'Query',
       };
-      
+
       const conversation = createMockConversation([message]);
       const stopConversationRef = { current: false };
-      
+
       mockFetch.mockRejectedValue(new DOMException('Aborted', 'AbortError'));
-      
+
       const result = await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1012,7 +1012,7 @@ describe('frontendChatServices', () => {
         mockSetProgress,
         stopConversationRef,
       );
-      
+
       expect(result.response).toBeDefined();
       expect(result.response.status).toBe(200);
       expect(console.log).toHaveBeenCalledWith('Request was aborted by user');
@@ -1025,19 +1025,19 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'Query with agents',
       };
-      
+
       const conversation = createMockConversation([message]);
-      
+
       const agentSettings = {
         enabled: true,
         enabledAgentTypes: ['web_search', 'local_knowledge'],
       };
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1053,7 +1053,7 @@ describe('frontendChatServices', () => {
         agentSettings,
         'web_search' as AgentType,
       );
-      
+
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(requestBody.agentSettings).toEqual(agentSettings);
       expect(requestBody.forceAgentType).toBe('web_search');
@@ -1066,14 +1066,14 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'Non-streaming query',
       };
-      
+
       const conversation = createMockConversation([message]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       const result = await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1085,7 +1085,7 @@ describe('frontendChatServices', () => {
         false, // Non-streaming
         mockSetProgress,
       );
-      
+
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(requestBody.stream).toBe(false);
       expect(result.response).toBeDefined();
@@ -1101,15 +1101,15 @@ describe('frontendChatServices', () => {
         ],
         messageType: 'text',
       };
-      
+
       const conversation = createMockConversation([multiFileMessage]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ data: { text: 'Summary' } }),
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1121,11 +1121,11 @@ describe('frontendChatServices', () => {
         false, // Non-streaming
         mockSetProgress,
       );
-      
+
       // First two requests are non-streaming (for summaries)
       const firstRequestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(firstRequestBody.stream).toBe(false);
-      
+
       // Final request should also be non-streaming
       const finalRequestBody = JSON.parse(mockFetch.mock.calls[2][1].body);
       expect(finalRequestBody.stream).toBe(false);
@@ -1144,15 +1144,15 @@ describe('frontendChatServices', () => {
         ],
         messageType: 'text',
       };
-      
+
       const conversation = createMockConversation([multiFileMessage]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ data: { text: 'Summary' } }),
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1164,7 +1164,7 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       expect(mockSetRequestStatusMessage).toHaveBeenCalledWith(`Processing ${longFilename}...`);
     });
 
@@ -1179,15 +1179,15 @@ describe('frontendChatServices', () => {
         ],
         messageType: 'text',
       };
-      
+
       const conversation = createMockConversation([multiFileMessage]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ data: { text: 'Summary' } }),
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1199,11 +1199,11 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       const finalRequestCall = mockFetch.mock.calls[2];
       const finalRequestBody = JSON.parse(finalRequestCall[1].body);
       const finalMessage = finalRequestBody.messages[finalRequestBody.messages.length - 1];
-      
+
       // Should properly escape special characters in the prompt
       expect(finalMessage.content[0].text).toContain(specialFilename);
     });
@@ -1214,7 +1214,7 @@ describe('frontendChatServices', () => {
         url: `file${i}.pdf`,
         originalFilename: `file${i}.pdf`,
       }));
-      
+
       const multiFileMessage: Message = {
         role: 'user',
         content: [
@@ -1223,15 +1223,15 @@ describe('frontendChatServices', () => {
         ],
         messageType: 'text',
       };
-      
+
       const conversation = createMockConversation([multiFileMessage]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ data: { text: 'Summary' } }),
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1243,10 +1243,10 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       // Should make 10 summary requests + 1 final request
       expect(mockFetch).toHaveBeenCalledTimes(11);
-      
+
       // Progress should be updated correctly
       const expectedProgress = [0, 9.09, 18.18, 27.27, 36.36, 45.45, 54.55, 63.64, 72.73, 81.82, 90.91];
       expectedProgress.forEach(progress => {
@@ -1259,14 +1259,14 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: 'First message',
       };
-      
+
       const conversation = createMockConversation([message]);
-      
+
       mockFetch.mockResolvedValue({
         ok: true,
         body: new ReadableStream(),
       });
-      
+
       await makeRequest(
         null,
         mockSetRequestStatusMessage,
@@ -1278,7 +1278,7 @@ describe('frontendChatServices', () => {
         true,
         mockSetProgress,
       );
-      
+
       const requestBody = JSON.parse(mockFetch.mock.calls[0][1].body);
       expect(requestBody.messages).toHaveLength(1);
       expect(requestBody.messages[0].content).toBe('First message');
@@ -1291,13 +1291,13 @@ describe('frontendChatServices', () => {
         role: 'user',
         content: [
           { type: 'text', text: 'Compare files' },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file1.pdf',
             originalFilename: 'file1.pdf'
           },
-          { 
-            type: 'file_url', 
+          {
+            type: 'file_url',
             url: 'https://example.com/file2.pdf',
             originalFilename: 'file2.pdf'
           },

@@ -16,7 +16,7 @@ import { CommandDefinition, CommandType } from '@/services/commandParser';
 import { Prompt } from '@/types/prompt';
 import { Message } from '@/types/chat';
 import { Plugin } from '@/types/plugin';
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 // Mock dependencies
 vi.mock('@tabler/icons-react', () => ({
@@ -29,7 +29,7 @@ vi.mock('@tabler/icons-react', () => ({
 }));
 
 vi.mock('next-i18next', () => ({
-  useTranslation: () => ({ 
+  useTranslation: () => ({
     t: (key: string, params?: any) => {
       if (params) {
         return `${key} ${JSON.stringify(params)}`;
@@ -109,8 +109,8 @@ vi.mock('@/components/Chat/PromptList', () => ({
   PromptList: ({ prompts, onSelect, activePromptIndex }: any) => (
     <div data-testid="prompt-list">
       {prompts.map((prompt: any, index: number) => (
-        <div 
-          key={prompt.id} 
+        <div
+          key={prompt.id}
           data-testid={`prompt-${index}`}
           onClick={() => onSelect(index)}
           className={index === activePromptIndex ? 'active' : ''}
@@ -130,14 +130,14 @@ vi.mock('@/components/Chat/VariableModal', () => ({
       {variables.map((v: string, i: number) => (
         <div key={i}>
           <label>{v}</label>
-          <input 
+          <input
             data-testid={`variable-${v}`}
             placeholder={`Enter a value for ${v}...`}
           />
         </div>
       ))}
       <button onClick={() => {
-        const values = variables.map((v: string, i: number) => 
+        const values = variables.map((v: string, i: number) =>
           i === 0 ? 'John' : '30'
         );
         onSubmit(values);
@@ -253,17 +253,17 @@ describe('ChatInput Selection Logic', () => {
   describe('Unified Selection Logic', () => {
     it('handles prompt selection when "/" is typed', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox');
-      
+
       // Type "/" to trigger prompt list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for prompt list to appear
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
       });
-      
+
       // Check that prompts are shown
       expect(screen.getByText('Simple Prompt')).toBeInTheDocument();
       expect(screen.getByText('Variable Prompt')).toBeInTheDocument();
@@ -271,12 +271,12 @@ describe('ChatInput Selection Logic', () => {
 
     it('shows variable modal for prompts with variables', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox');
-      
+
       // Type "/" to trigger prompt list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for prompt list
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
@@ -290,7 +290,7 @@ describe('ChatInput Selection Logic', () => {
       await waitFor(() => {
         expect(screen.getByTestId('variable-modal')).toBeInTheDocument();
       });
-      
+
       expect(screen.getByText('Variable Prompt')).toBeInTheDocument();
       expect(screen.getByText('A prompt with variables')).toBeInTheDocument();
       // Variable inputs should be present
@@ -300,12 +300,12 @@ describe('ChatInput Selection Logic', () => {
 
     it('fills in prompt content without variables directly', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
-      
+
       // Type "/" to trigger prompt list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for prompt list
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
@@ -325,17 +325,17 @@ describe('ChatInput Selection Logic', () => {
   describe('Index Calculation with Commands and Prompts', () => {
     it('correctly calculates indices when both commands and prompts are shown', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox');
-      
+
       // Type "/" to trigger command/prompt list
       await userEvent.type(textarea, '/');
-      
+
       // Should show prompt list
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
       });
-      
+
       // Verify prompts are shown
       expect(screen.getByText('Simple Prompt')).toBeInTheDocument();
       expect(screen.getByText('Variable Prompt')).toBeInTheDocument();
@@ -345,12 +345,12 @@ describe('ChatInput Selection Logic', () => {
   describe('Keyboard Navigation', () => {
     it('navigates through combined list with arrow keys', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox');
-      
+
       // Type "/" to trigger list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for list to appear
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
@@ -359,10 +359,10 @@ describe('ChatInput Selection Logic', () => {
       // Navigate with arrow keys
       await userEvent.keyboard('{ArrowDown}');
       await userEvent.keyboard('{ArrowDown}');
-      
+
       // Press Enter to select
       await userEvent.keyboard('{Enter}');
-      
+
       // Verify selection was made (prompt list should close)
       await waitFor(() => {
         expect(screen.queryByTestId('prompt-list')).not.toBeInTheDocument();
@@ -371,12 +371,12 @@ describe('ChatInput Selection Logic', () => {
 
     it('closes prompt list on Escape', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox');
-      
+
       // Type "/" to trigger list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for list to appear
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
@@ -384,7 +384,7 @@ describe('ChatInput Selection Logic', () => {
 
       // Press Escape
       await userEvent.keyboard('{Escape}');
-      
+
       // List should close
       await waitFor(() => {
         expect(screen.queryByTestId('prompt-list')).not.toBeInTheDocument();
@@ -395,12 +395,12 @@ describe('ChatInput Selection Logic', () => {
   describe('Variable Modal Interaction', () => {
     it('submits variable values and updates textarea', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox') as HTMLTextAreaElement;
-      
+
       // Type "/" to trigger prompt list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for prompt list
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
@@ -427,17 +427,17 @@ describe('ChatInput Selection Logic', () => {
 
     it('closes modal on outside click', async () => {
       renderChatInput();
-      
+
       const textarea = screen.getByRole('textbox');
-      
+
       // Type "/" to trigger prompt list
       await userEvent.type(textarea, '/');
-      
+
       // Wait for prompt list
       await waitFor(() => {
         expect(screen.getByTestId('prompt-list')).toBeInTheDocument();
       });
-      
+
       // Click on the variable prompt (index 1)
       const variablePrompt = screen.getByTestId('prompt-1');
       await userEvent.click(variablePrompt);
