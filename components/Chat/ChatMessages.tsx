@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { Message, MessageType } from '@/types/chat';
+import {
+  entryToDisplayMessage,
+  getVersionInfo,
+} from '@/lib/utils/chat/messageVersioning';
+
+import { ConversationEntry, Message, MessageType } from '@/types/chat';
 import { Citation } from '@/types/rag';
 
 import { MemoizedChatMessage } from './MemoizedChatMessage';
@@ -48,7 +53,7 @@ const AnimatedLoadingText: React.FC<{ text: string }> = ({ text }) => {
 };
 
 interface ChatMessagesProps {
-  messages: Message[];
+  messages: ConversationEntry[];
   isStreaming: boolean;
   streamingConversationId?: string | null;
   selectedConversationId?: string;
@@ -60,8 +65,9 @@ interface ChatMessagesProps {
   messagesEndRef: React.RefObject<HTMLDivElement | null>;
   onEditMessage: (message: Message) => void;
   onSelectPrompt: (prompt: string) => void;
-  onRegenerate: () => void;
+  onRegenerate: (messageIndex?: number) => void;
   onSaveAsPrompt: (content: string) => void;
+  onNavigateVersion: (messageIndex: number, direction: 'prev' | 'next') => void;
 }
 
 /**
@@ -83,32 +89,41 @@ export const ChatMessages: React.FC<ChatMessagesProps> = ({
   onSelectPrompt,
   onRegenerate,
   onSaveAsPrompt,
+  onNavigateVersion,
 }) => {
   return (
     <>
-      {messages.map((message, index) => {
+      {messages.map((entry, index) => {
         const isLastMessage = index === messages.length - 1;
+        const displayMessage = entryToDisplayMessage(entry);
+        const versionInfo = getVersionInfo(entry);
 
         return isLastMessage ? (
           <div key={index} ref={lastMessageRef} className="mb-2">
             <MemoizedChatMessage
-              message={message}
+              message={displayMessage}
               messageIndex={index}
               onEdit={onEditMessage}
               onQuestionClick={onSelectPrompt}
-              onRegenerate={onRegenerate}
+              onRegenerate={() => onRegenerate(index)}
               onSaveAsPrompt={onSaveAsPrompt}
+              versionInfo={versionInfo}
+              onPreviousVersion={() => onNavigateVersion(index, 'prev')}
+              onNextVersion={() => onNavigateVersion(index, 'next')}
             />
           </div>
         ) : (
           <div key={index} className="mb-2">
             <MemoizedChatMessage
-              message={message}
+              message={displayMessage}
               messageIndex={index}
               onEdit={onEditMessage}
               onQuestionClick={onSelectPrompt}
-              onRegenerate={onRegenerate}
+              onRegenerate={() => onRegenerate(index)}
               onSaveAsPrompt={onSaveAsPrompt}
+              versionInfo={versionInfo}
+              onPreviousVersion={() => onNavigateVersion(index, 'prev')}
+              onNextVersion={() => onNavigateVersion(index, 'next')}
             />
           </div>
         );
