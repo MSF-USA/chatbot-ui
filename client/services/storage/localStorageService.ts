@@ -505,7 +505,7 @@ export class LocalStorageService {
                 oldSelectedId ??
                 null,
             },
-            version: 1,
+            version: 2, // Must match conversationStore persist version
           };
 
           localStorage.setItem(
