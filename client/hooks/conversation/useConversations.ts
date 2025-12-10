@@ -45,16 +45,24 @@ export function useConversations() {
   // Compute filtered conversations
   const filteredConversations = !searchTerm
     ? conversations
-    : conversations.filter(
-        (c) =>
-          c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          c.messages.some((m) =>
-            m.content
+    : conversations.filter((c) => {
+        const searchLower = searchTerm.toLowerCase();
+        if (c.name.toLowerCase().includes(searchLower)) return true;
+
+        // Search in message content
+        return c.messages.some((entry) => {
+          // For assistant message groups, search in active version's content
+          if ('type' in entry && entry.type === 'assistant_group') {
+            const activeVersion = entry.versions[entry.activeIndex];
+            return activeVersion.content
               .toString()
               .toLowerCase()
-              .includes(searchTerm.toLowerCase()),
-          ),
-      );
+              .includes(searchLower);
+          }
+          // For legacy messages
+          return entry.content.toString().toLowerCase().includes(searchLower);
+        });
+      });
 
   return {
     // State
