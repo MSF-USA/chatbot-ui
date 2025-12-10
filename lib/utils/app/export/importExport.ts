@@ -88,7 +88,10 @@ export function cleanData(data: SupportedExportFormats): LatestExportFormat {
   }
 
   if (isExportFormatV5(data)) {
-    return data;
+    return {
+      ...data,
+      history: cleanConversationHistory(data.history || []),
+    };
   }
 
   throw new Error('Unsupported data format');
@@ -198,7 +201,7 @@ export const importData = (
       selectedConversationId:
         newHistory.length > 0 ? newHistory[newHistory.length - 1].id : null,
     },
-    version: 1,
+    version: 2, // Must match conversationStore persist version
   };
   localStorage.setItem(
     'conversation-storage',
