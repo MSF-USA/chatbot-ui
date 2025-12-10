@@ -95,7 +95,7 @@ export const TranslationDropdown: FC<TranslationDropdownProps> = ({
     }
   }, [isOpen, triggerRef]);
 
-  // Focus search input when dropdown opens
+  // Focus search input when dropdown opens and reset state when closed
   useEffect(() => {
     if (isOpen) {
       // Small delay to ensure DOM is ready
@@ -103,11 +103,21 @@ export const TranslationDropdown: FC<TranslationDropdownProps> = ({
         searchInputRef.current?.focus();
       }, 50);
       return () => clearTimeout(timeoutId);
-    } else {
-      // Reset state when closed
-      setSearchQuery('');
-      setSelectedIndex(-1);
     }
+  }, [isOpen]);
+
+  // Reset state when dropdown closes (using a ref to track previous state)
+  const prevIsOpenRef = useRef(isOpen);
+  useEffect(() => {
+    if (prevIsOpenRef.current && !isOpen) {
+      // Dropdown just closed - schedule reset
+      const timeoutId = setTimeout(() => {
+        setSearchQuery('');
+        setSelectedIndex(-1);
+      }, 0);
+      return () => clearTimeout(timeoutId);
+    }
+    prevIsOpenRef.current = isOpen;
   }, [isOpen]);
 
   // Close on click outside
