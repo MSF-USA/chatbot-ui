@@ -61,8 +61,11 @@ export function useChatActions({
 
       // Find the message to edit by matching properties (excluding content)
       // The editedMessage is a copy of the original with changed content
-      const messageIndex = currentConversation.messages.findIndex(
-        (msg) =>
+      // Only user messages can be edited, and they are always legacy Messages
+      const messageIndex = currentConversation.messages.findIndex((entry) => {
+        if (!isLegacyMessage(entry)) return false;
+        const msg = entry;
+        return (
           msg.role === editedMessage.role &&
           msg.messageType === editedMessage.messageType &&
           // Match citations if present
@@ -73,13 +76,14 @@ export function useChatActions({
           // Match other metadata
           msg.error === editedMessage.error &&
           msg.toneId === editedMessage.toneId &&
-          msg.promptId === editedMessage.promptId,
-      );
+          msg.promptId === editedMessage.promptId
+        );
+      });
 
       if (messageIndex === -1) return;
 
-      const updatedMessages = currentConversation.messages.map((msg, idx) =>
-        idx === messageIndex ? editedMessage : msg,
+      const updatedMessages = currentConversation.messages.map((entry, idx) =>
+        idx === messageIndex ? editedMessage : entry,
       );
 
       updateConversation(currentConversation.id, {
