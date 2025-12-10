@@ -59,8 +59,11 @@ export function useConversations() {
               .toLowerCase()
               .includes(searchLower);
           }
-          // For legacy messages
-          return entry.content.toString().toLowerCase().includes(searchLower);
+          // For legacy messages (type guard)
+          if ('content' in entry) {
+            return entry.content.toString().toLowerCase().includes(searchLower);
+          }
+          return false;
         });
       });
 
