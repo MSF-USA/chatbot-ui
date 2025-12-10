@@ -525,8 +525,8 @@
     "regenerate": "Regenerate",
     "modelSwitchPrompt": "{original} failed but {fallback} succeeded. Would you like to switch models?",
     "keepOriginalModel": "Keep {model}",
-    "switchToModel": "Use {model}",
-    "alwaysSwitchToModel": "Always use {model}"
+    "switchToModel": "Switch to {model}",
+    "alwaysSwitchToModel": "Always auto-switch"
   },
   "sidebar": {
     "collapseSidebar": "Collapse sidebar",
