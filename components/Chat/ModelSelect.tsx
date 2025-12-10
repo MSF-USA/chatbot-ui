@@ -17,6 +17,7 @@ import { SearchMode } from '@/types/searchMode';
 import {
   AzureAIIcon,
   AzureOpenAIIcon,
+  ClaudeAIIcon,
   DeepSeekIcon,
   MetaIcon,
   OpenAIIcon,
@@ -82,8 +83,14 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
       const aProvider = OpenAIModels[a.id as OpenAIModelID]?.provider || '';
       const bProvider = OpenAIModels[b.id as OpenAIModelID]?.provider || '';
 
-      // Provider order: openai, meta, deepseek, xai
-      const providerOrder = { openai: 0, meta: 1, deepseek: 2, xai: 3 };
+      // Provider order: openai, anthropic, meta, deepseek, xai
+      const providerOrder = {
+        openai: 0,
+        anthropic: 1,
+        meta: 2,
+        deepseek: 3,
+        xai: 4,
+      };
       const providerDiff =
         (providerOrder[aProvider as keyof typeof providerOrder] ?? 4) -
         (providerOrder[bProvider as keyof typeof providerOrder] ?? 4);
