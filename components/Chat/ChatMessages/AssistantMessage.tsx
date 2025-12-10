@@ -73,6 +73,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
   const [loadingMessage, setLoadingMessage] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
+  // Translation state
+  const [translationState, setTranslationState] =
+    useState<MessageTranslationState>({
+      currentLocale: null,
+      isTranslating: false,
+      translations: {},
+      error: null,
+    });
+  const [showTranslationDropdown, setShowTranslationDropdown] = useState(false);
+  const translateButtonRef = useRef<HTMLButtonElement>(null);
+
   // Detect dark mode
   useEffect(() => {
     const updateTheme = () => {
@@ -225,6 +236,90 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
     }
   };
 
+  // Translation handler
+  const handleTranslate = useCallback(
+    async (targetLocale: string | null) => {
+      // Reset to original
+      if (targetLocale === null) {
+        setTranslationState((prev) => ({
+          ...prev,
+          currentLocale: null,
+          error: null,
+        }));
+        return;
+      }
+
+      // Check cache first
+      if (translationState.translations[targetLocale]) {
+        setTranslationState((prev) => ({
+          ...prev,
+          currentLocale: targetLocale,
+          error: null,
+        }));
+        return;
+      }
+
+      // Call API for new translation
+      setTranslationState((prev) => ({
+        ...prev,
+        isTranslating: true,
+        error: null,
+      }));
+
+      try {
+        const response = await translateText({
+          sourceText: processedContent,
+          targetLocale,
+        });
+
+        if (response.success && response.data) {
+          setTranslationState((prev) => ({
+            ...prev,
+            currentLocale: targetLocale,
+            isTranslating: false,
+            translations: {
+              ...prev.translations,
+              [targetLocale]: {
+                locale: targetLocale,
+                translatedText: response.data!.translatedText,
+                notes: response.data!.notes,
+                cachedAt: Date.now(),
+              },
+            },
+          }));
+        } else {
+          throw new Error(response.error || 'Translation failed');
+        }
+      } catch (error) {
+        console.error('Translation error:', error);
+        setTranslationState((prev) => ({
+          ...prev,
+          isTranslating: false,
+          error: error instanceof Error ? error.message : 'Translation failed',
+        }));
+        // Clear error after 3 seconds
+        setTimeout(() => {
+          setTranslationState((prev) => ({ ...prev, error: null }));
+        }, 3000);
+      }
+    },
+    [processedContent, translationState.translations],
+  );
+
+  // Displayed content (original or translated)
+  const displayedContent = useMemo(() => {
+    const { currentLocale, translations } = translationState;
+    if (currentLocale && translations[currentLocale]) {
+      return translations[currentLocale].translatedText;
+    }
+    return processedContent;
+  }, [translationState, processedContent]);
+
+  // Set of cached locale codes
+  const cachedLocales = useMemo(() => {
+    return new Set(Object.keys(translationState.translations));
+  }, [translationState.translations]);
+
   // Custom components for Streamdown
   // Note: Streamdown handles code highlighting (Shiki), Mermaid, and math (KaTeX) built-in
   const customMarkdownComponents = {};
@@ -307,6 +402,31 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
             </div>
           )}
 
+          {/* Translation indicator - shown when viewing translated content */}
+          {translationState.currentLocale && !messageIsStreaming && (
+            <div className="flex items-center gap-2 mb-2 text-sm text-blue-600 dark:text-blue-400">
+              <IconLanguage size={14} />
+              <span>
+                {t('chat.translatedTo', {
+                  language: getAutonym(translationState.currentLocale),
+                })}
+              </span>
+              <button
+                onClick={() => handleTranslate(null)}
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                {t('chat.showOriginal')}
+              </button>
+            </div>
+          )}
+
+          {/* Translation error */}
+          {translationState.error && (
+            <div className="text-sm text-red-500 dark:text-red-400 mb-2">
+              {translationState.error}
+            </div>
+          )}
+
           <div className="flex-1 w-full">
             {children || (
               <div
@@ -322,7 +442,7 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                     shikiTheme={['github-light', 'github-dark']}
                     mermaidConfig={mermaidConfig}
                   >
-                    {processedContent}
+                    {displayedContent}
                   </CitationStreamdown>
                 </StreamdownWithCodeButtons>
               </div>
@@ -385,6 +505,30 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
                 )}
               </button>
 
+              {/* Translate button */}
+              <button
+                ref={translateButtonRef}
+                className={`transition-colors ${
+                  translationState.isTranslating
+                    ? 'text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    : translationState.currentLocale
+                      ? 'text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+                      : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'
+                }`}
+                onClick={() =>
+                  setShowTranslationDropdown(!showTranslationDropdown)
+                }
+                disabled={translationState.isTranslating}
+                aria-label={t('chat.translateMessage')}
+                title={t('chat.translateMessage')}
+              >
+                {translationState.isTranslating ? (
+                  <IconLoader2 size={18} className="animate-spin" />
+                ) : (
+                  <IconLanguage size={18} />
+                )}
+              </button>
+
               {/* Open as document button */}
               <button
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
@@ -407,6 +551,17 @@ export const AssistantMessage: FC<AssistantMessageProps> = ({
           {audioUrl && (
             <AudioPlayer audioUrl={audioUrl} onClose={handleCloseAudio} />
           )}
+
+          {/* Translation dropdown */}
+          <TranslationDropdown
+            triggerRef={translateButtonRef}
+            isOpen={showTranslationDropdown}
+            onClose={() => setShowTranslationDropdown(false)}
+            onSelectLanguage={handleTranslate}
+            currentLocale={translationState.currentLocale}
+            isTranslating={translationState.isTranslating}
+            cachedLocales={cachedLocales}
+          />
         </div>
       </div>
     </div>
