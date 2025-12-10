@@ -136,16 +136,104 @@ export const useConversationStore = create<ConversationStore>()(
           folders: [],
           searchTerm: '',
         }),
+
+      // Version navigation actions
+      setActiveVersion: (conversationId, messageIndex, versionIndex) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            if (isAssistantMessageGroup(entry)) {
+              const clampedIndex = Math.max(
+                0,
+                Math.min(versionIndex, entry.versions.length - 1),
+              );
+              messages[messageIndex] = {
+                ...entry,
+                activeIndex: clampedIndex,
+              };
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
+
+      navigateVersion: (conversationId, messageIndex, direction) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            if (isAssistantMessageGroup(entry)) {
+              const newIndex =
+                direction === 'prev'
+                  ? entry.activeIndex - 1
+                  : entry.activeIndex + 1;
+
+              // Only update if within bounds
+              if (newIndex >= 0 && newIndex < entry.versions.length) {
+                messages[messageIndex] = { ...entry, activeIndex: newIndex };
+              }
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
+
+      addMessageVersion: (conversationId, messageIndex, version) =>
+        set((state) => ({
+          conversations: state.conversations.map((c) => {
+            if (c.id !== conversationId) return c;
+
+            const messages = [...c.messages];
+            const entry = messages[messageIndex];
+
+            if (isAssistantMessageGroup(entry)) {
+              // Add new version and set it as active
+              messages[messageIndex] = {
+                ...entry,
+                versions: [...entry.versions, version],
+                activeIndex: entry.versions.length, // Point to new version
+              };
+            }
+
+            return { ...c, messages, updatedAt: new Date().toISOString() };
+          }),
+        })),
     }),
     {
       name: 'conversation-storage',
-      version: 1, // Increment this when schema changes to trigger migrations
+      version: 2, // Incremented for message versioning migration
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         conversations: state.conversations,
         selectedConversationId: state.selectedConversationId,
         folders: state.folders,
       }),
+      migrate: (persistedState: unknown, version: number) => {
+        const state = persistedState as {
+          conversations: Conversation[];
+          selectedConversationId: string | null;
+          folders: FolderInterface[];
+        };
+
+        if (version < 2) {
+          // Migrate conversations to new format with message versioning
+          const migratedConversations = state.conversations.map((conv) => ({
+            ...conv,
+            messages: needsMigration(conv.messages)
+              ? migrateLegacyMessages(conv.messages as never[])
+              : conv.messages,
+          }));
+          return { ...state, conversations: migratedConversations };
+        }
+        return state;
+      },
       onRehydrateStorage: () => (state) => {
         // Mark as loaded after hydration
         if (state) {
