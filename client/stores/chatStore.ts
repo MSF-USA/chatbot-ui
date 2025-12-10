@@ -392,23 +392,41 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     threadId?: string,
   ) => {
     const conversationStore = useConversationStore.getState();
-    const updates: Partial<Conversation> = {
-      messages: [...conversation.messages, assistantMessage],
-      ...(threadId ? { threadId } : {}),
-    };
+    const { regeneratingIndex } = get();
 
-    // Auto-name conversation if still "New Conversation"
-    if (
-      conversation.name === 'New Conversation' &&
-      conversation.messages.length > 0
-    ) {
-      const newName = get().generateConversationName(conversation.messages[0]);
-      if (newName) {
-        updates.name = newName;
+    if (regeneratingIndex !== null) {
+      // Adding a new version to an existing message group
+      const version = messageToVersion(assistantMessage);
+      conversationStore.addMessageVersion(
+        conversation.id,
+        regeneratingIndex,
+        version,
+      );
+      // Clear regenerating index
+      set({ regeneratingIndex: null });
+    } else {
+      // Creating a new assistant message group
+      const newGroup = createMessageGroup(assistantMessage);
+      const updates: Partial<Conversation> = {
+        messages: [...conversation.messages, newGroup],
+        ...(threadId ? { threadId } : {}),
+      };
+
+      // Auto-name conversation if still "New Conversation"
+      if (
+        conversation.name === 'New Conversation' &&
+        conversation.messages.length > 0
+      ) {
+        const newName = get().generateConversationName(
+          conversation.messages[0],
+        );
+        if (newName) {
+          updates.name = newName;
+        }
       }
-    }
 
-    conversationStore.updateConversation(conversation.id, updates);
+      conversationStore.updateConversation(conversation.id, updates);
+    }
   },
 
   generateConversationName: (firstUserMessage: Message): string | null => {
