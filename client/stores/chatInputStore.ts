@@ -243,6 +243,7 @@ export const useChatInputStore = create<ChatInputState>((set, get) => ({
       imageFieldValue: null,
       uploadProgress: {},
       submitType: 'TEXT',
+      pendingTranscriptions: new Map(),
     }),
 
   resetForNewConversation: (defaultSearchMode = SearchMode.OFF) =>
@@ -257,5 +258,6 @@ export const useChatInputStore = create<ChatInputState>((set, get) => ({
       submitType: 'TEXT',
       usedPromptId: null,
       usedPromptVariables: null,
+      pendingTranscriptions: new Map(),
     }),
 }));
