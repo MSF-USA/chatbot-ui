@@ -379,10 +379,13 @@ export function validateBufferSignature(
   expectedType: 'audio' | 'video' | 'any' = 'any',
   filename?: string,
 ): SignatureValidationResult {
-  const arrayBuffer = buffer.buffer.slice(
-    buffer.byteOffset,
-    buffer.byteOffset + Math.min(buffer.byteLength, 16),
-  );
+  // Create a proper ArrayBuffer from the Node.js Buffer
+  const headerBytes = Math.min(buffer.byteLength, 16);
+  const arrayBuffer = new ArrayBuffer(headerBytes);
+  const view = new Uint8Array(arrayBuffer);
+  for (let i = 0; i < headerBytes; i++) {
+    view[i] = buffer[i];
+  }
 
   const extension =
     filename && filename.includes('.')
