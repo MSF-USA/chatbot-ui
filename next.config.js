@@ -6,6 +6,13 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ['streamdown', 'shiki', 'mermaid'],
 
+  // Experimental settings for large file uploads
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb',
+    },
+  },
+
   // Remove X-Powered-By header for security
   poweredByHeader: false,
 
