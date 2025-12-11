@@ -176,33 +176,8 @@ export class FileUploadService {
   }
 
   /**
-   * Converts an ArrayBuffer to a base64 string.
-   * Uses byte-by-byte iteration to correctly handle all byte values (0-255).
-   *
-   * Note: String.fromCharCode.apply() with arrays can corrupt bytes > 127
-   * due to JavaScript string encoding issues. This byte-by-byte approach
-   * is slower but guarantees correct binary-to-base64 conversion.
-   *
-   * @param buffer - The ArrayBuffer to convert
-   * @returns Base64 encoded string
-   */
-  private static arrayBufferToBase64(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-
-    // Process byte-by-byte for correct handling of all byte values (0-255)
-    // This is slower than apply() but doesn't corrupt high bytes
-    for (let i = 0; i < bytes.length; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-
-    return btoa(binary);
-  }
-
-  /**
-   * Upload file with chunked upload support.
-   * Uses ArrayBuffer for proper binary handling to prevent file corruption
-   * that can occur with deprecated readAsBinaryString().
+   * Upload file using FormData with XMLHttpRequest for progress tracking.
+   * Uses native binary upload to avoid base64 encoding corruption issues.
    *
    * @param file - The file to upload
    * @param onProgress - Optional progress callback (0-100)
@@ -212,68 +187,56 @@ export class FileUploadService {
     file: File,
     onProgress?: (progress: number) => void,
   ): Promise<UploadResult> {
-    const chunkSize = FILE_SIZE_LIMITS.UPLOAD_CHUNK_BYTES;
-    let uploadedBytes = 0;
-
     return new Promise((resolve, reject) => {
-      const uploadChunk = () => {
-        const chunk = file.slice(uploadedBytes, uploadedBytes + chunkSize);
+      const xhr = new XMLHttpRequest();
+      const formData = new FormData();
+      formData.append('file', file);
 
-        const reader = new FileReader();
-        reader.onloadend = async () => {
+      // Track upload progress
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable && onProgress) {
+          onProgress((e.loaded / e.total) * 100);
+        }
+      });
+
+      // Handle successful completion
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
           try {
-            // Convert ArrayBuffer to base64 properly to avoid binary corruption
-            const arrayBuffer = reader.result as ArrayBuffer;
-            const base64Chunk = this.arrayBufferToBase64(arrayBuffer);
-            const encodedFileName = encodeURIComponent(file.name);
-            const encodedMimeType = encodeURIComponent(file.type);
-
-            const response = await fetch(
-              `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
-              {
-                method: 'POST',
-                body: base64Chunk,
-                headers: {
-                  'x-file-name': encodedFileName,
-                },
-              },
-            );
-
-            if (response.ok) {
-              uploadedBytes += chunk.size;
-              const progress = Math.min((uploadedBytes / file.size) * 100, 100);
-
-              if (onProgress) onProgress(progress);
-
-              if (uploadedBytes < file.size) {
-                // More chunks to upload - don't read response body yet
-                uploadChunk();
-              } else {
-                // Last chunk - now read the response
-                const response_data = await response.json();
-                const resp = response_data.data || response_data;
-                resolve({
-                  url: resp.uri ?? resp.filename ?? '',
-                  originalFilename: file.name,
-                  type: this.getFileType(file),
-                });
-              }
-            } else {
-              // Read error response
-              const errorText = await response.text();
-              reject(
-                new Error(`File upload failed: ${file.name} - ${errorText}`),
-              );
-            }
-          } catch (error) {
-            reject(error);
+            const data = JSON.parse(xhr.responseText);
+            const resp = data.data || data;
+            resolve({
+              url: resp.uri ?? resp.filename ?? '',
+              originalFilename: file.name,
+              type: this.getFileType(file),
+            });
+          } catch (parseError) {
+            reject(new Error(`Failed to parse upload response: ${file.name}`));
           }
-        };
-        reader.onerror = () => reject(reader.error);
-        reader.readAsArrayBuffer(chunk);
-      };
+        } else {
+          reject(
+            new Error(
+              `File upload failed: ${file.name} - ${xhr.status} ${xhr.statusText}`,
+            ),
+          );
+        }
+      });
 
-      uploadChunk();
+      // Handle network errors
+      xhr.addEventListener('error', () =>
+        reject(new Error(`Upload failed: ${file.name}`)),
+      );
+      xhr.addEventListener('abort', () =>
+        reject(new Error(`Upload aborted: ${file.name}`)),
+      );
+
+      // Build URL with query parameters
+      const encodedFileName = encodeURIComponent(file.name);
+      const encodedMimeType = encodeURIComponent(file.type);
+      const url = `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`;
+
+      xhr.open('POST', url);
+      xhr.send(formData);
     });
   }
 
