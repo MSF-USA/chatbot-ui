@@ -2,13 +2,24 @@ import { MetricsService } from '@/lib/services/observability/MetricsService';
 
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
-import { Message, MessageContent, TextMessageContent } from '@/types/chat';
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
 
 import { StandardChatService } from '../StandardChatService';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
+
+/** Union of all possible message content types */
+type MessageContent =
+  | TextMessageContent
+  | ImageMessageContent
+  | FileMessageContent;
 
 /**
  * Content types that should be passed through to the LLM API.
