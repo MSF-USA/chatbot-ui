@@ -212,6 +212,17 @@ const Dropdown: React.FC<DropdownProps> = ({
         category: 'media',
       },
       {
+        id: 'transcribe',
+        icon: (
+          <IconFileMusic size={18} className="text-orange-500 flex-shrink-0" />
+        ),
+        label: t('transcribeAudioVideoDropdown'),
+        infoTooltip:
+          'Upload audio or video files for transcription.\n\nSupported formats: MP3, MP4, WAV, WebM, M4A, MPEG, MPGA\nMax size: 25MB\n\nTranscription happens automatically when you send the message.',
+        onClick: handleTranscribeClick,
+        category: 'media',
+      },
+      {
         id: 'translate',
         icon: (
           <IconLanguage size={18} className="text-teal-500 flex-shrink-0" />
@@ -251,6 +262,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       setIsTranslateOpen,
       onCameraClick,
       handleAttachClick,
+      handleTranscribeClick,
       toggleSearchMode,
     ],
   );
@@ -465,6 +477,19 @@ const Dropdown: React.FC<DropdownProps> = ({
         }}
         className="hidden"
         multiple
+      />
+
+      {/* Hidden file input for audio/video files only (for transcription) */}
+      <input
+        ref={transcribeInputRef}
+        type="file"
+        accept="audio/*,video/*,.mp3,.mp4,.wav,.webm,.m4a,.mpeg,.mpga"
+        onChange={async (e) => {
+          if (e.target.files) {
+            await handleFileUpload(Array.from(e.target.files));
+          }
+        }}
+        className="hidden"
       />
     </div>
   );
