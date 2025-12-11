@@ -80,11 +80,19 @@ export class FileUploadService {
   }
 
   /**
+   * Check if file is a video (not just audio)
+   */
+  static isVideo(file: File): boolean {
+    return file.type.startsWith('video/');
+  }
+
+  /**
    * Get max file size for given file type
    */
   static getMaxSize(file: File): { bytes: number; mb: number } {
     const isImage = this.isImage(file);
-    const isAudioVideo = this.isAudioOrVideo(file);
+    const isVideo = this.isVideo(file);
+    const isAudio = file.type.startsWith('audio/');
 
     if (isImage) {
       return {
@@ -92,7 +100,15 @@ export class FileUploadService {
         mb: FILE_SIZE_LIMITS_MB.IMAGE,
       };
     }
-    if (isAudioVideo) {
+    // Video files can be larger since audio is extracted client-side
+    if (isVideo) {
+      return {
+        bytes: FILE_SIZE_LIMITS.VIDEO_MAX_BYTES,
+        mb: FILE_SIZE_LIMITS_MB.VIDEO,
+      };
+    }
+    // Audio files have the standard audio limit
+    if (isAudio) {
       return {
         bytes: FILE_SIZE_LIMITS.AUDIO_VIDEO_MAX_BYTES,
         mb: FILE_SIZE_LIMITS_MB.AUDIO_VIDEO,
