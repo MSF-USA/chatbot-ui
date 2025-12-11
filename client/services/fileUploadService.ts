@@ -177,8 +177,11 @@ export class FileUploadService {
 
   /**
    * Converts an ArrayBuffer to a base64 string.
-   * This method properly handles binary data without charset corruption issues
-   * that occur with readAsBinaryString() + btoa().
+   * Uses byte-by-byte iteration to correctly handle all byte values (0-255).
+   *
+   * Note: String.fromCharCode.apply() with arrays can corrupt bytes > 127
+   * due to JavaScript string encoding issues. This byte-by-byte approach
+   * is slower but guarantees correct binary-to-base64 conversion.
    *
    * @param buffer - The ArrayBuffer to convert
    * @returns Base64 encoded string
@@ -186,11 +189,11 @@ export class FileUploadService {
   private static arrayBufferToBase64(buffer: ArrayBuffer): string {
     const bytes = new Uint8Array(buffer);
     let binary = '';
-    const chunkSize = 8192; // Process in chunks to avoid stack overflow for large files
 
-    for (let i = 0; i < bytes.length; i += chunkSize) {
-      const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
-      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    // Process byte-by-byte for correct handling of all byte values (0-255)
+    // This is slower than apply() but doesn't corrupt high bytes
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
     }
 
     return btoa(binary);
