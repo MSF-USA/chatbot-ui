@@ -184,134 +184,134 @@ This is a **bold** paragraph with *italic* text.
   });
 
   describe('sanitizeHtml', () => {
-    it('should remove script tags', () => {
+    it('should remove script tags', async () => {
       const html = '<p>Safe</p><script>alert("xss")</script>';
-      const sanitized = sanitizeHtml(html);
+      const sanitized = await sanitizeHtml(html);
       expect(sanitized).not.toContain('<script');
       expect(sanitized).toContain('<p>Safe</p>');
     });
 
-    it('should remove inline event handlers', () => {
+    it('should remove inline event handlers', async () => {
       const html = '<div onclick="alert()">Click me</div>';
-      const sanitized = sanitizeHtml(html);
+      const sanitized = await sanitizeHtml(html);
       expect(sanitized).not.toContain('onclick');
       expect(sanitized).toContain('Click me');
     });
 
-    it('should preserve safe HTML', () => {
+    it('should preserve safe HTML', async () => {
       const html = '<p><strong>Bold</strong> and <em>italic</em></p>';
-      const sanitized = sanitizeHtml(html);
+      const sanitized = await sanitizeHtml(html);
       expect(sanitized).toBe(html);
     });
 
-    it('should handle multiple script tags', () => {
+    it('should handle multiple script tags', async () => {
       const html = '<p>Text</p><script>bad1</script><script>bad2</script>';
-      const sanitized = sanitizeHtml(html);
+      const sanitized = await sanitizeHtml(html);
       expect(sanitized).not.toContain('script');
       expect(sanitized).toContain('<p>Text</p>');
     });
   });
 
   describe('convertToHtml', () => {
-    it('should convert markdown format', () => {
+    it('should convert markdown format', async () => {
       const content = '# Hello';
-      const html = convertToHtml(content, 'md');
+      const html = await convertToHtml(content, 'md');
       expect(html).toContain('<h1');
       expect(html).toContain('Hello');
     });
 
-    it('should convert markdown format (full name)', () => {
+    it('should convert markdown format (full name)', async () => {
       const content = '**Bold**';
-      const html = convertToHtml(content, 'markdown');
+      const html = await convertToHtml(content, 'markdown');
       expect(html).toContain('<strong>');
     });
 
-    it('should convert text format', () => {
+    it('should convert text format', async () => {
       const content = 'Plain text\n\nParagraph 2';
-      const html = convertToHtml(content, 'txt');
+      const html = await convertToHtml(content, 'txt');
       expect(html).toContain('<p>');
     });
 
-    it('should sanitize HTML format', () => {
+    it('should sanitize HTML format', async () => {
       const content = '<p>Safe</p><script>bad</script>';
-      const html = convertToHtml(content, 'html');
+      const html = await convertToHtml(content, 'html');
       expect(html).not.toContain('script');
       expect(html).toContain('<p>Safe</p>');
     });
 
-    it('should sanitize htm format', () => {
+    it('should sanitize htm format', async () => {
       const content = '<div>Content</div>';
-      const html = convertToHtml(content, 'htm');
+      const html = await convertToHtml(content, 'htm');
       expect(html).toContain('Content');
     });
 
-    it('should fallback to text conversion for unknown formats', () => {
+    it('should fallback to text conversion for unknown formats', async () => {
       const content = 'Some content';
-      const html = convertToHtml(content, 'pdf' as any);
+      const html = await convertToHtml(content, 'pdf' as any);
       expect(html).toContain('<p>');
     });
   });
 
   describe('autoConvertToHtml', () => {
-    it('should detect and convert markdown by patterns', () => {
+    it('should detect and convert markdown by patterns', async () => {
       const content = '# Title\n\nThis has **markdown**';
-      const html = autoConvertToHtml(content);
+      const html = await autoConvertToHtml(content);
       expect(html).toContain('<h1');
       expect(html).toContain('<strong>');
     });
 
-    it('should detect markdown by bold syntax', () => {
+    it('should detect markdown by bold syntax', async () => {
       const content = 'This is **bold** text';
-      const html = autoConvertToHtml(content);
+      const html = await autoConvertToHtml(content);
       expect(html).toContain('<strong>');
     });
 
-    it('should detect markdown by italic syntax', () => {
+    it('should detect markdown by italic syntax', async () => {
       const content = 'This is *italic* text';
-      const html = autoConvertToHtml(content);
+      const html = await autoConvertToHtml(content);
       expect(html).toContain('<em>');
     });
 
-    it('should detect markdown by link syntax', () => {
+    it('should detect markdown by link syntax', async () => {
       const content = '[Link](url)';
-      const html = autoConvertToHtml(content);
+      const html = await autoConvertToHtml(content);
       expect(html).toContain('<a');
     });
 
-    it('should detect markdown by code block', () => {
+    it('should detect markdown by code block', async () => {
       const content = '```\ncode\n```';
-      const html = autoConvertToHtml(content);
+      const html = await autoConvertToHtml(content);
       expect(html).toContain('<pre');
     });
 
-    it('should fallback to text conversion if no markdown detected', () => {
+    it('should fallback to text conversion if no markdown detected', async () => {
       const content = 'Plain text without markdown';
-      const html = autoConvertToHtml(content);
+      const html = await autoConvertToHtml(content);
       expect(html).toContain('<p>');
       expect(html).toContain('Plain text without markdown');
     });
 
-    it('should use filename to detect format', () => {
+    it('should use filename to detect format', async () => {
       const content = 'Content here';
-      const html = autoConvertToHtml(content, 'test.txt');
+      const html = await autoConvertToHtml(content, 'test.txt');
       expect(html).toContain('<p>');
     });
 
-    it('should convert markdown files based on filename', () => {
+    it('should convert markdown files based on filename', async () => {
       const content = '# Title';
-      const html = autoConvertToHtml(content, 'README.md');
+      const html = await autoConvertToHtml(content, 'README.md');
       expect(html).toContain('<h1');
     });
 
-    it('should sanitize HTML files based on filename', () => {
+    it('should sanitize HTML files based on filename', async () => {
       const content = '<p>Test</p><script>bad</script>';
-      const html = autoConvertToHtml(content, 'page.html');
+      const html = await autoConvertToHtml(content, 'page.html');
       expect(html).not.toContain('script');
     });
 
-    it('should handle files without extension', () => {
+    it('should handle files without extension', async () => {
       const content = 'Plain content';
-      const html = autoConvertToHtml(content, 'README');
+      const html = await autoConvertToHtml(content, 'README');
       // Should fallback to markdown detection or text
       expect(html).toBeTruthy();
     });
