@@ -29,6 +29,7 @@ vi.mock('@/lib/utils/app/user/session', () => ({
 vi.mock('@/lib/services/transcriptionService', () => ({
   TranscriptionServiceFactory: {
     getTranscriptionService: vi.fn(),
+    getServiceTypeForFileSize: vi.fn(),
   },
 }));
 
@@ -61,6 +62,7 @@ describe('/api/file/[id]/transcribe', () => {
   const mockBlockBlobClient = {
     downloadToFile: vi.fn(),
     delete: vi.fn(),
+    getProperties: vi.fn(),
   };
 
   const mockBlobStorageClient = {
@@ -84,9 +86,17 @@ describe('/api/file/[id]/transcribe', () => {
     );
     mockBlockBlobClient.downloadToFile.mockResolvedValue(undefined);
     mockBlockBlobClient.delete.mockResolvedValue(undefined);
+    // Mock getProperties to return a small file size (under 25MB) so tests use whisper
+    mockBlockBlobClient.getProperties.mockResolvedValue({
+      contentLength: 1024 * 1024, // 1MB - small file for whisper
+    });
     vi.mocked(
       TranscriptionServiceFactory.getTranscriptionService,
     ).mockReturnValue(mockTranscriptionService as any);
+    // Mock getServiceTypeForFileSize to return 'whisper' for all tests by default
+    vi.mocked(
+      TranscriptionServiceFactory.getServiceTypeForFileSize,
+    ).mockReturnValue('whisper');
     mockTranscriptionService.transcribe.mockResolvedValue(
       'This is the transcribed text.',
     );
