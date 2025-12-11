@@ -8,10 +8,15 @@ const execAsync = promisify(exec);
 
 /**
  * Configure pdfjs-dist for server-side use.
+ * Uses the legacy build which has better Node.js compatibility
+ * (avoids DOMMatrix and other browser-only dependencies).
+ *
  * Must be done before any PDF operations.
  */
 async function configurePdfJs(): Promise<typeof import('pdfjs-dist')> {
-  const pdfjsLib = await import('pdfjs-dist');
+  // Use legacy build for better Node.js compatibility
+  // The standard build requires DOMMatrix and other browser APIs
+  const pdfjsLib = await import('pdfjs-dist/legacy/build/pdf.mjs');
 
   // Disable worker for server-side use (runs in main thread)
   // This avoids issues with web workers in Node.js environment
@@ -19,7 +24,7 @@ async function configurePdfJs(): Promise<typeof import('pdfjs-dist')> {
     pdfjsLib.GlobalWorkerOptions.workerSrc = '';
   }
 
-  return pdfjsLib;
+  return pdfjsLib as unknown as typeof import('pdfjs-dist');
 }
 
 async function retryRemoveFile(
