@@ -1,13 +1,33 @@
 import { exec } from 'child_process';
+import fs from 'fs';
+import { lookup } from 'mime-types';
+import path from 'path';
 import { promisify } from 'util';
-import {lookup} from "mime-types";
-import fs from "fs";
-import path from "path";
 
 const execAsync = promisify(exec);
 
-async function retryRemoveFile(filePath: string, maxRetries = 3): Promise<void> {
-  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+/**
+ * Configure pdfjs-dist for server-side use.
+ * Must be done before any PDF operations.
+ */
+async function configurePdfJs(): Promise<typeof import('pdfjs-dist')> {
+  const pdfjsLib = await import('pdfjs-dist');
+
+  // Disable worker for server-side use (runs in main thread)
+  // This avoids issues with web workers in Node.js environment
+  if (typeof window === 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '';
+  }
+
+  return pdfjsLib;
+}
+
+async function retryRemoveFile(
+  filePath: string,
+  maxRetries = 3,
+): Promise<void> {
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
@@ -20,7 +40,9 @@ async function retryRemoveFile(filePath: string, maxRetries = 3): Promise<void> 
         return;
       }
       if (attempt === maxRetries - 1) {
-        console.warn(`Failed to remove file after ${maxRetries} attempts: ${filePath}`);
+        console.warn(
+          `Failed to remove file after ${maxRetries} attempts: ${filePath}`,
+        );
         return;
       }
       console.warn(`Attempt ${attempt + 1} to remove file failed. Retrying...`);
@@ -37,7 +59,10 @@ async function retryRemoveFile(filePath: string, maxRetries = 3): Promise<void> 
  * @returns {Promise<string>} - A promise that resolves to the converted file content.
  * @throws {Error} - If there was an error converting the file.
  */
-export async function convertWithPandoc(inputPath: string, outputFormat: string): Promise<string> {
+export async function convertWithPandoc(
+  inputPath: string,
+  outputFormat: string,
+): Promise<string> {
   const outputPath = `${inputPath}.${outputFormat}`;
   const command = `pandoc "${inputPath}" -o "${outputPath}"`;
 
@@ -50,13 +75,12 @@ export async function convertWithPandoc(inputPath: string, outputFormat: string)
     throw error;
   } finally {
     // Clean up temporary files
-    retryRemoveFile(inputPath).catch(error => {
+    retryRemoveFile(inputPath).catch((error) => {
       console.error(`Failed to remove temporary file ${inputPath}:`, error);
     });
-    retryRemoveFile(outputPath).catch(error => {
+    retryRemoveFile(outputPath).catch((error) => {
       console.error(`Failed to remove temporary file ${outputPath}:`, error);
     });
-
   }
 }
 
@@ -72,18 +96,23 @@ async function xlsxToText(inputPath: string): Promise<string> {
 
   try {
     // Convert XLSX to multiple CSV files (one per sheet)
-    await execAsync(`ssconvert --export-file-per-sheet "${inputPath}" "${outputPattern}"`);
+    await execAsync(
+      `ssconvert --export-file-per-sheet "${inputPath}" "${outputPattern}"`,
+    );
 
     // Read all generated CSV files
     const files = await fs.promises.readdir(tempDir);
     let result = '';
 
-    const filePattern: string | undefined = outputPattern.split('/').pop()
+    const filePattern: string | undefined = outputPattern.split('/').pop();
 
     for (const file of files) {
       if (filePattern && file.indexOf(filePattern) > -1) {
         const sheetName = file.replace(`${baseName}_`, '').replace('.csv', '');
-        const content = await fs.promises.readFile(path.join(tempDir, file), 'utf8');
+        const content = await fs.promises.readFile(
+          path.join(tempDir, file),
+          'utf8',
+        );
 
         result += `\n\n--- START OF SHEET: ${sheetName} ---\n\n`;
         result += content;
@@ -109,7 +138,9 @@ async function pptToText(inputPath: string): Promise<string> {
   const pdfPath = path.join(outputDir, `${baseName}.pdf`);
 
   try {
-    const { stdout, stderr } = await execAsync(`libreoffice --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`);
+    const { stdout, stderr } = await execAsync(
+      `libreoffice --headless --convert-to pdf --outdir "${outputDir}" "${inputPath}"`,
+    );
     console.log('LibreOffice stdout:', stdout);
     if (stderr) {
       console.warn('LibreOffice stderr:', stderr);
@@ -127,19 +158,17 @@ async function pptToText(inputPath: string): Promise<string> {
     const text = await pdfToText(pdfPath);
     return text;
   } catch (error) {
-    console.error(`Error converting PPT/PPTX to PDF and extracting text: ${error}`);
+    console.error(
+      `Error converting PPT/PPTX to PDF and extracting text: ${error}`,
+    );
     throw error;
   } finally {
     // Clean up temporary files
-    retryRemoveFile(pdfPath).catch(error => {
+    retryRemoveFile(pdfPath).catch((error) => {
       console.error(`Failed to remove temporary file ${pdfPath}:`, error);
     });
   }
 }
-
-
-
-
 
 export async function loadDocument(file: File): Promise<string> {
   let text, content, loader;
@@ -148,30 +177,42 @@ export async function loadDocument(file: File): Promise<string> {
 
   // Write the file to a temporary location with secure permissions (0o600 = read/write for owner only)
   const buffer = Buffer.from(await file.arrayBuffer());
-  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer), { mode: 0o600 });
+  await fs.promises.writeFile(tempFilePath, new Uint8Array(buffer), {
+    mode: 0o600,
+  });
 
   switch (true) {
     case mimeType.startsWith('application/pdf'):
       text = await pdfToText(tempFilePath);
       break;
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.wordprocessingml.document'):
+    case mimeType.startsWith(
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ):
       text = await convertWithPandoc(tempFilePath, 'markdown');
       break;
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') || file.name.endsWith('.xlsx'):
-      text = await xlsxToText(tempFilePath)
-      break
-    case mimeType.startsWith('application/vnd.openxmlformats-officedocument.presentationml.presentation')
-    || mimeType.startsWith('application/vnd.ms-powerpoint'):
+    case mimeType.startsWith(
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    ) || file.name.endsWith('.xlsx'):
+      text = await xlsxToText(tempFilePath);
+      break;
+    case mimeType.startsWith(
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+    ) || mimeType.startsWith('application/vnd.ms-powerpoint'):
       text = await pptToText(tempFilePath);
-      break
+      break;
     case mimeType.startsWith('application/epub+zip'):
       text = await convertWithPandoc(tempFilePath, 'markdown');
       break;
-    case mimeType.startsWith('text/') || mimeType.startsWith('application/csv') || file.name.endsWith('.py') || file.name.endsWith('.sql')
-    || mimeType.startsWith('application/json') || mimeType.startsWith('application/xhtml+xml') || file.name.endsWith('.tex'):
+    case mimeType.startsWith('text/') ||
+      mimeType.startsWith('application/csv') ||
+      file.name.endsWith('.py') ||
+      file.name.endsWith('.sql') ||
+      mimeType.startsWith('application/json') ||
+      mimeType.startsWith('application/xhtml+xml') ||
+      file.name.endsWith('.tex'):
     default:
       try {
-        text = await file.text()
+        text = await file.text();
         if (!text) {
           // If file.text() fails or returns empty, read from the temp file
           text = await fs.promises.readFile(tempFilePath, 'utf8');
