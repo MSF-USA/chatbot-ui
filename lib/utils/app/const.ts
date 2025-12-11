@@ -20,7 +20,8 @@ export const FORCE_LOGOUT_ON_REFRESH_FAILURE =
 // File upload size limits (in bytes)
 export const FILE_SIZE_LIMITS = {
   IMAGE_MAX_BYTES: 5 * 1024 * 1024, // 5MB
-  AUDIO_VIDEO_MAX_BYTES: 25 * 1024 * 1024, // 25MB
+  AUDIO_VIDEO_MAX_BYTES: 25 * 1024 * 1024, // 25MB (for direct audio uploads)
+  VIDEO_MAX_BYTES: 1024 * 1024 * 1024, // 1GB (video files - audio will be extracted client-side)
   FILE_MAX_BYTES: 10 * 1024 * 1024, // 10MB
   UPLOAD_CHUNK_BYTES: 5 * 1024 * 1024, // 5MB chunks
 } as const;
@@ -29,8 +30,12 @@ export const FILE_SIZE_LIMITS = {
 export const FILE_SIZE_LIMITS_MB = {
   IMAGE: 5,
   AUDIO_VIDEO: 25,
+  VIDEO: 1024, // 1GB for video (audio extracted client-side)
   FILE: 10,
 } as const;
+
+// Whisper API size limit for transcription
+export const WHISPER_MAX_SIZE = 25 * 1024 * 1024; // 25MB
 
 // File upload count limits per message
 export const FILE_COUNT_LIMITS = {
