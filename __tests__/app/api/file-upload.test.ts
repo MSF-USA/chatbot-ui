@@ -132,11 +132,24 @@ describe('/api/file/upload', () => {
     });
 
     it('returns 413 when file size exceeds limit', async () => {
-      // Create a large file (> 50MB)
-      const largeContent = 'x'.repeat(51 * 1024 * 1024);
-      const request = createRequest({
-        filename: 'large.txt',
-        body: largeContent,
+      // Create a large file (> 50MB) as FormData
+      const largeContent = Buffer.alloc(51 * 1024 * 1024, 'x');
+      const file = new File([largeContent], 'large.txt', {
+        type: 'text/plain',
+      });
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const params = new URLSearchParams();
+      params.set('filename', 'large.txt');
+      params.set('filetype', 'file');
+      params.set('mime', 'text/plain');
+
+      const url = `http://localhost:3000/api/file/upload?${params.toString()}`;
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: formData,
       });
 
       const response = await POST(request);
@@ -314,8 +327,8 @@ describe('/api/file/upload', () => {
 
       const response = await POST(request);
 
-      // Should fail when getting session
-      expect(response.status).toBe(500);
+      // Should return 401 Unauthorized when no session
+      expect(response.status).toBe(401);
     });
 
     it('uses authenticated user ID for upload path', async () => {
@@ -370,7 +383,7 @@ describe('/api/file/upload', () => {
       expect(data.details).toBe('Upload failed');
     });
 
-    it('returns 500 when session retrieval fails', async () => {
+    it('returns 401 when session retrieval fails', async () => {
       (vi.mocked(auth) as any).mockResolvedValue(null);
 
       const request = createRequest({
@@ -379,7 +392,8 @@ describe('/api/file/upload', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(500);
+      // Changed from 500 to 401 - unauthorized is the correct response for no session
+      expect(response.status).toBe(401);
     });
 
     it('logs error details', async () => {
