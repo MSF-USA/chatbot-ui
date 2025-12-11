@@ -1,6 +1,6 @@
 /**
  * Agent Configuration Processor
- * 
+ *
  * This processor automatically distributes centralized agent configurations
  * throughout the application, eliminating the need to manually update 25+ files
  * when adding or modifying agents.
@@ -30,7 +30,7 @@ export class AgentConfigurationProcessor {
    */
   generateFactoryConfigs(): Record<AgentType, any> {
     const configs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       configs[agent.metadata.type] = {
         type: agent.metadata.type,
@@ -51,7 +51,7 @@ export class AgentConfigurationProcessor {
    */
   generateCommandConfigs(): Record<string, any> {
     const commands: Record<string, any> = {};
-    
+
     for (const agent of getAgentsWithCommands()) {
       if (!agent.commands) continue;
 
@@ -71,7 +71,7 @@ export class AgentConfigurationProcessor {
             agentType: agent.metadata.type,
             description: `Alias for ${agent.commands?.primary}`,
             usage: agent.commands?.usage.replace(agent.commands?.primary, alias),
-            examples: agent.commands?.examples.map(ex => 
+            examples: agent.commands?.examples.map(ex =>
               ex.replace(`/${agent.commands?.primary}`, `/${alias}`)
             ),
             isAlias: true,
@@ -89,7 +89,7 @@ export class AgentConfigurationProcessor {
    */
   generateAPIDefaults(): Record<AgentType, any> {
     const apiDefaults: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       apiDefaults[agent.metadata.type] = {
         ...agent.api.defaultConfig,
@@ -108,7 +108,7 @@ export class AgentConfigurationProcessor {
    */
   generateUIConfigs(): Record<AgentType, any> {
     const uiConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       uiConfigs[agent.metadata.type] = {
         name: agent.metadata.name,
@@ -129,7 +129,7 @@ export class AgentConfigurationProcessor {
    */
   generateErrorConfigs(): Record<AgentType, any> {
     const errorConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       errorConfigs[agent.metadata.type] = {
         maxRetries: agent.error?.maxRetries || 2,
@@ -148,7 +148,7 @@ export class AgentConfigurationProcessor {
    */
   generateIntentConfigs(): Record<AgentType, any> {
     const intentConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       if (agent.features?.intentAnalysis) {
         intentConfigs[agent.metadata.type] = {
@@ -167,7 +167,7 @@ export class AgentConfigurationProcessor {
    */
   generateParameterConfigs(): Record<AgentType, any> {
     const paramConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       if (agent.features?.parameterExtraction) {
         paramConfigs[agent.metadata.type] = {
@@ -186,7 +186,7 @@ export class AgentConfigurationProcessor {
    */
   generateIntentKeywordMaps(): Record<string, AgentType[]> {
     const keywordMap: Record<string, AgentType[]> = {};
-    
+
     for (const agent of getEnabledAgents()) {
       if (agent.features?.intentClassification?.keywords) {
         for (const keyword of agent.features.intentClassification.keywords) {
@@ -206,7 +206,7 @@ export class AgentConfigurationProcessor {
    */
   generateIntentClassificationConfigs(): Record<string, any> {
     const intentConfigs: Record<string, any> = {};
-    
+
     for (const agent of getEnabledAgents()) {
       const intentConfig = agent.features?.intentClassification;
       if (intentConfig) {
@@ -234,7 +234,7 @@ export class AgentConfigurationProcessor {
    */
   generateKeywordsByCategory(): Record<string, string[]> {
     const categories: Record<string, string[]> = {};
-    
+
     for (const agent of getEnabledAgents()) {
       const intentConfig = agent.features?.intentClassification;
       if (intentConfig && intentConfig.intentCategory) {
@@ -259,7 +259,7 @@ export class AgentConfigurationProcessor {
    */
   generateAgentScoringConfigs(): Record<AgentType, any> {
     const scoringConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       const intentConfig = agent.features?.intentClassification;
       if (intentConfig) {
@@ -283,7 +283,7 @@ export class AgentConfigurationProcessor {
    */
   generateConfidenceGuidelines(): Record<AgentType, any> {
     const confidenceConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       const confidenceConfig = agent.features?.confidenceGuidelines;
       if (confidenceConfig) {
@@ -301,7 +301,7 @@ export class AgentConfigurationProcessor {
    */
   generateExclusionPatterns(): Record<AgentType, any> {
     const exclusionConfigs: Record<AgentType, any> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       const exclusionConfig = agent.features?.exclusionPatterns;
       if (exclusionConfig) {
@@ -321,7 +321,7 @@ export class AgentConfigurationProcessor {
    */
   generateClassificationSchema(): any {
     const supportedAgentTypes = this.generateSupportedTypes();
-    
+
     return {
       type: 'object' as const,
       properties: {
@@ -371,7 +371,7 @@ export class AgentConfigurationProcessor {
    */
   generateEnvironmentMappings(): Record<AgentType, AgentExecutionEnvironment> {
     const mappings: Record<AgentType, AgentExecutionEnvironment> = {} as any;
-    
+
     for (const agent of getEnabledAgents()) {
       mappings[agent.metadata.type] = agent.execution.environment as AgentExecutionEnvironment;
     }
@@ -428,7 +428,7 @@ export class AgentConfigurationProcessor {
 
     // Apply environment-specific overrides
     const processed = { ...definition };
-    
+
     if (this.config.featureOverrides) {
       processed.features = {
         ...processed.features,
@@ -477,7 +477,7 @@ export class AgentConfigurationProcessor {
       if (!agent.commands && agent.metadata.type !== AgentType.STANDARD_CHAT) {
         warnings.push(`Agent ${agent.metadata.type} has no commands defined`);
       }
-      
+
       if (!agent.ui?.color) {
         warnings.push(`Agent ${agent.metadata.type} has no UI color defined`);
       }

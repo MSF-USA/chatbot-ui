@@ -1,6 +1,6 @@
 /**
  * Centralized Intent Classification Service
- * 
+ *
  * Replaces hardcoded intentClassificationPrompts.ts with dynamic configuration
  * from the centralized agent registry. This eliminates 1700+ lines of hardcoded
  * prompts and keywords in favor of centralized configuration.
@@ -17,7 +17,7 @@ export class CentralizedIntentService {
   private confidenceGuidelines: any;
   private exclusionPatterns: any;
   private classificationSchema: any;
-  
+
   constructor() {
     this.initializeConfiguration();
   }
@@ -40,18 +40,18 @@ export class CentralizedIntentService {
     // Get the multilingual base prompt
     const basePrompt = this.getMultilingualBasePrompt(locale);
     const enabledAgents = Object.keys(this.configBundle.intentClassification);
-    
+
     let agentDescriptions = '';
 
     // Generate agent descriptions dynamically from centralized config
     for (const agentType of enabledAgents) {
       const uiConfig = this.configBundle.ui[agentType];
       const intentConfig = this.configBundle.intentClassification[agentType];
-      
+
       if (uiConfig && intentConfig) {
         const icon = this.getAgentIcon(agentType);
         agentDescriptions += `${icon} **${agentType}** - Use for:\n`;
-        
+
         // Check if rich system prompts are available
         const systemPrompts = intentConfig.systemPrompts;
         if (systemPrompts && systemPrompts[locale]) {
@@ -70,7 +70,7 @@ export class CentralizedIntentService {
           const localizedDesc = this.getLocalizedAgentDescription(agentType, locale);
           agentDescriptions += localizedDesc + '\n';
         }
-        
+
         agentDescriptions += '\n';
       }
     }
@@ -147,7 +147,7 @@ DIRECTIVES DE CLASSIFICATION:
 1. **Sensibilité temporelle**: Si la requête mentionne "aujourd'hui", "récent", "dernier", "actuel", "maintenant", "dernière heure" → probablement **web_search**
 2. **Présence de code**: Si la requête contient des blocs de code, des langages de programmation ou une exécution technique → **code_interpreter**
 3. **Présence d'URL**: Si la requête contient des URLs ou pose des questions sur des sites web spécifiques → **url_pull**
-4. **Contexte de l'entreprise**: Si la requête pose des questions sur des informations internes/d'entreprise → **local_knowledge**  
+4. **Contexte de l'entreprise**: Si la requête pose des questions sur des informations internes/d'entreprise → **local_knowledge**
 5. **Traduction**: Si la requête demande une traduction → **translation**
 6. **Complexité**: Pour un raisonnement complexe ou une analyse à plusieurs étapes → **foundry**
 7. **Services externes**: Pour les intégrations ou APIs tierces → **third_party**
@@ -328,7 +328,7 @@ Sempre forneça raciocínio para sua classificação e considere interpretaçõe
   private getLocalizedAgentDescription(agentType: string, locale: string): string {
     const intentConfig = this.configBundle.intentClassification[agentType];
     const examples = intentConfig?.examples?.slice(0, 3) || [];
-    
+
     // First try to use system prompts if available
     const systemPrompts = intentConfig?.systemPrompts;
     if (systemPrompts) {
@@ -339,9 +339,9 @@ Sempre forneça raciocínio para sua classificação e considere interpretaçõe
         return useCases;
       }
     }
-    
+
     // Get examples as bullet points
-    const exampleText = examples.length > 0 
+    const exampleText = examples.length > 0
       ? examples.map((ex: string) => `- ${ex}`).join('\n')
       : '- General queries for this agent type';
 
@@ -361,7 +361,7 @@ Sempre forneça raciocínio para sua classificação e considere interpretaçõe
    */
   getAgentGuidance(agentType: AgentType): any {
     const intentConfig = this.configBundle.intentClassification[agentType];
-    
+
     if (!intentConfig) {
       return {
         keywords: [],
@@ -392,7 +392,7 @@ Sempre forneça raciocínio para sua classificação e considere interpretaçõe
   ): string {
     const template = this.getUserPromptTemplate(locale);
     const currentDateTime = new Date().toISOString();
-    
+
     const historySection = conversationHistory?.length
       ? `**Recent Conversation:**\n${conversationHistory
           .slice(-3)
@@ -515,7 +515,7 @@ Sempre forneça raciocínio para sua classificação e considere interpretaçõe
       return Math.min(0.9, 0.5 + matchScore);
     }
 
-    // Use agent-specific confidence guidelines 
+    // Use agent-specific confidence guidelines
     for (const [level, config] of Object.entries(guidelines.ranges)) {
       const rangeConfig = config as { range: [number, number]; description: string; examples: string[] };
       const [min, max] = rangeConfig.range;
@@ -545,7 +545,7 @@ Sempre forneça raciocínio para sua classificação e considere interpretaçõe
 **Session:** {sessionContext}
 
 Provide your classification with high confidence and detailed reasoning.`,
-      
+
       es: `Analiza esta consulta del usuario y clasifícala al agente más apropiado:
 
 **Consulta:** {query}
@@ -558,7 +558,7 @@ Provide your classification with high confidence and detailed reasoning.`,
 **Sesión:** {sessionContext}
 
 Proporciona tu clasificación con alta confianza y razonamiento detallado.`,
-      
+
       fr: `Analysez cette requête utilisateur et classifiez-la vers l'agent le plus approprié:
 
 **Requête:** {query}
@@ -571,7 +571,7 @@ Proporciona tu clasificación con alta confianza y razonamiento detallado.`,
 **Session:** {sessionContext}
 
 Fournissez votre classification avec une grande confiance et un raisonnement détaillé.`,
-      
+
       de: `Analysieren Sie diese Benutzeranfrage und klassifizieren Sie sie zum am besten geeigneten Agent:
 
 **Anfrage:** {query}
@@ -584,7 +584,7 @@ Fournissez votre classification avec une grande confiance et un raisonnement dé
 **Sitzung:** {sessionContext}
 
 Geben Sie Ihre Klassifizierung mit hohem Vertrauen und detaillierter Begründung an.`,
-      
+
       it: `Analizza questa query utente e classificala verso l'agente più appropriato:
 
 **Query:** {query}
@@ -597,7 +597,7 @@ Geben Sie Ihre Klassifizierung mit hohem Vertrauen und detaillierter Begründung
 **Sessione:** {sessionContext}
 
 Fornisci la tua classificazione con alta fiducia e ragionamento dettagliato.`,
-      
+
       pt: `Analise esta consulta do usuário e classifique-a para o agente mais apropriado:
 
 **Consulta:** {query}
@@ -610,7 +610,7 @@ Fornisci la tua classificazione con alta fiducia e ragionamento dettagliato.`,
 **Sessão:** {sessionContext}
 
 Forneça sua classificação com alta confiança e raciocínio detalhado.`,
-      
+
       ja: `このユーザークエリを分析し、最も適切なエージェントに分類してください：
 
 **クエリ:** {query}
@@ -623,7 +623,7 @@ Forneça sua classificação com alta confiança e raciocínio detalhado.`,
 **セッション:** {sessionContext}
 
 高い信頼度と詳細な推論で分類を提供してください。`,
-      
+
       ko: `이 사용자 쿼리를 분석하고 가장 적절한 에이전트로 분류하세요:
 
 **쿼리:** {query}
@@ -636,7 +636,7 @@ Forneça sua classificação com alta confiança e raciocínio detalhado.`,
 **세션:** {sessionContext}
 
 높은 신뢰도와 상세한 추론으로 분류를 제공하세요.`,
-      
+
       zh: `分析此用户查询并将其分类到最合适的代理：
 
 **查询:** {query}
@@ -659,11 +659,11 @@ Forneça sua classificação com alta confiança e raciocínio detalhado.`,
    */
   private generateExamplesFromKeywords(keywords: string[]): string[] {
     const examples: string[] = [];
-    
+
     for (const keyword of keywords.slice(0, 3)) {
       examples.push(`Example query with "${keyword}"`);
     }
-    
+
     return examples;
   }
 

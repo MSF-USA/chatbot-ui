@@ -10,7 +10,7 @@ import { FolderType } from '@/types/folder';
 
 import { SettingsSection } from '@/components/Settings/types';
 
-import { HomeInitialState } from './home.state';
+import { HomeInitialState } from './HomeState';
 
 export interface HomeContextProps {
   user?: Session['user'];

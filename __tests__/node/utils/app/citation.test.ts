@@ -22,7 +22,7 @@ describe('extractCitationsFromContent', () => {
 {"citations": [{"id": "1", "title": "AI Research", "url": "https://example.com"}]}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('This is the main content about AI.');
       expect(result.citations).toHaveLength(1);
       expect(result.citations[0]).toEqual({
@@ -40,7 +40,7 @@ describe('extractCitationsFromContent', () => {
 {invalid json}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Main content here.');
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('marker');
@@ -54,7 +54,7 @@ describe('extractCitationsFromContent', () => {
 {"citations": []}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Some text content.');
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('marker');
@@ -67,7 +67,7 @@ describe('extractCitationsFromContent', () => {
 {"citations": [{"id": "2", "title": "Research Paper", "url": "https://paper.com"}]}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('This is the main content.');
       expect(result.citations).toHaveLength(1);
       expect(result.citations[0].id).toBe('2');
@@ -82,7 +82,7 @@ describe('extractCitationsFromContent', () => {
 ]}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Main text here.');
       expect(result.citations).toHaveLength(2);
       expect(result.extractionMethod).toBe('regex');
@@ -101,7 +101,7 @@ function getData() {
 }`;
 
       const result = extractCitationsFromContent(jsCode);
-      
+
       expect(result.text).toBe(jsCode); // Original content preserved
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -116,7 +116,7 @@ const handler = (data) => {
 }`;
 
       const result = extractCitationsFromContent(arrowFunction);
-      
+
       expect(result.text).toBe(arrowFunction);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -133,7 +133,7 @@ public class Example {
 }`;
 
       const result = extractCitationsFromContent(javaCode);
-      
+
       expect(result.text).toBe(javaCode);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -150,7 +150,7 @@ class Vector {
 }`;
 
       const result = extractCitationsFromContent(cppCode);
-      
+
       expect(result.text).toBe(cppCode);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -165,7 +165,7 @@ console.log({
 });`;
 
       const result = extractCitationsFromContent(consoleCode);
-      
+
       expect(result.text).toBe(consoleCode);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -181,7 +181,7 @@ const config = {
 }`;
 
       const result = extractCitationsFromContent(jsonLikeCode);
-      
+
       expect(result.text).toBe(jsonLikeCode);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -196,7 +196,7 @@ fn main() {
 }`;
 
       const result = extractCitationsFromContent(rustCode);
-      
+
       expect(result.text).toBe(rustCode);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -212,7 +212,7 @@ interface User {
 }`;
 
       const result = extractCitationsFromContent(tsCode);
-      
+
       expect(result.text).toBe(tsCode);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -225,7 +225,7 @@ interface User {
 {"citations": [incomplete}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(content); // Original preserved
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -236,7 +236,7 @@ interface User {
 {"data": [{"id": "1"}]}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(content);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -247,7 +247,7 @@ interface User {
 {"citations": "not an array"}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(content);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -260,7 +260,7 @@ interface User {
 {"a": 1}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(content);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -269,19 +269,19 @@ interface User {
 
   describe('Content preservation', () => {
     it('should preserve whitespace when no citations found', () => {
-      const content = `  Content with    
-      multiple spaces  
+      const content = `  Content with
+      multiple spaces
   and newlines  `;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(content);
       expect(result.citations).toHaveLength(0);
     });
 
     it('should handle empty string', () => {
       const result = extractCitationsFromContent('');
-      
+
       expect(result.text).toBe('');
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');
@@ -289,7 +289,7 @@ interface User {
 
     it('should handle content with only whitespace', () => {
       const result = extractCitationsFromContent('   \n\t  ');
-      
+
       expect(result.text).toBe('   \n\t  ');
       expect(result.citations).toHaveLength(0);
     });
@@ -304,7 +304,7 @@ interface User {
       const contentWithBoth = content + '\n{"citations": [{"id": "legacy", "title": "From Legacy"}]}';
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Main content');
       expect(result.citations).toHaveLength(1);
       expect(result.citations[0].id).toBe('marker');
@@ -320,7 +320,7 @@ interface User {
 {"citations": ${JSON.stringify(citations)}}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Content here');
       expect(result.citations).toHaveLength(1);
       expect(result.citations[0].title).toBe('Test & "Special" <chars>');
@@ -331,7 +331,7 @@ interface User {
 {"citations": [{"id": "1", "title": "研究論文 📚", "url": "https://example.com"}]}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Unicode test');
       expect(result.citations).toHaveLength(1);
       expect(result.citations[0].title).toBe('研究論文 📚');
@@ -343,12 +343,12 @@ interface User {
         title: `Citation ${i + 1}`,
         url: `https://example.com/${i + 1}`
       }));
-      
+
       const content = `Content
 {"citations": ${JSON.stringify(longCitations)}}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe('Content');
       expect(result.citations).toHaveLength(10);
     });
@@ -368,7 +368,7 @@ And here are the references:
 {"citations": [{"id": "1", "title": "Reference", "url": "https://ref.com"}]}`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(`Here's some code:
 
 function test() {
@@ -389,7 +389,7 @@ const data = {
 }`;
 
       const result = extractCitationsFromContent(content);
-      
+
       expect(result.text).toBe(content);
       expect(result.citations).toHaveLength(0);
       expect(result.extractionMethod).toBe('none');

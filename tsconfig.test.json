@@ -10,13 +10,13 @@
     "strictPropertyInitialization": false,
     "noImplicitThis": false,
     "alwaysStrict": false,
-    
+
     // Allow more flexibility in tests
     "allowUnreachableCode": true,
     "allowUnusedLabels": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    
+
     // Keep other important settings
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -24,7 +24,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    
+
     // Test-specific types
     "types": ["vitest/globals", "node", "@testing-library/jest-dom"]
   },
@@ -32,7 +32,7 @@
     "__tests__/**/*",
     "**/*.test.ts",
     "**/*.test.tsx",
-    "**/*.spec.ts", 
+    "**/*.spec.ts",
     "**/*.spec.tsx",
     "vitest.*.ts",
     "test-*.js"

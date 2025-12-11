@@ -62,7 +62,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const targetLanguageName = getAutonym(targetLocale);
 
     // Prepare the prompt for translation
-    const prompt = `Translate the following text into ${targetLanguageName} (ISO code: ${targetLocale}). 
+    const prompt = `Translate the following text into ${targetLanguageName} (ISO code: ${targetLocale}).
 Retain the semantic intent, tone, vocabulary, and structure of the original text as much as possible.
 The translation should sound natural to native speakers of the target language.
 

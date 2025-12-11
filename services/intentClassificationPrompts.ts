@@ -1,10 +1,10 @@
 /**
  * Intent Classification Prompts and Schemas (DEPRECATED)
- * 
+ *
  * This file has been replaced by the centralized agent configuration system.
  * All functionality is now provided by CentralizedIntentService which uses
  * the agent registry for configuration.
- * 
+ *
  * This file is kept for backward compatibility only and will be removed
  * in a future version.
  */

@@ -39,21 +39,21 @@ export const extractCitationsFromContent = (
     const jsonMatch = content.match(/(\{"citations":\s*\[[\s\S]*?\]\s*\})$/);
     if (jsonMatch) {
       const jsonStr = jsonMatch[1];
-      
+
       // Additional validation to ensure this is likely citation JSON and not code
-      const looksLikeCitationJson = 
-        jsonStr.includes('"citations"') && 
+      const looksLikeCitationJson =
+        jsonStr.includes('"citations"') &&
         jsonStr.length > 20 && // Citations JSON is typically longer
         jsonStr.includes('":') && // JSON key-value separator
         !jsonStr.includes('function') && // Not JavaScript code
         !jsonStr.includes('class') && // Not class definition
         !jsonStr.includes('=>') && // Not arrow function
         !jsonStr.includes('console.'); // Not console statements
-      
+
       if (looksLikeCitationJson) {
         extractionMethod = 'regex';
         const tempContent = content.slice(0, -jsonStr.length).trim();
-        
+
         try {
           const parsedData = JSON.parse(jsonStr);
           if (parsedData.citations && Array.isArray(parsedData.citations)) {

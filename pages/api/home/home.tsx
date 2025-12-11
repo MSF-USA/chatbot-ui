@@ -51,8 +51,8 @@ import { SettingsSection } from '@/components/Settings/types';
 import { StorageWarningModal } from '@/components/Storage/StorageWarningModal';
 
 import { authOptions } from '../auth/[...nextauth]';
-import HomeContext from './home.context';
-import { HomeInitialState, initialState } from './home.state';
+import HomeContext from '@/context/HomeContext';
+import { HomeInitialState, initialState } from '@/context/HomeState';
 
 import {
   StorageMonitorProvider,

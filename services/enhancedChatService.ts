@@ -878,7 +878,7 @@ export class EnhancedChatService {
           contentLength: result.content?.length || 0,
         },
       );
-      
+
       const response = {
         success: true,
         data: {

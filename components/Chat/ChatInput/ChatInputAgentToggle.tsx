@@ -19,8 +19,8 @@ export const ChatInputAgentToggle = ({
     <div className="relative pb-2">
       <button
         className={`flex h-[40px] w-[40px] items-center justify-center rounded-sm p-1 transition-all ${
-          disabled 
-            ? 'cursor-not-allowed opacity-30 text-neutral-400 dark:text-neutral-600' 
+          disabled
+            ? 'cursor-not-allowed opacity-30 text-neutral-400 dark:text-neutral-600'
             : enabled
               ? 'bg-blue-100 border border-blue-300 text-blue-600 hover:bg-blue-200 dark:bg-blue-900/30 dark:border-blue-600 dark:text-blue-400 dark:hover:bg-blue-900/50'
               : 'text-neutral-600 hover:bg-neutral-200 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-200'
