@@ -47,15 +47,23 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  const uploadFileToBlobStorage = async (data: string) => {
-    const session: Session | null = await auth();
-    if (!session) throw new Error('Failed to pull session!');
-
+  /**
+   * Uploads file data to blob storage with content-based naming.
+   *
+   * @param data - The file data as Buffer (binary) or string (base64/image data URL)
+   * @param session - User session for authentication
+   * @returns The blob storage URL
+   */
+  const uploadFileToBlobStorage = async (
+    data: Buffer | string,
+    session: Session,
+  ) => {
     const userId = getUserIdFromSession(session);
-
     const blobStorageClient: BlobStorage = createBlobStorageClient(session);
 
-    const hashedFileContents = Hasher.sha256(data).slice(0, 200);
+    // Hash file contents for deduplication-based naming
+    const hashInput = Buffer.isBuffer(data) ? data.toString('base64') : data;
+    const hashedFileContents = Hasher.sha256(hashInput).slice(0, 200);
     const extension: string | undefined = filename.split('.').pop();
 
     let contentType;
@@ -69,17 +77,6 @@ export async function POST(request: NextRequest) {
 
     const uploadLocation = filetype === 'image' ? 'images' : 'files';
 
-    const isImage =
-      (mimeType && mimeType.startsWith('image/')) || filetype === 'image';
-
-    let decodedData: string | Buffer;
-    try {
-      decodedData = isImage ? data : Buffer.from(data, 'base64');
-    } catch (decodeError) {
-      console.error('Error decoding file data:', decodeError);
-      throw new Error('Invalid file data format - expected base64 encoding');
-    }
-
     // Validate magic bytes for audio/video files to prevent spoofing
     const isAudioVideo =
       (mimeType &&
@@ -87,9 +84,9 @@ export async function POST(request: NextRequest) {
       filetype === 'audio' ||
       filetype === 'video';
 
-    if (isAudioVideo && Buffer.isBuffer(decodedData)) {
+    if (isAudioVideo && Buffer.isBuffer(data)) {
       const signatureValidation = validateBufferSignature(
-        decodedData,
+        data,
         'any',
         filename,
       );
@@ -103,7 +100,7 @@ export async function POST(request: NextRequest) {
 
     return await blobStorageClient.upload(
       `${userId}/uploads/${uploadLocation}/${hashedFileContents}.${extension}`,
-      decodedData,
+      data,
       {
         blobHTTPHeaders: {
           blobContentType: contentType,
@@ -113,15 +110,55 @@ export async function POST(request: NextRequest) {
   };
 
   try {
-    const fileData = await request.text();
+    const session: Session | null = await auth();
+    if (!session) {
+      return errorResponse('Unauthorized', 401);
+    }
+
+    // Check Content-Type to determine upload format
+    const contentTypeHeader = request.headers.get('content-type') || '';
+
+    let fileData: Buffer | string;
+
+    if (contentTypeHeader.includes('multipart/form-data')) {
+      // FormData upload (binary - new approach)
+      const formData = await request.formData();
+      const file = formData.get('file') as File | null;
+      if (!file) {
+        return badRequestResponse('No file provided in form data');
+      }
+      fileData = Buffer.from(await file.arrayBuffer());
+    } else {
+      // Legacy base64 upload (backward compatibility)
+      const rawData = await request.text();
+      const isImage =
+        (mimeType && mimeType.startsWith('image/')) || filetype === 'image';
+
+      if (isImage) {
+        // Images are stored as base64 data URL strings
+        fileData = rawData;
+      } else {
+        // Decode base64 to binary for non-image files
+        try {
+          fileData = Buffer.from(rawData, 'base64');
+        } catch (decodeError) {
+          console.error('Error decoding file data:', decodeError);
+          return badRequestResponse(
+            'Invalid file data format - expected base64 encoding',
+          );
+        }
+      }
+    }
 
     // Check file size
-    const fileSize = Buffer.byteLength(fileData);
+    const fileSize = Buffer.isBuffer(fileData)
+      ? fileData.length
+      : Buffer.byteLength(fileData);
     if (fileSize > MAX_API_FILE_SIZE) {
       return payloadTooLargeResponse(`${MAX_API_FILE_SIZE / (1024 * 1024)}MB`);
     }
 
-    const fileURI: string = await uploadFileToBlobStorage(fileData);
+    const fileURI: string = await uploadFileToBlobStorage(fileData, session);
     return successResponse({ uri: fileURI }, 'File uploaded successfully');
   } catch (error) {
     console.error('Error uploading file:', error);
