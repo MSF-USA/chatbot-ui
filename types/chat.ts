@@ -191,7 +191,24 @@ export type ImageFieldValue =
   | ImageMessageContent[]
   | null;
 
-type UploadStatus = 'pending' | 'uploading' | 'completed' | 'failed';
+/**
+ * Status of a file during upload/processing workflow
+ */
+export type UploadStatus =
+  | 'pending'
+  | 'uploading'
+  | 'extracting' // Video: extracting audio before upload
+  | 'completed'
+  | 'failed';
+
+/**
+ * Status of async transcription jobs (batch API)
+ */
+export type TranscriptionJobStatus =
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed';
 
 export interface FilePreview {
   name: string;
@@ -199,6 +216,15 @@ export interface FilePreview {
   status: UploadStatus;
   previewUrl: string;
   file?: File; // Optional: Store the original File object for local operations (e.g., opening in code editor)
+  // Transcription tracking for batch jobs
+  transcriptionJobId?: string;
+  transcriptionStatus?: TranscriptionJobStatus;
+  // Original video info (when audio was extracted)
+  extractedFromVideo?: {
+    originalName: string;
+    originalSize: number;
+    extractedSize: number;
+  };
 }
 
 // Tool Router Types
