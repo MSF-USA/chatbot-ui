@@ -11,6 +11,19 @@ export async function register() {
   // Only run on Node.js runtime (not Edge)
   // Edge Runtime doesn't support OpenTelemetry NodeSDK
   if (process.env.NEXT_RUNTIME === 'nodejs') {
+    // Skip OpenTelemetry in development unless explicitly enabled.
+    // OTel's request body cloning conflicts with routes that read request.text().
+    // Set ENABLE_OTEL=true to enable telemetry in development for testing.
+    if (
+      process.env.NODE_ENV === 'development' &&
+      process.env.ENABLE_OTEL !== 'true'
+    ) {
+      console.log(
+        '[OpenTelemetry] Disabled in development (set ENABLE_OTEL=true to enable)',
+      );
+      return;
+    }
+
     const { registerOTel } = await import('@vercel/otel');
     const { AzureMonitorTraceExporter, AzureMonitorMetricExporter } =
       await import('@azure/monitor-opentelemetry-exporter');
