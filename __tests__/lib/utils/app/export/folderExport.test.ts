@@ -434,7 +434,16 @@ describe('folderExport', () => {
       expect(conv?.model).toEqual(mockConversation.model);
       expect(conv?.prompt).toBe(mockConversation.prompt);
       expect(conv?.temperature).toBe(mockConversation.temperature);
-      expect(conv?.messages).toEqual(mockConversation.messages);
+      // Messages are migrated: assistant messages become AssistantMessageGroup
+      expect(conv?.messages).toHaveLength(2);
+      // User message preserved as-is
+      expect(conv?.messages[0]).toEqual(mockConversation.messages[0]);
+      // Assistant message migrated to AssistantMessageGroup
+      const assistantGroup = conv?.messages[1] as any;
+      expect(assistantGroup.type).toBe('assistant_group');
+      expect(assistantGroup.activeIndex).toBe(0);
+      expect(assistantGroup.versions[0].content).toBe('Hi there!');
+      expect(assistantGroup.versions[0].messageType).toBe(MessageType.TEXT);
     });
   });
 });
