@@ -2,12 +2,23 @@ import { Session } from 'next-auth';
 
 import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
 
-import { Message, MessageContent } from '@/types/chat';
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
 import { OpenAIModel } from '@/types/openai';
 
 import { ChatCompletionParams, ModelHandler } from './ModelHandler';
 
 import OpenAI, { AzureOpenAI } from 'openai';
+
+/** Union of all possible message content types */
+type MessageContent =
+  | TextMessageContent
+  | ImageMessageContent
+  | FileMessageContent;
 
 /**
  * Content types supported by Azure OpenAI API.
