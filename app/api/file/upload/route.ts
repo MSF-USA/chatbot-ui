@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 
+// Allow up to 60 seconds for large uploads
 import { MAX_API_FILE_SIZE } from '@/lib/utils/app/const';
 import Hasher from '@/lib/utils/app/hash';
 import { getUserIdFromSession } from '@/lib/utils/app/user/session';
@@ -20,6 +21,13 @@ import {
 } from '@/lib/utils/server/mimeTypes';
 
 import { auth } from '@/auth';
+
+/**
+ * Route segment config to allow large file uploads.
+ * Next.js App Router defaults to 1MB body size limit.
+ * @see https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config
+ */
+export const maxDuration = 60; // Allow up to 60 seconds for large uploads
 
 export async function POST(request: NextRequest) {
   const { searchParams } = new URL(request.url);
