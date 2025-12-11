@@ -114,7 +114,7 @@ describe('/api/chat/tts', () => {
       const data = await parseJsonResponse(response);
 
       expect(response.status).toBe(400);
-      expect(data.error).toBe('No text provided');
+      expect(data.error).toBe('Text could not be processed');
     });
 
     it('handles whitespace text (passes validation but may fail synthesis)', async () => {
