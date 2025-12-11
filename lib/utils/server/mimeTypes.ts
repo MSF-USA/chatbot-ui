@@ -3,6 +3,21 @@
  * Centralized MIME type mappings to prevent duplication
  */
 
+// Re-export file validation utilities for convenience
+export {
+  validateFileSignature,
+  validateBufferSignature,
+  readFileHeader,
+  validateFile,
+  isValidAudioFile,
+  isValidVideoFile,
+  isValidAudioVideoFile,
+  FILE_SIGNATURES,
+  type SignatureValidationResult,
+  type FileTypeSignature,
+  type MagicSignature,
+} from './fileValidation';
+
 /**
  * Comprehensive MIME type mapping for common file extensions
  */
