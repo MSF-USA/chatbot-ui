@@ -104,6 +104,7 @@ export default [
         btoa: "readonly",
         atob: "readonly",
         queueMicrotask: "readonly",
+        XMLHttpRequest: "readonly",
         // Node.js globals
         global: "readonly",
         process: "readonly",
