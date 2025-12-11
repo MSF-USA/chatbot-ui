@@ -84,9 +84,104 @@ export async function convertWithPandoc(
   }
 }
 
-async function pdfToText(inputPath: string): Promise<string> {
+/**
+ * Extract text from PDF using pdfjs-dist library.
+ * Works server-side without browser dependencies.
+ * More forgiving of malformed PDFs than CLI tools.
+ *
+ * @param filePath - Path to the PDF file
+ * @returns Extracted text content
+ */
+async function extractTextWithPdfJs(filePath: string): Promise<string> {
+  const pdfjsLib = await configurePdfJs();
+
+  // Read file as Buffer and convert to ArrayBuffer
+  const data = await fs.promises.readFile(filePath);
+  const arrayBuffer = data.buffer.slice(
+    data.byteOffset,
+    data.byteOffset + data.byteLength,
+  );
+
+  // Load PDF document
+  const loadingTask = pdfjsLib.getDocument({ data: arrayBuffer });
+  const pdf = await loadingTask.promise;
+
+  const textContents: string[] = [];
+
+  // Extract text from each page
+  for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+    const page = await pdf.getPage(pageNum);
+    const textContent = await page.getTextContent();
+
+    // Join text items with spaces, preserving structure
+    const pageText = textContent.items
+      .map((item: { str?: string }) => item.str || '')
+      .join(' ');
+
+    if (pageText.trim()) {
+      textContents.push(`--- Page ${pageNum} ---\n${pageText}`);
+    }
+  }
+
+  return textContents.join('\n\n');
+}
+
+/**
+ * Extract text from PDF using pdftotext CLI tool (poppler-utils).
+ * Used as fallback when pdfjs-dist fails.
+ *
+ * @param inputPath - Path to the PDF file
+ * @returns Extracted text content
+ */
+async function extractTextWithPdfToTextCli(inputPath: string): Promise<string> {
   const { stdout } = await execAsync(`pdftotext "${inputPath}" -`);
   return stdout;
+}
+
+/**
+ * Extract text from PDF using pdfjs-dist (primary) with pdftotext CLI fallback.
+ * pdfjs-dist is more forgiving of malformed PDFs than the CLI tool.
+ *
+ * @param inputPath - Path to the PDF file
+ * @returns Extracted text content
+ * @throws Error if both extraction methods fail
+ */
+async function pdfToText(inputPath: string): Promise<string> {
+  // Try pdfjs-dist first (more robust for malformed PDFs)
+  try {
+    const text = await extractTextWithPdfJs(inputPath);
+    if (text.trim()) {
+      console.log('[pdfToText] Successfully extracted with pdfjs-dist');
+      return text;
+    }
+    console.warn(
+      '[pdfToText] pdfjs-dist returned empty text, trying CLI fallback',
+    );
+  } catch (pdfjsError) {
+    console.warn(
+      '[pdfToText] pdfjs-dist failed, trying pdftotext CLI:',
+      pdfjsError instanceof Error ? pdfjsError.message : pdfjsError,
+    );
+  }
+
+  // Fallback to pdftotext CLI
+  try {
+    const stdout = await extractTextWithPdfToTextCli(inputPath);
+    if (stdout.trim()) {
+      console.log('[pdfToText] Successfully extracted with pdftotext CLI');
+      return stdout;
+    }
+    console.warn('[pdfToText] pdftotext CLI returned empty text');
+  } catch (cliError) {
+    console.warn(
+      '[pdfToText] pdftotext CLI also failed:',
+      cliError instanceof Error ? cliError.message : cliError,
+    );
+  }
+
+  throw new Error(
+    'Failed to extract text from PDF using both pdfjs-dist and pdftotext CLI',
+  );
 }
 
 async function xlsxToText(inputPath: string): Promise<string> {
