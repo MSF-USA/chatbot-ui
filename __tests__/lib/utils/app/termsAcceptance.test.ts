@@ -77,8 +77,10 @@ describe('termsAcceptance utility', () => {
       json: async () => mockTermsData,
     } as Response);
 
-    // Setup localStorage mock
+    // Setup localStorage mock - set both window.localStorage and global.localStorage
+    // since implementation may use either form
     Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+    (global as any).localStorage = localStorageMock;
     localStorageMock.clear();
 
     // Setup fetch mock
@@ -90,6 +92,7 @@ describe('termsAcceptance utility', () => {
 
   afterEach(() => {
     delete (global as any).window;
+    delete (global as any).localStorage;
     vi.clearAllMocks();
   });
 
