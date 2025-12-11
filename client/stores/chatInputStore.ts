@@ -3,11 +3,23 @@ import {
   FileFieldValue,
   FilePreview,
   ImageFieldValue,
+  TranscriptionJobStatus,
 } from '@/types/chat';
 import { SearchMode } from '@/types/searchMode';
 
 import { onFileUpload } from '@/client/handlers/chatInput/file-upload';
 import { create } from 'zustand';
+
+/**
+ * Represents a pending batch transcription job
+ */
+export interface PendingTranscription {
+  jobId: string;
+  fileId: string;
+  filename: string;
+  status: TranscriptionJobStatus;
+  startedAt: number;
+}
 
 interface ChatInputState {
   // Text input state
@@ -21,6 +33,9 @@ interface ChatInputState {
   // Transcription state
   transcriptionStatus: string | null;
   isTranscribing: boolean;
+
+  // Batch transcription tracking (for files >25MB)
+  pendingTranscriptions: Map<string, PendingTranscription>;
 
   // Search mode & tone
   searchMode: SearchMode;
@@ -48,6 +63,14 @@ interface ChatInputState {
   // Actions - Transcription
   setTranscriptionStatus: (status: string | null) => void;
   setIsTranscribing: (transcribing: boolean) => void;
+
+  // Actions - Batch Transcription
+  addPendingTranscription: (fileId: string, job: PendingTranscription) => void;
+  removePendingTranscription: (fileId: string) => void;
+  updateTranscriptionStatus: (
+    fileId: string,
+    status: TranscriptionJobStatus,
+  ) => void;
 
   // Actions - Search mode & tone
   setSearchMode: (mode: SearchMode) => void;
@@ -100,6 +123,9 @@ export const useChatInputStore = create<ChatInputState>((set, get) => ({
   transcriptionStatus: null,
   isTranscribing: false,
 
+  // Initial state - Batch Transcription
+  pendingTranscriptions: new Map(),
+
   // Initial state - Search mode & tone
   searchMode: SearchMode.OFF,
   selectedToneId: null,
@@ -130,6 +156,29 @@ export const useChatInputStore = create<ChatInputState>((set, get) => ({
   // Actions - Transcription
   setTranscriptionStatus: (status) => set({ transcriptionStatus: status }),
   setIsTranscribing: (transcribing) => set({ isTranscribing: transcribing }),
+
+  // Actions - Batch Transcription
+  addPendingTranscription: (fileId, job) =>
+    set((state) => {
+      const newMap = new Map(state.pendingTranscriptions);
+      newMap.set(fileId, job);
+      return { pendingTranscriptions: newMap };
+    }),
+  removePendingTranscription: (fileId) =>
+    set((state) => {
+      const newMap = new Map(state.pendingTranscriptions);
+      newMap.delete(fileId);
+      return { pendingTranscriptions: newMap };
+    }),
+  updateTranscriptionStatus: (fileId, status) =>
+    set((state) => {
+      const existing = state.pendingTranscriptions.get(fileId);
+      if (!existing) return state;
+
+      const newMap = new Map(state.pendingTranscriptions);
+      newMap.set(fileId, { ...existing, status });
+      return { pendingTranscriptions: newMap };
+    }),
 
   // Actions - Search mode & tone
   setSearchMode: (mode) => set({ searchMode: mode }),
