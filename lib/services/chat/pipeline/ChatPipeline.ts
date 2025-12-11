@@ -1,10 +1,21 @@
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { ErrorCode, ErrorSeverity, PipelineError } from '@/lib/types/errors';
-import { Message, MessageContent, TextMessageContent } from '@/types/chat';
+import {
+  FileMessageContent,
+  ImageMessageContent,
+  Message,
+  TextMessageContent,
+} from '@/types/chat';
 
 import { ChatContext } from './ChatContext';
 import { PipelineStage } from './PipelineStage';
+
+/** Union of all possible message content types */
+type MessageContent =
+  | TextMessageContent
+  | ImageMessageContent
+  | FileMessageContent;
 
 /**
  * Timeout configuration for pipeline stages (in milliseconds).
@@ -325,7 +336,10 @@ export class ChatPipeline {
       messages: sanitizedMessages,
       processedContent: {
         ...context.processedContent,
-        fileProcessingFailed: true,
+        metadata: {
+          ...context.processedContent?.metadata,
+          fileProcessingFailed: true,
+        },
       },
     };
   }
