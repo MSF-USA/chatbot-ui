@@ -176,7 +176,34 @@ export class FileUploadService {
   }
 
   /**
-   * Upload file with chunked upload support
+   * Converts an ArrayBuffer to a base64 string.
+   * This method properly handles binary data without charset corruption issues
+   * that occur with readAsBinaryString() + btoa().
+   *
+   * @param buffer - The ArrayBuffer to convert
+   * @returns Base64 encoded string
+   */
+  private static arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    const chunkSize = 8192; // Process in chunks to avoid stack overflow for large files
+
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+      const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+      binary += String.fromCharCode.apply(null, Array.from(chunk));
+    }
+
+    return btoa(binary);
+  }
+
+  /**
+   * Upload file with chunked upload support.
+   * Uses ArrayBuffer for proper binary handling to prevent file corruption
+   * that can occur with deprecated readAsBinaryString().
+   *
+   * @param file - The file to upload
+   * @param onProgress - Optional progress callback (0-100)
+   * @returns Upload result with URL and metadata
    */
   static async uploadFile(
     file: File,
@@ -191,11 +218,13 @@ export class FileUploadService {
 
         const reader = new FileReader();
         reader.onloadend = async () => {
-          const base64Chunk = btoa(reader.result as string);
-          const encodedFileName = encodeURIComponent(file.name);
-          const encodedMimeType = encodeURIComponent(file.type);
-
           try {
+            // Convert ArrayBuffer to base64 properly to avoid binary corruption
+            const arrayBuffer = reader.result as ArrayBuffer;
+            const base64Chunk = this.arrayBufferToBase64(arrayBuffer);
+            const encodedFileName = encodeURIComponent(file.name);
+            const encodedMimeType = encodeURIComponent(file.type);
+
             const response = await fetch(
               `/api/file/upload?filename=${encodedFileName}&filetype=file&mime=${encodedMimeType}`,
               {
@@ -208,7 +237,7 @@ export class FileUploadService {
             );
 
             if (response.ok) {
-              uploadedBytes += chunkSize;
+              uploadedBytes += chunk.size;
               const progress = Math.min((uploadedBytes / file.size) * 100, 100);
 
               if (onProgress) onProgress(progress);
@@ -237,7 +266,8 @@ export class FileUploadService {
             reject(error);
           }
         };
-        reader.readAsBinaryString(chunk);
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(chunk);
       };
 
       uploadChunk();
