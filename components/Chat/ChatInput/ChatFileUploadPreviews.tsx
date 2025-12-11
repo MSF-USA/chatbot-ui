@@ -1,4 +1,10 @@
-import { IconCode, IconInfoCircle, IconX } from '@tabler/icons-react';
+import {
+  IconCheck,
+  IconCode,
+  IconInfoCircle,
+  IconLoader2,
+  IconX,
+} from '@tabler/icons-react';
 import React, {
   Dispatch,
   FC,
@@ -431,18 +437,77 @@ const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
               </div>
             </div>
             <div className="mt-1.5">
+              {/* Extraction status for video files */}
+              {status === 'extracting' && (
+                <div className="flex items-center gap-1 text-xs text-orange-600 dark:text-orange-400">
+                  <IconLoader2
+                    size={12}
+                    className="flex-shrink-0 animate-spin"
+                  />
+                  <span>Extracting audio...</span>
+                </div>
+              )}
+              {/* Transcription status indicators */}
+              {filePreview.transcriptionStatus === 'pending' && (
+                <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
+                  <IconLoader2
+                    size={12}
+                    className="flex-shrink-0 animate-spin"
+                  />
+                  <span>Queued for transcription</span>
+                </div>
+              )}
+              {filePreview.transcriptionStatus === 'processing' && (
+                <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                  <IconLoader2
+                    size={12}
+                    className="flex-shrink-0 animate-spin"
+                  />
+                  <span>Transcribing...</span>
+                </div>
+              )}
+              {filePreview.transcriptionStatus === 'completed' && (
+                <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                  <IconCheck size={12} className="flex-shrink-0" />
+                  <span>Transcribed</span>
+                </div>
+              )}
+              {filePreview.transcriptionStatus === 'failed' && (
+                <div className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400">
+                  <IconX size={12} className="flex-shrink-0" />
+                  <span>Transcription failed</span>
+                </div>
+              )}
+              {/* Extracted from video indicator */}
+              {filePreview.extractedFromVideo && status === 'completed' && (
+                <div className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
+                  <IconCheck size={12} className="flex-shrink-0" />
+                  <span>
+                    Extracted from{' '}
+                    {(
+                      (1 -
+                        filePreview.extractedFromVideo.extractedSize /
+                          filePreview.extractedFromVideo.originalSize) *
+                      100
+                    ).toFixed(0)}
+                    % smaller
+                  </span>
+                </div>
+              )}
               {isPdf && status === 'completed' && (
                 <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                   <IconInfoCircle size={12} className="flex-shrink-0" />
                   <span>Text extraction</span>
                 </div>
               )}
-              {(isAudio || isVideo) && status === 'completed' && (
-                <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
-                  <IconInfoCircle size={12} className="flex-shrink-0" />
-                  <span>Transcribes on send</span>
-                </div>
-              )}
+              {(isAudio || isVideo) &&
+                status === 'completed' &&
+                !filePreview.transcriptionStatus && (
+                  <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+                    <IconInfoCircle size={12} className="flex-shrink-0" />
+                    <span>Transcribes on send</span>
+                  </div>
+                )}
               {isCodeFile(extension) && filePreview.file && (
                 <button
                   onClick={openInCodeEditor}
