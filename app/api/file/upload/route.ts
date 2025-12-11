@@ -15,6 +15,7 @@ import {
 import { BlobStorage } from '@/lib/utils/server/blob';
 import {
   getContentType,
+  validateBufferSignature,
   validateFileNotExecutable,
 } from '@/lib/utils/server/mimeTypes';
 
@@ -63,12 +64,33 @@ export async function POST(request: NextRequest) {
     const isImage =
       (mimeType && mimeType.startsWith('image/')) || filetype === 'image';
 
-    let decodedData;
+    let decodedData: string | Buffer;
     try {
       decodedData = isImage ? data : Buffer.from(data, 'base64');
     } catch (decodeError) {
       console.error('Error decoding file data:', decodeError);
       throw new Error('Invalid file data format - expected base64 encoding');
+    }
+
+    // Validate magic bytes for audio/video files to prevent spoofing
+    const isAudioVideo =
+      (mimeType &&
+        (mimeType.startsWith('audio/') || mimeType.startsWith('video/'))) ||
+      filetype === 'audio' ||
+      filetype === 'video';
+
+    if (isAudioVideo && Buffer.isBuffer(decodedData)) {
+      const signatureValidation = validateBufferSignature(
+        decodedData,
+        'any',
+        filename,
+      );
+      if (!signatureValidation.isValid) {
+        throw new Error(
+          signatureValidation.error ||
+            'File content does not match expected audio/video format',
+        );
+      }
     }
 
     return await blobStorageClient.upload(
