@@ -235,7 +235,8 @@ export async function extractAudioFromVideo(
           ? 'audio/mp4'
           : 'audio/wav';
 
-    const audioBlob = new Blob([outputData], { type: mimeType });
+    // Cast to ArrayBuffer to satisfy TypeScript - FFmpeg.wasm returns Uint8Array with ArrayBuffer
+    const audioBlob = new Blob([outputData as BlobPart], { type: mimeType });
     const audioFile = new File([audioBlob], finalFilename, { type: mimeType });
 
     const compressionRatio = videoFile.size / audioBlob.size;
