@@ -3,7 +3,12 @@ import toast from 'react-hot-toast';
 
 import { FileUploadService } from '@/client/services/fileUploadService';
 
-import { FILE_COUNT_LIMITS } from '@/lib/utils/app/const';
+import { FILE_COUNT_LIMITS, FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
+import {
+  extractAudioFromVideo,
+  isAudioExtractionSupported,
+} from '@/lib/utils/client/audioExtractor';
+import { isVideoFile } from '@/lib/utils/client/fileValidation';
 
 import {
   ChatInputSubmitTypes,
@@ -111,11 +116,147 @@ export async function onFileUpload(
 
   setFilePreviews((prevState) => [...prevState, ...allFilePreviews]);
 
+  // Process video files: extract audio before upload
+  const filesToUpload: File[] = [];
+  const extractionInfo: Map<
+    string,
+    { originalName: string; originalSize: number }
+  > = new Map();
+
+  for (const file of filesArray) {
+    // Check if this is a video file that needs audio extraction
+    if (
+      isAudioVideoFileByTypeOrName(file.name, file.type) &&
+      (await isVideoFile(file))
+    ) {
+      // Check if extraction is supported in this browser
+      if (!isAudioExtractionSupported()) {
+        toast.error(
+          'Video extraction not supported in this browser. Please upload audio files directly.',
+        );
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === file.name ? { ...p, status: 'failed' } : p,
+          ),
+        );
+        continue;
+      }
+
+      // Check video file size
+      if (file.size > FILE_SIZE_LIMITS.VIDEO_MAX_BYTES) {
+        const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+        toast.error(
+          `Video ${file.name} (${sizeMB}MB) exceeds 1GB limit for extraction`,
+        );
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === file.name ? { ...p, status: 'failed' } : p,
+          ),
+        );
+        continue;
+      }
+
+      try {
+        // Update preview to show extraction in progress
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === file.name ? { ...p, status: 'extracting' } : p,
+          ),
+        );
+
+        // Extract audio from video
+        const result = await extractAudioFromVideo(file, {
+          outputFormat: 'mp3',
+          quality: 'medium',
+          onProgress: (progress) => {
+            // Update progress (extraction is 0-50%, upload is 50-100%)
+            setUploadProgress((prev) => ({
+              ...prev,
+              [file.name]: progress.percent * 0.5,
+            }));
+
+            // Show progress toast for loading stage
+            if (progress.stage === 'loading' && progress.percent === 0) {
+              toast.loading('Loading audio extraction engine...', {
+                id: `extract-${file.name}`,
+              });
+            } else if (progress.stage === 'complete') {
+              toast.dismiss(`extract-${file.name}`);
+            }
+          },
+        });
+
+        // Store extraction info for the preview update
+        extractionInfo.set(result.outputFilename, {
+          originalName: file.name,
+          originalSize: file.size,
+        });
+
+        // Show compression result
+        const compressionPercent = (
+          (1 - result.extractedSize / result.originalSize) *
+          100
+        ).toFixed(0);
+        toast.success(
+          `Extracted audio from ${file.name}: ${compressionPercent}% smaller`,
+          { duration: 3000 },
+        );
+
+        // Update preview to show extraction complete, rename to audio file
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === file.name
+              ? {
+                  ...p,
+                  name: result.outputFilename,
+                  type: 'audio/mpeg',
+                  status: 'uploading',
+                  extractedFromVideo: {
+                    originalName: file.name,
+                    originalSize: file.size,
+                    extractedSize: result.extractedSize,
+                  },
+                }
+              : p,
+          ),
+        );
+
+        // Add extracted audio file to upload queue
+        filesToUpload.push(result.audioFile);
+      } catch (error) {
+        console.error('Audio extraction failed:', error);
+        toast.error(
+          error instanceof Error
+            ? error.message
+            : `Failed to extract audio from ${file.name}`,
+        );
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === file.name ? { ...p, status: 'failed' } : p,
+          ),
+        );
+      }
+    } else {
+      // Not a video file, add directly to upload queue
+      filesToUpload.push(file);
+    }
+  }
+
   // Upload files using FileUploadService
   const results = await FileUploadService.uploadMultipleFiles(
-    filesArray,
+    filesToUpload,
     (progressMap) => {
-      setUploadProgress(progressMap);
+      // Adjust progress for files that had extraction (extraction was 0-50%)
+      const adjustedProgress: { [key: string]: number } = {};
+      for (const [filename, progress] of Object.entries(progressMap)) {
+        if (extractionInfo.has(filename)) {
+          // This file was extracted, upload progress is 50-100%
+          adjustedProgress[filename] = 50 + progress * 0.5;
+        } else {
+          adjustedProgress[filename] = progress;
+        }
+      }
+      setUploadProgress(adjustedProgress);
     },
   );
 
