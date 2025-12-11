@@ -5,11 +5,13 @@ import { getEnvVariable } from '@/lib/utils/app/env';
 import { env } from '@/config/environment';
 import { DefaultAzureCredential } from '@azure/identity';
 import {
+  BlobSASPermissions,
   BlobServiceClient,
   BlockBlobClient,
   BlockBlobUploadOptions,
   ContainerClient,
   StorageSharedKeyCredential,
+  generateBlobSASQueryParameters,
 } from '@azure/storage-blob';
 import {
   DequeuedMessageItem,
@@ -60,6 +62,15 @@ export interface BlobStorage {
   blobExists(blobName: string): Promise<boolean>;
   getBlockBlobClient(blobName: string): BlockBlobClient;
   getBlobSize(blobName: string): Promise<number>;
+  /**
+   * Generates a SAS URL for accessing the blob with read permissions.
+   * Used for batch transcription API which requires a publicly accessible URL.
+   *
+   * @param blobName - The blob path
+   * @param expiryHours - Hours until the SAS token expires (default: 24)
+   * @returns Promise resolving to the SAS URL
+   */
+  generateSasUrl(blobName: string, expiryHours?: number): Promise<string>;
 }
 
 export interface QueueStorage {
@@ -279,6 +290,48 @@ export class AzureBlobStorage implements BlobStorage, QueueStorage {
     return this.blobServiceClient.getContainerClient(
       this.containerName as string,
     );
+  }
+
+  /**
+   * Generates a SAS URL for accessing the blob with read permissions.
+   * Uses user delegation key from Azure Entra ID for authentication.
+   *
+   * @param blobName - The blob path
+   * @param expiryHours - Hours until the SAS token expires (default: 24)
+   * @returns Promise resolving to the SAS URL
+   */
+  async generateSasUrl(blobName: string, expiryHours = 24): Promise<string> {
+    const containerClient = this.blobServiceClient.getContainerClient(
+      this.containerName as string,
+    );
+    const blockBlobClient = containerClient.getBlockBlobClient(blobName);
+
+    // Calculate expiry time
+    const startsOn = new Date();
+    const expiresOn = new Date(
+      startsOn.getTime() + expiryHours * 60 * 60 * 1000,
+    );
+
+    // Get user delegation key from the service
+    const userDelegationKey = await this.blobServiceClient.getUserDelegationKey(
+      startsOn,
+      expiresOn,
+    );
+
+    // Generate the SAS token with read permission
+    const sasToken = generateBlobSASQueryParameters(
+      {
+        containerName: this.containerName as string,
+        blobName,
+        permissions: BlobSASPermissions.parse('r'), // Read only
+        startsOn,
+        expiresOn,
+      },
+      userDelegationKey,
+      this.blobServiceClient.accountName,
+    ).toString();
+
+    return `${blockBlobClient.url}?${sasToken}`;
   }
 
   // Queue methods
