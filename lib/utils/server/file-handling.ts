@@ -114,8 +114,10 @@ async function extractTextWithPdfJs(filePath: string): Promise<string> {
     const textContent = await page.getTextContent();
 
     // Join text items with spaces, preserving structure
+    // TextItem has 'str', TextMarkedContent does not
     const pageText = textContent.items
-      .map((item: { str?: string }) => item.str || '')
+      .map((item) => ('str' in item ? (item as { str: string }).str : ''))
+      .filter(Boolean)
       .join(' ');
 
     if (pageText.trim()) {
