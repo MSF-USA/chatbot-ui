@@ -2,13 +2,19 @@ import { MetricsService } from '@/lib/services/observability/MetricsService';
 
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
-import { Message } from '@/types/chat';
+import { Message, MessageContent, TextMessageContent } from '@/types/chat';
 
 import { StandardChatService } from '../StandardChatService';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 
 import { SpanStatusCode, trace } from '@opentelemetry/api';
+
+/**
+ * Content types that should be passed through to the LLM API.
+ * Excludes 'file_url' which is an internal type for file references.
+ */
+const ALLOWED_CONTENT_TYPES = ['text', 'image_url'];
 
 /**
  * StandardChatHandler executes the final chat request.
@@ -247,9 +253,9 @@ export class StandardChatHandler extends BasePipelineStage {
    * 3. Use original messages (if no processing)
    */
   private buildFinalMessages(context: ChatContext): Message[] {
-    // If enrichers modified messages, use those
+    // If enrichers modified messages, use those (but still sanitize)
     if (context.enrichedMessages) {
-      return context.enrichedMessages;
+      return this.stripUnsupportedContentTypes(context.enrichedMessages);
     }
 
     // If we have processed content, inject it into messages
@@ -320,10 +326,66 @@ export class StandardChatHandler extends BasePipelineStage {
         };
       }
 
-      return messages;
+      // Sanitize all messages before returning (defensive measure)
+      return this.stripUnsupportedContentTypes(messages);
     }
 
-    // No processing, return original messages
-    return context.messages;
+    // No processing, return original messages with file_url filtered out
+    return this.stripUnsupportedContentTypes(context.messages);
+  }
+
+  /**
+   * Strips content types not supported by LLM APIs from messages.
+   * This is a defensive measure to ensure 'file_url' and other internal
+   * content types never reach the API even if upstream processing fails.
+   *
+   * @param messages - The messages to sanitize
+   * @returns Messages with only API-supported content types
+   */
+  private stripUnsupportedContentTypes(messages: Message[]): Message[] {
+    return messages.map((message) => {
+      // String content is always valid
+      if (typeof message.content === 'string') {
+        return message;
+      }
+
+      // Non-array content, pass through
+      if (!Array.isArray(message.content)) {
+        return message;
+      }
+
+      // Filter out unsupported content types
+      const filteredContent = message.content.filter((c: MessageContent) =>
+        ALLOWED_CONTENT_TYPES.includes(c.type),
+      );
+
+      // If all content was filtered out, add placeholder text
+      if (filteredContent.length === 0) {
+        console.warn(
+          '[StandardChatHandler] All content was filtered out, adding placeholder',
+        );
+        return {
+          ...message,
+          content: '[File content could not be processed]',
+        };
+      }
+
+      // If only one text item remains, convert to string for simplicity
+      if (
+        filteredContent.length === 1 &&
+        filteredContent[0].type === 'text' &&
+        'text' in filteredContent[0]
+      ) {
+        return {
+          ...message,
+          content: (filteredContent[0] as TextMessageContent).text,
+        };
+      }
+
+      return {
+        ...message,
+        content: filteredContent,
+      };
+    });
   }
 }
