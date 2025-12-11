@@ -132,11 +132,18 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   const chatInputImageRef = useRef<{ openFilePicker: () => void }>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const transcribeInputRef = useRef<HTMLInputElement>(null);
 
   // Handler for file attach that doesn't access ref during render
   const handleAttachClick = useCallback(() => {
     closeDropdown();
     fileInputRef.current?.click();
+  }, [closeDropdown]);
+
+  // Handler for transcribe audio/video file selection
+  const handleTranscribeClick = useCallback(() => {
+    closeDropdown();
+    transcribeInputRef.current?.click();
   }, [closeDropdown]);
 
   // Helper function to toggle search mode (always sets to ALWAYS when enabled)
