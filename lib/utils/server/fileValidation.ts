@@ -150,6 +150,36 @@ export const FILE_SIGNATURES: FileTypeSignature[] = [
     mimeTypes: ['video/quicktime'],
     extensions: ['.mov', '.qt'],
   },
+  {
+    type: 'video',
+    format: 'mkv',
+    signatures: [
+      // Matroska/MKV uses same EBML header as WebM
+      { bytes: [0x1a, 0x45, 0xdf, 0xa3] },
+    ],
+    mimeTypes: ['video/x-matroska'],
+    extensions: ['.mkv'],
+  },
+  {
+    type: 'video',
+    format: 'flv',
+    signatures: [
+      // FLV header "FLV"
+      { bytes: [0x46, 0x4c, 0x56] },
+    ],
+    mimeTypes: ['video/x-flv'],
+    extensions: ['.flv'],
+  },
+  {
+    type: 'video',
+    format: 'wmv',
+    signatures: [
+      // ASF header (used by WMV/WMA)
+      { bytes: [0x30, 0x26, 0xb2, 0x75, 0x8e, 0x66, 0xcf, 0x11] },
+    ],
+    mimeTypes: ['video/x-ms-wmv', 'video/x-ms-asf'],
+    extensions: ['.wmv', '.asf'],
+  },
 ];
 
 /**
