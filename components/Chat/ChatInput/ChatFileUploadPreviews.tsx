@@ -155,6 +155,107 @@ const isCodeFile = (extension: string): boolean => {
   return codeExtensions.includes(extension.toLowerCase());
 };
 
+/**
+ * Transcription options component for audio/video files.
+ * Allows users to specify language and provide context instructions.
+ */
+interface TranscriptionOptionsProps {
+  filePreview: FilePreview;
+  setFilePreviews: Dispatch<SetStateAction<FilePreview[]>>;
+}
+
+const TranscriptionOptions: FC<TranscriptionOptionsProps> = ({
+  filePreview,
+  setFilePreviews,
+}) => {
+  const t = useTranslations();
+  const [showPromptInput, setShowPromptInput] = useState(
+    !!filePreview.transcriptionPrompt,
+  );
+
+  const updateFilePreview = (updates: Partial<FilePreview>) => {
+    setFilePreviews((prevPreviews) =>
+      prevPreviews.map((fp) =>
+        fp.name === filePreview.name && fp.previewUrl === filePreview.previewUrl
+          ? { ...fp, ...updates }
+          : fp,
+      ),
+    );
+  };
+
+  const handleLanguageChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    updateFilePreview({
+      transcriptionLanguage: value || undefined,
+    });
+  };
+
+  const handlePromptChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    updateFilePreview({
+      transcriptionPrompt: value || undefined,
+    });
+  };
+
+  const selectedLanguage =
+    TRANSCRIPTION_LANGUAGES.find(
+      (lang) => lang.code === filePreview.transcriptionLanguage,
+    )?.label || 'Auto-detect';
+
+  return (
+    <div className="space-y-1.5">
+      {/* Info text */}
+      <div className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400">
+        <IconInfoCircle size={12} className="flex-shrink-0" />
+        <span>{t('transcription.transcribesOnSend')}</span>
+      </div>
+
+      {/* Language selector */}
+      <div className="relative">
+        <select
+          value={filePreview.transcriptionLanguage || ''}
+          onChange={handleLanguageChange}
+          className="w-full text-xs px-2 py-1 pr-6 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {TRANSCRIPTION_LANGUAGES.map((lang) => (
+            <option key={lang.code} value={lang.code}>
+              {lang.label}
+            </option>
+          ))}
+        </select>
+        <IconChevronDown
+          size={12}
+          className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500"
+        />
+      </div>
+
+      {/* Prompt toggle/input */}
+      {!showPromptInput ? (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowPromptInput(true);
+          }}
+          className="text-xs text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        >
+          + {t('transcription.addInstructions')}
+        </button>
+      ) : (
+        <input
+          type="text"
+          value={filePreview.transcriptionPrompt || ''}
+          onChange={handlePromptChange}
+          onClick={(e) => e.stopPropagation()}
+          placeholder={t('transcription.instructionsPlaceholder')}
+          className="w-full text-xs px-2 py-1 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-blue-500"
+          maxLength={200}
+        />
+      )}
+    </div>
+  );
+};
+
 const ChatFileUploadPreview: FC<ChatFileUploadPreviewProps> = ({
   filePreview,
   setFilePreviews,
