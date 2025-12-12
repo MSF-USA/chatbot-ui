@@ -47,7 +47,8 @@ export const FILE_COUNT_LIMITS = {
 } as const;
 
 // Maximum file upload size for API endpoints (in bytes)
-export const MAX_API_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+// Set to 1GB to support large video files (audio is extracted server-side via FFmpeg)
+export const MAX_API_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
 
 // Default model for AI analysis operations (tone analysis, prompt revision, etc.)
 // Uses 'gpt-5' - reasoning model with advanced analysis capabilities
