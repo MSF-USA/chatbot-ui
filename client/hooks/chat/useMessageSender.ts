@@ -140,12 +140,19 @@ export function useMessageSender({
       return;
     }
 
+    // Merge transcription options from file previews into file field value
+    // This ensures user-selected language and prompt are passed to the server
+    const fileFieldWithTranscriptionOptions = mergeTranscriptionOptions(
+      fileFieldValue,
+      filePreviews,
+    );
+
     // Get artifact context if editor is open
     const artifactContext = await getArtifactContext();
 
     // If we have an artifact context, remove any uploaded file that matches the artifact fileName
     // This prevents sending both the original upload AND the edited version
-    let filteredFileFieldValue = fileFieldValue;
+    let filteredFileFieldValue = fileFieldWithTranscriptionOptions;
     if (artifactContext && fileFieldValue) {
       const fileArray = Array.isArray(fileFieldValue)
         ? fileFieldValue
