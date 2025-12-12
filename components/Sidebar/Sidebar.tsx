@@ -51,12 +51,14 @@ import { SearchMode } from '@/types/searchMode';
 import { SearchModal } from './components/SearchModal';
 import { SidebarHeader } from './components/SidebarHeader';
 import { CustomizationsModal } from '@/components/QuickActions/CustomizationsModal';
+import { ConfirmDialog } from '@/components/UI/ConfirmDialog';
 import { DropdownPortal } from '@/components/UI/DropdownPortal';
 import Modal from '@/components/UI/Modal';
 
 import { ConversationItem } from './ConversationItem';
 import { UserMenu } from './UserMenu';
 
+import { useArtifactStore } from '@/client/stores/artifactStore';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -99,6 +101,16 @@ export function Sidebar() {
   const [showNewChatMenu, setShowNewChatMenu] = useState(false);
   const [showNewFolderMenu, setShowNewFolderMenu] = useState(false);
   const [showFolderMenuId, setShowFolderMenuId] = useState<string | null>(null);
+
+  // Discard changes dialog state
+  const [showDiscardDialog, setShowDiscardDialog] = useState(false);
+  const [pendingConversationId, setPendingConversationId] = useState<
+    string | null
+  >(null);
+
+  // Artifact store for checking unsaved document changes
+  const { isArtifactOpen, hasUnsavedChanges, closeArtifact } =
+    useArtifactStore();
 
   // File input ref for importing conversations
   const fileInputRef = useRef<HTMLInputElement>(null);
