@@ -4,6 +4,11 @@ import { cacheImageBase64 } from '@/lib/services/imageService';
 
 import { FILE_SIZE_LIMITS, FILE_SIZE_LIMITS_MB } from '@/lib/utils/app/const';
 
+import { uploadFileAction } from '@/lib/actions/fileUpload';
+
+// Threshold for using Server Action (files larger than 10MB use Server Action)
+const SERVER_ACTION_THRESHOLD = 10 * 1024 * 1024; // 10MB
+
 export interface UploadProgress {
   [fileName: string]: number;
 }
@@ -179,11 +184,65 @@ export class FileUploadService {
    * Upload file using FormData with XMLHttpRequest for progress tracking.
    * Uses native binary upload to avoid base64 encoding corruption issues.
    *
+   * For files larger than 10MB, uses Server Action to bypass Route Handler
+   * body size limits. Server Actions support up to 50MB (configured in next.config.js).
+   *
    * @param file - The file to upload
    * @param onProgress - Optional progress callback (0-100)
    * @returns Upload result with URL and metadata
    */
   static async uploadFile(
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<UploadResult> {
+    // Use Server Action for large files to bypass Route Handler body size limit
+    if (file.size > SERVER_ACTION_THRESHOLD) {
+      return this.uploadFileViaServerAction(file, onProgress);
+    }
+
+    // Use XHR for smaller files (better progress tracking)
+    return this.uploadFileViaXHR(file, onProgress);
+  }
+
+  /**
+   * Upload file via Server Action (supports up to 50MB).
+   * Used for large files that exceed Route Handler body size limits.
+   */
+  private static async uploadFileViaServerAction(
+    file: File,
+    onProgress?: (progress: number) => void,
+  ): Promise<UploadResult> {
+    // Show indeterminate progress for Server Action uploads
+    if (onProgress) onProgress(10);
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('filename', file.name);
+    formData.append('filetype', this.getFileType(file));
+    formData.append('mime', file.type);
+
+    if (onProgress) onProgress(30);
+
+    const result = await uploadFileAction(formData);
+
+    if (!result.success || !result.uri) {
+      throw new Error(result.error || `Failed to upload ${file.name}`);
+    }
+
+    if (onProgress) onProgress(100);
+
+    return {
+      url: result.uri,
+      originalFilename: file.name,
+      type: this.getFileType(file),
+    };
+  }
+
+  /**
+   * Upload file via XMLHttpRequest (supports progress tracking).
+   * Used for smaller files that fit within Route Handler body size limits.
+   */
+  private static uploadFileViaXHR(
     file: File,
     onProgress?: (progress: number) => void,
   ): Promise<UploadResult> {
