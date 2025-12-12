@@ -264,7 +264,39 @@ export function Sidebar() {
   };
 
   const handleSelectConversation = (conversationId: string) => {
+    // Skip if already selected
+    if (conversationId === selectedConversation?.id) return;
+
+    // Check if document viewer is open with unsaved changes
+    if (isArtifactOpen && hasUnsavedChanges()) {
+      // Store the pending conversation and show dialog
+      setPendingConversationId(conversationId);
+      setShowDiscardDialog(true);
+      return;
+    }
+
+    // If artifact is open but no changes, close it silently
+    if (isArtifactOpen) {
+      closeArtifact();
+    }
+
     selectConversation(conversationId);
+  };
+
+  // Handle discard confirmation
+  const handleDiscardConfirm = () => {
+    if (pendingConversationId) {
+      closeArtifact();
+      selectConversation(pendingConversationId);
+    }
+    setShowDiscardDialog(false);
+    setPendingConversationId(null);
+  };
+
+  // Handle discard cancel
+  const handleDiscardCancel = () => {
+    setShowDiscardDialog(false);
+    setPendingConversationId(null);
   };
 
   const handleDeleteConversation = (
@@ -868,6 +900,18 @@ export function Sidebar() {
         accept=".json"
         onChange={handleImportConversation}
         style={{ display: 'none' }}
+      />
+
+      {/* Discard changes confirmation dialog */}
+      <ConfirmDialog
+        isOpen={showDiscardDialog}
+        title={t('chat.discardChanges')}
+        message={t('chat.discardChangesMessage')}
+        confirmLabel={t('common.discard')}
+        cancelLabel={t('common.keepEditing')}
+        confirmVariant="danger"
+        onConfirm={handleDiscardConfirm}
+        onCancel={handleDiscardCancel}
       />
     </>
   );
