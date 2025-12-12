@@ -205,7 +205,7 @@ export const createContentAnalysisMiddleware = (
 
   return {
     contentTypes,
-    hasFiles: contentTypes.has('file'),
+    hasFiles: contentTypes.has('file') || contentTypes.has('audio'),
     hasImages: contentTypes.has('image'),
     hasAudio: contentTypes.has('audio'), // Audio files detected separately by analyzer
   };
