@@ -1,4 +1,6 @@
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
+import { extractAudioFromVideo } from '@/lib/utils/server/audioExtractor';
+import { validateBufferSignature } from '@/lib/utils/server/fileValidation';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
 import { TranscriptionServiceFactory } from '../../transcriptionService';
