@@ -11,6 +11,9 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '50mb',
     },
+    // Also increase middleware body buffer limit (defaults to 10MB)
+    // This is needed because middleware buffers the body before passing to Server Actions
+    middlewareClientMaxBodySize: '50mb',
   },
 
   // Remove X-Powered-By header for security
