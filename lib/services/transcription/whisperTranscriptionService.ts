@@ -4,7 +4,10 @@ import {
   saveBase64AsFile,
 } from '@/lib/services/transcription/common';
 
-import { ITranscriptionService } from '@/types/transcription';
+import {
+  ITranscriptionService,
+  TranscriptionOptions,
+} from '@/types/transcription';
 
 import { env } from '@/config/environment';
 import {
@@ -53,7 +56,10 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     }
   }
 
-  async transcribe(input: string): Promise<string> {
+  async transcribe(
+    input: string,
+    options?: TranscriptionOptions,
+  ): Promise<string> {
     let filePath: string;
     let shouldCleanup = false;
 
@@ -77,7 +83,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
       }
 
       // Transcribe the file directly (Whisper supports mp3, mp4, mpeg, mpga, m4a, wav, webm)
-      const transcript = await this.transcribeSegment(filePath);
+      const transcript = await this.transcribeSegment(filePath, options);
 
       return transcript;
     } finally {
@@ -88,7 +94,10 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     }
   }
 
-  private async transcribeSegment(segmentPath: string): Promise<string> {
+  private async transcribeSegment(
+    segmentPath: string,
+    options?: TranscriptionOptions,
+  ): Promise<string> {
     const stats = await fs.promises.stat(segmentPath);
     const fileSize = stats.size;
 
@@ -97,23 +106,34 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     }
 
     try {
-      // Use OpenAI SDK which handles file streams properly
-      const transcription = await this.client.audio.transcriptions.create({
+      // Build transcription options
+      const transcriptionParams: Parameters<
+        typeof this.client.audio.transcriptions.create
+      >[0] = {
         file: fs.createReadStream(segmentPath),
         model: this.deployment,
-        // Optional: Uncomment to specify language for better accuracy
-        // language: 'en', // ISO-639-1 format (e.g., 'en', 'es', 'fr')
-        // Optional: Uncomment to provide context for better accuracy with technical terms
-        // prompt: 'This is a transcription of a conversation about...',
-        // Optional: Temperature for sampling (0-1). Lower = more deterministic
         temperature: 0, // Most deterministic transcription
-      });
+      };
+
+      // Add language if specified (undefined = auto-detect)
+      if (options?.language) {
+        transcriptionParams.language = options.language;
+      }
+
+      // Add prompt/context if specified (helps with technical terms, proper nouns)
+      if (options?.prompt) {
+        transcriptionParams.prompt = options.prompt;
+      }
+
+      const transcription =
+        await this.client.audio.transcriptions.create(transcriptionParams);
 
       return transcription.text || '';
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle rate limit errors with user-friendly message
-      if (error.status === 429 || error.code === 'rate_limit_exceeded') {
-        const retryAfterMatch = error.message?.match(
+      const err = error as { status?: number; code?: string; message?: string };
+      if (err.status === 429 || err.code === 'rate_limit_exceeded') {
+        const retryAfterMatch = err.message?.match(
           /retry after (\d+) seconds?/i,
         );
         const waitTime = retryAfterMatch ? retryAfterMatch[1] : 'a few';
@@ -123,7 +143,7 @@ export class WhisperTranscriptionService implements ITranscriptionService {
         );
       }
 
-      const errorMessage = error.message || 'Unknown error';
+      const errorMessage = err.message || 'Unknown error';
       throw new Error(`Error transcribing segment: ${errorMessage}`);
     }
   }
