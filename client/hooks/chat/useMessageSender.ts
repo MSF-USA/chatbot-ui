@@ -8,6 +8,7 @@ import { validateMessageSubmission } from '@/lib/utils/chat/validation';
 import {
   ChatInputSubmitTypes,
   FileFieldValue,
+  FileMessageContent,
   FilePreview,
   ImageFieldValue,
   Message,
@@ -47,6 +48,44 @@ const mapSubmitTypeToMessageType = (
     MULTI_FILE: MessageType.FILE, // Multi-file also maps to FILE
   };
   return mapping[submitType];
+};
+
+/**
+ * Merges transcription options from FilePreviews into FileFieldValue.
+ * This ensures transcriptionLanguage and transcriptionPrompt are passed to the server.
+ */
+const mergeTranscriptionOptions = (
+  fileFieldValue: FileFieldValue,
+  filePreviews: FilePreview[],
+): FileFieldValue => {
+  if (!fileFieldValue) return null;
+
+  const fileArray = Array.isArray(fileFieldValue)
+    ? fileFieldValue
+    : [fileFieldValue];
+
+  const merged = fileArray.map((file) => {
+    if (file.type !== 'file_url') return file;
+
+    // Find matching file preview by original filename
+    const preview = filePreviews.find(
+      (fp) => fp.name === file.originalFilename || fp.previewUrl === file.url,
+    );
+
+    if (!preview) return file;
+
+    // Merge transcription options if present
+    const fileMessage = file as FileMessageContent;
+    return {
+      ...fileMessage,
+      transcriptionLanguage:
+        preview.transcriptionLanguage || fileMessage.transcriptionLanguage,
+      transcriptionPrompt:
+        preview.transcriptionPrompt || fileMessage.transcriptionPrompt,
+    };
+  });
+
+  return merged.length === 1 ? merged[0] : merged;
 };
 
 /**
