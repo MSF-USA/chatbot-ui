@@ -13,6 +13,13 @@ import { useTranslations } from 'next-intl';
 
 import { FileUploadService } from '@/client/services/fileUploadService';
 
+import { FILE_SIZE_LIMITS } from '@/lib/utils/app/const';
+import {
+  extractAudioFromVideo,
+  isAudioExtractionSupported,
+} from '@/lib/utils/client/audioExtractor';
+import { isVideoFile } from '@/lib/utils/client/fileValidation';
+
 import {
   ChatInputSubmitTypes,
   FileFieldValue,
@@ -108,7 +115,8 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
   ) => {
     if (!event.target.files || !event.target.files[0]) return;
 
-    const selectedFile = event.target.files[0];
+    let selectedFile = event.target.files[0];
+    const originalFileName = selectedFile.name;
 
     // Close the modal immediately after file selection
     setParentModalIsOpen(false);
@@ -132,11 +140,116 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
     setFilePreviews((prev) => [...prev, filePreview]);
 
     try {
+      // Check if this is a video file that needs audio extraction
+      const isVideo = await isVideoFile(selectedFile);
+
+      if (isVideo) {
+        // Validate video size (1GB limit)
+        if (selectedFile.size > FILE_SIZE_LIMITS.VIDEO_MAX_BYTES) {
+          const sizeMB = (selectedFile.size / (1024 * 1024)).toFixed(1);
+          toast.error(
+            `Video ${selectedFile.name} (${sizeMB}MB) exceeds 1GB limit`,
+          );
+          setFilePreviews((prev) =>
+            prev.map((p) =>
+              p.name === originalFileName
+                ? { ...p, status: 'failed' as const }
+                : p,
+            ),
+          );
+          event.target.value = '';
+          return;
+        }
+
+        // Check if extraction is supported
+        if (!isAudioExtractionSupported()) {
+          toast.error(
+            'Video extraction not supported in this browser. Please upload audio files directly.',
+          );
+          setFilePreviews((prev) =>
+            prev.map((p) =>
+              p.name === originalFileName
+                ? { ...p, status: 'failed' as const }
+                : p,
+            ),
+          );
+          event.target.value = '';
+          return;
+        }
+
+        // Update preview to show extraction in progress
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === originalFileName
+              ? { ...p, status: 'extracting' as const }
+              : p,
+          ),
+        );
+
+        // Extract audio from video
+        const extractionResult = await extractAudioFromVideo(selectedFile, {
+          outputFormat: 'mp3',
+          quality: 'medium',
+          onProgress: (progress) => {
+            // Update progress (extraction is 0-50%, upload is 50-100%)
+            setUploadProgress((prev) => ({
+              ...prev,
+              [originalFileName]: progress.percent * 0.5,
+            }));
+
+            // Show progress toast for loading stage
+            if (progress.stage === 'loading' && progress.percent === 0) {
+              toast.loading('Loading audio extraction engine...', {
+                id: `extract-${originalFileName}`,
+              });
+            } else if (progress.stage === 'complete') {
+              toast.dismiss(`extract-${originalFileName}`);
+            }
+          },
+        });
+
+        // Show compression result
+        const compressionPercent = (
+          (1 - extractionResult.extractedSize / extractionResult.originalSize) *
+          100
+        ).toFixed(0);
+        toast.success(
+          `Extracted audio from ${selectedFile.name}: ${compressionPercent}% smaller`,
+          { duration: 3000 },
+        );
+
+        // Update preview to show extraction complete with new filename
+        setFilePreviews((prev) =>
+          prev.map((p) =>
+            p.name === originalFileName
+              ? {
+                  ...p,
+                  name: extractionResult.outputFilename,
+                  type: 'audio/mpeg',
+                  status: 'uploading' as const,
+                }
+              : p,
+          ),
+        );
+
+        // Use extracted audio for upload
+        selectedFile = extractionResult.audioFile;
+      }
+
       // Upload using FileUploadService for consistency
       const results = await FileUploadService.uploadMultipleFiles(
         [selectedFile],
         (progressMap) => {
-          setUploadProgress(progressMap);
+          // Adjust progress if extraction happened (50-100% range)
+          if (isVideo) {
+            const adjustedProgress: { [key: string]: number } = {};
+            for (const [filename, progress] of Object.entries(progressMap)) {
+              adjustedProgress[filename] = 50 + progress * 0.5;
+            }
+            setUploadProgress(adjustedProgress);
+          } else {
+            setUploadProgress(progressMap);
+          }
         },
       );
 
@@ -163,12 +276,11 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         }
       });
 
-      // Update preview to completed
+      // Update preview to completed (use extracted filename if applicable)
+      const finalFilename = isVideo ? selectedFile.name : originalFileName;
       setFilePreviews((prev) =>
         prev.map((p) =>
-          p.name === selectedFile.name
-            ? { ...p, status: 'completed' as const }
-            : p,
+          p.name === finalFilename ? { ...p, status: 'completed' as const } : p,
         ),
       );
     } catch (error) {
@@ -176,12 +288,14 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
       // Update file preview to show error
       setFilePreviews((prev) =>
         prev.map((p) =>
-          p.name === selectedFile.name
+          p.name === originalFileName || p.name === selectedFile.name
             ? { ...p, status: 'failed' as const }
             : p,
         ),
       );
-      toast.error(t('Failed to upload file'));
+      toast.error(
+        error instanceof Error ? error.message : t('Failed to upload file'),
+      );
     }
 
     // Reset the input so the same file can be selected again
