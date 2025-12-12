@@ -40,6 +40,10 @@ export interface FileMessageContent {
   type: 'file_url';
   url: string;
   originalFilename?: string;
+  /** ISO-639-1 language code for transcription (e.g., 'en', 'es'). Undefined = auto-detect */
+  transcriptionLanguage?: string;
+  /** Optional context/instructions to improve transcription accuracy */
+  transcriptionPrompt?: string;
 }
 
 export interface TextMessageContent {
@@ -219,6 +223,9 @@ export interface FilePreview {
   // Transcription tracking for batch jobs
   transcriptionJobId?: string;
   transcriptionStatus?: TranscriptionJobStatus;
+  // Transcription options (for audio/video files)
+  transcriptionLanguage?: string; // ISO-639-1 code (e.g., 'en', 'es', 'fr'). Undefined = auto-detect
+  transcriptionPrompt?: string; // Optional context/instructions for Whisper
   // Original video info (when audio was extracted)
   extractedFromVideo?: {
     originalName: string;
