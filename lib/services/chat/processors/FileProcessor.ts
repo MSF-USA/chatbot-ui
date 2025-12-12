@@ -178,30 +178,81 @@ export class FileProcessor extends BasePipelineStage {
                   `[FileProcessor] Transcribing audio/video: ${sanitizeForLog(filename)}`,
                 );
 
-                const transcriptionService =
-                  TranscriptionServiceFactory.getTranscriptionService(
-                    'whisper',
+                // Determine if this is a video file that needs audio extraction
+                const validation = validateBufferSignature(
+                  fileBuffer,
+                  'any',
+                  filename,
+                );
+                const isVideo = validation.detectedType === 'video';
+
+                let fileToTranscribe = filePath;
+                let extractedAudioPath: string | null = null;
+
+                // Extract audio from video files before transcription
+                if (isVideo) {
+                  console.log(
+                    `[FileProcessor] Detected video file, extracting audio: ${sanitizeForLog(filename)}`,
+                  );
+                  try {
+                    const extraction = await extractAudioFromVideo(filePath);
+                    fileToTranscribe = extraction.outputPath;
+                    extractedAudioPath = extraction.outputPath;
+                    console.log(
+                      `[FileProcessor] Audio extracted to: ${extractedAudioPath}`,
+                    );
+                  } catch (extractionError) {
+                    console.error(
+                      `[FileProcessor] Audio extraction failed, attempting direct transcription:`,
+                      extractionError,
+                    );
+                    // Fall back to direct transcription (might work for some formats)
+                  }
+                }
+
+                try {
+                  const transcriptionService =
+                    TranscriptionServiceFactory.getTranscriptionService(
+                      'whisper',
+                    );
+
+                  // Pass transcription options (language and prompt) if specified
+                  const transcriptionOptions = {
+                    language: file.transcriptionLanguage,
+                    prompt: file.transcriptionPrompt,
+                  };
+
+                  const transcript = await transcriptionService.transcribe(
+                    fileToTranscribe,
+                    transcriptionOptions,
                   );
 
-                // Pass transcription options (language and prompt) if specified
-                const transcriptionOptions = {
-                  language: file.transcriptionLanguage,
-                  prompt: file.transcriptionPrompt,
-                };
+                  transcripts.push({
+                    filename,
+                    transcript,
+                  });
 
-                const transcript = await transcriptionService.transcribe(
-                  filePath,
-                  transcriptionOptions,
-                );
-
-                transcripts.push({
-                  filename,
-                  transcript,
-                });
-
-                console.log(
-                  `[FileProcessor] Transcription complete: ${transcript.length} chars`,
-                );
+                  console.log(
+                    `[FileProcessor] Transcription complete: ${transcript.length} chars`,
+                  );
+                } finally {
+                  // Clean up extracted audio file if created
+                  if (extractedAudioPath) {
+                    try {
+                      await this.fileProcessingService.cleanupFile(
+                        extractedAudioPath,
+                      );
+                      console.log(
+                        `[FileProcessor] Cleaned up extracted audio: ${extractedAudioPath}`,
+                      );
+                    } catch (cleanupError) {
+                      console.warn(
+                        `[FileProcessor] Failed to clean up extracted audio:`,
+                        cleanupError,
+                      );
+                    }
+                  }
+                }
               } else {
                 // Regular document processing
                 console.log(
