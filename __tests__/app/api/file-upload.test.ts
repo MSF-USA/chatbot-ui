@@ -131,8 +131,10 @@ describe('/api/file/upload', () => {
       );
     });
 
-    it('returns 413 when file size exceeds limit', async () => {
-      // Create a large file (> 50MB) as FormData
+    it('accepts files up to 1GB (increased limit for video support)', async () => {
+      // The MAX_API_FILE_SIZE was increased from 50MB to 1GB to support large video files
+      // (audio is extracted server-side via FFmpeg before transcription)
+      // Testing with a 51MB file to verify it's now accepted
       const largeContent = Buffer.alloc(51 * 1024 * 1024, 'x');
       const file = new File([largeContent], 'large.txt', {
         type: 'text/plain',
@@ -153,10 +155,9 @@ describe('/api/file/upload', () => {
       });
 
       const response = await POST(request);
-      const data = await parseJsonResponse(response);
 
-      expect(response.status).toBe(413);
-      expect(data.error).toContain('50MB');
+      // 51MB files should now be accepted (limit is 1GB)
+      expect(response.status).toBe(200);
     });
   });
 
