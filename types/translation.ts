@@ -49,3 +49,32 @@ export interface TranslationResponseData {
   /** Optional notes about translation difficulties or adaptations */
   notes?: string;
 }
+
+/**
+ * A cached translation entry for transcript content.
+ * Used with version-style navigation (arrows) rather than locale-keyed access.
+ */
+export interface TranscriptTranslationEntry {
+  /** ISO 639-1 locale code */
+  locale: string;
+  /** Native language name for display (e.g., "Nederlands") */
+  localeName: string;
+  /** The translated transcript text */
+  translatedText: string;
+  /** Timestamp when the translation was cached */
+  cachedAt: number;
+}
+
+/**
+ * Translation state for transcript viewer with version navigation
+ */
+export interface TranscriptTranslationState {
+  /** Current view index (0 = original, 1+ = translations) */
+  currentIndex: number;
+  /** Array of translations in order they were created */
+  translations: TranscriptTranslationEntry[];
+  /** Whether a translation request is in progress */
+  isTranslating: boolean;
+  /** Error message if the last translation failed */
+  error: string | null;
+}
