@@ -63,3 +63,10 @@ export function isAudioVideoFileByTypeOrName(
   // Fall back to extension check
   return isAudioVideoFile(filename);
 }
+
+/**
+ * Accept attribute value for file inputs that accept audio/video for transcription.
+ * Includes MIME type wildcards and explicit extensions for browser compatibility.
+ */
+export const TRANSCRIPTION_ACCEPT_TYPES =
+  'audio/*,video/*,.mp3,.mp4,.mpeg,.mpga,.m4a,.wav,.webm,.mkv,.mov,.avi,.flv,.wmv';
