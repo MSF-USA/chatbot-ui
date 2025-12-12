@@ -490,7 +490,11 @@
     "msfLogo": "MSF Logo",
     "importantInformation": "Important Information",
     "contact": "Contact",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "discard": "Discard",
+    "keepEditing": "Keep Editing"
   },
   "chat": {
     "downloadAudio": "Download audio",
