@@ -1,4 +1,17 @@
 /**
+ * Options for transcription services.
+ *
+ * @property language - ISO-639-1 language code (e.g., 'en', 'es', 'fr').
+ *                      If undefined, Whisper will auto-detect the language.
+ * @property prompt - Optional context/instructions to improve transcription accuracy.
+ *                    Useful for technical terms, proper nouns, or specific formatting.
+ */
+export interface TranscriptionOptions {
+  language?: string;
+  prompt?: string;
+}
+
+/**
  * Interface for transcription services.
  *
  * Implemented by:
@@ -6,7 +19,7 @@
  * - BatchTranscriptionService: Asynchronous transcription for files >25MB
  */
 export interface ITranscriptionService {
-  transcribe(input: string): Promise<string>;
+  transcribe(input: string, options?: TranscriptionOptions): Promise<string>;
 }
 
 /**
