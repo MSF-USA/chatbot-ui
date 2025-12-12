@@ -1,8 +1,11 @@
+import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
 import { extractAudioFromVideo } from '@/lib/utils/server/audioExtractor';
 import { validateBufferSignature } from '@/lib/utils/server/fileValidation';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
+import { IBlobStorageClient } from '../../blobStorageClient';
+import { BatchTranscriptionService } from '../../transcription/batchTranscriptionService';
 import { TranscriptionServiceFactory } from '../../transcriptionService';
 import { FileProcessingService } from '../FileProcessingService';
 import { ChatContext } from '../pipeline/ChatContext';
@@ -11,6 +14,50 @@ import { InputValidator } from '../validators/InputValidator';
 
 import { isAudioVideoFile } from '@/lib/constants/fileTypes';
 import { SpanStatusCode, trace } from '@opentelemetry/api';
+import fs from 'fs';
+
+/**
+ * Polls a batch transcription job until completion.
+ *
+ * @param service - BatchTranscriptionService instance
+ * @param jobId - Job ID to poll
+ * @param maxWaitMs - Maximum wait time in milliseconds (default 10 minutes)
+ * @returns Promise resolving to the transcript text
+ * @throws Error if job fails or times out
+ */
+async function pollBatchTranscription(
+  service: BatchTranscriptionService,
+  jobId: string,
+  maxWaitMs: number = 600000,
+): Promise<string> {
+  const startTime = Date.now();
+  const pollIntervals = [2000, 5000, 10000, 15000]; // Increasing intervals
+  let pollIndex = 0;
+
+  while (Date.now() - startTime < maxWaitMs) {
+    const status = await service.getStatus(jobId);
+
+    if (status.status === 'Succeeded') {
+      return await service.getTranscript(jobId);
+    }
+
+    if (status.status === 'Failed') {
+      throw new Error(
+        `Batch transcription failed: ${status.error || 'Unknown error'}`,
+      );
+    }
+
+    // Wait with increasing intervals
+    const waitMs =
+      pollIntervals[Math.min(pollIndex++, pollIntervals.length - 1)];
+    console.log(
+      `[FileProcessor] Batch transcription status: ${status.status}, waiting ${waitMs}ms...`,
+    );
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
+  }
+
+  throw new Error(`Batch transcription timed out after ${maxWaitMs / 1000}s`);
+}
 
 /**
  * FileProcessor handles file content processing in the pipeline.
