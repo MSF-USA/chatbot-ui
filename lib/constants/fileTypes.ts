@@ -15,6 +15,12 @@ export const AUDIO_VIDEO_EXTENSIONS = [
   '.m4a',
   '.wav',
   '.webm',
+  // Additional video formats (audio extracted via FFmpeg)
+  '.mkv',
+  '.mov',
+  '.avi',
+  '.flv',
+  '.wmv',
 ] as const;
 
 /**
