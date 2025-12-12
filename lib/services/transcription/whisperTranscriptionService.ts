@@ -106,27 +106,17 @@ export class WhisperTranscriptionService implements ITranscriptionService {
     }
 
     try {
-      // Build transcription options
-      const transcriptionParams: Parameters<
-        typeof this.client.audio.transcriptions.create
-      >[0] = {
+      // Use OpenAI SDK which handles file streams properly
+      const transcription = await this.client.audio.transcriptions.create({
         file: fs.createReadStream(segmentPath),
         model: this.deployment,
-        temperature: 0, // Most deterministic transcription
-      };
-
-      // Add language if specified (undefined = auto-detect)
-      if (options?.language) {
-        transcriptionParams.language = options.language;
-      }
-
-      // Add prompt/context if specified (helps with technical terms, proper nouns)
-      if (options?.prompt) {
-        transcriptionParams.prompt = options.prompt;
-      }
-
-      const transcription =
-        await this.client.audio.transcriptions.create(transcriptionParams);
+        // Language code (ISO-639-1 format). If undefined, Whisper auto-detects
+        language: options?.language,
+        // Optional context/prompt to improve accuracy with technical terms
+        prompt: options?.prompt,
+        // Most deterministic transcription
+        temperature: 0,
+      });
 
       return transcription.text || '';
     } catch (error: unknown) {
