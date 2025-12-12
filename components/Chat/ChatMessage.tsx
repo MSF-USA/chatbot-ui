@@ -175,7 +175,6 @@ export const ChatMessage: FC<Props> = ({
             filename={message.transcript.filename}
             transcript={message.transcript.transcript}
             processedContent={message.transcript.processedContent}
-            onTranslate={handleTranslate}
           />
         </AssistantMessage>
       </div>
