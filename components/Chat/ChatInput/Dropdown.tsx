@@ -38,6 +38,7 @@ import ImageIcon from '@/components/Icons/image';
 import { DropdownMenuItem, MenuItem } from './DropdownMenuItem';
 
 import { useChatInputStore } from '@/client/stores/chatInputStore';
+import { TRANSCRIPTION_ACCEPT_TYPES } from '@/lib/constants/fileTypes';
 
 interface DropdownProps {
   onCameraClick: () => void;
@@ -483,7 +484,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       <input
         ref={transcribeInputRef}
         type="file"
-        accept="audio/*,video/*,.mp3,.mp4,.wav,.webm,.m4a,.mpeg,.mpga"
+        accept={TRANSCRIPTION_ACCEPT_TYPES}
         onChange={async (e) => {
           if (e.target.files) {
             await handleFileUpload(Array.from(e.target.files));
