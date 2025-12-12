@@ -22,6 +22,7 @@ interface ArtifactStore {
   isArtifactOpen: boolean; // Track if artifact overlay is visible
   editorMode: EditorMode; // Track whether we're in code or document mode
   sourceFormat: SourceFormat; // Format of the source content (md, txt, html, etc.) - determines conversion behavior
+  isDirty: boolean; // Track if user has made modifications since opening
 
   // Actions
   setModifiedCode: (code: string) => void;
