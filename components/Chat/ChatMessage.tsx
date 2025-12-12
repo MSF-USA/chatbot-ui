@@ -156,35 +156,6 @@ export const ChatMessage: FC<Props> = ({
     return { images, files, text };
   };
 
-  // Handle translate action - sends a new message to translate the transcript
-  const handleTranslate = (transcript: string, targetLanguage: string) => {
-    if (!onQuestionClick) return;
-
-    // Language names for better readability in the prompt
-    const languageNames: Record<string, string> = {
-      en: 'English',
-      es: 'Spanish',
-      fr: 'French',
-      de: 'German',
-      nl: 'Dutch',
-      it: 'Italian',
-      pt: 'Portuguese',
-      ru: 'Russian',
-      zh: 'Chinese',
-      ja: 'Japanese',
-      ko: 'Korean',
-      ar: 'Arabic',
-      hi: 'Hindi',
-    };
-
-    const languageName = languageNames[targetLanguage] || targetLanguage;
-
-    // Send the translation request immediately
-    onQuestionClick(
-      `Please translate the following transcript to ${languageName}:\n\n${transcript}`,
-    );
-  };
-
   // Render transcript viewer for transcription messages
   if (message.transcript && message.role === 'assistant') {
     return (
