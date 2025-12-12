@@ -49,6 +49,7 @@ interface ArtifactStore {
     code: string;
   } | null>; // Get artifact metadata for including in messages
   canSwitchToDocumentMode: () => boolean; // Check if current file can switch to document mode
+  hasUnsavedChanges: () => boolean; // Check if document has been modified since opening
 }
 
 export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
@@ -63,13 +64,15 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
   isArtifactOpen: false,
   editorMode: 'code',
   sourceFormat: null,
+  isDirty: false,
 
   // Actions
   setModifiedCode: (code) => {
-    // User edits update immediately
+    // User edits mark the document as dirty
     set({
       modifiedCode: code,
       originalCode: code,
+      isDirty: true,
     });
   },
 
@@ -158,6 +161,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       fileName: 'untitled.ts',
       isLoading: false,
       error: null,
+      isDirty: false,
     }),
 
   downloadFile: () => {
@@ -265,6 +269,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       isEditorOpen: true,
       editorMode: 'code',
       sourceFormat: null, // Pure code files don't have a document format
+      isDirty: false, // Fresh document, no modifications yet
     });
   },
 
@@ -297,6 +302,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
             isEditorOpen: true,
             editorMode: 'document',
             sourceFormat,
+            isDirty: false, // Fresh document, no modifications yet
           });
         },
       );
@@ -311,6 +317,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
         isEditorOpen: true,
         editorMode: 'code',
         sourceFormat,
+        isDirty: false, // Fresh document, no modifications yet
       });
     }
   },
@@ -319,6 +326,7 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
     set({
       isArtifactOpen: false,
       isEditorOpen: false,
+      isDirty: false, // Reset dirty state when closing
     });
   },
 
@@ -377,5 +385,11 @@ export const useArtifactStore = create<ArtifactStore>()((set, get) => ({
       (sourceFormat !== null &&
         ['md', 'markdown', 'txt', 'html', 'htm'].includes(sourceFormat))
     );
+  },
+
+  hasUnsavedChanges: () => {
+    const { isDirty, isArtifactOpen } = get();
+    // Only report unsaved changes if artifact is open and has been modified
+    return isArtifactOpen && isDirty;
   },
 }));
