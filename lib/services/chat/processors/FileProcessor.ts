@@ -70,7 +70,12 @@ export class FileProcessor extends BasePipelineStage {
           }> = [];
 
           // Extract files and images from message
-          const files: Array<{ url: string; originalFilename?: string }> = [];
+          const files: Array<{
+            url: string;
+            originalFilename?: string;
+            transcriptionLanguage?: string;
+            transcriptionPrompt?: string;
+          }> = [];
           const images: Array<{
             url: string;
             detail: 'auto' | 'low' | 'high';
@@ -175,8 +180,17 @@ export class FileProcessor extends BasePipelineStage {
                   TranscriptionServiceFactory.getTranscriptionService(
                     'whisper',
                   );
-                const transcript =
-                  await transcriptionService.transcribe(filePath);
+
+                // Pass transcription options (language and prompt) if specified
+                const transcriptionOptions = {
+                  language: file.transcriptionLanguage,
+                  prompt: file.transcriptionPrompt,
+                };
+
+                const transcript = await transcriptionService.transcribe(
+                  filePath,
+                  transcriptionOptions,
+                );
 
                 transcripts.push({
                   filename,
