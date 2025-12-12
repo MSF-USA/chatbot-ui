@@ -84,6 +84,8 @@ export class FileProcessor extends BasePipelineStage {
               files.push({
                 url: section.url,
                 originalFilename: section.originalFilename,
+                transcriptionLanguage: section.transcriptionLanguage,
+                transcriptionPrompt: section.transcriptionPrompt,
               });
             } else if (section.type === 'image_url') {
               images.push({
