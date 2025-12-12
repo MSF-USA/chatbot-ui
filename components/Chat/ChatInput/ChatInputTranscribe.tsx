@@ -20,7 +20,10 @@ import {
   ImageFieldValue,
 } from '@/types/chat';
 
-import { isAudioVideoFileByTypeOrName } from '@/lib/constants/fileTypes';
+import {
+  TRANSCRIPTION_ACCEPT_TYPES,
+  isAudioVideoFileByTypeOrName,
+} from '@/lib/constants/fileTypes';
 
 async function retryOperation<T>(
   operation: () => Promise<T>,
@@ -331,7 +334,7 @@ const ChatInputTranscribe: FC<ChatInputTranscribeProps> = ({
         type="file"
         className="hidden"
         onChange={handleFileChange}
-        accept="audio/*,video/*"
+        accept={TRANSCRIPTION_ACCEPT_TYPES}
         ref={fileInputRef}
       />
       {!simulateClick && (
