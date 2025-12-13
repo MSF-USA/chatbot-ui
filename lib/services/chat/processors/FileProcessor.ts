@@ -382,7 +382,11 @@ export class FileProcessor extends BasePipelineStage {
                     } finally {
                       // 6. Delete temp blob (always cleanup)
                       try {
-                        await this.blobStorageClient.delete(tempBlobPath);
+                        const blockBlobClient =
+                          this.blobStorageClient.getBlockBlobClient(
+                            tempBlobPath,
+                          );
+                        await blockBlobClient.delete();
                         console.log(
                           `[FileProcessor] Deleted temp blob: ${tempBlobPath}`,
                         );
