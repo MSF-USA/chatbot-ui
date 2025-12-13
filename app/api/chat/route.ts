@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 
 import { ServiceContainer } from '@/lib/services/ServiceContainer';
+import { createBlobStorageClient } from '@/lib/services/blobStorageFactory';
 import { AgentEnricher } from '@/lib/services/chat/enrichers/AgentEnricher';
 import { RAGEnricher } from '@/lib/services/chat/enrichers/RAGEnricher';
 import { ToolRouterEnricher } from '@/lib/services/chat/enrichers/ToolRouterEnricher';
@@ -109,9 +110,15 @@ export async function POST(req: NextRequest): Promise<Response> {
       // 3. Build pipeline
       console.log('[Unified Chat] Building pipeline...');
       const inputValidator = new InputValidator();
+      // Create blob storage client for batch transcription support
+      const blobStorageClient = createBlobStorageClient(context.session);
       const pipeline = new ChatPipeline([
         // Content processors
-        new FileProcessor(fileProcessingService, inputValidator),
+        new FileProcessor(
+          fileProcessingService,
+          inputValidator,
+          blobStorageClient,
+        ),
         new ImageProcessor(),
 
         // Feature enrichers
