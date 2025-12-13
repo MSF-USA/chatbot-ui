@@ -1,3 +1,5 @@
+import { FileProcessingService } from '@/lib/services/chat';
+
 import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
 import { extractAudioFromVideo } from '@/lib/utils/server/audioExtractor';
@@ -7,7 +9,6 @@ import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 import { IBlobStorageClient } from '../../blobStorageClient';
 import { BatchTranscriptionService } from '../../transcription/batchTranscriptionService';
 import { TranscriptionServiceFactory } from '../../transcriptionService';
-import { FileProcessingService } from '../FileProcessingService';
 import { ChatContext } from '../pipeline/ChatContext';
 import { BasePipelineStage } from '../pipeline/PipelineStage';
 import { InputValidator } from '../validators/InputValidator';
@@ -82,6 +83,7 @@ export class FileProcessor extends BasePipelineStage {
   constructor(
     private fileProcessingService: FileProcessingService,
     private inputValidator: InputValidator,
+    private blobStorageClient?: IBlobStorageClient,
   ) {
     super();
   }
@@ -258,21 +260,140 @@ export class FileProcessor extends BasePipelineStage {
                 }
 
                 try {
-                  const transcriptionService =
-                    TranscriptionServiceFactory.getTranscriptionService(
-                      'whisper',
+                  // Get file size to determine transcription service
+                  const stats = await fs.promises.stat(fileToTranscribe);
+                  const audioSize = stats.size;
+                  const audioSizeMB = (audioSize / (1024 * 1024)).toFixed(1);
+
+                  console.log(
+                    `[FileProcessor] Audio file size: ${audioSizeMB}MB`,
+                  );
+
+                  let transcript: string;
+
+                  // Route based on file size: ≤25MB → Whisper, >25MB → Batch
+                  if (audioSize <= WHISPER_MAX_SIZE) {
+                    // Whisper transcription (synchronous, ≤25MB)
+                    console.log(
+                      `[FileProcessor] Using Whisper transcription (≤25MB)`,
                     );
 
-                  // Pass transcription options (language and prompt) if specified
-                  const transcriptionOptions = {
-                    language: file.transcriptionLanguage,
-                    prompt: file.transcriptionPrompt,
-                  };
+                    const transcriptionService =
+                      TranscriptionServiceFactory.getTranscriptionService(
+                        'whisper',
+                      );
 
-                  const transcript = await transcriptionService.transcribe(
-                    fileToTranscribe,
-                    transcriptionOptions,
-                  );
+                    // Pass transcription options (language and prompt) if specified
+                    const transcriptionOptions = {
+                      language: file.transcriptionLanguage,
+                      prompt: file.transcriptionPrompt,
+                    };
+
+                    transcript = await transcriptionService.transcribe(
+                      fileToTranscribe,
+                      transcriptionOptions,
+                    );
+                  } else {
+                    // Batch transcription (asynchronous with polling, >25MB)
+                    console.log(
+                      `[FileProcessor] Using Batch transcription (>25MB)`,
+                    );
+
+                    // Batch transcription requires blob storage client
+                    if (!this.blobStorageClient) {
+                      throw new Error(
+                        `Audio file (${audioSizeMB}MB) exceeds 25MB Whisper limit. ` +
+                          `Batch transcription is not available - blobStorageClient not configured.`,
+                      );
+                    }
+
+                    // Check if batch service is configured
+                    const batchService = new BatchTranscriptionService();
+                    if (!batchService.isConfigured()) {
+                      throw new Error(
+                        `Audio file (${audioSizeMB}MB) exceeds 25MB Whisper limit. ` +
+                          `Batch transcription is not configured (missing AZURE_SPEECH_KEY).`,
+                      );
+                    }
+
+                    // 1. Upload extracted audio to temp blob storage
+                    const tempBlobPath = `${context.user.id}/uploads/temp/${Date.now()}_transcription_audio.mp3`;
+                    const audioBuffer =
+                      await fs.promises.readFile(fileToTranscribe);
+
+                    console.log(
+                      `[FileProcessor] Uploading audio to temp blob: ${tempBlobPath}`,
+                    );
+
+                    await this.blobStorageClient.upload(
+                      tempBlobPath,
+                      audioBuffer,
+                      {
+                        blobHTTPHeaders: {
+                          blobContentType: 'audio/mpeg',
+                        },
+                      },
+                    );
+
+                    try {
+                      // 2. Generate SAS URL for batch API access
+                      const sasUrl =
+                        await this.blobStorageClient.generateSasUrl(
+                          tempBlobPath,
+                          24, // 24 hour expiry
+                        );
+
+                      console.log(
+                        `[FileProcessor] Submitting batch transcription job...`,
+                      );
+
+                      // 3. Submit batch transcription job
+                      const jobId = await batchService.submitTranscription(
+                        sasUrl,
+                        file.transcriptionLanguage || 'en-US',
+                      );
+
+                      console.log(
+                        `[FileProcessor] Batch job submitted: ${jobId}`,
+                      );
+
+                      // 4. Poll until complete (synchronous polling)
+                      transcript = await pollBatchTranscription(
+                        batchService,
+                        jobId,
+                      );
+
+                      console.log(
+                        `[FileProcessor] Batch transcription complete: ${transcript.length} chars`,
+                      );
+
+                      // 5. Delete batch job (cleanup Azure resources)
+                      try {
+                        await batchService.deleteTranscription(jobId);
+                        console.log(
+                          `[FileProcessor] Deleted batch job: ${jobId}`,
+                        );
+                      } catch (deleteError) {
+                        console.warn(
+                          `[FileProcessor] Failed to delete batch job ${jobId}:`,
+                          deleteError,
+                        );
+                      }
+                    } finally {
+                      // 6. Delete temp blob (always cleanup)
+                      try {
+                        await this.blobStorageClient.delete(tempBlobPath);
+                        console.log(
+                          `[FileProcessor] Deleted temp blob: ${tempBlobPath}`,
+                        );
+                      } catch (blobDeleteError) {
+                        console.warn(
+                          `[FileProcessor] Failed to delete temp blob ${tempBlobPath}:`,
+                          blobDeleteError,
+                        );
+                      }
+                    }
+                  }
 
                   transcripts.push({
                     filename,
