@@ -3,10 +3,10 @@ import { FileProcessingService } from '@/lib/services/chat';
 import { WHISPER_MAX_SIZE } from '@/lib/utils/app/const';
 import { parseAndQueryFileOpenAI } from '@/lib/utils/app/stream/documentSummary';
 import { extractAudioFromVideo } from '@/lib/utils/server/audioExtractor';
+import { BlobStorage } from '@/lib/utils/server/blob';
 import { validateBufferSignature } from '@/lib/utils/server/fileValidation';
 import { sanitizeForLog } from '@/lib/utils/server/logSanitization';
 
-import { IBlobStorageClient } from '../../blobStorageClient';
 import { BatchTranscriptionService } from '../../transcription/batchTranscriptionService';
 import { TranscriptionServiceFactory } from '../../transcriptionService';
 import { ChatContext } from '../pipeline/ChatContext';
@@ -83,7 +83,7 @@ export class FileProcessor extends BasePipelineStage {
   constructor(
     private fileProcessingService: FileProcessingService,
     private inputValidator: InputValidator,
-    private blobStorageClient?: IBlobStorageClient,
+    private blobStorageClient?: BlobStorage,
   ) {
     super();
   }
