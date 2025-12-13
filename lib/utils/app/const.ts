@@ -66,4 +66,5 @@ export const API_TIMEOUTS = {
   CHAT: 300,
   FILE_PROCESSING: 120,
   TRANSCRIPTION: 180,
+  BATCH_TRANSCRIPTION: 600, // 10 minutes for large audio files (>25MB)
 } as const;
