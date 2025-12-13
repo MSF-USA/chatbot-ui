@@ -31,6 +31,20 @@ vi.mock('@azure/identity', () => ({
     .mockReturnValue(() => Promise.resolve('mock-token')),
 }));
 
+// Mock blob storage factory to prevent Azure blob storage initialization
+vi.mock('@/lib/services/blobStorageFactory', () => ({
+  createBlobStorageClient: vi.fn().mockReturnValue({
+    upload: vi.fn().mockResolvedValue('https://mock-blob-url'),
+    get: vi.fn().mockResolvedValue(Buffer.from('mock-content')),
+    blobExists: vi.fn().mockResolvedValue(false),
+    getBlockBlobClient: vi.fn().mockReturnValue({
+      delete: vi.fn().mockResolvedValue(undefined),
+    }),
+    getBlobSize: vi.fn().mockResolvedValue(1000),
+    generateSasUrl: vi.fn().mockResolvedValue('https://mock-sas-url'),
+  }),
+}));
+
 // Create shared mock create function that can be configured in tests
 const mockCreateFn = vi.fn();
 
