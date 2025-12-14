@@ -46,7 +46,9 @@ describe('RAGService', () => {
         date: '2024-01-01',
         url: 'https://test.com/1',
         chunk: 'Test content 1',
+        chunk_id: 'chunk_1',
       },
+      rerankerScore: 2.5,
     },
     {
       document: {
@@ -54,7 +56,9 @@ describe('RAGService', () => {
         date: '2024-01-02',
         url: 'https://test.com/2',
         chunk: 'Test content 2',
+        chunk_id: 'chunk_2',
       },
+      rerankerScore: 2.8,
     },
   ];
 
@@ -281,27 +285,30 @@ describe('RAGService', () => {
       expect(extractQuerySpy).toHaveBeenCalledWith(messages);
       expect(reformulateQuerySpy).not.toHaveBeenCalled();
 
-      // Verify the search was called with correct parameters
+      // Verify the search was called with semantic search parameters
       expect(mockSearchClient.search).toHaveBeenCalledWith(
         'test query',
         expect.objectContaining({
-          select: ['chunk', 'title', 'date', 'url'],
-          top: 15,
-          queryType: 'simple',
-          scoringProfile: 'dateScore',
+          select: ['chunk', 'title', 'date', 'url', 'chunk_id'],
+          top: 30,
+          queryType: 'semantic',
+          semanticSearchOptions: expect.objectContaining({
+            configurationName: 'test-index-semantic-configuration',
+          }),
           vectorSearchOptions: expect.objectContaining({
             queries: expect.arrayContaining([
               expect.objectContaining({
                 kind: 'text',
                 text: 'test query',
                 fields: ['text_vector'],
-                kNearestNeighborsCount: 15,
+                kNearestNeighborsCount: 30,
               }),
             ]),
           }),
         }),
       );
 
+      // Results are sorted by date (newest first), so order should be reversed
       expect(searchDocs).toHaveLength(2);
       expect(searchMetadata.dateRange).toEqual({
         newest: '2024-01-02',
@@ -518,7 +525,7 @@ describe('RAGService', () => {
         expect.any(Number),
         'test-model',
         messages.length,
-        0.5,
+        0.3,
         mockUser,
         'test-bot',
       );
@@ -562,7 +569,7 @@ describe('RAGService', () => {
         expect.any(Number),
         'test-model',
         messages.length,
-        0.5,
+        0.3,
         mockUser,
         'test-bot',
       );
@@ -716,32 +723,36 @@ describe('RAGService', () => {
   });
 
   describe('deduplicateResults', () => {
-    it('should deduplicate search results by URL and title', () => {
-      // Create test data with duplicates
+    it('should deduplicate search results by chunk_id', () => {
+      // Create test data with duplicate chunk_ids
       const duplicateResults = [
         {
-          title: 'Duplicate Title',
+          title: 'Same Article',
           date: '2024-01-01',
-          url: 'https://test.com/dup1',
+          url: 'https://test.com/article1',
           chunk: 'Content 1',
+          chunk_id: 'chunk_1',
         },
         {
-          title: 'Duplicate Title', // Same title as above
-          date: '2024-01-02',
-          url: 'https://test.com/unique',
+          title: 'Same Article', // Same title but different chunk
+          date: '2024-01-01',
+          url: 'https://test.com/article1',
           chunk: 'Content 2',
+          chunk_id: 'chunk_2',
         },
         {
-          title: 'Unique Title',
-          date: '2024-01-03',
-          url: 'https://test.com/dup1', // Same URL as first item
-          chunk: 'Content 3',
+          title: 'Same Article', // Duplicate chunk_id
+          date: '2024-01-01',
+          url: 'https://test.com/article1',
+          chunk: 'Content 1 duplicate',
+          chunk_id: 'chunk_1',
         },
         {
-          title: 'Another Title',
+          title: 'Different Article',
           date: '2024-01-04',
-          url: 'https://test.com/another',
+          url: 'https://test.com/article2',
           chunk: 'Content 4',
+          chunk_id: 'chunk_3',
         },
       ];
 
@@ -751,10 +762,11 @@ describe('RAGService', () => {
       );
       const result = deduplicateResults(duplicateResults);
 
-      // Should remove duplicates (by URL or title)
-      expect(result).toHaveLength(2);
-      expect(result[0].title).toBe('Duplicate Title');
-      expect(result[1].title).toBe('Another Title');
+      // Should allow multiple chunks from same article but remove duplicate chunk_ids
+      expect(result).toHaveLength(3);
+      expect(result[0].chunk_id).toBe('chunk_1');
+      expect(result[1].chunk_id).toBe('chunk_2');
+      expect(result[2].chunk_id).toBe('chunk_3');
     });
   });
 });
