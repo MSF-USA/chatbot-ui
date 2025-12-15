@@ -55,7 +55,7 @@ export enum OpenAIVisionModelID {
 }
 
 // Fallback model ID
-export const fallbackModelID = OpenAIModelID.GPT_5_2_2_CHAT;
+export const fallbackModelID = OpenAIModelID.GPT_5_2_CHAT;
 
 /**
  * Environment-specific configuration for models

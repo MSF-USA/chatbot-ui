@@ -57,7 +57,6 @@ export class AnthropicHandler extends ModelHandler {
     this.client = new AnthropicFoundry({
       azureADTokenProvider: tokenProvider,
       baseURL: endpoint,
-      apiVersion: '2023-06-01',
     });
   }
 
