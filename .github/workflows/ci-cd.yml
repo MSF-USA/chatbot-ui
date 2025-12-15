@@ -2,8 +2,7 @@ name: CI & CD for Container Apps
 
 on:
   # Trigger for PR Previews and Build/Test
-  # TEMPORARY: Using pull_request_target to bypass merge conflicts. Change back to pull_request once conflicts are resolved.
-  pull_request_target:
+  pull_request:
     types: [opened, synchronize, reopened]
 
   # Trigger for Beta deployment (push to main)
@@ -34,14 +33,11 @@ permissions:
 jobs:
   # JOB 0: Lint and Type Check (runs before build)
   lint_and_typecheck:
-    if: github.event_name == 'pull_request_target' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    if: github.event_name == 'pull_request' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          # For pull_request_target, checkout the PR head to test the actual PR code
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -71,15 +67,13 @@ jobs:
   # JOB 1: Handles the PR lifecycle: Build, Test, Push, and Deploy to a SHARED Preview Environment
   build_and_preview_pr:
     # Only run when a PR is opened or updated
-    if: github.event_name == 'pull_request_target'
+    if: github.event_name == 'pull_request'
     needs: lint_and_typecheck
     runs-on: ubuntu-latest
     environment: dev
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
