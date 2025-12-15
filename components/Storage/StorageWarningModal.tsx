@@ -277,7 +277,7 @@ export const StorageWarningModal: FC<StorageWarningModalProps> = ({
                   : isCriticalLevel
                   ? 'bg-orange-500 hover:bg-orange-600 dark:bg-orange-600 dark:hover:bg-orange-700'
                   : 'bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700'
-              } 
+              }
               text-white py-2 px-4 rounded
             `}
             onClick={handleCloseOrDismiss}

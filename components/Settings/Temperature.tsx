@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next';
 
 import { DEFAULT_TEMPERATURE } from '@/utils/app/const';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 interface Props {
   temperature: number;

@@ -216,7 +216,7 @@ export class AgenticFrontendService {
             const response = new Response(JSON.stringify(responseData), {
               headers: { 'Content-Type': 'application/json' },
             });
-            
+
             // Return AgenticChatResult with proper structure
             return {
               controller: new AbortController(),
@@ -226,7 +226,7 @@ export class AgenticFrontendService {
               usedAgent: true,
               agentType: forcedAgentType,
               agentConfidence: 1.0,
-              intent: 'forced_command', 
+              intent: 'forced_command',
               fellBackToStandardChat: false,
               processingMetadata: {
                 intentAnalysisTime: 0,
@@ -561,7 +561,7 @@ export class AgenticFrontendService {
           const response = new Response(JSON.stringify(responseData), {
             headers: { 'Content-Type': 'application/json' },
           });
-          
+
           // Return AgenticChatResult with proper structure
           return {
             controller: new AbortController(),

@@ -533,7 +533,7 @@ export class AgentFactory {
         try {
           // Create factory function based on agent type
           const factoryFunction = this.createAgentFactoryFunction(agentDef.metadata.type);
-          
+
           if (factoryFunction) {
             this.registerAgent(
               agentDef.metadata.type,

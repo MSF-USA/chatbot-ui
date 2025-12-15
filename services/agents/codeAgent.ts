@@ -584,7 +584,7 @@ export class CodeAgent extends BaseAgent {
   ): AgentResponse {
     const content = `## Code Analysis
 
-I can help you with code execution and analysis. I noticed your query doesn't contain any code blocks. 
+I can help you with code execution and analysis. I noticed your query doesn't contain any code blocks.
 
 ### Supported languages:
 - Python (recommended for data analysis, machine learning)

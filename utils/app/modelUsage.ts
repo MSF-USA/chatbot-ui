@@ -1,6 +1,6 @@
 /**
  * Model Usage Tracking Service
- * 
+ *
  * Tracks how frequently users select different AI models to enable
  * usage-based sorting in the model selection interface.
  */

@@ -17,7 +17,7 @@ import {
 import { getBotById } from '@/types/bots';
 import { Conversation } from '@/types/chat';
 
-import HomeContext from '@/pages/api/home/home.context';
+import HomeContext from '@/context/HomeContext';
 
 import SidebarActionButton from '@/components/Buttons/SidebarActionButton';
 import ChatbarContext from '@/components/Chatbar/Chatbar.context';

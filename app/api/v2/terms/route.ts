@@ -84,19 +84,19 @@ En utilisant ai.msf.org, vous acceptez les conditions générales suivantes :
 
 Vous acceptez d’utiliser ai.msf.org de manière responsable. Vous:
 
-• Utilisez le MSF AI Assistant conformément aux politiques applicables de vos entités MSF en matière de ICT (Information and Communication Technology), d'IA et autres. 
+• Utilisez le MSF AI Assistant conformément aux politiques applicables de vos entités MSF en matière de ICT (Information and Communication Technology), d'IA et autres.
 
 • Vérifiez toujours l'exactitude, l'inclusivité et le biais des réponses. ai.msf.org utilise une technologie expérimentale – elle ne garantit pas que les résultats seront exacts. De plus, la technologie n'a pas été entraînée à l'aide de données représentatives des patients et des communautés de MSF. Les résultats de l'IA peuvent perpétuer les préjugés, la discrimination et les stéréotypes. Vous êtes responsable de la vérification des réponses produites.
 
-• Vérifiez que les réponses n'enfreignent pas les droits de propriété intellectuelle de tiers, en particulier pour tout ce qui est utilisé publiquement. Comme d'autres systèmes d'IA générative, la technologie sous-jacente à ai.msf.org a été entraînée sur la propriété intellectuelle de tiers sans autorisations ni licences claires. 
+• Vérifiez que les réponses n'enfreignent pas les droits de propriété intellectuelle de tiers, en particulier pour tout ce qui est utilisé publiquement. Comme d'autres systèmes d'IA générative, la technologie sous-jacente à ai.msf.org a été entraînée sur la propriété intellectuelle de tiers sans autorisations ni licences claires.
 
 • Soyez transparent sur votre utilisation de l'IA. Dites aux gens si quelque chose que vous utilisez a été produit par l'IA et marquez les réponses comme générées par l'IA.
 
 ## Vie privée
 
-L'utilisation de ai.msf.org est un environnement plus sûr et plus sécurisé que l'utilisation d'autres outils d'IA externes gratuits, qui offrent très peu de garanties de confidentialité. Cependant, sachez qu'il y a toujours des limites et des mises en garde - consultez la politique d'utilisation pour plus de détails. 
+L'utilisation de ai.msf.org est un environnement plus sûr et plus sécurisé que l'utilisation d'autres outils d'IA externes gratuits, qui offrent très peu de garanties de confidentialité. Cependant, sachez qu'il y a toujours des limites et des mises en garde - consultez la politique d'utilisation pour plus de détails.
 
-À l'instar des autres produits Microsoft, vos informations de connexion seront traitées par MSF comme indiqué dans la politique de confidentialité de votre entité MSF. 
+À l'instar des autres produits Microsoft, vos informations de connexion seront traitées par MSF comme indiqué dans la politique de confidentialité de votre entité MSF.
 
 ## Infractions/commentaires
 

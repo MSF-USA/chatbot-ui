@@ -2,6 +2,7 @@ import { Message } from './chat';
 
 export interface SearchResult {
   chunk: string;
+  chunk_id?: string;
   title: string;
   date: string;
   url: string;

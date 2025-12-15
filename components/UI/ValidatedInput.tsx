@@ -324,7 +324,7 @@ export const ValidatedInput = forwardRef<HTMLInputElement, ValidatedInputProps>(
       }
 
       if (validation.errors.length > 0) {
-        return `${baseClasses} border-red-300 focus:border-red-500 focus:ring-red-500 
+        return `${baseClasses} border-red-300 focus:border-red-500 focus:ring-red-500
               dark:border-red-600 dark:focus:border-red-400`;
       }
 

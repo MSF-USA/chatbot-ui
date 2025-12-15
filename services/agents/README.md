@@ -120,16 +120,16 @@ export class YourAgent extends BaseAgent<AgentConfig> {
 
   async execute(context: AgentExecutionContext): Promise<AgentResponse> {
     const startTime = Date.now();
-    
+
     try {
       // Parse parameters from the query
       const params = this.parseParameters(context.query);
-      
+
       // Process the request (either directly or via service)
-      const result = this.service 
+      const result = this.service
         ? await this.service.processRequest(params)
         : await this.directProcess(params);
-      
+
       // Return formatted response
       return {
         content: result.content,
@@ -185,7 +185,7 @@ export class YourAgentService {
   async processRequest(params: any): Promise<any> {
     // Complex business logic
     // API calls, data processing, etc.
-    
+
     return {
       content: 'Processed result',
       structuredContent: {
@@ -579,7 +579,7 @@ User Input → Centralized Registry → Auto-Generated Configs → Agent Executi
 
 The centralized system automatically:
 - **Registers commands** in CommandParser
-- **Creates factory entries** in AgentFactory  
+- **Creates factory entries** in AgentFactory
 - **Configures API endpoints** in route handlers
 - **Sets up UI elements** with colors and icons
 - **Handles errors** with retry logic and fallbacks
@@ -601,10 +601,10 @@ The system now includes **centralized intent classification** that replaces the 
 
 ```typescript
 // Get intent classification configurations
-import { 
+import {
   getIntentClassificationConfigs,
   getIntentKeywordsByCategory,
-  getAgentScoringConfigs 
+  getAgentScoringConfigs
 } from '@/config/agents';
 
 // Use centralized intent service

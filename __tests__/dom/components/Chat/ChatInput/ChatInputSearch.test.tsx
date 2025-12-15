@@ -297,7 +297,7 @@ describe('ChatInputSearch Component', () => {
 
       render(<ChatInputSearch {...props} />);
       await user.click(screen.getByRole('button', { name: 'chatUrlInputTitle' }));
-      
+
       const submitButton = screen.getByRole('button', {
         name: 'submitButton',
       });
@@ -368,7 +368,7 @@ describe('ChatInputSearch Component', () => {
       );
       await user.type(searchInputEl, 'test query');
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      
+
       // Expect onSend to be called with user's message and forced agent type
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(
@@ -391,7 +391,7 @@ describe('ChatInputSearch Component', () => {
       const searchInput = screen.getByPlaceholderText('searchQueryPlaceholder');
       await user.type(searchInput, 'test query');
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      
+
       // Expect onSend to be called with user's message and forced agent type
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(
@@ -416,7 +416,7 @@ describe('ChatInputSearch Component', () => {
         'original query',
       );
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      
+
       // Expect onSend to be called with user's message and forced agent type
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(
@@ -441,7 +441,7 @@ describe('ChatInputSearch Component', () => {
         'failing search',
       );
       await user.click(screen.getByRole('button', { name: 'submitButton' }));
-      
+
       // Should just call onSend and close
       await waitFor(() => expect(props.onSend).toHaveBeenCalledTimes(1));
       expect(props.onSend).toHaveBeenCalledWith(

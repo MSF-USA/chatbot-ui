@@ -117,36 +117,36 @@ describe('OPENAI_API_VERSION determination logic', () => {
   function testDetermineApiVersion(envVersion: string | undefined, forceEnvVersion: string | undefined): string {
     const originalApiVersion = process.env.OPENAI_API_VERSION;
     const originalForceFlag = process.env.FORCE_OPENAI_API_VERSION;
-    
+
     // Set test environment variables
     if (envVersion !== undefined) {
       process.env.OPENAI_API_VERSION = envVersion;
     } else {
       delete process.env.OPENAI_API_VERSION;
     }
-    
+
     if (forceEnvVersion !== undefined) {
       process.env.FORCE_OPENAI_API_VERSION = forceEnvVersion;
     } else {
       delete process.env.FORCE_OPENAI_API_VERSION;
     }
-    
+
     // Call the actual production function
     const result = determineApiVersion();
-    
+
     // Restore original environment
     if (originalApiVersion !== undefined) {
       process.env.OPENAI_API_VERSION = originalApiVersion;
     } else {
       delete process.env.OPENAI_API_VERSION;
     }
-    
+
     if (originalForceFlag !== undefined) {
       process.env.FORCE_OPENAI_API_VERSION = originalForceFlag;
     } else {
       delete process.env.FORCE_OPENAI_API_VERSION;
     }
-    
+
     return result;
   }
 
@@ -361,14 +361,14 @@ describe('OPENAI_API_VERSION determination logic', () => {
       (global as any).Date = vi.fn().mockImplementation(() => {
         throw new Error('Date constructor error');
       });
-      
+
       const result = testDetermineApiVersion('2025-04-01', undefined);
       expect(result).toBe('2025-04-01');
       expect(consoleWarnSpy).toHaveBeenCalledWith(
         'Error parsing API version dates, using fallback logic:',
         expect.any(Error)
       );
-      
+
       global.Date = originalDate;
     });
   });

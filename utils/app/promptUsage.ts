@@ -1,6 +1,6 @@
 /**
  * Prompt Usage Tracking Service
- * 
+ *
  * Tracks how frequently users select different prompts to enable
  * usage-based sorting in the prompt selection interface.
  */

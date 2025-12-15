@@ -1,6 +1,6 @@
 /**
  * Centralized Agent Configuration Schema
- * 
+ *
  * This file defines comprehensive type-safe schemas for all agent configurations.
  * Instead of scattering agent config across 25+ files, everything is defined here
  * and automatically processed throughout the application.
@@ -73,7 +73,7 @@ export interface AgentUIConfig {
   /** Icon identifier or path */
   icon?: string;
   /** Component path for custom settings UI */
-  settingsComponent?: string;  
+  settingsComponent?: string;
   /** Display order in UI lists */
   displayOrder?: number;
   /** Whether to show in agent selector */

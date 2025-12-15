@@ -1,21 +1,21 @@
 /**
  * Centralized Agent Configuration System
- * 
+ *
  * This is the single entry point for all agent configurations.
  * Instead of scattering agent configuration across 25+ files,
  * this centralized system provides type-safe, validated,
  * and automatically distributed agent settings.
- * 
+ *
  * Usage:
  * ```typescript
  * import { getAgentConfigs, getAgentByType, validateConfigs } from '@/config/agents';
- * 
+ *
  * // Get all configurations for use throughout the app
  * const configs = getAgentConfigs();
- * 
+ *
  * // Get specific agent definition
  * const translationAgent = getAgentByType(AgentType.TRANSLATION);
- * 
+ *
  * // Validate configuration
  * const validation = validateConfigs();
  * ```
@@ -227,12 +227,12 @@ export function printConfigSummary(): void {
   console.log(`📊 Total Agents: ${configs.metadata.agentCount}`);
   console.log(`⌨️  Total Commands: ${configs.metadata.commandCount}`);
   console.log(`✅ Valid: ${validation.valid ? 'Yes' : 'No'}`);
-  
+
   if (validation.errors.length > 0) {
     console.log(`❌ Errors: ${validation.errors.length}`);
     validation.errors.forEach(error => console.log(`   - ${error}`));
   }
-  
+
   if (validation.warnings.length > 0) {
     console.log(`⚠️  Warnings: ${validation.warnings.length}`);
     validation.warnings.forEach(warning => console.log(`   - ${warning}`));
@@ -255,7 +255,7 @@ export function exportConfigAsJSON(): string {
   if (process.env.NODE_ENV !== 'development') {
     throw new Error('exportConfigAsJSON is only available in development');
   }
-  
+
   return JSON.stringify(generateAgentConfigs(), null, 2);
 }
 
@@ -264,11 +264,11 @@ export function exportConfigAsJSON(): string {
  */
 const initializeConfig = () => {
   const validation = validateConfigs();
-  
+
   if (!validation.valid) {
     console.error('❌ Agent configuration validation failed:');
     validation.errors.forEach(error => console.error(`   - ${error}`));
-    
+
     if (process.env.NODE_ENV === 'development') {
       throw new Error('Invalid agent configuration detected. Please fix the errors above.');
     }

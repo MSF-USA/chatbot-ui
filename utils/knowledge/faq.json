@@ -12,7 +12,7 @@
       "keywords": ["MSF AI Assistant", "what is", "AI tool", "chat tool", "Azure Open AI", "MSF", "assistant", "AI", "artificial intelligence", "internal", "custom-built", "humanitarian", "médecins sans frontières", "doctors without borders"]
     },
     {
-      "id": "faq_002", 
+      "id": "faq_002",
       "type": "faq",
       "category": "capabilities",
       "question": "How can the MSF AI Assistant assist employees of Doctors Without Borders (Médecins Sans Frontières)?",
@@ -21,7 +21,7 @@
     },
     {
       "id": "faq_003",
-      "type": "faq", 
+      "type": "faq",
       "category": "examples",
       "question": "What are some example questions I can ask the MSF AI Assistant?",
       "answer": "Here are a few examples of questions you can ask the MSF AI Assistant:\n- 'Summarize the main points from this large set of data.'\n- 'Translate this document into French.'\n- 'Give me the history on this culture or geographical area.'\n- 'Provide ideas for improving logistics in remote areas.'",

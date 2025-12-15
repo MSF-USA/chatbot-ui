@@ -121,7 +121,7 @@ export class RAGService {
         const streamResponse = await this.openAIClient.chat.completions.create({
           model: modelId,
           messages: enhancedMessages,
-          temperature: 0.5,
+          temperature: 0.3, // Lower temperature for factual RAG responses
           stream: true,
         });
 
@@ -136,7 +136,7 @@ export class RAGService {
           startTime,
           modelId,
           messages.length,
-          0.5,
+          0.3,
           user,
           botId,
         );
@@ -146,7 +146,7 @@ export class RAGService {
         const completion = await this.openAIClient.chat.completions.create({
           model: modelId,
           messages: enhancedMessages,
-          temperature: 0.5,
+          temperature: 0.3, // Lower temperature for factual RAG responses
           stream: false,
         });
 
@@ -175,7 +175,7 @@ export class RAGService {
           startTime,
           modelId,
           messages.length,
-          0.5,
+          0.3,
           user,
           botId,
         );
@@ -218,20 +218,20 @@ export class RAGService {
       // Azure-optimized system prompt
       const systemPrompt = `You are a search query optimizer for Azure AI Search.
 
-        Your task is to create concise, effective search queries that:
-        1. Prioritize recent information by default when appropriate (using terms like "latest," "recent," "this week," "today")
-        2. Respect the original intent when the query is about historical events
-        3. Include key entities and concepts from the original query and conversation context
-        4. Work effectively with Azure AI Search semantic ranking
+Your task is to create concise, effective search queries that:
+1. Preserve the user's original intent - if they ask about historical events, keep it historical
+2. Only add recency terms (latest, recent, current) if the user's query implies they want recent information
+3. Include key entities, locations, and concepts from the conversation context
+4. Resolve pronouns and references using conversation history (e.g., "tell me more about it" -> expand "it" to the actual topic)
 
-        GUIDELINES FOR AZURE AI SEARCH:
-        - Keep queries CONCISE (under 20 words)
-        - Focus on CORE CONCEPTS and ENTITIES
-        - Use NATURAL LANGUAGE phrasing
-        - Include 1-2 temporal terms at most when prioritizing recency
-        - Avoid complex boolean operators or syntax
+GUIDELINES FOR AZURE AI SEARCH:
+- Keep queries CONCISE (under 20 words)
+- Focus on CORE CONCEPTS and ENTITIES
+- Use NATURAL LANGUAGE phrasing
+- Avoid complex boolean operators or syntax
+- Do NOT add recency terms unless the user's query implies they want recent/current information
 
-        Return ONLY the reformulated search query with no additional text.`;
+Return ONLY the reformulated search query with no additional text.`;
 
       // Ask the model to generate an improved search query
       const completion = await this.openAIClient.chat.completions.create({
@@ -240,7 +240,7 @@ export class RAGService {
           { role: 'system', content: systemPrompt },
           {
             role: 'user',
-            content: `Conversation history:\n${conversationHistory}\n\nOriginal query: ${originalQuery}\n\nGenerate an improved Azure AI Search query that captures the key concepts and appropriately handles recency.`,
+            content: `Conversation history:\n${conversationHistory}\n\nOriginal query: ${originalQuery}\n\nGenerate an improved Azure AI Search query that captures the full context. Only add recency terms if the original query asks for recent/latest/current information.`,
           },
         ],
         temperature: 0.2,
@@ -295,42 +295,101 @@ export class RAGService {
       }
 
       const searchResults = await this.searchClient.search(query, {
-        select: ['chunk', 'title', 'date', 'url'],
-        top: 15,
-        queryType: 'simple',
-        scoringProfile: 'dateScore',
+        select: ['chunk', 'title', 'date', 'url', 'chunk_id'],
+        top: 30,
+        queryType: 'semantic',
+        semanticSearchOptions: {
+          configurationName: `${this.searchIndex}-semantic-configuration`,
+          captions: { captionType: 'extractive' },
+          answers: { answerType: 'extractive', count: 3 },
+        },
         vectorSearchOptions: {
           queries: [
             {
               kind: 'text',
               text: query,
               fields: ['text_vector'] as any,
-              kNearestNeighborsCount: 15,
+              kNearestNeighborsCount: 30,
             },
           ],
         },
       });
 
-      const searchDocs: SearchResult[] = [];
-      let newestDate: Date | null = null;
-      let oldestDate: Date | null = null;
+      const allDocs: Array<{
+        doc: SearchResult;
+        rerankerScore: number;
+        combinedScore: number;
+      }> = [];
 
-      const ONE_YEAR_AGO = new Date();
-      ONE_YEAR_AGO.setFullYear(ONE_YEAR_AGO.getFullYear() - 1);
+      const TWO_YEARS_AGO = new Date();
+      TWO_YEARS_AGO.setFullYear(TWO_YEARS_AGO.getFullYear() - 2);
+      const NOW = Date.now();
+      const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000;
 
+      // Collect all results from semantic search with scores
       for await (const result of searchResults.results) {
         const doc = result.document;
         const docDate = new Date(doc.date);
+        const rerankerScore = result.rerankerScore ?? 0;
 
-        if (docDate < ONE_YEAR_AGO && result.score < 0.7) {
+        // Filter out very old documents with low reranker scores
+        if (docDate < TWO_YEARS_AGO && rerankerScore < 2.0) {
           continue;
         }
 
-        searchDocs.push(doc);
+        // Calculate recency boost (0-1 scale, 1 = today, 0 = 1+ year old)
+        const ageMs = NOW - docDate.getTime();
+        const recencyScore = Math.max(0, 1 - ageMs / ONE_YEAR_MS);
+
+        // Combined score: 70% semantic relevance + 30% recency
+        // Normalize rerankerScore (typically 0-4) to 0-1 scale
+        const normalizedRerankerScore = Math.min(rerankerScore / 4, 1);
+        const combinedScore =
+          normalizedRerankerScore * 0.7 + recencyScore * 0.3;
+
+        allDocs.push({ doc, rerankerScore, combinedScore });
+      }
+
+      // Deduplicate by chunk_id and limit chunks per article for source diversity
+      const seenChunkIds = new Set<string>();
+      const chunksPerUrl = new Map<string, number>();
+      const MAX_CHUNKS_PER_ARTICLE = 2; // Ensure diverse sources
+
+      const deduplicatedDocs = allDocs.filter(({ doc }) => {
+        const chunkId = doc.chunk_id || '';
+        const url = doc.url || '';
+
+        // Skip duplicate chunks
+        if (chunkId && seenChunkIds.has(chunkId)) {
+          return false;
+        }
+
+        // Limit chunks per article to ensure source diversity
+        const currentCount = chunksPerUrl.get(url) || 0;
+        if (currentCount >= MAX_CHUNKS_PER_ARTICLE) {
+          return false;
+        }
+
+        if (chunkId) seenChunkIds.add(chunkId);
+        chunksPerUrl.set(url, currentCount + 1);
+        return true;
+      });
+
+      // Sort by combined score (relevance + recency)
+      const sortedDocs = deduplicatedDocs.sort(
+        (a, b) => b.combinedScore - a.combinedScore,
+      );
+
+      // Take top 10 results
+      const searchDocs = sortedDocs.slice(0, 10).map((item) => item.doc);
+
+      // Calculate date range from final results
+      let newestDate: Date | null = null;
+      let oldestDate: Date | null = null;
+      for (const doc of searchDocs) {
+        const docDate = new Date(doc.date);
         if (!newestDate || docDate > newestDate) newestDate = docDate;
         if (!oldestDate || docDate < oldestDate) oldestDate = docDate;
-
-        if (searchDocs.length >= 10) break;
       }
 
       const searchMetadata = {
@@ -351,7 +410,7 @@ export class RAGService {
       );
 
       return {
-        searchDocs: this.deduplicateResults(searchDocs),
+        searchDocs,
         searchMetadata,
       };
     } catch (error) {
@@ -361,29 +420,28 @@ export class RAGService {
   }
 
   /**
-   * Deduplication of search results.
+   * Deduplication of search results by chunk_id.
+   * This allows multiple chunks from the same article (same URL/title) while
+   * preventing duplicate chunks from appearing.
    *
    * @param {SearchResult[]} results - The search results to deduplicate.
    * @returns {SearchResult[]} Deduplicated search results.
    */
   private deduplicateResults(results: SearchResult[]): SearchResult[] {
     const uniqueResults: SearchResult[] = [];
-    const seenUrls = new Set<string>();
-    const seenTitles = new Set<string>();
+    const seenChunkIds = new Set<string>();
 
     for (const result of results) {
-      const url = result.url || '';
-      const title = result.title || '';
+      const chunkId = result.chunk_id || '';
 
-      // Check if we've seen either the URL or the title before
-      if ((url && seenUrls.has(url)) || (title && seenTitles.has(title))) {
-        // Skip this duplicate
-        continue;
+      // If we have a chunk_id, use it for deduplication
+      if (chunkId) {
+        if (seenChunkIds.has(chunkId)) {
+          continue;
+        }
+        seenChunkIds.add(chunkId);
       }
 
-      // Add to our seen sets and unique results
-      if (url) seenUrls.add(url);
-      if (title) seenTitles.add(title);
       uniqueResults.push(result);
     }
 
@@ -432,16 +490,13 @@ export class RAGService {
   ): OpenAI.Chat.ChatCompletionMessageParam[] {
     const query = this.extractQuery(messages);
 
-    // Apply deduplication to ensure unique sources
-    const uniqueSearchDocs = this.deduplicateResults(searchDocs);
-
     // Clear the existing sources number map
     this.sourcesNumberMap.clear();
 
-    // Create a unified context string with deduped sources, consistently numbered
+    // Create a unified context string with sources, consistently numbered
     const contextString =
       'Available sources:\n\n' +
-      uniqueSearchDocs
+      searchDocs
         .map((doc, index) => {
           const sourceNumber = index + 1;
           const date = new Date(doc.date).toISOString().split('T')[0];
