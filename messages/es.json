@@ -702,7 +702,51 @@
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Ver diagrama de flujo técnico"
+    "viewTechnicalFlowDiagram": "Ver diagrama de flujo técnico",
+    "backToChat": "Volver al chat",
+    "title": "Centro de ayuda",
+    "subtitle": "Encuentra respuestas, aprende sobre privacidad y obtén soporte",
+    "faq": {
+      "title": "Preguntas frecuentes",
+      "description": "Encuentra respuestas a preguntas comunes sobre el uso del Asistente de IA",
+      "articles": "artículos",
+      "searchPlaceholder": "Buscar preguntas frecuentes...",
+      "noResults": "No se encontraron preguntas frecuentes",
+      "noResultsHint": "Prueba con otro término de búsqueda"
+    },
+    "privacy": {
+      "title": "Privacidad y datos",
+      "description": "Aprende cómo se almacenan y protegen tus datos",
+      "topics": "temas",
+      "searchPlaceholder": "Buscar temas de privacidad...",
+      "noResults": "No se encontraron temas de privacidad",
+      "noResultsHint": "Prueba con otro término de búsqueda",
+      "bannerTitle": "Tu privacidad importa",
+      "bannerDescription": "Todas las conversaciones se almacenan localmente en tu dispositivo. El procesamiento de datos ocurre dentro de los sistemas de MSF utilizando infraestructura de Azure.",
+      "localStorageOnly": "Solo almacenamiento local",
+      "msfControlled": "Controlado por MSF",
+      "noPersonalData": "Sin datos personales",
+      "noSensitiveOps": "Sin operaciones sensibles"
+    },
+    "contact": {
+      "title": "Contacto y recursos",
+      "description": "Ponte en contacto con nuestro equipo y accede a enlaces útiles",
+      "supportAvailable": "Soporte disponible",
+      "submitRequest": "Enviar una solicitud de soporte",
+      "getHelp": "Obtén ayuda de nuestro equipo",
+      "requestDescription": "¿Necesitas ayuda o quieres dar retroalimentación? Haz clic abajo para abrir nuestro formulario de soporte.",
+      "openSupportForm": "Abrir formulario de soporte",
+      "otherWays": "Otras formas de contactarnos",
+      "emailSupport": "Soporte por correo electrónico",
+      "emailDescription": "Envíanos un correo para preguntas, retroalimentación o problemas técnicos"
+    },
+    "resources": {
+      "title": "Recursos adicionales",
+      "portalTitle": "Portal del acelerador de IA",
+      "portalDescription": "Documentación, actualizaciones del proyecto y materiales de capacitación",
+      "githubTitle": "Repositorio de código abierto",
+      "githubDescription": "Ver código, reportar problemas y contribuir en GitHub"
+    }
   },
   "settings": {
     "Settings": "Configuración",
@@ -770,7 +814,28 @@
     "FAQs, privacy policy, and guides": "Preguntas frecuentes, política de privacidad y guías",
     "Contact Support": "Contactar con soporte",
     "Popular Questions": "Preguntas populares",
-    "View all FAQs": "Ver todas las preguntas frecuentes"
+    "View all FAQs": "Ver todas las preguntas frecuentes",
+    "Delete legacy data after migration": "Eliminar datos heredados después de la migración",
+    "frees up storage space": "libera espacio de almacenamiento",
+    "Legacy data deleted": "Datos heredados eliminados",
+    "freed": "liberado",
+    "Conversations": "Conversaciones",
+    "Settings": "Configuración",
+    "Legacy": "Heredado",
+    "Other": "Otro",
+    "Loading": "Cargando",
+    "Legacy Data Detected": "Datos heredados detectados",
+    "legacyDataDescription": "Tienes {size} de datos de una versión anterior. Estos pueden migrarse, exportarse o eliminarse para liberar espacio.",
+    "legacyDeleteSuccess": "Se eliminaron correctamente los datos heredados y se liberaron {size}.",
+    "legacyDeleteError": "Error al eliminar datos heredados. Por favor, inténtalo de nuevo.",
+    "Explore solutions": "Explorar soluciones",
+    "Migrate to Current Format": "Migrar al formato actual",
+    "Export Legacy Data": "Exportar datos heredados",
+    "Delete Legacy Data": "Eliminar datos heredados",
+    "deleteLegacyConfirm": "¿Estás seguro de que deseas eliminar todos los datos heredados? Esta acción no se puede deshacer.",
+    "Deleting": "Eliminando",
+    "Confirm Delete": "Confirmar eliminación",
+    "Cancel": "Cancelar"
   },
   "notFound": {
     "lostDog": "Perro perdido"
