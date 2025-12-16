@@ -90,11 +90,10 @@ export function WelcomeBanner({ onVisibilityChange }: WelcomeBannerProps) {
         {/* Banner content */}
         <div className="flex-1 pointer-events-auto">
           <div className="relative overflow-hidden">
-            {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-rose-500/10 to-pink-500/10 dark:from-red-600/15 dark:via-rose-600/15 dark:to-pink-600/15" />
-
-            {/* Glass background */}
-            <div className="relative bg-gradient-to-r from-white/70 via-white/60 to-white/70 dark:from-[#212121]/70 dark:via-[#212121]/60 dark:to-[#212121]/70 backdrop-blur-xl shadow-lg border-b border-gray-200/30 dark:border-gray-700/30">
+            {/* Glass background with theme-specific colors */}
+            <div className="relative bg-gradient-to-r from-rose-100/95 via-red-50/90 to-rose-100/95 dark:from-[#212121]/70 dark:via-[#212121]/60 dark:to-[#212121]/70 backdrop-blur-xl shadow-lg border-b border-rose-200/70 dark:border-gray-700/30">
+              {/* Subtle gradient accent for dark mode only */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-transparent dark:from-red-600/15 dark:via-rose-600/15 dark:to-pink-600/15 pointer-events-none" />
               <div className="px-3 md:px-4 py-1.5 md:py-2">
                 <div className="flex items-center justify-between gap-2 md:gap-3">
                   <div className="flex items-center gap-1.5 md:gap-2 flex-1 min-w-0">

@@ -1,0 +1,16 @@
+{
+  "Support": "Support",
+  "Choose Your Organization": "Välj din organisation",
+  "Select your organization to get the right support contact": "Välj din organisation för att få rätt supportkontakt",
+  "MSF USA": "MSF USA",
+  "MSF USA Description": "För MSF USA:s personal",
+  "OCA HQ": "OCA HQ",
+  "OCA HQ Description": "För personal vid Operationscentret Amsterdam huvudkontor",
+  "OCG HQ": "OCG HQ",
+  "OCG HQ Description": "För personal vid Operationscentret Genève huvudkontor",
+  "Field Staff / Other": "Fältpersonal / Övrigt",
+  "Field Staff Description": "För fältpersonal och annan MSF-personal",
+  "Field Staff Message": "För fältpersonal och annan MSF-personal:\n\n1. Kontakta först din lokala IT-support\n2. Om det inte löses ska de eskalera till IT-avdelningen på ditt Operationscenter (OC)\n3. Om det fortfarande inte löses kan IT-avdelningen på OC eskalera till SITS (Delade IT-tjänster)",
+  "Close": "Stäng",
+  "Contact Support": "Kontakta support"
+}

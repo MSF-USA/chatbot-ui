@@ -1,5 +1,28 @@
+import React from 'react';
+
 import '@testing-library/jest-dom/vitest';
 import { afterAll, afterEach, beforeAll, beforeEach, vi } from 'vitest';
+
+// Mock next-auth to prevent module resolution errors in test environment
+vi.mock('next-auth', () => ({
+  default: () => ({
+    handlers: { GET: vi.fn(), POST: vi.fn() },
+    signIn: vi.fn(),
+    signOut: vi.fn(),
+    auth: vi.fn(),
+  }),
+  getServerSession: vi.fn(),
+}));
+
+vi.mock('next-auth/react', () => ({
+  useSession: () => ({
+    data: null,
+    status: 'unauthenticated',
+  }),
+  signIn: vi.fn(),
+  signOut: vi.fn(),
+  SessionProvider: ({ children }: { children: React.ReactNode }) => children,
+}));
 
 // Mock CSS imports
 vi.mock('katex/dist/katex.min.css', () => ({}));
@@ -33,6 +56,11 @@ Object.defineProperty(global, 'localStorage', {
   writable: true,
 });
 
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
 // Example setup code
 beforeAll(() => {
   console.log('Setting up before JSDom env tests');
@@ -42,6 +70,9 @@ afterAll(() => {
   console.log('Cleaning up after tests');
 });
 
-beforeEach(() => {});
+beforeEach(() => {
+  // Clear localStorage before each test
+  localStorageMock.clear();
+});
 
 afterEach(() => {});
