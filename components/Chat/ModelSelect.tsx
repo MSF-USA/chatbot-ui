@@ -325,13 +325,13 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
         tabs={[
           {
             id: 'models',
-            label: 'Models',
+            label: t('modelSelect.tabs.models'),
             icon: <AzureOpenAIIcon className="w-5 h-5" />,
             width: '110px',
           },
           {
             id: 'agents',
-            label: 'Agents',
+            label: t('modelSelect.tabs.agents'),
             icon: <AzureAIIcon className="w-5 h-5" />,
             width: '115px',
           },
@@ -359,7 +359,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
                 {/* Base Models */}
                 <div>
                   <h4 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase mb-2">
-                    Base Models
+                    {t('modelSelect.sections.baseModels')}
                   </h4>
                   <div className="space-y-2">
                     {baseModels.map((model) => {
