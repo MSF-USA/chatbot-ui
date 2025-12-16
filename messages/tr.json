@@ -1,4 +1,6 @@
 {
+  "Run Typewriter Intro": "Daktilo Girişini Çalıştır",
+  "importBackupParseError": "Yedekleme dosyası ayrıştırılamadı. Lütfen geçerli JSON olduğundan emin olun.",
   "OpenAI API Key Required": "OpenAI API Anahtarı Gerekli",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Lütfen OpenAI API anahtarınızı yan çubuğun sol altından ayarlayın.",
   "Stop Generating": "Oluşturmayı Durdur",
@@ -469,13 +471,41 @@
   "enterPromptDescriptionPlaceholder": "Bu istem ne için?",
   "enterPromptContentPlaceholder": "İsteminizi buraya yazın. Dinamik içerik için {{variable}} kullanın.",
   "common": {
-    "contact": "İletişim"
+    "contact": "İletişim",
+    "close": "Kapat",
+    "remove": "Kaldır",
+    "tryAgain": "Tekrar dene",
+    "menu": "Menü",
+    "copyToClipboard": "Panoya kopyala",
+    "toggleDropdownMenu": "Açılır menüyü aç/kapat",
+    "toggleMenu": "Menüyü aç/kapat",
+    "closeModal": "Modalı kapat",
+    "dismissBanner": "Afişi kapat",
+    "searchEllipsis": "Ara...",
+    "addTagEllipsis": "Etiket ekle...",
+    "msfLogo": "MSF Logosu",
+    "importantInformation": "Önemli bilgi",
+    "noResults": "Sonuç bulunamadı",
+    "confirm": "Onayla",
+    "cancel": "İptal",
+    "discard": "Vazgeç",
+    "keepEditing": "Düzenlemeye devam et",
+    "yes": "Evet",
+    "no": "Hayır"
   },
   "errors": {
     "unexpectedErrorOccurred": "Beklenmeyen bir hata oluştu",
     "criticalErrorReload": "Kritik bir hata oluştu. Lütfen sayfayı yeniden yükleyin.",
     "reloadPage": "Sayfayı yeniden yükle",
-    "persistContactSupport": "Bu sorun devam ederse, lütfen destek ekibiyle iletişime geçin"
+    "persistContactSupport": "Bu sorun devam ederse, lütfen destek ekibiyle iletişime geçin",
+    "somethingWentWrong": "Bir şeyler yanlış gitti",
+    "anErrorOccurred": "Bir hata oluştu",
+    "copyErrorMessage": "Hata mesajını kopyala",
+    "contactSupport": "Bu sorun devam ederse, destek ekibiyle iletişime geçin",
+    "dismissError": "Hatayı kapat",
+    "applicationError": "Uygulama hatası",
+    "chatLoadError": "Sohbet yüklenirken hata oluştu",
+    "anErrorOccurredTryAgain": "Bir hata oluştu. Lütfen tekrar deneyin."
   },
   "auth": {
     "authenticationError": "Kimlik Doğrulama Hatası",
@@ -544,7 +574,25 @@
     "fullSizePreview": "Tam boyut önizleme",
     "enterSearchQueryPlaceholder": "Arama sorgunuzu veya sorunuzu girin...",
     "errorFetchingUrl": "URL içeriği alınırken bir hata oluştu",
-    "errorInitiatingSearch": "Web araması başlatılırken bir hata oluştu"
+    "errorInitiatingSearch": "Web araması başlatılırken bir hata oluştu",
+    "regenerate": "Yeniden oluştur",
+    "modelSwitchPrompt": "{original} başarısız oldu ama {fallback} başarılı oldu. Model değiştirilsin mi?",
+    "keepOriginalModel": "{model} olarak kalsın",
+    "switchToModel": "{model}'e geç",
+    "alwaysSwitchToModel": "Her zaman otomatik geç",
+    "translateMessage": "Mesajı çevir",
+    "translating": "Çevriliyor...",
+    "translationError": "Çeviri başarısız oldu",
+    "showOriginal": "Orijinali göster",
+    "translatedTo": "{language} diline çevrildi",
+    "searchLanguages": "Dil ara...",
+    "selectLanguage": "Dil seç",
+    "audioFromOriginal": "Orijinal metinden ses",
+    "audioFromTranslation": "{language} çevirisinden ses",
+    "thinking": "Düşünüyor...",
+    "viewReasoningProcess": "Akıl yürütme sürecini görüntüle",
+    "collapseThinking": "Düşünceyi daralt",
+    "expandThinking": "Düşünceyi genişlet"
   },
   "sidebar": {
     "collapseSidebar": "Kenar çubuğunu daralt",
@@ -566,15 +614,134 @@
     "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez."
   },
   "prompts": {
-    "buildReusablePrompts": "AI yardımıyla yeniden kullanılabilir istemler oluşturun"
+    "buildReusablePrompts": "AI yardımıyla yeniden kullanılabilir istemler oluşturun",
+    "noToneDefault": "Ton yok (varsayılanı kullan)",
+    "tagHelp": "Etiket yardımı",
+    "tagHelpContent": "İstemlerinizi kategorize etmek ve hızlı bulmak için etiketler kullanın. Örnek:",
+    "tagExamples": {
+      "email": "E-posta",
+      "marketing": "Pazarlama",
+      "technical": "Teknik",
+      "customerSupport": "Müşteri Desteği"
+    },
+    "variableHelp": "Değişken yardımı",
+    "variableHelpIntro": "İstemlerinizi dinamik hale getirmek için değişkenler kullanın:",
+    "requiredVariables": "Gerekli değişkenler (varsayılan değer yok):",
+    "optionalVariables": "İsteğe bağlı değişkenler (varsayılan değer ile):",
+    "userMustProvide": "Kullanıcı bir değer sağlamalıdır",
+    "userCanProvide": "Kullanıcı bir değer sağlayabilir veya varsayılan kullanılır",
+    "example": "Örnek:",
+    "variableExampleText": "{{alıcı}} kişisine {{konu}} hakkında {{ton:profesyonel}} bir e-posta {{dil:Türkçe}} olarak yaz",
+    "detectedVariables": "Algılanan değişkenler",
+    "required": "Gerekli",
+    "aiAssistant": "AI Asistan",
+    "whatToImprove": "Ne iyileştirilsin?",
+    "whatShouldPromptDo": "Bu istem ne yapmalı?",
+    "improvePlaceholder": "örn., Daha profesyonel yap, örnekler ekle, netliği artır...",
+    "generatePlaceholder": "örn., Alıcı ve konu için değişkenlerle profesyonel bir e-posta şablonu oluştur...",
+    "addContextOptional": "Bağlam ekle (isteğe bağlı)",
+    "revising": "Revize ediliyor...",
+    "generating": "Oluşturuluyor...",
+    "reviseWithAI": "AI ile revize et",
+    "generatePrompt": "İstem oluştur",
+    "revisionComplete": "Revizyon tamamlandı",
+    "generationComplete": "Oluşturma tamamlandı",
+    "revisedPrompt": "Revize edilmiş istem:",
+    "generatedPrompt": "Oluşturulan istem:",
+    "applyRevision": "Bu revizyonu uygula",
+    "useThisPrompt": "Bu istemi kullan",
+    "improvementsMade": "Yapılan iyileştirmeler:",
+    "tips": "İpuçları:",
+    "howAICanHelp": "AI nasıl yardımcı olabilir",
+    "helpItems": {
+      "improveClarity": "Netliği ve yapıyı geliştir",
+      "suggestVariables": "Yararlı değişkenler öner",
+      "addContext": "Bağlam ve örnekler ekle",
+      "optimize": "Daha iyi sonuçlar için optimize et"
+    },
+    "savePrompt": "İstemi kaydet",
+    "add": "Ekle"
   },
   "tones": {
     "createCustomVoiceProfile": "AI yardımıyla özel ses profili oluşturun",
-    "examplePlaceholder": "örn., Profesyonel ama dostane bir müşteri hizmetleri tonu oluşturun..."
+    "examplePlaceholder": "örn., Profesyonel ama dostane bir müşteri hizmetleri tonu oluşturun...",
+    "tagHelp": "Etiket yardımı",
+    "tagHelpContent": "Tonlarınızı kategorize etmek ve hızlı bulmak için etiketler kullanın. Örnek:",
+    "tagExamples": {
+      "professional": "Profesyonel",
+      "casual": "Gündelik",
+      "technical": "Teknik",
+      "marketing": "Pazarlama"
+    },
+    "add": "Ekle",
+    "aiToneAnalyzer": "AI Ton Analizörü",
+    "describeToneToCreate": "Oluşturmak istediğiniz tonu açıklayın",
+    "uploadContentSamples": "İçerik örnekleri yükleyin",
+    "analyzing": "Analiz ediliyor...",
+    "analyzeToneWithAI": "AI ile tonu analiz et",
+    "analysisComplete": "Analiz tamamlandı",
+    "generatedVoiceGuidelines": "Oluşturulan ses kılavuzları:",
+    "examplePhrases": "Örnek ifadeler:",
+    "suggestedTags": "Önerilen etiketler:",
+    "applyThisAnalysis": "Bu analizi uygula",
+    "detectedCharacteristics": "Algılanan özellikler:",
+    "howAICanHelp": "AI nasıl yardımcı olabilir",
+    "helpItems": {
+      "transcribe": "Ses/video içeriğini yazıya dök",
+      "analyzeContent": "İçerik örneklerini analiz et",
+      "extractPatterns": "Ton ve stil kalıplarını çıkar",
+      "generateGuidelines": "Ses kılavuzları oluştur",
+      "suggestTags": "İlgili etiketler öner"
+    },
+    "saveTone": "Tonu kaydet"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Teknik akış diyagramını görüntüle"
+    "viewTechnicalFlowDiagram": "Teknik akış diyagramını görüntüle",
+    "backToChat": "Sohbete geri dön",
+    "title": "Yardım Merkezi",
+    "subtitle": "Cevapları bulun, gizlilik hakkında bilgi edinin, destek alın",
+    "faq": {
+      "title": "Sık Sorulan Sorular",
+      "description": "AI asistanı kullanma hakkındaki yaygın sorulara cevaplar bulun",
+      "articles": "Makaleler",
+      "searchPlaceholder": "SSS'leri ara...",
+      "noResults": "Aramanızla eşleşen SSS bulunamadı",
+      "noResultsHint": "Farklı arama terimleri deneyin"
+    },
+    "privacy": {
+      "title": "Gizlilik ve Veri",
+      "description": "Verilerinizin nasıl saklandığını ve korunduğunu öğrenin",
+      "topics": "Konular",
+      "searchPlaceholder": "Gizlilik konularını ara...",
+      "noResults": "Aramanızla eşleşen gizlilik konusu bulunamadı",
+      "noResultsHint": "Farklı arama terimleri deneyin",
+      "bannerTitle": "Gizliliğiniz önemlidir",
+      "bannerDescription": "Tüm konuşmalar cihazınızda yerel olarak saklanır. Veri işleme, Azure altyapısını kullanan MSF sistemleri içinde gerçekleşir.",
+      "localStorageOnly": "Yalnızca yerel depolama",
+      "msfControlled": "MSF kontrollü",
+      "noPersonalData": "Kişisel veri yok",
+      "noSensitiveOps": "Hassas işlem yok"
+    },
+    "contact": {
+      "title": "İletişim ve Kaynaklar",
+      "description": "Ekiple iletişime geçin ve yararlı bağlantılara erişin",
+      "supportAvailable": "Destek mevcut",
+      "submitRequest": "Destek talebi gönderin",
+      "getHelp": "Ekipten yardım alın",
+      "requestDescription": "Yardıma mı ihtiyacınız var veya geri bildirim mi vermek istiyorsunuz? Destek formunu açmak için aşağıya tıklayın.",
+      "openSupportForm": "Destek formunu aç",
+      "otherWays": "Diğer iletişim yolları",
+      "emailSupport": "E-posta desteği",
+      "emailDescription": "Sorular, geri bildirim veya teknik sorunlar için bize e-posta gönderin"
+    },
+    "resources": {
+      "title": "Ek Kaynaklar",
+      "portalTitle": "AI Accelerator Portalı",
+      "portalDescription": "Belgeler, proje güncellemeleri ve eğitim materyalleri",
+      "githubTitle": "Açık Kaynak Deposu",
+      "githubDescription": "GitHub'da kodu görün, sorunları bildirin ve katkıda bulunun"
+    }
   },
   "settings": {
     "Settings": "Ayarlar",
@@ -642,9 +809,250 @@
     "FAQs, privacy policy, and guides": "SSS, gizlilik politikası ve kılavuzlar",
     "Contact Support": "Desteğe başvurun",
     "Popular Questions": "Popüler sorular",
-    "View all FAQs": "Tüm SSS'leri görüntüle"
+    "View all FAQs": "Tüm SSS'leri görüntüle",
+    "Delete legacy data after migration": "Taşıma sonrası eski verileri sil",
+    "frees up storage space": "depolama alanı boşaltır",
+    "Legacy data deleted": "Eski veriler silindi",
+    "freed": "boşaltıldı",
+    "Conversations": "Konuşmalar",
+    "Legacy": "Eski",
+    "Other": "Diğer",
+    "Loading": "Yükleniyor",
+    "Legacy Data Detected": "Eski Veri Algılandı",
+    "legacyDataDescription": "Önceki sürümden {size} veri var. Bunu taşıyabilir, dışa aktarabilir veya silebilirsiniz.",
+    "legacyDeleteSuccess": "Eski veriler başarıyla silindi ve {size} boşaltıldı.",
+    "legacyDeleteError": "Eski veriler silinirken hata oluştu. Lütfen tekrar deneyin.",
+    "Explore solutions": "Çözümleri keşfet",
+    "Migrate to Current Format": "Mevcut Formata Taşı",
+    "Export Legacy Data": "Eski Verileri Dışa Aktar",
+    "Delete Legacy Data": "Eski Verileri Sil",
+    "deleteLegacyConfirm": "Tüm eski verileri silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    "Deleting": "Siliniyor",
+    "Confirm Delete": "Silmeyi Onayla",
+    "Cancel": "İptal"
   },
   "notFound": {
     "lostDog": "Kayıp köpek"
+  },
+  "emptyState": {
+    "greeting": "Size nasıl yardımcı olabilirim?",
+    "greetingWithName": "{name}, size nasıl yardımcı olabilirim?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Diyagram oluştur",
+        "prompt": "Diyagramlar ve akış şemaları oluşturmama nasıl yardımcı olabileceğinizi gösterin. Ne tür süreçleri, iş akışlarını veya sistemleri görselleştirmeme yardımcı olabilirsiniz? Birkaç örnek verin."
+      },
+      "draftContent": {
+        "title": "Profesyonel içerik yaz",
+        "prompt": "Profesyonel belgeler yazmada yardıma ihtiyacım var - e-postalar, raporlar, özetler. Farklı iş yazıları türlerinde nasıl yardımcı olabileceğinizi örneklerle gösterin."
+      },
+      "analyzeInformation": {
+        "title": "Bilgi analiz et",
+        "prompt": "Verileri veya bilgileri analiz etmeme nasıl yardımcı olabilirsiniz? Rakamları analiz etmenin, kalıpları bulmanın ve belgelerden veya veri setlerinden içgörüler çıkarmanın farklı yollarını gösterin."
+      },
+      "planOrganize": {
+        "title": "Planla ve organize et",
+        "prompt": "Proje planlamama veya işlerimi düzenlememe yardımcı olabilir misiniz? Farklı yapılarda gündemler, takvimler veya proje planları oluşturmayı örneklerle gösterin."
+      },
+      "brainstormIdeas": {
+        "title": "Fikir beyin fırtınası",
+        "prompt": "Bir sorun için çözümler üzerinde beyin fırtınası yapmak istiyorum. Yaratıcı düşünme ve fikir üretmeye nasıl yaklaştığınızı gösterin - hangi soruları sorarsınız ve olasılıkları nasıl keşfedersiniz?"
+      },
+      "buildPresentations": {
+        "title": "Sunumlar oluştur",
+        "prompt": "Sunumlar oluşturmama nasıl yardımcı olabilirsiniz? Farklı sunum yapıları, görsel öneriler ve farklı izleyiciler için bilgileri nasıl organize ettiğinizi örneklerle gösterin."
+      },
+      "workWithCode": {
+        "title": "Kodla çalış",
+        "prompt": "Kodlama veya betik yazımında yardımcı olabilir misiniz? Yeni kod yazma, sorunları hata ayıklama veya bir şeyin nasıl çalıştığını adım adım açıklama örneklerini gösterin."
+      },
+      "decisionSupport": {
+        "title": "Karar desteği",
+        "prompt": "Bir karar vermem gerekiyor ve seçeneklerimi nasıl değerlendireceğimden emin değilim. Seçimleri düşünmek için kullanabileceğiniz farklı çerçeveleri veya yaklaşımları gösterebilir misiniz?"
+      },
+      "summarizeSynthesize": {
+        "title": "Özetle ve sentezle",
+        "prompt": "Uzun belgeleri özetlememe veya birden fazla kaynaktan gelen bilgileri sentezlememe nasıl yardımcı olursunuz? Farklı özet formatları ve detay seviyelerini örneklerle gösterin."
+      },
+      "explainTopics": {
+        "title": "Karmaşık konuları açıkla",
+        "prompt": "Karmaşık kavramları basit terimlerle açıklayabilir misiniz? Karmaşık fikirleri nasıl parçaladığınızı, analojiler kullandığınızı ve farklı bilgi seviyelerine göre açıklamaları nasıl uyarladığınızı gösterin."
+      },
+      "createSchedules": {
+        "title": "Programlar oluştur",
+        "prompt": "Zamanımı organize etmeme ve programlar oluşturmama yardım edin. Gündemler, takvimler veya zaman tabanlı planları yapılandırmanın farklı yollarını örneklerle gösterin."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modeller",
+      "agents": "Ajanlar"
+    },
+    "sections": {
+      "baseModels": "Temel Modeller"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Gelişmiş Özellik",
+      "description": "Özelleştirilmiş yeteneklere sahip özel AI ajanları oluşturun ve yönetin. Bu ajanlar MSF AI Assistant Foundry örneğinde çalışır.",
+      "advancedFeatureTitle": "Gelişmiş Özellik - AI Assistant Teknik Ekibiyle Koordinasyon Gerektirir",
+      "advancedFeatureWarning": "Özel ajanlar yalnızca MSF AI Assistant Foundry örneğinde çalışır. Ajan kimlikleri, AI Assistant Teknik Ekibi tarafından bu özel örnekte oluşturulmalı ve kullanım öncesinde sizinle koordine edilmelidir.",
+      "createNewAgent": "Yeni Özel Ajan Oluştur",
+      "noAgentsTitle": "Özel Ajan Yok",
+      "noAgentsDescription": "Özelleştirilmiş araçlar ve davranışlarla AI yeteneklerinizi genişletmek için ilk özel ajanınızı oluşturun."
+    },
+    "advancedOptions": {
+      "title": "Gelişmiş Seçenekler",
+      "temperature": "Sıcaklık",
+      "fixedTemperatureNote": "Not: Bu model tutarlı performans için sabit bir sıcaklık değeri kullanır.",
+      "reasoningEffort": "Akıl Yürütme Çabası",
+      "minimal": "Minimal",
+      "low": "Düşük",
+      "medium": "Orta",
+      "high": "Yüksek",
+      "verbosity": "Ayrıntı Düzeyi"
+    },
+    "searchMode": {
+      "title": "Arama Modu",
+      "subtitle": "Gerektiğinde web aramasını kullan",
+      "routingLabel": "Arama yönlendirmesi:",
+      "whatsDifference": "Fark nedir?",
+      "privacyFocused": "Gizlilik odaklı (varsayılan)",
+      "privacyFocusedDescription": "Daha yavaş ama daha gizli",
+      "azureAgentMode": "Azure AI Ajan modu",
+      "azureAgentModeDescription": "Daha hızlı ama sohbet verilerini bulutta saklar",
+      "privacyInfoTitle": "Önemli gizlilik bilgisi",
+      "privacyInfoDescription": "Tüm konuşma Azure AI Foundry Ajanına gönderilir.",
+      "learnMoreDataStorage": "Veri depolama hakkında daha fazla bilgi edinin"
+    },
+    "customAgent": {
+      "label": "Özel Ajan:",
+      "description": "Bu ajan her zaman araçlar etkinleştirilmiş olarak MSF AI Assistant Foundry örneğinde çalışır.",
+      "webSearch": "Gerçek zamanlı web araması",
+      "codeInterpreter": "Kod yorumlayıcı ve dosya analizi"
+    },
+    "header": {
+      "backToModels": "Modellere geri dön",
+      "knowledgeCutoff": "Bilgi kesme tarihi: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "Temel",
+      "omni": "Çoklu",
+      "reasoning": "Akıl yürütme",
+      "agent": "Ajan"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Bing aracılığıyla gerçek zamanlı web arama özellikli GPT-4.1 tabanlı AI modeli. Güncel bilgi, gerçek doğrulama ve güncel etkinlik farkındalığı sağlar. Güncel bilgi gerektiren araştırma, haber analizi ve gerçek doğrulama için idealdir.",
+      "knowledgeCutoff": "Gerçek zamanlı web arama"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Karmaşık akıl yürütme, kod üretimi ve teknik problem çözmede mükemmel OpenAI'nin en gelişmiş modeli. Analitik görevler, programlama zorlukları, araştırma ve detaylı açıklamalar için idealdir. Ayarlanabilir akıl yürütme çabası ve yanıt ayrıntı düzeyini destekler.",
+      "knowledgeCutoff": "6 Ağustos 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Yüksek kaliteyi korurken hız için optimize edilmiş daha hızlı, maliyet etkin GPT-5 varyantı. Rutin görevler, hızlı sorgular, araç yönlendirme ve hızlı yanıt süresi gerektiren uygulamalar için uygundur. Performans ve verimlilik arasında mükemmel denge.",
+      "knowledgeCutoff": "6 Ağustos 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Konuşma etkileşimi ve duygusal zeka için optimize edilmiş GPT-5'in özel varyantı. Empatik iletişim, ruh sağlığı desteği, yaratıcı yazarlık, beyin fırtınası ve doğal diyalogda mükemmeldir. Gündelik sohbet, danışmanlık senaryoları ve duygusal farkındalık gerektiren görevler için idealdir.",
+      "knowledgeCutoff": "1 Ekim 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Çığır açan problem çözme yeteneklerine sahip OpenAI'nin en gelişmiş akıl yürütme modeli. Karmaşık matematik, bilimsel akıl yürütme, kodlama zorlukları ve çok adımlı mantık görevlerinde mükemmeldir. Genişletilmiş 200K bağlam penceresi. Akıl yürütme çabası kontrolünü destekler.",
+      "knowledgeCutoff": "8 Nisan 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta'nın hızlı ve maliyet etkin modeli. Yazma, özetleme ve temel kodlama yardımı gibi günlük görevler için idealdir. Günlük iş için hız ve kalite arasında iyi denge.",
+      "knowledgeCutoff": "7 Mayıs 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Çalışmasını adım adım gösteren akıl yürütme uzmanı. Matematik problemleri, mantık bulmacaları ve karmaşık kavramları anlamada mükemmeldir. Bir problemi gerçek zamanlı nasıl düşündüğünü görün.",
+      "knowledgeCutoff": "20 Ocak 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Özellikle kodlama ve teknik yazımda güçlü çok yönlü model. Kod hata ayıklama, dokümantasyon yazma ve teknik kavramları açıklama için idealdir. Geliştirme görevleri için hızlı ve güvenilir.",
+      "knowledgeCutoff": "16 Nisan 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Nüanslı yanıtlarıyla bilinen xAI'nin çok yönlü modeli. Açık tartışmalar, yaratıcı projeler ve karmaşık problem çözme için idealdir.",
+      "knowledgeCutoff": "13 Mayıs 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Olağanüstü akıl yürütme, kodlama ve yaratıcı yeteneklere sahip Anthropic'in en yetenekli modeli. Karmaşık analiz, araştırma ve derin anlayış gerektiren görevler için idealdir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Kodlama, analiz ve yaratıcı görevlerde mükemmel performans sunan dengeli Claude modeli. Hızlı yanıt süreleriyle günlük kullanım için idealdir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Önceki nesil Claude Opus modeli. Karmaşık kodlama görevleri, detaylı analiz ve nüanslı anlayışta mükemmeldir.",
+      "knowledgeCutoff": "Ocak 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Hızlı görevler için optimize edilmiş hızlı ve maliyet etkin Claude modeli. Basit sorgular, özetlemeler ve toplu uygulamalar için idealdir.",
+      "knowledgeCutoff": "Ocak 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Sohbete geri dön",
+    "title": "Arama Modu Açıklaması",
+    "subtitle": "Arama seçeneklerini ve verilerin nerede saklandığını anlayın",
+    "quickComparison": "Hızlı Karşılaştırma",
+    "noSearch": "Arama Yok",
+    "privacyFocused": "Gizlilik Odaklı",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Yanıt Hızı",
+    "fastest": "En Hızlı",
+    "slowerMultiStep": "Daha Yavaş (çok adımlı)",
+    "fasterDirect": "Daha Hızlı (doğrudan)",
+    "fullConversationStored": "Tam sohbet bulutta saklanıyor",
+    "whatsStoredInAzure": "Azure'da ne saklanıyor",
+    "nothingStateless": "Hiçbir şey (yalnızca durumsuz)",
+    "searchQueriesOnly": "Yalnızca arama sorguları",
+    "fullConversationHistory": "Tam sohbet geçmişi",
+    "modelAvailability": "Model Kullanılabilirliği",
+    "allModels": "Tüm modeller",
+    "gpt41Only": "Yalnızca GPT-4.1",
+    "searchTurnedOff": "Arama Kapalı",
+    "noSearchDescription": "Web arama özelliği olmadan en hızlı yanıtlar. Tam sohbet tarayıcınızda kalır ve bulutta hiçbir şey saklanmaz.",
+    "viewDetailsBelow": "Ayrıntılar için aşağıdaki teknik iş akışını görün.",
+    "viewTechnicalFlowDiagram": "Teknik akış diyagramını görüntüle",
+    "legend": "Lejand:",
+    "legendNoSearch": "Tarayıcı (yerel depolama) | AI Assistant Sunucusu | Azure OpenAI (durumsuz)",
+    "privacyFocusedMode": "Gizlilik Odaklı Mod",
+    "default": "Varsayılan",
+    "privacyDescription": "Gerektiğinde web aramasını kullanır ancak daha fazla adım içerdiği için daha yavaştır. Azure'da yalnızca arama sorguları saklanır - tam sohbet tarayıcınızda kalır.",
+    "legendPrivacy": "Tarayıcı (yerel depolama) | AI Assistant Sunucusu | Azure AI Foundry (yalnızca arama sorguları) | Azure OpenAI (durumsuz)",
+    "azureAIFoundryMode": "Azure AI Foundry Modu",
+    "foundryDescription": "Yerleşik web arama özelliğiyle daha hızlı yanıtlar. Tam sohbet hem tarayıcınızda hem de Azure AI Foundry veritabanında saklanır.",
+    "legendFoundry": "Tarayıcı (yerel depolama) | AI Assistant Sunucusu | Azure AI Foundry Ajanı (tam sohbet saklanır)",
+    "whyTheseOptions": "Neden bu seçenekler?",
+    "whyTheseOptionsText1": "AI Assistant'ın başlangıçta güvendiği Azure'un Bing Search API'si kullanımdan kaldırıldıktan sonra mevcut arama uygulamalarıdır.",
+    "whyTheseOptionsText2": "Ekip, daha gizlilik dostu arama alternatifleri aktif olarak araştırıyor. Şu anda her iki seçenek de Azure AI Foundry'nin arama yeteneklerini kullanıyor ancak paylaşılan konuşma verisi miktarı farklıdır.",
+    "azureDeprecatedBingApi": "Azure, Bing Search API'sini kullanımdan kaldırdı",
+    "footerNote": "Her iki mod da konuşmayı tarayıcınızda yerel olarak saklar. Model ayarlarından istediğiniz zaman modlar arasında geçiş yapabilirsiniz.",
+    "note": "Not:",
+    "loadingDiagram": "Diyagram yükleniyor..."
+  },
+  "transcription": {
+    "transcribesOnSend": "Gönderildiğinde yazıya döker",
+    "addInstructions": "Talimat ekle",
+    "instructionsPlaceholder": "Doğruluğu artırmak için bağlam (örn. isimler, terimler)"
   }
 }
