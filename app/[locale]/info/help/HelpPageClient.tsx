@@ -16,6 +16,7 @@ import {
 import { useEffect, useState } from 'react';
 import { FaGithub } from 'react-icons/fa';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 
 import { EXTERNAL_LINKS } from '@/lib/constants/externalLinks';
@@ -44,6 +45,7 @@ export function HelpPageClient({
   initialLocale,
   availableLocales,
 }: HelpPageClientProps) {
+  const t = useTranslations();
   const [expandedSection, setExpandedSection] = useState<SectionType>('faq');
   const [searchQuery, setSearchQuery] = useState('');
   const [openFaqItems, setOpenFaqItems] = useState<Set<number>>(new Set());
