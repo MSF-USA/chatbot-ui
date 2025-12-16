@@ -421,9 +421,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         ...(threadId ? { threadId } : {}),
       };
 
-      // Auto-name conversation if still "New Conversation"
+      // Auto-name conversation if still untitled (empty string or legacy "New Conversation")
       if (
-        conversation.name === 'New Conversation' &&
+        (conversation.name === '' ||
+          conversation.name === 'New Conversation') &&
         conversation.messages.length > 0
       ) {
         // Set immediate fallback title (sync) for instant feedback
