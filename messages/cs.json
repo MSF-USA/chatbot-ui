@@ -494,7 +494,9 @@
     "confirm": "Potvrdit",
     "cancel": "Zrušit",
     "discard": "Zahodit",
-    "keepEditing": "Pokračovat v úpravách"
+    "keepEditing": "Pokračovat v úpravách",
+    "yes": "Ano",
+    "no": "Ne"
   },
   "errors": {
     "unexpectedErrorOccurred": "Došlo k neočekávané chybě",
@@ -591,7 +593,11 @@
     "searchLanguages": "Hledat jazyky...",
     "selectLanguage": "Vybrat jazyk",
     "audioFromOriginal": "Zvuk je z původního textu",
-    "audioFromTranslation": "Zvuk je z překladu do {language}"
+    "audioFromTranslation": "Zvuk je z překladu do {language}",
+    "thinking": "Přemýšlení...",
+    "viewReasoningProcess": "Zobrazit proces uvažování",
+    "collapseThinking": "Sbalit přemýšlení",
+    "expandThinking": "Rozbalit přemýšlení"
   },
   "sidebar": {
     "collapseSidebar": "Sbalit postranní panel",
@@ -613,15 +619,134 @@
     "importantInfo": "Tento agent bude mít přístup ke kontextu konverzace a může používat stejné nástroje jako standardní modely. Ujistěte se, že ID agenta je správné, protože jej nelze později změnit."
   },
   "prompts": {
-    "buildReusablePrompts": "Vytvářejte opakovaně použitelné výzvy s pomocí AI"
+    "buildReusablePrompts": "Vytvářejte opakovaně použitelné výzvy s pomocí AI",
+    "noToneDefault": "Bez tónu (použít výchozí)",
+    "tagHelp": "Nápověda ke štítkům",
+    "tagHelpContent": "Použijte štítky k kategorizaci a rychlému nalezení výzev. Příklady:",
+    "tagExamples": {
+      "email": "e-mail",
+      "marketing": "marketing",
+      "technical": "technický",
+      "customerSupport": "zákaznická-podpora"
+    },
+    "variableHelp": "Nápověda k proměnným",
+    "variableHelpIntro": "Použijte proměnné, aby byly vaše výzvy dynamické:",
+    "requiredVariables": "Povinné proměnné (bez výchozí hodnoty):",
+    "optionalVariables": "Volitelné proměnné (s výchozí hodnotou):",
+    "userMustProvide": "Uživatel musí zadat hodnotu",
+    "userCanProvide": "Uživatel může zadat hodnotu, nebo se použije výchozí",
+    "example": "Příklad:",
+    "variableExampleText": "Napište {{tone:profesionální}} e-mail {{recipient}} o {{topic}} v {{language:češtině}}",
+    "detectedVariables": "Detekované proměnné",
+    "required": "Povinné",
+    "aiAssistant": "AI asistent",
+    "whatToImprove": "Co byste chtěli vylepšit?",
+    "whatShouldPromptDo": "Co má tato výzva dělat?",
+    "improvePlaceholder": "např. Udělat profesionálnější, přidat příklady, zlepšit srozumitelnost...",
+    "generatePlaceholder": "např. Vygenerovat profesionální šablonu e-mailu s proměnnými pro příjemce a téma...",
+    "addContextOptional": "Přidat kontext (volitelné)",
+    "revising": "Revidování...",
+    "generating": "Generování...",
+    "reviseWithAI": "Revidovat s AI",
+    "generatePrompt": "Vygenerovat výzvu",
+    "revisionComplete": "Revize dokončena",
+    "generationComplete": "Generování dokončeno",
+    "revisedPrompt": "Revidovaná výzva:",
+    "generatedPrompt": "Vygenerovaná výzva:",
+    "applyRevision": "Použít tuto revizi",
+    "useThisPrompt": "Použít tuto výzvu",
+    "improvementsMade": "Provedená vylepšení:",
+    "tips": "Tipy:",
+    "howAICanHelp": "Jak může AI pomoci",
+    "helpItems": {
+      "improveClarity": "Zlepšit srozumitelnost a strukturu",
+      "suggestVariables": "Navrhnout užitečné proměnné",
+      "addContext": "Přidat kontext a příklady",
+      "optimize": "Optimalizovat pro lepší výsledky"
+    },
+    "savePrompt": "Uložit výzvu",
+    "add": "Přidat"
   },
   "tones": {
     "createCustomVoiceProfile": "Vytvořte vlastní hlasový profil s pomocí AI",
-    "examplePlaceholder": "např. Vytvořte profesionální, ale přátelský tón zákaznické podpory..."
+    "examplePlaceholder": "např. Vytvořte profesionální, ale přátelský tón zákaznické podpory...",
+    "tagHelp": "Nápověda ke štítkům",
+    "tagHelpContent": "Použijte štítky k kategorizaci a rychlému nalezení tónů. Příklady:",
+    "tagExamples": {
+      "professional": "profesionální",
+      "casual": "neformální",
+      "technical": "technický",
+      "marketing": "marketingový"
+    },
+    "add": "Přidat",
+    "aiToneAnalyzer": "AI analyzátor tónu",
+    "describeToneToCreate": "Popište tón, který chcete vytvořit",
+    "uploadContentSamples": "Nahrát vzorky obsahu",
+    "analyzing": "Analyzování...",
+    "analyzeToneWithAI": "Analyzovat tón s AI",
+    "analysisComplete": "Analýza dokončena",
+    "generatedVoiceGuidelines": "Vygenerované hlasové pokyny:",
+    "examplePhrases": "Příklady frází:",
+    "suggestedTags": "Navrhované štítky:",
+    "applyThisAnalysis": "Použít tuto analýzu",
+    "detectedCharacteristics": "Detekované charakteristiky:",
+    "howAICanHelp": "Jak může AI pomoci",
+    "helpItems": {
+      "transcribe": "Přepsat audio/video obsah",
+      "analyzeContent": "Analyzovat vaše vzorky obsahu",
+      "extractPatterns": "Extrahovat vzory tónu a stylu",
+      "generateGuidelines": "Vygenerovat hlasové pokyny",
+      "suggestTags": "Navrhnout relevantní štítky"
+    },
+    "saveTone": "Uložit tón"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Zobrazit technický diagram toku"
+    "viewTechnicalFlowDiagram": "Zobrazit technický diagram toku",
+    "backToChat": "Zpět na chat",
+    "title": "Centrum nápovědy",
+    "subtitle": "Najděte odpovědi, zjistěte více o soukromí a získejte podporu",
+    "faq": {
+      "title": "Často kladené otázky",
+      "description": "Najděte odpovědi na běžné otázky o používání AI asistenta",
+      "articles": "články",
+      "searchPlaceholder": "Hledat v FAQ...",
+      "noResults": "Žádné FAQ neodpovídají vašemu hledání",
+      "noResultsHint": "Zkuste jiný hledaný výraz"
+    },
+    "privacy": {
+      "title": "Soukromí a data",
+      "description": "Zjistěte, jak jsou vaše data ukládána a chráněna",
+      "topics": "témata",
+      "searchPlaceholder": "Hledat témata o soukromí...",
+      "noResults": "Žádná témata o soukromí neodpovídají",
+      "noResultsHint": "Zkuste jiný hledaný výraz",
+      "bannerTitle": "Na vašem soukromí záleží",
+      "bannerDescription": "Všechny konverzace jsou ukládány lokálně na vašem zařízení. Zpracování dat probíhá v systémech MSF s využitím infrastruktury Azure.",
+      "localStorageOnly": "Pouze místní úložiště",
+      "msfControlled": "Kontrolováno MSF",
+      "noPersonalData": "Žádná osobní data",
+      "noSensitiveOps": "Žádné citlivé operace"
+    },
+    "contact": {
+      "title": "Kontakt a zdroje",
+      "description": "Spojte se s naším týmem a získejte přístup k užitečným odkazům",
+      "supportAvailable": "Podpora k dispozici",
+      "submitRequest": "Odeslat žádost o podporu",
+      "getHelp": "Získejte pomoc od našeho týmu",
+      "requestDescription": "Potřebujete pomoc nebo chcete poskytnout zpětnou vazbu? Klikněte níže pro otevření formuláře podpory.",
+      "openSupportForm": "Otevřít formulář podpory",
+      "otherWays": "Další způsoby, jak nás kontaktovat",
+      "emailSupport": "E-mailová podpora",
+      "emailDescription": "Napište nám e-mail s dotazy, zpětnou vazbou nebo technickými problémy"
+    },
+    "resources": {
+      "title": "Další zdroje",
+      "portalTitle": "Portál AI akcelerátoru",
+      "portalDescription": "Dokumentace, aktualizace projektu a školicí materiály",
+      "githubTitle": "Open source repozitář",
+      "githubDescription": "Zobrazit kód, nahlásit problémy a přispět na GitHubu"
+    }
   },
   "settings": {
     "Settings": "Nastavení",
@@ -693,7 +818,24 @@
     "Delete legacy data after migration": "Smazat starší data po migraci",
     "frees up storage space": "uvolní místo v úložišti",
     "Legacy data deleted": "Starší data smazána",
-    "freed": "uvolněno"
+    "freed": "uvolněno",
+    "Conversations": "Konverzace",
+    "Settings": "Nastavení",
+    "Legacy": "Starší",
+    "Other": "Ostatní",
+    "Loading": "Načítání",
+    "Legacy Data Detected": "Zjištěna starší data",
+    "legacyDataDescription": "Máte {size} dat z předchozí verze. Lze je migrovat, exportovat nebo smazat pro uvolnění místa.",
+    "legacyDeleteSuccess": "Úspěšně smazána starší data a uvolněno {size}.",
+    "legacyDeleteError": "Nepodařilo se smazat starší data. Zkuste to znovu.",
+    "Explore solutions": "Prozkoumat řešení",
+    "Migrate to Current Format": "Migrovat na aktuální formát",
+    "Export Legacy Data": "Exportovat starší data",
+    "Delete Legacy Data": "Smazat starší data",
+    "deleteLegacyConfirm": "Opravdu chcete smazat všechna starší data? Tuto akci nelze vrátit zpět.",
+    "Deleting": "Mazání",
+    "Confirm Delete": "Potvrdit smazání",
+    "Cancel": "Zrušit"
   },
   "notFound": {
     "lostDog": "Ztracený pes"
