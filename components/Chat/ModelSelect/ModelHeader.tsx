@@ -1,6 +1,10 @@
 import { IconChevronLeft } from '@tabler/icons-react';
 import React, { FC } from 'react';
 
+import { useTranslations } from 'next-intl';
+
+import { modelIdToLocaleKey } from '@/lib/utils/app/locales';
+
 import { OpenAIModel } from '@/types/openai';
 
 import { ModelProviderIcon } from './ModelProviderIcon';
@@ -16,6 +20,26 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
   modelConfig,
   setMobileView,
 }) => {
+  const t = useTranslations();
+
+  // Get localized model data if available
+  const localeKey = modelIdToLocaleKey(selectedModel.id);
+  const localizedName = t.has(`models.${localeKey}.name`)
+    ? t(`models.${localeKey}.name`)
+    : selectedModel.name;
+  const localizedDescription = t.has(`models.${localeKey}.description`)
+    ? t(`models.${localeKey}.description`)
+    : selectedModel.description || modelConfig?.description;
+  const localizedKnowledgeCutoff = t.has(`models.${localeKey}.knowledgeCutoff`)
+    ? t(`models.${localeKey}.knowledgeCutoff`)
+    : modelConfig?.knowledgeCutoff;
+
+  // Get localized model type
+  const modelType = modelConfig?.modelType || 'foundational';
+  const localizedModelType = t.has(`modelSelect.modelTypes.${modelType}`)
+    ? t(`modelSelect.modelTypes.${modelType}`)
+    : modelType;
+
   return (
     <div>
       <button
@@ -23,7 +47,7 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
         className="md:hidden flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-4"
       >
         <IconChevronLeft size={16} />
-        Back to Models
+        {t('modelSelect.header.backToModels')}
       </button>
 
       <div className="flex items-center gap-2 md:gap-3 mb-3">
@@ -32,11 +56,11 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
           size="lg"
         />
         <h2 className="text-xl md:text-2xl font-semibold text-gray-900 dark:text-white">
-          {selectedModel.name}
+          {localizedName}
         </h2>
       </div>
       <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mb-3">
-        {selectedModel.description || modelConfig?.description}
+        {localizedDescription}
       </p>
 
       <div className="flex items-center gap-2 flex-wrap">
@@ -51,11 +75,13 @@ export const ModelHeader: FC<ModelHeaderProps> = ({
                   : 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-300'
           }`}
         >
-          {modelConfig?.modelType || 'foundational'}
+          {localizedModelType}
         </span>
-        {modelConfig?.knowledgeCutoff && (
+        {localizedKnowledgeCutoff && (
           <span className="text-xs text-gray-600 dark:text-gray-400">
-            Knowledge cutoff: {modelConfig.knowledgeCutoff}
+            {t('modelSelect.header.knowledgeCutoff', {
+              cutoff: localizedKnowledgeCutoff,
+            })}
           </span>
         )}
       </div>
