@@ -319,7 +319,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           onChange={(e) => setSelectedToneId(e.target.value || null)}
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm transition-all focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100"
         >
-          <option value="">No tone (use default)</option>
+          <option value="">{t('prompts.noToneDefault')}</option>
           {tones.map((tone) => (
             <option key={tone.id} value={tone.id}>
               {tone.name}
@@ -347,28 +347,25 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
             className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             <IconInfoCircle size={14} />
-            <span>Tag Help</span>
+            <span>{t('prompts.tagHelp')}</span>
           </button>
         </div>
 
         {showTagHelp && (
           <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg text-xs text-gray-700 dark:text-gray-300">
-            <p className="mb-2">
-              <strong>Use tags</strong> to categorize and quickly find your
-              prompts. Examples:
-            </p>
+            <p className="mb-2">{t('prompts.tagHelpContent')}</p>
             <div className="flex flex-wrap gap-2 text-xs">
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                email
+                {t('prompts.tagExamples.email')}
               </span>
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                marketing
+                {t('prompts.tagExamples.marketing')}
               </span>
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                technical
+                {t('prompts.tagExamples.technical')}
               </span>
               <span className="px-2 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded">
-                customer-support
+                {t('prompts.tagExamples.customerSupport')}
               </span>
             </div>
           </div>
@@ -387,7 +384,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
             onClick={handleAddTag}
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
           >
-            Add
+            {t('prompts.add')}
           </button>
         </div>
 
@@ -423,50 +420,46 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
             className="flex items-center gap-1.5 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
           >
             <IconInfoCircle size={14} />
-            <span>Variable Help</span>
+            <span>{t('prompts.variableHelp')}</span>
           </button>
         </div>
 
         {showVariableHelp && (
           <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30 rounded-lg text-xs text-gray-700 dark:text-gray-300 space-y-3">
             <div>
-              <p className="mb-2">
-                <strong>Use variables</strong> to make your prompts dynamic:
-              </p>
+              <p className="mb-2">{t('prompts.variableHelpIntro')}</p>
 
               <div className="space-y-2">
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white mb-1">
-                    Required Variables (no default):
+                    {t('prompts.requiredVariables')}
                   </p>
                   <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700">
                     {`{{recipient}}`} or {`{{topic}}`}
                   </code>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    User <strong>must</strong> provide a value
+                    {t('prompts.userMustProvide')}
                   </p>
                 </div>
 
                 <div>
                   <p className="font-semibold text-gray-900 dark:text-white mb-1">
-                    Optional Variables (with default):
+                    {t('prompts.optionalVariables')}
                   </p>
                   <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700">
                     {`{{language:English}}`} or {`{{tone:professional}}`}
                   </code>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    User <strong>can</strong> provide a value, or default is
-                    used
+                    {t('prompts.userCanProvide')}
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="border-t border-blue-200 dark:border-blue-800 pt-2">
-              <p className="font-semibold mb-1">Example:</p>
+              <p className="font-semibold mb-1">{t('prompts.example')}</p>
               <code className="block bg-white dark:bg-gray-800 px-3 py-2 rounded border border-gray-200 dark:border-gray-700 text-[10px] leading-relaxed">
-                Write a {`{{tone:professional}}`} email to {`{{recipient}}`}{' '}
-                about {`{{topic}}`} in {`{{language:English}}`}
+                {t('prompts.variableExampleText')}
               </code>
             </div>
           </div>
@@ -486,7 +479,9 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-lg">
             <div className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300 mb-2">
               <IconBraces size={14} />
-              <span>Detected Variables ({variableDefinitions.length})</span>
+              <span>
+                {t('prompts.detectedVariables')} ({variableDefinitions.length})
+              </span>
             </div>
             <div className="flex flex-wrap gap-2">
               {variableDefinitions.map((varDef, index) => (
@@ -505,11 +500,11 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                   </span>
                   {varDef.isOptional ? (
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
-                      Optional
+                      {t('Optional')}
                     </span>
                   ) : (
                     <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-red-200 dark:bg-red-900/40 text-red-700 dark:text-red-400">
-                      Required
+                      {t('prompts.required')}
                     </span>
                   )}
                 </div>
@@ -532,7 +527,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
         <div className="flex items-center gap-2">
           <IconSparkles size={16} className="text-purple-500" />
           <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-            AI Assistant
+            {t('prompts.aiAssistant')}
           </h3>
         </div>
       </div>
@@ -542,16 +537,16 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
         <div>
           <label className="block text-xs font-medium mb-2 text-gray-700 dark:text-gray-300">
             {content.trim()
-              ? 'What would you like to improve?'
-              : 'What should this prompt do?'}
+              ? t('prompts.whatToImprove')
+              : t('prompts.whatShouldPromptDo')}
           </label>
           <textarea
             value={revisionGoal}
             onChange={(e) => setRevisionGoal(e.target.value)}
             placeholder={
               content.trim()
-                ? 'e.g., Make it more professional, add examples, improve clarity...'
-                : 'e.g., Generate a professional email template with variables for recipient and topic...'
+                ? t('prompts.improvePlaceholder')
+                : t('prompts.generatePlaceholder')
             }
             rows={3}
             className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-900 placeholder:text-gray-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 dark:border-gray-600 dark:bg-[#2a2a2a] dark:text-gray-100 resize-none"
@@ -562,7 +557,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
         {/* File Upload Section */}
         <div>
           <label className="block text-xs font-medium mb-2 text-gray-700 dark:text-gray-300">
-            Add Context (Optional)
+            {t('prompts.addContextOptional')}
           </label>
           <FileUploadSection
             uploadedFiles={uploadedFiles}
@@ -582,13 +577,19 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
           {isRevising ? (
             <>
               <IconLoader2 size={16} className="animate-spin" />
-              <span>{content.trim() ? 'Revising...' : 'Generating...'}</span>
+              <span>
+                {content.trim()
+                  ? t('prompts.revising')
+                  : t('prompts.generating')}
+              </span>
             </>
           ) : (
             <>
               <IconSparkles size={16} />
               <span>
-                {content.trim() ? 'Revise with AI' : 'Generate Prompt'}
+                {content.trim()
+                  ? t('prompts.reviseWithAI')
+                  : t('prompts.generatePrompt')}
               </span>
             </>
           )}
@@ -601,14 +602,18 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
               <div className="flex items-center gap-2 mb-3">
                 <IconCheck size={16} className="text-green-500" />
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {content.trim() ? 'Revision Complete' : 'Generation Complete'}
+                  {content.trim()
+                    ? t('prompts.revisionComplete')
+                    : t('prompts.generationComplete')}
                 </h4>
               </div>
 
               {/* Revised Prompt Preview */}
               <div className="mb-4">
                 <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  {content.trim() ? 'Revised Prompt:' : 'Generated Prompt:'}
+                  {content.trim()
+                    ? t('prompts.revisedPrompt')
+                    : t('prompts.generatedPrompt')}
                 </div>
                 <div className="p-3 bg-white dark:bg-[#2a2a2a] border border-gray-200 dark:border-gray-700 rounded-lg max-h-48 overflow-y-auto">
                   <pre className="text-xs text-gray-900 dark:text-gray-100 whitespace-pre-wrap font-mono">
@@ -620,7 +625,9 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                   className="mt-2 w-full flex items-center justify-center gap-2 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors"
                 >
                   <IconCheck size={14} />
-                  {content.trim() ? 'Apply This Revision' : 'Use This Prompt'}
+                  {content.trim()
+                    ? t('prompts.applyRevision')
+                    : t('prompts.useThisPrompt')}
                 </button>
               </div>
 
@@ -629,7 +636,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                 revisionResult.improvements.length > 0 && (
                   <div className="mb-4">
                     <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Improvements Made:
+                      {t('prompts.improvementsMade')}
                     </div>
                     <div className="space-y-2">
                       {revisionResult.improvements.map((improvement, index) => (
@@ -655,7 +662,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
                   <div>
                     <div className="flex items-center gap-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">
                       <IconBulb size={14} className="text-yellow-500" />
-                      <span>Tips:</span>
+                      <span>{t('prompts.tips')}</span>
                     </div>
                     <ul className="space-y-1.5">
                       {revisionResult.suggestions.map((suggestion, index) => (
@@ -679,14 +686,14 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
             <div className="flex items-center gap-2 mb-2">
               <IconBulb size={14} className="text-gray-400" />
               <h4 className="text-xs font-semibold text-gray-700 dark:text-gray-300">
-                How AI Can Help
+                {t('prompts.howAICanHelp')}
               </h4>
             </div>
             <ul className="space-y-1.5 text-xs text-gray-600 dark:text-gray-400">
-              <li>• Improve clarity and structure</li>
-              <li>• Suggest useful variables</li>
-              <li>• Add context and examples</li>
-              <li>• Optimize for better results</li>
+              <li>• {t('prompts.helpItems.improveClarity')}</li>
+              <li>• {t('prompts.helpItems.suggestVariables')}</li>
+              <li>• {t('prompts.helpItems.addContext')}</li>
+              <li>• {t('prompts.helpItems.optimize')}</li>
             </ul>
           </div>
         )}
@@ -709,7 +716,7 @@ export const PromptDashboard: FC<PromptDashboardProps> = ({
         className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <IconCheck size={16} />
-        <span>Save Prompt</span>
+        <span>{t('prompts.savePrompt')}</span>
       </button>
     </div>
   );
