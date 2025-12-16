@@ -6,9 +6,21 @@ import { EmptyState } from '@/components/Chat/EmptyState/EmptyState';
 import '@testing-library/jest-dom';
 import { describe, expect, it, vi } from 'vitest';
 
-// Mock next-intl
+// Mock next-intl with interpolation support
 vi.mock('next-intl', () => ({
-  useTranslations: () => (key: string) => key,
+  useTranslations: () => (key: string, params?: Record<string, string>) => {
+    const messages: Record<string, string> = {
+      greeting: 'How can I help?',
+      greetingWithName: 'How can I help, {name}?',
+    };
+    let message = messages[key] || key;
+    if (params) {
+      Object.entries(params).forEach(([k, v]) => {
+        message = message.replace(`{${k}}`, v);
+      });
+    }
+    return message;
+  },
 }));
 
 describe('EmptyState', () => {
