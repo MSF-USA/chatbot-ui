@@ -387,14 +387,125 @@
   "enterPromptNamePlaceholder": "mfano, Majibu ya Barua pepe",
   "enterPromptDescriptionPlaceholder": "Kidokezo hiki ni cha nini?",
   "enterPromptContentPlaceholder": "Andika kidokezo chako hapa. Tumia {{variable}} kwa maudhui yanayobadilika.",
+  "A description for your prompt_": "Maelezo ya kidokezo chako.",
+  "A name for your prompt_": "Jina la kidokezo chako.",
+  "AI": "AI",
+  "Accept and Continue": "Kubali na Endelea",
+  "Are you sure you want to clear all messages?": "Una uhakika unataka kufuta ujumbe wote?",
+  "Are you sure?": "Una uhakika?",
+  "Cancel": "Ghairi",
+  "Chat Settings": "Mipangilio ya Mazungumzo",
+  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI ni kifurushi cha hali ya juu cha chatbot kwa modeli za mazungumzo za OpenAI kinacholenga kuiga kiolesura na utendaji wa ChatGPT.",
+  "Clear conversations": "Futa mazungumzo",
+  "Content": "Maudhui",
+  "Conversation": "Mazungumzo",
+  "Conversation exported successfully": "Mazungumzo yametolewa kwa mafanikio",
+  "Conversation imported successfully": "Mazungumzo yameingizwa kwa mafanikio",
+  "Copied!": "Imenakiliwa!",
+  "Copy code": "Nakili msimbo",
+  "Default System Prompt": "Kidokezo cha Mfumo cha Kawaida",
+  "Description": "Maelezo",
+  "Edit": "Hariri",
+  "Email": "Barua pepe",
+  "Enter a prompt": "Ingiza kidokezo",
+  "Enter file name": "Ingiza jina la faili",
+  "Error fetching models_": "Hitilafu katika kupata modeli.",
+  "Export data": "Toa data",
+  "Failed to export conversation": "Imeshindwa kutoa mazungumzo",
+  "Failed to export folder": "Imeshindwa kutoa folda",
+  "Failed to import conversation": "Imeshindwa kuingiza mazungumzo",
+  "Failed to import file": "Imeshindwa kuingiza faili",
+  "Folder exported with {count} conversations": "Folda imetolewa na mazungumzo {count}",
+  "Folder imported with {count} conversations": "Folda imeingizwa na mazungumzo {count}",
+  "Folder not found": "Folda haijapatikana",
+  "Higher values like 0_8 will make the output more random, while lower values like 0_2 will make it more focused and deterministic_": "Thamani za juu kama 0.8 zitafanya matokeo kuwa nasibu zaidi, wakati thamani za chini kama 0.2 zitafanya kuwa na umakini zaidi na ya kimaamuzi.",
+  "I accept the": "Ninakubali",
+  "If you completed this step, OpenAI may be experiencing issues_": "Ikiwa umekamilisha hatua hii, OpenAI inaweza kuwa na matatizo.",
+  "If you don't have an OpenAI API key, you can get one here: ": "Ikiwa huna ufunguo wa API wa OpenAI, unaweza kupata moja hapa: ",
+  "Import data": "Ingiza data",
+  "Invalid conversation file": "Faili ya mazungumzo si halali",
+  "Invalid folder file": "Faili ya folda si halali",
+  "Loading terms and conditions_ellipsis": "Inapakia masharti na vigezo...",
+  "Loading_ellipsis": "Inapakia...",
+  "Make sure your OpenAI API key is set in the bottom left of the sidebar_": "Hakikisha ufunguo wako wa API wa OpenAI umewekwa upande wa kushoto chini wa upau wa kando.",
+  "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha ujumbe ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
+  "Model": "Modeli",
+  "Name": "Jina",
+  "New conversation": "Mazungumzo mapya",
+  "New folder": "Folda mpya",
+  "No conversations_": "Hakuna mazungumzo.",
+  "No prompts found": "Hakuna vidokezo vilivyopatikana",
+  "No prompts_": "Hakuna vidokezo.",
+  "OR": "AU",
+  "OpenAI API Key": "Ufunguo wa API wa OpenAI",
+  "OpenAI API Key Required": "Ufunguo wa API wa OpenAI Unahitajika",
+  "Please enter a message": "Tafadhali ingiza ujumbe",
+  "Please set your OpenAI API key in the bottom left of the sidebar_": "Tafadhali weka ufunguo wako wa API wa OpenAI upande wa kushoto chini wa upau wa kando.",
+  "Plugin Keys": "Funguo za Plugin",
+  "Privacy Policy": "Sera ya Faragha",
+  "Prompt": "Kidokezo",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kidokezo. Tumia '{{}}' kuonyesha kigezo. Mfano: '{{name}}' ni '{{adjective}}' '{{noun}}'",
+  "Prompt limit is {{maxLength}} characters": "Kikomo cha kidokezo ni herufi {{maxLength}}",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha kidokezo ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
+  "Regenerate response": "Tengeneza jibu upya",
+  "Retry": "Jaribu tena",
+  "Run Typewriter Intro": "Endesha Utangulizi wa Typewriter",
+  "Save & Submit": "Hifadhi na Wasilisha",
+  "Saved Prompts": "Vidokezo Vilivyohifadhiwa",
+  "Search prompts_ellipsis": "Tafuta vidokezo...",
+  "Select a prompt to view details": "Chagua kidokezo kuona maelezo",
+  "Sorry, there was an error_": "Samahani, kulikuwa na hitilafu.",
+  "Stop Generating": "Acha Kutengeneza",
+  "System Prompt": "Kidokezo cha Mfumo",
+  "Temperature": "Joto",
+  "Terms and Conditions": "Masharti na Vigezo",
+  "Terms of Service": "Masharti ya Huduma",
+  "Type a message or type \"/\" to select a prompt_ellipsis": "Andika ujumbe au andika \"/\" kuchagua kidokezo...",
+  "Type a message_ellipsis": "Andika ujumbe...",
+  "Unrecognized file format": "Muundo wa faili haujatambuliwa",
+  "Version": "Toleo",
+  "View Account Usage": "Angalia Matumizi ya Akaunti",
+  "You": "Wewe",
+  "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Wewe ni ChatGPT, modeli kubwa ya lugha iliyofunzwa na OpenAI. Fuata maelekezo ya mtumiaji kwa uangalifu. Jibu kwa kutumia markdown.",
+  "click if using a _env_local file": "bofya ukitumia faili ya .env.local",
+  "importBackupParseError": "Imeshindwa kuchambua faili ya hifadhi rudufu. Tafadhali hakikisha ni JSON halali.",
+  "transcriptionComplete": "Unakilishi umekamilika! Maandishi yameongezwa kwenye ingizo la mazungumzo.",
   "common": {
-    "contact": "Wasiliana"
+    "contact": "Wasiliana",
+    "close": "Funga",
+    "remove": "Ondoa",
+    "tryAgain": "Jaribu tena",
+    "menu": "Menyu",
+    "copyToClipboard": "Nakili kwenye ubao wa kunakili",
+    "toggleDropdownMenu": "Geuza menyu ya kushuka",
+    "toggleMenu": "Geuza menyu",
+    "closeModal": "Funga dirisha",
+    "dismissBanner": "Ondoa bango",
+    "searchEllipsis": "Tafuta...",
+    "addTagEllipsis": "Ongeza lebo...",
+    "msfLogo": "Nembo ya MSF",
+    "importantInformation": "Taarifa Muhimu",
+    "noResults": "Hakuna matokeo yaliyopatikana",
+    "confirm": "Thibitisha",
+    "cancel": "Ghairi",
+    "discard": "Tupa",
+    "keepEditing": "Endelea Kuhariri",
+    "yes": "Ndiyo",
+    "no": "Hapana"
   },
   "errors": {
     "unexpectedErrorOccurred": "Hitilafu isiyotarajiwa imetokea",
     "criticalErrorReload": "Hitilafu muhimu imetokea. Tafadhali pakia upya ukurasa.",
     "reloadPage": "Pakia upya ukurasa",
-    "persistContactSupport": "Ikiwa tatizo hili linaendelea, tafadhali wasiliana na usaidizi"
+    "persistContactSupport": "Ikiwa tatizo hili linaendelea, tafadhali wasiliana na usaidizi",
+    "somethingWentWrong": "Kitu kimekwenda vibaya",
+    "anErrorOccurred": "Hitilafu imetokea",
+    "copyErrorMessage": "Nakili ujumbe wa hitilafu",
+    "contactSupport": "Ikiwa tatizo hili linaendelea, tafadhali wasiliana na usaidizi kwa",
+    "dismissError": "Ondoa hitilafu",
+    "applicationError": "Hitilafu ya Programu",
+    "chatLoadError": "Hitilafu imetokea wakati wa kupakia mazungumzo",
+    "anErrorOccurredTryAgain": "Hitilafu imetokea. Tafadhali jaribu tena."
   },
   "auth": {
     "authenticationError": "Hitilafu ya Uthibitishaji",
@@ -463,7 +574,25 @@
     "fullSizePreview": "Onyesho la ukubwa kamili",
     "enterSearchQueryPlaceholder": "Ingiza hoja yako ya utaftaji au swali...",
     "errorFetchingUrl": "Hitilafu ilitokea wakati wa kuleta maudhui ya URL",
-    "errorInitiatingSearch": "Hitilafu ilitokea wakati wa kuanzisha utaftaji wa wavuti"
+    "errorInitiatingSearch": "Hitilafu ilitokea wakati wa kuanzisha utaftaji wa wavuti",
+    "regenerate": "Tengeneza upya",
+    "modelSwitchPrompt": "{original} imeshindwa lakini {fallback} imefanikiwa. Ungependa kubadilisha modeli?",
+    "keepOriginalModel": "Weka {model}",
+    "switchToModel": "Badilisha hadi {model}",
+    "alwaysSwitchToModel": "Badilisha kiotomatiki kila wakati",
+    "translateMessage": "Tafsiri ujumbe",
+    "translating": "Inatafsiri...",
+    "translationError": "Tafsiri imeshindwa",
+    "showOriginal": "Onyesha asili",
+    "translatedTo": "Imetafsiriwa kwa {language}",
+    "searchLanguages": "Tafuta lugha...",
+    "selectLanguage": "Chagua lugha",
+    "audioFromOriginal": "Sauti ni kutoka maandishi ya asili",
+    "audioFromTranslation": "Sauti ni kutoka tafsiri ya {language}",
+    "thinking": "Inafikiria...",
+    "viewReasoningProcess": "Angalia mchakato wa kufikiri",
+    "collapseThinking": "Kunja mawazo",
+    "expandThinking": "Panua mawazo"
   },
   "sidebar": {
     "collapseSidebar": "Kunja upau wa pembeni",
@@ -485,15 +614,134 @@
     "importantInfo": "Wakala huyu atakuwa na ufikiaji wa muktadha wa mazungumzo na ataweza kutumia zana sawa na miundo ya kawaida. Hakikisha kitambulisho cha wakala ni sahihi kwa sababu hakiwezi kubadilishwa baadaye."
   },
   "prompts": {
-    "buildReusablePrompts": "Jenga vidokezi vinavyoweza kutumika tena kwa msaada wa AI"
+    "buildReusablePrompts": "Jenga vidokezi vinavyoweza kutumika tena kwa msaada wa AI",
+    "noToneDefault": "Hakuna toni (tumia chaguo-msingi)",
+    "tagHelp": "Msaada wa Lebo",
+    "tagHelpContent": "Tumia lebo kuainisha na kupata vidokezo vyako haraka. Mifano:",
+    "tagExamples": {
+      "email": "barua-pepe",
+      "marketing": "masoko",
+      "technical": "kiufundi",
+      "customerSupport": "usaidizi-wa-wateja"
+    },
+    "variableHelp": "Msaada wa Vigezo",
+    "variableHelpIntro": "Tumia vigezo kufanya vidokezo vyako viwe na nguvu:",
+    "requiredVariables": "Vigezo Vinavyohitajika (bila chaguo-msingi):",
+    "optionalVariables": "Vigezo vya Hiari (na chaguo-msingi):",
+    "userMustProvide": "Mtumiaji lazima atoe thamani",
+    "userCanProvide": "Mtumiaji anaweza kutoa thamani, au chaguo-msingi inatumika",
+    "example": "Mfano:",
+    "variableExampleText": "Andika barua pepe ya {{tone:professional}} kwa {{recipient}} kuhusu {{topic}} kwa {{language:English}}",
+    "detectedVariables": "Vigezo Vilivyogunduliwa",
+    "required": "Inahitajika",
+    "aiAssistant": "Msaidizi wa AI",
+    "whatToImprove": "Ungependa kuboresha nini?",
+    "whatShouldPromptDo": "Kidokezo hiki kinapaswa kufanya nini?",
+    "improvePlaceholder": "mfano, Ifanye kuwa ya kitaalamu zaidi, ongeza mifano, boresha uwazi...",
+    "generatePlaceholder": "mfano, Tengeneza kiolezo cha barua pepe cha kitaalamu na vigezo vya mpokeaji na mada...",
+    "addContextOptional": "Ongeza Muktadha (Si Lazima)",
+    "revising": "Inarekebisha...",
+    "generating": "Inatengeneza...",
+    "reviseWithAI": "Rekebisha kwa AI",
+    "generatePrompt": "Tengeneza Kidokezo",
+    "revisionComplete": "Marekebisho Yamekamilika",
+    "generationComplete": "Utengenezaji Umekamilika",
+    "revisedPrompt": "Kidokezo Kilichorekebishwa:",
+    "generatedPrompt": "Kidokezo Kilichotengenezwa:",
+    "applyRevision": "Tumia Marekebisho Haya",
+    "useThisPrompt": "Tumia Kidokezo Hiki",
+    "improvementsMade": "Maboresho Yaliyofanywa:",
+    "tips": "Vidokezo:",
+    "howAICanHelp": "Jinsi AI Inavyoweza Kusaidia",
+    "helpItems": {
+      "improveClarity": "Boresha uwazi na muundo",
+      "suggestVariables": "Pendekeza vigezo muhimu",
+      "addContext": "Ongeza muktadha na mifano",
+      "optimize": "Boresha kwa matokeo bora"
+    },
+    "savePrompt": "Hifadhi Kidokezo",
+    "add": "Ongeza"
   },
   "tones": {
     "createCustomVoiceProfile": "Unda wasifu wa sauti maalum kwa msaada wa AI",
-    "examplePlaceholder": "mfano, Unda toni ya huduma kwa wateja yenye kitaalamu lakini rafiki..."
+    "examplePlaceholder": "mfano, Unda toni ya huduma kwa wateja yenye kitaalamu lakini rafiki...",
+    "tagHelp": "Msaada wa Lebo",
+    "tagHelpContent": "Tumia lebo kuainisha na kupata mitindo yako haraka. Mifano:",
+    "tagExamples": {
+      "professional": "kitaalamu",
+      "casual": "kawaida",
+      "technical": "kiufundi",
+      "marketing": "masoko"
+    },
+    "add": "Ongeza",
+    "aiToneAnalyzer": "Kichanganuzi cha Toni cha AI",
+    "describeToneToCreate": "Eleza toni unayotaka kuunda",
+    "uploadContentSamples": "Pakia Sampuli za Maudhui",
+    "analyzing": "Inachambua...",
+    "analyzeToneWithAI": "Chambua Toni kwa AI",
+    "analysisComplete": "Uchambuzi Umekamilika",
+    "generatedVoiceGuidelines": "Miongozo ya Sauti Iliyotengenezwa:",
+    "examplePhrases": "Misemo ya Mfano:",
+    "suggestedTags": "Lebo Zilizopendekezwa:",
+    "applyThisAnalysis": "Tumia Uchambuzi Huu",
+    "detectedCharacteristics": "Sifa Zilizogunduliwa:",
+    "howAICanHelp": "Jinsi AI Inavyoweza Kusaidia",
+    "helpItems": {
+      "transcribe": "Nakili maudhui ya sauti/video",
+      "analyzeContent": "Chambua sampuli za maudhui yako",
+      "extractPatterns": "Toa mifumo ya toni na mtindo",
+      "generateGuidelines": "Tengeneza miongozo ya sauti",
+      "suggestTags": "Pendekeza lebo zinazofaa"
+    },
+    "saveTone": "Hifadhi Toni"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Tazama mchoro wa mtiririko wa kiufundi"
+    "viewTechnicalFlowDiagram": "Tazama mchoro wa mtiririko wa kiufundi",
+    "backToChat": "Rudi kwenye Mazungumzo",
+    "title": "Kituo cha Msaada",
+    "subtitle": "Pata majibu, jifunze kuhusu faragha, na pata usaidizi",
+    "faq": {
+      "title": "Maswali Yanayoulizwa Mara kwa Mara",
+      "description": "Pata majibu ya maswali ya kawaida kuhusu kutumia Msaidizi wa AI",
+      "articles": "makala",
+      "searchPlaceholder": "Tafuta Maswali...",
+      "noResults": "Hakuna Maswali yanayolingana na utafutaji wako",
+      "noResultsHint": "Jaribu neno lingine la utafutaji"
+    },
+    "privacy": {
+      "title": "Faragha na Data",
+      "description": "Jifunze jinsi data yako inavyohifadhiwa na kulindwa",
+      "topics": "mada",
+      "searchPlaceholder": "Tafuta mada za faragha...",
+      "noResults": "Hakuna mada za faragha zinazolingana na utafutaji wako",
+      "noResultsHint": "Jaribu neno lingine la utafutaji",
+      "bannerTitle": "Faragha Yako Ni Muhimu",
+      "bannerDescription": "Mazungumzo yote yanahifadhiwa ndani ya kifaa chako. Usindikaji wa data hufanyika ndani ya mifumo ya MSF kwa kutumia miundombinu ya Azure.",
+      "localStorageOnly": "Hifadhi ya ndani tu",
+      "msfControlled": "Inasimamiwa na MSF",
+      "noPersonalData": "Hakuna data ya kibinafsi",
+      "noSensitiveOps": "Hakuna shughuli nyeti"
+    },
+    "contact": {
+      "title": "Wasiliana na Rasilimali",
+      "description": "Wasiliana na timu yetu na ufikie viungo muhimu",
+      "supportAvailable": "Usaidizi unapatikana",
+      "submitRequest": "Wasilisha Ombi la Usaidizi",
+      "getHelp": "Pata msaada kutoka kwa timu yetu",
+      "requestDescription": "Unahitaji msaada au unataka kutoa maoni? Bofya hapa chini kufungua fomu yetu ya usaidizi.",
+      "openSupportForm": "Fungua Fomu ya Usaidizi",
+      "otherWays": "Njia Nyingine za Kuwasiliana Nasi",
+      "emailSupport": "Usaidizi wa Barua pepe",
+      "emailDescription": "Tutumie barua pepe kwa maswali, maoni, au matatizo ya kiufundi"
+    },
+    "resources": {
+      "title": "Rasilimali za Ziada",
+      "portalTitle": "Portal ya AI Accelerator",
+      "portalDescription": "Hati, sasisho za mradi, na nyenzo za mafunzo",
+      "githubTitle": "Hazina ya Open Source",
+      "githubDescription": "Angalia msimbo, ripoti matatizo, na changia kwenye GitHub"
+    }
   },
   "settings": {
     "Settings": "Mipangilio",
@@ -561,9 +809,250 @@
     "FAQs, privacy policy, and guides": "Maswali Yanayoulizwa Mara kwa Mara, sera ya faragha na miongozo",
     "Contact Support": "Wasiliana na Usaidizi",
     "Popular Questions": "Maswali Maarufu",
-    "View all FAQs": "Tazama Maswali Yote Yanayoulizwa Mara kwa Mara"
+    "View all FAQs": "Tazama Maswali Yote Yanayoulizwa Mara kwa Mara",
+    "Delete legacy data after migration": "Futa data ya zamani baada ya uhamiaji",
+    "frees up storage space": "huachia nafasi ya hifadhi",
+    "Legacy data deleted": "Data ya zamani imefutwa",
+    "freed": "imeachiliwa",
+    "Conversations": "Mazungumzo",
+    "Legacy": "Zamani",
+    "Other": "Nyingine",
+    "Loading": "Inapakia",
+    "Legacy Data Detected": "Data ya Zamani Imegunduliwa",
+    "legacyDataDescription": "Una {size} ya data kutoka toleo la awali. Hii inaweza kuhamishwa, kutolewa, au kufutwa ili kuachia nafasi.",
+    "legacyDeleteSuccess": "Umefanikiwa kufuta data ya zamani na kuachia {size}.",
+    "legacyDeleteError": "Imeshindwa kufuta data ya zamani. Tafadhali jaribu tena.",
+    "Explore solutions": "Chunguza suluhu",
+    "Migrate to Current Format": "Hamishia Muundo wa Sasa",
+    "Export Legacy Data": "Toa Data ya Zamani",
+    "Delete Legacy Data": "Futa Data ya Zamani",
+    "deleteLegacyConfirm": "Una uhakika unataka kufuta data yote ya zamani? Kitendo hiki hakiwezi kufutwa.",
+    "Deleting": "Inafuta",
+    "Confirm Delete": "Thibitisha Kufuta",
+    "Cancel": "Ghairi"
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"
+  },
+  "emptyState": {
+    "greeting": "Nawezaje kusaidia?",
+    "greetingWithName": "Nawezaje kusaidia, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Unda Michoro",
+        "prompt": "Nionyeshe jinsi unavyoweza kuunda michoro na mtiririko wa kazi. Ni aina gani za michakato, mtiririko wa kazi, au mifumo unayoweza kunisaidia kuona? Nipe mifano."
+      },
+      "draftContent": {
+        "title": "Andika Maudhui ya Kitaalamu",
+        "prompt": "Ninahitaji msaada kuandika hati za kitaalamu - barua pepe, ripoti, muhtasari. Je, unaweza kunionyesha mifano ya jinsi unavyoweza kusaidia na aina tofauti za uandishi wa biashara?"
+      },
+      "analyzeInformation": {
+        "title": "Chambua Taarifa",
+        "prompt": "Unawezaje kunisaidia kuchambua data au taarifa? Nionyeshe njia tofauti unavyoweza kugawanya nambari, kupata mifumo, au kutoa maarifa kutoka kwa hati au seti za data."
+      },
+      "planOrganize": {
+        "title": "Panga na Andaa",
+        "prompt": "Je, unaweza kunisaidia kupanga miradi au kuandaa kazi? Nipe mifano ya jinsi unavyoweza kuunda ratiba, ajenda, au mipango ya mradi na miundo tofauti."
+      },
+      "brainstormIdeas": {
+        "title": "Fikiria Mawazo",
+        "prompt": "Nataka kufikiria suluhu za tatizo. Nionyeshe jinsi unavyoshughulikia mawazo ya ubunifu na utengenezaji wa mawazo - ni maswali gani ungeuliza na unachunguza vipi uwezekano?"
+      },
+      "buildPresentations": {
+        "title": "Jenga Mawasilisho",
+        "prompt": "Unawezaje kunisaidia kuunda mawasilisho? Nionyeshe mifano ya miundo tofauti ya mawasilisho, mapendekezo ya kuona, na jinsi unavyopanga taarifa kwa hadhira tofauti."
+      },
+      "workWithCode": {
+        "title": "Fanya Kazi na Msimbo",
+        "prompt": "Je, unaweza kusaidia na msimbo au hati? Nionyeshe mifano - iwe ni kuandika msimbo mpya, kurekebisha matatizo, au kueleza jinsi kitu kinavyofanya kazi hatua kwa hatua."
+      },
+      "decisionSupport": {
+        "title": "Usaidizi wa Maamuzi",
+        "prompt": "Ninahitaji kufanya uamuzi lakini sijui jinsi ya kutathmini chaguzi zangu. Je, unaweza kunionyesha mifumo au njia tofauti unazotumia kusaidia kufikiri kupitia chaguzi?"
+      },
+      "summarizeSynthesize": {
+        "title": "Fupisha na Unganisha",
+        "prompt": "Unasaidiaje kufupisha hati ndefu au kuunganisha taarifa kutoka vyanzo vingi? Nionyeshe mifano ya miundo tofauti ya muhtasari na viwango vya maelezo."
+      },
+      "explainTopics": {
+        "title": "Eleza Mada Ngumu",
+        "prompt": "Je, unaweza kueleza dhana ngumu kwa maneno rahisi? Nionyeshe jinsi unavyogawanya mawazo magumu, kutumia mifano, na kurekebisha maelezo kwa viwango tofauti vya ujuzi."
+      },
+      "createSchedules": {
+        "title": "Unda Ratiba",
+        "prompt": "Ninahitaji msaada kupanga wakati na kuunda ratiba. Nionyeshe njia tofauti unavyoweza kuunda ajenda, kalenda, au mipango ya msingi wa wakati na mifano."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modeli",
+      "agents": "Mawakala"
+    },
+    "sections": {
+      "baseModels": "Modeli za Msingi"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Kipengele cha Juu",
+      "description": "Unda na simamia mawakala wa AI maalum wenye uwezo wa kipekee. Mawakala hawa wanafanya kazi kwenye mfumo wa MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Kipengele cha Juu - Kinahitaji Uratibu na Timu ya Kiufundi ya AI Assistant",
+      "advancedFeatureWarning": "Mawakala maalum wanafanya kazi tu na mfumo wa MSF AI Assistant Foundry. Vitambulisho vya wakala lazima viundwe na timu ya kiufundi ya AI Assistant katika mfumo huu mahususi na kuratibiwa nawe kabla ya matumizi.",
+      "createNewAgent": "Unda Wakala Mpya Maalum",
+      "noAgentsTitle": "Bado Hakuna Mawakala Maalum",
+      "noAgentsDescription": "Unda wakala wako wa kwanza maalum ili kupanua uwezo wa AI na zana na tabia maalum."
+    },
+    "advancedOptions": {
+      "title": "Chaguo za Juu",
+      "temperature": "Joto",
+      "fixedTemperatureNote": "Kumbuka: Modeli hii hutumia thamani za joto zilizowekwa kwa utendaji thabiti.",
+      "reasoningEffort": "Juhudi ya Kufikiri",
+      "minimal": "Ndogo",
+      "low": "Chini",
+      "medium": "Wastani",
+      "high": "Juu",
+      "verbosity": "Urefu wa Majibu"
+    },
+    "searchMode": {
+      "title": "Hali ya Utafutaji",
+      "subtitle": "Itatumia utafutaji wa wavuti inapohitajika",
+      "routingLabel": "Uelekezaji wa Utafutaji:",
+      "whatsDifference": "Tofauti ni nini?",
+      "privacyFocused": "Inalenga Faragha (Chaguo-msingi)",
+      "privacyFocusedDescription": "Polepole lakini ya faragha zaidi",
+      "azureAgentMode": "Hali ya Wakala wa Azure AI",
+      "azureAgentModeDescription": "Haraka lakini huhifadhi data ya mazungumzo kwenye wingu",
+      "privacyInfoTitle": "Taarifa Muhimu ya Faragha",
+      "privacyInfoDescription": "Mazungumzo yako yote yatatumwa kwa wakala wa Azure AI Foundry.",
+      "learnMoreDataStorage": "Jifunze zaidi kuhusu hifadhi ya data"
+    },
+    "customAgent": {
+      "label": "Wakala Maalum:",
+      "description": "Wakala huyu anafanya kazi kwenye mfumo wa MSF AI Assistant Foundry na zana zimewezeshwa kila wakati.",
+      "webSearch": "Utafutaji wa wavuti wa wakati halisi",
+      "codeInterpreter": "Mkalimani wa msimbo na uchambuzi wa faili"
+    },
+    "header": {
+      "backToModels": "Rudi kwa Modeli",
+      "knowledgeCutoff": "Kipimo cha maarifa: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "msingi",
+      "omni": "omni",
+      "reasoning": "kufikiri",
+      "agent": "wakala"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Modeli ya AI inayoendeshwa na GPT-4.1 na utafutaji wa wavuti wa wakati halisi kupitia Bing. Inatoa taarifa za kisasa, uthibitishaji wa ukweli, na ufahamu wa matukio ya sasa. Bora kwa utafiti unaohitaji taarifa za hivi karibuni, uchambuzi wa habari, na uthibitishaji wa ukweli.",
+      "knowledgeCutoff": "Utafutaji wa wavuti wa wakati halisi"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Modeli ya hali ya juu zaidi ya OpenAI, inayofanya vyema katika kufikiri kwa kina, utengenezaji wa msimbo, na utatuzi wa matatizo ya kiufundi. Bora kwa kazi za uchambuzi, changamoto za programu, utafiti, na maelezo ya kina. Inasaidia juhudi za kufikiri zinazoweza kurekebishwa na urefu wa majibu.",
+      "knowledgeCutoff": "Agu 6, 2025 8:00 PM"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Toleo la haraka na la gharama nafuu la GPT-5, limeboreshwa kwa kasi huku likidumisha ubora wa juu. Bora kwa kazi za kila siku, maswali ya haraka, uelekezaji wa zana, na programu zinazohitaji nyakati za majibu haraka. Usawa bora wa utendaji na ufanisi.",
+      "knowledgeCutoff": "Agu 6, 2025 8:00 PM"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Toleo maalum la GPT-5 limeboreshwa kwa mwingiliano wa mazungumzo na akili ya kihisia. Inafanya vyema katika mawasiliano yenye huruma, usaidizi wa afya ya akili, uandishi wa ubunifu, kufikiria pamoja, na mazungumzo ya asili. Bora kwa mazungumzo ya kawaida, hali za ushauri, na kazi zinazohitaji ufahamu wa kihisia.",
+      "knowledgeCutoff": "Okt 1, 2025 8:00 PM"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Modeli ya hali ya juu zaidi ya kufikiri ya OpenAI yenye uwezo wa kuvunja matatizo. Inafanya vyema katika hisabati ngumu, kufikiri kisayansi, changamoto za msimbo, na kazi za kimantiki zenye hatua nyingi. Dirisha la muktadha la 200K lililopanuliwa. Inasaidia udhibiti wa juhudi za kufikiri.",
+      "knowledgeCutoff": "Apr 8, 2025 8:00 PM"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Modeli ya haraka na ya gharama nafuu kutoka Meta. Nzuri kwa kazi za kila siku kama kuandika, kufupisha, na msaada wa msimbo wa msingi. Usawa mzuri wa kasi na ubora kwa kazi za kawaida.",
+      "knowledgeCutoff": "Mei 7, 2025 7:11 AM"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Mtaalamu wa kufikiri anayeonyesha kazi yake hatua kwa hatua. Bora kwa matatizo ya hisabati, mafumbo ya kimantiki, na kuelewa dhana ngumu. Angalia jinsi inavyofikiri kupitia matatizo kwa wakati halisi.",
+      "knowledgeCutoff": "Jan 20, 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Modeli imara ya jumla hasa nzuri katika msimbo na uandishi wa kiufundi. Nzuri kwa kurekebisha msimbo, kuandika hati, na kueleza dhana za kiufundi. Haraka na ya kutegemewa kwa kazi za maendeleo.",
+      "knowledgeCutoff": "Apr 16, 2025 12:45 AM"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Modeli yenye matumizi mengi kutoka xAI inayojulikana kwa majibu ya kina. Nzuri kwa majadiliano ya wazi, miradi ya ubunifu, na kushughulikia matatizo magumu.",
+      "knowledgeCutoff": "Mei 13, 2025 12:16 AM"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Modeli yenye uwezo mkubwa zaidi ya Anthropic yenye kufikiri bora, msimbo, na uwezo wa ubunifu. Bora kwa uchambuzi mgumu, utafiti, na kazi zinazohitaji uelewa wa kina.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Modeli ya Claude yenye usawa inayotoa utendaji bora katika msimbo, uchambuzi, na kazi za ubunifu. Nzuri kwa matumizi ya kila siku na nyakati za majibu haraka.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Modeli ya kizazi kilichopita ya Claude Opus. Bora kwa kazi ngumu za msimbo, uchambuzi wa kina, na uelewa wa hila.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Modeli ya Claude ya haraka na ya gharama nafuu iliyoboreshwa kwa kazi za haraka. Nzuri kwa maswali rahisi, muhtasari, na programu za kiasi kikubwa.",
+      "knowledgeCutoff": "Januari 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Rudi kwenye Mazungumzo",
+    "title": "Hali ya Utafutaji Imeelezwa",
+    "subtitle": "Kuelewa chaguo zako za utafutaji na mahali data yako inahifadhiwa",
+    "quickComparison": "Ulinganisho wa Haraka",
+    "noSearch": "Hakuna Utafutaji",
+    "privacyFocused": "Inalenga Faragha",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Kasi ya Majibu",
+    "fastest": "Haraka Zaidi",
+    "slowerMultiStep": "Polepole (hatua nyingi)",
+    "fasterDirect": "Haraka (moja kwa moja)",
+    "fullConversationStored": "Mazungumzo Kamili Yamehifadhiwa kwenye Wingu",
+    "whatsStoredInAzure": "Kinachohifadhiwa katika Azure",
+    "nothingStateless": "Hakuna (bila hali tu)",
+    "searchQueriesOnly": "Maswali ya utafutaji tu",
+    "fullConversationHistory": "Historia kamili ya mazungumzo",
+    "modelAvailability": "Upatikanaji wa Modeli",
+    "allModels": "Modeli zote",
+    "gpt41Only": "GPT-4.1 pekee",
+    "searchTurnedOff": "Utafutaji Umezimwa",
+    "noSearchDescription": "Majibu ya haraka zaidi bila uwezo wa utafutaji wa wavuti. Mazungumzo yako yote yanabaki kwenye kivinjari chako - hakuna kinachohifadhiwa kwenye wingu.",
+    "viewDetailsBelow": "Kwa maelezo zaidi, angalia mtiririko wa kiufundi hapa chini.",
+    "viewTechnicalFlowDiagram": "Angalia Mchoro wa Mtiririko wa Kiufundi",
+    "legend": "Ufunguo:",
+    "legendNoSearch": "Kivinjari Chako (hifadhi ya ndani) | Seva ya AI Assistant | Azure OpenAI (bila hali)",
+    "privacyFocusedMode": "Hali Inayolenga Faragha",
+    "default": "Chaguo-msingi",
+    "privacyDescription": "Hutumia utafutaji wa wavuti inapohitajika lakini ni polepole kwa sababu hatua zaidi zinahusika. Maswali ya utafutaji tu yanayohifadhiwa katika Azure - mazungumzo yako yote yanabaki kwenye kivinjari chako.",
+    "legendPrivacy": "Kivinjari Chako (hifadhi ya ndani) | Seva ya AI Assistant | Azure AI Foundry (maswali ya utafutaji tu) | Azure OpenAI (bila hali)",
+    "azureAIFoundryMode": "Hali ya Azure AI Foundry",
+    "foundryDescription": "Majibu ya haraka na uwezo wa utafutaji wa wavuti uliojengwa ndani. Mazungumzo yako yote yanahifadhiwa kwenye hifadhidata ya Azure AI Foundry, sio tu kwenye kivinjari chako.",
+    "legendFoundry": "Kivinjari Chako (hifadhi ya ndani) | Seva ya AI Assistant | Wakala wa Azure AI Foundry (huhifadhi mazungumzo kamili)",
+    "whyTheseOptions": "Kwa Nini Chaguo Hizi?",
+    "whyTheseOptionsText1": "Hizi ni utekelezaji wa utafutaji unaopatikana baada ya Azure kusitisha API yao ya Bing Search, ambayo AI Assistant ilikuwa ikitegemea awali.",
+    "whyTheseOptionsText2": "Timu inachunguza kikamilifu njia mbadala za utafutaji zinazolenga faragha zaidi. Chaguo zote mbili za sasa hutumia uwezo wa utafutaji wa Azure AI Foundry lakini zinatofautiana katika kiasi gani cha data ya mazungumzo kinashirikiwa.",
+    "azureDeprecatedBingApi": "Azure ilisitisha API yao ya Bing Search",
+    "footerNote": "Hali zote mbili huhifadhi mazungumzo yako ndani ya kivinjari chako. Unaweza kubadilisha hali wakati wowote katika mipangilio ya modeli.",
+    "note": "Kumbuka:",
+    "loadingDiagram": "Inapakia mchoro..."
+  },
+  "transcription": {
+    "transcribesOnSend": "Inanakilisha unapotuma",
+    "addInstructions": "Ongeza maelekezo",
+    "instructionsPlaceholder": "Muktadha wa kuboresha usahihi (mfano, majina, maneno)"
   }
 }
