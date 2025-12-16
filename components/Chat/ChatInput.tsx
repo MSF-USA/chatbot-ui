@@ -393,7 +393,7 @@ export const ChatInput = ({
 
   useEffect(() => {
     setTimeout(() => {
-      setPlaceholderText('Ask Anything');
+      setPlaceholderText(t('Ask Anything'));
     }, 0);
   }, [t, setPlaceholderText]);
 
