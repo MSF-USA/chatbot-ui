@@ -674,5 +674,180 @@
   },
   "notFound": {
     "lostDog": "Chien perdu"
+  },
+  "emptyState": {
+    "greeting": "Comment puis-je vous aider ?",
+    "greetingWithName": "Comment puis-je vous aider, {name} ?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Créer des diagrammes",
+        "prompt": "Montrez-moi comment vous pouvez créer des diagrammes et des organigrammes. Quels types de processus, flux de travail ou systèmes pouvez-vous m'aider à visualiser ? Donnez-moi quelques exemples."
+      },
+      "draftContent": {
+        "title": "Rédiger du contenu professionnel",
+        "prompt": "J'ai besoin d'aide pour rédiger des documents professionnels - e-mails, rapports, résumés. Pouvez-vous me montrer des exemples de la façon dont vous pouvez aider avec différents types de rédaction commerciale ?"
+      },
+      "analyzeInformation": {
+        "title": "Analyser des informations",
+        "prompt": "Comment pouvez-vous m'aider à analyser des données ou des informations ? Montrez-moi différentes façons de décomposer des chiffres, trouver des modèles ou extraire des informations de documents ou d'ensembles de données."
+      },
+      "planOrganize": {
+        "title": "Planifier et organiser",
+        "prompt": "Pouvez-vous m'aider à planifier des projets ou organiser le travail ? Donnez-moi des exemples de la façon dont vous pourriez créer des calendriers, des agendas ou des plans de projet avec différentes structures."
+      },
+      "brainstormIdeas": {
+        "title": "Brainstorming d'idées",
+        "prompt": "Je veux faire un brainstorming pour résoudre un problème. Montrez-moi comment vous abordez la réflexion créative et la génération d'idées - quelles questions poseriez-vous et comment explorez-vous les possibilités ?"
+      },
+      "buildPresentations": {
+        "title": "Créer des présentations",
+        "prompt": "Comment pouvez-vous m'aider à créer des présentations ? Montrez-moi des exemples de différentes structures de présentation, suggestions visuelles et comment vous organisez les informations pour différents publics."
+      },
+      "workWithCode": {
+        "title": "Travailler avec le code",
+        "prompt": "Pouvez-vous aider avec la programmation ou les scripts ? Montrez-moi des exemples - que ce soit écrire du nouveau code, déboguer des problèmes ou expliquer comment quelque chose fonctionne étape par étape."
+      },
+      "decisionSupport": {
+        "title": "Aide à la décision",
+        "prompt": "Je dois prendre une décision mais je ne suis pas sûr de comment évaluer mes options. Pouvez-vous me montrer différents cadres ou approches que vous utilisez pour aider à réfléchir aux choix ?"
+      },
+      "summarizeSynthesize": {
+        "title": "Résumer et synthétiser",
+        "prompt": "Comment aidez-vous à résumer de longs documents ou à synthétiser des informations provenant de plusieurs sources ? Montrez-moi des exemples de différents formats de résumé et niveaux de détail."
+      },
+      "explainTopics": {
+        "title": "Expliquer des sujets complexes",
+        "prompt": "Pouvez-vous expliquer des concepts compliqués en termes simples ? Montrez-moi comment vous décomposez des idées complexes, utilisez des analogies et adaptez les explications à différents niveaux de connaissances."
+      },
+      "createSchedules": {
+        "title": "Créer des plannings",
+        "prompt": "J'ai besoin d'aide pour organiser le temps et créer des plannings. Montrez-moi différentes façons de structurer des agendas, calendriers ou plans basés sur le temps avec des exemples."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modèles",
+      "agents": "Agents"
+    },
+    "sections": {
+      "baseModels": "Modèles de base"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Fonctionnalité avancée",
+      "description": "Créez et gérez des agents IA personnalisés avec des capacités spécialisées. Ces agents fonctionnent sur l'instance MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Fonctionnalité avancée - Nécessite une coordination avec l'équipe technique de l'assistant IA",
+      "advancedFeatureWarning": "Les agents personnalisés ne fonctionnent qu'avec l'instance MSF AI Assistant Foundry. Les IDs des agents doivent être créés par l'équipe technique de l'assistant IA sur cette instance spécifique et coordonnés avec vous avant utilisation.",
+      "createNewAgent": "Créer un nouvel agent personnalisé",
+      "noAgentsTitle": "Pas encore d'agents personnalisés",
+      "noAgentsDescription": "Créez votre premier agent personnalisé pour étendre les capacités de l'IA avec des outils et des comportements spécialisés."
+    },
+    "advancedOptions": {
+      "title": "Options avancées",
+      "temperature": "Température",
+      "fixedTemperatureNote": "Remarque : Ce modèle utilise des valeurs de température fixes pour des performances cohérentes.",
+      "reasoningEffort": "Effort de raisonnement",
+      "minimal": "Minimal",
+      "low": "Faible",
+      "medium": "Moyen",
+      "high": "Élevé",
+      "verbosity": "Verbosité"
+    },
+    "searchMode": {
+      "title": "Mode de recherche",
+      "subtitle": "Utilisera la recherche web si nécessaire",
+      "routingLabel": "Routage de recherche :",
+      "whatsDifference": "Quelle est la différence ?",
+      "privacyFocused": "Axé sur la confidentialité (par défaut)",
+      "privacyFocusedDescription": "Plus lent mais plus privé",
+      "azureAgentMode": "Mode agent Azure AI",
+      "azureAgentModeDescription": "Plus rapide mais stocke les données de conversation dans le cloud",
+      "privacyInfoTitle": "Information importante sur la confidentialité",
+      "privacyInfoDescription": "Toute votre conversation sera envoyée à l'agent Azure AI Foundry.",
+      "learnMoreDataStorage": "En savoir plus sur le stockage des données"
+    },
+    "customAgent": {
+      "label": "Agent personnalisé :",
+      "description": "Cet agent fonctionne sur l'instance MSF AI Assistant Foundry avec des outils toujours activés.",
+      "webSearch": "Recherche web en temps réel",
+      "codeInterpreter": "Interpréteur de code et analyse de fichiers"
+    },
+    "header": {
+      "backToModels": "Retour aux modèles",
+      "knowledgeCutoff": "Date limite de connaissance : {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "fondamental",
+      "omni": "omni",
+      "reasoning": "raisonnement",
+      "agent": "agent"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Modèle IA alimenté par GPT-4.1 avec recherche web en temps réel via Bing. Fournit des informations à jour, la vérification des faits et la connaissance des événements actuels. Idéal pour la recherche nécessitant des informations récentes, l'analyse d'actualités et la vérification des faits.",
+      "knowledgeCutoff": "Recherche web en temps réel"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Le modèle le plus avancé d'OpenAI, excellent en raisonnement complexe, génération de code et résolution de problèmes techniques. Idéal pour les tâches analytiques, les défis de programmation, la recherche et les explications détaillées. Supporte l'effort de raisonnement et la verbosité ajustables.",
+      "knowledgeCutoff": "6 août 2025, 20h00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Variante plus rapide et plus économique de GPT-5, optimisée pour la vitesse tout en maintenant une haute qualité. Parfait pour les tâches quotidiennes, les requêtes rapides, le routage d'outils et les applications nécessitant des temps de réponse rapides. Excellent équilibre entre performance et efficacité.",
+      "knowledgeCutoff": "6 août 2025, 20h00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Variante spécialisée de GPT-5 optimisée pour les interactions conversationnelles et l'intelligence émotionnelle. Excelle dans la communication empathique, le soutien en santé mentale, l'écriture créative, le brainstorming et le dialogue naturel. Idéal pour les conversations informelles, les scénarios de conseil et les tâches nécessitant une conscience émotionnelle.",
+      "knowledgeCutoff": "1er octobre 2025, 20h00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Le modèle de raisonnement le plus avancé d'OpenAI avec des capacités révolutionnaires de résolution de problèmes. Excelle en mathématiques complexes, raisonnement scientifique, défis de programmation et tâches logiques à plusieurs étapes. Fenêtre de contexte étendue de 200K. Supporte le contrôle de l'effort de raisonnement.",
+      "knowledgeCutoff": "8 avril 2025, 20h00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Modèle rapide et économique de Meta. Excellent pour les tâches quotidiennes comme la rédaction, le résumé et l'aide au code de base. Bon équilibre entre vitesse et qualité pour le travail de routine.",
+      "knowledgeCutoff": "7 mai 2025, 07h11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Spécialiste du raisonnement qui montre son travail étape par étape. Excellent pour les problèmes mathématiques, les puzzles logiques et la compréhension de concepts complexes. Observez comment il réfléchit aux problèmes en temps réel.",
+      "knowledgeCutoff": "20 janvier 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Modèle polyvalent particulièrement bon en programmation et rédaction technique. Excellent pour déboguer du code, écrire de la documentation et expliquer des concepts techniques. Rapide et fiable pour le travail de développement.",
+      "knowledgeCutoff": "16 avril 2025, 00h45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Modèle polyvalent de xAI connu pour ses réponses nuancées. Excellent pour les discussions ouvertes, les projets créatifs et l'approche de problèmes complexes.",
+      "knowledgeCutoff": "13 mai 2025, 00h16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Le modèle le plus capable d'Anthropic avec un raisonnement, une programmation et des capacités créatives exceptionnels. Idéal pour les analyses complexes, la recherche et les tâches nécessitant une compréhension approfondie.",
+      "knowledgeCutoff": "Janvier 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Modèle Claude équilibré offrant d'excellentes performances en programmation, analyse et tâches créatives. Excellent pour un usage quotidien avec des temps de réponse rapides.",
+      "knowledgeCutoff": "Janvier 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Modèle Claude Opus de génération précédente. Excellent pour les tâches de programmation complexes, l'analyse détaillée et la compréhension nuancée.",
+      "knowledgeCutoff": "Janvier 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Modèle Claude rapide et économique optimisé pour les tâches rapides. Excellent pour les requêtes simples, le résumé et les applications à haut volume.",
+      "knowledgeCutoff": "Janvier 2025"
+    }
   }
 }
