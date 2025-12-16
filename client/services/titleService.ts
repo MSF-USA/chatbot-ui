@@ -3,7 +3,9 @@
  *
  * Client-side service for generating AI-powered conversation titles.
  */
-import { Message, MessageGroup } from '@/types/chat';
+import { flattenEntriesForAPI } from '@/lib/utils/chat/messageVersioning';
+
+import { ConversationEntry } from '@/types/chat';
 
 export interface TitleGenerationResult {
   title: string;
@@ -11,44 +13,19 @@ export interface TitleGenerationResult {
 }
 
 /**
- * Converts MessageGroups to flat Messages array for the API.
- */
-function flattenMessageGroups(groups: MessageGroup[]): Message[] {
-  const messages: Message[] = [];
-
-  for (const group of groups) {
-    // Add user message
-    messages.push({
-      role: 'user',
-      content: group.userMessage.content,
-    });
-
-    // Add assistant message if present
-    if (group.assistantMessage) {
-      messages.push({
-        role: 'assistant',
-        content: group.assistantMessage.content,
-      });
-    }
-  }
-
-  return messages;
-}
-
-/**
  * Generates an AI-powered title for a conversation.
  *
- * @param messageGroups - The conversation message groups
+ * @param entries - The conversation entries (messages)
  * @param modelId - The model ID to use for generation context
  * @returns The generated title, or null if generation failed
  */
 export async function generateConversationTitle(
-  messageGroups: MessageGroup[],
+  entries: ConversationEntry[],
   modelId: string,
 ): Promise<TitleGenerationResult | null> {
   try {
-    // Convert groups to flat messages
-    const messages = flattenMessageGroups(messageGroups);
+    // Convert conversation entries to flat messages for API
+    const messages = flattenEntriesForAPI(entries);
 
     if (messages.length === 0) {
       return null;
