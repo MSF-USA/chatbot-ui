@@ -697,5 +697,180 @@
   },
   "notFound": {
     "lostDog": "Ztracený pes"
+  },
+  "emptyState": {
+    "greeting": "Jak vám mohu pomoci?",
+    "greetingWithName": "Jak vám mohu pomoci, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Vytvořit diagramy",
+        "prompt": "Ukažte mi, jak můžete vytvářet diagramy a vývojové diagramy. Jaké typy procesů, pracovních postupů nebo systémů mi můžete pomoci vizualizovat? Uveďte mi příklady."
+      },
+      "draftContent": {
+        "title": "Navrhnout profesionální obsah",
+        "prompt": "Potřebuji pomoc s psaním profesionálních dokumentů - e-mailů, zpráv, shrnutí. Můžete mi ukázat příklady, jak můžete pomoci s různými typy obchodního psaní?"
+      },
+      "analyzeInformation": {
+        "title": "Analyzovat informace",
+        "prompt": "Jak mi můžete pomoci analyzovat data nebo informace? Ukažte mi různé způsoby, jak byste mohli rozebrat čísla, najít vzorce nebo získat poznatky z dokumentů či datových sad."
+      },
+      "planOrganize": {
+        "title": "Plánovat a organizovat",
+        "prompt": "Můžete mi pomoci plánovat projekty nebo organizovat práci? Uveďte mi příklady, jak byste mohli vytvořit časové harmonogramy, agendy nebo projektové plány s různými strukturami."
+      },
+      "brainstormIdeas": {
+        "title": "Brainstorming nápadů",
+        "prompt": "Chci udělat brainstorming k vyřešení problému. Ukažte mi, jak přistupujete ke kreativnímu myšlení a generování nápadů – jaké otázky byste položili a jak zkoumáte možnosti?"
+      },
+      "buildPresentations": {
+        "title": "Vytvořit prezentace",
+        "prompt": "Jak mi můžete pomoci vytvořit prezentace? Ukažte mi příklady různých struktur prezentací, vizuálních návrhů a jak organizujete informace pro různé publikum."
+      },
+      "workWithCode": {
+        "title": "Práce s kódem",
+        "prompt": "Můžete pomoci s programováním nebo skripty? Ukažte mi příklady – ať už jde o psaní nového kódu, ladění problémů nebo vysvětlení, jak něco funguje krok za krokem."
+      },
+      "decisionSupport": {
+        "title": "Podpora rozhodování",
+        "prompt": "Potřebuji udělat rozhodnutí, ale nejsem si jistý, jak vyhodnotit své možnosti. Můžete mi ukázat různé rámce nebo přístupy, které používáte k přemýšlení o volbách?"
+      },
+      "summarizeSynthesize": {
+        "title": "Shrnout a syntetizovat",
+        "prompt": "Jak pomáháte shrnout dlouhé dokumenty nebo syntetizovat informace z více zdrojů? Ukažte mi příklady různých formátů shrnutí a úrovní detailů."
+      },
+      "explainTopics": {
+        "title": "Vysvětlit složitá témata",
+        "prompt": "Můžete vysvětlit složité koncepty jednoduchými slovy? Ukažte mi, jak rozkládáte složité myšlenky, používáte analogie a přizpůsobujete vysvětlení různým úrovním znalostí."
+      },
+      "createSchedules": {
+        "title": "Vytvořit rozvrhy",
+        "prompt": "Potřebuji pomoc s organizací času a vytvářením rozvrhů. Ukažte mi různé způsoby, jak můžete strukturovat agendy, kalendáře nebo časové plány s příklady."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modely",
+      "agents": "Agenti"
+    },
+    "sections": {
+      "baseModels": "Základní modely"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Pokročilá funkce",
+      "description": "Vytvářejte a spravujte vlastní AI agenty se specializovanými schopnostmi. Tito agenti běží na instanci MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Pokročilá funkce - Vyžaduje koordinaci s technickým týmem AI asistenta",
+      "advancedFeatureWarning": "Vlastní agenti fungují pouze s instancí MSF AI Assistant Foundry. ID agentů musí být vytvořena technickým týmem AI asistenta na této konkrétní instanci a koordinována s vámi před použitím.",
+      "createNewAgent": "Vytvořit nového vlastního agenta",
+      "noAgentsTitle": "Zatím žádní vlastní agenti",
+      "noAgentsDescription": "Vytvořte svého prvního vlastního agenta pro rozšíření schopností AI o specializované nástroje a chování."
+    },
+    "advancedOptions": {
+      "title": "Pokročilé možnosti",
+      "temperature": "Teplota",
+      "fixedTemperatureNote": "Poznámka: Tento model používá pevné hodnoty teploty pro konzistentní výkon.",
+      "reasoningEffort": "Úsilí při uvažování",
+      "minimal": "Minimální",
+      "low": "Nízké",
+      "medium": "Střední",
+      "high": "Vysoké",
+      "verbosity": "Mnohomluvnost"
+    },
+    "searchMode": {
+      "title": "Režim vyhledávání",
+      "subtitle": "Bude používat webové vyhledávání, když je to potřeba",
+      "routingLabel": "Směrování vyhledávání:",
+      "whatsDifference": "Jaký je rozdíl?",
+      "privacyFocused": "Zaměřeno na soukromí (výchozí)",
+      "privacyFocusedDescription": "Pomalejší, ale soukromější",
+      "azureAgentMode": "Režim agenta Azure AI",
+      "azureAgentModeDescription": "Rychlejší, ale ukládá data konverzace v cloudu",
+      "privacyInfoTitle": "Důležité informace o soukromí",
+      "privacyInfoDescription": "Celá vaše konverzace bude odeslána agentovi Azure AI Foundry.",
+      "learnMoreDataStorage": "Více informací o ukládání dat"
+    },
+    "customAgent": {
+      "label": "Vlastní agent:",
+      "description": "Tento agent běží na instanci MSF AI Assistant Foundry s vždy povolenými nástroji.",
+      "webSearch": "Webové vyhledávání v reálném čase",
+      "codeInterpreter": "Interpret kódu a analýza souborů"
+    },
+    "header": {
+      "backToModels": "Zpět na modely",
+      "knowledgeCutoff": "Uzávěrka znalostí: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "základní",
+      "omni": "omni",
+      "reasoning": "uvažování",
+      "agent": "agent"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "AI model poháněný GPT-4.1 s webovým vyhledáváním v reálném čase prostřednictvím Bingu. Poskytuje aktuální informace, ověřování faktů a znalosti aktuálních událostí. Ideální pro výzkum vyžadující čerstvé informace, analýzu zpráv a ověřování faktů.",
+      "knowledgeCutoff": "Webové vyhledávání v reálném čase"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Nejpokročilejší model OpenAI, vyniká ve složitém uvažování, generování kódu a řešení technických problémů. Ideální pro analytické úkoly, programátorské výzvy, výzkum a podrobná vysvětlení. Podporuje nastavitelné úsilí při uvažování a mnohomluvnost odpovědí.",
+      "knowledgeCutoff": "6. srpna 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Rychlejší a nákladově efektivnější varianta GPT-5, optimalizovaná pro rychlost při zachování vysoké kvality. Perfektní pro každodenní úkoly, rychlé dotazy, směrování nástrojů a aplikace vyžadující rychlé odezvy. Vynikající rovnováha mezi výkonem a efektivitou.",
+      "knowledgeCutoff": "6. srpna 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Specializovaná varianta GPT-5 optimalizovaná pro konverzační interakce a emocionální inteligenci. Vyniká v empatické komunikaci, podpoře duševního zdraví, kreativním psaní, brainstormingu a přirozeném dialogu. Ideální pro neformální konverzace, poradenské scénáře a úkoly vyžadující emocionální uvědomění.",
+      "knowledgeCutoff": "1. října 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Nejpokročilejší model uvažování OpenAI s revolučními schopnostmi řešení problémů. Vyniká ve složité matematice, vědeckém uvažování, programátorských výzvách a víceúrovňových logických úkolech. Rozšířené kontextové okno 200K. Podporuje řízení úsilí při uvažování.",
+      "knowledgeCutoff": "8. dubna 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Rychlý a nákladově efektivní model od Meta. Skvělý pro každodenní úkoly jako psaní, shrnutí a základní pomoc s kódem. Dobrá rovnováha mezi rychlostí a kvalitou pro rutinní práci.",
+      "knowledgeCutoff": "7. května 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Specialista na uvažování, který ukazuje svou práci krok za krokem. Skvělý pro matematické problémy, logické hádanky a pochopení složitých konceptů. Sledujte, jak přemýšlí nad problémy v reálném čase.",
+      "knowledgeCutoff": "20. ledna 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Všestranný model obzvláště dobrý v programování a technickém psaní. Skvělý pro ladění kódu, psaní dokumentace a vysvětlování technických konceptů. Rychlý a spolehlivý pro vývojovou práci.",
+      "knowledgeCutoff": "16. dubna 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Všestranný model od xAI známý pro nuancované odpovědi. Skvělý pro otevřené diskuze, kreativní projekty a řešení složitých problémů.",
+      "knowledgeCutoff": "13. května 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Nejschopnější model Anthropic s výjimečným uvažováním, programováním a kreativními schopnostmi. Ideální pro složité analýzy, výzkum a úkoly vyžadující hluboké porozumění.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Vyvážený model Claude nabízející vynikající výkon v programování, analýze a kreativních úkolech. Skvělý pro každodenní použití s rychlými odezvami.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Model Claude Opus předchozí generace. Skvělý pro složité programátorské úkoly, podrobnou analýzu a nuancované porozumění.",
+      "knowledgeCutoff": "Leden 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Rychlý a nákladově efektivní model Claude optimalizovaný pro rychlé úkoly. Skvělý pro jednoduché dotazy, shrnutí a aplikace s vysokým objemem.",
+      "knowledgeCutoff": "Leden 2025"
+    }
   }
 }
