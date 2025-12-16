@@ -40,7 +40,9 @@ export function ConversationItem({
   const [showMenu, setShowMenu] = useState(false);
   const [showFolderSubmenu, setShowFolderSubmenu] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingName, setEditingName] = useState(conversation.name);
+  const [editingName, setEditingName] = useState(
+    conversation.name || t('New Conversation'),
+  );
   const menuRef = useRef<HTMLDivElement>(null);
 
   // Close menu when clicking outside
@@ -95,7 +97,7 @@ export function ConversationItem({
             if (e.key === 'Enter') {
               handleSaveName();
             } else if (e.key === 'Escape') {
-              setEditingName(conversation.name);
+              setEditingName(conversation.name || t('New Conversation'));
               setIsEditing(false);
             }
           }}
@@ -105,7 +107,7 @@ export function ConversationItem({
         />
       ) : (
         <span className="flex-1 truncate text-sm text-neutral-900 dark:text-neutral-100">
-          {conversation.name}
+          {conversation.name || t('New Conversation')}
         </span>
       )}
       <div
@@ -144,7 +146,7 @@ export function ConversationItem({
                   e.stopPropagation();
                   setShowMenu(false);
                   setIsEditing(true);
-                  setEditingName(conversation.name);
+                  setEditingName(conversation.name || t('New Conversation'));
                 }}
               >
                 <IconEdit
