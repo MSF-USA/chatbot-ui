@@ -53,7 +53,9 @@ export const SearchModeSection: FC<SearchModeSectionProps> = ({
           >
             <span
               className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                searchModeEnabled ? 'translate-x-6' : 'translate-x-1'
+                searchModeEnabled
+                  ? 'translate-x-6 rtl:-translate-x-6'
+                  : 'translate-x-1 rtl:-translate-x-1'
               }`}
             />
           </div>

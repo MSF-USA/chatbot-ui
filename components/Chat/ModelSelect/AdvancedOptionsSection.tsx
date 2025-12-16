@@ -81,7 +81,7 @@ export const AdvancedOptionsSection: FC<AdvancedOptionsSectionProps> = ({
               <div className="flex items-start">
                 <IconInfoCircle
                   size={16}
-                  className="mr-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
+                  className="me-2 mt-0.5 flex-shrink-0 text-blue-600 dark:text-blue-400"
                 />
                 <div className="text-blue-700 dark:text-blue-300">
                   {t('modelSelect.advancedOptions.fixedTemperatureNote')}
