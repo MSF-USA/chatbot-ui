@@ -754,6 +754,122 @@
     },
     "sections": {
       "baseModels": "Base Models"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Advanced Feature",
+      "description": "Create and manage custom AI agents with specialized capabilities. These agents run on the MSF AI Assistant Foundry instance.",
+      "advancedFeatureTitle": "Advanced Feature - Requires Coordination with AI Assistant Technical Team",
+      "advancedFeatureWarning": "Custom agents only work with the MSF AI Assistant Foundry instance. Agent IDs must be created by the AI Assistant technical team in this specific instance and coordinated with you before use.",
+      "createNewAgent": "Create New Custom Agent",
+      "noAgentsTitle": "No Custom Agents Yet",
+      "noAgentsDescription": "Create your first custom agent to extend AI capabilities with specialized tools and behaviors."
+    },
+    "advancedOptions": {
+      "title": "Advanced Options",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "Note: This model uses fixed temperature values for consistent performance.",
+      "reasoningEffort": "Reasoning Effort",
+      "minimal": "Minimal",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High",
+      "verbosity": "Verbosity"
+    },
+    "searchMode": {
+      "title": "Search Mode",
+      "subtitle": "Will use web search when needed",
+      "routingLabel": "Search Routing:",
+      "whatsDifference": "What's the difference?",
+      "privacyFocused": "Privacy-Focused (Default)",
+      "privacyFocusedDescription": "Slower but more private",
+      "azureAgentMode": "Azure AI Agent Mode",
+      "azureAgentModeDescription": "Faster but stores conversation data in the cloud",
+      "privacyInfoTitle": "Important Privacy Information",
+      "privacyInfoDescription": "Your full conversation will be sent to Azure AI Foundry agent.",
+      "learnMoreDataStorage": "Learn more about data storage"
+    },
+    "customAgent": {
+      "label": "Custom Agent:",
+      "description": "This agent runs on the MSF AI Assistant Foundry instance with tools always enabled.",
+      "webSearch": "Real-time web search",
+      "codeInterpreter": "Code interpreter & file analysis"
+    },
+    "header": {
+      "backToModels": "Back to Models",
+      "knowledgeCutoff": "Knowledge cutoff: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "foundational",
+      "omni": "omni",
+      "reasoning": "reasoning",
+      "agent": "agent"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "AI model powered by GPT-4.1 with real-time web search via Bing. Provides up-to-date information, fact-checking, and current event awareness. Best for research requiring recent information, news analysis, and fact verification.",
+      "knowledgeCutoff": "Real-time web search"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI's most advanced model, excelling at complex reasoning, code generation, and technical problem-solving. Best for analytical tasks, programming challenges, research, and detailed explanations. Supports adjustable reasoning effort and response verbosity.",
+      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Faster and more cost-effective variant of GPT-5, optimized for speed while maintaining high quality. Perfect for everyday tasks, quick queries, tool routing, and applications requiring fast response times. Excellent balance of performance and efficiency.",
+      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Specialized variant of GPT-5 optimized for conversational interactions and emotional intelligence. Excels at empathetic communication, mental health support, creative writing, brainstorming, and natural dialogue. Best for casual conversations, counseling scenarios, and tasks requiring emotional awareness.",
+      "knowledgeCutoff": "Oct 1, 2025 8:00 PM"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI's most advanced reasoning model with breakthrough problem-solving capabilities. Excels at complex mathematics, scientific reasoning, coding challenges, and multi-step logical tasks. Extended 200K context window. Supports reasoning effort control.",
+      "knowledgeCutoff": "Apr 8, 2025 8:00 PM"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Fast and cost-effective model from Meta. Great for everyday tasks like writing, summarization, and basic coding help. Good balance of speed and quality for routine work.",
+      "knowledgeCutoff": "May 7, 2025 7:11 AM"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Reasoning specialist that shows its work step-by-step. Excellent for math problems, logic puzzles, and understanding complex concepts. See how it thinks through problems in real-time.",
+      "knowledgeCutoff": "Jan 20, 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Strong all-around model especially good at coding and technical writing. Great for debugging code, writing documentation, and explaining technical concepts. Fast and reliable for development work.",
+      "knowledgeCutoff": "Apr 16, 2025 12:45 AM"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Versatile model from xAI known for nuanced responses. Great for open-ended discussions, creative projects, and tackling complex problems.",
+      "knowledgeCutoff": "May 13, 2025 12:16 AM"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic's most capable model with exceptional reasoning, coding, and creative abilities. Best for complex analysis, research, and tasks requiring deep understanding.",
+      "knowledgeCutoff": "January 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Balanced Claude model offering excellent performance across coding, analysis, and creative tasks. Great for everyday use with fast response times.",
+      "knowledgeCutoff": "January 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Previous generation Claude Opus model. Excellent for complex coding tasks, detailed analysis, and nuanced understanding.",
+      "knowledgeCutoff": "January 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Fast and cost-effective Claude model optimized for quick tasks. Great for simple queries, summarization, and high-volume applications.",
+      "knowledgeCutoff": "January 2025"
     }
   }
 }
