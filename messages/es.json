@@ -494,7 +494,9 @@
     "confirm": "Confirmar",
     "cancel": "Cancelar",
     "discard": "Descartar",
-    "keepEditing": "Seguir editando"
+    "keepEditing": "Seguir editando",
+    "yes": "Sí",
+    "no": "No"
   },
   "chat": {
     "downloadAudio": "Descargar audio",
@@ -868,5 +870,46 @@
       "description": "Modelo Claude rápido y rentable optimizado para tareas rápidas. Excelente para consultas simples, resumen y aplicaciones de alto volumen.",
       "knowledgeCutoff": "Enero 2025"
     }
+  },
+  "searchMode": {
+    "backToChat": "Volver al Chat",
+    "title": "Modo de Búsqueda Explicado",
+    "subtitle": "Comprende tus opciones de búsqueda y dónde se almacenan tus datos",
+    "quickComparison": "Comparación Rápida",
+    "noSearch": "Sin Búsqueda",
+    "privacyFocused": "Enfocado en Privacidad",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Velocidad de Respuesta",
+    "fastest": "Más Rápido",
+    "slowerMultiStep": "Más Lento (múltiples pasos)",
+    "fasterDirect": "Más Rápido (directo)",
+    "fullConversationStored": "Conversación Completa Almacenada en la Nube",
+    "whatsStoredInAzure": "Qué se Almacena en Azure",
+    "nothingStateless": "Nada (solo sin estado)",
+    "searchQueriesOnly": "Solo consultas de búsqueda",
+    "fullConversationHistory": "Historial completo de conversación",
+    "modelAvailability": "Disponibilidad de Modelos",
+    "allModels": "Todos los modelos",
+    "gpt41Only": "Solo GPT-4.1",
+    "searchTurnedOff": "Búsqueda Desactivada",
+    "noSearchDescription": "Respuestas más rápidas sin capacidad de búsqueda web. Tu conversación completa permanece en tu navegador - nada se almacena en la nube.",
+    "viewDetailsBelow": "Para más detalles, consulta el flujo técnico a continuación.",
+    "viewTechnicalFlowDiagram": "Ver Diagrama de Flujo Técnico",
+    "legend": "Leyenda:",
+    "legendNoSearch": "Tu Navegador (almacenamiento local) | Servidor AI Assistant | Azure OpenAI (sin estado)",
+    "privacyFocusedMode": "Modo Enfocado en Privacidad",
+    "default": "Predeterminado",
+    "privacyDescription": "Usa búsqueda web cuando es necesario pero es más lento porque involucra más pasos. Solo las consultas de búsqueda se almacenan en Azure - tu conversación completa permanece en tu navegador.",
+    "legendPrivacy": "Tu Navegador (almacenamiento local) | Servidor AI Assistant | Azure AI Foundry (solo consultas de búsqueda) | Azure OpenAI (sin estado)",
+    "azureAIFoundryMode": "Modo Azure AI Foundry",
+    "foundryDescription": "Respuestas más rápidas con capacidad de búsqueda web integrada. Tu conversación completa se almacena en la base de datos de Azure AI Foundry, no solo en tu navegador.",
+    "legendFoundry": "Tu Navegador (almacenamiento local) | Servidor AI Assistant | Agente Azure AI Foundry (almacena conversación completa)",
+    "whyTheseOptions": "¿Por Qué Estas Opciones?",
+    "whyTheseOptionsText1": "Estas son las implementaciones de búsqueda disponibles después de que Azure descontinuó su API de Bing Search, de la cual el AI Assistant originalmente dependía.",
+    "whyTheseOptionsText2": "El equipo está explorando activamente alternativas de búsqueda más enfocadas en la privacidad. Ambas opciones actuales usan las capacidades de búsqueda de Azure AI Foundry pero difieren en cuántos datos de conversación se comparten.",
+    "azureDeprecatedBingApi": "Azure descontinuó su API de Bing Search",
+    "footerNote": "Ambos modos almacenan tu conversación localmente en tu navegador. Puedes cambiar de modo en cualquier momento en la configuración del modelo.",
+    "note": "Nota:",
+    "loadingDiagram": "Cargando diagrama..."
   }
 }
