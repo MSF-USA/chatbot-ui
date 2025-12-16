@@ -489,7 +489,12 @@
     "addTagEllipsis": "Agregar una etiqueta...",
     "msfLogo": "Logo de MSF",
     "importantInformation": "Información importante",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "noResults": "No se encontraron resultados",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar",
+    "discard": "Descartar",
+    "keepEditing": "Seguir editando"
   },
   "chat": {
     "downloadAudio": "Descargar audio",
@@ -524,7 +529,21 @@
     "fullSizePreview": "Vista previa de tamaño completo",
     "enterSearchQueryPlaceholder": "Introduce tu consulta de búsqueda o pregunta...",
     "errorFetchingUrl": "Ocurrió un error al obtener el contenido de la URL",
-    "errorInitiatingSearch": "Ocurrió un error al iniciar la búsqueda web"
+    "errorInitiatingSearch": "Ocurrió un error al iniciar la búsqueda web",
+    "regenerate": "Regenerar",
+    "modelSwitchPrompt": "{original} falló pero {fallback} funcionó. ¿Deseas cambiar de modelo?",
+    "keepOriginalModel": "Mantener {model}",
+    "switchToModel": "Cambiar a {model}",
+    "alwaysSwitchToModel": "Siempre cambiar automáticamente",
+    "translateMessage": "Traducir mensaje",
+    "translating": "Traduciendo...",
+    "translationError": "Error en la traducción",
+    "showOriginal": "Mostrar original",
+    "translatedTo": "Traducido al {language}",
+    "searchLanguages": "Buscar idiomas...",
+    "selectLanguage": "Seleccionar idioma",
+    "audioFromOriginal": "Audio del texto original",
+    "audioFromTranslation": "Audio de la traducción al {language}"
   },
   "sidebar": {
     "collapseSidebar": "Contraer barra lateral",
@@ -674,5 +693,179 @@
   },
   "notFound": {
     "lostDog": "Perro perdido"
+  },
+  "emptyState": {
+    "greeting": "¿Cómo puedo ayudarte?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Crear Diagramas",
+        "prompt": "Muéstrame cómo puedes crear diagramas y diagramas de flujo. ¿Qué tipos de procesos, flujos de trabajo o sistemas puedes ayudarme a visualizar? Dame algunos ejemplos."
+      },
+      "draftContent": {
+        "title": "Redactar Contenido Profesional",
+        "prompt": "Necesito ayuda para escribir documentos profesionales: correos electrónicos, informes, resúmenes. ¿Puedes mostrarme ejemplos de cómo puedes ayudar con diferentes tipos de redacción empresarial?"
+      },
+      "analyzeInformation": {
+        "title": "Analizar Información",
+        "prompt": "¿Cómo puedes ayudarme a analizar datos o información? Muéstrame diferentes formas en que podrías desglosar números, encontrar patrones o extraer información de documentos o conjuntos de datos."
+      },
+      "planOrganize": {
+        "title": "Planificar y Organizar",
+        "prompt": "¿Puedes ayudarme a planificar proyectos u organizar el trabajo? Dame ejemplos de cómo podrías crear cronogramas, agendas o planes de proyecto con diferentes estructuras."
+      },
+      "brainstormIdeas": {
+        "title": "Lluvia de Ideas",
+        "prompt": "Quiero hacer una lluvia de ideas para resolver un problema. Muéstrame cómo abordas el pensamiento creativo y la generación de ideas: ¿qué tipo de preguntas harías y cómo exploras las posibilidades?"
+      },
+      "buildPresentations": {
+        "title": "Crear Presentaciones",
+        "prompt": "¿Cómo puedes ayudarme a crear presentaciones? Muéstrame ejemplos de diferentes estructuras de presentación, sugerencias visuales y cómo organizas la información para diferentes audiencias."
+      },
+      "workWithCode": {
+        "title": "Trabajar con Código",
+        "prompt": "¿Puedes ayudar con programación o scripts? Muéstrame ejemplos, ya sea escribiendo código nuevo, depurando problemas o explicando cómo funciona algo paso a paso."
+      },
+      "decisionSupport": {
+        "title": "Apoyo en Decisiones",
+        "prompt": "Necesito tomar una decisión pero no estoy seguro de cómo evaluar mis opciones. ¿Puedes mostrarme diferentes marcos o enfoques que utilizas para ayudar a pensar en las opciones?"
+      },
+      "summarizeSynthesize": {
+        "title": "Resumir y Sintetizar",
+        "prompt": "¿Cómo ayudas a resumir documentos largos o sintetizar información de múltiples fuentes? Muéstrame ejemplos de diferentes formatos de resumen y niveles de detalle."
+      },
+      "explainTopics": {
+        "title": "Explicar Temas Complejos",
+        "prompt": "¿Puedes explicar conceptos complicados en términos simples? Muéstrame cómo desglosas ideas complejas, usas analogías y adaptas explicaciones para diferentes niveles de conocimiento."
+      },
+      "createSchedules": {
+        "title": "Crear Horarios",
+        "prompt": "Necesito ayuda para organizar el tiempo y crear horarios. Muéstrame diferentes formas en que puedes estructurar agendas, calendarios o planes basados en el tiempo con ejemplos."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modelos",
+      "agents": "Agentes"
+    },
+    "sections": {
+      "baseModels": "Modelos Base"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Función Avanzada",
+      "description": "Crea y gestiona agentes de IA personalizados con capacidades especializadas. Estos agentes se ejecutan en la instancia de MSF AI Assistant Foundry.",
+      "advancedFeatureTitle": "Función Avanzada - Requiere Coordinación con el Equipo Técnico del Asistente de IA",
+      "advancedFeatureWarning": "Los agentes personalizados solo funcionan con la instancia de MSF AI Assistant Foundry. Los IDs de los agentes deben ser creados por el equipo técnico del Asistente de IA en esta instancia específica y coordinados contigo antes de usarlos.",
+      "createNewAgent": "Crear Nuevo Agente Personalizado",
+      "noAgentsTitle": "Aún No Hay Agentes Personalizados",
+      "noAgentsDescription": "Crea tu primer agente personalizado para ampliar las capacidades de IA con herramientas y comportamientos especializados."
+    },
+    "advancedOptions": {
+      "title": "Opciones Avanzadas",
+      "temperature": "Temperatura",
+      "fixedTemperatureNote": "Nota: Este modelo usa valores de temperatura fijos para un rendimiento consistente.",
+      "reasoningEffort": "Esfuerzo de Razonamiento",
+      "minimal": "Mínimo",
+      "low": "Bajo",
+      "medium": "Medio",
+      "high": "Alto",
+      "verbosity": "Verbosidad"
+    },
+    "searchMode": {
+      "title": "Modo de Búsqueda",
+      "subtitle": "Usará búsqueda web cuando sea necesario",
+      "routingLabel": "Enrutamiento de Búsqueda:",
+      "whatsDifference": "¿Cuál es la diferencia?",
+      "privacyFocused": "Enfocado en Privacidad (Predeterminado)",
+      "privacyFocusedDescription": "Más lento pero más privado",
+      "azureAgentMode": "Modo de Agente de Azure AI",
+      "azureAgentModeDescription": "Más rápido pero almacena datos de conversación en la nube",
+      "privacyInfoTitle": "Información Importante de Privacidad",
+      "privacyInfoDescription": "Tu conversación completa será enviada al agente de Azure AI Foundry.",
+      "learnMoreDataStorage": "Más información sobre almacenamiento de datos"
+    },
+    "customAgent": {
+      "label": "Agente Personalizado:",
+      "description": "Este agente se ejecuta en la instancia de MSF AI Assistant Foundry con herramientas siempre habilitadas.",
+      "webSearch": "Búsqueda web en tiempo real",
+      "codeInterpreter": "Intérprete de código y análisis de archivos"
+    },
+    "header": {
+      "backToModels": "Volver a Modelos",
+      "knowledgeCutoff": "Corte de conocimiento: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "fundamental",
+      "omni": "omni",
+      "reasoning": "razonamiento",
+      "agent": "agente"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Modelo de IA impulsado por GPT-4.1 con búsqueda web en tiempo real a través de Bing. Proporciona información actualizada, verificación de hechos y conocimiento de eventos actuales. Ideal para investigación que requiere información reciente, análisis de noticias y verificación de hechos.",
+      "knowledgeCutoff": "Búsqueda web en tiempo real"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "El modelo más avanzado de OpenAI, sobresale en razonamiento complejo, generación de código y resolución de problemas técnicos. Ideal para tareas analíticas, desafíos de programación, investigación y explicaciones detalladas. Soporta esfuerzo de razonamiento ajustable y verbosidad de respuesta.",
+      "knowledgeCutoff": "6 de agosto de 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Variante más rápida y rentable de GPT-5, optimizada para velocidad manteniendo alta calidad. Perfecto para tareas cotidianas, consultas rápidas, enrutamiento de herramientas y aplicaciones que requieren tiempos de respuesta rápidos. Excelente equilibrio entre rendimiento y eficiencia.",
+      "knowledgeCutoff": "6 de agosto de 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Variante especializada de GPT-5 optimizada para interacciones conversacionales e inteligencia emocional. Sobresale en comunicación empática, apoyo de salud mental, escritura creativa, lluvia de ideas y diálogo natural. Ideal para conversaciones casuales, escenarios de asesoramiento y tareas que requieren consciencia emocional.",
+      "knowledgeCutoff": "1 de octubre de 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "El modelo de razonamiento más avanzado de OpenAI con capacidades revolucionarias de resolución de problemas. Sobresale en matemáticas complejas, razonamiento científico, desafíos de programación y tareas lógicas de múltiples pasos. Ventana de contexto extendida de 200K. Soporta control de esfuerzo de razonamiento.",
+      "knowledgeCutoff": "8 de abril de 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Modelo rápido y rentable de Meta. Excelente para tareas cotidianas como redacción, resumen y ayuda básica con código. Buen equilibrio entre velocidad y calidad para trabajo rutinario.",
+      "knowledgeCutoff": "7 de mayo de 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Especialista en razonamiento que muestra su trabajo paso a paso. Excelente para problemas matemáticos, rompecabezas lógicos y comprensión de conceptos complejos. Observa cómo piensa a través de los problemas en tiempo real.",
+      "knowledgeCutoff": "20 de enero de 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Modelo versátil especialmente bueno en programación y redacción técnica. Excelente para depurar código, escribir documentación y explicar conceptos técnicos. Rápido y confiable para trabajo de desarrollo.",
+      "knowledgeCutoff": "16 de abril de 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Modelo versátil de xAI conocido por respuestas matizadas. Excelente para discusiones abiertas, proyectos creativos y abordar problemas complejos.",
+      "knowledgeCutoff": "13 de mayo de 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "El modelo más capaz de Anthropic con razonamiento excepcional, programación y habilidades creativas. Ideal para análisis complejos, investigación y tareas que requieren comprensión profunda.",
+      "knowledgeCutoff": "Enero 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Modelo Claude equilibrado que ofrece excelente rendimiento en programación, análisis y tareas creativas. Excelente para uso diario con tiempos de respuesta rápidos.",
+      "knowledgeCutoff": "Enero 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Modelo Claude Opus de generación anterior. Excelente para tareas de programación complejas, análisis detallado y comprensión matizada.",
+      "knowledgeCutoff": "Enero 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Modelo Claude rápido y rentable optimizado para tareas rápidas. Excelente para consultas simples, resumen y aplicaciones de alto volumen.",
+      "knowledgeCutoff": "Enero 2025"
+    }
   }
 }
