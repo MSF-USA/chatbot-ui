@@ -545,7 +545,11 @@
     "searchLanguages": "Buscar idiomas...",
     "selectLanguage": "Seleccionar idioma",
     "audioFromOriginal": "Audio del texto original",
-    "audioFromTranslation": "Audio de la traducción al {language}"
+    "audioFromTranslation": "Audio de la traducción al {language}",
+    "thinking": "Pensando...",
+    "viewReasoningProcess": "Ver proceso de razonamiento",
+    "collapseThinking": "Contraer pensamiento",
+    "expandThinking": "Expandir pensamiento"
   },
   "sidebar": {
     "collapseSidebar": "Contraer barra lateral",
