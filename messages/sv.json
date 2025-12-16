@@ -1,4 +1,37 @@
 {
+  "Run Typewriter Intro": "Kör skrivmaskinsintro",
+  "importBackupParseError": "Kunde inte tolka säkerhetskopia. Kontrollera att det är giltig JSON.",
+  "Accept and Continue": "Acceptera och fortsätt",
+  "Chat Settings": "Chattinställningar",
+  "Content": "Innehåll",
+  "Conversation exported successfully": "Konversationen exporterades framgångsrikt",
+  "Conversation imported successfully": "Konversationen importerades framgångsrikt",
+  "Default System Prompt": "Standard systemprompt",
+  "Edit": "Redigera",
+  "Email": "E-post",
+  "Failed to export conversation": "Kunde inte exportera konversation",
+  "Failed to export folder": "Kunde inte exportera mapp",
+  "Failed to import conversation": "Kunde inte importera konversation",
+  "Failed to import file": "Kunde inte importera fil",
+  "Folder exported with {count} conversations": "Mapp exporterades med {count} konversationer",
+  "Folder imported with {count} conversations": "Mapp importerades med {count} konversationer",
+  "Folder not found": "Mappen hittades inte",
+  "I accept the": "Jag accepterar",
+  "Invalid conversation file": "Ogiltig konversationsfil",
+  "Invalid folder file": "Ogiltig mappfil",
+  "Loading terms and conditions_ellipsis": "Laddar villkor...",
+  "New conversation": "Ny konversation",
+  "No prompts found": "Inga prompter hittades",
+  "Privacy Policy": "Integritetspolicy",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Promptgränsen är {{maxLength}} tecken. Du har angett {{valueLength}} tecken.",
+  "Retry": "Försök igen",
+  "Saved Prompts": "Sparade prompter",
+  "Select a prompt to view details": "Välj en prompt för att visa detaljer",
+  "Terms and Conditions": "Villkor",
+  "Terms of Service": "Användarvillkor",
+  "Unrecognized file format": "Okänt filformat",
+  "Version": "Version",
+  "transcriptionComplete": "Transkription klar! Texten har lagts till i chattinmatningen.",
   "OpenAI API Key Required": "OpenAI API-nyckel krävs",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Vänligen ange din OpenAI API-nyckel längst ner till vänster i sidofältet.",
   "Stop Generating": "Sluta generera",
@@ -440,13 +473,41 @@
   "enterPromptDescriptionPlaceholder": "Vad är denna prompt till för?",
   "enterPromptContentPlaceholder": "Skriv din prompt här. Använd {{variable}} för dynamiskt innehåll.",
   "common": {
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "close": "Stäng",
+    "remove": "Ta bort",
+    "tryAgain": "Försök igen",
+    "menu": "Meny",
+    "copyToClipboard": "Kopiera till urklipp",
+    "toggleDropdownMenu": "Växla rullgardinsmeny",
+    "toggleMenu": "Växla meny",
+    "closeModal": "Stäng modal",
+    "dismissBanner": "Avvisa banner",
+    "searchEllipsis": "Sök...",
+    "addTagEllipsis": "Lägg till tagg...",
+    "msfLogo": "MSF-logotyp",
+    "importantInformation": "Viktig information",
+    "noResults": "Inga resultat hittades",
+    "confirm": "Bekräfta",
+    "cancel": "Avbryt",
+    "discard": "Kassera",
+    "keepEditing": "Fortsätt redigera",
+    "yes": "Ja",
+    "no": "Nej"
   },
   "errors": {
     "unexpectedErrorOccurred": "Ett oväntat fel uppstod",
     "criticalErrorReload": "Ett kritiskt fel uppstod. Vänligen ladda om sidan.",
     "reloadPage": "Ladda om sidan",
-    "persistContactSupport": "Om detta problem kvarstår, vänligen kontakta support"
+    "persistContactSupport": "Om detta problem kvarstår, vänligen kontakta support",
+    "somethingWentWrong": "Något gick fel",
+    "anErrorOccurred": "Ett fel uppstod",
+    "copyErrorMessage": "Kopiera felmeddelande",
+    "contactSupport": "Om detta problem kvarstår, kontakta support",
+    "dismissError": "Avvisa fel",
+    "applicationError": "Applikationsfel",
+    "chatLoadError": "Ett fel uppstod vid laddning av chatt",
+    "anErrorOccurredTryAgain": "Ett fel uppstod. Vänligen försök igen."
   },
   "auth": {
     "authenticationError": "Autentiseringsfel",
@@ -515,7 +576,25 @@
     "fullSizePreview": "Förhandsgranskning i full storlek",
     "enterSearchQueryPlaceholder": "Ange din sökfråga eller fråga...",
     "errorFetchingUrl": "Ett fel uppstod vid hämtning av URL-innehåll",
-    "errorInitiatingSearch": "Ett fel uppstod vid initiering av webbsökning"
+    "errorInitiatingSearch": "Ett fel uppstod vid initiering av webbsökning",
+    "regenerate": "Återskapa",
+    "modelSwitchPrompt": "{original} misslyckades men {fallback} lyckades. Byta modell?",
+    "keepOriginalModel": "Behåll som {model}",
+    "switchToModel": "Byt till {model}",
+    "alwaysSwitchToModel": "Byt alltid automatiskt",
+    "translateMessage": "Översätt meddelande",
+    "translating": "Översätter...",
+    "translationError": "Översättning misslyckades",
+    "showOriginal": "Visa original",
+    "translatedTo": "Översatt till {language}",
+    "searchLanguages": "Sök språk...",
+    "selectLanguage": "Välj språk",
+    "audioFromOriginal": "Ljud från originaltext",
+    "audioFromTranslation": "Ljud från {language} översättning",
+    "thinking": "Tänker...",
+    "viewReasoningProcess": "Visa resonemangsprocess",
+    "collapseThinking": "Dölj resonemang",
+    "expandThinking": "Expandera resonemang"
   },
   "sidebar": {
     "collapseSidebar": "Fäll ihop sidofält",
@@ -537,15 +616,134 @@
     "importantInfo": "Denna agent kommer att ha tillgång till konversationskontexten och kan använda samma verktyg som standardmodeller. Se till att agent-ID:t är korrekt eftersom det inte kan ändras senare."
   },
   "prompts": {
-    "buildReusablePrompts": "Bygg återanvändbara prompter med AI-assistans"
+    "buildReusablePrompts": "Bygg återanvändbara prompter med AI-assistans",
+    "noToneDefault": "Ingen ton (använd standard)",
+    "tagHelp": "Tagghjälp",
+    "tagHelpContent": "Använd taggar för att kategorisera dina prompter och hitta dem snabbt. Exempel:",
+    "tagExamples": {
+      "email": "E-post",
+      "marketing": "Marknadsföring",
+      "technical": "Teknisk",
+      "customerSupport": "Kundsupport"
+    },
+    "variableHelp": "Variabelhjälp",
+    "variableHelpIntro": "Använd variabler för att göra dina prompter dynamiska:",
+    "requiredVariables": "Obligatoriska variabler (inget standardvärde):",
+    "optionalVariables": "Valfria variabler (med standardvärde):",
+    "userMustProvide": "Användaren måste ange ett värde",
+    "userCanProvide": "Användaren kan ange ett värde, eller så används standardvärdet",
+    "example": "Exempel:",
+    "variableExampleText": "Skriv ett {{ton:professionellt}} e-postmeddelande till {{mottagare}} om {{ämne}} på {{språk:svenska}}",
+    "detectedVariables": "Upptäckta variabler",
+    "required": "Obligatorisk",
+    "aiAssistant": "AI-assistent",
+    "whatToImprove": "Vad ska förbättras?",
+    "whatShouldPromptDo": "Vad ska denna prompt göra?",
+    "improvePlaceholder": "t.ex. Gör den mer professionell, lägg till exempel, förbättra tydligheten...",
+    "generatePlaceholder": "t.ex. Skapa en professionell e-postmall med variabler för mottagare och ämne...",
+    "addContextOptional": "Lägg till kontext (valfritt)",
+    "revising": "Reviderar...",
+    "generating": "Genererar...",
+    "reviseWithAI": "Revidera med AI",
+    "generatePrompt": "Generera prompt",
+    "revisionComplete": "Revidering klar",
+    "generationComplete": "Generering klar",
+    "revisedPrompt": "Reviderad prompt:",
+    "generatedPrompt": "Genererad prompt:",
+    "applyRevision": "Tillämpa denna revidering",
+    "useThisPrompt": "Använd denna prompt",
+    "improvementsMade": "Förbättringar gjorda:",
+    "tips": "Tips:",
+    "howAICanHelp": "Hur AI kan hjälpa",
+    "helpItems": {
+      "improveClarity": "Förbättra tydlighet och struktur",
+      "suggestVariables": "Föreslå användbara variabler",
+      "addContext": "Lägg till kontext och exempel",
+      "optimize": "Optimera för bättre resultat"
+    },
+    "savePrompt": "Spara prompt",
+    "add": "Lägg till"
   },
   "tones": {
     "createCustomVoiceProfile": "Skapa en anpassad röstprofil med AI-assistans",
-    "examplePlaceholder": "t.ex. Skapa en professionell men vänlig kundtjänstton..."
+    "examplePlaceholder": "t.ex. Skapa en professionell men vänlig kundtjänstton...",
+    "tagHelp": "Tagghjälp",
+    "tagHelpContent": "Använd taggar för att kategorisera dina toner och hitta dem snabbt. Exempel:",
+    "tagExamples": {
+      "professional": "Professionell",
+      "casual": "Avslappnad",
+      "technical": "Teknisk",
+      "marketing": "Marknadsföring"
+    },
+    "add": "Lägg till",
+    "aiToneAnalyzer": "AI-tonanalysator",
+    "describeToneToCreate": "Beskriv tonen du vill skapa",
+    "uploadContentSamples": "Ladda upp innehållsexempel",
+    "analyzing": "Analyserar...",
+    "analyzeToneWithAI": "Analysera ton med AI",
+    "analysisComplete": "Analys klar",
+    "generatedVoiceGuidelines": "Genererade röstriktlinjer:",
+    "examplePhrases": "Exempelfraser:",
+    "suggestedTags": "Föreslagna taggar:",
+    "applyThisAnalysis": "Tillämpa denna analys",
+    "detectedCharacteristics": "Upptäckta egenskaper:",
+    "howAICanHelp": "Hur AI kan hjälpa",
+    "helpItems": {
+      "transcribe": "Transkribera ljud/videoinnehåll",
+      "analyzeContent": "Analysera innehållsexempel",
+      "extractPatterns": "Extrahera ton- och stilmönster",
+      "generateGuidelines": "Generera röstriktlinjer",
+      "suggestTags": "Föreslå relevanta taggar"
+    },
+    "saveTone": "Spara ton"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Visa tekniskt flödesdiagram"
+    "viewTechnicalFlowDiagram": "Visa tekniskt flödesdiagram",
+    "backToChat": "Tillbaka till chatt",
+    "title": "Hjälpcenter",
+    "subtitle": "Hitta svar, lär dig om integritet, få support",
+    "faq": {
+      "title": "Vanliga frågor",
+      "description": "Hitta svar på vanliga frågor om att använda AI-assistenten",
+      "articles": "Artiklar",
+      "searchPlaceholder": "Sök i vanliga frågor...",
+      "noResults": "Inga vanliga frågor matchade din sökning",
+      "noResultsHint": "Prova andra söktermer"
+    },
+    "privacy": {
+      "title": "Integritet och data",
+      "description": "Lär dig hur din data lagras och skyddas",
+      "topics": "Ämnen",
+      "searchPlaceholder": "Sök integritetsämnen...",
+      "noResults": "Inga integritetsämnen matchade din sökning",
+      "noResultsHint": "Prova andra söktermer",
+      "bannerTitle": "Din integritet är viktig",
+      "bannerDescription": "Alla konversationer lagras lokalt på din enhet. Databehandling sker inom MSF-system som använder Azure-infrastruktur.",
+      "localStorageOnly": "Endast lokal lagring",
+      "msfControlled": "MSF-kontrollerad",
+      "noPersonalData": "Ingen personlig data",
+      "noSensitiveOps": "Inga känsliga operationer"
+    },
+    "contact": {
+      "title": "Kontakt och resurser",
+      "description": "Kontakta teamet och få tillgång till användbara länkar",
+      "supportAvailable": "Support tillgänglig",
+      "submitRequest": "Skicka en supportförfrågan",
+      "getHelp": "Få hjälp från teamet",
+      "requestDescription": "Behöver du hjälp eller vill ge feedback? Klicka nedan för att öppna supportformuläret.",
+      "openSupportForm": "Öppna supportformulär",
+      "otherWays": "Andra sätt att kontakta oss",
+      "emailSupport": "E-postsupport",
+      "emailDescription": "Skicka e-post till oss för frågor, feedback eller tekniska problem"
+    },
+    "resources": {
+      "title": "Ytterligare resurser",
+      "portalTitle": "AI Accelerator-portalen",
+      "portalDescription": "Dokumentation, projektuppdateringar och utbildningsmaterial",
+      "githubTitle": "Öppen källkodsrepo",
+      "githubDescription": "Visa koden, rapportera problem och bidra på GitHub"
+    }
   },
   "settings": {
     "Settings": "Inställningar",
@@ -613,9 +811,250 @@
     "FAQs, privacy policy, and guides": "Vanliga frågor, integritetspolicy och guider",
     "Contact Support": "Kontakta support",
     "Popular Questions": "Populära frågor",
-    "View all FAQs": "Visa alla vanliga frågor"
+    "View all FAQs": "Visa alla vanliga frågor",
+    "Delete legacy data after migration": "Ta bort äldre data efter migrering",
+    "frees up storage space": "frigör lagringsutrymme",
+    "Legacy data deleted": "Äldre data raderad",
+    "freed": "frigjord",
+    "Conversations": "Konversationer",
+    "Legacy": "Äldre",
+    "Other": "Övrigt",
+    "Loading": "Laddar",
+    "Legacy Data Detected": "Äldre data upptäckt",
+    "legacyDataDescription": "Det finns {size} data från tidigare version. Du kan migrera, exportera eller ta bort den för att frigöra utrymme.",
+    "legacyDeleteSuccess": "Äldre data raderades och {size} frigjordes.",
+    "legacyDeleteError": "Kunde inte ta bort äldre data. Vänligen försök igen.",
+    "Explore solutions": "Utforska lösningar",
+    "Migrate to Current Format": "Migrera till aktuellt format",
+    "Export Legacy Data": "Exportera äldre data",
+    "Delete Legacy Data": "Ta bort äldre data",
+    "deleteLegacyConfirm": "Är du säker på att du vill ta bort all äldre data? Denna åtgärd kan inte ångras.",
+    "Deleting": "Tar bort",
+    "Confirm Delete": "Bekräfta borttagning",
+    "Cancel": "Avbryt"
   },
   "notFound": {
     "lostDog": "Förlorad hund"
+  },
+  "emptyState": {
+    "greeting": "Hur kan jag hjälpa dig?",
+    "greetingWithName": "{name}, hur kan jag hjälpa dig?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Skapa diagram",
+        "prompt": "Visa mig hur du kan hjälpa mig att skapa diagram och flödesscheman. Vilka typer av processer, arbetsflöden eller system kan du hjälpa mig att visualisera? Ge mig några exempel."
+      },
+      "draftContent": {
+        "title": "Skriv professionellt innehåll",
+        "prompt": "Jag behöver hjälp med att skriva professionella dokument - e-post, rapporter, sammanfattningar. Visa mig exempel på hur du kan hjälpa till med olika typer av affärsskrivande."
+      },
+      "analyzeInformation": {
+        "title": "Analysera information",
+        "prompt": "Hur kan du hjälpa mig att analysera data eller information? Visa mig olika sätt att analysera siffror, hitta mönster och extrahera insikter från dokument eller datamängder."
+      },
+      "planOrganize": {
+        "title": "Planera och organisera",
+        "prompt": "Kan du hjälpa mig att planera projekt eller organisera mitt arbete? Visa mig exempel på hur du kan skapa agendor, kalendrar eller projektplaner i olika strukturer."
+      },
+      "brainstormIdeas": {
+        "title": "Brainstorma idéer",
+        "prompt": "Jag vill brainstorma lösningar på ett problem. Visa mig hur du närmar dig kreativt tänkande och idégenerering - vilka frågor ställer du och hur utforskar du möjligheter?"
+      },
+      "buildPresentations": {
+        "title": "Bygg presentationer",
+        "prompt": "Hur kan du hjälpa mig att skapa presentationer? Visa mig olika presentationsstrukturer, visuella förslag och hur du organiserar information för olika målgrupper."
+      },
+      "workWithCode": {
+        "title": "Arbeta med kod",
+        "prompt": "Kan du hjälpa mig med kodning eller skript? Visa mig exempel på att skriva ny kod, felsöka problem eller förklara hur något fungerar steg för steg."
+      },
+      "decisionSupport": {
+        "title": "Beslutsstöd",
+        "prompt": "Jag behöver fatta ett beslut och är osäker på hur jag ska utvärdera mina alternativ. Kan du visa mig olika ramverk eller tillvägagångssätt du kan använda för att tänka igenom val?"
+      },
+      "summarizeSynthesize": {
+        "title": "Sammanfatta och syntetisera",
+        "prompt": "Hur hjälper du mig att sammanfatta långa dokument eller syntetisera information från flera källor? Visa mig olika sammanfattningsformat och detaljnivåer."
+      },
+      "explainTopics": {
+        "title": "Förklara komplexa ämnen",
+        "prompt": "Kan du förklara komplexa koncept i enkla termer? Visa mig hur du bryter ner komplicerade idéer, använder analogier och anpassar förklaringar till olika kunskapsnivåer."
+      },
+      "createSchedules": {
+        "title": "Skapa scheman",
+        "prompt": "Hjälp mig att organisera min tid och skapa scheman. Visa mig olika sätt att strukturera agendor, kalendrar eller tidsbaserade planer med exempel."
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Modeller",
+      "agents": "Agenter"
+    },
+    "sections": {
+      "baseModels": "Basmodeller"
+    },
+    "agents": {
+      "advancedFeatureBadge": "Avancerad funktion",
+      "description": "Skapa och hantera anpassade AI-agenter med specialiserade förmågor. Dessa agenter körs på MSF AI Assistant Foundry-instansen.",
+      "advancedFeatureTitle": "Avancerad funktion - Kräver samordning med AI Assistant-tekniska teamet",
+      "advancedFeatureWarning": "Anpassade agenter fungerar endast på MSF AI Assistant Foundry-instansen. Agent-ID:n måste skapas av AI Assistant-tekniska teamet på denna specifika instans och samordnas med dig före användning.",
+      "createNewAgent": "Skapa ny anpassad agent",
+      "noAgentsTitle": "Inga anpassade agenter",
+      "noAgentsDescription": "Skapa din första anpassade agent för att utöka AI-förmågorna med specialiserade verktyg och beteenden."
+    },
+    "advancedOptions": {
+      "title": "Avancerade alternativ",
+      "temperature": "Temperatur",
+      "fixedTemperatureNote": "Obs: Denna modell använder ett fast temperaturvärde för konsekvent prestanda.",
+      "reasoningEffort": "Resonemangsansträngning",
+      "minimal": "Minimal",
+      "low": "Låg",
+      "medium": "Medel",
+      "high": "Hög",
+      "verbosity": "Detaljnivå"
+    },
+    "searchMode": {
+      "title": "Sökläge",
+      "subtitle": "Använd webbsökning vid behov",
+      "routingLabel": "Sökdirigering:",
+      "whatsDifference": "Vad är skillnaden?",
+      "privacyFocused": "Integritetsfokuserad (standard)",
+      "privacyFocusedDescription": "Långsammare men mer privat",
+      "azureAgentMode": "Azure AI-agentläge",
+      "azureAgentModeDescription": "Snabbare men lagrar chattdata i molnet",
+      "privacyInfoTitle": "Viktig integritetsinformation",
+      "privacyInfoDescription": "Hela konversationen skickas till Azure AI Foundry-agenten.",
+      "learnMoreDataStorage": "Läs mer om datalagring"
+    },
+    "customAgent": {
+      "label": "Anpassad agent:",
+      "description": "Denna agent körs på MSF AI Assistant Foundry-instansen med verktyg alltid aktiverade.",
+      "webSearch": "Webbsökning i realtid",
+      "codeInterpreter": "Kodtolkare och filanalys"
+    },
+    "header": {
+      "backToModels": "Tillbaka till modeller",
+      "knowledgeCutoff": "Kunskapsavstängning: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "Grundläggande",
+      "omni": "Omni",
+      "reasoning": "Resonemang",
+      "agent": "Agent"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "GPT-4.1-baserad AI-modell med webbsökning i realtid via Bing. Ger aktuell information, faktakontroll och medvetenhet om aktuella händelser. Idealisk för forskning, nyhetsanalys och faktakontroll som kräver aktuell information.",
+      "knowledgeCutoff": "Webbsökning i realtid"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI:s mest avancerade modell som utmärker sig i komplex resonemang, kodgenerering och teknisk problemlösning. Idealisk för analytiska uppgifter, programmeringsutmaningar, forskning och detaljerade förklaringar. Stödjer justerbar resonemangsansträngning och svarsdetaljnivå.",
+      "knowledgeCutoff": "6 augusti 2025, 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "En snabbare, kostnadseffektiv GPT-5-variant optimerad för hastighet samtidigt som hög kvalitet bibehålls. Lämplig för rutinuppgifter, snabba frågor, verktygsstyrning och applikationer som behöver snabba svarstider. Utmärkt balans mellan prestanda och effektivitet.",
+      "knowledgeCutoff": "6 augusti 2025, 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "En specialiserad variant av GPT-5 optimerad för samtalsinteraktion och emotionell intelligens. Utmärker sig i empatisk kommunikation, mental hälsa-stöd, kreativt skrivande, brainstorming och naturlig dialog. Idealisk för avslappnade samtal, rådgivningsscenarier och uppgifter som kräver emotionell medvetenhet.",
+      "knowledgeCutoff": "1 oktober 2025, 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI:s mest avancerade resonemangsmodell med banbrytande problemlösningsförmåga. Utmärker sig i komplex matematik, vetenskapligt resonemang, kodningsutmaningar och flerstegiga logikuppgifter. Utökat 200K kontextfönster. Stödjer kontroll av resonemangsansträngning.",
+      "knowledgeCutoff": "8 april 2025, 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Metas snabba och kostnadseffektiva modell. Idealisk för vardagliga uppgifter som skrivande, sammanfattning och grundläggande kodningshjälp. Bra balans mellan hastighet och kvalitet för dagligt arbete.",
+      "knowledgeCutoff": "7 maj 2025, 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "En resonemangsexpert som visar sitt arbete steg för steg. Utmärker sig i matematiska problem, logikpussel och förståelse av komplexa koncept. Se hur den tänker igenom problem i realtid.",
+      "knowledgeCutoff": "20 januari 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "En mångsidig modell med särskilda styrkor inom kodning och tekniskt skrivande. Idealisk för kodfelsökning, dokumentationsskrivande och förklaring av tekniska koncept. Snabb och pålitlig för utvecklingsuppgifter.",
+      "knowledgeCutoff": "16 april 2025, 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "En mångsidig modell från xAI känd för nyanserade svar. Idealisk för öppna diskussioner, kreativa projekt och komplex problemlösning.",
+      "knowledgeCutoff": "13 maj 2025, 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropics mest kapabla modell med exceptionellt resonemang, kodning och kreativa förmågor. Idealisk för komplex analys, forskning och uppgifter som kräver djup förståelse.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "En balanserad Claude-modell som ger utmärkt prestanda inom kodning, analys och kreativa uppgifter. Idealisk för daglig användning med snabba svarstider.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Föregående generations Claude Opus-modell. Utmärker sig i komplexa kodningsuppgifter, detaljerad analys och nyanserad förståelse.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "En snabb och kostnadseffektiv Claude-modell optimerad för snabba uppgifter. Idealisk för enkla frågor, sammanfattningar och massapplikationer.",
+      "knowledgeCutoff": "Januari 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "Tillbaka till chatt",
+    "title": "Sökläge förklarat",
+    "subtitle": "Förstå sökalternativ och var data lagras",
+    "quickComparison": "Snabb jämförelse",
+    "noSearch": "Ingen sökning",
+    "privacyFocused": "Integritetsfokuserad",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "Svarshastighet",
+    "fastest": "Snabbast",
+    "slowerMultiStep": "Långsammare (flerstegs)",
+    "fasterDirect": "Snabbare (direkt)",
+    "fullConversationStored": "Fullständig konversation lagrad i molnet",
+    "whatsStoredInAzure": "Vad lagras i Azure",
+    "nothingStateless": "Ingenting (endast tillståndslös)",
+    "searchQueriesOnly": "Endast sökfrågor",
+    "fullConversationHistory": "Fullständig konversationshistorik",
+    "modelAvailability": "Modelltillgänglighet",
+    "allModels": "Alla modeller",
+    "gpt41Only": "Endast GPT-4.1",
+    "searchTurnedOff": "Sökning avstängd",
+    "noSearchDescription": "Snabbaste svar utan webbsökningsfunktion. Fullständig konversation stannar i din webbläsare med ingenting lagrat i molnet.",
+    "viewDetailsBelow": "Se tekniskt arbetsflöde nedan för detaljer.",
+    "viewTechnicalFlowDiagram": "Visa tekniskt flödesschema",
+    "legend": "Förklaring:",
+    "legendNoSearch": "Webbläsare (lokal lagring) | AI Assistant-server | Azure OpenAI (tillståndslös)",
+    "privacyFocusedMode": "Integritetsfokuserat läge",
+    "default": "Standard",
+    "privacyDescription": "Använder webbsökning vid behov men är långsammare eftersom fler steg är involverade. Endast sökfrågor lagras i Azure - fullständig konversation stannar i din webbläsare.",
+    "legendPrivacy": "Webbläsare (lokal lagring) | AI Assistant-server | Azure AI Foundry (endast sökfrågor) | Azure OpenAI (tillståndslös)",
+    "azureAIFoundryMode": "Azure AI Foundry-läge",
+    "foundryDescription": "Snabbare svar med inbyggd webbsökningsfunktion. Fullständig konversation lagras i Azure AI Foundry-databasen utöver din webbläsare.",
+    "legendFoundry": "Webbläsare (lokal lagring) | AI Assistant-server | Azure AI Foundry-agent (fullständig konversation lagrad)",
+    "whyTheseOptions": "Varför dessa alternativ?",
+    "whyTheseOptionsText1": "Dessa är de tillgängliga sökimplementeringarna efter att Azures Bing Search API, som AI Assistant ursprungligen förlitade sig på, avvecklades.",
+    "whyTheseOptionsText2": "Teamet utforskar aktivt mer integritetsvänliga sökalternativ. För närvarande använder båda alternativen Azure AI Foundrys sökfunktioner men skiljer sig i mängden konversationsdata som delas.",
+    "azureDeprecatedBingApi": "Azure avvecklade Bing Search API",
+    "footerNote": "Båda lägena lagrar konversation lokalt i din webbläsare. Du kan växla mellan lägen när som helst från modellinställningarna.",
+    "note": "Obs:",
+    "loadingDiagram": "Laddar diagram..."
+  },
+  "transcription": {
+    "transcribesOnSend": "Transkriberar vid sändning",
+    "addInstructions": "Lägg till instruktioner",
+    "instructionsPlaceholder": "Kontext för att förbättra noggrannheten (t.ex. namn, termer)"
   }
 }
