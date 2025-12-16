@@ -353,7 +353,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({ onClose }) => {
             <div
               className={`${
                 mobileView === 'details' ? 'hidden md:block' : 'block'
-              } w-full md:w-80 flex-shrink-0 overflow-y-auto md:border-r border-gray-200 dark:border-gray-700 md:pr-4`}
+              } w-full md:w-80 flex-shrink-0 overflow-y-auto md:border-e border-gray-200 dark:border-gray-700 md:pe-4`}
             >
               <div className="space-y-4">
                 {/* Base Models */}
