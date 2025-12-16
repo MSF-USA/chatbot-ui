@@ -2,6 +2,8 @@
 
 import toast from 'react-hot-toast';
 
+import { generateConversationTitle } from '@/client/services/titleService';
+
 import { MessageContentAnalyzer } from '@/lib/utils/chat/messageContentAnalyzer';
 import {
   createMessageGroup,
@@ -424,11 +426,32 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         conversation.name === 'New Conversation' &&
         conversation.messages.length > 0
       ) {
+        // Set immediate fallback title (sync) for instant feedback
         const firstMessage = entryToDisplayMessage(conversation.messages[0]);
-        const newName = get().generateConversationName(firstMessage);
-        if (newName) {
-          updates.name = newName;
+        const fallbackName = get().generateConversationName(firstMessage);
+        if (fallbackName) {
+          updates.name = fallbackName;
         }
+
+        // Generate AI title async (fire and forget - updates when ready)
+        const conversationId = conversation.id;
+        const modelId = conversation.model.id;
+        const messageGroups = [
+          ...conversation.messages,
+          createMessageGroup(assistantMessage),
+        ];
+
+        generateConversationTitle(messageGroups, modelId)
+          .then((result) => {
+            if (result?.title) {
+              conversationStore.updateConversation(conversationId, {
+                name: result.title,
+              });
+            }
+          })
+          .catch((error) => {
+            console.error('[ChatStore] Failed to generate AI title:', error);
+          });
       }
 
       conversationStore.updateConversation(conversation.id, updates);
