@@ -1,4 +1,29 @@
 {
+  "Chat Settings": "チャット設定",
+  "Content": "内容",
+  "Conversation exported successfully": "会話が正常にエクスポートされました",
+  "Conversation imported successfully": "会話が正常にインポートされました",
+  "Default System Prompt": "デフォルトシステムプロンプト",
+  "Edit": "編集",
+  "Email": "メール",
+  "Failed to export conversation": "会話のエクスポートに失敗しました",
+  "Failed to export folder": "フォルダのエクスポートに失敗しました",
+  "Failed to import conversation": "会話のインポートに失敗しました",
+  "Failed to import file": "ファイルのインポートに失敗しました",
+  "Folder exported with {count} conversations": "{count}件の会話を含むフォルダがエクスポートされました",
+  "Folder imported with {count} conversations": "{count}件の会話を含むフォルダがインポートされました",
+  "Folder not found": "フォルダが見つかりません",
+  "importBackupParseError": "バックアップファイルの解析に失敗しました。有効なJSONであることを確認してください。",
+  "Invalid conversation file": "無効な会話ファイル",
+  "Invalid folder file": "無効なフォルダファイル",
+  "New conversation": "新しい会話",
+  "No prompts found": "プロンプトが見つかりません",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "プロンプトの文字数は{{maxLength}}文字までです。{{valueLength}}文字を入力しました。",
+  "Run Typewriter Intro": "タイプライターイントロを実行",
+  "Saved Prompts": "保存されたプロンプト",
+  "Select a prompt to view details": "詳細を表示するプロンプトを選択",
+  "transcriptionComplete": "文字起こし完了！テキストがチャット入力に追加されました。",
+  "Unrecognized file format": "認識できないファイル形式",
   "OpenAI API Key Required": "OpenAIのAPIキーが必要です",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "左下のサイドバーでOpenAIのAPIキーを設定してください",
   "Stop Generating": "回答をストップ",
@@ -985,6 +1010,11 @@
       "description": "迅速なタスクに最適化された高速でコスト効率の良いClaudeモデル。シンプルなクエリ、要約、大量のアプリケーションに最適です。",
       "knowledgeCutoff": "2025年1月"
     }
+  },
+  "transcription": {
+    "transcribesOnSend": "送信時に文字起こし",
+    "addInstructions": "指示を追加",
+    "instructionsPlaceholder": "精度を向上させるためのコンテキスト（例：名前、用語）"
   },
   "searchMode": {
     "backToChat": "チャットに戻る",
