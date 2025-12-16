@@ -696,6 +696,7 @@
   },
   "emptyState": {
     "greeting": "¿Cómo puedo ayudarte?",
+    "greetingWithName": "¿Cómo puedo ayudarte, {name}?",
     "suggestedPrompts": {
       "createDiagrams": {
         "title": "Crear Diagramas",

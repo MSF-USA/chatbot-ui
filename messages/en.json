@@ -699,7 +699,8 @@
     "freed": "freed"
   },
   "emptyState": {
-    "greeting": "How can I help",
+    "greeting": "How can I help?",
+    "greetingWithName": "How can I help, {name}?",
     "suggestedPrompts": {
       "createDiagrams": {
         "title": "Create Diagrams",
