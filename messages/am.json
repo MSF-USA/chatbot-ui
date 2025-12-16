@@ -1,9 +1,61 @@
 {
+  "Conversations": "ውይይቶች",
+  "Prompts": "ጥያቄዎች",
+  "Saved Prompts": "የተቀመጡ ጥያቄዎች",
+  "New conversation": "አዲስ ውይይት",
+  "New prompt": "አዲስ ጥያቄ",
+  "Close sidebar": "የጎን አሞሌውን ዝጋ",
+  "Search conversations": "ውይይቶችን ፈልግ...",
+  "No conversations found": "ምንም ውይይቶች አልተገኙም",
+  "No conversations yet": "ገና ምንም ውይይቶች የሉም",
+  "No prompts yet": "ገና ምንም ጥያቄዎች የሉም",
+  "Delete": "ሰርዝ",
+  "Edit": "አርትዕ",
+  "Are you sure you want to delete this conversation?": "እርግጠኛ ነዎት ይህን ውይይት መሰረዝ ይፈልጋሉ?",
+  "New Conversation": "አዲስ ውይይት",
+  "Settings": "ቅንብሮች",
+  "General": "አጠቃላይ",
+  "Chat Settings": "የውይይት ቅንብሮች",
+  "Privacy Control": "የግላዊነት ቁጥጥር",
+  "Privacy & Security": "ግላዊነት እና ደህንነት",
+  "Data Management": "የውሂብ አስተዳደር",
+  "Account": "መለያ",
+  "Mobile App": "ሞባይል መተግበሪያ",
+  "Help & Support": "እርዳታ እና ድጋፍ",
+  "App Settings": "የመተግበሪያ ቅንብሮች",
+  "Default Temperature": "ነባሪ ሙቀት",
+  "Default System Prompt": "ነባሪ የስርዓት ጥያቄ",
+  "Enter system prompt_ellipsis": "የስርዓት ጥያቄ አስገባ...",
+  "Theme": "ገጽታ",
+  "Light mode": "የብርሃን ሁነታ",
+  "Dark mode": "የጨለማ ሁነታ",
+  "Light": "ብርሃን",
+  "Dark": "ጨለማ",
+  "Language": "ቋንቋ",
+  "User Information": "የተጠቃሚ መረጃ",
+  "Name": "ስም",
+  "Email": "ኢሜይል",
+  "Department": "ክፍል",
+  "Position": "ቦታ",
+  "Cancel": "ሰርዝ",
+  "Save": "አስቀምጥ",
+  "Reset Settings": "ቅንብሮችን ዳግም አስጀምር",
+  "Are you sure?": "እርግጠኛ ነዎት?",
+  "Clear conversations": "ውይይቶችን አጽዳ",
+  "Import data": "ውሂብ አስመጣ",
+  "Export data": "ውሂብ ላክ",
+  "Sign Out": "ውጣ",
+  "Sign In": "ግባ",
+  "Chat": "ውይይት",
+  "App": "መተግበሪያ",
+  "FAQ": "ተደጋጋሚ ጥያቄዎች",
+  "Frequently Asked Questions": "ተደጋጋሚ የሚጠየቁ ጥያቄዎች",
+  "sendFeedback": "ድጋፍ ጠይቅ",
+  "Temperature": "ሙቀት",
   "welcomeMessage": "እንኳን ወደ MSF AI አስሸጋገር በደህና መጡ",
   "transcribingChatPlaceholder": "መቅዳት...",
   "temperatureDescription": "ከፍተኛ እንደ 0.8 ያሉ እሴቶች ውጤቱን በጣም ፈጠራ ያደርጋሉ፣ ከሚከተሉት ዝቅተኛ እንደ 0.2 ያሉ እሴቶች ደግሞ ውጤቱን በጣም ትኩረት እና የተወሰነ ያደርጋሉ።",
-  "sendFeedback": "አስተያየት ላክ",
-  "modelSelectionDialogue": "የእንቅስቃሴ ሞዴል ምርጫ",
+  "modelSelectionDialogue": "የAI ሞዴል ምርጫ:",
   "appName": "ኤምኤስኤፍ ኤአይ አስስታንት",
   "chatDisclaimer": "የኤምኤስኤፍ ማህበረሰብ አማካሪ ሊያቃጥል ይችላል። አስፈላጊ መረጃ ያረጋግጡ።",
   "chatInputPlaceholderFull": "ይህን ያነቡ ወይም \"/\" በመተው አማራጭ ይምረጡ...",
@@ -74,9 +126,40 @@
   "translatorTranslationDomainTechnical": "ቴክኒካል",
   "Search_ellipsis": "ፈልግ...",
   "New Conversation": "አዲስ ውይይት",
-  "Neutral": "ነጻ",
-  "Creative": "ፈጣሪ",
   "Precise": "ትክክለኛ",
+  "Neutral": "መካከለኛ",
+  "Creative": "ፈጠራ",
+  "AI": "AI",
+  "Are you sure you want to clear all messages?": "እርግጠኛ ነዎት ሁሉንም መልእክቶች መሰረዝ ይፈልጋሉ?",
+  "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI የOpenAI ውይይት ሞዴሎችን ChatGPT በይነገጽ እና ተግባራዊነትን ለመምሰል የተሰራ ከፍተኛ የውይይት ሮቦት ኪት ነው።",
+  "Conversation": "ውይይት",
+  "Enter a prompt": "ጥያቄ ያስገቡ",
+  "Error fetching models_": "ሞዴሎችን ማግኘት አልተሳካም።",
+  "Higher values like 0_8 will make the output more random, while lower values like 0_2 will make it more focused and deterministic_": "እንደ 0.8 ያሉ ከፍተኛ እሴቶች ውጤቱን የበለጠ ዘፈቀደ ያደርጉታል፣ እንደ 0.2 ያሉ ዝቅተኛ እሴቶች ደግሞ የበለጠ ትኩረት እና የተወሰነ ያደርጉታል።",
+  "If you completed this step, OpenAI may be experiencing issues_": "ይህን ደረጃ ካጠናቀቁ OpenAI ችግሮች እያጋጠሙት ሊሆን ይችላል።",
+  "If you don't have an OpenAI API key, you can get one here: ": "የOpenAI API ቁልፍ ከሌለዎት እዚህ ማግኘት ይችላሉ: ",
+  "Loading_ellipsis": "በመጫን ላይ...",
+  "Make sure your OpenAI API key is set in the bottom left of the sidebar_": "የOpenAI API ቁልፍዎ በጎን አሞሌው ግርጌ በስተግራ መቀመጡን ያረጋግጡ።",
+  "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የመልእክት ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
+  "Model": "ሞዴል",
+  "OR": "ወይም",
+  "OpenAI API Key Required": "የOpenAI API ቁልፍ ያስፈልጋል",
+  "Please enter a message": "እባኮትን መልእክት ያስገቡ",
+  "Please set your OpenAI API key in the bottom left of the sidebar_": "እባኮትን የOpenAI API ቁልፍዎን በጎን አሞሌው ግርጌ በስተግራ ያስቀምጡ።",
+  "Prompt limit is {{maxLength}} characters": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
+  "Regenerate response": "ምላሽ እንደገና አመንጭ",
+  "Run Typewriter Intro": "የጸሐፊ መግቢያ አሂድ",
+  "Save & Submit": "አስቀምጥ እና አስገባ",
+  "Sorry, there was an error_": "ይቅርታ፣ ስህተት ተከስቷል።",
+  "Stop Generating": "ማመንጨት አቁም",
+  "System Prompt": "የስርዓት ጥያቄ",
+  "Type a message or type \"/\" to select a prompt_ellipsis": "መልእክት ይተይቡ ወይም \"/\" በመተየብ ጥያቄ ይምረጡ...",
+  "Type a message_ellipsis": "መልእክት ይተይቡ...",
+  "View Account Usage": "የመለያ አጠቃቀም ይመልከቱ",
+  "You": "እርስዎ",
+  "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "እርስዎ ChatGPT ነዎት፣ በOpenAI የሰለጠነ ትልቅ የቋንቋ ሞዴል። የተጠቃሚውን መመሪያዎች በጥንቃቄ ይከተሉ። markdown በመጠቀም ይመልሱ።",
+  "click if using a _env_local file": ".env.local ፋይል እየተጠቀሙ ከሆነ ጠቅ ያድርጉ",
   "chatFeaturesDropdownWeb": "ዌብ",
   "chatFeaturesDropdownSearchModal": "ፍለጋ",
   "chatFeaturesDropdownURLModal": "የ URL አንሳቃ",
@@ -113,6 +196,10 @@
   "transcribingStatus": "በመጻፍ ላይ ነው... ይህ ጊዜ ሊወስድ ይችላል።",
   "transcriptionError": "በቅዳሜ ላይ ስህተት ተከስቷል። እባክዎን ድጋሜ ይሞክሩ።",
   "transcriptionResult": "የቅዳሴ ውጤት",
+  "transcriptionComplete": "ቅዳሴ ተጠናቋል! ጽሑፍ ወደ ውይይት ግብዓት ተጨምሯል።",
+  "transcription.transcribesOnSend": "በመላክ ጊዜ ይቀዳል",
+  "transcription.addInstructions": "መመሪያዎችን ጨምር",
+  "transcription.instructionsPlaceholder": "ትክክለኛነትን ለማሻሻል አውድ (ለምሳሌ ስሞች፣ ቃላት)",
   "unsupportedFileType": "የማይደገፍ የፋይል አይነት። እባክዎን የድምጽ ወይም የቪዲዮ ፋይል ይመርጡ።",
   "uploadAudioVideoFile": "የድምጽ ወይም የቪዲዮ ፋይል ያስገቡ",
   "uploadingFile": "ፋይል ማስገባት በሂደት ላይ...",
@@ -167,11 +254,31 @@
   "Version": "ስሪት",
   "I accept the": "እኔ ተቀብያለሁ",
   "Accept and Continue": "ተቀበል እና ቀጥል",
+  "Copied!": "ተቀድቷል!",
+  "Copy code": "ኮድ ቅዳ",
+  "Enter file name": "የፋይል ስም ያስገቡ",
+  "A description for your prompt_": "ለጥያቄዎ መግለጫ።",
+  "Search prompts_ellipsis": "ጥያቄዎችን ፈልግ",
+  "Description": "መግለጫ",
+  "New folder": "አዲስ አቃፊ",
   "Rename": "እንደገና ሰይም",
   "Move to folder": "ወደ አቃፊ አንቀሳቅስ",
   "Export folder": "አቃፊ ላክ",
   "Import conversation": "ውይይት አስገባ",
   "Import folder": "አቃፊ አስገባ",
+  "Export": "ላክ",
+  "Conversation exported successfully": "ውይይት በተሳካ ሁኔታ ተልኳል",
+  "Failed to export conversation": "ውይይት መላክ አልተሳካም",
+  "Conversation imported successfully": "ውይይት በተሳካ ሁኔታ ገብቷል",
+  "Failed to import conversation": "ውይይት ማስገባት አልተሳካም",
+  "Invalid conversation file": "ልክ ያልሆነ የውይይት ፋይል",
+  "Folder exported with {count} conversations": "አቃፊ ከ{count} ውይይቶች ጋር ተልኳል",
+  "Failed to export folder": "አቃፊ መላክ አልተሳካም",
+  "Folder not found": "አቃፊ አልተገኘም",
+  "Folder imported with {count} conversations": "አቃፊ ከ{count} ውይይቶች ጋር ገብቷል",
+  "Invalid folder file": "ልክ ያልሆነ የአቃፊ ፋይል",
+  "Failed to import file": "ፋይል ማስገባት አልተሳካም",
+  "Unrecognized file format": "ያልታወቀ የፋይል ቅርጸት",
   "No folder": "ምንም አቃፊ የለም",
   "Options": "አማራጮች",
   "Are you sure you want to delete this folder?": "እርግጠኛ ነዎት ይህን አቃፊ መሰረዝ ይፈልጋሉ?",
@@ -180,8 +287,15 @@
   "Prompt name": "የጥያቄ ስም",
   "Prompt content": "የጥያቄ ይዘት",
   "Are you sure you want to delete this prompt?": "እርግጠኛ ነዎት ይህን ጥያቄ መሰረዝ ይፈልጋሉ?",
-  "Import data from sidebar": "ከጎን አሞሌ ውሂብ አስገባ",
-  "Export data from sidebar": "ከጎን አሞሌ ውሂብ ላክ",
+  "No prompts_": "ምንም ጥያቄዎች የሉም።",
+  "Prompt": "ጥያቄ",
+  "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "የጥያቄ ይዘት። ተለዋዋጭ ለመግለጽ '{{}}' ይጠቀሙ። ምሳሌ: '{{ስም}}' '{{ቅጽል}}' '{{ስም}}' ነው",
+  "A name for your prompt_": "ለጥያቄዎ ስም።",
+  "Import data from sidebar": "የውይይት ታሪክ መልሶ ማግኘት",
+  "Export data from sidebar": "የውይይት ታሪክ ምትኬ",
+  "No conversations_": "ምንም ውይይቶች የሉም።",
+  "OpenAI API Key": "የOpenAI API ቁልፍ",
+  "Plugin Keys": "የተሰኪ ቁልፎች",
   "Search chats": "ውይይቶችን ፈልግ",
   "This is a set of instructions that guide the AI Assistant on how to respond_ It helps the AI provide useful and accurate information by giving context to the questions asked_": "ይህ የሃሰ ቴያጅ መመሪያዎች ስብስብ ሲሆን AI አስስታንት እንዴት ምላሽ እንደሚሰጥ ያመለክታል። AI ለተጠየቁ ጥያቄዎች አገባብ በመስጠት ጠቃሚ እና ትክክለኛ መረጃ እንዲሰጥ ይረዳል።",
   "Enter a prompt or type \"/\" to select a prompt_ellipsis": "ጥያቄ አስገባ ወይም \"/\" በመተየብ ጥያቄ ይምረጡ...",
@@ -321,6 +435,7 @@
   "Formality": "ይፋዊነት",
   "Friendly, authoritative, empathetic, direct": "ወዳጃዊ፣ ባለስልጣናዊ፣ መተሳሰብ ያለው፣ ቀጥተኛ",
   "Import Backup": "መጠባበቂያ አስገባ",
+  "importBackupParseError": "የምትኬ ፋይልን መተንተን አልተሳካም። እባኮትን ልክ JSON መሆኑን ያረጋግጡ።",
   "Import Team Template": "የቡድን አብነት አስገባ",
   "Import Template": "አብነት አስገባ",
   "Imported": "አስገብቷል",
@@ -411,7 +526,14 @@
     "addTagEllipsis": "መለያ ጨምር...",
     "msfLogo": "የኤምኤስኤፍ አርማ",
     "importantInformation": "አስፈላጊ መረጃ",
-    "contact": "ያነጋግሩ"
+    "contact": "ያነጋግሩ",
+    "noResults": "ምንም ውጤቶች አልተገኙም",
+    "confirm": "አረጋግጥ",
+    "cancel": "ሰርዝ",
+    "discard": "ጣል",
+    "keepEditing": "ማርትዕ ቀጥል",
+    "yes": "አዎ",
+    "no": "አይ"
   },
   "chat": {
     "downloadAudio": "ድምጽን አውርድ",
@@ -446,7 +568,25 @@
     "fullSizePreview": "ሙሉ መጠን ቅድመ-እይታ",
     "enterSearchQueryPlaceholder": "የፍለጋ ጥያቄዎን ወይም ጥያቄዎን ያስገቡ...",
     "errorFetchingUrl": "የዩአርኤል ይዘት በማግኘት ጊዜ ስህተት ተከስቷል",
-    "errorInitiatingSearch": "የድር ፍለጋን በማስጀመር ጊዜ ስህተት ተከስቷል"
+    "errorInitiatingSearch": "የድር ፍለጋን በማስጀመር ጊዜ ስህተት ተከስቷል",
+    "regenerate": "እንደገና አመንጭ",
+    "modelSwitchPrompt": "{original} አልተሳካም ነገር ግን {fallback} ተሳክቷል። ሞዴል መቀየር ይፈልጋሉ?",
+    "keepOriginalModel": "{model} ቀጥል",
+    "switchToModel": "ወደ {model} ቀይር",
+    "alwaysSwitchToModel": "ሁልጊዜ ራስ-ሰር ቀይር",
+    "translateMessage": "መልእክትን ተርጉም",
+    "translating": "በመተርጎም ላይ...",
+    "translationError": "ትርጉም አልተሳካም",
+    "showOriginal": "ዋናውን አሳይ",
+    "translatedTo": "ወደ {language} ተተርጉሟል",
+    "searchLanguages": "ቋንቋዎችን ፈልግ...",
+    "selectLanguage": "ቋንቋ ምረጥ",
+    "audioFromOriginal": "ድምጽ ከዋናው ጽሑፍ ነው",
+    "audioFromTranslation": "ድምጽ ከ{language} ትርጉም ነው",
+    "thinking": "በማሰብ ላይ...",
+    "viewReasoningProcess": "የማመዛዘን ሂደት ይመልከቱ",
+    "collapseThinking": "አስተሳሰብን ሰብስብ",
+    "expandThinking": "አስተሳሰብን አስፋፋ"
   },
   "sidebar": {
     "collapseSidebar": "የጎን አሞሌውን ሰብስብ",
@@ -468,15 +608,134 @@
     "importantInfo": "ይህ ወኪል የውይይት አውድ መዳረሻ ይኖረዋል እና እንደ መደበኛ ሞዴሎች ተመሳሳይ መሳሪያዎችን መጠቀም ይችላል። የወኪል መታወቂያው ትክክል መሆኑን ያረጋግጡ፣ ምክንያቱም ከዚያ በኋላ መቀየር አይቻልም።"
   },
   "prompts": {
-    "buildReusablePrompts": "በAI እገዛ እንደገና ሊጠቀሙ የሚችሉ ጥያቄዎችን ይፍጠሩ"
+    "buildReusablePrompts": "በAI እገዛ እንደገና ሊጠቀሙ የሚችሉ ጥያቄዎችን ይፍጠሩ",
+    "noToneDefault": "ምንም ቃና የለም (ነባሪ ይጠቀሙ)",
+    "tagHelp": "የመለያ እገዛ",
+    "tagHelpContent": "ጥያቄዎችዎን ለመመደብ እና በፍጥነት ለማግኘት መለያዎችን ይጠቀሙ። ምሳሌዎች:",
+    "tagExamples": {
+      "email": "ኢሜይል",
+      "marketing": "ግብይት",
+      "technical": "ቴክኒካል",
+      "customerSupport": "ደንበኛ-ድጋፍ"
+    },
+    "variableHelp": "የተለዋዋጭ እገዛ",
+    "variableHelpIntro": "ጥያቄዎችዎን ተለዋዋጭ ለማድረግ ተለዋዋጮችን ይጠቀሙ:",
+    "requiredVariables": "አስፈላጊ ተለዋዋጮች (ነባሪ የሌለው):",
+    "optionalVariables": "አማራጭ ተለዋዋጮች (ነባሪ ያለው):",
+    "userMustProvide": "ተጠቃሚ እሴት መስጠት አለበት",
+    "userCanProvide": "ተጠቃሚ እሴት መስጠት ይችላል፣ ወይም ነባሪ ይጠቀማል",
+    "example": "ምሳሌ:",
+    "variableExampleText": "ለ{{recipient}} ስለ {{topic}} {{tone:professional}} ኢሜይል በ{{language:English}} ጻፍ",
+    "detectedVariables": "የተገኙ ተለዋዋጮች",
+    "required": "አስፈላጊ",
+    "aiAssistant": "የAI አስስታንት",
+    "whatToImprove": "ምን ማሻሻል ይፈልጋሉ?",
+    "whatShouldPromptDo": "ይህ ጥያቄ ምን ማድረግ አለበት?",
+    "improvePlaceholder": "ለምሳሌ ፕሮፌሽናል ያድርጉት፣ ምሳሌዎችን ጨምሩ፣ ግልጽነትን ያሻሽሉ...",
+    "generatePlaceholder": "ለምሳሌ ለተቀባይ እና ርዕስ ተለዋዋጮች ያለው ፕሮፌሽናል ኢሜይል አብነት ይፍጠሩ...",
+    "addContextOptional": "አውድ ጨምር (አማራጭ)",
+    "revising": "በመከለስ ላይ...",
+    "generating": "በማመንጨት ላይ...",
+    "reviseWithAI": "በAI ከልስ",
+    "generatePrompt": "ጥያቄ አመንጭ",
+    "revisionComplete": "ክለሳ ተጠናቋል",
+    "generationComplete": "ማመንጨት ተጠናቋል",
+    "revisedPrompt": "የተከለሰ ጥያቄ:",
+    "generatedPrompt": "የተመነጨ ጥያቄ:",
+    "applyRevision": "ይህን ክለሳ ተግብር",
+    "useThisPrompt": "ይህን ጥያቄ ተጠቀም",
+    "improvementsMade": "የተደረጉ ማሻሻያዎች:",
+    "tips": "ምክሮች:",
+    "howAICanHelp": "AI እንዴት ሊረዳ ይችላል",
+    "helpItems": {
+      "improveClarity": "ግልጽነት እና መዋቅር ያሻሽሉ",
+      "suggestVariables": "ጠቃሚ ተለዋዋጮች ይጠቁሙ",
+      "addContext": "አውድ እና ምሳሌዎች ይጨምሩ",
+      "optimize": "ለተሻለ ውጤት ያመቻቹ"
+    },
+    "savePrompt": "ጥያቄን አስቀምጥ",
+    "add": "ጨምር"
   },
   "tones": {
     "createCustomVoiceProfile": "በAI እገዛ ብጁ የድምጽ መገለጫ ይፍጠሩ",
-    "examplePlaceholder": "ለምሳሌ፣ ሙያዊ ግን ወዳጃዊ የደንበኞች ድጋፍ ቃና ይፍጠሩ..."
+    "examplePlaceholder": "ለምሳሌ፣ ሙያዊ ግን ወዳጃዊ የደንበኞች ድጋፍ ቃና ይፍጠሩ...",
+    "tagHelp": "የመለያ እገዛ",
+    "tagHelpContent": "ቃናዎችዎን ለመመደብ እና በፍጥነት ለማግኘት መለያዎችን ይጠቀሙ። ምሳሌዎች:",
+    "tagExamples": {
+      "professional": "ሙያዊ",
+      "casual": "ተራ",
+      "technical": "ቴክኒካል",
+      "marketing": "ግብይት"
+    },
+    "add": "ጨምር",
+    "aiToneAnalyzer": "የAI ቃና ተንታኝ",
+    "describeToneToCreate": "መፍጠር የሚፈልጉትን ቃና ይግለጹ",
+    "uploadContentSamples": "የይዘት ናሙናዎችን ያስገቡ",
+    "analyzing": "በመተንተን ላይ...",
+    "analyzeToneWithAI": "ቃናን በAI ተንትን",
+    "analysisComplete": "ትንተና ተጠናቋል",
+    "generatedVoiceGuidelines": "የተመነጩ የድምጽ መመሪያዎች:",
+    "examplePhrases": "ምሳሌ ሐረጎች:",
+    "suggestedTags": "የተጠቆሙ መለያዎች:",
+    "applyThisAnalysis": "ይህን ትንተና ተግብር",
+    "detectedCharacteristics": "የተገኙ ባህሪያት:",
+    "howAICanHelp": "AI እንዴት ሊረዳ ይችላል",
+    "helpItems": {
+      "transcribe": "ድምጽ/ቪዲዮ ይዘትን ቀዳ",
+      "analyzeContent": "የይዘት ናሙናዎችዎን ተንትን",
+      "extractPatterns": "ቃና እና ዘይቤ ንድፎችን አውጣ",
+      "generateGuidelines": "የድምጽ መመሪያዎች አመንጭ",
+      "suggestTags": "ተዛማጅ መለያዎች ጠቁም"
+    },
+    "saveTone": "ቃናን አስቀምጥ"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "ቴክኒካዊ ፍሰት ንድፍ ይመልከቱ"
+    "viewTechnicalFlowDiagram": "ቴክኒካዊ ፍሰት ንድፍ ይመልከቱ",
+    "backToChat": "ወደ ውይይት ተመለስ",
+    "title": "የእርዳታ ማዕከል",
+    "subtitle": "መልሶችን ያግኙ፣ ስለ ግላዊነት ይወቁ እና ድጋፍ ያግኙ",
+    "faq": {
+      "title": "ተደጋጋሚ የሚጠየቁ ጥያቄዎች",
+      "description": "AI Assistant ስለመጠቀም የተለመዱ ጥያቄዎችን መልሶች ያግኙ",
+      "articles": "ጽሑፎች",
+      "searchPlaceholder": "ተደጋጋሚ ጥያቄዎችን ፈልግ...",
+      "noResults": "ከፍለጋዎ ጋር የሚዛመዱ ተደጋጋሚ ጥያቄዎች የሉም",
+      "noResultsHint": "ሌላ የፍለጋ ቃል ይሞክሩ"
+    },
+    "privacy": {
+      "title": "ግላዊነት እና ውሂብ",
+      "description": "ውሂብዎ እንዴት እንደሚከማች እና እንደሚጠበቅ ይወቁ",
+      "topics": "ርዕሶች",
+      "searchPlaceholder": "የግላዊነት ርዕሶችን ፈልግ...",
+      "noResults": "ከፍለጋዎ ጋር የሚዛመዱ የግላዊነት ርዕሶች የሉም",
+      "noResultsHint": "ሌላ የፍለጋ ቃል ይሞክሩ",
+      "bannerTitle": "ግላዊነትዎ ያስፈልጋል",
+      "bannerDescription": "ሁሉም ውይይቶች በመሣሪያዎ ላይ በአካባቢያዊ ይከማቻሉ። የውሂብ ማቀናበር በMSF ስርዓቶች ውስጥ Azure መሠረተ ልማት በመጠቀም ይከሰታል።",
+      "localStorageOnly": "አካባቢያዊ ማከማቻ ብቻ",
+      "msfControlled": "MSF ቁጥጥር",
+      "noPersonalData": "ምንም የግል ውሂብ የለም",
+      "noSensitiveOps": "ምንም ስሱ ስራዎች የሉም"
+    },
+    "contact": {
+      "title": "ያግኙን እና ሀብቶች",
+      "description": "ከቡድናችን ጋር ይገናኙ እና ጠቃሚ ማገናኛዎችን ያግኙ",
+      "supportAvailable": "ድጋፍ ይገኛል",
+      "submitRequest": "የድጋፍ ጥያቄ ያስገቡ",
+      "getHelp": "ከቡድናችን እገዛ ያግኙ",
+      "requestDescription": "እገዛ ይፈልጋሉ ወይም አስተያየት መስጠት ይፈልጋሉ? የድጋፍ ቅጻችንን ለመክፈት ከዚህ በታች ጠቅ ያድርጉ።",
+      "openSupportForm": "የድጋፍ ቅጽ ክፈት",
+      "otherWays": "ሌሎች የማግኛ መንገዶች",
+      "emailSupport": "የኢሜይል ድጋፍ",
+      "emailDescription": "ለጥያቄዎች፣ አስተያየቶች ወይም ቴክኒካል ችግሮች ኢሜይል ይላኩልን"
+    },
+    "resources": {
+      "title": "ተጨማሪ ሀብቶች",
+      "portalTitle": "የAI Accelerator ፖርታል",
+      "portalDescription": "ሰነዶች፣ የፕሮጀክት ዝመናዎች እና የስልጠና ቁሳቁሶች",
+      "githubTitle": "ክፍት ምንጭ ማከማቻ",
+      "githubDescription": "ኮድ ይመልከቱ፣ ችግሮችን ያሳውቁ እና በGitHub ላይ ያበርክቱ"
+    }
   },
   "settings": {
     "Settings": "ቅንብሮች",
@@ -544,7 +803,27 @@
     "FAQs, privacy policy, and guides": "ተደጋጋሚ ጥያቄዎች፣ የግላዊነት ፖሊሲ እና መመሪያዎች",
     "Contact Support": "ድጋፍ አግኝ",
     "Popular Questions": "ተወዳጅ ጥያቄዎች",
-    "View all FAQs": "ሁሉንም ተደጋጋሚ ጥያቄዎች አይ"
+    "View all FAQs": "ሁሉንም ተደጋጋሚ ጥያቄዎች አይ",
+    "Delete legacy data after migration": "ከፍልሰት በኋላ የድሮ ውሂብ ሰርዝ",
+    "frees up storage space": "የማከማቻ ቦታ ይለቃል",
+    "Legacy data deleted": "የድሮ ውሂብ ተሰርዟል",
+    "freed": "ተለቋል",
+    "Conversations": "ውይይቶች",
+    "Legacy": "ድሮ",
+    "Other": "ሌላ",
+    "Loading": "በመጫን ላይ",
+    "Legacy Data Detected": "የድሮ ውሂብ ተገኝቷል",
+    "legacyDataDescription": "ከቀድሞ ስሪት {size} ውሂብ አለዎት። ይህ ሊፈልስ፣ ሊላክ ወይም ቦታ ለማስለቀቅ ሊሰረዝ ይችላል።",
+    "legacyDeleteSuccess": "የድሮ ውሂብ በተሳካ ሁኔታ ተሰርዟል እና {size} ተለቋል።",
+    "legacyDeleteError": "የድሮ ውሂብ መሰረዝ አልተሳካም። እባኮትን እንደገና ይሞክሩ።",
+    "Explore solutions": "መፍትሄዎችን ያስሱ",
+    "Migrate to Current Format": "ወደ ወቅታዊ ቅርጸት ፍለስ",
+    "Export Legacy Data": "የድሮ ውሂብ ላክ",
+    "Delete Legacy Data": "የድሮ ውሂብ ሰርዝ",
+    "deleteLegacyConfirm": "እርግጠኛ ነዎት ሁሉንም የድሮ ውሂብ መሰረዝ ይፈልጋሉ? ይህ ድርጊት መልሰው መመለስ አይቻልም።",
+    "Deleting": "በመሰረዝ ላይ",
+    "Confirm Delete": "መሰረዝን አረጋግጥ",
+    "Cancel": "ሰርዝ"
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"
@@ -596,5 +875,221 @@
     "errorSessionExpired": "የእርስዎ ክፍለ-ጊዜ ጊዜው አልፏል። ለመቀጠል እባክዎን እንደገና ይግቡ።",
     "errorFallback": "ከማረጋገጫ አገልግሎት ጋር መገናኘት አልተቻለም። እባክዎን እንደገና ይሞክሩ ወይም ችግሩ ከቀጠለ ድጋፍን ያነጋግሩ።",
     "tryAgain": "እንደገና ይሞክሩ"
+  },
+  "emptyState": {
+    "greeting": "እንዴት ልርዳዎ?",
+    "greetingWithName": "እንዴት ልርዳዎ፣ {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "ንድፎችን ይፍጠሩ",
+        "prompt": "ንድፎች እና የፍሰት ቻርቶች እንዴት መፍጠር እንደሚችሉ ያሳዩኝ። ምን አይነት ሂደቶችን፣ የስራ ፍሰቶችን ወይም ስርዓቶችን እንዲያስቡ ሊረዱኝ ይችላሉ? ጥቂት ምሳሌዎችን ይስጡኝ።"
+      },
+      "draftContent": {
+        "title": "ፕሮፌሽናል ይዘት ረቂቅ",
+        "prompt": "ፕሮፌሽናል ሰነዶችን ለመጻፍ እገዛ እፈልጋለሁ - ኢሜይሎች፣ ሪፖርቶች፣ ማጠቃለያዎች። በተለያዩ የንግድ ጽሑፍ አይነቶች እንዴት ሊረዱኝ እንደሚችሉ ምሳሌዎችን ያሳዩኝ ይችላሉ?"
+      },
+      "analyzeInformation": {
+        "title": "መረጃን ተንትን",
+        "prompt": "ውሂብ ወይም መረጃ እንድተነትን እንዴት ሊረዱኝ ይችላሉ? ቁጥሮችን ለመከፋፈል፣ ንድፎችን ለማግኘት ወይም ከሰነዶች ወይም የውሂብ ስብስቦች ግንዛቤዎችን ለማውጣት የተለያዩ መንገዶችን ያሳዩኝ።"
+      },
+      "planOrganize": {
+        "title": "አቅድ እና አደራጅ",
+        "prompt": "ፕሮጀክቶችን ለማቀድ ወይም ስራ ለማደራጀት ሊረዱኝ ይችላሉ? በተለያዩ መዋቅሮች የጊዜ ሰሌዳዎችን፣ አጀንዳዎችን ወይም የፕሮጀክት እቅዶችን እንዴት መፍጠር እንደሚችሉ ምሳሌዎችን ይስጡኝ።"
+      },
+      "brainstormIdeas": {
+        "title": "ሀሳቦችን አውጣ",
+        "prompt": "ለችግር መፍትሄዎችን ማውጣት እፈልጋለሁ። ፈጠራ አስተሳሰብ እና ሀሳብ ማመንጨትን እንዴት እንደሚቀርቡ ያሳዩኝ - ምን አይነት ጥያቄዎች ይጠይቃሉ እና ዕድሎችን እንዴት ያስሳሉ?"
+      },
+      "buildPresentations": {
+        "title": "አቀራረቦችን ይፍጠሩ",
+        "prompt": "አቀራረቦችን ለመፍጠር እንዴት ሊረዱኝ ይችላሉ? የተለያዩ የአቀራረብ መዋቅሮችን፣ ምስላዊ ጥቆማዎችን እና ለተለያዩ ተመልካቾች መረጃን እንዴት እንደሚያደራጁ ምሳሌዎችን ያሳዩኝ።"
+      },
+      "workWithCode": {
+        "title": "ከኮድ ጋር ይስሩ",
+        "prompt": "ከኮድ ወይም ስክሪፕቶች ጋር ሊረዱኝ ይችላሉ? ምሳሌዎችን ያሳዩኝ - አዲስ ኮድ ለመጻፍ፣ ችግሮችን ለማረም ወይም አንድ ነገር እንዴት እንደሚሰራ በደረጃ ለማስረዳት።"
+      },
+      "decisionSupport": {
+        "title": "የውሳኔ ድጋፍ",
+        "prompt": "ውሳኔ መወሰን አለብኝ ግን አማራጮቼን እንዴት መገምገም እንዳለብኝ እርግጠኛ አይደለሁም። ምርጫዎችን ለማስተናገድ የሚጠቀሙባቸውን የተለያዩ ማዕቀፎች ወይም አቀራረቦች ሊያሳዩኝ ይችላሉ?"
+      },
+      "summarizeSynthesize": {
+        "title": "አጠቃል እና አዋህድ",
+        "prompt": "ረዥም ሰነዶችን ለማጠቃለል ወይም ከብዙ ምንጮች መረጃን ለማዋሃድ እንዴት ይረዳሉ? የተለያዩ ማጠቃለያ ቅርጸቶችን እና የዝርዝር ደረጃዎችን ምሳሌዎች ያሳዩኝ።"
+      },
+      "explainTopics": {
+        "title": "ውስብስብ ርዕሶችን ያብራሩ",
+        "prompt": "ውስብስብ ጽንሰ-ሀሳቦችን በቀላል ቃላት ማስረዳት ይችላሉ? ውስብስብ ሀሳቦችን እንዴት እንደሚከፋፍሉ፣ ንጽጽሮችን እንደሚጠቀሙ እና ማብራሪያዎችን ለተለያዩ የእውቀት ደረጃዎች እንደሚያስማሙ ያሳዩኝ።"
+      },
+      "createSchedules": {
+        "title": "መርሐግብሮችን ይፍጠሩ",
+        "prompt": "ጊዜን ለማደራጀት እና መርሐግብሮችን ለመፍጠር እገዛ እፈልጋለሁ። አጀንዳዎችን፣ ቀን መቁጠሪያዎችን ወይም ጊዜ-ተኮር እቅዶችን በምሳሌዎች እንዴት ማዋቀር እንደሚችሉ የተለያዩ መንገዶችን ያሳዩኝ።"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "ሞዴሎች",
+      "agents": "ወኪሎች"
+    },
+    "sections": {
+      "baseModels": "መሰረታዊ ሞዴሎች"
+    },
+    "agents": {
+      "advancedFeatureBadge": "ከፍተኛ ባህሪ",
+      "description": "ልዩ ችሎታዎች ያላቸው ብጁ AI ወኪሎችን ይፍጠሩ እና ያስተዳድሩ። እነዚህ ወኪሎች በMSF AI Assistant Foundry ምሳሌ ላይ ይሰራሉ።",
+      "advancedFeatureTitle": "ከፍተኛ ባህሪ - ከAI Assistant ቴክኒካል ቡድን ጋር ማስተባበር ያስፈልጋል",
+      "advancedFeatureWarning": "ብጁ ወኪሎች ከMSF AI Assistant Foundry ምሳሌ ጋር ብቻ ይሰራሉ። የወኪል መታወቂያዎች በAI Assistant ቴክኒካል ቡድን በዚህ ልዩ ምሳሌ ውስጥ መፈጠር እና ከመጠቀምዎ በፊት ከእርስዎ ጋር መስማማት አለባቸው።",
+      "createNewAgent": "አዲስ ብጁ ወኪል ፍጠር",
+      "noAgentsTitle": "ገና ምንም ብጁ ወኪሎች የሉም",
+      "noAgentsDescription": "AI ችሎታዎችን በልዩ መሳሪያዎች እና ባህሪያት ለማስፋት የመጀመሪያ ብጁ ወኪልዎን ይፍጠሩ።"
+    },
+    "advancedOptions": {
+      "title": "ከፍተኛ አማራጮች",
+      "temperature": "ሙቀት",
+      "fixedTemperatureNote": "ማስታወሻ: ይህ ሞዴል ለተከታታይ አፈጻጸም ቋሚ የሙቀት እሴቶችን ይጠቀማል።",
+      "reasoningEffort": "የማመዛዘን ጥረት",
+      "minimal": "አነስተኛ",
+      "low": "ዝቅተኛ",
+      "medium": "መካከለኛ",
+      "high": "ከፍተኛ",
+      "verbosity": "ቃላዊነት"
+    },
+    "searchMode": {
+      "title": "የፍለጋ ሁነታ",
+      "subtitle": "አስፈላጊ ሲሆን የድር ፍለጋ ይጠቀማል",
+      "routingLabel": "የፍለጋ ማዞሪያ:",
+      "whatsDifference": "ልዩነቱ ምንድነው?",
+      "privacyFocused": "ግላዊነት ላይ ያተኮረ (ነባሪ)",
+      "privacyFocusedDescription": "ዘገምተኛ ግን የበለጠ ግላዊ",
+      "azureAgentMode": "የAzure AI ወኪል ሁነታ",
+      "azureAgentModeDescription": "ፈጣን ግን የውይይት ውሂብን በደመና ውስጥ ያከማቻል",
+      "privacyInfoTitle": "አስፈላጊ የግላዊነት መረጃ",
+      "privacyInfoDescription": "ሙሉ ውይይትዎ ወደ Azure AI Foundry ወኪል ይላካል።",
+      "learnMoreDataStorage": "ስለ ውሂብ ማከማቻ የበለጠ ይወቁ"
+    },
+    "customAgent": {
+      "label": "ብጁ ወኪል:",
+      "description": "ይህ ወኪል በMSF AI Assistant Foundry ምሳሌ ላይ ሁልጊዜ መሳሪያዎች እንዲነቃ ይሰራል።",
+      "webSearch": "የእውነተኛ ጊዜ የድር ፍለጋ",
+      "codeInterpreter": "ኮድ አስተርጓሚ እና ፋይል ትንተና"
+    },
+    "header": {
+      "backToModels": "ወደ ሞዴሎች ተመለስ",
+      "knowledgeCutoff": "የእውቀት ማቋረጫ: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "መሰረታዊ",
+      "omni": "ኦምኒ",
+      "reasoning": "ማመዛዘን",
+      "agent": "ወኪል"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "በBing በኩል የእውነተኛ ጊዜ የድር ፍለጋ ያለው በGPT-4.1 የተጎላበተ AI ሞዴል። ዘመናዊ መረጃ፣ እውነታ ማረጋገጥ እና ወቅታዊ ዝግጅቶችን ማወቅ ይሰጣል። የቅርብ ጊዜ መረጃ ለሚያስፈልግ ምርምር፣ ዜና ትንተና እና እውነታ ማረጋገጫ ምርጥ ነው።",
+      "knowledgeCutoff": "የእውነተኛ ጊዜ የድር ፍለጋ"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "የOpenAI በጣም ከፍተኛ ሞዴል፣ ውስብስብ ማመዛዘን፣ ኮድ ማመንጨት እና ቴክኒካል ችግር መፍታት ላይ የተካነ። ለትንታኔ ስራዎች፣ የፕሮግራሚንግ ፈተናዎች፣ ምርምር እና ዝርዝር ማብራሪያዎች ምርጥ። ሊስተካከል የሚችል የማመዛዘን ጥረት እና የምላሽ ቃላዊነት ይደግፋል።",
+      "knowledgeCutoff": "ነሐሴ 6, 2025 8:00 ማታ"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "ከፍተኛ ጥራትን ሲጠብቅ ለፍጥነት የተመቻቸ ፈጣን እና ኢኮኖሚያዊ የGPT-5 ልዩነት። ለዕለታዊ ስራዎች፣ ፈጣን ጥያቄዎች፣ መሳሪያ ማዞሪያ እና ፈጣን የምላሽ ጊዜ ለሚያስፈልጋቸው መተግበሪያዎች ፍጹም። የአፈጻጸም እና ውጤታማነት ምርጥ ሚዛን።",
+      "knowledgeCutoff": "ነሐሴ 6, 2025 8:00 ማታ"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "ለውይይት መስተጋብር እና ስሜታዊ ብልህነት የተመቻቸ ልዩ የGPT-5 ልዩነት። በርኅራኄ ያለው ግንኙነት፣ የአእምሮ ጤና ድጋፍ፣ ፈጠራ ጽሑፍ፣ ሀሳብ ማውጣት እና ተፈጥሯዊ ውይይት ላይ የተካነ። ለተራ ውይይቶች፣ ምክር ሁኔታዎች እና ስሜታዊ ግንዛቤ ለሚያስፈልጋቸው ስራዎች ምርጥ።",
+      "knowledgeCutoff": "ጥቅምት 1, 2025 8:00 ማታ"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "የOpenAI በጣም ከፍተኛ ማመዛዘን ሞዴል ከፍተኛ የችግር መፍታት ችሎታዎች ያለው። ውስብስብ ሒሳብ፣ ሳይንሳዊ ማመዛዘን፣ የኮድ ፈተናዎች እና ብዙ-ደረጃ ምክንያታዊ ስራዎች ላይ የተካነ። የተራዘመ 200K አውድ መስኮት። የማመዛዘን ጥረት ቁጥጥር ይደግፋል።",
+      "knowledgeCutoff": "ሚያዝያ 8, 2025 8:00 ማታ"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "ከMeta የመጣ ፈጣን እና ኢኮኖሚያዊ ሞዴል። እንደ መጻፍ፣ ማጠቃለያ እና መሰረታዊ ኮድ እገዛ ላሉ ዕለታዊ ስራዎች ምርጥ። ለተለመደ ስራ ጥሩ የፍጥነት እና ጥራት ሚዛን።",
+      "knowledgeCutoff": "ግንቦት 7, 2025 7:11 ጥዋት"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "ስራውን በደረጃ የሚያሳይ ማመዛዘን ስፔሻሊስት። ለሒሳብ ችግሮች፣ ምክንያታዊ እንቆቅልሾች እና ውስብስብ ጽንሰ-ሀሳቦችን ለመረዳት ምርጥ። ችግሮችን በእውነተኛ ጊዜ እንዴት እንደሚያስብባቸው ይመልከቱ።",
+      "knowledgeCutoff": "ጥር 20, 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "በኮድ እና ቴክኒካል ጽሑፍ በተለይ ጥሩ የሆነ ጠንካራ ሁሉን አቀፍ ሞዴል። ኮድን ለማረም፣ ሰነዶችን ለመጻፍ እና ቴክኒካል ጽንሰ-ሀሳቦችን ለማብራራት ምርጥ። ለልማት ስራ ፈጣን እና አስተማማኝ።",
+      "knowledgeCutoff": "ሚያዝያ 16, 2025 12:45 ጥዋት"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "ከxAI የመጣ ለድቃቃ ምላሾች የታወቀ ሁለገብ ሞዴል። ለክፍት ውይይቶች፣ ፈጠራ ፕሮጀክቶች እና ውስብስብ ችግሮችን ለመፍታት ምርጥ።",
+      "knowledgeCutoff": "ግንቦት 13, 2025 12:16 ጥዋት"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "ልዩ ማመዛዘን፣ ኮድ እና ፈጠራ ችሎታዎች ያለው የAnthropic በጣም ችሎታ ያለው ሞዴል። ለውስብስብ ትንተና፣ ምርምር እና ጥልቅ ግንዛቤ ለሚያስፈልጋቸው ስራዎች ምርጥ።",
+      "knowledgeCutoff": "ጥር 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "በኮድ፣ ትንተና እና ፈጠራ ስራዎች ላይ ምርጥ አፈጻጸም የሚሰጥ ሚዛናዊ Claude ሞዴል። ከፈጣን የምላሽ ጊዜዎች ጋር ለዕለታዊ አጠቃቀም ምርጥ።",
+      "knowledgeCutoff": "ጥር 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "ቀድሞ ትውልድ Claude Opus ሞዴል። ለውስብስብ የኮድ ስራዎች፣ ዝርዝር ትንተና እና ድቃቃ ግንዛቤ ምርጥ።",
+      "knowledgeCutoff": "ጥር 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "ለፈጣን ስራዎች የተመቻቸ ፈጣን እና ኢኮኖሚያዊ Claude ሞዴል። ለቀላል ጥያቄዎች፣ ማጠቃለያ እና ከፍተኛ መጠን መተግበሪያዎች ምርጥ።",
+      "knowledgeCutoff": "ጥር 2025"
+    }
+  },
+  "searchMode": {
+    "backToChat": "ወደ ውይይት ተመለስ",
+    "title": "የፍለጋ ሁነታ ማብራሪያ",
+    "subtitle": "የፍለጋ አማራጮችዎን እና ውሂብዎ የት እንደሚከማች መረዳት",
+    "quickComparison": "ፈጣን ንጽጽር",
+    "noSearch": "ምንም ፍለጋ የለም",
+    "privacyFocused": "ግላዊነት ላይ ያተኮረ",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "የምላሽ ፍጥነት",
+    "fastest": "በጣም ፈጣን",
+    "slowerMultiStep": "ዘገምተኛ (ብዙ-ደረጃ)",
+    "fasterDirect": "ፈጣን (ቀጥተኛ)",
+    "fullConversationStored": "ሙሉ ውይይት በደመና ውስጥ የተከማቸ",
+    "whatsStoredInAzure": "በAzure ውስጥ ምን ተከማቸ",
+    "nothingStateless": "ምንም (ሁኔታ-አልባ ብቻ)",
+    "searchQueriesOnly": "የፍለጋ ጥያቄዎች ብቻ",
+    "fullConversationHistory": "ሙሉ የውይይት ታሪክ",
+    "modelAvailability": "የሞዴል አቅርቦት",
+    "allModels": "ሁሉም ሞዴሎች",
+    "gpt41Only": "GPT-4.1 ብቻ",
+    "searchTurnedOff": "ፍለጋ ጠፍቷል",
+    "noSearchDescription": "ያለ የድር ፍለጋ ችሎታ በጣም ፈጣን ምላሾች። ሙሉ ውይይትዎ በአሳሽዎ ውስጥ ይቆያል - ምንም በደመና ውስጥ አይከማችም።",
+    "viewDetailsBelow": "ለተጨማሪ ዝርዝሮች ከዚህ በታች ያለውን ቴክኒካል የስራ ፍሰት ይመልከቱ።",
+    "viewTechnicalFlowDiagram": "ቴክኒካዊ ፍሰት ንድፍ ይመልከቱ",
+    "legend": "ዝርዝር:",
+    "legendNoSearch": "የእርስዎ አሳሽ (አካባቢያዊ ማከማቻ) | AI Assistant አገልጋይ | Azure OpenAI (ሁኔታ-አልባ)",
+    "privacyFocusedMode": "ግላዊነት ላይ ያተኮረ ሁነታ",
+    "default": "ነባሪ",
+    "privacyDescription": "አስፈላጊ ሲሆን የድር ፍለጋ ይጠቀማል ግን ተጨማሪ ደረጃዎች ስለሚያካትት ዘገምተኛ ነው። የፍለጋ ጥያቄዎች ብቻ በAzure ውስጥ ይከማቻሉ - ሙሉ ውይይትዎ በአሳሽዎ ውስጥ ይቆያል።",
+    "legendPrivacy": "የእርስዎ አሳሽ (አካባቢያዊ ማከማቻ) | AI Assistant አገልጋይ | Azure AI Foundry (የፍለጋ ጥያቄዎች ብቻ) | Azure OpenAI (ሁኔታ-አልባ)",
+    "azureAIFoundryMode": "Azure AI Foundry ሁነታ",
+    "foundryDescription": "ከተካተተ የድር ፍለጋ ችሎታ ጋር ፈጣን ምላሾች። ሙሉ ውይይትዎ በAzure AI Foundry ውሂብ ጎታ ውስጥ ይከማቻል፣ በአሳሽዎ ውስጥ ብቻ አይደለም።",
+    "legendFoundry": "የእርስዎ አሳሽ (አካባቢያዊ ማከማቻ) | AI Assistant አገልጋይ | Azure AI Foundry ወኪል (ሙሉ ውይይት ያከማቻል)",
+    "whyTheseOptions": "ለምን እነዚህ አማራጮች?",
+    "whyTheseOptionsText1": "እነዚህ Azure የBing Search API ካስቀረ በኋላ ያሉ የፍለጋ ትግበራዎች ናቸው፣ ይህም AI Assistant መጀመሪያ ያመኑበት ነበር።",
+    "whyTheseOptionsText2": "ቡድኑ በግላዊነት ላይ የበለጠ ያተኮሩ የፍለጋ አማራጮችን በንቃት እያጠና ነው። ሁለቱም ወቅታዊ አማራጮች የAzure AI Foundry የፍለጋ ችሎታዎችን ይጠቀማሉ ግን ምን ያህል የውይይት ውሂብ እንደሚጋራ ይለያያሉ።",
+    "azureDeprecatedBingApi": "Azure የBing Search API አስቀርቷል",
+    "footerNote": "ሁለቱም ሁነታዎች ውይይትዎን በአሳሽዎ ውስጥ በአካባቢያዊ ያከማቻሉ። በማንኛውም ጊዜ በሞዴል ቅንብሮች ውስጥ ሁነታዎችን መቀየር ይችላሉ።",
+    "note": "ማስታወሻ:",
+    "loadingDiagram": "ንድፍ በመጫን ላይ..."
   }
 }
