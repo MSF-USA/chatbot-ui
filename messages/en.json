@@ -702,7 +702,51 @@
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "View Technical Flow Diagram"
+    "viewTechnicalFlowDiagram": "View Technical Flow Diagram",
+    "backToChat": "Back to Chat",
+    "title": "Help Center",
+    "subtitle": "Find answers, learn about privacy, and get support",
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "description": "Find answers to common questions about using the AI Assistant",
+      "articles": "articles",
+      "searchPlaceholder": "Search FAQs...",
+      "noResults": "No FAQs match your search",
+      "noResultsHint": "Try a different search term"
+    },
+    "privacy": {
+      "title": "Privacy & Data",
+      "description": "Learn how your data is stored and protected",
+      "topics": "topics",
+      "searchPlaceholder": "Search privacy topics...",
+      "noResults": "No privacy topics match your search",
+      "noResultsHint": "Try a different search term",
+      "bannerTitle": "Your Privacy Matters",
+      "bannerDescription": "All conversations are stored locally on your device. Data processing happens within MSF systems using Azure infrastructure.",
+      "localStorageOnly": "Local storage only",
+      "msfControlled": "MSF-controlled",
+      "noPersonalData": "No personal data",
+      "noSensitiveOps": "No sensitive ops"
+    },
+    "contact": {
+      "title": "Contact & Resources",
+      "description": "Get in touch with our team and access helpful links",
+      "supportAvailable": "Support available",
+      "submitRequest": "Submit a Support Request",
+      "getHelp": "Get help from our team",
+      "requestDescription": "Need help or want to provide feedback? Click below to open our support form.",
+      "openSupportForm": "Open Support Form",
+      "otherWays": "Other Ways to Reach Us",
+      "emailSupport": "Email Support",
+      "emailDescription": "Send us an email for questions, feedback, or technical issues"
+    },
+    "resources": {
+      "title": "Additional Resources",
+      "portalTitle": "AI Accelerator Portal",
+      "portalDescription": "Documentation, project updates, and training materials",
+      "githubTitle": "Open Source Repository",
+      "githubDescription": "View code, report issues, and contribute on GitHub"
+    }
   },
   "notFound": {
     "lostDog": "Lost dog"
