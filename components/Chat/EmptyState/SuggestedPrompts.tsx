@@ -59,7 +59,7 @@ export function SuggestedPrompts({
             onClick={() => onSelectPrompt?.(prompt.prompt)}
           >
             {Icon && (
-              <div className="flex flex-row items-center justify-center gap-2 whitespace-nowrap">
+              <div className="flex flex-row rtl:flex-row-reverse items-center justify-center gap-2 whitespace-nowrap">
                 <div className="flex items-center justify-center w-6 h-6 rounded-full bg-gray-100 dark:bg-[#2F2F2F] flex-shrink-0 group-hover:bg-gray-200 dark:group-hover:bg-[#3F3F3F] transition-colors">
                   <Icon className="h-3.5 w-3.5 text-gray-700 dark:text-gray-300" />
                 </div>
