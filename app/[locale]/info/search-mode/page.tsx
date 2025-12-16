@@ -196,58 +196,58 @@ export default function SearchModeInfoPage() {
             <tbody>
               <tr>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700/50">
-                  Response Speed
+                  {t('searchMode.responseSpeed')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-green-600 dark:text-green-400 font-semibold">
-                  Fastest
+                  {t('searchMode.fastest')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-amber-600 dark:text-amber-400">
-                  Slower (multi-step)
+                  {t('searchMode.slowerMultiStep')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-green-600 dark:text-green-400">
-                  Faster (direct)
+                  {t('searchMode.fasterDirect')}
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700/50">
-                  Full Conversation Stored in Cloud
+                  {t('searchMode.fullConversationStored')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-green-600 dark:text-green-400 font-semibold">
-                  No
+                  {t('common.no')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-green-600 dark:text-green-400 font-semibold">
-                  No
+                  {t('common.no')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-red-600 dark:text-red-400 font-semibold">
-                  Yes
+                  {t('common.yes')}
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700/50">
-                  What's Stored in Azure
+                  {t('searchMode.whatsStoredInAzure')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                  Nothing (stateless only)
+                  {t('searchMode.nothingStateless')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                  Search queries only
+                  {t('searchMode.searchQueriesOnly')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                  Full conversation history
+                  {t('searchMode.fullConversationHistory')}
                 </td>
               </tr>
               <tr>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-sm font-medium text-gray-900 dark:text-white bg-gray-50 dark:bg-gray-700/50">
-                  Model Availability
+                  {t('searchMode.modelAvailability')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">
-                  All models
+                  {t('searchMode.allModels')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">
-                  All models
+                  {t('searchMode.allModels')}
                 </td>
                 <td className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm text-gray-700 dark:text-gray-300">
-                  GPT-4.1 only
+                  {t('searchMode.gpt41Only')}
                 </td>
               </tr>
             </tbody>
@@ -260,25 +260,24 @@ export default function SearchModeInfoPage() {
         <div className="flex items-center gap-3 mb-4">
           <IconWorld size={28} className="text-gray-600 dark:text-gray-400" />
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Search Turned Off
+            {t('searchMode.searchTurnedOff')}
           </h2>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            Fastest responses with no web search capability. Your full
-            conversation stays in your browser - nothing is stored in the cloud.
+            {t('searchMode.noSearchDescription')}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-            For more details, view the technical workflow below.
+            {t('searchMode.viewDetailsBelow')}
           </p>
         </div>
 
         {/* Collapsible Diagram */}
         <CollapsibleDiagram
-          title="View Technical Flow Diagram"
+          title={t('searchMode.viewTechnicalFlowDiagram')}
           diagram={noSearchModeDiagram}
-          legend="🟢 Your Browser (local storage) | 🔵 AI Assistant Server | 🟣 Azure OpenAI (stateless)"
+          legend={t('searchMode.legendNoSearch')}
         />
       </div>
 
@@ -290,29 +289,27 @@ export default function SearchModeInfoPage() {
             className="text-green-600 dark:text-green-400"
           />
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Privacy-Focused Mode
+            {t('searchMode.privacyFocusedMode')}
           </h2>
           <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 rounded">
-            Default
+            {t('searchMode.default')}
           </span>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            Uses web search when needed but is slower because more steps are
-            involved. Only search queries are stored in Azure - your full
-            conversation stays in your browser.
+            {t('searchMode.privacyDescription')}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-            For more details, view the technical workflow below.
+            {t('searchMode.viewDetailsBelow')}
           </p>
         </div>
 
         {/* Collapsible Diagram */}
         <CollapsibleDiagram
-          title="View Technical Flow Diagram"
+          title={t('searchMode.viewTechnicalFlowDiagram')}
           diagram={privacyModeDiagram}
-          legend="🟢 Your Browser (local storage) | 🔵 AI Assistant Server | 🟡 Azure AI Foundry (search queries only) | 🟣 Azure OpenAI (stateless)"
+          legend={t('searchMode.legendPrivacy')}
         />
       </div>
 
@@ -321,29 +318,27 @@ export default function SearchModeInfoPage() {
         <div className="flex items-center gap-3 mb-4">
           <AzureAIIcon className="w-7 h-7" />
           <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
-            Azure AI Foundry Mode
+            {t('searchMode.azureAIFoundryMode')}
           </h2>
           <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 rounded">
-            GPT-4.1 only
+            {t('searchMode.gpt41Only')}
           </span>
         </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 mb-4">
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            Faster responses with web search capability built-in. Your full
-            conversation is stored in Azure AI Foundry's database, not just in
-            your browser.
+            {t('searchMode.foundryDescription')}
           </p>
           <p className="text-sm text-gray-500 dark:text-gray-400 italic">
-            For more details, view the technical workflow below.
+            {t('searchMode.viewDetailsBelow')}
           </p>
         </div>
 
         {/* Collapsible Diagram */}
         <CollapsibleDiagram
-          title="View Technical Flow Diagram"
+          title={t('searchMode.viewTechnicalFlowDiagram')}
           diagram={foundryModeDiagram}
-          legend="🟢 Your Browser (local storage) | 🔵 AI Assistant Server | 🔴 Azure AI Foundry Agent (stores full conversation)"
+          legend={t('searchMode.legendFoundry')}
         />
       </div>
 
@@ -356,24 +351,21 @@ export default function SearchModeInfoPage() {
           />
           <div>
             <h3 className="text-base font-semibold text-gray-900 dark:text-white mb-2">
-              Why These Options?
+              {t('searchMode.whyTheseOptions')}
             </h3>
             <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-              These are the available search implementations after{' '}
+              {t('searchMode.whyTheseOptionsText1')}{' '}
               <a
                 href="https://learn.microsoft.com/en-us/lifecycle/announcements/bing-search-api-retirement"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 dark:text-blue-400 hover:underline"
               >
-                Azure deprecated their Bing Search API
+                {t('searchMode.azureDeprecatedBingApi')}
               </a>
-              , which the AI Assistant originally relied on.
             </p>
             <p className="text-sm text-gray-700 dark:text-gray-300">
-              The team is actively exploring more privacy-focused search
-              alternatives. Both current options use Azure AI Foundry's search
-              capabilities but differ in how much conversation data is shared.
+              {t('searchMode.whyTheseOptionsText2')}
             </p>
           </div>
         </div>
@@ -382,8 +374,7 @@ export default function SearchModeInfoPage() {
       {/* Footer */}
       <div className="text-center text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
         <p className="mb-2">
-          <strong>Note:</strong> Both modes store your conversation locally in
-          your browser. You can switch modes anytime in the model settings.
+          <strong>{t('searchMode.note')}</strong> {t('searchMode.footerNote')}
         </p>
       </div>
     </div>
