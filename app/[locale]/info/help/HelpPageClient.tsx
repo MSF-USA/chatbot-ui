@@ -178,7 +178,7 @@ export function HelpPageClient({
             className="inline-flex items-center gap-2 mb-4 px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
             <IconArrowLeft size={18} />
-            Back to Chat
+            {t('help.backToChat')}
           </Link>
 
           <div className="flex items-center justify-between gap-4 mb-2">
@@ -191,10 +191,10 @@ export function HelpPageClient({
               </div>
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
-                  Help Center
+                  {t('help.title')}
                 </h1>
                 <p className="text-gray-600 dark:text-gray-400 mt-1">
-                  Find answers, learn about privacy, and get support
+                  {t('help.subtitle')}
                 </p>
               </div>
             </div>
@@ -263,13 +263,15 @@ export function HelpPageClient({
               />
             </div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Frequently Asked Questions
+              {t('help.faq.title')}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Find answers to common questions about using the AI Assistant
+              {t('help.faq.description')}
             </p>
             <div className="flex items-center gap-2 text-xs font-medium text-blue-600 dark:text-blue-400">
-              <span>{faqs.length} articles</span>
+              <span>
+                {faqs.length} {t('help.faq.articles')}
+              </span>
             </div>
           </button>
 
@@ -307,13 +309,15 @@ export function HelpPageClient({
               />
             </div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Privacy & Data
+              {t('help.privacy.title')}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Learn how your data is stored and protected
+              {t('help.privacy.description')}
             </p>
             <div className="flex items-center gap-2 text-xs font-medium text-green-600 dark:text-green-400">
-              <span>{privacyItems.length} topics</span>
+              <span>
+                {privacyItems.length} {t('help.privacy.topics')}
+              </span>
             </div>
           </button>
 
@@ -351,13 +355,13 @@ export function HelpPageClient({
               />
             </div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              Contact & Resources
+              {t('help.contact.title')}
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-              Get in touch with our team and access helpful links
+              {t('help.contact.description')}
             </p>
             <div className="flex items-center gap-2 text-xs font-medium text-purple-600 dark:text-purple-400">
-              <span>Support available</span>
+              <span>{t('help.contact.supportAvailable')}</span>
             </div>
           </button>
         </div>
@@ -375,7 +379,11 @@ export function HelpPageClient({
                   />
                   <input
                     type="text"
-                    placeholder={`Search ${expandedSection === 'faq' ? 'FAQs' : 'privacy topics'}...`}
+                    placeholder={
+                      expandedSection === 'faq'
+                        ? t('help.faq.searchPlaceholder')
+                        : t('help.privacy.searchPlaceholder')
+                    }
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-12 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent"
@@ -394,10 +402,10 @@ export function HelpPageClient({
                       className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
                     />
                     <p className="text-gray-600 dark:text-gray-400 font-medium">
-                      No FAQs match your search
+                      {t('help.faq.noResults')}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                      Try a different search term
+                      {t('help.faq.noResultsHint')}
                     </p>
                   </div>
                 ) : (
@@ -445,12 +453,10 @@ export function HelpPageClient({
                     </div>
                     <div className="flex-1">
                       <h3 className="text-base font-bold text-gray-900 dark:text-white mb-2">
-                        Your Privacy Matters
+                        {t('help.privacy.bannerTitle')}
                       </h3>
                       <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">
-                        All conversations are stored locally on your device.
-                        Data processing happens within MSF systems using Azure
-                        infrastructure.
+                        {t('help.privacy.bannerDescription')}
                       </p>
                       <div className="grid grid-cols-2 gap-2 text-xs">
                         <div className="flex items-center gap-2">
@@ -458,7 +464,7 @@ export function HelpPageClient({
                             ✓
                           </span>
                           <span className="text-gray-700 dark:text-gray-300">
-                            Local storage only
+                            {t('help.privacy.localStorageOnly')}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -466,7 +472,7 @@ export function HelpPageClient({
                             ✓
                           </span>
                           <span className="text-gray-700 dark:text-gray-300">
-                            MSF-controlled
+                            {t('help.privacy.msfControlled')}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -474,7 +480,7 @@ export function HelpPageClient({
                             ✗
                           </span>
                           <span className="text-gray-700 dark:text-gray-300">
-                            No personal data
+                            {t('help.privacy.noPersonalData')}
                           </span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -482,7 +488,7 @@ export function HelpPageClient({
                             ✗
                           </span>
                           <span className="text-gray-700 dark:text-gray-300">
-                            No sensitive ops
+                            {t('help.privacy.noSensitiveOps')}
                           </span>
                         </div>
                       </div>
@@ -499,10 +505,10 @@ export function HelpPageClient({
                         className="mx-auto mb-4 text-gray-400 dark:text-gray-500"
                       />
                       <p className="text-gray-600 dark:text-gray-400 font-medium">
-                        No privacy topics match your search
+                        {t('help.privacy.noResults')}
                       </p>
                       <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
-                        Try a different search term
+                        {t('help.privacy.noResultsHint')}
                       </p>
                     </div>
                   ) : (
@@ -557,17 +563,16 @@ export function HelpPageClient({
                       </div>
                       <div>
                         <h3 className="text-lg font-bold text-gray-900 dark:text-white">
-                          Submit a Support Request
+                          {t('help.contact.submitRequest')}
                         </h3>
                         <p className="text-purple-700 dark:text-purple-300 text-sm">
-                          Get help from our team
+                          {t('help.contact.getHelp')}
                         </p>
                       </div>
                     </div>
 
                     <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                      Need help or want to provide feedback? Click below to open
-                      our support form.
+                      {t('help.contact.requestDescription')}
                     </p>
 
                     <a
@@ -577,7 +582,7 @@ export function HelpPageClient({
                       className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 dark:bg-purple-600 dark:hover:bg-purple-700 text-white font-semibold text-sm rounded-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                     >
                       <IconExternalLink size={18} />
-                      Open Support Form
+                      {t('help.contact.openSupportForm')}
                     </a>
                   </div>
                 </div>
@@ -586,7 +591,7 @@ export function HelpPageClient({
                 <div>
                   <div className="flex items-center gap-2 mb-5">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      Other Ways to Reach Us
+                      {t('help.contact.otherWays')}
                     </h3>
                   </div>
 
@@ -605,11 +610,10 @@ export function HelpPageClient({
                         </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="text-base font-bold text-gray-900 dark:text-white mb-1">
-                            Email Support
+                            {t('help.contact.emailSupport')}
                           </h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-1.5">
-                            Send us an email for questions, feedback, or
-                            technical issues
+                            {t('help.contact.emailDescription')}
                           </p>
                           <span className="inline-flex items-center gap-2 text-sm font-semibold text-purple-600 dark:text-purple-400">
                             {supportEmail}
@@ -625,7 +629,7 @@ export function HelpPageClient({
                 <div>
                   <div className="flex items-center gap-2 mb-5">
                     <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                      Additional Resources
+                      {t('help.resources.title')}
                     </h3>
                   </div>
 
@@ -641,7 +645,7 @@ export function HelpPageClient({
                         <div className="flex-shrink-0 p-3 bg-gradient-to-br from-teal-100 to-teal-200 dark:from-teal-900/40 dark:to-teal-800/40 rounded-lg group-hover:scale-110 transition-transform">
                           <Image
                             src="/sharepoint-logo.svg"
-                            alt="SharePoint"
+                            alt={t('help.sharePoint')}
                             width={32}
                             height={32}
                             className="w-8 h-8"
@@ -650,7 +654,7 @@ export function HelpPageClient({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-base font-bold text-gray-900 dark:text-white">
-                              AI Accelerator Portal
+                              {t('help.resources.portalTitle')}
                             </h4>
                             <IconExternalLink
                               size={16}
@@ -658,8 +662,7 @@ export function HelpPageClient({
                             />
                           </div>
                           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                            Documentation, project updates, and training
-                            materials
+                            {t('help.resources.portalDescription')}
                           </p>
                         </div>
                       </div>
@@ -682,7 +685,7 @@ export function HelpPageClient({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-2">
                             <h4 className="text-base font-bold text-gray-900 dark:text-white">
-                              Open Source Repository
+                              {t('help.resources.githubTitle')}
                             </h4>
                             <IconExternalLink
                               size={16}
@@ -690,7 +693,7 @@ export function HelpPageClient({
                             />
                           </div>
                           <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
-                            View code, report issues, and contribute on GitHub
+                            {t('help.resources.githubDescription')}
                           </p>
                         </div>
                       </div>
