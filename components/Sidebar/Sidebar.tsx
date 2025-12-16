@@ -250,7 +250,7 @@ export function Sidebar() {
 
     const newConversation: Conversation = {
       id: uuidv4(),
-      name: t('New Conversation'),
+      name: '',
       messages: [],
       model: modelWithDefaults,
       prompt: systemPrompt || '',
