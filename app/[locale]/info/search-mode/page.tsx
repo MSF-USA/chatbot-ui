@@ -1,10 +1,13 @@
+'use client';
+
 import {
-  IconAlertCircle,
   IconArrowLeft,
   IconInfoCircle,
   IconShield,
   IconWorld,
 } from '@tabler/icons-react';
+
+import { useTranslations } from 'next-intl';
 
 import { AzureAIIcon } from '@/components/Icons/providers';
 
@@ -13,6 +16,7 @@ import { CollapsibleDiagram } from './CollapsibleDiagram';
 import { Link } from '@/lib/navigation';
 
 export default function SearchModeInfoPage() {
+  const t = useTranslations();
   // Mermaid diagram for No Search Mode
   const noSearchModeDiagram = `
     flowchart TB
@@ -142,7 +146,7 @@ export default function SearchModeInfoPage() {
         className="inline-flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mb-6"
       >
         <IconArrowLeft size={16} />
-        Back to Chat
+        {t('searchMode.backToChat')}
       </Link>
 
       {/* Header */}
@@ -150,18 +154,18 @@ export default function SearchModeInfoPage() {
         <div className="flex items-center gap-3 mb-3">
           <IconWorld size={32} className="text-blue-600 dark:text-blue-400" />
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Search Mode Explained
+            {t('searchMode.title')}
           </h1>
         </div>
         <p className="text-lg text-gray-600 dark:text-gray-400">
-          Understanding your search options and where your data is stored
+          {t('searchMode.subtitle')}
         </p>
       </div>
 
       {/* Comparison Chart - Moved to Top */}
       <div className="mb-8">
         <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-          Quick Comparison
+          {t('searchMode.quickComparison')}
         </h2>
 
         <div className="overflow-x-auto">
@@ -170,7 +174,7 @@ export default function SearchModeInfoPage() {
               <tr className="bg-gray-100 dark:bg-gray-700">
                 <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:text-white"></th>
                 <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm font-semibold text-gray-900 dark:text-white">
-                  No Search
+                  {t('searchMode.noSearch')}
                 </th>
                 <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm font-semibold text-gray-900 dark:text-white">
                   <div className="flex items-center justify-center gap-2">
@@ -178,13 +182,13 @@ export default function SearchModeInfoPage() {
                       size={16}
                       className="text-green-600 dark:text-green-400"
                     />
-                    Privacy-Focused
+                    {t('searchMode.privacyFocused')}
                   </div>
                 </th>
                 <th className="border border-gray-300 dark:border-gray-600 px-4 py-3 text-center text-sm font-semibold text-gray-900 dark:text-white">
                   <div className="flex items-center justify-center gap-2">
                     <AzureAIIcon className="w-4 h-4" />
-                    Azure AI Foundry
+                    {t('searchMode.azureAIFoundry')}
                   </div>
                 </th>
               </tr>
