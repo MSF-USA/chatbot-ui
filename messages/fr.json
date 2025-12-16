@@ -489,7 +489,14 @@
     "addTagEllipsis": "Ajouter une étiquette...",
     "msfLogo": "Logo MSF",
     "importantInformation": "Information importante",
-    "contact": "Contact"
+    "contact": "Contact",
+    "noResults": "Aucun résultat trouvé",
+    "confirm": "Confirmer",
+    "cancel": "Annuler",
+    "discard": "Abandonner",
+    "keepEditing": "Continuer à modifier",
+    "yes": "Oui",
+    "no": "Non"
   },
   "chat": {
     "downloadAudio": "Télécharger l'audio",
@@ -524,7 +531,25 @@
     "fullSizePreview": "Aperçu en taille réelle",
     "enterSearchQueryPlaceholder": "Entrez votre requête de recherche ou question...",
     "errorFetchingUrl": "Une erreur s'est produite lors de la récupération du contenu de l'URL",
-    "errorInitiatingSearch": "Une erreur s'est produite lors du lancement de la recherche web"
+    "errorInitiatingSearch": "Une erreur s'est produite lors du lancement de la recherche web",
+    "regenerate": "Régénérer",
+    "modelSwitchPrompt": "{original} a échoué mais {fallback} a réussi. Voulez-vous changer de modèle?",
+    "keepOriginalModel": "Garder {model}",
+    "switchToModel": "Passer à {model}",
+    "alwaysSwitchToModel": "Toujours changer automatiquement",
+    "translateMessage": "Traduire le message",
+    "translating": "Traduction en cours...",
+    "translationError": "Échec de la traduction",
+    "showOriginal": "Afficher l'original",
+    "translatedTo": "Traduit en {language}",
+    "searchLanguages": "Rechercher des langues...",
+    "selectLanguage": "Sélectionner la langue",
+    "audioFromOriginal": "L'audio provient du texte original",
+    "audioFromTranslation": "L'audio provient de la traduction en {language}",
+    "thinking": "Réflexion en cours...",
+    "viewReasoningProcess": "Voir le processus de raisonnement",
+    "collapseThinking": "Réduire la réflexion",
+    "expandThinking": "Développer la réflexion"
   },
   "sidebar": {
     "collapseSidebar": "Réduire la barre latérale",
@@ -560,11 +585,86 @@
     "importantInfo": "Cet agent aura accès au contexte de la conversation et pourra utiliser les mêmes outils que les modèles standard. Assurez-vous que l'ID de l'agent est correct car il ne pourra pas être modifié ultérieurement."
   },
   "prompts": {
-    "buildReusablePrompts": "Créer des instructions réutilisables avec l'assistance de l'IA"
+    "buildReusablePrompts": "Créer des instructions réutilisables avec l'assistance de l'IA",
+    "noToneDefault": "Pas de ton (utiliser par défaut)",
+    "tagHelp": "Aide sur les étiquettes",
+    "tagHelpContent": "Utilisez des étiquettes pour catégoriser et trouver rapidement vos prompts. Exemples:",
+    "tagExamples": {
+      "email": "e-mail",
+      "marketing": "marketing",
+      "technical": "technique",
+      "customerSupport": "support-client"
+    },
+    "variableHelp": "Aide sur les variables",
+    "variableHelpIntro": "Utilisez des variables pour rendre vos prompts dynamiques:",
+    "requiredVariables": "Variables requises (sans valeur par défaut):",
+    "optionalVariables": "Variables optionnelles (avec valeur par défaut):",
+    "userMustProvide": "L'utilisateur doit fournir une valeur",
+    "userCanProvide": "L'utilisateur peut fournir une valeur, ou la valeur par défaut est utilisée",
+    "example": "Exemple:",
+    "variableExampleText": "Rédigez un e-mail {{tone:professionnel}} à {{recipient}} concernant {{topic}} en {{language:Français}}",
+    "detectedVariables": "Variables détectées",
+    "required": "Requis",
+    "aiAssistant": "Assistant IA",
+    "whatToImprove": "Que souhaitez-vous améliorer?",
+    "whatShouldPromptDo": "Que doit faire ce prompt?",
+    "improvePlaceholder": "par ex., Le rendre plus professionnel, ajouter des exemples, améliorer la clarté...",
+    "generatePlaceholder": "par ex., Générer un modèle d'e-mail professionnel avec des variables pour le destinataire et le sujet...",
+    "addContextOptional": "Ajouter du contexte (optionnel)",
+    "revising": "Révision en cours...",
+    "generating": "Génération en cours...",
+    "reviseWithAI": "Réviser avec l'IA",
+    "generatePrompt": "Générer un prompt",
+    "revisionComplete": "Révision terminée",
+    "generationComplete": "Génération terminée",
+    "revisedPrompt": "Prompt révisé:",
+    "generatedPrompt": "Prompt généré:",
+    "applyRevision": "Appliquer cette révision",
+    "useThisPrompt": "Utiliser ce prompt",
+    "improvementsMade": "Améliorations apportées:",
+    "tips": "Conseils:",
+    "howAICanHelp": "Comment l'IA peut aider",
+    "helpItems": {
+      "improveClarity": "Améliorer la clarté et la structure",
+      "suggestVariables": "Suggérer des variables utiles",
+      "addContext": "Ajouter du contexte et des exemples",
+      "optimize": "Optimiser pour de meilleurs résultats"
+    },
+    "savePrompt": "Enregistrer le prompt",
+    "add": "Ajouter"
   },
   "tones": {
     "createCustomVoiceProfile": "Créer un profil vocal personnalisé avec l'assistance de l'IA",
-    "examplePlaceholder": "par ex., Créer un ton de support client professionnel mais amical..."
+    "examplePlaceholder": "par ex., Créer un ton de support client professionnel mais amical...",
+    "tagHelp": "Aide sur les étiquettes",
+    "tagHelpContent": "Utilisez des étiquettes pour catégoriser et trouver rapidement vos tons. Exemples:",
+    "tagExamples": {
+      "professional": "professionnel",
+      "casual": "décontracté",
+      "technical": "technique",
+      "marketing": "marketing"
+    },
+    "add": "Ajouter",
+    "aiToneAnalyzer": "Analyseur de ton IA",
+    "describeToneToCreate": "Décrivez le ton que vous souhaitez créer",
+    "uploadContentSamples": "Télécharger des échantillons de contenu",
+    "analyzing": "Analyse en cours...",
+    "analyzeToneWithAI": "Analyser le ton avec l'IA",
+    "analysisComplete": "Analyse terminée",
+    "generatedVoiceGuidelines": "Directives vocales générées:",
+    "examplePhrases": "Phrases d'exemple:",
+    "suggestedTags": "Étiquettes suggérées:",
+    "applyThisAnalysis": "Appliquer cette analyse",
+    "detectedCharacteristics": "Caractéristiques détectées:",
+    "howAICanHelp": "Comment l'IA peut aider",
+    "helpItems": {
+      "transcribe": "Transcrire le contenu audio/vidéo",
+      "analyzeContent": "Analyser vos échantillons de contenu",
+      "extractPatterns": "Extraire les modèles de ton et de style",
+      "generateGuidelines": "Générer des directives vocales",
+      "suggestTags": "Suggérer des étiquettes pertinentes"
+    },
+    "saveTone": "Enregistrer le ton"
   },
   "auth": {
     "microsoft": "Microsoft",
@@ -602,7 +702,51 @@
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Voir le diagramme de flux technique"
+    "viewTechnicalFlowDiagram": "Voir le diagramme de flux technique",
+    "backToChat": "Retour au chat",
+    "title": "Centre d'aide",
+    "subtitle": "Trouvez des réponses, découvrez la confidentialité et obtenez de l'aide",
+    "faq": {
+      "title": "Foire aux questions",
+      "description": "Trouvez des réponses aux questions courantes sur l'utilisation de l'Assistant IA",
+      "articles": "articles",
+      "searchPlaceholder": "Rechercher dans la FAQ...",
+      "noResults": "Aucune FAQ correspondante",
+      "noResultsHint": "Essayez un autre terme de recherche"
+    },
+    "privacy": {
+      "title": "Confidentialité et données",
+      "description": "Découvrez comment vos données sont stockées et protégées",
+      "topics": "sujets",
+      "searchPlaceholder": "Rechercher des sujets de confidentialité...",
+      "noResults": "Aucun sujet de confidentialité correspondant",
+      "noResultsHint": "Essayez un autre terme de recherche",
+      "bannerTitle": "Votre confidentialité compte",
+      "bannerDescription": "Toutes les conversations sont stockées localement sur votre appareil. Le traitement des données se fait au sein des systèmes MSF utilisant l'infrastructure Azure.",
+      "localStorageOnly": "Stockage local uniquement",
+      "msfControlled": "Contrôlé par MSF",
+      "noPersonalData": "Pas de données personnelles",
+      "noSensitiveOps": "Pas d'opérations sensibles"
+    },
+    "contact": {
+      "title": "Contact et ressources",
+      "description": "Contactez notre équipe et accédez à des liens utiles",
+      "supportAvailable": "Support disponible",
+      "submitRequest": "Soumettre une demande de support",
+      "getHelp": "Obtenez de l'aide de notre équipe",
+      "requestDescription": "Besoin d'aide ou souhaitez donner un retour? Cliquez ci-dessous pour ouvrir notre formulaire de support.",
+      "openSupportForm": "Ouvrir le formulaire de support",
+      "otherWays": "Autres moyens de nous contacter",
+      "emailSupport": "Support par e-mail",
+      "emailDescription": "Envoyez-nous un e-mail pour des questions, des retours ou des problèmes techniques"
+    },
+    "resources": {
+      "title": "Ressources supplémentaires",
+      "portalTitle": "Portail de l'accélérateur IA",
+      "portalDescription": "Documentation, mises à jour du projet et matériel de formation",
+      "githubTitle": "Dépôt open source",
+      "githubDescription": "Voir le code, signaler des problèmes et contribuer sur GitHub"
+    }
   },
   "settings": {
     "Settings": "Paramètres",
@@ -670,7 +814,28 @@
     "FAQs, privacy policy, and guides": "FAQ, politique de confidentialité et guides",
     "Contact Support": "Contacter le support",
     "Popular Questions": "Questions populaires",
-    "View all FAQs": "Voir toutes les FAQ"
+    "View all FAQs": "Voir toutes les FAQ",
+    "Delete legacy data after migration": "Supprimer les données héritées après la migration",
+    "frees up storage space": "libère de l'espace de stockage",
+    "Legacy data deleted": "Données héritées supprimées",
+    "freed": "libéré",
+    "Conversations": "Conversations",
+    "Settings": "Paramètres",
+    "Legacy": "Hérité",
+    "Other": "Autre",
+    "Loading": "Chargement",
+    "Legacy Data Detected": "Données héritées détectées",
+    "legacyDataDescription": "Vous avez {size} de données d'une version précédente. Elles peuvent être migrées, exportées ou supprimées pour libérer de l'espace.",
+    "legacyDeleteSuccess": "Suppression réussie des données héritées et libération de {size}.",
+    "legacyDeleteError": "Échec de la suppression des données héritées. Veuillez réessayer.",
+    "Explore solutions": "Explorer les solutions",
+    "Migrate to Current Format": "Migrer vers le format actuel",
+    "Export Legacy Data": "Exporter les données héritées",
+    "Delete Legacy Data": "Supprimer les données héritées",
+    "deleteLegacyConfirm": "Êtes-vous sûr de vouloir supprimer toutes les données héritées ? Cette action est irréversible.",
+    "Deleting": "Suppression en cours",
+    "Confirm Delete": "Confirmer la suppression",
+    "Cancel": "Annuler"
   },
   "notFound": {
     "lostDog": "Chien perdu"
