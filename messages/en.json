@@ -746,5 +746,14 @@
         "prompt": "I need help organizing time and creating schedules. Show me different ways you can structure agendas, calendars, or time-based plans with examples."
       }
     }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "Models",
+      "agents": "Agents"
+    },
+    "sections": {
+      "baseModels": "Base Models"
+    }
   }
 }
