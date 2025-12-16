@@ -585,11 +585,86 @@
     "importantInfo": "Este agente tendrá acceso al contexto de la conversación y puede usar las mismas herramientas que los modelos estándar. Asegúrate de que el ID del agente sea correcto, ya que no se puede cambiar más tarde."
   },
   "prompts": {
-    "buildReusablePrompts": "Construir instrucciones reutilizables con asistencia de IA"
+    "buildReusablePrompts": "Construir instrucciones reutilizables con asistencia de IA",
+    "noToneDefault": "Sin tono (usar predeterminado)",
+    "tagHelp": "Ayuda de etiquetas",
+    "tagHelpContent": "Usa etiquetas para categorizar y encontrar rápidamente tus prompts. Ejemplos:",
+    "tagExamples": {
+      "email": "correo",
+      "marketing": "marketing",
+      "technical": "técnico",
+      "customerSupport": "atención-al-cliente"
+    },
+    "variableHelp": "Ayuda de variables",
+    "variableHelpIntro": "Usa variables para hacer tus prompts dinámicos:",
+    "requiredVariables": "Variables requeridas (sin valor predeterminado):",
+    "optionalVariables": "Variables opcionales (con valor predeterminado):",
+    "userMustProvide": "El usuario debe proporcionar un valor",
+    "userCanProvide": "El usuario puede proporcionar un valor, o se usa el predeterminado",
+    "example": "Ejemplo:",
+    "variableExampleText": "Escribe un correo {{tone:profesional}} a {{recipient}} sobre {{topic}} en {{language:Español}}",
+    "detectedVariables": "Variables detectadas",
+    "required": "Requerido",
+    "aiAssistant": "Asistente de IA",
+    "whatToImprove": "¿Qué te gustaría mejorar?",
+    "whatShouldPromptDo": "¿Qué debe hacer este prompt?",
+    "improvePlaceholder": "ej., Hacerlo más profesional, agregar ejemplos, mejorar la claridad...",
+    "generatePlaceholder": "ej., Generar una plantilla de correo profesional con variables para destinatario y tema...",
+    "addContextOptional": "Agregar contexto (opcional)",
+    "revising": "Revisando...",
+    "generating": "Generando...",
+    "reviseWithAI": "Revisar con IA",
+    "generatePrompt": "Generar prompt",
+    "revisionComplete": "Revisión completada",
+    "generationComplete": "Generación completada",
+    "revisedPrompt": "Prompt revisado:",
+    "generatedPrompt": "Prompt generado:",
+    "applyRevision": "Aplicar esta revisión",
+    "useThisPrompt": "Usar este prompt",
+    "improvementsMade": "Mejoras realizadas:",
+    "tips": "Consejos:",
+    "howAICanHelp": "Cómo puede ayudar la IA",
+    "helpItems": {
+      "improveClarity": "Mejorar claridad y estructura",
+      "suggestVariables": "Sugerir variables útiles",
+      "addContext": "Agregar contexto y ejemplos",
+      "optimize": "Optimizar para mejores resultados"
+    },
+    "savePrompt": "Guardar prompt",
+    "add": "Agregar"
   },
   "tones": {
     "createCustomVoiceProfile": "Crear un perfil de voz personalizado con asistencia de IA",
-    "examplePlaceholder": "ej., Crear un tono de atención al cliente profesional pero amigable..."
+    "examplePlaceholder": "ej., Crear un tono de atención al cliente profesional pero amigable...",
+    "tagHelp": "Ayuda de etiquetas",
+    "tagHelpContent": "Usa etiquetas para categorizar y encontrar rápidamente tus tonos. Ejemplos:",
+    "tagExamples": {
+      "professional": "profesional",
+      "casual": "informal",
+      "technical": "técnico",
+      "marketing": "marketing"
+    },
+    "add": "Agregar",
+    "aiToneAnalyzer": "Analizador de tono con IA",
+    "describeToneToCreate": "Describe el tono que quieres crear",
+    "uploadContentSamples": "Subir muestras de contenido",
+    "analyzing": "Analizando...",
+    "analyzeToneWithAI": "Analizar tono con IA",
+    "analysisComplete": "Análisis completado",
+    "generatedVoiceGuidelines": "Directrices de voz generadas:",
+    "examplePhrases": "Frases de ejemplo:",
+    "suggestedTags": "Etiquetas sugeridas:",
+    "applyThisAnalysis": "Aplicar este análisis",
+    "detectedCharacteristics": "Características detectadas:",
+    "howAICanHelp": "Cómo puede ayudar la IA",
+    "helpItems": {
+      "transcribe": "Transcribir contenido de audio/video",
+      "analyzeContent": "Analizar tus muestras de contenido",
+      "extractPatterns": "Extraer patrones de tono y estilo",
+      "generateGuidelines": "Generar directrices de voz",
+      "suggestTags": "Sugerir etiquetas relevantes"
+    },
+    "saveTone": "Guardar tono"
   },
   "auth": {
     "microsoft": "Microsoft",
