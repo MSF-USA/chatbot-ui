@@ -786,9 +786,245 @@
     "FAQs, privacy policy, and guides": "FAQ、プライバシーポリシー、ガイド",
     "Contact Support": "サポートに連絡",
     "Popular Questions": "人気の質問",
-    "View all FAQs": "すべてのFAQを表示"
+    "View all FAQs": "すべてのFAQを表示",
+    "Delete legacy data after migration": "移行後にレガシーデータを削除",
+    "frees up storage space": "ストレージ容量を解放します",
+    "Legacy data deleted": "レガシーデータが削除されました",
+    "freed": "解放",
+    "Conversations": "会話",
+    "Legacy": "レガシー",
+    "Other": "その他",
+    "Loading": "読み込み中",
+    "Legacy Data Detected": "レガシーデータが検出されました",
+    "legacyDataDescription": "以前のバージョンから{size}のデータがあります。これは移行、エクスポート、または空き容量を確保するために削除できます。",
+    "legacyDeleteSuccess": "レガシーデータが正常に削除され、{size}が解放されました。",
+    "legacyDeleteError": "レガシーデータの削除に失敗しました。もう一度お試しください。",
+    "Explore solutions": "解決策を探す",
+    "Migrate to Current Format": "現在の形式に移行",
+    "Export Legacy Data": "レガシーデータをエクスポート",
+    "Delete Legacy Data": "レガシーデータを削除",
+    "deleteLegacyConfirm": "すべてのレガシーデータを削除してもよろしいですか？このアクションは元に戻せません。",
+    "Deleting": "削除中",
+    "Confirm Delete": "削除を確認",
+    "Cancel": "キャンセル"
   },
   "notFound": {
     "lostDog": "迷子の犬"
+  },
+  "emptyState": {
+    "greeting": "何かお手伝いできますか？",
+    "greetingWithName": "{name}さん、何かお手伝いできますか？",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "ダイアグラムを作成",
+        "prompt": "ダイアグラムやフローチャートをどのように作成できるか見せてください。どのようなプロセス、ワークフロー、システムを視覚化するのを手伝えますか？いくつかの例を示してください。"
+      },
+      "draftContent": {
+        "title": "プロフェッショナルなコンテンツを作成",
+        "prompt": "プロフェッショナルな文書（メール、レポート、要約）を書くのを手伝ってほしいです。さまざまなビジネス文書でどのように手伝えるか、例を見せてもらえますか？"
+      },
+      "analyzeInformation": {
+        "title": "情報を分析",
+        "prompt": "データや情報を分析するのにどのように役立てますか？数字を分解したり、パターンを見つけたり、文書やデータセットからインサイトを抽出するさまざまな方法を見せてください。"
+      },
+      "planOrganize": {
+        "title": "計画と整理",
+        "prompt": "プロジェクトの計画や仕事の整理を手伝ってもらえますか？さまざまな構造でタイムライン、議題、プロジェクト計画を作成する方法の例を教えてください。"
+      },
+      "brainstormIdeas": {
+        "title": "アイデアのブレインストーミング",
+        "prompt": "問題の解決策をブレインストーミングしたいです。クリエイティブな思考とアイデア生成にどのようにアプローチするか見せてください。どんな質問をしますか？可能性をどのように探りますか？"
+      },
+      "buildPresentations": {
+        "title": "プレゼンテーションを作成",
+        "prompt": "プレゼンテーションを作成するのにどのように役立てますか？さまざまなプレゼンテーション構造、ビジュアル提案、さまざまな聴衆向けの情報整理方法の例を見せてください。"
+      },
+      "workWithCode": {
+        "title": "コードを扱う",
+        "prompt": "プログラミングやスクリプトを手伝ってもらえますか？新しいコードを書く、問題をデバッグする、何かがどのように機能するかをステップバイステップで説明するなど、例を見せてください。"
+      },
+      "decisionSupport": {
+        "title": "意思決定サポート",
+        "prompt": "決定を下す必要がありますが、選択肢をどう評価すればいいかわかりません。選択について考えるために使用するさまざまなフレームワークやアプローチを見せてもらえますか？"
+      },
+      "summarizeSynthesize": {
+        "title": "要約と統合",
+        "prompt": "長い文書を要約したり、複数のソースからの情報を統合するのにどのように役立てますか？さまざまな要約形式と詳細レベルの例を見せてください。"
+      },
+      "explainTopics": {
+        "title": "複雑なトピックを説明",
+        "prompt": "複雑な概念を簡単な言葉で説明できますか？複雑なアイデアをどのように分解し、類推を使用し、さまざまな知識レベルに合わせて説明を調整するか見せてください。"
+      },
+      "createSchedules": {
+        "title": "スケジュールを作成",
+        "prompt": "時間を整理してスケジュールを作成するのを手伝ってほしいです。議題、カレンダー、時間ベースの計画を構造化するさまざまな方法を例と共に見せてください。"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "モデル",
+      "agents": "エージェント"
+    },
+    "sections": {
+      "baseModels": "ベースモデル"
+    },
+    "agents": {
+      "advancedFeatureBadge": "上級機能",
+      "description": "専門的な機能を持つカスタムAIエージェントを作成・管理します。これらのエージェントはMSF AI Assistant Foundryインスタンスで実行されます。",
+      "advancedFeatureTitle": "上級機能 - AIアシスタント技術チームとの調整が必要",
+      "advancedFeatureWarning": "カスタムエージェントはMSF AI Assistant Foundryインスタンスでのみ機能します。エージェントIDは、使用前にこの特定のインスタンスでAIアシスタント技術チームによって作成され、あなたと調整される必要があります。",
+      "createNewAgent": "新しいカスタムエージェントを作成",
+      "noAgentsTitle": "カスタムエージェントはまだありません",
+      "noAgentsDescription": "専門ツールと動作を備えてAI機能を拡張するための最初のカスタムエージェントを作成してください。"
+    },
+    "advancedOptions": {
+      "title": "詳細オプション",
+      "temperature": "温度",
+      "fixedTemperatureNote": "注意：このモデルは一貫したパフォーマンスのために固定温度値を使用します。",
+      "reasoningEffort": "推論努力",
+      "minimal": "最小",
+      "low": "低",
+      "medium": "中",
+      "high": "高",
+      "verbosity": "詳細度"
+    },
+    "searchMode": {
+      "title": "検索モード",
+      "subtitle": "必要に応じてウェブ検索を使用します",
+      "routingLabel": "検索ルーティング：",
+      "whatsDifference": "違いは何ですか？",
+      "privacyFocused": "プライバシー重視（デフォルト）",
+      "privacyFocusedDescription": "遅いですがよりプライベート",
+      "azureAgentMode": "Azure AIエージェントモード",
+      "azureAgentModeDescription": "高速ですがクラウドに会話データを保存",
+      "privacyInfoTitle": "重要なプライバシー情報",
+      "privacyInfoDescription": "会話全体がAzure AI Foundryエージェントに送信されます。",
+      "learnMoreDataStorage": "データストレージについて詳しく学ぶ"
+    },
+    "customAgent": {
+      "label": "カスタムエージェント：",
+      "description": "このエージェントは常に有効なツールでMSF AI Assistant Foundryインスタンスで実行されます。",
+      "webSearch": "リアルタイムウェブ検索",
+      "codeInterpreter": "コードインタープリターとファイル分析"
+    },
+    "header": {
+      "backToModels": "モデルに戻る",
+      "knowledgeCutoff": "知識カットオフ：{cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "基盤",
+      "omni": "オムニ",
+      "reasoning": "推論",
+      "agent": "エージェント"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Bingによるリアルタイムウェブ検索を備えたGPT-4.1搭載AIモデル。最新情報、事実確認、現在のイベント認識を提供します。最新情報、ニュース分析、事実確認が必要な調査に最適です。",
+      "knowledgeCutoff": "リアルタイムウェブ検索"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAIの最も先進的なモデルで、複雑な推論、コード生成、技術的な問題解決に優れています。分析タスク、プログラミングの課題、研究、詳細な説明に最適です。調整可能な推論努力と応答の詳細度をサポートします。",
+      "knowledgeCutoff": "2025年8月6日 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5のより高速でコスト効率の良いバージョンで、高品質を維持しながら速度に最適化されています。日常タスク、素早い質問、ツールルーティング、高速な応答時間を必要とするアプリケーションに最適です。パフォーマンスと効率の優れたバランス。",
+      "knowledgeCutoff": "2025年8月6日 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "会話のやり取りと感情知性に最適化されたGPT-5の専門バージョン。共感的なコミュニケーション、メンタルヘルスサポート、クリエイティブライティング、ブレインストーミング、自然な対話に優れています。カジュアルな会話、カウンセリングシナリオ、感情認識が必要なタスクに最適です。",
+      "knowledgeCutoff": "2025年10月1日 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "革新的な問題解決能力を持つOpenAIの最も先進的な推論モデル。複雑な数学、科学的推論、プログラミングの課題、多段階の論理タスクに優れています。拡張200Kコンテキストウィンドウ。推論努力制御をサポートします。",
+      "knowledgeCutoff": "2025年4月8日 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Metaからの高速でコスト効率の良いモデル。執筆、要約、基本的なコード支援などの日常タスクに最適です。日常的な作業に対する速度と品質の良いバランス。",
+      "knowledgeCutoff": "2025年5月7日 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "ステップバイステップで作業を示す推論スペシャリスト。数学の問題、論理パズル、複雑な概念の理解に優れています。リアルタイムで問題についてどのように考えているかを確認できます。",
+      "knowledgeCutoff": "2025年1月20日"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "特にプログラミングと技術文書作成に優れた汎用モデル。コードのデバッグ、ドキュメント作成、技術概念の説明に最適です。開発作業に高速で信頼性があります。",
+      "knowledgeCutoff": "2025年4月16日 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "ニュアンスのある応答で知られるxAIの汎用モデル。オープンエンドの議論、クリエイティブプロジェクト、複雑な問題への取り組みに最適です。",
+      "knowledgeCutoff": "2025年5月13日 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "優れた推論、プログラミング、クリエイティブ能力を持つAnthropicの最も高性能なモデル。複雑な分析、研究、深い理解が必要なタスクに最適です。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "プログラミング、分析、クリエイティブタスクで優れたパフォーマンスを提供するバランスの取れたClaudeモデル。高速な応答時間で日常使用に最適です。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "前世代のClaude Opusモデル。複雑なプログラミングタスク、詳細な分析、ニュアンスのある理解に優れています。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "迅速なタスクに最適化された高速でコスト効率の良いClaudeモデル。シンプルなクエリ、要約、大量のアプリケーションに最適です。",
+      "knowledgeCutoff": "2025年1月"
+    }
+  },
+  "searchMode": {
+    "backToChat": "チャットに戻る",
+    "title": "検索モードの説明",
+    "subtitle": "検索オプションとデータの保存場所を理解する",
+    "quickComparison": "クイック比較",
+    "noSearch": "検索なし",
+    "privacyFocused": "プライバシー重視",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "応答速度",
+    "fastest": "最速",
+    "slowerMultiStep": "遅い（マルチステップ）",
+    "fasterDirect": "速い（ダイレクト）",
+    "fullConversationStored": "完全な会話がクラウドに保存",
+    "whatsStoredInAzure": "Azureに保存されるもの",
+    "nothingStateless": "何もなし（ステートレスのみ）",
+    "searchQueriesOnly": "検索クエリのみ",
+    "fullConversationHistory": "完全な会話履歴",
+    "modelAvailability": "モデルの可用性",
+    "allModels": "すべてのモデル",
+    "gpt41Only": "GPT-4.1のみ",
+    "searchTurnedOff": "検索オフ",
+    "noSearchDescription": "ウェブ検索機能なしの最速応答。会話全体がブラウザに残り、クラウドには何も保存されません。",
+    "viewDetailsBelow": "詳細については、以下の技術ワークフローをご覧ください。",
+    "viewTechnicalFlowDiagram": "技術フロー図を表示",
+    "legend": "凡例：",
+    "legendNoSearch": "あなたのブラウザ（ローカルストレージ）| AIアシスタントサーバー | Azure OpenAI（ステートレス）",
+    "privacyFocusedMode": "プライバシー重視モード",
+    "default": "デフォルト",
+    "privacyDescription": "必要に応じてウェブ検索を使用しますが、ステップが多いため遅くなります。検索クエリのみがAzureに保存され、会話全体はブラウザに残ります。",
+    "legendPrivacy": "あなたのブラウザ（ローカルストレージ）| AIアシスタントサーバー | Azure AI Foundry（クエリのみ）| Azure OpenAI（ステートレス）",
+    "azureAIFoundryMode": "Azure AI Foundryモード",
+    "foundryDescription": "組み込みのウェブ検索機能を備えた高速応答。会話全体がAzure AI Foundryのデータベースに保存され、ブラウザだけではありません。",
+    "legendFoundry": "あなたのブラウザ（ローカルストレージ）| AIアシスタントサーバー | Azure AI Foundryエージェント（完全な会話を保存）",
+    "whyTheseOptions": "なぜこれらのオプション？",
+    "whyTheseOptionsText1": "これらは、AIアシスタントが元々依存していたBing Search APIをAzureが廃止した後に利用可能な検索実装です。",
+    "whyTheseOptionsText2": "チームは、よりプライバシーに焦点を当てた検索代替手段を積極的に調査しています。両方の現在のオプションはAzure AI Foundryの検索機能を使用していますが、共有される会話データの量が異なります。",
+    "azureDeprecatedBingApi": "AzureがBing Search APIを廃止",
+    "footerNote": "両方のモードは、会話をブラウザにローカルに保存します。モデル設定でいつでもモードを切り替えることができます。",
+    "note": "注意：",
+    "loadingDiagram": "ダイアグラムを読み込み中..."
   }
 }
