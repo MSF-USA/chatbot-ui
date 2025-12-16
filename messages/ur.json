@@ -612,7 +612,53 @@
     "quickActions": "فوری اقدامات"
   },
   "prompts": {
-    "buildReusablePrompts": "AI کی مدد سے دوبارہ قابل استعمال پرامپٹس بنائیں"
+    "buildReusablePrompts": "AI کی مدد سے دوبارہ قابل استعمال پرامپٹس بنائیں",
+    "add": "شامل کریں",
+    "addContextOptional": "سیاق و سباق شامل کریں (اختیاری)",
+    "aiAssistant": "AI اسسٹنٹ",
+    "applyRevision": "نظرثانی لاگو کریں",
+    "detectedVariables": "پتہ چلنے والے متغیرات",
+    "example": "مثال",
+    "generatePlaceholder": "اپنا پرامپٹ یہاں لکھیں...",
+    "generatePrompt": "پرامپٹ بنائیں",
+    "generatedPrompt": "بنایا گیا پرامپٹ",
+    "generating": "بنا رہا ہے...",
+    "generationComplete": "بنانا مکمل",
+    "helpItems": {
+      "addContext": "سیاق و سباق شامل کریں",
+      "improveClarity": "وضاحت بہتر کریں",
+      "optimize": "بہتر بنائیں",
+      "suggestVariables": "متغیرات تجویز کریں"
+    },
+    "howAICanHelp": "AI کیسے مدد کر سکتا ہے",
+    "improvePlaceholder": "کیا بہتر کرنا ہے...",
+    "improvementsMade": "کی گئی بہتری",
+    "noToneDefault": "کوئی ٹون (پہلے سے طے شدہ)",
+    "optionalVariables": "اختیاری متغیرات",
+    "required": "ضروری",
+    "requiredVariables": "ضروری متغیرات",
+    "reviseWithAI": "AI کے ساتھ نظرثانی کریں",
+    "revisedPrompt": "نظرثانی شدہ پرامپٹ",
+    "revising": "نظرثانی ہو رہی ہے...",
+    "revisionComplete": "نظرثانی مکمل",
+    "savePrompt": "پرامپٹ محفوظ کریں",
+    "tagExamples": {
+      "customerSupport": "کسٹمر سپورٹ",
+      "email": "ای میل",
+      "marketing": "مارکیٹنگ",
+      "technical": "تکنیکی"
+    },
+    "tagHelp": "ٹیگ مدد",
+    "tagHelpContent": "ٹیگز آپ کے پرامپٹس کو منظم کرنے میں مدد کرتے ہیں",
+    "tips": "تجاویز",
+    "useThisPrompt": "یہ پرامپٹ استعمال کریں",
+    "userCanProvide": "صارف فراہم کر سکتا ہے",
+    "userMustProvide": "صارف کو فراہم کرنا ضروری ہے",
+    "variableExampleText": "مثال متن",
+    "variableHelp": "متغیر کی مدد",
+    "variableHelpIntro": "متغیرات دوبارہ استعمال کے قابل پرامپٹس بناتے ہیں",
+    "whatShouldPromptDo": "پرامپٹ کیا کرے؟",
+    "whatToImprove": "کیا بہتر کریں؟"
   },
   "tones": {
     "createCustomVoiceProfile": "AI کی مدد سے اپنی مرضی کی آواز کی پروفائل بنائیں",
@@ -732,7 +778,27 @@
     "FAQs, privacy policy, and guides": "اکثر پوچھے جانے والے سوالات، رازداری کی پالیسی، اور رہنما",
     "Contact Support": "معاونت سے رابطہ کریں",
     "Popular Questions": "مقبول سوالات",
-    "View all FAQs": "تمام اکثر پوچھے جانے والے سوالات دیکھیں"
+    "View all FAQs": "تمام اکثر پوچھے جانے والے سوالات دیکھیں",
+    "Cancel": "منسوخ کریں",
+    "Confirm Delete": "حذف کی تصدیق کریں",
+    "Conversations": "گفتگو",
+    "Delete Legacy Data": "پرانا ڈیٹا حذف کریں",
+    "Delete legacy data after migration": "منتقلی کے بعد پرانا ڈیٹا حذف کریں",
+    "Deleting": "حذف ہو رہا ہے",
+    "Explore solutions": "حل تلاش کریں",
+    "Export Legacy Data": "پرانا ڈیٹا برآمد کریں",
+    "Legacy": "پرانا",
+    "Legacy Data Detected": "پرانا ڈیٹا پایا گیا",
+    "Legacy data deleted": "پرانا ڈیٹا حذف ہو گیا",
+    "Loading": "لوڈ ہو رہا ہے",
+    "Migrate to Current Format": "موجودہ فارمیٹ میں منتقل کریں",
+    "Other": "دیگر",
+    "deleteLegacyConfirm": "کیا آپ واقعی تمام پرانا ڈیٹا حذف کرنا چاہتے ہیں؟ یہ عمل واپس نہیں کیا جا سکتا۔",
+    "freed": "خالی کیا گیا",
+    "frees up storage space": "اسٹوریج کی جگہ خالی کرتا ہے",
+    "legacyDataDescription": "آپ کے پاس {size} پرانا ڈیٹا ہے۔",
+    "legacyDeleteError": "پرانا ڈیٹا حذف کرنے میں ناکام۔",
+    "legacyDeleteSuccess": "پرانا ڈیٹا کامیابی سے حذف ہو گیا۔"
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"
@@ -791,6 +857,131 @@
         "title": "فیصلے کی مدد",
         "prompt": "فیصلے کرنے میں مدد کریں۔"
       }
+    }
+  },
+  "modelSelect": {
+    "advancedOptions": {
+      "title": "اعلی ترتیبات",
+      "temperature": "درجہ حرارت",
+      "reasoningEffort": "استدلال کی کوشش",
+      "verbosity": "تفصیل",
+      "minimal": "کم سے کم",
+      "low": "کم",
+      "medium": "درمیانی",
+      "high": "زیادہ",
+      "fixedTemperatureNote": "اس ماڈل کے لیے درجہ حرارت 1 پر مقرر ہے"
+    },
+    "agents": {
+      "description": "مخصوص کاموں کے لیے حسب ضرورت AI ایجنٹس",
+      "noAgentsTitle": "کوئی ایجنٹ نہیں",
+      "noAgentsDescription": "آپ نے ابھی تک کوئی ایجنٹ نہیں بنایا۔",
+      "createNewAgent": "نیا ایجنٹ بنائیں",
+      "advancedFeatureTitle": "اعلی خصوصیت",
+      "advancedFeatureWarning": "یہ ایک تجرباتی خصوصیت ہے",
+      "advancedFeatureBadge": "تجرباتی"
+    },
+    "customAgent": {
+      "label": "کسٹم ایجنٹ",
+      "description": "اپنا AI ایجنٹ بنائیں",
+      "webSearch": "ویب سرچ",
+      "codeInterpreter": "کوڈ انٹرپریٹر"
+    },
+    "header": {
+      "backToModels": "ماڈلز پر واپس جائیں",
+      "knowledgeCutoff": "علم کی حد"
+    },
+    "modelTypes": {
+      "foundational": "بنیادی",
+      "omni": "آمنی",
+      "reasoning": "استدلال",
+      "agent": "ایجنٹ"
+    },
+    "searchMode": {
+      "title": "سرچ موڈ",
+      "subtitle": "تلاش کی ترتیبات",
+      "azureAgentMode": "Azure AI Foundry موڈ",
+      "azureAgentModeDescription": "مکمل گفتگو Azure میں محفوظ",
+      "privacyFocused": "رازداری مرکوز",
+      "privacyFocusedDescription": "صرف تلاش کے سوالات Azure میں محفوظ",
+      "privacyInfoTitle": "رازداری کی معلومات",
+      "privacyInfoDescription": "آپ کا ڈیٹا کیسے محفوظ ہے",
+      "routingLabel": "روٹنگ",
+      "learnMoreDataStorage": "ڈیٹا اسٹوریج کے بارے میں مزید جانیں",
+      "whatsDifference": "کیا فرق ہے؟"
+    },
+    "sections": {
+      "baseModels": "بنیادی ماڈلز"
+    },
+    "tabs": {
+      "models": "ماڈلز",
+      "agents": "ایجنٹس"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "OpenAI کا جدید ماڈل، پیچیدہ استدلال اور کوڈنگ کے لیے بہترین۔",
+      "knowledgeCutoff": "مارچ 2024"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI کا سب سے جدید ماڈل۔",
+      "knowledgeCutoff": "اگست 2025"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5 کا تیز تر ورژن۔",
+      "knowledgeCutoff": "اگست 2025"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "گفتگو کے لیے بہترین۔",
+      "knowledgeCutoff": "اکتوبر 2025"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI کا اعلی استدلال ماڈل۔",
+      "knowledgeCutoff": "اپریل 2025"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta کا تیز ماڈل۔",
+      "knowledgeCutoff": "مئی 2025"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "استدلال کا ماہر۔",
+      "knowledgeCutoff": "جنوری 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "پروگرامنگ میں ماہر۔",
+      "knowledgeCutoff": "اپریل 2025"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI کا ماڈل۔",
+      "knowledgeCutoff": "مئی 2025"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic کا سب سے قابل ماڈل۔",
+      "knowledgeCutoff": "جنوری 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "متوازن Claude ماڈل۔",
+      "knowledgeCutoff": "جنوری 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "پچھلی نسل کا Claude Opus۔",
+      "knowledgeCutoff": "جنوری 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "تیز Claude ماڈل۔",
+      "knowledgeCutoff": "جنوری 2025"
     }
   }
 }
