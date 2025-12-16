@@ -3,15 +3,38 @@
   "Please set your OpenAI API key in the bottom left of the sidebar_": "请在侧边栏左下角设置您的 OpenAI API 密钥。",
   "If you don't have an OpenAI API key, you can get one here: ": "如果你没有 OpenAI API 密钥，你可以在此获取：",
   "Stop Generating": "停止生成",
+  "Chat Settings": "聊天设置",
+  "Content": "内容",
+  "Default System Prompt": "默认系统提示",
+  "Edit": "编辑",
+  "Email": "电子邮件",
   "Prompt limit is {{maxLength}} characters": "提示字数限制为 {{maxLength}} 个字符",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
+  "New conversation": "新对话",
   "New Conversation": "新的聊天",
+  "No prompts found": "未找到提示",
   "System Prompt": "系统提示",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "你是 ChatGPT，一个由 OpenAI 训练的大型语言模型。请仔细遵循用户的指示。使用 Markdown 格式进行回应。",
   "Enter a prompt": "输入一个提示",
   "Regenerate response": "重新生成回应",
+  "Run Typewriter Intro": "运行打字机介绍动画",
+  "Saved Prompts": "已保存的提示",
+  "Select a prompt to view details": "选择提示以查看详情",
   "Sorry, there was an error_": "抱歉，出现了错误。",
   "Model": "模型",
   "Conversation": "对话",
+  "Conversation exported successfully": "对话导出成功",
+  "Conversation imported successfully": "对话导入成功",
+  "Failed to export conversation": "导出对话失败",
+  "Failed to export folder": "导出文件夹失败",
+  "Failed to import conversation": "导入对话失败",
+  "Failed to import file": "导入文件失败",
+  "Folder exported with {count} conversations": "文件夹已导出，包含 {count} 个对话",
+  "Folder imported with {count} conversations": "文件夹已导入，包含 {count} 个对话",
+  "Folder not found": "未找到文件夹",
+  "importBackupParseError": "解析备份文件失败。请确保它是有效的 JSON。",
+  "Invalid conversation file": "无效的对话文件",
+  "Invalid folder file": "无效的文件夹文件",
   "OR": "或",
   "Loading_ellipsis": "加载中...",
   "Type a message or type \"/\" to select a prompt_ellipsis": "输入一条消息或键入 \"/\" 以选择提示...",
@@ -35,7 +58,12 @@
   "Creative": "随性",
   "chatUrlInputTitle": "网页提取器",
   "Search_ellipsis": "搜索...",
+  "transcription.addInstructions": "添加说明",
+  "transcription.instructionsPlaceholder": "提高准确性的上下文（例如，名称、术语）",
+  "transcription.transcribesOnSend": "发送时转录",
+  "transcriptionComplete": "转录完成！文本已添加到聊天输入。",
   "Type a message_ellipsis": "",
+  "Unrecognized file format": "无法识别的文件格式",
   "chatDisclaimer": "MSF AI助手可能会出错。请检查重要信息。",
   "chatInputPlaceholder": "在此给MSF AI助理发消息",
   "chatInputPlaceholderFull": "在此处向MSF AI助手发送消息或键入“/”以选择提示...",
@@ -625,5 +653,180 @@
   },
   "notFound": {
     "lostDog": "迷路的狗"
+  },
+  "emptyState": {
+    "greeting": "我能为您做什么？",
+    "greetingWithName": "我能为您做什么，{name}？",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "创建图表",
+        "prompt": "向我展示您如何创建图表和流程图。您可以帮助我可视化哪些类型的流程、工作流或系统？给我一些例子。"
+      },
+      "draftContent": {
+        "title": "起草专业内容",
+        "prompt": "我需要帮助撰写专业文档 - 电子邮件、报告、摘要。您能向我展示如何帮助不同类型的商务写作吗？"
+      },
+      "analyzeInformation": {
+        "title": "分析信息",
+        "prompt": "您如何帮助我分析数据或信息？向我展示分解数字、发现模式或从文档或数据集中提取见解的不同方法。"
+      },
+      "planOrganize": {
+        "title": "计划和组织",
+        "prompt": "您能帮助我规划项目或组织工作吗？给我一些如何创建时间表、议程或具有不同结构的项目计划的例子。"
+      },
+      "brainstormIdeas": {
+        "title": "头脑风暴",
+        "prompt": "我想进行头脑风暴来解决问题。向我展示您如何进行创造性思维和想法生成 - 您会问什么问题以及如何探索可能性？"
+      },
+      "buildPresentations": {
+        "title": "创建演示文稿",
+        "prompt": "您如何帮助我创建演示文稿？向我展示不同演示文稿结构、视觉建议以及如何为不同受众组织信息的例子。"
+      },
+      "workWithCode": {
+        "title": "代码工作",
+        "prompt": "您能帮助编程或脚本吗？向我展示一些例子 - 无论是编写新代码、调试问题还是逐步解释某些东西是如何工作的。"
+      },
+      "decisionSupport": {
+        "title": "决策支持",
+        "prompt": "我需要做一个决定，但不确定如何评估我的选择。您能向我展示用于思考选择的不同框架或方法吗？"
+      },
+      "summarizeSynthesize": {
+        "title": "总结和综合",
+        "prompt": "您如何帮助总结长文档或综合来自多个来源的信息？向我展示不同摘要格式和详细程度的例子。"
+      },
+      "explainTopics": {
+        "title": "解释复杂话题",
+        "prompt": "您能用简单的术语解释复杂的概念吗？向我展示您如何分解复杂的想法、使用类比并为不同的知识水平调整解释。"
+      },
+      "createSchedules": {
+        "title": "创建日程表",
+        "prompt": "我需要帮助组织时间和创建日程表。向我展示如何构建议程、日历或基于时间的计划的不同方法，并附带示例。"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "模型",
+      "agents": "代理"
+    },
+    "sections": {
+      "baseModels": "基础模型"
+    },
+    "agents": {
+      "advancedFeatureBadge": "高级功能",
+      "description": "创建和管理具有专门功能的自定义 AI 代理。这些代理在 MSF AI Assistant Foundry 实例上运行。",
+      "advancedFeatureTitle": "高级功能 - 需要与 AI 助手技术团队协调",
+      "advancedFeatureWarning": "自定义代理仅与 MSF AI Assistant Foundry 实例一起工作。代理 ID 必须由 AI 助手技术团队在此特定实例上创建，并在使用前与您协调。",
+      "createNewAgent": "创建新的自定义代理",
+      "noAgentsTitle": "还没有自定义代理",
+      "noAgentsDescription": "创建您的第一个自定义代理，以使用专门的工具和行为扩展 AI 功能。"
+    },
+    "advancedOptions": {
+      "title": "高级选项",
+      "temperature": "温度",
+      "fixedTemperatureNote": "注意：此模型使用固定温度值以获得一致的性能。",
+      "reasoningEffort": "推理努力",
+      "minimal": "最小",
+      "low": "低",
+      "medium": "中等",
+      "high": "高",
+      "verbosity": "详细程度"
+    },
+    "searchMode": {
+      "title": "搜索模式",
+      "subtitle": "将在需要时使用网络搜索",
+      "routingLabel": "搜索路由：",
+      "whatsDifference": "有什么区别？",
+      "privacyFocused": "注重隐私（默认）",
+      "privacyFocusedDescription": "较慢但更私密",
+      "azureAgentMode": "Azure AI 代理模式",
+      "azureAgentModeDescription": "更快但在云中存储对话数据",
+      "privacyInfoTitle": "重要隐私信息",
+      "privacyInfoDescription": "您的整个对话将被发送到 Azure AI Foundry 代理。",
+      "learnMoreDataStorage": "了解有关数据存储的更多信息"
+    },
+    "customAgent": {
+      "label": "自定义代理：",
+      "description": "此代理在 MSF AI Assistant Foundry 实例上运行，工具始终启用。",
+      "webSearch": "实时网络搜索",
+      "codeInterpreter": "代码解释器和文件分析"
+    },
+    "header": {
+      "backToModels": "返回模型",
+      "knowledgeCutoff": "知识截止日期：{cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "基础型",
+      "omni": "全能型",
+      "reasoning": "推理型",
+      "agent": "代理型"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "由 GPT-4.1 驱动的 AI 模型，通过 Bing 提供实时网络搜索。提供最新信息、事实核查和当前事件知识。非常适合需要新鲜信息、新闻分析和事实核查的研究。",
+      "knowledgeCutoff": "实时网络搜索"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI 最先进的模型，擅长复杂推理、代码生成和技术问题解决。非常适合分析任务、编程挑战、研究和详细解释。支持可调节的推理努力和响应详细程度。",
+      "knowledgeCutoff": "2025年8月6日 20:00"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5 的更快、更经济的变体，在保持高质量的同时优化了速度。非常适合日常任务、快速查询、工具路由和需要快速响应的应用程序。在性能和效率之间取得了极好的平衡。",
+      "knowledgeCutoff": "2025年8月6日 20:00"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "GPT-5 的专门变体，针对对话互动和情商进行了优化。擅长共情沟通、心理健康支持、创意写作、头脑风暴和自然对话。非常适合休闲对话、咨询场景和需要情感意识的任务。",
+      "knowledgeCutoff": "2025年10月1日 20:00"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI 最先进的推理模型，具有革命性的问题解决能力。擅长复杂数学、科学推理、编程挑战和多步骤逻辑任务。扩展了 200K 上下文窗口。支持推理努力控制。",
+      "knowledgeCutoff": "2025年4月8日 20:00"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta 的快速、经济型模型。擅长日常任务，如写作、摘要和基本代码帮助。在速度和质量之间取得了很好的平衡，适合常规工作。",
+      "knowledgeCutoff": "2025年5月7日 07:11"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "逐步展示工作的推理专家。擅长数学问题、逻辑谜题和理解复杂概念。实时观察它如何思考问题。",
+      "knowledgeCutoff": "2025年1月20日"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "特别擅长编程和技术写作的多功能模型。擅长调试代码、编写文档和解释技术概念。快速可靠，适合开发工作。",
+      "knowledgeCutoff": "2025年4月16日 00:45"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI 的多功能模型，以细致入微的回答著称。擅长开放式讨论、创意项目和解决复杂问题。",
+      "knowledgeCutoff": "2025年5月13日 00:16"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic 最强大的模型，具有卓越的推理、编程和创意能力。非常适合复杂分析、研究和需要深入理解的任务。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "平衡的 Claude 模型，在编程、分析和创意任务方面表现出色。非常适合日常使用，响应速度快。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "上一代 Claude Opus 模型。擅长复杂编程任务、详细分析和细致入微的理解。",
+      "knowledgeCutoff": "2025年1月"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "快速、经济的 Claude 模型，针对快速任务进行了优化。擅长简单查询、摘要和高容量应用。",
+      "knowledgeCutoff": "2025年1月"
+    }
   }
 }
