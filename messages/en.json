@@ -545,7 +545,11 @@
     "searchLanguages": "Search languages...",
     "selectLanguage": "Select language",
     "audioFromOriginal": "Audio is from original text",
-    "audioFromTranslation": "Audio is from {language} translation"
+    "audioFromTranslation": "Audio is from {language} translation",
+    "thinking": "Thinking...",
+    "viewReasoningProcess": "View reasoning process",
+    "collapseThinking": "Collapse thinking",
+    "expandThinking": "Expand thinking"
   },
   "sidebar": {
     "collapseSidebar": "Collapse sidebar",
@@ -631,7 +635,36 @@
   },
   "tones": {
     "createCustomVoiceProfile": "Create a custom voice profile with AI assistance",
-    "examplePlaceholder": "e.g., Create a professional but friendly customer support tone..."
+    "examplePlaceholder": "e.g., Create a professional but friendly customer support tone...",
+    "tagHelp": "Tag Help",
+    "tagHelpContent": "Use tags to categorize and quickly find your tones. Examples:",
+    "tagExamples": {
+      "professional": "professional",
+      "casual": "casual",
+      "technical": "technical",
+      "marketing": "marketing"
+    },
+    "add": "Add",
+    "aiToneAnalyzer": "AI Tone Analyzer",
+    "describeToneToCreate": "Describe the tone you want to create",
+    "uploadContentSamples": "Upload Content Samples",
+    "analyzing": "Analyzing...",
+    "analyzeToneWithAI": "Analyze Tone with AI",
+    "analysisComplete": "Analysis Complete",
+    "generatedVoiceGuidelines": "Generated Voice Guidelines:",
+    "examplePhrases": "Example Phrases:",
+    "suggestedTags": "Suggested Tags:",
+    "applyThisAnalysis": "Apply This Analysis",
+    "detectedCharacteristics": "Detected Characteristics:",
+    "howAICanHelp": "How AI Can Help",
+    "helpItems": {
+      "transcribe": "Transcribe audio/video content",
+      "analyzeContent": "Analyze your content samples",
+      "extractPatterns": "Extract tone and style patterns",
+      "generateGuidelines": "Generate voice guidelines",
+      "suggestTags": "Suggest relevant tags"
+    },
+    "saveTone": "Save Tone"
   },
   "auth": {
     "microsoft": "Microsoft",
