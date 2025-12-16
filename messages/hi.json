@@ -669,11 +669,84 @@
   },
   "tones": {
     "createCustomVoiceProfile": "AI सहायता से कस्टम वॉयस प्रोफ़ाइल बनाएं",
-    "examplePlaceholder": "उदा., पेशेवर लेकिन मैत्रीपूर्ण ग्राहक सेवा टोन बनाएं..."
+    "examplePlaceholder": "उदा., पेशेवर लेकिन मैत्रीपूर्ण ग्राहक सेवा टोन बनाएं...",
+    "tagHelp": "टैग सहायता",
+    "tagHelpContent": "अपने टोन को श्रेणीबद्ध करने और जल्दी खोजने के लिए टैग का उपयोग करें। उदाहरण:",
+    "tagExamples": {
+      "professional": "पेशेवर",
+      "casual": "अनौपचारिक",
+      "technical": "तकनीकी",
+      "marketing": "मार्केटिंग"
+    },
+    "add": "जोड़ें",
+    "aiToneAnalyzer": "AI टोन विश्लेषक",
+    "describeToneToCreate": "वह टोन वर्णन करें जो आप बनाना चाहते हैं",
+    "uploadContentSamples": "सामग्री के नमूने अपलोड करें",
+    "analyzing": "विश्लेषण हो रहा है...",
+    "analyzeToneWithAI": "AI के साथ टोन का विश्लेषण करें",
+    "analysisComplete": "विश्लेषण पूर्ण",
+    "generatedVoiceGuidelines": "उत्पन्न आवाज़ दिशानिर्देश:",
+    "examplePhrases": "उदाहरण वाक्यांश:",
+    "suggestedTags": "सुझाए गए टैग:",
+    "applyThisAnalysis": "यह विश्लेषण लागू करें",
+    "detectedCharacteristics": "पहचानी गई विशेषताएं:",
+    "howAICanHelp": "AI कैसे मदद कर सकता है",
+    "helpItems": {
+      "transcribe": "ऑडियो/वीडियो सामग्री का प्रतिलेखन करें",
+      "analyzeContent": "अपनी सामग्री के नमूनों का विश्लेषण करें",
+      "extractPatterns": "टोन और शैली पैटर्न निकालें",
+      "generateGuidelines": "आवाज़ दिशानिर्देश उत्पन्न करें",
+      "suggestTags": "प्रासंगिक टैग सुझाएं"
+    },
+    "saveTone": "टोन सहेजें"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "तकनीकी प्रवाह आरेख देखें"
+    "viewTechnicalFlowDiagram": "तकनीकी प्रवाह आरेख देखें",
+    "backToChat": "चैट पर वापस जाएं",
+    "title": "सहायता केंद्र",
+    "subtitle": "उत्तर खोजें, गोपनीयता के बारे में जानें और सहायता प्राप्त करें",
+    "faq": {
+      "title": "अक्सर पूछे जाने वाले प्रश्न",
+      "description": "AI सहायक का उपयोग करने के बारे में सामान्य प्रश्नों के उत्तर पाएं",
+      "articles": "लेख",
+      "searchPlaceholder": "FAQ खोजें...",
+      "noResults": "आपकी खोज से कोई FAQ मेल नहीं खाता",
+      "noResultsHint": "कोई अलग खोज शब्द आज़माएं"
+    },
+    "privacy": {
+      "title": "गोपनीयता और डेटा",
+      "description": "जानें कि आपका डेटा कैसे संग्रहीत और सुरक्षित किया जाता है",
+      "topics": "विषय",
+      "searchPlaceholder": "गोपनीयता विषय खोजें...",
+      "noResults": "आपकी खोज से कोई गोपनीयता विषय मेल नहीं खाता",
+      "noResultsHint": "कोई अलग खोज शब्द आज़माएं",
+      "bannerTitle": "आपकी गोपनीयता मायने रखती है",
+      "bannerDescription": "सभी बातचीत आपके डिवाइस पर स्थानीय रूप से संग्रहीत होती हैं। डेटा प्रोसेसिंग Azure इन्फ्रास्ट्रक्चर का उपयोग करके MSF सिस्टम के भीतर होती है।",
+      "localStorageOnly": "केवल स्थानीय भंडारण",
+      "msfControlled": "MSF नियंत्रित",
+      "noPersonalData": "कोई व्यक्तिगत डेटा नहीं",
+      "noSensitiveOps": "कोई संवेदनशील संचालन नहीं"
+    },
+    "contact": {
+      "title": "संपर्क और संसाधन",
+      "description": "हमारी टीम से संपर्क करें और उपयोगी लिंक एक्सेस करें",
+      "supportAvailable": "सहायता उपलब्ध",
+      "submitRequest": "सहायता अनुरोध जमा करें",
+      "getHelp": "हमारी टीम से सहायता प्राप्त करें",
+      "requestDescription": "सहायता चाहिए या प्रतिक्रिया देना चाहते हैं? नीचे क्लिक करके हमारा सहायता फॉर्म खोलें।",
+      "openSupportForm": "सहायता फॉर्म खोलें",
+      "otherWays": "हमसे संपर्क करने के अन्य तरीके",
+      "emailSupport": "ईमेल सहायता",
+      "emailDescription": "प्रश्नों, प्रतिक्रिया या तकनीकी समस्याओं के लिए हमें ईमेल भेजें"
+    },
+    "resources": {
+      "title": "अतिरिक्त संसाधन",
+      "portalTitle": "AI एक्सेलेरेटर पोर्टल",
+      "portalDescription": "दस्तावेज़ीकरण, प्रोजेक्ट अपडेट और प्रशिक्षण सामग्री",
+      "githubTitle": "ओपन सोर्स रिपॉजिटरी",
+      "githubDescription": "GitHub पर कोड देखें, समस्याएं रिपोर्ट करें और योगदान करें"
+    }
   },
   "settings": {
     "Settings": "सेटिंग्स",
@@ -741,7 +814,27 @@
     "FAQs, privacy policy, and guides": "FAQ, गोपनीयता नीति और गाइड",
     "Contact Support": "सहायता से संपर्क करें",
     "Popular Questions": "लोकप्रिय प्रश्न",
-    "View all FAQs": "सभी FAQ देखें"
+    "View all FAQs": "सभी FAQ देखें",
+    "Delete legacy data after migration": "माइग्रेशन के बाद पुराना डेटा हटाएं",
+    "frees up storage space": "स्टोरेज स्पेस खाली करता है",
+    "Legacy data deleted": "पुराना डेटा हटाया गया",
+    "freed": "मुक्त",
+    "Conversations": "बातचीत",
+    "Legacy": "पुराना",
+    "Other": "अन्य",
+    "Loading": "लोड हो रहा है",
+    "Legacy Data Detected": "पुराना डेटा पता चला",
+    "legacyDataDescription": "आपके पास पिछले संस्करण का {size} डेटा है। इसे माइग्रेट किया जा सकता है, निर्यात किया जा सकता है, या स्थान खाली करने के लिए हटाया जा सकता है।",
+    "legacyDeleteSuccess": "पुराना डेटा सफलतापूर्वक हटाया गया और {size} मुक्त किया गया।",
+    "legacyDeleteError": "पुराना डेटा हटाने में विफल। कृपया पुनः प्रयास करें।",
+    "Explore solutions": "समाधान खोजें",
+    "Migrate to Current Format": "वर्तमान प्रारूप में माइग्रेट करें",
+    "Export Legacy Data": "पुराना डेटा निर्यात करें",
+    "Delete Legacy Data": "पुराना डेटा हटाएं",
+    "deleteLegacyConfirm": "क्या आप वाकई सभी पुराना डेटा हटाना चाहते हैं? इस क्रिया को पूर्ववत नहीं किया जा सकता।",
+    "Deleting": "हटाया जा रहा है",
+    "Confirm Delete": "हटाने की पुष्टि करें",
+    "Cancel": "रद्द करें"
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"
@@ -920,5 +1013,46 @@
       "description": "त्वरित कार्यों के लिए अनुकूलित तेज़, लागत प्रभावी Claude मॉडल। सरल प्रश्नों, सारांशीकरण और उच्च-मात्रा अनुप्रयोगों के लिए उत्कृष्ट।",
       "knowledgeCutoff": "जनवरी 2025"
     }
+  },
+  "searchMode": {
+    "backToChat": "चैट पर वापस जाएं",
+    "title": "खोज मोड समझाया गया",
+    "subtitle": "अपने खोज विकल्पों और आपका डेटा कहां संग्रहीत होता है यह समझें",
+    "quickComparison": "त्वरित तुलना",
+    "noSearch": "कोई खोज नहीं",
+    "privacyFocused": "गोपनीयता केंद्रित",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "प्रतिक्रिया गति",
+    "fastest": "सबसे तेज़",
+    "slowerMultiStep": "धीमा (बहु-चरण)",
+    "fasterDirect": "तेज़ (सीधा)",
+    "fullConversationStored": "क्लाउड में पूर्ण बातचीत संग्रहीत",
+    "whatsStoredInAzure": "Azure में क्या संग्रहीत है",
+    "nothingStateless": "कुछ नहीं (केवल स्टेटलेस)",
+    "searchQueriesOnly": "केवल खोज क्वेरी",
+    "fullConversationHistory": "पूर्ण बातचीत इतिहास",
+    "modelAvailability": "मॉडल उपलब्धता",
+    "allModels": "सभी मॉडल",
+    "gpt41Only": "केवल GPT-4.1",
+    "searchTurnedOff": "खोज बंद",
+    "noSearchDescription": "बिना वेब खोज क्षमता के सबसे तेज़ प्रतिक्रियाएं। आपकी पूरी बातचीत आपके ब्राउज़र में रहती है - क्लाउड में कुछ भी संग्रहीत नहीं होता।",
+    "viewDetailsBelow": "अधिक जानकारी के लिए नीचे तकनीकी कार्यप्रवाह देखें।",
+    "viewTechnicalFlowDiagram": "तकनीकी प्रवाह आरेख देखें",
+    "legend": "लेजेंड:",
+    "legendNoSearch": "आपका ब्राउज़र (स्थानीय भंडारण) | AI सहायक सर्वर | Azure OpenAI (स्टेटलेस)",
+    "privacyFocusedMode": "गोपनीयता केंद्रित मोड",
+    "default": "डिफ़ॉल्ट",
+    "privacyDescription": "आवश्यकता पड़ने पर वेब खोज का उपयोग करता है लेकिन धीमा है क्योंकि अधिक चरण शामिल हैं। केवल खोज क्वेरी Azure में संग्रहीत होती हैं - आपकी पूरी बातचीत आपके ब्राउज़र में रहती है।",
+    "legendPrivacy": "आपका ब्राउज़र (स्थानीय भंडारण) | AI सहायक सर्वर | Azure AI Foundry (केवल खोज क्वेरी) | Azure OpenAI (स्टेटलेस)",
+    "azureAIFoundryMode": "Azure AI Foundry मोड",
+    "foundryDescription": "अंतर्निहित वेब खोज क्षमता के साथ तेज़ प्रतिक्रियाएं। आपकी पूरी बातचीत Azure AI Foundry के डेटाबेस में संग्रहीत होती है, न केवल आपके ब्राउज़र में।",
+    "legendFoundry": "आपका ब्राउज़र (स्थानीय भंडारण) | AI सहायक सर्वर | Azure AI Foundry एजेंट (पूर्ण बातचीत संग्रहीत)",
+    "whyTheseOptions": "ये विकल्प क्यों?",
+    "whyTheseOptionsText1": "Azure द्वारा अपने Bing Search API को बंद करने के बाद ये उपलब्ध खोज कार्यान्वयन हैं, जिस पर AI सहायक मूल रूप से निर्भर था।",
+    "whyTheseOptionsText2": "टीम सक्रिय रूप से अधिक गोपनीयता-केंद्रित खोज विकल्पों की खोज कर रही है। दोनों वर्तमान विकल्प Azure AI Foundry की खोज क्षमताओं का उपयोग करते हैं लेकिन इस बात में भिन्न हैं कि कितना बातचीत डेटा साझा किया जाता है।",
+    "azureDeprecatedBingApi": "Azure ने अपने Bing Search API को बंद कर दिया",
+    "footerNote": "दोनों मोड आपकी बातचीत को आपके ब्राउज़र में स्थानीय रूप से संग्रहीत करते हैं। आप मॉडल सेटिंग्स में किसी भी समय मोड बदल सकते हैं।",
+    "note": "नोट:",
+    "loadingDiagram": "आरेख लोड हो रहा है..."
   }
 }
