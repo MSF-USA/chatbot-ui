@@ -265,6 +265,7 @@
   "Model Response Settings": "Nastavení odezvy modelu",
   "Higher values produce more creative and varied responses, lower values are more focused and deterministic_": "Vyšší hodnoty produkují kreativnější a rozmanitější odpovědi, nižší hodnoty jsou více zaměřené a deterministické.",
   "Text Streaming Settings": "Nastavení streamování textu",
+  "Run Typewriter Intro": "Spustit úvodní efekt psacího stroje",
   "Smooth streaming": "Plynulé streamování",
   "Enable for a more natural reading experience": "Povolit pro přirozenější čtecí zážitek",
   "Speed (characters per frame)": "Rychlost (znaky na snímek)",
