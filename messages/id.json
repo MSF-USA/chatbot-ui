@@ -297,13 +297,25 @@
   "Tones": "Nada",
   "Create Your First Tone": "Buat Nada Pertama Anda",
   "Search tones": "Cari nada...",
-  "Voice Guidelines": "Panduan Suara",
+  "Voice Guidelines": "Pedoman Suara",
   "Examples": "Contoh",
   "Select a tone to view details": "Pilih nada untuk melihat detail",
   "Team Templates": "Template Tim",
   "selected": "dipilih",
   "folders": "folder",
-  "agents": "agen",
+  "agents": {
+    "exportAgent": "Ekspor agen",
+    "editAgent": "Edit agen",
+    "agentName": "Nama Agen",
+    "myResearchAssistant": "Asisten Riset Saya",
+    "agentId": "ID Agen",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Deskripsi (opsional)",
+    "descriptionPlaceholder": "Agen khusus untuk tugas riset...",
+    "baseModel": "Model Dasar",
+    "formatDescription": "Format: asst_xxxxx (dari MSF AI Assistant Foundry)",
+    "importantInfo": "Agen ini akan memiliki akses ke konteks percakapan dan dapat menggunakan alat yang sama dengan model standar. Pastikan ID Agen benar karena tidak dapat diubah nanti."
+  },
   "Quick Actions": "Tindakan Cepat",
   "Type / in chat to access your prompts": "Ketik / dalam obrolan untuk mengakses prompt Anda",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Ketik / dalam obrolan, pilih prompt Anda, dan isi variabel saat diminta",
@@ -350,7 +362,6 @@
   "Custom Agents": "Agen Kustom",
   "Delete template and all its items": "Hapus template dan semua itemnya",
   "Description (Optional)": "Deskripsi (Opsional)",
-  "Edit Prompt": "Edit Prompt",
   "Edit Tone": "Edit Nada",
   "Email Response Template": "Template Respons Email",
   "Example Prompt": "Contoh Prompt",
@@ -410,7 +421,6 @@
   "msf_logo_alt": "Logo MSF",
   "collapse_sidebar": "Ciutkan bilah sisi",
   "expand_sidebar": "Perluas bilah sisi",
-  "Voice Guidelines": "Pedoman Suara",
   "Please upload some content or describe the tone you want": "Silakan unggah konten atau deskripsikan nada yang Anda inginkan",
   "Untitled Tone": "Nada Tanpa Judul",
   "Failed to analyze tone": "Gagal menganalisis nada",
@@ -440,13 +450,41 @@
   "enterPromptDescriptionPlaceholder": "Untuk apa prompt ini?",
   "enterPromptContentPlaceholder": "Tulis prompt Anda di sini. Gunakan {{variable}} untuk konten dinamis.",
   "common": {
-    "contact": "Kontak"
+    "contact": "Kontak",
+    "close": "Tutup",
+    "remove": "Hapus",
+    "tryAgain": "Coba lagi",
+    "menu": "Menu",
+    "copyToClipboard": "Salin ke papan klip",
+    "toggleDropdownMenu": "Beralih menu dropdown",
+    "toggleMenu": "Beralih menu",
+    "msfLogo": "Logo MSF",
+    "dismissBanner": "Tutup banner",
+    "importantInformation": "Informasi penting",
+    "searchEllipsis": "Cari...",
+    "closeModal": "Tutup modal",
+    "addTagEllipsis": "Tambah tag...",
+    "cancel": "Batal",
+    "confirm": "Konfirmasi",
+    "discard": "Buang",
+    "keepEditing": "Lanjut mengedit",
+    "no": "Tidak",
+    "yes": "Ya",
+    "noResults": "Tidak ada hasil"
   },
   "errors": {
     "unexpectedErrorOccurred": "Terjadi kesalahan yang tidak terduga",
     "criticalErrorReload": "Terjadi kesalahan kritis. Harap muat ulang halaman.",
     "reloadPage": "Muat ulang halaman",
-    "persistContactSupport": "Jika masalah ini terus berlanjut, harap hubungi dukungan"
+    "persistContactSupport": "Jika masalah ini terus berlanjut, harap hubungi dukungan",
+    "somethingWentWrong": "Terjadi kesalahan",
+    "anErrorOccurred": "Terjadi kesalahan",
+    "anErrorOccurredTryAgain": "Terjadi kesalahan. Silakan coba lagi.",
+    "chatLoadError": "Kesalahan memuat chat. Silakan segarkan halaman.",
+    "applicationError": "Kesalahan aplikasi",
+    "dismissError": "Tutup kesalahan",
+    "copyErrorMessage": "Salin pesan kesalahan",
+    "contactSupport": "Hubungi dukungan"
   },
   "auth": {
     "authenticationError": "Kesalahan Autentikasi",
@@ -515,7 +553,25 @@
     "fullSizePreview": "Pratinjau ukuran penuh",
     "enterSearchQueryPlaceholder": "Masukkan kueri pencarian atau pertanyaan Anda...",
     "errorFetchingUrl": "Terjadi kesalahan saat mengambil konten URL",
-    "errorInitiatingSearch": "Terjadi kesalahan saat memulai pencarian web"
+    "errorInitiatingSearch": "Terjadi kesalahan saat memulai pencarian web",
+    "translateMessage": "Terjemahkan pesan",
+    "showOriginal": "Tampilkan asli",
+    "translating": "Menerjemahkan...",
+    "translatedTo": "Diterjemahkan ke {language}",
+    "translationError": "Kesalahan terjemahan",
+    "searchLanguages": "Cari bahasa...",
+    "selectLanguage": "Pilih bahasa",
+    "regenerate": "Buat ulang",
+    "thinking": "Berpikir...",
+    "expandThinking": "Perluas pemikiran",
+    "collapseThinking": "Ciutkan pemikiran",
+    "viewReasoningProcess": "Lihat proses penalaran",
+    "modelSwitchPrompt": "Pesan ini berisi gambar yang tidak kompatibel dengan model saat ini.",
+    "switchToModel": "Beralih ke model",
+    "keepOriginalModel": "Pertahankan model asli",
+    "alwaysSwitchToModel": "Selalu beralih ke model ini",
+    "audioFromOriginal": "Audio dari asli",
+    "audioFromTranslation": "Audio dari terjemahan"
   },
   "sidebar": {
     "collapseSidebar": "Ciutkan sidebar",
@@ -523,21 +579,54 @@
     "quickActionsTitle": "Tindakan Cepat",
     "quickActions": "Tindakan Cepat"
   },
-  "agents": {
-    "exportAgent": "Ekspor agen",
-    "editAgent": "Edit agen",
-    "agentName": "Nama Agen",
-    "myResearchAssistant": "Asisten Riset Saya",
-    "agentId": "ID Agen",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Deskripsi (opsional)",
-    "descriptionPlaceholder": "Agen khusus untuk tugas riset...",
-    "baseModel": "Model Dasar",
-    "formatDescription": "Format: asst_xxxxx (dari MSF AI Assistant Foundry)",
-    "importantInfo": "Agen ini akan memiliki akses ke konteks percakapan dan dapat menggunakan alat yang sama dengan model standar. Pastikan ID Agen benar karena tidak dapat diubah nanti."
-  },
   "prompts": {
-    "buildReusablePrompts": "Bangun prompt yang dapat digunakan kembali dengan bantuan AI"
+    "buildReusablePrompts": "Bangun prompt yang dapat digunakan kembali dengan bantuan AI",
+    "add": "Tambah",
+    "addContextOptional": "Tambah konteks (opsional)",
+    "aiAssistant": "Asisten AI",
+    "applyRevision": "Terapkan revisi",
+    "detectedVariables": "Variabel terdeteksi",
+    "example": "Contoh",
+    "generatePlaceholder": "Tulis prompt Anda di sini...",
+    "generatePrompt": "Buat Prompt",
+    "generatedPrompt": "Prompt yang dibuat",
+    "generating": "Membuat...",
+    "generationComplete": "Pembuatan selesai",
+    "helpItems": {
+      "addContext": "Tambah konteks",
+      "improveClarity": "Tingkatkan kejelasan",
+      "optimize": "Optimalkan",
+      "suggestVariables": "Sarankan variabel"
+    },
+    "howAICanHelp": "Bagaimana AI dapat membantu",
+    "improvePlaceholder": "Apa yang harus ditingkatkan...",
+    "improvementsMade": "Perbaikan yang dibuat",
+    "noToneDefault": "Tanpa nada (default)",
+    "optionalVariables": "Variabel opsional",
+    "required": "Wajib",
+    "requiredVariables": "Variabel wajib",
+    "reviseWithAI": "Revisi dengan AI",
+    "revisedPrompt": "Prompt yang direvisi",
+    "revising": "Merevisi...",
+    "revisionComplete": "Revisi selesai",
+    "savePrompt": "Simpan Prompt",
+    "tagExamples": {
+      "customerSupport": "Dukungan Pelanggan",
+      "email": "Email",
+      "marketing": "Pemasaran",
+      "technical": "Teknis"
+    },
+    "tagHelp": "Bantuan tag",
+    "tagHelpContent": "Tag membantu mengorganisir prompt Anda",
+    "tips": "Tips",
+    "useThisPrompt": "Gunakan prompt ini",
+    "userCanProvide": "Pengguna dapat memberikan",
+    "userMustProvide": "Pengguna harus memberikan",
+    "variableExampleText": "Teks contoh",
+    "variableHelp": "Bantuan variabel",
+    "variableHelpIntro": "Variabel membuat prompt yang dapat digunakan kembali",
+    "whatShouldPromptDo": "Apa yang harus dilakukan prompt?",
+    "whatToImprove": "Apa yang harus ditingkatkan?"
   },
   "tones": {
     "createCustomVoiceProfile": "Buat profil suara kustom dengan bantuan AI",
@@ -545,7 +634,51 @@
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "Lihat Diagram Alur Teknis"
+    "viewTechnicalFlowDiagram": "Lihat Diagram Alur Teknis",
+    "backToChat": "Kembali ke Chat",
+    "title": "Pusat Bantuan",
+    "subtitle": "Temukan jawaban, pelajari privasi, dapatkan dukungan",
+    "faq": {
+      "title": "Pertanyaan Umum",
+      "description": "Temukan jawaban tentang penggunaan AI Assistant",
+      "articles": "Artikel",
+      "searchPlaceholder": "Cari FAQ...",
+      "noResults": "Tidak ada FAQ yang cocok",
+      "noResultsHint": "Coba istilah pencarian lain"
+    },
+    "privacy": {
+      "title": "Privasi & Data",
+      "description": "Pelajari bagaimana data Anda dilindungi",
+      "topics": "Topik",
+      "searchPlaceholder": "Cari topik privasi...",
+      "noResults": "Tidak ada topik yang cocok",
+      "noResultsHint": "Coba istilah pencarian lain",
+      "bannerTitle": "Privasi Anda penting",
+      "bannerDescription": "Semua percakapan disimpan di perangkat Anda.",
+      "localStorageOnly": "Hanya Penyimpanan Lokal",
+      "msfControlled": "Dikontrol MSF",
+      "noPersonalData": "Tidak Ada Data Pribadi",
+      "noSensitiveOps": "Tidak Ada Operasi Sensitif"
+    },
+    "contact": {
+      "title": "Kontak & Sumber Daya",
+      "description": "Hubungi tim kami",
+      "supportAvailable": "Dukungan tersedia",
+      "submitRequest": "Kirim permintaan dukungan",
+      "getHelp": "Dapatkan bantuan dari tim kami",
+      "requestDescription": "Butuh bantuan atau ingin memberi umpan balik? Buka form dukungan di bawah.",
+      "openSupportForm": "Buka Form Dukungan",
+      "otherWays": "Cara lain untuk menghubungi",
+      "emailSupport": "Dukungan Email",
+      "emailDescription": "Email kami untuk pertanyaan, umpan balik, atau masalah teknis"
+    },
+    "resources": {
+      "title": "Sumber Daya Lain",
+      "portalTitle": "Portal AI Accelerator",
+      "portalDescription": "Dokumentasi, pembaruan proyek, dan materi pelatihan",
+      "githubTitle": "Repositori Open Source",
+      "githubDescription": "Lihat kode, laporkan masalah di GitHub"
+    }
   },
   "settings": {
     "Settings": "Pengaturan",
@@ -613,9 +746,234 @@
     "FAQs, privacy policy, and guides": "FAQ, kebijakan privasi, dan panduan",
     "Contact Support": "Hubungi Dukungan",
     "Popular Questions": "Pertanyaan Populer",
-    "View all FAQs": "Lihat semua FAQ"
+    "View all FAQs": "Lihat semua FAQ",
+    "Cancel": "Batal",
+    "Confirm Delete": "Konfirmasi Hapus",
+    "Conversations": "Percakapan",
+    "Delete Legacy Data": "Hapus Data Lama",
+    "Delete legacy data after migration": "Hapus data lama setelah migrasi",
+    "Deleting": "Menghapus",
+    "Explore solutions": "Jelajahi solusi",
+    "Export Legacy Data": "Ekspor Data Lama",
+    "Legacy": "Lama",
+    "Legacy Data Detected": "Data Lama Terdeteksi",
+    "Legacy data deleted": "Data lama dihapus",
+    "Loading": "Memuat",
+    "Migrate to Current Format": "Migrasi ke Format Saat Ini",
+    "Other": "Lainnya",
+    "deleteLegacyConfirm": "Apakah Anda yakin ingin menghapus semua data lama? Tindakan ini tidak dapat dibatalkan.",
+    "freed": "dibebaskan",
+    "frees up storage space": "membebaskan ruang penyimpanan",
+    "legacyDataDescription": "Anda memiliki {size} data lama.",
+    "legacyDeleteError": "Gagal menghapus data lama.",
+    "legacyDeleteSuccess": "Data lama berhasil dihapus."
   },
   "notFound": {
     "lostDog": "Anjing hilang"
+  },
+  "transcription": {
+    "transcribesOnSend": "Transkripsi saat kirim",
+    "addInstructions": "Tambah instruksi",
+    "instructionsPlaceholder": "Konteks untuk meningkatkan akurasi (mis. nama, istilah)"
+  },
+  "transcriptionComplete": "Transkripsi selesai! Teks telah ditambahkan ke input chat.",
+  "importBackupParseError": "Gagal mengurai file cadangan. Pastikan itu adalah JSON yang valid.",
+  "Chat Settings": "Pengaturan Chat",
+  "Content": "Konten",
+  "Default System Prompt": "Prompt Sistem Default",
+  "Edit": "Edit",
+  "Email": "Email",
+  "Conversation exported successfully": "Percakapan berhasil diekspor",
+  "Conversation imported successfully": "Percakapan berhasil diimpor",
+  "Failed to export conversation": "Gagal mengekspor percakapan",
+  "Failed to export folder": "Gagal mengekspor folder",
+  "Failed to import conversation": "Gagal mengimpor percakapan",
+  "Failed to import file": "Gagal mengimpor file",
+  "Folder exported with {count} conversations": "Folder diekspor dengan {count} percakapan",
+  "Folder imported with {count} conversations": "Folder diimpor dengan {count} percakapan",
+  "Folder not found": "Folder tidak ditemukan",
+  "Invalid conversation file": "File percakapan tidak valid",
+  "Invalid folder file": "File folder tidak valid",
+  "New conversation": "Percakapan baru",
+  "No prompts found": "Tidak ada prompt ditemukan",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Batas prompt adalah {{maxLength}} karakter. Anda telah memasukkan {{valueLength}} karakter.",
+  "Run Typewriter Intro": "Jalankan Intro Mesin Ketik",
+  "Saved Prompts": "Prompt Tersimpan",
+  "Select a prompt to view details": "Pilih prompt untuk melihat detail",
+  "Unrecognized file format": "Format file tidak dikenali",
+  "emptyState": {
+    "greeting": "Apa yang bisa saya bantu?",
+    "greetingWithName": "Apa yang bisa saya bantu, {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "Buat Diagram",
+        "prompt": "Tunjukkan cara Anda dapat membuat diagram dan flowchart."
+      },
+      "brainstormIdeas": {
+        "title": "Curah Pendapat",
+        "prompt": "Bantu saya menghasilkan ide tentang suatu topik."
+      },
+      "draftContent": {
+        "title": "Tulis Konten",
+        "prompt": "Bantu saya menulis dokumen profesional."
+      },
+      "explainTopics": {
+        "title": "Jelaskan Topik",
+        "prompt": "Bantu saya memahami topik yang kompleks."
+      },
+      "summarizeSynthesize": {
+        "title": "Ringkas",
+        "prompt": "Bantu meringkas konten panjang."
+      },
+      "analyzeInformation": {
+        "title": "Analisis Informasi",
+        "prompt": "Bantu menganalisis data dan informasi."
+      },
+      "planOrganize": {
+        "title": "Rencanakan",
+        "prompt": "Bantu merencanakan proyek dan tugas."
+      },
+      "workWithCode": {
+        "title": "Bekerja dengan Kode",
+        "prompt": "Bantu pemrograman dan kode."
+      },
+      "buildPresentations": {
+        "title": "Buat Presentasi",
+        "prompt": "Bantu membuat presentasi."
+      },
+      "createSchedules": {
+        "title": "Buat Jadwal",
+        "prompt": "Bantu membuat jadwal dan timeline."
+      },
+      "decisionSupport": {
+        "title": "Dukungan Keputusan",
+        "prompt": "Bantu membuat keputusan."
+      }
+    }
+  },
+  "modelSelect": {
+    "advancedOptions": {
+      "title": "Opsi Lanjutan",
+      "temperature": "Temperatur",
+      "reasoningEffort": "Usaha Penalaran",
+      "verbosity": "Verbositas",
+      "minimal": "Minimal",
+      "low": "Rendah",
+      "medium": "Sedang",
+      "high": "Tinggi",
+      "fixedTemperatureNote": "Temperatur ditetapkan pada 1 untuk model ini"
+    },
+    "agents": {
+      "description": "Agen AI kustom untuk tugas tertentu",
+      "noAgentsTitle": "Tidak Ada Agen",
+      "noAgentsDescription": "Anda belum membuat agen.",
+      "createNewAgent": "Buat Agen Baru",
+      "advancedFeatureTitle": "Fitur Lanjutan",
+      "advancedFeatureWarning": "Ini adalah fitur eksperimental",
+      "advancedFeatureBadge": "Eksperimental"
+    },
+    "customAgent": {
+      "label": "Agen Kustom",
+      "description": "Buat agen AI Anda sendiri",
+      "webSearch": "Pencarian Web",
+      "codeInterpreter": "Penerjemah Kode"
+    },
+    "header": {
+      "backToModels": "Kembali ke Model",
+      "knowledgeCutoff": "Batas Pengetahuan"
+    },
+    "modelTypes": {
+      "foundational": "Fundamental",
+      "omni": "Omni",
+      "reasoning": "Penalaran",
+      "agent": "Agen"
+    },
+    "searchMode": {
+      "title": "Mode Pencarian",
+      "subtitle": "Pengaturan pencarian",
+      "azureAgentMode": "Mode Azure AI Foundry",
+      "azureAgentModeDescription": "Percakapan lengkap disimpan di Azure",
+      "privacyFocused": "Fokus Privasi",
+      "privacyFocusedDescription": "Hanya kueri pencarian disimpan di Azure",
+      "privacyInfoTitle": "Informasi Privasi",
+      "privacyInfoDescription": "Bagaimana data Anda dilindungi",
+      "routingLabel": "Routing",
+      "learnMoreDataStorage": "Pelajari lebih lanjut tentang penyimpanan data",
+      "whatsDifference": "Apa bedanya?"
+    },
+    "sections": {
+      "baseModels": "Model Dasar"
+    },
+    "tabs": {
+      "models": "Model",
+      "agents": "Agen"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "Model canggih OpenAI, terbaik untuk penalaran kompleks dan coding.",
+      "knowledgeCutoff": "Maret 2024"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "Model paling canggih dari OpenAI.",
+      "knowledgeCutoff": "Agustus 2025"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "Versi GPT-5 yang lebih cepat.",
+      "knowledgeCutoff": "Agustus 2025"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "Terbaik untuk percakapan.",
+      "knowledgeCutoff": "Oktober 2025"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "Model penalaran canggih OpenAI.",
+      "knowledgeCutoff": "April 2025"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Model cepat dari Meta.",
+      "knowledgeCutoff": "Mei 2025"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "Ahli penalaran.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "Ahli pemrograman.",
+      "knowledgeCutoff": "April 2025"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "Model dari xAI.",
+      "knowledgeCutoff": "Mei 2025"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Model paling capable dari Anthropic.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Model Claude yang seimbang.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "Claude Opus generasi sebelumnya.",
+      "knowledgeCutoff": "Januari 2025"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "Model Claude yang cepat.",
+      "knowledgeCutoff": "Januari 2025"
+    }
   }
 }
