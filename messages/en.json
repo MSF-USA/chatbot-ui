@@ -89,6 +89,7 @@
   "Prompt limit is {{maxLength}} characters": "Prompt limit is {{maxLength}} characters",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Prompt limit is {{maxLength}} characters. You have entered {{valueLength}} characters.",
   "Regenerate response": "Regenerate response",
+  "Run Typewriter Intro": "Run Typewriter Intro",
   "Save & Submit": "Save & Submit",
   "Search_ellipsis": "Search...",
   "Sorry, there was an error_": "Sorry, there was an error.",
