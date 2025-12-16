@@ -335,7 +335,19 @@
   "Team Templates": "ٹیم ٹیمپلیٹس",
   "selected": "منتخب شدہ",
   "folders": "فولڈرز",
-  "agents": "ایجنٹس",
+  "agents": {
+    "exportAgent": "ایجنٹ برآمد کریں",
+    "editAgent": "ایجنٹ میں ترمیم کریں",
+    "agentName": "ایجنٹ کا نام",
+    "myResearchAssistant": "میرا تحقیقی معاون",
+    "agentId": "ایجنٹ ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "تفصیل (اختیاری)",
+    "descriptionPlaceholder": "تحقیقی کاموں میں ماہر ایجنٹ...",
+    "baseModel": "بنیادی ماڈل",
+    "formatDescription": "فارمیٹ: asst_xxxxx (MSF AI Assistant Foundry سے)",
+    "importantInfo": "اس ایجنٹ کو گفتگو کے سیاق و سباق تک رسائی حاصل ہو گی اور یہ معیاری ماڈلز کی طرح ایک ہی ٹولز استعمال کر سکے گا۔ یقینی بنائیں کہ ایجنٹ ID درست ہے کیونکہ اسے بعد میں تبدیل نہیں کیا جا سکتا۔"
+  },
   "Quick Actions": "فوری کارروائیاں",
   "Type / in chat to access your prompts": "اپنے پرامپٹس تک رسائی کے لیے چیٹ میں / ٹائپ کریں",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "چیٹ میں / ٹائپ کریں، اپنا پرامپٹ منتخب کریں، اور جب کہا جائے تو متغیرات بھریں",
@@ -470,13 +482,41 @@
   "enterPromptDescriptionPlaceholder": "یہ پرامپٹ کس لیے ہے؟",
   "enterPromptContentPlaceholder": "اپنا پرامپٹ یہاں لکھیں۔ متحرک مواد کے لیے {{variable}} استعمال کریں۔",
   "common": {
-    "contact": "رابطہ"
+    "contact": "رابطہ",
+    "close": "بند کریں",
+    "remove": "ہٹائیں",
+    "tryAgain": "دوبارہ کوشش کریں",
+    "menu": "مینو",
+    "copyToClipboard": "کلپ بورڈ میں کاپی کریں",
+    "toggleDropdownMenu": "ڈراپ ڈاؤن مینو ٹوگل کریں",
+    "toggleMenu": "مینو ٹوگل کریں",
+    "msfLogo": "MSF لوگو",
+    "dismissBanner": "بینر برخاست کریں",
+    "importantInformation": "اہم معلومات",
+    "searchEllipsis": "تلاش کریں...",
+    "closeModal": "موڈل بند کریں",
+    "addTagEllipsis": "ٹیگ شامل کریں...",
+    "cancel": "منسوخ کریں",
+    "confirm": "تصدیق کریں",
+    "discard": "رد کریں",
+    "keepEditing": "ترمیم جاری رکھیں",
+    "no": "نہیں",
+    "yes": "ہاں",
+    "noResults": "کوئی نتائج نہیں"
   },
   "errors": {
     "unexpectedErrorOccurred": "ایک غیر متوقع خرابی پیش آگئی",
     "criticalErrorReload": "ایک سنگین خرابی پیش آگئی۔ براہ کرم صفحہ دوبارہ لوڈ کریں۔",
     "reloadPage": "صفحہ دوبارہ لوڈ کریں",
-    "persistContactSupport": "اگر یہ مسئلہ برقرار رہتا ہے تو براہ کرم سپورٹ سے رابطہ کریں"
+    "persistContactSupport": "اگر یہ مسئلہ برقرار رہتا ہے تو براہ کرم سپورٹ سے رابطہ کریں",
+    "somethingWentWrong": "کچھ غلط ہو گیا",
+    "anErrorOccurred": "ایک خرابی پیش آئی",
+    "anErrorOccurredTryAgain": "ایک خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔",
+    "chatLoadError": "چیٹ لوڈ کرنے میں خرابی۔ براہ کرم صفحہ ریفریش کریں۔",
+    "applicationError": "ایپلیکیشن میں خرابی",
+    "dismissError": "خرابی برخاست کریں",
+    "copyErrorMessage": "خرابی کا پیغام کاپی کریں",
+    "contactSupport": "سپورٹ سے رابطہ کریں"
   },
   "auth": {
     "authenticationError": "تصدیق کی خرابی",
@@ -545,26 +585,31 @@
     "fullSizePreview": "مکمل سائز کا پیش نظارہ",
     "enterSearchQueryPlaceholder": "اپنی تلاش یا سوال درج کریں...",
     "errorFetchingUrl": "URL مواد حاصل کرنے میں خرابی",
-    "errorInitiatingSearch": "ویب تلاش شروع کرنے میں خرابی"
+    "errorInitiatingSearch": "ویب تلاش شروع کرنے میں خرابی",
+    "translateMessage": "پیغام کا ترجمہ کریں",
+    "showOriginal": "اصل دکھائیں",
+    "translating": "ترجمہ ہو رہا ہے...",
+    "translatedTo": "{language} میں ترجمہ شدہ",
+    "translationError": "ترجمہ میں خرابی",
+    "searchLanguages": "زبانیں تلاش کریں...",
+    "selectLanguage": "زبان منتخب کریں",
+    "regenerate": "دوبارہ بنائیں",
+    "thinking": "سوچ رہا ہے...",
+    "expandThinking": "سوچ کو پھیلائیں",
+    "collapseThinking": "سوچ کو سمیٹیں",
+    "viewReasoningProcess": "استدلال کا عمل دیکھیں",
+    "modelSwitchPrompt": "اس پیغام میں تصاویر ہیں جو موجودہ ماڈل سے مطابقت نہیں رکھتیں۔",
+    "switchToModel": "ماڈل پر سوئچ کریں",
+    "keepOriginalModel": "اصل ماڈل رکھیں",
+    "alwaysSwitchToModel": "ہمیشہ اس ماڈل پر سوئچ کریں",
+    "audioFromOriginal": "اصل سے آڈیو",
+    "audioFromTranslation": "ترجمے سے آڈیو"
   },
   "sidebar": {
     "collapseSidebar": "سائیڈ بار کو سکیڑیں",
     "expandSidebar": "سائیڈ بار کو پھیلائیں",
     "quickActionsTitle": "فوری اقدامات",
     "quickActions": "فوری اقدامات"
-  },
-  "agents": {
-    "exportAgent": "ایجنٹ برآمد کریں",
-    "editAgent": "ایجنٹ میں ترمیم کریں",
-    "agentName": "ایجنٹ کا نام",
-    "myResearchAssistant": "میرا تحقیقی معاون",
-    "agentId": "ایجنٹ ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "تفصیل (اختیاری)",
-    "descriptionPlaceholder": "تحقیقی کاموں میں ماہر ایجنٹ...",
-    "baseModel": "بنیادی ماڈل",
-    "formatDescription": "فارمیٹ: asst_xxxxx (MSF AI Assistant Foundry سے)",
-    "importantInfo": "اس ایجنٹ کو گفتگو کے سیاق و سباق تک رسائی حاصل ہو گی اور یہ معیاری ماڈلز کی طرح ایک ہی ٹولز استعمال کر سکے گا۔ یقینی بنائیں کہ ایجنٹ ID درست ہے کیونکہ اسے بعد میں تبدیل نہیں کیا جا سکتا۔"
   },
   "prompts": {
     "buildReusablePrompts": "AI کی مدد سے دوبارہ قابل استعمال پرامپٹس بنائیں"
@@ -575,7 +620,51 @@
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "تکنیکی بہاؤ کا خاکہ دیکھیں"
+    "viewTechnicalFlowDiagram": "تکنیکی بہاؤ کا خاکہ دیکھیں",
+    "backToChat": "چیٹ پر واپس جائیں",
+    "title": "مدد مرکز",
+    "subtitle": "جوابات تلاش کریں، رازداری کے بارے میں جانیں، مدد حاصل کریں",
+    "faq": {
+      "title": "اکثر پوچھے جانے والے سوالات",
+      "description": "AI اسسٹنٹ استعمال کرنے کے بارے میں جوابات تلاش کریں",
+      "articles": "مضامین",
+      "searchPlaceholder": "سوالات تلاش کریں...",
+      "noResults": "کوئی مماثل سوالات نہیں ملے",
+      "noResultsHint": "دوسری تلاش کی اصطلاحات آزمائیں"
+    },
+    "privacy": {
+      "title": "رازداری اور ڈیٹا",
+      "description": "جانیں کہ آپ کا ڈیٹا کیسے محفوظ ہے",
+      "topics": "موضوعات",
+      "searchPlaceholder": "رازداری کے موضوعات تلاش کریں...",
+      "noResults": "کوئی مماثل موضوعات نہیں ملے",
+      "noResultsHint": "دوسری تلاش کی اصطلاحات آزمائیں",
+      "bannerTitle": "آپ کی رازداری اہم ہے",
+      "bannerDescription": "تمام گفتگو آپ کے آلے پر محفوظ ہوتی ہے۔",
+      "localStorageOnly": "صرف مقامی اسٹوریج",
+      "msfControlled": "MSF کا کنٹرول",
+      "noPersonalData": "کوئی ذاتی ڈیٹا نہیں",
+      "noSensitiveOps": "کوئی حساس آپریشنز نہیں"
+    },
+    "contact": {
+      "title": "رابطہ اور وسائل",
+      "description": "ہماری ٹیم سے رابطہ کریں",
+      "supportAvailable": "سپورٹ دستیاب ہے",
+      "submitRequest": "سپورٹ کی درخواست جمع کریں",
+      "getHelp": "ہماری ٹیم سے مدد حاصل کریں",
+      "requestDescription": "مدد چاہیے یا فیڈ بیک دینا چاہتے ہیں؟ نیچے سپورٹ فارم کھولیں۔",
+      "openSupportForm": "سپورٹ فارم کھولیں",
+      "otherWays": "رابطے کے دیگر طریقے",
+      "emailSupport": "ای میل سپورٹ",
+      "emailDescription": "سوالات، فیڈ بیک، یا تکنیکی مسائل کے لیے ہمیں ای میل کریں"
+    },
+    "resources": {
+      "title": "دیگر وسائل",
+      "portalTitle": "AI ایکسلریٹر پورٹل",
+      "portalDescription": "دستاویزات، پروجیکٹ اپڈیٹس اور تربیتی مواد",
+      "githubTitle": "اوپن سورس ریپوزٹری",
+      "githubDescription": "GitHub پر کوڈ دیکھیں، مسائل رپورٹ کریں"
+    }
   },
   "settings": {
     "Settings": "ترتیبات",
@@ -647,5 +736,61 @@
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"
+  },
+  "transcription": {
+    "transcribesOnSend": "بھیجنے پر نقل کرتا ہے",
+    "addInstructions": "ہدایات شامل کریں",
+    "instructionsPlaceholder": "درستگی بہتر کرنے کے لیے سیاق و سباق (مثلاً نام، اصطلاحات)"
+  },
+  "importBackupParseError": "بیک اپ فائل پارس کرنے میں ناکام۔ براہ کرم یقینی بنائیں کہ یہ درست JSON ہے۔",
+  "emptyState": {
+    "greeting": "میں آپ کی کیا مدد کر سکتا ہوں؟",
+    "greetingWithName": "میں آپ کی کیا مدد کر سکتا ہوں، {name}؟",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "خاکے بنائیں",
+        "prompt": "مجھے دکھائیں کہ آپ خاکے اور فلو چارٹس کیسے بنا سکتے ہیں۔"
+      },
+      "brainstormIdeas": {
+        "title": "خیالات پر غور کریں",
+        "prompt": "مجھے کسی موضوع پر خیالات پیدا کرنے میں مدد کریں۔"
+      },
+      "draftContent": {
+        "title": "مواد تحریر کریں",
+        "prompt": "مجھے پیشہ ورانہ دستاویزات لکھنے میں مدد کریں۔"
+      },
+      "explainTopics": {
+        "title": "موضوعات کی وضاحت کریں",
+        "prompt": "مجھے پیچیدہ موضوعات سمجھنے میں مدد کریں۔"
+      },
+      "summarizeSynthesize": {
+        "title": "خلاصہ کریں",
+        "prompt": "طویل مواد کا خلاصہ کرنے میں مدد کریں۔"
+      },
+      "analyzeInformation": {
+        "title": "معلومات کا تجزیہ کریں",
+        "prompt": "ڈیٹا اور معلومات کا تجزیہ کرنے میں مدد کریں۔"
+      },
+      "planOrganize": {
+        "title": "منصوبہ بندی کریں",
+        "prompt": "پروجیکٹس اور کاموں کی منصوبہ بندی میں مدد کریں۔"
+      },
+      "workWithCode": {
+        "title": "کوڈ کے ساتھ کام کریں",
+        "prompt": "پروگرامنگ اور کوڈ کی مدد کریں۔"
+      },
+      "buildPresentations": {
+        "title": "پیشکشیں بنائیں",
+        "prompt": "پیشکش بنانے میں مدد کریں۔"
+      },
+      "createSchedules": {
+        "title": "شیڈول بنائیں",
+        "prompt": "شیڈول اور ٹائم ٹیبل بنانے میں مدد کریں۔"
+      },
+      "decisionSupport": {
+        "title": "فیصلے کی مدد",
+        "prompt": "فیصلے کرنے میں مدد کریں۔"
+      }
+    }
   }
 }
