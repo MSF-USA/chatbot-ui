@@ -339,7 +339,19 @@
   "Team Templates": "Modelos de equipe",
   "selected": "selecionado",
   "folders": "pastas",
-  "agents": "agentes",
+  "agents": {
+    "exportAgent": "Exportar agente",
+    "editAgent": "Editar agente",
+    "agentName": "Nome do agente",
+    "myResearchAssistant": "Meu assistente de pesquisa",
+    "agentId": "ID do agente",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Descrição (opcional)",
+    "descriptionPlaceholder": "Agente especializado para tarefas de pesquisa...",
+    "baseModel": "Modelo base",
+    "formatDescription": "Formato: asst_xxxxx (do MSF AI Assistant Foundry)",
+    "importantInfo": "Este agente terá acesso ao contexto da conversa e pode usar as mesmas ferramentas que os modelos padrão. Certifique-se de que o ID do agente está correto, pois não pode ser alterado posteriormente."
+  },
   "Quick Actions": "Ações rápidas",
   "Type / in chat to access your prompts": "Digite / no chat para acessar seus prompts",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Digite / no chat, selecione seu prompt e preencha as variáveis quando solicitado",
@@ -386,7 +398,6 @@
   "Custom Agents": "Agentes personalizados",
   "Delete template and all its items": "Excluir modelo e todos os seus itens",
   "Description (Optional)": "Descrição (Opcional)",
-  "Edit Prompt": "Editar prompt",
   "Edit Tone": "Editar tom",
   "Email Response Template": "Modelo de resposta de e-mail",
   "Example Prompt": "Exemplo de prompt",
@@ -446,7 +457,6 @@
   "msf_logo_alt": "Logo MSF",
   "collapse_sidebar": "Recolher barra lateral",
   "expand_sidebar": "Expandir barra lateral",
-  "Voice Guidelines": "Diretrizes de voz",
   "Please upload some content or describe the tone you want": "Por favor, envie algum conteúdo ou descreva o tom que deseja",
   "Untitled Tone": "Tom sem título",
   "Failed to analyze tone": "Falha ao analisar tom",
@@ -570,19 +580,6 @@
     "criticalErrorReload": "Ocorreu um erro crítico. Por favor, recarregue a página.",
     "reloadPage": "Recarregar página",
     "persistContactSupport": "Se este problema persistir, entre em contato com o suporte"
-  },
-  "agents": {
-    "exportAgent": "Exportar agente",
-    "editAgent": "Editar agente",
-    "agentName": "Nome do agente",
-    "myResearchAssistant": "Meu assistente de pesquisa",
-    "agentId": "ID do agente",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Descrição (opcional)",
-    "descriptionPlaceholder": "Agente especializado para tarefas de pesquisa...",
-    "baseModel": "Modelo base",
-    "formatDescription": "Formato: asst_xxxxx (do MSF AI Assistant Foundry)",
-    "importantInfo": "Este agente terá acesso ao contexto da conversa e pode usar as mesmas ferramentas que os modelos padrão. Certifique-se de que o ID do agente está correto, pois não pode ser alterado posteriormente."
   },
   "prompts": {
     "buildReusablePrompts": "Criar prompts reutilizáveis com assistência de IA",
@@ -1012,6 +1009,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Modelo Claude rápido e econômico otimizado para tarefas rápidas. Ótimo para consultas simples, resumo e aplicações de alto volume.",
       "knowledgeCutoff": "Janeiro de 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "O modelo mais avançado da OpenAI, excelente em raciocínio complexo, geração de código e resolução técnica de problemas. Ideal para tarefas analíticas, desafios de programação, pesquisas e explicações detalhadas. Permite ajustar o nível de raciocínio e a extensão das respostas.",
+      "knowledgeCutoff": "Dez 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Variante especializada do GPT-5.2 otimizada para interações conversacionais e inteligência emocional. Excelente em comunicação empática, apoio em saúde mental, escrita criativa, geração de ideias e diálogo natural. Ideal para conversas casuais, cenários de aconselhamento e tarefas que exijam consciência emocional.",
+      "knowledgeCutoff": "Dez 2025"
     }
   },
   "searchMode": {
@@ -1054,5 +1061,167 @@
     "footerNote": "Ambos os modos armazenam sua conversa localmente no seu navegador. Você pode alternar modos a qualquer momento nas configurações do modelo.",
     "note": "Nota:",
     "loadingDiagram": "Carregando diagrama..."
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Verificando armazenamento",
+      "analyzingData": "Analisando seus dados...",
+      "updateAvailable": "Atualização disponível",
+      "storageSpaceLimited": "Espaço de armazenamento limitado",
+      "migratingData": "Migrando dados",
+      "migrationComplete": "Migração concluída",
+      "partiallyComplete": "Parcialmente concluída",
+      "migrationFailed": "Migração falhou"
+    },
+    "descriptions": {
+      "foundLegacyData": "Encontramos dados de uma versão anterior. Deseja migrá-los para funcionar com o sistema aprimorado?",
+      "storageSpaceWarning": "Seus dados requerem mais espaço do que o disponível atualmente. Recomendamos usar o modo de migração incremental.",
+      "pleaseWait": "Por favor, aguarde enquanto atualizamos seus dados...",
+      "dataIsSafe": "Seus dados originais estão seguros. Você pode tentar novamente ou pular por enquanto.",
+      "itemsTooLarge": "Esses itens são grandes demais para caber no armazenamento. Você pode exportá-los, liberar espaço ou continuar sem eles.",
+      "settingsUpdated": "Suas configurações foram atualizadas."
+    },
+    "benefits": {
+      "title": "Benefícios",
+      "fasterPerformance": "Desempenho mais rápido",
+      "betterReliability": "Maior confiabilidade",
+      "dataPreserved": "Seus dados estão preservados"
+    },
+    "options": {
+      "advancedOptions": "Opções avançadas",
+      "useIncrementalMode": "Usar modo incremental",
+      "slowerButSafer": "mais lento, porém mais seguro",
+      "recommended": "recomendado",
+      "deleteLegacyData": "Excluir dados antigos após migração",
+      "freesUpSpace": "libera espaço de armazenamento"
+    },
+    "actions": {
+      "skip": "Pular",
+      "migrateData": "Migrar dados",
+      "migrateAnyway": "Migrar mesmo assim",
+      "continue": "Continuar",
+      "retry": "Tentar novamente",
+      "exportBackupFirst": "Exportar backup primeiro",
+      "exportSkippedItems": "Exportar itens pulados"
+    },
+    "quota": {
+      "availableSpace": "Espaço disponível",
+      "dataToMigrate": "Dados a migrar",
+      "additionalSpaceNeeded": "Espaço adicional necessário"
+    },
+    "progress": {
+      "migratingConversations": "Migrando conversas",
+      "migratingPrompts": "Migrando prompts",
+      "migratingAgents": "Migrando agentes",
+      "finishingUp": "Finalizando"
+    },
+    "results": {
+      "successfullyMigrated": "Migrado com sucesso",
+      "notes": "Observações",
+      "couldNotMigrate": "Não foi possível migrar",
+      "legacyDataDeleted": "Dados antigos excluídos",
+      "freed": "liberado"
+    },
+    "units": {
+      "conversation": "conversa",
+      "conversations": "conversas",
+      "folder": "pasta",
+      "folders": "pastas",
+      "prompt": "prompt",
+      "prompts": "prompts",
+      "customAgent": "agente personalizado",
+      "customAgents": "agentes personalizados",
+      "item": "item",
+      "items": "itens"
+    }
+  },
+  "languageSwahili": "Suaíli",
+  "welcomeBanner": {
+    "title": "Bem-vindo ao Assistente de IA V2",
+    "whatsNew": "Novidades",
+    "whatsNewQuestion": "Quais as novidades?"
+  },
+  "welcomeV2": {
+    "backToChat": "Voltar ao chat",
+    "title": "Bem-vindo ao Assistente de IA V2",
+    "subtitle": "Um redesenho completo com novos recursos poderosos",
+    "webSearch": {
+      "title": "Modo de Pesquisa na Web",
+      "description": "Permita que a IA acesse pesquisas na web em tempo real com opções de privacidade",
+      "quickAccess": "Acesso rápido:",
+      "quickAccessInstructions": "Clique no botão + ao lado do campo de chat → Selecione \"Pesquisa na Web\"",
+      "setAsDefault": "Definir como padrão:",
+      "setAsDefaultInstructions": "Abra as configurações do modelo e ative a chave do Modo de Pesquisa na Web. Escolha entre:",
+      "privacyFocused": "Foco em Privacidade (padrão)",
+      "privacyFocusedDescription": "Apenas a consulta de pesquisa é enviada externamente",
+      "azureAIFoundry": "Modo Azure AI Foundry",
+      "azureAIFoundryDescription": "Mais rápido, mas toda a conversa é armazenada externamente",
+      "learnMore": "Saiba mais sobre os modos de pesquisa →"
+    },
+    "tones": {
+      "title": "Tons (Perfis de Voz)",
+      "description": "Controle o estilo de escrita, formalidade e personalidade da IA",
+      "createTones": "1. Criar tons:",
+      "createTonesInstructions": "Ações rápidas na barra lateral → Aba Tons",
+      "useTones": "2. Usar tons:",
+      "useTonesInstructions": "Clique no menu de tons ao lado do campo de chat",
+      "exampleProfessionalDesc": "Tom formal, profissional",
+      "exampleCasualDesc": "Amigável, conversacional"
+    },
+    "aiAssist": {
+      "title": "Assistência de IA para Prompts & Tons",
+      "description": "Deixe a IA ajudar você a criar prompts e tons melhores, mais rápido",
+      "step1": "Abra as Ações Rápidas na barra lateral",
+      "step2": "Navegue até a aba {prompts} ou {tones}",
+      "step3": "Procure o painel do Assistente de IA",
+      "getSuggestions": "Obter sugestões",
+      "getSuggestionsDesc": "A IA analisa seu rascunho e sugere melhorias",
+      "buildFromFiles": "Criar a partir de arquivos",
+      "buildFromFilesDesc": "Envie documentos para gerar prompts/tons",
+      "testBeforeSaving": "Testar antes de salvar",
+      "testBeforeSavingDesc": "Teste prompts/tons em uma pré-visualização de chat",
+      "step2Prefix": "Navegue até",
+      "step2Suffix": "aba"
+    },
+    "customAgents": {
+      "title": "Agentes Personalizados",
+      "advancedBadge": "AVANÇADO",
+      "description": "Agentes de IA especializados com recursos avançados como pesquisa na web e interpretação de código",
+      "advancedFeature": "Recurso Avançado",
+      "advancedFeatureDesc": "Agentes Personalizados rodam no Azure AI Foundry com ferramentas especializadas. Requer coordenação com a equipe técnica do Assistente de IA para criar IDs de agente.",
+      "howToAccess": "Como acessar:",
+      "howToAccessInstructions": "Configurações → Modelos → Aba Agentes",
+      "whatYouCanDo": "O que você pode fazer:",
+      "configureAgents": "Configurar agentes com capacidades especializadas",
+      "importExport": "Importar/exportar configurações de agentes",
+      "selectFromDropdown": "Selecione agentes personalizados na lista de modelos"
+    },
+    "audioTranslation": {
+      "title": "Transcrição de Áudio com Tradução",
+      "description": "Traduza automaticamente transcrições de áudio para mais de 13 idiomas",
+      "howToUse": "Como usar:",
+      "step1": "Carregue um arquivo de áudio ou vídeo",
+      "step2": "Clique no menu de idiomas na interface de transcrição",
+      "step3": "Selecione o idioma de destino",
+      "availableLanguages": "Idiomas disponíveis:",
+      "moreLanguages": "+7 mais"
+    },
+    "pwa": {
+      "title": "Instalar como aplicativo móvel",
+      "description": "Aplicativo Web Progressivo com experiência nativa",
+      "installTip": "Dica: Instale após fazer login para manter sua autenticação e ter a melhor experiência.",
+      "howToInstall": "Como instalar:",
+      "step1": "Faça login na sua conta",
+      "step2": "Abra Configurações → Aplicativo Móvel para instruções detalhadas",
+      "step3": "No celular: Toque no menu do navegador (⋮ ou ⚙️)",
+      "step4": "Procure por \"Adicionar à tela inicial\" ou \"Instalar aplicativo\"",
+      "step5": "Siga as instruções para instalar",
+      "benefits": "Benefícios:",
+      "benefit1": "Abra como um app nativo a partir da tela inicial",
+      "benefit2": "Tela cheia sem a interface do navegador",
+      "benefit3": "Acesso offline às conversas salvas"
+    }
+  },
+  "Professional": "Profissional",
+  "Casual": "Casual"
 }
