@@ -1280,5 +1280,30 @@
   },
   "codeBlock": {
     "openInEditor": "Open in editor"
+  },
+  "artifact": {
+    "noContentToExport": "No content to export",
+    "exportedAsHtml": "Exported as HTML",
+    "exportedAsMarkdown": "Exported as Markdown",
+    "exportedAsText": "Exported as Text",
+    "generatingPdf": "Generating PDF...",
+    "exportedAsPdf": "Exported as PDF",
+    "generatingDocx": "Generating DOCX...",
+    "exportedAsDocx": "Exported as DOCX",
+    "failedToExportAs": "Failed to export as {format}",
+    "document": "Document",
+    "switchToCodeEditor": "Switch to Code Editor",
+    "exportDocument": "Export Document",
+    "formatMarkdown": "Markdown (.md)",
+    "formatHtml": "HTML (.html)",
+    "formatDocx": "Word (.docx)",
+    "formatText": "Plain Text (.txt)",
+    "formatPdf": "PDF (.pdf)",
+    "close": "Close",
+    "editsNotSaved": "Edits are not saved. Send via message or download to save any edits.",
+    "fileDownloaded": "File downloaded",
+    "failedToDownload": "Failed to download",
+    "switchToDocumentEditor": "Switch to Document Editor",
+    "download": "Download"
   }
 }
