@@ -3,6 +3,7 @@
 import { OpenAIModel, OpenAIModelID } from '@/types/openai';
 import { Prompt } from '@/types/prompt';
 import { SearchMode } from '@/types/searchMode';
+import { DisplayNamePreference } from '@/types/settings';
 import { Tone } from '@/types/tone';
 
 import { create } from 'zustand';
@@ -29,6 +30,8 @@ interface SettingsStore {
   defaultModelId: OpenAIModelID | undefined;
   defaultSearchMode: SearchMode;
   autoSwitchOnFailure: boolean;
+  displayNamePreference: DisplayNamePreference;
+  customDisplayName: string;
   models: OpenAIModel[];
   prompts: Prompt[];
   tones: Tone[];
@@ -40,6 +43,8 @@ interface SettingsStore {
   setDefaultModelId: (id: OpenAIModelID | undefined) => void;
   setDefaultSearchMode: (mode: SearchMode) => void;
   setAutoSwitchOnFailure: (enabled: boolean) => void;
+  setDisplayNamePreference: (preference: DisplayNamePreference) => void;
+  setCustomDisplayName: (name: string) => void;
   setModels: (models: OpenAIModel[]) => void;
   setPrompts: (prompts: Prompt[]) => void;
   addPrompt: (prompt: Prompt) => void;
@@ -64,6 +69,8 @@ interface SettingsStore {
 
 const DEFAULT_TEMPERATURE = 0.5;
 const DEFAULT_SYSTEM_PROMPT = '';
+const DEFAULT_DISPLAY_NAME_PREFERENCE: DisplayNamePreference = 'firstName';
+const DEFAULT_CUSTOM_DISPLAY_NAME = '';
 
 export const useSettingsStore = create<SettingsStore>()(
   persist(
@@ -74,6 +81,8 @@ export const useSettingsStore = create<SettingsStore>()(
       defaultModelId: undefined,
       defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
       autoSwitchOnFailure: false,
+      displayNamePreference: DEFAULT_DISPLAY_NAME_PREFERENCE,
+      customDisplayName: DEFAULT_CUSTOM_DISPLAY_NAME,
       models: [],
       prompts: [],
       tones: [],
@@ -90,6 +99,11 @@ export const useSettingsStore = create<SettingsStore>()(
 
       setAutoSwitchOnFailure: (enabled) =>
         set({ autoSwitchOnFailure: enabled }),
+
+      setDisplayNamePreference: (preference) =>
+        set({ displayNamePreference: preference }),
+
+      setCustomDisplayName: (name) => set({ customDisplayName: name }),
 
       setModels: (models) => set({ models }),
 
@@ -157,6 +171,8 @@ export const useSettingsStore = create<SettingsStore>()(
           temperature: DEFAULT_TEMPERATURE,
           systemPrompt: DEFAULT_SYSTEM_PROMPT,
           defaultSearchMode: SearchMode.INTELLIGENT,
+          displayNamePreference: DEFAULT_DISPLAY_NAME_PREFERENCE,
+          customDisplayName: DEFAULT_CUSTOM_DISPLAY_NAME,
           prompts: [],
           tones: [],
           customAgents: [],
@@ -164,7 +180,7 @@ export const useSettingsStore = create<SettingsStore>()(
     }),
     {
       name: 'settings-storage',
-      version: 2, // Increment this when schema changes to trigger migrations
+      version: 3, // Increment this when schema changes to trigger migrations
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         temperature: state.temperature,
@@ -172,6 +188,8 @@ export const useSettingsStore = create<SettingsStore>()(
         defaultModelId: state.defaultModelId,
         defaultSearchMode: state.defaultSearchMode,
         autoSwitchOnFailure: state.autoSwitchOnFailure,
+        displayNamePreference: state.displayNamePreference,
+        customDisplayName: state.customDisplayName,
         prompts: state.prompts,
         tones: state.tones,
         customAgents: state.customAgents,
