@@ -642,7 +642,8 @@
     "thinking": "Thinking...",
     "viewReasoningProcess": "View reasoning process",
     "collapseThinking": "Collapse thinking",
-    "expandThinking": "Expand thinking"
+    "expandThinking": "Expand thinking",
+    "actionsDisabledForEmbed": "Use the controls in the embedded content above"
   },
   "transcript": {
     "originalTranscript": "Original Transcript",
