@@ -482,7 +482,7 @@
   "enterTagsPlaceholder": "Add tags (press Enter)",
   "enterPromptNamePlaceholder": "e.g., Email Response",
   "enterPromptDescriptionPlaceholder": "What is this prompt for?",
-  "enterPromptContentPlaceholder": "Write your prompt here. Use {{variable}} for dynamic content.",
+  "enterPromptContentPlaceholder": "Write your prompt here. Use '{{variable}}' for dynamic content.",
   "welcomeBanner": {
     "title": "Welcome to AI Assistant V2",
     "whatsNew": "What's New",
@@ -695,7 +695,7 @@
     "userMustProvide": "User must provide a value",
     "userCanProvide": "User can provide a value, or default is used",
     "example": "Example:",
-    "variableExampleText": "Write a {{tone:professional}} email to {{recipient}} about {{topic}} in {{language:English}}",
+    "variableExampleText": "Write a '{{tone:professional}}' email to '{{recipient}}' about '{{topic}}' in '{{language:English}}'",
     "detectedVariables": "Detected Variables",
     "required": "Required",
     "aiAssistant": "AI Assistant",
