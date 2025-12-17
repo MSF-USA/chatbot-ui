@@ -336,7 +336,19 @@
   "Team Templates": "Takım Şablonları",
   "selected": "seçili",
   "folders": "klasörler",
-  "agents": "ajanlar",
+  "agents": {
+    "exportAgent": "Ajanı dışa aktar",
+    "editAgent": "Ajanı düzenle",
+    "agentName": "Ajan adı",
+    "myResearchAssistant": "Araştırma asistanım",
+    "agentId": "Ajan kimliği",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Açıklama (isteğe bağlı)",
+    "descriptionPlaceholder": "Araştırma görevlerinde uzmanlaşmış ajan...",
+    "baseModel": "Temel model",
+    "formatDescription": "Format: asst_xxxxx (MSF AI Assistant Foundry'den)",
+    "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez."
+  },
   "Quick Actions": "Hızlı İşlemler",
   "Type / in chat to access your prompts": "İstemlerinize erişmek için sohbette / yazın",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Sohbette / yazın, isteminizi seçin ve istendiğinde değişkenleri doldurun",
@@ -599,19 +611,6 @@
     "expandSidebar": "Kenar çubuğunu genişlet",
     "quickActionsTitle": "Hızlı İşlemler",
     "quickActions": "Hızlı İşlemler"
-  },
-  "agents": {
-    "exportAgent": "Ajanı dışa aktar",
-    "editAgent": "Ajanı düzenle",
-    "agentName": "Ajan adı",
-    "myResearchAssistant": "Araştırma asistanım",
-    "agentId": "Ajan kimliği",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Açıklama (isteğe bağlı)",
-    "descriptionPlaceholder": "Araştırma görevlerinde uzmanlaşmış ajan...",
-    "baseModel": "Temel model",
-    "formatDescription": "Format: asst_xxxxx (MSF AI Assistant Foundry'den)",
-    "importantInfo": "Bu ajan konuşma bağlamına erişebilecek ve standart modellerle aynı araçları kullanabilecektir. Ajan kimliğinin doğru olduğundan emin olun çünkü daha sonra değiştirilemez."
   },
   "prompts": {
     "buildReusablePrompts": "AI yardımıyla yeniden kullanılabilir istemler oluşturun",
@@ -1007,6 +1006,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Hızlı görevler için optimize edilmiş hızlı ve maliyet etkin Claude modeli. Basit sorgular, özetlemeler ve toplu uygulamalar için idealdir.",
       "knowledgeCutoff": "Ocak 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI'nin en gelişmiş modeli; karmaşık muhakeme, kod üretimi ve teknik problem çözmede uzman. Analitik görevler, programlama zorlukları, araştırma ve ayrıntılı açıklamalar için en iyisidir. Ayarlanabilir muhakeme derecesi ve yanıt uzunluğu desteği sunar.",
+      "knowledgeCutoff": "Aralık 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Konuşmaya ve duygusal zekaya özel olarak optimize edilmiş GPT-5.2 varyantı. Empatik iletişim, ruh sağlığı desteği, yaratıcı yazarlık, fikir üretimi ve doğal diyalogda üstündür. Gündelik sohbetler, danışmanlık senaryoları ve duygusal farkındalığın gerekli olduğu görevler için idealdir.",
+      "knowledgeCutoff": "Aralık 2025"
     }
   },
   "searchMode": {
@@ -1054,5 +1063,167 @@
     "transcribesOnSend": "Gönderildiğinde yazıya döker",
     "addInstructions": "Talimat ekle",
     "instructionsPlaceholder": "Doğruluğu artırmak için bağlam (örn. isimler, terimler)"
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Depolama kontrol ediliyor",
+      "analyzingData": "Verileriniz analiz ediliyor...",
+      "updateAvailable": "Güncelleme Mevcut",
+      "storageSpaceLimited": "Depolama Alanı Sınırlı",
+      "migratingData": "Veriler Taşınıyor",
+      "migrationComplete": "Veri Taşıma Tamamlandı",
+      "partiallyComplete": "Kısmen Tamamlandı",
+      "migrationFailed": "Veri Taşıma Başarısız"
+    },
+    "descriptions": {
+      "foundLegacyData": "Önceki bir sürümden veri bulduk. Geliştirilmiş sistemle çalışması için bu verileri taşımak ister misiniz?",
+      "storageSpaceWarning": "Verileriniz mevcut alandan daha fazla yer gerektiriyor. Artımlı taşıma modunu kullanmanızı öneririz.",
+      "pleaseWait": "Verileriniz güncellenirken lütfen bekleyin...",
+      "dataIsSafe": "Orijinal verileriniz güvende. Tekrar deneyebilir veya şimdilik atlayabilirsiniz.",
+      "itemsTooLarge": "Bu öğeler depolamaya sığmayacak kadar büyük. Dışa aktarabilir, yer açabilir veya bu öğeler olmadan devam edebilirsiniz.",
+      "settingsUpdated": "Ayarlarınız güncellendi."
+    },
+    "benefits": {
+      "title": "Faydalar",
+      "fasterPerformance": "Daha hızlı performans",
+      "betterReliability": "Daha yüksek güvenilirlik",
+      "dataPreserved": "Verileriniz korunur"
+    },
+    "options": {
+      "advancedOptions": "Gelişmiş seçenekler",
+      "useIncrementalMode": "Artımlı modu kullan",
+      "slowerButSafer": "daha yavaş ama daha güvenli",
+      "recommended": "önerilen",
+      "deleteLegacyData": "Taşıma sonrası eski verileri sil",
+      "freesUpSpace": "depolama alanı açar"
+    },
+    "actions": {
+      "skip": "Atla",
+      "migrateData": "Verileri Taşı",
+      "migrateAnyway": "Yine de Taşı",
+      "continue": "Devam Et",
+      "retry": "Tekrar Dene",
+      "exportBackupFirst": "Önce Yedeği Dışa Aktar",
+      "exportSkippedItems": "Atlanan Öğeleri Dışa Aktar"
+    },
+    "quota": {
+      "availableSpace": "Kullanılabilir alan",
+      "dataToMigrate": "Taşınacak veri",
+      "additionalSpaceNeeded": "Ekstra alan gerekli"
+    },
+    "progress": {
+      "migratingConversations": "Sohbetler taşınıyor",
+      "migratingPrompts": "Komutlar taşınıyor",
+      "migratingAgents": "Ajanlar taşınıyor",
+      "finishingUp": "Son işlemler yapılıyor"
+    },
+    "results": {
+      "successfullyMigrated": "Başarıyla taşındı",
+      "notes": "Notlar",
+      "couldNotMigrate": "Taşıma yapılamadı",
+      "legacyDataDeleted": "Eski veriler silindi",
+      "freed": "boşaltıldı"
+    },
+    "units": {
+      "conversation": "sohbet",
+      "conversations": "sohbetler",
+      "folder": "klasör",
+      "folders": "klasörler",
+      "prompt": "komut",
+      "prompts": "komutlar",
+      "customAgent": "özel ajan",
+      "customAgents": "özel ajanlar",
+      "item": "öğe",
+      "items": "öğeler"
+    }
+  },
+  "languageSwahili": "Svahili",
+  "welcomeBanner": {
+    "title": "AI Asistan V2'ye Hoş Geldiniz",
+    "whatsNew": "Yenilikler",
+    "whatsNewQuestion": "Yenilikler Neler?"
+  },
+  "welcomeV2": {
+    "backToChat": "Sohbete Dön",
+    "title": "AI Asistan V2'ye Hoş Geldiniz",
+    "subtitle": "Güçlü yeni özelliklerle tamamen yeniden tasarlandı",
+    "webSearch": {
+      "title": "Web Arama Modu",
+      "description": "AI'a gizliliğe odaklı seçeneklerle gerçek zamanlı web arama erişimi verin",
+      "quickAccess": "Hızlı erişim:",
+      "quickAccessInstructions": "Sohbet girişinin yanındaki + butonuna tıklayın → \"Web Arama\"yı seçin",
+      "setAsDefault": "Varsayılan yap:",
+      "setAsDefaultInstructions": "Model ayarlarını açın ve Web Arama Modu'nu etkinleştirin. Seçenekler:",
+      "privacyFocused": "Gizlilik Odaklı (varsayılan)",
+      "privacyFocusedDescription": "Yalnızca arama sorgusu dışarı gönderilir",
+      "azureAIFoundry": "Azure AI Foundry Modu",
+      "azureAIFoundryDescription": "Daha hızlı, ancak tüm sohbet dışarıda saklanır",
+      "learnMore": "Arama modları hakkında daha fazla bilgi edinin →"
+    },
+    "tones": {
+      "title": "Tonlar (Ses Profilleri)",
+      "description": "AI'ın yazım tarzı, resmiyeti ve kişiliğini kontrol edin",
+      "createTones": "1. Ton oluşturun:",
+      "createTonesInstructions": "Yan menüde Hızlı Eylemler → Tonlar sekmesi",
+      "useTones": "2. Tonları kullanın:",
+      "useTonesInstructions": "Sohbet girişinin yanındaki ton açılır menüsüne tıklayın",
+      "exampleProfessionalDesc": "Resmi, iş tonu",
+      "exampleCasualDesc": "Samimi, sohbet tarzı"
+    },
+    "aiAssist": {
+      "title": "İstemler ve Tonlar için AI Desteği",
+      "description": "AI'ın size daha iyi istemler ve tonlar oluşturmasında yardımcı olmasına izin verin",
+      "step1": "Yan menüden Hızlı Eylemler'i açın",
+      "step2": "{prompts} veya {tones} sekmesine gidin",
+      "step3": "AI Asistanı panelini bulun",
+      "getSuggestions": "Öneriler alın",
+      "getSuggestionsDesc": "AI taslağınızı analiz eder ve iyileştirmeler sunar",
+      "buildFromFiles": "Dosyalardan oluştur",
+      "buildFromFilesDesc": "İstem/ton üretmek için belgeler yükleyin",
+      "testBeforeSaving": "Kaydetmeden önce test edin",
+      "testBeforeSavingDesc": "Canlı sohbet önizlemesinde istemleri/tonları deneyin",
+      "step2Prefix": "Şuraya gidin:",
+      "step2Suffix": "sekmesi"
+    },
+    "customAgents": {
+      "title": "Özel Ajanlar",
+      "advancedBadge": "İLERİ SEVİYE",
+      "description": "Web arama ve kod yorumlama gibi gelişmiş yeteneklere sahip özel AI ajanları",
+      "advancedFeature": "İleri Seviye Özellik",
+      "advancedFeatureDesc": "Özel Ajanlar, Azure AI Foundry üzerinde özel araçlarla çalışır. Ajan kimliği oluşturmak için AI Asistanı teknik ekibi ile koordinasyon gerektirir.",
+      "howToAccess": "Nasıl erişilir:",
+      "howToAccessInstructions": "Ayarlar → Modeller → Ajanlar sekmesi",
+      "whatYouCanDo": "Yapabilecekleriniz:",
+      "configureAgents": "Ajana özel yetenekler ekleyin",
+      "importExport": "Ajan yapılandırmalarını içe/dışa aktarın",
+      "selectFromDropdown": "Model açılır menüsünden özel ajanları seçin"
+    },
+    "audioTranslation": {
+      "title": "Çevirili Sesli Yazıya Döküm",
+      "description": "Sesli dökümleri otomatik olarak 13+ dile çevirin",
+      "howToUse": "Nasıl kullanılır:",
+      "step1": "Bir ses veya video dosyası yükleyin",
+      "step2": "Transkripsiyon arayüzünde dil açılır menüsüne tıklayın",
+      "step3": "Hedef dilinizi seçin",
+      "availableLanguages": "Mevcut diller:",
+      "moreLanguages": "+7 tane daha"
+    },
+    "pwa": {
+      "title": "Mobil Uygulama Olarak Yükle",
+      "description": "Yerel deneyime sahip Progressive Web App",
+      "installTip": "İpucu: En iyi deneyim ve kimliğinizin korunması için oturum açtıktan sonra yükleyin.",
+      "howToInstall": "Nasıl yüklenir:",
+      "step1": "Hesabınıza giriş yapın",
+      "step2": "Ayrıntılı talimatlar için Ayarlar → Mobil Uygulama bölümünü açın",
+      "step3": "Mobilde: Tarayıcı menüsüne dokunun (⋮ veya ⚙️)",
+      "step4": "\"Ana ekrana ekle\" veya \"Uygulamayı Yükle\" seçeneğini arayın",
+      "step5": "Yükleme talimatlarını takip edin",
+      "benefits": "Avantajlar:",
+      "benefit1": "Ana ekrandan yerel uygulama gibi başlatılır",
+      "benefit2": "Tarayıcı arayüzü olmadan tam ekran",
+      "benefit3": "Kaydedilen konuşmalara çevrimdışı erişim"
+    }
+  },
+  "Professional": "Profesyonel",
+  "Casual": "Gündelik"
 }
