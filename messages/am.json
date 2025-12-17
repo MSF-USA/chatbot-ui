@@ -1006,6 +1006,16 @@
       "name": "Claude Haiku 4.5",
       "description": "ለፈጣን ስራዎች የተመቻቸ ፈጣን እና ኢኮኖሚያዊ Claude ሞዴል። ለቀላል ጥያቄዎች፣ ማጠቃለያ እና ከፍተኛ መጠን መተግበሪያዎች ምርጥ።",
       "knowledgeCutoff": "ጥር 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "የOpenAI በጣም የሚያስተላለፍ ሞዴል፣ በበጣም የተዘጋጀ አስተካክል ፣ ኮድ መፍጠር እና ቴክኒካዊ ችግሮችን መፍታት ላይ የሚበልጥ አማካሪ ነው። ለትንታኔ ስራዎች፣ ለፕሮግራሚንግ ፈተናዎች፣ ለምርምር እና ለዝርዝር ማብራሪያዎች ተስተናግዷል። የሚሰጡትን አስተያየትና ዝርዝሩን ማስተካከል ይችላሉ።",
+      "knowledgeCutoff": "ዲሴምበር 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 ውይይት",
+      "description": "በውይይት ልዩ አይነት የተልካ የGPT-5.2 ሞዴል፤ በስሜታዊ ግንኙነት፣ ድጋፍ፣ ፈጣን ግልጽ መግባባት ማድረግ፣ ፈጣን ማሰብ እና በተፈጥሮ ውይይት ላይ ልዩ በሆነ ደረጃ የተበረታታ፤ ለሁሉም ዓይነቱ የውይይት ማድረግ፣ ለአሳታፊ አገልግሎት እና ለስሜታዊ ግንዛቤ የሚያስፈልጉ ሥራዎች ተመራጭ ነው።",
+      "knowledgeCutoff": "ዲሴምበር 2025"
     }
   },
   "searchMode": {
@@ -1124,5 +1134,94 @@
       "item": "እቃ",
       "items": "እቃዎች"
     }
-  }
+  },
+  "languageSwahili": "ስዋሂሊ",
+  "welcomeBanner": {
+    "title": "AI Assistant V2 ወደምትገኙበት እንኳን ደህና መጡ",
+    "whatsNew": "አዲስ የሆኑት",
+    "whatsNewQuestion": "አዲስ የሆኑት ምንድና?"
+  },
+  "welcomeV2": {
+    "backToChat": "ወደ ውይይት ተመለስ",
+    "title": "AI Assistant V2 ወደምትገኙበት እንኳን ደህና መጡ",
+    "subtitle": "በሙሉ የተዘጋጀ አዲስ አቀማመጥ እና አዲስ ባለኃይል ባህሪያት",
+    "webSearch": {
+      "title": "የድህረ ድር ፍለጋ ዘዴ",
+      "description": "AI ን ወቅታዊ የድህረ ድር ፍለጋ ላይ ከግል ጥንቃቄ አማራጮች ጋር መድረሻ ስጡ",
+      "quickAccess": "ፈጣን መድረሻ:",
+      "quickAccessInstructions": "በውይይት ግብዓት አቅራቢያ + ቁልፍ ይንኩ → \"Web Search\" ይምረጡ",
+      "setAsDefault": "እንደ ነባሪ ያድርጉ:",
+      "setAsDefaultInstructions": "የሞዴል ማቀናበሪያ ይከፈቱና የWeb Search ዘዴን ያንቁ። ከሚከተሉት መካከል ይምረጡ:",
+      "privacyFocused": "በግላዊነት ተመራ (ነባሪ)",
+      "privacyFocusedDescription": "የፍለጋ ጥያቄ ብቻ ውጭ ይላካል",
+      "azureAIFoundry": "Azure AI Foundry ዘዴ",
+      "azureAIFoundryDescription": "ፈጣን ነው፣ ግን ሙሉ ውይይት ውጭ ይይዛል",
+      "learnMore": "ስለ ፍለጋ ዘዴዎች ተጨማሪ ይውቁ →"
+    },
+    "tones": {
+      "title": "ቃላት (ድምጽ ፕሮፋይሎች)",
+      "description": "የAI የጽሁፍ ቅጥ ፣ ስነ-ስርዓትና የአእምሮ ቅጥ ይቆጣጠሩ",
+      "createTones": "1። ቃላት ይፍጠሩ:",
+      "createTonesInstructions": "በጎን ላይ ፈጣን ተግባሮች → ቃላት ትታቢያ",
+      "useTones": "2። ቃላት ይጠቀሙ:",
+      "useTonesInstructions": "በውይይት ግብዓት አቅራቢያ ያለውን tone dropdown ይጫኑ",
+      "exampleProfessionalDesc": "የስራ ቤት ፣ የተደጋጋሚ ቅጥ",
+      "exampleCasualDesc": "ጓደኛነት ፣ የመነጋገር ቅጥ"
+    },
+    "aiAssist": {
+      "title": "AI የPrompt እና Tone እገዳ",
+      "description": "AI በፍጥነት የተሻሉ የprompt እና tone ይፍጠራሉ",
+      "step1": "በጎን ላይ ፈጣን ተግባሮችን ይክፈቱ",
+      "step2": "ወደ {prompts} ወይም {tones} ትታቢያ ይመጡ",
+      "step3": "የAI Assistant ፓነሉን ይፈልጉ",
+      "getSuggestions": "ጥቆማዎች ይገኙ",
+      "getSuggestionsDesc": "AI አድራሻዎን ይተንተናልና ጥቆማዎች ይሰጣል",
+      "buildFromFiles": "ከፋይሎች ይገናኙ",
+      "buildFromFilesDesc": "አካሉን ለመፍጠር/ቃላት prompts tones መስራት ሰነዶች ይጫኑ",
+      "testBeforeSaving": "ከመያዝ በፊት ይፈትሹ",
+      "testBeforeSavingDesc": "ፕሮምፕት፣ ቃላት በቀጥታ የውይይት ቅድመ እይታ ይፈትሹ",
+      "step2Prefix": "ወደ",
+      "step2Suffix": "ትርጉም ማስታወቂያ"
+    },
+    "customAgents": {
+      "title": "ብቻዎት የተስተካከሉ ወኪሎች",
+      "advancedBadge": "የተሻለ",
+      "description": "ልዩ የተሻሉ የAI ወኪሎች ከድህረ ድር ፍለጋ እና የኮድ አስተርጓሚያ ችሎታዎች ጋር",
+      "advancedFeature": "የተሻለ ባህሪ",
+      "advancedFeatureDesc": "ብቻዎት የተስተካከሉ ወኪሎች Azure AI Foundry ላይ ከየተለዩ መሳሪያዎች ጋር ይሰራሉ። የወኪል መለያዎችን ለመፍጠርና ማግኘት ከAI Assistant ቴክኒክ ቡድን ጋር መቅረብ ያስፈልጋል።",
+      "howToAccess": "እንዴት መድረስ ይችላሉ:",
+      "howToAccessInstructions": "ማቀናበሪያ → ሞዴሎች → Agents ትታቢያ",
+      "whatYouCanDo": "ምን ማድረግ ትችላላችሁ:",
+      "configureAgents": "ወኪሎችን በልዩ ችሎታዎች ማዘጋጀት",
+      "importExport": "የወኪል ቅንብሮችን አስመጣ/አስግባ",
+      "selectFromDropdown": "በሞዴል ዝርዝር ውስጥ የተስተካከሉ ወኪሎችን ይምረጡ"
+    },
+    "audioTranslation": {
+      "title": "የድምጽ ቅዱስ ትርጉም ከተርጉም ጋር",
+      "description": "የድምጽ ጽሑፎችን ወደ 13 በላይ ቋንቋዎች በቀዳሚነት ያትርጉማል",
+      "howToUse": "በምንድነው እንደሚጠቀሙበት፦",
+      "step1": "የድምፅ ወይም የቪዲዮ ፋይል ያንቀሳቅሱ",
+      "step2": "በትርጉም አገባበር ውስጥ የቋንቋ አማራጭ ይጫኑ",
+      "step3": "የሚወዷቸውን መዳረሻ ቋንቋ ይምረጡ",
+      "availableLanguages": "የሚገኙ ቋንቋዎች፦",
+      "moreLanguages": "+7 ተጨማሪ"
+    },
+    "pwa": {
+      "title": "እንደ ሞባይል መተግበሪያ ያግኙ",
+      "description": "በአገልግሎት ተሳትፎ ያለ Progressive Web App",
+      "installTip": "ምክር፡ ምስተኛ ከሆኑ በኋላ መግባትዎን ለማኑም እና ምርጥ አጠቃቀም ለማግኘት ያግኙ።",
+      "howToInstall": "የመጫኛ ዘዴ፦",
+      "step1": "ወደ መለያዎ ይግቡ",
+      "step2": "ሙሉ መመሪያ ለማግኘት ቅኝት → ሞባይል መተግበሪያ ይክፈቱ",
+      "step3": "በሞባይል፡ የብራውዘር ሜኑ (⋮ ወይም ⚙️) ይጫኑ",
+      "step4": "\"Add to Home Screen\" ወይም \"Install App\" ይፈልጉ",
+      "step5": "ለመጫን መመሪያዎችን ይከተሉ",
+      "benefits": "ጥቅሞች፦",
+      "benefit1": "ከመነሻ ስክሪን እንደ ነጥብ መተግበሪያ ይጀምሩ",
+      "benefit2": "በማሳሰቢያ መተጫወቻ ሳይኖረው ፈጣን ሙሉ ስክሪን",
+      "benefit3": "የተቀመጡ ውይይቶችን ኦፍላይን ዳሰሳ"
+    }
+  },
+  "Professional": "የባለሙያ",
+  "Casual": "የተወሰነ"
 }
