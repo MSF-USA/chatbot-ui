@@ -253,7 +253,19 @@
   "Team Templates": "Violezo vya Timu",
   "selected": "imechaguliwa",
   "folders": "folda",
-  "agents": "mawakala",
+  "agents": {
+    "exportAgent": "Hamisha wakala",
+    "editAgent": "Hariri wakala",
+    "agentName": "Jina la wakala",
+    "myResearchAssistant": "Msaidizi wangu wa utafiti",
+    "agentId": "Kitambulisho cha wakala",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "Maelezo (si lazima)",
+    "descriptionPlaceholder": "Wakala aliye na ujuzi wa kazi za utafiti...",
+    "baseModel": "Modeli ya msingi",
+    "formatDescription": "Muundo: asst_xxxxx (kutoka MSF AI Assistant Foundry)",
+    "importantInfo": "Wakala huyu atakuwa na ufikiaji wa muktadha wa mazungumzo na ataweza kutumia zana sawa na miundo ya kawaida. Hakikisha kitambulisho cha wakala ni sahihi kwa sababu hakiwezi kubadilishwa baadaye."
+  },
   "Quick Actions": "Vitendo vya Haraka",
   "Type / in chat to access your prompts": "Andika / katika mazungumzo ili kufikia vidokezo vyako",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "Andika / katika mazungumzo, chagua kidokezo chako, na jaza vigeu vinapotakiwa",
@@ -599,19 +611,6 @@
     "expandSidebar": "Panua upau wa pembeni",
     "quickActionsTitle": "Vitendo vya Haraka",
     "quickActions": "Vitendo vya Haraka"
-  },
-  "agents": {
-    "exportAgent": "Hamisha wakala",
-    "editAgent": "Hariri wakala",
-    "agentName": "Jina la wakala",
-    "myResearchAssistant": "Msaidizi wangu wa utafiti",
-    "agentId": "Kitambulisho cha wakala",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "Maelezo (si lazima)",
-    "descriptionPlaceholder": "Wakala aliye na ujuzi wa kazi za utafiti...",
-    "baseModel": "Modeli ya msingi",
-    "formatDescription": "Muundo: asst_xxxxx (kutoka MSF AI Assistant Foundry)",
-    "importantInfo": "Wakala huyu atakuwa na ufikiaji wa muktadha wa mazungumzo na ataweza kutumia zana sawa na miundo ya kawaida. Hakikisha kitambulisho cha wakala ni sahihi kwa sababu hakiwezi kubadilishwa baadaye."
   },
   "prompts": {
     "buildReusablePrompts": "Jenga vidokezi vinavyoweza kutumika tena kwa msaada wa AI",
@@ -1007,6 +1006,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Modeli ya Claude ya haraka na ya gharama nafuu iliyoboreshwa kwa kazi za haraka. Nzuri kwa maswali rahisi, muhtasari, na programu za kiasi kikubwa.",
       "knowledgeCutoff": "Januari 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Mfano wa kisasa zaidi wa OpenAI, unaobobea katika urazimishaji tata, utayarishaji wa msimbo, na utatuzi wa matatizo ya kiufundi. Unafaa zaidi kwa kazi za kudadisi, changamoto za programu, utafiti, na maelezo ya kina. Unawezesha kurekebisha jitihada za urazimishaji na urefu wa majibu.",
+      "knowledgeCutoff": "Des 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Toleo maalumu la GPT-5.2 lililoboreshwa kwa ajili ya mazungumzo na akili ya kihisia. Linabobea katika mawasiliano yenye uelewa, msaada wa afya ya akili, uandishi wa ubunifu, ubunifu wa mawazo, na mazungumzo ya asili. Linapendekezwa kwa mazungumzo ya kawaida, ushauri, na kazi zinazohitaji uelewa wa kihisia.",
+      "knowledgeCutoff": "Des 2025"
     }
   },
   "searchMode": {
@@ -1054,5 +1063,167 @@
     "transcribesOnSend": "Inanakilisha unapotuma",
     "addInstructions": "Ongeza maelekezo",
     "instructionsPlaceholder": "Muktadha wa kuboresha usahihi (mfano, majina, maneno)"
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "Inakagua hifadhi",
+      "analyzingData": "Inachanganua data yako...",
+      "updateAvailable": "Sasisho Linapatikana",
+      "storageSpaceLimited": "Nafasi ya hifadhi imeisha",
+      "migratingData": "Inahamisha data",
+      "migrationComplete": "Uhamishaji Umekamilika",
+      "partiallyComplete": "Imekamilika kiasi",
+      "migrationFailed": "Uhamishaji Umeshindikana"
+    },
+    "descriptions": {
+      "foundLegacyData": "Tumepata data kutoka toleo la awali. Ungependa kuihamisha ili ifanye kazi na mfumo ulioboreshwa?",
+      "storageSpaceWarning": "Data zako zinahitaji nafasi zaidi kuliko ilivyo sasa. Tunashauri utumie hali ya uhamishaji wa hatua kwa hatua.",
+      "pleaseWait": "Tafadhali subiri tunaposasisha data zako...",
+      "dataIsSafe": "Data zako asilia ziko salama. Unaweza kujaribu tena au kuruka kwa sasa.",
+      "itemsTooLarge": "Vipengele hivi ni vikubwa mno kutoshea kwenye hifadhi. Unaweza kuvisafirisha nje, kuachia nafasi, au kuendelea bila hivyo.",
+      "settingsUpdated": "Mipangilio yako imesasishwa."
+    },
+    "benefits": {
+      "title": "Faida",
+      "fasterPerformance": "Utendaji wa haraka",
+      "betterReliability": "Utegemezi zaidi",
+      "dataPreserved": "Data zako zinalindwa"
+    },
+    "options": {
+      "advancedOptions": "Chaguzi za ziada",
+      "useIncrementalMode": "Tumia hali ya hatua kwa hatua",
+      "slowerButSafer": "polepole lakini salama zaidi",
+      "recommended": "inapendekezwa",
+      "deleteLegacyData": "Futa data ya zamani baada ya uhamishaji",
+      "freesUpSpace": "inaachia nafasi ya hifadhi"
+    },
+    "actions": {
+      "skip": "Ruka",
+      "migrateData": "Hamisha Data",
+      "migrateAnyway": "Hamisha Bado",
+      "continue": "Endelea",
+      "retry": "Jaribu tena",
+      "exportBackupFirst": "Hamisha Nakala Rudufu Kwanza",
+      "exportSkippedItems": "Hamisha Vipengele vilivyopuuzwa"
+    },
+    "quota": {
+      "availableSpace": "Nafasi inayopatikana",
+      "dataToMigrate": "Data ya kuhamisha",
+      "additionalSpaceNeeded": "Nafasi ya ziada inahitajika"
+    },
+    "progress": {
+      "migratingConversations": "Inahamisha mazungumzo",
+      "migratingPrompts": "Inahamisha maswali",
+      "migratingAgents": "Inahamisha wakala",
+      "finishingUp": "Inakamilisha"
+    },
+    "results": {
+      "successfullyMigrated": "Imehamishwa kikamilifu",
+      "notes": "Maelezo",
+      "couldNotMigrate": "Haikuweza kuhamishwa",
+      "legacyDataDeleted": "Data ya zamani imefutwa",
+      "freed": "imeachia"
+    },
+    "units": {
+      "conversation": "mazungumzo",
+      "conversations": "mazungumzo",
+      "folder": "jalada",
+      "folders": "majalada",
+      "prompt": "swali",
+      "prompts": "maswali",
+      "customAgent": "wakala maalum",
+      "customAgents": "mawakala maalum",
+      "item": "kipengee",
+      "items": "vipengee"
+    }
+  },
+  "languageSwahili": "Kiswahili",
+  "welcomeBanner": {
+    "title": "Karibu kwenye Msaidizi wa AI V2",
+    "whatsNew": "Nini Kipya",
+    "whatsNewQuestion": "Nini Kipya?"
+  },
+  "welcomeV2": {
+    "backToChat": "Rudi kwenye Gumzo",
+    "title": "Karibu kwenye Msaidizi wa AI V2",
+    "subtitle": "Ubunifu mpya kabisa na vipengele vipya vikubwa",
+    "webSearch": {
+      "title": "Hali ya Utafutaji Mtandaoni",
+      "description": "Mruhusu AI kupata utafutaji mtandaoni kwa wakati halisi na chaguo za faragha",
+      "quickAccess": "Ufikiaji wa haraka:",
+      "quickAccessInstructions": "Bonyeza kitufe cha + kando ya sehemu ya kuingiza ujumbe → Chagua \"Utafutaji Mtandaoni\"",
+      "setAsDefault": "Weka kama msingi:",
+      "setAsDefaultInstructions": "Fungua mipangilio ya modeli na washa chaguo la Hali ya Utafutaji Mtandaoni. Chagua kati ya:",
+      "privacyFocused": "Lengo ni Faragha (msingi)",
+      "privacyFocusedDescription": "Ni swali la utafutaji pekee ndilo litakalotumwa nje",
+      "azureAIFoundry": "Hali ya Azure AI Foundry",
+      "azureAIFoundryDescription": "Haraka zaidi, lakini mazungumzo yote yanahifadhiwa nje",
+      "learnMore": "Jifunze zaidi kuhusu hali za utafutaji →"
+    },
+    "tones": {
+      "title": "Mitindo (Sifa za Sauti)",
+      "description": "Dhibiti mtindo, rasmi, na utu wa maandishi ya AI",
+      "createTones": "1. Tengeneza mitindo:",
+      "createTonesInstructions": "Vitendo vya Haraka upande wa menyu → Tab ya Mitindo",
+      "useTones": "2. Tumia mitindo:",
+      "useTonesInstructions": "Bonyeza menyu kunjuzi ya mitindo karibu na sehemu ya ujumbe",
+      "exampleProfessionalDesc": "Mtindo rasmi, wa kibiashara",
+      "exampleCasualDesc": "Wa kirafiki, wa mazungumzo"
+    },
+    "aiAssist": {
+      "title": "Msaada wa AI kwa Viashiria na Mitindo",
+      "description": "Mruhusu AI kukusaidia kutengeneza viashiria na mitindo bora haraka",
+      "step1": "Fungua Vitendo vya Haraka kwenye menyu ya pembeni",
+      "step2": "Nenda kwenye tab ya {prompts} au {tones}",
+      "step3": "Tafuta paneli ya Msaidizi wa AI",
+      "getSuggestions": "Pata mapendekezo",
+      "getSuggestionsDesc": "AI inachambua rasimu yako na inatoa uboreshaji",
+      "buildFromFiles": "Tengeneza kutoka kwa faili",
+      "buildFromFilesDesc": "Pakia nyaraka ili kuunda viashiria/mitindo",
+      "testBeforeSaving": "Jaribu kabla ya kuhifadhi",
+      "testBeforeSavingDesc": "Jaribu viashiria/mitindo kwenye hakikisho la gumzo moja kwa moja",
+      "step2Prefix": "Nenda kwenye",
+      "step2Suffix": "kibao"
+    },
+    "customAgents": {
+      "title": "Wakala Maalum",
+      "advancedBadge": "KIBORA",
+      "description": "Wakala wa AI walio na uwezo wa kipekee kama vile utafutaji mtandaoni na ufafanuzi wa msimbo",
+      "advancedFeature": "Kipengele cha Juu",
+      "advancedFeatureDesc": "Wakala Maalum hufanya kazi kwenye Azure AI Foundry kwa kutumia zana maalum. Inahitaji uratibu na timu ya kiufundi ya AI Assistant kuanzisha vitambulisho vya wakala.",
+      "howToAccess": "Jinsi ya kufikia:",
+      "howToAccessInstructions": "Mipangilio → Modeli → Tab ya Wakala",
+      "whatYouCanDo": "Unachoweza kufanya:",
+      "configureAgents": "Sanidi wakala wenye uwezo maalum",
+      "importExport": "Ingiza/peleka mipangilio ya wakala",
+      "selectFromDropdown": "Chagua wakala maalum kutoka kwenye menyu kunjuzi ya modeli"
+    },
+    "audioTranslation": {
+      "title": "Uandishi wa Sauti na Tafsiri",
+      "description": "Tafsiri kiotomati maandishi ya sauti kwenda lugha 13+ tofauti",
+      "howToUse": "Jinsi ya kutumia:",
+      "step1": "Pakia faili la sauti au video",
+      "step2": "Bofya menyu ya lugha kwenye kiolesura cha unukuzi",
+      "step3": "Chagua lugha lengwa",
+      "availableLanguages": "Lugha zinazopatikana:",
+      "moreLanguages": "+7 zaidi"
+    },
+    "pwa": {
+      "title": "Sakinisha kama App ya Simu",
+      "description": "Progressive Web App yenye uzoefu wa asili",
+      "installTip": "Dokezo: Sakinisha baada ya kuingia ili kuhifadhi uthibitisho wako na kupata matumizi bora.",
+      "howToInstall": "Jinsi ya kusakinisha:",
+      "step1": "Ingia kwenye akaunti yako",
+      "step2": "Fungua Mipangilio → App ya Simu kwa maelekezo zaidi",
+      "step3": "Kwenye simu: Gusa menyu ya kivinjari (⋮ au ⚙️)",
+      "step4": "Tafuta \"Ongeza kwenye Skrini ya Mwanzo\" au \"Sakinisha App\"",
+      "step5": "Fuata maelekezo ili kusakinisha",
+      "benefits": "Faida:",
+      "benefit1": "Fungua kama app ya asili kutoka kwenye skrini ya mwanzo",
+      "benefit2": "Skrini nzima bila kiolesura cha kivinjari",
+      "benefit3": "Upatikanaji wa mazungumzo uliyookoa bila mtandao"
+    }
+  },
+  "Professional": "Kitaalamu",
+  "Casual": "Kawaida"
 }
