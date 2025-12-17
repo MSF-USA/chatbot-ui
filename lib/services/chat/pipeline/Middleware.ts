@@ -4,7 +4,7 @@ import { NextRequest } from 'next/server';
 import { InputValidator } from '@/lib/services/chat/validators/InputValidator';
 import { ModelSelector, RateLimiter } from '@/lib/services/shared';
 
-import { DEFAULT_SYSTEM_PROMPT } from '@/lib/utils/app/const';
+import { buildSystemPrompt } from '@/lib/utils/app/systemPrompt';
 import { getMessageContentTypes } from '@/lib/utils/server/chat';
 
 import { ErrorCode, PipelineError } from '@/lib/types/errors';
@@ -148,7 +148,7 @@ export const requestParsingMiddleware: Middleware = async (req) => {
     return {
       model,
       messages,
-      systemPrompt: prompt || DEFAULT_SYSTEM_PROMPT,
+      systemPrompt: buildSystemPrompt(prompt),
       temperature,
       stream,
       reasoningEffort,
