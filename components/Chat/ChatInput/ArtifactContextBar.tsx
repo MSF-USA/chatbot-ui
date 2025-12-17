@@ -1,6 +1,8 @@
 import { IconCode, IconX } from '@tabler/icons-react';
 import { FC } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 interface ArtifactContextBarProps {
   fileName: string;
   language: string;
@@ -17,6 +19,8 @@ export const ArtifactContextBar: FC<ArtifactContextBarProps> = ({
   language,
   onClose,
 }) => {
+  const t = useTranslations();
+
   return (
     <div className="flex items-center justify-between gap-3 px-4 py-1.5 bg-blue-50 dark:bg-blue-950/30 border-t border-blue-200 dark:border-blue-800/50">
       <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -36,13 +40,13 @@ export const ArtifactContextBar: FC<ArtifactContextBarProps> = ({
 
       <div className="flex items-center gap-2 flex-shrink-0">
         <span className="text-xs text-blue-700 dark:text-blue-300">
-          File and edits included with message
+          {t('artifact.fileIncludedWithMessage')}
         </span>
         <button
           onClick={onClose}
           className="p-0.5 rounded hover:bg-blue-200 dark:hover:bg-blue-900/50 text-blue-600 dark:text-blue-400 transition-colors"
-          aria-label="Close editor"
-          title="Close code editor"
+          aria-label={t('artifact.closeEditor')}
+          title={t('artifact.closeCodeEditor')}
         >
           <IconX size={14} />
         </button>
