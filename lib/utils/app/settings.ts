@@ -1,3 +1,5 @@
+import { DEFAULT_USER_PROMPT } from '@/lib/utils/app/systemPrompt';
+
 import { SearchMode } from '@/types/searchMode';
 import { Settings } from '@/types/settings';
 
@@ -13,9 +15,7 @@ const getDefaultSettings = (): Settings => {
   return {
     theme: userDefaultThemeIsDark ? 'dark' : 'light',
     temperature: 0.5,
-    systemPrompt:
-      env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT ||
-      "You are ChatGPT, a large language model trained by OpenAI. Follow the user's instructions carefully. Respond using markdown.",
+    systemPrompt: env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || DEFAULT_USER_PROMPT,
     advancedMode: false,
     defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
   };
