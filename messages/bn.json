@@ -314,7 +314,19 @@
   "Team Templates": "টিম টেমপ্লেট",
   "selected": "নির্বাচিত",
   "folders": "ফোল্ডার",
-  "agents": "এজেন্ট",
+  "agents": {
+    "exportAgent": "এজেন্ট রপ্তানি করুন",
+    "editAgent": "এজেন্ট সম্পাদনা করুন",
+    "agentName": "এজেন্ট নাম",
+    "myResearchAssistant": "আমার গবেষণা সহায়ক",
+    "agentId": "এজেন্ট আইডি",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "বিবরণ (ঐচ্ছিক)",
+    "descriptionPlaceholder": "গবেষণা কাজের জন্য বিশেষায়িত এজেন্ট...",
+    "baseModel": "বেস মডেল",
+    "formatDescription": "ফর্ম্যাট: asst_xxxxx (MSF AI Assistant Foundry থেকে)",
+    "importantInfo": "এই এজেন্টটির কথোপকথন প্রসঙ্গে অ্যাক্সেস থাকবে এবং স্ট্যান্ডার্ড মডেলের মতো একই সরঞ্জাম ব্যবহার করতে পারবে। নিশ্চিত করুন যে এজেন্ট আইডি সঠিক কারণ এটি পরে পরিবর্তন করা যাবে না।"
+  },
   "Quick Actions": "দ্রুত ক্রিয়া",
   "Type / in chat to access your prompts": "আপনার প্রম্পট অ্যাক্সেস করতে চ্যাটে / টাইপ করুন",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "চ্যাটে / টাইপ করুন, আপনার প্রম্পট নির্বাচন করুন এবং অনুরোধ করা হলে ভেরিয়েবলগুলি পূরণ করুন",
@@ -340,9 +352,6 @@
   "Chat Settings": "চ্যাট সেটিংস",
   "Default System Prompt": "ডিফল্ট সিস্টেম প্রম্পট",
   "Email": "ইমেইল",
-  "Export folder": "ফোল্ডার রপ্তানি করুন",
-  "Import conversation": "কথোপকথন আমদানি করুন",
-  "Import folder": "ফোল্ডার আমদানি করুন",
   "Conversation exported successfully": "কথোপকথন সফলভাবে রপ্তানি করা হয়েছে",
   "Failed to export conversation": "কথোপকথন রপ্তানি করতে ব্যর্থ হয়েছে",
   "Conversation imported successfully": "কথোপকথন সফলভাবে আমদানি করা হয়েছে",
@@ -355,9 +364,6 @@
   "Invalid folder file": "অবৈধ ফোল্ডার ফাইল",
   "Failed to import file": "ফাইল আমদানি করতে ব্যর্থ হয়েছে",
   "Unrecognized file format": "অচেনা ফাইল ফরম্যাট",
-  "Save as prompt": "প্রম্পট হিসেবে সংরক্ষণ করুন",
-  "Optional": "ঐচ্ছিক",
-  "What is this?": "এটি কী?",
   "No prompts found": "কোনও প্রম্পট পাওয়া যায়নি",
   "Select a prompt to view details": "বিস্তারিত দেখতে একটি প্রম্পট নির্বাচন করুন",
   "Content": "বিষয়বস্তু",
@@ -392,7 +398,6 @@
   "Custom Agents": "কাস্টম এজেন্ট",
   "Delete template and all its items": "টেমপ্লেট এবং এর সমস্ত আইটেম মুছুন",
   "Description (Optional)": "বিবরণ (ঐচ্ছিক)",
-  "Edit Prompt": "প্রম্পট সম্পাদনা করুন",
   "Edit Tone": "টোন সম্পাদনা করুন",
   "Email Response Template": "ইমেইল প্রতিক্রিয়া টেমপ্লেট",
   "Example Prompt": "উদাহরণ প্রম্পট",
@@ -452,7 +457,6 @@
   "msf_logo_alt": "MSF লোগো",
   "collapse_sidebar": "সাইডবার সংকুচিত করুন",
   "expand_sidebar": "সাইডবার প্রসারিত করুন",
-  "Voice Guidelines": "ভয়েস নির্দেশিকা",
   "Please upload some content or describe the tone you want": "দয়া করে কিছু বিষয়বস্তু আপলোড করুন বা আপনি যে টোন চান তা বর্ণনা করুন",
   "Untitled Tone": "শিরোনামহীন টোন",
   "Failed to analyze tone": "টোন বিশ্লেষণ করতে ব্যর্থ হয়েছে",
@@ -562,19 +566,6 @@
     "expandSidebar": "সাইডবার প্রসারিত করুন",
     "quickActionsTitle": "দ্রুত ক্রিয়া",
     "quickActions": "দ্রুত ক্রিয়া"
-  },
-  "agents": {
-    "exportAgent": "এজেন্ট রপ্তানি করুন",
-    "editAgent": "এজেন্ট সম্পাদনা করুন",
-    "agentName": "এজেন্ট নাম",
-    "myResearchAssistant": "আমার গবেষণা সহায়ক",
-    "agentId": "এজেন্ট আইডি",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "বিবরণ (ঐচ্ছিক)",
-    "descriptionPlaceholder": "গবেষণা কাজের জন্য বিশেষায়িত এজেন্ট...",
-    "baseModel": "বেস মডেল",
-    "formatDescription": "ফর্ম্যাট: asst_xxxxx (MSF AI Assistant Foundry থেকে)",
-    "importantInfo": "এই এজেন্টটির কথোপকথন প্রসঙ্গে অ্যাক্সেস থাকবে এবং স্ট্যান্ডার্ড মডেলের মতো একই সরঞ্জাম ব্যবহার করতে পারবে। নিশ্চিত করুন যে এজেন্ট আইডি সঠিক কারণ এটি পরে পরিবর্তন করা যাবে না।"
   },
   "prompts": {
     "buildReusablePrompts": "AI সহায়তায় পুনর্ব্যবহারযোগ্য প্রম্পট তৈরি করুন",
@@ -1060,5 +1051,78 @@
     "footerNote": "উভয় মোড আপনার কথোপকথন আপনার ব্রাউজারে স্থানীয়ভাবে সঞ্চয় করে। আপনি মডেল সেটিংসে যেকোনো সময় মোড পরিবর্তন করতে পারেন।",
     "note": "দ্রষ্টব্য:",
     "loadingDiagram": "চিত্র লোড হচ্ছে..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "স্টোরেজ যাচাই করা হচ্ছে",
+      "analyzingData": "আপনার ডেটা বিশ্লেষণ করা হচ্ছে...",
+      "updateAvailable": "আপডেট উপলব্ধ",
+      "storageSpaceLimited": "স্টোরেজ স্পেস সীমিত",
+      "migratingData": "ডেটা স্থানান্তর করা হচ্ছে",
+      "migrationComplete": "মাইগ্রেশন সম্পন্ন",
+      "partiallyComplete": "আংশিকভাবে সম্পন্ন",
+      "migrationFailed": "মাইগ্রেশন ব্যর্থ হয়েছে"
+    },
+    "descriptions": {
+      "foundLegacyData": "আমরা পূর্ববর্তী সংস্করণের ডেটা পেয়েছি। আপনি কি এটি উন্নত ব্যবস্থার সাথে কাজ করার জন্য স্থানান্তর করতে চান?",
+      "storageSpaceWarning": "আপনার ডেটার জন্য বর্তমানে বিদ্যমান স্থানের চেয়ে বেশি জায়গা দরকার। আমরা ইনক্রিমেন্টাল মাইগ্রেশন মোড ব্যবহারের পরামর্শ দিচ্ছি।",
+      "pleaseWait": "আপনার ডেটা আপডেট করা হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...",
+      "dataIsSafe": "আপনার মূল ডেটা নিরাপদ আছে। আপনি পুনরায় চেষ্টা করতে বা আপাতত স্কিপ করতে পারেন।",
+      "itemsTooLarge": "এই আইটেমগুলো স্টোরেজে ফিট করার জন্য খুব বড়। আপনি এগুলো এক্সপোর্ট করতে, জায়গা খালি করতে, অথবা এগুলো ছাড়া চালিয়ে যেতে পারেন।",
+      "settingsUpdated": "আপনার সেটিংস আপডেট হয়েছে।"
+    },
+    "benefits": {
+      "title": "সুবিধাসমূহ",
+      "fasterPerformance": "দ্রুততর পারফরম্যান্স",
+      "betterReliability": "উন্নত নির্ভরযোগ্যতা",
+      "dataPreserved": "আপনার ডেটা সংরক্ষিত"
+    },
+    "options": {
+      "advancedOptions": "অ্যাডভান্সড অপশন",
+      "useIncrementalMode": "ইনক্রিমেন্টাল মোড ব্যবহার করুন",
+      "slowerButSafer": "ধীরতর কিন্তু নিরাপদ",
+      "recommended": "প্রস্তাবিত",
+      "deleteLegacyData": "মাইগ্রেশনের পর লিগ্যাসি ডেটা মুছে দিন",
+      "freesUpSpace": "স্টোরেজ স্পেস খালি করে"
+    },
+    "actions": {
+      "skip": "স্কিপ",
+      "migrateData": "ডেটা স্থানান্তর করুন",
+      "migrateAnyway": "তবুও স্থানান্তর করুন",
+      "continue": "চালিয়ে যান",
+      "retry": "পুনরায় চেষ্টা করুন",
+      "exportBackupFirst": "প্রথমে ব্যাকআপ এক্সপোর্ট করুন",
+      "exportSkippedItems": "স্কিপ করা আইটেম এক্সপোর্ট করুন"
+    },
+    "quota": {
+      "availableSpace": "উপলব্ধ স্থান",
+      "dataToMigrate": "স্থানান্তরের জন্য ডেটা",
+      "additionalSpaceNeeded": "অতিরিক্ত জায়গা প্রয়োজন"
+    },
+    "progress": {
+      "migratingConversations": "কনভার্সেশন স্থানান্তর করা হচ্ছে",
+      "migratingPrompts": "প্রম্পট স্থানান্তর করা হচ্ছে",
+      "migratingAgents": "এজেন্ট স্থানান্তর করা হচ্ছে",
+      "finishingUp": "শেষ পর্যায়ে"
+    },
+    "results": {
+      "successfullyMigrated": "সফলভাবে স্থানান্তরিত",
+      "notes": "নোট",
+      "couldNotMigrate": "স্থানান্তর করা যায়নি",
+      "legacyDataDeleted": "লিগ্যাসি ডেটা মুছে ফেলা হয়েছে",
+      "freed": "মুক্ত"
+    },
+    "units": {
+      "conversation": "কনভার্সেশন",
+      "conversations": "কনভার্সেশন",
+      "folder": "ফোল্ডার",
+      "folders": "ফোল্ডার",
+      "prompt": "প্রম্পট",
+      "prompts": "প্রম্পট",
+      "customAgent": "কাস্টম এজেন্ট",
+      "customAgents": "কাস্টম এজেন্টস",
+      "item": "আইটেম",
+      "items": "আইটেমসমূহ"
+    }
   }
 }
