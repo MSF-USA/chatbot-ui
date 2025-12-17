@@ -339,7 +339,19 @@
   "Team Templates": "团队模板",
   "selected": "已选择",
   "folders": "文件夹",
-  "agents": "代理",
+  "agents": {
+    "exportAgent": "导出代理",
+    "editAgent": "编辑代理",
+    "agentName": "代理名称",
+    "myResearchAssistant": "我的研究助手",
+    "agentId": "代理 ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "描述（可选）",
+    "descriptionPlaceholder": "专门从事研究任务的代理...",
+    "baseModel": "基础模型",
+    "formatDescription": "格式：asst_xxxxx（来自 MSF AI Assistant Foundry）",
+    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。"
+  },
   "Quick Actions": "快速操作",
   "Type / in chat to access your prompts": "在聊天中输入 / 以访问您的提示",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "在聊天中输入 /，选择您的提示，并在提示时填写变量",
@@ -386,7 +398,6 @@
   "Custom Agents": "自定义代理",
   "Delete template and all its items": "删除模板及其所有项目",
   "Description (Optional)": "描述（可选）",
-  "Edit Prompt": "编辑提示",
   "Edit Tone": "编辑语气",
   "Email Response Template": "电子邮件回复模板",
   "Example Prompt": "示例提示",
@@ -446,7 +457,6 @@
   "msf_logo_alt": "MSF徽标",
   "collapse_sidebar": "折叠侧边栏",
   "expand_sidebar": "展开侧边栏",
-  "Voice Guidelines": "语音指南",
   "Please upload some content or describe the tone you want": "请上传一些内容或描述您想要的语气",
   "Untitled Tone": "无标题语气",
   "Failed to analyze tone": "分析语气失败",
@@ -604,19 +614,6 @@
     "expandSidebar": "展开侧边栏",
     "quickActionsTitle": "快速操作",
     "quickActions": "快速操作"
-  },
-  "agents": {
-    "exportAgent": "导出代理",
-    "editAgent": "编辑代理",
-    "agentName": "代理名称",
-    "myResearchAssistant": "我的研究助手",
-    "agentId": "代理 ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "描述（可选）",
-    "descriptionPlaceholder": "专门从事研究任务的代理...",
-    "baseModel": "基础模型",
-    "formatDescription": "格式：asst_xxxxx（来自 MSF AI Assistant Foundry）",
-    "importantInfo": "此代理将有权访问对话上下文，并可以使用与标准模型相同的工具。确保代理 ID 正确，因为以后无法更改。"
   },
   "prompts": {
     "buildReusablePrompts": "使用 AI 辅助构建可重复使用的提示",
@@ -820,7 +817,6 @@
     "Legacy data deleted": "旧数据已删除",
     "freed": "已释放",
     "Conversations": "对话",
-    "Settings": "设置",
     "Legacy": "旧版",
     "Other": "其他",
     "Loading": "加载中",
@@ -1013,6 +1009,16 @@
       "name": "Claude Haiku 4.5",
       "description": "快速、经济的 Claude 模型，针对快速任务进行了优化。擅长简单查询、摘要和高容量应用。",
       "knowledgeCutoff": "2025年1月"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI 最先进的模型，擅长复杂推理、代码生成和技术问题解决。非常适合分析任务、编程挑战、研究和详细解释。支持可调节的推理深度和回复详细程度。",
+      "knowledgeCutoff": "2025年12月"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "GPT-5.2 的专用变体，针对对话交互和情感智能进行了优化。擅长共情沟通、心理健康支持、创意写作、头脑风暴和自然对话。非常适合日常交流、咨询场景和需要情感洞察的任务。",
+      "knowledgeCutoff": "2025年12月"
     }
   },
   "searchMode": {
@@ -1055,5 +1061,167 @@
     "footerNote": "两种模式都将您的对话本地存储在浏览器中。您可以随时在模型设置中切换模式。",
     "note": "注意：",
     "loadingDiagram": "加载图表中..."
-  }
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "正在检查存储空间",
+      "analyzingData": "正在分析您的数据...",
+      "updateAvailable": "有可用更新",
+      "storageSpaceLimited": "存储空间有限",
+      "migratingData": "正在迁移数据",
+      "migrationComplete": "迁移完成",
+      "partiallyComplete": "部分完成",
+      "migrationFailed": "迁移失败"
+    },
+    "descriptions": {
+      "foundLegacyData": "我们发现了来自旧版本的数据。您是否希望将其迁移以适配改进后的系统？",
+      "storageSpaceWarning": "您的数据所需空间超出当前可用空间。建议使用增量迁移模式。",
+      "pleaseWait": "请稍候，我们正在更新您的数据...",
+      "dataIsSafe": "您的原始数据是安全的。您可以重试或暂时跳过。",
+      "itemsTooLarge": "这些项目过大，无法存储。您可以导出它们、释放空间或跳过继续。",
+      "settingsUpdated": "您的设置已更新。"
+    },
+    "benefits": {
+      "title": "优势",
+      "fasterPerformance": "性能更快",
+      "betterReliability": "更高的可靠性",
+      "dataPreserved": "您的数据已保留"
+    },
+    "options": {
+      "advancedOptions": "高级选项",
+      "useIncrementalMode": "使用增量模式",
+      "slowerButSafer": "更慢但更安全",
+      "recommended": "推荐",
+      "deleteLegacyData": "迁移后删除旧数据",
+      "freesUpSpace": "释放存储空间"
+    },
+    "actions": {
+      "skip": "跳过",
+      "migrateData": "迁移数据",
+      "migrateAnyway": "仍然迁移",
+      "continue": "继续",
+      "retry": "重试",
+      "exportBackupFirst": "先导出备份",
+      "exportSkippedItems": "导出跳过的项目"
+    },
+    "quota": {
+      "availableSpace": "可用空间",
+      "dataToMigrate": "待迁移数据",
+      "additionalSpaceNeeded": "所需额外空间"
+    },
+    "progress": {
+      "migratingConversations": "正在迁移对话",
+      "migratingPrompts": "正在迁移提示",
+      "migratingAgents": "正在迁移代理",
+      "finishingUp": "正在完成"
+    },
+    "results": {
+      "successfullyMigrated": "迁移成功",
+      "notes": "备注",
+      "couldNotMigrate": "无法迁移",
+      "legacyDataDeleted": "旧数据已删除",
+      "freed": "已释放"
+    },
+    "units": {
+      "conversation": "对话",
+      "conversations": "对话",
+      "folder": "文件夹",
+      "folders": "文件夹",
+      "prompt": "提示",
+      "prompts": "提示",
+      "customAgent": "自定义代理",
+      "customAgents": "自定义代理",
+      "item": "项目",
+      "items": "项目"
+    }
+  },
+  "languageSwahili": "斯瓦希里语",
+  "welcomeBanner": {
+    "title": "欢迎使用 AI 助手 V2",
+    "whatsNew": "新功能",
+    "whatsNewQuestion": "有哪些新功能？"
+  },
+  "welcomeV2": {
+    "backToChat": "返回聊天",
+    "title": "欢迎使用 AI 助手 V2",
+    "subtitle": "全新设计，强大新功能",
+    "webSearch": {
+      "title": "网页搜索模式",
+      "description": "为 AI 提供实时网页搜索并注重隐私保护",
+      "quickAccess": "快速访问：",
+      "quickAccessInstructions": "点击聊天输入框旁的 + 按钮 → 选择“网页搜索”",
+      "setAsDefault": "设为默认：",
+      "setAsDefaultInstructions": "打开模型设置并启用网页搜索模式开关。可选择：",
+      "privacyFocused": "隐私优先（默认）",
+      "privacyFocusedDescription": "仅发送搜索查询至外部",
+      "azureAIFoundry": "Azure AI Foundry 模式",
+      "azureAIFoundryDescription": "速度更快，但完整对话会外部存储",
+      "learnMore": "了解更多搜索模式 →"
+    },
+    "tones": {
+      "title": "语调（语音风格）",
+      "description": "控制 AI 的写作风格、正式程度和个性",
+      "createTones": "1. 创建语调：",
+      "createTonesInstructions": "侧边栏快速操作 → 语调标签",
+      "useTones": "2. 使用语调：",
+      "useTonesInstructions": "点击聊天输入框旁的语调下拉菜单",
+      "exampleProfessionalDesc": "正式、商务语气",
+      "exampleCasualDesc": "友好、对话式"
+    },
+    "aiAssist": {
+      "title": "AI 协助优化提示与语调",
+      "description": "让 AI 帮助你更快优化提示和语调",
+      "step1": "在侧边栏打开快速操作",
+      "step2": "导航至 {prompts} 或 {tones} 标签",
+      "step3": "查找 AI 助手面板",
+      "getSuggestions": "获取建议",
+      "getSuggestionsDesc": "AI 分析你的草稿并提出优化建议",
+      "buildFromFiles": "通过文件生成",
+      "buildFromFilesDesc": "上传文档生成提示/语调",
+      "testBeforeSaving": "保存前测试",
+      "testBeforeSavingDesc": "在实时聊天预览中试用提示/语调",
+      "step2Prefix": "前往",
+      "step2Suffix": "选项卡"
+    },
+    "customAgents": {
+      "title": "自定义代理",
+      "advancedBadge": "高级",
+      "description": "具备网页搜索与代码解析等增强能力的 AI 专用代理",
+      "advancedFeature": "高级功能",
+      "advancedFeatureDesc": "自定义代理运行于 Azure AI Foundry，拥有专用工具。需要与 AI 助手技术团队协作创建代理 ID。",
+      "howToAccess": "访问方法：",
+      "howToAccessInstructions": "设置 → 模型 → 代理标签",
+      "whatYouCanDo": "可实现功能：",
+      "configureAgents": "配置具专用能力的代理",
+      "importExport": "导入/导出代理配置",
+      "selectFromDropdown": "在模型下拉菜单中选择自定义代理"
+    },
+    "audioTranslation": {
+      "title": "音频转录与翻译",
+      "description": "自动将音频转录翻译为 13 种以上语言",
+      "howToUse": "使用方法：",
+      "step1": "上传音频或视频文件",
+      "step2": "在转录界面点击语言下拉菜单",
+      "step3": "选择目标语言",
+      "availableLanguages": "可用语言：",
+      "moreLanguages": "+7 种更多语言"
+    },
+    "pwa": {
+      "title": "安装为移动应用",
+      "description": "带有原生体验的渐进式 Web 应用",
+      "installTip": "提示：登录后安装可保留您的身份验证，并获得最佳体验。",
+      "howToInstall": "安装方法：",
+      "step1": "登录您的账户",
+      "step2": "打开设置 → 移动应用，查看详细说明",
+      "step3": "在手机端：点击浏览器菜单（⋮ 或 ⚙️）",
+      "step4": "查找“添加到主屏幕”或“安装应用”",
+      "step5": "按照提示完成安装",
+      "benefits": "优势：",
+      "benefit1": "可像本地应用一样从主屏幕启动",
+      "benefit2": "全屏显示，无浏览器界面",
+      "benefit3": "离线访问已保存的对话"
+    }
+  },
+  "Professional": "专业",
+  "Casual": "休闲"
 }
