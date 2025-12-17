@@ -21,11 +21,7 @@
   "Please enter a message": "Voer een bericht in",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Stel je OpenAI API-sleutel in de linkeronderhoek van de zijbalk in.",
   "Precise": "Nauwkeurig",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "De limiet voor de prompt is {{maxLength}} tekens. U heeft {{valueLength}} tekens ingevoerd."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Promptlimiet is {{maxLength}} tekens",
   "Regenerate response": "Antwoord opnieuw genereren",
   "Save & Submit": "Opslaan & Verzenden",
   "Search_ellipsis": "Zoeken...",
@@ -798,7 +794,18 @@
     "Deleting": "Verwijderen",
     "Confirm Delete": "Verwijderen bevestigen",
     "Cancel": "Annuleren",
-    "Custom Instructions": "Aangepaste instructies"
+    "Custom Instructions": "Aangepaste instructies",
+    "Personalization": "Personalisatie",
+    "Display Name": "Weergavenaam",
+    "Display Name Description": "Kies hoe uw naam wordt weergegeven in begroetingen en in de app",
+    "First Name": "Voornaam",
+    "Last Name": "Achternaam",
+    "Full Name": "Volledige naam",
+    "Custom": "Aangepast",
+    "None": "Geen",
+    "Custom Display Name": "Aangepaste weergavenaam",
+    "Custom Display Name Placeholder": "Voer uw gewenste naam in",
+    "displayNamePreview": "Voorbeeld: \"Hoe kan ik helpen, {name}?\""
   },
   "notFound": {
     "lostDog": "Verloren hond"

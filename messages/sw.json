@@ -457,11 +457,7 @@
   "Privacy Policy": "Sera ya Faragha",
   "Prompt": "Kidokezo",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Maudhui ya kidokezo. Tumia '{{}}' kuonyesha kigezo. Mfano: '{{name}}' ni '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Kikomo cha herufi ni {{maxLength}}. Umeingiza herufi {{valueLength}}."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Kikomo cha maandishi ni herufi {{maxLength}}",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Kikomo cha kidokezo ni herufi {{maxLength}}. Umeingiza herufi {{valueLength}}.",
   "Regenerate response": "Tengeneza jibu upya",
   "Retry": "Jaribu tena",
@@ -833,7 +829,18 @@
     "Deleting": "Inafuta",
     "Confirm Delete": "Thibitisha Kufuta",
     "Cancel": "Ghairi",
-    "Custom Instructions": "Maelekezo Binafsi"
+    "Custom Instructions": "Maelekezo Binafsi",
+    "Personalization": "Ubinafsishaji",
+    "Display Name": "Jina Linaloonekana",
+    "Display Name Description": "Chagua jina lako litakavyoonekana kwenye salamu na katika programu",
+    "First Name": "Jina la Kwanza",
+    "Last Name": "Jina la Mwisho",
+    "Full Name": "Jina Kamili",
+    "Custom": "Maalum",
+    "None": "Hakuna",
+    "Custom Display Name": "Jina Maalum Linaloonekana",
+    "Custom Display Name Placeholder": "Weka jina lako unalopendelea",
+    "displayNamePreview": "Onyesho: \"Ninawezaje kusaidia, {name}?\""
   },
   "notFound": {
     "lostDog": "Mbwa aliyepotea"

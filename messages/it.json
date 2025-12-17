@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "E' richiesta la chiave API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Per favore, inserisci la tua Chiave API OpenAI in basso a sinistra nella barra laterale",
   "Stop Generating": "Interrompi la generazione",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Il limite è di {{maxLength}} caratteri. Ne hai inseriti {{valueLength}}."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Il limite del prompt è di {{maxLength}} caratteri",
   "System Prompt": "Prompt del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sei ChatGPT, un grande modello di linguaggio addestrato da OpenAI. Segui attentamente le istruzioni dell'utente. Rispondi usando il markdown.",
   "Enter a prompt": "Inserisci un prompt",
@@ -808,7 +804,18 @@
     "Deleting": "Eliminazione in corso",
     "Confirm Delete": "Conferma eliminazione",
     "Cancel": "Annulla",
-    "Custom Instructions": "Istruzioni personalizzate"
+    "Custom Instructions": "Istruzioni personalizzate",
+    "Personalization": "Personalizzazione",
+    "Display Name": "Nome visualizzato",
+    "Display Name Description": "Scegli come verrà visualizzato il tuo nome nei saluti e nell’app",
+    "First Name": "Nome",
+    "Last Name": "Cognome",
+    "Full Name": "Nome completo",
+    "Custom": "Personalizzato",
+    "None": "Nessuno",
+    "Custom Display Name": "Nome visualizzato personalizzato",
+    "Custom Display Name Placeholder": "Inserisci il nome preferito",
+    "displayNamePreview": "Anteprima: \"Come posso aiutarti, {name}?\""
   },
   "notFound": {
     "lostDog": "Cane smarrito"

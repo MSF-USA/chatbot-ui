@@ -27,11 +27,7 @@
   "OpenAI API Key Required": "OpenAIのAPIキーが必要です",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "左下のサイドバーでOpenAIのAPIキーを設定してください",
   "Stop Generating": "回答をストップ",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "プロンプトの上限は{{maxLength}}文字です。現在{{valueLength}}文字入力されています。"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "プロンプトの上限は{{maxLength}}文字です",
   "System Prompt": "システムのプロンプト",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "あなたはOpenAIによってトレーニングされた大規模言語モデルのChatGPTです。ユーザーの指示には注意深く従ってください。マークダウンを使用して応答してください。",
   "Enter a prompt": "プロンプトを入力してください",
@@ -833,7 +829,18 @@
     "Deleting": "削除中",
     "Confirm Delete": "削除を確認",
     "Cancel": "キャンセル",
-    "Custom Instructions": "カスタム指示"
+    "Custom Instructions": "カスタム指示",
+    "Personalization": "パーソナライズ",
+    "Display Name": "表示名",
+    "Display Name Description": "挨拶やアプリ内での名前の表示方法を選択してください",
+    "First Name": "名",
+    "Last Name": "姓",
+    "Full Name": "フルネーム",
+    "Custom": "カスタム",
+    "None": "なし",
+    "Custom Display Name": "カスタム表示名",
+    "Custom Display Name Placeholder": "ご希望の名前を入力してください",
+    "displayNamePreview": "プレビュー：「どのようにお手伝いできますか、{name}？」"
   },
   "notFound": {
     "lostDog": "迷子の犬"

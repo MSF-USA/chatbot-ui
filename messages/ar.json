@@ -21,11 +21,7 @@
   "Invalid folder file": "ملف مجلد غير صالح",
   "New conversation": "محادثة جديدة",
   "No prompts found": "لم يتم العثور على موجهات",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "الحد الأقصى للمدخلات هو {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "الحد الأقصى للمطالبة هو {{maxLength}} حرفاً",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "حد الموجه {{maxLength}} حرفًا. لقد أدخلت {{valueLength}} حرفًا.",
   "System Prompt": "مطالبة النظام",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "أنت شات جبت نموذج لغة كبير تم تدريبه بواسطة أوبن أيه أي. اتبع تعليمات المستخدم بعناية. الرد باستخدام الماركداون",
@@ -788,7 +784,18 @@
     "Deleting": "جارٍ الحذف",
     "Confirm Delete": "تأكيد الحذف",
     "Cancel": "إلغاء",
-    "Custom Instructions": "تعليمات مخصصة"
+    "Custom Instructions": "تعليمات مخصصة",
+    "Personalization": "التخصيص",
+    "Display Name": "اسم العرض",
+    "Display Name Description": "اختر كيف يظهر اسمك في التحيات وفي جميع أنحاء التطبيق",
+    "First Name": "الاسم الأول",
+    "Last Name": "اسم العائلة",
+    "Full Name": "الاسم الكامل",
+    "Custom": "مخصص",
+    "None": "بدون",
+    "Custom Display Name": "اسم عرض مخصص",
+    "Custom Display Name Placeholder": "أدخل الاسم الذي تفضله",
+    "displayNamePreview": "معاينة: \"كيف يمكنني المساعدة، {name}?\""
   },
   "notFound": {
     "lostDog": "كلب ضائع"

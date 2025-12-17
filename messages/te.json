@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "ఒపెన్ ఎయి ఐ API కీ అవసరం",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "దయచేసి మీ OpenAI API కీని సైడ్ బార్ యొక్క దిగువ ఎడమ భాగంలో సెట్ చేయండి.",
   "Stop Generating": "జెనరేట్ చేస్తున్న ప్రక్రియ నిలిపేయి",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "ప్రాంప్ట్ పరిమితం {{maxLength}} అక్షరాలు. మీరు ఇప్పటికే {{valueLength}} అక్షరాలు నమోదు చేశారు."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "ప్రాంప్ట్ పరిమితి {{maxLength}} అక్షరాలు",
   "System Prompt": "సిస్టమ్ ప్రాంప్ట్",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "మీరు ChatGPT, ఒక పెద్ద భాషా మోడల్ ఓపెన్‌ఏఐ ద్వారా ట్రైన్ చేయబడింది. యూజర్ ఇన్స్ట్రక్షన్స్ కనుగొనండి. మార్క్‌డౌన్ ఉపయోగించి సమాధానం ఇవ్వండి.",
   "Enter a prompt": "ఒక ప్రాంప్ట్(సంకేతం) నమోదు చేయండి",
@@ -831,7 +827,18 @@
     "Deleting": "తొలగిస్తోంది",
     "Confirm Delete": "తొలగింపును నిర్ధారించండి",
     "Cancel": "రద్దు చేయండి",
-    "Custom Instructions": "అనుకూల సూచనలు"
+    "Custom Instructions": "అనుకూల సూచనలు",
+    "Personalization": "వ్యక్తిగతీకరణ",
+    "Display Name": "ప్రదర్శించే పేరు",
+    "Display Name Description": "మీ పేరు అభివాదాలు మరియు యాప్‌లో ఎక్కడైనా ఎలా కనిపించాలో ఎంచుకోండి",
+    "First Name": "మొదటి",
+    "Last Name": "చివరి",
+    "Full Name": "పూర్తి",
+    "Custom": "అనుకూల",
+    "None": "ఏమీ లేదు",
+    "Custom Display Name": "అనుకూల ప్రదర్శించే పేరు",
+    "Custom Display Name Placeholder": "మీ ఇష్టమైన పేరును నమోదు చేయండి",
+    "displayNamePreview": "ప్రీవ్యూ: \"నేను ఎలా సహాయం చేయగలను, {name}?\""
   },
   "notFound": {
     "lostDog": "కోల్పోయిన కుక్క"

@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "Memerlukan Kunci API OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Silakan atur kunci API OpenAI Anda di bagian kiri bawah bilah sisi.",
   "Stop Generating": "Berhenti Menghasilkan",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Batas prompt adalah {{maxLength}} karakter. Anda telah memasukkan {{valueLength}} karakter."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Batas prompt adalah {{maxLength}} karakter",
   "System Prompt": "Prompt Sistem",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Anda adalah ChatGPT, model bahasa besar yang dilatih oleh OpenAI. Ikuti instruksi pengguna dengan hati-hati. Balas menggunakan markdown.",
   "Enter a prompt": "Masukkan sebuah prompt",
@@ -800,7 +796,18 @@
     "legacyDataDescription": "Anda memiliki {size} data lama.",
     "legacyDeleteError": "Gagal menghapus data lama.",
     "legacyDeleteSuccess": "Data lama berhasil dihapus.",
-    "Custom Instructions": "Instruksi Khusus"
+    "Custom Instructions": "Instruksi Khusus",
+    "Personalization": "Personalisasi",
+    "Display Name": "Nama Tampilan",
+    "Display Name Description": "Pilih bagaimana nama Anda ditampilkan dalam sapaan dan di seluruh aplikasi",
+    "First Name": "Nama Depan",
+    "Last Name": "Nama Belakang",
+    "Full Name": "Nama Lengkap",
+    "Custom": "Kustom",
+    "None": "Tidak Ada",
+    "Custom Display Name": "Nama Tampilan Khusus",
+    "Custom Display Name Placeholder": "Masukkan nama pilihan Anda",
+    "displayNamePreview": "Pratinjau: \"Bagaimana saya dapat membantu, {name}?\""
   },
   "notFound": {
     "lostDog": "Anjing hilang"

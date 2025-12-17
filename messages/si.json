@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API යතුර අවශ්‍යයි",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "කරුණාකර ඔබේ OpenAI API යතුර පැති තීරුවේ පහළ වම්පසින් සකසන්න.",
   "Stop Generating": "උත්පාදනය නවත්වන්න",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "ප්‍රමිති සීමාව අකුරු {{maxLength}}ක් වේ. ඔබ ඇතුළත් කර ඇති අකුරු ගණන {{valueLength}}කි."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "ප්‍රාථමික සීමාව අක්ෂර {{maxLength}}කි",
   "System Prompt": "පද්ධති ඉඟිය",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "ඔබ ChatGPT, OpenAI විසින් පුහුණු කරන ලද විශාල භාෂා ආකෘතියකි. පරිශීලක උපදෙස් ප්රවේශමෙන් අනුගමනය කරන්න. මාර්ක්ඩවුන් භාවිතයෙන් ප්‍රතිචාර දක්වන්න.",
   "Enter a prompt": "ප්‍රේරකයක් ඇතුළු කරන්න",
@@ -800,7 +796,18 @@
     "Deleting": "මකමින් පවතියි",
     "Confirm Delete": "මකා දැමීම තහවුරු කරන්න",
     "Cancel": "අවලංගු කරන්න",
-    "Custom Instructions": "අභිරුචි උපදෙස්"
+    "Custom Instructions": "අභිරුචි උපදෙස්",
+    "Personalization": "පුද්ගලීකරණය",
+    "Display Name": "පෙන්වන නම",
+    "Display Name Description": "ඔබගේ නම ආයුබෝවන් සහ යෙදුමේදි පෙනෙන ආකාරය තෝරන්න",
+    "First Name": "මුල් නම",
+    "Last Name": "අවසන් නම",
+    "Full Name": "සම්පූර්ණ නම",
+    "Custom": "අභිරුචි",
+    "None": "කිසිවක් නැත",
+    "Custom Display Name": "අභිරුචි පෙන්වන නම",
+    "Custom Display Name Placeholder": "ඔබ අභිප්‍රේත නම ඇතුළත් කරන්න",
+    "displayNamePreview": "පූර්වදසුන: \"මට උපකාර කළ හැක්කේ කෙසේද, {name}?\""
   },
   "notFound": {
     "lostDog": "අහිමි වූ බල්ලා"

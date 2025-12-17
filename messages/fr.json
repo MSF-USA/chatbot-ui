@@ -99,11 +99,7 @@
   "OpenAI API Key Required": "Clé API OpenAI requise",
   "Please enter a message": "Veuillez entrer un message",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Veuillez définir votre clé API OpenAI en bas à gauche de la barre latérale.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "La limite du prompt est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "La limite pour l'invite est de {{maxLength}} caractères",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "La limite d'invite est de {{maxLength}} caractères. Vous avez saisi {{valueLength}} caractères.",
   "Regenerate response": "Régénérer la réponse",
   "Run Typewriter Intro": "Exécuter l'intro machine à écrire",
@@ -836,7 +832,18 @@
     "Deleting": "Suppression en cours",
     "Confirm Delete": "Confirmer la suppression",
     "Cancel": "Annuler",
-    "Custom Instructions": "Instructions personnalisées"
+    "Custom Instructions": "Instructions personnalisées",
+    "Personalization": "Personnalisation",
+    "Display Name": "Nom affiché",
+    "Display Name Description": "Choisissez comment votre nom apparaît dans les messages de bienvenue et dans l’application",
+    "First Name": "Prénom",
+    "Last Name": "Nom",
+    "Full Name": "Nom complet",
+    "Custom": "Personnalisé",
+    "None": "Aucun",
+    "Custom Display Name": "Nom affiché personnalisé",
+    "Custom Display Name Placeholder": "Entrez le nom de votre choix",
+    "displayNamePreview": "Aperçu : « Comment puis-je vous aider, {name} ? »"
   },
   "notFound": {
     "lostDog": "Chien perdu"

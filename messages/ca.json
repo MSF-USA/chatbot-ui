@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "Cal la clau d'API d'OpenAI",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Si us plau, introdueix la teva clau d'API d'OpenAI a la cantonada inferior esquerra de la barra lateral.",
   "Stop Generating": "Parar de generar",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "El límit del prompt és de {{maxLength}} caràcters. N'heu introduït {{valueLength}}."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "El límit del missatge és de {{maxLength}} caràcters",
   "System Prompt": "Missatge del sistema",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Ets ChatGPT, un model de llenguatge gran entrenat per OpenAI. Segueix les instruccions de l'usuari amb cura. Respon utilitzant markdown.",
   "Enter a prompt": "Introdueix un missatge",
@@ -808,7 +804,18 @@
     "Deleting": "Eliminant",
     "Confirm Delete": "Confirma l'eliminació",
     "Cancel": "Cancel·la",
-    "Custom Instructions": "Instruccions personalitzades"
+    "Custom Instructions": "Instruccions personalitzades",
+    "Personalization": "Personalització",
+    "Display Name": "Nom mostrat",
+    "Display Name Description": "Escull com vols que aparegui el teu nom a les salutacions i a tota l’aplicació",
+    "First Name": "Nom",
+    "Last Name": "Cognom",
+    "Full Name": "Nom complet",
+    "Custom": "Personalitzat",
+    "None": "Cap",
+    "Custom Display Name": "Nom mostrat personalitzat",
+    "Custom Display Name Placeholder": "Introdueix el nom que prefereixis",
+    "displayNamePreview": "Previsualització: \"En què et puc ajudar, {name}?\""
   },
   "notFound": {
     "lostDog": "Gos perdut"

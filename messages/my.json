@@ -27,11 +27,7 @@
   "Please enter a message": "ကျေးဇူးပြု၍ စာတစ်စောင် ရိုက်ထည့်ပါ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "ကျေးဇူးပြု၍ သင့် OpenAI API သော့ကို ဘယ်ဘက်အောက်ခြေ ဘေးတန်းတွင် သတ်မှတ်ပါ။",
   "Precise": "တိကျသော",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Prompt အတွင်းစာလုံးအရေအတွက် အမြင့်ဆုံး {{maxLength}} ဖြစ်သည်။ သင်ထည့်ထားသည့်စာလုံးအရေအတွက်မှာ {{valueLength}} ဖြစ်ပါသည်။"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Prompt အရှည် ကန့်သတ်ချက်မှာ {{maxLength}} အက္ခရာဖြစ်သည်",
   "Regenerate response": "တုံ့ပြန်မှုကို ပြန်လည်ထုတ်လုပ်ရန်",
   "Save & Submit": "သိမ်းဆည်း & တင်သွင်းရန်",
   "Search_ellipsis": "ရှာဖွေရန်...",
@@ -808,7 +804,18 @@
     "Deleting": "ဖျက်နေသည်",
     "Confirm Delete": "ဖျက်ရန် အတည်ပြုပါ",
     "Cancel": "ပယ်ဖျက်ရန်",
-    "Custom Instructions": "ကိုယ်ပိုင်ညွှန်ကြားချက်များ"
+    "Custom Instructions": "ကိုယ်ပိုင်ညွှန်ကြားချက်များ",
+    "Personalization": "ပုဂ္ဂိုလ်ရေးချိန်ညှိမှု",
+    "Display Name": "ပြသမည့်နာမည်",
+    "Display Name Description": "သင်၏နာမည်ကို မင်္ဂလာဆက်သွယ်ခြင်းနှင့် app တစ်လျှောက်၌ မည်သို့ပြသမည်ကို ရွေးချယ်ပါ",
+    "First Name": "ပထမနာမည်",
+    "Last Name": "နောက်ဆုံးနာမည်",
+    "Full Name": "နာမည်အပြည့်အစုံ",
+    "Custom": "ကိုယ်တိုင်သတ်မှတ်",
+    "None": "မရွေးထားပါ",
+    "Custom Display Name": "ကိုယ်သတ်မှတ်ပြသမည်နာမည်",
+    "Custom Display Name Placeholder": "သင့်လိုချင်သောနာမည် ထည့်ပါ",
+    "displayNamePreview": "နမူနာ - \"ဘာကြောင့်ကူညီပေးရမလဲ၊ {name}?\""
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"

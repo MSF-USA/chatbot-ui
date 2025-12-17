@@ -53,11 +53,7 @@
   "Plugin Keys": "Klíče pluginů",
   "Prompt": "Výzva",
   "Prompt content_ Use {{}} to denote a variable_ Ex: {{name}} is a {{adjective}} {{noun}}": "Obsah výzvy. Použijte '{{}}' k označení proměnné. Např.: '{{name}}' je '{{adjective}}' '{{noun}}'",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Limit pro zadání je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Limit podnětu je {{maxLength}} znaků",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Limit výzvy je {{maxLength}} znaků. Zadali jste {{valueLength}} znaků.",
   "Regenerate response": "Regenerovat odpověď",
   "Save & Submit": "Uložit a odeslat",
@@ -836,7 +832,18 @@
     "Deleting": "Mazání",
     "Confirm Delete": "Potvrdit smazání",
     "Cancel": "Zrušit",
-    "Custom Instructions": "Vlastní pokyny"
+    "Custom Instructions": "Vlastní pokyny",
+    "Personalization": "Personalizace",
+    "Display Name": "Zobrazované jméno",
+    "Display Name Description": "Zvolte, jak se bude vaše jméno zobrazovat v pozdravech a v celé aplikaci",
+    "First Name": "Křestní",
+    "Last Name": "Příjmení",
+    "Full Name": "Celé",
+    "Custom": "Vlastní",
+    "None": "Žádné",
+    "Custom Display Name": "Vlastní zobrazované jméno",
+    "Custom Display Name Placeholder": "Zadejte preferované jméno",
+    "displayNamePreview": "Náhled: \"Jak vám mohu pomoci, {name}?\""
   },
   "notFound": {
     "lostDog": "Ztracený pes"

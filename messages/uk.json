@@ -746,7 +746,18 @@
     "Deleting": "Видалення",
     "Confirm Delete": "Підтвердити видалення",
     "Cancel": "Скасувати",
-    "Custom Instructions": "Користувацькі інструкції"
+    "Custom Instructions": "Користувацькі інструкції",
+    "Personalization": "Персоналізація",
+    "Display Name": "Відображуване ім’я",
+    "Display Name Description": "Виберіть, як ваше ім’я буде відображатися в привітаннях та в додатку",
+    "First Name": "Ім’я",
+    "Last Name": "Прізвище",
+    "Full Name": "Повне ім’я",
+    "Custom": "Власне",
+    "None": "Не вказано",
+    "Custom Display Name": "Власне відображуване ім’я",
+    "Custom Display Name Placeholder": "Введіть бажане ім’я",
+    "displayNamePreview": "Попередній перегляд: «Чим можу допомогти, {name}?»"
   },
   "notFound": {
     "lostDog": "Загублений пес"
@@ -781,11 +792,7 @@
   "OpenAI API Key Required": "Потрібен ключ OpenAI API",
   "Please enter a message": "Будь ласка, введіть повідомлення",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Будь ласка, задайте ваш OpenAI API ключ у нижньому лівому куті бічної панелі.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Ліміт підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Обмеження підказки — {{maxLength}} символів",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Обмеження підказки — {{maxLength}} символів. Ви ввели {{valueLength}} символів.",
   "Regenerate response": "Згенерувати відповідь знову",
   "Run Typewriter Intro": "Запустити Typewriter Intro",

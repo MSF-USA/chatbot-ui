@@ -94,11 +94,7 @@
   "translatorTranslationTypeLabel": "ترجمہ کی قسم",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پیغام کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "OpenAI API Key Required": "OpenAI API کلید درکار ہے",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "پرامپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "حد {{maxLength}} حروف ہے",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "پرامپٹ کی حد {{maxLength}} حروف ہے۔ آپ نے {{valueLength}} حروف درج کیے ہیں۔",
   "Regenerate response": "جواب دوبارہ تیار کریں",
   "cancelButton": "منسوخ کریں",
@@ -832,7 +828,18 @@
     "legacyDataDescription": "آپ کے پاس {size} پرانا ڈیٹا ہے۔",
     "legacyDeleteError": "پرانا ڈیٹا حذف کرنے میں ناکام۔",
     "legacyDeleteSuccess": "پرانا ڈیٹا کامیابی سے حذف ہو گیا۔",
-    "Custom Instructions": "حسب ضرورت ہدایات"
+    "Custom Instructions": "حسب ضرورت ہدایات",
+    "Personalization": "ذاتی تخصیص",
+    "Display Name": "نام ظاہر کریں",
+    "Display Name Description": "منتخب کریں کہ آپ کا نام سلام اور ایپ میں کس طرح ظاہر ہو",
+    "First Name": "پہلا",
+    "Last Name": "آخری",
+    "Full Name": "مکمل",
+    "Custom": "حسبِ مرضی",
+    "None": "کوئی نہیں",
+    "Custom Display Name": "حسبِ مرضی نام",
+    "Custom Display Name Placeholder": "اپنا پسندیدہ نام درج کریں",
+    "displayNamePreview": "پیش منظر: \"میں کس طرح مدد کر سکتا ہوں، {name}?\""
   },
   "notFound": {
     "lostDog": "گمشدہ کتا"

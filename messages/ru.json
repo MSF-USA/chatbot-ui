@@ -21,11 +21,7 @@
   "Invalid folder file": "Недопустимый файл папки",
   "New conversation": "Новый разговор",
   "No prompts found": "Подсказки не найдены",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Лимит для запроса — {{maxLength}} символов. Вы ввели {{valueLength}} символов."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Лимит запроса — {{maxLength}} символов",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Лимит сообщения: {{maxLength}} символов. Вы ввели {{valueLength}} символов.",
   "System Prompt": "Системное сообщение",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Вы ChatGPT, большая языковая модель, созданная компанией OpenAI. Следуйте инструкциям пользователя. Отвечайте на сообщения, используя Markdown",
@@ -836,7 +832,18 @@
     "Deleting": "Удаление",
     "Confirm Delete": "Подтвердить удаление",
     "Cancel": "Отмена",
-    "Custom Instructions": "Персональные инструкции"
+    "Custom Instructions": "Персональные инструкции",
+    "Personalization": "Персонализация",
+    "Display Name": "Отображаемое имя",
+    "Display Name Description": "Выберите, как ваше имя будет отображаться в приветствиях и в приложении",
+    "First Name": "Имя",
+    "Last Name": "Фамилия",
+    "Full Name": "Полное имя",
+    "Custom": "Настраиваемое",
+    "None": "Нет",
+    "Custom Display Name": "Настраиваемое отображаемое имя",
+    "Custom Display Name Placeholder": "Введите предпочитаемое имя",
+    "displayNamePreview": "Пример: «Чем могу помочь, {name}?»"
   },
   "notFound": {
     "lostDog": "Потерянная собака"

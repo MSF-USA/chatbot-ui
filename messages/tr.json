@@ -4,11 +4,7 @@
   "OpenAI API Key Required": "OpenAI API Anahtarı Gerekli",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Lütfen OpenAI API anahtarınızı yan çubuğun sol altından ayarlayın.",
   "Stop Generating": "Oluşturmayı Durdur",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "İleti sınırı {{maxLength}} karakterdir. {{valueLength}} karakter girdiniz."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "İstem sınırı {{maxLength}} karakterdir",
   "System Prompt": "Sistem İstemi",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Siz ChatGPT'siniz, OpenAI tarafından eğitilmiş büyük bir dil modelisiniz. Kullanıcının talimatlarını dikkatlice izleyin. Markdown kullanarak yanıt verin.",
   "Enter a prompt": "Bir istem girin",
@@ -833,7 +829,18 @@
     "Deleting": "Siliniyor",
     "Confirm Delete": "Silmeyi Onayla",
     "Cancel": "İptal",
-    "Custom Instructions": "Özel Talimatlar"
+    "Custom Instructions": "Özel Talimatlar",
+    "Personalization": "Kişiselleştirme",
+    "Display Name": "Görünen Ad",
+    "Display Name Description": "Adınızın selamlamalarda ve uygulama genelinde nasıl görüneceğini seçin",
+    "First Name": "Ad",
+    "Last Name": "Soyad",
+    "Full Name": "Tam Ad",
+    "Custom": "Özel",
+    "None": "Yok",
+    "Custom Display Name": "Özel Görünen Ad",
+    "Custom Display Name Placeholder": "Tercih ettiğiniz adı girin",
+    "displayNamePreview": "Önizleme: \"Nasıl yardımcı olabilirim, {name}?\""
   },
   "notFound": {
     "lostDog": "Kayıp köpek"

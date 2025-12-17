@@ -8,11 +8,7 @@
   "Default System Prompt": "默认系统提示",
   "Edit": "编辑",
   "Email": "电子邮件",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "提示字数上限为{{maxLength}}个字符。您已输入{{valueLength}}个字符。"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "提示长度限制为{{maxLength}}个字符",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "提示字数限制为 {{maxLength}} 个字符。您已输入 {{valueLength}} 个字符。",
   "New conversation": "新对话",
   "New Conversation": "新的聊天",
@@ -836,7 +832,18 @@
     "Deleting": "正在删除",
     "Confirm Delete": "确认删除",
     "Cancel": "取消",
-    "Custom Instructions": "自定义指令"
+    "Custom Instructions": "自定义指令",
+    "Personalization": "个性化设置",
+    "Display Name": "显示名称",
+    "Display Name Description": "选择您的名字在问候和应用中的显示方式",
+    "First Name": "名",
+    "Last Name": "姓",
+    "Full Name": "全名",
+    "Custom": "自定义",
+    "None": "无",
+    "Custom Display Name": "自定义显示名称",
+    "Custom Display Name Placeholder": "请输入您偏好的名称",
+    "displayNamePreview": "预览：“我能帮您什么，{name}？”"
   },
   "notFound": {
     "lostDog": "迷路的狗"

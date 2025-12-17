@@ -27,11 +27,7 @@
   "OpenAI API Key Required": "OpenAI API-Schlüssel erforderlich",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Bitte trage deinen OpenAI API-Schlüssel in der linken unteren Ecke der Seitenleiste ein.",
   "Stop Generating": "Generieren stoppen",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Das Limit für den Prompt beträgt {{maxLength}} Zeichen. Sie haben {{valueLength}} Zeichen eingegeben."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Die Eingabe ist auf {{maxLength}} Zeichen begrenzt",
   "System Prompt": "Systemaufforderung",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Du bist ChatGPT, ein großes Sprachmodell, das von OpenAI trainiert wurde. Befolge die Anweisungen des Benutzers sorgfältig. Antworte in Markdown-Format.",
   "Enter a prompt": "Gib eine Anweisung ein",
@@ -833,7 +829,18 @@
     "Deleting": "Löschen",
     "Confirm Delete": "Löschen bestätigen",
     "Cancel": "Abbrechen",
-    "Custom Instructions": "Eigene Anweisungen"
+    "Custom Instructions": "Eigene Anweisungen",
+    "Personalization": "Personalisierung",
+    "Display Name": "Anzeigename",
+    "Display Name Description": "Wählen Sie, wie Ihr Name in Begrüßungen und in der App angezeigt wird",
+    "First Name": "Vorname",
+    "Last Name": "Nachname",
+    "Full Name": "Vollständig",
+    "Custom": "Benutzerdefiniert",
+    "None": "Keiner",
+    "Custom Display Name": "Benutzerdefinierter Anzeigename",
+    "Custom Display Name Placeholder": "Geben Sie Ihren bevorzugten Namen ein",
+    "displayNamePreview": "Vorschau: \"Wie kann ich helfen, {name}?\""
   },
   "emptyState": {
     "greeting": "Wie kann ich helfen?",

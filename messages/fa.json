@@ -754,7 +754,18 @@
     "Deleting": "در حال حذف",
     "Confirm Delete": "تأیید حذف",
     "Cancel": "لغو",
-    "Custom Instructions": "دستورالعمل‌های سفارشی"
+    "Custom Instructions": "دستورالعمل‌های سفارشی",
+    "Personalization": "شخصی‌سازی",
+    "Display Name": "نام نمایشی",
+    "Display Name Description": "انتخاب کنید نام شما چگونه در خوشامدگویی و بخش‌های مختلف برنامه نمایش داده شود",
+    "First Name": "نام",
+    "Last Name": "نام خانوادگی",
+    "Full Name": "نام کامل",
+    "Custom": "سفارشی",
+    "None": "هیچ‌کدام",
+    "Custom Display Name": "نام نمایشی سفارشی",
+    "Custom Display Name Placeholder": "نام دلخواه خود را وارد کنید",
+    "displayNamePreview": "پیش‌نمایش: «چگونه می‌توانم کمک کنم، {name}؟»"
   },
   "notFound": {
     "lostDog": "سگ گمشده"
@@ -789,11 +800,7 @@
   "OpenAI API Key Required": "نیاز به کلید OpenAI API",
   "Please enter a message": "لطفاً یک پیام وارد کنید",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "لطفاً کلید OpenAI API خود را در پایین سمت چپ نوار کناری تنظیم کنید.",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "حداکثر تعداد کاراکترها {{maxLength}} است. شما {{valueLength}} کاراکتر وارد کرده‌اید."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "حداکثر طول متن {{maxLength}} کاراکتر است",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "محدودیت پرامپت {{maxLength}} کاراکتر است. شما {{valueLength}} کاراکتر وارد کرده‌اید.",
   "Regenerate response": "تولید مجدد پاسخ",
   "Run Typewriter Intro": "اجرای مقدمه ماشین‌تحریر",

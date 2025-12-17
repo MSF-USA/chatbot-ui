@@ -746,7 +746,18 @@
     "Deleting": "กำลังลบ",
     "Confirm Delete": "ยืนยันการลบ",
     "Cancel": "ยกเลิก",
-    "Custom Instructions": "คำแนะนำส่วนตัว"
+    "Custom Instructions": "คำแนะนำส่วนตัว",
+    "Personalization": "ปรับแต่งส่วนบุคคล",
+    "Display Name": "ชื่อที่แสดง",
+    "Display Name Description": "เลือกวิธีแสดงชื่อของคุณในการทักทายและในแอป",
+    "First Name": "ชื่อ",
+    "Last Name": "นามสกุล",
+    "Full Name": "ชื่อเต็ม",
+    "Custom": "กำหนดเอง",
+    "None": "ไม่มี",
+    "Custom Display Name": "ชื่อที่กำหนดเอง",
+    "Custom Display Name Placeholder": "กรอกชื่อที่คุณต้องการ",
+    "displayNamePreview": "ตัวอย่าง: \"ฉันสามารถช่วยอะไรคุณได้บ้าง, {name}?\""
   },
   "notFound": {
     "lostDog": "สุนัขหาย"
@@ -781,11 +792,7 @@
   "OpenAI API Key Required": "ต้องใช้ OpenAI API Key",
   "Please enter a message": "กรุณาป้อนข้อความ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "โปรดตั้งค่า OpenAI API key ที่มุมล่างซ้ายของแถบด้านข้าง",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "จำกัดจำนวนอักขระที่ {{maxLength}} ตัว คุณได้ป้อนแล้ว {{valueLength}} ตัวอักขระ"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "จำนวนอักษรสูงสุดสำหรับคำสั่งคือ {{maxLength}} ตัวอักษร",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "จำกัดพรอมต์ที่ {{maxLength}} ตัวอักษร คุณป้อนแล้ว {{valueLength}} ตัวอักษร",
   "Regenerate response": "สร้างคำตอบใหม่",
   "Run Typewriter Intro": "เริ่มต้นแนะนำแบบพิมพ์ดีด",

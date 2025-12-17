@@ -145,11 +145,7 @@
   "OpenAI API Key Required": "የOpenAI API ቁልፍ ያስፈልጋል",
   "Please enter a message": "እባኮትን መልእክት ያስገቡ",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "እባኮትን የOpenAI API ቁልፍዎን በጎን አሞሌው ግርጌ በስተግራ ያስቀምጡ።",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "የፕሮምፕት መጠን {{maxLength}} ቁምፊዎች ነው። እርስዎ {{valueLength}} ቁምፊዎችን አስገብተዋል።"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "የመግቢያ ገደብ {{maxLength}} ቁጥር ባህሪዎች ነው",
   "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "የጥያቄ ገደብ {{maxLength}} ቁምፊዎች ነው። {{valueLength}} ቁምፊዎች አስገብተዋል።",
   "Regenerate response": "ምላሽ እንደገና አመንጭ",
   "Run Typewriter Intro": "የጸሐፊ መግቢያ አሂድ",
@@ -785,7 +781,18 @@
     "Deleting": "በመሰረዝ ላይ",
     "Confirm Delete": "መሰረዝን አረጋግጥ",
     "Cancel": "ሰርዝ",
-    "Custom Instructions": "ብጁ መመሪያዎች"
+    "Custom Instructions": "ብጁ መመሪያዎች",
+    "Personalization": "ግለሰቦች ማስተካከያ",
+    "Display Name": "የሚታየው ስም",
+    "Display Name Description": "ስምዎ በሰላምታዎችና በመተግበሪያው ውስጥ እንዴት እንደሚታይ ይምረጡ",
+    "First Name": "አንደኛ ስም",
+    "Last Name": "የአባት ስም",
+    "Full Name": "ሙሉ ስም",
+    "Custom": "በተግባር",
+    "None": "ምንም የለም",
+    "Custom Display Name": "በተግባር የታየው ስም",
+    "Custom Display Name Placeholder": "የሚመርጡትን ስም ያስገቡ",
+    "displayNamePreview": "ቅድመ እይታ፡ \"እንዴት ልረዳዎ, {name}?\""
   },
   "notFound": {
     "lostDog": "የጠፋ ውሻ"

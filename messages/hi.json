@@ -121,11 +121,7 @@
   "translatorTranslationTypeLabel": "अनुवाद प्रकार",
   "Message limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "संदेश सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।",
   "OpenAI API Key Required": "OpenAI API Key आवश्यक है",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "प्रॉम्प्ट सीमा {{maxLength}} अक्षर है। आपने {{valueLength}} अक्षर दर्ज किए हैं।"
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "प्रॉम्प्ट की सीमा {{maxLength}} अक्षर है",
   "Regenerate response": "प्रतिक्रिया पुनः उत्पन्न करें",
   "cancelButton": "रद्द करें",
   "Chatbot UI is an advanced chatbot kit for OpenAI's chat models aiming to mimic ChatGPT's interface and functionality_": "Chatbot UI एक उन्नत चैटबॉट किट है जो OpenAI के चैट मॉडल के लिए ChatGPT के इंटरफ़ेस और कार्यक्षमता की नकल करने का लक्ष्य रखती है।",
@@ -836,7 +832,18 @@
     "Deleting": "हटाया जा रहा है",
     "Confirm Delete": "हटाने की पुष्टि करें",
     "Cancel": "रद्द करें",
-    "Custom Instructions": "कस्टम निर्देश"
+    "Custom Instructions": "कस्टम निर्देश",
+    "Personalization": "व्यक्तिगतकरण",
+    "Display Name": "दर्शाया जाने वाला नाम",
+    "Display Name Description": "यह चुनें कि आपका नाम अभिवादन और ऐप में कैसे दिखाई दे",
+    "First Name": "पहला",
+    "Last Name": "अंतिम",
+    "Full Name": "पूरा नाम",
+    "Custom": "कस्टम",
+    "None": "कोई नहीं",
+    "Custom Display Name": "कस्टम दर्शाया जाने वाला नाम",
+    "Custom Display Name Placeholder": "अपना पसंदीदा नाम दर्ज करें",
+    "displayNamePreview": "पूर्वावलोकन: \"मैं आपकी कैसे मदद कर सकता हूँ, {name}?\""
   },
   "notFound": {
     "lostDog": "खोया हुआ कुत्ता"

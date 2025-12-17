@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "מפתח openAI API",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "עליך להזין את המפתח האישי שלך בצידו השמאלי התחתון של תפריט הניווט.",
   "Stop Generating": "עצור תהליך הפקת התשובה",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "מגבלת ההנחיה היא {{maxLength}} תווים. הכנסת {{valueLength}} תווים."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "המגבלה היא {{maxLength}} תווים",
   "System Prompt": "הגדרת בסיס לכל תשובה של המערכת",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "You are Hebrew speaking ChatGPT, a large language model trained by OpenAI which responds in Hebrew to any question or User comment. Follow the user's instructions carefully. Respond in Hebrew using markdown.",
   "Enter a prompt": "הקלד הודעה",
@@ -808,7 +804,18 @@
     "Deleting": "מוחק",
     "Confirm Delete": "אשר מחיקה",
     "Cancel": "ביטול",
-    "Custom Instructions": "הוראות מותאמות אישית"
+    "Custom Instructions": "הוראות מותאמות אישית",
+    "Personalization": "התאמה אישית",
+    "Display Name": "שם תצוגה",
+    "Display Name Description": "בחר כיצד שמך יוצג בברכות ובמהלך השימוש באפליקציה",
+    "First Name": "שם פרטי",
+    "Last Name": "שם משפחה",
+    "Full Name": "שם מלא",
+    "Custom": "מותאם אישית",
+    "None": "ללא",
+    "Custom Display Name": "שם תצוגה מותאם אישית",
+    "Custom Display Name Placeholder": "הזן את השם המועדף עליך",
+    "displayNamePreview": "תצוגה מקדימה: \"איך אפשר לעזור, {name}?\""
   },
   "notFound": {
     "lostDog": "כלב אבוד"

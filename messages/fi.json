@@ -2,11 +2,7 @@
   "OpenAI API Key Required": "OpenAI API-avain tarvitaan",
   "Please set your OpenAI API key in the bottom left of the sidebar_": "Ole hyvä ja aseta OpenAI API-avaimesi sivupalkin vasemmassa alareunassa.",
   "Stop Generating": "Lopeta generointi",
-  "Prompt limit is {{maxLength}} characters": {
-    " You have entered {{valueLength}} characters": {
-      "": "Kehotteen enimmäispituus on {{maxLength}} merkkiä. Olet syöttänyt {{valueLength}} merkkiä."
-    }
-  },
+  "Prompt limit is {{maxLength}} characters": "Kehotteen pituusraja on {{maxLength}} merkkiä",
   "System Prompt": "System prompt",
   "You are ChatGPT, a large language model trained by OpenAI_ Follow the user's instructions carefully_ Respond using markdown_": "Sinä olet ChatGPT, OpenAI:n opettama laaja kielimalli. Seuraa käyttäjän ohjeita tarkasti. Vastaa käyttäen markdownia.",
   "Enter a prompt": "Syötä prompti",
@@ -808,7 +804,18 @@
     "Deleting": "Poistetaan",
     "Confirm Delete": "Vahvista poisto",
     "Cancel": "Peruuta",
-    "Custom Instructions": "Mukautetut ohjeet"
+    "Custom Instructions": "Mukautetut ohjeet",
+    "Personalization": "Personointi",
+    "Display Name": "Näyttönimi",
+    "Display Name Description": "Valitse, miten nimesi näkyy tervehdyksissä ja sovelluksessa",
+    "First Name": "Etunimi",
+    "Last Name": "Sukunimi",
+    "Full Name": "Koko nimi",
+    "Custom": "Mukautettu",
+    "None": "Ei mitään",
+    "Custom Display Name": "Mukautettu näyttönimi",
+    "Custom Display Name Placeholder": "Anna haluamasi nimi",
+    "displayNamePreview": "Esikatselu: \"Miten voin auttaa, {name}?\""
   },
   "notFound": {
     "lostDog": "Kadonnut koira"
