@@ -1003,6 +1003,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Model Claude yang cepat.",
       "knowledgeCutoff": "Januari 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Model paling canggih dari OpenAI, unggul dalam penalaran kompleks, pembuatan kode, dan pemecahan masalah teknis. Terbaik untuk tugas analitis, tantangan pemrograman, riset, dan penjelasan mendetail. Mendukung penyesuaian upaya penalaran dan tingkat detail respons.",
+      "knowledgeCutoff": "Des 2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Varian khusus dari GPT-5.2 yang dioptimalkan untuk interaksi percakapan dan kecerdasan emosional. Unggul dalam komunikasi empatik, dukungan kesehatan mental, penulisan kreatif, brainstorming, dan dialog alami. Paling cocok untuk percakapan santai, skenario konseling, dan tugas yang membutuhkan kesadaran emosional.",
+      "knowledgeCutoff": "Des 2025"
     }
   },
   "searchMode": {
@@ -1053,5 +1063,167 @@
   "Retry": "Coba Lagi",
   "Terms and Conditions": "Syarat dan Ketentuan",
   "Terms of Service": "Ketentuan Layanan",
-  "Version": "Versi"
+  "Version": "Versi",
+  "migration": {
+    "status": {
+      "checkingStorage": "Memeriksa Penyimpanan",
+      "analyzingData": "Menganalisis data Anda...",
+      "updateAvailable": "Pembaruan Tersedia",
+      "storageSpaceLimited": "Ruang Penyimpanan Terbatas",
+      "migratingData": "Memigrasikan Data",
+      "migrationComplete": "Migrasi Selesai",
+      "partiallyComplete": "Sebagian Selesai",
+      "migrationFailed": "Migrasi Gagal"
+    },
+    "descriptions": {
+      "foundLegacyData": "Kami menemukan data dari versi sebelumnya. Apakah Anda ingin memigrasikannya agar dapat digunakan di sistem yang telah ditingkatkan?",
+      "storageSpaceWarning": "Data Anda membutuhkan ruang lebih banyak dari yang tersedia saat ini. Kami sarankan menggunakan mode migrasi bertahap.",
+      "pleaseWait": "Mohon tunggu, kami sedang memperbarui data Anda...",
+      "dataIsSafe": "Data asli Anda aman. Anda dapat mencoba lagi atau melewati untuk saat ini.",
+      "itemsTooLarge": "Item ini terlalu besar untuk disimpan. Anda dapat mengekspor, mengosongkan ruang, atau melanjutkan tanpa item tersebut.",
+      "settingsUpdated": "Pengaturan Anda telah diperbarui."
+    },
+    "benefits": {
+      "title": "Manfaat",
+      "fasterPerformance": "Performa lebih cepat",
+      "betterReliability": "Keandalan lebih baik",
+      "dataPreserved": "Data Anda tetap aman"
+    },
+    "options": {
+      "advancedOptions": "Opsi lanjutan",
+      "useIncrementalMode": "Gunakan mode bertahap",
+      "slowerButSafer": "lebih lambat tapi lebih aman",
+      "recommended": "disarankan",
+      "deleteLegacyData": "Hapus data lama setelah migrasi",
+      "freesUpSpace": "mengosongkan ruang penyimpanan"
+    },
+    "actions": {
+      "skip": "Lewati",
+      "migrateData": "Migrasikan Data",
+      "migrateAnyway": "Migrasikan Tetap",
+      "continue": "Lanjutkan",
+      "retry": "Coba Lagi",
+      "exportBackupFirst": "Ekspor Cadangan Terlebih Dahulu",
+      "exportSkippedItems": "Ekspor Item yang Dilewati"
+    },
+    "quota": {
+      "availableSpace": "Ruang tersedia",
+      "dataToMigrate": "Data yang akan dimigrasikan",
+      "additionalSpaceNeeded": "Ruang tambahan dibutuhkan"
+    },
+    "progress": {
+      "migratingConversations": "Memigrasikan percakapan",
+      "migratingPrompts": "Memigrasikan prompt",
+      "migratingAgents": "Memigrasikan agen",
+      "finishingUp": "Sedang menyelesaikan"
+    },
+    "results": {
+      "successfullyMigrated": "Berhasil dimigrasikan",
+      "notes": "Catatan",
+      "couldNotMigrate": "Tidak dapat dimigrasikan",
+      "legacyDataDeleted": "Data lama dihapus",
+      "freed": "dibebaskan"
+    },
+    "units": {
+      "conversation": "percakapan",
+      "conversations": "percakapan",
+      "folder": "folder",
+      "folders": "folder",
+      "prompt": "prompt",
+      "prompts": "prompt",
+      "customAgent": "agen khusus",
+      "customAgents": "agen khusus",
+      "item": "item",
+      "items": "item"
+    }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Selamat datang di AI Assistant V2",
+    "whatsNew": "Apa yang Baru",
+    "whatsNewQuestion": "Apa yang Baru?"
+  },
+  "welcomeV2": {
+    "backToChat": "Kembali ke Chat",
+    "title": "Selamat datang di AI Assistant V2",
+    "subtitle": "Desain ulang total dengan fitur-fitur baru yang canggih",
+    "webSearch": {
+      "title": "Mode Pencarian Web",
+      "description": "Berikan akses AI ke pencarian web secara real-time dengan opsi fokus privasi",
+      "quickAccess": "Akses cepat:",
+      "quickAccessInstructions": "Klik tombol + di samping kolom chat → Pilih \"Pencarian Web\"",
+      "setAsDefault": "Jadikan sebagai default:",
+      "setAsDefaultInstructions": "Buka pengaturan model dan aktifkan toggle Mode Pencarian Web. Pilih antara:",
+      "privacyFocused": "Fokus Privasi (default)",
+      "privacyFocusedDescription": "Hanya kueri pencarian yang dikirim ke luar",
+      "azureAIFoundry": "Mode Azure AI Foundry",
+      "azureAIFoundryDescription": "Lebih cepat, namun seluruh percakapan disimpan di luar",
+      "learnMore": "Pelajari lebih lanjut tentang mode pencarian →"
+    },
+    "tones": {
+      "title": "Nada (Profil Suara)",
+      "description": "Kendalikan gaya penulisan, tingkat formalitas, dan kepribadian AI",
+      "createTones": "1. Buat nada:",
+      "createTonesInstructions": "Aksi Cepat di sidebar → tab Nada",
+      "useTones": "2. Gunakan nada:",
+      "useTonesInstructions": "Klik dropdown nada di samping kolom chat",
+      "exampleProfessionalDesc": "Nada formal, bisnis",
+      "exampleCasualDesc": "Ramah, percakapan santai"
+    },
+    "aiAssist": {
+      "title": "AI Assist untuk Prompt & Nada",
+      "description": "Biarkan AI membantu Anda membuat prompt dan nada lebih baik, lebih cepat",
+      "step1": "Buka Aksi Cepat di sidebar",
+      "step2": "Buka ke tab {prompts} atau {tones}",
+      "step3": "Cari panel AI Assistant",
+      "getSuggestions": "Dapatkan saran",
+      "getSuggestionsDesc": "AI menganalisis draft Anda dan memberikan perbaikan",
+      "buildFromFiles": "Buat dari berkas",
+      "buildFromFilesDesc": "Unggah dokumen untuk menghasilkan prompt/nada",
+      "testBeforeSaving": "Uji sebelum menyimpan",
+      "testBeforeSavingDesc": "Coba prompt/nada di pratinjau chat langsung",
+      "step2Prefix": "Arahkan ke",
+      "step2Suffix": "tab"
+    },
+    "customAgents": {
+      "title": "Agen Kustom",
+      "advancedBadge": "TINGKAT LANJUT",
+      "description": "Agen AI khusus dengan kemampuan lanjutan seperti pencarian web dan interpretasi kode",
+      "advancedFeature": "Fitur Tingkat Lanjut",
+      "advancedFeatureDesc": "Agen Kustom berjalan di Azure AI Foundry dengan alat khusus. Membutuhkan koordinasi dengan tim teknis AI Assistant untuk membuat ID agen.",
+      "howToAccess": "Cara mengakses:",
+      "howToAccessInstructions": "Pengaturan → Model → tab Agen",
+      "whatYouCanDo": "Yang dapat Anda lakukan:",
+      "configureAgents": "Konfigurasi agen dengan kemampuan khusus",
+      "importExport": "Impor/ekspor konfigurasi agen",
+      "selectFromDropdown": "Pilih agen kustom dari dropdown model"
+    },
+    "audioTranslation": {
+      "title": "Transkripsi Audio dengan Terjemahan",
+      "description": "Transkrip audio diterjemahkan otomatis ke 13+ bahasa",
+      "howToUse": "Cara penggunaan:",
+      "step1": "Unggah file audio atau video",
+      "step2": "Klik menu dropdown bahasa di antarmuka transkripsi",
+      "step3": "Pilih bahasa tujuan Anda",
+      "availableLanguages": "Bahasa yang tersedia:",
+      "moreLanguages": "+7 lainnya"
+    },
+    "pwa": {
+      "title": "Instal sebagai Aplikasi Mobile",
+      "description": "Progressive Web App dengan pengalaman seperti aplikasi asli",
+      "installTip": "Tips: Instal setelah masuk untuk menjaga autentikasi dan mendapatkan pengalaman terbaik.",
+      "howToInstall": "Cara instalasi:",
+      "step1": "Masuk ke akun Anda",
+      "step2": "Buka Pengaturan → Aplikasi Mobile untuk instruksi lengkap",
+      "step3": "Di ponsel: Ketuk menu browser (⋮ atau ⚙️)",
+      "step4": "Cari \"Tambahkan ke Layar Utama\" atau \"Instal Aplikasi\"",
+      "step5": "Ikuti petunjuk untuk instalasi",
+      "benefits": "Keuntungan:",
+      "benefit1": "Dapat dibuka seperti aplikasi asli dari layar utama",
+      "benefit2": "Layar penuh tanpa tampilan browser",
+      "benefit3": "Akses offline ke percakapan yang tersimpan"
+    }
+  },
+  "Professional": "Profesional",
+  "Casual": "Santai"
 }
