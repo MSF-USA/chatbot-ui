@@ -226,7 +226,7 @@
   "Options": "ရွေးချယ်စရာများ",
   "Are you sure you want to delete this folder?": "ဤဖိုဒါကို ဖျက်လိုသည်မှာ သေချာပါသလား?",
   "New Prompt": "စာသားအသစ်",
-  "Edit Prompt": "စာသားကို ပြင်ဆင်ပါ",
+  "Edit Prompt": "အညွှန်း တည်းဖြတ်ပါ",
   "Prompt name": "စာသား အမည်",
   "Prompt content": "စာသား အကြောင်းအရာ",
   "Are you sure you want to delete this prompt?": "ဤစာသားကို ဖျက်လိုသည်မှာ သေချာပါသလား?",
@@ -305,13 +305,25 @@
   "Tones": "လေသံများ",
   "Create Your First Tone": "သင့်ပထမဆုံး လေသံကို ဖန်တီးပါ",
   "Search tones": "လေသံများကို ရှာဖွေပါ...",
-  "Voice Guidelines": "အသံလမ်းညွှန်ချက်များ",
+  "Voice Guidelines": "အသံ လမ်းညွှန်ချက်များ",
   "Examples": "ဥပမာများ",
   "Select a tone to view details": "အသေးစိတ်ကြည့်ရှုရန် လေသံတစ်ခု ရွေးချယ်ပါ",
   "Team Templates": "အဖွဲ့ပုံစံများ",
   "selected": "ရွေးချယ်ထား",
   "folders": "ဖိုလ်ဒါများ",
-  "agents": "ကိုယ်စားလှယ်များ",
+  "agents": {
+    "exportAgent": "အေးဂျင့်ကို တင်ပို့ပါ",
+    "editAgent": "အေးဂျင့်ကို တည်းဖြတ်ပါ",
+    "agentName": "အေးဂျင့် အမည်",
+    "myResearchAssistant": "ကျွန်ုပ်၏ သုတေသန လက်ထောက်",
+    "agentId": "အေးဂျင့် ID",
+    "agentIdExample": "asst_abc123def456",
+    "descriptionOptional": "ဖော်ပြချက် (ရွေးချယ်ပိုင်ခွင့်)",
+    "descriptionPlaceholder": "သုတေသန လုပ်ငန်းများတွင် ကျွမ်းကျင်သော အေးဂျင့်...",
+    "baseModel": "အခြေခံ မော်ဒယ်",
+    "formatDescription": "ပုံစံ: asst_xxxxx (MSF AI Assistant Foundry မှ)",
+    "importantInfo": "ဤအေးဂျင့်သည် စကားပြောဆိုမှု ဆက်စပ်မှုကို အသုံးပြု နိုင်မည်ဖြစ်ပြီး စံ မော်ဒယ်များ ကဲ့သို့ တူညီသော ကိရိယာများကို အသုံးပြု နိုင်မည်ဖြစ်သည်။ အေးဂျင့် ID မှန်ကန်ကြောင်း သေချာစေပါ၊ အကြောင်းမှာ နောက်ပိုင်းတွင် ပြောင်းလဲ၍မရပါ။"
+  },
   "Quick Actions": "မြန်ဆန်သော လုပ်ဆောင်ချက်များ",
   "Type / in chat to access your prompts": "သင့်အညွှန်းများကို ဝင်ရောက်ရန် စကားပြောခန်းတွင် / ရိုက်ပါ",
   "Type / in chat, select your prompt, and fill in the variables when prompted": "စကားပြောခန်းတွင် / ရိုက်ပါ၊ သင့်အညွှန်းကို ရွေးချယ်ပြီး တောင်းဆိုသည့်အခါ ကိန်းရှင်များကို ဖြည့်ပါ",
@@ -358,7 +370,6 @@
   "Custom Agents": "စိတ်ကြိုက် ကိုယ်စားလှယ်များ",
   "Delete template and all its items": "ပုံစံနှင့် ၎င်း၏အရာများအားလုံးကို ဖျက်ပါ",
   "Description (Optional)": "ဖော်ပြချက် (ရွေးချယ်ပိုင်ခွင့်)",
-  "Edit Prompt": "အညွှန်း တည်းဖြတ်ပါ",
   "Edit Tone": "လေသံ တည်းဖြတ်ပါ",
   "Email Response Template": "အီးမေးလ် တုံ့ပြန်မှု ပုံစံ",
   "Example Prompt": "ဥပမာ အညွှန်း",
@@ -418,7 +429,6 @@
   "msf_logo_alt": "MSF လိုဂို",
   "collapse_sidebar": "ဘေးတန်းကို ခေါက်သိမ်းပါ",
   "expand_sidebar": "ဘေးတန်းကို ချဲ့ပါ",
-  "Voice Guidelines": "အသံ လမ်းညွှန်ချက်များ",
   "Please upload some content or describe the tone you want": "ကျေးဇူးပြု၍ အကြောင်းအရာအချို့ကို အပ်လုဒ်လုပ်ပါ သို့မဟုတ် သင်လိုချင်သော လေသံကို ဖော်ပြပါ",
   "Untitled Tone": "ခေါင်းစဉ်မရှိသော လေသံ",
   "Failed to analyze tone": "လေသံ ခွဲခြမ်းစိတ်ဖြာရန် မအောင်မြင်ပါ",
@@ -448,13 +458,41 @@
   "enterPromptDescriptionPlaceholder": "ဤအညွှန်းသည် ဘာအတွက်နည်း?",
   "enterPromptContentPlaceholder": "သင့်အညွှန်းကို ဤနေရာတွင် ရေးပါ။ ပြောင်းလဲနိုင်သော အကြောင်းအရာအတွက် {{variable}} ကို သုံးပါ။",
   "common": {
-    "contact": "ဆက်သွယ်ရန်"
+    "contact": "ဆက်သွယ်ရန်",
+    "close": "ပိတ်ပါ",
+    "remove": "ဖယ်ရှားပါ",
+    "tryAgain": "ထပ်မံကြိုးစားပါ",
+    "menu": "မီနူး",
+    "copyToClipboard": "ကလစ်ဘုတ်သို့ ကူးယူပါ",
+    "toggleDropdownMenu": "Dropdown မီနူး ဖွင့်/ပိတ်",
+    "toggleMenu": "မီနူးကို ဖွင့်/ပိတ်",
+    "closeModal": "မော်ဒယ်ပိတ်ပါ",
+    "dismissBanner": "Banner ကို ပယ်ဖျက်ပါ",
+    "searchEllipsis": "ရှာဖွေရန်...",
+    "addTagEllipsis": "Tag တစ်ခု ထည့်ပါ...",
+    "msfLogo": "MSF လိုဂို",
+    "importantInformation": "အရေးကြီးသတင်းအချက်အလက်",
+    "noResults": "ရလဒ် မတွေ့ပါ",
+    "confirm": "အတည်ပြုပါ",
+    "cancel": "ဖျက်သိမ်းပါ",
+    "discard": "ဖျက်သွားမည်",
+    "keepEditing": "ဆက်လက်တည်းဖြတ်ပါ",
+    "yes": "ဟုတ်ကဲ့",
+    "no": "မဟုတ်ပါ"
   },
   "errors": {
     "unexpectedErrorOccurred": "မမျှော်လင့်ထားသော အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်",
     "criticalErrorReload": "အရေးကြီးသော အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်။ ကျေးဇူးပြု၍ စာမျက်နှာကို ပြန်လည်တင်ပါ။",
     "reloadPage": "စာမျက်နှာကို ပြန်လည်တင်ပါ",
-    "persistContactSupport": "ဤပြဿနာ ဆက်လက်ဖြစ်ပေါ်နေပါက၊ ကျေးဇူးပြု၍ ပံ့ပိုးကူညီမှုကို ဆက်သွယ်ပါ"
+    "persistContactSupport": "ဤပြဿနာ ဆက်လက်ဖြစ်ပေါ်နေပါက၊ ကျေးဇူးပြု၍ ပံ့ပိုးကူညီမှုကို ဆက်သွယ်ပါ",
+    "somethingWentWrong": "တစ်ခုခုပျက်ကွက်နေသည်",
+    "anErrorOccurred": "အမှားတစ်ခုကြုံတွေ့ခဲ့သည်",
+    "copyErrorMessage": "အမှားစာကိုကူးယူရန်",
+    "contactSupport": "ပြဿနာမပြေပါက support သို့ ဆက်သွယ်ပါ",
+    "dismissError": "အမှားကိုပိတ်ရန်",
+    "applicationError": "အပ်ပလီကေးရှင်း အမှား",
+    "chatLoadError": "ချတ်ဖြင့်ဖွင့်ရာတွင် အမှားတစ်ခု ဖြစ်ပွားခဲ့သည်",
+    "anErrorOccurredTryAgain": "အမှားတစ်ခုကြုံတွေ့ခဲ့သည်။ ထပ်မံကြိုးစားပါ။"
   },
   "auth": {
     "authenticationError": "စစ်မှန်ကြောင်းအထောက်အထား အမှား",
@@ -523,7 +561,25 @@
     "fullSizePreview": "အပြည့်အစုံ အရွယ်အစား ကြိုတင် ကြည့်ရှုမှု",
     "enterSearchQueryPlaceholder": "သင့် ရှာဖွေမှု မေးခွန်း သို့မဟုတ် မေးခွန်းကို ရိုက်ထည့်ပါ...",
     "errorFetchingUrl": "URL အကြောင်းအရာကို ရယူရာတွင် အမှား ဖြစ်ပွားခဲ့သည်",
-    "errorInitiatingSearch": "ဝဘ်ရှာဖွေမှု စတင်ရာတွင် အမှား ဖြစ်ပွားခဲ့သည်"
+    "errorInitiatingSearch": "ဝဘ်ရှာဖွေမှု စတင်ရာတွင် အမှား ဖြစ်ပွားခဲ့သည်",
+    "regenerate": "ပြန်လည်ထုတ်လုပ်မည်",
+    "modelSwitchPrompt": "{original} အောင်မြင်မည် မဟုတ်သော်လည်း {fallback} မှ အောင်မြင်ပါသည်။ မော်ဒယ်ပြောင်းရန် လိုပါသလား။",
+    "keepOriginalModel": "မူရင်း {model} ကိုထားရှိမည်",
+    "switchToModel": "{model} သို့ပြောင်းရန်",
+    "alwaysSwitchToModel": "အလိုအလျောက် အမြဲပြောင်းရန်",
+    "translateMessage": "စာကိုဘာသာပြန်ရန်",
+    "translating": "ဘာသာပြန်နေသည်...",
+    "translationError": "ဘာသာပြန်မှု မအောင်မြင်ပါ",
+    "showOriginal": "မူရင်းအတန်းဖော်ပြရန်",
+    "translatedTo": "{language} သို့ဘာသာပြန်ထားသည်",
+    "searchLanguages": "ဘာသာစကား ရှာရန်...",
+    "selectLanguage": "ဘာသာစကား ရွေးရန်",
+    "audioFromOriginal": "အသံသည် မူရင်းစာသားမှ",
+    "audioFromTranslation": "အသံသည် {language} ဘာသာပြန်စာသားမှ",
+    "thinking": "စဉ်းစားနေသည်...",
+    "viewReasoningProcess": "အကြောင်းအရင်း ဆင်ခြင်ချက်ကိုကြည့်ရန်",
+    "collapseThinking": "စဉ်းစားမှုကိုပိတ်ရန်",
+    "expandThinking": "စဉ်းစားမှုကိုချဲ့ရန်"
   },
   "sidebar": {
     "collapseSidebar": "ဘေးဘားကို ကျုံ့ပါ",
@@ -531,29 +587,135 @@
     "quickActionsTitle": "လျှင်မြန်သော လုပ်ဆောင်ချက်များ",
     "quickActions": "လျှင်မြန်သော လုပ်ဆောင်ချက်များ"
   },
-  "agents": {
-    "exportAgent": "အေးဂျင့်ကို တင်ပို့ပါ",
-    "editAgent": "အေးဂျင့်ကို တည်းဖြတ်ပါ",
-    "agentName": "အေးဂျင့် အမည်",
-    "myResearchAssistant": "ကျွန်ုပ်၏ သုတေသန လက်ထောက်",
-    "agentId": "အေးဂျင့် ID",
-    "agentIdExample": "asst_abc123def456",
-    "descriptionOptional": "ဖော်ပြချက် (ရွေးချယ်ပိုင်ခွင့်)",
-    "descriptionPlaceholder": "သုတေသန လုပ်ငန်းများတွင် ကျွမ်းကျင်သော အေးဂျင့်...",
-    "baseModel": "အခြေခံ မော်ဒယ်",
-    "formatDescription": "ပုံစံ: asst_xxxxx (MSF AI Assistant Foundry မှ)",
-    "importantInfo": "ဤအေးဂျင့်သည် စကားပြောဆိုမှု ဆက်စပ်မှုကို အသုံးပြု နိုင်မည်ဖြစ်ပြီး စံ မော်ဒယ်များ ကဲ့သို့ တူညီသော ကိရိယာများကို အသုံးပြု နိုင်မည်ဖြစ်သည်။ အေးဂျင့် ID မှန်ကန်ကြောင်း သေချာစေပါ၊ အကြောင်းမှာ နောက်ပိုင်းတွင် ပြောင်းလဲ၍မရပါ။"
-  },
   "prompts": {
-    "buildReusablePrompts": "AI အကူအညီဖြင့် ပြန်လည်အသုံးပြုနိုင်သော အကြံပြုချက်များကို တည်ဆောက်ပါ"
+    "buildReusablePrompts": "AI အကူအညီဖြင့် ပြန်လည်အသုံးပြုနိုင်သော အကြံပြုချက်များကို တည်ဆောက်ပါ",
+    "noToneDefault": "အသံပြောခြင်း မရှိ (မူလသတ်မှတ်ချက်)",
+    "tagHelp": "Tag အကူအညီ",
+    "tagHelpContent": "သင့်ထည့်သွင်းထားသော prompts များကို အမျိုးအစားခွဲရန်နှင့် အလျင်အမြန် ရှာဖွေရန် tag များကို အသုံးပြုပါ။ ဥပမာများ-",
+    "tagExamples": {
+      "email": "email",
+      "marketing": "marketing",
+      "technical": "technical",
+      "customerSupport": "customer-support"
+    },
+    "variableHelp": "Variable အကူအညီ",
+    "variableHelpIntro": "သင့် prompt ကို dynamic ဖြစ်အောင် variable များ အသုံးပြုပါ-",
+    "requiredVariables": "လိုအပ်သော Variable များ (နောက်ခံမရှိ)",
+    "optionalVariables": "ရွေးချယ်စရာ Variable များ (နောက်ခံသတ်မှတ်ချက်ဖြင့်)",
+    "userMustProvide": "အသုံးပြုသူသည် တန်ဖိုးထည့်ရန်လိုအပ်သည်",
+    "userCanProvide": "အသုံးပြုသူသည် တန်ဖိုးထည့်နိုင်သည်၊ မထည့်လျှင် နောက်ခံတန်ဖိုးအသုံးပြုမည်",
+    "example": "ဥပမာ-",
+    "variableExampleText": "{{tone:professional}} အသုံးအနှုန်းဖြင့် {{language:English}} ဖြင့် {{topic}} အကြောင်း {{recipient}} ထံသို့ အီးမေးလ်ရေးပါ",
+    "detectedVariables": "တွေ့ရှိထားသော Variable များ",
+    "required": "လိုအပ်သည်",
+    "aiAssistant": "AI အကူအညီ",
+    "whatToImprove": "ဘာကို တိုးတက်အောင်လိုပါသလဲ",
+    "whatShouldPromptDo": "ဒီ prompt သည် ဘာလုပ်သင့်သလဲ",
+    "improvePlaceholder": "ဥပမာ- ပရော်ဖက်ရှင်နယ်များစွာဖြစ်အောင်၊ ဥပမာထည့်ရန်၊ ထင်ရှားမှုတိုးပေးရန်...",
+    "generatePlaceholder": "ဥပမာ- recipient နှင့် topic အတွက် variable များဖြင့် ပရော်ဖက်ရှင်နယ် အီးမေးလ် template တစ်ခုပြုလုပ်ရန်...",
+    "addContextOptional": "အကြောင်းအရာ ထပ်ထည့်ရန် (ရွေးချယ်နိုင်သည်)",
+    "revising": "ပြင်ဆင်နေသည်...",
+    "generating": "ဖန်တီးနေသည်...",
+    "reviseWithAI": "AI ဖြင့် ပြင်ဆင်မည်",
+    "generatePrompt": "Prompt ကိုထုတ်ရန်",
+    "revisionComplete": "ပြင်ဆင်မှုပြီးဆုံးပါပြီ",
+    "generationComplete": "ထုတ်ပေးမှုပြီးဆုံးပါပြီ",
+    "revisedPrompt": "ပြင်ဆင်ပြီး Prompt:",
+    "generatedPrompt": "အသစ်ထုတ်ထားသော Prompt:",
+    "applyRevision": "ပြင်ဆင်မှုကိုအသုံးပြုပါ",
+    "useThisPrompt": "ဤ Prompt ကိုအသုံးပြုပါ",
+    "improvementsMade": "ပြင်ဆင်ထားသည့်အချက်များ:",
+    "tips": "အကြံပြုချက်:",
+    "howAICanHelp": "AI ဘယ်လိုအကူအညီပေးနိုင်သလဲ",
+    "helpItems": {
+      "improveClarity": "ထင်ရှားပြတ်သားမှုနှင့်ဖွဲ့စည်းပုံ တိုးတက်စေသည်",
+      "suggestVariables": "အသုံးဝင်သော variables များကိုအကြံပြုသည်",
+      "addContext": "အကြောင်းအရာနှင့် ဥပမာများထပ်ထည့်ပါ",
+      "optimize": "ပိုမိုထိရောက်စေရန် သွင်းပေးပါသည်"
+    },
+    "savePrompt": "Prompt ထိန်းသိမ်းပါ",
+    "add": "ထည့်ပါ"
   },
   "tones": {
     "createCustomVoiceProfile": "AI အကူအညီဖြင့် စိတ်ကြိုက် အသံပရိုဖိုင်ကို ဖန်တီးပါ",
-    "examplePlaceholder": "ဥပမာ၊ ပရော်ဖက်ရှင်နယ် ဒါပေမယ့် ဖော်ရွေသော ဖောက်သည်ဝန်ဆောင်မှု အသံကို ဖန်တီးပါ..."
+    "examplePlaceholder": "ဥပမာ၊ ပရော်ဖက်ရှင်နယ် ဒါပေမယ့် ဖော်ရွေသော ဖောက်သည်ဝန်ဆောင်မှု အသံကို ဖန်တီးပါ...",
+    "tagHelp": "Tag အကြံပြုချက်",
+    "tagHelpContent": "သင့် tone များကိုအုပ်စုခွဲ၍ လွယ်လင့်တက်ရှာဖွေရန် tag များအသုံးပြုပါ။ ဥပမာများ:",
+    "tagExamples": {
+      "professional": "professional",
+      "casual": "casual",
+      "technical": "technical",
+      "marketing": "marketing"
+    },
+    "add": "ထည့်ပါ",
+    "aiToneAnalyzer": "AI Tone Analyzer",
+    "describeToneToCreate": "ဖန်တီးလိုသော tone ကိုဖော်ပြပါ",
+    "uploadContentSamples": "Content နမူနာများတင်ပါ",
+    "analyzing": "ခွဲခြမ်းစိတ်ဖြာနေပါသည်...",
+    "analyzeToneWithAI": "AI ဖြင့် Tone ကိုခွဲခြမ်းစိတ်ဖြာပါ",
+    "analysisComplete": "ခွဲခြမ်းစိတ်ဖြာမှုပြီးဆုံး",
+    "generatedVoiceGuidelines": "ထုတ်ယူသည့် Voice Guidelines:",
+    "examplePhrases": "ဥပမာစကားများ:",
+    "suggestedTags": "အကြံပြု Tag များ:",
+    "applyThisAnalysis": "ဤခွဲခြမ်းစိတ်ဖြာမှုကိုအသုံးပြုပါ",
+    "detectedCharacteristics": "တွေ့ရှိထားသော လက္ခဏာများ:",
+    "howAICanHelp": "AI ဘယ်လိုအကူအညီပေးနိုင်သလဲ",
+    "helpItems": {
+      "transcribe": "audio/video များကိုစာသားပြန်ပေးသည်",
+      "analyzeContent": "သင့်နမူနာအကြောင်းအရာကိုခွဲခြမ်းစိတ်ဖြာသည်",
+      "extractPatterns": "tone နှင့် style ပုံစံများကို ခွဲထုတ်သည်",
+      "generateGuidelines": "voice guidelines များထုတ်ပေးသည်",
+      "suggestTags": "သက်ဆိုင်ရာ tag များအကြံပြုသည်"
+    },
+    "saveTone": "Tone ထိန်းသိမ်းပါ"
   },
   "help": {
     "sharePoint": "SharePoint",
-    "viewTechnicalFlowDiagram": "နည်းပညာဆိုင်ရာ စီးဆင်းမှု ပုံကြမ်းကို ကြည့်ပါ"
+    "viewTechnicalFlowDiagram": "နည်းပညာဆိုင်ရာ စီးဆင်းမှု ပုံကြမ်းကို ကြည့်ပါ",
+    "backToChat": "Chat ကိုပြန်သွားရန်",
+    "title": "အကူအညီစင်တာ",
+    "subtitle": "အဖြေရှာပါ၊ privacy အကြောင်းေလ့လာပါ၊ အထောက်အကူရယူပါ",
+    "faq": {
+      "title": "မကြာခဏမေးလေ့ရှိသောမေးခွန်းများ",
+      "description": "AI Assistant သုံးစွဲမှုနဲ့ပတ်သက်သည့် မေးခွန်းများ၏အဖြေများရှာဖွေပါ",
+      "articles": "ဆောင်းပါးများ",
+      "searchPlaceholder": "FAQs ရှာဖွေနေသည်...",
+      "noResults": "သင့်ရှာဖွေမှုနှင့်ကိုက်ညီသော FAQs မရှိပါ",
+      "noResultsHint": "အခြားရှာဖွေခြင်းစကားလုံးကိုကြိုးစားကြည့်ပါ"
+    },
+    "privacy": {
+      "title": "ကိုယ်ရေးအချက်အလက်နှင့် ဒေတာ",
+      "description": "သင့်ဒေတာထားသိမ်းပုံနှင့် ကာကွယ်ရေးနည်းလမ်းများကို လေ့လာပါ",
+      "topics": "အကြောင်းအရာများ",
+      "searchPlaceholder": "ကိုယ်ရေးအချက်အလက် ချုပ်ကိုင်မှုအကြောင်းအရာရှာရန်...",
+      "noResults": "သင့်ရှာဖွေရေးနှင့်ကိုက်ညီသော ကိုယ်ရေးအချက်အလက်ဆိုင်ရာ အကြောင်းအရာများ မရှိပါ",
+      "noResultsHint": "အခြားရှာဖွေရေးစကားလုံးဖြင့် ပြန်လည်ရှာဖွေပါ",
+      "bannerTitle": "သင့်ကိုယ်ရေးအချက်အလက်သည် အရေးပါသည်",
+      "bannerDescription": "ကုန်တိုင်းသည် သင့်စက်ပေါ်တွင်သာ သိမ်းဆည်းထားပါသည်။ ဒေတာထိန်းသိမ်းခြင်းသည် MSF ၏စနစ်များမှ Azure ဆာဗာကို အသုံးပြု၍ ဆောင်ရွက်သည်။",
+      "localStorageOnly": "စက်တွင်းသိမ်းဆည်းမှုသာ",
+      "msfControlled": "MSF ထိန်းချုပ်ထားသည်",
+      "noPersonalData": "ကိုယ်ရေးအချက်အလက် မပါ",
+      "noSensitiveOps": "အရေးကြီးလုပ်ငန်းများ မပါ"
+    },
+    "contact": {
+      "title": "ဆက်သွယ်ရန်နှင့် အရင်းအမြစ်များ",
+      "description": "ကျွန်ုပ်တို့အဖွဲ့နှင့် ဆက်သွယ်ပါ၊ အတူတူအသုံးဝင်သောလင့်များရယူပါ",
+      "supportAvailable": "ပါဝန်ထောက်ပံ့မှုရှိသည်",
+      "submitRequest": "ပါဝန်ထောက်ပံ့မှု တောင်းဆိုရန်",
+      "getHelp": "ကျွန်ုပ်တို့အဖွဲ့ထံမှ အကူအညီရယူပါ",
+      "requestDescription": "အကူအညီလိုပါသလား။ အကြံပြုလိုပါသလား။ အောက်ဖော်ပြပါ စာမျက်နှာမှတစ်ဆင့် တောင်းဆိုနိုင်ပါသည်။",
+      "openSupportForm": "ပါဝန်ထောက်ပံ့မှု ဖောင်ဖွင့်ပါ",
+      "otherWays": "အခြားဆက်သွယ်နိုင်သည့် နည်းလမ်းများ",
+      "emailSupport": "အီးမေးလ်ထောက်ပံ့မှု",
+      "emailDescription": "မေးခွန်းများ၊ အကြံပြုချက်များ သို့မဟုတ် နည်းပညာ ပြဿနာများအတွက် ကျွန်ုပ်တို့ထံ အီးမေးလ်ပို့နိုင်ပါသည်"
+    },
+    "resources": {
+      "title": "အပိုဆောင်း အရင်းအမြစ်များ",
+      "portalTitle": "AI Accelerator Portal",
+      "portalDescription": "စာရွက်စာတမ်းများ၊ ပရောဂျက် အပ်ဒိတ်များနှင့် သင်ကြားမှုအကြောင်းအရာများ",
+      "githubTitle": "Open Source Repository",
+      "githubDescription": "GitHub တွင် ကုဒ်ကြည့်ရှုပါ၊ ပြဿနာ တင်ပြနိုင်ပါသည်၊ ပါဝင် အထောက်အပံ့ပေးနိုင်ပါသည်"
+    }
   },
   "settings": {
     "Settings": "ဆက်တင်များ",
@@ -616,9 +778,452 @@
     "Add to Home screen": "မူလမျက်နှာပြင်သို့ ထည့်သွင်းပါ",
     "Install": "ထည့်သွင်းပါ",
     "PWA Note": "သတိပြုရန်: ဤသည်မှာ ဝဘ်အက်ပ်ကို Progressive Web App (PWA) အဖြစ် သင့်ကိရိယာပေါ်တွင် ထည့်သွင်းခြင်းဖြစ်သည်။ အက်ပ်စတိုး မလိုအပ်ပါ!",
-    "Learn more about Progressive Web Apps": "Progressive Web Apps များအကြောင်း ပိုမိုလေ့လာပါ"
+    "Learn more about Progressive Web Apps": "Progressive Web Apps များအကြောင်း ပိုမိုလေ့လာပါ",
+    "Help Center": "အကူအညီစင်တာ",
+    "FAQs, privacy policy, and guides": "မကြာမကြေမေးခွန်းများ၊ ကိုယ်ရေးအချက်အလက်မူဝါဒ၊ လမ်းညွှန်များ",
+    "Contact Support": "ထောက်ပံ့ရေးကို ဆက်သွယ်ရန်",
+    "Popular Questions": "အကြိုက်ဆုံးမေးခွန်းများ",
+    "View all FAQs": "မကြာမကြေမေးခွန်းများအားလုံးကြည့်ရန်",
+    "Delete legacy data after migration": "ဒေတာကို ပြောင်းပြောင်းပြီးအနောက်နှင့် ဖျက်ပါ",
+    "frees up storage space": "သိမ်းဆည်းခွင့် နေရာ အလွတ်လုပ်ပေးသည်",
+    "Legacy data deleted": "အဟောင်းဒေတာ ဖျက်ပြီးပါပြီ",
+    "freed": "အလွတ်လုပ်ပြီး",
+    "Conversations": "ဆွေးနွေးချက်များ",
+    "Legacy": "အဟောင်း",
+    "Other": "အျခား",
+    "Loading": "တင်နေသည်",
+    "Legacy Data Detected": "အဟောင်းဒေတာ ရှာတွေ့ပါသည်",
+    "legacyDataDescription": "သင့်တွင် ယခင်ဗားရှင်းမှ ဒေတာ {size} ရှိသည်။ ဒါ့ဒေတာကို ပြောင်းနိုင်သည်၊ တင်ပို့နိုင်သည် သို့မဟုတ် နေရာအလွတ်ရရန် ဖျက်နိုင်သည်။",
+    "legacyDeleteSuccess": "အဟောင်းဒေတာကို အောင်မြင်စွာဖျက်ခဲ့ပြီး {size} အလွတ်ရပြီ။",
+    "legacyDeleteError": "အဟောင်းဒေတာ ဖျက်ရန် မအောင်မြင်ပါ။ ထပ်မံကြိုးစားပါ",
+    "Explore solutions": "ဖြေရှင်းနည်းများ ရှာဖွေရန်",
+    "Migrate to Current Format": "လက်ရှိဖော်မတ်သို့ ပြောင်းရန်",
+    "Export Legacy Data": "အဟောင်း ဒေတာ တင်ပို့ရန်",
+    "Delete Legacy Data": "အဟောင်းဒေတာ ဖျက်ရန်",
+    "deleteLegacyConfirm": "အဟောင်းဒေတာအားလုံးကို ဖျက်ရန် သေချာပါသလား။ ဤလုပ်ဆောင်မှုကို နောက်ပြန်ပြင်ပေးလို့မရပါ။",
+    "Deleting": "ဖျက်နေသည်",
+    "Confirm Delete": "ဖျက်ရန် အတည်ပြုပါ",
+    "Cancel": "ပယ်ဖျက်ရန်"
   },
   "notFound": {
     "lostDog": "ပျောက်ဆုံးနေသော ခွေး"
-  }
+  },
+  "Saved Prompts": "သိမ်းဆည်းထားသော Prompt များ",
+  "New conversation": "ဆွေးနွေးမှုအသစ်",
+  "Edit": "တည်းဖြတ်",
+  "Chat Settings": "ချတ်ဆက်တင်များ",
+  "Default System Prompt": "မူလ System Prompt",
+  "Email": "အီးမေးလ်",
+  "Prompt limit is {{maxLength}} characters_ You have entered {{valueLength}} characters_": "Prompt သည် {{maxLength}} စာလုံးအထိသာ ခွင့်ပြုသည်။ ကျွန်ုပ်ထည့်သွင်းထားသည်မှာ {{valueLength}} စာလုံးဖြစ်သည်။",
+  "Run Typewriter Intro": "Typewriter ခေါင်းစဉ်ကို မောင်းနှင်မည်",
+  "Conversation exported successfully": "ဆွေးနွေးမှုကို အောင်မြင်စွာ ထုတ်ယူပြီး",
+  "Failed to export conversation": "ဆွေးနွေးမှု ထုတ်ယူခြင်း မအောင်မြင်ပါ",
+  "Conversation imported successfully": "ဆွေးနွေးမှုကို အောင်မြင်စွာ တင်သွင်းပြီး",
+  "Failed to import conversation": "ဆွေးနွေးမှု တင်သွင်းခြင်း မအောင်မြင်ပါ",
+  "Invalid conversation file": "ဆွေးနွေးမှုဖိုင် မမှန်ကန်ပါ",
+  "Folder exported with {count} conversations": "ဖိုလ်ဒါတွင် ဆွေးနွေးမှု {count} ခုနှင့် ထုတ်ယူပြီး",
+  "Failed to export folder": "ဖိုလ်ဒါ ထုတ်ယူရန် မအောင်မြင်ပါ",
+  "Folder not found": "ဖိုလ်ဒါ မတွေ့ပါ",
+  "Folder imported with {count} conversations": "ဖိုလ်ဒါတွင် ဆွေးနွေးမှု {count} ခုနှင့် တင်သွင်းပြီး",
+  "Invalid folder file": "ဖိုလ်ဒါဖိုင် မမှန်ကန်ပါ",
+  "Failed to import file": "ဖိုင် တင်သွင်းခြင်း မအောင်မြင်ပါ",
+  "Unrecognized file format": "ဖိုင်ဖော်မတ် ကို မသိရှိပါ",
+  "transcription": {
+    "transcribesOnSend": "ပို့သလျှင် စာအား ရိုက်သွင်းပါ",
+    "addInstructions": "ညွှန်ကြားချက်များ ထည့်ပါ",
+    "instructionsPlaceholder": "တိကျမှန်ကန်မှု အတွက် အကြောင်းအရာ (ဥပမာ- နာမည်များ၊ အကြောင်းအရာများ)"
+  },
+  "transcriptionComplete": "စာရိုက်ဖြစ်ပြီးပါပြီ! စာသားကို ချတ်ထဲသို့ ထည့်ပြီးပါပြီ။",
+  "No prompts found": "Prompt မတွေ့ရပါ",
+  "Select a prompt to view details": "အသေးစိတ်ကြည့်ရန် Prompt တစ်ခု ရွေးချယ်ပါ",
+  "Content": "အကြောင်းအရာ",
+  "importBackupParseError": "Backup ဖိုင်ကို ဖတ်ရန် မအောင်မြင်ပါ။ သေချာသော JSON ဖြစ်ကြောင်း စစ်ဆေးပါ။",
+  "emptyState": {
+    "greeting": "ဘာကူညီပေးရမလဲ?",
+    "greetingWithName": "ဘယ်လိုကူညီပေးရမလဲ၊ {name}?",
+    "suggestedPrompts": {
+      "createDiagrams": {
+        "title": "ဇယား ဖန်တီးခြင်း",
+        "prompt": "ဇယားများနှင့် လှိုင်းပုံများကို ဘယ်လိုဖန်တီးနိုင်သည်ကိုပြပါ။ မည်သည့်ဖြစ်စဉ်များ၊ လုပ်ငန်းလည်ပတ်မှုများ သို့မဟုတ် စနစ်များကို ဗျူဟာပေါ်ပေါက်စေ၍ ဖော်ပြနိုင်ထင်သလဲ? ဥပမာများပြပေးပါ။"
+      },
+      "draftContent": {
+        "title": "ပရော်ဖက်ရှင်နယ်အကြောင်းအရာ အကြမ်းတမ်းရေးခြင်း",
+        "prompt": "ပရော်ဖက်ရှင်နယ်စာတမ်းများ (အီးမေးလ်၊ အစီရင်ခံစာ၊ အကျဉ်းချုပ်) ရေးရန်ကူညီပေးရန်လိုအပ်သည်။ လုပ်ငန်းစာရေးရာအမျိုးမျိုးတွင် ဘယ်လိုကူညီပေးနိုင်သည်ကို ဥပမာအချို့ပြပေးပါ။"
+      },
+      "analyzeInformation": {
+        "title": "အချက်အလက် ခွဲခြမ်းစိတ်ဖြာခြင်း",
+        "prompt": "ဒေတာ သို့မဟုတ် အချက်အလက်များကို ခွဲခြမ်းစိတ်ဖြာရန် ဘယ်လိုကူညီပေးနိုင်သလဲ? ဂဏန်းများ ခွဲခြမ်းကြည့်ခြင်း၊ ပုံစံများရှာဖွေခြင်း သို့မဟုတ် စာရွက်စာတမ်း/ဒေတာမှ အဓိပ္ပါယ်တင်ရယူခြင်းတို့ကို ဘယ်လိုလုပ်ဆောင်နိုင်သည်ကို ဥပမာများနှင့်ပြသပါ။"
+      },
+      "planOrganize": {
+        "title": "အစီအစဉ်ချခြင်း နှင့် စီစဉ်ခြင်း",
+        "prompt": "စီမံကိန်းများရေးဆွဲခြင်း သို့မဟုတ် အလုပ်အပ်ခြင်း/စီစဉ်ခြင်းတွင်ကူညီပေးနိုင်သလား? အချိန်ဇယား၊ မီနူးခေါ်စာ အစရှိသည်တို့ကို ဖွဲ့စည်းစရာတွေနဲ့ အမျိုးမျိုးပြပေးပါ။"
+      },
+      "brainstormIdeas": {
+        "title": "စိတ်ကူး အကြံအစည် များရှာဖွေခြင်း",
+        "prompt": "ပြဿနာတစ်ခုကို ဖြေရှင်းရန် လမ်းကြောင်းတွေကို စဉ်းစားလိုသည်။ တီထွင်ခြင်းနှင့် စိတ်ကူးစပါးခြင်းကို ဘယ်လိုလုပ်ဆောင်နိုင်သလဲ - မည်သည့်အမေးများမေးမလဲ၊ ဒါတွေကို ဘယ်လိုရွေးချယ်ရှာဖွေလေ့ရှိသလဲ ပြပါ။"
+      },
+      "buildPresentations": {
+        "title": "တင်ပြချက် ဖန်တီးခြင်း",
+        "prompt": "တင်ပြချက်ဖန်တီးရာတွင် ဘယ်လိုကူညီပေးနိုင်သလဲ? တင်ပြချက်ပုံစံပေါင်းများစွာ၊ ရုပ်ထွက်ပေးနိုင်တဲ့အကြံပြုချက်များနဲ့ တိုင်းသူအပေါ်မူတည်သော အချက်အလက်စီစဉ်ပုံများကို ဥပမာပြပါ။"
+      },
+      "workWithCode": {
+        "title": "ကုဒ်နှင့် အလုပ်လုပ်ခြင်း",
+        "prompt": "ကုဒ် သို့မဟုတ် စကရစ်များအတွက် ကူညီနိုင်သလား? ကုဒ်အသစ်ရေးခြင်း၊ ပြဿနာရှာဖွေရေး သို့မဟုတ် တစ်ဆင့်ချင်းဖော်ပြပြသခြင်း အပါအဝင် ဥပမာများပြပါ။"
+      },
+      "decisionSupport": {
+        "title": "ဆုံးဖြတ်ချက် ကူညီမှု",
+        "prompt": "ဆုံးဖြတ်ချက်ချရန် လိုအပ်သော်လည်း ရွေးချယ်စရာများကို နားလည်ခွဲခြားပေးရန် မသေချာပါ။ ရွေးချယ်မှုများစဉ်းစားရာတွင် အသုံးပြုနိုင်သည့် နည်းစနစ်များ သို့မဟုတ် ဗဟုသုတရှင်းလင်းချက်များကို ပြပါ။"
+      },
+      "summarizeSynthesize": {
+        "title": "အကျဉ်းချုပ်ခြင်း & ပေါင်းစည်းခြင်း",
+        "prompt": "ရှည်လျားသောစာတမ်းများအကျဉ်းချုပ်ခြင်း သို့မဟုတ် အမျိုးမျိုးသောအရင်းအမြစ်မှ အချက်အလက်ပေါင်းစည်းခြင်းတွင် ဘယ်လိုကူညီနိုင်သလဲ? အကျဉ်းချုပ်ပုံစံအမျိုးမျိုး နဲ့ အသေးစိတ်အဆင့်အတန်းများကို ဥပမာများဖြင့်ပြပါ။"
+      },
+      "explainTopics": {
+        "title": "ရှုပ်ထွေးသောအကြောင်းအရာများ ရှင်းပြခြင်း",
+        "prompt": "ရှုပ်ထွေးသောအကြောင်းအရာများကို လွယ်ကူစွာ ရှင်းပြနိုင်ပါသလား? ခက်ခဲသောအယူအဆများကို ဘယ်လို ခွဲခြမ်းဖော်ပြပြီး ဥပမာတွေအပြင် နားလည်မှုအဆင့်အလိုက် ဘယ်လိုတုံ့ပြန်ဆွေးနွေးပေးနိုင်သည်ကို ပြပါ။"
+      },
+      "createSchedules": {
+        "title": "အချိန်ဇယားဖန်တီးခြင်း",
+        "prompt": "အချိန်စီစဉ်ခြင်း၊ ဇယားဖန်တီးခြင်းအတွက် ကူညီပေးပါ။ မီနူးခေါ်စာ၊ ကယ်လင်ဒါ သို့မဟုတ် အချိန်အခြေခံ အစီအစဉ်များကို ဘယ်လိုဖွဲ့စည်းပေးနိုင်သည်ကို ဥပမာများနဲ့ ပြပါ။"
+      }
+    }
+  },
+  "modelSelect": {
+    "tabs": {
+      "models": "ပုံစံများ",
+      "agents": "Agent များ"
+    },
+    "sections": {
+      "baseModels": "အခြေခံပုံစံများ"
+    },
+    "agents": {
+      "advancedFeatureBadge": "တိုးတက်သောအင်္ဂါရပ်",
+      "description": "စိတ်ကြိုက် AI Agent များကို ဖန်တီးပြီး စီမံခန့်ခွဲပါ။ ဤ Agent များသည် MSF AI Assistant Foundry instance တွင် မောင်းနှင်သည်။",
+      "advancedFeatureTitle": "တိုးတက်သောအင်္ဂါရပ် - AI Assistant Technical Team နှင့် ပေါင်းစည်းလေ့လာရန်လိုအပ်ပါသည်",
+      "advancedFeatureWarning": "စိတ်ကြိုက် Agent များသည် MSF AI Assistant Foundry instance တွင်သာ အလုပ်လုပ်သည်။ Agent ID များကို ဤအထူး instance တွင် AI Assistant technical team မှ ဖန်တီးရမည်ဖြစ်ပြီး အသုံးပြုပါမည့်မီ သင်နှင့် ညှိနှိုင်းရပါမည်။",
+      "createNewAgent": "စိတ်ကြိုက် Agent အသစ်ဖန်တီးရန်",
+      "noAgentsTitle": "စိတ်ကြိုက် Agent မရှိသေးပါ",
+      "noAgentsDescription": "တိုးချဲ့ထားသော တိကျသောကိရိယာများနှင့် လုပ်ဆောင်နိုင်မှုများဖြင့် သင့်ပထမဆုံး စိတ်ကြိုက် agent ကိုဖန်တီးပါ။"
+    },
+    "advancedOptions": {
+      "title": "အဆင့်မြင့်ရွေးချယ်စရာများ",
+      "temperature": "Temperature",
+      "fixedTemperatureNote": "မှတ်ချက် - ဤပုံစံသည် တည်ငြိမ်သောလုပ်ဆောင်ချက်အတွက် တင်းတိပ်ထားသော temperature တန်ဖိုးများကို အသုံးပြုသည်။",
+      "reasoningEffort": "ယူဆချက်ကြိုးစားမှု",
+      "minimal": "အနည်းဆုံး",
+      "low": "နိမ့်",
+      "medium": "အလယ်အလတ်",
+      "high": "မြင့်",
+      "verbosity": "ဝေါဟာရပမာဏ"
+    },
+    "searchMode": {
+      "title": "ရှာဖွေမှုမုဒ်",
+      "subtitle": "လိုအပ်သည့်အခါ Web ရှာဖွေမှုကို အသုံးပြုပါမည်",
+      "routingLabel": "ရှာဖွေမှု နည်းလမ်းချိတ်ဆက်မှု:",
+      "whatsDifference": "ကွာခြားချက်ဘာလဲ?",
+      "privacyFocused": "ကိုယ်ရေးအချက်အလက်ကို ဦးစားပေး (မူရင်း)",
+      "privacyFocusedDescription": "အနည်းငယ်နှေးသော်လည်း ပိုမိုကိုယ်ရေးလုံခြုံသည်",
+      "azureAgentMode": "Azure AI Agent Mode",
+      "azureAgentModeDescription": "ပိုမြန်ပေမယ့် စကားပြောသည့်ဒေတာကို cloud ထဲသို့ သိမ်းဆည်းထားသည်",
+      "privacyInfoTitle": "ကိုယ်ရေးလုံခြုံမှုနှင့် ဆိုင်သောအရေးကြီးသောအချက်",
+      "privacyInfoDescription": "သင်၏ စကားပြောချက် အပြည့်အစုံကို Azure AI Foundry agent သို့ ပို့ပါမည်။",
+      "learnMoreDataStorage": "ဒေတာသိမ်းဆည်းမှုအကြောင်း နောက်ထပ်သိရန်"
+    },
+    "customAgent": {
+      "label": "Custom Agent:",
+      "description": "ဤ agent သည် MSF AI Assistant Foundry instance ပေါ်တွင် စက်ကိရိယာများ အမြဲဖွင့်လှစ်ထား၍ လည်ပတ်သည်။",
+      "webSearch": "အချိန်နှင့်တပြေးညီ ဝက်ဘ်ရှာဖွေမှု",
+      "codeInterpreter": "Code interpreter & ဖိုင်ခွဲခြမ်းစိတ်ဖြာမှု"
+    },
+    "header": {
+      "backToModels": "မော်ဒယ်များသို့ ပြန်သွားရန်",
+      "knowledgeCutoff": "Knowledge cutoff: {cutoff}"
+    },
+    "modelTypes": {
+      "foundational": "အခြေခံ",
+      "omni": "Omni",
+      "reasoning": "သုံးသပ်ချက်",
+      "agent": "Agent"
+    }
+  },
+  "models": {
+    "gpt_4_1": {
+      "name": "GPT-4.1",
+      "description": "GPT-4.1 ဖြင့် အားဖြည့်ထားသော AI မော်ဒယ်တစ်ခုဖြစ်ပြီး Bing မှတဆင့် အချိန်နှင့်တပြေးညီ ဝက်ဘ်ရှာဖွေမှုလုပ်နိုင်သည်။ နောက်ဆုံးသတင်းအချက်အလက်၊ တိကျမှန်ကန်မှုစစ်ဆေးမှု နှင့် လက်ရှိဖြစ်ရပ်များ သိရှိနိုင်သည်။ မကြာသေးမီ သတင်းအချက်အလက် များလိုအပ်သော သုတေသန၊ သတင်းစမ်းသပ်ခြင်းနှင့် တိကျမှန်ကန်မှုအတည်ပြုရန်အတွက် အကောင်းဆုံးဖြစ်သည်။",
+      "knowledgeCutoff": "အချိန်နှင့်တပြေးညီ ဝက်ဘ်ရှာဖွေမှု"
+    },
+    "gpt_5": {
+      "name": "GPT-5",
+      "description": "OpenAI ၏ အဆင့်အမြင့်ဆုံး မော်ဒယ်ဖြစ်ပြီး စုန်းမရှုပ်ထွေးသော သုံးသပ်ချက်များ၊ ကုဒ်ထုတ်ပေးခြင်းနှင့် နည်းပညာဆိုင်ရာ ပြဿနာများဖြေရှင်းခြင်းတွင် အထူးကျွမ်းကျင်သည်။ သုံးသပ်မှုလိုအပ်သော အလုပ်များ၊ programming စိန်ခေါ်မှုများ၊ သုတေသနနှင့် အသေးစိတ်ရှင်းပြချက်များအတွက် အကောင်းဆုံး။ သုံးသပ်ချက်အရည်အသွေးနှင့် ဖြေကြားမှုအသေးစိတ်စွာ ထုတ်ပေးမှုကို ချိန်ညှိနိုင်သည်။",
+      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+    },
+    "gpt_5_mini": {
+      "name": "GPT-5 Mini",
+      "description": "GPT-5 ကို အမြန်နှုန်းမြင့်စွာ ပိုမိုသက်သာစွာ အသုံးပြုနိုင်ရန်အတွက် အရည်အသွေးမလျော့ဘဲ စွယ်စုံစွမ်းဆောင်ရည်ရှိစေသည်။ နေ့စဥ် လုပ်ဆောင်ရသော တာဝန်များ၊ မြန်မြန်ဖြေကြားခြင်းလိုအပ်သည့် မေးခွန်းများ၊ ကိရိယာခွဲခြားသုံးစွဲမှုနှင့် အမြန်တုံ့ပြန်မှုတောင်းဆိုမှုများအတွက် သင့်လျော်သည်။ စွမ်းဆောင်ရည်နှင့် ထိရောက်မှု အညီမျှထားသည်။",
+      "knowledgeCutoff": "Aug 6, 2025 8:00 PM"
+    },
+    "gpt_5_chat": {
+      "name": "GPT-5 Chat",
+      "description": "GPT-5 ၏ စကားပြောမှုအတွက် အထူးပြု မော်ဒယ်ဖြစ်ပြီး စိတ်ခံစားမှုနားလည်မှုနှင့် စကားပြောမှုတွင် ထူးခြားသည်။ နှစ်မျိုးသဘောထား သက်သေပြ၍ စိတ်ကျန်းမာရေးလက်ခံရန်၊ ဖန်တီးမှုရေးသားခြင်း၊ အကြံဉာဏ်ပေးခြင်းနှင့် သဘာဝပြောဆိုမှုအတတ်ပညာများတွင် ထူးချွန်သည်။ ပုံမှန်ပြောဆိုမှု၊ အကြံပေးမှုနှင့် စိတ်ခံစားမှုလိုအပ်သည့် အလုပ်များအတွက် အကောင်းဆုံး။",
+      "knowledgeCutoff": "Oct 1, 2025 8:00 PM"
+    },
+    "o3": {
+      "name": "o3",
+      "description": "OpenAI ၏ ထူးခြားသော သုံးသပ်ချက်စွမ်းရည်ဖြင့် ပြဿနာဖြေရှင်းမှုပိုင်း၌ ဆန်းသစ်မှုရှိသည့် မော်ဒယ်။ သုံးသပ်ရန်ရှုပ်ထွေးသော သင်္ချာ၊ သိပ္ပံ သုံးသပ်ချက်၊ coding စိန်ခေါ်မှုများနှင့် အဆင့်ဆင့်လက်တွေ့ ဉာဏ်ပညာအလုပ်များတွင် ထူးခြားသည်။ ၂၀၀၀၀၀ context window ဖြင့် ပိုမိုကျယ်ပြန့်သည်။ သုံးသပ်မှုကြိုးပမ်းမှုကို ထိန်းချုပ်နိုင်သည်။",
+      "knowledgeCutoff": "Apr 8, 2025 8:00 PM"
+    },
+    "llama_4_maverick": {
+      "name": "Llama 4 Maverick",
+      "description": "Meta မှ ထုတ်လုပ်သော မြန်မြန်ဆန်ဆန် နှင့် သက်သာသော မော်ဒယ်။ ရေးသားခြင်း၊ ချုပ်ဆိုခြင်းနှင့် အခြေခံ coding အကူအညီလိုအပ်သည့် နေ့စဥ်လုပ်ငန်းများအတွက် သင့်တော်သည်။ အမြန်နှုန်းနှင့် အရည်အသွေးကို မညှင်းညလဲ ထားပေးနိုင်သည်။",
+      "knowledgeCutoff": "May 7, 2025 7:11 AM"
+    },
+    "deepseek_r1": {
+      "name": "DeepSeek-R1",
+      "description": "လှုပ်ရှားမှုတစ်ဆင့်ခြင်း အဆင့်ခြင်း ပြသနိုင်သည့် သုံးသပ်မှုအထူးပြု မော်ဒယ်။ သင်္ချာပြဿနာများ၊ လောဂျစ်ပဟေဠိများနှင့် ရှုပ်ထွေးသောအိမ်မြှောင်အယူအဆများနားလည်ရန်အတွက် အထူးသင့်လျော်သည်။ ပြဿနာများကို အချိန်နှင့်တပြေးညီ သုံးသပ်သည့် နည်းလမ်းကို မြင်နိုင်သည်။",
+      "knowledgeCutoff": "Jan 20, 2025"
+    },
+    "deepseek_v3_1": {
+      "name": "DeepSeek-V3.1",
+      "description": "အကောင်းဆုံး coding နှင့် နည်းပညာရေးသားခြင်းစွမ်းရည်ရှိသည့် စွယ်စုံအသုံးပြုနိုင်သည့် မော်ဒယ်။ ကုဒ် debugging ပြုလုပ်ခြင်း၊ documentation ရေးသားခြင်းနှင့် နည်းပညာအယူအဆများ ရှင်းပြခြင်းတွင် ထူးခၽြားသည်။ ပရိုဂရမ်ရေးသားရေးအတွက် မြန်ဆန်၍ ယုံကြည်စိတ်ချရသည်။",
+      "knowledgeCutoff": "Apr 16, 2025 12:45 AM"
+    },
+    "grok_3": {
+      "name": "Grok 3",
+      "description": "xAI မှ ထုတ်လုပ်သည့် သုံးစွဲနိုင်စွမ်းမြင့် မော်ဒယ်ဖြစ်ပြီး အသေးစိတ် ချောမွေ့စွာ ဖြေကြားနိုင်သည်။ ပွင့်လင်းသော ဆွေးနွေးမှုများ၊ ဖန်တီးမှုစီမံကိန်းများနှင့် ရှုပ်ထွေးသည့် ပြဿနာများ ဖြေရှင်းရန်သင့်တော်သည်။",
+      "knowledgeCutoff": "May 13, 2025 12:16 AM"
+    },
+    "claude_opus_4_5": {
+      "name": "Claude Opus 4.5",
+      "description": "Anthropic ၏ အရည်အသွေးမြင့်ဆုံး မော်ဒယ်ဖြစ်၍ သောင်းသပ်မှု၊ coding နှင့် ဖန်တီးမှုစွမ်းရည်မှာ ထူးခြားသည်။ ရှုပ်ထွေးသည့် သုံးသပ်ချက်၊ သုတေသနနှင့် နက်နဲစွာ နားလည်သိရှိရသောအလုပ်များအတွက် အကောင်းဆုံး။",
+      "knowledgeCutoff": "January 2025"
+    },
+    "claude_sonnet_4_5": {
+      "name": "Claude Sonnet 4.5",
+      "description": "Coding, သုံးသပ်မှုနှင့် ဖန်တီးမှု တစ်ခြားပြီးမြောက်စွာဆောင်ရွက်နိုင်သော Claude မော်ဒယ်ဖြစ်သည်။ နေ့စဥ်အသုံးအတွက် သင့်လျော်ပြီး မြန်မြန်တုံ့ပြန်နိုင်သည်။",
+      "knowledgeCutoff": "January 2025"
+    },
+    "claude_opus_4_1": {
+      "name": "Claude Opus 4.1",
+      "description": "ယခင်မျိုးဆက် Claude Opus မော်ဒယ်ဖြစ်သည်။ စုန်ပေါင်းကုဒ်ရေးခြင်း၊ အသေးစိတ်ခွဲခြမ်းစိတ်ဖြာခြင်းနှင့် လှပပြီးနားလည်နိုင်စွမ်းအတွက် ထူးချွန်ပါသည်။",
+      "knowledgeCutoff": "ဇန်နဝါရီ ၂၀၂၅"
+    },
+    "claude_haiku_4_5": {
+      "name": "Claude Haiku 4.5",
+      "description": "အလျင်အမြန်နှင့် ကုန်ကျစရိတ်သက်သာသော Claude မော်ဒယ်ဖြစ်ပြီး လွယ်ကူသောအလုပ်များအတွက် သင့်တော်သည်။ ရိုးရှင်းသောမေးခွန်းများ၊ အကျဉ်းချုပ်ရေးခြင်းနှင့် လူကြီးမင်းဆောင်ရွက်ရမည့်အလုပ်များအတွက် အသင့်တော်ဆုံးဖြစ်သည်။",
+      "knowledgeCutoff": "ဇန်နဝါရီ ၂၀၂၅"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "OpenAI ၏အထူးတန်းမော်ဒယ်ဖြစ်ပြီး၊ စဉ်းစားသုံးသပ်မှု မှန်ကန်မှုများ၊ ကုဒ်ရေးခြင်းနှင့် နည်းပညာဆိုင်ရာပြဿနာများ ဖြေရှင်းရာတွင် ထူးချွန်သည်။ သုံးသပ်မှု လုပ်ငန်းများ၊ ပရိုဂရမ်မင်းအလှည့်အပြောင်း၊ သုတေသနနှင့် အသေးစိတ်ရှင်းပြခြင်းတို့အတွက် အကောင်းဆုံး။ Reasoning effort နှင့် response verbosity ကို အလိုအလျောက် ချိန်ညှိနိုင်သည်။",
+      "knowledgeCutoff": "2025 ဒီဇင်ဘာ"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "GPT-5.2 ၏ ပြောဆိုမှုအတွက် အထူးပြုပြင်ထားသော မော်ဒယ်ဖြစ်ပြီး၊ စာနာမှုနှင့် စိတ်ခံစားမှုနားလည်မှုတွင် ထူးချွန်သည်။ စာနာထောက်ခံမှု၊ စိတ်ကျန်းမာရေးအတွက်ထောက်ပံ့မှု၊ ရှုမြင်ဖန်တီးရေး၊ စကားပြောချိန်တွင် အသုံးပြုရန်အကောင်းဆုံး။ ပုံမှန်စကားပြောခြင်း၊ အကြံပေးခြင်းနှင့် စိတ်ခံစားမှုလိုအပ်သော tarea များတွင် သင့်တော်သည်။",
+      "knowledgeCutoff": "2025 ဒီဇင်ဘာ"
+    }
+  },
+  "searchMode": {
+    "backToChat": "ပြန်သွားရန် Chat",
+    "title": "Search Mode အကြောင်း ရှင်းပြချက်",
+    "subtitle": "ရှာဖွေရေး ရွေးချယ်စရာများနှင့် သင့်ဒေတာ သိမ်းဆည်းရာနေရာကိုနားလည်ရန်",
+    "quickComparison": "အမြန် နှိုင်းယှဉ်ခြင်း",
+    "noSearch": "Search မလုပ်သော",
+    "privacyFocused": "Privacy သို့ ဦးစူးထားသော",
+    "azureAIFoundry": "Azure AI Foundry",
+    "responseSpeed": "တုံ့ပြန်မှု အမြန်နှုန်း",
+    "fastest": "အမြန်ဆုံး",
+    "slowerMultiStep": "ဖြေးဖြေး (အဆင့်ကြောင်းကြာ)",
+    "fasterDirect": "ပိုမြန် (တိုက်ရိုက်)",
+    "fullConversationStored": "အပြည့်အစုံ စကားပြောသမိုင်း Cloud တွင် သိမ်းဆည်းထားသည်",
+    "whatsStoredInAzure": "Azure တွင် သိမ်းဆည်းထားသည့်အရာများ",
+    "nothingStateless": "မရှိပါ (stateless သာ)",
+    "searchQueriesOnly": "ရှာဖွေမေးခွန်းများသာ",
+    "fullConversationHistory": "အပြည့်အစုံ စကားပြောသမိုင်း",
+    "modelAvailability": "မော်ဒယ် ရရှိနိုင်မှု",
+    "allModels": "မော်ဒယ် အားလုံး",
+    "gpt41Only": "GPT-4.1 သာ",
+    "searchTurnedOff": "Search ပိတ်ထားသည်",
+    "noSearchDescription": "နှေးဖွေးမှုအနည်းဆုံးဖြင့် web search မရှိသော တုံ့ပြန်မှု။ သင်၏စကားပြောသမိုင်း အပြည့် browser ထဲတွင်သာရှိပြီး cloud တွင် မသိမ်းဆည်းပါ။",
+    "viewDetailsBelow": "အသေးစိတ်ပါဝင်ချက်များ အောက်ဖော်ပြပါ နည်းပညာလုပ်ငန်းစဉ်ကိုကြည့်ပါ။",
+    "viewTechnicalFlowDiagram": "နည်းပညာလုပ်ငန်းစဉ် အျပင်အဆင် ကြည့်ရန်",
+    "legend": "ရှင်းပြချက်:",
+    "legendNoSearch": "သင်၏ Browser (local storage) | AI Assistant Server | Azure OpenAI (stateless)",
+    "privacyFocusedMode": "Privacy ဦးစားပေး Mode",
+    "default": "မူလတည်နေရာ",
+    "privacyDescription": "လိုအပ်သည့်အခါ web search အသုံးပြုသော်လည်း အဆင့်များများပါဝင်သည့်အတွက် နှေးနည်းသည်။ ရှာဖွေမေးခွန်းများသာ Azure တွင် သိမ်းဆည်းထားပြီး စကားပြောသမိုင်းအပြည့်သည် သင်၏ browser တွင်သာရှိသည်။",
+    "legendPrivacy": "သင်၏ Browser (local storage) | AI Assistant Server | Azure AI Foundry (search queries only) | Azure OpenAI (stateless)",
+    "azureAIFoundryMode": "Azure AI Foundry Mode",
+    "foundryDescription": "Web search ပါဝင်စွာ အမြန်တုံ့ပြန်နိုင်သည်။ သင့်စကားပြောသမိုင်း အပြည့် Azure AI Foundry ၏ database တွင် သိမ်းဆည်းထားပြီး browser တွင်သာမကပါ။",
+    "legendFoundry": "သင်၏ Browser (local storage) | AI Assistant Server | Azure AI Foundry Agent (full conversation သိမ်းဆည်းသည်)",
+    "whyTheseOptions": "ဘာကြောင့် ဒီရွေးချယ်စရာများ ရှိသလဲ?",
+    "whyTheseOptionsText1": "AI Assistant သည် မူလတည်သည့် Bing Search API ကို Azure မှ ပယ်ဖျက်လိုက်သည့်အတွက် ရရှိနိုင်သော search နည်းလမ်းများဖြစ်သည်။",
+    "whyTheseOptionsText2": "အသေးစိတ် privacy ဦးစားပေး search နည်းလမ်းအသစ်များကို အသင်းက ဆက်လက်လေ့လာနေသည်။ သုံးစွဲနေသောနည်းလမ်းနှစ်ခုစလုံးသည် Azure AI Foundry ရဲ့ search စွမ်းရည်ကိုအသုံးပြုသော်လည်း စကားပြောသမိုင်း မျှဝေမှုမှာ ကွာခြားသည်။",
+    "azureDeprecatedBingApi": "Azure သည် Bing Search API ကို ပယ်ဖျက်လိုက်သည်",
+    "footerNote": "Mode နှစ်ခုစလုံးတွင် သင့်စကားပြောသမိုင်းသည် browser ထဲတွင်သာ သိမ်းဆည်းထားသည်။ မော်ဒယ် သတ်မှတ်ချက်များတွင် မည်သည့်အချိန်မဆို mode ပြောင်းလဲနိုင်သည်။",
+    "note": "မှတ်ချက်:",
+    "loadingDiagram": "diagram ဖွင့်နေသည်..."
+  },
+  "migration": {
+    "status": {
+      "checkingStorage": "သိမ်းဆည်းရာနေရာ စစ်ဆေးနေသည်",
+      "analyzingData": "သင့်ဒေတာကို ခွဲခြမ်းစိတ်ဖြာနေသည်...",
+      "updateAvailable": "Update ရရှိနိုင်ပါသည်",
+      "storageSpaceLimited": "သိမ်းဆည်းရာနေရာ ကန့်သတ်ထားပါသည်",
+      "migratingData": "ဒေတာပြောင်းနေသည်",
+      "migrationComplete": "မိုင်းဂရိတ် လုပ်ငန်းပြီးစီးပါပြီ",
+      "partiallyComplete": "တစ်စိတ်တစ်ပိုင်းပြီးဆုံးပြီး",
+      "migrationFailed": "သွားပြောင်းမှု မအောင်မြင်ပါ"
+    },
+    "descriptions": {
+      "foundLegacyData": "ယခင်ဗားရှင်းမှ ဒေတာတွေ့ရှိခဲ့ပါသည်။ မသွားပြောင်းလိုပါက စနစ်အသစ်တွင် အသုံးပြုနိုင်ရန် ပြောင်းလဲ မလုပ်မည်လား",
+      "storageSpaceWarning": "သင်၏ဒေတာသည် လက်ရှိရှိသော နေရာထက် ပိုမိုလိုအပ်ပါသည်။ တဖြည်းဖြည်းပြောင်းလဲသွားပြောင်းမည့် mode ကို အသုံးပြုရန် အကြံပြုသည်။",
+      "pleaseWait": "သင်၏ဒေတာကို အပ်ဒိတ်လုပ်နေသဖြင့် ခဏစောင့်ပေးပါ...",
+      "dataIsSafe": "သင်၏မူရင်းဒေတာ သေချာစွာထားရှိထားသည်။ ထပ်မံကြိုးစားနိုင်ပါသည် သို့မဟုတ် ယာယီကျော်သွားနိုင်သည်။",
+      "itemsTooLarge": "ဤအကြောင်းအရာများသည် သိုလှောင်မှုအတွက် ကြီးလွန်းသည်။ ထုတ်ယူထားမည်၊ နေရာလွှတ်မည် သို့မဟုတ် မပါဝင်ဘဲ ဆက်လုပ်နိုင်သည်။",
+      "settingsUpdated": "သင်၏ဆက်တင်များ ကို အပ်ဒိတ်ပြုလုပ်ပြီးပါပြီ။"
+    },
+    "benefits": {
+      "title": "အကျိုးကျေးဇူးများ",
+      "fasterPerformance": "လုပ်ဆောင်မှု မြန်ဆန်မှု",
+      "betterReliability": "ယုံကြည်စိတ်ချရမှု မြင့်မားမှု",
+      "dataPreserved": "သင်၏ဒေတာလုံခြုံစွာထားရှိထားသည်"
+    },
+    "options": {
+      "advancedOptions": "အဆင့်မြင့်ရွေးချယ်မှုများ",
+      "useIncrementalMode": "တဖြည်းဖြည်းပြောင်းလဲသွားပြောင်းရန် mode ကိုအသုံးပြုပါ",
+      "slowerButSafer": "ဖြည်းဖြည်းပေမယ့် ပိုစိတ်ချရ",
+      "recommended": "အကြံပြုသည်",
+      "deleteLegacyData": "သွားပြောင်းပြီးလျှင် လူကြီးပိုင်ဒေတာဖျက်မည်",
+      "freesUpSpace": "သိုလှောင်နေရန် နေရာလွတ်ဆွတ်နိုင်သည်"
+    },
+    "actions": {
+      "skip": "ကျော်သွားမည်",
+      "migrateData": "ဒေတာသွားပြောင်းမည်",
+      "migrateAnyway": "အခြေအနေမပဲ သွားပြောင်းမည်",
+      "continue": "ဆက်လက်လုပ်ဆောင်မည်",
+      "retry": "ထပ်မံကြိုးစားမည်",
+      "exportBackupFirst": "အရင်ဆုံး မိတ္တူထုတ်ယူပါ",
+      "exportSkippedItems": "ကျော်ထားသောအကြောင်းအရာများ ထုတ်ယူမည်"
+    },
+    "quota": {
+      "availableSpace": "လက်ရှိသုံးနိုင်သော နေရာ",
+      "dataToMigrate": "သွားပြောင်းရန် ဒေတာ",
+      "additionalSpaceNeeded": "လိုအပ်သော နေရာ ပိုသည်"
+    },
+    "progress": {
+      "migratingConversations": "စကားပြောမှုများကို သွားပြောင်းနေသည်",
+      "migratingPrompts": "prompts ကို သွားပြောင်းနေသည်",
+      "migratingAgents": "agents များကို သွားပြောင်းနေသည်",
+      "finishingUp": "ပြီးဆုံးအောင်လုပ်ဆောင်နေသည်"
+    },
+    "results": {
+      "successfullyMigrated": "သွားပြောင်းမှုအောင်မြင်ပါသည်",
+      "notes": "မှတ်စုများ",
+      "couldNotMigrate": "သွားပြောင်းလို့မရပါ",
+      "legacyDataDeleted": "လူကြီးပိုင်ဒေတာ ဖျက်ပြီး",
+      "freed": "နေရာလွတ်လာသည်"
+    },
+    "units": {
+      "conversation": "စကားပြောမှု",
+      "conversations": "စကားပြောမှုများ",
+      "folder": "ဖိုလ်ဒါ",
+      "folders": "ဖိုလ်ဒါများ",
+      "prompt": "prompt",
+      "prompts": "prompts",
+      "customAgent": "ထုံးစံလုပ်ထားသော agent",
+      "customAgents": "ထုံးစံလုပ်ထားသော agents",
+      "item": "အကြောင်းအရာ",
+      "items": "အကြောင်းအရာများ"
+    }
+  },
+  "languageSwahili": "ဆွာဟီလီ",
+  "welcomeBanner": {
+    "title": "AI Assistant V2 သို့ လာရောက်အပ်နှင်းပါတယ်",
+    "whatsNew": "အသစ်ပြောင်းလဲသည်များ",
+    "whatsNewQuestion": "အသစ်ပြောင်းလဲသည်များကဘာလဲ?"
+  },
+  "welcomeV2": {
+    "backToChat": "ပြန်သွားရန် Chat",
+    "title": "AI Assistant V2 သို့ လာရောက်အပ်နှင်းပါတယ်",
+    "subtitle": "အသစ်ပြုလုပ်ထားသည့် မျက်နှာသစ်နဲ့ အားကောင်းသော လုပ်ဆောင်ချက်အသစ်များ",
+    "webSearch": {
+      "title": "Web Search Mode",
+      "description": "AI ကို အချိန်နှင့်တပြေးညီ ဝက်ဘ်ရှာဖွေမှုသို့ ဝင်ရောက်ခွင့်ပေးပါ (privacy ကို ဦးစားပေးထားသော ရွေးချယ်စရာများ)",
+      "quickAccess": "အလျင်အမြန် ဝင်ရောက်နိုင်မှု:",
+      "quickAccessInstructions": "chat input ရဲ့ဘေးမှာရှိတဲ့ + ခလုတ်ကိုနှိပ်ပါ → \"Web Search\" ကို ရွေးပါ",
+      "setAsDefault": "ပုံသေအဖြစ် သတ်မှတ်ရန်:",
+      "setAsDefaultInstructions": "model settings ကိုဖွင့်ပြီး Web Search Mode toggle ကို ဖွင့်ပါ။ အောက်ပါရွေးချယ်စရာများမှ ရွေးနိုင်သည်:",
+      "privacyFocused": "ပုဂ္ဂလိကအချက်အလက်အရေးကြီး (ပုံသေ)",
+      "privacyFocusedDescription": "ရှာဖွေရေး စုစုပေါင်းသာ ပြင်ပသို့ပေးပို့မည်",
+      "azureAIFoundry": "Azure AI Foundry Mode",
+      "azureAIFoundryDescription": "ပိုမြန်သော်လည်း အပြည့်အစုံ စကားပြောမှုသည် ပြင်ပသို့သိမ်းဆည်းသည်",
+      "learnMore": "ရှာဖွေမှု modes များအကြောင်း နောက်ထပ်သိရှိရန် →"
+    },
+    "tones": {
+      "title": "အသံအနုပညာ မျိုးစုံ (Voice Profiles)",
+      "description": "AI ရေးသားပုံစံ၊ စကားပြောလေးနက်မှု၊ စကားသံ စသည် ထိန်းချုပ်နိုင်သည်",
+      "createTones": "၁။ အသံအနုပညာ မျိုးစုံဖန်တီးရန်:",
+      "createTonesInstructions": "Sidebar ထဲမှ Quick Actions → Tones tab",
+      "useTones": "၂။ အသံအနုပညာများ အသုံးပြုရန်:",
+      "useTonesInstructions": "chat input ဘေးရှိ tone dropdown ကိုနှိပ်ပါ",
+      "exampleProfessionalDesc": "အစည်းအဝေးဆန်သော မှတ်ချက်",
+      "exampleCasualDesc": "ရင်းနှီးပျော်ရွှင်သော၊ ညီညာစကားများ"
+    },
+    "aiAssist": {
+      "title": "Prompts & Tones အတွက် AI အကူအညီ",
+      "description": "AI က ပိုမြန်မြန် ဆောင်ရွက်နိုင်စေရန် prompts နှင့် tones ဖန်တီးရာတွင် ကူညီပေးပါသည်",
+      "step1": "Sidebar မှ Quick Actions ကိုဖွင့်ပါ",
+      "step2": "{prompts} သို့မဟုတ် {tones} tab သို့ သွားပါ",
+      "step3": "AI Assistant panel ကိုရှာပါ",
+      "getSuggestions": "အကြံပြုချက်ရယူရန်",
+      "getSuggestionsDesc": "AI သည် မိမိရေးဆွဲထားသည့်မူကြမ်းကို ချက်ခြင်းခန့်မှန်း၍ တိုးတက်မှုအကြံပြုချက်များပေးသည်",
+      "buildFromFiles": "ဖိုင်များမှ ဖန်တီးရန်",
+      "buildFromFilesDesc": "prompts/tones များ ဖန်တီးရန် စာရွက်စာတမ်းများ upload လုပ်ပါ",
+      "testBeforeSaving": "သိမ်းဆည်းခြင်းမတိုင်မီ စမ်းသပ်ရန်",
+      "testBeforeSavingDesc": "live chat preview တွင် prompts/tones များ စမ်းသပ်ကြည့်ပါ",
+      "step2Prefix": "သွားရန်",
+      "step2Suffix": "တပ် (tab)"
+    },
+    "customAgents": {
+      "title": "စိတ်ကြိုက် Agents များ",
+      "advancedBadge": "အဆင့်မြင့်",
+      "description": "ဝက်ဘ်ရှာဖွေမှု၊ ကုဒ်ဖြေရှင်းခြင်း စတဲ့ အထူးနည်းပညာ ပါရှိသည့် AI agents များ",
+      "advancedFeature": "အဆင့်မြင့် လုပ်ဆောင်ချက်",
+      "advancedFeatureDesc": "Custom Agents များသည် Azure AI Foundry တွင် အထူး tool များဖြင့် အလုပ်လုပ်သည်။ Agent ID ဖန်တီးရန် AI Assistant နည်းပညာအဖွဲ့နှင့် တွဲလုပ်ရန် လိုအပ်သည်။",
+      "howToAccess": "ဝင်ရောက်အသုံးပြုနည်း:",
+      "howToAccessInstructions": "Settings → Models → Agents tab",
+      "whatYouCanDo": "လုပ်နိုင်သောအရာများ:",
+      "configureAgents": "အထူးလုပ်ဆောင်ချက်များဖြင့် agents များ ပြင်ဆင်နိုင်သည်",
+      "importExport": "agent configurations များ ထည့်သွင်း/ထုတ်ယူနိုင်သည်",
+      "selectFromDropdown": "model dropdown မှ custom agents များ ရွေးချယ်နိုင်သည်"
+    },
+    "audioTranslation": {
+      "title": "အသံမှစာသားဆွဲထုတ်ခြင်းနှင့် ဘာသာပြန်ပေးခြင်း",
+      "description": "အသံမှစာသားများကို အလိုအလျောက် ဘာသာစကား ၁၃+ ခုသို့ ဘာသာပြန်နိုင္သည်",
+      "howToUse": "အသုံးပြုနည်း -",
+      "step1": "အသံဖိုင် သို့မဟုတ် ဗီဒီယိုဖိုင် တင်ပါ။",
+      "step2": "စာတမ်းတင်ပုံမျက်နှာပြင်တွင် ဘာသာစကားရွေးချယ်ရန် dropdown ကို နှိပ်ပါ။",
+      "step3": "သင်လိုချင်သော ပစ်ပိုးဘာသာစကားကို ရွေးပါ။",
+      "availableLanguages": "ရရှိနိုင်သော ဘာသာစကားများ -",
+      "moreLanguages": "+7 ချက် ထပ်မံရှိသည်"
+    },
+    "pwa": {
+      "title": "မိုဘိုင်းအက်ပ်အဖြစ် တပ်ဆင်ခြင်း",
+      "description": "Native အတွေ့အကြုံရှိ Progressive Web App",
+      "installTip": "သတိပြုရန် - အကောင့်ဝင်ပြီး တပ်ဆင်ပါ။ သင့်အတည်ပြုချက်နှင့် အကောင်းဆုံးအသုံးပြုမှုကို သိမ်းဆည်းနိုင်ပါသည်။",
+      "howToInstall": "တပ်ဆင်ရန်နည်းလမ်း -",
+      "step1": "သင့်အကောင့်သို့ ဝင်ရောက်ပါ။",
+      "step2": "လမ်းညွှန်ချက်အသေးစိတ်ကို 'Settings → Mobile App' တွင်ဖွင့်ကြည့်ပါ။",
+      "step3": "မိုဘိုင်းတွင် - ဘရောက်ဇာ မီနူး (⋮ သို့မဟုတ် ⚙️) ကို နှိပ်ပါ။",
+      "step4": "“Add to Home Screen” သို့မဟုတ် “Install App” ကို ရှာပါ။",
+      "step5": "တပ်ဆင်ရန် ပေါ်လာသော လမ်းညွှန်ချက်များအတိုင်း လုပ်ဆောင်ပါ။",
+      "benefits": "ရရှိနိုင်သော အကျိုးကျေးဇူးများ -",
+      "benefit1": "မူလအက်ပ်အတိုင်း နေ့သုံးဖုန်းမျက်နှာပြင်မှ တင်ပိတ်နိုင်သည်။",
+      "benefit2": "ဘရောက်ဇာ UI မပါဘဲ အပြည့်အဝ မျက်နှာပြင်ဖွင့်နိုင်သည်။",
+      "benefit3": "သိမ်းဆည်းထားသော စကားပြောချက်များကို အွန်လိုင်းမရှိသော်လည်း ဝင်ကြည့်နိုင်သည်။"
+    }
+  },
+  "Professional": "ပရော်ဖက်ရှင်နယ်",
+  "Casual": "ပုံမှန်"
 }
