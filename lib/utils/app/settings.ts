@@ -18,6 +18,8 @@ const getDefaultSettings = (): Settings => {
     systemPrompt: env.NEXT_PUBLIC_DEFAULT_SYSTEM_PROMPT || DEFAULT_USER_PROMPT,
     advancedMode: false,
     defaultSearchMode: SearchMode.INTELLIGENT, // Privacy-focused intelligent search by default
+    displayNamePreference: 'firstName',
+    customDisplayName: '',
   };
 };
 
