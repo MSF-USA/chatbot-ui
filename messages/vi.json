@@ -1011,6 +1011,16 @@
       "name": "Claude Haiku 4.5",
       "description": "Mô hình Claude nhanh và tiết kiệm, tối ưu cho các tác vụ nhanh. Phù hợp với câu hỏi đơn giản, tóm tắt và các ứng dụng số lượng lớn.",
       "knowledgeCutoff": "Tháng 1 năm 2025"
+    },
+    "gpt_5_2": {
+      "name": "GPT-5.2",
+      "description": "Mô hình tiên tiến nhất của OpenAI, vượt trội về lập luận phức tạp, tạo mã và giải quyết các vấn đề kỹ thuật. Phù hợp nhất cho các tác vụ phân tích, thử thách lập trình, nghiên cứu và giải thích chi tiết. Hỗ trợ điều chỉnh mức độ lập luận và độ dài phản hồi.",
+      "knowledgeCutoff": "Tháng 12/2025"
+    },
+    "gpt_5_2_chat": {
+      "name": "GPT-5.2 Chat",
+      "description": "Biến thể chuyên biệt của GPT-5.2 được tối ưu cho tương tác hội thoại và trí tuệ cảm xúc. Vượt trội về giao tiếp đồng cảm, hỗ trợ sức khỏe tinh thần, sáng tác sáng tạo, động não và đối thoại tự nhiên. Phù hợp cho trò chuyện thân mật, tư vấn và các nhiệm vụ cần sự nhận biết cảm xúc.",
+      "knowledgeCutoff": "Tháng 12/2025"
     }
   },
   "searchMode": {
@@ -1126,5 +1136,94 @@
       "item": "mục",
       "items": "các mục"
     }
-  }
+  },
+  "languageSwahili": "Swahili",
+  "welcomeBanner": {
+    "title": "Chào mừng đến với AI Assistant V2",
+    "whatsNew": "Có gì mới",
+    "whatsNewQuestion": "Có gì mới?"
+  },
+  "welcomeV2": {
+    "backToChat": "Quay lại trò chuyện",
+    "title": "Chào mừng đến với AI Assistant V2",
+    "subtitle": "Thiết kế hoàn toàn mới với nhiều tính năng mạnh mẽ",
+    "webSearch": {
+      "title": "Chế độ Tìm kiếm web",
+      "description": "Cho phép AI truy cập tìm kiếm web theo thời gian thực với các tùy chọn tập trung vào quyền riêng tư",
+      "quickAccess": "Truy cập nhanh:",
+      "quickAccessInstructions": "Nhấn nút + bên cạnh ô nhập trò chuyện → Chọn \"Tìm kiếm web\"",
+      "setAsDefault": "Đặt làm mặc định:",
+      "setAsDefaultInstructions": "Mở cài đặt model và bật công tắc Chế độ Tìm kiếm web. Chọn một trong các chế độ sau:",
+      "privacyFocused": "Tập trung vào quyền riêng tư (mặc định)",
+      "privacyFocusedDescription": "Chỉ gửi truy vấn tìm kiếm ra ngoài",
+      "azureAIFoundry": "Chế độ Azure AI Foundry",
+      "azureAIFoundryDescription": "Nhanh hơn, nhưng toàn bộ cuộc trò chuyện sẽ được lưu bên ngoài",
+      "learnMore": "Tìm hiểu thêm về các chế độ tìm kiếm →"
+    },
+    "tones": {
+      "title": "Giọng điệu (Hồ sơ giọng nói)",
+      "description": "Điều chỉnh phong cách viết, mức độ trang trọng và cá tính của AI",
+      "createTones": "1. Tạo giọng điệu:",
+      "createTonesInstructions": "Tác vụ nhanh ở thanh bên → thẻ Giọng điệu",
+      "useTones": "2. Sử dụng giọng điệu:",
+      "useTonesInstructions": "Nhấn vào danh sách giọng điệu cạnh ô nhập trò chuyện",
+      "exampleProfessionalDesc": "Giọng trang trọng, kiểu doanh nghiệp",
+      "exampleCasualDesc": "Thân thiện, kiểu hội thoại"
+    },
+    "aiAssist": {
+      "title": "AI Hỗ trợ cho Lời nhắc & Giọng điệu",
+      "description": "Để AI giúp bạn tạo lời nhắc và giọng điệu hiệu quả hơn, nhanh hơn",
+      "step1": "Mở Tác vụ nhanh ở thanh bên",
+      "step2": "Đi tới thẻ {prompts} hoặc {tones}",
+      "step3": "Tìm bảng AI Assistant",
+      "getSuggestions": "Lấy gợi ý",
+      "getSuggestionsDesc": "AI phân tích bản nháp của bạn và đề xuất cải thiện",
+      "buildFromFiles": "Tạo từ file",
+      "buildFromFilesDesc": "Tải lên tài liệu để tạo prompt/giọng điệu",
+      "testBeforeSaving": "Thử trước khi lưu",
+      "testBeforeSavingDesc": "Dùng thử prompt/giọng điệu trong bản xem trước trò chuyện trực tiếp",
+      "step2Prefix": "Đi tới",
+      "step2Suffix": "tab"
+    },
+    "customAgents": {
+      "title": "Tác nhân tùy chỉnh",
+      "advancedBadge": "NÂNG CAO",
+      "description": "Tác nhân AI chuyên biệt với khả năng mở rộng như tìm kiếm web và phân tích mã",
+      "advancedFeature": "Tính năng nâng cao",
+      "advancedFeatureDesc": "Tác nhân tùy chỉnh chạy trên Azure AI Foundry với công cụ chuyên biệt. Cần phối hợp với đội kỹ thuật AI Assistant để tạo ID tác nhân.",
+      "howToAccess": "Cách truy cập:",
+      "howToAccessInstructions": "Cài đặt → Model → thẻ Agents",
+      "whatYouCanDo": "Bạn có thể làm gì:",
+      "configureAgents": "Cấu hình tác nhân với khả năng chuyên biệt",
+      "importExport": "Nhập/xuất cấu hình tác nhân",
+      "selectFromDropdown": "Chọn tác nhân tùy chỉnh từ danh sách model"
+    },
+    "audioTranslation": {
+      "title": "Chép âm thanh kèm dịch",
+      "description": "Tự động dịch bản ghi âm sang hơn 13 ngôn ngữ",
+      "howToUse": "Cách sử dụng:",
+      "step1": "Tải lên tệp âm thanh hoặc video",
+      "step2": "Nhấp vào menu thả xuống ngôn ngữ trong giao diện chép lời",
+      "step3": "Chọn ngôn ngữ đích",
+      "availableLanguages": "Ngôn ngữ có sẵn:",
+      "moreLanguages": "+7 ngôn ngữ khác"
+    },
+    "pwa": {
+      "title": "Cài đặt dưới dạng Ứng dụng Di động",
+      "description": "Progressive Web App với trải nghiệm như ứng dụng gốc",
+      "installTip": "Mẹo: Hãy cài đặt sau khi đăng nhập để lưu xác thực và có trải nghiệm tốt nhất.",
+      "howToInstall": "Cách cài đặt:",
+      "step1": "Đăng nhập vào tài khoản của bạn",
+      "step2": "Mở Cài đặt → Ứng dụng Di động để xem hướng dẫn chi tiết",
+      "step3": "Trên di động: Nhấn vào menu trình duyệt (⋮ hoặc ⚙️)",
+      "step4": "Tìm \"Thêm vào Màn hình chính\" hoặc \"Cài đặt ứng dụng\"",
+      "step5": "Làm theo hướng dẫn để cài đặt",
+      "benefits": "Lợi ích:",
+      "benefit1": "Khởi động như ứng dụng gốc từ màn hình chính",
+      "benefit2": "Toàn màn hình, không có giao diện trình duyệt",
+      "benefit3": "Truy cập ngoại tuyến các cuộc hội thoại đã lưu"
+    }
+  },
+  "Professional": "Chuyên nghiệp",
+  "Casual": "Thân mật"
 }
