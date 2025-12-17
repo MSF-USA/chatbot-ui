@@ -10,6 +10,8 @@ import {
 } from '@tabler/icons-react';
 import { FC } from 'react';
 
+import { useTranslations } from 'next-intl';
+
 export type FileStatus = 'uploading' | 'transcribing' | 'completed' | 'failed';
 
 interface FileUploadSectionProps {
@@ -35,6 +37,8 @@ export const FileUploadSection: FC<FileUploadSectionProps> = ({
   acceptedFileTypes = 'audio/*,video/*,text/*,.txt,.md,.pdf,.doc,.docx',
   disabled = false,
 }) => {
+  const t = useTranslations();
+
   const getFileIcon = (file: File) => {
     if (file.type.startsWith('audio/')) {
       return <IconMusic size={16} className="text-purple-500 flex-shrink-0" />;
@@ -54,28 +58,28 @@ export const FileUploadSection: FC<FileUploadSectionProps> = ({
         return (
           <span className="flex items-center gap-1 text-xs text-blue-600 dark:text-blue-400 ml-auto flex-shrink-0">
             <IconLoader2 size={12} className="animate-spin" />
-            Uploading...
+            {t('fileUpload.uploading')}
           </span>
         );
       case 'transcribing':
         return (
           <span className="flex items-center gap-1 text-xs text-purple-600 dark:text-purple-400 ml-auto flex-shrink-0">
             <IconLoader2 size={12} className="animate-spin" />
-            Transcribing...
+            {t('fileUpload.transcribing')}
           </span>
         );
       case 'completed':
         return (
           <span className="flex items-center gap-1 text-xs text-green-600 dark:text-green-400 ml-auto flex-shrink-0">
             <IconCheck size={12} />
-            Complete
+            {t('fileUpload.complete')}
           </span>
         );
       case 'failed':
         return (
           <span className="flex items-center gap-1 text-xs text-red-600 dark:text-red-400 ml-auto flex-shrink-0">
             <IconX size={12} />
-            Failed
+            {t('fileUpload.failed')}
           </span>
         );
     }
@@ -86,7 +90,7 @@ export const FileUploadSection: FC<FileUploadSectionProps> = ({
       <label className="block text-sm font-semibold mb-2 text-gray-900 dark:text-white cursor-pointer">
         <div className="flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-[#1a1a1a] px-4 py-8 text-sm text-gray-600 dark:text-gray-400 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/10 transition-all">
           <IconUpload size={20} />
-          <span>Upload files (audio, video, or text)</span>
+          <span>{t('fileUpload.uploadFiles')}</span>
         </div>
         <input
           type="file"
